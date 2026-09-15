@@ -21,6 +21,7 @@ import Foundation
 protocol UnauthenticatedSessionStatusDelegate: AnyObject {
 
     var isAllowedToCreateNewAccount: Bool { get }
+    var maxNumberAccounts: Int { get }
 
 }
 
@@ -45,7 +46,9 @@ class CompanyLoginURLActionProcessor: URLActionProcessor {
             guard delegate?.isAllowedToCreateNewAccount == true else {
                 presentationDelegate?.failedToPerformAction(
                     urlAction,
-                    error: SessionManager.AccountError.accountLimitReached
+                    error: SessionManager.AccountError.accountLimitReached(
+                        maxNumberAccounts: delegate?.maxNumberAccounts ?? SessionManager.defaultMaxNumberAccounts
+                    )
                 )
                 return
             }

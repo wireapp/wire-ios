@@ -18,7 +18,7 @@
 
 import Foundation
 
-final class MeetingsAPIV17: MeetingsAPIV16 {
+class MeetingsAPIV17: MeetingsAPIV16 {
 
     override var apiVersion: APIVersion {
         .v17

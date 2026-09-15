@@ -33,19 +33,14 @@ package struct MeetingsFormatter: MeetingsFormatterProtocol {
         let calendar = Calendar.current
 
         if calendar.isDate(date, inSameDayAs: now) {
-            return Strings.Header.today + " (\(DateFormatter.dayHeader.string(from: date)))"
+            return Strings.Header.today + " (\(DateFormatter.meetingDate.string(from: date)))"
         } else {
-            return DateFormatter.dayHeader.string(from: date)
+            return DateFormatter.meetingDate.string(from: date)
         }
     }
 
     package func timeRange(from start: Date, to end: Date) -> String {
-        let calendar = Calendar.current
-        let startPeriod = calendar.component(.hour, from: start) / 12
-        let endPeriod = calendar.component(.hour, from: end) / 12
-        let isSamePeriod = startPeriod == endPeriod
-        let startFormatter = isSamePeriod ? DateFormatter.meetingTimeWithoutPeriod : DateFormatter.meetingTime
-        let startString = startFormatter.string(from: start)
+        let startString = DateFormatter.meetingTime.string(from: start)
         let endString = DateFormatter.meetingTime.string(from: end)
         return "\(startString) - \(endString)"
     }
@@ -54,30 +49,20 @@ package struct MeetingsFormatter: MeetingsFormatterProtocol {
 
 // MARK: - Helpers
 
-private extension DateFormatter {
+extension DateFormatter {
 
-    static let dayHeader: DateFormatter = {
+    static let meetingDate: DateFormatter = {
         let formatter = DateFormatter()
-        formatter.locale = .current
-        formatter.dateFormat = "EEEE, MMMM d"
-        return formatter
-    }()
-
-}
-
-private extension DateFormatter {
-
-    static let meetingTimeWithoutPeriod: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.locale = .current
-        formatter.dateFormat = "hh:mm"
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.calendar = Calendar(identifier: .gregorian)
+        formatter.dateFormat = "dd.MM.yyyy"
         return formatter
     }()
 
     static let meetingTime: DateFormatter = {
         let formatter = DateFormatter()
-        formatter.locale = .current
-        formatter.dateFormat = "hh:mm a"
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.dateFormat = "HH:mm"
         return formatter
     }()
 

@@ -10,6 +10,10 @@ As it is hard to spot changes from version to version of database models (.xcdat
 
 ## zmessaging
 
+### 2.142.0
+
+* added `WireDriveDirectUpload` entity, tracking in-flight Wire Drive direct uploads so background transfers can be reconciled after the app is terminated and relaunched
+
 ### 2.141.0
 
 * added optional `Meeting.timeZoneIdentifier` for recurring meetings.

@@ -65,7 +65,7 @@ package struct FilesContentView<Toolbar: ToolbarContent, Sheet: View>: View {
                     if viewModel.showReadOnlyBanner {
                         ConversationViewerAccessBanner(backgroundColor: ColorTheme.Buttons.Secondary
                             .disabledOutline) {
-                                viewModel.showReadOnlyBanner = false
+                                viewModel.dismissReadOnlyBanner()
                             }.padding(.bottom, viewModel.isOffline ? 0 : 15)
                     }
 
