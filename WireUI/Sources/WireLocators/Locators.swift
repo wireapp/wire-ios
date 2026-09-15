@@ -391,8 +391,15 @@ public enum Locators {
 
         case theme = "Theme"
         case themeCell
+        case notificationSoundCell
         case lockWithPasscode = "Lock With Passcode"
         case createLinkPreviews = "Create Link Previews"
+    }
+
+    public enum NotificationSoundSettingsPage: AutoPrefixedEnum {
+
+        case wireOption
+        case wireOldOption
     }
 
     public enum SaveBackupFileBottomSheetPage: String {

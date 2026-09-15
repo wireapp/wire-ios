@@ -1361,13 +1361,6 @@
 "self.settings.notifications.chat_alerts.toggle" = "Powiadomienia wiadomości";
 "self.settings.notifications.chat_alerts.footer" = "Nowa wiadomość w innej konwersacji.";
 
-"self.settings.sound_menu.sounds.title" = "Dźwięki";
-"self.settings.sound_menu.ringtone.title" = "Dźwięk dzwonka";
-"self.settings.sound_menu.message.title" = "Dźwięk wiadomości";
-"self.settings.sound_menu.ping.title" = "Ping";
-"self.settings.sound_menu.ringtones.title" = "Dzwonki";
-"self.settings.sound_menu.sounds.wire_sound" = "Wire";
-"self.settings.sound_menu.sounds.none" = "Wyciszone";
 
 "self.settings.callkit.title" = "Połączenia";
 "self.settings.callkit.caption" = "Udostępnij poprzez iOS";
@@ -1379,9 +1372,6 @@
 "self.settings.vbr.title" = "Kodowanie o zmiennej przepływności (VBR)";
 "self.settings.vbr.description" = "To sprawia, że połączenia audio używają mniej danych i działają lepiej w wolniejszych sieciach. Wyłącz aby używać kodowania stałej przepływności (CBR). To ustawienie dotyczy tylko połączeń 1:1; połączenia konferencyjne zawsze używają kodowania CBR.";
 
-"self.settings.sound_menu.sounds.wire_call" = "Połączenie Wire";
-"self.settings.sound_menu.sounds.wire_message" = "Wiadomość Wire";
-"self.settings.sound_menu.sounds.wire_ping" = "Wire ping";
 
 // By popular demand
 "self.settings.popular_demand.title" = "Różne";

@@ -6064,6 +6064,14 @@ internal enum L10n {
             /// Message Previews
             internal static let toogle = L10n.tr("Localizable", "self.settings.notifications.push_notification.toogle", fallback: "Message Previews")
           }
+          internal enum Sound {
+            /// Notification Sound
+            internal static let title = L10n.tr("Localizable", "self.settings.notifications.sound.title", fallback: "Notification Sound")
+            /// Wire
+            internal static let wire = L10n.tr("Localizable", "self.settings.notifications.sound.wire", fallback: "Wire")
+            /// Wire old (click)
+            internal static let wireOld = L10n.tr("Localizable", "self.settings.notifications.sound.wire_old", fallback: "Wire old (click)")
+          }
         }
         internal enum OptionsMenu {
           /// Options
@@ -6230,10 +6238,6 @@ internal enum L10n {
             /// All
             internal static let title = L10n.tr("Localizable", "self.settings.sound_menu.all_sounds.title", fallback: "All")
           }
-          internal enum Message {
-            /// Text Tone
-            internal static let title = L10n.tr("Localizable", "self.settings.sound_menu.message.title", fallback: "Text Tone")
-          }
           internal enum MuteWhileTalking {
             /// First message and pings
             internal static let title = L10n.tr("Localizable", "self.settings.sound_menu.mute_while_talking.title", fallback: "First message and pings")
@@ -6241,32 +6245,6 @@ internal enum L10n {
           internal enum NoSounds {
             /// None
             internal static let title = L10n.tr("Localizable", "self.settings.sound_menu.no_sounds.title", fallback: "None")
-          }
-          internal enum Ping {
-            /// Ping
-            internal static let title = L10n.tr("Localizable", "self.settings.sound_menu.ping.title", fallback: "Ping")
-          }
-          internal enum Ringtone {
-            /// Ringtone
-            internal static let title = L10n.tr("Localizable", "self.settings.sound_menu.ringtone.title", fallback: "Ringtone")
-          }
-          internal enum Ringtones {
-            /// Ringtones
-            internal static let title = L10n.tr("Localizable", "self.settings.sound_menu.ringtones.title", fallback: "Ringtones")
-          }
-          internal enum Sounds {
-            /// None
-            internal static let `none` = L10n.tr("Localizable", "self.settings.sound_menu.sounds.none", fallback: "None")
-            /// Sounds
-            internal static let title = L10n.tr("Localizable", "self.settings.sound_menu.sounds.title", fallback: "Sounds")
-            /// Wire Call
-            internal static let wireCall = L10n.tr("Localizable", "self.settings.sound_menu.sounds.wire_call", fallback: "Wire Call")
-            /// Wire Message
-            internal static let wireMessage = L10n.tr("Localizable", "self.settings.sound_menu.sounds.wire_message", fallback: "Wire Message")
-            /// Wire Ping
-            internal static let wirePing = L10n.tr("Localizable", "self.settings.sound_menu.sounds.wire_ping", fallback: "Wire Ping")
-            /// Wire
-            internal static let wireSound = L10n.tr("Localizable", "self.settings.sound_menu.sounds.wire_sound", fallback: "Wire")
           }
         }
         internal enum SwitchAccount {

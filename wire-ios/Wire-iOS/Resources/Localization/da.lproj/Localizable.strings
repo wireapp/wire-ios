@@ -1361,13 +1361,6 @@
 "self.settings.notifications.chat_alerts.toggle" = "Besked bannere";
 "self.settings.notifications.chat_alerts.footer" = "Nye beskeder i andre samtaler.";
 
-"self.settings.sound_menu.sounds.title" = "Lyde";
-"self.settings.sound_menu.ringtone.title" = "Ringetone";
-"self.settings.sound_menu.message.title" = "Besked tone";
-"self.settings.sound_menu.ping.title" = "Ping";
-"self.settings.sound_menu.ringtones.title" = "Ringetoner";
-"self.settings.sound_menu.sounds.wire_sound" = "Wire";
-"self.settings.sound_menu.sounds.none" = "Ingen";
 
 "self.settings.callkit.title" = "Opkald";
 "self.settings.callkit.caption" = "Del med iOS";
@@ -1379,9 +1372,6 @@
 "self.settings.vbr.title" = "Variable bithastighed";
 "self.settings.vbr.description" = "This makes audio calls use less data and work better on slower networks. Turn off to use constant bitrate encoding (CBR). This setting only affects 1:1 calls; conference calls always use CBR encoding.";
 
-"self.settings.sound_menu.sounds.wire_call" = "Wire Opkald";
-"self.settings.sound_menu.sounds.wire_message" = "Wire Besked";
-"self.settings.sound_menu.sounds.wire_ping" = "Wire Ping";
 
 // By popular demand
 "self.settings.popular_demand.title" = "Ved populær efterspørgsel";

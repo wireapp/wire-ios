@@ -1361,13 +1361,6 @@
 "self.settings.notifications.chat_alerts.toggle" = "Nachrichten-Banner";
 "self.settings.notifications.chat_alerts.footer" = "Neue Nachrichten in anderen Unterhaltungen.";
 
-"self.settings.sound_menu.sounds.title" = "Töne";
-"self.settings.sound_menu.ringtone.title" = "Klingelton";
-"self.settings.sound_menu.message.title" = "Nachrichtenton";
-"self.settings.sound_menu.ping.title" = "Ping";
-"self.settings.sound_menu.ringtones.title" = "Klingeltöne";
-"self.settings.sound_menu.sounds.wire_sound" = "Wire";
-"self.settings.sound_menu.sounds.none" = "Keine";
 
 "self.settings.callkit.title" = "Anrufe";
 "self.settings.callkit.caption" = "Mit iOS teilen";
@@ -1379,9 +1372,6 @@
 "self.settings.vbr.title" = "Codierung mit variabler Bitrate";
 "self.settings.vbr.description" = "Anrufe benötigen hierbei weniger Datenvolumen und funktionieren besser in Netzen mit geringer Bandbreite. Schalten Sie diese Option aus, um die Kodierung mit konstanter Bitrate (CBR) zu verwenden. Diese Einstellung wirkt sich nur auf Einzelgespräche aus; Telefonkonferenzen verwenden immer CBR-Kodierung.";
 
-"self.settings.sound_menu.sounds.wire_call" = "Wire Anruf";
-"self.settings.sound_menu.sounds.wire_message" = "Wire Nachricht";
-"self.settings.sound_menu.sounds.wire_ping" = "Wire Ping";
 
 // By popular demand
 "self.settings.popular_demand.title" = "Auf allgemeinen Wunsch";

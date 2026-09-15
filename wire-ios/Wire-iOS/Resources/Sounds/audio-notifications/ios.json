@@ -80,37 +80,13 @@
 			"incallAllowed": 1,
 			"intensity": 50
 		},
-		"new_message_apns": {
-			"path": "new_message_apns",
-			"format": "m4a",
-			"loopAllowed": 0,
-			"mixingAllowed": 100,
-			"incallAllowed": 0,
-			"intensity": 100
-		},
-		"first_message_apns": {
-			"path": "first_message_apns",
-			"format": "m4a",
-			"loopAllowed": 0,
-			"mixingAllowed": 100,
-			"incallAllowed": 0,
-			"intensity": 50
-		},
 		"new_message": {
 			"path": "new_message",
-			"format": "m4a",
+			"format": "caf",
 			"loopAllowed": 0,
 			"mixingAllowed": 100,
 			"incallAllowed": 0,
 			"intensity": 100
-		},
-		"first_message": {
-			"path": "first_message",
-			"format": "m4a",
-			"loopAllowed": 0,
-			"mixingAllowed": 100,
-			"incallAllowed": 0,
-			"intensity": 50
 		},
 		"ping_from_me": {
 			"path": "ping_from_me",

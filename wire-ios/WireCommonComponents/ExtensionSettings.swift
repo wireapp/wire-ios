@@ -22,11 +22,14 @@ import WireUtilities
 private enum ExtensionSettingsKey: String, CaseIterable {
 
     case disableLinkPreviews
+    case messageNotificationSound
 
     private var defaultValue: Any? {
         switch self {
         case .disableLinkPreviews:
             false
+        case .messageNotificationSound:
+            MessageNotificationSound.wire.rawValue
         }
     }
 
@@ -35,6 +38,11 @@ private enum ExtensionSettingsKey: String, CaseIterable {
             partialResult[current.rawValue] = current.defaultValue
         }
     }
+}
+
+public enum MessageNotificationSound: String, CaseIterable {
+    case wire
+    case wireOld
 }
 
 public final class ExtensionSettings: NSObject {
@@ -62,5 +70,21 @@ public final class ExtensionSettings: NSObject {
     public var disableLinkPreviews: Bool {
         get { defaults.bool(forKey: ExtensionSettingsKey.disableLinkPreviews.rawValue) }
         set { defaults.set(newValue, forKey: ExtensionSettingsKey.disableLinkPreviews.rawValue) }
+    }
+
+    public var messageNotificationSound: MessageNotificationSound {
+        get {
+            guard
+                let rawValue = defaults.string(forKey: ExtensionSettingsKey.messageNotificationSound.rawValue),
+                let sound = MessageNotificationSound(rawValue: rawValue)
+            else {
+                return .wire
+            }
+
+            return sound
+        }
+        set {
+            defaults.set(newValue.rawValue, forKey: ExtensionSettingsKey.messageNotificationSound.rawValue)
+        }
     }
 }

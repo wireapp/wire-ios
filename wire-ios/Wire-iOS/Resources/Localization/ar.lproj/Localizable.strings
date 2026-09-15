@@ -1361,13 +1361,6 @@
 "self.settings.notifications.chat_alerts.toggle" = "شارة الرسالة";
 "self.settings.notifications.chat_alerts.footer" = "رسائل جديدة في مُحادثات أخرى.";
 
-"self.settings.sound_menu.sounds.title" = "الأصوات";
-"self.settings.sound_menu.ringtone.title" = "نغمة الرنين";
-"self.settings.sound_menu.message.title" = "نغمة التنبيه";
-"self.settings.sound_menu.ping.title" = "بينغ";
-"self.settings.sound_menu.ringtones.title" = "النغمات";
-"self.settings.sound_menu.sounds.wire_sound" = "Wire";
-"self.settings.sound_menu.sounds.none" = "لا شيء";
 
 "self.settings.callkit.title" = "المكالمات";
 "self.settings.callkit.caption" = "مشاركة بواسطة iOS";
@@ -1379,9 +1372,6 @@
 "self.settings.vbr.title" = "ترميز بمعدل بت متغير";
 "self.settings.vbr.description" = "This makes audio calls use less data and work better on slower networks. Turn off to use constant bitrate encoding (CBR). This setting only affects 1:1 calls; conference calls always use CBR encoding.";
 
-"self.settings.sound_menu.sounds.wire_call" = "مُكالمة Wire";
-"self.settings.sound_menu.sounds.wire_message" = "رسالة Wire";
-"self.settings.sound_menu.sounds.wire_ping" = "رنين Wire";
 
 // By popular demand
 "self.settings.popular_demand.title" = "الأكثر شعبية";

@@ -1361,13 +1361,6 @@
 "self.settings.notifications.chat_alerts.toggle" = "Notificaciones internas";
 "self.settings.notifications.chat_alerts.footer" = "Ver tira con mensajes recibidos en otros chats desde el chat activo.";
 
-"self.settings.sound_menu.sounds.title" = "Sonidos";
-"self.settings.sound_menu.ringtone.title" = "Tono de llamada";
-"self.settings.sound_menu.message.title" = "Tono de mensaje";
-"self.settings.sound_menu.ping.title" = "Ping";
-"self.settings.sound_menu.ringtones.title" = "Tonos de llamada";
-"self.settings.sound_menu.sounds.wire_sound" = "Wire";
-"self.settings.sound_menu.sounds.none" = "Ninguno";
 
 "self.settings.callkit.title" = "Notificaciones de (vídeo)llamadas";
 "self.settings.callkit.caption" = "A pantalla completa";
@@ -1379,9 +1372,6 @@
 "self.settings.vbr.title" = "Tasa de bits variable";
 "self.settings.vbr.description" = "Esto hace que las llamadas de audio usen menos datos y funcionen mejor en redes más lentas. Desactívalo para usar codificación de bitrate constante (CBR). Esta configuración sólo afecta a las llamadas 1:1; las llamadas en conferencia siempre utilizan codificación CBR.";
 
-"self.settings.sound_menu.sounds.wire_call" = "Tono de Wire";
-"self.settings.sound_menu.sounds.wire_message" = "Tono de Wire";
-"self.settings.sound_menu.sounds.wire_ping" = "Tono de Wire";
 
 // By popular demand
 "self.settings.popular_demand.title" = "Por demanda popular";
