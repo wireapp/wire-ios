@@ -135,6 +135,21 @@ final class UserHelper {
                 fatalError("Missing BASIC_AUTH_QA_FEDERATION_B environment variable")
             }
             return auth
+
+        case .qaFixedSSO:
+            if let auth = ProcessInfo.processInfo.environment["BASIC_AUTH_QA_FIXED_SSO"], !auth.isEmpty {
+                return auth
+            }
+
+            guard let username = ProcessInfo.processInfo.environment["BASIC_AUTH_QA_FIXED_SSO_USERNAME"],
+                  let password = ProcessInfo.processInfo.environment["BASIC_AUTH_QA_FIXED_SSO_PASSWORD"],
+                  !username.isEmpty,
+                  !password.isEmpty else {
+                fatalError("Missing BASIC_AUTH_QA_FIXED_SSO_USERNAME / BASIC_AUTH_QA_FIXED_SSO_PASSWORD environment variable")
+            }
+
+            let value = "\(username):\(password)"
+            return "Basic \(Data(value.utf8).base64EncodedString())"
         }
     }
 
@@ -866,6 +881,10 @@ extension BackendEnvironment {
     static let backendURL = "https://\(ProcessInfo.processInfo.environment["BACKEND_URL"]!)"
     static let backendURLQAFederationA = "https://\(ProcessInfo.processInfo.environment["BACKEND_URL_QA_FEDERATION_A"]!)"
     static let backendURLQAFederationB = "https://\(ProcessInfo.processInfo.environment["BACKEND_URL_QA_FEDERATION_B"]!)"
+    static let backendURLQAFixedSSO = backendURL(
+        from: "BACKEND_URL_QA_FIXED_SSO",
+        defaultValue: "https://nginz-https.qa-fixed-sso-wire.wire.link"
+    )
 
     static let staging = BackendEnvironment(
         url: URL(string: backendURL)!,
@@ -890,6 +909,22 @@ extension BackendEnvironment {
         pinnedKeys: [],
         proxySettings: nil
     )
+
+    static let qaFixedSSO = BackendEnvironment(
+        url: URL(string: backendURLQAFixedSSO)!,
+        webSocketURL: URL(string: backendURLQAFixedSSO)!,
+        blacklistURL: URL(string: backendURLQAFixedSSO)!,
+        pinnedKeys: [],
+        proxySettings: nil
+    )
+
+    private static func backendURL(from key: String, defaultValue: String) -> String {
+        guard let value = ProcessInfo.processInfo.environment[key], !value.isEmpty else {
+            return defaultValue
+        }
+
+        return value.contains("://") ? value : "https://\(value)"
+    }
 }
 
 extension BackendTarget {
@@ -901,6 +936,8 @@ extension BackendTarget {
             .qaFederationA
         case .qaFederationB:
             .qaFederationB
+        case .qaFixedSSO:
+            .qaFixedSSO
         }
     }
 }

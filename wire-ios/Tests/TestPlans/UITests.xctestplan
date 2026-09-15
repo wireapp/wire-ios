@@ -74,6 +74,30 @@
             "value" : "$(BACKEND_URL_QA_FEDERATION_B)"
           },
           {
+            "key" : "QA_FIXED_SSO_DEEPLINK_URL",
+            "value" : "$(QA_FIXED_SSO_DEEPLINK_URL)"
+          },
+          {
+            "key" : "QA_FIXED_SSO_WEBAPP_URL",
+            "value" : "$(QA_FIXED_SSO_WEBAPP_URL)"
+          },
+          {
+            "key" : "QA_FIXED_SSO_INBUCKET_URL",
+            "value" : "$(QA_FIXED_SSO_INBUCKET_URL)"
+          },
+          {
+            "key" : "BASIC_AUTH_QA_FIXED_SSO_USERNAME",
+            "value" : "$(BASIC_AUTH_QA_FIXED_SSO_USERNAME)"
+          },
+          {
+            "key" : "BASIC_AUTH_QA_FIXED_SSO_PASSWORD",
+            "value" : "$(BASIC_AUTH_QA_FIXED_SSO_PASSWORD)"
+          },
+          {
+            "key" : "BACKEND_URL_QA_FIXED_SSO",
+            "value" : "$(BACKEND_URL_QA_FIXED_SSO)"
+          },
+          {
             "key" : "PREDEFINED_BACKEND",
             "value" : "$(PREDEFINED_BACKEND)"
           },
