@@ -67,6 +67,8 @@
 "wireMeetings.schedule.setupParticipants.placeholder" = "Добавить участников";
 "wireMeetings.schedule.error.alert.title" = "Что-то пошло не так";
 "wireMeetings.schedule.error.alert.ok" = "OK";
+"wireMeetings.schedule.participantsNotAdded.title" = "Встреча создана";
+"wireMeetings.schedule.participantsNotAdded.message" = "Встреча была создана, но не удалось добавить этих пользователей:\n\n%@";
 "wireMeetings.schedule.error.conversationName.title" = "Не удалось обновить имя вызова";
 "wireMeetings.schedule.error.conversationName.message" = "Название встречи было обновлено, но имя, указанное в вызове, обновить не удалось. Пожалуйста, попробуйте снова.";
 "wireMeetings.schedule.error.conversationName.retry" = "Повторить";
@@ -94,3 +96,6 @@
 "wireMeetings.schedule.members.retry.button" = "Повторить";
 "wireMeetings.schedule.members.selected.title" = "Выбрано";
 "wireMeetings.schedule.members.contacts.title" = "Контакты";
+
+"wireMeetings.schedule.error.expiredStartDate.title" = "Выберите более позднее время начала";
+"wireMeetings.schedule.error.expiredStartDate.message" = "Время начала встречи можно изменить только на период не более чем за 24 часа до текущего момента. Выберите более позднее время начала и сохраните изменения заново.";
