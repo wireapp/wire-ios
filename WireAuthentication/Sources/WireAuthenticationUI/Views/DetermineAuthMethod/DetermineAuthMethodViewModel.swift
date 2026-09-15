@@ -67,7 +67,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
 
     /// The `restAPIURL` hosts of the accounts already logged in on this device.
     private let existingBackendHosts: Set<String>
-    private let isAccountAlreadyLoggedIn: (UUID) -> Bool
+    private let isAccountAlreadyLoggedIn: (AuthenticationResult) -> Bool
 
     private var cancellable: AnyCancellable?
 
@@ -83,7 +83,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         allowsMultipleBackends: Bool,
         existingBackendHosts: Set<String>,
         isLoading: Bool = false,
-        isAccountAlreadyLoggedIn: @escaping (UUID) -> Bool = { _ in false },
+        isAccountAlreadyLoggedIn: @escaping (AuthenticationResult) -> Bool = { _ in false },
         overrideAllowEmailLoginOnly: Bool
     ) {
         self.factory = factory
@@ -205,10 +205,11 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
                 environment: environment
             ))
 
-        case let .loginViaSSO(code):
+        case let .loginViaSSO(code, multiIngressIdentityProviderID):
             do {
-                let authResult = try await loginViaSSO(code: code, environment: nil)
-                if isAccountAlreadyLoggedIn(authResult.userID) {
+                var authResult = try await loginViaSSO(code: code, environment: nil)
+                authResult.multiIngressIdentityProviderID = multiIngressIdentityProviderID
+                if isAccountAlreadyLoggedIn(authResult) {
                     alert = .alreadyLoggedIn
                 } else {
                     router.navigate(to: DetermineAuthMethodDestination.noHistory(authResult))
@@ -305,7 +306,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
                 code: nil,
                 environment: environment
             )
-            if isAccountAlreadyLoggedIn(authResult.userID) {
+            if isAccountAlreadyLoggedIn(authResult) {
                 alert = .alreadyLoggedIn
             } else {
                 router.navigate(to: DetermineAuthMethodDestination.noHistory(authResult))
