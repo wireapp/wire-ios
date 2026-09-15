@@ -1810,7 +1810,6 @@
 "error.user.device_deleted_remotely" = "Je bent uitgelogd door een ander apparaat.";
 "error.user.last_identity_cant_be_deleted" = "An email address is required.";
 "error.user.account_suspended" = "Dit account is niet langer geautoriseerd om in te loggen.";
-"error.user.account_limit_reached" = "Je kan niet meer dan 3 accounts toevoegen.";
 "error.user.too_many_requests" = "Too many requests, please try again later.";
 
 "error.group_call.too_many_members_in_conversation.title" = "Te veel mensen om te bellen";
