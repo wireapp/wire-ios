@@ -228,6 +228,10 @@ public enum Locators {
         case openOngoingCallButton
         case readReceiptsDisabledSystemMessage
         case readReceiptsEnabledSystemMessage
+        case replyOptionOnMessage = "Reply"
+        case replyPreviewView = "replyView"
+        case cancelReplyButton = "cancelReply"
+        case originalSender = "original.sender"
 
     }
 
