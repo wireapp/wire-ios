@@ -635,6 +635,11 @@ platform :ios do
 
         ENV['TEST_RUNNER_CI'] = ENV['CI']
 
+        xcargs = ["-collect-test-diagnostics never"]
+        xcargs << "-test-repetition-relaunch-enabled YES" if scheme == "WireUITests" && build.number_of_retries > 0
+
+        output_directory = "#{build.artifact_path(with_filename: false)}/tests/#{scheme}"
+
         run_tests_options = {
             step_name: "🧪 Running tests for scheme: #{scheme}",
             testplan: testplan,
@@ -648,14 +653,14 @@ platform :ios do
             buildlog_path: build.build_path,
             result_bundle: true,
             # suppress_xcode_output: true,
-            output_directory: "#{build.artifact_path(with_filename: false)}/tests/#{scheme}",
+            output_directory: output_directory,
             output_types: "junit",
             cloned_source_packages_path: ENV['PACKAGES_DIR'],
             disable_package_automatic_updates: true,
             skip_package_dependencies_resolution: true,
             number_of_retries: build.number_of_retries,
             output_remove_retry_attempts: options[:output_remove_retry_attempts].to_s == "true",
-            xcargs: "-collect-test-diagnostics never" # Disable verbose diagnostics as these are generally not useful and collecting them can cause 600 second delays per test scheme.
+            xcargs: xcargs.join(" ") # Disable verbose diagnostics as these are generally not useful and collecting them can cause 600 second delays per test scheme.
         }
         only_testing = normalize_test_identifiers(options[:only_testing])
         skip_testing = normalize_test_identifiers(options[:skip_testing])
