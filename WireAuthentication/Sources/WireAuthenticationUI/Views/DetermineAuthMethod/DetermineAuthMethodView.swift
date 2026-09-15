@@ -85,7 +85,7 @@ package struct DetermineAuthMethodView: View {
         .navigationDestination(for: DetermineAuthMethodDestination.self) {
             destinationView(for: $0)
         }
-        .fullScreenCover(item: $viewModel.modalDestination) {
+        .fullScreenCover(item: $viewModel.modalDestination, onDismiss: viewModel.onModalDismissed) {
             sheetView(for: $0)
                 .presentationBackground(Color.black.opacity(0.7))
         }
@@ -215,13 +215,11 @@ package struct DetermineAuthMethodView: View {
             environment
         ):
             SwitchBackendConfirmation(environment: environment) { didConfirm in
-                guard didConfirm else { return }
-                Task {
-                    await viewModel.switchBackend(
-                        email: email,
-                        environment: environment
-                    )
-                }
+                viewModel.confirmBackendSwitch(
+                    didConfirm: didConfirm,
+                    email: email,
+                    environment: environment
+                )
             }
         }
     }
