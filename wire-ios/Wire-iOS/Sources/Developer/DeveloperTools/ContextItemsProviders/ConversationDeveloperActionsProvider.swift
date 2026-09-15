@@ -49,7 +49,35 @@ struct ConversationDeveloperActionsProvider: DeveloperToolsContextItemsProvider 
             items.append(toggleReadButton)
         }
 
+        if canTriggerManualMLSMigration {
+            items.append(migrateToMLSItem)
+        }
+
         return items
+    }
+
+    private var migrateToMLSItem: DeveloperToolsViewModel.Item {
+        .button(ButtonItem(
+            title: "Migrate to MLS",
+            action: { Task { await migrateConversationToMLS() } }
+        ))
+    }
+
+    private var canTriggerManualMLSMigration: Bool {
+        guard conversation.messageProtocol.isOne(of: .proteus, .mixed) else {
+            return false
+        }
+
+        guard let managedObjectContext = conversation.managedObjectContext else {
+            return false
+        }
+
+        let selfUser = ZMUser.selfUser(in: managedObjectContext)
+        guard selfUser.isGroupAdmin(in: conversation) else {
+            return false
+        }
+
+        return true
     }
 
     private func makeConversationIdItem() -> DeveloperToolsViewModel.Item {
@@ -101,6 +129,11 @@ struct ConversationDeveloperActionsProvider: DeveloperToolsContextItemsProvider 
         }
 
         return nil
+    }
+
+    @MainActor
+    private func migrateConversationToMLS() {
+        requestMLSMigration()
     }
 
     @MainActor
@@ -156,6 +189,21 @@ struct ConversationDeveloperActionsProvider: DeveloperToolsContextItemsProvider 
             WireLogger.conversation
                 .debug("duplicate conversation \(String(describing: original.qualifiedID?.safeForLoggingDescription))")
         }
+    }
+
+}
+
+extension ConversationDeveloperActionsProvider: @MainActor MLSMigrationPresenter {
+    var conversationToMigrate: ZMConversation? {
+        conversation
+    }
+
+    func presentController(_ controller: UIViewController) {
+        UIApplication.shared.topmostViewController(onlyFullScreen: false)?.present(
+            controller,
+            animated: true,
+            completion: nil
+        )
     }
 
 }
