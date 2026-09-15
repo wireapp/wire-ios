@@ -42,7 +42,7 @@ final class OnPremLoginRedirectTests: WireUITestCase {
         let email = "redirect-user@\(domain)"
         let targetBackend = BackendTarget.qaFederationA
         let targetBackendURL = environmentVariables.backendURL(for: targetBackend)
-        let targetConfigURL = targetBackendURL.appendingPathComponent("deeplink.json")
+        let targetConfigURL = environmentVariables.deepLinkURL(for: targetBackend)
         let backendLookupURL = environmentVariables.backendURL(for: .staging)
             .appendingPathComponent("custom-backend")
             .appendingPathComponent("by-domain")
