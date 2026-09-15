@@ -41,7 +41,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
     @Published var modalDestination: DetermineAuthMethodSheet?
     @Published var existsAnotherAccount: Bool
 
-    /// Action to run once `modalDestination`'s dismissal transition has actually completed.
+    /// Action to run once `modalDestination`'s dismissal transition has completed.
     /// See `confirmBackendSwitch(didConfirm:email:environment:)`.
     private var pendingModalDismissAction: (() -> Void)?
 
