@@ -41,8 +41,26 @@ package struct CreateAuthenticationResultUseCase: CreateAuthenticationResultUseC
             emailCredentials: emailCredentials,
             backendEnvironment: networkStack.backendEnvironment,
             backendMetadata: try await networkStack.resolvedBackendMetadata(),
-            proxyCredentials: await networkStack.proxyCredentials
+            proxyCredentials: await networkStack.proxyCredentials,
+            ssoIdpChangeDetectionEnabled: await fetchSSOIdpChangeDetectionEnabled()
         )
+    }
+
+    /// Fails open (returns `false`) if the endpoint isn't available yet (older
+    /// backends) or the request fails transiently, rather than blocking login.
+
+    private func fetchSSOIdpChangeDetectionEnabled() async -> Bool {
+        do {
+            guard try await networkStack.resolvedAPIVersion() >= .v18 else {
+                return false
+            }
+
+            let networkService = try await networkStack.networkServices.rest
+            let api = SystemSettingsAPIBuilder(networkService: networkService).makeAPI()
+            return try await api.getSystemSettings().ssoIdpChangeDetectionEnabled
+        } catch {
+            return false
+        }
     }
 
 }
