@@ -75,6 +75,14 @@ final class WireApplication: UIApplication {
         shareDebugPresenter.present(from: topmostViewController(onlyFullScreen: false))
     }
 
+    @objc
+    private func handleTripleTapGestureAction() {
+        guard UITestConfig.environment?.useTripleTapForShakeGesture == true else {
+            return
+        }
+        handleShakeAction()
+    }
+
     // MARK: - UITest support
 
     // Triple tap gesture for simulator (used in XCUITests)
@@ -102,7 +110,7 @@ final class WireApplication: UIApplication {
                 return
             }
 
-            let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleShakeAction))
+            let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTripleTapGestureAction))
             tapGesture.numberOfTapsRequired = 3
             tapGesture.cancelsTouchesInView = false
             window.addGestureRecognizer(tapGesture)
