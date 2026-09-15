@@ -60,7 +60,16 @@ final class SSOTests: WireUITestCase {
         .openSettings()
         .openAccountSettings()
 
-        // THEN
+        // THEN - account settings show the registered SSO user details
+        XCTAssertTrue(
+            accountSettingsPage.getUsername().contains(ssoUser.username),
+            "Username didn't contain \(ssoUser.username)"
+        )
+        XCTAssertEqual(
+            accountSettingsPage.getDomainInfo(),
+            BackendTarget.staging.domainInfo,
+            "Domain info mismatched on account page"
+        )
         XCTAssertFalse(
             accountSettingsPage.resetPasswordButton.exists,
             "Reset password option is visible for SSO users"
