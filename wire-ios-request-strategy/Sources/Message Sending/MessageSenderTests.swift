@@ -459,7 +459,7 @@ final class MessageSenderTests: MessagingTestBase {
 
     // MARK: - Send MLS Message
 
-    func testThatWhenSendingMlsMessageSucceeds_thenCompleteWithoutErrors() async throws {
+    func testThatWhenSendingMlsMessageFromUnestablishedGroup_thenWipeAndReEstablish() async throws {
         // given
         await syncMOC.performGrouped {
             self.groupConversation.mlsGroupID = Arrangement.Scaffolding.groupID
@@ -484,9 +484,11 @@ final class MessageSenderTests: MessagingTestBase {
             .withIncrementalSyncObserverCompleting()
             .withMessageDependencyResolverReturning(result: .success(()))
             .withApiVersionResolving(to: .v5)
-            .withMLServiceConfigured()
+            .withMLServiceConfigured(domain: owningDomain)
             .withSendMlsMessage(returning: .success((messageSendingStatus, response)))
             .arrange()
+        arrangement.mlsService.epochFor_MockValue = 0
+        arrangement.mlsService.wipeGroup_MockMethod = { _ in }
         arrangement.mlsService.encryptMessageFor_MockMethod = { message, _ in
             message + [000]
         }
@@ -494,8 +496,12 @@ final class MessageSenderTests: MessagingTestBase {
         // when
         try await messageSender.sendMessage(message: message)
 
-        // then test completes
-        XCTAssertEqual(arrangement.mlsService.reEstablishPendingGroupGroupID_Invocations.count, 0)
+        // then
+        XCTAssertEqual(arrangement.mlsService.wipeGroup_Invocations, [Arrangement.Scaffolding.groupID])
+        XCTAssertEqual(
+            arrangement.mlsService.reEstablishPendingGroupGroupID_Invocations,
+            [Arrangement.Scaffolding.groupID]
+        )
     }
 
     func testThatWhenSendingMlsMessageSucceeds_thenCommitPendingProposalsInGroup() async throws {
@@ -538,6 +544,7 @@ final class MessageSenderTests: MessagingTestBase {
         XCTAssertEqual(Arrangement.Scaffolding.groupID, invocation.groupID)
         XCTAssertTrue(invocation.skipRetry)
         XCTAssertEqual(arrangement.mlsService.reEstablishPendingGroupGroupID_Invocations.count, 0)
+        XCTAssertEqual(arrangement.mlsService.wipeGroup_Invocations.count, 0)
     }
 
     func testThatWhenSendingMlsMessageFailsWithPermanentError_thenThrowError() async throws {
@@ -1047,6 +1054,8 @@ final class MessageSenderTests: MessagingTestBase {
             coreDataStack.syncContext.performAndWait {
                 coreDataStack.syncContext.mlsService = mlsService
             }
+            mlsService.conversationExistsGroupID_MockValue = true
+            mlsService.epochFor_MockValue = 1
             mlsService.commitPendingProposalsInSkipRetry_MockMethod = { _, _ in }
             mlsService.underlyingLocalDomain = domain
             return self
