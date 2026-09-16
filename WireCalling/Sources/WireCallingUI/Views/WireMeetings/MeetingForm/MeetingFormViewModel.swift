@@ -224,6 +224,7 @@ package final class MeetingFormViewModel {
         hasError = false
         hasConversationNameUpdateError = false
         meetingPendingConversationNameUpdate = nil
+        participantsNotAdded = []
         hasExpiredStartDateError = false
         if mode.isEdit, startDate < currentDateProvider.now.addingTimeInterval(-TimeInterval.oneDay) {
             hasExpiredStartDateError = true
@@ -234,12 +235,14 @@ package final class MeetingFormViewModel {
         do {
             let meeting = try await saveMeeting()
             onSuccess(meeting)
-        } catch let CreateMeetingUseCaseError.participantsNotAdded(meeting, participants) {
+        } catch let CreateMeetingUseCaseError.participantsNotAdded(meeting, participants),
+                    let UpdateMeetingUseCaseError.participantsNotAdded(meeting, participants) {
             meetingWithParticipantsNotAdded = meeting
             participantsNotAdded = participants
             hasParticipantsNotAddedAlert = true
-        } catch let UpdateMeetingUseCaseError.conversationNameUpdateFailed(updatedMeeting) {
+        } catch let UpdateMeetingUseCaseError.conversationNameUpdateFailed(updatedMeeting, participants) {
             meetingPendingConversationNameUpdate = updatedMeeting
+            participantsNotAdded = participants
             hasConversationNameUpdateError = true
         } catch {
             let errorType = Swift.type(of: error)
@@ -264,7 +267,12 @@ package final class MeetingFormViewModel {
         do {
             try await updateMeetingUseCase.updateConversationName(for: meeting)
             meetingPendingConversationNameUpdate = nil
-            onSuccess(meeting)
+            if participantsNotAdded.isEmpty {
+                onSuccess(meeting)
+            } else {
+                meetingWithParticipantsNotAdded = meeting
+                hasParticipantsNotAddedAlert = true
+            }
         } catch {
             let errorType = Swift.type(of: error)
             WireLogger.search.error("failed to update conversation name: \(String(describing: errorType))")

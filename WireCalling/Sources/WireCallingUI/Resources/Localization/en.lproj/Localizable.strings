@@ -41,6 +41,8 @@
 "wireMeetings.list.actions.deleteForMe" = "Delete meeting for me";
 "wireMeetings.list.delete.alert.title" = "Delete meeting for all";
 "wireMeetings.list.delete.alert.subtitle" = "The meeting will be deleted for you and everybody else. All participants will be notified.";
+"wireMeetings.list.deleteRecurring.alert.title" = "Delete meeting for everyone";
+"wireMeetings.list.deleteRecurring.alert.subtitle" = "This is a recurring meeting. Deleting it removes every occurrence for you and everybody else. All participants will be notified.";
 "wireMeetings.list.deleteForMe.alert.title" = "Delete meeting for me";
 "wireMeetings.list.deleteForMe.alert.subtitle" = "The meeting will be deleted from your calendar. This will not affect other participants.";
 "wireMeetings.list.delete.alert.delete.button" = "Delete";
@@ -67,8 +69,8 @@
 "wireMeetings.schedule.setupParticipants.placeholder" = "Add participants";
 "wireMeetings.schedule.error.alert.title" = "Something went wrong";
 "wireMeetings.schedule.error.alert.ok" = "OK";
-"wireMeetings.schedule.participantsNotAdded.title" = "Meeting created";
-"wireMeetings.schedule.participantsNotAdded.message" = "The meeting was created, but these users could not be added:\n\n%@";
+"wireMeetings.schedule.participantsNotAdded.title" = "Meeting saved";
+"wireMeetings.schedule.participantsNotAdded.message" = "The meeting was saved, but these users could not be added:\n\n%@";
 "wireMeetings.schedule.error.conversationName.title" = "Could not update call name";
 "wireMeetings.schedule.error.conversationName.message" = "The meeting title was updated, but the name shown in the call could not be updated. Please try again.";
 "wireMeetings.schedule.error.conversationName.retry" = "Try again";
