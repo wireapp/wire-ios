@@ -1,0 +1,2 @@
+curl \
+	"/v18/properties/WIRE_RECEIPT_MODE"
