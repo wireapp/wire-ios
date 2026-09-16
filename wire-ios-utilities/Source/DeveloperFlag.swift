@@ -39,6 +39,7 @@ public enum DeveloperFlag: String, CaseIterable {
     case skipMLSMessagesDecryption
     case useWireAuthentication
     case lowKeyPackageCount
+<<<<<<< HEAD
     case enabledCCDebugLogs
     case shakeToReport
     case showNSEErrors
@@ -46,6 +47,9 @@ public enum DeveloperFlag: String, CaseIterable {
     case simulateUnestablishedMLSGroup
     // TODO: [WPB-25941] Remove drive permissions flag when feature is complete
     case enableDrivePermissions
+=======
+    case simulateUnestablishedMLSGroup
+>>>>>>> 563e4c8993 (fix: Recover unestablished MLS groups - WPB-21123 🍒 (#5242))
     case unSafeLogsForPublic
     case useBackgroundActivityFactoryInAppBackgroundTaskExecuter
 
@@ -102,6 +106,7 @@ public enum DeveloperFlag: String, CaseIterable {
         case .lowKeyPackageCount:
             "Turn on to set the minimum number of packages to 1"
 
+<<<<<<< HEAD
         case .enabledCCDebugLogs:
             "Turn on to enable Core Crypto debug logs"
 
@@ -120,6 +125,11 @@ public enum DeveloperFlag: String, CaseIterable {
         case .enableDrivePermissions:
             "Turn on to enable drive permissions"
 
+=======
+        case .simulateUnestablishedMLSGroup:
+            "Turn on to leave the next locally created MLS group unestablished at epoch 0"
+
+>>>>>>> 563e4c8993 (fix: Recover unestablished MLS groups - WPB-21123 🍒 (#5242))
         case .unSafeLogsForPublic:
             "Turn on to write all logs (including debug and non-public) to disk in release builds"
 
