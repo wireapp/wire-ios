@@ -3,6 +3,14 @@ name: Playground
 on:
   workflow_dispatch:
     inputs:
+      mac_runner:
+        description: 'macOS runner'
+        type: choice
+        options:
+          - in-house
+          - cirrus
+          - github
+        default: in-house
       distribute_externals:
         type: boolean
         description: 'Distribute externally: Wire Employees and Externals - Non Wire Employees'
@@ -19,7 +27,7 @@ jobs:
       datadog_enabled: true
       distribute_externals: ${{ inputs.distribute_externals }}
       fastlane_action: playground
-      runner_labels: '["self-hosted", "in-house"]'
+      mac_runner: ${{ inputs.mac_runner || 'in-house' }}
     secrets:
       KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
       APPSTORE_API_KEY_BASE64: ${{ secrets.APPSTORE_API_KEY_BASE64 }}

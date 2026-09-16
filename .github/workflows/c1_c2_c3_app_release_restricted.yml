@@ -3,6 +3,14 @@ name: C1 C2 C3 Restricted
 on: 
   workflow_dispatch:
     inputs:
+      mac_runner:
+        description: 'macOS runner'
+        type: choice
+        options:
+          - in-house
+          - cirrus
+          - github
+        default: cirrus
       column:
         description: 'Column (C1, C2, C3, all)'
         type: choice
@@ -40,6 +48,7 @@ jobs:
     with:
       fastlane_action: appstore_col_1_restricted
       is_cloud_build: false
+      mac_runner: ${{ inputs.mac_runner || 'cirrus' }}
       countly_enabled: false
       datadog_enabled: ${{ inputs.datadog_enabled }}
       skip_security_tests: ${{ inputs.skip_security_tests }}
@@ -79,6 +88,7 @@ jobs:
     with:
       fastlane_action: appstore_col_2_restricted
       is_cloud_build: false
+      mac_runner: ${{ inputs.mac_runner || 'cirrus' }}
       countly_enabled: false
       datadog_enabled: ${{ inputs.datadog_enabled }}
       skip_security_tests: ${{ inputs.skip_security_tests }}
@@ -118,6 +128,7 @@ jobs:
     with:
       fastlane_action: appstore_col_3_restricted
       is_cloud_build: false
+      mac_runner: ${{ inputs.mac_runner || 'cirrus' }}
       countly_enabled: false
       datadog_enabled: ${{ inputs.datadog_enabled }}
       skip_security_tests: ${{ inputs.skip_security_tests }}
