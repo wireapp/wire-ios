@@ -75,7 +75,12 @@ package struct UpdateMeetingUseCase: UpdateMeetingUseCaseProtocol {
             !selectedIDs.contains($0.qualifiedID) && currentIDs.contains($0.qualifiedID)
         }
 
-        try await conversationRepository.addParticipants(membersToAdd, to: meeting.conversationID)
+        var participantsNotAdded: [MeetingMember] = []
+        do {
+            try await conversationRepository.addParticipants(membersToAdd, to: meeting.conversationID)
+        } catch let MeetingParticipantsError.failedToAddParticipants(participants) {
+            participantsNotAdded = participants
+        }
         try await conversationRepository.removeParticipants(membersToRemove, from: meeting.conversationID)
         await meetingRepository.storeMeeting(updatedMeeting)
 
@@ -83,8 +88,18 @@ package struct UpdateMeetingUseCase: UpdateMeetingUseCaseProtocol {
             do {
                 try await updateConversationName(for: updatedMeeting)
             } catch {
-                throw UpdateMeetingUseCaseError.conversationNameUpdateFailed(updatedMeeting: updatedMeeting)
+                throw UpdateMeetingUseCaseError.conversationNameUpdateFailed(
+                    updatedMeeting: updatedMeeting,
+                    participantsNotAdded: participantsNotAdded
+                )
             }
+        }
+
+        if !participantsNotAdded.isEmpty {
+            throw UpdateMeetingUseCaseError.participantsNotAdded(
+                meeting: updatedMeeting,
+                participants: participantsNotAdded
+            )
         }
 
         return updatedMeeting
@@ -106,6 +121,8 @@ package enum UpdateMeetingUseCaseError: Error, Equatable {
     case conversationNotResolved
 
     /// The meeting update succeeded, but its dedicated conversation could not be renamed.
-    case conversationNameUpdateFailed(updatedMeeting: Meeting)
+    case conversationNameUpdateFailed(updatedMeeting: Meeting, participantsNotAdded: [MeetingMember] = [])
+
+    case participantsNotAdded(meeting: Meeting, participants: [MeetingMember])
 
 }

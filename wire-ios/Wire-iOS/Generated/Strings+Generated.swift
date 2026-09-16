@@ -4739,8 +4739,8 @@ internal enum L10n {
             internal static let conversationNotFound = L10n.tr("Localizable", "meta.menu.mls_migration.failure.conversation_not_found", fallback: "The conversation could not be found.")
             /// The conversation does not have an MLS group ID.
             internal static let missingMlsGroupId = L10n.tr("Localizable", "meta.menu.mls_migration.failure.missing_mls_group_id", fallback: "The conversation does not have an MLS group ID.")
-            /// The MLS service is unavailable.
-            internal static let missingMlsService = L10n.tr("Localizable", "meta.menu.mls_migration.failure.missing_mls_service", fallback: "The MLS service is unavailable.")
+            /// Unable to start the migration to MLS.
+            internal static let missingMlsService = L10n.tr("Localizable", "meta.menu.mls_migration.failure.missing_mls_service", fallback: "Unable to start the migration to MLS.")
             /// MLS migration failed
             internal static let title = L10n.tr("Localizable", "meta.menu.mls_migration.failure.title", fallback: "MLS migration failed")
             /// Only team group conversations can be migrated.
