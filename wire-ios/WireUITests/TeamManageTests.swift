@@ -164,10 +164,9 @@ final class TeamManageTests: WireUITestCase {
         )
     }
 
-    /// [WPB-24825] Bug: no alert shown when the self user is removed from the team
-    /// TC-6091, TC-6258
     @MainActor
-    func test_TeamMemberRemovedFromTeam_SeesSessionExpiredAlert() async throws {
+    /// testiny: https://app.testiny.io/p/16/testcases/tcf/1687/tc/11930
+    func test_TeamMemberRemovedFromTeam_SeesSessionExpiredAlert_TC_11930() async throws {
 
         let (_, teamOwner) = try await userHelper.registerUserAsTeamOwner()
         let ownerAccessToken = try await userHelper.fetchAccessToken(
