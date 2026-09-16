@@ -145,6 +145,8 @@ jobs:
 
       - name: Cache Swift Packages
         uses: ./.github/actions/cache-swift-packages
+        with:
+          cache_enabled: ${{ !contains(fromJSON(inputs.runner_labels), 'in-house') }}
 
       - name: Setup Ruby
         uses: ruby/setup-ruby@afeafc3d1ab54a631816aba4c914a0081c12ff2f # v1.310.0
