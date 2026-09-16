@@ -265,7 +265,8 @@ final class FilesBrowserViewTests: XCTestCase {
                     localAssetRepository: MockWireDriveLocalAssetRepositoryProtocol()
                 ),
                 observeAsset: observeAssetUseCase,
-                moveNode: moveNodeUseCase
+                moveNode: moveNodeUseCase,
+                enqueueUploads: MockWireDriveEnqueueDirectUploadsUseCaseProtocol()
             ),
             isCellsStatePending: false,
             isBrowsing: true
