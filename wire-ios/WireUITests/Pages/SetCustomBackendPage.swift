@@ -28,9 +28,24 @@ class SetCustomBackendPage: PageModel {
         app.buttons[Locators.SetCustomBackendPage.proceedButton.rawValue]
     }
 
+    func backendUrlValue(containing url: URL) -> XCUIElement {
+        let backendURL = if url.absoluteString.hasSuffix("/") {
+            String(url.absoluteString.dropLast())
+        } else {
+            url.absoluteString
+        }
+
+        return app.staticTexts.matching(NSPredicate(format: "label CONTAINS %@", backendURL)).firstMatch
+    }
+
     @discardableResult
     func tapOnProceedButton() throws -> WelcomePage {
         proceedButton.tap()
         return try WelcomePage()
+    }
+
+    func tapOnProceedButtonToSSOLogin() throws -> SSOWebLoginPage {
+        proceedButton.waitAndTap()
+        return try SSOWebLoginPage()
     }
 }

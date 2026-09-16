@@ -21,17 +21,57 @@ import XCTest
 /// [core-messenger]
 final class SSOTests: WireUITestCase {
 
-    private func registerTeamOwnerWithSSOEnabled() async throws -> UserInfo {
-        let (_, teamOwner) = try await UserHelper.default.registerUserAsTeamOwner()
+    private var customBackendDomain: String?
+    private var previousQAFixedSSOCode: String?
+    private var didUpdateQAFixedSSOCode = false
+    private var qaFixedSSOHelper: SSOHelper?
+
+    @MainActor
+    override func tearDown() async throws {
+        if let environmentVariables = try? EnvironmentVariables() {
+            if didUpdateQAFixedSSOCode {
+                let userHelper = UserHelper.instance(backend: .qaFixedSSO)
+                let backOffice = BackOffice(backendURL: environmentVariables.backendURL(for: .qaFixedSSO))
+                try? await backOffice.setDefaultSSOCode(previousQAFixedSSOCode, basicAuth: userHelper.basicAuth())
+            }
+
+            if let customBackendDomain {
+                let backOffice = BackOffice(backendURL: environmentVariables.backendURL(for: .staging))
+                try? await backOffice.deleteCustomBackendDomain(
+                    customBackendDomain,
+                    basicAuth: UserHelper.default.basicAuth()
+                )
+            }
+        }
+
+        await qaFixedSSOHelper?.cleanUpSSOResources()
+        qaFixedSSOHelper = nil
+
+        try await super.tearDown()
+    }
+
+    private func registerTeamOwnerWithSSOEnabled(
+        userHelper: UserHelper = UserHelper.default,
+        ssoHelperOverride: SSOHelper? = nil
+    ) async throws -> UserInfo {
+        let (_, teamOwner) = try await userHelper.registerUserAsTeamOwner()
         let teamID = try XCTUnwrap(teamOwner.teamID, "teamOwner.teamID is nil")
-        try await ssoHelper.enableSSOFeature(teamID: teamID)
+        let helper = ssoHelperOverride ?? ssoHelper!
+        try await helper.enableSSOFeature(teamID: teamID)
         return teamOwner
     }
 
-    private func createSSOUser() async throws -> UserInfo {
-        let teamOwner = try await registerTeamOwnerWithSSOEnabled()
+    private func createSSOUser(
+        userHelper: UserHelper = UserHelper.default,
+        ssoHelperOverride: SSOHelper? = nil
+    ) async throws -> UserInfo {
+        let teamOwner = try await registerTeamOwnerWithSSOEnabled(
+            userHelper: userHelper,
+            ssoHelperOverride: ssoHelperOverride
+        )
         let ssoMember = UserGenerator.generateUniqueUserInfo()
-        return try await ssoHelper.createSSOUser(owner: teamOwner, ssoUser: ssoMember)
+        let helper = ssoHelperOverride ?? ssoHelper!
+        return try await helper.createSSOUser(owner: teamOwner, ssoUser: ssoMember)
     }
 
     @MainActor
@@ -60,7 +100,16 @@ final class SSOTests: WireUITestCase {
         .openSettings()
         .openAccountSettings()
 
-        // THEN
+        // THEN - account settings show the registered SSO user details
+        XCTAssertTrue(
+            accountSettingsPage.getUsername().contains(ssoUser.username),
+            "Username didn't contain \(ssoUser.username)"
+        )
+        XCTAssertEqual(
+            accountSettingsPage.getDomainInfo(),
+            BackendTarget.staging.domainInfo,
+            "Domain info mismatched on account page"
+        )
         XCTAssertFalse(
             accountSettingsPage.resetPasswordButton.exists,
             "Reset password option is visible for SSO users"
@@ -98,6 +147,64 @@ final class SSOTests: WireUITestCase {
         XCTAssertTrue(
             conversationsPage.pageMainElement.exists,
             "Conversations page did not appear after SSO relogin"
+        )
+    }
+
+    @MainActor
+    func testLoginOnRegisteredCustomBackendWithFixedSSO_TC_0000() async throws {
+        // GIVEN - staging routes random domain to QA-Fixed-SSO, where default SSO code is set
+        let environmentVariables = try EnvironmentVariables()
+        let qaFixedSSOUserHelper = UserHelper.instance(backend: .qaFixedSSO)
+        let qaFixedSSOHelper = SSOHelper(userHelper: qaFixedSSOUserHelper)
+        self.qaFixedSSOHelper = qaFixedSSOHelper
+
+        let ssoUser = try await createSSOUser(
+            userHelper: qaFixedSSOUserHelper,
+            ssoHelperOverride: qaFixedSSOHelper
+        )
+        let ssoCode = try XCTUnwrap(qaFixedSSOHelper.identityProviderId, "identityProviderId is nil")
+
+        let qaFixedSSOBackOffice = BackOffice(backendURL: environmentVariables.backendURL(for: .qaFixedSSO))
+        previousQAFixedSSOCode = try await qaFixedSSOBackOffice.getDefaultSSOCode(
+            basicAuth: qaFixedSSOUserHelper.basicAuth()
+        )
+        try await qaFixedSSOBackOffice.setDefaultSSOCode(
+            ssoCode,
+            basicAuth: qaFixedSSOUserHelper.basicAuth()
+        )
+        didUpdateQAFixedSSOCode = true
+
+        let domain = "fixed-sso-\(UUID().uuidString.prefix(8).lowercased()).com"
+        customBackendDomain = domain
+        let stagingBackOffice = BackOffice(backendURL: environmentVariables.backendURL(for: .staging))
+        try await stagingBackOffice.addCustomBackendDomain(
+            domain,
+            configURL: environmentVariables.deepLinkURL(for: .qaFixedSSO),
+            webappURL: environmentVariables.qaFixedSSOWebAppURL,
+            basicAuth: UserHelper.default.basicAuth()
+        )
+
+        // WHEN - user enters email for mapped domain and accepts custom backend redirect
+        let confirmationPage = try WelcomePage().enterDomainForBackendSwitch("joe@\(domain)")
+        XCTAssertTrue(
+            confirmationPage.backendUrlValue(containing: environmentVariables.backendURL(for: .qaFixedSSO))
+                .waitForExistence(timeout: 5),
+            "Confirmation dialog did not show expected backend URL"
+        )
+
+        let firstTimePage = try await confirmationPage
+            .tapOnProceedButtonToSSOLogin()
+            .ssoWebLogin(email: ssoUser.email, password: ssoUser.password)
+
+        let conversationsPage = try firstTimePage
+            .acceptFirstTimeAlert()
+            .acceptPopupOnTeamMemberSetup()
+            .setUsername(ssoUser.username)
+
+        // THEN - login reaches conversation list without user entering SSO code manually
+        XCTAssertTrue(
+            conversationsPage.pageMainElement.waitForExistence(timeout: 5),
+            "Conversations page did not appear after fixed SSO custom backend login"
         )
     }
 
