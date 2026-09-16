@@ -338,6 +338,27 @@ class UserHelper {
         return (qualifiedID, teamMember)
     }
 
+    /// Remove a member from a team, e.g. to reproduce the self user's session being
+    /// invalidated once the team owner removes them.
+    /// - Parameters:
+    ///   - ownerAccessToken: access token of the team owner performing the removal
+    ///   - ownerPassword: password of the team owner performing the removal
+    ///   - teamID: teamID
+    ///   - userID: id of the member to remove
+    func removeTeamMember(
+        ownerAccessToken: String,
+        ownerPassword: String,
+        teamID: UUID,
+        userID: UUID
+    ) async throws {
+        try await teamsAPI.removeMemberFromTeam(
+            access_token: ownerAccessToken,
+            teamID: teamID,
+            userID: userID,
+            password: ownerPassword
+        )
+    }
+
     func registerUsersAsTeamMemberWithUserHandleSet(
         ownerAccessToken: String,
         teamID: UUID
