@@ -167,6 +167,7 @@ class TeamsAPIV0: TeamsAPI, VersionedAPI {
         return payload.id
     }
 
+<<<<<<< HEAD
     // MARK: - Get apps
 
     func getApps(
@@ -180,6 +181,16 @@ class TeamsAPIV0: TeamsAPI, VersionedAPI {
     func getCollaborators(
         for teamID: Team.ID
     ) async throws -> [CollaboratorInfo] {
+=======
+    // MARK: - Remove member from Team
+
+    func removeMemberFromTeam(
+        access_token: String,
+        teamID: UUID,
+        userID: UUID,
+        password: String
+    ) async throws {
+>>>>>>> 89b2142dbe (fix: session expired alert not shown when removed from team - WPB-24285 (#5213))
         throw TeamsAPIError.unsupportedEndpointForAPIVersion
     }
 

@@ -165,6 +165,42 @@ final class TeamManageTests: WireUITestCase {
         )
     }
 
+<<<<<<< HEAD
+=======
+    @MainActor
+    /// testiny: https://app.testiny.io/p/16/testcases/tcf/1687/tc/11930
+    func test_TeamMemberRemovedFromTeam_SeesSessionExpiredAlert_TC_11930() async throws {
+
+        let (_, teamOwner) = try await userHelper.registerUserAsTeamOwner()
+        let ownerAccessToken = try await userHelper.fetchAccessToken(
+            email: teamOwner.email,
+            password: teamOwner.password
+        )
+        let teamID = try XCTUnwrap(teamOwner.teamID)
+
+        let (memberQualifiedID, teamMember) = try await userHelper.registerUsersAsTeamMember(
+            ownerAccessToken: ownerAccessToken.token,
+            teamID: teamID
+        )
+
+        let firstTimePage = try app.loginUser(email: teamMember.email, password: teamMember.password)
+        _ = try firstTimePage
+            .acceptPopupOnTeamMemberSetup(with: self)
+            .setUsername(teamMember.username)
+
+        try await userHelper.removeTeamMember(
+            ownerAccessToken: ownerAccessToken.token,
+            ownerPassword: teamOwner.password,
+            teamID: teamID,
+            userID: memberQualifiedID.id
+        )
+
+        _ = try SessionExpiredPage().confirm()
+    }
+
+    /// [WPB-3772] Bug: Opening an archived conversation unarchives it
+    /// testiny: https://app.testiny.io/IOS/testcases/tc/8563
+>>>>>>> 89b2142dbe (fix: session expired alert not shown when removed from team - WPB-24285 (#5213))
     @MainActor
     func testArchiveOpenAndUnarchiveConversation_TC_8872_8873() async throws {
         let groupName = UserGenerator.generateRandomConversationName()
