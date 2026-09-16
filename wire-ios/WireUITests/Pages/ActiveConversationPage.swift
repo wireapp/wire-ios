@@ -357,7 +357,10 @@ class ActiveConversationPage: PageModel {
     /// Long-presses the given message element, taps Reply, then types and sends the reply text.
     @discardableResult
     func replyToMessage(_ message: XCUIElement, withText replyText: String) throws -> ActiveConversationPage {
-        XCTAssertTrue(message.waitForExistence(timeout: 5), "Expected message to reply to was not found, possible that not being sent via testService")
+        XCTAssertTrue(
+            message.waitForExistence(timeout: 5),
+            "Expected message to reply to was not found, possible that not being sent via testService"
+        )
         message.press(forDuration: 1.0)
         XCTAssertTrue(replyMenuButton.waitAndTap(), "Reply button was not found")
         XCTAssertTrue(replyPreviewView.waitForExistence(timeout: 3), "Reply preview did not appear in input bar")

@@ -56,9 +56,12 @@ final class ReplyOnMessagesTests: WireUITestCase {
 
         let groupTeam = try await registerGroupTeam()
 
-        let activeConversationPage = try app.loginUser(email: groupTeam.teamOwner.email, password: groupTeam.teamOwner.password)
-            .acceptPopup()
-            .openConversation()
+        let activeConversationPage = try app.loginUser(
+            email: groupTeam.teamOwner.email,
+            password: groupTeam.teamOwner.password
+        )
+        .acceptPopup()
+        .openConversation()
 
         try await testServicesClient.sendText(
             user: groupTeam.teamMember,
@@ -113,9 +116,12 @@ final class ReplyOnMessagesTests: WireUITestCase {
         let audioFileName = "audio-message"
         let groupTeam = try await registerGroupTeam()
         let mediaURLs = TestServiceMediaFixtures.mediaURLs(relativeTo: #filePath)
-        let activeConversationPage = try app.loginUser(email: groupTeam.teamOwner.email, password: groupTeam.teamOwner.password)
-            .acceptPopup()
-            .openConversation()
+        let activeConversationPage = try app.loginUser(
+            email: groupTeam.teamOwner.email,
+            password: groupTeam.teamOwner.password
+        )
+        .acceptPopup()
+        .openConversation()
 
         try await testServicesClient.sendImage(
             user: groupTeam.teamMember,
