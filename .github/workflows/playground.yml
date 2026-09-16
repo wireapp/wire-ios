@@ -19,6 +19,7 @@ jobs:
       datadog_enabled: true
       distribute_externals: ${{ inputs.distribute_externals }}
       fastlane_action: playground
+      runner_labels: '["self-hosted", "in-house"]'
     secrets:
       KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
       APPSTORE_API_KEY_BASE64: ${{ secrets.APPSTORE_API_KEY_BASE64 }}

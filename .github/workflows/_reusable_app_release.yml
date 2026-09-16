@@ -4,6 +4,9 @@ on:
       fastlane_action:
         required: true
         type: string
+      runner_labels:
+        type: string
+        default: '["ghcr.io/cirruslabs/macos-runner:tahoe"]'
       is_cloud_build:
         type: boolean
         default: true
@@ -101,7 +104,7 @@ jobs:
     if: always()
     timeout-minutes: 60
     needs: changelog
-    runs-on: ghcr.io/cirruslabs/macos-runner:tahoe
+    runs-on: ${{ fromJSON(inputs.runner_labels) }}
     env:
       S3_BUCKET: "z-lohika"
       REPO_ROOT: ${{ github.workspace }}
