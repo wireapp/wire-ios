@@ -68,8 +68,10 @@ final class ReplyOnMessagesTests: WireUITestCase {
         )
 
         // WHEN - reply to text message
-        let textMessageElement = activeConversationPage.message(withText: originalTextMessage)
-        try activeConversationPage.replyToMessage(textMessageElement, withText: textReply)
+        try activeConversationPage.replyToMessage(
+            activeConversationPage.message(withText: originalTextMessage),
+            withText: textReply
+        )
 
         // THEN
         activeConversationPage.verifyReplySent(
@@ -87,8 +89,10 @@ final class ReplyOnMessagesTests: WireUITestCase {
         )
 
         // WHEN - reply to link message
-        let linkMessageElement = activeConversationPage.message(withText: originalLinkMessage)
-        try activeConversationPage.replyToMessage(linkMessageElement, withText: linkReply)
+        try activeConversationPage.replyToMessage(
+            activeConversationPage.message(withText: originalLinkMessage),
+            withText: linkReply
+        )
 
         // THEN
         activeConversationPage.verifyReplySent(
