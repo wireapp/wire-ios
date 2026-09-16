@@ -16,7 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Foundation
+import WireCoreCrypto
 import WireDataModelSupport
+import WireFoundation
 import WireTesting
 import XCTest
 
@@ -42,6 +45,7 @@ final class MLSConversationParticipantsServiceTests: MessagingTestBase {
         mockClientIDsProvider = MockMLSClientIDsProviding()
         mockMLSService = MockMLSServiceInterface()
         mockMLSService.addMembersToConversationWithFor_MockMethod = { _, _ in }
+        mockMLSService.fetchAndRepairGroupWith_MockMethod = { _ in }
         mockMLSService.removeMembersFromConversationWithFor_MockMethod = { _, _ in }
 
         syncMOC.performAndWait { [self] in
@@ -92,6 +96,60 @@ final class MLSConversationParticipantsServiceTests: MessagingTestBase {
 
         XCTAssertEqual(addMembersInvocation.users, expectedUsers)
         XCTAssertEqual(addMembersInvocation.groupID, groupID)
+    }
+
+    func test_AddParticipants_RepairsGroup_AndRetries_WhenMLSMessageIsStale() async throws {
+        // GIVEN
+        let staleMessageError = try backoffError(for: .mlsStaleMessage)
+        var attempt = 0
+
+        mockMLSService.addMembersToConversationWithFor_MockMethod = { _, _ in
+            defer { attempt += 1 }
+            if attempt == 0 {
+                throw staleMessageError
+            }
+        }
+
+        // WHEN
+        try await sut.addParticipants([user], to: conversation)
+
+        // THEN
+        XCTAssertEqual(mockMLSService.addMembersToConversationWithFor_Invocations.count, 2)
+        XCTAssertEqual(mockMLSService.fetchAndRepairGroupWith_Invocations, [groupID])
+    }
+
+    func test_AddParticipants_Rethrows_WhenRetryAfterRepairFails() async throws {
+        // GIVEN
+        let staleMessageError = try backoffError(for: .mlsStaleMessage)
+        mockMLSService.addMembersToConversationWithFor_MockMethod = { _, _ in
+            throw staleMessageError
+        }
+
+        // WHEN
+        await XCTAssertThrowsErrorAsync {
+            try await self.sut.addParticipants([self.user], to: self.conversation)
+        }
+
+        // THEN
+        XCTAssertEqual(mockMLSService.addMembersToConversationWithFor_Invocations.count, 2)
+        XCTAssertEqual(mockMLSService.fetchAndRepairGroupWith_Invocations, [groupID])
+    }
+
+    func test_AddParticipants_DoesNotRepairGroup_WhenMessageRejectedForAnotherReason() async throws {
+        // GIVEN
+        let clientMismatchError = try backoffError(for: .mlsClientMismatch)
+        mockMLSService.addMembersToConversationWithFor_MockMethod = { _, _ in
+            throw clientMismatchError
+        }
+
+        // WHEN
+        await XCTAssertThrowsErrorAsync {
+            try await self.sut.addParticipants([self.user], to: self.conversation)
+        }
+
+        // THEN
+        XCTAssertEqual(mockMLSService.addMembersToConversationWithFor_Invocations.count, 1)
+        XCTAssertTrue(mockMLSService.fetchAndRepairGroupWith_Invocations.isEmpty)
     }
 
     func test_AddParticipants_Throws_InvalidOperation() async {
@@ -239,6 +297,12 @@ final class MLSConversationParticipantsServiceTests: MessagingTestBase {
     }
 
     // MARK: - Helpers
+
+    func backoffError(for transportError: MLSTransportError) throws -> BackoffRetrier.Failure {
+        let reason = String(decoding: try JSONEncoder().encode(transportError), as: UTF8.self)
+        let coreCryptoError = CoreCryptoError.Mls(mlsError: .MessageRejected(reason: reason))
+        return .exceededMaxAttempts(latestError: coreCryptoError)
+    }
 
     enum ParticipantsError: Error {
         case genericError
