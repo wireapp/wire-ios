@@ -54,11 +54,23 @@ package final class MeetingsViewModel {
     }
 
     var deleteConfirmationTitle: String {
-        isDeletingForSelf ? Strings.DeleteForMe.Alert.title : Strings.Delete.Alert.title
+        if isDeletingForSelf {
+            Strings.DeleteForMe.Alert.title
+        } else if meetingToDelete?.recurrence != nil {
+            Strings.DeleteRecurring.Alert.title
+        } else {
+            Strings.Delete.Alert.title
+        }
     }
 
     var deleteConfirmationMessage: String {
-        isDeletingForSelf ? Strings.DeleteForMe.Alert.subtitle : Strings.Delete.Alert.subtitle
+        if isDeletingForSelf {
+            Strings.DeleteForMe.Alert.subtitle
+        } else if meetingToDelete?.recurrence != nil {
+            Strings.DeleteRecurring.Alert.subtitle
+        } else {
+            Strings.Delete.Alert.subtitle
+        }
     }
 
     private let formatter: MeetingsFormatter
