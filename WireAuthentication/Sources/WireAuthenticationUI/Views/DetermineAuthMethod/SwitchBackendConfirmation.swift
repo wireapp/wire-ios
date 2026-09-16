@@ -35,7 +35,6 @@ public struct SwitchBackendConfirmation: View {
 
     // MARK: - Properties
 
-    @Environment(\.dismiss) var dismiss
     @State private var showFullDetails: Bool = false
 
     private let items: [Item]
@@ -208,7 +207,6 @@ public struct SwitchBackendConfirmation: View {
 
     private var cancelButton: some View {
         Button {
-            dismiss()
             onConfirm(false)
         } label: {
             Text(Strings.cancel)
@@ -219,7 +217,6 @@ public struct SwitchBackendConfirmation: View {
 
     private var proceedButton: some View {
         Button {
-            dismiss()
             onConfirm(true)
         } label: {
             Text(Strings.proceed)

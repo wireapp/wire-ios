@@ -63,8 +63,20 @@ struct MeetingConversationRepositoryBridge: MeetingConversationRepositoryProtoco
             guard !participants.isEmpty else { return }
             // The group already exists (the meeting is being edited), so the
             // participants are added with a regular add-members commit.
-            try await updateParticipants(participants, in: objectID, syncContext: syncContext) {
-                try await participantsService.addParticipants($0, to: $1)
+            try await updateParticipants(participants, in: objectID, syncContext: syncContext) { users, conversation in
+                try await participantsService.addParticipants(users, to: conversation)
+                let failedParticipants = await syncContext.perform {
+                    let currentIDs = Set(conversation.localParticipants.compactMap(\.qualifiedID))
+                    return participants.filter {
+                        !currentIDs.contains(WireDataModel.QualifiedID(
+                            uuid: $0.qualifiedID.id,
+                            domain: $0.qualifiedID.domain
+                        ))
+                    }
+                }
+                if !failedParticipants.isEmpty {
+                    throw MeetingParticipantsError.failedToAddParticipants(failedParticipants)
+                }
             }
         } else {
             // The group must be established even with no extra participants
@@ -233,17 +245,40 @@ struct MeetingConversationRepositoryBridge: MeetingConversationRepositoryProtoco
             MLSUser(id: member.qualifiedID.id, domain: member.qualifiedID.domain)
         }
 
-        let ciphersuite = try await mlsService.establishGroup(
-            for: mlsGroupID,
-            with: mlsUsers,
-            removalKeys: nil
-        )
+        let ciphersuite: MLSCipherSuite
+        var failedParticipants: [MeetingMember] = []
+        do {
+            ciphersuite = try await mlsService.establishGroup(
+                for: mlsGroupID,
+                with: mlsUsers,
+                removalKeys: nil
+            )
+        } catch let MLSService.MLSAddMembersError.failedToClaimKeyPackages(failedUsers) {
+            guard !failedUsers.isEmpty, failedUsers.allSatisfy({ mlsUsers.contains($0) }) else {
+                throw MLSService.MLSAddMembersError.failedToClaimKeyPackages(users: failedUsers)
+            }
 
-        await syncContext.perform {
-            guard let conv = ZMConversation.existingObject(for: objectID, in: syncContext) else { return }
+            // Failed establishment wipes the group, so recreate it with the eligible invitees and host devices.
+            ciphersuite = try await mlsService.establishGroup(
+                for: mlsGroupID,
+                with: mlsUsers.filter { !failedUsers.contains($0) },
+                removalKeys: nil
+            )
+            failedParticipants = zip(participants, mlsUsers).compactMap { participant, user in
+                failedUsers.contains(user) ? participant : nil
+            }
+        }
+
+        let isGroupReady = await syncContext.perform {
+            guard let conv = ZMConversation.existingObject(for: objectID, in: syncContext) else { return false }
             conv.mlsStatus = .ready
             conv.ciphersuite = ciphersuite
-            _ = syncContext.saveOrRollback()
+            return syncContext.saveOrRollback()
+        }
+
+        if !failedParticipants.isEmpty {
+            guard isGroupReady else { throw MLSService.MLSGroupCreationError.failedToCreateGroup }
+            throw MeetingParticipantsError.failedToAddParticipants(failedParticipants)
         }
     }
 

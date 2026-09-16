@@ -33,9 +33,15 @@ extension UpdateEventDecodingProxy {
             let event = try MeetingDeleteEventDecoder().decode(from: container)
             updateEvent = .meeting(.delete(event))
 
-        // A member-add event carries the meeting ID and triggers the same
-        // authoritative refresh as an update event.
-        case .memberAdd, .update:
+        case .memberAdd:
+            let meetingID = try container.decode(QualifiedIDV0.self, forKey: .qualifiedID)
+            let senderID = try container.decode(QualifiedIDV0.self, forKey: .qualifiedFrom)
+            updateEvent = .meeting(.memberAdd(MeetingMemberAddEvent(
+                meetingID: meetingID.toAPIModel(),
+                senderID: senderID.toAPIModel()
+            )))
+
+        case .update:
             let event = try MeetingUpdateEventDecoder().decode(from: container)
             updateEvent = .meeting(.update(event))
         }
