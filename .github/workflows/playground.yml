@@ -10,7 +10,7 @@ on:
           - in-house
           - cirrus
           - github
-        default: in-house
+        default: cirrus
       distribute_externals:
         type: boolean
         description: 'Distribute externally: Wire Employees and Externals - Non Wire Employees'
@@ -27,7 +27,7 @@ jobs:
       datadog_enabled: true
       distribute_externals: ${{ inputs.distribute_externals }}
       fastlane_action: playground
-      mac_runner: ${{ inputs.mac_runner || 'in-house' }}
+      mac_runner: ${{ inputs.mac_runner || 'cirrus' }}
     secrets:
       KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
       APPSTORE_API_KEY_BASE64: ${{ secrets.APPSTORE_API_KEY_BASE64 }}
