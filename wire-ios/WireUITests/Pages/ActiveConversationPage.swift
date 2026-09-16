@@ -86,6 +86,14 @@ class ActiveConversationPage: PageModel {
         app.descendants(matching: .any)[Locators.ActiveConversationPage.imageCell.rawValue].firstMatch
     }
 
+    func receivedFileMessage(named fileName: String) -> XCUIElement {
+        let predicate = NSPredicate(
+            format: "label CONTAINS[c] %@",
+            "File name: \(fileName.uppercased())"
+        )
+        return app.buttons.matching(predicate).firstMatch
+    }
+
     var videoCell: XCUIElement {
         app.descendants(matching: .any)[Locators.ActiveConversationPage.videoCell.rawValue].firstMatch
     }
@@ -341,39 +349,21 @@ class ActiveConversationPage: PageModel {
         return self
     }
 
-    /// Locates a text/link message bubble by its exact content, for replying to it.
+    /// Locates the message bubble by its exact content, for replying to it.
     func message(withText text: String) -> XCUIElement {
         messageLabels.matching(NSPredicate(format: "value == %@", text)).firstMatch
     }
 
-    /// Swipes right on the given message element, then types and sends the reply text.
+    /// Long-presses the given message element, taps Reply, then types and sends the reply text.
     @discardableResult
-    func replyToMessage(_ element: XCUIElement, withText replyText: String) throws -> ActiveConversationPage {
-        XCTAssertTrue(element.waitForExistence(timeout: 5), "Message to reply to was not found")
-        swipeRightToRevealReply(on: element)
-        tapRevealedReplyAction(for: element)
+    func replyToMessage(_ message: XCUIElement, withText replyText: String) throws -> ActiveConversationPage {
+        XCTAssertTrue(message.waitForExistence(timeout: 5), "Expected message to reply to was not found, possible that not being sent via testService")
+        message.press(forDuration: 1.0)
+        XCTAssertTrue(replyMenuButton.waitAndTap(), "Reply button was not found")
         XCTAssertTrue(replyPreviewView.waitForExistence(timeout: 3), "Reply preview did not appear in input bar")
         try inputMessageField.tapIfKeyboardNotFocused().typeText(replyText)
         sendButton.tap()
         return self
-    }
-
-    private func swipeRightToRevealReply(on element: XCUIElement) {
-        let start = app.coordinate(withNormalizedOffset: .zero).withOffset(
-            CGVector(dx: conversationBackground.frame.minX + 30, dy: element.frame.midY)
-        )
-        let end = app.coordinate(withNormalizedOffset: .zero).withOffset(
-            CGVector(dx: conversationBackground.frame.maxX - 30, dy: element.frame.midY)
-        )
-        start.press(forDuration: 0.1, thenDragTo: end)
-    }
-
-    private func tapRevealedReplyAction(for element: XCUIElement) {
-        let replyActionPoint = CGVector(
-            dx: conversationBackground.frame.minX + 44,
-            dy: element.frame.midY
-        )
-        app.coordinate(withNormalizedOffset: .zero).withOffset(replyActionPoint).tap()
     }
 
     func quotedContent(ofType type: String) -> XCUIElement {
@@ -400,30 +390,22 @@ class ActiveConversationPage: PageModel {
         quotedContentType: String,
         quotedSenderName: String,
         quotedText: String? = nil,
-        file: StaticString = #filePath,
-        line: UInt = #line
     ) -> ActiveConversationPage {
         XCTAssertTrue(
             quotedContent(ofType: quotedContentType).waitForExistence(timeout: 5),
             "Quoted content of type '\(quotedContentType)' not found in reply",
-            file: file,
-            line: line
         )
         if let quotedText {
             XCTAssertTrue(
                 self.quotedText(containing: quotedText).waitForExistence(timeout: 5),
                 "Quoted message text '\(quotedText)' not found in reply",
-                file: file,
-                line: line
             )
         }
         XCTAssertTrue(
             quotedOriginalSender.label.contains(quotedSenderName),
             "Quoted message sender '\(quotedOriginalSender.label)' didn't contain expected value \(quotedSenderName)",
-            file: file,
-            line: line
         )
-        verifyMessageSent(replyText, file: file, line: line)
+        verifyMessageSent(replyText)
         return self
     }
 

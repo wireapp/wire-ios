@@ -20,7 +20,7 @@ import WireFoundation
 import XCTest
 
 /// [core-messenger]
-final class ReplyMessagingTests: WireUITestCase {
+final class ReplyOnMessagesTests: WireUITestCase {
 
     private typealias ReturnedTeam = (
         teamOwner: UserInfo,
@@ -46,12 +46,6 @@ final class ReplyMessagingTests: WireUITestCase {
     }
 
     @MainActor
-    private func login(user: UserInfo) throws -> ConversationsPage {
-        try app.loginUser(email: user.email, password: user.password)
-            .acceptPopup()
-    }
-
-    @MainActor
     func testReplyToTextAndLinkMessageInGroupConversation_TC_11820_11823() async throws {
 
         // GIVEN
@@ -59,8 +53,12 @@ final class ReplyMessagingTests: WireUITestCase {
         let originalLinkMessage = "Check this out: https://github.com/wireapp/wire-ios"
         let textReply = "Reply to Text"
         let linkReply = "Reply to link"
+
         let groupTeam = try await registerGroupTeam()
-        let conversationsPage = try login(user: groupTeam.teamOwner)
+
+        let activeConversationPage = try app.loginUser(email: groupTeam.teamOwner.email, password: groupTeam.teamOwner.password)
+            .acceptPopup()
+            .openConversation()
 
         try await testServicesClient.sendText(
             user: groupTeam.teamMember,
@@ -68,19 +66,6 @@ final class ReplyMessagingTests: WireUITestCase {
             conversationId: groupTeam.conversationId,
             domain: groupTeam.conversationDomain
         )
-
-        try await testServicesClient.sendText(
-            user: groupTeam.teamMember,
-            text: originalLinkMessage,
-            conversationId: groupTeam.conversationId,
-            domain: groupTeam.conversationDomain
-        )
-
-        XCTAssertTrue(
-            conversationsPage.unreadMessagesCount.waitForExistence(timeout: 5),
-            "Unread messages count element did not appear"
-        )
-        let activeConversationPage = try conversationsPage.openConversation()
 
         // WHEN - reply to text message
         let textMessageElement = activeConversationPage.message(withText: originalTextMessage)
@@ -92,6 +77,13 @@ final class ReplyMessagingTests: WireUITestCase {
             quotedContentType: "text",
             quotedSenderName: groupTeam.teamMember.name,
             quotedText: originalTextMessage
+        )
+
+        try await testServicesClient.sendText(
+            user: groupTeam.teamMember,
+            text: originalLinkMessage,
+            conversationId: groupTeam.conversationId,
+            domain: groupTeam.conversationDomain
         )
 
         // WHEN - reply to link message
@@ -108,14 +100,18 @@ final class ReplyMessagingTests: WireUITestCase {
     }
 
     @MainActor
-    func testReplyToAudioAndImageMessageInGroupConversation_TC_11821_11822() async throws {
+    func testReplyToImageAndAudioMessageInGroupConversation_TC_11821_11822() async throws {
 
         // GIVEN
-        let audioReply = UserGenerator.generateRandomMessage()
-        let imageReply = UserGenerator.generateRandomMessage()
+        let imageReply = "Reply to Image"
+        let audioReply = "Reply to Audio"
+        let imageFileName = "image"
+        let audioFileName = "audio-message"
         let groupTeam = try await registerGroupTeam()
-        let conversationsPage = try login(user: groupTeam.teamOwner)
         let mediaURLs = TestServiceMediaFixtures.mediaURLs(relativeTo: #filePath)
+        let activeConversationPage = try app.loginUser(email: groupTeam.teamOwner.email, password: groupTeam.teamOwner.password)
+            .acceptPopup()
+            .openConversation()
 
         try await testServicesClient.sendImage(
             user: groupTeam.teamMember,
@@ -125,44 +121,39 @@ final class ReplyMessagingTests: WireUITestCase {
             domain: groupTeam.conversationDomain
         )
 
+        // WHEN - reply to image message
+        try activeConversationPage.replyToMessage(
+            activeConversationPage.receivedFileMessage(named: imageFileName),
+            withText: imageReply
+        )
+
+        // THEN
+        activeConversationPage.verifyReplySent(
+            replyText: imageReply,
+            quotedContentType: "file",
+            quotedSenderName: groupTeam.teamMember.name
+        )
+
         try await testServicesClient.sendFile(
             type: "audio",
             user: groupTeam.teamMember,
-            fileName: "audio-message",
+            fileName: audioFileName,
             filepath: nil,
             convoId: groupTeam.conversationId,
             domain: groupTeam.conversationDomain,
             audio: TestServiceMediaFixtures.audioMetadata()
         )
 
-        XCTAssertTrue(
-            conversationsPage.unreadMessagesCount.waitForExistence(timeout: 4),
-            "Unread messages count element did not appear"
-        )
-        let activeConversationPage = try conversationsPage.openConversation()
-
-        XCTAssertTrue(
-            activeConversationPage.imageCell.waitForExistence(timeout: 5),
-            "Expected image message not found"
-        )
-
         // WHEN - reply to audio message
-        try activeConversationPage.replyToMessage(activeConversationPage.latestMessageCell, withText: audioReply)
+        try activeConversationPage.replyToMessage(
+            activeConversationPage.receivedFileMessage(named: audioFileName),
+            withText: audioReply
+        )
 
         // THEN
         activeConversationPage.verifyReplySent(
             replyText: audioReply,
-            quotedContentType: "audio",
-            quotedSenderName: groupTeam.teamMember.name
-        )
-
-        // WHEN - reply to image message
-        try activeConversationPage.replyToMessage(activeConversationPage.imageCell, withText: imageReply)
-
-        // THEN
-        activeConversationPage.verifyReplySent(
-            replyText: imageReply,
-            quotedContentType: "image",
+            quotedContentType: "file",
             quotedSenderName: groupTeam.teamMember.name
         )
     }
