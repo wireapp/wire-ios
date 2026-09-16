@@ -4739,8 +4739,8 @@ internal enum L10n {
             internal static let conversationNotFound = L10n.tr("Localizable", "meta.menu.mls_migration.failure.conversation_not_found", fallback: "The conversation could not be found.")
             /// The conversation does not have an MLS group ID.
             internal static let missingMlsGroupId = L10n.tr("Localizable", "meta.menu.mls_migration.failure.missing_mls_group_id", fallback: "The conversation does not have an MLS group ID.")
-            /// The MLS service is unavailable.
-            internal static let missingMlsService = L10n.tr("Localizable", "meta.menu.mls_migration.failure.missing_mls_service", fallback: "The MLS service is unavailable.")
+            /// Unable to start the migration to MLS.
+            internal static let missingMlsService = L10n.tr("Localizable", "meta.menu.mls_migration.failure.missing_mls_service", fallback: "Unable to start the migration to MLS.")
             /// MLS migration failed
             internal static let title = L10n.tr("Localizable", "meta.menu.mls_migration.failure.title", fallback: "MLS migration failed")
             /// Only team group conversations can be migrated.
@@ -5912,6 +5912,16 @@ internal enum L10n {
         internal enum AddAccount {
           /// Add an account
           internal static let title = L10n.tr("Localizable", "self.settings.add_account.title", fallback: "Add an account")
+          internal enum Error {
+            /// Plural format key: "%#@number_of_accounts@"
+            internal static func message(_ p1: Int) -> String {
+              return L10n.tr("Localizable", "self.settings.add_account.error.message", p1, fallback: "Plural format key: \"%#@number_of_accounts@\"")
+            }
+            /// Plural format key: "%#@number_of_accounts@"
+            internal static func title(_ p1: Int) -> String {
+              return L10n.tr("Localizable", "self.settings.add_account.error.title", p1, fallback: "Plural format key: \"%#@number_of_accounts@\"")
+            }
+          }
         }
         internal enum AddAccountOrTeam {
           /// Add Account or Team
