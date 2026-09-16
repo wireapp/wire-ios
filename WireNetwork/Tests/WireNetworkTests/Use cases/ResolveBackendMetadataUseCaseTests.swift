@@ -50,7 +50,7 @@ struct ResolveBackendMetadataUseCaseTests {
 
     // MARK: - Resolve for production
 
-    @Test("Resolves to max production version", arguments: [APIVersion.v15, .v16, .v17])
+    @Test("Resolves to max production version", arguments: [APIVersion.v15, .v16, .v17, .v18])
     func resolvesToMaxProductionVersion(maxBackendVersion: APIVersion) async throws {
         // Given
         let sut = ResolveBackendMetadataUseCase(
