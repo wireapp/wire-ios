@@ -330,4 +330,11 @@ public enum Locators {
         case clientObsoleteAlertTitle = "Update required"
 
     }
+
+    public enum SessionExpiredPage: String {
+
+        case alertTitle = "Your session expired"
+        case okButton = "OK"
+
+    }
 }
