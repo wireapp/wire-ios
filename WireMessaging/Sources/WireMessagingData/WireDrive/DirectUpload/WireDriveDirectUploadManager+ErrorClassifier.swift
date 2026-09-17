@@ -95,7 +95,9 @@ package extension WireDriveDirectUploadManager {
 
             case NSURLErrorBackgroundSessionWasDisconnected,
                  NSURLErrorBackgroundSessionInUseByAnotherProcess:
-                return .silentRestart(reason: .reattach)
+                return attemptCount < Self.maximumSilentRestarts
+                    ? .silentRestart(reason: .reattach)
+                    : .transientFailure(.cancelledBySystem)
 
             case NSURLErrorTimedOut,
                  NSURLErrorNetworkConnectionLost,
