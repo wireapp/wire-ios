@@ -16,6 +16,19 @@ default_platform(:ios)
 # https://github.com/fastlane/fastlane/issues/20919
 ENV["FASTLANE_XCODEBUILD_SETTINGS_TIMEOUT"] = "120"
 
+CI_KEYCHAIN_EXCLUDED_LANES = Set[
+    :prepare_for_tests,
+    :select_framework,
+    :select_frameworks,
+    :generate_framework_list,
+    :list_schemes_json,
+    :list_uitest_tags,
+    :test_frameworks,
+    :test_only_frameworks,
+    :run_uitests,
+    :generate_env
+].freeze
+
 platform :ios do
     def iPhoneNameForTesting
         ENV['IPHONE_MODEL']
@@ -66,7 +79,7 @@ platform :ios do
     end
 
     before_all do |lane|
-        create_keychain_if_needed unless [:prepare_for_tests, :select_framework, :select_frameworks, :generate_framework_list, :list_schemes_json, :list_uitest_tags, :test_frameworks, :test_only_frameworks, :run_uitests, :generate_env].include?(lane)
+        create_keychain_if_needed unless CI_KEYCHAIN_EXCLUDED_LANES.include?(lane)
         `mkdir -p ./.post_build`
         Dir.chdir("..") do
             encoded_key = ENV['APPSTORE_API_KEY_BASE64']
@@ -78,11 +91,11 @@ platform :ios do
     end
 
     after_all do |lane|
-        delete_keychain_if_needed unless [:prepare_for_tests, :select_framework, :select_frameworks, :generate_framework_list, :list_schemes_json, :list_uitest_tags, :test_frameworks, :test_only_frameworks, :run_uitests, :generate_env].include?(lane)
+        delete_keychain_if_needed unless CI_KEYCHAIN_EXCLUDED_LANES.include?(lane)
     end
 
     error do |lane, _exception|
-        delete_keychain_if_needed unless [:prepare_for_tests, :select_framework, :select_frameworks, :generate_framework_list, :list_schemes_json, :list_uitest_tags, :test_frameworks, :test_only_frameworks, :run_uitests, :generate_env].include?(lane)
+        delete_keychain_if_needed unless CI_KEYCHAIN_EXCLUDED_LANES.include?(lane)
     end
     
     desc "Test frameworks given folders"
