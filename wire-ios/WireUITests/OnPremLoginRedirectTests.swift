@@ -97,7 +97,7 @@ final class OnPremLoginRedirectTests: WireUITestCase {
 
         // GIVEN - relaunch without staging backend, not needed for this flow
         app.terminate()
-        app.launchArguments = ["-resetData"]
+        app.launchArguments = ["-resetData", "--developer-flag=useWireAuthentication:true"]
         app.launch()
 
         // WHEN - user enters email with custom domain
