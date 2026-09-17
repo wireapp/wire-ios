@@ -86,6 +86,14 @@ class ActiveConversationPage: PageModel {
         app.descendants(matching: .any)[Locators.ActiveConversationPage.imageCell.rawValue].firstMatch
     }
 
+    func receivedFileMessage(named fileName: String) -> XCUIElement {
+        let predicate = NSPredicate(
+            format: "label CONTAINS[c] %@",
+            "File name: \(fileName.uppercased())"
+        )
+        return app.buttons.matching(predicate).firstMatch
+    }
+
     var videoCell: XCUIElement {
         app.descendants(matching: .any)[Locators.ActiveConversationPage.videoCell.rawValue].firstMatch
     }
@@ -100,6 +108,18 @@ class ActiveConversationPage: PageModel {
 
     var videoPreview: XCUIElement {
         app.descendants(matching: .any)[Locators.ActiveConversationPage.videoPreview.rawValue].firstMatch
+    }
+
+    var replyMenuButton: XCUIElement {
+        app.buttons[Locators.ActiveConversationPage.replyOptionOnMessage.rawValue].firstMatch
+    }
+
+    var replyPreviewView: XCUIElement {
+        app.otherElements[Locators.ActiveConversationPage.replyPreviewView.rawValue].firstMatch
+    }
+
+    var cancelReplyButton: XCUIElement {
+        app.buttons[Locators.ActiveConversationPage.cancelReplyButton.rawValue]
     }
 
     var userRemovedSystemMessage: XCUIElement {
@@ -288,6 +308,10 @@ class ActiveConversationPage: PageModel {
         app.cells[Locators.ActiveConversationPage.linkPreviewCell.rawValue].firstMatch
     }
 
+    var latestMessageCell: XCUIElement {
+        conversationBackground.cells.element(boundBy: 0)
+    }
+
     func fetchMessages() -> [String] {
         var messages: [String] = []
         for i in 0 ..< messageLabels.count {
@@ -322,6 +346,69 @@ class ActiveConversationPage: PageModel {
     func sendMessage(_ message: String) throws -> ActiveConversationPage {
         try inputMessageField.tapIfKeyboardNotFocused().typeText(message)
         sendButton.tap()
+        return self
+    }
+
+    /// Locates the message bubble by its exact content, for replying to it.
+    func message(withText text: String) -> XCUIElement {
+        messageLabels.matching(NSPredicate(format: "value == %@", text)).firstMatch
+    }
+
+    /// Long-presses the given message element, taps Reply, then types and sends the reply text.
+    @discardableResult
+    func replyToMessage(_ message: XCUIElement, withText replyText: String) throws -> ActiveConversationPage {
+        XCTAssertTrue(
+            message.waitForExistence(timeout: 5),
+            "Expected message to reply to was not found, possible that not being sent via testService"
+        )
+        message.press(forDuration: 1.0)
+        XCTAssertTrue(replyMenuButton.waitAndTap(), "Reply button was not found")
+        XCTAssertTrue(replyPreviewView.waitForExistence(timeout: 3), "Reply preview did not appear in input bar")
+        try inputMessageField.tapIfKeyboardNotFocused().typeText(replyText)
+        sendButton.tap()
+        return self
+    }
+
+    func quotedContent(ofType type: String) -> XCUIElement {
+        app.descendants(matching: .any)["quote.type.\(type)"].firstMatch
+    }
+
+    func quotedText(containing text: String) -> XCUIElement {
+        let predicate = NSPredicate(
+            format: "identifier == %@ AND (value CONTAINS[c] %@ OR label CONTAINS[c] %@)",
+            "quote.type.text",
+            text,
+            text
+        )
+        return app.textViews.matching(predicate).firstMatch
+    }
+
+    var quotedOriginalSender: XCUIElement {
+        app.descendants(matching: .any)[Locators.ActiveConversationPage.originalSender.rawValue].firstMatch
+    }
+
+    @discardableResult
+    func verifyReplySent(
+        replyText: String,
+        quotedContentType: String,
+        quotedSenderName: String,
+        quotedText: String? = nil,
+    ) -> ActiveConversationPage {
+        XCTAssertTrue(
+            quotedContent(ofType: quotedContentType).waitForExistence(timeout: 5),
+            "Quoted content of type '\(quotedContentType)' not found in reply",
+        )
+        if let quotedText {
+            XCTAssertTrue(
+                self.quotedText(containing: quotedText).waitForExistence(timeout: 5),
+                "Quoted message text '\(quotedText)' not found in reply",
+            )
+        }
+        XCTAssertTrue(
+            quotedOriginalSender.label.contains(quotedSenderName),
+            "Quoted message sender '\(quotedOriginalSender.label)' didn't contain expected value \(quotedSenderName)",
+        )
+        verifyMessageSent(replyText)
         return self
     }
 
