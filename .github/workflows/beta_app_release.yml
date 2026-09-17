@@ -6,6 +6,14 @@ on:
       - 'release/cycle-*' # automatically trigger a beta build when merge is done to the branch
   workflow_dispatch:
     inputs:
+      mac_runner:
+        description: 'macOS runner'
+        type: choice
+        options:
+          - in-house
+          - cirrus
+          - github
+        default: cirrus
       distribute_externals:
         type: boolean
         description: 'Distribute externally: Wire Employees and Externals - Non Wire Employees (Public Beta)'
@@ -25,6 +33,7 @@ jobs:
       countly_enabled: true
       datadog_enabled: true
       fastlane_action: testflight_beta
+      mac_runner: ${{ inputs.mac_runner || 'cirrus' }}
       distribute_externals: ${{ inputs.distribute_externals || false }}
     secrets:
       KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}

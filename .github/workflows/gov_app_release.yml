@@ -3,6 +3,14 @@ name: Gov
 on:
   workflow_dispatch:
     inputs:
+      mac_runner:
+        description: 'macOS runner'
+        type: choice
+        options:
+          - in-house
+          - cirrus
+          - github
+        default: cirrus
       datadog_enabled:
         description: 'Enable DataDog'
         type: boolean
@@ -22,6 +30,7 @@ jobs:
       is_cloud_build: false
       countly_enabled: false
       datadog_enabled: ${{ inputs.datadog_enabled }}
+      mac_runner: ${{ inputs.mac_runner || 'cirrus' }}
       skip_security_tests: ${{ inputs.skip_security_tests }}
     secrets:
       KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
