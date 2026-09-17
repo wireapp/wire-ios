@@ -99,23 +99,31 @@ package final class WireDriveDirectUploadManager:
 
     // MARK: - Deferred work
 
-    private var deferredWork: [UUID: Task<Void, Never>] = [:]
-
-    func scheduleDeferred(_ key: UUID, operation: @escaping @Sendable () async -> Void) {
-        deferredWork[key]?.cancel()
-        deferredWork[key] = Task { [weak self] in
-            await operation()
-            self?.clearDeferredWork(key)
-        }
+    private struct DeferredWorkEntry {
+        let token: UUID
+        let task: Task<Void, Never>
     }
 
-    private func clearDeferredWork(_ key: UUID) {
+    private var deferredWork: [UUID: DeferredWorkEntry] = [:]
+
+    func scheduleDeferred(_ key: UUID, operation: @escaping @Sendable () async -> Void) {
+        deferredWork[key]?.task.cancel()
+        let token = UUID()
+        let task = Task { [weak self] in
+            await operation()
+            self?.clearDeferredWork(key, token: token)
+        }
+        deferredWork[key] = DeferredWorkEntry(token: token, task: task)
+    }
+
+    private func clearDeferredWork(_ key: UUID, token: UUID) {
+        guard deferredWork[key]?.token == token else { return }
         deferredWork[key] = nil
     }
 
     package func waitForPendingWork() async {
         while !deferredWork.isEmpty {
-            let tasks = Array(deferredWork.values)
+            let tasks = deferredWork.values.map(\.task)
             deferredWork = [:]
             for task in tasks {
                 await task.value
