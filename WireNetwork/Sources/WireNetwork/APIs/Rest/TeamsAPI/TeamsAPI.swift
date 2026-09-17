@@ -95,7 +95,6 @@ public protocol TeamsAPI {
         ) async throws -> UUID
     #endif
 
-<<<<<<< HEAD
     /// Fetches details of all apps in a team.
 
     func getApps(
@@ -108,8 +107,7 @@ public protocol TeamsAPI {
         for teamID: Team.ID
     ) async throws -> [CollaboratorInfo]
 
-    /// Fetches legacy services (bots) in a team.
-=======
+
     /// Remove a member from a team.
     /// - Parameters:
     ///   - access_token: access token of the user performing the removal (e.g. the team owner).
@@ -124,7 +122,8 @@ public protocol TeamsAPI {
             password: String
         ) async throws
     #endif
->>>>>>> 89b2142dbe (fix: session expired alert not shown when removed from team - WPB-24285 (#5213))
+
+    /// Fetches legacy services (bots) in a team.
 
     func getWhitelistedBots(
         for teamID: Team.ID,
