@@ -1196,8 +1196,6 @@
 "self.settings.manage_team.title" = "Zarządzaj zespołem";
 "self.settings.add_account.title" = "Dodaj konto";
 
-"self.settings.add_account.error.title" = "Trzy konta aktywne";
-"self.settings.add_account.error.message" = "Możesz być zalogowany tylko na trzy konta jednocześnie. Wyloguj się z jednego aby dodać inne.";
 
 "self.settings.switch_account.message" = "Połączenie jest aktywne na tym koncie.\nPrzełączenie kont zawiesi bieżące połączenie.";
 "self.settings.switch_account.action" = "Przełącz mimo to";

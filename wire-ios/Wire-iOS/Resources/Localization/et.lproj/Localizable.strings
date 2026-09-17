@@ -1196,8 +1196,6 @@
 "self.settings.manage_team.title" = "Tiimi haldus";
 "self.settings.add_account.title" = "Lisa konto";
 
-"self.settings.add_account.error.title" = "Kolm aktiivset kontot";
-"self.settings.add_account.error.message" = "Korraga saad kasutada kolme kontot. Lisakonto kasutamiseks pead ühega olemasolevatest välja logima.";
 
 "self.settings.switch_account.message" = "Sellel kontol on käimasolev kõne.\nKontode vahetamine lõpetab käimasoleva kõne.";
 "self.settings.switch_account.action" = "Vaheta ikkagi";

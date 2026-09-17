@@ -1196,8 +1196,6 @@
 "self.settings.manage_team.title" = "Керування командою";
 "self.settings.add_account.title" = "Додати акаунт";
 
-"self.settings.add_account.error.title" = "Три акаунти вже активні";
-"self.settings.add_account.error.message" = "Тільки три акаунти можуть одночасно бути активними. Вийдіть з одного активного акаунта, щоб додати наступний.";
 
 "self.settings.switch_account.message" = "Цей акаунт має активний дзвінок.\nПереключення акаунтів завершить його.";
 "self.settings.switch_account.action" = "Все-одно переключити";

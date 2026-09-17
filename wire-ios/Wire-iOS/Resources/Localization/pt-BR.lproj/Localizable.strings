@@ -1196,8 +1196,6 @@
 "self.settings.manage_team.title" = "Gerenciar Equipe";
 "self.settings.add_account.title" = "Adicionar uma conta";
 
-"self.settings.add_account.error.title" = "Três contas de ativas";
-"self.settings.add_account.error.message" = "Você apenas pode estar conectado com três contas de uma vez. Saia de uma para adicionar outra.";
 
 "self.settings.switch_account.message" = "Uma chamada está ativa nesta conta.\nMudar de conta irá desligar a chamada atual.";
 "self.settings.switch_account.action" = "Mudar de qualquer maneira";

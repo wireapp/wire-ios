@@ -1196,8 +1196,6 @@
 "self.settings.manage_team.title" = "チームを管理";
 "self.settings.add_account.title" = "アカウントを追加";
 
-"self.settings.add_account.error.title" = "3 つのアカウントがアクティブです";
-"self.settings.add_account.error.message" = "１度に３つのアカウントまでログインできます。新規にログインする為に、１つログアウトしてください。";
 
 "self.settings.switch_account.message" = "このアカウントで通話中です。\nアカウントを切り替えると現在の通話が終了します。";
 "self.settings.switch_account.action" = "すぐに切り替える";

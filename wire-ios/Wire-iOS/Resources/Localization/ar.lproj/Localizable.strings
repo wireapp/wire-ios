@@ -1196,8 +1196,6 @@
 "self.settings.manage_team.title" = "إدارة الفريق";
 "self.settings.add_account.title" = "إضافة حساب";
 
-"self.settings.add_account.error.title" = "ثلاث حساب نشطة";
-"self.settings.add_account.error.message" = "بإمكانك تسجيل الدخول بثلاث حسابات في المرة الواحدة. اخرج من أحدهم لتضيف آخر.";
 
 "self.settings.switch_account.message" = "A call is active in this account.\nSwitching accounts will hang up the current call.";
 "self.settings.switch_account.action" = "Switch anyway";

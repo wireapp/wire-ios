@@ -1196,8 +1196,6 @@
 "self.settings.manage_team.title" = "Takımı Yönet";
 "self.settings.add_account.title" = "Bir hesap ekle";
 
-"self.settings.add_account.error.title" = "Üç hesap aktif";
-"self.settings.add_account.error.message" = "Tek seferde üç hesapla giriş yapabilirsiniz. Başka bir tane eklemek için birinden çıkış yapın.";
 
 "self.settings.switch_account.message" = "Bu hesapta bir çağrı etkin.\nHesapların değiştirilmesi mevcut aramayı kapatacaktır.";
 "self.settings.switch_account.action" = "Yine de değiştir";

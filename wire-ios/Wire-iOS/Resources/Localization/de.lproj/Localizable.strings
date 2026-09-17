@@ -1196,8 +1196,6 @@
 "self.settings.manage_team.title" = "Team verwalten";
 "self.settings.add_account.title" = "Ein Konto hinzufügen";
 
-"self.settings.add_account.error.title" = "Drei Benutzerkonten sind aktiv";
-"self.settings.add_account.error.message" = "Sie können nur mit drei Konten gleichzeitig angemeldet sein. Melden Sie sich von einem Konto ab, um ein weiteres hinzuzufügen.";
 
 "self.settings.switch_account.message" = "In diesem Konto ist ein Anruf aktiv.\nEin Wechsel der Konten beendet den aktuellen Anruf.";
 "self.settings.switch_account.action" = "Trotzdem wechseln";

@@ -1196,8 +1196,6 @@
 "self.settings.manage_team.title" = "Valdyti komandą";
 "self.settings.add_account.title" = "Pridėti paskyrą";
 
-"self.settings.add_account.error.title" = "Aktyvios trys paskyros";
-"self.settings.add_account.error.message" = "Vienu metu galite būti prisijungęs iki trijų paskyrų. Atsijunkite nuo vienos, kad galėtumėte pridėti kitą.";
 
 "self.settings.switch_account.message" = "Vyksta skambutis šioje paskyroje.\nKeičiant paskyras nutrauksite vykstantį skambutį.";
 "self.settings.switch_account.action" = "Vis tiek pakeisti";

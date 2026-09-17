@@ -1196,8 +1196,6 @@
 "self.settings.manage_team.title" = "Beheer team";
 "self.settings.add_account.title" = "Voeg een account toe";
 
-"self.settings.add_account.error.title" = "Drie accounts zijn actief";
-"self.settings.add_account.error.message" = "Je kan maximaal met 3 accounts te gelijk inloggen. Log op een ander account uit, om een nieuw account toe te voegen.";
 
 "self.settings.switch_account.message" = "A call is active in this account.\nSwitching accounts will hang up the current call.";
 "self.settings.switch_account.action" = "Toch wisselen";

@@ -1196,8 +1196,6 @@
 "self.settings.manage_team.title" = "管理團隊";
 "self.settings.add_account.title" = "新增帳號";
 
-"self.settings.add_account.error.title" = "已啓動三個賬號";
-"self.settings.add_account.error.message" = "您只能同時登錄三個帳號。請先登出任何一個賬號，然後加入新賬號。";
 
 "self.settings.switch_account.message" = "此帳戶中有一個通話進行中。\n切換帳戶將掛斷該通話。";
 "self.settings.switch_account.action" = "仍要切換";

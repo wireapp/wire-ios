@@ -1196,8 +1196,6 @@
 "self.settings.manage_team.title" = "Управлять командой";
 "self.settings.add_account.title" = "Добавить аккаунт";
 
-"self.settings.add_account.error.title" = "Активны три аккаунта";
-"self.settings.add_account.error.message" = "Одновременно можно авторизоваться не более чем в трех аккаунтах. Выйдите из одного для добавления другого.";
 
 "self.settings.switch_account.message" = "В этой учетной записи активен вызов.\nПереключение учетных записей приведет к завершению текущего вызова.";
 "self.settings.switch_account.action" = "Все равно переключиться";
