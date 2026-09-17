@@ -21,7 +21,6 @@ import XCTest
 final class OnPremLoginRedirectTests: WireUITestCase {
 
     private var claimedDomain: String?
-    private let expectedAuthenticationDomain = "auth.tech.orange"
 
     @MainActor
     override func tearDown() async throws {
@@ -94,17 +93,22 @@ final class OnPremLoginRedirectTests: WireUITestCase {
     @MainActor
     func testCustomDomainRedirectOpensIdP_TC_11927() async throws {
 
+        let environmentVariables = try EnvironmentVariables()
+
         // GIVEN - relaunch without staging backend, not needed for this flow
         app.terminate()
         app.launchArguments = ["-resetData"]
         app.launch()
 
         // WHEN - user enters email with custom domain
-        let confirmationPage = try WelcomePage().enterDomainForBackendSwitch("test@Orange.com")
+        let confirmationPage = try WelcomePage()
+            .enterDomainForBackendSwitch(environmentVariables.customDomainRedirectEmail)
 
+        let expectedBackendURL = try XCTUnwrap(
+            URL(string: environmentVariables.customDomainRedirectBackendURL)
+        )
         XCTAssertTrue(
-            confirmationPage.backendUrlValue(containing: try XCTUnwrap(URL(string: "wire.tech.orange")))
-                .waitForExistence(timeout: 5),
+            confirmationPage.backendUrlValue(containing: expectedBackendURL).waitForExistence(timeout: 5),
             "Confirmation dialog did not show expected backend URL"
         )
 
@@ -117,13 +121,13 @@ final class OnPremLoginRedirectTests: WireUITestCase {
                 .matching(
                     NSPredicate(
                         format: "label CONTAINS[c] %@ OR value CONTAINS[c] %@",
-                        expectedAuthenticationDomain,
-                        expectedAuthenticationDomain
+                        environmentVariables.customDomainRedirectIdpDomain,
+                        environmentVariables.customDomainRedirectIdpDomain
                     )
                 )
                 .firstMatch
                 .waitForExistence(timeout: 10),
-            "Webpage did not open expected URL \(expectedAuthenticationDomain)"
+            "Webpage did not open expected URL \(environmentVariables.customDomainRedirectIdpDomain)"
         )
     }
 }
