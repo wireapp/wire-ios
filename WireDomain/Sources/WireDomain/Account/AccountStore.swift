@@ -120,6 +120,9 @@ struct AccountStore {
         do {
             try fileManager.removeItem(at: url(for: account.userIdentifier))
             return true
+        } catch CocoaError.fileNoSuchFile {
+            // Already deleted, nothing to do, and no need to log a spurious error.
+            return false
         } catch {
             let accountDescription = account.safeForLoggingDescription
             let errorDescription = error.safeForLoggingDescription
