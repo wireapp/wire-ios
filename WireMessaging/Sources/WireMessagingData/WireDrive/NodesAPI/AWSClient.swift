@@ -36,6 +36,7 @@ package protocol S3ClientProtocol: Sendable {
     func createMultipartUpload(input: CreateMultipartUploadInput) async throws -> CreateMultipartUploadOutput
     func completeMultipartUpload(input: CompleteMultipartUploadInput) async throws -> CompleteMultipartUploadOutput
     func presignedURLForGetObject(input: GetObjectInput, expiration: Foundation.TimeInterval) async throws -> URL
+    func presignedURLForPutObject(input: PutObjectInput, expiration: Foundation.TimeInterval) async throws -> URL
 
 }
 
@@ -284,21 +285,34 @@ final class AWSClient: Sendable {
         )
     }
 
+    /// Returns a presigned `PUT` URL that uploads a new draft version of `node`.
+    ///
+    /// The draft metadata is folded into the URL's query string by the presigner, so a request built
+    /// from this URL needs no application headers. That is what makes the upload usable from a
+    /// background `URLSession`, which cannot stream a body the way `uploadRegular` does.
+    ///
+    /// - Note: Deliberately does not set `contentType`. It would be signed as a header, which a bare
+    ///   `URLRequest` would not reproduce, and the signature would then fail to verify.
+
+    func presignedPutURL(
+        node: WireDriveNodeNetworkModel,
+        versionID: UUID,
+        expiration: TimeInterval
+    ) async throws -> URL {
+        let input = PutObjectInput(
+            bucket: Constants.bucket,
+            key: node.path,
+            metadata: node.createDraftNodeMetadata(versionID: versionID)
+        )
+
+        return try await s3.presignedURLForPutObject(input: input, expiration: expiration)
+    }
+
     func getPreSignedUrl(objectKey: String) async throws -> String {
         let expiration = TimeInterval(Constants.preSignedUrlExpiryInHours * 60 * 60)
         let input = GetObjectInput(bucket: Constants.bucket, key: objectKey)
         let signed = try await s3.presignedURLForGetObject(input: input, expiration: expiration)
         return signed.absoluteString
-    }
-}
-
-private extension WireDriveNodeNetworkModel {
-    func createDraftNodeMetadata(versionID: UUID) -> [String: String] {
-        [
-            "Draft-Mode": "true",
-            "Create-Resource-UUID": uuid.transportString(),
-            "Create-Version-ID": versionID.transportString()
-        ]
     }
 }
 
