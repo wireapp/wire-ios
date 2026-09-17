@@ -21,6 +21,7 @@ import XCTest
 final class OnPremLoginRedirectTests: WireUITestCase {
 
     private var claimedDomain: String?
+    private let expectedAuthenticationDomain = "auth.tech.orange"
 
     @MainActor
     override func tearDown() async throws {
@@ -85,6 +86,44 @@ final class OnPremLoginRedirectTests: WireUITestCase {
         XCTAssertTrue(
             welcomePage.setBackendLabel.label.contains(targetBackend.domainInfo),
             "Expected backend domain missing from \(welcomePage.setBackendLabel.label)"
+        )
+    }
+
+    /// Validates custom domain redirect opens Idp login
+    /// Ref: https://wearezeta.atlassian.net/browse/WPB-28698
+    @MainActor
+    func testCustomDomainRedirectOpensIdP_TC_11927() async throws {
+
+        // GIVEN - relaunch without staging backend, not needed for this flow
+        app.terminate()
+        app.launchArguments = ["-resetData"]
+        app.launch()
+
+        // WHEN - user enters email with custom domain
+        let confirmationPage = try WelcomePage().enterDomainForBackendSwitch("test@Orange.com")
+
+        XCTAssertTrue(
+            confirmationPage.backendUrlValue(containing: try XCTUnwrap(URL(string: "wire.tech.orange")))
+                .waitForExistence(timeout: 5),
+            "Confirmation dialog did not show expected backend URL"
+        )
+
+        // WHEN - user proceeds with the backend change
+        try confirmationPage.tapOnProceedButton()
+
+        // THEN - custom domain webpage opens in the app
+        XCTAssertTrue(
+            app.descendants(matching: .any)
+                .matching(
+                    NSPredicate(
+                        format: "label CONTAINS[c] %@ OR value CONTAINS[c] %@",
+                        expectedAuthenticationDomain,
+                        expectedAuthenticationDomain
+                    )
+                )
+                .firstMatch
+                .waitForExistence(timeout: 10),
+            "Webpage did not open expected URL \(expectedAuthenticationDomain)"
         )
     }
 }
