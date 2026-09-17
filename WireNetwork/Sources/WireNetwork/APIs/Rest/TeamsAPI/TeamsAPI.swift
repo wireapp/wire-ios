@@ -107,7 +107,6 @@ public protocol TeamsAPI {
         for teamID: Team.ID
     ) async throws -> [CollaboratorInfo]
 
-
     /// Remove a member from a team.
     /// - Parameters:
     ///   - access_token: access token of the user performing the removal (e.g. the team owner).
