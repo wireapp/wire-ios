@@ -18,6 +18,12 @@
 
 // MARK: - Meetings List
 
+"meetings.list.loadError" = "Не удалось загрузить встречи. Попробуйте еще раз.";
+"meetings.deleteModal.error.deleteFailedTitle" = "Не удалось удалить встречу";
+"meetings.deleteModal.error.deleteFailed" = "Что-то пошло не так при удалении встречи. Попробуйте еще раз.";
+"meetings.deleteModal.error.leaveConversationFailedTitle" = "Не удалось покинуть встречу";
+"meetings.deleteModal.error.leaveConversationFailed" = "Что-то пошло не так при выходе со встречи. Попробуйте еще раз.";
+"wireMeetings.retry" = "Повторить";
 "wireMeetings.list.title" = "Встречи";
 "wireMeetings.list.tabs.past" = "Прошлые";
 "wireMeetings.list.tabs.next" = "Вперед";
@@ -41,6 +47,8 @@
 "wireMeetings.list.actions.deleteForMe" = "Удалить встречу для меня";
 "wireMeetings.list.delete.alert.title" = "Удалить встречу для всех";
 "wireMeetings.list.delete.alert.subtitle" = "Встреча будет удалена для вас и всех остальных. Все участники будут уведомлены.";
+"wireMeetings.list.deleteRecurring.alert.title" = "Удалить встречу для всех";
+"wireMeetings.list.deleteRecurring.alert.subtitle" = "Это повторяющаяся встреча. Ее удаление удалит все события для вас и всех остальных. Все участники будут уведомлены.";
 "wireMeetings.list.deleteForMe.alert.title" = "Удалить встречу для меня";
 "wireMeetings.list.deleteForMe.alert.subtitle" = "Встреча будет удалена из календаря. Это не повлияет на других участников.";
 "wireMeetings.list.delete.alert.delete.button" = "Удалить";
@@ -52,6 +60,12 @@
 
 // MARK: - Schedule a meeting
 
+"meetings.scheduleModal.error.createFailedTitle" = "Не удалось запланировать встречу";
+"meetings.scheduleModal.error.createFailed" = "Что-то пошло не так при планировании встречи. Попробуйте еще раз.";
+"meetings.meetNowModal.error.createFailedTitle" = "Не удалось начать встречу";
+"meetings.meetNowModal.error.createFailed" = "Что-то пошло не так при начале встречи. Попробуйте еще раз.";
+"meetings.scheduleModal.error.updateFailedTitle" = "Не удалось обновить встречу";
+"meetings.scheduleModal.error.updateFailed" = "Что-то пошло не так при обновлении встречи. Попробуйте еще раз.";
 "wireMeetings.schedule.now.title" = "Встречи сейчас";
 "wireMeetings.schedule.future.title" = "Новая встреча";
 "wireMeetings.schedule.edit.title" = "Изменить встречу";
@@ -67,6 +81,8 @@
 "wireMeetings.schedule.setupParticipants.placeholder" = "Добавить участников";
 "wireMeetings.schedule.error.alert.title" = "Что-то пошло не так";
 "wireMeetings.schedule.error.alert.ok" = "OK";
+"wireMeetings.schedule.participantsNotAdded.title" = "Встреча сохранена";
+"wireMeetings.schedule.participantsNotAdded.message" = "Встреча была сохранена, но не удалось добавить этих пользователей:\n\n%@";
 "wireMeetings.schedule.error.conversationName.title" = "Не удалось обновить имя вызова";
 "wireMeetings.schedule.error.conversationName.message" = "Название встречи было обновлено, но имя, указанное в вызове, обновить не удалось. Пожалуйста, попробуйте снова.";
 "wireMeetings.schedule.error.conversationName.retry" = "Повторить";
@@ -94,3 +110,6 @@
 "wireMeetings.schedule.members.retry.button" = "Повторить";
 "wireMeetings.schedule.members.selected.title" = "Выбрано";
 "wireMeetings.schedule.members.contacts.title" = "Контакты";
+
+"wireMeetings.schedule.error.expiredStartDate.title" = "Выберите более позднее время начала";
+"wireMeetings.schedule.error.expiredStartDate.message" = "Время начала встречи можно изменить только на период не более чем за 24 часа до текущего момента. Выберите более позднее время начала и сохраните изменения заново.";
