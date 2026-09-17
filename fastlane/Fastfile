@@ -60,7 +60,7 @@ platform :ios do
             unlock: true,
             timeout: 3600,
             lock_when_sleeps: true,
-            add_to_search_list: false,
+            add_to_search_list: true,
             require_create: true
         )
     end
@@ -72,10 +72,6 @@ platform :ios do
         rescue
             UI.verbose("No keychain found, skipping deletion...")
         end
-    end
-
-    def ci_keychain_path
-        FastlaneCore::Helper.keychain_path(ENV.fetch('KEYCHAIN_NAME'))
     end
 
     before_all do |lane|
@@ -623,7 +619,6 @@ platform :ios do
             xcargs = ["BUILD_NUMBER=#{build.build_number}"]
             xcargs += enable_datadog_args if build.enable_datadog
             xcargs += enable_countly_args if build.enable_countly
-            xcargs << "OTHER_CODE_SIGN_FLAGS='--keychain #{ci_keychain_path}'" if is_running_on_ci
 
             sh "echo $HAS_PACKAGES_CACHE_HIT"
             build_app(
