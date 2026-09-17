@@ -1,6 +1,16 @@
 name: Public AppStore
 
-on: workflow_dispatch
+on:
+  workflow_dispatch:
+    inputs:
+      mac_runner:
+        description: 'macOS runner'
+        type: choice
+        options:
+          - in-house
+          - cirrus
+          - github
+        default: cirrus
 
 permissions: 
   checks: write
@@ -11,6 +21,7 @@ jobs:
     with:
       countly_enabled: true
       fastlane_action: appstore_public
+      mac_runner: ${{ inputs.mac_runner || 'cirrus' }}
     secrets:
       KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
       APPSTORE_API_KEY_BASE64: ${{ secrets.APPSTORE_API_KEY_BASE64 }}
