@@ -698,7 +698,7 @@ public enum Locators {
             case joinButton = "Join Button"
         }
     }
-    
+
     public enum SessionExpiredPage: String {
 
         case alertTitle = "Your session expired"

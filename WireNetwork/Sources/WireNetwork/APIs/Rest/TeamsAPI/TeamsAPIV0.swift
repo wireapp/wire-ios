@@ -167,7 +167,6 @@ class TeamsAPIV0: TeamsAPI, VersionedAPI {
         return payload.id
     }
 
-
     // MARK: - Get apps
 
     func getApps(
