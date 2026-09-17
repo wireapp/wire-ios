@@ -203,13 +203,15 @@ struct EnvironmentVariables {
             throw Failure.missingCustomDomainRedirectEmail
         }
 
-        guard let customDomainRedirectBackendURL = ProcessInfo.processInfo.environment["CUSTOM_DOMAIN_REDIRECT_BACKEND_URL"],
-              !customDomainRedirectBackendURL.isEmpty else {
+        guard let customDomainRedirectBackendURL = ProcessInfo.processInfo
+            .environment["CUSTOM_DOMAIN_REDIRECT_BACKEND_URL"],
+            !customDomainRedirectBackendURL.isEmpty else {
             throw Failure.missingCustomDomainRedirectBackendURL
         }
 
-        guard let customDomainRedirectIdpDomain = ProcessInfo.processInfo.environment["CUSTOM_DOMAIN_REDIRECT_IDP_DOMAIN"],
-              !customDomainRedirectIdpDomain.isEmpty else {
+        guard let customDomainRedirectIdpDomain = ProcessInfo.processInfo
+            .environment["CUSTOM_DOMAIN_REDIRECT_IDP_DOMAIN"],
+            !customDomainRedirectIdpDomain.isEmpty else {
             throw Failure.missingCustomDomainRedirectIdpDomain
         }
 
