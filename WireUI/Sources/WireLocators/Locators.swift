@@ -677,7 +677,6 @@ public enum Locators {
 
     }
 
-<<<<<<< HEAD
     public enum SSOWebLoginPage: String {
         case username = "Username"
         case signInButton = "Sign In"
@@ -698,12 +697,11 @@ public enum Locators {
             case deleteForMeButton = "Delete Meeting for Me Button"
             case joinButton = "Join Button"
         }
-=======
+    }
+    
     public enum SessionExpiredPage: String {
 
         case alertTitle = "Your session expired"
         case okButton = "OK"
->>>>>>> 89b2142dbe (fix: session expired alert not shown when removed from team - WPB-24285 (#5213))
-
     }
 }
