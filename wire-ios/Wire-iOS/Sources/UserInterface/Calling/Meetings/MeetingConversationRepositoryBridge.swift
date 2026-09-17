@@ -63,8 +63,20 @@ struct MeetingConversationRepositoryBridge: MeetingConversationRepositoryProtoco
             guard !participants.isEmpty else { return }
             // The group already exists (the meeting is being edited), so the
             // participants are added with a regular add-members commit.
-            try await updateParticipants(participants, in: objectID, syncContext: syncContext) {
-                try await participantsService.addParticipants($0, to: $1)
+            try await updateParticipants(participants, in: objectID, syncContext: syncContext) { users, conversation in
+                try await participantsService.addParticipants(users, to: conversation)
+                let failedParticipants = await syncContext.perform {
+                    let currentIDs = Set(conversation.localParticipants.compactMap(\.qualifiedID))
+                    return participants.filter {
+                        !currentIDs.contains(WireDataModel.QualifiedID(
+                            uuid: $0.qualifiedID.id,
+                            domain: $0.qualifiedID.domain
+                        ))
+                    }
+                }
+                if !failedParticipants.isEmpty {
+                    throw MeetingParticipantsError.failedToAddParticipants(failedParticipants)
+                }
             }
         } else {
             // The group must be established even with no extra participants

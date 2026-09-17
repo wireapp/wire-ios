@@ -18,6 +18,12 @@
 
 // MARK: - Meetings List
 
+"meetings.list.loadError" = "Could not load meetings. Please try again.";
+"meetings.deleteModal.error.deleteFailedTitle" = "Could not delete meeting";
+"meetings.deleteModal.error.deleteFailed" = "Something went wrong while deleting the meeting. Please try again.";
+"meetings.deleteModal.error.leaveConversationFailedTitle" = "Could not leave meeting";
+"meetings.deleteModal.error.leaveConversationFailed" = "Something went wrong while leaving the meeting conversation. Please try again.";
+"wireMeetings.retry" = "Retry";
 "wireMeetings.list.title" = "Meetings";
 "wireMeetings.list.tabs.past" = "Past";
 "wireMeetings.list.tabs.next" = "次へ";
@@ -41,6 +47,8 @@
 "wireMeetings.list.actions.deleteForMe" = "Delete meeting for me";
 "wireMeetings.list.delete.alert.title" = "Delete meeting for all";
 "wireMeetings.list.delete.alert.subtitle" = "The meeting will be deleted for you and everybody else. All participants will be notified.";
+"wireMeetings.list.deleteRecurring.alert.title" = "Delete meeting for everyone";
+"wireMeetings.list.deleteRecurring.alert.subtitle" = "This is a recurring meeting. Deleting it removes every occurrence for you and everybody else. All participants will be notified.";
 "wireMeetings.list.deleteForMe.alert.title" = "Delete meeting for me";
 "wireMeetings.list.deleteForMe.alert.subtitle" = "The meeting will be deleted from your calendar. This will not affect other participants.";
 "wireMeetings.list.delete.alert.delete.button" = "削除";
@@ -52,6 +60,12 @@
 
 // MARK: - Schedule a meeting
 
+"meetings.scheduleModal.error.createFailedTitle" = "Could not schedule meeting";
+"meetings.scheduleModal.error.createFailed" = "Something went wrong while scheduling the meeting. Please try again.";
+"meetings.meetNowModal.error.createFailedTitle" = "Could not start meeting";
+"meetings.meetNowModal.error.createFailed" = "Something went wrong while starting the meeting. Please try again.";
+"meetings.scheduleModal.error.updateFailedTitle" = "Could not update meeting";
+"meetings.scheduleModal.error.updateFailed" = "Something went wrong while updating the meeting. Please try again.";
 "wireMeetings.schedule.now.title" = "Meet now";
 "wireMeetings.schedule.future.title" = "New meeting";
 "wireMeetings.schedule.edit.title" = "Edit Meeting";
@@ -67,6 +81,8 @@
 "wireMeetings.schedule.setupParticipants.placeholder" = "参加者を追加";
 "wireMeetings.schedule.error.alert.title" = "何か問題があります";
 "wireMeetings.schedule.error.alert.ok" = "OK";
+"wireMeetings.schedule.participantsNotAdded.title" = "Meeting saved";
+"wireMeetings.schedule.participantsNotAdded.message" = "The meeting was saved, but these users could not be added:\n\n%@";
 "wireMeetings.schedule.error.conversationName.title" = "Could not update call name";
 "wireMeetings.schedule.error.conversationName.message" = "The meeting title was updated, but the name shown in the call could not be updated. Please try again.";
 "wireMeetings.schedule.error.conversationName.retry" = "Try again";
@@ -94,3 +110,6 @@
 "wireMeetings.schedule.members.retry.button" = "Retry";
 "wireMeetings.schedule.members.selected.title" = "Selected";
 "wireMeetings.schedule.members.contacts.title" = "連絡先";
+
+"wireMeetings.schedule.error.expiredStartDate.title" = "Choose a later start time";
+"wireMeetings.schedule.error.expiredStartDate.message" = "Meetings can only be updated with a start time up to 24 hours in the past. Choose a later start time and save again.";
