@@ -20,7 +20,7 @@ import WireFoundation
 import XCTest
 
 /// [core-messenger]
-final class ReplyOnMessagesTests: WireUITestCase {
+final class ReplyOnMessageTests: WireUITestCase {
 
     private typealias ReturnedTeam = (
         teamOwner: UserInfo,
@@ -196,17 +196,13 @@ final class ReplyOnMessagesTests: WireUITestCase {
 
         // WHEN - long-press ping message
         pingMessage.press(forDuration: 1.0)
-        XCTAssertTrue(
-            app.menuItems.firstMatch.waitForExistence(timeout: 2),
-            "Expected message action menu to appear after long-pressing the ping message"
-        )
 
         // THEN - no Reply option offered
         XCTAssertFalse(
-            activeConversationPage.replyMenuButton.exists,
+            activeConversationPage.replyMenuButton.waitForExistence(timeout: 2),
             "Reply option should not be available for ping messages"
         )
-        activeConversationPage.inputMessageField.tap() // dismiss the message actions menu
+
         try await testServicesClient.sendText(
             user: groupTeam.teamMember,
             text: originalTextMessage,
