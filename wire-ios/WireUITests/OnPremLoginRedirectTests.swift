@@ -90,7 +90,7 @@ final class OnPremLoginRedirectTests: WireUITestCase {
     }
 
     /// Validates custom domain redirect opens Idp login
-    /// Ref: https://wearezeta.atlassian.net/browse/WPB-28698
+    /// Ref Bug: [WPB-28698]
     @MainActor
     func testCustomDomainRedirectOpensIdP_TC_11927() async throws {
 
