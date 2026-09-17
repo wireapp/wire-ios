@@ -66,7 +66,16 @@ public enum MessageDestructionTimeoutValue: RawRepresentable, Hashable {
             .zero
 
         case .tenSeconds:
+            #if DEBUG
+            if let value = ProcessInfo.processInfo.environment["UITEST_SELF_DELETING_TIMER_SECONDS"],
+               let seconds = TimeInterval(value) {
+                seconds
+            } else {
+                .tenSeconds
+            }
+            #else
             .tenSeconds
+            #endif
 
         case .fiveMinutes:
             .fiveMinutes

@@ -82,6 +82,53 @@ class ActiveConversationPage: PageModel {
         app.buttons[Locators.ActiveConversationPage.ephemeralTimeSelectionButton.rawValue]
     }
 
+    var selfDeletingMessageTimerPicker: XCUIElement {
+        app.pickerWheels.firstMatch
+    }
+
+    @discardableResult
+    func selectSelfDeletingMessageTimer(_ duration: String) -> ActiveConversationPage {
+        selfDeletingMessageButton.waitAndTap()
+        XCTAssertTrue(
+            selfDeletingMessageTimerPicker.waitForExistence(timeout: 3),
+            "Self-deleting message timer picker did not appear"
+        )
+        selfDeletingMessageTimerPicker.adjust(toPickerWheelValue: duration)
+        selfDeletingMessageButton.waitAndTap()
+        return self
+    }
+
+    var ephemeralIndicatorButton: XCUIElement {
+        app.buttons["ephemeralTimeIndicatorButton"].firstMatch
+    }
+
+    @discardableResult
+    func verifyEphemeralIndicatorShows(_ timerValue: String) -> ActiveConversationPage {
+        XCTAssertTrue(
+            ephemeralIndicatorButton.waitForExistence(timeout: 3),
+            "Expected self-deleting timer indicator button to appear"
+        )
+        XCTAssertEqual(
+            ephemeralIndicatorButton.value as? String,
+            timerValue,
+            "Expected self-deleting timer indicator to show '\(timerValue)'"
+        )
+        return self
+    }
+
+    /// While empty and in ephemeral mode, the input field's accessibilityValue mirrors its
+    /// placeholder label text ("Self-deleting message"), see TextView.accessibilityValue.
+    /// Only true before any text is typed - call this before sendMessage(_:).
+    @discardableResult
+    func verifyInputFieldShowsSelfDeletingPlaceholder() -> ActiveConversationPage {
+        XCTAssertEqual(
+            inputMessageField.value as? String,
+            "Self-deleting message",
+            "Expected input field placeholder to show 'Self-deleting message'"
+        )
+        return self
+    }
+
     var imageCell: XCUIElement {
         app.descendants(matching: .any)[Locators.ActiveConversationPage.imageCell.rawValue].firstMatch
     }
@@ -311,6 +358,14 @@ class ActiveConversationPage: PageModel {
     var latestMessageCell: XCUIElement {
         conversationBackground.cells.element(boundBy: 0)
     }
+    
+    var ephemeralCountdownLabel: XCUIElement {
+        app.staticTexts[Locators.ActiveConversationPage.ephemeralCountdown.rawValue].firstMatch
+    }
+    
+    var selfDeletedMessage: XCUIElement {
+        app.textViews[Locators.ActiveConversationPage.selfDeletedMessage.rawValue].firstMatch
+    }
 
     func fetchMessages() -> [String] {
         var messages: [String] = []
@@ -342,7 +397,8 @@ class ActiveConversationPage: PageModel {
         }
         return files
     }
-
+    
+    @discardableResult
     func sendMessage(_ message: String) throws -> ActiveConversationPage {
         try inputMessageField.tapIfKeyboardNotFocused().typeText(message)
         sendButton.tap()
@@ -759,6 +815,26 @@ class ActiveConversationPage: PageModel {
     }
 
     @discardableResult
+    func verifyMessageTimerSystemMessage(_ duration: String) -> ActiveConversationPage {
+        // The prod label swaps the space in `duration` (e.g. "10 seconds") for a
+        // non-breaking space (see ConversationMessageTimerSystemMessageCellDescription),
+        // so match the number and unit as separate CONTAINS clauses instead of one exact substring.
+        let parts = duration.split(separator: " ")
+        let (number, unit) = (parts[0], parts[1])
+        XCTAssertTrue(
+            app.descendants(matching: .any)
+                .matching(NSPredicate(
+                    format: "label CONTAINS[c] %@ AND label CONTAINS[c] %@ AND label CONTAINS[c] %@",
+                    "set the message timer to", number, unit
+                ))
+                .firstMatch
+                .waitForExistence(timeout: 5),
+            "Expected 'set the message timer to \(duration)' system message not found"
+        )
+        return self
+    }
+
+    @discardableResult
     func verifySharedFile(
         name: String,
         type: String,
@@ -882,6 +958,34 @@ class ActiveConversationPage: PageModel {
                 line: line
             )
         }
+        return self
+    }
+
+
+
+    @discardableResult
+    func verifyMessageExpired(
+        timeout: TimeInterval = 20
+    ) -> ActiveConversationPage {
+        XCTAssertTrue(
+            selfDeletedMessage.waitForExistence(timeout: timeout),
+            "Expected self-deleting message to expire but it did not"
+        )
+        return self
+    }
+
+
+
+    @discardableResult
+    func verifyEphemeralCountdownVisible() -> ActiveConversationPage {
+        XCTAssertTrue(
+            ephemeralCountdownLabel.waitForExistence(timeout: 5),
+            "Expected self-deleting message countdown label to appear"
+        )
+        XCTAssertFalse(
+            ephemeralCountdownLabel.label.isEmpty,
+            "Expected self-deleting message countdown label to show remaining time"
+        )
         return self
     }
 
