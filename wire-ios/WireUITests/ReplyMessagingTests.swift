@@ -169,9 +169,10 @@ final class ReplyOnMessagesTests: WireUITestCase {
     }
 
     @MainActor
-    func testCanNotReplyToPingMessageInGroupConversation_TC_11824() async throws {
+    func testNotAbleToReplyToPingOrSelfDeletingMessageInGroupConversation_TC_11824_11825() async throws {
 
         // GIVEN
+        let originalTextMessage = UserGenerator.generateRandomMessage()
         let groupTeam = try await registerGroupTeam()
 
         let activeConversationPage = try app.loginUser(
@@ -201,28 +202,13 @@ final class ReplyOnMessagesTests: WireUITestCase {
             activeConversationPage.replyMenuButton.waitForExistence(timeout: 2),
             "Reply option should not be available for ping messages"
         )
-    }
-
-    @MainActor
-    func testCanNotReplyToSelfDeletingMessageInGroupConversation_TC_11825() async throws {
-
-        // GIVEN
-        let originalTextMessage = UserGenerator.generateRandomMessage()
-        let groupTeam = try await registerGroupTeam()
-
-        let activeConversationPage = try app.loginUser(
-            email: groupTeam.teamOwner.email,
-            password: groupTeam.teamOwner.password
-        )
-        .acceptPopup()
-        .openConversation()
 
         try await testServicesClient.sendText(
             user: groupTeam.teamMember,
             text: originalTextMessage,
             conversationId: groupTeam.conversationId,
             domain: groupTeam.conversationDomain,
-            timeoutMillis: 60000
+            timeoutMillis: 60_000 // messageTimer => self-deleting message
         )
 
         let selfDeletingMessage = activeConversationPage.message(withText: originalTextMessage)
