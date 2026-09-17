@@ -60,7 +60,7 @@ platform :ios do
             unlock: true,
             timeout: 3600,
             lock_when_sleeps: true,
-            add_to_search_list: false,
+            add_to_search_list: true,
             require_create: true
         )
     end
@@ -505,22 +505,19 @@ platform :ios do
             adhoc: build.should_sigh_adhoc,
             readonly: true,
             api_key_path: appstoreconnect_api_key_file_path,
-            app_identifier: app_bundle_id,
-            skip_certificate_verification: is_running_on_ci
+            app_identifier: app_bundle_id
         )
         sigh(
             adhoc: build.should_sigh_adhoc,
             readonly: true,
             api_key_path: appstoreconnect_api_key_file_path,
-            app_identifier: "#{app_bundle_id}.extension-share",
-            skip_certificate_verification: is_running_on_ci
+            app_identifier: "#{app_bundle_id}.extension-share"
         )
         sigh(
             adhoc: build.should_sigh_adhoc,
             readonly: true,
             api_key_path: appstoreconnect_api_key_file_path,
-            app_identifier: "#{app_bundle_id}.extension-notification",
-            skip_certificate_verification: is_running_on_ci
+            app_identifier: "#{app_bundle_id}.extension-notification"
         )
     end
 
