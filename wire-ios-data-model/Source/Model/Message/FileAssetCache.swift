@@ -1025,7 +1025,16 @@ private struct FileCache: Cache {
         for character in reservedCharacters {
             safeKey = safeKey.replacingOccurrences(of: "\(character)", with: "_")
         }
-        return cacheFolderURL.appendingPathComponent(safeKey)
+
+        /// Parts of a key can come from the backend, so a key may nest into
+        /// subdirectories but must never climb out of the cache folder.
+        let components = safeKey
+            .split(separator: "/", omittingEmptySubsequences: true)
+            .map { $0 == "." || $0 == ".." ? "_" : String($0) }
+
+        guard !components.isEmpty else { return cacheFolderURL.appendingPathComponent("_") }
+
+        return components.reduce(cacheFolderURL) { $0.appendingPathComponent($1) }
     }
 
     /// Deletes the contents of the cache.
