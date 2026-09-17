@@ -949,6 +949,16 @@
 "shortcut.mark_all_as_read.title" = "Alle als gelesen markieren";
 "meta.menu.configure_notifications" = "Benachrichtigungen…";
 "meta.menu.open_self_profile" = "Profil öffnen";
+"meta.menu.mls_migration.confirmation.title" = "Protokoll auf MLS umstellen?";
+"meta.menu.mls_migration.confirmation.message" = "Das Standard-Nachrichtenprotokoll wird von Proteus auf Messaging-Layer-Security (MLS) umgestellt.";
+"meta.menu.mls_migration.confirmation.button" = "Protokoll umstellen";
+"meta.menu.mls_migration.success.title" = "Umstellung auf MLS abgeschlossen";
+"meta.menu.mls_migration.success.message" = "Die Unterhaltung verwendet jetzt MLS.";
+"meta.menu.mls_migration.failure.title" = "Umstellung auf MLS fehlgeschlagen";
+"meta.menu.mls_migration.failure.conversation_not_found" = "Die Unterhaltung wurde nicht gefunden.";
+"meta.menu.mls_migration.failure.unsupported_conversation" = "Es können nur Gruppenunterhaltungen von Teams umgestellt werden.";
+"meta.menu.mls_migration.failure.missing_mls_service" = "Die Umstellung auf MLS konnte nicht gestartet werden.";
+"meta.menu.mls_migration.failure.missing_mls_group_id" = "Die Unterhaltung hat keine MLS-Gruppen-ID.";
 
 // Delete conversation
 "meta.menu.delete_content.dialog_title" = "Verlauf löschen?";
