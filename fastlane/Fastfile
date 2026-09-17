@@ -2,6 +2,7 @@ require 'git'
 require 'base64'
 require 'httparty'
 require 'json'
+require 'securerandom'
 require 'set'
 require 'fastlane/action'
 require_relative 'framework'
@@ -33,21 +34,35 @@ platform :ios do
     end
 
     def create_keychain_if_needed
+        return unless is_running_on_ci
+
+        keychain_name = "Wire-Distribution-#{SecureRandom.uuid}"
+        ENV['KEYCHAIN_NAME'] = keychain_name
+        ENV['MATCH_KEYCHAIN_NAME'] = keychain_name
+
         create_keychain(
+            name: keychain_name,
+            password: ENV.fetch('KEYCHAIN_PASSWORD'),
             default_keychain: false,
             unlock: true,
             timeout: 3600,
-            lock_when_sleeps: true
-        ) if is_running_on_ci
+            lock_when_sleeps: true,
+            add_to_search_list: false,
+            require_create: true
+        )
     end
 
     def delete_keychain_if_needed
         return unless is_running_on_ci
         begin
-            delete_keychain
+            delete_keychain(name: ENV.fetch('KEYCHAIN_NAME'))
         rescue
             UI.verbose("No keychain found, skipping deletion...")
         end
+    end
+
+    def ci_keychain_path
+        FastlaneCore::Helper.keychain_path(ENV.fetch('KEYCHAIN_NAME'))
     end
 
     before_all do |lane|
@@ -63,7 +78,11 @@ platform :ios do
     end
 
     after_all do |lane|
-        delete_keychain_if_needed unless [:prepare_for_tests, :select_framework, :select_frameworks, :generate_framework_list, :list_schemes_json, :list_uitest_tags, :test_frameworks, :test_only_frameworks, :run_uitests].include?(lane)
+        delete_keychain_if_needed unless [:prepare_for_tests, :select_framework, :select_frameworks, :generate_framework_list, :list_schemes_json, :list_uitest_tags, :test_frameworks, :test_only_frameworks, :run_uitests, :generate_env].include?(lane)
+    end
+
+    error do |lane, _exception|
+        delete_keychain_if_needed unless [:prepare_for_tests, :select_framework, :select_frameworks, :generate_framework_list, :list_schemes_json, :list_uitest_tags, :test_frameworks, :test_only_frameworks, :run_uitests, :generate_env].include?(lane)
     end
     
     desc "Test frameworks given folders"
@@ -591,6 +610,7 @@ platform :ios do
             xcargs = ["BUILD_NUMBER=#{build.build_number}"]
             xcargs += enable_datadog_args if build.enable_datadog
             xcargs += enable_countly_args if build.enable_countly
+            xcargs << "OTHER_CODE_SIGN_FLAGS='--keychain #{ci_keychain_path}'" if is_running_on_ci
 
             sh "echo $HAS_PACKAGES_CACHE_HIT"
             build_app(
