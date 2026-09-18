@@ -402,6 +402,7 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
             MeetingDeleteEventNotificationBuilder(
                 meetingLocalStore: MeetingLocalStore(context: coreDataStack.syncContext),
                 userLocalStore: userLocalStore,
+                developerFlagStorage: dependency.sharedUserDefaults,
                 featureConfigLocalStore: FeatureConfigLocalStore(context: coreDataStack.syncContext),
                 accountID: dependency.accountID
             )

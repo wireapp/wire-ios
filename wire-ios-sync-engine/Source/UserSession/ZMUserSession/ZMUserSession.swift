@@ -174,6 +174,9 @@ public final class ZMUserSession: NSObject {
     }
 
     public var isMeetingsEnabled: Bool {
+        // TODO: [WPB-28001] Remove developer flag before release
+        guard DeveloperFlag.wireMeetings.isOn else { return false }
+
         let feature = Feature.fetch(name: .meetings, context: coreDataStack.viewContext)
         return feature?.status == .enabled
     }
