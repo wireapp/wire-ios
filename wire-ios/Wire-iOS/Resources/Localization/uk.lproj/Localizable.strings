@@ -1368,13 +1368,6 @@
 "self.settings.notifications.chat_alerts.toggle" = "Заголовки повідомлень";
 "self.settings.notifications.chat_alerts.footer" = "Нові повідомлення в інших розмовах.";
 
-"self.settings.sound_menu.sounds.title" = "Звуки";
-"self.settings.sound_menu.ringtone.title" = "Рингтон";
-"self.settings.sound_menu.message.title" = "Звук текстових повідомлень";
-"self.settings.sound_menu.ping.title" = "Пінг";
-"self.settings.sound_menu.ringtones.title" = "Рингтони";
-"self.settings.sound_menu.sounds.wire_sound" = "Wire";
-"self.settings.sound_menu.sounds.none" = "Вимкнено";
 
 "self.settings.callkit.title" = "Дзвінки";
 "self.settings.callkit.caption" = "Ділитися інформацією з iOS";
@@ -1386,9 +1379,6 @@
 "self.settings.vbr.title" = "Змінний бітрейт";
 "self.settings.vbr.description" = "Дана опція дозволяє аудіодзвінкам економити трафік та покращує їх якість в мережах з низькою швидкістю передачі даних. Ви можете деактивувати її, увімкнувши сталий бітрейт (CBR). Це налаштування впливає тільки на персональні дзвінки; конференційні дзвінки завжди використовують CBR.";
 
-"self.settings.sound_menu.sounds.wire_call" = "Дзвінок у Wire";
-"self.settings.sound_menu.sounds.wire_message" = "Повідомлення у Wire";
-"self.settings.sound_menu.sounds.wire_ping" = "Пінг у Wire";
 
 // By popular demand
 "self.settings.popular_demand.title" = "У відповідь на численні прохання";

@@ -1368,13 +1368,6 @@
 "self.settings.notifications.chat_alerts.toggle" = "Mesaj afişleri";
 "self.settings.notifications.chat_alerts.footer" = "Diğer konuşmalarda yeni mesajlar.";
 
-"self.settings.sound_menu.sounds.title" = "Sesler";
-"self.settings.sound_menu.ringtone.title" = "Arama zil sesi";
-"self.settings.sound_menu.message.title" = "Mesaj Sesi";
-"self.settings.sound_menu.ping.title" = "Ping";
-"self.settings.sound_menu.ringtones.title" = "Zil Sesleri";
-"self.settings.sound_menu.sounds.wire_sound" = "Wire";
-"self.settings.sound_menu.sounds.none" = "Hiçbiri";
 
 "self.settings.callkit.title" = "Aramalar";
 "self.settings.callkit.caption" = "iOS ile Paylaş";
@@ -1386,9 +1379,6 @@
 "self.settings.vbr.title" = "Değişken Bit Hızı Kodlaması";
 "self.settings.vbr.description" = "This makes audio calls use less data and work better on slower networks. Turn off to use constant bitrate encoding (CBR). This setting only affects 1:1 calls; conference calls always use CBR encoding.";
 
-"self.settings.sound_menu.sounds.wire_call" = "Wire Araması";
-"self.settings.sound_menu.sounds.wire_message" = "Wire Mesajı";
-"self.settings.sound_menu.sounds.wire_ping" = "Wire Pingi";
 
 // By popular demand
 "self.settings.popular_demand.title" = "Yoğun talep üzerine";

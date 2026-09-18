@@ -157,6 +157,15 @@ final class NotificationService: UNNotificationServiceExtension {
             "loading new notification service",
             attributes: .safePublic
         )
+
+        let messageNotificationSound = switch ExtensionSettings(defaults: sharedUserDefaults)
+            .messageNotificationSound {
+        case .wire:
+            UNNotificationSound(named: .init("new_message.caf"))
+        case .wireOld:
+            UNNotificationSound(named: .init("new_message_legacy.caf"))
+        }
+
         return NotificationServiceExtension(
             currentAppVersion: currentAppVersion,
             currentBuildNumber: currentBuildNumber,
@@ -168,6 +177,7 @@ final class NotificationService: UNNotificationServiceExtension {
                 UInt($0.rawValue)
             },
             request: request,
+            messageNotificationSound: messageNotificationSound,
             contentHandler: contentHandler,
             didComplete: { [weak self] in
                 guard let self else { return }
