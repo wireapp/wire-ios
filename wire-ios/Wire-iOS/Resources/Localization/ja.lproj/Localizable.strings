@@ -1196,8 +1196,6 @@
 "self.settings.manage_team.title" = "チームを管理";
 "self.settings.add_account.title" = "アカウントを追加";
 
-"self.settings.add_account.error.title" = "3 つのアカウントがアクティブです";
-"self.settings.add_account.error.message" = "１度に３つのアカウントまでログインできます。新規にログインする為に、１つログアウトしてください。";
 
 "self.settings.switch_account.message" = "このアカウントで通話中です。\nアカウントを切り替えると現在の通話が終了します。";
 "self.settings.switch_account.action" = "すぐに切り替える";
@@ -1739,7 +1737,6 @@
 "error.user.device_deleted_remotely" = "別のデバイスからログアウトしました。";
 "error.user.last_identity_cant_be_deleted" = "An email address is required.";
 "error.user.account_suspended" = "このアカウントは、もはやログイン権限はありません";
-"error.user.account_limit_reached" = "３アカウント以上は追加できません。";
 "error.user.too_many_requests" = "Too many requests, please try again later.";
 
 "error.group_call.too_many_members_in_conversation.title" = "呼び出す人が多すぎます";

@@ -3564,8 +3564,6 @@ internal enum L10n {
         }
       }
       internal enum User {
-        /// You can’t add more than 3 accounts.
-        internal static let accountLimitReached = L10n.tr("Localizable", "error.user.account_limit_reached", fallback: "You can’t add more than 3 accounts.")
         /// The account you are trying access is pending activation. Please verify your details.
         internal static let accountPendingActivation = L10n.tr("Localizable", "error.user.account_pending_activation", fallback: "The account you are trying access is pending activation. Please verify your details.")
         /// This account is no longer authorized to log in.

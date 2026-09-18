@@ -1196,8 +1196,6 @@
 "self.settings.manage_team.title" = "Administrar equipo";
 "self.settings.add_account.title" = "Agregar cuenta";
 
-"self.settings.add_account.error.title" = "Tres cuentas activas";
-"self.settings.add_account.error.message" = "Solo puedes estar conectado con tres cuentas a la vez. Desconecta una para agregar otra.";
 
 "self.settings.switch_account.message" = "Hay una llamada activa con esta cuenta.\nCambiar de cuenta colgará la llamada actual.";
 "self.settings.switch_account.action" = "Cambiar de todos modos";
@@ -1739,7 +1737,6 @@
 "error.user.device_deleted_remotely" = "Se ha cerrado la sesión en otro dispositivo.";
 "error.user.last_identity_cant_be_deleted" = "Se requiere una dirección de correo electrónico.";
 "error.user.account_suspended" = "Esta cuenta ya no está autorizada a iniciar sesión.";
-"error.user.account_limit_reached" = "No puedes añadir más de 3 cuentas.";
 "error.user.too_many_requests" = "Demasiadas solicitudes, por favor inténtalo de nuevo más tarde.";
 
 "error.group_call.too_many_members_in_conversation.title" = "Demasiadas personas para llamar";

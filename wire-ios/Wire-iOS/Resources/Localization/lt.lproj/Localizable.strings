@@ -1196,8 +1196,6 @@
 "self.settings.manage_team.title" = "Valdyti komandą";
 "self.settings.add_account.title" = "Pridėti paskyrą";
 
-"self.settings.add_account.error.title" = "Aktyvios trys paskyros";
-"self.settings.add_account.error.message" = "Vienu metu galite būti prisijungęs iki trijų paskyrų. Atsijunkite nuo vienos, kad galėtumėte pridėti kitą.";
 
 "self.settings.switch_account.message" = "Vyksta skambutis šioje paskyroje.\nKeičiant paskyras nutrauksite vykstantį skambutį.";
 "self.settings.switch_account.action" = "Vis tiek pakeisti";
@@ -1739,7 +1737,6 @@
 "error.user.device_deleted_remotely" = "Buvote atjungtas kitame įrenginyje.";
 "error.user.last_identity_cant_be_deleted" = "An email address is required.";
 "error.user.account_suspended" = "Ši paskyra daugiau nebeturi įgaliojimų prisijungti.";
-"error.user.account_limit_reached" = "Negalite pridėti daugiau nei 3 paskyras.";
 "error.user.too_many_requests" = "Too many requests, please try again later.";
 
 "error.group_call.too_many_members_in_conversation.title" = "Per daug žmonių, norint skambinti";
