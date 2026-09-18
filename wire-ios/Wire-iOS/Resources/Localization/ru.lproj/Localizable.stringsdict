@@ -517,5 +517,45 @@
         <string>%d прикрепленных файла</string>
       </dict>
     </dict>
+    <key>self.settings.add_account.error.title</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@number_of_accounts@</string>
+      <key>number_of_accounts</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>активен %2$@ аккаунт</string>
+        <key>few</key>
+        <string>Активны %2$@ аккаунта</string>
+        <key>many</key>
+        <string>Активны %2$@ аккаунтов</string>
+        <key>other</key>
+        <string>Активны %2$@ аккаунта</string>
+      </dict>
+    </dict>
+    <key>self.settings.add_account.error.message</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@number_of_accounts@</string>
+      <key>number_of_accounts</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>Одновременно можно авторизоваться только в %2$@ аккаунте. Выйдите, чтобы добавить другой.</string>
+        <key>few</key>
+        <string>Одновременно можно авторизоваться только в %2$@ аккаунтах. Выйдите, чтобы добавить другой.</string>
+        <key>many</key>
+        <string>Одновременно можно авторизоваться только в %2$@ аккаунтах. Выйдите, чтобы добавить другой.</string>
+        <key>other</key>
+        <string>Одновременно можно авторизоваться только в %2$@ аккаунтах. Выйдите, чтобы добавить другой.</string>
+      </dict>
+    </dict>
   </dict>
 </plist>
