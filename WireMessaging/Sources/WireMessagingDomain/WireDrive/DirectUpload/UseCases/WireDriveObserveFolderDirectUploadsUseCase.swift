@@ -16,30 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import Foundation
+package import Combine
+package import Foundation
 
-public enum WireDriveUploadStatus: Equatable, Hashable, Sendable {
-    case uploading(progress: Float)
-    case uploaded(isDraft: Bool)
-    case failed(error: WireDriveUploadError)
-    case cancelled
+/// Observes the uploads destined for one folder.
+@MainActor
+package struct WireDriveObserveFolderDirectUploadsUseCase: WireDriveObserveFolderDirectUploadsUseCaseProtocol {
 
-    public var isUploaded: Bool {
-        switch self {
-        case .uploaded:
-            true
-        default:
-            false
-        }
+    private let tracker: any WireDriveDirectUploadTrackerProtocol
+
+    package init(tracker: any WireDriveDirectUploadTrackerProtocol) {
+        self.tracker = tracker
     }
-}
 
-public enum WireDriveUploadError: Error, Equatable, Hashable, Sendable {
-    case fileNotFound
-    case urlError(error: URLError)
-    case other(message: String)
-    case serverError(statusCode: Int)
-    case unauthorized
-    case insufficientStorage
-    case cancelledBySystem
+    package func invoke(folderPath: String) -> AnyPublisher<[WireDriveDirectUploadItem], Never> {
+        tracker.publisher(folderPath: folderPath)
+    }
 }

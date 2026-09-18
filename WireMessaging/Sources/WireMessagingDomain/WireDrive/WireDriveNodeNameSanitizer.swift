@@ -16,30 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import Foundation
+package import Foundation
 
-public enum WireDriveUploadStatus: Equatable, Hashable, Sendable {
-    case uploading(progress: Float)
-    case uploaded(isDraft: Bool)
-    case failed(error: WireDriveUploadError)
-    case cancelled
+/// Replaces characters that are not allowed in a Wire Drive node name.
+package enum WireDriveNodeNameSanitizer {
 
-    public var isUploaded: Bool {
-        switch self {
-        case .uploaded:
-            true
-        default:
-            false
-        }
+    package static let charactersToReplace: Set<Character> = ["/", "\\", "\""]
+
+    package static let replacement: Character = "_"
+
+    package static func sanitize(_ name: String) -> String {
+        String(name.map { charactersToReplace.contains($0) ? replacement : $0 })
     }
-}
-
-public enum WireDriveUploadError: Error, Equatable, Hashable, Sendable {
-    case fileNotFound
-    case urlError(error: URLError)
-    case other(message: String)
-    case serverError(statusCode: Int)
-    case unauthorized
-    case insufficientStorage
-    case cancelledBySystem
 }
