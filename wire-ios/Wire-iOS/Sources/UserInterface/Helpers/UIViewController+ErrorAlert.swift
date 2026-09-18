@@ -85,7 +85,9 @@ extension UIViewController {
             case .accountSuspended:
                 message = L10n.Localizable.Error.User.accountSuspended
             case .accountLimitReached:
-                message = L10n.Localizable.Error.User.accountLimitReached
+                let maxNumberAccounts = (nsError.userInfo[ZMAccountLimitReachedMaxNumberAccountsKey] as? Int)
+                    ?? SessionManager.defaultMaxNumberAccounts
+                message = AccountLimitAlertLocalization.message(maxNumberAccounts: maxNumberAccounts)
             case .tooManyRequests:
                 message = L10n.Localizable.Error.User.tooManyRequests
             case .unknownError:

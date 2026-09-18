@@ -1196,8 +1196,6 @@
 "self.settings.manage_team.title" = "Gerenciar Equipe";
 "self.settings.add_account.title" = "Adicionar uma conta";
 
-"self.settings.add_account.error.title" = "Três contas de ativas";
-"self.settings.add_account.error.message" = "Você apenas pode estar conectado com três contas de uma vez. Saia de uma para adicionar outra.";
 
 "self.settings.switch_account.message" = "Uma chamada está ativa nesta conta.\nMudar de conta irá desligar a chamada atual.";
 "self.settings.switch_account.action" = "Mudar de qualquer maneira";
@@ -1739,7 +1737,6 @@
 "error.user.device_deleted_remotely" = "Você foi desconectado através de um outro aparelho.";
 "error.user.last_identity_cant_be_deleted" = "Um endereço de e-mail é obrigatório.";
 "error.user.account_suspended" = "Esta conta não está mais autorizada a entrar.";
-"error.user.account_limit_reached" = "Você não pode adicionar mais de 3 contas.";
 "error.user.too_many_requests" = "Muitas solicitações, tente novamente mais tarde.";
 
 "error.group_call.too_many_members_in_conversation.title" = "Muitas pessoas na chamada";

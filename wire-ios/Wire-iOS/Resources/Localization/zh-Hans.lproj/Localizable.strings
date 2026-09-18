@@ -1196,8 +1196,6 @@
 "self.settings.manage_team.title" = "管理团队";
 "self.settings.add_account.title" = "添加帐户";
 
-"self.settings.add_account.error.title" = "已啓動三個帐户";
-"self.settings.add_account.error.message" = "您只能同时登录三个帐户。请先登出任何一个帐户，然后加入新帐户。";
 
 "self.settings.switch_account.message" = "该账户正在进行通话。\n切换帐号会挂断当前通话。";
 "self.settings.switch_account.action" = "仍然切换";
@@ -1739,7 +1737,6 @@
 "error.user.device_deleted_remotely" = "您的另一台设备已被登出。";
 "error.user.last_identity_cant_be_deleted" = "需要一个电子邮件地址。";
 "error.user.account_suspended" = "此账户不再被授权登录";
-"error.user.account_limit_reached" = "您最多只能添加3个帐号。";
 "error.user.too_many_requests" = "请求过多，请稍后重试。";
 
 "error.group_call.too_many_members_in_conversation.title" = "超出群组通话人数";
