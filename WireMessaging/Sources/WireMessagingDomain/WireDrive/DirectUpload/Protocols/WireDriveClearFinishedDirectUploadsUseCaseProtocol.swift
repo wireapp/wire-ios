@@ -21,7 +21,8 @@ package import Foundation
 // sourcery: AutoMockable
 package protocol WireDriveClearFinishedDirectUploadsUseCaseProtocol: Sendable {
 
-    /// Forgets uploads that finished, failed or were cancelled, and deletes their staged files.
+    /// Forgets uploads that finished successfully or were cancelled.
+    /// Failed uploads are left so they can still be retried.
 
     func invoke() async
 
