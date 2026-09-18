@@ -106,7 +106,7 @@ public struct WireDriveDirectUploadItem: Identifiable, Equatable, Hashable, Send
     public let isRetryable: Bool
 
     /// How many bytes have been sent so far.
-    
+
     public var bytesSent: UInt64 {
         UInt64((Float(fileSize) * status.progress).rounded())
     }
