@@ -68,12 +68,16 @@ struct ConversationCallingEventNotificationBuilder: ConversationCallingEventNoti
 
         if displayCallKitNotification {
             // First, let's try to return a CallKit notification if possible.
-            return await buildCallKitNotification(
-                callContent: callContent,
-                accountID: accountID,
-                conversationID: resolvedConversationID,
-                senderID: senderID
-            )
+            if DeveloperFlag.enableNSEHelper.isOn {
+                return nil
+            } else {
+                return await buildCallKitNotification(
+                    callContent: callContent,
+                    accountID: accountID,
+                    conversationID: resolvedConversationID,
+                    senderID: senderID
+                )
+            }
 
         } else if displayCallNotification {
             // If not, try to return a regular call notification.
