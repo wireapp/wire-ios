@@ -44,8 +44,7 @@ package protocol WireDriveDirectUploadManagerProtocol: Sendable {
 
     func retryFailed() async
 
-    /// Forgets uploads that have finished, failed or been cancelled, and deletes their staged files.
-
+    /// Forgets uploads that finished successfully or were cancelled, and deletes their staged files.
     func clearFinished() async
 
     /// Cancels everything and removes all state, e.g. on logout.
