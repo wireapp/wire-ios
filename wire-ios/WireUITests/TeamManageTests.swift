@@ -182,7 +182,7 @@ final class TeamManageTests: WireUITestCase {
 
         let firstTimePage = try app.loginUser(email: teamMember.email, password: teamMember.password)
         _ = try firstTimePage
-            .acceptPopupOnTeamMemberSetup(with: self)
+            .acceptPopupOnTeamMemberSetup()
             .setUsername(teamMember.username)
 
         try await UserHelper.default.removeTeamMember(
