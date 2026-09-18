@@ -340,9 +340,12 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
 
         // Protocol details
         sections.append(MessageProtocolSectionController(
+            conversation: conversation as? ZMConversation,
             messageProtocol: conversation.messageProtocol,
             groupID: conversation.mlsGroupID,
-            ciphersuite: conversation.ciphersuite
+            ciphersuite: conversation.ciphersuite,
+            userSession: userSession,
+            presentingViewController: self
         ))
 
         return sections
@@ -356,7 +359,9 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
               changeInfo.allowAppsChanged ||
               changeInfo.destructionTimeoutChanged ||
               changeInfo.mutedMessageTypesChanged ||
-              changeInfo.legalHoldStatusChanged
+              changeInfo.legalHoldStatusChanged ||
+              changeInfo.messageProtocolChanged ||
+              changeInfo.mlsStatusChanged
         else { return }
 
         updateLegalHoldIndicator()
