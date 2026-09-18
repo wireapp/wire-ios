@@ -100,6 +100,7 @@ extension MLSMigrationPresenter {
         )
         controller.addAction(UIAlertAction(title: L10n.Localizable.General.ok, style: .default))
         presentController(controller)
+    }
 
     private func localizedDescription(for error: Error) -> String {
         guard let failure = error as? MigrateConversationToMLSUseCase.Failure else {
