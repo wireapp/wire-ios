@@ -3,6 +3,14 @@ name: Run all tests
 on:
   workflow_dispatch:
     inputs:
+      mac_runner:
+        description: 'macOS runner'
+        type: choice
+        options:
+          - in-house
+          - cirrus
+          - github
+        default: cirrus
       run_critical_flows:
         description: 'Run critical flows'
         type: boolean
@@ -18,6 +26,7 @@ jobs:
     uses: ./.github/workflows/_reusable_run_tests.yml
     with:
       all: true
+      mac_runner: ${{ inputs.mac_runner || 'cirrus' }}
       run_critical_flows: ${{ inputs.run_critical_flows }}
       notify: always
     secrets:

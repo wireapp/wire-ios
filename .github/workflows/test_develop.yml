@@ -2,6 +2,15 @@ name: Nightly Tests
 
 on:
   workflow_dispatch:
+    inputs:
+      mac_runner:
+        description: 'macOS runner'
+        type: choice
+        options:
+          - in-house
+          - cirrus
+          - github
+        default: cirrus
   schedule:
     - cron: "0 21 * * MON-FRI"
   
@@ -17,6 +26,7 @@ jobs:
     with:
       all: false
       branch: develop
+      mac_runner: ${{ inputs.mac_runner || 'cirrus' }}
       run_critical_flows: true
       ui_test_tags: "!critical"
       notify: always
