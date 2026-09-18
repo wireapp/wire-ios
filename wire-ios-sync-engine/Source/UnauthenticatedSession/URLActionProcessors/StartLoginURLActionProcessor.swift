@@ -34,7 +34,9 @@ class StartLoginURLActionProcessor: URLActionProcessor {
             guard delegate?.isAllowedToCreateNewAccount == true else {
                 presentationDelegate?.failedToPerformAction(
                     urlAction,
-                    error: SessionManager.AccountError.accountLimitReached
+                    error: SessionManager.AccountError.accountLimitReached(
+                        maxNumberAccounts: delegate?.maxNumberAccounts ?? SessionManager.defaultMaxNumberAccounts
+                    )
                 )
                 return
             }

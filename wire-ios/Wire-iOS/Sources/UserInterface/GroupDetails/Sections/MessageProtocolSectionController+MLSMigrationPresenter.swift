@@ -1,0 +1,133 @@
+//
+// Wire
+// Copyright (C) 2026 Wire Swiss GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+//
+
+import UIKit
+import WireDataModel
+import WireLocators
+
+protocol MLSMigrationPresenter {
+    func requestMLSMigration()
+
+    var conversationToMigrate: ZMConversation? { get }
+
+    func presentController(_ controller: UIViewController)
+}
+
+extension MLSMigrationPresenter {
+
+    @MainActor
+    func requestMLSMigration() {
+        guard let conversation = conversationToMigrate else { return }
+
+        let controller = UIAlertController(
+            title: L10n.Localizable.Meta.Menu.MlsMigration.Confirmation.title,
+            message: L10n.Localizable.Meta.Menu.MlsMigration.Confirmation.message,
+            preferredStyle: .alert
+        )
+        controller.addAction(.cancel())
+        controller.addAction(
+            UIAlertAction(
+                title: L10n.Localizable.Meta.Menu.MlsMigration.Confirmation.button,
+                style: .default,
+                accessibilityIdentifier: Locators.ConversationDetailsActions.migrateToMLS.rawValue
+            ) { _ in
+                migrateConversationToMLS(conversation)
+            }
+        )
+        presentController(controller)
+    }
+
+    private func migrateConversationToMLS(_ conversation: ZMConversation) {
+        guard let conversationID = conversation.qualifiedID,
+              let syncContext = conversation.managedObjectContext?.zm_sync
+        else {
+            Task {
+                await presentMLSMigrationFailure(
+                    MigrateConversationToMLSUseCase.Failure.conversationNotFound
+                )
+            }
+            return
+        }
+
+        let useCase = MigrateConversationToMLSUseCase()
+
+        Task {
+            do {
+                try await useCase.invoke(
+                    conversationID: conversationID,
+                    syncContext: syncContext
+                )
+                await presentMLSMigrationSuccess()
+            } catch {
+                await presentMLSMigrationFailure(error)
+            }
+        }
+    }
+
+    @MainActor
+    private func presentMLSMigrationSuccess() {
+        let controller = UIAlertController(
+            title: L10n.Localizable.Meta.Menu.MlsMigration.Success.title,
+            message: L10n.Localizable.Meta.Menu.MlsMigration.Success.message,
+            preferredStyle: .alert
+        )
+        controller.addAction(UIAlertAction(title: L10n.Localizable.General.ok, style: .default))
+
+        presentController(controller)
+    }
+
+    @MainActor
+    private func presentMLSMigrationFailure(_ error: Error) {
+        let controller = UIAlertController(
+            title: L10n.Localizable.Meta.Menu.MlsMigration.Failure.title,
+            message: localizedDescription(for: error),
+            preferredStyle: .alert
+        )
+        controller.addAction(UIAlertAction(title: L10n.Localizable.General.ok, style: .default))
+
+    }
+
+    private func localizedDescription(for error: Error) -> String {
+        guard let failure = error as? MigrateConversationToMLSUseCase.Failure else {
+            return error.localizedDescription
+        }
+
+        return switch failure {
+        case .conversationNotFound:
+            L10n.Localizable.Meta.Menu.MlsMigration.Failure.conversationNotFound
+        case .unsupportedConversation:
+            L10n.Localizable.Meta.Menu.MlsMigration.Failure.unsupportedConversation
+        case .missingMLSService:
+            L10n.Localizable.Meta.Menu.MlsMigration.Failure.missingMlsService
+        case .missingMLSGroupID:
+            L10n.Localizable.Meta.Menu.MlsMigration.Failure.missingMlsGroupId
+        }
+    }
+
+}
+
+extension MessageProtocolSectionController: @MainActor MLSMigrationPresenter {
+    var conversationToMigrate: ZMConversation? {
+        conversation
+    }
+
+    @MainActor
+    func presentController(_ controller: UIViewController) {
+        presentingViewController?.present(controller, animated: true)
+    }
+}

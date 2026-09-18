@@ -2,6 +2,15 @@ name: Edge
 
 on:
   workflow_dispatch:
+    inputs:
+      mac_runner:
+        description: 'macOS runner'
+        type: choice
+        options:
+          - in-house
+          - cirrus
+          - github
+        default: cirrus
   push:
     branches:
       - 'develop'
@@ -21,6 +30,7 @@ jobs:
       datadog_enabled: true
       fastlane_action: development
       is_cloud_build: true
+      mac_runner: ${{ inputs.mac_runner || 'cirrus' }}
       produce_changelog: false
       distribute_externals: true # automatically deliver to Wire Employees
     secrets:
