@@ -1009,7 +1009,7 @@
 "admin_selection.title" = "Новый администратор";
 "admin_selection.promote" = "Назначить";
 "admin_selection.info_banner" = "После того как вы назначите нового администратора, вы покинете группу.";
-"admin_selection.promotion_error" = "Не удалось назначить пользователя администратором.";
+"admin_selection.promotion_error" = "Член группы не может быть повышен до admin.";
 
 // Last admin leave flow
 "last_admin_leave.title" = "Покинуть \"%@\"?";

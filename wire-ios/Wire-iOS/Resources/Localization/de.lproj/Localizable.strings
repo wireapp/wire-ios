@@ -1009,7 +1009,7 @@
 "admin_selection.title" = "Neuer Admin";
 "admin_selection.promote" = "Ernennen";
 "admin_selection.info_banner" = "Nachdem Sie einen neuen Admin ernannt haben, verlassen Sie die Gruppe.";
-"admin_selection.promotion_error" = "Failed to promote user to admin.";
+"admin_selection.promotion_error" = "Gruppen-Mitglied konnte nicht zum Admin ernannt werden.";
 
 // Last admin leave flow
 "last_admin_leave.title" = "\"%s\" verlassen?";
