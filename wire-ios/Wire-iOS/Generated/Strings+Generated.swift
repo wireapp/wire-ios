@@ -5767,6 +5767,7 @@ internal enum L10n {
               return L10n.tr("Localizable", "self.settings.add_account.error.title", p1, fallback: "Plural format key: \"%#@number_of_accounts@\"")
             }
           }
+x
         }
         internal enum AddAccountOrTeam {
           /// Add Account or Team
