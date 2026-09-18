@@ -130,6 +130,13 @@ public extension JournalKey where Value == Bool {
 
 public extension JournalKey where Value == Set<String> {
 
+    /// The client production API versions used for the last successful backend metadata resolution.
+
+    static let resolvedBackendMetadataAPIVersions = Self(
+        "resolvedBackendMetadataAPIVersions",
+        defaultValue: []
+    )
+
     /// The set of MLS group IDs to be repaired.
 
     static let brokenMLSGroupIDs = Self(
