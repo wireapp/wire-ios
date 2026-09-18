@@ -91,6 +91,9 @@ jobs:
           ref: ${{ inputs.branch }}
           lfs: 'true'
 
+      - name: Materialize Git LFS files
+        run: git lfs checkout
+
       - name: Sanitize branch name
         env:
           INPUT_BRANCH: ${{ inputs.branch }}
