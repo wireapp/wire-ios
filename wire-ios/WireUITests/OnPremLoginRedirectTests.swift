@@ -87,4 +87,47 @@ final class OnPremLoginRedirectTests: WireUITestCase {
             "Expected backend domain missing from \(welcomePage.setBackendLabel.label)"
         )
     }
+
+    /// Validates custom domain redirect opens Idp login
+    /// Ref Bug: [WPB-28698]
+    @MainActor
+    func testCustomDomainRedirectOpensIdP_TC_11927() async throws {
+
+        let environmentVariables = try EnvironmentVariables()
+
+        // GIVEN - relaunch without staging backend, not needed for this flow
+        app.terminate()
+        app.launchArguments = ["-resetData", "--developer-flag=useWireAuthentication:true"]
+        app.launch()
+
+        // WHEN - user enters email with custom domain
+        let confirmationPage = try WelcomePage()
+            .enterDomainForBackendSwitch(environmentVariables.customDomainRedirectEmail)
+
+        let expectedBackendURL = try XCTUnwrap(
+            URL(string: environmentVariables.customDomainRedirectBackendURL)
+        )
+        XCTAssertTrue(
+            confirmationPage.backendUrlValue(containing: expectedBackendURL).waitForExistence(timeout: 5),
+            "Confirmation dialog did not show expected backend URL"
+        )
+
+        // WHEN - user proceeds with the backend change
+        try confirmationPage.tapOnProceedButton()
+
+        // THEN - custom domain webpage opens in the app
+        XCTAssertTrue(
+            app.descendants(matching: .any)
+                .matching(
+                    NSPredicate(
+                        format: "label CONTAINS[c] %@ OR value CONTAINS[c] %@",
+                        environmentVariables.customDomainRedirectIdpDomain,
+                        environmentVariables.customDomainRedirectIdpDomain
+                    )
+                )
+                .firstMatch
+                .waitForExistence(timeout: 10),
+            "Webpage did not open expected URL \(environmentVariables.customDomainRedirectIdpDomain)"
+        )
+    }
 }
