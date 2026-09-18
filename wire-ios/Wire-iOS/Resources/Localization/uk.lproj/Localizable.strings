@@ -1196,8 +1196,6 @@
 "self.settings.manage_team.title" = "Керування командою";
 "self.settings.add_account.title" = "Додати акаунт";
 
-"self.settings.add_account.error.title" = "Три акаунти вже активні";
-"self.settings.add_account.error.message" = "Тільки три акаунти можуть одночасно бути активними. Вийдіть з одного активного акаунта, щоб додати наступний.";
 
 "self.settings.switch_account.message" = "Цей акаунт має активний дзвінок.\nПереключення акаунтів завершить його.";
 "self.settings.switch_account.action" = "Все-одно переключити";
@@ -1739,7 +1737,6 @@
 "error.user.device_deleted_remotely" = "Ви вийшли на іншому пристрої.";
 "error.user.last_identity_cant_be_deleted" = "An email address is required.";
 "error.user.account_suspended" = "Даний акаунт був заблокований.";
-"error.user.account_limit_reached" = "Ви не можете додати більше трьох акаунтів.";
 "error.user.too_many_requests" = "Too many requests, please try again later.";
 
 "error.group_call.too_many_members_in_conversation.title" = "Забагато учасників для здійснення дзвінка";

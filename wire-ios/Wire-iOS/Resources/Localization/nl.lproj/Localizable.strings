@@ -1196,8 +1196,6 @@
 "self.settings.manage_team.title" = "Beheer team";
 "self.settings.add_account.title" = "Voeg een account toe";
 
-"self.settings.add_account.error.title" = "Drie accounts zijn actief";
-"self.settings.add_account.error.message" = "Je kan maximaal met 3 accounts te gelijk inloggen. Log op een ander account uit, om een nieuw account toe te voegen.";
 
 "self.settings.switch_account.message" = "A call is active in this account.\nSwitching accounts will hang up the current call.";
 "self.settings.switch_account.action" = "Toch wisselen";
@@ -1739,7 +1737,6 @@
 "error.user.device_deleted_remotely" = "Je bent uitgelogd door een ander apparaat.";
 "error.user.last_identity_cant_be_deleted" = "An email address is required.";
 "error.user.account_suspended" = "Dit account is niet langer geautoriseerd om in te loggen.";
-"error.user.account_limit_reached" = "Je kan niet meer dan 3 accounts toevoegen.";
 "error.user.too_many_requests" = "Too many requests, please try again later.";
 
 "error.group_call.too_many_members_in_conversation.title" = "Te veel mensen om te bellen";

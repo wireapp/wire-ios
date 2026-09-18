@@ -1196,8 +1196,6 @@
 "self.settings.manage_team.title" = "Управлять командой";
 "self.settings.add_account.title" = "Добавить аккаунт";
 
-"self.settings.add_account.error.title" = "Активны три аккаунта";
-"self.settings.add_account.error.message" = "Одновременно можно авторизоваться не более чем в трех аккаунтах. Выйдите из одного для добавления другого.";
 
 "self.settings.switch_account.message" = "В этой учетной записи активен вызов.\nПереключение учетных записей приведет к завершению текущего вызова.";
 "self.settings.switch_account.action" = "Все равно переключиться";
@@ -1739,7 +1737,6 @@
 "error.user.device_deleted_remotely" = "Вы вышли на другом устройстве.";
 "error.user.last_identity_cant_be_deleted" = "Необходимо указать адрес электронной почты.";
 "error.user.account_suspended" = "Эта учетная запись больше не авторизована для входа.";
-"error.user.account_limit_reached" = "Нельзя добавить более трех учетных записей.";
 "error.user.too_many_requests" = "Слишком много запросов, пожалуйста, повторите попытку позже.";
 
 "error.group_call.too_many_members_in_conversation.title" = "Вы выбрали слишком много пользователей для звонка";
