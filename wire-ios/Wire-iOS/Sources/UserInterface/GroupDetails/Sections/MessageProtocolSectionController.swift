@@ -176,8 +176,7 @@ final class MessageProtocolSectionController: GroupDetailsSectionController {
         requestMLSMigration()
     }
 
-    @MainActor
-    private var canTriggerManualMLSMigration: Bool {
+    @MainActor private var canTriggerManualMLSMigration: Bool {
         get async {
             guard messageProtocol == .proteus || messageProtocol == .mixed else {
                 Self.logger
