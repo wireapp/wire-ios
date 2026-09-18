@@ -3,6 +3,14 @@ name: C1 C2 C3 Production
 on: 
   workflow_dispatch:
     inputs:
+      mac_runner:
+        description: 'macOS runner'
+        type: choice
+        options:
+          - in-house
+          - cirrus
+          - github
+        default: cirrus
       column:
         description: 'Column (C1, C2, C3, all)'
         type: choice
@@ -33,6 +41,7 @@ jobs:
     with:
       fastlane_action: appstore_col_1_prod
       is_cloud_build: false
+      mac_runner: ${{ inputs.mac_runner || 'cirrus' }}
       countly_enabled: false
       skip_security_tests: false
       produce_debug_builds: ${{ inputs.produce_debug_builds }}
@@ -72,6 +81,7 @@ jobs:
     with:
       fastlane_action: appstore_col_2_prod
       is_cloud_build: false
+      mac_runner: ${{ inputs.mac_runner || 'cirrus' }}
       countly_enabled: false
       skip_security_tests: false
       produce_debug_builds: ${{ inputs.produce_debug_builds }}
@@ -110,6 +120,7 @@ jobs:
     with:
       fastlane_action: appstore_col_3_prod
       is_cloud_build: false
+      mac_runner: ${{ inputs.mac_runner || 'cirrus' }}
       countly_enabled: false
       skip_security_tests: false
       produce_debug_builds: ${{ inputs.produce_debug_builds }}

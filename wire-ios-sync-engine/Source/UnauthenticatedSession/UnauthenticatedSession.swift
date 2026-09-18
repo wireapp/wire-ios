@@ -133,6 +133,10 @@ extension UnauthenticatedSession: UnauthenticatedSessionStatusDelegate {
         delegate?.sessionIsAllowedToCreateNewAccount(self) ?? false
     }
 
+    var maxNumberAccounts: Int {
+        delegate?.sessionMaxNumberAccounts(self) ?? SessionManager.defaultMaxNumberAccounts
+    }
+
 }
 
 extension UnauthenticatedSession: URLActionProcessor {

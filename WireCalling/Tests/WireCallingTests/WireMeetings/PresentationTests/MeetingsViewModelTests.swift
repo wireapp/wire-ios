@@ -101,6 +101,13 @@ struct MeetingsViewModelTests {
         }
         await viewModel.loadInitialData()
 
+        upcomingMeetingsUseCase
+            .invokePageSizeIntOffsetIntPaginatedMeetingsThrowableError = URLError(.notConnectedToInternet)
+        await viewModel.loadInitialData()
+        #expect(viewModel.hasLoadError)
+        #expect(viewModel.loadedMeetings == [first])
+        upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsThrowableError = nil
+
         // When — a second initial load returns a different page
         upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsClosure = { _, _ in
             PaginatedMeetings(meetings: [second], hasMore: false, nextOffset: 10)
@@ -111,6 +118,7 @@ struct MeetingsViewModelTests {
         #expect(viewModel.loadedMeetings.count == 1)
         #expect(viewModel.loadedMeetings.first?.title == "Second load")
         #expect(viewModel.hasMore == false)
+        #expect(!viewModel.hasLoadError)
         #expect(upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsReceivedInvocations.last?
             .offset == 0)
     }
@@ -194,18 +202,20 @@ struct MeetingsViewModelTests {
     @Test("a meeting change event re-fetches the entire loaded range in one page")
     func meetingChangeEvent_refetchesLoadedRange() async {
         // Given — 25 loaded meetings (initial page of 20 plus a page of 5)
-        let meetings = (0 ..< 25).map { index in
+        var meetings = (0 ..< 25).map { index in
             Meeting.fixture(
                 title: "Meeting \(index)",
                 start: mockDateProvider.now.addingTimeInterval(Double(index + 1) * 3600)
             )
         }
-        upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsClosure = { _, offset in
-            if offset == 0 {
-                PaginatedMeetings(meetings: Array(meetings.prefix(20)), hasMore: true, nextOffset: 20)
-            } else {
-                PaginatedMeetings(meetings: Array(meetings.suffix(5)), hasMore: false, nextOffset: 25)
-            }
+        let repository = MeetingRepositoryProtocolMock()
+        repository.fetchMeetingsInRangeRangeDateOffsetIntLimitIntMeetingReturnValue = meetings
+        let fetchMeetings = FetchUpcomingMeetingsUseCase(
+            repository: repository,
+            currentDateProvider: mockDateProvider
+        )
+        upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsClosure = { pageSize, offset in
+            try await fetchMeetings.invoke(pageSize: pageSize, offset: offset)
         }
         await viewModel.loadInitialData()
         await viewModel.loadMoreIfNeeded()
@@ -215,9 +225,8 @@ struct MeetingsViewModelTests {
         observeMeetingChangesUseCase.invokeAsyncStreamVoidReturnValue = changes
 
         // When
-        upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsClosure = { _, _ in
-            PaginatedMeetings(meetings: meetings, hasMore: false, nextOffset: 12)
-        }
+        meetings[0] = Meeting.fixture(id: meetings[0].id, title: "Edited", start: meetings[0].start)
+        repository.fetchMeetingsInRangeRangeDateOffsetIntLimitIntMeetingReturnValue = meetings
         changeContinuation.yield(())
         changeContinuation.finish()
         await viewModel.observeMeetingChanges()
@@ -227,7 +236,7 @@ struct MeetingsViewModelTests {
             .last
         #expect(lastInvocation?.pageSize == 25)
         #expect(lastInvocation?.offset == 0)
-        #expect(viewModel.loadedMeetings.count == 25)
+        #expect(viewModel.loadedMeetings == meetings)
     }
 
     // MARK: - observeAttendedMeetings
@@ -431,6 +440,14 @@ struct MeetingsViewModelTests {
         // Then — the error is surfaced and the meeting is not removed
         #expect(viewModel.hasDeleteError == true)
         #expect(viewModel.loadedMeetings.count == 1)
+
+        viewModel.hasDeleteError = false
+        deleteMeetingUseCase.invokeMeetingMeetingVoidThrowableError = nil
+        await viewModel.retryDelete()
+
+        #expect(deleteMeetingUseCase.invokeMeetingMeetingVoidCallsCount == 2)
+        #expect(deleteMeetingUseCase.invokeMeetingMeetingVoidReceivedMeeting == meeting)
+        #expect(viewModel.loadedMeetings.isEmpty)
     }
 
     // MARK: - Delete Confirmation
