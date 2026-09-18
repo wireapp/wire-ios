@@ -1196,8 +1196,6 @@
 "self.settings.manage_team.title" = "Zarządzaj zespołem";
 "self.settings.add_account.title" = "Dodaj konto";
 
-"self.settings.add_account.error.title" = "Trzy konta aktywne";
-"self.settings.add_account.error.message" = "Możesz być zalogowany tylko na trzy konta jednocześnie. Wyloguj się z jednego aby dodać inne.";
 
 "self.settings.switch_account.message" = "Połączenie jest aktywne na tym koncie.\nPrzełączenie kont zawiesi bieżące połączenie.";
 "self.settings.switch_account.action" = "Przełącz mimo to";
@@ -1739,7 +1737,6 @@
 "error.user.device_deleted_remotely" = "Zostałeś wylogowany na tym urządzeniu!";
 "error.user.last_identity_cant_be_deleted" = "An email address is required.";
 "error.user.account_suspended" = "To konto jest już uprawnione do zalogowania się.";
-"error.user.account_limit_reached" = "Nie możesz dodać więcej niż 3 konta.";
 "error.user.too_many_requests" = "Too many requests, please try again later.";
 
 "error.group_call.too_many_members_in_conversation.title" = "Zbyt dużo osób do połączenia";

@@ -256,8 +256,8 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     static let logger = Logger(subsystem: "VoIP Push", category: "SessionManager")
 
-    public enum AccountError: Error {
-        case accountLimitReached
+    public enum AccountError: Error, Equatable {
+        case accountLimitReached(maxNumberAccounts: Int)
     }
 
     /// Maximum number of accounts which can be logged in simultanously
@@ -1517,6 +1517,12 @@ extension SessionManager: UnauthenticatedSessionDelegate {
         accountManager.numberOfAccounts < maxNumberAccounts
     }
 
+    public func sessionMaxNumberAccounts(
+        _ session: UnauthenticatedSession
+    ) -> Int {
+        maxNumberAccounts
+    }
+
     public func session(
         session: UnauthenticatedSession,
         isExistingAccount account: Account
@@ -1542,7 +1548,10 @@ extension SessionManager: UnauthenticatedSessionDelegate {
         guard
             numberOfExistingAccounts < maxNumberAccounts || createdAccountIsKnown
         else {
-            let error = NSError(userSessionErrorCode: .accountLimitReached, userInfo: nil)
+            let error = NSError(
+                userSessionErrorCode: .accountLimitReached,
+                userInfo: [ZMAccountLimitReachedMaxNumberAccountsKey: maxNumberAccounts]
+            )
             loginDelegate?.authenticationDidFail(error)
             return
         }

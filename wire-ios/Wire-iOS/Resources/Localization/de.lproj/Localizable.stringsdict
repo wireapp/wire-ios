@@ -413,5 +413,37 @@
         <string>%d angehängte Dateien</string>
       </dict>
     </dict>
-  </dict>
+      <key>self.settings.add_account.error.title</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@number_of_accounts@</string>
+      <key>number_of_accounts</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>%2$@ aktives Konto</string>
+        <key>other</key>
+        <string>%2$@ aktive Konten</string>
+      </dict>
+    </dict>
+    <key>self.settings.add_account.error.message</key>
+    <dict>
+      <key>NSStringLocalizedFormatKey</key>
+      <string>%#@number_of_accounts@</string>
+      <key>number_of_accounts</key>
+      <dict>
+        <key>NSStringFormatSpecTypeKey</key>
+        <string>NSStringPluralRuleType</string>
+        <key>NSStringFormatValueTypeKey</key>
+        <string>d</string>
+        <key>one</key>
+        <string>Sie können nur mit %2$@ Konto angemeldet sein. Melden Sie sich ab, um ein anderes hinzuzufügen.</string>
+        <key>other</key>
+        <string>Sie können nur mit %2$@ Konten gleichzeitig angemeldet sein. Melden Sie sich von einem ab, um ein anderes hinzuzufügen.</string>
+      </dict>
+    </dict>
+</dict>
 </plist>
