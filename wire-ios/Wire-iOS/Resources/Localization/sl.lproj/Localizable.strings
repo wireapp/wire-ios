@@ -1247,6 +1247,10 @@
 "self.settings.manage_team.title" = "Manage Team";
 "self.settings.add_account.title" = "Dodaj račun";
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0caaf69b90 (fix: show correct account-limit alert copy for max 2 or 3 accounts - WPB-26467 🍒 (#5254))
 "self.settings.switch_account.message" = "A call is active in this account.\nSwitching accounts will hang up the current call.";
 "self.settings.switch_account.action" = "Switch anyway";
 

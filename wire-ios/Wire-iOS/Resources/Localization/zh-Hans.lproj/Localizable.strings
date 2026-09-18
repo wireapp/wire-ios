@@ -1247,6 +1247,10 @@
 "self.settings.manage_team.title" = "管理团队";
 "self.settings.add_account.title" = "添加帐户";
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0caaf69b90 (fix: show correct account-limit alert copy for max 2 or 3 accounts - WPB-26467 🍒 (#5254))
 "self.settings.switch_account.message" = "该账户正在进行通话。\n切换帐号会挂断当前通话。";
 "self.settings.switch_account.action" = "仍然切换";
 

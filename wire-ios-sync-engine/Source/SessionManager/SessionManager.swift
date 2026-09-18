@@ -260,6 +260,11 @@ public protocol ForegroundNotificationResponder: AnyObject {
 @objcMembers
 public final class SessionManager: NSObject, SessionManagerType {
 
+<<<<<<< HEAD
+=======
+    static let logger = Logger(subsystem: "VoIP Push", category: "SessionManager")
+
+>>>>>>> 0caaf69b90 (fix: show correct account-limit alert copy for max 2 or 3 accounts - WPB-26467 🍒 (#5254))
     public enum AccountError: Error, Equatable {
         case accountLimitReached(maxNumberAccounts: Int)
     }

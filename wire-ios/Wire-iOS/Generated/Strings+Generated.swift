@@ -5912,6 +5912,7 @@ internal enum L10n {
         internal enum AddAccount {
           /// Add an account
           internal static let title = L10n.tr("Localizable", "self.settings.add_account.title", fallback: "Add an account")
+<<<<<<< HEAD
           internal enum Error {
             /// Plural format key: "%#@number_of_accounts@"
             internal static func message(_ p1: Int) -> String {
@@ -5922,6 +5923,8 @@ internal enum L10n {
               return L10n.tr("Localizable", "self.settings.add_account.error.title", p1, fallback: "Plural format key: \"%#@number_of_accounts@\"")
             }
           }
+=======
+>>>>>>> 0caaf69b90 (fix: show correct account-limit alert copy for max 2 or 3 accounts - WPB-26467 🍒 (#5254))
         }
         internal enum AddAccountOrTeam {
           /// Add Account or Team
