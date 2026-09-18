@@ -19,8 +19,8 @@
 package import Foundation
 
 // sourcery: AutoMockable
-/// Drives Wire Drive direct uploads: staging, pre-check, presigning, background transfer,
-/// publishing, and reconciliation after the app is relaunched.
+/// Drives Wire Drive direct uploads: staging, pre-check, presigning, background transfer
+/// and reconciliation after the app is relaunched.
 package protocol WireDriveDirectUploadManagerProtocol: Sendable {
 
     /// Reconciles persisted uploads against the background session's live tasks.
