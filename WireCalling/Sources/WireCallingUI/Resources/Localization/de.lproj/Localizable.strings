@@ -48,7 +48,7 @@
 "wireMeetings.list.delete.alert.title" = "Meeting für alle löschen";
 "wireMeetings.list.delete.alert.subtitle" = "Das Meeting wird für Sie und alle anderen gelöscht. Alle Teilnehmer werden darüber informiert.";
 "wireMeetings.list.deleteRecurring.alert.title" = "Meeting für alle löschen";
-"wireMeetings.list.deleteRecurring.alert.subtitle" = "This is a recurring meeting. Deleting it removes every occurrence for you and everybody else. All participants will be notified.";
+"wireMeetings.list.deleteRecurring.alert.subtitle" = "Dies ist ein wiederkehrendes Meeting. Wenn Sie es löschen, werden alle Termine für Sie und alle anderen Teilnehmer entfernt. Alle Teilnehmer werden darüber benachrichtigt.";
 "wireMeetings.list.deleteForMe.alert.title" = "Meeting für mich löschen";
 "wireMeetings.list.deleteForMe.alert.subtitle" = "Das Meeting wird aus Ihrem Kalender gelöscht. Dies wirkt sich nicht auf andere Teilnehmer aus.";
 "wireMeetings.list.delete.alert.delete.button" = "Löschen";
@@ -81,7 +81,7 @@
 "wireMeetings.schedule.setupParticipants.placeholder" = "Teilnehmer hinzufügen";
 "wireMeetings.schedule.error.alert.title" = "Ein Fehler ist aufgetreten";
 "wireMeetings.schedule.error.alert.ok" = "OK";
-"wireMeetings.schedule.participantsNotAdded.title" = "Meeting saved";
+"wireMeetings.schedule.participantsNotAdded.title" = "Meeting gespeichert";
 "wireMeetings.schedule.participantsNotAdded.message" = "The meeting was saved, but these users could not be added:\n\n%@";
 "wireMeetings.schedule.error.conversationName.title" = "Could not update call name";
 "wireMeetings.schedule.error.conversationName.message" = "The meeting title was updated, but the name shown in the call could not be updated. Please try again.";
