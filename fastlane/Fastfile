@@ -63,7 +63,7 @@ platform :ios do
     end
 
     after_all do |lane|
-        delete_keychain_if_needed unless [:prepare_for_tests, :select_framework, :select_frameworks, :generate_framework_list, :list_schemes_json, :list_uitest_tags, :test_frameworks, :test_only_frameworks, :run_uitests].include?(lane)
+        delete_keychain_if_needed unless [:prepare_for_tests, :select_framework, :select_frameworks, :generate_framework_list, :list_schemes_json, :list_uitest_tags, :test_frameworks, :test_only_frameworks, :run_uitests, :generate_env].include?(lane)
     end
     
     desc "Test frameworks given folders"
