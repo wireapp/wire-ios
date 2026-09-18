@@ -16,30 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import Foundation
+package import Combine
+package import Foundation
 
-public enum WireDriveUploadStatus: Equatable, Hashable, Sendable {
-    case uploading(progress: Float)
-    case uploaded(isDraft: Bool)
-    case failed(error: WireDriveUploadError)
-    case cancelled
+// sourcery: AutoMockable
+@MainActor
+package protocol WireDriveObserveDirectUploadsUseCaseProtocol {
 
-    public var isUploaded: Bool {
-        switch self {
-        case .uploaded:
-            true
-        default:
-            false
-        }
-    }
-}
+    /// Emits the state of every tracked upload, starting with the current one.
 
-public enum WireDriveUploadError: Error, Equatable, Hashable, Sendable {
-    case fileNotFound
-    case urlError(error: URLError)
-    case other(message: String)
-    case serverError(statusCode: Int)
-    case unauthorized
-    case insufficientStorage
-    case cancelledBySystem
+    func invoke() -> AnyPublisher<WireDriveDirectUploadsSummary, Never>
+
 }
