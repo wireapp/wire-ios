@@ -30,6 +30,18 @@
             "value" : "$(SSO_CLAIMED_USER_EMAIL)"
           },
           {
+            "key" : "CUSTOM_DOMAIN_REDIRECT_EMAIL",
+            "value" : "$(CUSTOM_DOMAIN_REDIRECT_EMAIL)"
+          },
+          {
+            "key" : "CUSTOM_DOMAIN_REDIRECT_BACKEND_URL",
+            "value" : "$(CUSTOM_DOMAIN_REDIRECT_BACKEND_URL)"
+          },
+          {
+            "key" : "CUSTOM_DOMAIN_REDIRECT_IDP_DOMAIN",
+            "value" : "$(CUSTOM_DOMAIN_REDIRECT_IDP_DOMAIN)"
+          },
+          {
             "key" : "INBUCKET_USERNAME",
             "value" : "$(INBUCKET_USERNAME)"
           },
