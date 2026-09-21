@@ -67,6 +67,7 @@ env: # https://docs.fastlane.tools/getting-started/ios/setup/
 jobs:
   run-tests:
     name: Run tests
+    # Temporarily force non-manual critical-flow runs onto Cirrus while setting up the in-house runners.
     runs-on: >-
       ${{
         github.event_name != 'workflow_dispatch' && inputs.run_critical_flows && 'ghcr.io/cirruslabs/macos-runner:tahoe' ||

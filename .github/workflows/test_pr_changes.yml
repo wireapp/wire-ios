@@ -143,6 +143,7 @@ jobs:
     uses: ./.github/workflows/_reusable_run_tests.yml
     with:
       folders: ${{ join(fromJson(needs.detect-changes.outputs.folders), ',') }}
+      mac_runner: ${{ vars.DEFAULT_MAC_RUNNER }}
       test_dependencies: ${{ github.event_name != 'pull_request' || startsWith(github.base_ref, 'release/cycle') }}
       run_critical_flows: false # separate workflow
       notify: failure

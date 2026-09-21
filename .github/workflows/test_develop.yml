@@ -26,7 +26,7 @@ jobs:
     with:
       all: false
       branch: develop
-      mac_runner: ${{ inputs.mac_runner || 'in-house' }}
+      mac_runner: ${{ github.event_name == 'workflow_dispatch' && inputs.mac_runner || vars.DEFAULT_MAC_RUNNER }}
       run_critical_flows: true
       ui_test_tags: "!critical"
       notify: always

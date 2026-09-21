@@ -26,7 +26,7 @@ jobs:
     uses: ./.github/workflows/_reusable_run_tests.yml
     with:
       all: true
-      mac_runner: ${{ inputs.mac_runner || 'in-house' }}
+      mac_runner: ${{ inputs.mac_runner }}
       run_critical_flows: ${{ inputs.run_critical_flows }}
       notify: always
     secrets:
