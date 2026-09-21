@@ -33,8 +33,6 @@ public enum MessageDestructionTimeoutValue: RawRepresentable, Hashable {
     case custom(TimeInterval)
 
     #if DEBUG
-        /// UI tests shorten the ten-seconds timer via env var. `init(rawValue:)` and `rawValue`
-        /// must agree on it, otherwise the shortened value round-trips to `.custom`.
         private static let uiTestTenSecondsOverride: TimeInterval? = ProcessInfo.processInfo
             .environment["UITEST_SELF_DELETING_TIMER_SECONDS"]
             .flatMap(TimeInterval.init)

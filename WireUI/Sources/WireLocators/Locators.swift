@@ -191,8 +191,8 @@ public enum Locators {
         case userCellName
         case labelSharedDriveON = "Shared Drive is on"
         case labelSelfDeletingMessagesOFF = "Self-deleting messages are off"
-        case selfDeletedMessage = "Obfuscated message"
-        case ephemeralCountdown = "EphemeralCountdown"
+        case selfDeletedMessage
+        case ephemeralCountdown
         case sharedFileLabel = "FileTransferTopLabel"
         case sharedFileDetailsLabel = "FileTransferBottomLabel"
         case fileTypeIcon = "FileTransferFileTypeIcon"
