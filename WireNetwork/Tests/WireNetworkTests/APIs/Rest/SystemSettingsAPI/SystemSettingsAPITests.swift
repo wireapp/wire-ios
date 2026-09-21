@@ -31,7 +31,7 @@ final class SystemSettingsAPITests: XCTestCase {
         let sut = SystemSettingsAPIBuilder(networkService: networkService).makeAPI()
 
         // When
-        let result = try await sut.getSystemSettings()
+        let result = try await sut.getSystemSettings(accessToken: nil)
 
         // Then
         XCTAssertEqual(
@@ -55,7 +55,7 @@ final class SystemSettingsAPITests: XCTestCase {
         // Then
         await XCTAssertThrowsErrorAsync {
             // When
-            try await sut.getSystemSettings()
+            try await sut.getSystemSettings(accessToken: nil)
         }
     }
 

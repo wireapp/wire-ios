@@ -53,7 +53,7 @@ package struct DetermineAuthMethodUseCase: DetermineAuthMethodUseCaseProtocol {
             }
 
         case let .ssoCode(ssoCode):
-            return .loginViaSSO(code: ssoCode)
+            return .loginViaSSO(code: ssoCode, multiIngressIdentityProviderID: ssoCode)
         }
     }
 
@@ -103,7 +103,7 @@ package struct DetermineAuthMethodUseCase: DetermineAuthMethodUseCaseProtocol {
             guard let ssoCode = configuration.ssoCode else {
                 throw AuthenticationAPIError.invalidResponse
             }
-            return .loginViaSSO(code: ssoCode)
+            return .loginViaSSO(code: ssoCode, multiIngressIdentityProviderID: ssoCode)
 
         case .backend:
             guard let configURL = configuration.backendURL else {

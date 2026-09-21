@@ -18,6 +18,7 @@
 
 import Foundation
 import WireAuthenticationAPI
+import WireLogging
 import WireNetwork
 
 package struct CreateAuthenticationResultUseCase: CreateAuthenticationResultUseCaseProtocol {
@@ -34,7 +35,8 @@ package struct CreateAuthenticationResultUseCase: CreateAuthenticationResultUseC
         accessToken: AccessToken?,
         emailCredentials: EmailCredentials?
     ) async throws -> AuthenticationResult {
-        AuthenticationResult(
+        let a = await fetchSSOIdpChangeDetectionEnabled(accessToken: accessToken)
+        let result = AuthenticationResult(
             userID: userID,
             cookies: cookies,
             accessToken: accessToken,
@@ -42,23 +44,32 @@ package struct CreateAuthenticationResultUseCase: CreateAuthenticationResultUseC
             backendEnvironment: networkStack.backendEnvironment,
             backendMetadata: try await networkStack.resolvedBackendMetadata(),
             proxyCredentials: await networkStack.proxyCredentials,
-            ssoIdpChangeDetectionEnabled: await fetchSSOIdpChangeDetectionEnabled()
+            ssoIdpChangeDetectionEnabled: a
         )
+        return result
     }
 
     /// Fails open (returns `false`) if the endpoint isn't available yet (older
     /// backends) or the request fails transiently, rather than blocking login.
 
-    private func fetchSSOIdpChangeDetectionEnabled() async -> Bool {
+    private func fetchSSOIdpChangeDetectionEnabled(accessToken: AccessToken?) async -> Bool {
         do {
             guard try await networkStack.resolvedAPIVersion() >= .v18 else {
+                WireLogger.authentication.info(
+                    "Skipping SSO IdP change detection check: backend API version is below v18",
+                    attributes: .safePublic
+                )
                 return false
             }
 
             let networkService = try await networkStack.networkServices.rest
             let api = SystemSettingsAPIBuilder(networkService: networkService).makeAPI()
-            return try await api.getSystemSettings().ssoIdpChangeDetectionEnabled
+            return try await api.getSystemSettings(accessToken: accessToken).ssoIdpChangeDetectionEnabled
         } catch {
+            WireLogger.authentication.error(
+                "SSO IdP change detection check (GET /system/settings) failed, hadAccessToken: \(accessToken != nil): \(String(describing: error))",
+                attributes: .safePublic
+            )
             return false
         }
     }

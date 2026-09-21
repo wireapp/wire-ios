@@ -30,11 +30,15 @@ final class SystemSettingsAPIV18: SystemSettingsAPI, VersionedAPI {
         .v18
     }
 
-    func getSystemSettings() async throws -> SystemSettings {
-        let request = try URLRequestBuilder(path: "\(pathPrefix)/system/settings")
+    func getSystemSettings(accessToken: AccessToken?) async throws -> SystemSettings {
+        var request = try URLRequestBuilder(path: "\(pathPrefix)/system/settings")
             .withMethod(.get)
             .withAcceptType(.json)
             .build()
+
+        if let accessToken {
+            request.setAccessToken(accessToken)
+        }
 
         let (data, response) = try await networkService.executeRequest(request)
 
@@ -47,14 +51,14 @@ final class SystemSettingsAPIV18: SystemSettingsAPI, VersionedAPI {
 
 private struct SystemSettingsResponseV18: Decodable, ToAPIModelConvertible {
 
-    let nomadProfiles: Bool
+    let nomadProfiles: Bool?
     let setEnableMls: Bool
     let setRestrictUserCreation: Bool
     let ssoIdpChangeDetectionEnabled: Bool
 
     func toAPIModel() -> SystemSettings {
         SystemSettings(
-            nomadProfiles: nomadProfiles,
+            nomadProfiles: nomadProfiles ?? false,
             setEnableMls: setEnableMls,
             setRestrictUserCreation: setRestrictUserCreation,
             ssoIdpChangeDetectionEnabled: ssoIdpChangeDetectionEnabled

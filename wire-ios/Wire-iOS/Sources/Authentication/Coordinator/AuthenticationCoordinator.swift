@@ -598,22 +598,31 @@ extension AuthenticationCoordinator {
         )
 
         stopActivityIndicator()
-        presentAlert(for: AuthenticationCoordinatorAlert(
-            title: Strings.title,
-            message: Strings.message,
-            actions: [cancelAction, deleteAction]
-        ))
+
+        // The result reaches us while the `.noHistory` screen (presented
+        // modally by `presenter`) is still on screen, so it must be
+        // dismissed before we can present this alert on top of it.
+        presenter?.dismiss(animated: true) { [weak self] in
+            self?.presentAlert(for: AuthenticationCoordinatorAlert(
+                title: Strings.title,
+                message: Strings.message,
+                actions: [cancelAction, deleteAction]
+            ))
+        }
     }
 
     private func purgeRetainedAccountAndContinue(
         _ context: (AuthenticationResult, RegistrationAnalyticsTrackingConsent)
     ) {
-        do {
-            try sessionManager.purgeRetainedAccountData(for: context.0.userID)
-            executeActions([.completeWireAuthenticationLogin(context)])
-        } catch {
-            logger.error("Failed to purge retained account data: \(error)")
-            restartWireAuthentication(error: NSError(userSessionErrorCode: .unknownError, userInfo: nil))
+        Task { @MainActor [weak self] in
+            guard let self else { return }
+            do {
+                try await sessionManager.logoutBackgroundSessionAndPurgeRetainedAccountData(for: context.0.userID)
+                executeActions([.completeWireAuthenticationLogin(context)])
+            } catch {
+                logger.error("Failed to purge retained account data: \(error)")
+                restartWireAuthentication(error: NSError(userSessionErrorCode: .unknownError, userInfo: nil))
+            }
         }
     }
 

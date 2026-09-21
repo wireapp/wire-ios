@@ -33,6 +33,7 @@ final class LoginViaSSOUseCaseTests: XCTestCase {
     private let ssoCallbackURLScheme = "sso-callback"
     private var mockTokenGenerator: MockSSOLoginVerificationTokenGenerator!
     private var mockWebAuthenticator: MockWebAuthenticator!
+    private var mockAccessTokenExchange: MockAccessTokenExchangeProtocol!
     private var mockCreateAuthResultUseCase: MockCreateAuthenticationResultUseCaseProtocol!
 
     @MainActor
@@ -40,6 +41,10 @@ final class LoginViaSSOUseCaseTests: XCTestCase {
         mockAuthenticationAPI = MockAuthenticationAPI()
         mockTokenGenerator = MockSSOLoginVerificationTokenGenerator()
         mockWebAuthenticator = MockWebAuthenticator()
+        mockAccessTokenExchange = MockAccessTokenExchangeProtocol()
+        mockAccessTokenExchange.exchangeCookiesClientIDLastKnownAccessToken_MockMethod = { _, _, _ in
+            throw MockAccessTokenExchangeError.notConfigured
+        }
         mockCreateAuthResultUseCase = MockCreateAuthenticationResultUseCaseProtocol()
         sut = LoginViaSSOUseCase(
             authenticationAPI: mockAuthenticationAPI,
@@ -47,6 +52,7 @@ final class LoginViaSSOUseCaseTests: XCTestCase {
             ssoCallbackURLScheme: ssoCallbackURLScheme,
             verificationTokenGenerator: mockTokenGenerator,
             webAuthenticator: mockWebAuthenticator,
+            accessTokenExchange: mockAccessTokenExchange,
             createAuthResultUseCase: mockCreateAuthResultUseCase
         )
 
@@ -66,6 +72,7 @@ final class LoginViaSSOUseCaseTests: XCTestCase {
         mockAuthenticationAPI = nil
         mockTokenGenerator = nil
         mockWebAuthenticator = nil
+        mockAccessTokenExchange = nil
         sut = nil
     }
 
@@ -152,4 +159,8 @@ final class LoginViaSSOUseCaseTests: XCTestCase {
         return "sso-callback://login/failure?label=$label&validation_token=\(token)"
     }
 
+}
+
+private enum MockAccessTokenExchangeError: Error {
+    case notConfigured
 }

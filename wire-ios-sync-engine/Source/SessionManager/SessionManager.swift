@@ -1182,9 +1182,46 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     public func purgeRetainedAccountData(for userID: UUID) throws {
         guard let account = accountManager.account(with: userID) else { return }
-        guard !isAccountActive(account) else { throw RetainedAccountDataError.accountIsActive }
+
+        // A "retained" account keeps its data and cookie on disk after
+        // logging out (`deleteCookie: false`), so it always has a valid
+        // cookie and would be considered `isAccountActive` even though no
+        // live session exists. Only a live in-memory session should block
+        // purging its data.
+        guard backgroundUserSessions[account.userIdentifier] == nil else {
+            throw RetainedAccountDataError.accountIsActive
+        }
 
         try deleteAccountData(for: account, keepAccountOnFailure: true)
+    }
+
+    /// Tears down any live background session for the account (if it isn't
+    /// the currently active/foreground session), then purges its retained
+    /// data on disk.
+    ///
+    /// - Throws: `RetainedAccountDataError.accountIsActive` if the account is
+    /// the current foreground session — safely logging that out requires the
+    /// full app-state logout flow (`sessionManagerWillLogout`), which this
+    /// method does not perform.
+
+    public func logoutBackgroundSessionAndPurgeRetainedAccountData(for userID: UUID) async throws {
+        let (backgroundSession, activeSession) = state.withLockUnchecked {
+            ($0.backgroundUserSessions[userID], $0.activeUserSession)
+        }
+
+        if let backgroundSession {
+            guard backgroundSession != activeSession else {
+                throw RetainedAccountDataError.accountIsActive
+            }
+
+            await withCheckedContinuation { continuation in
+                tearDownBackgroundSession(for: userID) {
+                    continuation.resume()
+                }
+            }
+        }
+
+        try purgeRetainedAccountData(for: userID)
     }
 
     private func deleteAccountData(

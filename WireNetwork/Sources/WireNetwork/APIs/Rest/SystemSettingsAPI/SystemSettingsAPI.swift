@@ -23,8 +23,9 @@ import Foundation
 public protocol SystemSettingsAPI: Sendable {
 
     /// Get the system settings.
+    /// - Parameter accessToken: The access token used to authenticate the request, if available.
     /// - Returns: The system settings.
 
-    func getSystemSettings() async throws -> SystemSettings
+    func getSystemSettings(accessToken: AccessToken?) async throws -> SystemSettings
 
 }

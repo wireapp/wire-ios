@@ -40,7 +40,7 @@ public struct SystemSettings: Equatable, Sendable {
     public let ssoIdpChangeDetectionEnabled: Bool
 
     public init(
-        nomadProfiles: Bool,
+        nomadProfiles: Bool = false,
         setEnableMls: Bool,
         setRestrictUserCreation: Bool,
         ssoIdpChangeDetectionEnabled: Bool
