@@ -492,6 +492,33 @@ public class MockUserSession: UserSession {
 
     public var underlyingE2eiFeature: Feature.E2EI!
 
+    // MARK: - fileSharingFeature
+
+    public var fileSharingFeature: Feature.FileSharing {
+        get { return underlyingFileSharingFeature }
+        set(value) { underlyingFileSharingFeature = value }
+    }
+
+    public var underlyingFileSharingFeature: Feature.FileSharing!
+
+    // MARK: - selfDeletingMessagesFeature
+
+    public var selfDeletingMessagesFeature: Feature.SelfDeletingMessages {
+        get { return underlyingSelfDeletingMessagesFeature }
+        set(value) { underlyingSelfDeletingMessagesFeature = value }
+    }
+
+    public var underlyingSelfDeletingMessagesFeature: Feature.SelfDeletingMessages!
+
+    // MARK: - conversationGuestLinksFeature
+
+    public var conversationGuestLinksFeature: Feature.ConversationGuestLinks {
+        get { return underlyingConversationGuestLinksFeature }
+        set(value) { underlyingConversationGuestLinksFeature = value }
+    }
+
+    public var underlyingConversationGuestLinksFeature: Feature.ConversationGuestLinks!
+
     // MARK: - mlsFeature
 
     public var mlsFeature: Feature.MLS {
