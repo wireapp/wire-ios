@@ -23,7 +23,12 @@ import WireCallingUI
 @Suite("MeetingsFormatter Tests")
 struct MeetingsFormatterTests {
 
-    let calendar = Calendar(identifier: .gregorian)
+    var calendar: Calendar {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = TimeZone(secondsFromGMT: 0) ?? calendar.timeZone
+        return calendar
+    }
+
     var formatter: MeetingsFormatter {
         MeetingsFormatter(
             calendar: calendar,

@@ -70,6 +70,7 @@ extension DateFormatter {
         let formatter = DateFormatter()
         formatter.locale = locale
         formatter.calendar = calendar
+        formatter.timeZone = calendar.timeZone
         formatter.setLocalizedDateFormatFromTemplate("EEEE MMMM d")
         return formatter
     }
