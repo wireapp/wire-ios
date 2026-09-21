@@ -106,7 +106,7 @@ jobs:
     needs: changelog
     runs-on: >-
       ${{
-        inputs.mac_runner == 'in-house' && fromJSON('["self-hosted", "in-house"]') ||
+        inputs.mac_runner == 'in-house' && fromJSON('["self-hosted", "in-house", "delivery"]') ||
         inputs.mac_runner == 'github' && 'macos-26' ||
         'ghcr.io/cirruslabs/macos-runner:tahoe'
       }}
