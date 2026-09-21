@@ -1252,6 +1252,9 @@ public final class SessionManager: NSObject, SessionManagerType {
         do {
             try environment.cookieStorage(for: account).removeCookies()
         } catch {
+            if keepAccountOnFailure {
+                throw error
+            }
             WireLogger.sessionManager.error("Failed to remove cookies: \(error)")
         }
 
