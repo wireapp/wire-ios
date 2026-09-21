@@ -27,16 +27,31 @@ package struct MeetingsFormatter: MeetingsFormatterProtocol {
 
     private typealias Strings = L10n.Localizable.WireMeetings.List
 
-    package init() {}
+    private let calendar: Calendar
+    private let dayHeaderDateFormatter: DateFormatter
+
+    package init(
+        calendar: Calendar = .autoupdatingCurrent,
+        dateLocale: Locale = .autoupdatingCurrent
+    ) {
+        self.calendar = calendar
+        self.dayHeaderDateFormatter = DateFormatter.meetingDayHeaderDate(
+            locale: dateLocale,
+            calendar: calendar
+        )
+    }
 
     package func dayHeader(for date: Date, now: Date) -> String {
-        let calendar = Calendar.current
+        let formattedDate = dayHeaderDateFormatter.string(from: date)
 
         if calendar.isDate(date, inSameDayAs: now) {
-            return Strings.Header.today + " (\(DateFormatter.meetingDate.string(from: date)))"
-        } else {
-            return DateFormatter.meetingDate.string(from: date)
+            return Strings.Header.today + " (\(formattedDate))"
+        } else if let tomorrow = calendar.date(byAdding: .day, value: 1, to: now),
+                  calendar.isDate(date, inSameDayAs: tomorrow) {
+            return Strings.Header.tomorrow + " (\(formattedDate))"
         }
+
+        return formattedDate
     }
 
     package func timeRange(from start: Date, to end: Date) -> String {
@@ -50,6 +65,14 @@ package struct MeetingsFormatter: MeetingsFormatterProtocol {
 // MARK: - Helpers
 
 extension DateFormatter {
+
+    fileprivate static func meetingDayHeaderDate(locale: Locale, calendar: Calendar) -> DateFormatter {
+        let formatter = DateFormatter()
+        formatter.locale = locale
+        formatter.calendar = calendar
+        formatter.setLocalizedDateFormatFromTemplate("EEEE MMMM d")
+        return formatter
+    }
 
     static let meetingDate: DateFormatter = {
         let formatter = DateFormatter()

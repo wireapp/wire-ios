@@ -23,8 +23,13 @@ import WireCallingUI
 @Suite("MeetingsFormatter Tests")
 struct MeetingsFormatterTests {
 
-    let formatter = MeetingsFormatter()
     let calendar = Calendar(identifier: .gregorian)
+    var formatter: MeetingsFormatter {
+        MeetingsFormatter(
+            calendar: calendar,
+            dateLocale: Locale(identifier: "en_US")
+        )
+    }
 
     // MARK: - Day Header Tests
 
@@ -33,12 +38,21 @@ struct MeetingsFormatterTests {
         let now = try makeDate(hour: 9, minute: 0)
         let result = formatter.dayHeader(for: now, now: now)
 
-        #expect(result == "Today (08.09.2026)")
+        #expect(result == "Today (Tuesday, September 8)")
     }
 
-    @Test("dayHeader uses a numeric calendar date", arguments: [
-        (2026, 9, 13, "13.09.2026"),
-        (2026, 12, 31, "31.12.2026")
+    @Test("dayHeader returns 'Tomorrow' for the next date")
+    func testDayHeaderForTomorrow() throws {
+        let now = try makeDate(hour: 9, minute: 0)
+        let tomorrow = try #require(calendar.date(byAdding: .day, value: 1, to: now))
+        let result = formatter.dayHeader(for: tomorrow, now: now)
+
+        #expect(result == "Tomorrow (Wednesday, September 9)")
+    }
+
+    @Test("dayHeader uses weekday, month, and day for other days", arguments: [
+        (2026, 9, 13, "Sunday, September 13"),
+        (2026, 12, 31, "Thursday, December 31")
     ])
     func testDayHeaderForOtherDays(year: Int, month: Int, day: Int, expected: String) throws {
         let now = try makeDate(hour: 9, minute: 0)
