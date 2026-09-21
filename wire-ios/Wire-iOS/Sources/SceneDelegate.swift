@@ -133,6 +133,16 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         handleEventsForBackgroundURLSession identifier: String,
         completionHandler: @escaping () -> Void
     ) {
+        // Wire Drive owns its own background sessions and must be able to answer even before an
+        // account is loaded, which is the normal case for a background relaunch. Claiming is
+        // synchronous; the authenticated path below would queue indefinitely and drop the events.
+        if AppDependencies.wireDriveUploadSessions.handleEventsForBackgroundURLSession(
+            identifier: identifier,
+            completionHandler: completionHandler
+        ) {
+            return
+        }
+
         guard let appRootRouter else {
             WireLogger.sceneDelegate.info("no appRouter, calling completionHandler", attributes: .safePublic)
             completionHandler()

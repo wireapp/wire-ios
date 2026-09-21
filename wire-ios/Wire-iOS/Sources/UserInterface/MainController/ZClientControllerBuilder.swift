@@ -102,14 +102,44 @@ final class ZClientControllerBuilder {
             isFederationEnabled: userSession.resolvedBackendMetadata.isFederationEnabled
         )
 
-        return WireMessagingFactory(
+        let factory = WireMessagingFactory(
             driveURLResolver: driveURLResolver,
             driveConversationLocalStore: driveConversationLocalStore,
             accessToken: DefaultAccessTokenProvider(userSession: userSession),
             fileCache: userSession.fileAssetCache,
             contextProvider: DefaultManagedObjectContextProvider(contextProvider: userSession.contextProvider),
-            analyticsProvider: { [self] in userSession.analyticsEventTracker }
+            analyticsProvider: { [self] in userSession.analyticsEventTracker },
+            selfUserID: account.userIdentifier,
+            uploadSessions: AppDependencies.wireDriveUploadSessions,
+            uploadStagingDirectory: driveUploadStagingURL
         )
+
+        // The database exists by this point, so persisted uploads can be reconciled against the
+        // background session. Until this runs, the session buffers its events rather than losing
+        // them, which is what makes a background relaunch safe.
+        Task { await factory.startDirectUploads() }
+
+        return factory
+    }
+
+    private var driveUploadStagingURL: URL {
+        let fileManager = FileManager.default
+
+        if let appGroupIdentifier = Bundle.main.applicationGroupIdentifier,
+           let url = fileManager.driveUploadStagingURL(
+               for: appGroupIdentifier,
+               accountIdentifier: account.userIdentifier
+           ) {
+            return url
+        }
+
+        WireLogger.wireDrive.warn(
+            "no app group container for drive upload staging; background uploads will not resume",
+            attributes: .safePublic
+        )
+
+        return fileManager.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
+            .appendingPathComponent(FileManager.driveUploadStagingFolderName, isDirectory: true)
     }
 
     @MainActor

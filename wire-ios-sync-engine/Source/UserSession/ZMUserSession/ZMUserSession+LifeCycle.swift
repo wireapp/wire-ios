@@ -21,11 +21,23 @@ import WireLogging
 
 public extension ZMUserSession {
 
+    /// Handles background `URLSession` events that no other owner claimed.
+    ///
+    /// Wire Drive direct uploads are deliberately *not* routed here. They are claimed earlier, in
+    /// `SceneDelegate`, for two reasons: the session must be a per-process singleton while
+    /// `ZMUserSession` is per-account and re-created, and reaching this method goes through
+    /// `AppRootRouter.performWhenAuthenticated`, which queues indefinitely when no account is
+    /// loaded — starving the short window iOS grants after a background launch.
+
     func application(
         _ application: ZMApplication,
         handleEventsForBackgroundURLSession identifier: String,
         completionHandler: @escaping () -> Void
     ) {
+        WireLogger.session.warn(
+            "unhandled background URL session events for session identifier: \(identifier)",
+            attributes: .safePublic
+        )
         completionHandler()
     }
 

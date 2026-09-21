@@ -42,6 +42,15 @@ public struct WireMessagingFactory {
     private let nodeRenameNotifier: WireDriveNodeRenameNotifier
     private let analyticsProvider: DriveAnalyticsProvider
 
+    // MARK: Direct uploads
+
+    private let selfUserID: UUID
+    private let directUploadSessions: WireDriveDirectUploadSessionHolder
+    private let directUploadStore: WireDriveDirectUploadStore
+    private let directUploadFileCache: WireDriveDirectUploadFileCache
+    private let directUploadTracker: WireDriveObserveDirectUploadsUseCase
+    private let directUploadManager: WireDriveDirectUploadManager
+
     @MainActor var lastOpenRequestNodeID: UUID?
 
     @MainActor
@@ -51,7 +60,10 @@ public struct WireMessagingFactory {
         accessToken: any AccessTokenProvider,
         fileCache: any FileCache,
         contextProvider: any ManagedObjectContextProvider,
-        analyticsProvider: @escaping DriveAnalyticsProvider
+        analyticsProvider: @escaping DriveAnalyticsProvider,
+        selfUserID: UUID,
+        uploadSessions: WireDriveDirectUploadSessionHolder,
+        uploadStagingDirectory: URL
     ) {
         self.nodeCache = WireDriveNodeCache()
         self.nodesAPI = NodesAPI(
@@ -71,6 +83,89 @@ public struct WireMessagingFactory {
         self.lastOpenRequest = WireDriveLastOpenRequest()
         self.nodeRenameNotifier = WireDriveNodeRenameNotifier()
         self.analyticsProvider = analyticsProvider
+
+        self.selfUserID = selfUserID
+        self.directUploadSessions = uploadSessions
+        self.directUploadStore = WireDriveDirectUploadStore(contextProvider: contextProvider)
+        self.directUploadFileCache = WireDriveDirectUploadFileCache(directory: uploadStagingDirectory)
+        self.directUploadTracker = WireDriveObserveDirectUploadsUseCase()
+        self.directUploadManager = WireDriveDirectUploadManager(
+            nodesAPI: nodesAPI,
+            store: directUploadStore,
+            fileCache: directUploadFileCache,
+            // The session is created and owned by the holder, never here: this factory is rebuilt
+            // on account switch, and a second session for a live identifier is undefined behaviour.
+            session: uploadSessions.session(userID: selfUserID),
+            accessTokenProvider: accessToken,
+            tracker: directUploadTracker
+        )
+    }
+
+    // MARK: - Direct uploads
+
+    /// Reconciles persisted uploads against the background session and starts receiving its events.
+    ///
+    /// Must be called once the database is available. On a background relaunch that can be well
+    /// after the session has begun delivering callbacks, which is why the session buffers them
+    /// until this point rather than dropping them.
+
+    public func startDirectUploads() async {
+        await directUploadSessions.attach(userID: selfUserID, sink: directUploadManager)
+        await directUploadManager.start()
+    }
+
+    /// Cancels every transfer and removes all upload state. For logout or account deletion.
+
+    public func tearDownDirectUploads() async {
+        await directUploadManager.tearDown()
+        await directUploadSessions.tearDown(userID: selfUserID)
+    }
+
+    package func makeEnqueueDirectUploadsUseCase() -> any WireDriveEnqueueDirectUploadsUseCaseProtocol {
+        WireDriveEnqueueDirectUploadsUseCase(uploadManager: directUploadManager)
+    }
+
+    @MainActor
+    package func makeObserveDirectUploadsUseCase() -> any WireDriveObserveDirectUploadsUseCaseProtocol {
+        directUploadTracker
+    }
+
+    @MainActor
+    package func makeObserveFolderDirectUploadsUseCase() -> any WireDriveObserveFolderDirectUploadsUseCaseProtocol {
+        WireDriveObserveFolderDirectUploadsUseCase(tracker: directUploadTracker)
+    }
+
+    package func makeCancelDirectUploadUseCase() -> any WireDriveCancelDirectUploadUseCaseProtocol {
+        WireDriveCancelDirectUploadUseCase(uploadManager: directUploadManager)
+    }
+
+    package func makeCancelDirectUploadsUseCase() -> any WireDriveCancelDirectUploadsUseCaseProtocol {
+        WireDriveCancelDirectUploadsUseCase(uploadManager: directUploadManager)
+    }
+
+    package func makeRetryDirectUploadUseCase() -> any WireDriveRetryDirectUploadUseCaseProtocol {
+        WireDriveRetryDirectUploadUseCase(uploadManager: directUploadManager)
+    }
+
+    package func makeRetryFailedDirectUploadsUseCase() -> any WireDriveRetryFailedDirectUploadsUseCaseProtocol {
+        WireDriveRetryFailedDirectUploadsUseCase(uploadManager: directUploadManager)
+    }
+
+    package func makeClearFinishedDirectUploadsUseCase() -> any WireDriveClearFinishedDirectUploadsUseCaseProtocol {
+        WireDriveClearFinishedDirectUploadsUseCase(uploadManager: directUploadManager)
+    }
+
+    @MainActor
+    package func makeDirectUploadsViewModel(cellName: String) -> WireDriveDirectUploadsViewModel {
+        WireDriveDirectUploadsViewModel(
+            rootFolderPath: cellName,
+            observeFolderUploads: makeObserveFolderDirectUploadsUseCase(),
+            cancelUpload: makeCancelDirectUploadUseCase(),
+            cancelUploads: makeCancelDirectUploadsUseCase(),
+            retryUpload: makeRetryDirectUploadUseCase(),
+            retryFailedUploads: makeRetryFailedDirectUploadsUseCase(),
+            clearFinishedUploads: makeClearFinishedDirectUploadsUseCase()
+        )
     }
 
     public func makeUploadDraftUseCase(cellName: String) -> any WireDriveUploadDraftUseCaseProtocol {
@@ -162,7 +257,9 @@ public extension WireMessagingFactory {
                 localAssetRepository: localAssetRepository,
                 nodeCache: nodeCache,
                 nodeRenameNotifier: nodeRenameNotifier,
-                fileCache: fileCache
+                fileCache: fileCache,
+                uploadManager: directUploadManager,
+                uploadsViewModel: makeDirectUploadsViewModel(cellName: cellName)
             )
             .environment(\.wireAccentColor, accentColorProvider())
         )
@@ -235,6 +332,11 @@ public extension WireMessagingFactory {
                         moveNode: WireDriveMoveNodeUseCase(
                             nodesRepository: nodesAPI,
                             localAssetRepository: localAssetRepository
+                        ),
+                        // Browsing all files has no single destination, so `canUpload` is false
+                        // there; the use case set is shared with the per-conversation file list.
+                        enqueueUploads: WireDriveEnqueueDirectUploadsUseCase(
+                            uploadManager: directUploadManager
                         )
                     ),
                     isCellsStatePending: false,
