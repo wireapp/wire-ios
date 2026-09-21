@@ -97,8 +97,11 @@ package final class WireDriveObserveDirectUploadsUseCase: WireDriveObserveDirect
             return
         }
 
+        let clamped = min(max(progress, 0), 1)
+        let status: WireDriveDirectUploadItem.Status = clamped > 0 ? .uploading(progress: clamped) : .queued
+
         var current = trackedItems.value
-        current[uploadID] = existing.with(status: .uploading(progress: min(max(progress, 0), 1)))
+        current[uploadID] = existing.with(status: status)
         trackedItems.value = current
     }
 

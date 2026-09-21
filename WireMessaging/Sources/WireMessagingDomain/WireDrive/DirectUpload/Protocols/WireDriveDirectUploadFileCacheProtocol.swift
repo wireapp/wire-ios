@@ -24,9 +24,14 @@ package import Foundation
 package protocol WireDriveDirectUploadFileCacheProtocol: Sendable {
 
     /// Copies the file at `sourceURL` into staging.
-    func stage(sourceURL: URL, uploadID: UUID, fileName: String, isSecurityScoped: Bool) throws -> WireDriveStagedFile
+    func stage(
+        sourceURL: URL,
+        uploadID: UUID,
+        fileName: String,
+        isSecurityScoped: Bool
+    ) async throws -> WireDriveStagedFile
 
-    func stage(data: Data, uploadID: UUID, fileName: String) throws -> WireDriveStagedFile
+    func stage(data: Data, uploadID: UUID, fileName: String) async throws -> WireDriveStagedFile
 
     func url(stagedFileName: String) -> URL
 
