@@ -135,13 +135,18 @@ package final class WireDriveDirectUploadManager:
 
     package func start() async {
         guard !didStart else { return }
+        let persisted: [WireDriveDirectUploadRecord]
+        do {
+            persisted = try await store.fetchAll()
+        } catch {
+            WireLogger.wireDrive.error("failed to load persisted drive uploads, deferring start: \(error)")
+            return
+        }
+
         didStart = true
 
-        do {
-            let persisted = try await store.fetchAll()
-            records = Dictionary(uniqueKeysWithValues: persisted.map { ($0.uploadID, $0) })
-        } catch {
-            WireLogger.wireDrive.error("failed to load persisted drive uploads: \(error)")
+        for record in persisted where records[record.uploadID] == nil {
+            records[record.uploadID] = record
         }
 
         publishToTracker(replacingAll: true)
@@ -190,45 +195,42 @@ package final class WireDriveDirectUploadManager:
             let uploadID = UUID()
             let fileName = WireDriveNodeNameSanitizer.sanitize(source.fileName)
 
-            let stagedFile: WireDriveStagedFile
             do {
-                stagedFile = try fileCache.stage(
+                let stagedFile = try await fileCache.stage(
                     sourceURL: source.url,
                     uploadID: uploadID,
                     fileName: fileName,
                     isSecurityScoped: source.isSecurityScoped
                 )
-            } catch {
-                // One unreadable file must not abort the rest of the batch.
-                WireLogger.wireDrive.error("failed to stage drive upload: \(error)")
-                continue
-            }
 
-            let timestamp = now()
-            staged.append(
-                WireDriveDirectUploadRecord(
-                    uploadID: uploadID,
-                    batchID: batchID,
-                    nodeID: UUID(),
-                    versionID: UUID(),
-                    destinationFolderPath: destinationFolderPath,
-                    nodePath: [destinationFolderPath, fileName].joined(separator: "/"),
-                    fileName: fileName,
-                    fileSize: stagedFile.size,
-                    mimeType: source.fileType?.preferredMIMEType,
-                    stagedFileName: stagedFile.fileName,
-                    state: .staged,
-                    createdAt: timestamp,
-                    updatedAt: timestamp
+                let timestamp = now()
+                staged.append(
+                    WireDriveDirectUploadRecord(
+                        uploadID: uploadID,
+                        batchID: batchID,
+                        nodeID: UUID(),
+                        versionID: UUID(),
+                        destinationFolderPath: destinationFolderPath,
+                        nodePath: [destinationFolderPath, fileName].joined(separator: "/"),
+                        fileName: fileName,
+                        fileSize: stagedFile.size,
+                        mimeType: source.fileType?.preferredMIMEType,
+                        stagedFileName: stagedFile.fileName,
+                        state: .staged,
+                        createdAt: timestamp,
+                        updatedAt: timestamp
+                    )
                 )
-            )
-        }
-
-        guard !staged.isEmpty else {
-            throw WireDriveDirectUploadBatchError.stagingFailed(
-                fileName: sources.first?.fileName ?? "",
-                message: "no files could be staged"
-            )
+            } catch {
+                for record in staged {
+                    try? fileCache.delete(stagedFileName: record.stagedFileName)
+                }
+                WireLogger.wireDrive.error("failed to stage drive upload: \(error)")
+                throw WireDriveDirectUploadBatchError.stagingFailed(
+                    fileName: source.fileName,
+                    message: "\(error)"
+                )
+            }
         }
 
         let admitted = admissible(candidates: staged)

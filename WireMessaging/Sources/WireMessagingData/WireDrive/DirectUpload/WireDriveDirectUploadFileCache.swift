@@ -54,6 +54,22 @@ package final class WireDriveDirectUploadFileCache: WireDriveDirectUploadFileCac
         uploadID: UUID,
         fileName: String,
         isSecurityScoped: Bool
+    ) async throws -> WireDriveStagedFile {
+        try await Task.detached(priority: .utility) { [self] in
+            try stageSynchronously(
+                sourceURL: sourceURL,
+                uploadID: uploadID,
+                fileName: fileName,
+                isSecurityScoped: isSecurityScoped
+            )
+        }.value
+    }
+
+    private func stageSynchronously(
+        sourceURL: URL,
+        uploadID: UUID,
+        fileName: String,
+        isSecurityScoped: Bool
     ) throws -> WireDriveStagedFile {
         try createDirectoryIfNeeded()
 
@@ -97,7 +113,13 @@ package final class WireDriveDirectUploadFileCache: WireDriveDirectUploadFileCac
         )
     }
 
-    package func stage(data: Data, uploadID: UUID, fileName: String) throws -> WireDriveStagedFile {
+    package func stage(data: Data, uploadID: UUID, fileName: String) async throws -> WireDriveStagedFile {
+        try await Task.detached(priority: .utility) { [self] in
+            try stageSynchronously(data: data, uploadID: uploadID, fileName: fileName)
+        }.value
+    }
+
+    private func stageSynchronously(data: Data, uploadID: UUID, fileName: String) throws -> WireDriveStagedFile {
         try createDirectoryIfNeeded()
 
         let stagedFileName = makeStagedFileName(uploadID: uploadID, fileName: fileName)
