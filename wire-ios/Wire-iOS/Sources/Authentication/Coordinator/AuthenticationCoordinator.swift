@@ -317,9 +317,11 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
 
             case let .completeWireAuthenticationLogin((result, trackingConsent)):
                 if let account = sessionManager.accountManager.account(with: result.userID),
-                   result.ssoIdpChangeDetectionEnabled,
-                   let identityProviderID = result.multiIngressIdentityProviderID,
-                   account.lastSSOIdentityProviderID != identityProviderID {
+                   AccountAlreadyLoggedInPolicy.hasIdentityProviderChanged(
+                       ssoIdpChangeDetectionEnabled: result.ssoIdpChangeDetectionEnabled,
+                       multiIngressIdentityProviderID: result.multiIngressIdentityProviderID,
+                       lastSSOIdentityProviderID: account.lastSSOIdentityProviderID
+                   ) {
                     presentSSOIdentityChangeAlert(for: (result, trackingConsent))
                     return
                 }

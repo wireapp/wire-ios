@@ -175,7 +175,6 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodViewModel.Factory {
         }
 
         let authenticationAPI = try await networkStack.makeAuthenticationAPI()
-        let networkService = try await networkStack.networkServices.rest
 
         return LoginViaSSOUseCase(
             authenticationAPI: authenticationAPI,
@@ -183,7 +182,7 @@ extension DetermineAuthMethodComponent: DetermineAuthMethodViewModel.Factory {
             ssoCallbackURLScheme: dependency.ssoCallbackURLScheme,
             verificationTokenGenerator: SSOLoginVerificationTokenGenerator(),
             webAuthenticator: WebAuthenticator(ssoCallbackURLScheme: dependency.ssoCallbackURLScheme),
-            accessTokenExchange: AccessTokenExchange(networkService: networkService),
+            accessTokenExchange: try await networkStack.makeAccessTokenExchange(),
             createAuthResultUseCase: CreateAuthenticationResultUseCase(networkStack: networkStack)
         )
     }

@@ -35,8 +35,7 @@ package struct CreateAuthenticationResultUseCase: CreateAuthenticationResultUseC
         accessToken: AccessToken?,
         emailCredentials: EmailCredentials?
     ) async throws -> AuthenticationResult {
-        let a = await fetchSSOIdpChangeDetectionEnabled(accessToken: accessToken)
-        let result = AuthenticationResult(
+        AuthenticationResult(
             userID: userID,
             cookies: cookies,
             accessToken: accessToken,
@@ -44,9 +43,8 @@ package struct CreateAuthenticationResultUseCase: CreateAuthenticationResultUseC
             backendEnvironment: networkStack.backendEnvironment,
             backendMetadata: try await networkStack.resolvedBackendMetadata(),
             proxyCredentials: await networkStack.proxyCredentials,
-            ssoIdpChangeDetectionEnabled: a
+            ssoIdpChangeDetectionEnabled: await fetchSSOIdpChangeDetectionEnabled(accessToken: accessToken)
         )
-        return result
     }
 
     /// Fails open (returns `false`) if the endpoint isn't available yet (older

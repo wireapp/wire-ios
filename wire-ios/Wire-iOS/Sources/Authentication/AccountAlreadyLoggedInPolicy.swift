@@ -25,15 +25,34 @@ import Foundation
 
 enum AccountAlreadyLoggedInPolicy {
 
+    /// Whether the backend-reported SSO identity provider for this login
+    /// differs from the one last recorded for the account, meaning the
+    /// multi-ingress IdP-change flow should run instead of treating this as
+    /// a plain re-login.
+
+    static func hasIdentityProviderChanged(
+        ssoIdpChangeDetectionEnabled: Bool,
+        multiIngressIdentityProviderID: UUID?,
+        lastSSOIdentityProviderID: UUID?
+    ) -> Bool {
+        guard ssoIdpChangeDetectionEnabled, let identityProviderID = multiIngressIdentityProviderID else {
+            return false
+        }
+
+        return lastSSOIdentityProviderID != identityProviderID
+    }
+
     static func isAlreadyLoggedIn(
         isAccountActive: Bool,
         ssoIdpChangeDetectionEnabled: Bool,
         multiIngressIdentityProviderID: UUID?,
         lastSSOIdentityProviderID: UUID?
     ) -> Bool {
-        if ssoIdpChangeDetectionEnabled,
-           let identityProviderID = multiIngressIdentityProviderID,
-           lastSSOIdentityProviderID != identityProviderID {
+        if hasIdentityProviderChanged(
+            ssoIdpChangeDetectionEnabled: ssoIdpChangeDetectionEnabled,
+            multiIngressIdentityProviderID: multiIngressIdentityProviderID,
+            lastSSOIdentityProviderID: lastSSOIdentityProviderID
+        ) {
             return false
         }
 

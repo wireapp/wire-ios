@@ -266,7 +266,6 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     enum RetainedAccountDataError: Error {
         case accountIsActive
-        case failedToDeleteAccountData
     }
 
     /// Maximum number of accounts which can be logged in simultanously
@@ -843,17 +842,26 @@ public final class SessionManager: NSObject, SessionManagerType {
     public func logout(account: Account, error: Error? = nil) {
         WireLogger.sessionManager.debug("Logging out account \(account.userIdentifier)...")
 
-        let (accountSession, activeSession) = state.withLockUnchecked {
-            ($0.backgroundUserSessions[account.userIdentifier], $0.activeUserSession)
+        guard let isActiveSession = backgroundSessionStatus(for: account.userIdentifier) else { return }
+
+        if isActiveSession {
+            logoutCurrentSession(deleteCookie: true, deleteAccount: false, error: error)
+        } else {
+            tearDownBackgroundSession(for: account.userIdentifier)
+        }
+    }
+
+    /// Whether the account has a live background session, and if so, whether
+    /// that session is the currently active/foreground one. Returns `nil` if
+    /// there is no live background session at all.
+
+    private func backgroundSessionStatus(for userID: UUID) -> Bool? {
+        let (backgroundSession, activeSession) = state.withLockUnchecked {
+            ($0.backgroundUserSessions[userID], $0.activeUserSession)
         }
 
-        if let accountSession {
-            if accountSession == activeSession {
-                logoutCurrentSession(deleteCookie: true, deleteAccount: false, error: error)
-            } else {
-                tearDownBackgroundSession(for: account.userIdentifier)
-            }
-        }
+        guard let backgroundSession else { return nil }
+        return backgroundSession == activeSession
     }
 
     public func logoutCurrentSession() {
@@ -1205,12 +1213,8 @@ public final class SessionManager: NSObject, SessionManagerType {
     /// method does not perform.
 
     public func logoutBackgroundSessionAndPurgeRetainedAccountData(for userID: UUID) async throws {
-        let (backgroundSession, activeSession) = state.withLockUnchecked {
-            ($0.backgroundUserSessions[userID], $0.activeUserSession)
-        }
-
-        if let backgroundSession {
-            guard backgroundSession != activeSession else {
+        if let isActiveSession = backgroundSessionStatus(for: userID) {
+            guard !isActiveSession else {
                 throw RetainedAccountDataError.accountIsActive
             }
 
@@ -1266,9 +1270,6 @@ public final class SessionManager: NSObject, SessionManagerType {
         PrivateUserDefaults.removeAll(forUserID: account.userIdentifier, in: .standard)
 
         accountManager.remove(account)
-        guard accountManager.account(with: accountID) == nil else {
-            throw RetainedAccountDataError.failedToDeleteAccountData
-        }
     }
 
     fileprivate func registerObservers(account: Account, session: ZMUserSession) {
