@@ -28,7 +28,7 @@ final class SystemSettingsAPITests: XCTestCase {
         let networkService = MockNetworkServiceProtocol.withResponses([
             (.ok, "GetSystemSettingsSuccessResponse")
         ])
-        let sut = SystemSettingsAPIBuilder(networkService: networkService).makeAPI()
+        let sut = SystemSettingsAPIBuilder(networkService: networkService).makeAPI(for: .v18)
 
         // When
         let result = try await sut.getSystemSettings(accessToken: nil)
@@ -50,10 +50,21 @@ final class SystemSettingsAPITests: XCTestCase {
         let networkService = MockNetworkServiceProtocol.withResponses([
             (.ok, "GetSystemSettingsMissingFieldResponse")
         ])
-        let sut = SystemSettingsAPIBuilder(networkService: networkService).makeAPI()
+        let sut = SystemSettingsAPIBuilder(networkService: networkService).makeAPI(for: .v18)
 
         // Then
         await XCTAssertThrowsErrorAsync {
+            // When
+            try await sut.getSystemSettings(accessToken: nil)
+        }
+    }
+
+    func testGetSystemSettings_ThrowsUnsupportedEndpoint_WhenAPIVersionIsBelowV18() async throws {
+        // Given
+        let sut = SystemSettingsAPIBuilder(networkService: MockNetworkServiceProtocol()).makeAPI(for: .v17)
+
+        // Then
+        await XCTAssertThrowsErrorAsync(SystemSettingsAPIError.unsupportedEndpointForAPIVersion) {
             // When
             try await sut.getSystemSettings(accessToken: nil)
         }

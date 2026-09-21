@@ -52,17 +52,16 @@ package struct CreateAuthenticationResultUseCase: CreateAuthenticationResultUseC
 
     private func fetchSSOIdpChangeDetectionEnabled(accessToken: AccessToken?) async -> Bool {
         do {
-            guard try await networkStack.resolvedAPIVersion() >= .v18 else {
-                WireLogger.authentication.info(
-                    "Skipping SSO IdP change detection check: backend API version is below v18",
-                    attributes: .safePublic
-                )
-                return false
-            }
-
             let networkService = try await networkStack.networkServices.rest
-            let api = SystemSettingsAPIBuilder(networkService: networkService).makeAPI()
+            let apiVersion = try await networkStack.resolvedAPIVersion()
+            let api = SystemSettingsAPIBuilder(networkService: networkService).makeAPI(for: apiVersion)
             return try await api.getSystemSettings(accessToken: accessToken).ssoIdpChangeDetectionEnabled
+        } catch SystemSettingsAPIError.unsupportedEndpointForAPIVersion {
+            WireLogger.authentication.info(
+                "Skipping SSO IdP change detection check: backend API version is below v18",
+                attributes: .safePublic
+            )
+            return false
         } catch {
             WireLogger.authentication.error(
                 "SSO IdP change detection check (GET /system/settings) failed, hadAccessToken: \(accessToken != nil): \(String(describing: error))",

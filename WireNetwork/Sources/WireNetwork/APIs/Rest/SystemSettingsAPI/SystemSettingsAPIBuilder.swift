@@ -32,12 +32,52 @@ public struct SystemSettingsAPIBuilder {
         self.networkService = networkService
     }
 
-    /// Make a `SystemSettingsAPI`.
+    /// Make a versioned `SystemSettingsAPI`.
     ///
-    /// - Returns: A `SystemSettingsAPI`.
+    /// - Parameter version: An api version.
+    /// - Returns: A versioned `SystemSettingsAPI`.
 
-    public func makeAPI() -> any SystemSettingsAPI {
-        SystemSettingsAPIV18(networkService: networkService)
+    public func makeAPI(for version: APIVersion) -> any SystemSettingsAPI {
+        switch version {
+        case .v0:
+            SystemSettingsAPIV0(networkService: networkService)
+        case .v1:
+            SystemSettingsAPIV1(networkService: networkService)
+        case .v2:
+            SystemSettingsAPIV2(networkService: networkService)
+        case .v3:
+            SystemSettingsAPIV3(networkService: networkService)
+        case .v4:
+            SystemSettingsAPIV4(networkService: networkService)
+        case .v5:
+            SystemSettingsAPIV5(networkService: networkService)
+        case .v6:
+            SystemSettingsAPIV6(networkService: networkService)
+        case .v7:
+            SystemSettingsAPIV7(networkService: networkService)
+        case .v8:
+            SystemSettingsAPIV8(networkService: networkService)
+        case .v9:
+            SystemSettingsAPIV9(networkService: networkService)
+        case .v10:
+            SystemSettingsAPIV10(networkService: networkService)
+        case .v11:
+            SystemSettingsAPIV11(networkService: networkService)
+        case .v12:
+            SystemSettingsAPIV12(networkService: networkService)
+        case .v13:
+            SystemSettingsAPIV13(networkService: networkService)
+        case .v14:
+            SystemSettingsAPIV14(networkService: networkService)
+        case .v15:
+            SystemSettingsAPIV15(networkService: networkService)
+        case .v16:
+            SystemSettingsAPIV16(networkService: networkService)
+        case .v17:
+            SystemSettingsAPIV17(networkService: networkService)
+        case .v18:
+            SystemSettingsAPIV18(networkService: networkService)
+        }
     }
 
 }

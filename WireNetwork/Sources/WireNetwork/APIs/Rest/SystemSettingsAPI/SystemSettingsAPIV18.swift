@@ -18,19 +18,13 @@
 
 import Foundation
 
-final class SystemSettingsAPIV18: SystemSettingsAPI, VersionedAPI {
+final class SystemSettingsAPIV18: SystemSettingsAPIV17 {
 
-    let networkService: any NetworkServiceProtocol
-
-    init(networkService: any NetworkServiceProtocol) {
-        self.networkService = networkService
-    }
-
-    var apiVersion: APIVersion {
+    override var apiVersion: APIVersion {
         .v18
     }
 
-    func getSystemSettings(accessToken: AccessToken?) async throws -> SystemSettings {
+    override func getSystemSettings(accessToken: AccessToken?) async throws -> SystemSettings {
         var request = try URLRequestBuilder(path: "\(pathPrefix)/system/settings")
             .withMethod(.get)
             .withAcceptType(.json)
