@@ -10,7 +10,7 @@ on:
           - in-house
           - cirrus
           - github
-        default: cirrus
+        default: in-house
       testiny_run_name:
         description: "Testiny test run name: paste the exact run name from Testiny"
         required: false
@@ -59,7 +59,7 @@ jobs:
     uses: ./.github/workflows/_reusable_run_tests.yml
     with:
       all: false
-      mac_runner: ${{ inputs.mac_runner || 'cirrus' }}
+      mac_runner: in-house
       test_dependencies: false
       run_critical_flows: true
       ui_test_tags: critical
@@ -77,7 +77,7 @@ jobs:
     uses: ./.github/workflows/_reusable_run_tests.yml
     with:
       all: false
-      mac_runner: ${{ inputs.mac_runner || 'cirrus' }}
+      mac_runner: ${{ inputs.mac_runner || 'in-house' }}
       test_dependencies: false
       run_critical_flows: true
       # Logic:

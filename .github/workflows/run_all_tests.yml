@@ -10,7 +10,7 @@ on:
           - in-house
           - cirrus
           - github
-        default: cirrus
+        default: in-house
       run_critical_flows:
         description: 'Run critical flows'
         type: boolean
@@ -26,7 +26,7 @@ jobs:
     uses: ./.github/workflows/_reusable_run_tests.yml
     with:
       all: true
-      mac_runner: ${{ inputs.mac_runner || 'cirrus' }}
+      mac_runner: ${{ inputs.mac_runner || 'in-house' }}
       run_critical_flows: ${{ inputs.run_critical_flows }}
       notify: always
     secrets:

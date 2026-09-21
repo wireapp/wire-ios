@@ -107,7 +107,8 @@ jobs:
     if: ${{ github.event.pull_request.draft != true }}
     runs-on: ubuntu-24.04
     outputs:
-      use_parallel: ${{ steps.decide.outputs.use_parallel }}
+      # Temporarily disable parallel testing while setting up the in-house runners.
+      use_parallel: ${{ false }}
     steps:
       - name: Decide parallel vs sequential
         id: decide
