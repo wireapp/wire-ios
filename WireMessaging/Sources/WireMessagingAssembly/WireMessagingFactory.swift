@@ -104,13 +104,8 @@ public struct WireMessagingFactory {
     // MARK: - Direct uploads
 
     /// Reconciles persisted uploads against the background session and starts receiving its events.
-    ///
-    /// Must be called once the database is available. On a background relaunch that can be well
-    /// after the session has begun delivering callbacks, which is why the session buffers them
-    /// until this point rather than dropping them.
-
+    
     public func startDirectUploads() async {
-        await directUploadSessions.attach(userID: selfUserID, sink: directUploadManager)
         await directUploadManager.start()
     }
 
