@@ -25,8 +25,16 @@ package struct CreateAuthenticationResultUseCase: CreateAuthenticationResultUseC
 
     private let networkStack: NetworkStack
 
-    package init(networkStack: NetworkStack) {
+    /// Whether to check the SSO IdP-change-detection flag. Only the SSO login
+    /// paths can ever produce a `multiIngressIdentityProviderID` for this
+    /// flag to matter, so other flows skip the extra `GET /system/settings`
+    /// round trip entirely.
+
+    private let checksSSOIdpChangeDetection: Bool
+
+    package init(networkStack: NetworkStack, checksSSOIdpChangeDetection: Bool = false) {
         self.networkStack = networkStack
+        self.checksSSOIdpChangeDetection = checksSSOIdpChangeDetection
     }
 
     package func invoke(
@@ -43,7 +51,9 @@ package struct CreateAuthenticationResultUseCase: CreateAuthenticationResultUseC
             backendEnvironment: networkStack.backendEnvironment,
             backendMetadata: try await networkStack.resolvedBackendMetadata(),
             proxyCredentials: await networkStack.proxyCredentials,
-            ssoIdpChangeDetectionEnabled: await fetchSSOIdpChangeDetectionEnabled(accessToken: accessToken)
+            ssoIdpChangeDetectionEnabled: checksSSOIdpChangeDetection
+                ? await fetchSSOIdpChangeDetectionEnabled(accessToken: accessToken)
+                : false
         )
     }
 
