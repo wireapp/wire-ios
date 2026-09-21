@@ -77,7 +77,11 @@ public struct AccessTokenExchange: AccessTokenExchangeProtocol {
 
         return try ResponseParser(decoder: decoder)
             .success(code: .ok, type: AccessTokenPayload.self)
-            .failure(code: .forbidden, label: "invalid-credentials", error: AuthenticationManager.Failure.invalidCredentials)
+            .failure(
+                code: .forbidden,
+                label: "invalid-credentials",
+                error: AuthenticationManager.Failure.invalidCredentials
+            )
             .parse(code: response.statusCode, data: data)
     }
 

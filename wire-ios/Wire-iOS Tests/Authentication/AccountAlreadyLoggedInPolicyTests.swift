@@ -26,7 +26,7 @@ final class AccountAlreadyLoggedInPolicyTests: XCTestCase {
     private let idpB = UUID()
 
     // MARK: - Not a multi-ingress login
-    //
+
     // A plain (non-multi-ingress) login into an account already known on
     // this device is always treated as "already logged in", regardless of
     // whether the account currently has an active session.
@@ -90,7 +90,7 @@ final class AccountAlreadyLoggedInPolicyTests: XCTestCase {
     }
 
     // MARK: - Multi-ingress login, flag enabled, IdP changed
-    //
+
     // This is the regression this policy fixes: an IdP change must always
     // be let through to the multi-ingress alert, even for an active account,
     // rather than being blocked with a generic "already logged in" error.
