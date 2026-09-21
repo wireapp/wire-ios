@@ -10,7 +10,7 @@ on:
           - in-house
           - cirrus
           - github
-        default: cirrus
+        default: in-house
       datadog_enabled:
         description: 'Enable DataDog'
         type: boolean
@@ -30,7 +30,7 @@ jobs:
       is_cloud_build: false
       countly_enabled: false
       datadog_enabled: ${{ inputs.datadog_enabled }}
-      mac_runner: ${{ inputs.mac_runner || 'cirrus' }}
+      mac_runner: ${{ inputs.mac_runner || vars.DEFAULT_MAC_RUNNER }}
       skip_security_tests: ${{ inputs.skip_security_tests }}
     secrets:
       KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
