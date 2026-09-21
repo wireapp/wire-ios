@@ -104,7 +104,7 @@ public struct WireMessagingFactory {
     // MARK: - Direct uploads
 
     /// Reconciles persisted uploads against the background session and starts receiving its events.
-    
+
     public func startDirectUploads() async {
         await directUploadManager.start()
     }
