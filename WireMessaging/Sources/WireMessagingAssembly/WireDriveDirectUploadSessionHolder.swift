@@ -25,10 +25,6 @@ import WireMessagingData
 ///
 /// Held by the app target since a background `URLSession` must be a per-process singleton per identifier, but
 /// `handleEventsForBackgroundURLSession` can fire before any account is loaded.
-///
-/// Lock-based rather than an actor so the app delegate can claim a session identifier
-/// synchronously within iOS's short background-launch window.
-
 public final class WireDriveDirectUploadSessionHolder: Sendable {
 
     enum Identifier {
@@ -69,8 +65,6 @@ public final class WireDriveDirectUploadSessionHolder: Sendable {
             makeSession: { WireDriveDirectUploadSession(identifier: $0, sharedContainerIdentifier: $1) }
         )
     }
-
-    /// Exposed at module level so tests can inject a fake session without a real `URLSession`.
 
     init(
         sharedContainerIdentifier: String?,
