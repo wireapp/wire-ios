@@ -934,7 +934,7 @@ platform :ios do
             end
 
             sh("xcrun", "simctl", "boot", simulator_id, log: false)
-            sh("xcrun", "simctl", "bootstatus", simulator_id, "-b", log: false)
+            sh("xcrun", "simctl", "bootstatus", simulator_id, "-b", log: false) # Wait for simulator to finish booting
             sh "../scripts/seed-simulator-media.sh"
             return
         end
