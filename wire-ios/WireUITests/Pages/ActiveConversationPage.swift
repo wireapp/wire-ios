@@ -64,14 +64,8 @@ class ActiveConversationPage: PageModel {
         app.buttons[Locators.ActiveConversationPage.conversationTitleButton.rawValue].firstMatch
     }
 
-    func conversationTitle(named name: String) -> XCUIElement {
-        app.staticTexts.matching(
-            NSPredicate(
-                format: "identifier == %@ AND label == %@",
-                Locators.ActiveConversationPage.conversationTitleLabel.rawValue,
-                name
-            )
-        ).firstMatch
+    var imageCell: XCUIElement {
+        app.descendants(matching: .any)[Locators.ActiveConversationPage.imageCell.rawValue].firstMatch
     }
 
     var conversationDetailsButton: XCUIElement {
@@ -84,61 +78,6 @@ class ActiveConversationPage: PageModel {
 
     var selfDeletingMessageTimerPicker: XCUIElement {
         app.pickerWheels.firstMatch
-    }
-
-    @discardableResult
-    func selectSelfDeletingMessageTimer(_ duration: String) -> ActiveConversationPage {
-        selfDeletingMessageButton.waitAndTap()
-        XCTAssertTrue(
-            selfDeletingMessageTimerPicker.waitForExistence(timeout: 3),
-            "Self-deleting message timer picker did not appear"
-        )
-        selfDeletingMessageTimerPicker.adjust(toPickerWheelValue: duration)
-        selfDeletingMessageButton.waitAndTap()
-        return self
-    }
-
-    var ephemeralIndicatorButton: XCUIElement {
-        app.buttons["ephemeralTimeIndicatorButton"].firstMatch
-    }
-
-    @discardableResult
-    func verifyEphemeralIndicatorShows(_ timerValue: String) -> ActiveConversationPage {
-        XCTAssertTrue(
-            ephemeralIndicatorButton.waitForExistence(timeout: 3),
-            "Expected self-deleting timer indicator button to appear"
-        )
-        XCTAssertEqual(
-            ephemeralIndicatorButton.value as? String,
-            timerValue,
-            "Expected self-deleting timer indicator to show '\(timerValue)'"
-        )
-        return self
-    }
-
-    /// While empty and in ephemeral mode, the input field's accessibilityValue mirrors its
-    /// placeholder label text ("Self-deleting message"), see TextView.accessibilityValue.
-    /// Only true before any text is typed - call this before sendMessage(_:).
-    @discardableResult
-    func verifyInputFieldShowsSelfDeletingPlaceholder() -> ActiveConversationPage {
-        XCTAssertEqual(
-            inputMessageField.value as? String,
-            "Self-deleting message",
-            "Expected input field placeholder to show 'Self-deleting message'"
-        )
-        return self
-    }
-
-    var imageCell: XCUIElement {
-        app.descendants(matching: .any)[Locators.ActiveConversationPage.imageCell.rawValue].firstMatch
-    }
-
-    func receivedFileMessage(named fileName: String) -> XCUIElement {
-        let predicate = NSPredicate(
-            format: "label CONTAINS[c] %@",
-            "File name: \(fileName.uppercased())"
-        )
-        return app.buttons.matching(predicate).firstMatch
     }
 
     var videoCell: XCUIElement {
@@ -185,18 +124,18 @@ class ActiveConversationPage: PageModel {
         app.images.matching(identifier: Locators.ActiveConversationPage.fileTypeIcon.rawValue)
     }
 
-    func fileAttachment(name: String, type: String) -> XCUIElement {
-        app.buttons.containing(
-            NSPredicate(format: "label CONTAINS[c] %@ AND label CONTAINS[c] %@", name, type)
+    func conversationTitle(named name: String) -> XCUIElement {
+        app.staticTexts.matching(
+            NSPredicate(
+                format: "identifier == %@ AND label == %@",
+                Locators.ActiveConversationPage.conversationTitleLabel.rawValue,
+                name
+            )
         ).firstMatch
     }
 
-    func fileLabel(containing name: String) -> XCUIElement {
-        fileLabels.matching(NSPredicate(format: "label CONTAINS[c] %@", name)).firstMatch
-    }
-
-    func fileDetails(containing text: String) -> XCUIElement {
-        fileDetailLabels.matching(NSPredicate(format: "label CONTAINS[c] %@", text)).firstMatch
+    var ephemeralIndicatorButton: XCUIElement {
+        app.buttons["ephemeralTimeIndicatorButton"].firstMatch
     }
 
     var labelSharedDriveIsOn: XCUIElement {
@@ -290,23 +229,6 @@ class ActiveConversationPage: PageModel {
         app.buttons[Locators.ActiveConversationPage.open.rawValue].firstMatch
     }
 
-    func fileCell(named fileName: String) -> XCUIElement {
-        let displayedFileName = (fileName as NSString).deletingPathExtension
-        let fileExtension = (fileName as NSString).pathExtension
-
-        return app.cells["\(displayedFileName), \(fileExtension)"].firstMatch
-    }
-
-    /// Photos grid sorts newest-first; 3 seeded videos always occupy indices 0-2,
-    /// so the first real image sits at index 3.
-    func imageToChoose(at index: Int = 3) -> XCUIElement {
-        app.images.element(boundBy: index).firstMatch
-    }
-
-    func videoToChoose(at index: Int = 0) -> XCUIElement {
-        app.images.element(boundBy: index).firstMatch
-    }
-
     var okToSend: XCUIElement {
         app.buttons[Locators.ActiveConversationPage.ok.rawValue].firstMatch
     }
@@ -358,13 +280,102 @@ class ActiveConversationPage: PageModel {
     var latestMessageCell: XCUIElement {
         conversationBackground.cells.element(boundBy: 0)
     }
-    
+
     var ephemeralCountdownLabel: XCUIElement {
         app.staticTexts[Locators.ActiveConversationPage.ephemeralCountdown.rawValue].firstMatch
     }
-    
+
     var selfDeletedMessage: XCUIElement {
         app.textViews[Locators.ActiveConversationPage.selfDeletedMessage.rawValue].firstMatch
+    }
+
+    var quotedOriginalSender: XCUIElement {
+        app.descendants(matching: .any)[Locators.ActiveConversationPage.originalSender.rawValue].firstMatch
+    }
+
+    @discardableResult
+    func verifyEphemeralIndicatorShows(_ timerValue: String) -> ActiveConversationPage {
+        let indicatorButtonWithTimerValue = app.buttons.matching(
+            NSPredicate(
+                format: "identifier == %@ AND value == %@",
+                "ephemeralTimeIndicatorButton",
+                timerValue
+            )
+        ).firstMatch
+
+        XCTAssertTrue(
+            indicatorButtonWithTimerValue.waitForExistence(timeout: 5),
+            "Expected self-deleting timer indicator to show '\(timerValue)'"
+        )
+        return self
+    }
+
+    @discardableResult
+    func verifyInputFieldShowsSelfDeletingPlaceholder() -> ActiveConversationPage {
+        let inputFieldWithSelfDeletingPlaceholder = app.textViews.matching(
+            NSPredicate(
+                format: "identifier == %@ AND value == %@",
+                Locators.ActiveConversationPage.inputField.rawValue,
+                "Self-deleting message"
+            )
+        ).firstMatch
+
+        XCTAssertTrue(
+            inputFieldWithSelfDeletingPlaceholder.waitForExistence(timeout: 5),
+            "Expected input field placeholder to show 'Self-deleting message'"
+        )
+        return self
+    }
+
+    func receivedFileMessage(named fileName: String) -> XCUIElement {
+        let predicate = NSPredicate(
+            format: "label CONTAINS[c] %@",
+            "File name: \(fileName.uppercased())"
+        )
+        return app.buttons.matching(predicate).firstMatch
+    }
+
+    func fileAttachment(name: String, type: String) -> XCUIElement {
+        app.buttons.containing(
+            NSPredicate(format: "label CONTAINS[c] %@ AND label CONTAINS[c] %@", name, type)
+        ).firstMatch
+    }
+
+    func fileLabel(containing name: String) -> XCUIElement {
+        fileLabels.matching(NSPredicate(format: "label CONTAINS[c] %@", name)).firstMatch
+    }
+
+    func fileDetails(containing text: String) -> XCUIElement {
+        fileDetailLabels.matching(NSPredicate(format: "label CONTAINS[c] %@", text)).firstMatch
+    }
+
+    func fileCell(named fileName: String) -> XCUIElement {
+        let displayedFileName = (fileName as NSString).deletingPathExtension
+        let fileExtension = (fileName as NSString).pathExtension
+
+        return app.cells["\(displayedFileName), \(fileExtension)"].firstMatch
+    }
+
+    @discardableResult
+    func selectSelfDeletingMessageTimer(_ duration: String) -> ActiveConversationPage {
+        selfDeletingMessageButton.waitAndTap()
+        XCTAssertTrue(
+            selfDeletingMessageTimerPicker.waitForExistence(timeout: 3),
+            "Self-deleting message timer picker did not appear"
+        )
+        selfDeletingMessageTimerPicker.adjust(toPickerWheelValue: duration)
+        selfDeletingMessageButton.waitAndTap()
+        return self
+    }
+
+    /// Photos grid sorts newest-first; 3 seeded videos always occupy indices 0-2,
+    /// so the first real image sits at index 3.
+    func imageToChoose(at index: Int = 3) -> XCUIElement {
+        app.images.element(boundBy: index).firstMatch
+    }
+
+    func videoToChoose(at index: Int = 0) -> XCUIElement {
+        app.images.element(boundBy: index).firstMatch
     }
 
     func fetchMessages() -> [String] {
@@ -397,7 +408,7 @@ class ActiveConversationPage: PageModel {
         }
         return files
     }
-    
+
     @discardableResult
     func sendMessage(_ message: String) throws -> ActiveConversationPage {
         try inputMessageField.tapIfKeyboardNotFocused().typeText(message)
@@ -437,10 +448,6 @@ class ActiveConversationPage: PageModel {
             text
         )
         return app.textViews.matching(predicate).firstMatch
-    }
-
-    var quotedOriginalSender: XCUIElement {
-        app.descendants(matching: .any)[Locators.ActiveConversationPage.originalSender.rawValue].firstMatch
     }
 
     @discardableResult
@@ -816,10 +823,7 @@ class ActiveConversationPage: PageModel {
 
     @discardableResult
     func verifyMessageTimerSystemMessage(_ duration: String) -> ActiveConversationPage {
-        // The prod label swaps the space in `duration` (e.g. "10 seconds") for a
-        // non-breaking space (see ConversationMessageTimerSystemMessageCellDescription),
-        // so match the number and unit as separate CONTAINS clauses instead of one exact substring.
-        let parts = duration.split(separator: " ")
+        let parts = duration.split(separator: " ").map(String.init)
         let (number, unit) = (parts[0], parts[1])
         XCTAssertTrue(
             app.descendants(matching: .any)
@@ -961,8 +965,6 @@ class ActiveConversationPage: PageModel {
         return self
     }
 
-
-
     @discardableResult
     func verifyMessageExpired(
         timeout: TimeInterval = 20
@@ -973,8 +975,6 @@ class ActiveConversationPage: PageModel {
         )
         return self
     }
-
-
 
     @discardableResult
     func verifyEphemeralCountdownVisible() -> ActiveConversationPage {

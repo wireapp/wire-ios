@@ -19,9 +19,9 @@
 import UIKit
 import WireDataModel
 import WireDesign
+import WireLocators
 import WireReusableUIComponents
 import WireSyncEngine
-import WireLocators
 
 private enum Item {
     case supportedValue(MessageDestructionTimeoutValue)
@@ -81,7 +81,8 @@ final class ConversationTimeoutOptionsViewController: UIViewController {
         navigationItem.rightBarButtonItem = UIBarButtonItem.closeButton(action: UIAction { [weak self] _ in
             self?.presentingViewController?.dismiss(animated: true)
         }, accessibilityLabel: L10n.Accessibility.SelfDeletingMessagesConversationSettings.CloseButton.description)
-        navigationItem.rightBarButtonItem?.accessibilityIdentifier = Locators.ConversationTimeoutOptionsPage.timeOutOptionsCloseButton.rawValue
+        navigationItem.rightBarButtonItem?.accessibilityIdentifier = Locators.ConversationTimeoutOptionsPage
+            .timeOutOptionsCloseButton.rawValue
     }
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
