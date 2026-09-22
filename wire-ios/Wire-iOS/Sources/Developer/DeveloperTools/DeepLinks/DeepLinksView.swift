@@ -27,6 +27,7 @@ struct DeepLinksView: View {
     @State private var urlString = ""
 
     @State private var isQRScannerPresented: Bool = false
+    @State private var pendingScannedCode: String?
 
     // MARK: - Views
 
@@ -65,16 +66,29 @@ struct DeepLinksView: View {
             error: viewModel.error,
             actions: {}
         )
-        .sheet(isPresented: $isQRScannerPresented) {
+        .sheet(
+            isPresented: $isQRScannerPresented,
+            onDismiss: openPendingScannedCode
+        ) {
             QRCodeScannerView { scannedCode in
                 urlString = scannedCode
-                viewModel.openLink(urlString: scannedCode)
+                pendingScannedCode = scannedCode
+                isQRScannerPresented = false
             }
             .frame(
                 maxWidth: .infinity,
                 maxHeight: .infinity
             )
         }
+    }
+
+    private func openPendingScannedCode() {
+        guard let scannedCode = pendingScannedCode else {
+            return
+        }
+
+        pendingScannedCode = nil
+        viewModel.openLink(urlString: scannedCode)
     }
 }
 

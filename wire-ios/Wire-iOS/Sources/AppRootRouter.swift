@@ -25,6 +25,7 @@ import WireNetwork
 import WireReusableUIComponents
 import WireSyncEngine
 import WireSystem
+import WireTransport
 
 // MARK: - AppRootRouter
 
@@ -123,7 +124,119 @@ final class AppRootRouter {
         urlActionRouter.open(url: deepLinkURL)
     }
 
+    @MainActor
+    func loginWithDeveloperCredentials(
+        email: String,
+        username: String?,
+        password: String,
+        backendConfigURL: URL
+    ) -> Bool {
+        guard Bundle.developerModeEnabled else {
+            presentDeveloperLoginError("Developer mode is not enabled.")
+            return false
+        }
+
+        guard authenticationCoordinator != nil else {
+            presentDeveloperLoginError("Open the login screen before scanning a credential QR code.")
+            return false
+        }
+
+        sessionManager.fetchBackendEnvironment(at: backendConfigURL) { [weak self] result in
+            Task { @MainActor in
+                guard let self else { return }
+
+                switch result {
+                case let .success(backendEnvironment):
+                    self.sessionManager.switchBackend(
+                        to: backendEnvironment
+                    ) { [weak self] error in
+                        Task { @MainActor in
+                            if error != nil {
+                                self?.presentDeveloperLoginError("Could not switch backend.")
+                                return
+                            }
+
+                            self?.showDeveloperLoginFlow(
+                                email: email,
+                                username: username,
+                                password: password,
+                                backendEnvironment: backendEnvironment
+                            )
+                        }
+                    }
+
+                case .failure:
+                    self.presentDeveloperLoginError("Could not load backend from QR code.")
+                }
+            }
+        }
+
+        return true
+    }
+
     // MARK: - Private implementation
+
+    @MainActor
+    private func presentDeveloperLoginError(_ message: String) {
+        let alert = UIAlertController(
+            title: "QR login failed",
+            message: message,
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(title: L10n.Localizable.General.ok, style: .cancel))
+        rootViewController.present(alert, animated: true)
+    }
+
+    @MainActor
+    private func showDeveloperLoginFlow(
+        email: String,
+        username: String?,
+        password: String,
+        backendEnvironment: WireTransport.BackendEnvironment
+    ) {
+        authenticationCoordinator?.tearDown()
+        authenticationCoordinator = nil
+        WireTransport.BackendEnvironment.shared = backendEnvironment
+        screenCurtainWindow.userSession = nil
+        configureUnauthenticatedAppearance()
+
+        guard let sessionManager = SessionManager.shared else {
+            presentDeveloperLoginError("Could not start login from QR code.")
+            return
+        }
+
+        let navigationController = UINavigationController(
+            navigationBarClass: AuthenticationNavigationBar.self,
+            toolbarClass: nil
+        )
+
+        authenticationCoordinator = AuthenticationCoordinator(
+            defaultEnvironment: defaultEnvironment,
+            presenter: navigationController,
+            sessionManager: sessionManager,
+            featureProvider: BuildSettingAuthenticationFeatureProvider(),
+            statusProvider: AuthenticationStatusProvider(sharedUserSession: nil)
+        )
+
+        guard let authenticationCoordinator else {
+            presentDeveloperLoginError("Could not start login from QR code.")
+            return
+        }
+
+        authenticationCoordinator.delegate = appStateCalculator
+        authenticationCoordinator.startAuthentication(
+            environment: nil,
+            error: nil,
+            numberOfAccounts: SessionManager.numberOfAccounts
+        )
+        authenticationCoordinator.loginWithDeveloperCredentials(
+            email: email,
+            username: username,
+            password: password
+        )
+
+        replaceRootViewController(by: navigationController) {}
+    }
 
     @MainActor
     private func replaceRootViewController(

@@ -102,6 +102,7 @@ final class AuthenticationCoordinator: NSObject, AuthenticationEventResponderCha
     private var unauthenticatedSessionObserver: Any?
     private var postLoginObservers: [Any] = []
     private var pendingAlert: AuthenticationCoordinatorAlert?
+    private var pendingDeveloperUsername: String?
     private var registrationStatus: RegistrationStatus {
         unauthenticatedSession.registrationStatus
     }
@@ -229,6 +230,8 @@ extension AuthenticationCoordinator: @preconcurrency AuthenticationStateControll
                 presenter.setViewControllers([stepViewController], animated: true)
             }
         }
+
+        updatePendingDeveloperUsername(for: newState)
     }
 
 }
@@ -531,6 +534,24 @@ extension AuthenticationCoordinator {
 
     func handleUserInput(_ input: Any) {
         eventResponderChain.handleEvent(ofType: .userInput(input))
+    }
+
+    func loginWithDeveloperCredentials(email: String, username: String?, password: String) {
+        guard Bundle.developerModeEnabled else {
+            return
+        }
+
+        pendingDeveloperUsername = username.flatMap { $0.isEmpty ? nil : $0 }
+
+        let loginRequest = AuthenticationLoginRequest.email(
+            address: email,
+            password: password
+        )
+
+        executeActions([
+            .showLoadingView,
+            .startLoginFlow(loginRequest, BackendEnvironment.shared.proxyCredentialsInput)
+        ])
     }
 
 }
@@ -1001,6 +1022,24 @@ extension AuthenticationCoordinator {
                 WireLogger.authentication.error("failed to update MLS migration status: \(error)")
                 assertionFailure(String(reflecting: error))
             }
+        }
+    }
+
+    @MainActor
+    private func updatePendingDeveloperUsername(for step: AuthenticationFlowStep) {
+        switch step {
+        case .addUsername:
+            guard let username = pendingDeveloperUsername else { return }
+            pendingDeveloperUsername = nil
+            Task { @MainActor in
+                handleUserInput(username)
+            }
+
+        case .provideCredentials, .reauthenticate:
+            pendingDeveloperUsername = nil
+
+        default:
+            break
         }
     }
 }
