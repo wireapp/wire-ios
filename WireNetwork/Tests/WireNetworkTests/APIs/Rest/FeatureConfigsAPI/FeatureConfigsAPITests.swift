@@ -709,18 +709,18 @@ extension FeatureConfigsAPITests {
                 return true
             }
         )
-            .union([
-                .assetAuditLog(.init(status: .enabled)),
-                .cellsInternal(.init(status: .enabled, backendURL: URL(string: "https://example.com")!)),
-                .mlsMigration(
-                    .init(
-                        status: .enabled,
-                        startTime: dateV6(from: "2021-05-12T10:52:02Z"),
-                        finaliseRegardlessAfter: dateV6(from: "2021-05-12T10:52:02Z"),
-                        allowManualMigration: true
-                    )
+        .union([
+            .assetAuditLog(.init(status: .enabled)),
+            .cellsInternal(.init(status: .enabled, backendURL: URL(string: "https://example.com")!)),
+            .mlsMigration(
+                .init(
+                    status: .enabled,
+                    startTime: dateV6(from: "2021-05-12T10:52:02Z"),
+                    finaliseRegardlessAfter: dateV6(from: "2021-05-12T10:52:02Z"),
+                    allowManualMigration: true
                 )
-            ])
+            )
+        ])
 
     }
 
