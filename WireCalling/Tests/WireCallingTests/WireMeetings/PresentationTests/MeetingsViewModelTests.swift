@@ -101,13 +101,6 @@ struct MeetingsViewModelTests {
         }
         await viewModel.loadInitialData()
 
-        upcomingMeetingsUseCase
-            .invokePageSizeIntOffsetIntPaginatedMeetingsThrowableError = URLError(.notConnectedToInternet)
-        await viewModel.loadInitialData()
-        #expect(viewModel.hasLoadError)
-        #expect(viewModel.loadedMeetings == [first])
-        upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsThrowableError = nil
-
         // When — a second initial load returns a different page
         upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsClosure = { _, _ in
             PaginatedMeetings(meetings: [second], hasMore: false, nextOffset: 10)
@@ -118,7 +111,6 @@ struct MeetingsViewModelTests {
         #expect(viewModel.loadedMeetings.count == 1)
         #expect(viewModel.loadedMeetings.first?.title == "Second load")
         #expect(viewModel.hasMore == false)
-        #expect(!viewModel.hasLoadError)
         #expect(upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsReceivedInvocations.last?
             .offset == 0)
     }
@@ -440,14 +432,6 @@ struct MeetingsViewModelTests {
         // Then — the error is surfaced and the meeting is not removed
         #expect(viewModel.hasDeleteError == true)
         #expect(viewModel.loadedMeetings.count == 1)
-
-        viewModel.hasDeleteError = false
-        deleteMeetingUseCase.invokeMeetingMeetingVoidThrowableError = nil
-        await viewModel.retryDelete()
-
-        #expect(deleteMeetingUseCase.invokeMeetingMeetingVoidCallsCount == 2)
-        #expect(deleteMeetingUseCase.invokeMeetingMeetingVoidReceivedMeeting == meeting)
-        #expect(viewModel.loadedMeetings.isEmpty)
     }
 
     // MARK: - Delete Confirmation

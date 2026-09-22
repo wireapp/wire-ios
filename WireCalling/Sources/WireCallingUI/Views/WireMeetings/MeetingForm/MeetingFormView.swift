@@ -61,16 +61,10 @@ struct MeetingFormView: View {
                     }
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    if viewModel.isLoading {
-                        ProgressView()
-                            .accessibilityLabel(actionButtonLabel)
-                            .accessibilityIdentifier("meetingFormLoading")
-                    } else {
-                        Button(actionButtonLabel) {
-                            Task { await viewModel.submit() }
-                        }
-                        .disabled(!viewModel.isNextButtonEnabled)
+                    Button(actionButtonLabel) {
+                        Task { await viewModel.submit() }
                     }
+                    .disabled(!viewModel.isNextButtonEnabled || viewModel.isLoading)
                 }
             }
             .toolbarBackground(ColorTheme.Backgrounds.background.color, for: .navigationBar)
@@ -79,8 +73,7 @@ struct MeetingFormView: View {
             }
             .alert(isPresented: $viewModel.hasError) {
                 Alert(
-                    title: Text(errorContent.title),
-                    message: Text(errorContent.message),
+                    title: Text(Strings.Error.Alert.title),
                     dismissButton: .default(Text(Strings.Error.Alert.ok))
                 )
             }
@@ -113,18 +106,6 @@ struct MeetingFormView: View {
             } message: {
                 Text(Strings.Error.ConversationName.message)
             }
-        }
-    }
-
-    private var errorContent: (title: String, message: String) {
-        typealias Errors = L10n.Localizable.Meetings
-        switch viewModel.mode {
-        case .instant:
-            return (Errors.MeetNowModal.Error.createFailedTitle, Errors.MeetNowModal.Error.createFailed)
-        case .scheduled:
-            return (Errors.ScheduleModal.Error.createFailedTitle, Errors.ScheduleModal.Error.createFailed)
-        case .edit:
-            return (Errors.ScheduleModal.Error.updateFailedTitle, Errors.ScheduleModal.Error.updateFailed)
         }
     }
 
