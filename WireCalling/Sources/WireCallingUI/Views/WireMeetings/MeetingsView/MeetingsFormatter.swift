@@ -29,18 +29,18 @@ package struct MeetingsFormatter: MeetingsFormatterProtocol {
 
     private let calendar: Calendar
     private let dayHeaderDateFormatter: DateFormatter
-    private let timeFormatter: DateFormatter
+    private let timeFormatStyle: Date.FormatStyle
 
     package init(
         calendar: Calendar = .autoupdatingCurrent,
-        dateLocale: Locale = .autoupdatingCurrent
+        locale: Locale = .autoupdatingCurrent
     ) {
         self.calendar = calendar
         self.dayHeaderDateFormatter = DateFormatter.meetingDayHeaderDate(
-            locale: dateLocale,
+            locale: locale,
             calendar: calendar
         )
-        self.timeFormatter = DateFormatter.meetingTime(locale: dateLocale, calendar: calendar)
+        self.timeFormatStyle = Date.FormatStyle.meetingTime(locale: locale, calendar: calendar)
     }
 
     package func dayHeader(for date: Date, now: Date) -> String {
@@ -57,8 +57,8 @@ package struct MeetingsFormatter: MeetingsFormatterProtocol {
     }
 
     package func timeRange(from start: Date, to end: Date) -> String {
-        let startString = timeFormatter.string(from: start)
-        let endString = timeFormatter.string(from: end)
+        let startString = start.formatted(timeFormatStyle)
+        let endString = end.formatted(timeFormatStyle)
         return "\(startString) - \(endString)"
     }
 
@@ -81,52 +81,28 @@ package extension DateFormatter {
         locale: Locale = .autoupdatingCurrent,
         calendar: Calendar = .autoupdatingCurrent
     ) -> DateFormatter {
-        cachedMeetingFormatter(kind: .date, locale: locale, calendar: calendar)
-    }
-
-    static func meetingTime(
-        locale: Locale = .autoupdatingCurrent,
-        calendar: Calendar = .autoupdatingCurrent
-    ) -> DateFormatter {
-        cachedMeetingFormatter(kind: .time, locale: locale, calendar: calendar)
-    }
-
-    private static func cachedMeetingFormatter(
-        kind: MeetingFormatterKind,
-        locale: Locale,
-        calendar: Calendar
-    ) -> DateFormatter {
-        let cacheKey = [
-            "WireCallingUI.MeetingFormatter",
-            kind.rawValue,
-            locale.identifier,
-            String(describing: calendar.identifier),
-            calendar.timeZone.identifier
-        ].joined(separator: ".")
-
-        if let formatter = Thread.current.threadDictionary[cacheKey] as? DateFormatter {
-            return formatter
-        }
-
         let formatter = DateFormatter()
         formatter.locale = locale
         formatter.calendar = calendar
         formatter.timeZone = calendar.timeZone
-        switch kind {
-        case .date:
-            formatter.dateStyle = .short
-            formatter.timeStyle = .none
-        case .time:
-            formatter.dateStyle = .none
-            formatter.timeStyle = .short
-        }
-        Thread.current.threadDictionary[cacheKey] = formatter
+        formatter.dateStyle = .short
+        formatter.timeStyle = .none
         return formatter
     }
 
-    private enum MeetingFormatterKind: String {
-        case date
-        case time
+}
+
+package extension Date.FormatStyle {
+
+    static func meetingTime(
+        locale: Locale = .autoupdatingCurrent,
+        calendar: Calendar = .autoupdatingCurrent
+    ) -> Date.FormatStyle {
+        var style = Date.FormatStyle(date: .omitted, time: .shortened)
+        style.locale = locale
+        style.calendar = calendar
+        style.timeZone = calendar.timeZone
+        return style
     }
 
 }

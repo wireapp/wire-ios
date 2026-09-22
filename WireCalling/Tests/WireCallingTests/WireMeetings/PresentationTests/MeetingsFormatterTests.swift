@@ -38,7 +38,7 @@ struct MeetingsFormatterTests {
     var formatter: MeetingsFormatter {
         MeetingsFormatter(
             calendar: dayHeaderCalendar,
-            dateLocale: Locale(identifier: "en_US")
+            locale: Locale(identifier: "en_US")
         )
     }
 
@@ -99,12 +99,12 @@ struct MeetingsFormatterTests {
 
     @Test("meetingTime uses localized short time settings")
     func meetingTime_usesLocalizedShortTimeSettings() throws {
-        let formatter = DateFormatter.meetingTime(
+        let formatter = Date.FormatStyle.meetingTime(
             locale: Locale(identifier: "en_US@hours=h12"),
             calendar: timeRangeCalendar
         )
         let date = try makeTimeRangeDate(hour: 14, minute: 5)
-        let result = formatter.string(from: date)
+        let result = date.formatted(formatter)
 
         #expect(result.contains("2:05"))
         #expect(result.contains("PM"))
@@ -125,34 +125,6 @@ struct MeetingsFormatterTests {
         #expect(formatter.string(from: date) == expected)
     }
 
-    @Test("meetingDate reuses cached formatters")
-    func meetingDate_reusesCachedFormatters() {
-        let firstFormatter = DateFormatter.meetingDate(
-            locale: Locale(identifier: "en_US"),
-            calendar: timeRangeCalendar
-        )
-        let secondFormatter = DateFormatter.meetingDate(
-            locale: Locale(identifier: "en_US"),
-            calendar: timeRangeCalendar
-        )
-
-        #expect(firstFormatter === secondFormatter)
-    }
-
-    @Test("meetingTime reuses cached formatters")
-    func meetingTime_reusesCachedFormatters() {
-        let firstFormatter = DateFormatter.meetingTime(
-            locale: Locale(identifier: "en_US@hours=h12"),
-            calendar: timeRangeCalendar
-        )
-        let secondFormatter = DateFormatter.meetingTime(
-            locale: Locale(identifier: "en_US@hours=h12"),
-            calendar: timeRangeCalendar
-        )
-
-        #expect(firstFormatter === secondFormatter)
-    }
-
     private func makeDayHeaderDate(hour: Int, minute: Int) throws -> Date {
         try #require(dayHeaderCalendar.date(
             from: DateComponents(year: 2026, month: 9, day: 8, hour: hour, minute: minute)
@@ -168,7 +140,7 @@ struct MeetingsFormatterTests {
     private func timeRangeFormatter(localeIdentifier: String) -> MeetingsFormatter {
         MeetingsFormatter(
             calendar: timeRangeCalendar,
-            dateLocale: Locale(identifier: localeIdentifier)
+            locale: Locale(identifier: localeIdentifier)
         )
     }
 
