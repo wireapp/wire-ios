@@ -251,7 +251,7 @@ struct MeetingFormView: View {
             Text(label)
             Spacer()
             pill(
-                text: DateFormatter.meetingDate.string(from: date.wrappedValue),
+                text: DateFormatter.meetingDate().string(from: date.wrappedValue),
                 isSelected: expandedField == dateField
             ) {
                 toggleExpansion(dateField)
@@ -260,7 +260,7 @@ struct MeetingFormView: View {
             .disabled(!isDateFieldEnabled)
             .accessibilityHidden(!isDateFieldEnabled)
             pill(
-                text: DateFormatter.meetingTime.string(from: date.wrappedValue),
+                text: DateFormatter.meetingTime().string(from: date.wrappedValue),
                 isSelected: expandedField == timeField
             ) {
                 toggleExpansion(timeField)
