@@ -106,7 +106,7 @@ jobs:
     needs: changelog
     runs-on: >-
       ${{
-        inputs.mac_runner == 'in-house' && fromJSON('["self-hosted", "in-house"]') ||
+        inputs.mac_runner == 'in-house' && fromJSON('["self-hosted", "in-house", "delivery"]') ||
         inputs.mac_runner == 'github' && 'macos-26' ||
         'ghcr.io/cirruslabs/macos-runner:tahoe'
       }}
@@ -198,6 +198,11 @@ jobs:
           COUNTLY_PRODUCTION_KEY: ${{ secrets.COUNTLY_PRODUCTION_KEY }}
           COUNTLY_INTERNAL_KEY: ${{ secrets.COUNTLY_INTERNAL_KEY }}
         run: bundle exec fastlane "$FASTLANE_ACTION"
+
+      - name: Delete simulator
+        if: ${{ always() && inputs.skip_security_tests == false }}
+        run: bundle exec fastlane delete_test_simulator
+
       - name: Check for duplicate symbol implementations
         if: always()
         continue-on-error: true
