@@ -13,7 +13,7 @@ on:
           - in-house
           - cirrus
           - github
-        default: cirrus
+        default: in-house
       distribute_externals:
         type: boolean
         description: 'Distribute externally: Wire Employees and Externals - Non Wire Employees (Public Beta)'
@@ -33,7 +33,7 @@ jobs:
       countly_enabled: true
       datadog_enabled: true
       fastlane_action: testflight_beta
-      mac_runner: ${{ inputs.mac_runner || 'cirrus' }}
+      mac_runner: ${{ inputs.mac_runner || vars.DEFAULT_MAC_RUNNER }}
       distribute_externals: ${{ inputs.distribute_externals || false }}
     secrets:
       KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}

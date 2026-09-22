@@ -71,7 +71,7 @@ jobs:
     runs-on: >-
       ${{
         github.event_name != 'workflow_dispatch' && inputs.run_critical_flows && 'ghcr.io/cirruslabs/macos-runner:tahoe' ||
-        inputs.mac_runner == 'in-house' && fromJSON('["self-hosted", "in-house"]') ||
+        inputs.mac_runner == 'in-house' && fromJSON('["self-hosted", "in-house", "tests"]') ||
         inputs.mac_runner == 'github' && 'macos-26' ||
         'ghcr.io/cirruslabs/macos-runner:tahoe'
       }}
