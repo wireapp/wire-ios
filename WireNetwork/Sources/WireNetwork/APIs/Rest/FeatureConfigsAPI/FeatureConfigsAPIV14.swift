@@ -53,7 +53,8 @@ struct FeatureConfigsResponseAPIV14: Decodable, ToAPIModelConvertible {
     let fileSharing: FeatureWithoutConfig
     let selfDeletingMessages: FeatureWithConfig<FeatureConfigResponse.SelfDeletingMessagesV0>
     let mls: FeatureWithConfig<FeatureConfigResponse.MLSV4>
-    let mlsMigration: FeatureWithConfig<FeatureConfigResponse.MLSMigrationV6>
+    // added in v14
+    let mlsMigration: FeatureWithConfig<FeatureConfigResponse.MLSMigrationV14>
     let mlsE2EId: FeatureWithConfig<FeatureConfigResponse.EndToEndIdentityV6>
     let channels: FeatureWithConfig<FeatureConfigResponse.ChannelsV8>
     let cells: FeatureWithoutConfig
@@ -113,7 +114,8 @@ struct FeatureConfigsResponseAPIV14: Decodable, ToAPIModelConvertible {
         let mlsMigrationConfig = MLSMigrationFeatureConfig(
             status: mlsMigration.status.toAPIModel(),
             startTime: mlsMigration.config.startTime?.date,
-            finaliseRegardlessAfter: mlsMigration.config.finaliseRegardlessAfter?.date
+            finaliseRegardlessAfter: mlsMigration.config.finaliseRegardlessAfter?.date,
+            allowManualMigration: mlsMigration.config.allowManualMigration
         )
 
         featureConfigs.append(.mlsMigration(mlsMigrationConfig))
@@ -180,6 +182,12 @@ extension FeatureConfigResponse {
         struct BackendV14: Decodable {
             let url: URL
         }
+    }
+
+    struct MLSMigrationV14: Decodable {
+        let startTime: UTCTime?
+        let finaliseRegardlessAfter: UTCTime?
+        let allowManualMigration: Bool?
     }
 
 }

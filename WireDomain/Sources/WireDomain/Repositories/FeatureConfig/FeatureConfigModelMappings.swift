@@ -89,7 +89,8 @@ extension WireNetwork.MLSMigrationFeatureConfig {
     func toDomainModel() -> Feature.MLSMigration.Config {
         .init(
             startTime: startTime,
-            finaliseRegardlessAfter: finaliseRegardlessAfter
+            finaliseRegardlessAfter: finaliseRegardlessAfter,
+            allowManualMigration: allowManualMigration
         )
     }
 

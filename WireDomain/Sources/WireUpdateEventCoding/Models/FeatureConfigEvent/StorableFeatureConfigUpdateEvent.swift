@@ -105,7 +105,8 @@ struct StorableFeatureConfigUpdateEvent: Equatable, Codable, Sendable {
                 StorableMLSMigrationFeatureConfig(
                     status: StorableFeatureConfigStatus(config.status),
                     startTime: config.startTime,
-                    finaliseRegardlessAfter: config.finaliseRegardlessAfter
+                    finaliseRegardlessAfter: config.finaliseRegardlessAfter,
+                    allowManualMigration: config.allowManualMigration
                 )
             )
         case let .selfDeletingMessages(config):
@@ -245,7 +246,8 @@ struct StorableFeatureConfigUpdateEvent: Equatable, Codable, Sendable {
                 MLSMigrationFeatureConfig(
                     status: config.status.toAPIModel(),
                     startTime: config.startTime,
-                    finaliseRegardlessAfter: config.finaliseRegardlessAfter
+                    finaliseRegardlessAfter: config.finaliseRegardlessAfter,
+                    allowManualMigration: config.allowManualMigration
                 )
             )
         case let .selfDeletingMessages(config):
@@ -414,6 +416,7 @@ struct StorableMLSMigrationFeatureConfig: Equatable, Codable, Sendable {
     let status: StorableFeatureConfigStatus
     let startTime: Date?
     let finaliseRegardlessAfter: Date?
+    let allowManualMigration: Bool?
 
 }
 
