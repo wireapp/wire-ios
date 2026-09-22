@@ -90,11 +90,11 @@ struct MeetingsFormatterTests {
 
     @Test("timeRange respects 24-hour time settings")
     func timeRange_respectsTwentyFourHourTimeSettings() throws {
-        let formatter = timeRangeFormatter(localeIdentifier: "en_US@hours=h23")
-        let start = try makeTimeRangeDate(hour: 14, minute: 0)
-        let end = try makeTimeRangeDate(hour: 15, minute: 15)
+        let formatter = timeRangeFormatter(localeIdentifier: "en_GB")
+        let start = try makeTimeRangeDate(hour: 7, minute: 5)
+        let end = try makeTimeRangeDate(hour: 8, minute: 15)
 
-        #expect(formatter.timeRange(from: start, to: end) == "14:00 - 15:15")
+        #expect(formatter.timeRange(from: start, to: end) == "07:05 - 08:15")
     }
 
     @Test("meetingTime uses localized short time settings")
@@ -108,6 +108,17 @@ struct MeetingsFormatterTests {
 
         #expect(result.contains("2:05"))
         #expect(result.contains("PM"))
+    }
+
+    @Test("meetingTime pads 24-hour time settings")
+    func meetingTime_padsTwentyFourHourTimeSettings() throws {
+        let formatter = Date.FormatStyle.meetingTime(
+            locale: Locale(identifier: "en_GB"),
+            calendar: timeRangeCalendar
+        )
+        let date = try makeTimeRangeDate(hour: 7, minute: 5)
+
+        #expect(date.formatted(formatter) == "07:05")
     }
 
     @Test("meetingDate uses localized short date settings", arguments: [

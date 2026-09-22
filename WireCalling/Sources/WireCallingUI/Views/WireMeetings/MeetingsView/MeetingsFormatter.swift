@@ -98,11 +98,30 @@ package extension Date.FormatStyle {
         locale: Locale = .autoupdatingCurrent,
         calendar: Calendar = .autoupdatingCurrent
     ) -> Date.FormatStyle {
-        var style = Date.FormatStyle(date: .omitted, time: .shortened)
+        var style = Date.FormatStyle()
+        if locale.usesTwentyFourHourTime {
+            style = style
+                .hour(.twoDigits(amPM: .omitted))
+                .minute(.twoDigits)
+        } else {
+            style = style
+                .hour(.defaultDigits(amPM: .abbreviated))
+                .minute(.twoDigits)
+        }
         style.locale = locale
         style.calendar = calendar
         style.timeZone = calendar.timeZone
         return style
+    }
+
+}
+
+private extension Locale {
+
+    var usesTwentyFourHourTime: Bool {
+        // The "j" template resolves to the locale's preferred hour cycle, including user overrides.
+        let hourFormat = DateFormatter.dateFormat(fromTemplate: "j", options: 0, locale: self) ?? ""
+        return !hourFormat.contains("a")
     }
 
 }
