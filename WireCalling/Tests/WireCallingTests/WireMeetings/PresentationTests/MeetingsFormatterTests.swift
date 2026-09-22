@@ -125,6 +125,34 @@ struct MeetingsFormatterTests {
         #expect(formatter.string(from: date) == expected)
     }
 
+    @Test("meetingDate reuses cached formatters")
+    func meetingDate_reusesCachedFormatters() {
+        let firstFormatter = DateFormatter.meetingDate(
+            locale: Locale(identifier: "en_US"),
+            calendar: timeRangeCalendar
+        )
+        let secondFormatter = DateFormatter.meetingDate(
+            locale: Locale(identifier: "en_US"),
+            calendar: timeRangeCalendar
+        )
+
+        #expect(firstFormatter === secondFormatter)
+    }
+
+    @Test("meetingTime reuses cached formatters")
+    func meetingTime_reusesCachedFormatters() {
+        let firstFormatter = DateFormatter.meetingTime(
+            locale: Locale(identifier: "en_US@hours=h12"),
+            calendar: timeRangeCalendar
+        )
+        let secondFormatter = DateFormatter.meetingTime(
+            locale: Locale(identifier: "en_US@hours=h12"),
+            calendar: timeRangeCalendar
+        )
+
+        #expect(firstFormatter === secondFormatter)
+    }
+
     private func makeDayHeaderDate(hour: Int, minute: Int) throws -> Date {
         try #require(dayHeaderCalendar.date(
             from: DateComponents(year: 2026, month: 9, day: 8, hour: hour, minute: minute)
