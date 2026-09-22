@@ -76,7 +76,7 @@ struct MeetingsFormatterTests {
 
     @Test("timeRange respects 12-hour time settings")
     func timeRange_respectsTwelveHourTimeSettings() throws {
-        let formatter = timeRangeFormatter(localeIdentifier: "en_US@hours=h12")
+        let formatter = formatter(localeIdentifier: "en_US@hours=h12")
         let start = try makeTimeRangeDate(hour: 14, minute: 0)
         let end = try makeTimeRangeDate(hour: 15, minute: 15)
         let result = formatter.timeRange(from: start, to: end)
@@ -90,50 +90,41 @@ struct MeetingsFormatterTests {
 
     @Test("timeRange respects 24-hour time settings")
     func timeRange_respectsTwentyFourHourTimeSettings() throws {
-        let formatter = timeRangeFormatter(localeIdentifier: "en_GB")
+        let formatter = formatter(localeIdentifier: "en_GB")
         let start = try makeTimeRangeDate(hour: 7, minute: 5)
         let end = try makeTimeRangeDate(hour: 8, minute: 15)
 
         #expect(formatter.timeRange(from: start, to: end) == "07:05 - 08:15")
     }
 
-    @Test("meetingTime uses localized short time settings")
-    func meetingTime_usesLocalizedShortTimeSettings() throws {
-        let formatter = Date.FormatStyle.meetingTime(
-            locale: Locale(identifier: "en_US@hours=h12"),
-            calendar: timeRangeCalendar
-        )
+    @Test("time uses localized short time settings")
+    func time_usesLocalizedShortTimeSettings() throws {
+        let formatter = formatter(localeIdentifier: "en_US@hours=h12")
         let date = try makeTimeRangeDate(hour: 14, minute: 5)
-        let result = date.formatted(formatter)
+        let result = formatter.time(date)
 
         #expect(result.contains("2:05"))
         #expect(result.contains("PM"))
     }
 
-    @Test("meetingTime pads 24-hour time settings")
-    func meetingTime_padsTwentyFourHourTimeSettings() throws {
-        let formatter = Date.FormatStyle.meetingTime(
-            locale: Locale(identifier: "en_GB"),
-            calendar: timeRangeCalendar
-        )
+    @Test("time pads 24-hour time settings")
+    func time_padsTwentyFourHourTimeSettings() throws {
+        let formatter = formatter(localeIdentifier: "en_GB")
         let date = try makeTimeRangeDate(hour: 7, minute: 5)
 
-        #expect(date.formatted(formatter) == "07:05")
+        #expect(formatter.time(date) == "07:05")
     }
 
-    @Test("meetingDate uses localized short date settings", arguments: [
+    @Test("date uses localized short date settings", arguments: [
         ("en_US", "9/8/26"),
         ("en_GB", "08/09/2026"),
         ("de_DE", "08.09.26")
     ])
-    func meetingDate_usesLocalizedShortDateSettings(localeIdentifier: String, expected: String) throws {
-        let formatter = DateFormatter.meetingDate(
-            locale: Locale(identifier: localeIdentifier),
-            calendar: timeRangeCalendar
-        )
+    func date_usesLocalizedShortDateSettings(localeIdentifier: String, expected: String) throws {
+        let formatter = formatter(localeIdentifier: localeIdentifier)
         let date = try makeTimeRangeDate(hour: 14, minute: 5)
 
-        #expect(formatter.string(from: date) == expected)
+        #expect(formatter.date(date) == expected)
     }
 
     private func makeDayHeaderDate(hour: Int, minute: Int) throws -> Date {
@@ -148,7 +139,7 @@ struct MeetingsFormatterTests {
         ))
     }
 
-    private func timeRangeFormatter(localeIdentifier: String) -> MeetingsFormatter {
+    private func formatter(localeIdentifier: String) -> MeetingsFormatter {
         MeetingsFormatter(
             calendar: timeRangeCalendar,
             locale: Locale(identifier: localeIdentifier)

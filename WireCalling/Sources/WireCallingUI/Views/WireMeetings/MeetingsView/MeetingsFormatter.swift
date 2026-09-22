@@ -20,6 +20,8 @@ package import Foundation
 
 package protocol MeetingsFormatterProtocol {
     func dayHeader(for date: Date, now: Date) -> String
+    func date(_ date: Date) -> String
+    func time(_ date: Date) -> String
     func timeRange(from start: Date, to end: Date) -> String
 }
 
@@ -29,7 +31,8 @@ package struct MeetingsFormatter: MeetingsFormatterProtocol {
 
     private let calendar: Calendar
     private let dayHeaderDateFormatter: DateFormatter
-    private let timeFormatStyle: Date.FormatStyle
+    private let dateFormatter: DateFormatter
+    private let timeFormatter: DateFormatter
 
     package init(
         calendar: Calendar = .autoupdatingCurrent,
@@ -40,7 +43,8 @@ package struct MeetingsFormatter: MeetingsFormatterProtocol {
             locale: locale,
             calendar: calendar
         )
-        self.timeFormatStyle = Date.FormatStyle.meetingTime(locale: locale, calendar: calendar)
+        self.dateFormatter = DateFormatter.meetingDate(locale: locale, calendar: calendar)
+        self.timeFormatter = DateFormatter.meetingTime(locale: locale, calendar: calendar)
     }
 
     package func dayHeader(for date: Date, now: Date) -> String {
@@ -56,10 +60,16 @@ package struct MeetingsFormatter: MeetingsFormatterProtocol {
         return formattedDate
     }
 
+    package func date(_ date: Date) -> String {
+        dateFormatter.string(from: date)
+    }
+
+    package func time(_ date: Date) -> String {
+        timeFormatter.string(from: date)
+    }
+
     package func timeRange(from start: Date, to end: Date) -> String {
-        let startString = start.formatted(timeFormatStyle)
-        let endString = end.formatted(timeFormatStyle)
-        return "\(startString) - \(endString)"
+        "\(time(start)) - \(time(end))"
     }
 
 }
@@ -90,38 +100,17 @@ package extension DateFormatter {
         return formatter
     }
 
-}
-
-package extension Date.FormatStyle {
-
     static func meetingTime(
         locale: Locale = .autoupdatingCurrent,
         calendar: Calendar = .autoupdatingCurrent
-    ) -> Date.FormatStyle {
-        var style = Date.FormatStyle()
-        if locale.usesTwentyFourHourTime {
-            style = style
-                .hour(.twoDigits(amPM: .omitted))
-                .minute(.twoDigits)
-        } else {
-            style = style
-                .hour(.defaultDigits(amPM: .abbreviated))
-                .minute(.twoDigits)
-        }
-        style.locale = locale
-        style.calendar = calendar
-        style.timeZone = calendar.timeZone
-        return style
-    }
-
-}
-
-private extension Locale {
-
-    var usesTwentyFourHourTime: Bool {
-        // The "j" template resolves to the locale's preferred hour cycle, including user overrides.
-        let hourFormat = DateFormatter.dateFormat(fromTemplate: "j", options: 0, locale: self) ?? ""
-        return !hourFormat.contains("a")
+    ) -> DateFormatter {
+        let formatter = DateFormatter()
+        formatter.locale = locale
+        formatter.calendar = calendar
+        formatter.timeZone = calendar.timeZone
+        formatter.dateStyle = .none
+        formatter.timeStyle = .short
+        return formatter
     }
 
 }

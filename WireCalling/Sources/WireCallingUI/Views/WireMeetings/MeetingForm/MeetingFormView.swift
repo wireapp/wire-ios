@@ -25,8 +25,7 @@ import WireFoundation
 struct MeetingFormView: View {
     private typealias Strings = L10n.Localizable.WireMeetings.Schedule
     private static let timePickerMinuteInterval = 15
-    private let meetingDateFormatter = DateFormatter.meetingDate()
-    private let meetingTimeFormatStyle = Date.FormatStyle.meetingTime()
+    private let formatter = MeetingsFormatter()
 
     @Environment(\.dismiss) private var dismiss
     @Environment(\.wireAccentColor) private var wireAccentColor
@@ -234,7 +233,7 @@ struct MeetingFormView: View {
             Text(label)
             Spacer()
             pill(
-                text: meetingDateFormatter.string(from: date.wrappedValue),
+                text: formatter.date(date.wrappedValue),
                 isSelected: expandedField == dateField
             ) {
                 toggleExpansion(dateField)
@@ -243,7 +242,7 @@ struct MeetingFormView: View {
             .disabled(!isDateFieldEnabled)
             .accessibilityHidden(!isDateFieldEnabled)
             pill(
-                text: date.wrappedValue.formatted(meetingTimeFormatStyle),
+                text: formatter.time(date.wrappedValue),
                 isSelected: expandedField == timeField
             ) {
                 toggleExpansion(timeField)
