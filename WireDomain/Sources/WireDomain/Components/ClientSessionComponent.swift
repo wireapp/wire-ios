@@ -778,10 +778,10 @@ public final class ClientSessionComponent {
         switch event {
         case let .meeting(.delete(event)):
             notification = await meetingDeleteEventNotificationBuilder.buildContent(event: event)
-        case let .meeting(.memberAdd(event)):
-            notification = await meetingMemberAddEventNotificationBuilder.buildContent(event: event)
-        case let .meeting(.update(event)):
-            notification = await meetingUpdateEventNotificationBuilder.buildContent(event: event)
+        case .meeting(.create), .meeting(.memberAdd), .meeting(.update):
+            // Meeting invitation and update notifications are disabled for now
+            // to align with platforms that do not support them yet.
+            return
         default:
             return
         }

@@ -125,15 +125,15 @@ final class MeetingMemberAddEventNotificationBuilderTests: XCTestCase {
         XCTAssertTrue(meetingsAPI.requestedIDs.isEmpty)
     }
 
-    func testMemberAddIsRoutedToInvitationBuilder() async {
+    func testMemberAddIsNotRoutedToInvitationBuilder() async {
         let builder = MeetingEventNotificationBuilder(
             meetingDeleteEventBuilder: UnusedMeetingDeleteBuilder(),
             meetingMemberAddEventBuilder: sut,
             meetingUpdateEventBuilder: UnusedMeetingUpdateBuilder()
         )
         let result = await builder.buildContent(event: .memberAdd(Scaffolding.event))
-        XCTAssertNotNil(result)
-        XCTAssertEqual(meetingsAPI.requestedIDs, [Scaffolding.meetingID])
+        XCTAssertNil(result)
+        XCTAssertTrue(meetingsAPI.requestedIDs.isEmpty)
     }
 
     func testMemberAddStillRefreshesMeetingThroughUpdateProcessor() async throws {

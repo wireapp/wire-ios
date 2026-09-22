@@ -36,11 +36,9 @@ struct MeetingEventNotificationBuilder: MeetingEventNotificationBuilderProtocol 
         switch event {
         case let .delete(event):
             await meetingDeleteEventBuilder.buildContent(event: event)
-        case let .memberAdd(event):
-            await meetingMemberAddEventBuilder.buildContent(event: event)
-        case let .update(event):
-            await meetingUpdateEventBuilder.buildContent(event: event)
-        default:
+        case .create, .memberAdd, .update:
+            // Meeting invitation and update notifications are disabled for now
+            // to align with platforms that do not support them yet.
             nil
         }
     }
