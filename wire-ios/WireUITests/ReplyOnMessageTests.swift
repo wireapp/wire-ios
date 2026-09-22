@@ -20,7 +20,7 @@ import WireFoundation
 import XCTest
 
 /// [core-messenger]
-final class ReplyOnMessagesTests: WireUITestCase {
+final class ReplyOnMessageTests: WireUITestCase {
 
     private typealias ReturnedTeam = (
         teamOwner: UserInfo,
@@ -165,6 +165,65 @@ final class ReplyOnMessagesTests: WireUITestCase {
             replyText: audioReply,
             quotedContentType: "file",
             quotedSenderName: groupTeam.teamMember.name
+        )
+    }
+
+    @MainActor
+    func testNotAbleToReplyToPingOrSelfDeletingMessageInGroupConversation_TC_11824_11825() async throws {
+
+        // GIVEN
+        let originalTextMessage = UserGenerator.generateRandomMessage()
+        let groupTeam = try await registerGroupTeam()
+
+        let activeConversationPage = try app.loginUser(
+            email: groupTeam.teamOwner.email,
+            password: groupTeam.teamOwner.password
+        )
+        .acceptPopup()
+        .openConversation()
+
+        try await testServicesClient.sendPing(
+            user: groupTeam.teamMember,
+            conversationId: groupTeam.conversationId,
+            domain: groupTeam.conversationDomain
+        )
+
+        let pingMessage = activeConversationPage.receivedPing(for: groupTeam.teamMember.name)
+        XCTAssertTrue(
+            pingMessage.waitForExistence(timeout: 5),
+            "Expected ping message was not found, possible that not being sent via testService"
+        )
+
+        // WHEN - long-press ping message
+        pingMessage.press(forDuration: 1.0)
+
+        // THEN - no Reply option offered
+        XCTAssertFalse(
+            activeConversationPage.replyMenuButton.waitForExistence(timeout: 2),
+            "Reply option should not be available for ping messages"
+        )
+
+        try await testServicesClient.sendText(
+            user: groupTeam.teamMember,
+            text: originalTextMessage,
+            conversationId: groupTeam.conversationId,
+            domain: groupTeam.conversationDomain,
+            timeoutMillis: 60_000 // messageTimer => self-deleting message
+        )
+
+        let selfDeletingMessage = activeConversationPage.message(withText: originalTextMessage)
+        XCTAssertTrue(
+            selfDeletingMessage.waitForExistence(timeout: 5),
+            "Expected self-deleting message was not found, possible that not being sent via testService"
+        )
+
+        // WHEN - long-press self-deleting message
+        selfDeletingMessage.press(forDuration: 1.0)
+
+        // THEN - no Reply option offered
+        XCTAssertFalse(
+            activeConversationPage.replyMenuButton.waitForExistence(timeout: 2),
+            "Reply option should not be available for self-deleting messages"
         )
     }
 }
