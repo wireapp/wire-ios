@@ -184,7 +184,7 @@ extension UnauthenticatedSession: UserInfoParser {
     public func upgradeToAuthenticatedSession(
         with userInfo: UserInfo,
         newEnvironment: NewEnvironment,
-        multiIngressIdentityProviderID: UUID? = nil
+        multiIngressIdentityProviderID: UUID?
     ) {
         let account = Account(userName: "", userIdentifier: userInfo.identifier)
         account.lastSSOIdentityProviderID = multiIngressIdentityProviderID
