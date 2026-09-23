@@ -475,10 +475,6 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     func test_EstablishGroupWithMultipleUsers_IsSuccessful() async throws {
         // Given
-        // Serialize key package claims: MockMLSActionsProviderProtocol's generated
-        // invocation-recording arrays aren't thread-safe, so concurrent claims would race.
-        createSut(maxConcurrentKeyPackageClaims: 1)
-
         let groupID = MLSGroupID(Data([1, 2, 3]))
         let removalKey = ed25519RemovalKey
         let users = [
@@ -532,10 +528,6 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     func test_EstablishGroupWithSelfUser_IsAlwaysAddingSelfLast() async throws {
         // Given
-        // Serialize key package claims: MockMLSActionsProviderProtocol's generated
-        // invocation-recording arrays aren't thread-safe, so concurrent claims would race.
-        createSut(maxConcurrentKeyPackageClaims: 1)
-
         let mlsSelfUser = await uiMOC.perform {
             let selfUser = ZMUser.selfUser(in: self.uiMOC)
             return MLSUser(from: selfUser, localDomain: self.localDomain)
