@@ -38,10 +38,18 @@ final class ConversationFailedToAddParticipantsSystemMessageCellDescription: Con
     let accessibilityIdentifier: String? = nil
     let accessibilityLabel: String? = nil
 
-    init(failedUsers: [UserType], isCollapsed: Bool, buttonAction: @escaping Completion) {
+    init(
+        failedUsers: [UserType],
+        isCollapsed: Bool,
+        reason: ZMSystemMessageType = .failedToAddParticipants,
+        buttonAction: @escaping Completion
+    ) {
         self.configuration = View.Configuration(
             title: ConversationFailedToAddParticipantsSystemMessageCellDescription.configureTitle(for: failedUsers),
-            content: ConversationFailedToAddParticipantsSystemMessageCellDescription.configureContent(for: failedUsers),
+            content: ConversationFailedToAddParticipantsSystemMessageCellDescription.configureContent(
+                for: failedUsers,
+                reason: reason
+            ),
             isCollapsed: isCollapsed,
             icon: .init(resource: .attention).withRenderingMode(.alwaysOriginal),
             buttonAction: buttonAction
@@ -57,7 +65,10 @@ final class ConversationFailedToAddParticipantsSystemMessageCellDescription: Con
         return .markdown(from: title, style: .errorLabelStyle)
     }
 
-    private static func configureContent(for failedUsers: [UserType]) -> NSAttributedString {
+    private static func configureContent(
+        for failedUsers: [UserType],
+        reason: ZMSystemMessageType
+    ) -> NSAttributedString {
         let keyString = "content.system.failedtoadd_participants.could_not_be_added"
 
         let userNames = failedUsers.compactMap(\.name)
@@ -65,7 +76,12 @@ final class ConversationFailedToAddParticipantsSystemMessageCellDescription: Con
         let text = keyString.localized(args: userNames.count, userNamesJoined)
 
         let attributedText = NSAttributedString.errorSystemMessage(withText: text, andHighlighted: userNamesJoined)
-        let learnMore = NSAttributedString.unreachableBackendLearnMoreLink
+        let learnMore: NSAttributedString = switch reason {
+        case .failedToAddParticipantsMLS:
+            .mlsMissingKeyPackageLearnMoreLink
+        default:
+            .unreachableBackendLearnMoreLink
+        }
 
         return [attributedText, learnMore].joined(separator: " ".attributedString)
     }

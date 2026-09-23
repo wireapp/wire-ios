@@ -209,9 +209,6 @@ final class ConversationListCellTests: XCTestCase {
     }
 
     func testThatItRendersScheduledForDeletionConversation() {
-        // GIVEN
-        DeveloperFlag.preventAdminlessGroups.enable(true)
-        defer { DeveloperFlag.preventAdminlessGroups.enable(false) }
 
         // WHEN
         let status = ConversationStatus(

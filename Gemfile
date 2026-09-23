@@ -3,12 +3,10 @@ source 'https://rubygems.org'
 ruby file: ".ruby-version"
 
 gem 'abbrev'
-gem 'fastlane', '2.237.0'
+gem 'fastlane', '2.239.0'
 gem 'git'
 gem 'httparty'
 gem 'mutex_m'
-gem 'danger'
-gem 'danger-xcode_summary'
 gem "nkf"
 gem 'rexml', '>=3.3.2'
 

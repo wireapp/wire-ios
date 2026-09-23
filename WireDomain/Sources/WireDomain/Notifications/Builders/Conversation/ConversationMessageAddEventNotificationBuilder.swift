@@ -128,6 +128,8 @@ struct ConversationMessageAddEventNotificationBuilder: ConversationMessageAddEve
         senderID: UserID,
         conversationID: ConversationID
     ) async -> UserNotification? {
+        guard !message.hasCalling else { return nil }
+
         let canDisplayNotification = await validator.validate(
             message: message,
             senderID: senderID,

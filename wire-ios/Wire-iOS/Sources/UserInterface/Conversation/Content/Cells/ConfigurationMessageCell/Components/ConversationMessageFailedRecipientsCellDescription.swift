@@ -116,6 +116,18 @@ extension NSAttributedString {
         )
     }
 
+    static var mlsMissingKeyPackageLearnMoreLink: NSAttributedString {
+        typealias SystemContent = L10n.Localizable.Content.System
+
+        return NSAttributedString(
+            string: SystemContent.FailedParticipants.learnMore,
+            attributes: [
+                .font: UIFont.mediumSemiboldFont,
+                .link: WireURLs.shared.mlsInfo
+            ]
+        )
+    }
+
     static func errorSystemMessage(withText text: String, andHighlighted highlighted: String) -> NSAttributedString {
         .markdown(from: text, style: .errorLabelStyle)
             .adding(font: .mediumSemiboldFont, to: highlighted)

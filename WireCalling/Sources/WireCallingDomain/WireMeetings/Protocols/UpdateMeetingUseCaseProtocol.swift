@@ -41,4 +41,7 @@ package protocol UpdateMeetingUseCaseProtocol: Sendable {
         participants: [MeetingMember]
     ) async throws -> Meeting
 
+    /// Updates the meeting's dedicated conversation name without updating the meeting itself.
+    func updateConversationName(for meeting: Meeting) async throws
+
 }

@@ -27,6 +27,7 @@ struct ConversationCreateEventNotificationBuilder: ConversationCreateEventNotifi
     func buildContent(
         event: ConversationCreateEvent
     ) async -> UserNotification? {
+        guard event.conversation.groupType != .meeting else { return nil }
         let canBuildNotification = await validator.validate()
 
         guard canBuildNotification else {

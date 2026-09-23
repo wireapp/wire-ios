@@ -21,6 +21,8 @@ public import WireCallingDomain
 public import WireFoundation
 public import WireNetwork
 
+import WireLogging
+
 /// The single implementation of `WireCallingDomain.MeetingRepositoryProtocol`.
 ///
 /// The repository bridges between the backend API (`MeetingResponse`) and the
@@ -31,16 +33,19 @@ public final class MeetingRepository: MeetingRepositoryProtocol {
 
     private let meetingsAPI: any MeetingsAPI
     private let localStore: any MeetingLocalStoreProtocol
+    private let pullConversation: (@Sendable (QualifiedID) async throws -> Void)?
     private let changeBroadcaster = AsyncMulticaster<Void>()
 
     // MARK: - Object lifecycle
 
     public init(
         meetingsAPI: any MeetingsAPI,
-        localStore: any MeetingLocalStoreProtocol
+        localStore: any MeetingLocalStoreProtocol,
+        pullConversation: (@Sendable (QualifiedID) async throws -> Void)? = nil
     ) {
         self.meetingsAPI = meetingsAPI
         self.localStore = localStore
+        self.pullConversation = pullConversation
     }
 
     // MARK: - Public
@@ -62,15 +67,14 @@ public final class MeetingRepository: MeetingRepositoryProtocol {
                 title: title,
                 startTime: startTime,
                 endTime: endTime,
+                timeZoneIdentifier: TimeZone.current.identifier,
                 recurrence: recurrence?.toNetworkRecurrence()
             )
         )
         let meeting = response.toDomainMeeting()
         await storeMeeting(meeting)
         // The stored copy has its members populated from the conversation.
-        // Right after creation the conversation is not pulled yet, so the
-        // store can't provide the meeting and the mapped one is returned;
-        // its empty member list is accurate at this point.
+        // Until the conversation is pulled, its metadata remains unavailable.
         return await localStore.storedMeeting(id: meeting.id) ?? meeting
     }
 
@@ -122,7 +126,9 @@ public final class MeetingRepository: MeetingRepositoryProtocol {
             // so there is nothing to pull from older backends.
             return
         }
-        await localStore.replaceAllMeetings(with: responses.map { $0.toDomainMeeting() })
+        let meetings = responses.map { $0.toDomainMeeting() }
+        await localStore.replaceAllMeetings(with: meetings)
+        await resolveConversations(for: meetings)
         changeBroadcaster.broadcast()
     }
 
@@ -175,8 +181,27 @@ public final class MeetingRepository: MeetingRepositoryProtocol {
         do {
             let meetings = try await meetingsAPI.listMeetings().map { $0.toDomainMeeting() }
             await localStore.replaceAllMeetings(with: meetings)
+            await resolveConversations(for: meetings)
         } catch {
             guard await !localStore.storedMeetings().isEmpty else { throw error }
+        }
+    }
+
+    private func resolveConversations(for meetings: [Meeting]) async {
+        guard let pullConversation else { return }
+        var conversationIDs = Set<QualifiedID>()
+        for meeting in meetings {
+            guard !Task.isCancelled else { return }
+            guard conversationIDs.insert(meeting.conversationID).inserted,
+                  await localStore.storedMeeting(id: meeting.id)?.conversation == nil else { continue }
+            do {
+                try await pullConversation(meeting.conversationID)
+            } catch {
+                guard !Task.isCancelled else { return }
+                // Keep the meeting snapshot and retry its missing metadata on the next refresh.
+                WireLogger.meetings
+                    .warn("failed to resolve meeting conversation: \(String(describing: type(of: error)))")
+            }
         }
     }
 
@@ -196,6 +221,7 @@ private extension MeetingResponse {
             start: startTime,
             end: endTime,
             recurrence: recurrence?.toDomainRecurrence(),
+            timeZoneIdentifier: timeZoneIdentifier,
             conversationID: conversationID,
             creatorID: creatorID
         )

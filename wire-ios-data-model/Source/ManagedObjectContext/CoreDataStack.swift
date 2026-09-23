@@ -137,6 +137,8 @@ public final class CoreDataStack: NSObject, CoreDataStackProtocol, ContextProvid
         // Set the EARMessageEncryptionService on the new background context
         context.performAndWait {
             context.earMessageEncryptionService = earMessageEncryptionService
+            context.localDomain = localDomain
+            context.isFederationEnabled = isFederationEnabled
         }
 
         return context

@@ -63,6 +63,9 @@ package final class MeetingFormViewModel {
     private let onSuccess: (Meeting) -> Void
 
     private static let timePickerMinuteInterval = 15
+    // Match the limits enforced by SimpleTextFieldValidator for conversation names.
+    private static let maximumConversationNameLength = 64
+    private static let maximumConversationNameByteLength = 256
 
     /// The smallest selectable interval between start and end time.
     private static let minimumDuration = TimeInterval(timePickerMinuteInterval) * TimeInterval.oneMinute
@@ -89,18 +92,26 @@ package final class MeetingFormViewModel {
     }
 
     /// Scheduled meetings start at the next available picker interval.
-    /// When editing a meeting whose start lies in the past, its original day
-    /// stays selectable unless it is recurring; recurring meetings are moved
-    /// to their next editable occurrence so the backend receives a non-past start date.
+    /// Edited meetings may start up to 24 hours in the past, as allowed by the backend.
     var startDateRange: PartialRangeFrom<Date> {
-        var earliest = currentDateProvider.now
+        let earliest = currentDateProvider.now
         if case .scheduled = mode {
             return Self.nextSelectableStartDate(after: earliest)...
         }
-        if case let .edit(meeting) = mode, meeting.recurrence == nil {
-            earliest = min(earliest, meeting.start)
+        if case .edit = mode {
+            return earliest.addingTimeInterval(-TimeInterval.oneDay)...
         }
         return Calendar.current.startOfDay(for: earliest)...
+    }
+
+    /// Present a valid picker selection without changing the meeting merely by opening the picker.
+    /// The form displays `startDate`; only a valid picker change updates it.
+    var startDatePickerSelection: Date {
+        get { max(startDate, startDateRange.lowerBound) }
+        set {
+            guard startDateRange.contains(newValue) else { return }
+            startDate = newValue
+        }
     }
 
     /// Acceptance: the end picker must stay on the start date, with 23:45 as the latest available time.
@@ -125,6 +136,17 @@ package final class MeetingFormViewModel {
     /// logged; the view shows a generic alert.
     var hasError = false
 
+    var hasExpiredStartDateError = false
+
+    /// Set when the meeting was saved but its dedicated conversation could not be renamed.
+    var hasConversationNameUpdateError = false
+    private var meetingPendingConversationNameUpdate: Meeting?
+
+    var hasParticipantsNotAddedAlert = false
+    private(set) var participantsNotAdded: [MeetingMember] = []
+    private var meetingWithParticipantsNotAdded: Meeting?
+    private var didAcknowledgeParticipantsNotAdded = false
+
     var selectedMembersSummary: String {
         selectedMembers
             .map(\.name)
@@ -132,7 +154,12 @@ package final class MeetingFormViewModel {
     }
 
     var isNextButtonEnabled: Bool {
-        !meetingTitle.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        !meetingTitle.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && !isMeetingTitleTooLong
+    }
+
+    var isMeetingTitleTooLong: Bool {
+        meetingTitle.count > Self.maximumConversationNameLength ||
+            meetingTitle.utf8.count > Self.maximumConversationNameByteLength
     }
 
     // MARK: - Public Interface
@@ -193,17 +220,63 @@ package final class MeetingFormViewModel {
         // corrupt subsequent pagination (e.g. the next “load more” would re-fetch from offset 0 and replace data
         // unexpectedly). Consider making load(pageSize:) return/throw on failure so reloadLoadedMeetings() can restore
         // futureOffset (and possibly coalesce missed reloads while isLoading is true).
-        guard !isLoading else { return }
-        isLoading = true
+        guard !isLoading, meetingWithParticipantsNotAdded == nil else { return }
         hasError = false
+        hasConversationNameUpdateError = false
+        meetingPendingConversationNameUpdate = nil
+        participantsNotAdded = []
+        hasExpiredStartDateError = false
+        if mode.isEdit, startDate < currentDateProvider.now.addingTimeInterval(-TimeInterval.oneDay) {
+            hasExpiredStartDateError = true
+            return
+        }
+        isLoading = true
         defer { isLoading = false }
         do {
             let meeting = try await saveMeeting()
             onSuccess(meeting)
+        } catch let CreateMeetingUseCaseError.participantsNotAdded(meeting, participants),
+                    let UpdateMeetingUseCaseError.participantsNotAdded(meeting, participants) {
+            meetingWithParticipantsNotAdded = meeting
+            participantsNotAdded = participants
+            hasParticipantsNotAddedAlert = true
+        } catch let UpdateMeetingUseCaseError.conversationNameUpdateFailed(updatedMeeting, participants) {
+            meetingPendingConversationNameUpdate = updatedMeeting
+            participantsNotAdded = participants
+            hasConversationNameUpdateError = true
         } catch {
             let errorType = Swift.type(of: error)
             WireLogger.search.error("failed to save meeting: \(String(describing: errorType))")
             hasError = true
+        }
+    }
+
+    func acknowledgeParticipantsNotAdded() {
+        guard !didAcknowledgeParticipantsNotAdded, let meeting = meetingWithParticipantsNotAdded else { return }
+        didAcknowledgeParticipantsNotAdded = true
+        hasParticipantsNotAddedAlert = false
+        onSuccess(meeting)
+    }
+
+    func retryConversationNameUpdate() async {
+        guard !isLoading, let meeting = meetingPendingConversationNameUpdate else { return }
+        isLoading = true
+        hasConversationNameUpdateError = false
+        defer { isLoading = false }
+
+        do {
+            try await updateMeetingUseCase.updateConversationName(for: meeting)
+            meetingPendingConversationNameUpdate = nil
+            if participantsNotAdded.isEmpty {
+                onSuccess(meeting)
+            } else {
+                meetingWithParticipantsNotAdded = meeting
+                hasParticipantsNotAddedAlert = true
+            }
+        } catch {
+            let errorType = Swift.type(of: error)
+            WireLogger.search.error("failed to update conversation name: \(String(describing: errorType))")
+            hasConversationNameUpdateError = true
         }
     }
 
@@ -244,12 +317,13 @@ package final class MeetingFormViewModel {
     }
 
     private static func editableTimeRange(for meeting: Meeting, now: Date) -> (start: Date, end: Date) {
-        guard meeting.recurrence != nil, meeting.start < now else {
+        let earliestStart = now.addingTimeInterval(-TimeInterval.oneDay)
+        guard meeting.recurrence != nil, meeting.start < earliestStart else {
             return (meeting.start, meeting.end)
         }
 
         guard let nextOccurrence = MeetingOccurrencePaginator()
-            .occurrences(for: [meeting], startingAt: now, offset: 0, limit: 1)
+            .occurrences(for: [meeting], startingAt: earliestStart, offset: 0, limit: 1)
             .first else {
             return (meeting.start, meeting.end)
         }

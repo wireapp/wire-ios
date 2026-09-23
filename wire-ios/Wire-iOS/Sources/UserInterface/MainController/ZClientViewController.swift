@@ -285,7 +285,6 @@ final class ZClientViewController: UIViewController {
             .observe(\.showUnreadConversationsFilter, options: [.new]) { [weak self] _, _ in
                 // Update sidebar's showUnreadFilters when developer flag changes
                 self?.sidebarViewController.showUnreadFilters = DeveloperFlag.showUnreadConversationsFilter.isOn
-                self?.sidebarViewController.showMeetings = self?.userSession.isMeetingsEnabled ?? false
             }
 
         observeFeatureConfigChanges()
@@ -581,7 +580,7 @@ final class ZClientViewController: UIViewController {
     ///
     /// - Parameter focus: focus or not
     func selectIncomingContactRequestsAndFocus(onView focus: Bool) {
-        mainTabBarController.selectedIndex = MainTabBarControllerContent.conversations.rawValue
+        mainTabBarController.selectedContent = .conversations
         conversationListViewController.selectInboxAndFocusOnView(focus: focus)
     }
 

@@ -277,7 +277,7 @@ extension ZMConversation {
 // "Will be deleted soon"
 final class ScheduledForDeletionMatcher: ConversationStatusMatcher {
     func isMatching(with status: ConversationStatus) -> Bool {
-        status.isScheduledForDeletion && DeveloperFlag.preventAdminlessGroups.isOn
+        status.isScheduledForDeletion
     }
 
     func description(with status: ConversationStatus, conversation: MatcherConversation) -> NSAttributedString? {

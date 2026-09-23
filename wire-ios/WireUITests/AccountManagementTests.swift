@@ -39,6 +39,11 @@ final class AccountManagementTests: WireUITestCase {
             .updateUsernameAndSave()
 
         XCTAssertTrue(
+            accountSettingPage.nameField.waitForExistence(timeout: 3),
+            "Name field was not visible"
+        )
+
+        XCTAssertTrue(
             (accountSettingPage.nameField.value as? String)?.contains("-updated") == true,
             "Updated name was not visible"
         )

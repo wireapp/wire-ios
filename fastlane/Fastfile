@@ -2,6 +2,7 @@ require 'git'
 require 'base64'
 require 'httparty'
 require 'json'
+require 'securerandom'
 require 'set'
 require 'fastlane/action'
 require_relative 'framework'
@@ -22,6 +23,10 @@ platform :ios do
   
     def ios_version
         ENV['IOS_VERSION']
+    end
+
+    def simulator_name_for_testing
+        "Wire-#{SecureRandom.uuid}"
     end
 
     def appstoreconnect_api_key_file_path
@@ -50,8 +55,32 @@ platform :ios do
         end
     end
 
+    def delete_test_simulator_if_needed
+        return unless is_running_on_ci
+
+        simulator_id = ENV['IOS_SIM_ID'].to_s.strip
+        return if simulator_id.empty?
+
+        begin
+            sh("xcrun", "simctl", "shutdown", simulator_id, log: false)
+        rescue => error
+            UI.important("Failed to shut down simulator #{simulator_id}: #{error}")
+        end
+
+        begin
+            sh("xcrun", "simctl", "delete", simulator_id, log: false)
+        rescue => error
+            UI.important("Failed to delete simulator #{simulator_id}: #{error}")
+        end
+
+        ENV.delete('IOS_SIM_ID')
+        if ENV['GITHUB_ENV']
+            File.open(ENV['GITHUB_ENV'], 'a') { |file| file.puts('IOS_SIM_ID=') }
+        end
+    end
+
     before_all do |lane|
-        create_keychain_if_needed unless [:prepare_for_tests, :select_framework, :select_frameworks, :generate_framework_list, :list_schemes_json, :list_uitest_tags, :test_frameworks, :test_only_frameworks, :run_uitests, :generate_env].include?(lane)
+        create_keychain_if_needed unless [:prepare_for_tests, :delete_test_simulator, :select_framework, :select_frameworks, :generate_framework_list, :list_schemes_json, :list_uitest_tags, :test_frameworks, :test_only_frameworks, :run_uitests, :generate_env].include?(lane)
         `mkdir -p ./.post_build`
         Dir.chdir("..") do
             encoded_key = ENV['APPSTORE_API_KEY_BASE64']
@@ -63,7 +92,7 @@ platform :ios do
     end
 
     after_all do |lane|
-        delete_keychain_if_needed unless [:prepare_for_tests, :select_framework, :select_frameworks, :generate_framework_list, :list_schemes_json, :list_uitest_tags, :test_frameworks, :test_only_frameworks, :run_uitests].include?(lane)
+        delete_keychain_if_needed unless [:prepare_for_tests, :delete_test_simulator, :select_framework, :select_frameworks, :generate_framework_list, :list_schemes_json, :list_uitest_tags, :test_frameworks, :test_only_frameworks, :run_uitests, :generate_env].include?(lane)
     end
     
     desc "Test frameworks given folders"
@@ -114,12 +143,12 @@ platform :ios do
         options[:number_of_retries] = 1
         options[:output_remove_retry_attempts] = true
         raw_testiny_cases = options[:testiny_cases].to_s.strip
-        requested_testiny_cases = normalize_testiny_case_ids(raw_testiny_cases)
-        if raw_testiny_cases != "" && requested_testiny_cases.empty?
-            UI.user_error!("No valid Testiny case id(s) provided: #{raw_testiny_cases}")
+        explicit_tests = ui_test_identifiers_matching_selectors(raw_testiny_cases)
+        if raw_testiny_cases != "" && explicit_tests.empty?
+            UI.user_error!(
+                "No UI tests matched Testiny case id(s), class(es), or function(s): #{raw_testiny_cases}"
+            )
         end
-        explicit_tests = ui_test_identifiers_matching_testiny_cases(requested_testiny_cases)
-        UI.user_error!("No UI tests matched Testiny case id(s): #{requested_testiny_cases.join(',')}") if requested_testiny_cases.any? && explicit_tests.empty?
         explicit_tests = normalize_test_identifiers(options[:only_testing]) if explicit_tests.empty?
         if explicit_tests.any?
             UI.message("Running #{explicit_tests.count} explicit UI test(s)")
@@ -242,6 +271,11 @@ platform :ios do
     desc "Prepare for tests"
     lane :prepare_for_tests do
         create_simulator_if_needed
+    end
+
+    desc "Delete test simulator"
+    lane :delete_test_simulator do
+        delete_test_simulator_if_needed
     end
 
     desc "Build & Upload Edge build"
@@ -625,11 +659,11 @@ platform :ios do
     end
 
     def test_plan(build, scheme, testplan, options = {})
-        if ENV['IOS_SIM_ID'].nil?
+        if ENV['IOS_SIM_ID'].to_s.empty?
             create_simulator_if_needed
         end
 
-        if ENV['IOS_SIM_ID'].nil?
+        if ENV['IOS_SIM_ID'].to_s.empty?
             UI.user_error! "missing id for tests"
         end
 
@@ -701,6 +735,49 @@ platform :ios do
         UI.message("Ignoring unmatched Testiny case id(s): #{missing_ids.join(',')}") if missing_ids.any?
 
         matching_tests.map { |test| test[:identifier] }.uniq
+    end
+
+    def ui_test_identifiers_matching_selectors(value)
+        tokens = normalize_test_identifiers(value)
+        return [] if tokens.empty?
+
+        tests = ui_test_metadata
+        matching_tests = []
+        missing_tokens = []
+
+        tokens.each do |token|
+            token_matches = ui_test_tests_matching_token(token, tests)
+            if token_matches.empty?
+                missing_tokens << token
+            else
+                matching_tests.concat(token_matches)
+            end
+        end
+
+        UI.message("Ignoring unmatched UI test selector(s): #{missing_tokens.join(',')}") if missing_tokens.any?
+        matching_tests.map { |test| test[:identifier] }.uniq
+    end
+
+    def ui_test_tests_matching_token(token, tests)
+        requested_ids = normalize_testiny_case_ids(token)
+        return tests.select { |test|
+            (requested_ids & testiny_ids_from_test_identifier(test[:identifier])).any?
+        } if requested_ids.any?
+
+        test_identifier = token.delete_prefix("WireUITests/")
+        parts = test_identifier.split("/")
+
+        tests.select do |test|
+            _, class_name, method_name = test[:identifier].split("/")
+            case parts.length
+            when 1
+                parts[0].start_with?("test") ? method_name == parts[0] : class_name == parts[0]
+            when 2
+                class_name == parts[0] && method_name == parts[1]
+            else
+                test[:identifier] == token
+            end
+        end
     end
 
     def ui_test_filter_options(options)
@@ -838,6 +915,30 @@ platform :ios do
     end
 
     def create_simulator_if_needed
+        if is_running_on_ci
+            simulator_name = simulator_name_for_testing
+            UI.message "Create simulator #{simulator_name}"
+            simulator_id = sh(
+                "xcrun",
+                "simctl",
+                "create",
+                simulator_name,
+                iPhoneNameForTesting,
+                "iOS#{ios_version}",
+                log: false
+            ).strip
+
+            ENV['IOS_SIM_ID'] = simulator_id
+            if ENV['GITHUB_ENV']
+                File.open(ENV['GITHUB_ENV'], 'a') { |file| file.puts("IOS_SIM_ID=#{simulator_id}") }
+            end
+
+            sh("xcrun", "simctl", "boot", simulator_id, log: false)
+            sh("xcrun", "simctl", "bootstatus", simulator_id, "-b", log: false) # Wait for simulator to finish booting
+            sh "../scripts/seed-simulator-media.sh"
+            return
+        end
+
         devices = `xcrun simctl list`
         UI.message("Available simulators:\n#{devices}")
 

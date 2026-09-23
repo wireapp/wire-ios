@@ -78,6 +78,7 @@ struct MeetingRow: View {
                                     .renderingMode(.template)
                             }
                         }
+                        .disabled(meeting.conversation == nil)
 
                         if isOrganizer {
                             Button {
@@ -85,6 +86,7 @@ struct MeetingRow: View {
                             } label: {
                                 Label(Strings.Actions.edit, systemImage: "pencil")
                             }
+                            .disabled(meeting.conversation == nil)
 
                             Button(role: .destructive) {
                                 onDelete()
@@ -97,6 +99,7 @@ struct MeetingRow: View {
                             } label: {
                                 Label(Strings.Actions.deleteForMe, systemImage: "trash")
                             }
+                            .disabled(meeting.conversation == nil)
                             .accessibilityIdentifier(Locators.WireMeetings.MeetingRow.deleteForMeButton)
                         }
                     } label: {
@@ -152,6 +155,7 @@ struct MeetingRow: View {
             .background(ColorTheme.Base.primary(wireAccentColor).color, in: Capsule())
         }
         .buttonStyle(.plain)
+        .disabled(meeting.conversation == nil)
         .accessibilityIdentifier(Locators.WireMeetings.MeetingRow.joinButton)
         .accessibilityLabel(Text(L10n.Accessibility.WireMeetings.JoinButton.description))
     }
@@ -241,7 +245,7 @@ private extension MeetingRecurrence {
     VStack(alignment: .leading, spacing: 24) {
         MeetingRow(
             occurrence: MeetingOccurrence(meeting: meeting),
-            formatTime: { formatter.startedAt($0.start) },
+            formatTime: { formatter.timeRange(from: $0.start, to: $0.end) },
             isOrganizer: true,
             isLive: true,
             onEdit: {},
@@ -251,7 +255,7 @@ private extension MeetingRecurrence {
 
         MeetingRow(
             occurrence: MeetingOccurrence(meeting: meeting),
-            formatTime: { formatter.startedAt($0.start) },
+            formatTime: { formatter.timeRange(from: $0.start, to: $0.end) },
             isOrganizer: true,
             isAttending: true,
             isLive: true,

@@ -25,17 +25,20 @@ public struct UpdateMeetingParameters: Encodable, Sendable {
     public let startTime: Date?
     public let endTime: Date?
     public let recurrence: MeetingRecurrence?
+    public let timeZoneIdentifier: String?
 
     public init(
         title: String? = nil,
         startTime: Date? = nil,
         endTime: Date? = nil,
-        recurrence: MeetingRecurrence? = nil
+        recurrence: MeetingRecurrence? = nil,
+        timeZoneIdentifier: String? = nil
     ) {
         self.title = title
         self.startTime = startTime
         self.endTime = endTime
         self.recurrence = recurrence
+        self.timeZoneIdentifier = timeZoneIdentifier
     }
 
     enum CodingKeys: String, CodingKey {
@@ -43,6 +46,7 @@ public struct UpdateMeetingParameters: Encodable, Sendable {
         case startTime = "start_time"
         case endTime = "end_time"
         case recurrence
+        case timeZoneIdentifier = "tzid"
     }
 
     public func encode(to encoder: any Encoder) throws {
@@ -58,5 +62,6 @@ public struct UpdateMeetingParameters: Encodable, Sendable {
         // the backend's Recurrence parser rejects explicit `null` with a
         // 400 bad-request (verified 2026-07-22).
         try container.encodeIfPresent(recurrence, forKey: .recurrence)
+        try container.encodeIfPresent(timeZoneIdentifier, forKey: .timeZoneIdentifier)
     }
 }

@@ -174,9 +174,6 @@ public final class ZMUserSession: NSObject {
     }
 
     public var isMeetingsEnabled: Bool {
-        // TODO: [WPB-28001] Remove developer flag before release
-        guard DeveloperFlag.wireMeetings.isOn else { return false }
-
         let feature = Feature.fetch(name: .meetings, context: coreDataStack.viewContext)
         return feature?.status == .enabled
     }
@@ -617,7 +614,11 @@ public final class ZMUserSession: NSObject {
             clientID: clientID,
             completionHandlers: .init(
                 onProcessedCallEvent: { [weak self] in self?.onProcessedCallEvent(callEventInfo: $0) },
-                onMeetingCancellation: { [weak self] in await self?.handleMeetingCancellationNotification($0) },
+                onMeetingNotification: { [weak self] in await self?.handleMeetingNotification($0) },
+                isApplicationActive: { [weak self] in
+                    guard let application = self?.application else { return false }
+                    return await MainActor.run { application.applicationState == .active }
+                },
                 onSelfClientInvalidated: { [weak self] in await self?.onSelfClientInvalidated() },
                 onAuthenticationFailure: { [weak self] in self?.onAuthenticationFailure() },
                 onProcessedTypingUsers: { [weak self] in self?.onProcessedTypingUsers(typingUsersInfo: $0) }
@@ -1301,7 +1302,7 @@ extension ZMUserSession: SyncAgentDelegate {
     }
 
     func didStartIncrementalSync() {
-        WireLogger.sync.debug("did start incremental sync", attributes: .incrementalSync)
+        WireLogger.sync.info("did start incremental sync", attributes: .incrementalSync)
         Task {
             await showSyncBar(true)
         }
@@ -1315,7 +1316,7 @@ extension ZMUserSession: SyncAgentDelegate {
     }
 
     func didFinishIncrementalSync(isRecovering: Bool) {
-        WireLogger.sync.debug(
+        WireLogger.sync.info(
             "did finish incremental sync (isRecovering: \(isRecovering))",
             attributes: .incrementalSync
         )
@@ -1405,8 +1406,8 @@ extension ZMUserSession: SyncAgentDelegate {
     }
 
     func processPendingCallEvents(only onlyCallEvents: Bool) async {
-        WireLogger.sync.debug(
-            "process pending call events (onlyCallEvents: \(onlyCallEvents)",
+        WireLogger.sync.info(
+            "process pending call events (onlyCallEvents: \(onlyCallEvents))",
             attributes: .incrementalSync
         )
 

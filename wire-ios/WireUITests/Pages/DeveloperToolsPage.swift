@@ -28,4 +28,14 @@ class DeveloperToolsPage: PageModel {
         app.buttons["Close"].firstMatch.tap()
     }
 
+    var preferredAPIVersionButton: XCUIElement {
+        app.buttons["Preferred API version"].firstMatch
+    }
+
+    @discardableResult
+    func openPreferredAPIVersion() throws -> PreferredAPIVersionPage {
+        preferredAPIVersionButton.tap()
+        return try PreferredAPIVersionPage()
+    }
+
 }

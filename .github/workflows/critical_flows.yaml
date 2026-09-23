@@ -3,6 +3,14 @@ name: Critical Flows
 on:
   workflow_dispatch:
     inputs:
+      mac_runner:
+        description: 'macOS runner'
+        type: choice
+        options:
+          - in-house
+          - cirrus
+          - github
+        default: in-house
       testiny_run_name:
         description: "Testiny test run name: paste the exact run name from Testiny"
         required: false
@@ -30,7 +38,7 @@ on:
         default: false
         type: boolean
       ui_test_cases:
-        description: "Want to run specific Test? Pass Testiny case ID(s), comma separated"
+        description: "Want to run specific Test? Pass Testiny case ID(s), class(es), or function(s), comma separated"
         required: false
         type: string
   push:
@@ -51,6 +59,7 @@ jobs:
     uses: ./.github/workflows/_reusable_run_tests.yml
     with:
       all: false
+      mac_runner: ${{ vars.DEFAULT_MAC_RUNNER }}
       test_dependencies: false
       run_critical_flows: true
       ui_test_tags: critical
@@ -68,6 +77,7 @@ jobs:
     uses: ./.github/workflows/_reusable_run_tests.yml
     with:
       all: false
+      mac_runner: ${{ inputs.mac_runner }}
       test_dependencies: false
       run_critical_flows: true
       # Logic:

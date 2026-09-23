@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-final class UpdateEventsAPIV17: UpdateEventsAPIV16 {
+class UpdateEventsAPIV17: UpdateEventsAPIV16 {
 
     override var apiVersion: APIVersion {
         .v17

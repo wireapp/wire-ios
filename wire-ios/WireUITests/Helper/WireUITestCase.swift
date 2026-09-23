@@ -53,6 +53,7 @@ class WireUITestCase: XCTestCase {
         ssoHelper = SSOHelper()
         app = XCUIApplication()
         app.launchEnvironment["UITEST_APPLOCK_TIMEOUT"] = "2"
+        app.launchEnvironment["UITEST_SELF_DELETING_TIMER_SECONDS"] = "3"
         app.launchEnvironment[UITestConfig.environmentKey] = uiTestConfig.encode()
         app.launchArguments = launchArguments
         var flags: [DeveloperFlag: Bool] = [.useWireAuthentication: true]
@@ -69,10 +70,10 @@ class WireUITestCase: XCTestCase {
     override func tearDown() async throws {
         app?.terminate()
         app = nil
-        await callingServiceClient.destroyCreatedInstances()
+        await callingServiceClient?.destroyCreatedInstances()
         await testServicesClient.deleteInstances()
         await UserHelper.deleteCreatedUsers()
-        await ssoHelper.cleanUpSSOResources()
+        await ssoHelper?.cleanUpSSOResources()
     }
 
     func setCustomBackend(byDeeplink deeplink: URL, timeout: TimeInterval = 5, domainInfo: String) {
@@ -148,6 +149,17 @@ class WireUITestCase: XCTestCase {
 
     func simulateShakeGesture() {
         app.tap(withNumberOfTaps: 3, numberOfTouches: 1)
+    }
+
+    /// Manually switches the preferred API version via the developer tools menu (accessible by
+    /// shaking the device). Selecting a version force-quits the app, so it is relaunched afterwards.
+    @MainActor
+    func switchToPreferredAPIVersion(_ version: String) throws {
+        simulateShakeGesture()
+        try DeveloperToolsPage()
+            .openPreferredAPIVersion()
+            .selectVersion(version)
+        app.launch()
     }
 }
 

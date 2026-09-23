@@ -3,6 +3,9 @@ on:
     inputs:
       folders:
         type: string
+      mac_runner:
+        type: string
+        default: in-house
       all:
         type: boolean
         default: false
@@ -24,6 +27,7 @@ on:
         type: string
         required: false
         default: ''
+        description: 'Testiny case ID(s), class(es), or function(s), comma separated'
       rerun_failed_from_previous:
         type: boolean
         required: false
@@ -63,7 +67,13 @@ env: # https://docs.fastlane.tools/getting-started/ios/setup/
 jobs:
   run-tests:
     name: Run tests
-    runs-on: ghcr.io/cirruslabs/macos-runner:tahoe
+    runs-on: >-
+      ${{
+        inputs.mac_runner == 'in-house' && inputs.run_critical_flows && fromJSON('["self-hosted", "in-house", "ui-tests"]') ||
+        inputs.mac_runner == 'in-house' && fromJSON('["self-hosted", "in-house", "tests"]') ||
+        inputs.mac_runner == 'github' && 'macos-26' ||
+        'ghcr.io/cirruslabs/macos-runner:tahoe'
+      }}
     timeout-minutes: ${{ inputs.timeout_minutes }}
     permissions:
       contents: read
@@ -81,6 +91,9 @@ jobs:
         with:
           ref: ${{ inputs.branch }}
           lfs: 'true'
+
+      - name: Materialize Git LFS files
+        run: git lfs checkout
 
       - name: Sanitize branch name
         env:
@@ -142,6 +155,8 @@ jobs:
 
       - name: Cache Swift Packages
         uses: ./.github/actions/cache-swift-packages
+        with:
+          cache_enabled: ${{ inputs.mac_runner != 'in-house' }}
 
       - name: Setup Ruby
         uses: ruby/setup-ruby@afeafc3d1ab54a631816aba4c914a0081c12ff2f # v1.310.0
@@ -239,6 +254,11 @@ jobs:
           FOLDERS: ${{ inputs.folders }}
         run: |
           bundle exec fastlane test_only_frameworks folders:"$FOLDERS"
+
+      - name: Delete simulator
+        if: always()
+        run: |
+          bundle exec fastlane delete_test_simulator
 
       - name: Check for duplicate symbol implementations
         if: always()
@@ -428,7 +448,6 @@ jobs:
             ${{ steps.html-report-link.outputs.html_report_url != '' && format('**HTML report:** [download zip]({0})', steps.html-report-link.outputs.html_report_url) || '' }}
 
             ${{ steps.test-summary.outputs.report_message }}
-
   upload-test-results-datadadog:
     name: Upload to Datadog
     runs-on: ubuntu-24.04

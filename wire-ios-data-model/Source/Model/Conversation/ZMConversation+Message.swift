@@ -365,7 +365,7 @@ public extension ZMConversation {
             LogAttributesKey.messageType: "asset"
         ]
 
-        WireLogger.messaging.debug(
+        WireLogger.messaging.info(
             "appending message to conversation",
             attributes: logAttributes, .safePublic
         )
@@ -466,7 +466,7 @@ public extension ZMConversation {
             .conversationId: qualifiedID?.safeForLoggingDescription ?? "<nil>"
         ]
 
-        WireLogger.messaging.debug(
+        WireLogger.messaging.info(
             "appending message to conversation",
             attributes: logAttributes,
             .safePublic

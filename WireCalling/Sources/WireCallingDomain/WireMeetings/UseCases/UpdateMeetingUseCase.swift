@@ -59,12 +59,6 @@ package struct UpdateMeetingUseCase: UpdateMeetingUseCaseProtocol {
             recurrence: recurrence
         )
 
-        // Mirror the new title onto the underlying conversation, which the
-        // backend doesn't rename on a meeting update.
-        if title != meeting.title {
-            try await conversationRepository.setConversationName(title, for: meeting.conversationID)
-        }
-
         // The creator is implicit in the form's participant selection, so it
         // is excluded from the baseline too — otherwise every update would
         // try to remove the creator from the conversation.
@@ -73,21 +67,62 @@ package struct UpdateMeetingUseCase: UpdateMeetingUseCaseProtocol {
             .sorted { $0.name < $1.name }
         let previousIDs = Set(previousMembers.map(\.qualifiedID))
         let selectedIDs = Set(participants.map(\.qualifiedID))
-        let membersToAdd = participants.filter { !previousIDs.contains($0.qualifiedID) }
-        let membersToRemove = previousMembers.filter { !selectedIDs.contains($0.qualifiedID) }
+        let currentIDs = Set((updatedMeeting.conversation ?? conversation).participants.map(\.qualifiedID))
+        let membersToAdd = participants.filter {
+            !previousIDs.contains($0.qualifiedID) && !currentIDs.contains($0.qualifiedID)
+        }
+        let membersToRemove = previousMembers.filter {
+            !selectedIDs.contains($0.qualifiedID) && currentIDs.contains($0.qualifiedID)
+        }
 
-        try await conversationRepository.addParticipants(membersToAdd, to: meeting.conversationID)
+        var participantsNotAdded: [MeetingMember] = []
+        do {
+            try await conversationRepository.addParticipants(membersToAdd, to: meeting.conversationID)
+        } catch let MeetingParticipantsError.failedToAddParticipants(participants) {
+            participantsNotAdded = participants
+        }
         try await conversationRepository.removeParticipants(membersToRemove, from: meeting.conversationID)
+        await meetingRepository.storeMeeting(updatedMeeting)
+
+        if title != meeting.title {
+            do {
+                try await updateConversationName(for: updatedMeeting)
+            } catch {
+                throw UpdateMeetingUseCaseError.conversationNameUpdateFailed(
+                    updatedMeeting: updatedMeeting,
+                    participantsNotAdded: participantsNotAdded
+                )
+            }
+        }
+
+        if !participantsNotAdded.isEmpty {
+            throw UpdateMeetingUseCaseError.participantsNotAdded(
+                meeting: updatedMeeting,
+                participants: participantsNotAdded
+            )
+        }
 
         return updatedMeeting
     }
 
+    package func updateConversationName(for meeting: Meeting) async throws {
+        try await conversationRepository.updateConversationName(
+            meeting.title,
+            for: meeting.conversationID
+        )
+    }
+
 }
 
-package enum UpdateMeetingUseCaseError: Error {
+package enum UpdateMeetingUseCaseError: Error, Equatable {
 
     /// The meeting's conversation has not been resolved from the local store,
     /// so there is no baseline to diff the selected participants against.
     case conversationNotResolved
+
+    /// The meeting update succeeded, but its dedicated conversation could not be renamed.
+    case conversationNameUpdateFailed(updatedMeeting: Meeting, participantsNotAdded: [MeetingMember] = [])
+
+    case participantsNotAdded(meeting: Meeting, participants: [MeetingMember])
 
 }

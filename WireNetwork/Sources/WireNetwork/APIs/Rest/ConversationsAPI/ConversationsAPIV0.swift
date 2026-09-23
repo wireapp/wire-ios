@@ -142,6 +142,13 @@ class ConversationsAPIV0: ConversationsAPI, VersionedAPI {
             .parse(code: response.statusCode, data: data)
     }
 
+    func updateConversationName(
+        _ name: String,
+        for conversationID: QualifiedID
+    ) async throws -> ConversationRenameEvent? {
+        throw ConversationsAPIError.unsupportedEndpointForAPIVersion
+    }
+
     func createGroupConversation(
         parameters: CreateGroupConversationParameters
     ) async throws -> Conversation {

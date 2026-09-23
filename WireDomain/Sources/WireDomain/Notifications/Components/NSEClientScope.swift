@@ -134,10 +134,10 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
                 if Task.isCancelled {
                     return
                 }
-                WireLogger.sync.debug("requested to cancel sync", attributes: .incrementalSync, .newNSE)
+                WireLogger.sync.info("requested to cancel sync", attributes: .incrementalSync, .newNSE)
                 currentTask.cancel()
                 request.acknowledge()
-                WireLogger.sync.debug("notified main App to resume sync", attributes: .incrementalSync, .newNSE)
+                WireLogger.sync.info("notified main App to resume sync", attributes: .incrementalSync, .newNSE)
             }
 
             try await withTaskCancellationHandler {
@@ -390,7 +390,9 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
     private var meetingEventNotificationBuilder: MeetingEventNotificationBuilder {
         shared {
             MeetingEventNotificationBuilder(
-                meetingDeleteEventBuilder: meetingDeleteEventNotificationBuilder
+                meetingDeleteEventBuilder: meetingDeleteEventNotificationBuilder,
+                meetingMemberAddEventBuilder: meetingMemberAddEventNotificationBuilder,
+                meetingUpdateEventBuilder: meetingUpdateEventNotificationBuilder
             )
         }
     }
@@ -400,7 +402,28 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
             MeetingDeleteEventNotificationBuilder(
                 meetingLocalStore: MeetingLocalStore(context: coreDataStack.syncContext),
                 userLocalStore: userLocalStore,
-                developerFlagStorage: dependency.sharedUserDefaults,
+                featureConfigLocalStore: FeatureConfigLocalStore(context: coreDataStack.syncContext),
+                accountID: dependency.accountID
+            )
+        }
+    }
+
+    private var meetingMemberAddEventNotificationBuilder: MeetingMemberAddEventNotificationBuilder {
+        shared {
+            MeetingMemberAddEventNotificationBuilder(
+                meetingsAPI: MeetingsAPIBuilder(apiService: apiService).makeAPI(for: apiVersion),
+                usersAPI: UsersAPIBuilder(apiService: apiService).makeAPI(for: apiVersion),
+                featureConfigLocalStore: FeatureConfigLocalStore(context: coreDataStack.syncContext),
+                accountID: dependency.accountID
+            )
+        }
+    }
+
+    private var meetingUpdateEventNotificationBuilder: MeetingUpdateEventNotificationBuilder {
+        shared {
+            MeetingUpdateEventNotificationBuilder(
+                meetingsAPI: MeetingsAPIBuilder(apiService: apiService).makeAPI(for: apiVersion),
+                usersAPI: UsersAPIBuilder(apiService: apiService).makeAPI(for: apiVersion),
                 featureConfigLocalStore: FeatureConfigLocalStore(context: coreDataStack.syncContext),
                 accountID: dependency.accountID
             )
@@ -457,6 +480,7 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
         let validator = ConversationCallingEventNotificationBuilder.Validator(
             userLocalStore: userLocalStore,
             conversationLocalStore: conversationLocalStore,
+            conversationsAPI: ConversationsAPIBuilder(apiService: apiService).makeAPI(for: apiVersion),
             userDefaults: dependency.sharedUserDefaults
         )
 
@@ -579,7 +603,8 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
 
         let validator = ConversationMemberJoinEventNotificationBuilder.Validator(
             userLocalStore: userLocalStore,
-            conversationLocalStore: conversationLocalStore
+            conversationLocalStore: conversationLocalStore,
+            conversationsAPI: ConversationsAPIBuilder(apiService: apiService).makeAPI(for: apiVersion)
         )
 
         return ConversationMemberJoinEventNotificationBuilder(

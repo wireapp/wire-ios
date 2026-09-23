@@ -24,6 +24,7 @@ public struct CreateMeetingParameters: Encodable, Sendable {
     public let title: String
     public let startTime: Date
     public let endTime: Date
+    public let timeZoneIdentifier: String
     public let invitedEmails: [String]?
     public let recurrence: MeetingRecurrence?
 
@@ -31,12 +32,14 @@ public struct CreateMeetingParameters: Encodable, Sendable {
         title: String,
         startTime: Date,
         endTime: Date,
+        timeZoneIdentifier: String,
         invitedEmails: [String]? = nil,
         recurrence: MeetingRecurrence? = nil
     ) {
         self.title = title
         self.startTime = startTime
         self.endTime = endTime
+        self.timeZoneIdentifier = timeZoneIdentifier
         self.invitedEmails = invitedEmails
         self.recurrence = recurrence
     }
@@ -45,6 +48,7 @@ public struct CreateMeetingParameters: Encodable, Sendable {
         case title
         case startTime = "start_time"
         case endTime = "end_time"
+        case timeZoneIdentifier = "tzid"
         case invitedEmails = "invited_emails"
         case recurrence
     }
@@ -54,6 +58,7 @@ public struct CreateMeetingParameters: Encodable, Sendable {
         try container.encode(title, forKey: .title)
         try container.encode(ISO8601DateFormatter.internetDateTime.string(from: startTime), forKey: .startTime)
         try container.encode(ISO8601DateFormatter.internetDateTime.string(from: endTime), forKey: .endTime)
+        try container.encode(timeZoneIdentifier, forKey: .timeZoneIdentifier)
         try container.encodeIfPresent(invitedEmails, forKey: .invitedEmails)
         try container.encodeIfPresent(recurrence, forKey: .recurrence)
     }
