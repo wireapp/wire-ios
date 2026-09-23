@@ -149,12 +149,6 @@ jobs:
         with:
           bundler-cache: true
 
-      - name: Install ImageMagick
-        uses: gerlero/brew-install@5e2f576b2a0ede9d50a5b08c0099c70fdda0b0b9 # v1.1.2
-        with:
-          packages: imagemagick ghostscript freetype
-          cache: false
-
       - name: Display all fastlane lanes
         if: ${{ contains(inputs.folders, 'fastlane') || inputs.all }}
         run: |
