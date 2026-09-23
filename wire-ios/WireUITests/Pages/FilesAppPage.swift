@@ -113,16 +113,11 @@ class FilesAppPage: PageModel {
             .firstMatch
     }
 
-    func visibleShareExtensionLabels() -> [String] {
-        let labels = filesApp.staticTexts.allElementsBoundByIndex + filesApp.cells.allElementsBoundByIndex
-        return Array(labels.map(\.label).filter { !$0.isEmpty }.prefix(20))
-    }
-
     func selectConversation(name: String) -> XCUIElement {
         let conversationCell = conversationCell(named: name)
         XCTAssertTrue(
             conversationCell.waitForExistence(timeout: conversationTimeout),
-            "Conversation '\(name)' didn't show up. Visible share extension labels: \(visibleShareExtensionLabels())"
+            "Conversation '\(name)' didn't show up"
         )
         return conversationCell
     }
@@ -177,9 +172,17 @@ class FilesAppPage: PageModel {
         return self
     }
 
+    private func scrollIfNeeded() {
+        _ = chooseConversation.waitForExistence(timeout: 1.0)
+        guard !chooseConversation.isHittable else { return }
+        guard messageField.exists else { return }
+        messageField.swipeUp()
+    }
+
     func chooseConversationAndSend(name: String, message: String) throws {
+        scrollIfNeeded()
         XCTAssertTrue(
-            chooseConversation.waitAndTap(timeout: timeout),
+            chooseConversation.waitAndTap(),
             "Choose conversation didn't show up or wasn't tappable"
         )
 
