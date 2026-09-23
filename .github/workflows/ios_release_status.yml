@@ -221,7 +221,7 @@ jobs:
             const betaName          = `iOS v${betaVersion}`;
             const betaQ             = jqlEscape(betaName);
             const betaJira          = await findJiraVersion(betaVersion);
-            const betaAffectedJql   = `project = ${project} AND affectedVersion = "${betaQ}"`;
+            const betaAffectedJql   = `project = ${project} AND affectedVersion = "${betaQ}" AND status != "Done"`;
             const betaAffectedCount = await countIssues(betaAffectedJql);
             const betaAffectedItems = betaAffectedCount > 0 ? (await listIssues(betaAffectedJql)).issues : [];
             const daysToBeta        = betaJira ? daysBetween(betaJira.releaseDate) : null;
