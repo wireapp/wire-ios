@@ -35,8 +35,8 @@ class SessionExpiredPage: PageModel {
         alert.buttons[Locators.SessionExpiredPage.okButton.rawValue]
     }
 
-    func confirm() throws -> ReauthenticatePage {
+    func confirm() throws -> WelcomePage {
         okButton.tap()
-        return try ReauthenticatePage()
+        return try WelcomePage()
     }
 }
