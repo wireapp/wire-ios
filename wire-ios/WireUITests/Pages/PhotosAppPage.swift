@@ -22,6 +22,7 @@ import XCTest
 class PhotosAppPage: PageModel {
     private let photosApp: XCUIApplication
     private let timeout: TimeInterval = 5
+    private let conversationTimeout: TimeInterval = 10
 
     override var pageMainElement: XCUIElement {
         photosApp.windows.firstMatch
@@ -110,9 +111,12 @@ class PhotosAppPage: PageModel {
 
     @discardableResult
     func selectConversation(name: String) -> XCUIElement {
-        let conversationCell = photosApp.staticTexts[name]
-        XCTAssertTrue(conversationCell.waitForExistence(timeout: timeout))
-        return conversationCell.firstMatch
+        let conversationCell = conversationCell(named: name)
+        XCTAssertTrue(
+            conversationCell.waitForExistence(timeout: conversationTimeout),
+            "Conversation '\(name)' didn't show up. Visible share extension labels: \(visibleShareExtensionLabels())"
+        )
+        return conversationCell
     }
 
     @discardableResult
@@ -173,17 +177,12 @@ class PhotosAppPage: PageModel {
     func chooseConversationAndSend(name: String, message: String) throws {
 
         XCTAssertTrue(
-            chooseConversation.waitForExistence(timeout: timeout),
-            "chooseConversation, didn't show up"
+            chooseConversation.waitAndTap(timeout: timeout),
+            "Choose conversation didn't show up or wasn't tappable"
         )
-        chooseConversation.tap()
 
         let conversationToSend = selectConversation(name: name)
-        XCTAssertTrue(
-            conversationToSend.waitForExistence(timeout: timeout),
-            "Tap to chooseConversation, didn't pass"
-        )
-        conversationToSend.waitAndTap()
+        XCTAssertTrue(conversationToSend.waitAndTap(timeout: timeout), "Conversation '\(name)' wasn't tappable")
         addMessage(message)
         sendButton.waitAndTap()
 
