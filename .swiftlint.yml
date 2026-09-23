@@ -81,8 +81,8 @@ custom_rules:
     name: "XCUITest requires Testiny TC ID"
     included:
       - "WireUITests"
-    regex: '^\s*func\s+test(?![A-Za-z0-9_]*_TC_\d+(?:_\d+)*)[A-Za-z0-9_]*\s*\('
-    message: "WireUITests test methods must include a Testiny TC ID suffix, for example: testLogin_TC_1234"
+    regex: '^\s*(?:(?:@\w+|internal|public|open|final|nonisolated|override)\s+)*func\s+(?!test(?:(?!_TC_)[A-Za-z0-9_])*_TC_\d+(?:_\d+)*\s*\(\s*\))test[A-Za-z0-9_]*\s*\(\s*\)'
+    message: "Please use Testiny TC suffix as testABC_TC_1234 if one OR testABC_TC_1234_2222_3333 if multiple"
     severity: error
 
 excluded:

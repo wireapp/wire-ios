@@ -18,43 +18,74 @@
 
 // MARK: - Meetings List
 
+"meetings.list.loadError" = "Could not load meetings. Please try again.";
+"meetings.deleteModal.error.deleteFailedTitle" = "Could not delete meeting";
+"meetings.deleteModal.error.deleteFailed" = "Something went wrong while deleting the meeting. Please try again.";
+"meetings.deleteModal.error.leaveConversationFailedTitle" = "Could not leave meeting";
+"meetings.deleteModal.error.leaveConversationFailed" = "Something went wrong while leaving the meeting conversation. Please try again.";
+"wireMeetings.retry" = "Retry";
 "wireMeetings.list.title" = "Meetings";
 "wireMeetings.list.tabs.past" = "Past";
 "wireMeetings.list.tabs.next" = "İleri";
 "wireMeetings.list.actions.meetNow" = "Meet Now";
 "wireMeetings.list.actions.scheduleMeeting" = "Schedule a Meeting";
 "wireMeetings.list.actions.showAll" = "Show All";
+"wireMeetings.list.actions.join" = "Katıl";
+"wireMeetings.list.actions.joinNow" = "Join now";
 "wireMeetings.list.emptyState.next.title" = "No upcoming meetings yet";
 "wireMeetings.list.emptyState.next.subtitle" = "Start a meeting with team members";
 "wireMeetings.list.emptyState.past.title" = "No past meetings yet";
 "wireMeetings.list.emptyState.past.subtitle" = "You'll find all previous meetings here.";
+"wireMeetings.list.startedAt" = "Started at %@";
 "wireMeetings.list.header.today" = "Today";
 "wireMeetings.list.header.tomorrow" = "Tomorrow";
 "wireMeetings.list.header.yesterday" = "Yesterday";
 "wireMeetings.list.header.ongoing" = "Ongoing";
+"wireMeetings.list.attending" = "Attending";
 "wireMeetings.list.actions.edit" = "Edit meeting";
 "wireMeetings.list.actions.delete" = "Delete meeting for all";
+"wireMeetings.list.actions.deleteForMe" = "Delete meeting for me";
 "wireMeetings.list.delete.alert.title" = "Delete meeting for all";
 "wireMeetings.list.delete.alert.subtitle" = "The meeting will be deleted for you and everybody else. All participants will be notified.";
+"wireMeetings.list.deleteRecurring.alert.title" = "Delete meeting for everyone";
+"wireMeetings.list.deleteRecurring.alert.subtitle" = "This is a recurring meeting. Deleting it removes every occurrence for you and everybody else. All participants will be notified.";
+"wireMeetings.list.deleteForMe.alert.title" = "Delete meeting for me";
+"wireMeetings.list.deleteForMe.alert.subtitle" = "The meeting will be deleted from your calendar. This will not affect other participants.";
 "wireMeetings.list.delete.alert.delete.button" = "Sil";
 "wireMeetings.list.delete.alert.cancel.button" = "İptal";
+"wireMeetings.list.join.error.alert.title" = "Could not join the meeting";
+"wireMeetings.list.join.error.alert.ok" = "TAMAM";
 "wireMeetings.list.delete.error.alert.title" = "Bir şeyler yanlış gitti";
 "wireMeetings.list.delete.error.alert.ok" = "TAMAM";
 
 // MARK: - Schedule a meeting
 
+"meetings.scheduleModal.error.createFailedTitle" = "Could not schedule meeting";
+"meetings.scheduleModal.error.createFailed" = "Something went wrong while scheduling the meeting. Please try again.";
+"meetings.meetNowModal.error.createFailedTitle" = "Could not start meeting";
+"meetings.meetNowModal.error.createFailed" = "Something went wrong while starting the meeting. Please try again.";
+"meetings.scheduleModal.error.updateFailedTitle" = "Could not update meeting";
+"meetings.scheduleModal.error.updateFailed" = "Something went wrong while updating the meeting. Please try again.";
 "wireMeetings.schedule.now.title" = "Meet now";
 "wireMeetings.schedule.future.title" = "New meeting";
+"wireMeetings.schedule.edit.title" = "Edit Meeting";
 "wireMeetings.schedule.cancel.button" = "İptal";
 "wireMeetings.schedule.schedule.button" = "Schedule";
+"wireMeetings.schedule.save.button" = "Onay";
 "wireMeetings.schedule.select.button" = "Select";
 "wireMeetings.schedule.start.button" = "Start";
 "wireMeetings.schedule.setupTitle.header" = "Title";
 "wireMeetings.schedule.setupTitle.placeholder" = "Enter meeting title";
+"wireMeetings.schedule.setupTitle.error.tooLong" = "Çok fazla karakter";
 "wireMeetings.schedule.setupParticipants.header" = "Katılımcılar";
 "wireMeetings.schedule.setupParticipants.placeholder" = "Katılımcıları ekle";
 "wireMeetings.schedule.error.alert.title" = "Bir şeyler yanlış gitti";
 "wireMeetings.schedule.error.alert.ok" = "TAMAM";
+"wireMeetings.schedule.participantsNotAdded.title" = "Meeting saved";
+"wireMeetings.schedule.participantsNotAdded.message" = "The meeting was saved, but these users could not be added:\n\n%@";
+"wireMeetings.schedule.error.conversationName.title" = "Could not update call name";
+"wireMeetings.schedule.error.conversationName.message" = "The meeting title was updated, but the name shown in the call could not be updated. Please try again.";
+"wireMeetings.schedule.error.conversationName.retry" = "Try again";
 "wireMeetings.schedule.disableGuestAccess.alert.title" = "Disable guest access?";
 "wireMeetings.schedule.disableGuestAccess.alert.disable" = "Disable";
 "wireMeetings.schedule.disableGuestAccess.alert.cancel" = "İptal";
@@ -65,6 +96,7 @@
 "wireMeetings.schedule.time.daily" = "Daily";
 "wireMeetings.schedule.time.weekly" = "Weekly";
 "wireMeetings.schedule.time.everyTwoWeeks" = "Every 2 weeks";
+"wireMeetings.schedule.time.everyFourWeeks" = "Every 4 weeks";
 "wireMeetings.schedule.time.monthly" = "Monthly";
 "wireMeetings.schedule.time.yearly" = "Yearly";
 "wireMeetings.schedule.members.title" = "Katılımcılar";
@@ -78,3 +110,6 @@
 "wireMeetings.schedule.members.retry.button" = "Retry";
 "wireMeetings.schedule.members.selected.title" = "Selected";
 "wireMeetings.schedule.members.contacts.title" = "Kişiler";
+
+"wireMeetings.schedule.error.expiredStartDate.title" = "Choose a later start time";
+"wireMeetings.schedule.error.expiredStartDate.message" = "Meetings can only be updated with a start time up to 24 hours in the past. Choose a later start time and save again.";

@@ -25,7 +25,7 @@ final class AccountManagementTests: WireUITestCase {
     var teamMember: UserInfo!
 
     @MainActor
-    func testUpdateNameAndUsernameInfo_TC_8932_TC_8934() async throws {
+    func testUpdateNameAndUsernameInfo_TC_8932_8934() async throws {
 
         let user = try await UserHelper.default.createPersonalUser()
 
@@ -37,6 +37,11 @@ final class AccountManagementTests: WireUITestCase {
             .updateName()
             .tapUsernameField()
             .updateUsernameAndSave()
+
+        XCTAssertTrue(
+            accountSettingPage.nameField.waitForExistence(timeout: 3),
+            "Name field was not visible"
+        )
 
         XCTAssertTrue(
             (accountSettingPage.nameField.value as? String)?.contains("-updated") == true,
@@ -74,7 +79,7 @@ final class AccountManagementTests: WireUITestCase {
     }
 
     @MainActor
-    func testAccountManagementUpdateEmailAndResetPassword_TC_8933_TC_8931() async throws {
+    func testAccountManagementUpdateEmailAndResetPassword_TC_8933_8931() async throws {
 
         let updatedUserDetails = UserGenerator.generateUniqueUserInfo()
 

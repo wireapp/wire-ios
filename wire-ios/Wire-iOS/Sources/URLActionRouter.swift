@@ -284,6 +284,10 @@ extension URLActionRouter: PresentationDelegate {
         navigate(to: .conversationList)
     }
 
+    func showMeetings() {
+        navigate(to: .meetings)
+    }
+
     // MARK: - Private Implementation
 
     private func notifyCompanyLoginCompletion() {

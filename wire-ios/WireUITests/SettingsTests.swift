@@ -105,7 +105,6 @@ final class SettingsTests: WireUITestCase {
             conversation: .group("Test")
         )
 
-        // Login & Disable link previews
         let conversationPage = try app.loginUser(email: stagingTeam.email, password: stagingTeam.password)
             .acceptPopup()
             .openSettings()
@@ -113,26 +112,26 @@ final class SettingsTests: WireUITestCase {
             .disableCreateLinkPreviews()
             .backToSettings()
             .switchToConversationsTab()
-            // Open conversation and send first link
             .openConversation()
             .sendMessage("First link: https://github.com/wireapp/wire-ios")
+
+        // Verify first message is sent without link preview
+        let conversationsPage = try conversationPage
+            .verifyMessageSent("First link: https://github.com/wireapp/wire-ios")
+            .verifyLinkPreviewCell(shouldExist: false)
             .goBackToConversationPage()
-            // Enable link previews
+
+        let conversationPageWithPreview = try conversationsPage
             .openSettings()
             .openOptionsMenu()
             .enableCreateLinkPreviews()
             .backToSettings()
             .switchToConversationsTab()
-            // Open conversation and send first link
             .openConversation()
             .sendMessage("Second link: https://github.com/wireapp/wire-android")
 
-        // Verify first message is the original message without preview
-        _ = conversationPage
-            .verifyMessageSent("First link: https://github.com/wireapp/wire-ios")
-
         // Verify second message has link preview
-        _ = conversationPage
+        _ = conversationPageWithPreview
             .verifyMessageSent("Second link:")
             .verifyLinkPreviewCell()
     }

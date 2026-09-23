@@ -24,7 +24,7 @@ import WireLogging
 public final class SafeCoreCrypto {
 
     private let backgroundTaskExecuter: any BackgroundTaskExecuter
-    let coreCrypto: any CoreCryptoProtocol
+    public let coreCrypto: any CoreCryptoProtocol
 
     public init(
         backgroundTaskExecuter: any BackgroundTaskExecuter,
@@ -35,7 +35,7 @@ public final class SafeCoreCrypto {
     }
 
     public func registerEpochObserver(_ epochObserver: any EpochObserver) async throws {
-        try await coreCrypto.registerEpochObserver(epochObserver)
+        try await coreCrypto.registerEpochObserver(epochObserver: epochObserver)
     }
 
     public func transaction<Result>(

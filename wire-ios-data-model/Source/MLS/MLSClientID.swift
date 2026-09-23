@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireCoreCrypto
 import WireTransport
 
 /// An ID representing a identifying a single user client.
@@ -34,6 +35,15 @@ public struct MLSClientID: Equatable, Hashable, Sendable {
 
     public var data: Data {
         Data(rawValue.utf8)
+    }
+
+    public func cryptoId() throws -> WireCoreCrypto.ClientId {
+
+        ClientId(
+            userId: try WireCoreCrypto.Uuid(uuid: userID),
+            deviceId: try WireCoreCrypto.DeviceId.fromHexString(hexString: clientID),
+            domain: domain
+        )
     }
 
     // MARK: - Life cycle

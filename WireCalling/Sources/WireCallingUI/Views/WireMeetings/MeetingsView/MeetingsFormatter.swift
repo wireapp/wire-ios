@@ -20,6 +20,8 @@ package import Foundation
 
 package protocol MeetingsFormatterProtocol {
     func dayHeader(for date: Date, now: Date) -> String
+    func date(_ date: Date) -> String
+    func time(_ date: Date) -> String
     func timeRange(from start: Date, to end: Date) -> String
 }
 
@@ -27,53 +29,88 @@ package struct MeetingsFormatter: MeetingsFormatterProtocol {
 
     private typealias Strings = L10n.Localizable.WireMeetings.List
 
-    package init() {}
+    private let calendar: Calendar
+    private let dayHeaderDateFormatter: DateFormatter
+    private let dateFormatter: DateFormatter
+    private let timeFormatter: DateFormatter
+
+    package init(
+        calendar: Calendar = .autoupdatingCurrent,
+        locale: Locale = .autoupdatingCurrent
+    ) {
+        self.calendar = calendar
+        self.dayHeaderDateFormatter = DateFormatter.meetingDayHeaderDate(
+            locale: locale,
+            calendar: calendar
+        )
+        self.dateFormatter = DateFormatter.meetingDate(locale: locale, calendar: calendar)
+        self.timeFormatter = DateFormatter.meetingTime(locale: locale, calendar: calendar)
+    }
 
     package func dayHeader(for date: Date, now: Date) -> String {
-        let calendar = Calendar.current
+        let formattedDate = dayHeaderDateFormatter.string(from: date)
 
         if calendar.isDate(date, inSameDayAs: now) {
-            return Strings.Header.today + " (\(DateFormatter.dayHeader.string(from: date)))"
-        } else {
-            return DateFormatter.dayHeader.string(from: date)
+            return Strings.Header.today + " (\(formattedDate))"
+        } else if let tomorrow = calendar.date(byAdding: .day, value: 1, to: now),
+                  calendar.isDate(date, inSameDayAs: tomorrow) {
+            return Strings.Header.tomorrow + " (\(formattedDate))"
         }
+
+        return formattedDate
+    }
+
+    package func date(_ date: Date) -> String {
+        dateFormatter.string(from: date)
+    }
+
+    package func time(_ date: Date) -> String {
+        timeFormatter.string(from: date)
     }
 
     package func timeRange(from start: Date, to end: Date) -> String {
-        let startString = DateFormatter.meetingStartTime.string(from: start)
-        let endString = DateFormatter.meetingEndTime.string(from: end)
-        return "\(startString) - \(endString)"
+        "\(time(start)) - \(time(end))"
     }
 
 }
 
 // MARK: - Helpers
 
-private extension DateFormatter {
+package extension DateFormatter {
 
-    static let dayHeader: DateFormatter = {
+    fileprivate static func meetingDayHeaderDate(locale: Locale, calendar: Calendar) -> DateFormatter {
         let formatter = DateFormatter()
-        formatter.locale = .current
-        formatter.dateFormat = "EEEE, MMMM d"
+        formatter.locale = locale
+        formatter.calendar = calendar
+        formatter.timeZone = calendar.timeZone
+        formatter.setLocalizedDateFormatFromTemplate("EEEE MMMM d")
         return formatter
-    }()
+    }
 
-}
-
-private extension DateFormatter {
-
-    static let meetingStartTime: DateFormatter = {
+    static func meetingDate(
+        locale: Locale = .autoupdatingCurrent,
+        calendar: Calendar = .autoupdatingCurrent
+    ) -> DateFormatter {
         let formatter = DateFormatter()
-        formatter.locale = .current
-        formatter.dateFormat = "h:mm"
+        formatter.locale = locale
+        formatter.calendar = calendar
+        formatter.timeZone = calendar.timeZone
+        formatter.dateStyle = .short
+        formatter.timeStyle = .none
         return formatter
-    }()
+    }
 
-    static let meetingEndTime: DateFormatter = {
+    static func meetingTime(
+        locale: Locale = .autoupdatingCurrent,
+        calendar: Calendar = .autoupdatingCurrent
+    ) -> DateFormatter {
         let formatter = DateFormatter()
-        formatter.locale = .current
-        formatter.dateFormat = "h:mm a"
+        formatter.locale = locale
+        formatter.calendar = calendar
+        formatter.timeZone = calendar.timeZone
+        formatter.dateStyle = .none
+        formatter.timeStyle = .short
         return formatter
-    }()
+    }
 
 }

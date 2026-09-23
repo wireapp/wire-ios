@@ -284,6 +284,16 @@ public enum SemanticColors {
         public static let amber = UIColor(light: .amber500Light, dark: .amber500Dark)
         public static let turquoise = UIColor(light: .turquoise500Light, dark: .turquoise500Dark)
         public static let purple = UIColor(light: .purple500Light, dark: .purple500Dark)
+
+        public enum Secondary {
+            public static let blue = UIColor(light: .blue50Light, dark: .blue900Dark)
+            public static let green = UIColor(light: .green50Light, dark: .green900Dark)
+            public static let red = UIColor(light: .red50Light, dark: .red900Dark)
+            public static let amber = UIColor(light: .amber50Light, dark: .amber900Dark)
+            public static let turquoise = UIColor(light: .turquoise50Light, dark: .turquoise900Dark)
+            public static let purple = UIColor(light: .purple50Light, dark: .purple900Dark)
+        }
+
     }
 }
 

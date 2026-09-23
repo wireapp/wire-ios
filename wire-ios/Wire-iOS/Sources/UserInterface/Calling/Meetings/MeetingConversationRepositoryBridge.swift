@@ -21,15 +21,17 @@ import WireCallingDomain
 import WireDataModel
 import WireDomain
 import WireFoundation
+import WireSyncEngine
 
-/// Bridges `WireDomain`'s `ConversationRepositoryProtocol` into `WireCallingDomain`'s
+/// Bridges `WireDomain`'s `ConversationRepository` into `WireCallingDomain`'s
 /// `MeetingConversationRepositoryProtocol`, so the meetings feature can pull meeting
-/// conversations and add participants (including MLS group establishment) without
-/// depending on `WireDomain` directly.
+/// conversations and add or remove participants (including MLS group establishment)
+/// without depending on `WireDomain` directly.
 struct MeetingConversationRepositoryBridge: MeetingConversationRepositoryProtocol, @unchecked Sendable {
 
-    let conversationRepository: any ConversationRepositoryProtocol
+    let conversationRepository: ConversationRepository
     let contextProvider: any ContextProvider
+    let participantsService: any ConversationParticipantsServiceInterface
 
     func pullConversation(id: UUID, domain: String) async throws {
         try await conversationRepository.pullConversation(id: id, domain: domain)
@@ -39,8 +41,6 @@ struct MeetingConversationRepositoryBridge: MeetingConversationRepositoryProtoco
         _ participants: [MeetingMember],
         to conversationID: WireCallingDomain.QualifiedID
     ) async throws {
-        guard !participants.isEmpty else { return }
-
         guard let conversation = await conversationRepository.fetchConversation(
             id: conversationID.id,
             domain: conversationID.domain
@@ -49,23 +49,183 @@ struct MeetingConversationRepositoryBridge: MeetingConversationRepositoryProtoco
         let objectID = conversation.objectID
         let syncContext = contextProvider.syncContext
 
-        let mlsGroupID = await syncContext.perform {
+        let (mlsGroupID, isGroupEstablished) = await syncContext.perform {
             guard
                 let conv = ZMConversation.existingObject(for: objectID, in: syncContext),
                 conv.messageProtocol == .mls
-            else { return nil as MLSGroupID? }
-            return conv.mlsGroupID
+            else { return (nil as MLSGroupID?, false) }
+            return (conv.mlsGroupID, conv.mlsStatus == .ready)
         }
 
         guard let mlsGroupID else { return }
 
-        try await addMLSParticipants(
+        if isGroupEstablished {
+            guard !participants.isEmpty else { return }
+            // The group already exists (the meeting is being edited), so the
+            // participants are added with a regular add-members commit.
+            try await updateParticipants(participants, in: objectID, syncContext: syncContext) { users, conversation in
+                try await participantsService.addParticipants(users, to: conversation)
+                let failedParticipants = await syncContext.perform {
+                    let currentIDs = Set(conversation.localParticipants.compactMap(\.qualifiedID))
+                    return participants.filter {
+                        !currentIDs.contains(WireDataModel.QualifiedID(
+                            uuid: $0.qualifiedID.id,
+                            domain: $0.qualifiedID.domain
+                        ))
+                    }
+                }
+                if !failedParticipants.isEmpty {
+                    throw MeetingParticipantsError.failedToAddParticipants(failedParticipants)
+                }
+            }
+        } else {
+            // The group must be established even with no extra participants
+            // (a solo "Meet Now" instant meeting): without this, the
+            // conversation's MLS group never gets created, and starting the
+            // call later fails silently when it tries to set up the
+            // conference against a non-existent parent group.
+            try await addMLSParticipants(
+                participants,
+                to: mlsGroupID,
+                conversationObjectID: objectID,
+                syncContext: syncContext,
+                mlsService: syncContext.performAndWait { syncContext.mlsService }
+            )
+        }
+    }
+
+    func removeParticipants(
+        _ participants: [MeetingMember],
+        from conversationID: WireCallingDomain.QualifiedID
+    ) async throws {
+        guard !participants.isEmpty else { return }
+
+        guard let conversation = await conversationRepository.fetchConversation(
+            id: conversationID.id,
+            domain: conversationID.domain
+        ) else { return }
+
+        try await updateParticipants(
             participants,
-            to: mlsGroupID,
-            conversationObjectID: objectID,
-            syncContext: syncContext,
-            mlsService: syncContext.performAndWait { syncContext.mlsService }
+            in: conversation.objectID,
+            syncContext: contextProvider.syncContext
+        ) { users, conversation in
+            for user in users {
+                try await participantsService.removeParticipant(user, from: conversation)
+            }
+        }
+    }
+
+    func leaveConversation(id conversationID: WireCallingDomain.QualifiedID) async throws {
+        let syncContext = contextProvider.syncContext
+        let resolved = await syncContext.perform {
+            let conversation = ZMConversation.fetch(
+                with: conversationID.id,
+                domain: conversationID.domain,
+                in: syncContext
+            )
+            let selfUser = ZMUser.selfUser(in: syncContext)
+            return (
+                conversation: conversation,
+                selfUser: selfUser,
+                isMeeting: conversation?.isMeeting == true,
+                hasSelfUserID: selfUser.qualifiedID != nil
+            )
+        }
+
+        guard
+            let conversation = resolved.conversation,
+            resolved.isMeeting,
+            resolved.hasSelfUserID
+        else {
+            throw ConversationRemoveParticipantError.invalidOperation
+        }
+
+        do {
+            try await participantsService.removeParticipant(resolved.selfUser, from: conversation)
+        } catch ConversationRemoveParticipantError.conversationNotFound {
+            // The current user already left, so the requested state exists.
+        }
+    }
+
+    func setConversationName(
+        _ name: String,
+        for conversationID: WireCallingDomain.QualifiedID
+    ) async throws {
+        guard let conversation = await conversationRepository.fetchConversation(
+            id: conversationID.id,
+            domain: conversationID.domain
+        ) else { return }
+
+        let objectID = conversation.objectID
+        // The name must be changed on the view context: only view context
+        // saves update `keysThatHaveLocalModifications`, which is what the
+        // request strategy uses to push the new name to the backend.
+        // Note that this is the regular conversation-rename pipeline, so it
+        // also inserts a "... renamed the conversation" system message.
+        let viewContext = contextProvider.viewContext
+
+        await viewContext.perform {
+            guard
+                let conv = ZMConversation.existingObject(for: objectID, in: viewContext),
+                conv.userDefinedName != name
+            else { return }
+            conv.userDefinedName = name
+            _ = viewContext.saveOrRollback()
+        }
+    }
+
+    func updateConversationName(
+        _ name: String,
+        for conversationID: WireCallingDomain.QualifiedID
+    ) async throws {
+        let syncContext = contextProvider.syncContext
+        let isMeeting = try await syncContext.perform {
+            guard let conversation = ZMConversation.fetch(
+                with: conversationID.id,
+                domain: conversationID.domain,
+                in: syncContext
+            ) else {
+                throw ConversationRemoveParticipantError.conversationNotFound
+            }
+            return conversation.isMeeting
+        }
+
+        guard isMeeting else { return }
+
+        try await conversationRepository.renameConversation(
+            WireDataModel.QualifiedID(uuid: conversationID.id, domain: conversationID.domain),
+            to: name
         )
+    }
+
+    /// Resolves the meeting members and the conversation into their managed
+    /// objects on the sync context and hands them to `operation`. Members
+    /// unknown to the local store are skipped.
+    private func updateParticipants(
+        _ participants: [MeetingMember],
+        in conversationObjectID: NSManagedObjectID,
+        syncContext: NSManagedObjectContext,
+        operation: ([ZMUser], ZMConversation) async throws -> Void
+    ) async throws {
+        let (users, conversation) = await syncContext.perform { () -> ([ZMUser], ZMConversation?) in
+            let users = participants.compactMap { member in
+                ZMUser.fetch(
+                    with: member.qualifiedID.id,
+                    domain: member.qualifiedID.domain,
+                    in: syncContext
+                )
+            }
+            let conversation: ZMConversation? = ZMConversation.existingObject(
+                for: conversationObjectID,
+                in: syncContext
+            )
+            return (users, conversation)
+        }
+
+        guard let conversation, !users.isEmpty else { return }
+
+        try await operation(users, conversation)
     }
 
     // Establishes the local CoreCrypto group and adds all users in one commit.
@@ -85,17 +245,40 @@ struct MeetingConversationRepositoryBridge: MeetingConversationRepositoryProtoco
             MLSUser(id: member.qualifiedID.id, domain: member.qualifiedID.domain)
         }
 
-        let ciphersuite = try await mlsService.establishGroup(
-            for: mlsGroupID,
-            with: mlsUsers,
-            removalKeys: nil
-        )
+        let ciphersuite: MLSCipherSuite
+        var failedParticipants: [MeetingMember] = []
+        do {
+            ciphersuite = try await mlsService.establishGroup(
+                for: mlsGroupID,
+                with: mlsUsers,
+                removalKeys: nil
+            )
+        } catch let MLSService.MLSAddMembersError.failedToClaimKeyPackages(failedUsers) {
+            guard !failedUsers.isEmpty, failedUsers.allSatisfy({ mlsUsers.contains($0) }) else {
+                throw MLSService.MLSAddMembersError.failedToClaimKeyPackages(users: failedUsers)
+            }
 
-        await syncContext.perform {
-            guard let conv = ZMConversation.existingObject(for: objectID, in: syncContext) else { return }
+            // Failed establishment wipes the group, so recreate it with the eligible invitees and host devices.
+            ciphersuite = try await mlsService.establishGroup(
+                for: mlsGroupID,
+                with: mlsUsers.filter { !failedUsers.contains($0) },
+                removalKeys: nil
+            )
+            failedParticipants = zip(participants, mlsUsers).compactMap { participant, user in
+                failedUsers.contains(user) ? participant : nil
+            }
+        }
+
+        let isGroupReady = await syncContext.perform {
+            guard let conv = ZMConversation.existingObject(for: objectID, in: syncContext) else { return false }
             conv.mlsStatus = .ready
             conv.ciphersuite = ciphersuite
-            _ = syncContext.saveOrRollback()
+            return syncContext.saveOrRollback()
+        }
+
+        if !failedParticipants.isEmpty {
+            guard isGroupReady else { throw MLSService.MLSGroupCreationError.failedToCreateGroup }
+            throw MeetingParticipantsError.failedToAddParticipants(failedParticipants)
         }
     }
 

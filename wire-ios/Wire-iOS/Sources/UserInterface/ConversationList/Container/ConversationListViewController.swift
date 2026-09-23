@@ -474,6 +474,8 @@ final class ConversationListViewController: UIViewController {
         let searchController = UISearchController(searchResultsController: nil)
         searchController.obscuresBackgroundDuringPresentation = false
         searchController.searchBar.isTranslucent = false
+        searchController.searchBar.searchTextField.accessibilityIdentifier =
+            Locators.ConversationsPage.conversationSearchBar.rawValue
         searchController.hidesNavigationBarDuringPresentation = true
         return searchController
     }

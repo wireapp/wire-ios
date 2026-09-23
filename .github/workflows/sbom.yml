@@ -45,8 +45,11 @@ jobs:
 
       - name: Read project version
         id: read_version
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          USE_COMMIT_REF: ${{ inputs.use_commit_ref }}
         run: |
-          if [ "${{ github.event_name }}" = "create" ] || { [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.use_commit_ref }}" != "true" ]; }; then
+          if [ "$EVENT_NAME" = "create" ] || { [ "$EVENT_NAME" = "workflow_dispatch" ] && [ "$USE_COMMIT_REF" != "true" ]; }; then
             VERSION=$(grep 'WIRE_SHORT_VERSION' wire-ios/Wire-iOS/Resources/Configuration/Version.xcconfig | cut -d'=' -f2 | tr -d ' ')
             echo "project_version=$VERSION" >> "$GITHUB_OUTPUT"
           else

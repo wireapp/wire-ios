@@ -282,12 +282,12 @@ extension BackupLocalStore {
             return try await context.perform {
                 let fetchRequest = T.fetchRequest()
 
-                let predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
-                    NSPredicate(format: "%K IN %@", T.remoteIdentifierDataKey(), uuidsData),
-                    NSPredicate(format: "%K IN %@", T.domainKey(), domains)
-                ])
-
-                fetchRequest.predicate = predicate
+                var subpredicates = [NSPredicate(format: "%K IN %@", T.remoteIdentifierDataKey(), uuidsData)]
+                // If federation is not enabled, Users & Conversations may not have domains set.
+                if context.isFederationEnabled {
+                    subpredicates.append(NSPredicate(format: "%K IN %@", T.domainKey(), domains))
+                }
+                fetchRequest.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: subpredicates)
 
                 let fetchResult = try context.fetch(fetchRequest) as! [T]
 
@@ -447,12 +447,28 @@ extension BackupLocalStore {
                     WireLogger.backupImport.warn("Failed to delete invalid messages \(String(describing: error))")
                 }
             }
+
+            // Imported history was already read on other devices: advance
+            // lastReadServerTimeStamp so scrolling restored history doesn't
+            // broadcast an older lastRead via the self-conversation sync.
+            advanceLastReadAfterImport(conversationsByID: conversationsByID)
         }
 
         return .init(
             successCount: restoredCount,
             failureCount: failedCount
         )
+    }
+
+    private func advanceLastReadAfterImport(
+        conversationsByID: [QualifiedID: ZMConversation]
+    ) {
+        for conversation in conversationsByID.values {
+            guard let lastModified = conversation.lastModifiedDate else { continue }
+            let currentLastRead = conversation.lastReadServerTimeStamp ?? .distantPast
+            guard currentLastRead < lastModified else { continue }
+            conversation.lastReadServerTimeStamp = lastModified
+        }
     }
 
     private enum RehydrationFailure: Error {

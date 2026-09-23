@@ -78,7 +78,7 @@ NSString *const ZMConversationMigratedToMLS = @"migratedToMLS";
 NSString *const ZMConversationCellNameKey = @"cellName";
 NSString *const ZMConversationWireCellsMessageAttachmentDraftsKey = @"wireCellsMessageAttachmentDrafts";
 NSString *const ZMConversationCellsState = @"cellsState";
-NSString *const ZMConversationParentMeetingKey = @"parentMeeting";
+NSString *const ZMConversationMeetingsKey = @"meetings";
 
 static NSString *const ConnectedUserKey = @"connectedUser";
 static NSString *const CreatorKey = @"creator";
@@ -170,7 +170,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 @dynamic labels;
 @dynamic participantRoles;
 @dynamic nonTeamRoles;
-@dynamic parentMeeting;
+@dynamic meetings;
 
 @synthesize pendingLastReadServerTimestamp;
 @synthesize previousLastReadServerTimestamp;
@@ -375,7 +375,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
             ZMConversationCellNameKey,
             ZMConversationWireCellsMessageAttachmentDraftsKey,
             ZMConversationCellsState,
-            ZMConversationParentMeetingKey,
+            ZMConversationMeetingsKey,
             ZMConversation.scheduledDeletionDateKey
         };
         
@@ -463,6 +463,8 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     // local participant roles, so check its count first to avoid unncessary iterations.
 
     if (conversationType == ZMConversationTypeGroup &&
+        (self.entity.attributesByName[ZMConversationGroupTypeKey] == nil ||
+         self.groupType != ConversationGroupTypeMeeting) &&
         self.team != nil &&
         self.userDefinedName.length == 0 &&
         self.localParticipantRoles.count == 2 &&

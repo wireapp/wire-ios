@@ -73,6 +73,10 @@ public struct MLSAPIBuilder {
             MLSAPIV15(apiService: apiService)
         case .v16:
             MLSAPIV16(apiService: apiService)
+        case .v17:
+            MLSAPIV17(apiService: apiService)
+        case .v18:
+            MLSAPIV18(apiService: apiService)
         }
     }
 

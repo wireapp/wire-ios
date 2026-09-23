@@ -16,24 +16,28 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireFoundation
 import WireUtilities
 import XCTest
 
 class AdminPromotionTests: WireUITestCase {
 
-    override func additionalDeveloperFlags() -> [DeveloperFlag: Bool] {
-        [.preventAdminlessGroups: true]
-    }
+    private let userHelper = UserHelper.instance(apiVersion: .v18)
 
     @MainActor
     func testLastAdmin_promotesNewAdmin_andLeavesGroup_TC_11032() async throws {
         let groupName = UserGenerator.generateRandomConversationName()
 
-        let (owner, teamMembers, _, _) = try await UserHelper.default.registerTeam(
+        let (owner, teamMembers, _, _) = try await userHelper.registerTeam(
             withMemberCount: 1,
             conversation: .group(groupName)
         )
         let member = try XCTUnwrap(teamMembers.first)
+        let teamID = try XCTUnwrap(owner.teamID)
+        try await userHelper.unlockAndEnablePreventAdminlessGroupsFeature(teamID: teamID)
+
+        // TODO: [WPB-28649] - Remove when v18 is PROD ready.
+        try switchToPreferredAPIVersion("18")
 
         let conversationDetailsPage = try app.loginUser(email: owner.email, password: owner.password)
             .acceptPopup()
@@ -51,22 +55,10 @@ class AdminPromotionTests: WireUITestCase {
             "Promoted member should appear in the admin section"
         )
 
-        // Self user is no longer a participant
-        XCTAssertTrue(
-            conversationDetailsPage.userCell(named: owner.name).waitForNonExistence(timeout: 0.5),
-            "Owner should not appear in participant list after leaving"
-        )
-
-        // Active conversation shows "you left" and input is disabled
-        let activeConversationPage = try conversationDetailsPage.closeConversationDetails()
-
-        XCTAssertTrue(
-            activeConversationPage.userLeftSystemMessage.waitForExistence(timeout: 5),
-            "Expected 'you left' system message"
-        )
-        XCTAssertFalse(
-            activeConversationPage.inputMessageField.exists,
-            "Input bar should not be available after leaving"
+        try verifyUserLeftGroup(
+            conversationDetailsPage,
+            leavingUserName: owner.name,
+            participantDescription: "Owner"
         )
     }
 
@@ -74,10 +66,15 @@ class AdminPromotionTests: WireUITestCase {
     func testLastAdmin_deletesGroup_insteadOfPromoting_TC_11033() async throws {
         let groupName = UserGenerator.generateRandomConversationName()
 
-        let (owner, _, _, _) = try await UserHelper.default.registerTeam(
+        let (owner, _, _, _) = try await userHelper.registerTeam(
             withMemberCount: 1,
             conversation: .group(groupName)
         )
+
+        let teamID = try XCTUnwrap(owner.teamID)
+        try await userHelper.unlockAndEnablePreventAdminlessGroupsFeature(teamID: teamID)
+
+        try switchToPreferredAPIVersion("18")
 
         let conversationsPage = try app.loginUser(email: owner.email, password: owner.password)
             .acceptPopup()
@@ -104,10 +101,15 @@ class AdminPromotionTests: WireUITestCase {
     func testLastAdmin_onlySeesDeleteGroupOption_whenNoEligibleMembers_TC_11034() async throws {
         let groupName = UserGenerator.generateRandomConversationName()
 
-        let (owner, _, _, _) = try await UserHelper.default.registerTeam(
+        let (owner, _, _, _) = try await userHelper.registerTeam(
             withMemberCount: 0,
             conversation: .group(groupName)
         )
+
+        let teamID = try XCTUnwrap(owner.teamID)
+        try await userHelper.unlockAndEnablePreventAdminlessGroupsFeature(teamID: teamID)
+
+        try switchToPreferredAPIVersion("18")
 
         let conversationDetailsPage = try app.loginUser(email: owner.email, password: owner.password)
             .acceptPopup()
@@ -124,6 +126,153 @@ class AdminPromotionTests: WireUITestCase {
         XCTAssertFalse(
             conversationDetailsPage.promoteNewAdminButton.exists,
             "Should not see the promote button"
+        )
+    }
+
+    @MainActor
+    func testLastGuestUserAdmin_CannotLeaveGroup_PromotesNewAdmin_ThenLeaveGroupSuccessfully_TC_11577() async throws {
+        let groupName = "Guest User Leave Group Test"
+        let (
+            owner,
+            guestUser
+        ) =
+            try await createGroupConversationWithTeamMemberAndLastGuestUserAdmin(groupName: groupName)
+
+        try switchToPreferredAPIVersion("18")
+
+        let conversationsPage = try app
+            .loginUser(email: guestUser.email, password: guestUser.password)
+            .acceptPopup()
+
+        let conversationDetailsPage = try conversationsPage.openConversationWithGuest(groupName: groupName)
+            .openConversationDetails()
+            .moreOptionsConversationDetails()
+            .leaveOptionsConversationDetails()
+            .tapCannotLeaveAlert() // cannot leave group
+            .appParticipantToConversation()
+            .tapMemberCells(withLabelPrefixes: [owner.name])
+            .addSelectedParticipant() // adds eligible member
+            .moreOptionsConversationDetails()
+            .leaveOptionsConversationDetails()
+            .tapPromoteNewAdmin() // promotes the member
+            .selectUser(named: owner.name)
+            .tapPromote()
+
+        // Team member is now in the admin section
+        XCTAssertTrue(
+            conversationDetailsPage.adminCell(named: owner.name).waitForExistence(timeout: 5),
+            "Promoted member should appear in the admin section"
+        )
+
+        try verifyUserLeftGroup(
+            conversationDetailsPage,
+            leavingUserName: guestUser.name,
+            participantDescription: "Guest user"
+        )
+    }
+
+    private func createGroupConversationWithTeamMemberAndLastGuestUserAdmin(groupName: String) async throws
+        -> (teamMember: UserInfo, personalUser: UserInfo) {
+        let (teamMember, guestUser) = try await userHelper.connectDriveEnabledTeamUserWithGuestUser()
+
+        let domain = BackendTarget.staging.domainInfo
+        let teamMemberQualifiedID = WireFoundation.QualifiedID(
+            id: try XCTUnwrap(UUID(uuidString: teamMember.id)),
+            domain: domain
+        )
+        let guestUserQualifiedID = WireFoundation.QualifiedID(
+            id: try XCTUnwrap(UUID(uuidString: guestUser.id)),
+            domain: domain
+        )
+
+        try await userHelper
+            .unlockAndEnablePreventAdminlessGroupsFeature(teamID: try XCTUnwrap(teamMember.teamID))
+        try await userHelper
+            .unlockAndEnablePreventAdminlessGroupsFeature(teamID: try XCTUnwrap(guestUser.teamID))
+
+        let conversation = try await userHelper.createGroupConversations(
+            qualifiedIds: [guestUserQualifiedID],
+            owner: teamMember,
+            groupName: groupName,
+            driveEnabled: true
+        )
+
+        let conversationQualifiedID = try XCTUnwrap(conversation.qualifiedID)
+
+        try await userHelper.updateRole(
+            "wire_admin",
+            userID: guestUserQualifiedID,
+            conversationID: conversationQualifiedID
+        )
+
+        try await userHelper.removeParticipant(
+            userID: teamMemberQualifiedID,
+            conversationID: conversationQualifiedID
+        )
+
+        return (teamMember, guestUser)
+    }
+
+    @MainActor
+    private func verifyUserLeftGroup(
+        _ conversationDetailsPage: ConversationDetailsPage,
+        leavingUserName: String,
+        participantDescription: String
+    ) throws {
+        XCTAssertTrue(
+            conversationDetailsPage.userCell(named: leavingUserName).waitForNonExistence(timeout: 5),
+            "\(participantDescription) should not appear in participant list after leaving"
+        )
+
+        let activeConversationPage = try conversationDetailsPage.closeConversationDetails()
+
+        XCTAssertTrue(
+            activeConversationPage.userLeftSystemMessage.waitForExistence(timeout: 5),
+            "Expected 'you left' system message"
+        )
+        XCTAssertFalse(
+            activeConversationPage.inputMessageField.exists,
+            "Input bar should not be available after leaving"
+        )
+    }
+
+    @MainActor
+    func testAdmin_notLastAdmin_leavesGroupWithoutAdminSelectionModal_TC_11031() async throws {
+        let groupName = UserGenerator.generateRandomConversationName()
+
+        let (owner, _, _, _) = try await userHelper.createGroupConversationWithAdminsAndMembers(
+            groupName: groupName,
+            memberCount: 2,
+            groupAdminCount: 2,
+            preventAdminlessGroupsEnabled: true
+        )
+
+        let teamID = try XCTUnwrap(owner.teamID)
+        try await userHelper.unlockAndEnablePreventAdminlessGroupsFeature(teamID: teamID)
+
+        try switchToPreferredAPIVersion("18")
+
+        let conversationDetailsPage = try app.loginUser(email: owner.email, password: owner.password)
+            .acceptPopup()
+            .openConversation()
+            .openConversationDetails()
+
+        let leavingConversationDetailsPage = try conversationDetailsPage
+            .moreOptionsConversationDetails()
+            .leaveOptionsConversationDetails()
+
+        XCTAssertFalse(
+            leavingConversationDetailsPage.promoteNewAdminButton.exists,
+            "Admin selection modal should not appear when self user is not the last admin"
+        )
+
+        let leftConversationDetailsPage = try leavingConversationDetailsPage
+            .leaveConversation()
+
+        try verifyUserLeftGroup(
+            leftConversationDetailsPage,
+            leavingUserName: owner.name,
+            participantDescription: "Owner"
         )
     }
 

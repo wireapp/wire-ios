@@ -262,6 +262,7 @@
 "conversation.voiceover.value.disabled" = "отключено";
 
 "conversation.status.secutity_alert.default" = "Новое оповещение безопасности";
+"conversation.status.scheduled_for_deletion" = "Будет удалена в ближайшее время";
 
 "conversation.status.typing" = "Печатает сообщение…";
 "conversation.status.typing.group" = "%@: печатает сообщение…";
@@ -318,6 +319,7 @@
 "conversation.input_bar.verified" = "Верифицировано";
 "conversation.input_bar.placeholder" = "Введите сообщение";
 "conversation.input_bar.placeholder_ephemeral" = "Самоудаляющееся сообщение";
+"conversation.input_bar.blocked_user" = "Вы заблокировали этого пользователя";
 
 "conversation.input_bar.audio_message.tooltip.pull_send" = "Проведите вверх для отправки";
 "conversation.input_bar.audio_message.tooltip.tap_send" = "Нажмите для отправки";
@@ -643,7 +645,7 @@
 "content.system.file_collaboration.enabled.editor_access" = "У вас есть права редактора. У пользователей, не входящих в вашу команду, есть только права просмотра.";
 "content.system.file_collaboration.enabled.viewer_access" = "Вы можете просматривать файлы, но не можете загружать, редактировать или управлять ими.";
 "content.system.file_collaboration.enabled.learn_more" = "Подробнее";
-"content.system.file_collaboration.drive_viewer_access.title" = "Гости имеют доступ к файлам в этом чате только для просмотра.";
+"content.system.file_collaboration.drive_viewer_access.title" = "Пользователи не из вашей команды могут присоединиться к этой беседе в качестве наблюдателей.";
 
 // read receipt
 
@@ -668,6 +670,11 @@
 "content.system.message_legal_hold.disabled" = "Для этой беседы деактивированы юридические ограничения";
 
 "content.system.message_legal_hold.learn_more" = "Подробнее";
+
+// automatic conversation deletion
+
+"content.system.message_conversation_scheduled_for_deletion.text" = "Эта группа будет автоматически удалена %@, так как в ней нет подходящих администраторов.";
+"content.system.message_conversation_scheduled_for_deletion.read_more.text" = "Подробнее";
 
 //
 "content.system.is_verified" = "Все отпечатки верифицированы";
@@ -964,6 +971,16 @@
 "shortcut.mark_all_as_read.title" = "Отметить все как прочитанные";
 "meta.menu.configure_notifications" = "Уведомления…";
 "meta.menu.open_self_profile" = "Открыть профиль";
+"meta.menu.mls_migration.confirmation.title" = "Изменить протокол на MLS?";
+"meta.menu.mls_migration.confirmation.message" = "Стандартный протокол обмена сообщениями изменится с Proteus на Messaging Layer Security (MLS).";
+"meta.menu.mls_migration.confirmation.button" = "Изменить протокол";
+"meta.menu.mls_migration.success.title" = "Миграция на MLS выполнена";
+"meta.menu.mls_migration.success.message" = "В беседе теперь используется MLS.";
+"meta.menu.mls_migration.failure.title" = "Миграция на MLS завершилась неудачей";
+"meta.menu.mls_migration.failure.conversation_not_found" = "Не удалось найти беседу";
+"meta.menu.mls_migration.failure.unsupported_conversation" = "Перенести можно только групповые беседы команд.";
+"meta.menu.mls_migration.failure.missing_mls_service" = "Не удалось начать миграцию на MLS.";
+"meta.menu.mls_migration.failure.missing_mls_group_id" = "У этой беседы нет идентификатора группы MLS.";
 
 // Delete conversation
 "meta.menu.delete_content.dialog_title" = "Очистить контент?";
@@ -992,7 +1009,7 @@
 "admin_selection.title" = "Новый администратор";
 "admin_selection.promote" = "Назначить";
 "admin_selection.info_banner" = "После того как вы назначите нового администратора, вы покинете группу.";
-"admin_selection.promotion_error" = "Не удалось назначить пользователя администратором.";
+"admin_selection.promotion_error" = "Член группы не может быть повышен до admin.";
 
 // Last admin leave flow
 "last_admin_leave.title" = "Покинуть \"%@\"?";
@@ -1001,8 +1018,8 @@
 "last_admin_leave.no_eligible_candidates_message" = "Вы - единственный администратор. Другие участники не могут быть администраторами.\nДобавьте хотя бы одного члена команды и назначьте его администратором, прежде чем покинуть. Или удалите группу, если она больше не нужна.";
 "last_admin_leave.delete_group" = "Удалить группу";
 "last_admin_leave.promote_only_message" = "Вы единственный администратор.\nНазначьте другого пользователя, прежде чем покинуть.";
-"last_admin_leave.cannot_leave_title" = "Невозможно покинуть \"%@\".";
-"last_admin_leave.cannot_leave_message" = "В этой группе нет администраторов с соответствующими правами. Как обычный пользователь вы не можете удалить группу. Для этого добавьте еще одного участника команды и назначьте его администратором.";
+"last_admin_leave.cannot_leave_title" = "Покинуть \"%@\"?";
+"last_admin_leave.cannot_leave_message" = "Перед тем как покинуть группу, добавьте в нее хотя бы одного пользователя из команды, создавшей эту группу, и назначьте его администратором.";
 
 // Conversation Degraded (security level lowered)
 "meta.degraded.degradation_reason_message.singular" = "%@ начал(-а) использовать новое устройство.";
@@ -1229,9 +1246,6 @@
 "self.settings.add_account_or_team.title" = "Добавить аккаунт или команду";
 "self.settings.manage_team.title" = "Управлять командой";
 "self.settings.add_account.title" = "Добавить аккаунт";
-
-"self.settings.add_account.error.title" = "Активны три аккаунта";
-"self.settings.add_account.error.message" = "Одновременно можно авторизоваться не более чем в трех аккаунтах. Выйдите из одного для добавления другого.";
 
 "self.settings.switch_account.message" = "В этой учетной записи активен вызов.\nПереключение учетных записей приведет к завершению текущего вызова.";
 "self.settings.switch_account.action" = "Все равно переключиться";
@@ -1622,7 +1636,7 @@
 
 "apps_options.allow_apps.title" = "Разрешить приложения";
 "apps_options.allow_apps.subtitle" = "Открыть эту беседу для приложений.";
-"apps_options.remove_apps.message" = "Все приложения будут удалены из разговора. Новые приложения допущены не будут.";
+"apps_options.remove_apps.message" = "Все приложения будут удалены из беседы. Новые приложения допущены не будут.";
 "apps_options.remove_apps.action" = "Удалить";
 
 
@@ -1673,6 +1687,10 @@
 "login.sso.backend_switch.title" = "Перенаправление...";
 "login.sso.backend_switch.subtitle" = "Вы будете перенаправлены на специализированное обслуживание вашей организации.";
 "login.sso.backend_switch.information" = "Указывайте учетные данные, только если уверены, что это страница авторизации вашей организации.";
+
+"sso_identity_changed.title" = "Провайдер идентификации изменен";
+"sso_identity_changed.message" = "Этот аккаунт использовался с другим провайдером услуг аутентификации. Если вы продолжите, все беседы с этого устройства будут удалены.\nЧтобы сохранить свои данные, нажмите Отмена, а затем авторизуйтесь с помощью прежнего провайдера услуг аутентификации.";
+"sso_identity_changed.delete_data_and_continue" = "Удалить данные и продолжить";
 
 "registration.no_history.logged_out.hero" = "Вы уже использовали Wire на этом устройстве.";
 "registration.no_history.logged_out.subtitle" = "Сообщения, отправленные пока устройствоне использовалось, отображаться не будут.";
@@ -1799,7 +1817,6 @@
 "error.user.device_deleted_remotely" = "Вы вышли на другом устройстве.";
 "error.user.last_identity_cant_be_deleted" = "Необходимо указать адрес электронной почты.";
 "error.user.account_suspended" = "Эта учетная запись больше не авторизована для входа.";
-"error.user.account_limit_reached" = "Нельзя добавить более трех учетных записей.";
 "error.user.too_many_requests" = "Слишком много запросов, пожалуйста, повторите попытку позже.";
 
 "error.group_call.too_many_members_in_conversation.title" = "Вы выбрали слишком много пользователей для звонка";
@@ -1899,7 +1916,7 @@
 
 // End-to-end identity revoked certificate
 "revoked_certificate.alert.title" = "Сертификат сквозной идентификации отозван";
-"revoked_certificate.alert.message" = "Для снижения рисков безопасности следует осуществить выход. После авторизации получите новый сертификат и сбросьте пароль. Если вы продолжите использование этого устройства, ваши разговоры больше не будут являться верифицированными.";
+"revoked_certificate.alert.message" = "Для снижения рисков безопасности следует осуществить выход. После авторизации получите новый сертификат и сбросьте пароль. Если вы продолжите использование этого устройства, ваши беседы больше не будут являться верифицированными.";
 "revoked_certificate.alert.log_out" = "Выйти";
 "revoked_certificate.alert.continue" = "Продолжить использование этого устройства";
 

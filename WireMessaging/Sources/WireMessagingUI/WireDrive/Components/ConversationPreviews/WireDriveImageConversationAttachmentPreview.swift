@@ -19,6 +19,7 @@
 import SwiftUI
 import WireDesign
 import WireFoundation
+import WireLocators
 
 private typealias Strings = L10n.Localizable.Conversation.WireCells
 private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
@@ -61,6 +62,7 @@ struct WireDriveImageConversationAttachmentPreview: View {
                                     .resizable()
                                     .scaledToFill()
                                     .frame(width: geometry.size.width, height: geometry.size.height)
+                                    .accessibilityIdentifier(Locators.ActiveConversationPage.imagePreview.rawValue)
                             }
                         case let .failure(error) where !error.isURLErrorCancelled && !isAssetDownloadError:
                             noPreviewMessageView

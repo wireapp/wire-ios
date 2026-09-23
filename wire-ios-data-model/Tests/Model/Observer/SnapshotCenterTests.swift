@@ -88,7 +88,8 @@ class SnapshotCenterTests: BaseZMMessageTests {
             "labels": 0,
             "nonTeamRoles": 0,
             "lastServerSyncedActiveParticipants": 0,
-            "wireCellsMessageAttachmentDrafts": 0
+            "wireCellsMessageAttachmentDrafts": 0,
+            "meetings": 0
         ]
 
         expectedAttributes.forEach {
@@ -159,7 +160,8 @@ class SnapshotCenterTests: BaseZMMessageTests {
             "labels": 0,
             "nonTeamRoles": 0,
             "lastServerSyncedActiveParticipants": 0,
-            "wireCellsMessageAttachmentDrafts": 0
+            "wireCellsMessageAttachmentDrafts": 0,
+            "meetings": 0
         ]
 
         let expectedToOneRelationships: [String: NSManagedObjectID] =
@@ -217,7 +219,8 @@ class SnapshotCenterTests: BaseZMMessageTests {
             "labels",
             "nonTeamRoles",
             "lastServerSyncedActiveParticipants",
-            "wireCellsMessageAttachmentDrafts"
+            "wireCellsMessageAttachmentDrafts",
+            "meetings"
         ]))
     }
 

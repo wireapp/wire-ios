@@ -372,9 +372,7 @@ class CameraKeyboardViewController: UIViewController {
                         completeBlock(data, info?["PHImageFileUTIKey"] as? String)
                     } else {
                         options.isSynchronous = true
-                        DispatchQueue.main.async {
-                            self.activityIndicator.start()
-                        }
+                        self.showActivityIndicator(true)
 
                         self.imageManagerType.defaultInstance.requestImage(
                             for: asset,
@@ -382,9 +380,7 @@ class CameraKeyboardViewController: UIViewController {
                             contentMode: .aspectFit,
                             options: options,
                             resultHandler: { image, info in
-                                DispatchQueue.main.async {
-                                    self.activityIndicator.stop()
-                                }
+                                self.showActivityIndicator(false)
 
                                 if let image {
                                     let data = image.jpegData(compressionQuality: 0.9)
@@ -408,15 +404,11 @@ class CameraKeyboardViewController: UIViewController {
 
                 guard let data else {
                     options.isNetworkAccessAllowed = true
-                    DispatchQueue.main.async {
-                        self.activityIndicator.start()
-                    }
+                    self.showActivityIndicator(true)
 
                     self.imageManagerType.defaultInstance
                         .requestImageData(for: asset, options: options) { data, uti, _, _ in
-                            DispatchQueue.main.async {
-                                self.activityIndicator.stop()
-                            }
+                            self.showActivityIndicator(false)
                             guard let data else {
                                 WireLogger.ui.error("Failure: cannot fetch image")
                                 return
@@ -434,28 +426,22 @@ class CameraKeyboardViewController: UIViewController {
     }
 
     private func forwardSelectedVideoAsset(_ asset: PHAsset) {
-        activityIndicator.start()
+        showActivityIndicator(true)
         let fileLengthLimit: UInt64 = userSession.maxUploadFileSize
         let localIdentifier = asset.localIdentifier
 
         asset.getVideoURL { url in
-            DispatchQueue.main.async {
-                self.activityIndicator.stop()
-            }
+            self.showActivityIndicator(false)
 
             guard let url else { return }
 
-            DispatchQueue.main.async {
-                self.activityIndicator.start()
-            }
+            self.showActivityIndicator(true)
 
             AVURLAsset.convertVideoToUploadFormat(
                 at: url,
                 fileLengthLimit: Int64(fileLengthLimit)
             ) { resultURL, asset, error in
-                DispatchQueue.main.async {
-                    self.activityIndicator.stop()
-                }
+                self.showActivityIndicator(false)
 
                 guard error == nil,
                       let resultURL,
@@ -472,6 +458,12 @@ class CameraKeyboardViewController: UIViewController {
             }
         }
 
+    }
+
+    func showActivityIndicator(_ show: Bool) {
+        DispatchQueue.main.async {
+            show ? self.activityIndicator.start() : self.activityIndicator.stop()
+        }
     }
 
 }

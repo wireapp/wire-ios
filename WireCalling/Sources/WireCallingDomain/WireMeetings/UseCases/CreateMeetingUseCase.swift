@@ -49,15 +49,29 @@ package struct CreateMeetingUseCase: CreateMeetingUseCaseProtocol {
         // The backend creates a conversation for the meeting but doesn't
         // notify this client about it, so pull it explicitly.
         try await conversationRepository.pullConversation(
-            id: meeting.conversation.qualifiedID.id,
-            domain: meeting.conversation.qualifiedID.domain
+            id: meeting.conversationID.id,
+            domain: meeting.conversationID.domain
         )
-        try await conversationRepository.addParticipants(participants, to: meeting.conversation.qualifiedID)
+        // The backend doesn't name the conversation it creates for the
+        // meeting, so mirror the meeting title onto it.
+        try await conversationRepository.setConversationName(title, for: meeting.conversationID)
+        do {
+            try await conversationRepository.addParticipants(participants, to: meeting.conversationID)
+        } catch let MeetingParticipantsError.failedToAddParticipants(participants) {
+            await meetingRepository.storeMeeting(meeting)
+            throw CreateMeetingUseCaseError.participantsNotAdded(meeting: meeting, participants: participants)
+        }
         // Store the meeting again now that its conversation exists locally,
         // so the two are linked; meetings without a local conversation are
         // not listed.
         await meetingRepository.storeMeeting(meeting)
         return meeting
     }
+
+}
+
+package enum CreateMeetingUseCaseError: Error, Equatable {
+
+    case participantsNotAdded(meeting: Meeting, participants: [MeetingMember])
 
 }

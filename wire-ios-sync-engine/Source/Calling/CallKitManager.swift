@@ -374,12 +374,12 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
     ) {
         logger.info("report incoming call preemptively", attributes: .safePublic)
 
-        guard !callRegister.callExists(for: handle) else {
-            logger.critical("fail: report incoming call preemptively: call doesn't exist", attributes: .safePublic)
-            return
+        let existingCall = callRegister.lookupCall(by: handle)
+        if existingCall != nil {
+            logger.warn("report incoming call preemptively: call already exists. Re-reporting", attributes: .safePublic)
         }
 
-        let call = callRegister.registerNewCall(with: handle)
+        let call = existingCall ?? callRegister.registerNewCall(with: handle)
 
         let update = CXCallUpdate()
         update.localizedCallerName = callerName
@@ -390,16 +390,23 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
         update.supportsGrouping = false
         update.supportsUngrouping = false
 
+        // Re-set configuration as potential iOS bug fix. See [WPB-28164]
+        provider.configuration = CallKitManager.providerConfiguration
         // Don't use the async version, it's broken
         // It doesn't get executed when waking up the app from the background and ends up crashing
         // See latest comments https://stackoverflow.com/questions/56788314/ios-13-killing-app-because-it-never-posted-an-incoming-call-to-the-system-after
         provider.reportNewIncomingCall(
             with: call.id,
             update: update
-        ) { [weak self] error in
-            if let error {
-                self?.logger.error("fail: report incoming call preemptively: \(error)", attributes: .safePublic)
-                self?.callRegister.unregisterCall(call)
+        ) { [logger, callRegister] error in
+            guard let error else { return }
+
+            switch error {
+            case CXErrorCodeIncomingCallError.callUUIDAlreadyExists:
+                logger.warn("reported new incoming call again, ignoring error", attributes: .safePublic)
+            default:
+                logger.error("fail: report incoming call preemptively: \(error)", attributes: .safePublic)
+                callRegister.unregisterCall(call)
             }
         }
     }
@@ -469,6 +476,8 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
 
         logger.info("provider.reportNewIncomingCall", attributes: .safePublic)
 
+        // Re-set configuration as potential iOS bug fix. See [WPB-28164]
+        provider.configuration = CallKitManager.providerConfiguration
         provider.reportNewIncomingCall(
             with: call.id,
             update: update

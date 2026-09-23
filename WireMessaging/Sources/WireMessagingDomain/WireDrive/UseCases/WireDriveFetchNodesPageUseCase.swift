@@ -21,18 +21,14 @@ import Foundation
 /// Fetches `WireDriveNodes`s for the given parameters.
 package struct WireDriveFetchNodesPageUseCase: Sendable {
 
-    private let configuration: WireDriveGetNodesRequest.Configuration
     private let repository: any WireDriveNodesRepositoryProtocol
 
     /// Initializes the use case with the required parameters.
     /// - Parameters:
-    ///   - configuration: The configuration for the use case.
     ///   - repository: The repository to use for fetching nodes.
     package init(
-        configuration: WireDriveGetNodesRequest.Configuration,
         repository: any WireDriveNodesRepositoryProtocol
     ) {
-        self.configuration = configuration
         self.repository = repository
     }
 
@@ -44,6 +40,7 @@ package struct WireDriveFetchNodesPageUseCase: Sendable {
     /// - Returns: An array of `WireDriveNode` values and an optional pagination token for the next page of results. If
     /// `nil`, there are no more pages to fetch.
     package func invoke(
+        configuration: WireDriveGetNodesRequest.Configuration,
         searchTerm: String?,
         metafilter: Set<WireDriveNodesMetaFilter> = [],
         sortField: String? = nil,

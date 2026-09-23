@@ -46,7 +46,7 @@ struct MeetingRepositoryTests {
     func pullMeetingStoresMeetingContainedInBackendResponse() async throws {
         // Mock
 
-        meetingsAPI.listMeetings_MockValue = [Scaffolding.meetingResponse]
+        meetingsAPI.getMeetingId_MockValue = Scaffolding.meetingResponse
 
         // When
 
@@ -55,6 +55,8 @@ struct MeetingRepositoryTests {
         // Then
 
         #expect(meeting?.id == Scaffolding.meetingID)
+        #expect(meeting?.timeZoneIdentifier == Scaffolding.meetingResponse.timeZoneIdentifier)
+        #expect(meetingsAPI.getMeetingId_Invocations == [Scaffolding.meetingID])
         #expect(localStore.storeMeetingMeetingMeetingVoidReceivedInvocations.count == 1)
         #expect(localStore.storeMeetingMeetingMeetingVoidReceivedInvocations.first?.id == Scaffolding.meetingID)
         #expect(
@@ -72,7 +74,7 @@ struct MeetingRepositoryTests {
     func pullMeetingDeletesMeetingMissingFromBackendResponse() async throws {
         // Mock
 
-        meetingsAPI.listMeetings_MockValue = []
+        meetingsAPI.getMeetingId_MockError = MeetingsAPIError.meetingNotFound
 
         // When
 
@@ -86,14 +88,14 @@ struct MeetingRepositoryTests {
     }
 
     @Test
-    func pullMeetingThrowsWhenListingMeetingsFails() async {
+    func pullMeetingThrowsWhenFetchingMeetingFails() async {
         // Mock
 
-        meetingsAPI.listMeetings_MockError = MeetingsAPIError.meetingNotFound
+        meetingsAPI.getMeetingId_MockError = MeetingsAPIError.accessDenied
 
         // When / Then
 
-        await #expect(throws: (any Error).self) {
+        await #expect(throws: MeetingsAPIError.accessDenied) {
             try await sut.pullMeeting(id: Scaffolding.meetingID)
         }
         #expect(localStore.storeMeetingMeetingMeetingVoidReceivedInvocations.isEmpty)
@@ -232,7 +234,7 @@ struct MeetingRepositoryTests {
     func pullMeetingBroadcastsMeetingChange() async throws {
         // Mock
 
-        meetingsAPI.listMeetings_MockValue = [Scaffolding.meetingResponse]
+        meetingsAPI.getMeetingId_MockValue = Scaffolding.meetingResponse
         var changes = sut.observeMeetingChanges().makeAsyncIterator()
 
         // When
@@ -368,6 +370,37 @@ struct MeetingRepositoryTests {
         }
     }
 
+    @Test
+    func fetchMeetingsRetriesMissingConversationUntilResolved() async throws {
+        let pulls = ConversationPulls()
+        let sut = MeetingRepository(meetingsAPI: meetingsAPI, localStore: localStore) { [localStore] id in
+            if await pulls.record(id) == 1 {
+                throw URLError(.networkConnectionLost)
+            }
+            localStore.storedMeetingIdQualifiedIDMeetingReturnValue = Scaffolding.storedMeeting
+            localStore.storedMeetingsMeetingReturnValue = [Scaffolding.storedMeeting]
+        }
+        meetingsAPI.listMeetings_MockValue = [Scaffolding.meetingResponse]
+        localStore.storedMeetingsMeetingReturnValue = [Meeting(
+            id: Scaffolding.meetingID,
+            title: Scaffolding.meetingResponse.title,
+            start: Scaffolding.meetingResponse.startTime,
+            end: Scaffolding.meetingResponse.endTime,
+            recurrence: nil,
+            conversationID: Scaffolding.meetingResponse.conversationID,
+            creatorID: Scaffolding.meetingResponse.creatorID
+        )]
+
+        let unresolved = try await sut.fetchMeetings(in: Date.distantPast ..< Date.distantFuture, offset: 0, limit: 10)
+        #expect(unresolved.map(\.id) == [Scaffolding.meetingID])
+        #expect(unresolved.first?.conversation == nil)
+
+        let resolved = try await sut.fetchMeetings(in: Date.distantPast ..< Date.distantFuture, offset: 0, limit: 10)
+        #expect(resolved.first?.conversation?.participants == [Scaffolding.member])
+        _ = try await sut.fetchMeetings(in: Date.distantPast ..< Date.distantFuture, offset: 0, limit: 10)
+        #expect(await pulls.ids == Array(repeating: Scaffolding.meetingResponse.conversationID, count: 2))
+    }
+
     // MARK: - hasUpcomingMeetings
 
     @Test
@@ -405,9 +438,84 @@ struct MeetingRepositoryTests {
         // Then
 
         #expect(meetingsAPI.createMeetingParameters_Invocations.count == 1)
+        #expect(
+            meetingsAPI.createMeetingParameters_Invocations.first?.timeZoneIdentifier == TimeZone.current.identifier
+        )
         #expect(meeting.id == Scaffolding.meetingID)
         #expect(localStore.storeMeetingMeetingMeetingVoidReceivedInvocations.count == 1)
         #expect(localStore.storeMeetingMeetingMeetingVoidReceivedInvocations.first?.id == Scaffolding.meetingID)
+    }
+
+    @Test("createMeeting returns the stored copy, which has its participants populated")
+    func createMeetingReturnsStoredCopy() async throws {
+        // Mock
+
+        meetingsAPI.createMeetingParameters_MockValue = Scaffolding.meetingResponse
+        localStore.storedMeetingIdQualifiedIDMeetingReturnValue = Scaffolding.storedMeeting
+
+        // When
+
+        let meeting = try await sut.createMeeting(
+            title: Scaffolding.meetingResponse.title,
+            startTime: Scaffolding.meetingResponse.startTime,
+            endTime: Scaffolding.meetingResponse.endTime,
+            recurrence: nil
+        )
+
+        // Then
+
+        #expect(localStore.storedMeetingIdQualifiedIDMeetingReceivedId == Scaffolding.meetingID)
+        #expect(meeting == Scaffolding.storedMeeting)
+        #expect(meeting.conversation?.participants == [Scaffolding.member])
+    }
+
+    @Test("createMeeting falls back to the mapped meeting when the store can't provide it")
+    func createMeetingFallsBackToMappedMeeting() async throws {
+        // Mock — storedMeeting(id:) is not stubbed and returns nil, like right
+        // after creation, when the meeting's conversation is not pulled yet.
+
+        meetingsAPI.createMeetingParameters_MockValue = Scaffolding.meetingResponse
+
+        // When
+
+        let meeting = try await sut.createMeeting(
+            title: Scaffolding.meetingResponse.title,
+            startTime: Scaffolding.meetingResponse.startTime,
+            endTime: Scaffolding.meetingResponse.endTime,
+            recurrence: nil
+        )
+
+        // Then
+
+        #expect(meeting.id == Scaffolding.meetingID)
+        #expect(meeting.conversation == nil)
+    }
+
+    @Test("pullMeeting returns the stored copy, which has its participants populated")
+    func pullMeetingReturnsStoredCopy() async throws {
+        // Mock
+
+        meetingsAPI.getMeetingId_MockValue = Scaffolding.meetingResponse
+        localStore.storedMeetingIdQualifiedIDMeetingReturnValue = Scaffolding.storedMeeting
+
+        // When
+
+        let meeting = try await sut.pullMeeting(id: Scaffolding.meetingID)
+
+        // Then
+
+        #expect(localStore.storedMeetingIdQualifiedIDMeetingReceivedId == Scaffolding.meetingID)
+        #expect(meeting == Scaffolding.storedMeeting)
+        #expect(meeting?.conversation?.participants == [Scaffolding.member])
+    }
+
+    private actor ConversationPulls {
+        var ids: [WireNetwork.QualifiedID] = []
+
+        func record(_ id: WireNetwork.QualifiedID) -> Int {
+            ids.append(id)
+            return ids.count
+        }
     }
 
     private enum Scaffolding {
@@ -429,7 +537,32 @@ struct MeetingRepositoryTests {
             invitedEmails: [],
             isTrial: false,
             createdAt: Date(timeIntervalSince1970: 900_000),
-            updatedAt: Date(timeIntervalSince1970: 900_000)
+            updatedAt: Date(timeIntervalSince1970: 900_000),
+            timeZoneIdentifier: "Asia/Tokyo"
+        )
+
+        static let member = MeetingMember(
+            qualifiedID: WireNetwork.QualifiedID(id: UUID(), domain: "example.com"),
+            name: "Katie Armstrong",
+            handle: "katie",
+            isSelfUser: false,
+            initials: "",
+            accentColor: .default,
+            avatarImageData: nil
+        )
+
+        /// The meeting as the local store provides it,
+        /// with its participants populated from the conversation.
+        static let storedMeeting = Meeting(
+            id: meetingID,
+            title: meetingResponse.title,
+            start: meetingResponse.startTime,
+            end: meetingResponse.endTime,
+            recurrence: nil,
+            timeZoneIdentifier: meetingResponse.timeZoneIdentifier,
+            conversation: MeetingConversation(participants: [member]),
+            conversationID: meetingResponse.conversationID,
+            creatorID: meetingResponse.creatorID
         )
 
         static func meeting(title: String, start: Date) -> Meeting {
@@ -439,10 +572,7 @@ struct MeetingRepositoryTests {
                 start: start,
                 end: start.addingTimeInterval(3600),
                 recurrence: nil,
-                conversation: MeetingConversation(
-                    qualifiedID: WireNetwork.QualifiedID(id: UUID(), domain: "example.com"),
-                    participants: []
-                ),
+                conversationID: WireNetwork.QualifiedID(id: UUID(), domain: "example.com"),
                 creatorID: WireNetwork.QualifiedID(id: UUID(), domain: "example.com")
             )
         }

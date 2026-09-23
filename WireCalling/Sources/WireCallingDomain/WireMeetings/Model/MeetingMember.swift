@@ -25,6 +25,9 @@ public struct MeetingMember: Sendable {
     public let name: String
     public let handle: String
 
+    /// Whether this member represents the current user.
+    public let isSelfUser: Bool
+
     /// The member's initials, used as an avatar fallback when no image is available.
     public let initials: String
 
@@ -38,13 +41,15 @@ public struct MeetingMember: Sendable {
         qualifiedID: QualifiedID,
         name: String,
         handle: String,
-        initials: String = "",
-        accentColor: WireAccentColor = .default,
-        avatarImageData: Data? = nil
+        isSelfUser: Bool,
+        initials: String,
+        accentColor: WireAccentColor,
+        avatarImageData: Data?
     ) {
         self.qualifiedID = qualifiedID
         self.name = name
         self.handle = handle
+        self.isSelfUser = isSelfUser
         self.initials = initials
         self.accentColor = accentColor
         self.avatarImageData = avatarImageData
@@ -54,6 +59,9 @@ public struct MeetingMember: Sendable {
 
 // MARK: - Hashable
 
+/// `Hashable` is intentionally not synthesized because meeting members are identified only
+/// by their qualified ID. Display properties such as name, initials, color, and avatar data
+/// must not affect set membership or dictionary keys.
 extension MeetingMember: Hashable {
 
     public func hash(into hasher: inout Hasher) {

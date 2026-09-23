@@ -219,13 +219,21 @@ private extension MeetingMember {
     static let alice = MeetingMember(
         qualifiedID: QualifiedID(id: UUID(), domain: ""),
         name: "Alice",
-        handle: "alice"
+        handle: "alice",
+        isSelfUser: false,
+        initials: "",
+        accentColor: .default,
+        avatarImageData: nil
     )
 
     static let bob = MeetingMember(
         qualifiedID: QualifiedID(id: UUID(), domain: ""),
         name: "Bob",
-        handle: "bob"
+        handle: "bob",
+        isSelfUser: false,
+        initials: "",
+        accentColor: .default,
+        avatarImageData: nil
     )
 
 }

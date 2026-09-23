@@ -170,7 +170,7 @@ final class CoreDataStackTests_Backup: DatabaseBaseTest {
         directory.viewContext.saveOrRollback()
 
         // then
-        let model = CoreDataStack.loadMessagingModel()
+        let model = CoreDataStack.messagingModel
         let coordinator = NSPersistentStoreCoordinator(managedObjectModel: model)
         let storeFile = backup.appendingPathComponent("data").appendingStoreFile()
         _ = try coordinator.addPersistentStore(type: .sqlite, configuration: nil, at: storeFile, options: [:])

@@ -31,6 +31,14 @@ public protocol MeetingLocalStoreProtocol: Sendable {
 
     func storedMeetings() async -> [Meeting]
 
+    /// Fetches a single locally stored meeting.
+    ///
+    /// - Parameter id: The qualified id of the meeting to fetch.
+    /// - Returns: The stored meeting, or `nil` if no meeting with the
+    ///   given id is stored or its conversation is not known locally.
+
+    func storedMeeting(id: QualifiedID) async -> Meeting?
+
     /// Stores a meeting locally, creating or updating it.
     ///
     /// - Parameter meeting: The meeting to store.

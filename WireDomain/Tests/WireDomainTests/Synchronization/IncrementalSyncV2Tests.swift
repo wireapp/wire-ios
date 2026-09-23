@@ -47,6 +47,7 @@ final class IncrementalSyncV2Tests: XCTestCase {
     var journal: Journal!
     var cancellables: Set<AnyCancellable>!
     var earService: MockEARServiceInterface!
+    var liveEventsObservedBeforeProcessing: [UpdateEvent]!
 
     override func setUp() {
         pushChannelAPI = MockPushChannelV2API()
@@ -75,6 +76,7 @@ final class IncrementalSyncV2Tests: XCTestCase {
         liveBrokenGroupSubject = .init()
         cancellables = .init()
         earService = MockEARServiceInterface()
+        liveEventsObservedBeforeProcessing = []
 
         sut = IncrementalSyncV2(
             selfClientID: Scaffolding.selfClientID,
@@ -94,6 +96,9 @@ final class IncrementalSyncV2Tests: XCTestCase {
             backgroundTaskExecuter: PassthroughTaskExecuter(),
             createPushChannelState: {
                 self.pushChannelState
+            },
+            beforeProcessingLiveEvent: { event in
+                self.liveEventsObservedBeforeProcessing.append(event)
             },
             syncMarkerGenerator: { Scaffolding.markerID }
         )
@@ -127,6 +132,7 @@ final class IncrementalSyncV2Tests: XCTestCase {
         coreCryptoProvider = nil
         cancellables = nil
         coreCryptoContext = nil
+        liveEventsObservedBeforeProcessing = nil
     }
 
     func testPerform_pendingEventsExist() async throws {
@@ -243,6 +249,7 @@ final class IncrementalSyncV2Tests: XCTestCase {
                 Scaffolding.event2
             ].flatMap(\.events)
         )
+        XCTAssertEqual(liveEventsObservedBeforeProcessing, Scaffolding.event2.events)
 
         // Then unread messages are calculated once after processing pending events
         // and once after processing each live event.

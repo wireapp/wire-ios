@@ -91,7 +91,7 @@ class RemoveDuplicatePreAction: CoreDataMigrationAction {
                 )
                 return
             }
-            WireLogger.localStorage.debug("processing \(key)", attributes: .safePublic)
+            WireLogger.localStorage.info("processing \(key)", attributes: .safePublic)
             // for now we just keep one object and mark to sync and drop the rest.
             // Marking needsToBeUpdatedFromBackend will recover the data from backend
             objects.first?.setValue(true, forKey: Keys.needsToBeUpdatedFromBackend.rawValue)

@@ -48,20 +48,19 @@ final class FileVersioningViewTests: XCTestCase {
         repository = nil
     }
 
-    // TODO: [WPB-21903] - fix snapshot test currently failing on the CI
-//    @MainActor
-//    func testFileVersioningSuccess() async {
-//        let viewModel = await makeViewModel(testCase: .success)
-//        let view = FileVersioningView(viewModel: viewModel)
-//            .frame(width: 375, height: 667)
-//
-//        snapshotHelper
-//            .withUserInterfaceStyle(.light)
-//            .verify(matching: view, named: "light")
-//        snapshotHelper
-//            .withUserInterfaceStyle(.dark)
-//            .verify(matching: view, named: "dark")
-//    }
+    @MainActor
+    func testFileVersioningSuccess() async {
+        let viewModel = await makeViewModel(testCase: .success)
+        let view = FileVersioningView(viewModel: viewModel)
+            .frame(width: 375, height: 667)
+
+        snapshotHelper
+            .withUserInterfaceStyle(.light)
+            .verify(matching: view, named: "light")
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: view, named: "dark")
+    }
 
     @MainActor
     func testFileVersioningRestoringVersion() async {
@@ -104,11 +103,15 @@ final class FileVersioningViewTests: XCTestCase {
             fileCache: MockFileCache()
         )
 
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.locale = Locale(identifier: "en_US_POSIX")
+        calendar.timeZone = .gmt
+
         let viewModel = FileVersioningViewModel(
             nodeID: .mockID1,
             name: "foo.jpg",
             eTag: nil,
-            context: (Locale(identifier: "en_US_POSIX"), Calendar(identifier: .gregorian), TimeZone.gmt),
+            context: (Locale(identifier: "en_US_POSIX"), calendar, TimeZone.gmt),
             fetchNodeVersionsUseCase: fetchNodeVersionUseCase,
             restoreNodeVersionUseCase: restoreNodeVersionUseCase,
             getAssetUseCase: getAssetUseCase,

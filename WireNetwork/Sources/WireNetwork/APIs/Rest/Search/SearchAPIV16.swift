@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-final class SearchAPIV16: SearchAPIV15 {
+class SearchAPIV16: SearchAPIV15 {
 
     override var apiVersion: APIVersion {
         .v16

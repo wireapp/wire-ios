@@ -107,7 +107,8 @@ jobs:
     if: ${{ github.event.pull_request.draft != true }}
     runs-on: ubuntu-24.04
     outputs:
-      use_parallel: ${{ steps.decide.outputs.use_parallel }}
+      # Temporarily disable parallel testing while setting up the in-house runners.
+      use_parallel: ${{ false }}
     steps:
       - name: Decide parallel vs sequential
         id: decide
@@ -142,11 +143,15 @@ jobs:
     uses: ./.github/workflows/_reusable_run_tests.yml
     with:
       folders: ${{ join(fromJson(needs.detect-changes.outputs.folders), ',') }}
-      notify_secret: WIRE_IOS_CI_WEBHOOK
+      mac_runner: ${{ vars.DEFAULT_MAC_RUNNER }}
       test_dependencies: ${{ github.event_name != 'pull_request' || startsWith(github.base_ref, 'release/cycle') }}
       run_critical_flows: false # separate workflow
       notify: failure
-    secrets: inherit
+    secrets:
+      ZENKINS_USERNAME: ${{ secrets.ZENKINS_USERNAME }}
+      DD_API_KEY: ${{ secrets.DD_API_KEY }}
+      OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+      SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_CI_WEBHOOK }}
 
   # ── Parallel ────────────────────────────────────────────────────────────────
   trigger_tests_pr_parallel:
@@ -161,4 +166,4 @@ jobs:
     secrets:
       ZENKINS_USERNAME: ${{ secrets.ZENKINS_USERNAME }}
       DD_API_KEY: ${{ secrets.DD_API_KEY }}
-      WIRE_IOS_CI_WEBHOOK: ${{ secrets.WIRE_IOS_CI_WEBHOOK }}
+      SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_CI_WEBHOOK }}

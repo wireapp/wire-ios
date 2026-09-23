@@ -26,6 +26,13 @@ public protocol MeetingsAPI: Sendable {
 
     func listMeetings() async throws -> [MeetingResponse]
 
+    /// Fetch a meeting by ID.
+    ///
+    /// - Parameter id: The meeting ID.
+    /// - Returns: The meeting.
+
+    func getMeeting(id: QualifiedID) async throws -> MeetingResponse
+
     /// Create a new meeting.
     ///
     /// - Parameter parameters: The meeting creation parameters.

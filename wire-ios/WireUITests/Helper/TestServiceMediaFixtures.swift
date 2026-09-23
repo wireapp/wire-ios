@@ -23,6 +23,8 @@ enum TestServiceMediaFixtures {
     struct MediaURLs {
         let imageURL: URL
         let imageExtension: String
+        let gifURL: URL
+        let gifType: String
         let videoURL: URL
         let videoExtension: String
     }
@@ -33,11 +35,14 @@ enum TestServiceMediaFixtures {
             .appendingPathComponent("TestServicesData")
 
         let imageURL = testDataDirectory.appendingPathComponent("Img/testImage.jpg")
+        let gifURL = testDataDirectory.appendingPathComponent("Img/testGIF.gif")
         let videoURL = testDataDirectory.appendingPathComponent("Video/testVideo.mp4")
 
         return MediaURLs(
             imageURL: imageURL,
             imageExtension: imageURL.pathExtension,
+            gifURL: gifURL,
+            gifType: "image/gif",
             videoURL: videoURL,
             videoExtension: videoURL.pathExtension
         )

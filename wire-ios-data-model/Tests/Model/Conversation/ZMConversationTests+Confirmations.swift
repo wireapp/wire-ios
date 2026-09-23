@@ -17,6 +17,7 @@
 //
 
 import XCTest
+
 @testable import WireDataModel
 
 class ZMConversationTests_Confirmations: ZMConversationTestsBase {
@@ -41,6 +42,14 @@ class ZMConversationTests_Confirmations: ZMConversationTestsBase {
         message4.sender = user1
 
         conversation.conversationType = .group
+
+        // Pin the timestamps: `awakeFromInsert` floors the current time to whole milliseconds,
+        // so back-to-back appends can tie and drop out of the `> lastReadServerTimeStamp` fetch.
+        message1.updateServerTimestamp(with: 10)
+        message2.updateServerTimestamp(with: 20)
+        message3.updateServerTimestamp(with: 30)
+        message4.updateServerTimestamp(with: 40)
+
         conversation.lastReadServerTimeStamp = message1.serverTimestamp
 
         // when

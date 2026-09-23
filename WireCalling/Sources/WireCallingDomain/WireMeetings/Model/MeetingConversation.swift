@@ -16,21 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-public import WireFoundation
-
-/// The conversation backing a ``Meeting``, along with its participants.
-
-public struct MeetingConversation: Equatable, Sendable {
-
-    public let qualifiedID: QualifiedID
+/// The participants of the conversation backing a ``Meeting``. The
+/// conversation itself is identified by ``Meeting/conversationID``.
+public struct MeetingConversation: Hashable, Sendable {
 
     public let participants: Set<MeetingMember>
 
-    public init(
-        qualifiedID: QualifiedID,
-        participants: Set<MeetingMember>
-    ) {
-        self.qualifiedID = qualifiedID
+    public init(participants: Set<MeetingMember>) {
         self.participants = participants
     }
 

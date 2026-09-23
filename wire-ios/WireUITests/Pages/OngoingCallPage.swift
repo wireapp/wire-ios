@@ -17,8 +17,10 @@
 //
 
 import Foundation
+import UIKit
 import WireLocators
 import XCTest
+import ZXingCpp
 
 class OngoingCallPage: PageModel {
 
@@ -66,6 +68,66 @@ class OngoingCallPage: PageModel {
         app.buttons[Locators.OngoingCallPage.participantIdentifier(name)]
     }
 
+    func callTile(named name: String) -> XCUIElement {
+        app.buttons.matching(
+            NSPredicate(
+                format: """
+                (identifier BEGINSWITH %@ OR identifier BEGINSWITH %@) AND
+                identifier CONTAINS %@
+                """,
+                "audioView.",
+                "videoView.",
+                ".\(name)."
+            )
+        ).firstMatch
+    }
+
+    @discardableResult
+    func verifyParticipantsShownInOrder(
+        _ expectedNames: [String]
+    ) -> OngoingCallPage {
+        for name in expectedNames {
+            _ = callTile(named: name).waitForExistence(timeout: 15)
+        }
+
+        XCTAssertEqual(
+            visibleParticipantNames(from: expectedNames),
+            expectedNames,
+            "Call participant tiles are not shown in expected order"
+        )
+        return self
+    }
+
+    private func visibleParticipantNames(from expectedNames: [String]) -> [String] {
+        let tiles = app.buttons.matching(
+            NSPredicate(
+                format: "identifier BEGINSWITH %@ OR identifier BEGINSWITH %@",
+                "audioView.",
+                "videoView."
+            )
+        ).allElementsBoundByIndex
+
+        var seenNames = Set<String>()
+        return tiles.compactMap { tile in
+            guard let name = expectedNames.first(where: { tile.identifier.contains(".\($0).") }),
+                  seenNames.insert(name).inserted else {
+                return nil
+            }
+            return name
+        }
+    }
+
+    func verifyGroupNameAndTimerShowingOnceCallJoined(groupName: String) {
+        XCTAssertTrue(
+            timeLabel.waitForExistence(timeout: 10),
+            "Call timer is not showing"
+        )
+        XCTAssertTrue(
+            app.staticTexts[groupName].waitForExistence(timeout: 5),
+            "Group name mismatch"
+        )
+    }
+
     func videoView(for participantName: String) -> XCUIElement {
         app.descendants(matching: .any).matching(
             NSPredicate(
@@ -81,6 +143,16 @@ class OngoingCallPage: PageModel {
                 "minimized",
                 "maximized",
                 "Camera on"
+            )
+        ).firstMatch
+    }
+
+    func screenSharingView(for participantName: String) -> XCUIElement {
+        app.descendants(matching: .any).matching(
+            NSPredicate(
+                format: "label CONTAINS[c] %@ AND label CONTAINS[c] %@",
+                participantName,
+                Locators.OngoingCallPage.sharesScreenDescription.rawValue
             )
         ).firstMatch
     }
@@ -102,6 +174,64 @@ class OngoingCallPage: PageModel {
             "Remote video tile did not match participant \(participantName). Identifier: \(tile.identifier). Label: \(tile.label)"
         )
         return self
+    }
+
+    @discardableResult
+    func isOtherParticipantScreenSharingVisible(
+        for participantName: String,
+        timeout: TimeInterval = 15
+    ) -> OngoingCallPage {
+        let tile = screenSharingView(for: participantName)
+        XCTAssertTrue(
+            tile.waitForExistence(timeout: timeout),
+            "screen share is not visible for \(participantName)"
+        )
+        return self
+    }
+
+    /// Verifies QR payloads rendered inside another participant's screen-share tile.
+    @discardableResult
+    func verifyScreenSharingQRCodes(
+        for participantName: String,
+        expectedContentInQRCode: [String],
+    ) -> OngoingCallPage {
+        let tile = screenSharingView(for: participantName)
+        let expectedPayloads = Set(expectedContentInQRCode)
+        let deadline = Date().addingTimeInterval(6)
+        var decodedPayloads = Set<String>()
+
+        repeat {
+            decodedPayloads = Set(readQRCodes(from: tile.screenshot()))
+            if expectedPayloads.isSubset(of: decodedPayloads) {
+                return self
+            }
+
+            RunLoop.current.run(until: Date().addingTimeInterval(2))
+        } while Date() < deadline
+
+        XCTAssertTrue(
+            expectedPayloads.isSubset(of: decodedPayloads),
+            "Expected QR payloads \(expectedPayloads.sorted()) for \(participantName), decoded \(decodedPayloads.sorted())"
+        )
+        return self
+    }
+
+    /// Reads QR codes from an XCTest screenshot using ZXing and returns decoded text values.
+    func readQRCodes(from screenshot: XCUIScreenshot) -> [String] {
+        guard let cgImage = screenshot.image.cgImage else {
+            return []
+        }
+
+        let options = ZXIReaderOptions()
+        options.tryHarder = true
+        options.tryRotate = true
+        options.tryInvert = true
+        options.maxNumberOfSymbols = 10
+
+        let reader = ZXIBarcodeReader(options: options)
+        let results = (try? reader.read(cgImage)) ?? []
+
+        return results.map(\.text).filter { !$0.isEmpty }
     }
 
     private func tapEndCallButton() {

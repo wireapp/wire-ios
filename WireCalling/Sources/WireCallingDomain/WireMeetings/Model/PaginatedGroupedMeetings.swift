@@ -18,14 +18,26 @@
 
 package struct PaginatedMeetings {
 
-    package let meetings: [Meeting]
+    package let occurrences: [MeetingOccurrence]
     package let hasMore: Bool
     package let nextOffset: Int
 
-    package init(meetings: [Meeting], hasMore: Bool, nextOffset: Int) {
-        self.meetings = meetings
+    package var meetings: [Meeting] {
+        occurrences.map(\.meeting)
+    }
+
+    package init(occurrences: [MeetingOccurrence], hasMore: Bool, nextOffset: Int) {
+        self.occurrences = occurrences
         self.hasMore = hasMore
         self.nextOffset = nextOffset
+    }
+
+    package init(meetings: [Meeting], hasMore: Bool, nextOffset: Int) {
+        self.init(
+            occurrences: meetings.map { MeetingOccurrence(meeting: $0) },
+            hasMore: hasMore,
+            nextOffset: nextOffset
+        )
     }
 
 }

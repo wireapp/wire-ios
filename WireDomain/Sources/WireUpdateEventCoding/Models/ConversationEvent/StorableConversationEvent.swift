@@ -38,6 +38,7 @@ enum StorableConversationEvent: Equatable, Codable, Sendable {
     case typing(StorableConversationTypingEvent)
     case permissionUpdate(StorableConversationAddPermissionEvent)
     case mlsReset(StorableConversationMLSResetEvent)
+    case adminlessReminder(StorableConversationAdminlessReminderEvent)
 
     init(_ value: WireNetwork.ConversationEvent) {
         switch value {
@@ -75,6 +76,8 @@ enum StorableConversationEvent: Equatable, Codable, Sendable {
             self = .permissionUpdate(StorableConversationAddPermissionEvent(event))
         case let .mlsReset(event):
             self = .mlsReset(StorableConversationMLSResetEvent(event))
+        case let .adminlessReminder(event):
+            self = .adminlessReminder(StorableConversationAdminlessReminderEvent(event))
         }
     }
 
@@ -114,6 +117,8 @@ enum StorableConversationEvent: Equatable, Codable, Sendable {
             .permissionUpdate(event.toAPIModel())
         case let .mlsReset(event):
             .mlsReset(event.toAPIModel())
+        case let .adminlessReminder(event):
+            .adminlessReminder(event.toAPIModel())
         }
     }
 

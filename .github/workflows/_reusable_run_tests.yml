@@ -3,6 +3,9 @@ on:
     inputs:
       folders:
         type: string
+      mac_runner:
+        type: string
+        default: in-house
       all:
         type: boolean
         default: false
@@ -10,9 +13,6 @@ on:
       branch:
         type: string
         required: false
-      notify_secret:
-        type: string
-        required: true
       test_dependencies:
         type: boolean
         default: false
@@ -23,6 +23,15 @@ on:
         type: string
         required: false
         default: ''
+      ui_test_cases:
+        type: string
+        required: false
+        default: ''
+        description: 'Testiny case ID(s), class(es), or function(s), comma separated'
+      rerun_failed_from_previous:
+        type: boolean
+        required: false
+        default: false
       testiny_run_name:
         type: string
         required: false
@@ -43,6 +52,8 @@ on:
         required: true
       OP_SERVICE_ACCOUNT_TOKEN:
         required: true
+      SLACK_WEBHOOK_URL:
+        required: true
 
 env: # https://docs.fastlane.tools/getting-started/ios/setup/
   LC_ALL: en_US.UTF-8
@@ -56,10 +67,17 @@ env: # https://docs.fastlane.tools/getting-started/ios/setup/
 jobs:
   run-tests:
     name: Run tests
-    runs-on: ghcr.io/cirruslabs/macos-runner:tahoe
+    runs-on: >-
+      ${{
+        inputs.mac_runner == 'in-house' && inputs.run_critical_flows && fromJSON('["self-hosted", "in-house", "ui-tests"]') ||
+        inputs.mac_runner == 'in-house' && fromJSON('["self-hosted", "in-house", "tests"]') ||
+        inputs.mac_runner == 'github' && 'macos-26' ||
+        'ghcr.io/cirruslabs/macos-runner:tahoe'
+      }}
     timeout-minutes: ${{ inputs.timeout_minutes }}
     permissions:
       contents: read
+      actions: read
       pull-requests: write
       checks: write
     outputs:
@@ -67,14 +85,15 @@ jobs:
     env:
       GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       GITHUB_USERNAME: ${{ secrets.ZENKINS_USERNAME }}
-      SLACK_WEBHOOK_URL: ${{ secrets[inputs.notify_secret] }}
-      OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
 
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ inputs.branch }}
           lfs: 'true'
+
+      - name: Materialize Git LFS files
+        run: git lfs checkout
 
       - name: Sanitize branch name
         env:
@@ -101,6 +120,28 @@ jobs:
         with:
           path: fastlane/
 
+      - name: Resolve failed UI tests from previous run
+        id: previous-failed-ui-tests
+        if: ${{ inputs.run_critical_flows && inputs.rerun_failed_from_previous && inputs.ui_test_cases == '' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          INPUT_BRANCH: ${{ inputs.branch }}
+          GH_EVENT_NAME: ${{ github.event_name }}
+          GH_HEAD_REF: ${{ github.head_ref }}
+        run: |
+          set -euo pipefail
+
+          if [ -n "$INPUT_BRANCH" ]; then
+            BRANCH="$INPUT_BRANCH"
+          elif [ "$GH_EVENT_NAME" == "pull_request" ] || [ "$GH_EVENT_NAME" == "merge_group" ]; then
+            BRANCH="$GH_HEAD_REF"
+          else
+            BRANCH="${GITHUB_REF#refs/heads/}"
+          fi
+
+          FAILED_CASES="$(scripts/extract-failed-tests.sh --branch "$BRANCH")"
+          echo "ui_test_cases=$FAILED_CASES" >> "$GITHUB_OUTPUT"
+
       - name: Restore Carthage Cache
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         id: cache-carthage
@@ -114,6 +155,8 @@ jobs:
 
       - name: Cache Swift Packages
         uses: ./.github/actions/cache-swift-packages
+        with:
+          cache_enabled: ${{ inputs.mac_runner != 'in-house' }}
 
       - name: Setup Ruby
         uses: ruby/setup-ruby@afeafc3d1ab54a631816aba4c914a0081c12ff2f # v1.310.0
@@ -139,6 +182,8 @@ jobs:
 
       - name: Generate env file
         if: ${{ inputs.run_critical_flows }}
+        env:
+          OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
         run: |
           bundle exec fastlane generate_env
 
@@ -150,8 +195,14 @@ jobs:
         if: ${{ inputs.run_critical_flows }}
         env:
           UI_TEST_TAGS: ${{ inputs.ui_test_tags }}
+          UI_TEST_CASES: ${{ inputs.ui_test_cases }}
+          PREVIOUS_FAILED_UI_TEST_CASES: ${{ steps.previous-failed-ui-tests.outputs.ui_test_cases }}
         run: |
-          if [ -n "$UI_TEST_TAGS" ]; then
+          if [ -n "$UI_TEST_CASES" ]; then
+            bundle exec fastlane run_uitests testiny_cases:"$UI_TEST_CASES"
+          elif [ -n "$PREVIOUS_FAILED_UI_TEST_CASES" ]; then
+            bundle exec fastlane run_uitests testiny_cases:"$PREVIOUS_FAILED_UI_TEST_CASES"
+          elif [ -n "$UI_TEST_TAGS" ]; then
             bundle exec fastlane run_uitests tags:"$UI_TEST_TAGS"
           else
             bundle exec fastlane run_uitests
@@ -168,6 +219,7 @@ jobs:
         shell: bash
         env:
           TESTINY_RUN_NAME: ${{ inputs.testiny_run_name }}
+          OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
         run: |
           set -euo pipefail
           TESTINY_API_KEY="$(op read 'op://Test Automation/TESTINY_API_KEY_IOS/password')"
@@ -190,13 +242,23 @@ jobs:
 
       - name: "Test all selected frameworks"
         if: ${{ inputs.test_dependencies || inputs.all }}
+        env:
+          FOLDERS: ${{ inputs.folders }}
+          ALL: ${{ inputs.all }}
         run: |
-          bundle exec fastlane test_frameworks folders:${{ inputs.folders }} all:${{ inputs.all }}
-          
+          bundle exec fastlane test_frameworks folders:"$FOLDERS" all:"$ALL"
+
       - name: "Test frameworks without dependencies"
         if: ${{ inputs.test_dependencies == false }}
+        env:
+          FOLDERS: ${{ inputs.folders }}
         run: |
-          bundle exec fastlane test_only_frameworks folders:${{ inputs.folders }}
+          bundle exec fastlane test_only_frameworks folders:"$FOLDERS"
+
+      - name: Delete simulator
+        if: always()
+        run: |
+          bundle exec fastlane delete_test_simulator
 
       - name: Check for duplicate symbol implementations
         if: always()
@@ -306,7 +368,7 @@ jobs:
           {
             echo "## 📊 Allure Report Generated Successfully";
             echo "";
-            echo "**Artifact Name:** \`html-report-${{ github.run_number }}-${{ env.SANITIZED_BRANCH }}\`";
+            echo "**Artifact Name:** \`html-report-${GITHUB_RUN_NUMBER}-${SANITIZED_BRANCH}\`";
             echo "";
             echo "### 📥 How to View the Report";
             echo "";
@@ -351,6 +413,8 @@ jobs:
         uses: ./.github/actions/notify-wire
         continue-on-error: true
         if: ${{ inputs.notify == 'always' && always() }}
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         with:
           notify: custom
           text: |
@@ -369,6 +433,8 @@ jobs:
         uses: ./.github/actions/notify-wire
         continue-on-error: true
         if: ${{ inputs.notify == 'failure' && failure() }}
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         with:
           notify: custom
           text: |
@@ -382,7 +448,6 @@ jobs:
             ${{ steps.html-report-link.outputs.html_report_url != '' && format('**HTML report:** [download zip]({0})', steps.html-report-link.outputs.html_report_url) || '' }}
 
             ${{ steps.test-summary.outputs.report_message }}
-
   upload-test-results-datadadog:
     name: Upload to Datadog
     runs-on: ubuntu-24.04
@@ -390,11 +455,15 @@ jobs:
     if: ${{ always() && needs.run-tests.result != 'skipped' }}
     steps:
       - name: Sanitize branch name
+        env:
+          INPUT_BRANCH: ${{ inputs.branch }}
+          EVENT_NAME: ${{ github.event_name }}
+          HEAD_REF: ${{ github.head_ref }}
         run: |
-          if [ -n "${{ inputs.branch }}" ]; then
-            BRANCH="${{ inputs.branch }}"
-          elif [ "${{ github.event_name }}" == "pull_request" ] || [ "${{ github.event_name }}" == "merge_group" ]; then
-            BRANCH="${{ github.head_ref }}"
+          if [ -n "$INPUT_BRANCH" ]; then
+            BRANCH="$INPUT_BRANCH"
+          elif [ "$EVENT_NAME" == "pull_request" ] || [ "$EVENT_NAME" == "merge_group" ]; then
+            BRANCH="$HEAD_REF"
           else
             BRANCH="${GITHUB_REF#refs/heads/}"
           fi

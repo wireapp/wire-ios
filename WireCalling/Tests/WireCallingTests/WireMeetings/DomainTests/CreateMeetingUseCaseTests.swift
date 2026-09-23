@@ -33,7 +33,11 @@ struct CreateMeetingUseCaseTests {
     private let participant = MeetingMember(
         qualifiedID: QualifiedID(id: UUID(), domain: "example.com"),
         name: "Katie Armstrong",
-        handle: "katie"
+        handle: "katie",
+        isSelfUser: false,
+        initials: "",
+        accentColor: .default,
+        avatarImageData: nil
     )
 
     private let meeting = Meeting(
@@ -42,10 +46,7 @@ struct CreateMeetingUseCaseTests {
         start: .distantPast,
         end: .distantFuture,
         recurrence: nil,
-        conversation: MeetingConversation(
-            qualifiedID: QualifiedID(id: UUID(), domain: "example.com"),
-            participants: []
-        ),
+        conversationID: QualifiedID(id: UUID(), domain: "example.com"),
         creatorID: QualifiedID(id: UUID(), domain: "example.com")
     )
 
@@ -99,12 +100,34 @@ struct CreateMeetingUseCaseTests {
 
         // Then
         let pullArguments = conversationRepository.pullConversationIdUUIDDomainStringVoidReceivedArguments
-        #expect(pullArguments?.id == meeting.conversation.qualifiedID.id)
-        #expect(pullArguments?.domain == meeting.conversation.qualifiedID.domain)
+        #expect(pullArguments?.id == meeting.conversationID.id)
+        #expect(pullArguments?.domain == meeting.conversationID.domain)
         let addArguments = conversationRepository
             .addParticipantsParticipantsMeetingMemberToConversationIDQualifiedIDVoidReceivedArguments
         #expect(addArguments?.participants == [participant])
-        #expect(addArguments?.conversationID == meeting.conversation.qualifiedID)
+        #expect(addArguments?.conversationID == meeting.conversationID)
+    }
+
+    @Test("invoke names the meeting's conversation after the meeting title")
+    func invokeSetsConversationName() async throws {
+        // Given
+        meetingRepository
+            .createMeetingTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceMeetingReturnValue = meeting
+
+        // When
+        _ = try await useCase.invoke(
+            title: "Team Standup",
+            startTime: meeting.start,
+            endTime: meeting.end,
+            recurrence: nil,
+            participants: [participant]
+        )
+
+        // Then
+        let nameArguments = conversationRepository
+            .setConversationNameNameStringForConversationIDQualifiedIDVoidReceivedArguments
+        #expect(nameArguments?.name == "Team Standup")
+        #expect(nameArguments?.conversationID == meeting.conversationID)
     }
 
     @Test("invoke stores the meeting again after its conversation was pulled")
@@ -127,6 +150,30 @@ struct CreateMeetingUseCaseTests {
         #expect(conversationRepository.pullConversationIdUUIDDomainStringVoidCallsCount == 1)
     }
 
+    @Test("invoke stores the created meeting before reporting participants who could not be added")
+    func invokeStoresMeetingWhenParticipantsCouldNotBeAdded() async {
+        meetingRepository
+            .createMeetingTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceMeetingReturnValue = meeting
+        conversationRepository
+            .addParticipantsParticipantsMeetingMemberToConversationIDQualifiedIDVoidThrowableError =
+            MeetingParticipantsError.failedToAddParticipants([participant])
+
+        await #expect(throws: CreateMeetingUseCaseError.participantsNotAdded(
+            meeting: meeting,
+            participants: [participant]
+        )) {
+            _ = try await useCase.invoke(
+                title: meeting.title,
+                startTime: meeting.start,
+                endTime: meeting.end,
+                recurrence: nil,
+                participants: [participant]
+            )
+        }
+
+        #expect(meetingRepository.storeMeetingMeetingMeetingVoidReceivedInvocations == [meeting])
+    }
+
     @Test("invoke does not touch the conversation when creating the meeting fails")
     func invokeFailsWhenCreatingMeetingFails() async {
         // Given
@@ -145,6 +192,8 @@ struct CreateMeetingUseCaseTests {
             )
         }
         #expect(conversationRepository.pullConversationIdUUIDDomainStringVoidCallsCount == 0)
+        #expect(conversationRepository
+            .setConversationNameNameStringForConversationIDQualifiedIDVoidCallsCount == 0)
         #expect(conversationRepository
             .addParticipantsParticipantsMeetingMemberToConversationIDQualifiedIDVoidCallsCount == 0)
         #expect(meetingRepository.storeMeetingMeetingMeetingVoidReceivedInvocations.isEmpty)

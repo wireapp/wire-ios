@@ -79,12 +79,8 @@ extension ConversationActionController {
     func requestLeave(for conversation: ZMConversation) {
         let session = userSession
         Task { @MainActor in
-            let isPreventAdminlessGroupsEnabled: Bool = if DeveloperFlag.preventAdminlessGroups.isOn {
-                true
-            } else {
-                await session.clientSessionComponent?
-                    .featureConfigRepository.isFeatureEnabled(.preventAdminlessGroups) ?? false
-            }
+            let isPreventAdminlessGroupsEnabled: Bool = await session.clientSessionComponent?
+                .featureConfigRepository.isFeatureEnabled(.preventAdminlessGroups) ?? false
 
             guard isPreventAdminlessGroupsEnabled, self.isLastAdmin(in: conversation) else {
                 self.request(LeaveResult.self) { result in
@@ -154,7 +150,9 @@ extension ConversationActionController {
             }
             await MainActor.run {
                 userSession.enqueue {
-                    conversation.removeOrShowError(participant: user)
+                    conversation.removeOrShowError(participant: user) { [weak self] result in
+                        self?.handleRemoveParticipantResult(result, conversation: conversation)
+                    }
                 }
             }
         }
@@ -175,17 +173,27 @@ extension ConversationActionController {
     }
 
     @MainActor
-    private func presentAdminSelection(for conversation: ZMConversation, candidates: [UserType]) {
+    private func presentAdminSelection(
+        for conversation: ZMConversation,
+        candidates: [UserType],
+        showAlert: Bool = false
+    ) {
         let session = userSession
         let viewModel = AdminSelectionViewModel(
             candidates: candidates,
             userSession: session,
+            showError: showAlert,
             onPromote: { [weak self] user in
                 guard let self else {
                     throw CancellationError()
                 }
                 do {
-                    try await performAdminPromotion(user: user, in: conversation)
+                    try await performAdminPromotion(
+                        user: user,
+                        in: conversation
+                    ) { [weak self] removeParticipantResult in
+                        self?.handleRemoveParticipantResult(removeParticipantResult, conversation: conversation)
+                    }
                 } catch {
                     WireLogger.conversation.warn("admin promotion failed: \(error)")
                     // Re-throw so AdminSelectionViewModel can set `.failed`
@@ -198,7 +206,43 @@ extension ConversationActionController {
     }
 
     @MainActor
-    private func performAdminPromotion(user: UserType, in conversation: ZMConversation) async throws {
+    private func handleRemoveParticipantResult(_ result: Result<Void, any Error>, conversation: ZMConversation) {
+        switch result {
+        case .success:
+            break
+
+        case let .failure(ConversationRemoveParticipantError.requiresAdmin(eligibleMembers)):
+            let newEligibleCandidates: [UserType] = conversation.localParticipantsExcludingSelf
+                .filter { participant in
+                    guard let id = participant.qualifiedID else {
+                        return false
+                    }
+
+                    return eligibleMembers.contains {
+                        $0.id == id.uuid && $0.domain == id.domain
+                    }
+                }
+
+            presentAdminSelection(
+                for: conversation,
+                candidates: newEligibleCandidates,
+                showAlert: true
+            )
+
+        case let .failure(error):
+            // error alert displayed within `removeOrShowError` method, see `showAlertForRemoval`.
+            WireLogger.conversation.warn("remove participant failed: \(error)")
+        }
+    }
+
+    private typealias RemoveParticipantResultHandler = (Result<Void, Error>) -> Void
+
+    @MainActor
+    private func performAdminPromotion(
+        user: UserType,
+        in conversation: ZMConversation,
+        removeParticipantResultHandler: RemoveParticipantResultHandler? = nil
+    ) async throws {
         let roles = conversation.getRoles()
         guard let adminRole = roles.first(where: { $0.name == ZMConversation.defaultAdminRoleName }) else {
             throw AdminPromotionError.adminRoleNotFound
@@ -217,7 +261,7 @@ extension ConversationActionController {
             throw error
         }
         guard let selfUser = SelfUser.provider?.providedSelfUser else { return }
-        conversation.removeOrShowError(participant: selfUser)
+        conversation.removeOrShowError(participant: selfUser, completion: removeParticipantResultHandler)
     }
 
 }

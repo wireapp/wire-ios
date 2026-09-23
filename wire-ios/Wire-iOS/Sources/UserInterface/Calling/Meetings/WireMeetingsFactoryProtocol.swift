@@ -26,7 +26,9 @@ protocol WireMeetingsFactoryProtocol {
     func makeMeetingsView(
         meetingRepository: any MeetingRepositoryProtocol,
         memberRepository: any MeetingMemberRepositoryProtocol,
-        conversationRepository: any MeetingConversationRepositoryProtocol
+        conversationRepository: any MeetingConversationRepositoryProtocol,
+        callRepository: any MeetingCallRepositoryProtocol,
+        accentColorState: WireMeetingsAccentColorState
     ) -> UIViewController
 }
 

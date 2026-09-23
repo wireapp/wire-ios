@@ -55,6 +55,11 @@ package struct WireDriveGetAssetUseCase {
         return fileURL
     }
 
+    @MainActor
+    package func asset(nodeID: UUID) throws -> WireDriveLocalAsset? {
+        try? localAssetRepository.asset(nodeID: nodeID)
+    }
+
     package func downloadState(nodeID: UUID) async throws -> WireDriveLocalAsset.DownloadState? {
         let asset = try await localAssetRepository.asset(nodeID: nodeID)
         return asset?.downloadState

@@ -61,14 +61,14 @@ extension AppLockModule {
         private func observeViewWillEnterForeground() {
             NotificationCenter.default.addObserver(
                 self,
-                selector: #selector(applicationWillEnterForeground),
-                name: UIApplication.willEnterForegroundNotification,
-                object: nil
+                selector: #selector(sceneWillEnterForeground),
+                name: UIScene.willEnterForegroundNotification,
+                object: view.window?.windowScene
             )
         }
 
         @objc
-        func applicationWillEnterForeground() {
+        func sceneWillEnterForeground() {
             presenter.processEvent(.applicationWillEnterForeground)
         }
 

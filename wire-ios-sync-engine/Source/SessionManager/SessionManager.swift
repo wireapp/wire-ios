@@ -32,8 +32,6 @@ import WireRequestStrategy
 import WireTransport
 import WireUtilities
 
-public typealias LaunchOptions = [UIApplication.LaunchOptionsKey: Any]
-
 public extension Bundle {
     @objc var appGroupIdentifier: String? {
         bundleIdentifier.map { "group." + $0 }
@@ -152,6 +150,9 @@ public protocol SessionManagerType: AnyObject {
     /// Switch account and and ask UI to navigate to the conversation list
     func showConversationList(in session: ZMUserSession)
 
+    /// Switch account and ask UI to navigate to the meetings screen.
+    func showMeetings(in session: ZMUserSession)
+
     /// Switch to the given session's account without triggering any in-app navigation.
     /// Use when post-activation flows (e.g. presenting an incoming-call UI) should drive
     /// what the user sees next, rather than navigating to a specific conversation.
@@ -259,8 +260,8 @@ public protocol ForegroundNotificationResponder: AnyObject {
 @objcMembers
 public final class SessionManager: NSObject, SessionManagerType {
 
-    public enum AccountError: Error {
-        case accountLimitReached
+    public enum AccountError: Error, Equatable {
+        case accountLimitReached(maxNumberAccounts: Int)
     }
 
     /// Maximum number of accounts which can be logged in simultanously
@@ -429,7 +430,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         environment: WireTransport.BackendEnvironment,
         configuration: SessionManagerConfiguration = SessionManagerConfiguration(),
         detector: JailbreakDetectorProtocol = JailbreakDetector(),
-        pushTokenService: PushTokenServiceInterface = PushTokenService(),
+        pushTokenService: PushTokenServiceInterface,
         callKitManager: CallKitManagerInterface,
         isDeveloperModeEnabled: Bool = false,
         isUnauthenticatedTransportSessionReady: Bool = false,
@@ -540,7 +541,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         environment: WireTransport.BackendEnvironment,
         configuration: SessionManagerConfiguration = SessionManagerConfiguration(),
         detector: JailbreakDetectorProtocol = JailbreakDetector(),
-        pushTokenService: PushTokenServiceInterface = PushTokenService(),
+        pushTokenService: PushTokenServiceInterface,
         callKitManager: CallKitManagerInterface,
         isDeveloperModeEnabled: Bool = false,
         proxyCredentials: WireTransport.ProxyCredentials?,
@@ -627,14 +628,17 @@ public final class SessionManager: NSObject, SessionManagerType {
         updateCallNotificationStyle()
 
         pushTokenService.onTokenChange = { [weak self] _ in
-            guard
-                let self,
-                let session = activeUserSession
-            else {
+            guard let self else { return }
+
+            if DeveloperFlag.noAPNSTokenCache.isOn {
+                // Upload push token for all loaded sessions. Correct behavior would be to upload it for all accounts
+                // but we don't yet have a means to do that without loading all sessions into memory.
+                Task { await self.uploadPushToken(sessions: Array(self.backgroundUserSessions.values)) }
                 return
             }
 
-            syncLocalTokenWithRemote(session: session)
+            guard let activeUserSession else { return }
+            syncLocalTokenWithRemote(session: activeUserSession)
         }
 
         self.deleteAccountToken = AccountDeletedNotification.addObserver(observer: self, queue: groupQueue)
@@ -644,9 +648,9 @@ public final class SessionManager: NSObject, SessionManagerType {
     }
 
     @MainActor
-    public func start(launchOptions: LaunchOptions) async {
+    public func start(connectionOptions: UIScene.ConnectionOptions) async {
         if
-            let url = launchOptions[UIApplication.LaunchOptionsKey.url] as? URL,
+            let url = connectionOptions.urlContexts.first?.url, // Currently we only support one URL
             let urlAction = try? URLAction(url: url),
             urlAction.causesLogout {
             // If a logout is coming, then no need to start.
@@ -661,7 +665,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         if let account = accountManager.selectedAccount {
             if let session = await loadSession(for: account) {
                 updateCurrentAccount(in: session.managedObjectContext)
-                session.application(application, didFinishLaunching: launchOptions)
+                session.startEphemeralTimers()
             } else {
                 WireLogger.sessionManager.critical("Failed to load session for selected account")
             }
@@ -1150,11 +1154,6 @@ public final class SessionManager: NSObject, SessionManagerType {
         }
     }
 
-    private func clearCRLExpirationDates(for account: Account) {
-        let repository = CRLExpirationDatesRepository(userID: account.userIdentifier)
-        repository.removeAllExpirationDates()
-    }
-
     private func clearCacheDirectory() {
         guard let cachesDirectoryPath = cachesDirectory else { return }
         let manager = FileManager.default
@@ -1170,8 +1169,6 @@ public final class SessionManager: NSObject, SessionManagerType {
             WireLogger.sessionManager.error("Failed to remove cookies: \(error)")
         }
         account.deleteKeychainItems()
-
-        clearCRLExpirationDates(for: account)
 
         deleteUserLogs?()
 
@@ -1548,6 +1545,12 @@ extension SessionManager: UnauthenticatedSessionDelegate {
         accountManager.numberOfAccounts < maxNumberAccounts
     }
 
+    public func sessionMaxNumberAccounts(
+        _ session: UnauthenticatedSession
+    ) -> Int {
+        maxNumberAccounts
+    }
+
     public func session(
         session: UnauthenticatedSession,
         isExistingAccount account: Account
@@ -1573,7 +1576,10 @@ extension SessionManager: UnauthenticatedSessionDelegate {
         guard
             numberOfExistingAccounts < maxNumberAccounts || createdAccountIsKnown
         else {
-            let error = NSError(userSessionErrorCode: .accountLimitReached, userInfo: nil)
+            let error = NSError(
+                userSessionErrorCode: .accountLimitReached,
+                userInfo: [ZMAccountLimitReachedMaxNumberAccountsKey: maxNumberAccounts]
+            )
             loginDelegate?.authenticationDidFail(error)
             return
         }

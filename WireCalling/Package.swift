@@ -54,7 +54,8 @@ let package = Package(
             dependencies: [
                 "WireCallingDomain",
                 "WireCallingUI",
-                "WireCallingData"
+                "WireCallingData",
+                .product(name: "WireDesign", package: "WireUI")
             ]
         ),
         .target(
@@ -64,7 +65,8 @@ let package = Package(
                 "WireCallingDomainSupport",
                 .product(name: "WireDesign", package: "WireUI"),
                 "WireFoundation",
-                "WireLogging"
+                "WireLogging",
+                .product(name: "WireReusableUIComponents", package: "WireUI")
             ],
             plugins: [.plugin(name: "SwiftGenPlugin", package: "WirePlugins")]
         ),

@@ -30,6 +30,7 @@ import WireDataModel
 import WireNetwork
 import WireSyncEngine
 import WireAccountImageUI
+import WireCallingAssembly
 import WireCallingDomain
 import WireMessagingDomain
 import WireMessagingUI
@@ -1752,20 +1753,20 @@ class MockWireMeetingsFactoryProtocol: WireMeetingsFactoryProtocol {
 
     // MARK: - makeMeetingsView
 
-    var makeMeetingsViewMeetingRepositoryMemberRepositoryConversationRepository_Invocations: [(meetingRepository: any MeetingRepositoryProtocol, memberRepository: any MeetingMemberRepositoryProtocol, conversationRepository: any MeetingConversationRepositoryProtocol)] = []
-    var makeMeetingsViewMeetingRepositoryMemberRepositoryConversationRepository_MockMethod: ((any MeetingRepositoryProtocol, any MeetingMemberRepositoryProtocol, any MeetingConversationRepositoryProtocol) -> UIViewController)?
-    var makeMeetingsViewMeetingRepositoryMemberRepositoryConversationRepository_MockValue: UIViewController?
+    var makeMeetingsViewMeetingRepositoryMemberRepositoryConversationRepositoryCallRepositoryAccentColorState_Invocations: [(meetingRepository: any MeetingRepositoryProtocol, memberRepository: any MeetingMemberRepositoryProtocol, conversationRepository: any MeetingConversationRepositoryProtocol, callRepository: any MeetingCallRepositoryProtocol, accentColorState: WireMeetingsAccentColorState)] = []
+    var makeMeetingsViewMeetingRepositoryMemberRepositoryConversationRepositoryCallRepositoryAccentColorState_MockMethod: ((any MeetingRepositoryProtocol, any MeetingMemberRepositoryProtocol, any MeetingConversationRepositoryProtocol, any MeetingCallRepositoryProtocol, WireMeetingsAccentColorState) -> UIViewController)?
+    var makeMeetingsViewMeetingRepositoryMemberRepositoryConversationRepositoryCallRepositoryAccentColorState_MockValue: UIViewController?
 
     @MainActor
-    func makeMeetingsView(meetingRepository: any MeetingRepositoryProtocol, memberRepository: any MeetingMemberRepositoryProtocol, conversationRepository: any MeetingConversationRepositoryProtocol) -> UIViewController {
-        makeMeetingsViewMeetingRepositoryMemberRepositoryConversationRepository_Invocations.append((meetingRepository: meetingRepository, memberRepository: memberRepository, conversationRepository: conversationRepository))
+    func makeMeetingsView(meetingRepository: any MeetingRepositoryProtocol, memberRepository: any MeetingMemberRepositoryProtocol, conversationRepository: any MeetingConversationRepositoryProtocol, callRepository: any MeetingCallRepositoryProtocol, accentColorState: WireMeetingsAccentColorState) -> UIViewController {
+        makeMeetingsViewMeetingRepositoryMemberRepositoryConversationRepositoryCallRepositoryAccentColorState_Invocations.append((meetingRepository: meetingRepository, memberRepository: memberRepository, conversationRepository: conversationRepository, callRepository: callRepository, accentColorState: accentColorState))
 
-        if let mock = makeMeetingsViewMeetingRepositoryMemberRepositoryConversationRepository_MockMethod {
-            return mock(meetingRepository, memberRepository, conversationRepository)
-        } else if let mock = makeMeetingsViewMeetingRepositoryMemberRepositoryConversationRepository_MockValue {
+        if let mock = makeMeetingsViewMeetingRepositoryMemberRepositoryConversationRepositoryCallRepositoryAccentColorState_MockMethod {
+            return mock(meetingRepository, memberRepository, conversationRepository, callRepository, accentColorState)
+        } else if let mock = makeMeetingsViewMeetingRepositoryMemberRepositoryConversationRepositoryCallRepositoryAccentColorState_MockValue {
             return mock
         } else {
-            fatalError("no mock for `makeMeetingsViewMeetingRepositoryMemberRepositoryConversationRepository`")
+            fatalError("no mock for `makeMeetingsViewMeetingRepositoryMemberRepositoryConversationRepositoryCallRepositoryAccentColorState`")
         }
     }
 

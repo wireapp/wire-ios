@@ -42,7 +42,7 @@ extension UpdateEventDecodingProxy {
             let event = try ConversationCreateEventDecoder().decode(from: container)
             updateEvent = .conversation(.create(event))
 
-        case .delete:
+        case .delete, .deleteMeeting:
             let event = try ConversationDeleteEventDecoder().decode(from: container)
             updateEvent = .conversation(.delete(event))
 
@@ -97,6 +97,10 @@ extension UpdateEventDecodingProxy {
         case .mlsReset:
             let event = try ConversationMLSResetEventDecoder().decode(from: container)
             updateEvent = .conversation(.mlsReset(event))
+
+        case .adminlessReminder:
+            let event = try ConversationAdminlessReminderEventDecoder().decode(from: container)
+            updateEvent = .conversation(.adminlessReminder(event))
         }
     }
 

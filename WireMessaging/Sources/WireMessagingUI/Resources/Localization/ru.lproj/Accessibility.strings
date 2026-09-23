@@ -72,8 +72,10 @@
 "conversation.wireCells.files.availableOffline" = "Доступно оффлайн";
 
 // MARK: - Viewer access
-"conversation.wireCells.files.readOnly" = "Только чтение";
+"conversation.wireCells.files.readOnly" = "Доступ для просмотра";
 "conversation.wireCells.files.viewerAccess.banner.close" = "Закрыть информацию о доступе";
+"conversation.wireCells.files.viewerAccess.shareLink" = "Общий доступ к ссылке, отключен при доступе на просмотр ";
+"conversation.wireCells.files.viewerAccess.makeAvailableOffline" = "Возможность делать доступным офлайн, отключена при доступе на просмотр ";
 
 // MARK: - Conversation details shared drive options
 "conversation.details.sharedDrive.closeButton" = "Закрыть информацию о беседе";

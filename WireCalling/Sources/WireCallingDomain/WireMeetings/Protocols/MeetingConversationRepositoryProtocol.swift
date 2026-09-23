@@ -27,4 +27,24 @@ public protocol MeetingConversationRepositoryProtocol: Sendable {
     /// Add participants to the underlying MLS conversation.
     func addParticipants(_ participants: [MeetingMember], to conversationID: QualifiedID) async throws
 
+    /// Remove participants from the underlying MLS conversation.
+    func removeParticipants(_ participants: [MeetingMember], from conversationID: QualifiedID) async throws
+
+    /// Leave the meeting conversation as the current user.
+    /// A conversation already missing from the backend is treated as success.
+    func leaveConversation(id conversationID: QualifiedID) async throws
+
+    /// Set the name of the underlying conversation.
+    func setConversationName(_ name: String, for conversationID: QualifiedID) async throws
+
+    /// Update the name of the underlying conversation and await the backend response.
+    func updateConversationName(_ name: String, for conversationID: QualifiedID) async throws
+
+}
+
+public enum MeetingParticipantsError: Error, Equatable {
+
+    /// The group is ready, but these participants could not be added.
+    case failedToAddParticipants([MeetingMember])
+
 }

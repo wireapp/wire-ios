@@ -34,6 +34,14 @@ final class BackOffice {
         self.httpClient = httpClient
     }
 
+    private func normalizeBasicAuth(_ basicAuth: String) -> String {
+        let trimmed = basicAuth.trimmingCharacters(in: .whitespacesAndNewlines)
+        if trimmed.lowercased().hasPrefix("basic ") {
+            return trimmed
+        }
+        return "Basic \(trimmed)"
+    }
+
     private func sendRequest(
         endpoint: URL,
         method: HttpClient.Method,
@@ -318,6 +326,236 @@ final class BackOffice {
         guard code.statusCode == 200 else {
             throw RuntimeError(
                 "enableCellsBackdoorViaBackendTeam failed: HTTP \(code.statusCode) \(String(data: data, encoding: .utf8) ?? "")"
+            )
+        }
+    }
+
+    func unlockPreventAdminlessGroupsFeature(teamId: String, basicAuth: String) async throws {
+
+        let trimmed = basicAuth.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        let headerValue: String = if trimmed.lowercased().hasPrefix("basic ") {
+            trimmed
+        } else {
+            "Basic \(trimmed)"
+        }
+
+        let endpoint = backendURL
+            .appendingPathComponent("i")
+            .appendingPathComponent("teams")
+            .appendingPathComponent(teamId)
+            .appendingPathComponent("features")
+            .appendingPathComponent("preventAdminlessGroups")
+            .appendingPathComponent("unlocked")
+
+        let (data, code) = try await sendRequest(
+            endpoint: endpoint,
+            method: .put,
+            body: Data("{}".utf8),
+            basicAuth: headerValue
+        )
+
+        guard code.statusCode == 200 else {
+            throw RuntimeError(
+                "preventAdminlessGroups feature failed: HTTP \(code.statusCode) \(String(data: data, encoding: .utf8) ?? "")"
+            )
+        }
+    }
+
+    func enablePreventAdminlessGroupsFeature(teamId: String, basicAuth: String) async throws {
+
+        let trimmed = basicAuth.trimmingCharacters(in: .whitespacesAndNewlines)
+
+        let headerValue: String = if trimmed.lowercased().hasPrefix("basic ") {
+            trimmed
+        } else {
+            "Basic \(trimmed)"
+        }
+
+        let endpoint = backendURL
+            .appendingPathComponent("i")
+            .appendingPathComponent("teams")
+            .appendingPathComponent(teamId)
+            .appendingPathComponent("features")
+            .appendingPathComponent("preventAdminlessGroups")
+
+        let payload: [String: Any] = [
+            "config": [
+                "deletionTimeoutDuration": "7d",
+                "promotionStrategy": "alphabetical",
+                "reminderTimeoutDurations": [
+                    "2d",
+                    "4d",
+                    "6d"
+                ]
+            ],
+            "status": "enabled"
+        ]
+
+        let json = try JSONSerialization.data(withJSONObject: payload, options: [])
+        let (data, code) = try await sendRequest(
+            endpoint: endpoint,
+            method: .put,
+            body: json,
+            basicAuth: headerValue
+        )
+
+        guard code.statusCode == 200 else {
+            throw RuntimeError(
+                "preventAdminlessGroupsBackdoorViaBackendTeam failed: HTTP \(code.statusCode) \(String(data: data, encoding: .utf8) ?? "")"
+            )
+        }
+    }
+
+    func addCustomBackendDomain(_ domain: String, configURL: URL, webappURL: URL, basicAuth: String) async throws {
+        let endpoint = backendURL
+            .appendingPathComponent("i")
+            .appendingPathComponent("custom-backend")
+            .appendingPathComponent("by-domain")
+            .appendingPathComponent(domain)
+
+        let payload: [String: Any] = [
+            "config_json_url": configURL.absoluteString,
+            "webapp_welcome_url": webappURL.absoluteString
+        ]
+
+        let json = try JSONSerialization.data(withJSONObject: payload, options: [])
+        let (data, code) = try await sendRequest(
+            endpoint: endpoint,
+            method: .put,
+            body: json,
+            basicAuth: normalizeBasicAuth(basicAuth)
+        )
+
+        guard (200 ... 204).contains(code.statusCode) else {
+            throw RuntimeError(
+                "addCustomBackendDomain failed: HTTP \(code.statusCode) \(String(data: data, encoding: .utf8) ?? "")"
+            )
+        }
+    }
+
+    func claimDomain(_ domain: String, configURL: URL, webappURL: URL, basicAuth: String) async throws {
+        let endpoint = backendURL
+            .appendingPathComponent("i")
+            .appendingPathComponent("domain-registration")
+            .appendingPathComponent(domain)
+
+        let payload: [String: Any] = [
+            "backend": [
+                "config_url": configURL.absoluteString,
+                "webapp_url": webappURL.absoluteString
+            ],
+            "domain_redirect": "backend",
+            "team_invite": "not-allowed"
+        ]
+
+        let json = try JSONSerialization.data(withJSONObject: payload, options: [])
+        let (data, code) = try await sendRequest(
+            endpoint: endpoint,
+            method: .put,
+            body: json,
+            basicAuth: normalizeBasicAuth(basicAuth)
+        )
+
+        guard (200 ... 204).contains(code.statusCode) else {
+            throw RuntimeError(
+                "claimDomain failed: HTTP \(code.statusCode) \(String(data: data, encoding: .utf8) ?? "")"
+            )
+        }
+    }
+
+    func waitForDomainRegistration(
+        email: String,
+        expectedConfigURL: URL,
+        timeout: TimeInterval = 15,
+    ) async throws {
+        guard let apiVersion = APIVersion.productionVersions.max() else {
+            throw RuntimeError("No production API version available")
+        }
+
+        let endpoint = backendURL
+            .appendingPathComponent("v\(apiVersion.rawValue)")
+            .appendingPathComponent("get-domain-registration")
+        let body = try JSONSerialization.data(withJSONObject: ["email": email], options: [])
+        let deadline = Date().addingTimeInterval(timeout)
+        var lastStatusCode = -1
+        var lastResponse = ""
+
+        while Date() < deadline {
+            let (data, code) = try await httpClient.send(
+                url: endpoint,
+                method: .post,
+                body: body,
+                headers: [
+                    HttpClient.HeaderKey.contentType: HttpClient.ContentType.jsonUtf8,
+                    HttpClient.HeaderKey.accept: HttpClient.ContentType.json
+                ]
+            )
+            lastStatusCode = code.statusCode
+            lastResponse = String(data: data, encoding: .utf8) ?? ""
+
+            if (400 ... 499).contains(code.statusCode) {
+                throw RuntimeError(
+                    "domain registration for \(email) failed: HTTP \(code.statusCode) \(lastResponse)"
+                )
+            }
+
+            if code.statusCode == 200 {
+                let response = try JSONSerialization.jsonObject(with: data) as? [String: Any]
+                let backend = response?["backend"] as? [String: Any]
+                let configURL = backend?["config_url"] as? String
+
+                if response?["domain_redirect"] as? String == "backend",
+                   configURL == expectedConfigURL.absoluteString {
+                    return
+                }
+            }
+
+            try await Task.sleep(for: .seconds(1))
+        }
+
+        throw RuntimeError(
+            "domain registration for \(email) not visible within \(timeout)s, last HTTP \(lastStatusCode) \(lastResponse)"
+        )
+    }
+
+    func deleteCustomBackendDomain(_ domain: String, basicAuth: String) async throws {
+        let endpoint = backendURL
+            .appendingPathComponent("i")
+            .appendingPathComponent("custom-backend")
+            .appendingPathComponent("by-domain")
+            .appendingPathComponent(domain)
+
+        let (data, code) = try await sendRequest(
+            endpoint: endpoint,
+            method: .delete,
+            body: Data(),
+            basicAuth: normalizeBasicAuth(basicAuth)
+        )
+
+        guard (200 ... 204).contains(code.statusCode) else {
+            throw RuntimeError(
+                "deleteCustomBackendDomain failed: HTTP \(code.statusCode) \(String(data: data, encoding: .utf8) ?? "")"
+            )
+        }
+    }
+
+    func deleteDomainClaim(_ domain: String, basicAuth: String) async throws {
+        let endpoint = backendURL
+            .appendingPathComponent("i")
+            .appendingPathComponent("domain-registration")
+            .appendingPathComponent(domain)
+
+        let (data, code) = try await sendRequest(
+            endpoint: endpoint,
+            method: .delete,
+            body: Data(),
+            basicAuth: normalizeBasicAuth(basicAuth)
+        )
+
+        guard (200 ... 204).contains(code.statusCode) else {
+            throw RuntimeError(
+                "deleteDomainClaim failed: HTTP \(code.statusCode) \(String(data: data, encoding: .utf8) ?? "")"
             )
         }
     }

@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-final class ConnectionsAPIV16: ConnectionsAPIV15 {
+class ConnectionsAPIV16: ConnectionsAPIV15 {
 
     override var apiVersion: APIVersion {
         .v16

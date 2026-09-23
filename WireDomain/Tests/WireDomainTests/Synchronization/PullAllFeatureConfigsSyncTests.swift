@@ -54,7 +54,7 @@ final class PullAllFeatureConfigsSyncTests: XCTestCase {
         XCTAssertEqual(api.getFeatureConfigs_Invocations.count, 1)
 
         let storeInvocations = store.storeFeatureNameIsEnabledConfig_Invocations
-        try XCTAssertCount(storeInvocations, count: 16)
+        try XCTAssertCount(storeInvocations, count: 17)
 
         XCTAssertEqual(storeInvocations[0].name, .appLock)
         XCTAssertEqual(storeInvocations[0].isEnabled, true)
@@ -141,6 +141,10 @@ final class PullAllFeatureConfigsSyncTests: XCTestCase {
             storeInvocations[15].config as? Feature.PreventAdminlessGroups.Config,
             Scaffolding.preventAdminlessGroupsFeatureConfig.toDomainModel()
         )
+
+        XCTAssertEqual(storeInvocations[16].name, .meetings)
+        XCTAssertTrue(storeInvocations[16].isEnabled)
+        XCTAssertNil(storeInvocations[16].config)
     }
 
 }
@@ -163,7 +167,8 @@ private enum Scaffolding {
         .mlsMigration(mlsMigrationFeatureConfig),
         .selfDeletingMessages(selfDeletingMessagesFeatureConfig),
         .simplifiedUserConnectionRequestQRCode(simplifiedUserConnectionRequestQRCodeConfig),
-        .preventAdminlessGroups(preventAdminlessGroupsFeatureConfig)
+        .preventAdminlessGroups(preventAdminlessGroupsFeatureConfig),
+        .meetings(meetingsFeatureConfig)
     ]
 
     static let appLockFeatureConfig = AppLockFeatureConfig(
@@ -252,5 +257,7 @@ private enum Scaffolding {
         deletionTimeout: 30,
         reminderTimeouts: [7, 1]
     )
+
+    static let meetingsFeatureConfig = MeetingsFeatureConfig(status: .enabled)
 
 }

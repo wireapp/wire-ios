@@ -17,10 +17,12 @@
 //
 
 package import WireCallingDomain
+package import Foundation
 package import WireFoundation
 
 import SwiftUI
 import WireCallingDomainSupport
+import WireLogging
 
 /// ViewModel responsible for the AllMeetingsView screen.
 /// Owns the MeetingsViewModel for data logic and handles navigation actions.
@@ -29,13 +31,16 @@ import WireCallingDomainSupport
 package final class AllMeetingsViewModel {
 
     private let makeFormViewModel: @MainActor (
-        _ mode: CreateMeetingFormViewModel.Mode,
+        _ mode: MeetingFormViewModel.Mode,
         _ onSuccess: @escaping (Meeting) -> Void
-    ) -> CreateMeetingFormViewModel
+    ) -> MeetingFormViewModel
 
     package let meetingsViewModel: MeetingsViewModel
 
-    var presentedFormMode: CreateMeetingFormViewModel.Mode?
+    var presentedFormMode: MeetingFormViewModel.Mode?
+    var hasJoinError = false
+
+    private let joinMeetingCallUseCase: any JoinMeetingCallUseCaseProtocol
 
     package init(
         currentDateProvider: any CurrentDateProviding,
@@ -43,18 +48,24 @@ package final class AllMeetingsViewModel {
         upcomingMeetingsUseCase: any FetchUpcomingMeetingsUseCaseProtocol,
         observeMeetingChangesUseCase: any ObserveMeetingChangesUseCaseProtocol,
         deleteMeetingUseCase: any DeleteMeetingUseCaseProtocol,
+        selfUserID: UUID,
+        observeAttendedMeetingsUseCase: (any ObserveAttendedMeetingsUseCaseProtocol)? = nil,
+        joinMeetingCallUseCase: any JoinMeetingCallUseCaseProtocol,
         makeFormViewModel: @escaping @MainActor (
-            _ mode: CreateMeetingFormViewModel.Mode,
+            _ mode: MeetingFormViewModel.Mode,
             _ onSuccess: @escaping (Meeting) -> Void
-        ) -> CreateMeetingFormViewModel
+        ) -> MeetingFormViewModel
     ) {
         self.meetingsViewModel = MeetingsViewModel(
             currentDateProvider: currentDateProvider,
             formatter: formatter,
             upcomingMeetingsUseCase: upcomingMeetingsUseCase,
             observeMeetingChangesUseCase: observeMeetingChangesUseCase,
-            deleteMeetingUseCase: deleteMeetingUseCase
+            deleteMeetingUseCase: deleteMeetingUseCase,
+            selfUserID: selfUserID,
+            observeAttendedMeetingsUseCase: observeAttendedMeetingsUseCase
         )
+        self.joinMeetingCallUseCase = joinMeetingCallUseCase
         self.makeFormViewModel = makeFormViewModel
     }
 
@@ -68,9 +79,32 @@ package final class AllMeetingsViewModel {
         presentedFormMode = .scheduled
     }
 
-    func makeMeetingFormViewModel(mode: CreateMeetingFormViewModel.Mode) -> CreateMeetingFormViewModel {
-        makeFormViewModel(mode) { [weak self] _ in
-            self?.presentedFormMode = nil
+    func editMeetingTapped(_ meeting: Meeting) {
+        presentedFormMode = .edit(meeting)
+    }
+
+    func joinMeetingTapped(_ occurrence: MeetingOccurrence) async {
+        await joinCall(conversationID: occurrence.conversationID)
+    }
+
+    func makeMeetingFormViewModel(mode: MeetingFormViewModel.Mode) -> MeetingFormViewModel {
+        makeFormViewModel(mode) { [weak self] meeting in
+            guard let self else { return }
+            presentedFormMode = nil
+            if case .instant = mode {
+                Task { await self.joinCall(conversationID: meeting.conversationID) }
+            }
+        }
+    }
+
+    // MARK: - Private Helpers
+
+    private func joinCall(conversationID: QualifiedID) async {
+        do {
+            try await joinMeetingCallUseCase.invoke(conversationID: conversationID)
+        } catch {
+            hasJoinError = true
+            WireLogger.meetings.error("failed to join meeting call: \(String(reflecting: error))")
         }
     }
 

@@ -100,7 +100,7 @@ struct FilesSortingView: View {
         }
         .padding(.horizontal)
         .onDisappear {
-            viewModel.sortingSelection = .default
+            viewModel.sortingSelection = viewModel.isBrowsing ? .defaultDrive : .defaultSharedDrive
         }
     }
 

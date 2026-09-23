@@ -645,9 +645,18 @@ struct ConversationEventPayloadProcessor {
         }
 
         guard let otherUser = localConversation.localParticipantsExcludingSelf.first else {
-            localConversation.isForcedReadOnly = true
-            if localConversation.messageProtocol.isOne(of: .mls, .mixed) {
-                localConversation.mlsStatus = .invalid
+            // The other participant is absent from the synced member list. This is exactly what the
+            // backend returns to the party that was *blocked*: it removes the blocker from the 1:1
+            // member list (Proteus and MLS) without notifying this side. We must not tear down an
+            // established 1:1 — forcing it read-only and marking the MLS group invalid (which wipes
+            // it and drops the user back to the read-only Proteus conversation) — when we still have
+            // a linked one-on-one user. Only do so when there is genuinely no user behind the
+            // conversation (e.g. a malformed/empty 1:1 that was never linked). [WPB-24403]
+            if localConversation.oneOnOneUser == nil {
+                localConversation.isForcedReadOnly = true
+                if localConversation.messageProtocol.isOne(of: .mls, .mixed) {
+                    localConversation.mlsStatus = .invalid
+                }
             }
             return
         }
@@ -796,7 +805,11 @@ struct ConversationEventPayloadProcessor {
             updateAttributes(from: payload, for: conversation, context: context)
             assignMessageProtocol(from: payload, for: conversation, in: context)
             updateMetadata(from: payload, for: conversation, context: context)
-            updateMembers(from: payload, for: conversation, context: context)
+            // `/conversations/list` is known to return incomplete data for 1:1s (see comment above on
+            // `setNeedsToBeUpdatedFromBackend: false`) — e.g. it omits the other member when that user has
+            // blocked self. Don't let a stale/partial payload remove the other participant from a 1:1;
+            // membership there is fixed by the connection, not by this list response.
+            updateMembers(from: payload, for: conversation, shouldRemoveParticipants: false, context: context)
             updateConversationTimestamps(for: conversation, serverTimestamp: serverTimestamp)
             updateConversationStatus(from: payload, for: conversation)
             linkOneOnOneUserIfNeeded(for: conversation)

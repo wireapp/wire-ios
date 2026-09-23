@@ -68,6 +68,29 @@ final class MeetingEventDecodingTests: XCTestCase {
         )
     }
 
+    func testDecodingMeetingMemberAddEvent() throws {
+        // Given
+        let mockEventData = try MockJSONPayloadResource(name: "MeetingMemberAdd")
+
+        // When
+        let decodedEvent = try decoder.decode(
+            UpdateEventDecodingProxy.self,
+            from: mockEventData.jsonData
+        ).updateEvent
+
+        // Then
+        XCTAssertEqual(
+            decodedEvent,
+            .meeting(.memberAdd(MeetingMemberAddEvent(
+                meetingID: Scaffolding.meetingID,
+                senderID: QualifiedID(
+                    id: UUID(uuidString: "8c74a470-5383-4800-9a7d-a77fb9f1a46c")!,
+                    domain: "example.com"
+                )
+            )))
+        )
+    }
+
     func testDecodingMeetingUpdateEvent() throws {
         // Given
         let mockEventData = try MockJSONPayloadResource(name: "MeetingUpdate")
