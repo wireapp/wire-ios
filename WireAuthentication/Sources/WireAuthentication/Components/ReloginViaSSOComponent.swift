@@ -96,7 +96,11 @@ extension ReloginViaSSOComponent: ReloginViaSSOViewModel.Factory {
             ssoCallbackURLScheme: dependency.ssoCallbackURLScheme,
             verificationTokenGenerator: SSOLoginVerificationTokenGenerator(),
             webAuthenticator: WebAuthenticator(ssoCallbackURLScheme: dependency.ssoCallbackURLScheme),
-            createAuthResultUseCase: CreateAuthenticationResultUseCase(networkStack: networkStack)
+            accessTokenExchange: try await networkStack.makeAccessTokenExchange(),
+            createAuthResultUseCase: CreateAuthenticationResultUseCase(
+                networkStack: networkStack,
+                checksSSOIdpChangeDetection: true
+            )
         )
     }
 

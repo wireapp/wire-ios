@@ -146,7 +146,7 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
         messageTextView.attributedText = mutableText
 
         if object.isObfuscated {
-            messageTextView.accessibilityIdentifier = "Obfuscated message"
+            messageTextView.accessibilityIdentifier = Locators.ActiveConversationPage.selfDeletedMessage.rawValue
         } else {
             messageTextView.accessibilityIdentifier = Locators.ActiveConversationPage.message.rawValue
         }

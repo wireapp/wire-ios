@@ -191,6 +191,8 @@ public enum Locators {
         case userCellName
         case labelSharedDriveON = "Shared Drive is on"
         case labelSelfDeletingMessagesOFF = "Self-deleting messages are off"
+        case selfDeletedMessage
+        case ephemeralCountdown
         case sharedFileLabel = "FileTransferTopLabel"
         case sharedFileDetailsLabel = "FileTransferBottomLabel"
         case fileTypeIcon = "FileTransferFileTypeIcon"
@@ -228,6 +230,10 @@ public enum Locators {
         case openOngoingCallButton
         case readReceiptsDisabledSystemMessage
         case readReceiptsEnabledSystemMessage
+        case replyOptionOnMessage = "Reply"
+        case replyPreviewView = "replyView"
+        case cancelReplyButton = "cancelReply"
+        case originalSender = "original.sender"
 
     }
 
@@ -270,6 +276,10 @@ public enum Locators {
         case everythingOption
         case mentionsAndRepliesOption
         case nothingOption
+    }
+
+    public enum ConversationTimeoutOptionsPage: AutoPrefixedEnum {
+        case timeOutOptionsCloseButton
     }
 
     public enum ConversationDetailsActions: AutoPrefixedEnum {
