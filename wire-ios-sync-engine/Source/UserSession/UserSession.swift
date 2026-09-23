@@ -220,11 +220,7 @@ public protocol UserSession: AnyObject {
 
     var e2eiFeature: Feature.E2EI { get }
 
-    var fileSharingFeature: Feature.FileSharing { get }
-
     var selfDeletingMessagesFeature: Feature.SelfDeletingMessages { get }
-
-    var conversationGuestLinksFeature: Feature.ConversationGuestLinks { get }
 
     var mlsFeature: Feature.MLS { get }
 
