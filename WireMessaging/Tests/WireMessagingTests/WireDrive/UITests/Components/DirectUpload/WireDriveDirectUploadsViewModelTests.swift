@@ -35,15 +35,23 @@ final class WireDriveDirectUploadsViewModelTests {
     private let clearFinishedUploads = MockWireDriveClearFinishedDirectUploadsUseCaseProtocol()
 
     private let items = CurrentValueSubject<[WireDriveDirectUploadItem], Never>([])
+    private let processingCount = CurrentValueSubject<Int, Never>(0)
 
     /// A second, independent stream keyed to `otherFolderPath`, used to verify that re-scoping the
     /// tracker to a different folder actually stops reacting to the previous one.
     private let otherFolderPath = "cell-1/Folder2"
     private let otherFolderItems = CurrentValueSubject<[WireDriveDirectUploadItem], Never>([])
+    private let otherFolderProcessingCount = CurrentValueSubject<Int, Never>(0)
 
     init() {
         observeFolderUploads.invokeFolderPath_MockMethod = { [items, otherFolderItems, otherFolderPath] folderPath in
             folderPath == otherFolderPath ? otherFolderItems.eraseToAnyPublisher() : items.eraseToAnyPublisher()
+        }
+        observeFolderUploads.processingCountFolderPath_MockMethod = {
+            [processingCount, otherFolderProcessingCount, otherFolderPath] folderPath in
+            folderPath == otherFolderPath
+                ? otherFolderProcessingCount.eraseToAnyPublisher()
+                : processingCount.eraseToAnyPublisher()
         }
         cancelUpload.invokeUploadID_MockMethod = { _ in }
         cancelUploads.invoke_MockMethod = {}
@@ -141,6 +149,95 @@ final class WireDriveDirectUploadsViewModelTests {
         #expect(sut.presentation == .pill)
     }
 
+    // MARK: - Processing media
+
+    @Test
+    func processingCountSurfacesThePill() {
+        // Given
+        let sut = makeSut()
+
+        // When
+        processingCount.send(2)
+
+        // Then
+        #expect(sut.processingCount == 2)
+        #expect(sut.presentation == .pill)
+        #expect(sut.title == "Processing media…")
+    }
+
+    /// The signal is folder-scoped exactly like real uploads are — processing elsewhere must not
+    /// surface here.
+    @Test
+    func processingCountForAnotherFolderIsIgnored() {
+        // Given
+        let sut = makeSut()
+
+        // When
+        otherFolderProcessingCount.send(2)
+
+        // Then
+        #expect(sut.processingCount == 0)
+        #expect(sut.presentation == .hidden)
+    }
+
+    /// A real transfer already running is more relevant than media still being resolved for a later
+    /// batch, so the pill must keep reporting upload progress rather than flip to "Processing media…".
+    @Test
+    func activeUploadTakesPriorityOverProcessingMedia() {
+        // Given
+        let sut = makeSut()
+        send(.preview(fileName: "a.pdf", status: .uploading(progress: 0.5)))
+
+        // When
+        processingCount.send(1)
+
+        // Then
+        #expect(sut.title == "Uploading 1 file")
+    }
+
+    /// Matches `title`'s own priority: while media is being resolved, that is what the pill should
+    /// say regardless of an unrelated, already-failed upload sitting in the same folder.
+    @Test
+    func processingCountTakesPriorityOverAnUnrelatedFailure() {
+        // Given
+        let sut = makeSut()
+        send(.preview(fileName: "a.pdf", status: .failed(error: .unauthorized), isRetryable: true))
+
+        // When
+        processingCount.send(1)
+
+        // Then
+        #expect(sut.title == "Processing media…")
+    }
+
+    /// Clearing the signal must not hide a pill that has a real reason to still be shown.
+    @Test
+    func processingCountClearingKeepsThePillWhileRealUploadsExist() {
+        // Given
+        let sut = makeSut()
+        processingCount.send(1)
+        send(.preview(fileName: "a.pdf", status: .uploading(progress: 0.2)))
+
+        // When
+        processingCount.send(0)
+
+        // Then
+        #expect(sut.presentation == .pill)
+    }
+
+    @Test
+    func processingCountClearingHidesThePillWhenNothingElseIsThere() {
+        // Given
+        let sut = makeSut()
+        processingCount.send(1)
+
+        // When
+        processingCount.send(0)
+
+        // Then
+        #expect(sut.presentation == .hidden)
+    }
+    
     // MARK: - Upload completion
 
     /// Lets the file list refresh itself once something new has actually landed.

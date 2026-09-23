@@ -620,6 +620,31 @@ public enum Locators {
             case restoreButton
         }
 
+        /// The Shared Drive direct uploads tracker: the collapsed pill and the expanded sheet.
+        public enum UploadsPage: AutoPrefixedEnum {
+
+            case uploadFile
+            case uploadMedia
+
+            case pill
+            case expand
+            case collapse
+            case cancelAll
+            case retryAll
+
+            public static func item(_ fileName: String) -> String {
+                "UploadsPage.item.\(fileName)"
+            }
+
+            public static func cancel(_ fileName: String) -> String {
+                "UploadsPage.cancel.\(fileName)"
+            }
+
+            public static func retry(_ fileName: String) -> String {
+                "UploadsPage.retry.\(fileName)"
+            }
+        }
+
         public enum TagsEditPage: String {
 
             case closeButton

@@ -999,6 +999,54 @@ final class WireDriveDirectUploadManagerTests {
         #expect(emissions == 1)
     }
 
+    // MARK: - Processing media
+
+    @Test
+    func beginProcessingMedia_incrementsTheTrackerByOne() async {
+        // When
+        await sut.beginProcessingMedia(destinationFolderPath: "cell-1")
+
+        // Then
+        var received: Int?
+        let subscription = tracker.processingCountPublisher(folderPath: "cell-1").sink { received = $0 }
+        defer { subscription.cancel() }
+        #expect(received == 1)
+    }
+
+    @Test
+    func endProcessingMedia_decrementsTheTrackerByOne() async {
+        // Given
+        await sut.beginProcessingMedia(destinationFolderPath: "cell-1")
+
+        // When
+        await sut.endProcessingMedia(destinationFolderPath: "cell-1")
+
+        // Then
+        var received: Int?
+        let subscription = tracker.processingCountPublisher(folderPath: "cell-1").sink { received = $0 }
+        defer { subscription.cancel() }
+        #expect(received == 0)
+    }
+
+    /// The actual bug this guards against: two overlapping items for the same folder must each only
+    /// remove their own contribution — one finishing must not wipe out the other's still-in-flight
+    /// count.
+    @Test
+    func endProcessingMedia_onlyDecrementsItsOwnItemWhenAnotherIsStillInFlight() async {
+        // Given — item A and item B are both resolving for "cell-1".
+        await sut.beginProcessingMedia(destinationFolderPath: "cell-1")
+        await sut.beginProcessingMedia(destinationFolderPath: "cell-1")
+
+        // When — item B finishes first.
+        await sut.endProcessingMedia(destinationFolderPath: "cell-1")
+
+        // Then — item A's count must still be showing.
+        var received: Int?
+        let subscription = tracker.processingCountPublisher(folderPath: "cell-1").sink { received = $0 }
+        defer { subscription.cancel() }
+        #expect(received == 1)
+    }
+
     // MARK: - Helpers
 
     private func enqueueOne() async throws -> UUID {

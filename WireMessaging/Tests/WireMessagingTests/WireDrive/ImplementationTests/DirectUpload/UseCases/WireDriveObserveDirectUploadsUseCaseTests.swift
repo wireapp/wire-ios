@@ -235,6 +235,98 @@ struct WireDriveObserveDirectUploadsUseCaseTests {
         #expect(sut.summary.items.isEmpty)
     }
 
+    // MARK: - Processing
+
+    @Test
+    func processingCountPublisherStartsAtZeroForAnUntouchedFolder() {
+        var received: Int?
+        let subscription = sut.processingCountPublisher(folderPath: "cell-1/Documents").sink { received = $0 }
+        defer { subscription.cancel() }
+
+        #expect(received == 0)
+    }
+
+    @Test
+    func processingCountPublisherReflectsWhatWasSet() {
+        // Given / When
+        sut.adjustProcessingCount(by: 3, folderPath: "cell-1/Documents")
+
+        // Then
+        var received: Int?
+        let subscription = sut.processingCountPublisher(folderPath: "cell-1/Documents").sink { received = $0 }
+        defer { subscription.cancel() }
+        #expect(received == 3)
+    }
+
+    @Test
+    func settingProcessingCountToZeroClearsIt() {
+        // Given
+        sut.adjustProcessingCount(by: 2, folderPath: "cell-1/Documents")
+
+        // When
+        sut.adjustProcessingCount(by: -2, folderPath: "cell-1/Documents")
+
+        // Then
+        var received: Int?
+        let subscription = sut.processingCountPublisher(folderPath: "cell-1/Documents").sink { received = $0 }
+        defer { subscription.cancel() }
+        #expect(received == 0)
+    }
+
+    /// Mirrors `folderPublisherExcludesSubfoldersAndUnrelatedConversations`: processing counts are
+    /// exactly as folder-scoped as real uploads are.
+    @Test
+    func processingCountIsScopedPerFolder() {
+        // Given
+        sut.adjustProcessingCount(by: 5, folderPath: "cell-1/Documents")
+
+        // When
+        var received: Int?
+        let subscription = sut.processingCountPublisher(folderPath: "cell-1/Photos").sink { received = $0 }
+        defer { subscription.cancel() }
+
+        // Then
+        #expect(received == 0)
+    }
+
+    @Test
+    func processingCountPublisherDoesNotEmitWhenNothingChanged() {
+        // Given
+        sut.adjustProcessingCount(by: 2, folderPath: "cell-1/Documents")
+
+        var emissions = 0
+        let subscription = sut.processingCountPublisher(folderPath: "cell-1/Documents").sink { _ in emissions += 1 }
+        defer { subscription.cancel() }
+
+        // When — a net-zero delta (e.g. an unmatched begin/end pair) must not emit either.
+        sut.adjustProcessingCount(by: 0, folderPath: "cell-1/Documents")
+
+        // Then — only the replayed value.
+        #expect(emissions == 1)
+    }
+
+    /// The bug this guards against: batch B finishing (and correctly subtracting only its own count)
+    /// must never wipe out batch A's still-in-flight count for the same folder — only an unmatched,
+    /// larger-than-total subtraction should ever be able to do that, and even then it clamps to zero
+    /// rather than going negative.
+    @Test
+    func adjustProcessingCountAccumulatesAcrossConcurrentBatches() {
+        // Given — batch A (3 files) and batch B (2 files) are both resolving for the same folder.
+        sut.adjustProcessingCount(by: 3, folderPath: "cell-1/Documents")
+        sut.adjustProcessingCount(by: 2, folderPath: "cell-1/Documents")
+
+        var received: Int?
+        let subscription = sut.processingCountPublisher(folderPath: "cell-1/Documents").sink { received = $0 }
+        defer { subscription.cancel() }
+        #expect(received == 5)
+
+        // When — batch B finishes first.
+        sut.adjustProcessingCount(by: -2, folderPath: "cell-1/Documents")
+
+        // Then — batch A's count must still be showing.
+        #expect(received == 3)
+    }
+
     // MARK: - Removing
 
     @Test
