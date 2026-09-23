@@ -25,4 +25,14 @@ package protocol WireDriveEnqueueDirectUploadsUseCaseProtocol: Sendable {
     @discardableResult
     func invoke(sources: [WireDriveDirectUploadSource], destinationFolderPath: String) async throws -> UUID
 
+    /// Signals that one upload is currently being resolved for `destinationFolderPath`, before it
+    /// exists as a record of its own.
+
+    func beginProcessingMedia(destinationFolderPath: String) async
+
+    /// Signals that resolving that one upload has finished, whether or not it produced anything to
+    /// enqueue.
+
+    func endProcessingMedia(destinationFolderPath: String) async
+
 }

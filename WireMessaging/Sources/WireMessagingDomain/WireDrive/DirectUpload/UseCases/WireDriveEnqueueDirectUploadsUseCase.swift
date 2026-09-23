@@ -40,4 +40,12 @@ package struct WireDriveEnqueueDirectUploadsUseCase: WireDriveEnqueueDirectUploa
             destinationFolderPath: destinationFolderPath
         )
     }
+
+    package func beginProcessingMedia(destinationFolderPath: String) async {
+        await uploadManager.beginProcessingMedia(destinationFolderPath: destinationFolderPath)
+    }
+
+    package func endProcessingMedia(destinationFolderPath: String) async {
+        await uploadManager.endProcessingMedia(destinationFolderPath: destinationFolderPath)
+    }
 }

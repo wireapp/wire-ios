@@ -27,6 +27,7 @@ package final class WireDriveObserveDirectUploadsUseCase: WireDriveObserveDirect
     WireDriveDirectUploadTrackerProtocol {
 
     private let trackedItems = CurrentValueSubject<[UUID: WireDriveDirectUploadItem], Never>([:])
+    private let processingCounts = CurrentValueSubject<[String: Int], Never>([:])
 
     package init() {}
 
@@ -63,6 +64,13 @@ package final class WireDriveObserveDirectUploadsUseCase: WireDriveObserveDirect
                     .filter { $0.destinationFolderPath == folderPath }
                     .sorted { $0.createdAt < $1.createdAt }
             }
+            .removeDuplicates()
+            .eraseToAnyPublisher()
+    }
+
+    package func processingCountPublisher(folderPath: String) -> AnyPublisher<Int, Never> {
+        processingCounts
+            .map { $0[folderPath] ?? 0 }
             .removeDuplicates()
             .eraseToAnyPublisher()
     }
@@ -108,6 +116,15 @@ package final class WireDriveObserveDirectUploadsUseCase: WireDriveObserveDirect
     package func removeAll() {
         guard !trackedItems.value.isEmpty else { return }
         trackedItems.value = [:]
+    }
+
+    package func adjustProcessingCount(by delta: Int, folderPath: String) {
+        let newValue = max(0, (processingCounts.value[folderPath] ?? 0) + delta)
+        guard processingCounts.value[folderPath] ?? 0 != newValue else { return }
+
+        var current = processingCounts.value
+        current[folderPath] = newValue > 0 ? newValue : nil
+        processingCounts.value = current
     }
 }
 

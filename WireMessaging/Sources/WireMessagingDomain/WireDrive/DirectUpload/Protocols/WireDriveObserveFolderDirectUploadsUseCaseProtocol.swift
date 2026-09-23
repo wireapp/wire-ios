@@ -27,4 +27,9 @@ package protocol WireDriveObserveFolderDirectUploadsUseCaseProtocol {
 
     func invoke(folderPath: String) -> AnyPublisher<[WireDriveDirectUploadItem], Never>
 
+    /// Emits how many uploads are currently being resolved for exactly this folder, before any of
+    /// them has a record of its own.
+
+    func processingCount(folderPath: String) -> AnyPublisher<Int, Never>
+
 }

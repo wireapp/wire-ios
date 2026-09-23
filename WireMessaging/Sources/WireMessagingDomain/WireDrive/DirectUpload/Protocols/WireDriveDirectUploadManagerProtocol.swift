@@ -24,15 +24,15 @@ package import Foundation
 package protocol WireDriveDirectUploadManagerProtocol: Sendable {
 
     /// Reconciles persisted uploads against the background session's live tasks.
-    ///
-    /// Called once the database is available, which on a background relaunch may be well after the
-    /// session started delivering events.
-
     func start() async
 
     /// Accepts a batch of picked files for upload into `destinationFolderPath`.
     @discardableResult
     func enqueue(sources: [WireDriveDirectUploadSource], destinationFolderPath: String) async throws -> UUID
+
+    func beginProcessingMedia(destinationFolderPath: String) async
+
+    func endProcessingMedia(destinationFolderPath: String) async
 
     func cancel(uploadID: UUID) async
 
