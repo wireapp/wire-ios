@@ -286,7 +286,6 @@ public enum Locators {
         case archive
         case clearContent
         case leaveConversation
-        case migrateToMLS
         case moveToFolder
     }
 
