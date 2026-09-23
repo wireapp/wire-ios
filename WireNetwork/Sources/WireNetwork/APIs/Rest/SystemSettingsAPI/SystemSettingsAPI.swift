@@ -17,17 +17,15 @@
 //
 
 import Foundation
-import WireNetwork
 
-extension NetworkStack {
+// sourcery: AutoMockable
+/// An API access object for endpoints concerning system-wide settings.
+public protocol SystemSettingsAPI: Sendable {
 
-    func makeAuthenticationAPI() async throws -> some AuthenticationAPI {
-        let networkServices = try networkServices
-        let apiVersion = try await resolvedAPIVersion()
-        return AuthenticationAPIBuilder(networkService: networkServices.rest).makeAPI(for: apiVersion)
-    }
+    /// Get the system settings.
+    /// - Parameter accessToken: The access token used to authenticate the request, if available.
+    /// - Returns: The system settings.
 
-    func makeAccessTokenExchange() async throws -> AccessTokenExchange {
-        AccessTokenExchange(networkService: try networkServices.rest)
-    }
+    func getSystemSettings(accessToken: AccessToken?) async throws -> SystemSettings
+
 }

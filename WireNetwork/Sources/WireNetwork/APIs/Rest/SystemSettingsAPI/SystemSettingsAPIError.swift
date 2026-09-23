@@ -17,17 +17,13 @@
 //
 
 import Foundation
-import WireNetwork
 
-extension NetworkStack {
+/// Errors originating from `SystemSettingsAPI`.
 
-    func makeAuthenticationAPI() async throws -> some AuthenticationAPI {
-        let networkServices = try networkServices
-        let apiVersion = try await resolvedAPIVersion()
-        return AuthenticationAPIBuilder(networkService: networkServices.rest).makeAPI(for: apiVersion)
-    }
+public enum SystemSettingsAPIError: Error, Equatable {
 
-    func makeAccessTokenExchange() async throws -> AccessTokenExchange {
-        AccessTokenExchange(networkService: try networkServices.rest)
-    }
+    /// Unsupported endpoint for API version.
+
+    case unsupportedEndpointForAPIVersion
+
 }

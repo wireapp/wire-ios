@@ -17,17 +17,21 @@
 //
 
 import Foundation
-import WireNetwork
 
-extension NetworkStack {
+class SystemSettingsAPIV0: SystemSettingsAPI, VersionedAPI {
 
-    func makeAuthenticationAPI() async throws -> some AuthenticationAPI {
-        let networkServices = try networkServices
-        let apiVersion = try await resolvedAPIVersion()
-        return AuthenticationAPIBuilder(networkService: networkServices.rest).makeAPI(for: apiVersion)
+    let networkService: any NetworkServiceProtocol
+
+    init(networkService: any NetworkServiceProtocol) {
+        self.networkService = networkService
     }
 
-    func makeAccessTokenExchange() async throws -> AccessTokenExchange {
-        AccessTokenExchange(networkService: try networkServices.rest)
+    var apiVersion: APIVersion {
+        .v0
     }
+
+    func getSystemSettings(accessToken: AccessToken?) async throws -> SystemSettings {
+        throw SystemSettingsAPIError.unsupportedEndpointForAPIVersion
+    }
+
 }

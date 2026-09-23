@@ -17,17 +17,11 @@
 //
 
 import Foundation
-import WireNetwork
 
-extension NetworkStack {
+class SystemSettingsAPIV8: SystemSettingsAPIV7 {
 
-    func makeAuthenticationAPI() async throws -> some AuthenticationAPI {
-        let networkServices = try networkServices
-        let apiVersion = try await resolvedAPIVersion()
-        return AuthenticationAPIBuilder(networkService: networkServices.rest).makeAPI(for: apiVersion)
+    override var apiVersion: APIVersion {
+        .v8
     }
 
-    func makeAccessTokenExchange() async throws -> AccessTokenExchange {
-        AccessTokenExchange(networkService: try networkServices.rest)
-    }
 }
