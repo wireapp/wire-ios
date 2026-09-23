@@ -149,8 +149,8 @@ jobs:
         with:
           bundler-cache: true
 
-      - name: Update Homebrew
-        run: brew update
+      - name: Remove untrusted Homebrew tap
+        run: brew untap wix-incubator/brew || true
 
       - name: Install ImageMagick
         uses: gerlero/brew-install@5e2f576b2a0ede9d50a5b08c0099c70fdda0b0b9 # v1.1.2
