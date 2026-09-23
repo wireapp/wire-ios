@@ -136,25 +136,35 @@ class FilesAppPage: PageModel {
         file.tap()
 
         XCTAssertTrue(
-            shareButton.waitForExistence(timeout: timeout),
-            "Share button didn't show up"
+            shareButton.waitAndTap(timeout: timeout),
+            "Share button didn't show up or wasn't tappable"
         )
-        shareButton.tap()
-
-        if shareToWireApp.waitForExistence(timeout: timeout) {
-            shareToWireApp.tap()
-        }
+        XCTAssertTrue(
+            shareToWireApp.waitAndTap(timeout: timeout),
+            "Wire share extension didn't show up or wasn't tappable"
+        )
 
         return self
     }
 
     @discardableResult
-    func addMessage(_ message: String) throws -> Self {
+    func addMessage(_ message: String) -> Self {
+        let field = messageField
         XCTAssertTrue(
-            messageField.waitForExistence(timeout: timeout),
+            field.waitForExistence(timeout: timeout),
             "Share extension message field didn't show up"
         )
-        try messageField.tapIfKeyboardNotFocused().typeText(message)
+        XCTAssertTrue(
+            field.waitAndTap(timeout: timeout),
+            "Share extension message field wasn't tappable"
+        )
+        field.typeText(message)
+
+        let typedMessage = (field.value as? String) ?? field.label
+        XCTAssertTrue(
+            typedMessage.contains(message),
+            "Share extension message wasn't typed"
+        )
         return self
     }
 
@@ -172,7 +182,7 @@ class FilesAppPage: PageModel {
         )
         conversationToSend.waitAndTap()
 
-        try addMessage(message)
+        addMessage(message)
         XCTAssertTrue(sendButton.waitForExistence(timeout: timeout), "Send button didn't show up")
         sendButton.waitAndTap()
         XCTAssertFalse(

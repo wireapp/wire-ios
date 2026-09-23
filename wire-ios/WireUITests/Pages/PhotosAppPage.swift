@@ -138,19 +138,35 @@ class PhotosAppPage: PageModel {
 
     @discardableResult
     func shareImageToWire() throws -> PhotosAppPage {
-        shareButton.waitAndTap()
-        XCTAssertTrue(shareToWireApp.waitForExistence(timeout: timeout))
-        shareToWireApp.tap()
+        XCTAssertTrue(
+            shareButton.waitAndTap(timeout: timeout),
+            "Share button didn't show up or wasn't tappable"
+        )
+        XCTAssertTrue(
+            shareToWireApp.waitAndTap(timeout: timeout),
+            "Wire share extension didn't show up or wasn't tappable"
+        )
         return self
     }
 
     @discardableResult
-    func addMessage(_ message: String) throws -> PhotosAppPage {
+    func addMessage(_ message: String) -> PhotosAppPage {
+        let field = messageField
         XCTAssertTrue(
-            messageField.waitForExistence(timeout: timeout),
+            field.waitForExistence(timeout: timeout),
             "Share extension message field didn't show up"
         )
-        try messageField.tapIfKeyboardNotFocused().typeText(message)
+        XCTAssertTrue(
+            field.waitAndTap(timeout: timeout),
+            "Share extension message field wasn't tappable"
+        )
+        field.typeText(message)
+
+        let typedMessage = (field.value as? String) ?? field.label
+        XCTAssertTrue(
+            typedMessage.contains(message),
+            "Share extension message wasn't typed"
+        )
         return self
     }
 
@@ -168,7 +184,7 @@ class PhotosAppPage: PageModel {
             "Tap to chooseConversation, didn't pass"
         )
         conversationToSend.waitAndTap()
-        try addMessage(message)
+        addMessage(message)
         sendButton.waitAndTap()
 
         XCTAssertFalse(
