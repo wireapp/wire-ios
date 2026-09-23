@@ -285,7 +285,7 @@ jobs:
             const dateTitle = `*🚀 iOS Release Status — ${new Date().toDateString()}*`;
 
             // Edge
-            const edgeLines = [dateTitle, ''];
+            const edgeLines = [];
             edgeLines.push(`*🟢 Edge — ${releaseLink(edgeJira, edgeName)}*  _(develop)_`);
             edgeLines.push(`  • ${driverLabel(edgeJira?.driver)}`);
             if (daysToEdge != null) {
@@ -304,7 +304,7 @@ jobs:
             }
 
             // Beta
-            const betaLines = [dateTitle, ''];
+            const betaLines = [];
             betaLines.push(`*🔵 Beta — ${releaseLink(betaJira, betaName)}*  _(\`${betaBranch}\`)_`);
             betaLines.push(`  • ${driverLabel(betaJira?.driver)}`);
             if (daysToBeta != null) {
@@ -320,7 +320,7 @@ jobs:
             }
 
             // Prod
-            const prodLines = [dateTitle, ''];
+            const prodLines = [];
             prodLines.push(`*⚪ Prod — ${releaseLink(prodJira, prodName)}*  _(\`${prodTag}\`)_`);
             prodLines.push(`  • ${driverLabel(prodJira?.driver)}`);
             if (daysSinceProd != null) {
@@ -337,7 +337,7 @@ jobs:
             // LTS C Builds (optional)
             let ltsLines = null;
             if (lts) {
-              ltsLines = [dateTitle, ''];
+              ltsLines = [];
               ltsLines.push(`*⬜ LTS C Builds - ${releaseLink(lts.ltsJira, lts.ltsName)} (\`${lts.ltsBranch}\`)*`);
               ltsLines.push(`  • ${driverLabel(lts.ltsJira?.driver)}`);
               if (lts.daysToLts != null) {
@@ -355,7 +355,7 @@ jobs:
             // GOV Builds (optional)
             let govLines = null;
             if (gov) {
-              govLines = [dateTitle, ''];
+              govLines = [];
               govLines.push(`*⬛ GOV Builds - ${releaseLink(gov.govJira, gov.govName)} (\`${gov.govBranch}\`)*`);
               govLines.push(`  • ${driverLabel(gov.govJira?.driver)}`);
               if (gov.daysToGov != null) {
@@ -377,6 +377,7 @@ jobs:
             const govMsg  = govLines ? govLines.join('\n') : '';
 
             // LTS/GOV are '' when their vars aren't configured — their post steps are skipped.
+            core.setOutput('date', dateTitle);
             core.setOutput('edge', edgeMsg);
             core.setOutput('beta', betaMsg);
             core.setOutput('prod', prodMsg);
@@ -384,8 +385,17 @@ jobs:
             core.setOutput('gov', govMsg);
 
             await core.summary
-              .addRaw([edgeMsg, betaMsg, prodMsg, ltsMsg, govMsg].filter(Boolean).join('\n\n'))
+              .addRaw([dateTitle, edgeMsg, betaMsg, prodMsg, ltsMsg, govMsg].filter(Boolean).join('\n\n'))
               .write();
+
+      - name: Post Date to Wire
+        if: ${{ env.HAS_SLACK_WEBHOOK == 'true' }}
+        uses: ./.github/actions/notify-wire
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_RELEASE_WEBHOOK }}
+        with:
+          notify: custom
+          text: ${{ steps.build.outputs.date }}
 
       - name: Post Edge to Wire
         if: ${{ env.HAS_SLACK_WEBHOOK == 'true' }}
