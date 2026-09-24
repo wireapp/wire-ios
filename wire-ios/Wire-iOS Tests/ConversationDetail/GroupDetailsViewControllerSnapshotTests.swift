@@ -355,7 +355,6 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
 
     func testWireDriveEnabled_Drive_Permissions_Flag_Disabled() throws {
         // GIVEN
-        DeveloperFlag.enableDrivePermissions.enable(false)
         setSelfUserInTeam()
         mockSelfUser.teamRole = .admin
         mockSelfUser.canModifyEphemeralSettingsInConversation = true
@@ -382,8 +381,6 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
 
     func testWireDriveEnabled() throws {
         // GIVEN
-        DeveloperFlag.enableDrivePermissions.enable(true)
-        defer { DeveloperFlag.enableDrivePermissions.enable(false) }
         setSelfUserInTeam()
         mockSelfUser.teamRole = .admin
         mockSelfUser.canModifyEphemeralSettingsInConversation = true

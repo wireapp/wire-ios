@@ -175,7 +175,7 @@ final class ConversationInputBarViewController: UIViewController,
 
     private var showDriveViewerBanner: Bool {
         conversation.isWireDriveEnabled && userSession.selfUser
-            .isGuest(in: conversation) && DeveloperFlag.enableDrivePermissions.isOn
+            .isGuest(in: conversation)
     }
 
     private var shouldShowDriveViewerBanner: Bool {
@@ -419,16 +419,13 @@ final class ConversationInputBarViewController: UIViewController,
             self.typingObserverToken = conversation.addTypingObserver(self)
         }
 
-        // TODO: [WPB-25941] Remove developer flag when feature is complete
-        if DeveloperFlag.enableDrivePermissions.isOn {
-            if conversation.isWireDriveEnabled, !conversation.isTeamConversation {
-                [photoButton, videoButton, sketchButton, uploadFileButton].forEach {
-                    $0.isEnabled = false
-                    $0.setBackgroundImageColor(
-                        ColorTheme.Buttons.Secondary.disabled,
-                        for: .disabled
-                    )
-                }
+        if conversation.isWireDriveEnabled, !conversation.isTeamConversation {
+            [photoButton, videoButton, sketchButton, uploadFileButton].forEach {
+                $0.isEnabled = false
+                $0.setBackgroundImageColor(
+                    ColorTheme.Buttons.Secondary.disabled,
+                    for: .disabled
+                )
             }
         }
 

@@ -196,9 +196,7 @@ final class GroupOptionsSectionController: GroupDetailsSectionController {
         case .channelHistoryDepth:
             delegate?.presentChannelHistoryOptions(animated: true)
         case .sharedDrive:
-            if DeveloperFlag.enableDrivePermissions.isOn {
-                delegate?.presentSharedDriveOptions(animated: true)
-            }
+            delegate?.presentSharedDriveOptions(animated: true)
         }
 
     }
@@ -211,7 +209,7 @@ final class GroupOptionsSectionController: GroupDetailsSectionController {
         referenceSizeForFooterInSection section: Int
     ) -> CGSize {
 
-        guard conversation.isWireDriveEnabled, !DeveloperFlag.enableDrivePermissions.isOn else {
+        guard conversation.isWireDriveEnabled else {
             return .zero
         }
 
