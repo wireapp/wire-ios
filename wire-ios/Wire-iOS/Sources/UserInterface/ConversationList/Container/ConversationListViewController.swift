@@ -309,6 +309,14 @@ final class ConversationListViewController: UIViewController {
         .portrait
     }
 
+    override var preferredFocusEnvironments: [any UIFocusEnvironment] {
+        guard navigationItem.searchController?.searchBar.searchTextField.isFirstResponder == true else {
+            return super.preferredFocusEnvironments
+        }
+
+        return [listContentController.collectionView] + super.preferredFocusEnvironments
+    }
+
     // MARK: - Setup UI
 
     private func setupObservers() {
