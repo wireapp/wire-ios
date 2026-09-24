@@ -42,11 +42,6 @@ package protocol WireDriveDirectUploadTrackerProtocol: AnyObject {
 
     func publisher(folderPath: String) -> AnyPublisher<[WireDriveDirectUploadItem], Never>
 
-    /// Emits how many uploads are currently being resolved (e.g. exported from the photo library)
-    /// for exactly the given folder.
-
-    func processingCountPublisher(folderPath: String) -> AnyPublisher<Int, Never>
-
     // MARK: - Writing
 
     /// Replaces the tracked set outright, dropping anything not present in `items`.
@@ -64,8 +59,4 @@ package protocol WireDriveDirectUploadTrackerProtocol: AnyObject {
     /// Empties the tracked set.
 
     func removeAll()
-
-    /// Adds `delta` to how many uploads are currently being resolved for `folderPath`.
-
-    func adjustProcessingCount(by delta: Int, folderPath: String)
 }

@@ -32,8 +32,4 @@ package struct WireDriveObserveFolderDirectUploadsUseCase: WireDriveObserveFolde
     package func invoke(folderPath: String) -> AnyPublisher<[WireDriveDirectUploadItem], Never> {
         tracker.publisher(folderPath: folderPath)
     }
-
-    package func processingCount(folderPath: String) -> AnyPublisher<Int, Never> {
-        tracker.processingCountPublisher(folderPath: folderPath)
-    }
 }
