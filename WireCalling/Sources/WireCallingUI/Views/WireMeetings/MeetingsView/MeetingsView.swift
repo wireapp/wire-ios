@@ -163,6 +163,7 @@ struct MeetingsView: View {
         .scrollContentBackground(.hidden)
         .background(ColorTheme.Backgrounds.surface.color)
         .refreshable {
+            await Task.yield()
             await viewModel.loadInitialData()
         }
         .alert(
