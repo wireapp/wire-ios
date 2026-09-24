@@ -621,7 +621,7 @@ struct MeetingsViewModelTests {
         }
 
         for _ in expectedNotificationNames {
-            let change = await iterator.next()
+            let change: Void? = await iterator.next()
             #expect(change != nil)
         }
     }
