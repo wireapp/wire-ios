@@ -8,7 +8,7 @@ Wire iOS is a secure messaging app built as a monorepo (`wire-ios-mono.xcworkspa
 
 ## Agent Workflow
 
-- Before making code changes, discuss the proposed approach and ask for confirmation, unless the user explicitly asks to implement immediately.
+- Implement small, clear, low-risk changes directly when requested. Before making broad, high-risk, multi-file, or still-debatable changes, discuss the proposed approach and ask for confirmation.
 
 ## Prerequisites & Setup
 
