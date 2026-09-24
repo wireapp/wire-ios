@@ -286,11 +286,53 @@ package struct DetermineAuthMethodView: View {
         AVCaptureMetadataOutputObjectsDelegate {
         private var captureSession: AVCaptureSession?
         private var previewLayer: AVCaptureVideoPreviewLayer?
+        private let sessionQueue = DispatchQueue(label: "DeveloperCredentialQRCodeScanner.session")
+        private var didScanQRCode = false
         var onQRCodeScanned: ((String) -> Void)?
 
         override func viewDidLoad() {
             super.viewDidLoad()
+            requestCameraAccess()
+        }
 
+        override func viewDidLayoutSubviews() {
+            super.viewDidLayoutSubviews()
+            previewLayer?.frame = view.bounds
+        }
+
+        override func viewWillDisappear(_ animated: Bool) {
+            super.viewWillDisappear(animated)
+            stopCaptureSession()
+        }
+
+        private func requestCameraAccess() {
+            switch AVCaptureDevice.authorizationStatus(for: .video) {
+            case .authorized:
+                configureCaptureSession()
+            case .notDetermined:
+                AVCaptureDevice.requestAccess(for: .video) { [weak self] isGranted in
+                    DispatchQueue.main.async {
+                        guard let self else { return }
+
+                        if isGranted {
+                            self.configureCaptureSession()
+                        } else {
+                            self.showScannerError(
+                                title: "Camera access needed",
+                                message: "Allow camera access to scan credential QR codes."
+                            )
+                        }
+                    }
+                }
+            default:
+                showScannerError(
+                    title: "Camera access needed",
+                    message: "Allow camera access to scan credential QR codes."
+                )
+            }
+        }
+
+        private func configureCaptureSession() {
             let captureSession = AVCaptureSession()
             self.captureSession = captureSession
 
@@ -299,6 +341,10 @@ package struct DetermineAuthMethodView: View {
                 let videoInput = try? AVCaptureDeviceInput(device: videoCaptureDevice),
                 captureSession.canAddInput(videoInput)
             else {
+                showScannerError(
+                    title: "QR scanner unavailable",
+                    message: "Could not start the camera."
+                )
                 return
             }
 
@@ -306,6 +352,10 @@ package struct DetermineAuthMethodView: View {
 
             let metadataOutput = AVCaptureMetadataOutput()
             guard captureSession.canAddOutput(metadataOutput) else {
+                showScannerError(
+                    title: "QR scanner unavailable",
+                    message: "Could not read QR codes from the camera."
+                )
                 return
             }
 
@@ -319,19 +369,33 @@ package struct DetermineAuthMethodView: View {
             view.layer.addSublayer(previewLayer)
             self.previewLayer = previewLayer
 
-            DispatchQueue.global(qos: .userInitiated).async {
+            startCaptureSession()
+        }
+
+        private func startCaptureSession() {
+            guard let captureSession else { return }
+
+            sessionQueue.async {
+                guard !captureSession.isRunning else { return }
                 captureSession.startRunning()
             }
         }
 
-        override func viewDidLayoutSubviews() {
-            super.viewDidLayoutSubviews()
-            previewLayer?.frame = view.bounds
+        private func stopCaptureSession() {
+            guard let captureSession else { return }
+
+            sessionQueue.async {
+                guard captureSession.isRunning else { return }
+                captureSession.stopRunning()
+            }
         }
 
-        override func viewWillDisappear(_ animated: Bool) {
-            super.viewWillDisappear(animated)
-            captureSession?.stopRunning()
+        private func showScannerError(title: String, message: String) {
+            let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "OK", style: .default) { [weak self] _ in
+                self?.dismiss(animated: true)
+            })
+            present(alert, animated: true)
         }
 
         func metadataOutput(
@@ -339,7 +403,7 @@ package struct DetermineAuthMethodView: View {
             didOutput metadataObjects: [AVMetadataObject],
             from connection: AVCaptureConnection
         ) {
-            captureSession?.stopRunning()
+            guard !didScanQRCode else { return }
 
             guard
                 let readableObject = metadataObjects.first as? AVMetadataMachineReadableCodeObject,
@@ -348,6 +412,8 @@ package struct DetermineAuthMethodView: View {
                 return
             }
 
+            didScanQRCode = true
+            stopCaptureSession()
             onQRCodeScanned?(stringValue)
         }
     }

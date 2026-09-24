@@ -239,6 +239,42 @@ final class DetermineAuthMethodViewModelTests: XCTestCase, DetermineAuthMethodVi
         XCTAssertFalse(router.navigate_Invocations.isEmpty)
     }
 
+    #if DEBUG
+        func test_developerCredentialQRCode_parsesOwnerCredentials() {
+            let payload = """
+            Owner Email: owner@example.com
+            Owner Username: owner123
+            Owner Password: Apple@12345
+            """
+
+            let credentials = DeveloperCredentialQRCode(scannedCode: payload)
+
+            XCTAssertEqual(credentials?.email, "owner@example.com")
+            XCTAssertEqual(credentials?.username, "owner123")
+            XCTAssertEqual(credentials?.password, "Apple@12345")
+        }
+
+        func test_developerCredentialQRCode_parsesMemberCredentials() {
+            let payload = """
+            Member Email: member@example.com
+            Member Username: member123
+            Member Password: Apple@12345
+            """
+
+            let credentials = DeveloperCredentialQRCode(scannedCode: payload)
+
+            XCTAssertEqual(credentials?.email, "member@example.com")
+            XCTAssertEqual(credentials?.username, "member123")
+            XCTAssertEqual(credentials?.password, "Apple@12345")
+        }
+
+        func test_developerCredentialQRCode_rejectsInvalidPayload() {
+            let credentials = DeveloperCredentialQRCode(scannedCode: "Email: member@example.com")
+
+            XCTAssertNil(credentials)
+        }
+    #endif
+
     // MARK: - Helpers
 
     @MainActor

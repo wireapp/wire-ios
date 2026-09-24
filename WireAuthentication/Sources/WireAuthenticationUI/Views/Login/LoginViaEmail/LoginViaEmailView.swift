@@ -104,7 +104,11 @@ package struct LoginViaEmailView: View {
         .presentationDragIndicator(.hidden)
         #if DEBUG
             .task {
-                guard viewModel.shouldSubmitCredentialsOnAppear, !didSubmitDeveloperCredentials else {
+                guard
+                    viewModel.shouldSubmitCredentialsOnAppear,
+                    !didSubmitDeveloperCredentials,
+                    !viewModel.areProxyCredentialsRequired
+                else {
                     return
                 }
 
