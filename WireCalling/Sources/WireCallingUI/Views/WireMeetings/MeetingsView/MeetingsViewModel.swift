@@ -16,9 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-package import WireCallingDomain
 package import Foundation
+package import WireCallingDomain
 package import WireFoundation
+
 import UIKit
 import WireLogging
 

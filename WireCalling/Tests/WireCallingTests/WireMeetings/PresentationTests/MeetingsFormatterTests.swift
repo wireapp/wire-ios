@@ -160,7 +160,7 @@ struct MeetingsFormatterTests {
 
         #expect(formatter.date(date) == "08/09/2026")
 
-        calendar.timeZone = try #require(TimeZone(secondsFromGMT: 7_200))
+        calendar.timeZone = try #require(TimeZone(secondsFromGMT: 7200))
         #expect(formatter.date(date) == "08/09/2026")
 
         formatter.refresh()

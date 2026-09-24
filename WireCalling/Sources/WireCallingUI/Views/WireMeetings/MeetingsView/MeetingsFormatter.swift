@@ -72,9 +72,9 @@ package final class MeetingsFormatter: MeetingsFormatterProtocol {
         let locale = localeProvider()
         let formatters = Self.makeFormatters(locale: locale, calendar: calendar)
         self.calendar = calendar
-        self.dayHeaderDateFormatter = formatters.dayHeaderDateFormatter
-        self.dateFormatter = formatters.dateFormatter
-        self.timeFormatter = formatters.timeFormatter
+        dayHeaderDateFormatter = formatters.dayHeaderDateFormatter
+        dateFormatter = formatters.dateFormatter
+        timeFormatter = formatters.timeFormatter
     }
 
     package func dayHeader(for date: Date, now: Date) -> String {

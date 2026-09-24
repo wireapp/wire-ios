@@ -381,7 +381,7 @@ struct MeetingsViewModelTests {
 
         #expect(grouper.group(occurrences).count == 2)
 
-        calendar.timeZone = try #require(TimeZone(secondsFromGMT: 7_200))
+        calendar.timeZone = try #require(TimeZone(secondsFromGMT: 7200))
         #expect(grouper.group(occurrences).count == 2)
 
         grouper.refresh()
@@ -589,7 +589,7 @@ struct MeetingsViewModelTests {
         let task = Task {
             await viewModel.observeSystemDateTimeChanges(changes)
         }
-        let updatedDate = mockDateProvider.now.addingTimeInterval(3_600)
+        let updatedDate = mockDateProvider.now.addingTimeInterval(3600)
 
         mockDateProvider.now = updatedDate
         continuation.yield(())
