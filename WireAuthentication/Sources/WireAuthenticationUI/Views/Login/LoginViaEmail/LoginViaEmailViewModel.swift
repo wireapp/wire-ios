@@ -50,7 +50,7 @@ package final class LoginViaEmailViewModel: ObservableObject {
     let isEmailPrefilled: Bool
     let canCreateAccount: Bool
     #if DEBUG
-    let shouldSubmitCredentialsOnAppear: Bool
+        let shouldSubmitCredentialsOnAppear: Bool
     #endif
 
     var areProxyCredentialsRequired: Bool {
@@ -118,19 +118,19 @@ package final class LoginViaEmailViewModel: ObservableObject {
         self.didDetectDomainConflict = didDetectDomainConflict
 
         #if DEBUG
-        if let email, let credentials = PendingDeveloperCredentialsStore.consume(email: email) {
-            self.email = credentials.email
-            self.password = credentials.password
-            self.isEmailPrefilled = true
-            self.shouldSubmitCredentialsOnAppear = true
-        } else {
+            if let email, let credentials = PendingDeveloperCredentialsStore.consume(email: email) {
+                self.email = credentials.email
+                self.password = credentials.password
+                self.isEmailPrefilled = true
+                self.shouldSubmitCredentialsOnAppear = true
+            } else {
+                self.email = email ?? ""
+                self.isEmailPrefilled = email != nil
+                self.shouldSubmitCredentialsOnAppear = false
+            }
+        #else
             self.email = email ?? ""
             self.isEmailPrefilled = email != nil
-            self.shouldSubmitCredentialsOnAppear = false
-        }
-        #else
-        self.email = email ?? ""
-        self.isEmailPrefilled = email != nil
         #endif
     }
 

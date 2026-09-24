@@ -47,11 +47,11 @@ final class AuthenticationStartMissingUsernameErrorHandler: AuthenticationEventH
         }
 
         #if DEBUG
-        if let username = UserDefaults.standard.consumePendingDeveloperCredentialUsername(
-            for: statusProvider?.selfUser?.emailAddress
-        ) {
-            return [.showLoadingView, .startPostLoginFlow, .setUsername(username)]
-        }
+            if let username = UserDefaults.standard.consumePendingDeveloperCredentialUsername(
+                for: statusProvider?.selfUser?.emailAddress
+            ) {
+                return [.showLoadingView, .startPostLoginFlow, .setUsername(username)]
+            }
         #endif
 
         return [.startPostLoginFlow, .transition(.addUsername, mode: .reset)]

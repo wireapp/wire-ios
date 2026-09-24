@@ -46,7 +46,7 @@ package struct LoginViaEmailView: View {
 
     @StateObject private var viewModel: LoginViaEmailViewModel
     #if DEBUG
-    @State private var didSubmitDeveloperCredentials = false
+        @State private var didSubmitDeveloperCredentials = false
     #endif
 
     private typealias Strings = L10n.Localizable

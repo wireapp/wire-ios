@@ -17,11 +17,11 @@
 //
 
 #if DEBUG
-import AVFoundation
+    import AVFoundation
 #endif
 import SwiftUI
 #if DEBUG
-import UIKit
+    import UIKit
 #endif
 import WireAuthenticationAPI
 import WireDesign
@@ -56,7 +56,7 @@ package struct DetermineAuthMethodView: View {
 
     @StateObject var viewModel: DetermineAuthMethodViewModel
     #if DEBUG
-    @State private var isQRCodeScannerPresented = false
+        @State private var isQRCodeScannerPresented = false
     #endif
 
     private typealias Strings = L10n.Localizable.Authentication
@@ -100,15 +100,15 @@ package struct DetermineAuthMethodView: View {
         }
         #if DEBUG
         .sheet(isPresented: $isQRCodeScannerPresented) {
-            DeveloperCredentialQRCodeScannerView { scannedCode in
-                isQRCodeScannerPresented = false
-                viewModel.submitDeveloperCredentialQRCode(scannedCode)
+                DeveloperCredentialQRCodeScannerView { scannedCode in
+                    isQRCodeScannerPresented = false
+                    viewModel.submitDeveloperCredentialQRCode(scannedCode)
+                }
             }
-        }
         #endif
-        .interactiveDismissDisabled()
-        .background(ColorTheme.Backgrounds.surface.color)
-        .presentationDragIndicator(.hidden)
+            .interactiveDismissDisabled()
+            .background(ColorTheme.Backgrounds.surface.color)
+            .presentationDragIndicator(.hidden)
     }
 
     // MARK: - Views
@@ -138,25 +138,25 @@ package struct DetermineAuthMethodView: View {
     @ViewBuilder private var inputField: some View {
         VStack(alignment: .leading, spacing: 8) {
             #if DEBUG
-            ZStack(alignment: .bottomTrailing) {
-                inputTextField
+                ZStack(alignment: .bottomTrailing) {
+                    inputTextField
 
-                if viewModel.isOnPremiseBackend {
-                    Button {
-                        isQRCodeScannerPresented = true
-                    } label: {
-                        Image(systemName: "qrcode.viewfinder")
-                            .font(.system(size: 22, weight: .medium))
-                            .frame(width: 44, height: 44)
-                            .padding(.trailing, 4)
+                    if viewModel.isOnPremiseBackend {
+                        Button {
+                            isQRCodeScannerPresented = true
+                        } label: {
+                            Image(systemName: "qrcode.viewfinder")
+                                .font(.system(size: 22, weight: .medium))
+                                .frame(width: 44, height: 44)
+                                .padding(.trailing, 4)
+                        }
+                        .buttonStyle(.plain)
+                        .contentShape(Rectangle())
+                        .accessibilityLabel("Scan credentials QR code")
                     }
-                    .buttonStyle(.plain)
-                    .contentShape(Rectangle())
-                    .accessibilityLabel("Scan credentials QR code")
                 }
-            }
             #else
-            inputTextField
+                inputTextField
             #endif
         }
     }
@@ -267,84 +267,88 @@ package struct DetermineAuthMethodView: View {
 }
 
 #if DEBUG
-private struct DeveloperCredentialQRCodeScannerView: UIViewControllerRepresentable {
-    let onQRCodeScanned: (String) -> Void
+    private struct DeveloperCredentialQRCodeScannerView: UIViewControllerRepresentable {
+        let onQRCodeScanned: (String) -> Void
 
-    func makeUIViewController(context: Context) -> DeveloperCredentialQRCodeScannerViewController {
-        let viewController = DeveloperCredentialQRCodeScannerViewController()
-        viewController.onQRCodeScanned = onQRCodeScanned
-        return viewController
-    }
-
-    func updateUIViewController(_ uiViewController: DeveloperCredentialQRCodeScannerViewController, context: Context) {}
-}
-
-private final class DeveloperCredentialQRCodeScannerViewController: UIViewController, AVCaptureMetadataOutputObjectsDelegate {
-    private var captureSession: AVCaptureSession?
-    private var previewLayer: AVCaptureVideoPreviewLayer?
-    var onQRCodeScanned: ((String) -> Void)?
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        let captureSession = AVCaptureSession()
-        self.captureSession = captureSession
-
-        guard
-            let videoCaptureDevice = AVCaptureDevice.default(for: .video),
-            let videoInput = try? AVCaptureDeviceInput(device: videoCaptureDevice),
-            captureSession.canAddInput(videoInput)
-        else {
-            return
+        func makeUIViewController(context: Context) -> DeveloperCredentialQRCodeScannerViewController {
+            let viewController = DeveloperCredentialQRCodeScannerViewController()
+            viewController.onQRCodeScanned = onQRCodeScanned
+            return viewController
         }
 
-        captureSession.addInput(videoInput)
+        func updateUIViewController(
+            _ uiViewController: DeveloperCredentialQRCodeScannerViewController,
+            context: Context
+        ) {}
+    }
 
-        let metadataOutput = AVCaptureMetadataOutput()
-        guard captureSession.canAddOutput(metadataOutput) else {
-            return
+    private final class DeveloperCredentialQRCodeScannerViewController: UIViewController,
+        AVCaptureMetadataOutputObjectsDelegate {
+        private var captureSession: AVCaptureSession?
+        private var previewLayer: AVCaptureVideoPreviewLayer?
+        var onQRCodeScanned: ((String) -> Void)?
+
+        override func viewDidLoad() {
+            super.viewDidLoad()
+
+            let captureSession = AVCaptureSession()
+            self.captureSession = captureSession
+
+            guard
+                let videoCaptureDevice = AVCaptureDevice.default(for: .video),
+                let videoInput = try? AVCaptureDeviceInput(device: videoCaptureDevice),
+                captureSession.canAddInput(videoInput)
+            else {
+                return
+            }
+
+            captureSession.addInput(videoInput)
+
+            let metadataOutput = AVCaptureMetadataOutput()
+            guard captureSession.canAddOutput(metadataOutput) else {
+                return
+            }
+
+            captureSession.addOutput(metadataOutput)
+            metadataOutput.setMetadataObjectsDelegate(self, queue: DispatchQueue.main)
+            metadataOutput.metadataObjectTypes = [.qr]
+
+            let previewLayer = AVCaptureVideoPreviewLayer(session: captureSession)
+            previewLayer.frame = view.bounds
+            previewLayer.videoGravity = .resizeAspectFill
+            view.layer.addSublayer(previewLayer)
+            self.previewLayer = previewLayer
+
+            DispatchQueue.global(qos: .userInitiated).async {
+                captureSession.startRunning()
+            }
         }
 
-        captureSession.addOutput(metadataOutput)
-        metadataOutput.setMetadataObjectsDelegate(self, queue: DispatchQueue.main)
-        metadataOutput.metadataObjectTypes = [.qr]
-
-        let previewLayer = AVCaptureVideoPreviewLayer(session: captureSession)
-        previewLayer.frame = view.bounds
-        previewLayer.videoGravity = .resizeAspectFill
-        view.layer.addSublayer(previewLayer)
-        self.previewLayer = previewLayer
-
-        DispatchQueue.global(qos: .userInitiated).async {
-            captureSession.startRunning()
-        }
-    }
-
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        previewLayer?.frame = view.bounds
-    }
-
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        captureSession?.stopRunning()
-    }
-
-    func metadataOutput(
-        _ output: AVCaptureMetadataOutput,
-        didOutput metadataObjects: [AVMetadataObject],
-        from connection: AVCaptureConnection
-    ) {
-        captureSession?.stopRunning()
-
-        guard
-            let readableObject = metadataObjects.first as? AVMetadataMachineReadableCodeObject,
-            let stringValue = readableObject.stringValue
-        else {
-            return
+        override func viewDidLayoutSubviews() {
+            super.viewDidLayoutSubviews()
+            previewLayer?.frame = view.bounds
         }
 
-        onQRCodeScanned?(stringValue)
+        override func viewWillDisappear(_ animated: Bool) {
+            super.viewWillDisappear(animated)
+            captureSession?.stopRunning()
+        }
+
+        func metadataOutput(
+            _ output: AVCaptureMetadataOutput,
+            didOutput metadataObjects: [AVMetadataObject],
+            from connection: AVCaptureConnection
+        ) {
+            captureSession?.stopRunning()
+
+            guard
+                let readableObject = metadataObjects.first as? AVMetadataMachineReadableCodeObject,
+                let stringValue = readableObject.stringValue
+            else {
+                return
+            }
+
+            onQRCodeScanned?(stringValue)
+        }
     }
-}
 #endif
