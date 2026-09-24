@@ -173,16 +173,6 @@ package final class WireDriveDirectUploadManager:
         tracker.removeAll()
     }
 
-    // MARK: - Processing media
-
-    package func beginProcessingMedia(destinationFolderPath: String) async {
-        tracker.adjustProcessingCount(by: 1, folderPath: destinationFolderPath)
-    }
-
-    package func endProcessingMedia(destinationFolderPath: String) async {
-        tracker.adjustProcessingCount(by: -1, folderPath: destinationFolderPath)
-    }
-
     // MARK: - Enqueuing
 
     @discardableResult
