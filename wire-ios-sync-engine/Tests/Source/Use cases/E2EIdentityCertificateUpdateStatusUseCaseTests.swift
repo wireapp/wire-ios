@@ -215,9 +215,21 @@ final class E2EIdentityCertificateUpdateStatusUseCaseTests: XCTestCase {
         XCTAssertEqual(result, .block)
     }
 
+    func testThatItReturnsNoAction_WhenCertificateWasNeverActivated() async throws {
+        // Given
+        update(certificate: certificate(with: -.oneDay, certificateStatus: .notActivated))
+
+        // When
+        let result = try await sut.invoke()
+
+        // Then
+        XCTAssertEqual(result, .noAction)
+    }
+
     private func certificate(
         with expiry: TimeInterval,
-        serverStoragePeriod: TimeInterval = 0
+        serverStoragePeriod: TimeInterval = 0,
+        certificateStatus: E2EIdentityCertificateStatus = .valid
     ) -> E2eIdentityCertificate {
         E2eIdentityCertificate(
             clientId: "sdfsdfsdfs",
@@ -225,7 +237,7 @@ final class E2EIdentityCertificateUpdateStatusUseCaseTests: XCTestCase {
             mlsThumbprint: "ABCDEFGHIJKLMNOPQRSTUVWX",
             notValidBefore: Date.now,
             expiryDate: Date.now + expiry,
-            certificateStatus: .valid,
+            certificateStatus: certificateStatus,
             serialNumber: .mockSerialNumber,
             serverStoragePeriod: serverStoragePeriod,
             randomPeriod: 0
