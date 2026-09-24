@@ -96,8 +96,6 @@ package final class MeetingsViewModel {
     private let deleteMeetingUseCase: any DeleteMeetingUseCaseProtocol
     private let selfUserID: UUID
     private let observeAttendedMeetingsUseCase: (any ObserveAttendedMeetingsUseCaseProtocol)?
-    private let minimumRefreshDuration: Duration
-    private var loadingContinuations: [CheckedContinuation<Void, Never>] = []
 
     private var futureOffset: Int = 0
     private let initialPageSize: Int = 20
@@ -112,8 +110,7 @@ package final class MeetingsViewModel {
         observeMeetingChangesUseCase: any ObserveMeetingChangesUseCaseProtocol,
         deleteMeetingUseCase: any DeleteMeetingUseCaseProtocol,
         selfUserID: UUID,
-        observeAttendedMeetingsUseCase: (any ObserveAttendedMeetingsUseCaseProtocol)? = nil,
-        minimumRefreshDuration: Duration = .milliseconds(700)
+        observeAttendedMeetingsUseCase: (any ObserveAttendedMeetingsUseCaseProtocol)? = nil
     ) {
         self.currentDateProvider = currentDateProvider
         self.formatter = formatter
@@ -122,7 +119,6 @@ package final class MeetingsViewModel {
         self.deleteMeetingUseCase = deleteMeetingUseCase
         self.selfUserID = selfUserID
         self.observeAttendedMeetingsUseCase = observeAttendedMeetingsUseCase
-        self.minimumRefreshDuration = minimumRefreshDuration
         self.currentDate = currentDateProvider.now
     }
 
@@ -133,14 +129,10 @@ package final class MeetingsViewModel {
     }
 
     func loadInitialData() async {
-        await loadInitialData(waitingForActiveLoad: false)
-    }
-
-    func refreshData() async {
-        async let minimumDuration: Void = waitForMinimumRefreshDuration()
-
-        await loadInitialData(waitingForActiveLoad: true)
-        await minimumDuration
+        guard !isLoading else { return }
+        futureOffset = 0
+        hasMore = false
+        await load(pageSize: initialPageSize)
     }
 
     func loadMoreIfNeeded() async {
@@ -258,40 +250,6 @@ package final class MeetingsViewModel {
 
     // MARK: - Private Methods
 
-    private func loadInitialData(waitingForActiveLoad: Bool) async {
-        if isLoading {
-            guard waitingForActiveLoad else { return }
-            await waitForActiveLoadToFinish()
-            guard !Task.isCancelled else { return }
-            await loadInitialData(waitingForActiveLoad: true)
-            return
-        }
-
-        futureOffset = 0
-        hasMore = false
-        await load(pageSize: initialPageSize)
-    }
-
-    private func waitForMinimumRefreshDuration() async {
-        guard minimumRefreshDuration > .zero else { return }
-
-        do {
-            try await Task.sleep(for: minimumRefreshDuration)
-        } catch {}
-    }
-
-    private func waitForActiveLoadToFinish() async {
-        await withCheckedContinuation { continuation in
-            loadingContinuations.append(continuation)
-        }
-    }
-
-    private func finishActiveLoad() {
-        let continuations = loadingContinuations
-        loadingContinuations.removeAll()
-        continuations.forEach { $0.resume() }
-    }
-
     /// Re-fetches everything that is currently loaded in a single page, because a
     /// change can insert or remove meetings anywhere in the loaded range.
     private func reloadLoadedMeetings() async {
@@ -304,10 +262,7 @@ package final class MeetingsViewModel {
     private func load(pageSize: Int) async {
         isLoading = true
         hasLoadError = false
-        defer {
-            isLoading = false
-            finishActiveLoad()
-        }
+        defer { isLoading = false }
 
         do {
             let result = try await upcomingMeetingsUseCase.invoke(pageSize: pageSize, offset: futureOffset)
