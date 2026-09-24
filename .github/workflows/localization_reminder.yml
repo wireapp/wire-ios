@@ -5,6 +5,7 @@ on:
     types: [opened, synchronize, reopened]
     paths:
       - '**/en.lproj/*.strings'
+      - '**/Base.lproj/*.strings'
       - '**/*.xcstrings'
 
 concurrency:
@@ -15,6 +16,7 @@ jobs:
   check-localizations:
     runs-on: ubuntu-24.04
     permissions:
+      contents: read
       pull-requests: write
     steps:
       - name: Checkout repository
@@ -34,32 +36,53 @@ jobs:
 
           NEW_KEYS=""
 
-          # .strings files: extract "key" = "value" from added lines in en.lproj
+          # .strings files: report keys whose name doesn't exist in the base
+          # file yet (a value-only edit of an existing key also shows up as a
+          # "+" diff line, so we compare key sets rather than diff output).
           CHANGED_STRINGS=$(git diff --name-only "$BASE_SHA" "$HEAD_SHA" \
-            | grep 'en\.lproj/.*\.strings$' \
+            | grep -E '(en|Base)\.lproj/.*\.strings$' \
             | grep -v 'vendor/' \
-            | grep -v 'Carthage/')
+            | grep -v 'Carthage/') || true
 
           if [ -n "$CHANGED_STRINGS" ]; then
-            KEYS=$(git diff "$BASE_SHA" "$HEAD_SHA" -- $CHANGED_STRINGS \
-              | grep '^+' | grep -v '^+++' \
-              | grep -E '^\+"[^"]+" *= *"' \
-              | sed 's/^+"\([^"]*\)" *= *"\(.*\)";.*/`\1` = "\2"/')
-            NEW_KEYS="$KEYS"
+            while IFS= read -r file; do
+              [ -z "$file" ] && continue
+              BASE_KEYS=$(git show "$BASE_SHA:$file" 2>/dev/null \
+                | grep -oE '^"[^"]+" *=' \
+                | sed -E 's/^"([^"]*)".*/\1/') || true
+              HEAD_LINES=$(git show "$HEAD_SHA:$file" 2>/dev/null \
+                | grep -E '^"[^"]+" *= *"') || true
+              [ -z "$HEAD_LINES" ] && continue
+
+              while IFS= read -r line; do
+                [ -z "$line" ] && continue
+                key=$(echo "$line" | sed -E 's/^"([^"]*)".*/\1/')
+                if ! printf '%s\n' "$BASE_KEYS" | grep -qxF "$key"; then
+                  value=$(echo "$line" | sed -E 's/^"[^"]*" *= *"(.*)";.*/\1/')
+                  ENTRY="\`$key\` = \"$value\""
+                  if [ -n "$NEW_KEYS" ]; then
+                    NEW_KEYS="$NEW_KEYS"$'\n'"$ENTRY"
+                  else
+                    NEW_KEYS="$ENTRY"
+                  fi
+                fi
+              done <<< "$HEAD_LINES"
+            done <<< "$CHANGED_STRINGS"
           fi
 
-          # .xcstrings files: extract key + English value using jq on the current file
+          # .xcstrings files: a genuinely new key always adds a new top-level
+          # "key" : { line, so this stays accurate even for value-only edits.
           CHANGED_XCSTRINGS=$(git diff --name-only "$BASE_SHA" "$HEAD_SHA" \
             | grep '\.xcstrings$' \
             | grep -v 'vendor/' \
-            | grep -v 'Carthage/')
+            | grep -v 'Carthage/') || true
 
           if [ -n "$CHANGED_XCSTRINGS" ]; then
             for file in $CHANGED_XCSTRINGS; do
               NEW_IN_FILE=$(git diff "$BASE_SHA" "$HEAD_SHA" -- "$file" \
                 | grep '^+' | grep -v '^+++' \
                 | grep -E '^\+    "[^"]+" : \{' \
-                | sed 's/^+    "\([^"]*\)".*/\1/')
+                | sed 's/^+    "\([^"]*\)".*/\1/') || true
 
               while IFS= read -r key; do
                 [ -z "$key" ] && continue
@@ -100,13 +123,35 @@ jobs:
           fi
 
       - name: Post localization reminder
-        if: steps.check.outputs.has_new_strings == 'true'
         uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
         env:
           NEW_KEYS: ${{ steps.check.outputs.new_keys }}
+          HAS_NEW_STRINGS: ${{ steps.check.outputs.has_new_strings }}
         with:
           script: |
             const MARKER = '<!-- localization-reminder -->'
+            const hasNewStrings = process.env.HAS_NEW_STRINGS === 'true'
+
+            const comments = await github.paginate(github.rest.issues.listComments, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            })
+            const existing = comments.find(c => c.body.includes(MARKER))
+
+            if (!hasNewStrings) {
+              // A follow-up push may have removed the strings that triggered
+              // the original reminder — drop the now-stale comment.
+              if (existing) {
+                await github.rest.issues.deleteComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  comment_id: existing.id,
+                })
+              }
+              return
+            }
+
             const keys = process.env.NEW_KEYS.split('\n').filter(Boolean)
             const bulletList = keys.map(k => `- ${k}`).join('\n')
             const body = [
@@ -118,13 +163,6 @@ jobs:
               bulletList,
             ].join('\n')
 
-            const { data: comments } = await github.rest.issues.listComments({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.issue.number,
-            })
-
-            const existing = comments.find(c => c.body.includes(MARKER))
             if (existing) {
               await github.rest.issues.updateComment({
                 owner: context.repo.owner,
