@@ -52,7 +52,8 @@ struct MeetingsViewModelTests {
             observeMeetingChangesUseCase: observeMeetingChangesUseCase,
             deleteMeetingUseCase: deleteMeetingUseCase,
             selfUserID: Scaffolding.selfUserID,
-            observeAttendedMeetingsUseCase: observeAttendedMeetingsUseCase
+            observeAttendedMeetingsUseCase: observeAttendedMeetingsUseCase,
+            minimumRefreshDuration: .zero
         )
     }
 
@@ -121,6 +122,53 @@ struct MeetingsViewModelTests {
         #expect(!viewModel.hasLoadError)
         #expect(upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsReceivedInvocations.last?
             .offset == 0)
+    }
+
+    @Test("refreshData waits for an active load before reloading")
+    func refreshData_waitsForActiveLoadBeforeReloading() async {
+        // Given
+        let initial = Meeting.fixture(title: "Initial", start: mockDateProvider.now.addingTimeInterval(3600))
+        let refreshed = Meeting.fixture(title: "Refreshed", start: mockDateProvider.now.addingTimeInterval(7200))
+        let (firstFetchStarted, firstFetchStartedContinuation) = AsyncStream<Void>.makeStream()
+        let (finishFirstFetch, finishFirstFetchContinuation) = AsyncStream<Void>.makeStream()
+        var invocationCount = 0
+
+        upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsClosure = { _, _ in
+            invocationCount += 1
+
+            if invocationCount == 1 {
+                firstFetchStartedContinuation.yield(())
+                firstFetchStartedContinuation.finish()
+
+                for await _ in finishFirstFetch {
+                    break
+                }
+
+                return PaginatedMeetings(meetings: [initial], hasMore: false, nextOffset: 1)
+            } else {
+                return PaginatedMeetings(meetings: [refreshed], hasMore: false, nextOffset: 1)
+            }
+        }
+
+        let initialLoad = Task { await viewModel.loadInitialData() }
+        var firstFetchStartedIterator = firstFetchStarted.makeAsyncIterator()
+        _ = await firstFetchStartedIterator.next()
+
+        // When
+        let refresh = Task { await viewModel.refreshData() }
+        await Task.yield()
+
+        // Then — refreshData waits instead of starting an overlapping fetch.
+        #expect(invocationCount == 1)
+
+        finishFirstFetchContinuation.yield(())
+        finishFirstFetchContinuation.finish()
+
+        await initialLoad.value
+        await refresh.value
+
+        #expect(invocationCount == 2)
+        #expect(viewModel.loadedMeetings == [refreshed])
     }
 
     // MARK: - loadMoreIfNeeded
