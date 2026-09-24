@@ -707,6 +707,11 @@ public enum Locators {
             case deleteForMeButton = "Delete Meeting for Me Button"
             case joinButton = "Join Button"
         }
+    }
 
+    public enum SessionExpiredPage: String {
+
+        case alertTitle = "Your session expired"
+        case okButton = "OK"
     }
 }
