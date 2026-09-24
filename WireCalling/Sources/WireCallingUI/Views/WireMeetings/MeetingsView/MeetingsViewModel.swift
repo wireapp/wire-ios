@@ -19,10 +19,7 @@
 package import WireCallingDomain
 package import Foundation
 package import WireFoundation
-
-#if canImport(UIKit)
 import UIKit
-#endif
 import WireLogging
 
 @Observable
@@ -305,21 +302,14 @@ package final class MeetingsViewModel {
 private extension MeetingsViewModel {
 
     static var systemDateTimeChangeNotificationNames: [Notification.Name] {
-        var names: [Notification.Name] = [
+        [
             .NSCalendarDayChanged,
             .NSSystemClockDidChange,
             .NSSystemTimeZoneDidChange,
-            NSLocale.currentLocaleDidChangeNotification
-        ]
-
-        #if canImport(UIKit)
-        names.append(contentsOf: [
+            NSLocale.currentLocaleDidChangeNotification,
             UIApplication.didBecomeActiveNotification,
             UIApplication.significantTimeChangeNotification
-        ])
-        #endif
-
-        return names
+        ]
     }
 
     static func systemDateTimeChanges(

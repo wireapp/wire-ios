@@ -19,6 +19,7 @@
 package import Foundation
 
 package protocol MeetingsFormatterProtocol {
+    /// Refreshes calendar- and locale-dependent formatting state.
     func refresh()
     func dayHeader(for date: Date, now: Date) -> String
     func date(_ date: Date) -> String
