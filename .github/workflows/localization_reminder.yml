@@ -24,6 +24,10 @@ jobs:
 
       - name: Collect new string keys and English values
         id: check
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_AUTHOR: ${{ github.event.pull_request.user.login }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
         run: |
           BASE_SHA=${{ github.event.pull_request.base.sha }}
           HEAD_SHA=${{ github.event.pull_request.head.sha }}
@@ -63,8 +67,7 @@ jobs:
                   '.strings[$k].localizations.en.stringUnit.value // "(no English value)"' "$file")
                 ENTRY="\`$key\` = \"$EN_VALUE\""
                 if [ -n "$NEW_KEYS" ]; then
-                  NEW_KEYS="$NEW_KEYS
-$ENTRY"
+                  NEW_KEYS="$NEW_KEYS"$'\n'"$ENTRY"
                 else
                   NEW_KEYS="$ENTRY"
                 fi
@@ -79,6 +82,19 @@ $ENTRY"
               echo "$NEW_KEYS"
               echo EOF
             } >> "$GITHUB_OUTPUT"
+
+            TICKET=$(echo "$PR_TITLE" | grep -oiE 'WPB-[0-9]+' | tr 'a-z' 'A-Z' | head -1 || true)
+            if [ -n "$TICKET" ]; then
+              TICKET_LINE="**Jira ticket:** [$TICKET](https://wearezeta.atlassian.net/browse/$TICKET)"
+            else
+              TICKET_LINE="**Jira ticket:** none found in PR title"
+            fi
+
+            BULLET_LIST=$(echo "$NEW_KEYS" | sed 's/^/- /')
+            MESSAGE=$(printf 'New localization strings added\n\n%s\n\n%s\n**Author:** %s\n**PR:** %s' \
+              "$BULLET_LIST" "$TICKET_LINE" "$PR_AUTHOR" "$PR_URL")
+            MESSAGE_JSON=$(printf '%s' "$MESSAGE" | jq -Rs .)
+            echo "message_json=$MESSAGE_JSON" >> "$GITHUB_OUTPUT"
           else
             echo "has_new_strings=false" >> "$GITHUB_OUTPUT"
           fi
@@ -124,3 +140,12 @@ $ENTRY"
                 body,
               })
             }
+
+      - name: Send Wire notification
+        if: steps.check.outputs.has_new_strings == 'true'
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_LOCALIZATIONS_WEBHOOK }}
+        uses: ./.github/actions/notify-wire
+        with:
+          notify: custom
+          text: ${{ steps.check.outputs.message_json }}
