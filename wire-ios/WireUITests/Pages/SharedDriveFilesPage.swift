@@ -122,8 +122,8 @@ class SharedDriveFilesPage: PageModel {
     }
 
     func createFolder() throws -> FolderPage {
-        moreOptionOnSharedDrive.tap()
-        createFolderButton.tap()
+        moreOptionOnSharedDrive.waitAndTap(timeout: 3)
+        createFolderButton.waitAndTap(timeout: 3)
         return try FolderPage()
     }
 

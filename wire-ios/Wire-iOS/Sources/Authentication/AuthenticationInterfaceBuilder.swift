@@ -351,7 +351,13 @@ final class AuthenticationInterfaceBuilder {
             isAccountAlreadyLoggedIn: { result in
                 guard let sessionManager = SessionManager.shared,
                       let account = sessionManager.accountManager.account(with: result.userID) else { return false }
-                return result.multiIngressIdentityProviderID == nil || sessionManager.isAccountActive(account)
+
+                return AccountAlreadyLoggedInPolicy.isAlreadyLoggedIn(
+                    isAccountActive: sessionManager.isAccountActive(account),
+                    ssoIdpChangeDetectionEnabled: result.ssoIdpChangeDetectionEnabled,
+                    multiIngressIdentityProviderID: result.multiIngressIdentityProviderID,
+                    lastSSOIdentityProviderID: account.lastSSOIdentityProviderID
+                )
             },
             overrideAllowEmailLoginOnly: featureProvider.allowOnlyEmailLogin
         )

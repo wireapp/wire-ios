@@ -17,9 +17,9 @@
 //
 
 package import WireCallingDomain
+package import Foundation
 package import WireFoundation
 
-import Foundation
 import WireLogging
 
 @Observable
@@ -28,11 +28,13 @@ package final class MeetingsViewModel {
 
     private typealias Strings = L10n.Localizable.WireMeetings.List
 
-    private static let currentDateRefreshInterval: Duration = .seconds(20)
-
     private(set) var loadedOccurrences: [MeetingOccurrence] = []
     private(set) var hasMore: Bool = false
+    private(set) var isLoading = false
+    private(set) var hasLoadError = false
+    private(set) var isDeleting = false
     var hasDeleteError = false
+    private var failedMeetingToDelete: Meeting?
 
     package var loadedMeetings: [Meeting] {
         loadedOccurrences.map(\.meeting)
@@ -51,17 +53,53 @@ package final class MeetingsViewModel {
         set { if !newValue { meetingToDelete = nil } }
     }
 
+    private var isDeletingForSelf: Bool {
+        meetingToDelete.map { !isOrganizer($0) } ?? false
+    }
+
+    var deleteConfirmationTitle: String {
+        if isDeletingForSelf {
+            Strings.DeleteForMe.Alert.title
+        } else if meetingToDelete?.recurrence != nil {
+            Strings.DeleteRecurring.Alert.title
+        } else {
+            Strings.Delete.Alert.title
+        }
+    }
+
+    var deleteConfirmationMessage: String {
+        if isDeletingForSelf {
+            Strings.DeleteForMe.Alert.subtitle
+        } else if meetingToDelete?.recurrence != nil {
+            Strings.DeleteRecurring.Alert.subtitle
+        } else {
+            Strings.Delete.Alert.subtitle
+        }
+    }
+
+    var deleteErrorTitle: String {
+        let strings = L10n.Localizable.Meetings.DeleteModal.Error.self
+        return failedMeetingToDelete.map { !isOrganizer($0) } == true
+            ? strings.leaveConversationFailedTitle : strings.deleteFailedTitle
+    }
+
+    var deleteErrorMessage: String {
+        let strings = L10n.Localizable.Meetings.DeleteModal.Error.self
+        return failedMeetingToDelete.map { !isOrganizer($0) } == true
+            ? strings.leaveConversationFailed : strings.deleteFailed
+    }
+
     private let formatter: MeetingsFormatter
     private let currentDateProvider: any CurrentDateProviding
     private let upcomingMeetingsUseCase: any FetchUpcomingMeetingsUseCaseProtocol
     private let observeMeetingChangesUseCase: any ObserveMeetingChangesUseCaseProtocol
     private let deleteMeetingUseCase: any DeleteMeetingUseCaseProtocol
+    private let selfUserID: UUID
     private let observeAttendedMeetingsUseCase: (any ObserveAttendedMeetingsUseCaseProtocol)?
 
     private var futureOffset: Int = 0
     private let initialPageSize: Int = 20
     private let pageSize: Int = 20
-    private var isLoading: Bool = false
 
     private let grouper = MeetingsGrouper()
 
@@ -71,6 +109,7 @@ package final class MeetingsViewModel {
         upcomingMeetingsUseCase: any FetchUpcomingMeetingsUseCaseProtocol,
         observeMeetingChangesUseCase: any ObserveMeetingChangesUseCaseProtocol,
         deleteMeetingUseCase: any DeleteMeetingUseCaseProtocol,
+        selfUserID: UUID,
         observeAttendedMeetingsUseCase: (any ObserveAttendedMeetingsUseCaseProtocol)? = nil
     ) {
         self.currentDateProvider = currentDateProvider
@@ -78,6 +117,7 @@ package final class MeetingsViewModel {
         self.upcomingMeetingsUseCase = upcomingMeetingsUseCase
         self.observeMeetingChangesUseCase = observeMeetingChangesUseCase
         self.deleteMeetingUseCase = deleteMeetingUseCase
+        self.selfUserID = selfUserID
         self.observeAttendedMeetingsUseCase = observeAttendedMeetingsUseCase
         self.currentDate = currentDateProvider.now
     }
@@ -89,8 +129,8 @@ package final class MeetingsViewModel {
     }
 
     func loadInitialData() async {
+        guard !isLoading else { return }
         futureOffset = 0
-        loadedOccurrences = []
         hasMore = false
         await load(pageSize: initialPageSize)
     }
@@ -122,7 +162,7 @@ package final class MeetingsViewModel {
             refreshCurrentDate()
 
             do {
-                try await Task.sleep(for: Self.currentDateRefreshInterval)
+                try await Task.sleep(for: durationUntilNextMinute())
             } catch {
                 return
             }
@@ -133,6 +173,14 @@ package final class MeetingsViewModel {
         currentDate = currentDateProvider.now
     }
 
+    /// Meeting start times are always minute-aligned, so the refresh is scheduled on the
+    /// minute boundary rather than a fixed interval from when the screen appeared.
+    func durationUntilNextMinute() -> Duration {
+        let secondsIntoMinute = currentDateProvider.now.timeIntervalSince1970
+            .truncatingRemainder(dividingBy: 60)
+        return .seconds(60 - secondsIntoMinute)
+    }
+
     /// Whether the self user is currently attending (joined the call of) the given meeting.
     func isAttending(_ meeting: Meeting) -> Bool {
         attendingConversationIDs.contains(meeting.conversationID)
@@ -140,6 +188,10 @@ package final class MeetingsViewModel {
 
     func isAttending(_ occurrence: MeetingOccurrence) -> Bool {
         attendingConversationIDs.contains(occurrence.conversationID) && isHappeningNow(occurrence)
+    }
+
+    func isOrganizer(_ meeting: Meeting) -> Bool {
+        meeting.creatorID.id == selfUserID
     }
 
     /// Whether the meeting's scheduled time range contains the current time.
@@ -160,7 +212,7 @@ package final class MeetingsViewModel {
         formatter.timeRange(from: meeting.start, to: meeting.end)
     }
 
-    func formatTimeRange(for occurrence: MeetingOccurrence) -> String {
+    func formatTime(for occurrence: MeetingOccurrence) -> String {
         formatter.timeRange(from: occurrence.start, to: occurrence.end)
     }
 
@@ -175,13 +227,25 @@ package final class MeetingsViewModel {
     }
 
     func deleteMeeting(_ meeting: Meeting) async {
+        guard !isDeleting else { return }
+        isDeleting = true
+        hasDeleteError = false
+        failedMeetingToDelete = nil
+        defer { isDeleting = false }
+
         do {
-            try await deleteMeetingUseCase.invoke(meetingID: meeting.id)
+            try await deleteMeetingUseCase.invoke(meeting: meeting)
             loadedOccurrences.removeAll { $0.meeting.id == meeting.id }
         } catch {
+            failedMeetingToDelete = meeting
             hasDeleteError = true
             WireLogger.meetings.error("failed to delete meeting: \(String(reflecting: error))")
         }
+    }
+
+    func retryDelete() async {
+        guard let meeting = failedMeetingToDelete else { return }
+        await deleteMeeting(meeting)
     }
 
     // MARK: - Private Methods
@@ -197,6 +261,7 @@ package final class MeetingsViewModel {
 
     private func load(pageSize: Int) async {
         isLoading = true
+        hasLoadError = false
         defer { isLoading = false }
 
         do {
@@ -211,6 +276,7 @@ package final class MeetingsViewModel {
             hasMore = result.hasMore
         } catch {
             hasMore = false
+            hasLoadError = true
             WireLogger.meetings.error("failed to fetch upcoming meetings: \(String(reflecting: error))")
         }
     }

@@ -67,10 +67,16 @@ final class OneOnOneConversationHeaderViewSnapshotTests: XCTestCase {
 
     // MARK: - Helper Method
 
-    func sutForUser(_ mockUser: MockUserType, isFederated: Bool = false) -> OneOnOneConversationHeaderView {
-        mockUser.isPendingApprovalByOtherUser = true
+    func sutForUser(
+        _ mockUser: MockUserType,
+        isFederated: Bool = false,
+        isPendingApproval: Bool = false,
+        isBlocked: Bool = false
+    ) -> OneOnOneConversationHeaderView {
+        mockUser.isPendingApprovalByOtherUser = isPendingApproval
         mockUser.isPendingApprovalBySelfUser = false
-        mockUser.isConnected = false
+        mockUser.isConnected = !isPendingApproval && !isBlocked
+        mockUser.isBlocked = isBlocked
         mockUser.isFederated = isFederated
         mockUser.domain = "wire.com"
 
@@ -94,9 +100,16 @@ final class OneOnOneConversationHeaderViewSnapshotTests: XCTestCase {
     }
 
     func testWithoutUserName() {
-        // The last mock user does not have a handle
+        // The last mock user does not have a handle. For a connected (non-pending) user the avatar
+        // shows the user's initials rather than a connection-state badge.
         mockUser = SwiftMockLoader.mockUsers().last!
         sut = sutForUser(mockUser)
+        sut.layoutForTest()
+        snapshotHelper.verify(matching: sut)
+    }
+
+    func testBlockedUser() {
+        sut = sutForUser(mockUser, isBlocked: true)
         sut.layoutForTest()
         snapshotHelper.verify(matching: sut)
     }

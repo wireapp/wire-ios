@@ -133,6 +133,10 @@ extension UnauthenticatedSession: UnauthenticatedSessionStatusDelegate {
         delegate?.sessionIsAllowedToCreateNewAccount(self) ?? false
     }
 
+    var maxNumberAccounts: Int {
+        delegate?.sessionMaxNumberAccounts(self) ?? SessionManager.defaultMaxNumberAccounts
+    }
+
 }
 
 extension UnauthenticatedSession: URLActionProcessor {
@@ -180,7 +184,7 @@ extension UnauthenticatedSession: UserInfoParser {
     public func upgradeToAuthenticatedSession(
         with userInfo: UserInfo,
         newEnvironment: NewEnvironment,
-        multiIngressIdentityProviderID: UUID? = nil
+        multiIngressIdentityProviderID: UUID?
     ) {
         let account = Account(userName: "", userIdentifier: userInfo.identifier)
         account.lastSSOIdentityProviderID = multiIngressIdentityProviderID

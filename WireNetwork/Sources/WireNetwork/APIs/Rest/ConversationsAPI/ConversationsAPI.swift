@@ -50,6 +50,16 @@ public protocol ConversationsAPI {
         conversationID: String
     ) async throws -> String?
 
+    /// Updates the name of a qualified conversation.
+    /// - Parameters:
+    ///   - name: The new conversation name.
+    ///   - conversationID: The conversation identifier.
+    /// - Returns: The conversation rename event, when supplied by the backend.
+    func updateConversationName(
+        _ name: String,
+        for conversationID: QualifiedID
+    ) async throws -> ConversationRenameEvent?
+
     /// Creates a group conversation given provided parameters.
     /// - parameter parameters: API body parameters required to create the group.
     /// - returns: The created group conversation.

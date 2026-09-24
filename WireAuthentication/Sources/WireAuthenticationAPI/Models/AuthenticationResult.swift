@@ -55,6 +55,12 @@ public struct AuthenticationResult: Equatable, Hashable, Sendable {
 
     public package(set) var multiIngressIdentityProviderID: UUID?
 
+    /// Whether the backend wants clients to compare the stored SSO IdP ID with the
+    /// IdP ID of the current login and keep existing locally decrypted messages
+    /// when they match.
+
+    public let ssoIdpChangeDetectionEnabled: Bool
+
     public init(
         userID: UUID,
         cookies: [HTTPCookie],
@@ -62,7 +68,8 @@ public struct AuthenticationResult: Equatable, Hashable, Sendable {
         emailCredentials: EmailCredentials?,
         backendEnvironment: BackendEnvironment2,
         backendMetadata: ResolvedBackendMetadata,
-        proxyCredentials: ProxyCredentials?
+        proxyCredentials: ProxyCredentials?,
+        ssoIdpChangeDetectionEnabled: Bool = false
     ) {
         self.userID = userID
         self.cookies = cookies
@@ -71,6 +78,7 @@ public struct AuthenticationResult: Equatable, Hashable, Sendable {
         self.backendEnvironment = backendEnvironment
         self.backendMetadata = backendMetadata
         self.proxyCredentials = proxyCredentials
+        self.ssoIdpChangeDetectionEnabled = ssoIdpChangeDetectionEnabled
     }
 
 }

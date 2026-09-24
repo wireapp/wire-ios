@@ -35,14 +35,17 @@ struct EnvironmentVariables {
         case missingSSOClaimedUserEmail
         case missingSSOClaimedUserPassword
         case missingSSOClaimedDomainCode
+        case missingCustomDomainRedirectEmail
+        case missingCustomDomainRedirectBackendURL
+        case missingCustomDomainRedirectIdpDomain
 
         var errorDescription: String? {
             switch self {
             case .missingBackendURL: "Missing env var: BACKEND_URL"
-            case .missingInbucketURL: "Missing env var: INBUCKET_URL / ANTA_INBUCKET_URL / BELLA_INBUCKET_URL"
+            case .missingInbucketURL: "Missing env var: INBUCKET_URL / QA_FEDERATION_A_INBUCKET_URL / QA_FEDERATION_B_INBUCKET_URL"
             case .missingInbucketUsername: "Missing env var: INBUCKET_USERNAME"
             case .missingInbucketPassword: "Missing env var: INBUCKET_PASSWORD"
-            case .missingDeepLinkURL: "Missing env var: ANTA_DEEPLINK_URL / BELLA_DEEPLINK_URL"
+            case .missingDeepLinkURL: "Missing env var: QA_FEDERATION_A_DEEPLINK_URL / QA_FEDERATION_B_DEEPLINK_URL"
             case .missingCallingServiceURL: "Missing env var: CALLINGSERVICE_URL"
             case .missingCallingServiceUsername: "Missing env var: CALLINGSERVICE_USERNAME"
             case .missingCallingServicePassword: "Missing env var: CALLINGSERVICE_PASSWORD"
@@ -54,20 +57,23 @@ struct EnvironmentVariables {
             case .missingSSOClaimedUserEmail: "Missing env var: SSO_CLAIMED_USER_EMAIL"
             case .missingSSOClaimedUserPassword: "Missing env var: SSO_CLAIMED_USER_PASSWORD"
             case .missingSSOClaimedDomainCode: "Missing env var: SSO_CLAIMED_DOMAIN_CODE"
+            case .missingCustomDomainRedirectEmail: "Missing env var: CUSTOM_DOMAIN_REDIRECT_EMAIL"
+            case .missingCustomDomainRedirectBackendURL: "Missing env var: CUSTOM_DOMAIN_REDIRECT_BACKEND_URL"
+            case .missingCustomDomainRedirectIdpDomain: "Missing env var: CUSTOM_DOMAIN_REDIRECT_IDP_DOMAIN"
             }
         }
     }
 
     private let stagingBackendURL: URL
-    private let antaBackendURL: URL
-    private let bellaBackendURL: URL
+    private let qaFederationABackendURL: URL
+    private let qaFederationBBackendURL: URL
 
     private let stagingInbucketURL: URL
-    private let antaInbucketURL: URL
-    private let bellaInbucketURL: URL
+    private let qaFederationAInbucketURL: URL
+    private let qaFederationBInbucketURL: URL
 
-    let antaDeepLinkURL: URL
-    let bellaDeepLinkURL: URL
+    let qaFederationADeepLinkURL: URL
+    let qaFederationBDeepLinkURL: URL
 
     let inbucketUsername: String
     let inbucketPassword: String
@@ -82,6 +88,9 @@ struct EnvironmentVariables {
     let ssoClaimedUserEmail: String
     let ssoClaimedUserPassword: String
     let ssoClaimedDomainCode: String
+    let customDomainRedirectEmail: String
+    let customDomainRedirectBackendURL: String
+    let customDomainRedirectIdpDomain: String
 
     init() throws {
         guard let backendURLString = ProcessInfo.processInfo.environment["BACKEND_URL"],
@@ -118,34 +127,34 @@ struct EnvironmentVariables {
             throw Failure.missingCallingServicePassword
         }
 
-        guard let antaDeeplinkURL = ProcessInfo.processInfo.environment["ANTA_DEEPLINK_URL"],
-              !antaDeeplinkURL.isEmpty else {
+        guard let qaFederationADeeplinkURL = ProcessInfo.processInfo.environment["QA_FEDERATION_A_DEEPLINK_URL"],
+              !qaFederationADeeplinkURL.isEmpty else {
             throw Failure.missingDeepLinkURL
 
         }
-        guard let bellaDeeplinkURL = ProcessInfo.processInfo.environment["BELLA_DEEPLINK_URL"],
-              !bellaDeeplinkURL.isEmpty else {
+        guard let qaFederationBDeeplinkURL = ProcessInfo.processInfo.environment["QA_FEDERATION_B_DEEPLINK_URL"],
+              !qaFederationBDeeplinkURL.isEmpty else {
             throw Failure.missingDeepLinkURL
 
         }
 
-        guard let antaInbucketURL = ProcessInfo.processInfo.environment["ANTA_INBUCKET_URL"],
-              !antaInbucketURL.isEmpty else {
+        guard let qaFederationAInbucketURL = ProcessInfo.processInfo.environment["QA_FEDERATION_A_INBUCKET_URL"],
+              !qaFederationAInbucketURL.isEmpty else {
             throw Failure.missingInbucketURL
         }
 
-        guard let bellaInbucketURL = ProcessInfo.processInfo.environment["BELLA_INBUCKET_URL"],
-              !bellaInbucketURL.isEmpty else {
+        guard let qaFederationBInbucketURL = ProcessInfo.processInfo.environment["QA_FEDERATION_B_INBUCKET_URL"],
+              !qaFederationBInbucketURL.isEmpty else {
             throw Failure.missingInbucketURL
         }
 
-        guard let backendURLAntaString = ProcessInfo.processInfo.environment["BACKEND_URL_ANTA"],
-              !backendURLAntaString.isEmpty else {
+        guard let backendURLQAFederationAString = ProcessInfo.processInfo.environment["BACKEND_URL_QA_FEDERATION_A"],
+              !backendURLQAFederationAString.isEmpty else {
             throw Failure.missingBackendURL
         }
 
-        guard let backendURLBellaString = ProcessInfo.processInfo.environment["BACKEND_URL_BELLA"],
-              !backendURLBellaString.isEmpty else {
+        guard let backendURLQAFederationBString = ProcessInfo.processInfo.environment["BACKEND_URL_QA_FEDERATION_B"],
+              !backendURLQAFederationBString.isEmpty else {
             throw Failure.missingBackendURL
         }
 
@@ -189,6 +198,23 @@ struct EnvironmentVariables {
             throw Failure.missingSSOClaimedDomainCode
         }
 
+        guard let customDomainRedirectEmail = ProcessInfo.processInfo.environment["CUSTOM_DOMAIN_REDIRECT_EMAIL"],
+              !customDomainRedirectEmail.isEmpty else {
+            throw Failure.missingCustomDomainRedirectEmail
+        }
+
+        guard let customDomainRedirectBackendURL = ProcessInfo.processInfo
+            .environment["CUSTOM_DOMAIN_REDIRECT_BACKEND_URL"],
+            !customDomainRedirectBackendURL.isEmpty else {
+            throw Failure.missingCustomDomainRedirectBackendURL
+        }
+
+        guard let customDomainRedirectIdpDomain = ProcessInfo.processInfo
+            .environment["CUSTOM_DOMAIN_REDIRECT_IDP_DOMAIN"],
+            !customDomainRedirectIdpDomain.isEmpty else {
+            throw Failure.missingCustomDomainRedirectIdpDomain
+        }
+
         self.stagingBackendURL = URL(string: "https://\(backendURLString)")!
         self.stagingInbucketURL = URL(string: "https://\(inbucketHostname)")!
         self.inbucketUsername = inbucketUsername
@@ -201,12 +227,12 @@ struct EnvironmentVariables {
 
         self.callingServiceUsername = callingServiceEnvironment.username
         self.callingServicePassword = callingServiceEnvironment.password
-        self.antaDeepLinkURL = URL(string: "https://\(antaDeeplinkURL)")!
-        self.antaInbucketURL = URL(string: "https://\(antaInbucketURL)")!
-        self.antaBackendURL = URL(string: "https://\(backendURLAntaString)")!
-        self.bellaDeepLinkURL = URL(string: "https://\(bellaDeeplinkURL)")!
-        self.bellaInbucketURL = URL(string: "https://\(bellaInbucketURL)")!
-        self.bellaBackendURL = URL(string: "https://\(backendURLBellaString)")!
+        self.qaFederationADeepLinkURL = URL(string: "https://\(qaFederationADeeplinkURL)")!
+        self.qaFederationAInbucketURL = URL(string: "https://\(qaFederationAInbucketURL)")!
+        self.qaFederationABackendURL = URL(string: "https://\(backendURLQAFederationAString)")!
+        self.qaFederationBDeepLinkURL = URL(string: "https://\(qaFederationBDeeplinkURL)")!
+        self.qaFederationBInbucketURL = URL(string: "https://\(qaFederationBInbucketURL)")!
+        self.qaFederationBBackendURL = URL(string: "https://\(backendURLQAFederationBString)")!
         self.callingServiceURL = callingServiceEnvironment.url
         self.callingBackend = callingBackend
         self.callingInstanceTypeName = callingInstanceTypeName
@@ -216,6 +242,9 @@ struct EnvironmentVariables {
         self.ssoClaimedUserEmail = ssoClaimedUserEmail
         self.ssoClaimedUserPassword = ssoClaimedUserPassword
         self.ssoClaimedDomainCode = ssoClaimedDomainCode
+        self.customDomainRedirectEmail = customDomainRedirectEmail
+        self.customDomainRedirectBackendURL = customDomainRedirectBackendURL
+        self.customDomainRedirectIdpDomain = customDomainRedirectIdpDomain
     }
 
     private static func callingServiceEnvironment(
@@ -257,32 +286,32 @@ struct EnvironmentVariables {
 
     func inbucketURL(for target: BackendTarget) -> URL {
         switch target {
-        case .anta:
-            antaInbucketURL
+        case .qaFederationA:
+            qaFederationAInbucketURL
         case .staging:
             stagingInbucketURL
-        case .bella:
-            bellaInbucketURL
+        case .qaFederationB:
+            qaFederationBInbucketURL
         }
     }
 
     func backendURL(for target: BackendTarget) -> URL {
         switch target {
-        case .anta:
-            antaBackendURL
+        case .qaFederationA:
+            qaFederationABackendURL
         case .staging:
             stagingBackendURL
-        case .bella:
-            bellaBackendURL
+        case .qaFederationB:
+            qaFederationBBackendURL
         }
     }
 
     func deepLinkURL(for target: BackendTarget) -> URL {
         switch target {
-        case .anta:
-            antaDeepLinkURL
-        case .bella:
-            bellaDeepLinkURL
+        case .qaFederationA:
+            qaFederationADeepLinkURL
+        case .qaFederationB:
+            qaFederationBDeepLinkURL
         case .staging:
             fatalError("Not implemented yet")
         }

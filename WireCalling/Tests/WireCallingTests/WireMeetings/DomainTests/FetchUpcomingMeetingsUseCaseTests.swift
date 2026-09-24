@@ -386,8 +386,8 @@ struct FetchUpcomingMeetingsUseCaseTests {
         #expect(!result.hasMore)
     }
 
-    @Test("invoke caps page size at twenty occurrence rows")
-    func invoke_CapsPageSizeAtTwentyOccurrences() async throws {
+    @Test("invoke honors larger page sizes when refreshing loaded occurrences")
+    func invoke_HonorsRequestedPageSize() async throws {
         // Given
         let calendar = Calendar.current
         let startOfToday = calendar.startOfDay(for: try Date.ISO8601FormatStyle().parse("2026-07-11T12:00:00Z"))
@@ -410,7 +410,7 @@ struct FetchUpcomingMeetingsUseCaseTests {
         let result = try await useCase.invoke(pageSize: 50, offset: 0)
 
         // Then
-        #expect(result.occurrences.count == 20)
+        #expect(result.occurrences.count == 50)
         #expect(result.hasMore)
     }
 
@@ -431,6 +431,7 @@ private extension Meeting {
             start: start,
             end: start.addingTimeInterval(duration),
             recurrence: recurrence,
+            timeZoneIdentifier: TimeZone.current.identifier,
             conversationID: QualifiedID(id: UUID(), domain: ""),
             creatorID: QualifiedID(id: UUID(), domain: "")
         )

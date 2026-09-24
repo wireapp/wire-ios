@@ -36,7 +36,10 @@ final class MeetingLocalStoreTests: XCTestCase {
     }
 
     override func setUp() async throws {
-        coreDataStackHelper = CoreDataStackHelper()
+        coreDataStackHelper = CoreDataStackHelper(
+            localDomain: Scaffolding.conversationID.domain,
+            isFederationEnabled: true
+        )
         modelHelper = ModelHelper()
         stack = try await coreDataStackHelper.createStack()
 
@@ -64,11 +67,13 @@ final class MeetingLocalStoreTests: XCTestCase {
                 domain: Scaffolding.creatorID.domain,
                 in: context
             )
-            _ = modelHelper!.createGroupConversation(
+            let conversation = modelHelper!.createGroupConversation(
                 id: Scaffolding.conversationID.id,
                 domain: Scaffolding.conversationID.domain,
                 in: context
             )
+            conversation.isPendingInitialFetch = false
+            conversation.groupType = .meeting
         }
 
         // When
@@ -87,12 +92,59 @@ final class MeetingLocalStoreTests: XCTestCase {
             XCTAssertEqual(storedMeeting.title, Scaffolding.meeting.title)
             XCTAssertEqual(storedMeeting.start, Scaffolding.meeting.start)
             XCTAssertEqual(storedMeeting.end, Scaffolding.meeting.end)
+            XCTAssertEqual(storedMeeting.timeZoneIdentifier, Scaffolding.meeting.timeZoneIdentifier)
             XCTAssertEqual(storedMeeting.recurrenceFrequency, .weekly)
             XCTAssertEqual(storedMeeting.recurrenceInterval, 2)
             XCTAssertEqual(storedMeeting.recurrenceUntil, Scaffolding.recurrenceUntil)
             XCTAssertEqual(storedMeeting.conversation?.remoteIdentifier, Scaffolding.conversationID.id)
             XCTAssertEqual(storedMeeting.creator?.remoteIdentifier, Scaffolding.creatorID.id)
         }
+    }
+
+    func testStoredMeeting_It_Preserves_Missing_Relationships_Without_Exposing_Incomplete_Conversation() async throws {
+        await sut.storeMeeting(Scaffolding.meeting)
+        await context.perform { [context] in context.reset() }
+
+        let storedMeeting = await sut.storedMeeting(id: Scaffolding.meetingID)
+        let meeting = try XCTUnwrap(storedMeeting)
+        XCTAssertEqual(meeting.conversationID, Scaffolding.conversationID)
+        XCTAssertEqual(meeting.creatorID, Scaffolding.creatorID)
+        XCTAssertEqual(meeting.title, Scaffolding.meeting.title)
+        XCTAssertNil(meeting.conversation)
+
+        try await context.perform { [context] in
+            let conversation = try XCTUnwrap(ZMConversation.fetch(
+                with: Scaffolding.conversationID.id,
+                domain: Scaffolding.conversationID.domain,
+                in: context
+            ))
+            XCTAssertTrue(conversation.needsToBeUpdatedFromBackend)
+            XCTAssertTrue(conversation.isPendingInitialFetch)
+            XCTAssertTrue(conversation.isMeeting)
+            conversation.conversationType = .group
+            conversation.isPendingInitialFetch = false
+            conversation.groupType = .group
+            let member = ModelHelper().createUser(
+                id: Scaffolding.memberAliceID.id,
+                domain: Scaffolding.memberAliceID.domain,
+                name: "Alice Archer",
+                in: context
+            )
+            conversation.addParticipantsAndUpdateConversationState(users: [member], role: nil)
+        }
+
+        let legacyMeeting = await sut.storedMeeting(id: Scaffolding.meetingID)
+        XCTAssertNil(legacyMeeting?.conversation)
+        await context.perform { [context] in
+            let conversation = ZMConversation.fetch(
+                with: Scaffolding.conversationID.id,
+                domain: Scaffolding.conversationID.domain,
+                in: context
+            )
+            conversation?.groupType = .meeting
+        }
+        let resolvedMeeting = await sut.storedMeeting(id: Scaffolding.meetingID)
+        XCTAssertEqual(resolvedMeeting?.conversation?.participants.map(\.qualifiedID), [Scaffolding.memberAliceID])
     }
 
     func testStoreMeeting_It_Updates_Existing_Stored_Meeting() async throws {
@@ -106,6 +158,7 @@ final class MeetingLocalStoreTests: XCTestCase {
             start: Scaffolding.meeting.start,
             end: Scaffolding.meeting.end,
             recurrence: nil,
+            timeZoneIdentifier: "Europe/Berlin",
             conversationID: Scaffolding.conversationID,
             creatorID: Scaffolding.creatorID
         )
@@ -122,6 +175,7 @@ final class MeetingLocalStoreTests: XCTestCase {
 
             let storedMeeting = try XCTUnwrap(storedMeetings.first)
             XCTAssertEqual(storedMeeting.title, "Renamed Meeting")
+            XCTAssertEqual(storedMeeting.timeZoneIdentifier, "Europe/Berlin")
             XCTAssertNil(storedMeeting.recurrenceFrequency)
         }
     }
@@ -154,12 +208,14 @@ final class MeetingLocalStoreTests: XCTestCase {
                 domain: Scaffolding.creatorID.domain,
                 in: context
             )
-            _ = modelHelper!.createGroupConversation(
+            let conversation = modelHelper!.createGroupConversation(
                 id: Scaffolding.conversationID.id,
                 with: [selfUser, bob, alice],
                 domain: Scaffolding.conversationID.domain,
                 in: context
             )
+            conversation.isPendingInitialFetch = false
+            conversation.groupType = .meeting
         }
 
         await sut.storeMeeting(Scaffolding.meeting)
@@ -173,6 +229,7 @@ final class MeetingLocalStoreTests: XCTestCase {
         let meeting = try XCTUnwrap(meetings.first)
         let conversation = try XCTUnwrap(meeting.conversation)
         XCTAssertEqual(meeting.conversationID, Scaffolding.conversationID)
+        XCTAssertEqual(meeting.timeZoneIdentifier, Scaffolding.meeting.timeZoneIdentifier)
         XCTAssertEqual(conversation.participants.count, 3, "all local participants, including the self user")
         let alice = try XCTUnwrap(conversation.participants.first { $0.qualifiedID == Scaffolding.memberAliceID })
         XCTAssertEqual(alice.name, "Alice Archer")
@@ -198,12 +255,14 @@ final class MeetingLocalStoreTests: XCTestCase {
                 domain: Scaffolding.creatorID.domain,
                 in: context
             )
-            _ = modelHelper!.createGroupConversation(
+            let conversation = modelHelper!.createGroupConversation(
                 id: Scaffolding.conversationID.id,
                 with: [alice],
                 domain: Scaffolding.conversationID.domain,
                 in: context
             )
+            conversation.isPendingInitialFetch = false
+            conversation.groupType = .meeting
         }
 
         await sut.storeMeeting(Scaffolding.meeting)
@@ -306,6 +365,7 @@ final class MeetingLocalStoreTests: XCTestCase {
                 interval: 2,
                 until: recurrenceUntil
             ),
+            timeZoneIdentifier: "America/New_York",
             conversationID: conversationID,
             creatorID: creatorID
         )

@@ -105,7 +105,14 @@ struct StorableFeatureConfigUpdateEvent: Equatable, Codable, Sendable {
                 StorableMLSMigrationFeatureConfig(
                     status: StorableFeatureConfigStatus(config.status),
                     startTime: config.startTime,
-                    finaliseRegardlessAfter: config.finaliseRegardlessAfter
+                    finaliseRegardlessAfter: config.finaliseRegardlessAfter,
+                    allowManualMigration: config.allowManualMigration
+                )
+            )
+        case let .meetings(config):
+            .meetings(
+                StorableBasicFeatureConfig(
+                    status: StorableFeatureConfigStatus(config.status)
                 )
             )
         case let .selfDeletingMessages(config):
@@ -254,7 +261,14 @@ struct StorableFeatureConfigUpdateEvent: Equatable, Codable, Sendable {
                 MLSMigrationFeatureConfig(
                     status: config.status.toAPIModel(),
                     startTime: config.startTime,
-                    finaliseRegardlessAfter: config.finaliseRegardlessAfter
+                    finaliseRegardlessAfter: config.finaliseRegardlessAfter,
+                    allowManualMigration: config.allowManualMigration
+                )
+            )
+        case let .meetings(config):
+            .meetings(
+                MeetingsFeatureConfig(
+                    status: config.status.toAPIModel()
                 )
             )
         case let .selfDeletingMessages(config):
@@ -338,6 +352,7 @@ enum StorableFeatureConfig: Equatable, Codable, Sendable {
     case fileSharing(StorableBasicFeatureConfig)
     case mls(StorableMLSFeatureConfig)
     case mlsMigration(StorableMLSMigrationFeatureConfig)
+    case meetings(StorableBasicFeatureConfig)
     case selfDeletingMessages(StorableSelfDeletingMessagesFeatureConfig)
     case channels(StorableChannelsFeatureConfig)
     case allowedGlobalOperations(StorableAllowedGlobalOperationsFeatureConfig)
@@ -433,6 +448,7 @@ struct StorableMLSMigrationFeatureConfig: Equatable, Codable, Sendable {
     let status: StorableFeatureConfigStatus
     let startTime: Date?
     let finaliseRegardlessAfter: Date?
+    let allowManualMigration: Bool?
 
 }
 

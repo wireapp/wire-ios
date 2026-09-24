@@ -87,6 +87,7 @@ public final class MLSService: MLSServiceInterface {
     let actionsProvider: MLSActionsProviderProtocol
 
     private let subconversationGroupIDRepository: SubconversationGroupIDRepositoryInterface
+    private let maxConcurrentKeyPackageClaims: Int
 
     var lastKeyMaterialUpdateCheck = Date.distantPast
     var keyMaterialUpdateCheckTimer: Timer?
@@ -145,8 +146,11 @@ public final class MLSService: MLSServiceInterface {
         featureRepository: LegacyFeatureRepositoryInterface,
         subconversationGroupIDRepository: SubconversationGroupIDRepositoryInterface =
             SubconversationGroupIDRepository(),
+        maxConcurrentKeyPackageClaims: Int = 4,
         localDomain: String
     ) {
+        precondition(maxConcurrentKeyPackageClaims > 0, "maxConcurrentKeyPackageClaims must be greater than zero")
+
         self.context = context
         self.notificationContext = notificationContext
         self.coreCryptoProvider = coreCryptoProvider
@@ -160,6 +164,7 @@ public final class MLSService: MLSServiceInterface {
         self.userDefaults = PrivateUserDefaults(userID: userID, storage: userDefaults)
         self.delegate = delegate
         self.subconversationGroupIDRepository = subconversationGroupIDRepository
+        self.maxConcurrentKeyPackageClaims = maxConcurrentKeyPackageClaims
 
         self.encryptionService = encryptionService ?? MLSEncryptionService(
             coreCryptoProvider: coreCryptoProvider
@@ -416,7 +421,7 @@ public final class MLSService: MLSServiceInterface {
             }
             // make sure we have the selfUser but only once
             // add self in last position so - if the other user doesn't have key packages for 1-1 - we don't deplete our
-            // keypackages
+            // keyPackages
             // for nothing
             let usersWithSelfUser = users.filter { $0 != mlsSelfUser } + [mlsSelfUser]
             try await addMembersToConversation(with: usersWithSelfUser, for: groupID)
@@ -492,6 +497,52 @@ public final class MLSService: MLSServiceInterface {
         case invalidCiphersuite
     }
 
+    private struct KeyPackageClaim {
+        let index: Int
+        let user: MLSUser
+        let result: Result<[KeyPackage], Error>
+
+        var fatalFailure: Error? {
+            guard case let .failure(error) = result,
+                  MLSService.isFatalKeyPackageClaimFailure(error) else {
+                return nil
+            }
+
+            return error
+        }
+    }
+
+    /// Values passed to a key-package claim child task.
+    ///
+    /// `MLSActionsProvider` is stateless and the notification context is backed by a thread-safe
+    /// `NSPersistentStoreCoordinator` or `Account`, so both can be used by concurrent claim tasks.
+    private struct KeyPackageClaimTask: @unchecked Sendable {
+        let index: Int
+        let user: MLSUser
+        let ciphersuite: MLSCipherSuite
+        let actionsProvider: MLSActionsProviderProtocol
+        let notificationContext: NotificationContext
+
+        func execute() async -> KeyPackageClaim {
+            guard !Task.isCancelled else {
+                return KeyPackageClaim(index: index, user: user, result: .failure(CancellationError()))
+            }
+
+            do {
+                let keyPackages = try await actionsProvider.claimKeyPackages(
+                    userID: user.id,
+                    domain: user.domain,
+                    ciphersuite: ciphersuite,
+                    excludedSelfClientID: user.selfClientID,
+                    in: notificationContext
+                )
+                return KeyPackageClaim(index: index, user: user, result: .success(keyPackages))
+            } catch {
+                return KeyPackageClaim(index: index, user: user, result: .failure(error))
+            }
+        }
+    }
+
     public func addMembersToConversation(with users: [MLSUser], for groupID: MLSGroupID) async throws {
         try await commitPendingProposals(in: groupID)
         try await retryOnCommitFailure(for: groupID) { [weak self] in
@@ -513,7 +564,7 @@ public final class MLSService: MLSServiceInterface {
             let keyPackages = try await claimKeyPackages(for: users, ciphersuite: ciphersuite)
 
             if keyPackages.isEmpty {
-                // CC does not accept empty keypackages in addMembers, but
+                // CC does not accept empty keyPackages in addMembers, but
                 // when creating a group we still need to send a commit to backend
                 // to inform we are in the group
                 try await mlsActionExecutor.updateKeyMaterial(for: groupID)
@@ -539,22 +590,78 @@ public final class MLSService: MLSServiceInterface {
             return []
         }
 
-        var result = [KeyPackage]()
+        try Task.checkCancellation()
+
+        let notificationContext = context.notificationContext
+        let (claims, fatalFailure) = await withTaskGroup(of: KeyPackageClaim.self) { group in
+            var claims = [KeyPackageClaim]()
+            var nextUserIndex = 0
+            var fatalFailure: Error?
+
+            while nextUserIndex < min(maxConcurrentKeyPackageClaims, users.count) {
+                let task = KeyPackageClaimTask(
+                    index: nextUserIndex,
+                    user: users[nextUserIndex],
+                    ciphersuite: ciphersuite,
+                    actionsProvider: actionsProvider,
+                    notificationContext: notificationContext
+                )
+                group.addTask {
+                    await task.execute()
+                }
+                nextUserIndex += 1
+            }
+
+            while let claim = await group.next() {
+                claims.append(claim)
+
+                if fatalFailure == nil, let claimFailure = claim.fatalFailure {
+                    fatalFailure = claimFailure
+                    group.cancelAll()
+                } else if Task.isCancelled {
+                    group.cancelAll()
+                }
+
+                if fatalFailure == nil, !Task.isCancelled, nextUserIndex < users.count {
+                    let task = KeyPackageClaimTask(
+                        index: nextUserIndex,
+                        user: users[nextUserIndex],
+                        ciphersuite: ciphersuite,
+                        actionsProvider: actionsProvider,
+                        notificationContext: notificationContext
+                    )
+                    group.addTask {
+                        await task.execute()
+                    }
+                    nextUserIndex += 1
+                }
+            }
+
+            return (claims, fatalFailure)
+        }
+
+        try Task.checkCancellation()
+
+        if let fatalFailure {
+            throw fatalFailure
+        }
+
+        var keyPackages = [KeyPackage]()
         var failedUsers = [MLSUser]()
 
-        for user in users {
-            do {
-                let keyPackages = try await actionsProvider.claimKeyPackages(
-                    userID: user.id,
-                    domain: user.domain,
-                    ciphersuite: ciphersuite,
-                    excludedSelfClientID: user.selfClientID,
-                    in: context.notificationContext
+        for claim in claims.sorted(by: { $0.index < $1.index }) {
+            switch claim.result {
+            case let .success(claimedKeyPackages):
+                keyPackages.append(contentsOf: claimedKeyPackages)
+            case let .failure(error):
+                if let fatalFailure = claim.fatalFailure {
+                    throw fatalFailure
+                }
+
+                failedUsers.append(claim.user)
+                logger.warn(
+                    "failed to claim key packages for user (\(claim.user.id)): \(String(describing: error))"
                 )
-                result.append(contentsOf: keyPackages)
-            } catch {
-                failedUsers.append(user)
-                logger.warn("failed to claim key packages for user (\(user.id)): \(String(describing: error))")
             }
         }
 
@@ -562,7 +669,43 @@ public final class MLSService: MLSServiceInterface {
             throw MLSAddMembersError.failedToClaimKeyPackages(users: failedUsers)
         }
 
-        return result
+        return keyPackages
+    }
+
+    private static func isFatalKeyPackageClaimFailure(_ error: Error) -> Bool {
+        switch error {
+        case is CancellationError:
+            true
+
+        case let actionFailure as ClaimMLSKeyPackageAction.Failure:
+            // The legacy action layer represents transport failures with status 0
+            // and proxy authentication failures with HTTP status 407.
+            switch actionFailure {
+            case let .unknown(status) where status == 0 || status == 407:
+                true
+            default:
+                false
+            }
+
+        case let urlError as URLError:
+            switch urlError.code {
+            case .notConnectedToInternet, .networkConnectionLost:
+                true
+            default:
+                false
+            }
+
+        case let networkStackError as NetworkStackError:
+            switch networkStackError {
+            case .proxyCredentialsRequired:
+                true
+            default:
+                false
+            }
+
+        default:
+            false
+        }
     }
 
     // MARK: - Remove participants from mls group
@@ -588,7 +731,7 @@ public final class MLSService: MLSServiceInterface {
         do {
             logger.info("removing members from group (\(groupID.safeForLoggingDescription)), members: \(clientIds)")
             guard !clientIds.isEmpty else { throw MLSRemoveParticipantsError.noClientsToRemove }
-            let clientIds = clientIds.compactMap(\.rawValue.utf8Data).map { ClientId(bytes: $0) }
+            let clientIds = try clientIds.map { try $0.cryptoId() }
             try await mlsActionExecutor.removeClients(clientIds, from: groupID)
         } catch {
             logger
@@ -668,8 +811,20 @@ public final class MLSService: MLSServiceInterface {
                 return
             }
 
+            guard let mlsClientID = await context.perform({
+                MLSClientID(
+                    user: ZMUser.selfUser(in: context),
+                    localDomain: self.localDomain
+                )
+            }) else {
+                return logWarn(abortedWithReason: "failed to get MLS client ID")
+            }
+
             let amount = UInt32(targetUnclaimedKeyPackageCount)
-            let keyPackages = try await generateKeyPackages(amountRequested: amount)
+            let keyPackages = try await generateKeyPackages(
+                clientID: mlsClientID.cryptoId(),
+                amountRequested: amount
+            )
             try await uploadKeyPackages(
                 clientID: clientID,
                 keyPackages: keyPackages,
@@ -698,7 +853,7 @@ public final class MLSService: MLSServiceInterface {
 
             let ciphersuite = await featureRepository.fetchMLS().config.defaultCipherSuite.coreCryptoCipherSuite
             let estimatedLocalKeyPackageCount = try await coreCrypto.transaction {
-                try await $0.clientValidKeypackagesCount(ciphersuite: ciphersuite, credentialType: .basic)
+                try await $0.getKeyPackages().filter { $0.cipherSuite() == ciphersuite }.count
             }
             let shouldCountRemainingKeyPackages = estimatedLocalKeyPackageCount < halfOfTargetUnclaimedKeyPackageCount
 
@@ -747,20 +902,30 @@ public final class MLSService: MLSServiceInterface {
         }
     }
 
-    private func generateKeyPackages(amountRequested: UInt32) async throws -> [String] {
+    private func generateKeyPackages(clientID: ClientId, amountRequested: UInt32) async throws -> [String] {
         logger.info("generating \(amountRequested) key packages")
 
         var keyPackages = [WireCoreCryptoUniffi.KeyPackage]()
 
         do {
             let ciphersuite = await featureRepository.fetchMLS().config.defaultCipherSuite.coreCryptoCipherSuite
-            keyPackages = try await coreCrypto.transaction {
-                let e2eiIsEnabled = try await $0.e2eiIsEnabled(ciphersuite: ciphersuite)
-                return try await $0.clientKeypackages(
-                    ciphersuite: ciphersuite,
+            keyPackages = try await coreCrypto.transaction { [self] in
+                let e2eiIsEnabled = try await $0.e2eiIsEnabled(cipherSuite: ciphersuite)
+                guard let credentialRef = try await coreCrypto.coreCrypto.findCredentials(
+                    clientId: nil,
+                    publicKey: nil,
+                    cipherSuite: ciphersuite,
                     credentialType: e2eiIsEnabled ? .x509 : .basic,
-                    amountRequested: amountRequested
-                )
+                    earliestValidity: nil
+                ).first else {
+                    throw MLSKeyPackagesError.failedToGenerateKeyPackages
+                }
+
+                var keyPackages: [WireCoreCryptoUniffi.KeyPackage] = []
+                for _ in 0 ..< amountRequested {
+                    try await keyPackages.append($0.generateKeyPackage(credentialRef: credentialRef, lifetime: nil))
+                }
+                return keyPackages
             }
 
         } catch {
@@ -773,7 +938,7 @@ public final class MLSService: MLSServiceInterface {
             throw MLSKeyPackagesError.failedToGenerateKeyPackages
         }
 
-        return keyPackages.map { $0.copyBytes().base64EncodedString() }
+        return try keyPackages.map { try $0.serialize().base64EncodedString() }
     }
 
     private func uploadKeyPackages(
@@ -807,7 +972,7 @@ public final class MLSService: MLSServiceInterface {
     public func externalSenderKey(groupID: MLSGroupID) async throws -> Data {
         try await coreCrypto.transaction { coreCrypto in
             try await coreCrypto.getExternalSender(conversationId: groupID.conversationId)
-        }.copyBytes()
+        }.serialize()
     }
 
     public func conversationExists(groupID: MLSGroupID) async throws -> Bool {
@@ -1980,14 +2145,6 @@ public final class MLSService: MLSServiceInterface {
 
     public func epochChanged(conversationId: WireCoreCryptoUniffi.ConversationId, epoch: UInt64) async throws {
         onEpochChangedSubject.send(MLSGroupID(conversationId))
-    }
-
-    // MARK: - CRLs distribution points
-
-    public func onNewCRLsDistributionPoints() -> AnyPublisher<CRLsDistributionPoints, Never> {
-        decryptionService.onNewCRLsDistributionPoints()
-            .merge(with: mlsActionExecutor.onNewCRLsDistributionPoints())
-            .eraseToAnyPublisher()
     }
 
     // MARK: - Proteus to MLS Migration

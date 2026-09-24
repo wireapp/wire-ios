@@ -178,13 +178,23 @@ final class ConversationInputBarViewController: UIViewController,
             .isGuest(in: conversation) && DeveloperFlag.enableDrivePermissions.isOn
     }
 
+    private var shouldShowDriveViewerBanner: Bool {
+        showDriveViewerBanner &&
+            !ConversationViewerAccessBannerDismissalStore.shared
+            .isDismissed(forCellName: conversation.wireDriveCellName)
+    }
+
     // MARK: subviews
 
     lazy var inputBar: InputBar = {
+        let driveConfiguration: InputBar.DriveConfiguration? = if conversation.isWireDriveEnabled {
+            .init(cellName: conversation.wireDriveCellName, showBanner: shouldShowDriveViewerBanner)
+        } else {
+            nil
+        }
         let inputBar = InputBar(
             buttons: inputBarButtons,
-            isWireDriveEnabled: conversation.isWireDriveEnabled,
-            showDriveViewerBanner: showDriveViewerBanner
+            driveConfiguration: driveConfiguration
         )
         if !mediaShareRestrictionManager.canUseSpellChecking {
             inputBar.textView.spellCheckingType = .no
@@ -504,6 +514,7 @@ final class ConversationInputBarViewController: UIViewController,
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        inputBar.hideDriveViewerBannerIfDismissed()
         updateButtonStates()
         inputBar.updateReturnKey()
         inputBar.updateEphemeralState()
@@ -619,8 +630,17 @@ final class ConversationInputBarViewController: UIViewController,
         updateButtonStates()
     }
 
+    /// Hides the input bar when the self user has blocked the other user, so it can be replaced by
+    /// the "You blocked this user" bar. See `ConversationViewController`.
+    var isHiddenForBlockedUser = false {
+        didSet {
+            guard isHiddenForBlockedUser != oldValue else { return }
+            updateInputBarVisibility()
+        }
+    }
+
     func updateInputBarVisibility() {
-        view.isHidden = conversation.isReadOnly
+        view.isHidden = conversation.isReadOnly || isHiddenForBlockedUser
     }
 
     @objc
@@ -1224,7 +1244,7 @@ extension ConversationInputBarViewController: UIGestureRecognizerDelegate {
         uploadFileButton.accessibilityIdentifier = "uploadFileButton"
         sketchButton.accessibilityIdentifier = Locators.ActiveConversationPage.sketchButton.rawValue
         pingButton.accessibilityIdentifier = Locators.ActiveConversationPage.pingButton.rawValue
-        locationButton.accessibilityIdentifier = "locationButton"
+        locationButton.accessibilityIdentifier = Locators.ActiveConversationPage.locationButton.rawValue
         gifButton.accessibilityIdentifier = "gifButton"
         mentionButton.accessibilityIdentifier = Locators.ActiveConversationPage.mentionButton.rawValue
         markdownButton.accessibilityIdentifier = "markdownButton"

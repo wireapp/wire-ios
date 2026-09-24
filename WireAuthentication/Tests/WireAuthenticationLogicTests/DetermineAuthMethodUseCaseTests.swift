@@ -64,7 +64,8 @@ final class DetermineAuthMethodUseCaseTests: XCTestCase {
         let authMethod = try await sut.invoke(emailOrSSOCode: "wire-acd708f0-7fab-4b5f-9c1e-2e570bcf7372")
 
         // then
-        XCTAssertEqual(authMethod, .loginViaSSO(code: UUID(uuidString: "acd708f0-7fab-4b5f-9c1e-2e570bcf7372")!))
+        let ssoCode = UUID(uuidString: "acd708f0-7fab-4b5f-9c1e-2e570bcf7372")!
+        XCTAssertEqual(authMethod, .loginViaSSO(code: ssoCode, multiIngressIdentityProviderID: ssoCode))
     }
 
     // MARK: - Default SSO for the backend
@@ -115,7 +116,7 @@ final class DetermineAuthMethodUseCaseTests: XCTestCase {
         let authMethod = try await sut.invoke(emailOrSSOCode: email)
 
         // then
-        XCTAssertEqual(authMethod, .loginViaSSO(code: teamSSOCode))
+        XCTAssertEqual(authMethod, .loginViaSSO(code: teamSSOCode, multiIngressIdentityProviderID: teamSSOCode))
         XCTAssertEqual(mockAuthenticationAPI.getSSOCodeForEmail_Invocations, [email])
         XCTAssertEqual(mockAuthenticationAPI.getDomainRegistrationForEmail_Invocations, [email])
     }
@@ -187,7 +188,7 @@ final class DetermineAuthMethodUseCaseTests: XCTestCase {
             ),
             (
                 config: .make(domainRedirect: .sso, ssoCodeString: someSSO.uuidString),
-                expected: .loginViaSSO(code: someSSO)
+                expected: .loginViaSSO(code: someSSO, multiIngressIdentityProviderID: someSSO)
             )
         ]
 

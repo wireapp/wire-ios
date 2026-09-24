@@ -214,7 +214,7 @@ final class UpdateEventsLocalStore: UpdateEventsLocalStoreProtocol {
                 )
             }
 
-            WireLogger.sync.debug(
+            WireLogger.sync.info(
                 "deleting \(objectIDs.count) stored envelopes",
                 attributes: .incrementalSync
             )
@@ -246,7 +246,7 @@ final class UpdateEventsLocalStore: UpdateEventsLocalStoreProtocol {
                 )
             }
 
-            WireLogger.sync.debug(
+            WireLogger.sync.info(
                 "deleting \(indices.count) stored envelopes",
                 attributes: .incrementalSync
             )

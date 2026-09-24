@@ -629,7 +629,9 @@ final class UpdateEventsLocalStoreTests: XCTestCase {
 
         static let envelope1 = UpdateEventEnvelope(
             id: id1,
-            events: [.user(.pushRemove)],
+            events: [.featureConfig(.update(.init(
+                featureConfig: .meetings(.init(status: .enabled))
+            )))],
             isTransient: false
         )
 

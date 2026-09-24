@@ -29,6 +29,10 @@ class IncomingCallPage: PageModel {
         app.staticTexts[Locators.IncomingCallPage.acceptCall.rawValue]
     }
 
+    var declineButton: XCUIElement {
+        app.buttons[Locators.IncomingCallPage.declineCall.rawValue].firstMatch
+    }
+
     var turnOffMicrophoneButton: XCUIElement {
         app.staticTexts[Locators.IncomingCallPage.turnOffMicrophone.rawValue]
     }
@@ -42,5 +46,10 @@ class IncomingCallPage: PageModel {
         acceptButton.tap()
         app.dismissAllowIfPresent()
         return try OngoingCallPage()
+    }
+
+    func declineIncomingCall() throws -> ConversationsPage {
+        declineButton.tapAndWait()
+        return try ConversationsPage()
     }
 }

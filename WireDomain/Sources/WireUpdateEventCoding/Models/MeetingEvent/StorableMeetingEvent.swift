@@ -22,6 +22,7 @@ enum StorableMeetingEvent: Equatable, Codable, Sendable {
 
     case create(StorableMeetingCreateEvent)
     case delete(StorableMeetingDeleteEvent)
+    case memberAdd(StorableMeetingMemberAddEvent)
     case update(StorableMeetingUpdateEvent)
 
     init(_ value: WireNetwork.MeetingEvent) {
@@ -30,6 +31,8 @@ enum StorableMeetingEvent: Equatable, Codable, Sendable {
             self = .create(StorableMeetingCreateEvent(event))
         case let .delete(event):
             self = .delete(StorableMeetingDeleteEvent(event))
+        case let .memberAdd(event):
+            self = .memberAdd(StorableMeetingMemberAddEvent(event))
         case let .update(event):
             self = .update(StorableMeetingUpdateEvent(event))
         }
@@ -41,6 +44,8 @@ enum StorableMeetingEvent: Equatable, Codable, Sendable {
             .create(event.toAPIModel())
         case let .delete(event):
             .delete(event.toAPIModel())
+        case let .memberAdd(event):
+            .memberAdd(event.toAPIModel())
         case let .update(event):
             .update(event.toAPIModel())
         }

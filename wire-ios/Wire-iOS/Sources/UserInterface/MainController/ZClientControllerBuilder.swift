@@ -114,7 +114,7 @@ final class ZClientControllerBuilder {
 
     @MainActor
     private func buildWireMeetingsFactory() -> any WireMeetingsFactoryProtocol {
-        WireMeetingsFactory()
+        WireMeetingsFactory(selfUserID: account.userIdentifier)
     }
 
 }

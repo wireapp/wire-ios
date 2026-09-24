@@ -32,7 +32,10 @@ package struct AllMeetingsView: View {
     package var body: some View {
         MeetingsView(
             viewModel: viewModel.meetingsViewModel,
-            onEditMeeting: { viewModel.editMeetingTapped($0) }
+            onEditMeeting: { viewModel.editMeetingTapped($0) },
+            onJoinMeeting: { occurrence in
+                Task { await viewModel.joinMeetingTapped(occurrence) }
+            }
         )
         .navigationTitle(L10n.Localizable.WireMeetings.List.title)
         .navigationBarTitleDisplayMode(.inline)
@@ -62,6 +65,12 @@ package struct AllMeetingsView: View {
         .toolbarBackground(.visible, for: .navigationBar)
         .sheet(item: $viewModel.presentedFormMode) { mode in
             MeetingFormView(viewModel: viewModel.makeMeetingFormViewModel(mode: mode))
+        }
+        .alert(
+            L10n.Localizable.WireMeetings.List.Join.Error.Alert.title,
+            isPresented: $viewModel.hasJoinError
+        ) {
+            Button(L10n.Localizable.WireMeetings.List.Join.Error.Alert.ok, role: .cancel) {}
         }
     }
 }

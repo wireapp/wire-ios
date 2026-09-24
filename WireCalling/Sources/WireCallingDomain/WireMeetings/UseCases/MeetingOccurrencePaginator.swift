@@ -22,11 +22,7 @@ import WireFoundation
 
 package struct MeetingOccurrencePaginator {
 
-    private let calendar: Calendar
-
-    package init(calendar: Calendar = .current) {
-        self.calendar = calendar
-    }
+    package init() {}
 
     package func occurrences(
         for meetings: [Meeting],
@@ -53,7 +49,7 @@ package struct MeetingOccurrencePaginator {
                 occurrences.append(cursor.occurrence)
             }
 
-            if cursor.advance(using: calendar) {
+            if cursor.advance() {
                 cursors.append(cursor)
             }
         }
@@ -62,9 +58,13 @@ package struct MeetingOccurrencePaginator {
     }
 
     private func makeCursor(for meeting: Meeting, startingAt lowerBound: Date) -> OccurrenceCursor? {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = meeting.timeZoneIdentifier.flatMap(TimeZone.init(identifier:))
+            ?? TimeZone(identifier: "Europe/Berlin")!
+
         guard let recurrence = meeting.recurrence else {
             guard meeting.start >= lowerBound else { return nil }
-            return OccurrenceCursor(meeting: meeting, occurrenceStart: meeting.start)
+            return OccurrenceCursor(meeting: meeting, calendar: calendar, occurrenceStart: meeting.start)
         }
 
         guard recurrence.until.map({ $0 >= lowerBound }) ?? true else {
@@ -74,11 +74,16 @@ package struct MeetingOccurrencePaginator {
         var occurrenceStart = fastForwardOccurrenceStart(
             from: meeting.start,
             recurrence: recurrence,
-            lowerBound: lowerBound
+            lowerBound: lowerBound,
+            calendar: calendar
         )
         while occurrenceStart < lowerBound {
-            guard let nextStart = nextOccurrenceStart(after: occurrenceStart, recurrence: recurrence),
-                  nextStart > occurrenceStart else {
+            guard let nextStart = nextOccurrenceStart(
+                after: occurrenceStart,
+                recurrence: recurrence,
+                calendar: calendar
+            ),
+                nextStart > occurrenceStart else {
                 return nil
             }
 
@@ -93,13 +98,14 @@ package struct MeetingOccurrencePaginator {
             return nil
         }
 
-        return OccurrenceCursor(meeting: meeting, occurrenceStart: occurrenceStart)
+        return OccurrenceCursor(meeting: meeting, calendar: calendar, occurrenceStart: occurrenceStart)
     }
 
     private func fastForwardOccurrenceStart(
         from start: Date,
         recurrence: MeetingRecurrence,
-        lowerBound: Date
+        lowerBound: Date,
+        calendar: Calendar
     ) -> Date {
         guard start < lowerBound else { return start }
 
@@ -147,7 +153,7 @@ package struct MeetingOccurrencePaginator {
         }
     }
 
-    private func nextOccurrenceStart(after date: Date, recurrence: MeetingRecurrence) -> Date? {
+    private func nextOccurrenceStart(after date: Date, recurrence: MeetingRecurrence, calendar: Calendar) -> Date? {
         let interval = max(recurrence.interval, 1)
         let component: Calendar.Component = switch recurrence.frequency {
         case .daily: .day
@@ -164,6 +170,7 @@ package struct MeetingOccurrencePaginator {
 private struct OccurrenceCursor {
 
     let meeting: Meeting
+    let calendar: Calendar
     var occurrenceStart: Date
 
     var occurrence: MeetingOccurrence {
@@ -174,7 +181,7 @@ private struct OccurrenceCursor {
         )
     }
 
-    mutating func advance(using calendar: Calendar) -> Bool {
+    mutating func advance() -> Bool {
         guard let recurrence = meeting.recurrence else { return false }
 
         let interval = max(recurrence.interval, 1)

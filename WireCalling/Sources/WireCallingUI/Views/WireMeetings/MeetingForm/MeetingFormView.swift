@@ -25,6 +25,7 @@ import WireFoundation
 struct MeetingFormView: View {
     private typealias Strings = L10n.Localizable.WireMeetings.Schedule
     private static let timePickerMinuteInterval = 15
+    private let formatter = MeetingsFormatter()
 
     @Environment(\.dismiss) private var dismiss
     @Environment(\.wireAccentColor) private var wireAccentColor
@@ -61,10 +62,16 @@ struct MeetingFormView: View {
                     }
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(actionButtonLabel) {
-                        Task { await viewModel.submit() }
+                    if viewModel.isLoading {
+                        ProgressView()
+                            .accessibilityLabel(actionButtonLabel)
+                            .accessibilityIdentifier("meetingFormLoading")
+                    } else {
+                        Button(actionButtonLabel) {
+                            Task { await viewModel.submit() }
+                        }
+                        .disabled(!viewModel.isNextButtonEnabled)
                     }
-                    .disabled(!viewModel.isNextButtonEnabled || viewModel.isLoading)
                 }
             }
             .toolbarBackground(ColorTheme.Backgrounds.background.color, for: .navigationBar)
@@ -73,10 +80,52 @@ struct MeetingFormView: View {
             }
             .alert(isPresented: $viewModel.hasError) {
                 Alert(
-                    title: Text(Strings.Error.Alert.title),
+                    title: Text(errorContent.title),
+                    message: Text(errorContent.message),
                     dismissButton: .default(Text(Strings.Error.Alert.ok))
                 )
             }
+            .alert(
+                Strings.ParticipantsNotAdded.title,
+                isPresented: $viewModel.hasParticipantsNotAddedAlert
+            ) {
+                Button(Strings.Error.Alert.ok, action: viewModel.acknowledgeParticipantsNotAdded)
+            } message: {
+                Text(Strings.ParticipantsNotAdded
+                    .message(viewModel.participantsNotAdded.map(\.name).joined(separator: ", ")))
+            }
+            .alert(
+                Strings.Error.ExpiredStartDate.title,
+                isPresented: $viewModel.hasExpiredStartDateError
+            ) {
+                Button(Strings.Error.Alert.ok) {
+                    expandedField = .startDate
+                }
+            } message: {
+                Text(Strings.Error.ExpiredStartDate.message)
+            }
+            .alert(
+                Strings.Error.ConversationName.title,
+                isPresented: $viewModel.hasConversationNameUpdateError
+            ) {
+                Button(Strings.Error.ConversationName.retry) {
+                    Task { await viewModel.retryConversationNameUpdate() }
+                }
+            } message: {
+                Text(Strings.Error.ConversationName.message)
+            }
+        }
+    }
+
+    private var errorContent: (title: String, message: String) {
+        typealias Errors = L10n.Localizable.Meetings
+        switch viewModel.mode {
+        case .instant:
+            return (Errors.MeetNowModal.Error.createFailedTitle, Errors.MeetNowModal.Error.createFailed)
+        case .scheduled:
+            return (Errors.ScheduleModal.Error.createFailedTitle, Errors.ScheduleModal.Error.createFailed)
+        case .edit:
+            return (Errors.ScheduleModal.Error.updateFailedTitle, Errors.ScheduleModal.Error.updateFailed)
         }
     }
 
@@ -103,7 +152,7 @@ struct MeetingFormView: View {
     }
 
     private var titleSection: some View {
-        Section(Strings.SetupTitle.header) {
+        Section {
             HStack {
                 TextField(Strings.SetupTitle.placeholder, text: $viewModel.meetingTitle)
                     .focused($isTitleFieldFocused)
@@ -115,6 +164,13 @@ struct MeetingFormView: View {
                         }
                 }
             }
+        } header: {
+            Text(Strings.SetupTitle.header)
+        } footer: {
+            if viewModel.isMeetingTitleTooLong {
+                Text(Strings.SetupTitle.Error.tooLong)
+                    .foregroundStyle(ColorTheme.Base.error.color)
+            }
         }
         .textCase(nil)
     }
@@ -124,6 +180,7 @@ struct MeetingFormView: View {
             dateTimeRow(
                 label: Strings.Time.starts,
                 date: $viewModel.startDate,
+                pickerDate: $viewModel.startDatePickerSelection,
                 range: viewModel.startDateRange,
                 maximumDate: nil,
                 dateField: .startDate,
@@ -183,6 +240,7 @@ struct MeetingFormView: View {
     private func dateTimeRow(
         label: String,
         date: Binding<Date>,
+        pickerDate: Binding<Date>? = nil,
         range: PartialRangeFrom<Date>,
         maximumDate: Date?,
         dateField: ExpandedField,
@@ -194,7 +252,7 @@ struct MeetingFormView: View {
             Text(label)
             Spacer()
             pill(
-                text: date.wrappedValue.formatted(.dateTime.day().month(.abbreviated).year()),
+                text: formatter.date(date.wrappedValue),
                 isSelected: expandedField == dateField
             ) {
                 toggleExpansion(dateField)
@@ -203,7 +261,7 @@ struct MeetingFormView: View {
             .disabled(!isDateFieldEnabled)
             .accessibilityHidden(!isDateFieldEnabled)
             pill(
-                text: date.wrappedValue.formatted(date: .omitted, time: .shortened),
+                text: formatter.time(date.wrappedValue),
                 isSelected: expandedField == timeField
             ) {
                 toggleExpansion(timeField)
@@ -211,12 +269,12 @@ struct MeetingFormView: View {
         }
 
         if expandedField == dateField {
-            DatePicker("", selection: date, in: range, displayedComponents: .date)
+            DatePicker("", selection: pickerDate ?? date, in: range, displayedComponents: .date)
                 .datePickerStyle(.graphical)
                 .labelsHidden()
         }
         if expandedField == timeField {
-            timePicker(date: date, range: range, maximumDate: maximumDate)
+            timePicker(date: pickerDate ?? date, range: range, maximumDate: maximumDate)
         }
     }
 
@@ -228,6 +286,7 @@ struct MeetingFormView: View {
             maximumDate: maximumDate,
             minuteInterval: Self.timePickerMinuteInterval
         )
+        .id(Calendar.current.isDate(date.wrappedValue, equalTo: range.lowerBound, toGranularity: .hour))
     }
 
     private func pill(
@@ -273,6 +332,8 @@ private struct MinuteIntervalTimePicker: UIViewRepresentable {
         let datePicker = UIDatePicker()
         datePicker.datePickerMode = .time
         datePicker.preferredDatePickerStyle = .wheels
+        // Keep 24-hour wheels even when the device uses a 12-hour clock.
+        datePicker.locale = Locale(identifier: "en_US_POSIX@hours=h23")
         datePicker.minuteInterval = minuteInterval
         datePicker.minimumDate = range.lowerBound
         datePicker.maximumDate = maximumDate
@@ -327,8 +388,10 @@ private extension MeetingRepeatOption {
             Strings.daily
         case .weekly:
             Strings.weekly
-        case .every2Weeks:
+        case .everyTwoWeeks:
             Strings.everyTwoWeeks
+        case .everyFourWeeks:
+            Strings.everyFourWeeks
         case .monthly:
             Strings.monthly
         case .yearly:

@@ -311,7 +311,8 @@ final class MeetingsAPITests: XCTestCase {
         static let createParameters = CreateMeetingParameters(
             title: "Engineering Sync",
             startTime: startTime,
-            endTime: endTime
+            endTime: endTime,
+            timeZoneIdentifier: "America/New_York"
         )
         static let updateParameters = UpdateMeetingParameters(
             title: "Engineering Sync (Updated)",

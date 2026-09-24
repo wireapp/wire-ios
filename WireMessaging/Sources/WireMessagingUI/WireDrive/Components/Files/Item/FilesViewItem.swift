@@ -79,6 +79,9 @@ package struct FilesViewItem: Identifiable, Hashable, Sendable {
 
     /// The size of of this item
     let size: UInt64?
+
+    /// The thumbnail URL of this item
+    let thumbnailURL: URL?
 }
 
 extension FilesViewItem {
@@ -110,7 +113,8 @@ extension FilesViewItem {
             publicLinkID: node.publicLinkID?.string,
             conversationName: node.conversation?.name,
             isReadOnly: selfUser.role == .viewer,
-            size: node.size
+            size: node.size,
+            thumbnailURL: node.previews.min(by: { $0.dimension < $1.dimension })?.url
         )
     }
 }
@@ -175,7 +179,8 @@ extension FilesViewItem {
             publicLinkID: nil, // change later if we want to be able to share a public link in offline mode.
             conversationName: asset.conversationName,
             isReadOnly: isReadOnly,
-            size: asset.size
+            size: asset.size,
+            thumbnailURL: nil // in offline mode, we'll use the full asset directly
         )
     }
 }

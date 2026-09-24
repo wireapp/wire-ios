@@ -181,7 +181,8 @@ extension FilesItemViewModel {
                 publicLinkID: publicLinkID,
                 conversationName: "Conversation 1",
                 isReadOnly: false,
-                size: nil
+                size: nil,
+                thumbnailURL: nil
             ),
             selectedSortingKey: .date,
             conversationName: "Test",

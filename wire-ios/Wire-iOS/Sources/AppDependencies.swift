@@ -29,6 +29,6 @@ enum AppDependencies {
 
     static let cookieStorage = CookieStorage(cookieEncryptionKey: UserDefaults.cookiesKey())
     static let pushTokenService = PushTokenService()
-    static let voIPPushManager = VoIPPushManager(application: UIApplication.shared, pushTokenService: pushTokenService)
+    static let voIPPushManager = VoIPPushManager(application: UIApplication.shared)
 
 }

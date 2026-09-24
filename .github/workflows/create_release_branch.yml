@@ -49,8 +49,6 @@ env:
 jobs:
   create-release-branch:
     runs-on: ubuntu-24.04
-    env:
-      GITHUB_TOKEN: ${{ secrets.SUBMODULE_PAT }}
 
     steps:
       - name: Validate version input
@@ -208,6 +206,8 @@ jobs:
             core.info(`Grouped ${keys.length} ticket(s): New=${buckets.New.length} Improvements=${buckets.Improvements.length} Fix=${buckets.Fix.length}`);
 
       - name: Create draft GitHub release
+        env:
+          GITHUB_TOKEN: ${{ secrets.SUBMODULE_PAT }}
         run: |
           set -euo pipefail
           TICKET_SECTIONS="${TICKET_SECTIONS:-**New:**
@@ -255,6 +255,7 @@ jobs:
         env:
           TICKET: ${{ inputs.ticket }}
           ACTOR: ${{ github.actor }}
+          GITHUB_TOKEN: ${{ secrets.SUBMODULE_PAT }}
         run: |
           set -euo pipefail
           BUMP_BRANCH="chore/bump-edge-version-${NEXT_VERSION}"

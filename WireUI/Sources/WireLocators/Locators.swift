@@ -65,6 +65,8 @@ public enum Locators {
         case conversationSearchBar
         case conversationSearchClearButton = "Clear text"
         case conversationCell
+        case unblockOptionOnContextMenu
+        case joinCallButton = "Join"
         case blockOptionOnContextMenu = "Block…"
         case clearOptionOnContextMenu = "Clear Content…"
         case clearButtonOnBottomSheet
@@ -173,6 +175,7 @@ public enum Locators {
         case inputField
         case sendButton
         case authorName
+        case conversationTitleLabel
         case conversationTitleButton
         case conversationDetailsButton
         case sharedDriveButton
@@ -182,10 +185,14 @@ public enum Locators {
         case imageCell
         case videoCell
         case videoPlayButton
+        case imagePreview
+        case videoPreview
         case mentionButton
         case userCellName
         case labelSharedDriveON = "Shared Drive is on"
         case labelSelfDeletingMessagesOFF = "Self-deleting messages are off"
+        case selfDeletedMessage
+        case ephemeralCountdown
         case sharedFileLabel = "FileTransferTopLabel"
         case sharedFileDetailsLabel = "FileTransferBottomLabel"
         case fileTypeIcon = "FileTransferFileTypeIcon"
@@ -197,10 +204,17 @@ public enum Locators {
         case attachmentVideoPreview
         case classifiedBanner = "ClassificationBannerClassified"
         case photoButton
+        case cameraRollButton
         case uploadFileButton
+        case locationButton
+        case add = "Add"
         case browse = "Browse"
         case open = "Open"
         case allowFullAccess = "Allow Full Access"
+        case sendLocation
+        case selectedAddress
+        case locationCell
+        case locationMap
         case ok = "OK"
         case audioButton
         case startRecording
@@ -216,6 +230,10 @@ public enum Locators {
         case openOngoingCallButton
         case readReceiptsDisabledSystemMessage
         case readReceiptsEnabledSystemMessage
+        case replyOptionOnMessage = "Reply"
+        case replyPreviewView = "replyView"
+        case cancelReplyButton = "cancelReply"
+        case originalSender = "original.sender"
 
     }
 
@@ -246,6 +264,7 @@ public enum Locators {
         case title
         case addParticipantsButton
         case moreOptionsButton
+        case notificationOptionsCell
         case userCellName
         case adminCell
         case memberCell
@@ -253,10 +272,21 @@ public enum Locators {
         case readReceiptsSwitch
     }
 
+    public enum ConversationNotificationOptionsPage: AutoPrefixedEnum {
+        case everythingOption
+        case mentionsAndRepliesOption
+        case nothingOption
+    }
+
+    public enum ConversationTimeoutOptionsPage: AutoPrefixedEnum {
+        case timeOutOptionsCloseButton
+    }
+
     public enum ConversationDetailsActions: AutoPrefixedEnum {
         case archive
         case clearContent
         case leaveConversation
+        case migrateToMLS
         case moveToFolder
     }
 
@@ -460,6 +490,7 @@ public enum Locators {
     public enum ShareExtensionPage: String {
 
         case sendButtonOnShareExtension
+        case messageField
         case wire = "Wire"
         case chooseConversations = "Choose"
     }
@@ -476,6 +507,7 @@ public enum Locators {
     public enum IncomingCallPage: String {
 
         case acceptCall = "Accept"
+        case declineCall
         case turnOffMicrophone = "Microphone"
     }
 
@@ -671,5 +703,15 @@ public enum Locators {
             case attendingLabel = "Attending Label"
         }
 
+        public enum MeetingRow: String {
+            case deleteForMeButton = "Delete Meeting for Me Button"
+            case joinButton = "Join Button"
+        }
+    }
+
+    public enum SessionExpiredPage: String {
+
+        case alertTitle = "Your session expired"
+        case okButton = "OK"
     }
 }

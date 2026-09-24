@@ -179,12 +179,13 @@ enum ConversationSystemMessageCellDescription {
             // Displayed in the table header via GroupConversationHeaderView.
             return []
 
-        case .failedToAddParticipants:
+        case .failedToAddParticipants, .failedToAddParticipantsMLS:
             if let users = Array(systemMessageData.userTypes) as? [UserType], let buttonAction {
 
                 let cellDescription = ConversationFailedToAddParticipantsSystemMessageCellDescription(
                     failedUsers: users,
                     isCollapsed: isCollapsed,
+                    reason: systemMessageData.systemMessageType,
                     buttonAction: buttonAction
                 )
                 return [AnyConversationMessageCellDescription(cellDescription)]
@@ -232,8 +233,7 @@ enum ConversationSystemMessageCellDescription {
             return [AnyConversationMessageCellDescription(cell)]
 
         case .conversationScheduledForDeletion:
-            guard let deletionDate = systemMessageData.conversationScheduledDeletionDate,
-                  DeveloperFlag.preventAdminlessGroups.isOn else {
+            guard let deletionDate = systemMessageData.conversationScheduledDeletionDate else {
                 break
             }
             let cell = ConversationScheduledForDeletionCellDescription(deletionDate: deletionDate)

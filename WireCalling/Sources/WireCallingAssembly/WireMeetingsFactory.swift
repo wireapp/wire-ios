@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+public import Foundation
 public import UIKit
 public import WireCallingDomain
 
@@ -25,15 +26,19 @@ import WireFoundation
 
 public struct WireMeetingsFactory {
 
+    private let selfUserID: UUID
+
     @MainActor
-    public init() {}
+    public init(selfUserID: UUID) {
+        self.selfUserID = selfUserID
+    }
 
     @MainActor
     public func makeMeetingsView(
         meetingRepository: any MeetingRepositoryProtocol,
         memberRepository: any MeetingMemberRepositoryProtocol,
         conversationRepository: any MeetingConversationRepositoryProtocol,
-        callStateRepository: any MeetingCallStateRepositoryProtocol,
+        callRepository: any MeetingCallRepositoryProtocol,
         accentColorState: WireMeetingsAccentColorState
     ) -> UIViewController {
         let createMeetingUseCase = CreateMeetingUseCase(
@@ -49,15 +54,22 @@ public struct WireMeetingsFactory {
             currentDateProvider: .system
         )
         let observeMeetingChangesUseCase = ObserveMeetingChangesUseCase(repository: meetingRepository)
-        let deleteMeetingUseCase = DeleteMeetingUseCase(repository: meetingRepository)
-        let observeAttendedMeetingsUseCase = ObserveAttendedMeetingsUseCase(repository: callStateRepository)
+        let deleteMeetingUseCase = DeleteMeetingUseCase(
+            meetingRepository: meetingRepository,
+            conversationRepository: conversationRepository,
+            selfUserID: selfUserID
+        )
+        let observeAttendedMeetingsUseCase = ObserveAttendedMeetingsUseCase(repository: callRepository)
+        let joinMeetingCallUseCase = JoinMeetingCallUseCase(repository: callRepository)
         let searchMembersUseCase = SearchMembersUseCase(repository: memberRepository)
         let meetingsViewModel = AllMeetingsViewModel(
             currentDateProvider: .system,
             upcomingMeetingsUseCase: fetchUpcomingMeetingsUseCase,
             observeMeetingChangesUseCase: observeMeetingChangesUseCase,
             deleteMeetingUseCase: deleteMeetingUseCase,
+            selfUserID: selfUserID,
             observeAttendedMeetingsUseCase: observeAttendedMeetingsUseCase,
+            joinMeetingCallUseCase: joinMeetingCallUseCase,
             makeFormViewModel: { mode, onSuccess in
                 MeetingFormViewModel(
                     mode: mode,

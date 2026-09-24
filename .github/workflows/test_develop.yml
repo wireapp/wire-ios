@@ -2,6 +2,15 @@ name: Nightly Tests
 
 on:
   workflow_dispatch:
+    inputs:
+      mac_runner:
+        description: 'macOS runner'
+        type: choice
+        options:
+          - in-house
+          - cirrus
+          - github
+        default: in-house
   schedule:
     - cron: "0 21 * * MON-FRI"
   
@@ -17,9 +26,13 @@ jobs:
     with:
       all: false
       branch: develop
-      notify_secret: WIRE_IOS_NIGHTLY_WEBHOOK
+      mac_runner: ${{ github.event_name == 'workflow_dispatch' && inputs.mac_runner || vars.DEFAULT_MAC_RUNNER }}
       run_critical_flows: true
       ui_test_tags: "!critical"
       notify: always
       timeout_minutes: 120
-    secrets: inherit
+    secrets:
+      ZENKINS_USERNAME: ${{ secrets.ZENKINS_USERNAME }}
+      DD_API_KEY: ${{ secrets.DD_API_KEY }}
+      OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+      SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_NIGHTLY_WEBHOOK }}

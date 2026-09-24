@@ -113,6 +113,12 @@ extension FeatureConfigLocalStoreProtocol {
                 isEnabled: config.status == .enabled,
                 config: config.toDomainModel()
             )
+        case let .meetings(config):
+            await storeFeature(
+                name: .meetings,
+                isEnabled: config.status == .enabled,
+                config: nil
+            )
         case let .selfDeletingMessages(config):
             await storeFeature(
                 name: .selfDeletingMessages,

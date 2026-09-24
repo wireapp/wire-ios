@@ -6,5 +6,7 @@
 	<string>$(WIRE_AUTHENTICATION_ENABLED)</string>
 	<key>CreateLegacyBackupsEnabled</key>
 	<string>$(CREATE_LEGACY_BACKUP_ENABLED)</string>
+	<key>NoAPNSTokenCacheEnabled</key>
+	<string>$(NO_APNS_TOKEN_CACHE_ENABLED)</string>
 </dict>
 </plist>

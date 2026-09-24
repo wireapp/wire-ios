@@ -38,7 +38,6 @@ public final class VoIPPushManager: NSObject, PKPushRegistryDelegate {
 
     public let callKitManager: CallKitManager
 
-    private let pushTokenService: PushTokenServiceInterface
     private let backgroundActivityFactory: BackgroundActivityFactory
     private let registry: PKPushRegistry
 
@@ -50,11 +49,9 @@ public final class VoIPPushManager: NSObject, PKPushRegistryDelegate {
 
     public init(
         application: ZMApplication,
-        pushTokenService: PushTokenServiceInterface,
         backgroundActivityFactory: BackgroundActivityFactory = .shared
     ) {
         Self.logger.debug("init VoIPPushManager")
-        self.pushTokenService = pushTokenService
         self.backgroundActivityFactory = backgroundActivityFactory
 
         self.registry = PKPushRegistry(queue: Self.pushRegistryQueue)

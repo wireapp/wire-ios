@@ -35,14 +35,16 @@ final class ZCallingTests: WireUITestCase {
 
     private func makeTeamAndGroupCallSetup(
         memberCount: Int,
-        groupName: String? = nil
+        groupName: String? = nil,
+        preferredNames: [String] = []
     ) async throws -> GroupCallScenario {
         let groupName = groupName ?? UserGenerator.generateRandomConversationName()
 
         let (teamOwner, teamMembers, _, conversationId) = try await UserHelper.default
             .registerTeam(
                 withMemberCount: memberCount,
-                conversation: .group(groupName)
+                conversation: .group(groupName),
+                names: preferredNames
             )
 
         let convId = try XCTUnwrap(conversationId, "conversationId is nil").uuidString.lowercased()
@@ -75,6 +77,12 @@ final class ZCallingTests: WireUITestCase {
         let ownerId = try XCTUnwrap(instances.first?.id, "Owner instanceId is nil")
         XCTAssertFalse(ownerId.isEmpty, "Owner instanceId is empty")
         return ownerId
+    }
+
+    private func sortedByName(_ users: [UserInfo]) -> [UserInfo] {
+        users.sorted { firstUser, secondUser in
+            firstUser.name.localizedCaseInsensitiveCompare(secondUser.name) == .orderedAscending
+        }
     }
 
     private func acceptIncomingCall(groupName: String) throws -> OngoingCallPage {
@@ -460,5 +468,121 @@ final class ZCallingTests: WireUITestCase {
 
         // THEN
         XCTAssertTrue(activeAccountOngoingCallPage.timeLabel.waitForExistence(timeout: 10), "Call timer did not appear")
+    }
+
+    @MainActor
+    func testUserCanDeclineAndRejoinOngoingGroupCall_TC_9493_9503_8886() async throws {
+        // GIVEN
+        let teamAndGroupCallSetup = try await makeTeamAndGroupCallSetup(memberCount: 1)
+
+        let firstTimePage = try app.loginUser(
+            email: teamAndGroupCallSetup.appUserReceivingCall.email,
+            password: teamAndGroupCallSetup.appUserReceivingCall.password
+        )
+        _ = try firstTimePage.acceptPopup()
+
+        let instances = try await createCallingServiceInstances(users: teamAndGroupCallSetup.callingServiceUsers)
+        let ownerInstanceId = try requireOwnerInstanceId(from: instances)
+
+        // WHEN
+        _ = try await callingServiceClient.startCall(
+            instanceId: ownerInstanceId,
+            conversationId: teamAndGroupCallSetup.conversationId
+        )
+
+        let incomingCallPage = try IncomingCallPage()
+        XCTAssertTrue(incomingCallPage.declineButton.exists, "Decline button did not show up")
+
+        // THEN
+        let conversationsPage = try incomingCallPage.declineIncomingCall()
+        XCTAssertTrue(
+            conversationsPage.joinCallButton.waitForExistence(timeout: 10),
+            "Join call button did not show up after declining the call"
+        )
+
+        // WHEN
+        let joinedCallPage = try conversationsPage.joinOngoingCall(groupName: teamAndGroupCallSetup.groupName)
+
+        // THEN
+        joinedCallPage.verifyGroupNameAndTimerShowingOnceCallJoined(
+            groupName: teamAndGroupCallSetup.groupName
+        )
+
+        let conversationListPage = try joinedCallPage.endOngoingCall()
+
+        // WHEN
+        let rejoinedCallPage = try conversationListPage.joinOngoingCall(groupName: teamAndGroupCallSetup.groupName)
+
+        // THEN
+        rejoinedCallPage.verifyGroupNameAndTimerShowingOnceCallJoined(
+            groupName: teamAndGroupCallSetup.groupName
+        )
+    }
+
+    @MainActor
+    func testCallParticipantTilesShownInAlphabeticalOrder_TC_9462() async throws {
+        // GIVEN
+        let teamAndGroupCallSetup = try await makeTeamAndGroupCallSetup(
+            memberCount: 3,
+            preferredNames: ["A", "B", "C", "D"]
+        )
+
+        let firstTimePage = try app.loginUser(
+            email: teamAndGroupCallSetup.appUserReceivingCall.email,
+            password: teamAndGroupCallSetup.appUserReceivingCall.password
+        )
+        _ = try firstTimePage.acceptPopup()
+
+        let instances = try await createCallingServiceInstances(users: teamAndGroupCallSetup.callingServiceUsers)
+        let ownerInstanceId = try requireOwnerInstanceId(from: instances)
+
+        // WHEN
+        _ = try await callingServiceClient.startCall(
+            instanceId: ownerInstanceId,
+            conversationId: teamAndGroupCallSetup.conversationId
+        )
+
+        let acceptingIds = instances.dropFirst().compactMap(\.id).filter { !$0.isEmpty }
+        let responses = try await callingManager.acceptNextCalls(
+            instanceIds: acceptingIds,
+            conversationId: teamAndGroupCallSetup.conversationId
+        )
+        XCTAssertEqual(responses.count, acceptingIds.count)
+
+        let ongoingCallPage = try acceptIncomingCall(groupName: teamAndGroupCallSetup.groupName)
+
+        // THEN
+        // Self user should be shown first, then other participants should be shown in alphabetical order.
+        let expectedAudioOrder = [teamAndGroupCallSetup.appUserReceivingCall.name] +
+            sortedByName(teamAndGroupCallSetup.callingServiceUsers).map(\.name)
+        ongoingCallPage.verifyParticipantsShownInOrder(expectedAudioOrder)
+
+        let videoFirstUser = try XCTUnwrap(sortedByName(teamAndGroupCallSetup.callingServiceUsers).last)
+        let videoFirstUserIndex = try XCTUnwrap(
+            teamAndGroupCallSetup.callingServiceUsers.firstIndex { $0 === videoFirstUser }
+        )
+        let videoFirstInstanceId = instances[videoFirstUserIndex].id
+        try await callingManager.waitForCurrentCallStatus(
+            instanceId: videoFirstInstanceId,
+            expectedStatuses: ["ACTIVE"],
+            timeout: 30
+        )
+        // WHEN - switched video on
+        try await callingManager.switchVideoOn(instanceId: videoFirstInstanceId)
+        XCTAssertTrue(
+            ongoingCallPage.videoView(for: videoFirstUser.name).waitForExistence(timeout: 20),
+            "Video tile did not appear for \(videoFirstUser.name)"
+        )
+
+        // When a participant enables video, self user stays first, video participant shows next,
+        // and remaining participants stay in alphabetical order.
+        let expectedVideoOrder = [
+            teamAndGroupCallSetup.appUserReceivingCall.name,
+            videoFirstUser.name
+        ] + sortedByName(teamAndGroupCallSetup.callingServiceUsers.filter { $0.email != videoFirstUser.email })
+            .map(\.name)
+
+        // THEN
+        ongoingCallPage.verifyParticipantsShownInOrder(expectedVideoOrder)
     }
 }

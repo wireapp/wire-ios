@@ -23,9 +23,9 @@ extension WireCoreCryptoUniffi.CommitBundle {
 
     func toAPIModel() -> WireNetwork.CommitBundle {
         WireNetwork.CommitBundle(
-            welcome: welcome?.copyBytes(),
+            welcome: try? welcome?.serialize(),
             commit: commit,
-            groupInfo: groupInfo.payload.copyBytes()
+            groupInfo: groupInfo.payload
         )
     }
 }

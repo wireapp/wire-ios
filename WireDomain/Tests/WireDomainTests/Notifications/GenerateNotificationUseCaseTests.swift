@@ -28,14 +28,21 @@ import XCTest
 final class GenerateNotificationUseCaseTests: XCTestCase {
     private var sut: GenerateNotificationUseCase!
     private var conversationEventBuilder: MockConversationEventNotificationBuilderProtocol!
+    private var meetingDeleteEventBuilder: MockMeetingDeleteEventNotificationBuilder!
     private var userEventBuilder: MockUserEventNotificationBuilderProtocol!
 
     override func setUp() async throws {
         conversationEventBuilder = MockConversationEventNotificationBuilderProtocol()
+        meetingDeleteEventBuilder = MockMeetingDeleteEventNotificationBuilder()
         userEventBuilder = MockUserEventNotificationBuilderProtocol()
 
         sut = GenerateNotificationUseCase(
             conversationEventBuilder: conversationEventBuilder,
+            meetingEventBuilder: MeetingEventNotificationBuilder(
+                meetingDeleteEventBuilder: meetingDeleteEventBuilder,
+                meetingMemberAddEventBuilder: MockMeetingMemberAddEventNotificationBuilder(),
+                meetingUpdateEventBuilder: MockMeetingUpdateEventNotificationBuilder()
+            ),
             userEventBuilder: userEventBuilder,
             eventID: .mockID1
         )
@@ -44,6 +51,7 @@ final class GenerateNotificationUseCaseTests: XCTestCase {
     override func tearDown() async throws {
         sut = nil
         conversationEventBuilder = nil
+        meetingDeleteEventBuilder = nil
         userEventBuilder = nil
     }
 
@@ -114,8 +122,27 @@ final class GenerateNotificationUseCaseTests: XCTestCase {
         XCTAssertLessThan(totalInvocations, events.count, "Should not process all events after cancellation")
     }
 
+    func testProcess_ItOnlyBuildsMeetingDeleteNotifications() async throws {
+        meetingDeleteEventBuilder.buildContentMockValue = .text(UNMutableNotificationContent())
+
+        let asyncStream = AsyncStream<[UpdateEvent]> {
+            $0.yield([
+                .meeting(.create(.init(meetingID: Scaffolding.meetingID))),
+                .meeting(.update(.init(meetingID: Scaffolding.meetingID))),
+                .meeting(.delete(.init(meetingID: Scaffolding.meetingID)))
+            ])
+            $0.finish()
+        }
+
+        let notifications = try await sut.invoke(updateEvents: asyncStream)
+
+        XCTAssertEqual(notifications.count, 1)
+        XCTAssertEqual(meetingDeleteEventBuilder.buildContentInvocations, [Scaffolding.meetingID])
+    }
+
     private enum Scaffolding {
         static let conversationID = WireNetwork.QualifiedID(id: .mockID2, domain: "domain.com")
+        static let meetingID = WireNetwork.QualifiedID(id: .mockID4, domain: "domain.com")
         static let userID = UserID(id: .mockID3, domain: "domain.com")
         static let userPushRemoveEvent = UpdateEvent.user(.pushRemove)
         static let conversationRenameEvent = UpdateEvent.conversation(
@@ -143,4 +170,28 @@ final class GenerateNotificationUseCaseTests: XCTestCase {
         }
     }
 
+}
+
+private final class MockMeetingDeleteEventNotificationBuilder: MeetingDeleteEventNotificationBuilderProtocol {
+
+    var buildContentInvocations = [WireNetwork.QualifiedID]()
+    var buildContentMockValue: UserNotification?
+
+    func buildContent(event: MeetingDeleteEvent) async -> UserNotification? {
+        buildContentInvocations.append(event.meetingID)
+        return buildContentMockValue
+    }
+
+}
+
+private struct MockMeetingMemberAddEventNotificationBuilder: MeetingMemberAddEventNotificationBuilderProtocol {
+    func buildContent(event: MeetingMemberAddEvent) async -> UserNotification? {
+        nil
+    }
+}
+
+private struct MockMeetingUpdateEventNotificationBuilder: MeetingUpdateEventNotificationBuilderProtocol {
+    func buildContent(event: MeetingUpdateEvent) async -> UserNotification? {
+        nil
+    }
 }

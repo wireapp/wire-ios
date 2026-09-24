@@ -150,6 +150,9 @@ public protocol SessionManagerType: AnyObject {
     /// Switch account and and ask UI to navigate to the conversation list
     func showConversationList(in session: ZMUserSession)
 
+    /// Switch account and ask UI to navigate to the meetings screen.
+    func showMeetings(in session: ZMUserSession)
+
     /// Switch to the given session's account without triggering any in-app navigation.
     /// Use when post-activation flows (e.g. presenting an incoming-call UI) should drive
     /// what the user sees next, rather than navigating to a specific conversation.
@@ -257,13 +260,12 @@ public protocol ForegroundNotificationResponder: AnyObject {
 @objcMembers
 public final class SessionManager: NSObject, SessionManagerType {
 
-    public enum AccountError: Error {
-        case accountLimitReached
+    public enum AccountError: Error, Equatable {
+        case accountLimitReached(maxNumberAccounts: Int)
     }
 
     enum RetainedAccountDataError: Error {
         case accountIsActive
-        case failedToDeleteAccountData
     }
 
     /// Maximum number of accounts which can be logged in simultanously
@@ -436,7 +438,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         environment: WireTransport.BackendEnvironment,
         configuration: SessionManagerConfiguration = SessionManagerConfiguration(),
         detector: JailbreakDetectorProtocol = JailbreakDetector(),
-        pushTokenService: PushTokenServiceInterface = PushTokenService(),
+        pushTokenService: PushTokenServiceInterface,
         callKitManager: CallKitManagerInterface,
         isDeveloperModeEnabled: Bool = false,
         isUnauthenticatedTransportSessionReady: Bool = false,
@@ -547,7 +549,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         environment: WireTransport.BackendEnvironment,
         configuration: SessionManagerConfiguration = SessionManagerConfiguration(),
         detector: JailbreakDetectorProtocol = JailbreakDetector(),
-        pushTokenService: PushTokenServiceInterface = PushTokenService(),
+        pushTokenService: PushTokenServiceInterface,
         callKitManager: CallKitManagerInterface,
         isDeveloperModeEnabled: Bool = false,
         proxyCredentials: WireTransport.ProxyCredentials?,
@@ -634,14 +636,17 @@ public final class SessionManager: NSObject, SessionManagerType {
         updateCallNotificationStyle()
 
         pushTokenService.onTokenChange = { [weak self] _ in
-            guard
-                let self,
-                let session = activeUserSession
-            else {
+            guard let self else { return }
+
+            if DeveloperFlag.noAPNSTokenCache.isOn {
+                // Upload push token for all loaded sessions. Correct behavior would be to upload it for all accounts
+                // but we don't yet have a means to do that without loading all sessions into memory.
+                Task { await self.uploadPushToken(sessions: Array(self.backgroundUserSessions.values)) }
                 return
             }
 
-            syncLocalTokenWithRemote(session: session)
+            guard let activeUserSession else { return }
+            syncLocalTokenWithRemote(session: activeUserSession)
         }
 
         self.deleteAccountToken = AccountDeletedNotification.addObserver(observer: self, queue: groupQueue)
@@ -837,17 +842,26 @@ public final class SessionManager: NSObject, SessionManagerType {
     public func logout(account: Account, error: Error? = nil) {
         WireLogger.sessionManager.debug("Logging out account \(account.userIdentifier)...")
 
-        let (accountSession, activeSession) = state.withLockUnchecked {
-            ($0.backgroundUserSessions[account.userIdentifier], $0.activeUserSession)
+        guard let isActiveSession = backgroundSessionStatus(for: account.userIdentifier) else { return }
+
+        if isActiveSession {
+            logoutCurrentSession(deleteCookie: true, deleteAccount: false, error: error)
+        } else {
+            tearDownBackgroundSession(for: account.userIdentifier)
+        }
+    }
+
+    /// Whether the account has a live background session, and if so, whether
+    /// that session is the currently active/foreground one. Returns `nil` if
+    /// there is no live background session at all.
+
+    private func backgroundSessionStatus(for userID: UUID) -> Bool? {
+        let (backgroundSession, activeSession) = state.withLockUnchecked {
+            ($0.backgroundUserSessions[userID], $0.activeUserSession)
         }
 
-        if let accountSession {
-            if accountSession == activeSession {
-                logoutCurrentSession(deleteCookie: true, deleteAccount: false, error: error)
-            } else {
-                tearDownBackgroundSession(for: account.userIdentifier)
-            }
-        }
+        guard let backgroundSession else { return nil }
+        return backgroundSession == activeSession
     }
 
     public func logoutCurrentSession() {
@@ -1157,11 +1171,6 @@ public final class SessionManager: NSObject, SessionManagerType {
         }
     }
 
-    private func clearCRLExpirationDates(for account: Account) {
-        let repository = CRLExpirationDatesRepository(userID: account.userIdentifier)
-        repository.removeAllExpirationDates()
-    }
-
     private func clearCacheDirectory() {
         guard let cachesDirectoryPath = cachesDirectory else { return }
         let manager = FileManager.default
@@ -1181,9 +1190,42 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     public func purgeRetainedAccountData(for userID: UUID) throws {
         guard let account = accountManager.account(with: userID) else { return }
-        guard !isAccountActive(account) else { throw RetainedAccountDataError.accountIsActive }
+
+        // A "retained" account keeps its data and cookie on disk after
+        // logging out (`deleteCookie: false`), so it always has a valid
+        // cookie and would be considered `isAccountActive` even though no
+        // live session exists. Only a live in-memory session should block
+        // purging its data.
+        guard backgroundUserSessions[account.userIdentifier] == nil else {
+            throw RetainedAccountDataError.accountIsActive
+        }
 
         try deleteAccountData(for: account, keepAccountOnFailure: true)
+    }
+
+    /// Tears down any live background session for the account (if it isn't
+    /// the currently active/foreground session), then purges its retained
+    /// data on disk.
+    ///
+    /// - Throws: `RetainedAccountDataError.accountIsActive` if the account is
+    /// the current foreground session — safely logging that out requires the
+    /// full app-state logout flow (`sessionManagerWillLogout`), which this
+    /// method does not perform.
+
+    public func logoutBackgroundSessionAndPurgeRetainedAccountData(for userID: UUID) async throws {
+        if let isActiveSession = backgroundSessionStatus(for: userID) {
+            guard !isActiveSession else {
+                throw RetainedAccountDataError.accountIsActive
+            }
+
+            await withCheckedContinuation { continuation in
+                tearDownBackgroundSession(for: userID) {
+                    continuation.resume()
+                }
+            }
+        }
+
+        try purgeRetainedAccountData(for: userID)
     }
 
     private func deleteAccountData(
@@ -1210,12 +1252,13 @@ public final class SessionManager: NSObject, SessionManagerType {
         do {
             try environment.cookieStorage(for: account).removeCookies()
         } catch {
+            if keepAccountOnFailure {
+                throw error
+            }
             WireLogger.sessionManager.error("Failed to remove cookies: \(error)")
         }
 
         account.deleteKeychainItems()
-
-        clearCRLExpirationDates(for: account)
 
         deleteUserLogs?()
 
@@ -1230,9 +1273,6 @@ public final class SessionManager: NSObject, SessionManagerType {
         PrivateUserDefaults.removeAll(forUserID: account.userIdentifier, in: .standard)
 
         accountManager.remove(account)
-        guard accountManager.account(with: accountID) == nil else {
-            throw RetainedAccountDataError.failedToDeleteAccountData
-        }
     }
 
     fileprivate func registerObservers(account: Account, session: ZMUserSession) {
@@ -1585,6 +1625,12 @@ extension SessionManager: UnauthenticatedSessionDelegate {
         accountManager.numberOfAccounts < maxNumberAccounts
     }
 
+    public func sessionMaxNumberAccounts(
+        _ session: UnauthenticatedSession
+    ) -> Int {
+        maxNumberAccounts
+    }
+
     public func session(
         session: UnauthenticatedSession,
         isExistingAccount account: Account
@@ -1610,7 +1656,10 @@ extension SessionManager: UnauthenticatedSessionDelegate {
         guard
             numberOfExistingAccounts < maxNumberAccounts || createdAccountIsKnown
         else {
-            let error = NSError(userSessionErrorCode: .accountLimitReached, userInfo: nil)
+            let error = NSError(
+                userSessionErrorCode: .accountLimitReached,
+                userInfo: [ZMAccountLimitReachedMaxNumberAccountsKey: maxNumberAccounts]
+            )
             loginDelegate?.authenticationDidFail(error)
             return
         }

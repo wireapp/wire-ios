@@ -1286,8 +1286,8 @@ internal enum L10n {
       internal static let infoBanner = L10n.tr("Localizable", "admin_selection.info_banner", fallback: "After you promote a new admin, you leave the group.")
       /// Promote
       internal static let promote = L10n.tr("Localizable", "admin_selection.promote", fallback: "Promote")
-      /// Failed to promote user to admin.
-      internal static let promotionError = L10n.tr("Localizable", "admin_selection.promotion_error", fallback: "Failed to promote user to admin.")
+      /// Group member could not be promoted to admin.
+      internal static let promotionError = L10n.tr("Localizable", "admin_selection.promotion_error", fallback: "Group member could not be promoted to admin.")
       /// New admin
       internal static let title = L10n.tr("Localizable", "admin_selection.title", fallback: "New admin")
     }
@@ -2821,6 +2821,8 @@ internal enum L10n {
         }
       }
       internal enum InputBar {
+        /// You blocked this user
+        internal static let blockedUser = L10n.tr("Localizable", "conversation.input_bar.blocked_user", fallback: "You blocked this user")
         /// Cancel reply
         internal static let closeReply = L10n.tr("Localizable", "conversation.input_bar.close_reply", fallback: "Cancel reply")
         /// Type a message
@@ -3662,8 +3664,6 @@ internal enum L10n {
         }
       }
       internal enum User {
-        /// You can’t add more than 3 accounts.
-        internal static let accountLimitReached = L10n.tr("Localizable", "error.user.account_limit_reached", fallback: "You can’t add more than 3 accounts.")
         /// The account you are trying access is pending activation. Please verify your details.
         internal static let accountPendingActivation = L10n.tr("Localizable", "error.user.account_pending_activation", fallback: "The account you are trying access is pending activation. Please verify your details.")
         /// This account is no longer authorized to log in.
@@ -4340,11 +4340,11 @@ internal enum L10n {
       }
     }
     internal enum LastAdminLeave {
-      /// There are no eligible admins in this group. As a personal user, you can’t delete the group. To delete it, add another team member and assign them as an admin.
-      internal static let cannotLeaveMessage = L10n.tr("Localizable", "last_admin_leave.cannot_leave_message", fallback: "There are no eligible admins in this group. As a personal user, you can’t delete the group. To delete it, add another team member and assign them as an admin.")
-      /// Cannot leave "%@".
+      /// Add at least one team member from the team that created this group and select them as an admin before you leave.
+      internal static let cannotLeaveMessage = L10n.tr("Localizable", "last_admin_leave.cannot_leave_message", fallback: "Add at least one team member from the team that created this group and select them as an admin before you leave.")
+      /// Leave "%@"?
       internal static func cannotLeaveTitle(_ p1: Any) -> String {
-        return L10n.tr("Localizable", "last_admin_leave.cannot_leave_title", String(describing: p1), fallback: "Cannot leave \"%@\".")
+        return L10n.tr("Localizable", "last_admin_leave.cannot_leave_title", String(describing: p1), fallback: "Leave \"%@\"?")
       }
       /// Delete group
       internal static let deleteGroup = L10n.tr("Localizable", "last_admin_leave.delete_group", fallback: "Delete group")
@@ -4724,6 +4724,34 @@ internal enum L10n {
           internal static let dialogTitle = L10n.tr("Localizable", "meta.menu.delete_content.dialog_title", fallback: "Clear content?")
           /// Also leave the conversation
           internal static let leaveAsWellMessage = L10n.tr("Localizable", "meta.menu.delete_content.leave_as_well_message", fallback: "Also leave the conversation")
+        }
+        internal enum MlsMigration {
+          internal enum Confirmation {
+            /// Change Protocol
+            internal static let button = L10n.tr("Localizable", "meta.menu.mls_migration.confirmation.button", fallback: "Change Protocol")
+            /// The standard messaging protocol will change from Proteus to Messaging Layer Security (MLS).
+            internal static let message = L10n.tr("Localizable", "meta.menu.mls_migration.confirmation.message", fallback: "The standard messaging protocol will change from Proteus to Messaging Layer Security (MLS).")
+            /// Change protocol to MLS?
+            internal static let title = L10n.tr("Localizable", "meta.menu.mls_migration.confirmation.title", fallback: "Change protocol to MLS?")
+          }
+          internal enum Failure {
+            /// The conversation could not be found.
+            internal static let conversationNotFound = L10n.tr("Localizable", "meta.menu.mls_migration.failure.conversation_not_found", fallback: "The conversation could not be found.")
+            /// The conversation does not have an MLS group ID.
+            internal static let missingMlsGroupId = L10n.tr("Localizable", "meta.menu.mls_migration.failure.missing_mls_group_id", fallback: "The conversation does not have an MLS group ID.")
+            /// Unable to start the migration to MLS.
+            internal static let missingMlsService = L10n.tr("Localizable", "meta.menu.mls_migration.failure.missing_mls_service", fallback: "Unable to start the migration to MLS.")
+            /// MLS migration failed
+            internal static let title = L10n.tr("Localizable", "meta.menu.mls_migration.failure.title", fallback: "MLS migration failed")
+            /// Only team group conversations can be migrated.
+            internal static let unsupportedConversation = L10n.tr("Localizable", "meta.menu.mls_migration.failure.unsupported_conversation", fallback: "Only team group conversations can be migrated.")
+          }
+          internal enum Success {
+            /// The conversation now uses MLS.
+            internal static let message = L10n.tr("Localizable", "meta.menu.mls_migration.success.message", fallback: "The conversation now uses MLS.")
+            /// MLS migration completed
+            internal static let title = L10n.tr("Localizable", "meta.menu.mls_migration.success.title", fallback: "MLS migration completed")
+          }
         }
         internal enum Silence {
           /// Mute
@@ -5885,10 +5913,14 @@ internal enum L10n {
           /// Add an account
           internal static let title = L10n.tr("Localizable", "self.settings.add_account.title", fallback: "Add an account")
           internal enum Error {
-            /// You can only be logged in with three accounts at once. Log out from one to add another.
-            internal static let message = L10n.tr("Localizable", "self.settings.add_account.error.message", fallback: "You can only be logged in with three accounts at once. Log out from one to add another.")
-            /// Three accounts active
-            internal static let title = L10n.tr("Localizable", "self.settings.add_account.error.title", fallback: "Three accounts active")
+            /// Plural format key: "%#@number_of_accounts@"
+            internal static func message(_ p1: Int) -> String {
+              return L10n.tr("Localizable", "self.settings.add_account.error.message", p1, fallback: "Plural format key: \"%#@number_of_accounts@\"")
+            }
+            /// Plural format key: "%#@number_of_accounts@"
+            internal static func title(_ p1: Int) -> String {
+              return L10n.tr("Localizable", "self.settings.add_account.error.title", p1, fallback: "Plural format key: \"%#@number_of_accounts@\"")
+            }
           }
         }
         internal enum AddAccountOrTeam {
@@ -6406,10 +6438,11 @@ internal enum L10n {
     internal enum SsoIdentityChanged {
       /// Delete data and continue
       internal static let deleteDataAndContinue = L10n.tr("Localizable", "sso_identity_changed.delete_data_and_continue", fallback: "Delete data and continue")
-      /// This account was previously used with a different identity provider. Continuing will delete all locally stored conversations and account data on this device. To keep or back up your data, cancel and sign in with the previous identity provider.
-      internal static let message = L10n.tr("Localizable", "sso_identity_changed.message", fallback: "This account was previously used with a different identity provider. Continuing will delete all locally stored conversations and account data on this device. To keep or back up your data, cancel and sign in with the previous identity provider.")
-      /// Different identity provider detected
-      internal static let title = L10n.tr("Localizable", "sso_identity_changed.title", fallback: "Different identity provider detected")
+      /// This account was used with a different identity provider. Continuing will delete all conversations from this device.
+      /// To keep your data, select Cancel, then log in with your previous identity provider.
+      internal static let message = L10n.tr("Localizable", "sso_identity_changed.message", fallback: "This account was used with a different identity provider. Continuing will delete all conversations from this device.\nTo keep your data, select Cancel, then log in with your previous identity provider.")
+      /// Identity provider changed
+      internal static let title = L10n.tr("Localizable", "sso_identity_changed.title", fallback: "Identity provider changed")
     }
     internal enum SystemStatusBar {
       internal enum NoInternet {

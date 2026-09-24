@@ -709,6 +709,51 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
 
     // MARK: 1:1 / Connection Conversations
 
+    func testUpdateOrCreateConversation_OneToOne_PreservesEstablishedMLSWhenOtherMemberMissing() async throws {
+        // given an established MLS 1:1 linked to its one-on-one user, with the other member already
+        // absent — as the backend leaves it for the party that was blocked (and never notified).
+        let qualifiedID = QualifiedID(uuid: .create(), domain: owningDomain)
+        await syncMOC.perform { [self] in
+            let conversation = ZMConversation.insertNewObject(in: syncMOC)
+            conversation.remoteIdentifier = qualifiedID.uuid
+            conversation.domain = qualifiedID.domain
+            conversation.conversationType = .oneOnOne
+            conversation.messageProtocol = .mls
+            conversation.mlsStatus = .ready
+            conversation.oneOnOneUser = otherUser
+            conversation.addParticipantAndUpdateConversationState(
+                user: ZMUser.selfUser(in: syncMOC),
+                role: nil
+            )
+        }
+
+        let payload = await syncMOC.perform { [self] in
+            let selfUser = ZMUser.selfUser(in: syncMOC)
+            let selfMember = Payload.ConversationMember(qualifiedID: selfUser.qualifiedID!)
+            let members = Payload.ConversationMembers(selfMember: selfMember, others: [])
+            return Payload.Conversation(
+                qualifiedID: qualifiedID,
+                type: BackendConversationType.oneOnOne.rawValue,
+                members: members
+            )
+        }
+
+        // when the 1:1 is synced without the other member
+        await sut.updateOrCreateConversation(
+            from: payload,
+            in: syncMOC
+        )
+
+        // then the established MLS 1:1 is preserved (not wiped, not read-only)
+        try await syncMOC.perform { [self] in
+            let conversation = try XCTUnwrap(ZMConversation.fetch(with: qualifiedID, in: syncMOC))
+            XCTAssertEqual(conversation.mlsStatus, .ready)
+            XCTAssertEqual(conversation.messageProtocol, .mls)
+            XCTAssertFalse(conversation.isForcedReadOnly)
+            XCTAssertEqual(conversation.oneOnOneUser, otherUser)
+        }
+    }
+
     func testUpdateOrCreateConversation_OneToOne_CreatesConversation() async throws {
         // given
         sut = ConversationEventPayloadProcessor(

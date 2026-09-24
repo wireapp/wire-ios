@@ -29,17 +29,7 @@ struct MeetingUpdateEventProcessor: MeetingUpdateEventProcessorProtocol {
         // was already deleted, so there is nothing left to link.
         guard let meeting = try await repository.pullMeeting(id: event.meetingID) else { return }
 
-        // The meeting's conversation arrives via its own conversation.create-meeting
-        // event, but that event isn't guaranteed to have been processed before this
-        // one. If the conversation isn't stored locally yet, pull it and store the
-        // meeting again so the two are linked; meetings without a locally stored
-        // conversation are not listed.
         let conversationID = meeting.conversationID
-        guard await conversationRepository.fetchConversation(
-            id: conversationID.id,
-            domain: conversationID.domain
-        ) == nil else { return }
-
         try await conversationRepository.pullConversation(
             id: conversationID.id,
             domain: conversationID.domain

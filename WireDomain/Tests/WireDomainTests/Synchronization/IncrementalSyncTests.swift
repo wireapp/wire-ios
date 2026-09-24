@@ -46,6 +46,7 @@ final class IncrementalSyncTests: XCTestCase {
     var cancellables: Set<AnyCancellable>!
     var earService: MockEARServiceInterface!
     fileprivate var notificationContext: MockNotificationContext!
+    var liveEventsObservedBeforeProcessing: [UpdateEvent]!
 
     override func setUp() {
         journal = Journal(
@@ -65,6 +66,7 @@ final class IncrementalSyncTests: XCTestCase {
         cancellables = Set<AnyCancellable>()
         earService = MockEARServiceInterface()
         notificationContext = MockNotificationContext()
+        liveEventsObservedBeforeProcessing = []
 
         earService.underlyingIsLocked = false
         earService.fetchPublicKeys_MockMethod = { nil }
@@ -84,11 +86,14 @@ final class IncrementalSyncTests: XCTestCase {
             journal: journal,
             mlsGroupRepairAgent: mlsGroupRepairAgent,
             earService: earService,
-            backgroundTaskExecuter: PassthroughTaskExecuter()
+            backgroundTaskExecuter: PassthroughTaskExecuter(),
+            beforeProcessingLiveEvent: { [weak self] event in
+                self?.liveEventsObservedBeforeProcessing.append(event)
+            }
         )
     }
 
-    override func tearDown() {
+    override func tearDown() async throws {
         sut = nil
         journal = nil
         pushChannelAPI = nil
@@ -102,6 +107,7 @@ final class IncrementalSyncTests: XCTestCase {
         liveBrokenGroupSubject = nil
         mlsGroupRepairAgent = nil
         cancellables = nil
+        liveEventsObservedBeforeProcessing = nil
     }
 
     func test_perform_pendingEventsExist() async throws {
@@ -222,6 +228,10 @@ final class IncrementalSyncTests: XCTestCase {
                 Scaffolding.event4,
                 Scaffolding.event5
             ].flatMap(\.events)
+        )
+        XCTAssertEqual(
+            liveEventsObservedBeforeProcessing,
+            [Scaffolding.event4, Scaffolding.event5].flatMap(\.events)
         )
 
         // Then pending events were deleted.
@@ -392,10 +402,12 @@ final class IncrementalSyncTests: XCTestCase {
         let task = Task {
             try await sut.perform()
         }
+        task.cancel()
 
         // Then
         do {
             _ = try await task.value
+            XCTFail("Expected CancellationError to be thrown")
         } catch {
             XCTAssertEqual(pushChannel.close_Invocations.count, 1)
             XCTAssertTrue(error is CancellationError)

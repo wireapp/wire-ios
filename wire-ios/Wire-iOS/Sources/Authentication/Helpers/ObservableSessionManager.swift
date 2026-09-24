@@ -55,6 +55,8 @@ protocol ObservableSessionManager: SessionManagerType {
 
     func purgeRetainedAccountData(for userID: UUID) throws
 
+    func logoutBackgroundSessionAndPurgeRetainedAccountData(for userID: UUID) async throws
+
     /// Add a new account.
     func addAccount(userInfo: [String: Any]?, completion: (() -> Void)?)
 }

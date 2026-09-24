@@ -38,12 +38,12 @@
 "conversation.hideFormattingButton.description" = "隐藏格式选项";
 "conversation.timerButton.description" = "设置自动删除邮件计时器";
 "conversation.mentionButton.description" = "提及某人";
-"conversation.cameraButton.description" = "拍摄或选择照片";
-"conversation.sketchButton.description" = "打开草图进行绘画或书写";
+"conversation.cameraButton.description" = "Take or select a photo";
+"conversation.sketchButton.description" = "Open sketch to draw or write";
 "conversation.gifButton.description" = "选择 GIF";
 "conversation.audioButton.description" = "录制一条音频消息";
 "conversation.pingButton.description" = "发送 @";
-"conversation.uploadFileButton.description" = "分享文件";
+"conversation.uploadFileButton.description" = "Share a file";
 "conversation.locationButton.description" = "分享您的位置";
 "conversation.videoButton.description" = "录制视频";
 "conversation.moreButton.description" = "打开更多消息选项";

@@ -100,7 +100,7 @@ final class MeetingUpdateEventProcessorTests: XCTestCase {
         XCTAssertEqual(repository.storeMeetingMeetingMeetingVoidReceivedInvocations.map(\.id), [Scaffolding.meetingID])
     }
 
-    func testProcessEvent_It_Does_Not_Pull_Conversation_When_It_Is_Already_Known() async throws {
+    func testProcessEvent_It_Pulls_Conversation_When_It_Is_Already_Known() async throws {
         // Mock
 
         let coreDataStackHelper = CoreDataStackHelper()
@@ -116,6 +116,7 @@ final class MeetingUpdateEventProcessorTests: XCTestCase {
 
         repository.pullMeetingIdQualifiedIDMeetingReturnValue = Scaffolding.meeting
         conversationRepository.fetchConversationIdDomain_MockValue = conversation
+        conversationRepository.pullConversationIdDomain_MockMethod = { _, _ in }
 
         // When
 
@@ -123,8 +124,8 @@ final class MeetingUpdateEventProcessorTests: XCTestCase {
 
         // Then
 
-        XCTAssertTrue(conversationRepository.pullConversationIdDomain_Invocations.isEmpty)
-        XCTAssertTrue(repository.storeMeetingMeetingMeetingVoidReceivedInvocations.isEmpty)
+        XCTAssertEqual(conversationRepository.pullConversationIdDomain_Invocations.count, 1)
+        XCTAssertEqual(repository.storeMeetingMeetingMeetingVoidReceivedInvocations.map(\.id), [Scaffolding.meetingID])
 
         try coreDataStackHelper.cleanupDirectory()
     }

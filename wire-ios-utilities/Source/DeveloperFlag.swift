@@ -33,12 +33,11 @@ public enum DeveloperFlag: String, CaseIterable {
     case forceDatabaseLoadingFailure
     case ignoreIncomingEvents
     case newRegistration
-    case preventAdminlessGroups
+    case noAPNSTokenCache
     case showCreateMLSGroupToggle
     case showUnreadConversationsFilter
     case skipMLSMessagesDecryption
     case useWireAuthentication
-    case wireMeetings
     case lowKeyPackageCount
     case enabledCCDebugLogs
     case shakeToReport
@@ -85,8 +84,8 @@ public enum DeveloperFlag: String, CaseIterable {
         case .newRegistration:
             "Turn on to use the new registration flow"
 
-        case .preventAdminlessGroups:
-            "Turn on to prevent last admins from leaving groups without promoting someone else"
+        case .noAPNSTokenCache:
+            "Turn on to always request the APNS token from the system instead of reading a cached one"
 
         case .showUnreadConversationsFilter:
             "Turn on to show the new conversation filter options"
@@ -99,9 +98,6 @@ public enum DeveloperFlag: String, CaseIterable {
 
         case .consumableNotifications:
             "Turn on to enable consumable notifications"
-
-        case .wireMeetings:
-            "Turn on to enable Wire meetings"
 
         case .lowKeyPackageCount:
             "Turn on to set the minimum number of packages to 1"
@@ -163,6 +159,8 @@ public enum DeveloperFlag: String, CaseIterable {
             "ForceDatabaseLoadingFailure"
         case .ignoreIncomingEvents:
             "IgnoreIncomingEventsEnabled"
+        case .noAPNSTokenCache:
+            "NoAPNSTokenCacheEnabled"
         case .useWireAuthentication:
             "WireAuthenticationEnabled"
         default:
