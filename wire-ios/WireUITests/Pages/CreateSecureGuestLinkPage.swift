@@ -53,7 +53,7 @@ class CreateSecureGuestLinkPage: PageModel {
 
     func createLink() throws -> GuestOptionsPage {
         createLinkButton.waitAndTap()
-        passwordCopiedAlert.buttons.firstMatch.tap()
+        passwordCopiedAlert.buttons.firstMatch.waitAndTap()
         return try GuestOptionsPage()
     }
 }
