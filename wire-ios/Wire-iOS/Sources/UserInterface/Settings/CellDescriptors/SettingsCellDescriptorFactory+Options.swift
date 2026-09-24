@@ -19,6 +19,7 @@
 import LocalAuthentication
 import UIKit
 import WireCommonComponents
+import WireFoundation
 import WireLocators
 import WireSettingsUI
 import WireSyncEngine
@@ -30,6 +31,7 @@ extension SettingsCellDescriptorFactory {
     var optionsGroup: any SettingsCellDescriptorType {
         let descriptors = [
             notificationVisibleSection,
+            notificationSoundSection,
             chatHeadsSection,
             soundAlertSection,
             callKitSection,
@@ -84,6 +86,54 @@ extension SettingsCellDescriptorFactory {
             cellDescriptors: [chatHeadsToggle],
             header: nil,
             footer: L10n.Localizable.Self.Settings.Notifications.ChatAlerts.footer
+        )
+    }
+
+    private var notificationSoundSection: SettingsSectionDescriptorType {
+        SettingsSectionDescriptor(
+            cellDescriptors: [notificationSoundGroup],
+            footer: L10n.Localizable.Self.Settings.Notifications.Sound.footer
+        )
+    }
+
+    private var notificationSoundGroup: any SettingsCellDescriptorType {
+        let property = settingsPropertyFactory.property(.notificationSound)
+        let cells = NotificationSoundPreference.allCases.map { preference in
+            SettingsPropertySelectValueCellDescriptor(
+                settingsProperty: property,
+                value: SettingsPropertyValue.string(value: preference.rawValue),
+                title: preference.displayName,
+                identifier: preference.accessibilityIdentifier,
+                selectAction: { _ in
+                    switch preference {
+                    case .systemDefault:
+                        ZMSound.None.playPreview()
+                    case .wire:
+                        ZMSound.WireText.playPreview()
+                    }
+                }
+            )
+        }
+
+        let section = SettingsSectionDescriptor(
+            cellDescriptors: cells.map { $0 as any SettingsCellDescriptorType }
+        )
+
+        let previewGenerator: PreviewGeneratorType = { _ in
+            let rawValue = property.value().value() as? String
+            let preference = rawValue.flatMap(NotificationSoundPreference.init(rawValue:)) ?? .defaultValue
+            return .text(preference.displayName)
+        }
+
+        return SettingsGroupCellDescriptor(
+            items: [section],
+            title: property.propertyName.settingsPropertyLabelText,
+            identifier: Locators.OptionsOnSettingsPage.notificationSoundCell.rawValue,
+            previewGenerator: previewGenerator,
+            accessibilityBackButtonText: L10n.Accessibility.OptionsSettings.BackButton.description,
+            settingsTopLevelMenuItem: nil,
+            settingsCoordinator: settingsCoordinator,
+            userSession: userSession
         )
     }
 
@@ -411,6 +461,27 @@ extension SettingsCellDescriptorFactory {
         }
     }
 
+}
+
+private extension NotificationSoundPreference {
+
+    var displayName: String {
+        switch self {
+        case .systemDefault:
+            L10n.Localizable.Self.Settings.Notifications.Sound.SystemDefault.title
+        case .wire:
+            L10n.Localizable.Self.Settings.Notifications.Sound.Wire.title
+        }
+    }
+
+    var accessibilityIdentifier: String {
+        switch self {
+        case .systemDefault:
+            Locators.OptionsOnSettingsPage.systemNotificationSound.rawValue
+        case .wire:
+            Locators.OptionsOnSettingsPage.wireNotificationSound.rawValue
+        }
+    }
 }
 
 // MARK: - Helpers
