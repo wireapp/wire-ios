@@ -17,7 +17,6 @@
 //
 
 import UIKit
-import WireAuthenticationAPI
 import WireDomain
 import WireFoundation
 import WireLogging
@@ -102,7 +101,6 @@ final class AuthenticationCoordinator: NSObject, AuthenticationEventResponderCha
     private var unauthenticatedSessionObserver: Any?
     private var postLoginObservers: [Any] = []
     private var pendingAlert: AuthenticationCoordinatorAlert?
-    private var pendingDeveloperUsername: String?
     private var registrationStatus: RegistrationStatus {
         unauthenticatedSession.registrationStatus
     }
@@ -230,8 +228,6 @@ extension AuthenticationCoordinator: @preconcurrency AuthenticationStateControll
                 presenter.setViewControllers([stepViewController], animated: true)
             }
         }
-
-        updatePendingDeveloperUsername(for: newState)
     }
 
 }
@@ -319,13 +315,6 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
                 unauthenticatedSession.continueAfterBackupImportStep()
 
             case let .completeWireAuthenticationLogin((result, trackingConsent)):
-                if let account = sessionManager.accountManager.account(with: result.userID),
-                   let identityProviderID = result.multiIngressIdentityProviderID,
-                   account.lastSSOIdentityProviderID != identityProviderID {
-                    presentSSOIdentityChangeAlert(for: (result, trackingConsent))
-                    return
-                }
-
                 // Don't store the env here... pass it along when upgrading
                 // to an authenticated session.
 
@@ -370,15 +359,8 @@ extension AuthenticationCoordinator: AuthenticationActioner, SessionManagerCreat
                 )
                 unauthenticatedSession.upgradeToAuthenticatedSession(
                     with: userInfo,
-                    newEnvironment: newEnvironment,
-                    multiIngressIdentityProviderID: result.multiIngressIdentityProviderID
+                    newEnvironment: newEnvironment
                 )
-
-            case let .purgeRetainedAccountAndContinue(context):
-                purgeRetainedAccountAndContinue(context)
-
-            case .restartWireAuthentication:
-                restartWireAuthentication()
 
             case let .executeFeedbackAction(action):
                 currentViewController?.executeErrorFeedbackAction(action)
@@ -536,24 +518,6 @@ extension AuthenticationCoordinator {
         eventResponderChain.handleEvent(ofType: .userInput(input))
     }
 
-    func loginWithDeveloperCredentials(email: String, username: String?, password: String) {
-        guard Bundle.developerModeEnabled else {
-            return
-        }
-
-        pendingDeveloperUsername = username.flatMap { $0.isEmpty ? nil : $0 }
-
-        let loginRequest = AuthenticationLoginRequest.email(
-            address: email,
-            password: password
-        )
-
-        executeActions([
-            .showLoadingView,
-            .startLoginFlow(loginRequest, BackendEnvironment.shared.proxyCredentialsInput)
-        ])
-    }
-
 }
 
 // MARK: - Actions
@@ -598,54 +562,6 @@ extension AuthenticationCoordinator {
             presentAlert(for: alertModel)
         } else {
             deleteSession(eraseData: true)
-        }
-    }
-
-    private func presentSSOIdentityChangeAlert(
-        for context: (AuthenticationResult, RegistrationAnalyticsTrackingConsent)
-    ) {
-        typealias Strings = L10n.Localizable.SsoIdentityChanged
-
-        let deleteAction = AuthenticationCoordinatorAlertAction(
-            title: Strings.deleteDataAndContinue,
-            coordinatorActions: [.showLoadingView, .purgeRetainedAccountAndContinue(context)],
-            style: .destructive
-        )
-        let cancelAction = AuthenticationCoordinatorAlertAction(
-            title: L10n.Localizable.General.cancel,
-            coordinatorActions: [.restartWireAuthentication],
-            style: .cancel
-        )
-
-        stopActivityIndicator()
-        presentAlert(for: AuthenticationCoordinatorAlert(
-            title: Strings.title,
-            message: Strings.message,
-            actions: [cancelAction, deleteAction]
-        ))
-    }
-
-    private func purgeRetainedAccountAndContinue(
-        _ context: (AuthenticationResult, RegistrationAnalyticsTrackingConsent)
-    ) {
-        do {
-            try sessionManager.purgeRetainedAccountData(for: context.0.userID)
-            executeActions([.completeWireAuthenticationLogin(context)])
-        } catch {
-            logger.error("Failed to purge retained account data: \(error)")
-            restartWireAuthentication(error: NSError(userSessionErrorCode: .unknownError, userInfo: nil))
-        }
-    }
-
-    private func restartWireAuthentication(error: Error? = nil) {
-        let error = error as NSError?
-        stopActivityIndicator()
-        Task { @MainActor [weak self] in
-            guard let self else { return }
-            stateDidChange(stateController.currentStep, mode: .reset)
-            if let error {
-                presenter?.showAlert(for: error)
-            }
         }
     }
 
@@ -1022,24 +938,6 @@ extension AuthenticationCoordinator {
                 WireLogger.authentication.error("failed to update MLS migration status: \(error)")
                 assertionFailure(String(reflecting: error))
             }
-        }
-    }
-
-    @MainActor
-    private func updatePendingDeveloperUsername(for step: AuthenticationFlowStep) {
-        switch step {
-        case .addUsername:
-            guard let username = pendingDeveloperUsername else { return }
-            pendingDeveloperUsername = nil
-            Task { @MainActor in
-                handleUserInput(username)
-            }
-
-        case .provideCredentials, .reauthenticate:
-            pendingDeveloperUsername = nil
-
-        default:
-            break
         }
     }
 }

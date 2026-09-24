@@ -30,8 +30,6 @@ enum AuthenticationCoordinatorAction {
     case presentErrorAlert(AuthenticationCoordinatorErrorAlert)
     case completeBackupStep(didSucceed: Bool?)
     case completeWireAuthenticationLogin((AuthenticationResult, RegistrationAnalyticsTrackingConsent))
-    case purgeRetainedAccountAndContinue((AuthenticationResult, RegistrationAnalyticsTrackingConsent))
-    case restartWireAuthentication
     case completeLoginFlow
     case startPostLoginFlow
     case transition(AuthenticationFlowStep, mode: AuthenticationStateController.StateChangeMode)
