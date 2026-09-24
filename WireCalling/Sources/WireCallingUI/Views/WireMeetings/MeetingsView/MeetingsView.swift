@@ -82,6 +82,9 @@ struct MeetingsView: View {
         .task {
             await viewModel.observeCurrentDate()
         }
+        .task {
+            await viewModel.observeSystemDateTimeChanges()
+        }
     }
 
     @ViewBuilder private var content: some View {

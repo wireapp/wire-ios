@@ -367,6 +367,24 @@ struct MeetingsViewModelTests {
         #expect(groups[1].meetings.map(\.title) == ["Next day"])
     }
 
+    @Test("day grouping uses the latest calendar provider value")
+    func dayGrouping_usesLatestCalendarProviderValue() throws {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = try #require(TimeZone(secondsFromGMT: 0))
+        let grouper = MeetingsGrouper(calendarProvider: { calendar })
+        let beforeMidnight = try Date.ISO8601FormatStyle().parse("2026-03-29T23:30:00Z")
+        let afterMidnight = try Date.ISO8601FormatStyle().parse("2026-03-30T00:30:00Z")
+        let occurrences = [
+            MeetingOccurrence(meeting: Meeting.fixture(title: "Before midnight", start: beforeMidnight)),
+            MeetingOccurrence(meeting: Meeting.fixture(title: "After midnight", start: afterMidnight))
+        ]
+
+        #expect(grouper.group(occurrences).count == 2)
+
+        calendar.timeZone = try #require(TimeZone(secondsFromGMT: 7_200))
+        #expect(grouper.group(occurrences).count == 1)
+    }
+
     // MARK: - deleteMeeting
 
     @Test("deleteMeeting calls the use case with the correct ID and removes the meeting")
@@ -560,6 +578,22 @@ struct MeetingsViewModelTests {
         mockDateProvider.now = start.addingTimeInterval(60)
         viewModel.refreshCurrentDate()
         #expect(viewModel.isHappeningNow(meeting) == false)
+    }
+
+    @Test("system date and time changes refresh currentDate")
+    func systemDateTimeChanges_refreshCurrentDate() async {
+        let (changes, continuation) = AsyncStream<Void>.makeStream()
+        let task = Task {
+            await viewModel.observeSystemDateTimeChanges(changes)
+        }
+        let updatedDate = mockDateProvider.now.addingTimeInterval(3_600)
+
+        mockDateProvider.now = updatedDate
+        continuation.yield(())
+        continuation.finish()
+
+        await task.value
+        #expect(viewModel.currentDate == updatedDate)
     }
 
     // MARK: - Formatting

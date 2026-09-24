@@ -23,13 +23,24 @@ package typealias GroupedMeetings = [(day: Date, meetings: [MeetingOccurrence])]
 
 package struct MeetingsGrouper {
 
-    private let calendar = Calendar.current
+    private let calendarProvider: () -> Calendar
 
-    package init() {}
+    package init() {
+        self.init(calendarProvider: { .autoupdatingCurrent })
+    }
+
+    package init(calendar: Calendar) {
+        self.init(calendarProvider: { calendar })
+    }
+
+    package init(calendarProvider: @escaping () -> Calendar) {
+        self.calendarProvider = calendarProvider
+    }
 
     package func group(
         _ meetings: [MeetingOccurrence]
     ) -> GroupedMeetings {
+        let calendar = calendarProvider()
         let sortMeetings: ([MeetingOccurrence]) -> [MeetingOccurrence] = { meetings in
             meetings.sorted {
                 if $0.start != $1.start {

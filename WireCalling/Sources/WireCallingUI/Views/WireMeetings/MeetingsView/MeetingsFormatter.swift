@@ -29,26 +29,36 @@ package struct MeetingsFormatter: MeetingsFormatterProtocol {
 
     private typealias Strings = L10n.Localizable.WireMeetings.List
 
-    private let calendar: Calendar
-    private let dayHeaderDateFormatter: DateFormatter
-    private let dateFormatter: DateFormatter
-    private let timeFormatter: DateFormatter
+    private let calendarProvider: () -> Calendar
+    private let localeProvider: () -> Locale
+
+    package init() {
+        self.init(
+            calendarProvider: { .autoupdatingCurrent },
+            localeProvider: { .autoupdatingCurrent }
+        )
+    }
+
+    package init(calendar: Calendar, locale: Locale) {
+        self.init(
+            calendarProvider: { calendar },
+            localeProvider: { locale }
+        )
+    }
 
     package init(
-        calendar: Calendar = .autoupdatingCurrent,
-        locale: Locale = .autoupdatingCurrent
+        calendarProvider: @escaping () -> Calendar,
+        localeProvider: @escaping () -> Locale
     ) {
-        self.calendar = calendar
-        self.dayHeaderDateFormatter = DateFormatter.meetingDayHeaderDate(
-            locale: locale,
-            calendar: calendar
-        )
-        self.dateFormatter = DateFormatter.meetingDate(locale: locale, calendar: calendar)
-        self.timeFormatter = DateFormatter.meetingTime(locale: locale, calendar: calendar)
+        self.calendarProvider = calendarProvider
+        self.localeProvider = localeProvider
     }
 
     package func dayHeader(for date: Date, now: Date) -> String {
-        let formattedDate = dayHeaderDateFormatter.string(from: date)
+        let calendar = calendarProvider()
+        let formattedDate = DateFormatter
+            .meetingDayHeaderDate(locale: localeProvider(), calendar: calendar)
+            .string(from: date)
 
         if calendar.isDate(date, inSameDayAs: now) {
             return Strings.Header.today + " (\(formattedDate))"
@@ -61,11 +71,15 @@ package struct MeetingsFormatter: MeetingsFormatterProtocol {
     }
 
     package func date(_ date: Date) -> String {
-        dateFormatter.string(from: date)
+        DateFormatter
+            .meetingDate(locale: localeProvider(), calendar: calendarProvider())
+            .string(from: date)
     }
 
     package func time(_ date: Date) -> String {
-        timeFormatter.string(from: date)
+        DateFormatter
+            .meetingTime(locale: localeProvider(), calendar: calendarProvider())
+            .string(from: date)
     }
 
     package func timeRange(from start: Date, to end: Date) -> String {
