@@ -83,7 +83,7 @@
 "wireMeetings.schedule.error.alert.ok" = "OK";
 "wireMeetings.schedule.participantsNotAdded.title" = "Meeting saved";
 "wireMeetings.schedule.participantsNotAdded.message" = "The meeting was saved, but these users could not be added:\n\n%@";
-"wireMeetings.schedule.error.conversationName.title" = "Could not update call name";
+"wireMeetings.schedule.error.conversationName.title" = "Meeting title not fully updated";
 "wireMeetings.schedule.error.conversationName.message" = "The meeting title could not be updated everywhere. Please try again.";
 "wireMeetings.schedule.error.conversationName.retry" = "Try again";
 "wireMeetings.schedule.disableGuestAccess.alert.title" = "Disable guest access?";
