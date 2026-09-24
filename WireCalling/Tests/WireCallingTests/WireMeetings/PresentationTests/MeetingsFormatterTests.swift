@@ -127,8 +127,8 @@ struct MeetingsFormatterTests {
         #expect(formatter.date(date) == expected)
     }
 
-    @Test("time uses the latest locale provider value")
-    func time_usesLatestLocaleProviderValue() throws {
+    @Test("refresh rebuilds time formatting with the latest locale provider value")
+    func refresh_rebuildsTimeFormattingWithLatestLocaleProviderValue() throws {
         let calendar = timeRangeCalendar
         var locale = Locale(identifier: "en_US@hours=h12")
         let formatter = MeetingsFormatter(
@@ -141,11 +141,14 @@ struct MeetingsFormatterTests {
         #expect(formatter.timeRange(from: start, to: end).contains("PM"))
 
         locale = Locale(identifier: "en_GB")
+        #expect(formatter.timeRange(from: start, to: end).contains("PM"))
+
+        formatter.refresh()
         #expect(formatter.timeRange(from: start, to: end) == "14:00 - 15:15")
     }
 
-    @Test("date uses the latest calendar provider value")
-    func date_usesLatestCalendarProviderValue() throws {
+    @Test("refresh rebuilds date formatting with the latest calendar provider value")
+    func refresh_rebuildsDateFormattingWithLatestCalendarProviderValue() throws {
         var calendar = timeRangeCalendar
         calendar.timeZone = try #require(TimeZone(secondsFromGMT: 0))
         let locale = Locale(identifier: "en_GB")
@@ -158,6 +161,9 @@ struct MeetingsFormatterTests {
         #expect(formatter.date(date) == "08/09/2026")
 
         calendar.timeZone = try #require(TimeZone(secondsFromGMT: 7_200))
+        #expect(formatter.date(date) == "08/09/2026")
+
+        formatter.refresh()
         #expect(formatter.date(date) == "09/09/2026")
     }
 

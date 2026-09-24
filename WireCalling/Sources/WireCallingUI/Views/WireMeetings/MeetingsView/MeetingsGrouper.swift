@@ -21,26 +21,31 @@ package import WireCallingDomain
 
 package typealias GroupedMeetings = [(day: Date, meetings: [MeetingOccurrence])]
 
-package struct MeetingsGrouper {
+package final class MeetingsGrouper {
 
     private let calendarProvider: () -> Calendar
+    private var calendar: Calendar
 
-    package init() {
+    package convenience init() {
         self.init(calendarProvider: { .autoupdatingCurrent })
     }
 
-    package init(calendar: Calendar) {
+    package convenience init(calendar: Calendar) {
         self.init(calendarProvider: { calendar })
     }
 
     package init(calendarProvider: @escaping () -> Calendar) {
         self.calendarProvider = calendarProvider
+        self.calendar = calendarProvider()
+    }
+
+    package func refresh() {
+        calendar = calendarProvider()
     }
 
     package func group(
         _ meetings: [MeetingOccurrence]
     ) -> GroupedMeetings {
-        let calendar = calendarProvider()
         let sortMeetings: ([MeetingOccurrence]) -> [MeetingOccurrence] = { meetings in
             meetings.sorted {
                 if $0.start != $1.start {

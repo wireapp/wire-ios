@@ -367,8 +367,8 @@ struct MeetingsViewModelTests {
         #expect(groups[1].meetings.map(\.title) == ["Next day"])
     }
 
-    @Test("day grouping uses the latest calendar provider value")
-    func dayGrouping_usesLatestCalendarProviderValue() throws {
+    @Test("day grouping refresh uses the latest calendar provider value")
+    func dayGroupingRefresh_usesLatestCalendarProviderValue() throws {
         var calendar = Calendar(identifier: .gregorian)
         calendar.timeZone = try #require(TimeZone(secondsFromGMT: 0))
         let grouper = MeetingsGrouper(calendarProvider: { calendar })
@@ -382,6 +382,9 @@ struct MeetingsViewModelTests {
         #expect(grouper.group(occurrences).count == 2)
 
         calendar.timeZone = try #require(TimeZone(secondsFromGMT: 7_200))
+        #expect(grouper.group(occurrences).count == 2)
+
+        grouper.refresh()
         #expect(grouper.group(occurrences).count == 1)
     }
 
@@ -594,6 +597,43 @@ struct MeetingsViewModelTests {
 
         await task.value
         #expect(viewModel.currentDate == updatedDate)
+    }
+
+    @Test("system date and time changes refresh cached formatting")
+    func systemDateTimeChanges_refreshCachedFormatting() async throws {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = try #require(TimeZone(secondsFromGMT: 0))
+        var locale = Locale(identifier: "en_US@hours=h12")
+        let formatter = MeetingsFormatter(
+            calendarProvider: { calendar },
+            localeProvider: { locale }
+        )
+        let viewModel = MeetingsViewModel(
+            currentDateProvider: mockDateProvider,
+            formatter: formatter,
+            upcomingMeetingsUseCase: upcomingMeetingsUseCase,
+            observeMeetingChangesUseCase: observeMeetingChangesUseCase,
+            deleteMeetingUseCase: deleteMeetingUseCase,
+            selfUserID: Scaffolding.selfUserID,
+            observeAttendedMeetingsUseCase: observeAttendedMeetingsUseCase
+        )
+        let start = try Date.ISO8601FormatStyle().parse("2026-09-08T14:00:00Z")
+        let meeting = Meeting.fixture(title: "Meeting", start: start)
+
+        #expect(viewModel.formatTimeRange(for: meeting).contains("PM"))
+
+        locale = Locale(identifier: "en_GB")
+        #expect(viewModel.formatTimeRange(for: meeting).contains("PM"))
+
+        let (changes, continuation) = AsyncStream<Void>.makeStream()
+        let task = Task {
+            await viewModel.observeSystemDateTimeChanges(changes)
+        }
+        continuation.yield(())
+        continuation.finish()
+
+        await task.value
+        #expect(viewModel.formatTimeRange(for: meeting) == "14:00 - 15:00")
     }
 
     // MARK: - Formatting
