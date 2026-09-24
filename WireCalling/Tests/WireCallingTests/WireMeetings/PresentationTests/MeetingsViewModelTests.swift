@@ -18,6 +18,7 @@
 
 import Foundation
 import Testing
+import UIKit
 import WireFoundation
 import WireFoundationSupport
 
@@ -597,6 +598,32 @@ struct MeetingsViewModelTests {
 
         await task.value
         #expect(viewModel.currentDate == updatedDate)
+    }
+
+    @Test("system date and time notifications are observed")
+    func systemDateTimeChanges_observesNotifications() async {
+        let notificationCenter = NotificationCenter()
+        let changes = MeetingsViewModel.systemDateTimeChanges(notificationCenter: notificationCenter)
+        var iterator = changes.makeAsyncIterator()
+        let expectedNotificationNames: Set<Notification.Name> = [
+            .NSCalendarDayChanged,
+            .NSSystemClockDidChange,
+            .NSSystemTimeZoneDidChange,
+            NSLocale.currentLocaleDidChangeNotification,
+            UIApplication.didBecomeActiveNotification,
+            UIApplication.significantTimeChangeNotification
+        ]
+
+        #expect(Set(MeetingsViewModel.systemDateTimeChangeNotificationNames) == expectedNotificationNames)
+
+        for name in expectedNotificationNames {
+            notificationCenter.post(name: name, object: nil)
+        }
+
+        for _ in expectedNotificationNames {
+            let change = await iterator.next()
+            #expect(change != nil)
+        }
     }
 
     @Test("system date and time changes refresh cached formatting")

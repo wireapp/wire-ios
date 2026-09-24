@@ -300,7 +300,7 @@ package final class MeetingsViewModel {
 
 }
 
-private extension MeetingsViewModel {
+package extension MeetingsViewModel {
 
     static var systemDateTimeChangeNotificationNames: [Notification.Name] {
         [
