@@ -41,6 +41,10 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
     @Published var modalDestination: DetermineAuthMethodSheet?
     @Published var existsAnotherAccount: Bool
 
+    /// Action to run once `modalDestination`'s dismissal transition has completed.
+    /// See `confirmBackendSwitch(didConfirm:email:environment:)`.
+    private var pendingModalDismissAction: (() -> Void)?
+
     var isNextButtonEnabled: Bool {
         if overrideAllowEmailLoginOnly {
             isValidEmail
@@ -193,6 +197,21 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         ))
     }
     #endif
+
+    /// Dismisses the confirmation sheet; the switch (and the SSO sheet it triggers) runs in
+    /// `onModalDismissed()` instead, to avoid "Attempted to present SFAuthenticationViewController
+    /// from a view controller that is being dismissed".
+    func confirmBackendSwitch(didConfirm: Bool, email: String?, environment: BackendEnvironment2) {
+        pendingModalDismissAction = didConfirm ? { [weak self] in
+            Task { await self?.switchBackend(email: email, environment: environment) }
+        } : nil
+        modalDestination = nil
+    }
+
+    func onModalDismissed() {
+        pendingModalDismissAction?()
+        pendingModalDismissAction = nil
+    }
 
     // MARK: - Private
 
