@@ -173,14 +173,6 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         }
     }
 
-    func onAlertDismiss() {
-        modalDestination = nil
-    }
-
-    func exitFlow() {
-        bridge.sendOutboundEvent(.exitFlowRequested)
-    }
-
     #if DEBUG
     func submitDeveloperCredentialQRCode(_ scannedCode: String) {
         guard let credentials = DeveloperCredentialQRCode(scannedCode: scannedCode) else {
@@ -197,6 +189,14 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         ))
     }
     #endif
+
+    func onAlertDismiss() {
+        modalDestination = nil
+    }
+
+    func exitFlow() {
+        bridge.sendOutboundEvent(.exitFlowRequested)
+    }
 
     /// Dismisses the confirmation sheet; the switch (and the SSO sheet it triggers) runs in
     /// `onModalDismissed()` instead, to avoid "Attempted to present SFAuthenticationViewController
