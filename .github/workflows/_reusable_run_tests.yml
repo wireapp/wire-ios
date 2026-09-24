@@ -187,8 +187,32 @@ jobs:
         run: |
           bundle exec fastlane generate_env
 
-      - name: Setup Kalium Testservice
+      - name: Configure test services
+        id: test-services
         if: ${{ inputs.run_critical_flows }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          ENV_FILE="wire-ios/WireUITests/env.xcconfig"
+          [[ -f "$ENV_FILE" ]] || { echo "::error::env.xcconfig missing: $ENV_FILE" >&2; exit 1; }
+
+          IN_HOUSE_RUNNER=false
+
+          if [[ "${RUNNER_NAME:-}" == Mac-Mini-iOS* ]]; then
+            IN_HOUSE_RUNNER=true
+          fi
+
+          if [[ "$IN_HOUSE_RUNNER" == "true" ]]; then
+            echo "USE_IN_HOUSE_SERVICES=true" >> "$ENV_FILE"
+          fi
+
+          echo "use_in_house_services=$IN_HOUSE_RUNNER" >> "$GITHUB_OUTPUT"
+          echo "Runner name: ${RUNNER_NAME:-unknown}"
+          echo "Use in-house services: $IN_HOUSE_RUNNER"
+
+      - name: Setup Kalium Testservice
+        if: ${{ inputs.run_critical_flows && steps.test-services.outputs.use_in_house_services != 'true' }}
         uses: ./.github/actions/kalium-testservice/setup
 
       - name: "Test new critical flows"
@@ -209,7 +233,7 @@ jobs:
           fi
 
       - name: Stop Kalium Testservice
-        if: ${{ always() && inputs.run_critical_flows }}
+        if: ${{ always() && inputs.run_critical_flows && steps.test-services.outputs.use_in_house_services != 'true' }}
         uses: ./.github/actions/kalium-testservice/stop
         with:
           print_logs_on_failure: ${{ job.status != 'success' }}
