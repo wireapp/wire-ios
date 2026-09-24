@@ -31,13 +31,10 @@ extension SettingsCellDescriptorFactory {
         let descriptors = [
             notificationVisibleSection,
             chatHeadsSection,
-            soundAlertSection,
+            soundSection,
             callKitSection,
             muteCallSection,
             SecurityFlags.forceConstantBitRateCalls.isEnabled ? nil : VBRSection,
-            // temporary hiding this section because currently we have only one sound. We plan to add more in the
-            // future. https://wearezeta.atlassian.net/browse/WPB-455
-//            soundsSection,
             externalAppsSection,
             popularDemandSendButtonSection,
             popularDemandDarkThemeSection,
@@ -87,8 +84,10 @@ extension SettingsCellDescriptorFactory {
         )
     }
 
-    private var soundAlertSection: SettingsSectionDescriptorType {
-        SettingsSectionDescriptor(cellDescriptors: [soundAlertGroup])
+    private var soundSection: SettingsSectionDescriptorType {
+        SettingsSectionDescriptor(
+            cellDescriptors: [soundAlertGroup, notificationSoundGroup]
+        )
     }
 
     private var callKitSection: SettingsSectionDescriptorType {
@@ -136,38 +135,6 @@ extension SettingsCellDescriptorFactory {
             header: .none,
             footer: L10n.Localizable.Self.Settings.Vbr.description,
             visibilityAction: .none
-        )
-    }
-
-    private var soundsSection: SettingsSectionDescriptorType {
-
-        let callSoundProperty = settingsPropertyFactory.property(.callSoundName)
-        let callSoundGroup = soundGroupForSetting(
-            callSoundProperty,
-            title: callSoundProperty.propertyName.settingsPropertyLabelText,
-            customSounds: ZMSound.ringtones,
-            defaultSound: ZMSound.WireCall
-        )
-
-        let messageSoundProperty = settingsPropertyFactory.property(.messageSoundName)
-        let messageSoundGroup = soundGroupForSetting(
-            messageSoundProperty,
-            title: messageSoundProperty.propertyName.settingsPropertyLabelText,
-            customSounds: ZMSound.soundEffects,
-            defaultSound: ZMSound.WireText
-        )
-
-        let pingSoundProperty = settingsPropertyFactory.property(.pingSoundName)
-        let pingSoundGroup = soundGroupForSetting(
-            pingSoundProperty,
-            title: pingSoundProperty.propertyName.settingsPropertyLabelText,
-            customSounds: ZMSound.soundEffects,
-            defaultSound: ZMSound.WirePing
-        )
-
-        return SettingsSectionDescriptor(
-            cellDescriptors: [callSoundGroup, messageSoundGroup, pingSoundGroup],
-            header: L10n.Localizable.Self.Settings.SoundMenu.Sounds.title
         )
     }
 

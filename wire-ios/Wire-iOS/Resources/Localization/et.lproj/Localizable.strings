@@ -1368,13 +1368,6 @@
 "self.settings.notifications.chat_alerts.toggle" = "Sõnumi bännerid";
 "self.settings.notifications.chat_alerts.footer" = "Näitab saabuvaid sõnumeid, kui sul mõni teine vestlus avatud.";
 
-"self.settings.sound_menu.sounds.title" = "Helid";
-"self.settings.sound_menu.ringtone.title" = "Helin";
-"self.settings.sound_menu.message.title" = "Tekstisõnumi märgutoon";
-"self.settings.sound_menu.ping.title" = "Ping";
-"self.settings.sound_menu.ringtones.title" = "Helinad";
-"self.settings.sound_menu.sounds.wire_sound" = "Wire";
-"self.settings.sound_menu.sounds.none" = "Puudub";
 
 "self.settings.callkit.title" = "Kõned";
 "self.settings.callkit.caption" = "Jaga iOS-s";
@@ -1386,9 +1379,6 @@
 "self.settings.vbr.title" = "Muutuva bitisagedusega kodeering";
 "self.settings.vbr.description" = "This makes audio calls use less data and work better on slower networks. Turn off to use constant bitrate encoding (CBR). This setting only affects 1:1 calls; conference calls always use CBR encoding.";
 
-"self.settings.sound_menu.sounds.wire_call" = "Wire Kõne";
-"self.settings.sound_menu.sounds.wire_message" = "Wire Sõnum";
-"self.settings.sound_menu.sounds.wire_ping" = "Wire Ping";
 
 // By popular demand
 "self.settings.popular_demand.title" = "Publiku nõudmisel";

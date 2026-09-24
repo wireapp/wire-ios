@@ -93,7 +93,7 @@ public class ZMLocalNotification: NSObject {
         let content = UNMutableNotificationContent()
         content.body = self.body
         content.categoryIdentifier = self.category.rawValue
-        content.sound = UNNotificationSound(named: convertToUNNotificationSoundName(sound.name))
+        content.sound = sound.userNotificationSound
 
         if let title = self.title {
             content.title = title
@@ -234,11 +234,6 @@ extension LocalNotificationType {
         }
     }
 
-}
-
-// Helper function inserted by Swift 4.2 migrator.
-private func convertToUNNotificationSoundName(_ input: String) -> UNNotificationSoundName {
-    UNNotificationSoundName(rawValue: input)
 }
 
 public extension ZMLocalNotification {
