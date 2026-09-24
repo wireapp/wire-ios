@@ -1324,13 +1324,6 @@ extension ZMUserSession: SyncAgentDelegate {
 
             // always check if need to upload key packages if needed
             await mlsService.uploadKeyPackagesIfNeeded()
-            while mlsFeature.isEnabled,
-                  isBackendMLSEnabled,
-                  application.applicationState == .active {
-                guard await mlsService.recoverPendingConversationBatchIfNeeded() else {
-                    break
-                }
-            }
             await resolveOneOnOneConversationsIfNeeded()
             await recurringActionService.performActionsIfNeeded()
         }

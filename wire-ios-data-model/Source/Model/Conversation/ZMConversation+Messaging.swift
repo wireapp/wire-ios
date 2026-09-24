@@ -211,7 +211,6 @@ public extension ZMConversation {
     static func fetchConversationsWithMLSGroupStatus(
         mlsGroupStatus: MLSGroupStatus,
         domain: String? = nil,
-        messageProtocols: [MessageProtocol] = [.mls],
         in context: NSManagedObjectContext
     ) throws -> [ZMConversation] {
 
@@ -230,25 +229,9 @@ public extension ZMConversation {
             )
         }
 
-        let matchingMessageProtocol = NSPredicate(
-            format: "%K IN %@",
-            argumentArray: [Self.messageProtocolKey, messageProtocols.map(\.int16Value)]
-        )
-
-        let hasMLSGroupID = NSPredicate(
-            format: "%K != nil",
-            argumentArray: [Self.mlsGroupIdKey]
-        )
-
-        let notDeleted = NSPredicate(format: "%K == NO", #keyPath(ZMConversation.isDeletedRemotely))
-
         request.predicate = NSCompoundPredicate(
             andPredicateWithSubpredicates: [
-                matchingGroupStatus,
-                matchingMessageProtocol,
-                hasMLSGroupID,
-                matchingDomain,
-                notDeleted
+                matchingGroupStatus, .isMLSConversation, matchingDomain
             ].compactMap(\.self)
         )
 
