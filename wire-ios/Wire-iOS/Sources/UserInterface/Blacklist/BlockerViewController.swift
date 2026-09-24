@@ -368,6 +368,8 @@ extension BlockerViewController {
                     await self.enrollCertificateAction()
                 }
             } cancelled: {}
+
+            present(alert, animated: true)
         }
 
     }
