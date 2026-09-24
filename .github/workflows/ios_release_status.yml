@@ -125,6 +125,10 @@ jobs:
             // ── Jira lookups ──────────────────────────────────────────────────
             const projectVersions = await jira(`/rest/api/3/project/${project}/versions`);
 
+            // Sprint is a custom field whose id varies per Jira site — resolve it by name.
+            const jiraFields   = await jira('/rest/api/3/field');
+            const sprintFieldId = jiraFields.find(f => f.name === 'Sprint')?.id ?? null;
+
             const findJiraVersion = async (semver) => {
               const v = projectVersions.find(x => x.name === `iOS v${semver}`);
               if (!v) return null;
@@ -171,6 +175,21 @@ jobs:
               issues.slice(0, limit).map(i =>
                 `    • ${issueLink(i)} — ${i.fields.status.name} — ${i.fields.summary}`);
 
+            // Sprint field returns an array of sprint objects (past + current); pick the
+            // active one, falling back to the most recent when the ticket isn't in one yet.
+            const sprintOf = (issue) => {
+              const sprints = sprintFieldId ? issue.fields[sprintFieldId] : null;
+              if (!Array.isArray(sprints) || sprints.length === 0) return null;
+              return (sprints.find(s => s.state === 'active') ?? sprints[sprints.length - 1])?.name ?? null;
+            };
+
+            const partitionBySprint = (issues) => {
+              const scheduled = [];
+              const unscheduled = [];
+              for (const i of issues) (sprintOf(i) ? scheduled : unscheduled).push(i);
+              return { scheduled, unscheduled };
+            };
+
             // Edge/LTS: bullets headered by status name, with assignee inline.
             const assigneeOf = (issue) => issue.fields.assignee?.displayName ?? 'Unassigned';
             const renderGroupedByStatus = (issues, perGroupLimit = 10) => {
@@ -205,6 +224,14 @@ jobs:
               });
             };
 
+            // Scheduled (sprinted) tickets: same shape as the triage lines, with the
+            // sprint name prefixed to the summary.
+            const renderScheduled = (issues, scopeFn = null) =>
+              issues.map(i => {
+                const scope = scopeFn ? scopeFn(i) : null;
+                return `    • ${issueLink(i)}${scope ? ` — ${scope}` : ''} — ${sprintOf(i)} - ${i.fields.summary}`;
+              });
+
             // ── Edge: fixVersion ──────────────────────────────────────────────
             const edgeName       = `iOS v${edgeVersion}`;
             const edgeQ          = jqlEscape(edgeName);
@@ -223,7 +250,8 @@ jobs:
             const betaJira          = await findJiraVersion(betaVersion);
             const betaAffectedJql   = `project = ${project} AND affectedVersion = "${betaQ}" AND status != "Done"`;
             const betaAffectedCount = await countIssues(betaAffectedJql);
-            const betaAffectedItems = betaAffectedCount > 0 ? (await listIssues(betaAffectedJql)).issues : [];
+            const betaFields        = ['summary', 'status', ...(sprintFieldId ? [sprintFieldId] : [])];
+            const betaAffectedItems = betaAffectedCount > 0 ? (await listIssues(betaAffectedJql, betaFields)).issues : [];
             const daysToBeta        = betaJira ? daysBetween(betaJira.releaseDate) : null;
 
             // ── Prod: affectedVersion + releaseDate ───────────────────────────
@@ -232,7 +260,8 @@ jobs:
             const prodJira          = await findJiraVersion(prodVersion);
             const prodAffectedJql   = `project = ${project} AND affectedVersion = "${prodQ}" AND status not in ("Done", "Rejected")`;
             const prodAffectedCount = await countIssues(prodAffectedJql);
-            const prodAffectedItems = prodAffectedCount > 0 ? (await listIssues(prodAffectedJql, ['summary', 'components'])).issues : [];
+            const prodFields        = ['summary', 'components', ...(sprintFieldId ? [sprintFieldId] : [])];
+            const prodAffectedItems = prodAffectedCount > 0 ? (await listIssues(prodAffectedJql, prodFields)).issues : [];
             const daysSinceProd     = prodJira ? -daysBetween(prodJira.releaseDate) : null;
 
             // ── LTS C Builds (optional, only if vars.LTS_RELEASE is set
@@ -315,8 +344,15 @@ jobs:
             }
             betaLines.push(`  • ${betaAffectedCount} ticket(s) with affectedVersion`);
             if (betaAffectedCount > 0) {
-              betaLines.push(`  • 🔍 *Triage needed*`);
-              betaLines.push(...renderIssues(betaAffectedItems));
+              const { scheduled: betaScheduled, unscheduled: betaUnscheduled } = partitionBySprint(betaAffectedItems);
+              if (betaUnscheduled.length > 0) {
+                betaLines.push(`  • 🔍 *Triage needed*`);
+                betaLines.push(...renderIssues(betaUnscheduled));
+              }
+              if (betaScheduled.length > 0) {
+                betaLines.push(`  • 🗓️ *Scheduled tickets:*`);
+                betaLines.push(...renderScheduled(betaScheduled));
+              }
             }
 
             // Prod
@@ -330,8 +366,15 @@ jobs:
             }
             prodLines.push(`  • ${prodAffectedCount} ticket(s) with affectedVersion`);
             if (prodAffectedCount > 0) {
-              prodLines.push(`  • 🔍 *Triage needed*`);
-              prodLines.push(...renderWithScope(prodAffectedItems));
+              const { scheduled: prodScheduled, unscheduled: prodUnscheduled } = partitionBySprint(prodAffectedItems);
+              if (prodUnscheduled.length > 0) {
+                prodLines.push(`  • 🔍 *Triage needed*`);
+                prodLines.push(...renderWithScope(prodUnscheduled));
+              }
+              if (prodScheduled.length > 0) {
+                prodLines.push(`  • 🗓️ *Scheduled tickets:*`);
+                prodLines.push(...renderScheduled(prodScheduled, scopeOf));
+              }
             }
 
             // LTS C Builds (optional)
