@@ -70,8 +70,11 @@ jobs:
             done <<< "$CHANGED_STRINGS"
           fi
 
-          # .xcstrings files: a genuinely new key always adds a new top-level
-          # "key" : { line, so this stays accurate even for value-only edits.
+          # .xcstrings files hold every locale in one JSON file, so adding a
+          # translation for an existing key (e.g. Russian) can reshuffle
+          # unrelated lines and make them look "added" in a line-based diff.
+          # Compare key sets between base and head instead, same as the
+          # .strings case above, so only genuinely new keys are reported.
           CHANGED_XCSTRINGS=$(git diff --name-only "$BASE_SHA" "$HEAD_SHA" \
             | grep '\.xcstrings$' \
             | grep -v 'vendor/' \
@@ -79,10 +82,13 @@ jobs:
 
           if [ -n "$CHANGED_XCSTRINGS" ]; then
             for file in $CHANGED_XCSTRINGS; do
-              NEW_IN_FILE=$(git diff "$BASE_SHA" "$HEAD_SHA" -- "$file" \
-                | grep '^+' | grep -v '^+++' \
-                | grep -E '^\+    "[^"]+" : \{' \
-                | sed 's/^+    "\([^"]*\)".*/\1/') || true
+              BASE_STRING_KEYS=$(git show "$BASE_SHA:$file" 2>/dev/null | jq -r '.strings | keys[]' 2>/dev/null) || true
+              HEAD_STRING_KEYS=$(git show "$HEAD_SHA:$file" 2>/dev/null | jq -r '.strings | keys[]' 2>/dev/null) || true
+              [ -z "$HEAD_STRING_KEYS" ] && continue
+
+              NEW_IN_FILE=$(comm -13 \
+                <(printf '%s\n' "$BASE_STRING_KEYS" | sort) \
+                <(printf '%s\n' "$HEAD_STRING_KEYS" | sort)) || true
 
               while IFS= read -r key; do
                 [ -z "$key" ] && continue
@@ -116,17 +122,22 @@ jobs:
             BULLET_LIST=$(echo "$NEW_KEYS" | sed 's/^/- /')
             MESSAGE=$(printf 'New localization strings added\n\n%s\n\n%s\n**Author:** %s\n**PR:** %s' \
               "$BULLET_LIST" "$TICKET_LINE" "$PR_AUTHOR" "$PR_URL")
-            MESSAGE_JSON=$(printf '%s' "$MESSAGE" | jq -Rs .)
-            echo "message_json=$MESSAGE_JSON" >> "$GITHUB_OUTPUT"
+            {
+              echo 'message<<EOF'
+              echo "$MESSAGE"
+              echo EOF
+            } >> "$GITHUB_OUTPUT"
           else
             echo "has_new_strings=false" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Post localization reminder
+        id: post
         uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
         env:
           NEW_KEYS: ${{ steps.check.outputs.new_keys }}
           HAS_NEW_STRINGS: ${{ steps.check.outputs.has_new_strings }}
+          MESSAGE: ${{ steps.check.outputs.message }}
         with:
           script: |
             const MARKER = '<!-- localization-reminder -->'
@@ -179,6 +190,12 @@ jobs:
               })
             }
 
+            // JSON.stringify (rather than passing the raw multi-line text through
+            // bash/$GITHUB_OUTPUT) matches the pattern used for notify-wire's
+            // custom_payload in ios_release_status.yml, so the message survives
+            // as a valid JSON string literal all the way to the Slack payload.
+            core.setOutput('message_json', JSON.stringify(process.env.MESSAGE))
+
       - name: Send Wire notification
         if: steps.check.outputs.has_new_strings == 'true'
         env:
@@ -186,4 +203,4 @@ jobs:
         uses: ./.github/actions/notify-wire
         with:
           notify: custom
-          text: ${{ steps.check.outputs.message_json }}
+          text: ${{ steps.post.outputs.message_json }}
