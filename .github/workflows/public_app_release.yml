@@ -10,7 +10,7 @@ on:
           - in-house
           - cirrus
           - github
-        default: cirrus
+        default: in-house
 
 permissions: 
   checks: write
@@ -21,7 +21,7 @@ jobs:
     with:
       countly_enabled: true
       fastlane_action: appstore_public
-      mac_runner: ${{ inputs.mac_runner || 'cirrus' }}
+      mac_runner: ${{ inputs.mac_runner || vars.DEFAULT_MAC_RUNNER }}
     secrets:
       KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
       APPSTORE_API_KEY_BASE64: ${{ secrets.APPSTORE_API_KEY_BASE64 }}

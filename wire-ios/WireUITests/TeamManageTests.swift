@@ -166,6 +166,36 @@ final class TeamManageTests: WireUITestCase {
     }
 
     @MainActor
+    func test_TeamMemberRemovedFromTeam_SeesSessionExpiredAlert_TC_11930() async throws {
+
+        let (_, teamOwner) = try await UserHelper.default.registerUserAsTeamOwner()
+        let ownerAccessToken = try await UserHelper.default.fetchAccessToken(
+            email: teamOwner.email,
+            password: teamOwner.password
+        )
+        let teamID = try XCTUnwrap(teamOwner.teamID)
+
+        let (memberQualifiedID, teamMember) = try await UserHelper.default.registerUsersAsTeamMember(
+            ownerAccessToken: ownerAccessToken.token,
+            teamID: teamID
+        )
+
+        let firstTimePage = try app.loginUser(email: teamMember.email, password: teamMember.password)
+        _ = try firstTimePage
+            .acceptPopupOnTeamMemberSetup()
+            .setUsername(teamMember.username)
+
+        try await UserHelper.default.removeTeamMember(
+            ownerAccessToken: ownerAccessToken.token,
+            ownerPassword: teamOwner.password,
+            teamID: teamID,
+            userID: memberQualifiedID.id
+        )
+
+        _ = try SessionExpiredPage().confirm()
+    }
+
+    @MainActor
     func testArchiveOpenAndUnarchiveConversation_TC_8872_8873() async throws {
         let groupName = UserGenerator.generateRandomConversationName()
 

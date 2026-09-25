@@ -264,6 +264,10 @@ public final class SessionManager: NSObject, SessionManagerType {
         case accountLimitReached(maxNumberAccounts: Int)
     }
 
+    enum RetainedAccountDataError: Error {
+        case accountIsActive
+    }
+
     /// Maximum number of accounts which can be logged in simultanously
     public let maxNumberAccounts: Int
 
@@ -379,6 +383,10 @@ public final class SessionManager: NSObject, SessionManagerType {
         }
 
         return environment.isAuthenticated(selectedAccount)
+    }
+
+    public func isAccountActive(_ account: Account) -> Bool {
+        backgroundUserSessions[account.userIdentifier] != nil || environment.isAuthenticated(account)
     }
 
     public var activeUnauthenticatedSession: UnauthenticatedSession {
@@ -834,17 +842,26 @@ public final class SessionManager: NSObject, SessionManagerType {
     public func logout(account: Account, error: Error? = nil) {
         WireLogger.sessionManager.debug("Logging out account \(account.userIdentifier)...")
 
-        let (accountSession, activeSession) = state.withLockUnchecked {
-            ($0.backgroundUserSessions[account.userIdentifier], $0.activeUserSession)
+        guard let isActiveSession = backgroundSessionStatus(for: account.userIdentifier) else { return }
+
+        if isActiveSession {
+            logoutCurrentSession(deleteCookie: true, deleteAccount: false, error: error)
+        } else {
+            tearDownBackgroundSession(for: account.userIdentifier)
+        }
+    }
+
+    /// Whether the account has a live background session, and if so, whether
+    /// that session is the currently active/foreground one. Returns `nil` if
+    /// there is no live background session at all.
+
+    private func backgroundSessionStatus(for userID: UUID) -> Bool? {
+        let (backgroundSession, activeSession) = state.withLockUnchecked {
+            ($0.backgroundUserSessions[userID], $0.activeUserSession)
         }
 
-        if let accountSession {
-            if accountSession == activeSession {
-                logoutCurrentSession(deleteCookie: true, deleteAccount: false, error: error)
-            } else {
-                tearDownBackgroundSession(for: account.userIdentifier)
-            }
-        }
+        guard let backgroundSession else { return nil }
+        return backgroundSession == activeSession
     }
 
     public func logoutCurrentSession() {
@@ -1163,11 +1180,84 @@ public final class SessionManager: NSObject, SessionManagerType {
     fileprivate func deleteAccountData(for account: Account) {
         WireLogger.sessionManager.debug("Deleting the data for \(account.userName) -- \(account.userIdentifier)")
         WireLogger.session.debug("Deleting the data for account \(account)")
+
+        do {
+            try deleteAccountData(for: account, keepAccountOnFailure: false)
+        } catch {
+            WireLogger.sessionManager.critical("Failed to delete account data for \(account): \(error)")
+        }
+    }
+
+    public func purgeRetainedAccountData(for userID: UUID) throws {
+        guard let account = accountManager.account(with: userID) else { return }
+
+        // A "retained" account keeps its data and cookie on disk after
+        // logging out (`deleteCookie: false`), so it always has a valid
+        // cookie and would be considered `isAccountActive` even though no
+        // live session exists. Only a live in-memory session should block
+        // purging its data.
+        guard backgroundUserSessions[account.userIdentifier] == nil else {
+            throw RetainedAccountDataError.accountIsActive
+        }
+
+        try deleteAccountData(for: account, keepAccountOnFailure: true)
+    }
+
+    /// Tears down any live background session for the account (if it isn't
+    /// the currently active/foreground session), then purges its retained
+    /// data on disk.
+    ///
+    /// - Throws: `RetainedAccountDataError.accountIsActive` if the account is
+    /// the current foreground session — safely logging that out requires the
+    /// full app-state logout flow (`sessionManagerWillLogout`), which this
+    /// method does not perform.
+
+    public func logoutBackgroundSessionAndPurgeRetainedAccountData(for userID: UUID) async throws {
+        if let isActiveSession = backgroundSessionStatus(for: userID) {
+            guard !isActiveSession else {
+                throw RetainedAccountDataError.accountIsActive
+            }
+
+            await withCheckedContinuation { continuation in
+                tearDownBackgroundSession(for: userID) {
+                    continuation.resume()
+                }
+            }
+        }
+
+        try purgeRetainedAccountData(for: userID)
+    }
+
+    private func deleteAccountData(
+        for account: Account,
+        keepAccountOnFailure: Bool
+    ) throws {
+        let accountID = account.userIdentifier
+        let accountDataFolder = CoreDataStack.accountDataFolder(
+            accountIdentifier: accountID,
+            applicationContainer: sharedContainerURL
+        )
+
+        do {
+            try FileManager.default.removeItem(at: accountDataFolder)
+        } catch let error as NSError where error.domain == NSCocoaErrorDomain && error.code == NSFileNoSuchFileError {
+            // The desired state has already been reached.
+        } catch {
+            if keepAccountOnFailure {
+                throw error
+            }
+            WireLogger.sessionManager.critical("Impossible to delete the account \(account): \(error)")
+        }
+
         do {
             try environment.cookieStorage(for: account).removeCookies()
         } catch {
+            if keepAccountOnFailure {
+                throw error
+            }
             WireLogger.sessionManager.error("Failed to remove cookies: \(error)")
         }
+
         account.deleteKeychainItems()
 
         deleteUserLogs?()
@@ -1182,17 +1272,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         PrivateUserDefaults.removeAll(forUserID: account.userIdentifier, in: sharedUserDefaults)
         PrivateUserDefaults.removeAll(forUserID: account.userIdentifier, in: .standard)
 
-        let accountID = account.userIdentifier
         accountManager.remove(account)
-
-        do {
-            try FileManager.default.removeItem(at: CoreDataStack.accountDataFolder(
-                accountIdentifier: accountID,
-                applicationContainer: sharedContainerURL
-            ))
-        } catch {
-            WireLogger.sessionManager.critical("Impossible to delete the account \(account): \(error)")
-        }
     }
 
     fileprivate func registerObservers(account: Account, session: ZMUserSession) {
@@ -1591,6 +1671,9 @@ extension SessionManager: UnauthenticatedSessionDelegate {
             storage: sharedUserDefaults
         )
         journal[.isInitialSyncRequired] = true
+
+        account.lastSSOIdentityProviderID = account.lastSSOIdentityProviderID ??
+            accountManager.account(with: account.userIdentifier)?.lastSSOIdentityProviderID
 
         accountManager.addAndSelect(account)
 

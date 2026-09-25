@@ -603,7 +603,8 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
 
         let validator = ConversationMemberJoinEventNotificationBuilder.Validator(
             userLocalStore: userLocalStore,
-            conversationLocalStore: conversationLocalStore
+            conversationLocalStore: conversationLocalStore,
+            conversationsAPI: ConversationsAPIBuilder(apiService: apiService).makeAPI(for: apiVersion)
         )
 
         return ConversationMemberJoinEventNotificationBuilder(

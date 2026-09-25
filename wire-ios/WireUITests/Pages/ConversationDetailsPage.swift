@@ -161,6 +161,10 @@ class ConversationDetailsPage: PageModel {
         app.descendants(matching: .any)[Locators.ConversationDetailsPage.notificationOptionsCell.rawValue].firstMatch
     }
 
+    var timeoutOptionsCell: XCUIElement {
+        app.descendants(matching: .any)["cell.groupdetails.timeoutoptions"].firstMatch
+    }
+
     @discardableResult
     func toggleGroupReadReceipts() -> ConversationDetailsPage {
         readReceiptsSwitch.waitAndTap()
@@ -178,6 +182,14 @@ class ConversationDetailsPage: PageModel {
             "Notification options cell did not appear"
         )
         return try ConversationNotificationOptionsPage()
+    }
+
+    func openTimeoutOptions() throws -> ConversationTimeoutOptionsPage {
+        XCTAssertTrue(
+            timeoutOptionsCell.waitAndTap(),
+            "Self-deleting messages options cell did not appear"
+        )
+        return try ConversationTimeoutOptionsPage()
     }
 
     @discardableResult
