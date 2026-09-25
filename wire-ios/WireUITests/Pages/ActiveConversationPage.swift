@@ -608,9 +608,13 @@ class ActiveConversationPage: PageModel {
     }
 
     func selectImageAndSend(at index: Int = 3) throws -> ActiveConversationPage {
-        if !imageToChoose(at: index).waitForExistence(timeout: 2) {
+        if !imageToChoose(at: index).waitForExistence(timeout: 5) {
             photoButton.waitAndTap()
         }
+        XCTAssertTrue(
+            imageToChoose(at: index).waitForExistence(timeout: 7),
+            "No image found in simulator photo library"
+        )
         imageToChoose(at: index).waitAndTap()
 
         XCTAssertTrue(
@@ -622,9 +626,13 @@ class ActiveConversationPage: PageModel {
     }
 
     func selectImageAndSendInDriveEnabledConversation(at index: Int = 3) throws -> ActiveConversationPage {
-        if !imageToChoose(at: index).waitForExistence(timeout: 2) {
+        if !imageToChoose(at: index).waitForExistence(timeout: 5) {
             photoButton.waitAndTap()
         }
+        XCTAssertTrue(
+            imageToChoose(at: index).waitForExistence(timeout: 5),
+            "No image found in simulator photo library"
+        )
         imageToChoose(at: index).waitAndTap()
 
         XCTAssertTrue(
