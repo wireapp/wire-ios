@@ -584,6 +584,29 @@ final class MarkdownTextViewTests: XCTestCase {
         checkAttributes(for: .none, inRange: wholeRange)
     }
 
+    // MARK: - Bar Button Taps
+
+    func testThatButtonTapDeselectsBasedOnActiveMarkdownRatherThanIconColor() {
+        // GIVEN: bold is the active markdown and the bar icons reflect it
+        bar.delegate = sut
+        let text = "Oh Hai!"
+        select(.bold)
+        insertText(text)
+        checkAttributes(for: .bold, inRange: NSRange(location: 0, length: text.length))
+        bar.updateIcons(for: sut.activeMarkdown)
+
+        // Simulate the icon coloring falling out of sync with the real
+        // active markdown state.
+        bar.resetIcons()
+
+        // WHEN: tapping bold, as a user attempting to turn it off
+        bar.boldButton.sendActions(for: .touchUpInside)
+        insertText(text)
+
+        // THEN: bold is deselected, not re-applied
+        checkAttributes(for: .none, inRange: NSRange(location: text.length, length: text.length))
+    }
+
     // MARK: - Lists
 
     func testThatSelectingListInsertsNewItemPrefix_Number() {

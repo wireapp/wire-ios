@@ -566,6 +566,7 @@ final class InputBar: UIView {
 
             case .markingDown:
                 self.secondaryButtonsView.setMarkdownBarView()
+                self.markdownView.updateIcons(for: self.textView.activeMarkdown)
             }
         }
 

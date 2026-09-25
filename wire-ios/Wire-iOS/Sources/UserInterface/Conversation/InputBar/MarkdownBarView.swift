@@ -97,7 +97,7 @@ final class MarkdownBarView: UIView {
         stackView.axis = .horizontal
         stackView.distribution = .fillEqually
         stackView.alignment = .center
-        stackView.layoutMargins = UIEdgeInsets(top: 0, left: buttonMargin, bottom: 0, right: buttonMargin)
+        refreshLayoutMargins()
         stackView.isLayoutMarginsRelativeArrangement = true
 
         headerButton.setIcon(.markdownH1, size: .tiny, for: .normal)
@@ -162,6 +162,13 @@ final class MarkdownBarView: UIView {
         setupAccessibility()
     }
 
+    /// Refreshes the button row's horizontal margins. Call this whenever the
+    /// bar becomes visible again, since `conversationHorizontalMargins` may
+    /// have changed (e.g. size class change) while the bar was hidden.
+    func refreshLayoutMargins() {
+        stackView.layoutMargins = UIEdgeInsets(top: 0, left: buttonMargin, bottom: 0, right: buttonMargin)
+    }
+
     private func setupAccessibility() {
         typealias Conversation = L10n.Accessibility.Conversation
 
@@ -186,7 +193,11 @@ final class MarkdownBarView: UIView {
 
         guard let markdown = markdown(for: sender) else { return }
 
-        if sender.iconColor(for: .normal) != enabledStateIconColor {
+        // Determine the toggle direction from the actual active markdown
+        // state, rather than the button's rendered color, since the latter
+        // can fall out of sync with the former (e.g. after the bar is
+        // hidden and shown again).
+        if (prevMarkdown ?? Markdown()).contains(markdown) {
             delegate?.markdownBarView(self, didDeselectMarkdown: markdown, with: sender)
         } else {
             delegate?.markdownBarView(self, didSelectMarkdown: markdown, with: sender)
