@@ -34,6 +34,12 @@ jobs:
           BASE_SHA=${{ github.event.pull_request.base.sha }}
           HEAD_SHA=${{ github.event.pull_request.head.sha }}
 
+          # Localization values come from the PR itself, so a value that
+          # happens to contain a line matching a fixed heredoc delimiter
+          # (e.g. "EOF") could truncate or corrupt the output. Use a
+          # random delimiter instead.
+          DELIM="EOF_$(uuidgen)"
+
           NEW_KEYS=""
 
           # .strings files: report keys whose name doesn't exist in the base
@@ -70,8 +76,11 @@ jobs:
             done <<< "$CHANGED_STRINGS"
           fi
 
-          # .xcstrings files: a genuinely new key always adds a new top-level
-          # "key" : { line, so this stays accurate even for value-only edits.
+          # .xcstrings files hold every locale in one JSON file, so adding a
+          # translation for an existing key (e.g. Russian) can reshuffle
+          # unrelated lines and make them look "added" in a line-based diff.
+          # Compare key sets between base and head instead, same as the
+          # .strings case above, so only genuinely new keys are reported.
           CHANGED_XCSTRINGS=$(git diff --name-only "$BASE_SHA" "$HEAD_SHA" \
             | grep '\.xcstrings$' \
             | grep -v 'vendor/' \
@@ -79,10 +88,13 @@ jobs:
 
           if [ -n "$CHANGED_XCSTRINGS" ]; then
             for file in $CHANGED_XCSTRINGS; do
-              NEW_IN_FILE=$(git diff "$BASE_SHA" "$HEAD_SHA" -- "$file" \
-                | grep '^+' | grep -v '^+++' \
-                | grep -E '^\+    "[^"]+" : \{' \
-                | sed 's/^+    "\([^"]*\)".*/\1/') || true
+              BASE_STRING_KEYS=$(git show "$BASE_SHA:$file" 2>/dev/null | jq -r '.strings | keys[]' 2>/dev/null) || true
+              HEAD_STRING_KEYS=$(git show "$HEAD_SHA:$file" 2>/dev/null | jq -r '.strings | keys[]' 2>/dev/null) || true
+              [ -z "$HEAD_STRING_KEYS" ] && continue
+
+              NEW_IN_FILE=$(comm -13 \
+                <(printf '%s\n' "$BASE_STRING_KEYS" | sort) \
+                <(printf '%s\n' "$HEAD_STRING_KEYS" | sort)) || true
 
               while IFS= read -r key; do
                 [ -z "$key" ] && continue
@@ -101,9 +113,9 @@ jobs:
           if [ -n "$NEW_KEYS" ]; then
             echo "has_new_strings=true" >> "$GITHUB_OUTPUT"
             {
-              echo 'new_keys<<EOF'
+              echo "new_keys<<$DELIM"
               echo "$NEW_KEYS"
-              echo EOF
+              echo "$DELIM"
             } >> "$GITHUB_OUTPUT"
 
             TICKET=$(echo "$PR_TITLE" | grep -oiE 'WPB-[0-9]+' | tr 'a-z' 'A-Z' | head -1 || true)
@@ -116,8 +128,11 @@ jobs:
             BULLET_LIST=$(echo "$NEW_KEYS" | sed 's/^/- /')
             MESSAGE=$(printf 'New localization strings added\n\n%s\n\n%s\n**Author:** %s\n**PR:** %s' \
               "$BULLET_LIST" "$TICKET_LINE" "$PR_AUTHOR" "$PR_URL")
-            MESSAGE_JSON=$(printf '%s' "$MESSAGE" | jq -Rs .)
-            echo "message_json=$MESSAGE_JSON" >> "$GITHUB_OUTPUT"
+            {
+              echo "message<<$DELIM"
+              echo "$MESSAGE"
+              echo "$DELIM"
+            } >> "$GITHUB_OUTPUT"
           else
             echo "has_new_strings=false" >> "$GITHUB_OUTPUT"
           fi
@@ -186,4 +201,4 @@ jobs:
         uses: ./.github/actions/notify-wire
         with:
           notify: custom
-          text: ${{ steps.check.outputs.message_json }}
+          text: ${{ steps.check.outputs.message }}
