@@ -45,7 +45,7 @@ struct MeetingConversationRepositoryBridge: MeetingConversationRepositoryProtoco
         guard let conversation = await conversationRepository.fetchConversation(
             id: conversationID.id,
             domain: conversationID.domain
-        ) else { return }
+        ) else { throw MLSService.MLSGroupCreationError.failedToCreateGroup }
 
         let objectID = conversation.objectID
         let syncContext = contextProvider.syncContext
@@ -58,7 +58,7 @@ struct MeetingConversationRepositoryBridge: MeetingConversationRepositoryProtoco
             return (conv.mlsGroupID, conv.mlsStatus == .ready)
         }
 
-        guard let mlsGroupID else { return }
+        guard let mlsGroupID else { throw MLSService.MLSGroupCreationError.failedToCreateGroup }
 
         if isGroupEstablished {
             guard !participants.isEmpty else { return }
@@ -66,14 +66,20 @@ struct MeetingConversationRepositoryBridge: MeetingConversationRepositoryProtoco
             // participants are added with a regular add-members commit.
             try await updateParticipants(participants, in: objectID, syncContext: syncContext) { users, conversation in
                 try await participantsService.addParticipants(users, to: conversation)
-                let failedParticipants = await syncContext.perform {
+                let (failedParticipants, isGroupReady) = await syncContext.perform {
                     let currentIDs = Set(conversation.localParticipants.compactMap(\.qualifiedID))
-                    return participants.filter {
+                    let failedParticipants = participants.filter {
                         !currentIDs.contains(WireDataModel.QualifiedID(
                             uuid: $0.qualifiedID.id,
                             domain: $0.qualifiedID.domain
                         ))
                     }
+                    let isGroupReady = !conversation.isDeleted && conversation.mlsGroupID == mlsGroupID &&
+                        conversation.mlsStatus == .ready
+                    return (failedParticipants, isGroupReady)
+                }
+                guard isGroupReady else {
+                    throw MeetingParticipantsError.failedToSetUpParticipants(failedParticipants)
                 }
                 if !failedParticipants.isEmpty {
                     throw MeetingParticipantsError.failedToAddParticipants(failedParticipants)
@@ -104,7 +110,7 @@ struct MeetingConversationRepositoryBridge: MeetingConversationRepositoryProtoco
         guard let conversation = await conversationRepository.fetchConversation(
             id: conversationID.id,
             domain: conversationID.domain
-        ) else { return }
+        ) else { throw ConversationRemoveParticipantError.conversationNotFound }
 
         try await updateParticipants(
             participants,
@@ -158,7 +164,7 @@ struct MeetingConversationRepositoryBridge: MeetingConversationRepositoryProtoco
         guard let conversation = await conversationRepository.fetchConversation(
             id: conversationID.id,
             domain: conversationID.domain
-        ) else { return }
+        ) else { throw MLSService.MLSGroupCreationError.failedToCreateGroup }
 
         let objectID = conversation.objectID
         // The name must be changed on the view context: only view context
@@ -168,13 +174,13 @@ struct MeetingConversationRepositoryBridge: MeetingConversationRepositoryProtoco
         // also inserts a "... renamed the conversation" system message.
         let viewContext = contextProvider.viewContext
 
-        await viewContext.perform {
-            guard
-                let conv = ZMConversation.existingObject(for: objectID, in: viewContext),
-                conv.userDefinedName != name
-            else { return }
+        try await viewContext.perform {
+            guard let conv = ZMConversation.existingObject(for: objectID, in: viewContext) else {
+                throw MLSService.MLSGroupCreationError.failedToCreateGroup
+            }
+            guard conv.userDefinedName != name else { return }
             conv.userDefinedName = name
-            _ = viewContext.saveOrRollback()
+            guard viewContext.saveOrRollback() else { throw MLSService.MLSGroupCreationError.failedToCreateGroup }
         }
     }
 
@@ -203,8 +209,7 @@ struct MeetingConversationRepositoryBridge: MeetingConversationRepositoryProtoco
     }
 
     /// Resolves the meeting members and the conversation into their managed
-    /// objects on the sync context and hands them to `operation`. Members
-    /// unknown to the local store are skipped.
+    /// objects on the sync context and hands them to `operation`.
     private func updateParticipants(
         _ participants: [MeetingMember],
         in conversationObjectID: NSManagedObjectID,
@@ -226,7 +231,10 @@ struct MeetingConversationRepositoryBridge: MeetingConversationRepositoryProtoco
             return (users, conversation)
         }
 
-        guard let conversation, !users.isEmpty else { return }
+        guard let conversation else { throw ConversationRemoveParticipantError.conversationNotFound }
+        guard users.count == participants.count, !users.isEmpty else {
+            throw ConversationRemoveParticipantError.invalidOperation
+        }
 
         try await operation(users, conversation)
     }
@@ -242,7 +250,7 @@ struct MeetingConversationRepositoryBridge: MeetingConversationRepositoryProtoco
         syncContext: NSManagedObjectContext,
         mlsService: (any MLSServiceInterface)?
     ) async throws {
-        guard let mlsService else { return }
+        guard let mlsService else { throw MLSService.MLSGroupCreationError.failedToCreateGroup }
 
         let mlsUsers = participants.map { member in
             MLSUser(id: member.qualifiedID.id, domain: member.qualifiedID.domain)
@@ -256,19 +264,39 @@ struct MeetingConversationRepositoryBridge: MeetingConversationRepositoryProtoco
                 with: mlsUsers,
                 removalKeys: nil
             )
-        } catch let MLSService.MLSAddMembersError.failedToClaimKeyPackages(failedUsers) {
+        } catch let error as MLSService.MLSAddMembersError {
+            guard case let .failedToClaimKeyPackages(failedUsers) = error else { throw error }
+            guard !participants.isEmpty else { throw error }
             guard !failedUsers.isEmpty, failedUsers.allSatisfy({ mlsUsers.contains($0) }) else {
-                throw MLSService.MLSAddMembersError.failedToClaimKeyPackages(users: failedUsers)
+                throw MeetingParticipantsError.failedToSetUpParticipants(participants)
             }
 
-            // Failed establishment wipes the group, so recreate it with the eligible invitees and host devices.
-            ciphersuite = try await mlsService.establishGroup(
-                for: mlsGroupID,
-                with: mlsUsers.filter { !failedUsers.contains($0) },
-                removalKeys: nil
-            )
             failedParticipants = zip(participants, mlsUsers).compactMap { participant, user in
                 failedUsers.contains(user) ? participant : nil
+            }
+            // Failed establishment wipes the group, so recreate it with the eligible invitees and host devices.
+            do {
+                ciphersuite = try await mlsService.establishGroup(
+                    for: mlsGroupID,
+                    with: mlsUsers.filter { !failedUsers.contains($0) },
+                    removalKeys: nil
+                )
+            } catch {
+                throw MeetingParticipantsError.failedToSetUpParticipants(
+                    participants,
+                    reasons: participantFailureReasons(for: error, participants: participants)
+                )
+            }
+        } catch let error as SendMLSMessageFailure {
+            switch error {
+            case .nonFederatingDomains, .unreachableDomains:
+                guard !participants.isEmpty else { throw error }
+                throw MeetingParticipantsError.failedToSetUpParticipants(
+                    participants,
+                    reasons: participantFailureReasons(for: error, participants: participants)
+                )
+            default:
+                throw error
             }
         }
 
@@ -279,10 +307,34 @@ struct MeetingConversationRepositoryBridge: MeetingConversationRepositoryProtoco
             return syncContext.saveOrRollback()
         }
 
+        guard isGroupReady else {
+            if !failedParticipants.isEmpty {
+                throw MeetingParticipantsError.failedToSetUpParticipants(failedParticipants)
+            }
+            throw MLSService.MLSGroupCreationError.failedToCreateGroup
+        }
         if !failedParticipants.isEmpty {
-            guard isGroupReady else { throw MLSService.MLSGroupCreationError.failedToCreateGroup }
             throw MeetingParticipantsError.failedToAddParticipants(failedParticipants)
         }
+    }
+
+    private func participantFailureReasons(
+        for error: Error,
+        participants: [MeetingMember]
+    ) -> [WireCallingDomain.QualifiedID: MeetingParticipantFailureReason] {
+        var reasons: [WireCallingDomain.QualifiedID: MeetingParticipantFailureReason] = [:]
+        for participant in participants {
+            let id = participant.qualifiedID
+            switch error {
+            case let SendMLSMessageFailure.nonFederatingDomains(domains) where domains.contains(id.domain):
+                reasons[id] = .nonFederatingBackends
+            case let SendMLSMessageFailure.unreachableDomains(domains) where domains.contains(id.domain):
+                reasons[id] = .offlineBackend(domain: id.domain)
+            default:
+                break
+            }
+        }
+        return reasons
     }
 
 }

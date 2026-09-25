@@ -132,9 +132,57 @@ package final class MeetingFormViewModel {
     var selectedMembers: [MeetingMember] = []
     private(set) var isLoading = false
 
-    /// Set when creating a meeting fails. The caught error itself is only
-    /// logged; the view shows a generic alert.
     var hasError = false
+    private var submitError: (any Error)?
+
+    var dismissAfterError: Bool {
+        switch submitError {
+        case CreateMeetingUseCaseError.conversationSetupFailed?,
+             CreateMeetingUseCaseError.addParticipantsFailed?,
+             UpdateMeetingUseCaseError.addParticipantsFailed?,
+             UpdateMeetingUseCaseError.removeParticipantsFailed?:
+            true
+        default:
+            false
+        }
+    }
+
+    var errorTitle: String {
+        typealias Errors = L10n.Localizable.Meetings
+        switch submitError {
+        case CreateMeetingUseCaseError.conversationSetupFailed?, CreateMeetingUseCaseError.addParticipantsFailed?:
+            return Errors.Error.setupFailedTitle
+        default:
+            break
+        }
+        switch mode {
+        case .instant: return Errors.MeetNowModal.Error.createFailedTitle
+        case .scheduled: return Errors.ScheduleModal.Error.createFailedTitle
+        case .edit: return Errors.ScheduleModal.Error.updateFailedTitle
+        }
+    }
+
+    var errorMessage: String {
+        typealias Errors = L10n.Localizable.Meetings
+        switch submitError {
+        case CreateMeetingUseCaseError.conversationSetupFailed?:
+            return Errors.Error.conversationSetupFailed
+        case let CreateMeetingUseCaseError.addParticipantsFailed(participants, reasons)?,
+             let UpdateMeetingUseCaseError.addParticipantsFailed(participants, reasons)?:
+            let details = MeetingParticipantErrorFormatter.message(participants: participants, reasons: reasons)
+            return Errors.Error.addParticipantsFailed + (details.isEmpty ? "" : "\n\n" + details)
+        case let UpdateMeetingUseCaseError.removeParticipantsFailed(participants)?:
+            return Errors.ScheduleModal.Error.removeParticipantsFailed + participantFailureDetails(for: participants)
+        case UpdateMeetingUseCaseError.conversationNotResolved?:
+            return Errors.ScheduleModal.Error.editMeetingIdMissing
+        default:
+            switch mode {
+            case .instant: return Errors.MeetNowModal.Error.createFailed
+            case .scheduled: return Errors.ScheduleModal.Error.createFailed
+            case .edit: return Errors.ScheduleModal.Error.updateFailed
+            }
+        }
+    }
 
     var hasExpiredStartDateError = false
 
@@ -146,6 +194,21 @@ package final class MeetingFormViewModel {
     private(set) var participantsNotAdded: [MeetingMember] = []
     private var meetingWithParticipantsNotAdded: Meeting?
     private var didAcknowledgeParticipantsNotAdded = false
+
+    var conversationNameErrorMessage: String {
+        L10n.Localizable.WireMeetings.Schedule.Error.ConversationName.message
+            + participantFailureDetails(for: participantsNotAdded)
+    }
+
+    var participantsNotAddedMessage: String {
+        MeetingParticipantErrorFormatter.message(participants: participantsNotAdded, reasons: [:])
+    }
+
+    private func participantFailureDetails(for participants: [MeetingMember]) -> String {
+        guard !participants.isEmpty else { return "" }
+        return "\n\n" + L10n.Localizable.Meetings.ScheduleModal.Error.addParticipantsFailed + "\n\n"
+            + MeetingParticipantErrorFormatter.message(participants: participants, reasons: [:])
+    }
 
     var selectedMembersSummary: String {
         selectedMembers
@@ -220,8 +283,9 @@ package final class MeetingFormViewModel {
         // corrupt subsequent pagination (e.g. the next “load more” would re-fetch from offset 0 and replace data
         // unexpectedly). Consider making load(pageSize:) return/throw on failure so reloadLoadedMeetings() can restore
         // futureOffset (and possibly coalesce missed reloads while isLoading is true).
-        guard !isLoading, meetingWithParticipantsNotAdded == nil else { return }
+        guard !isLoading, meetingWithParticipantsNotAdded == nil, !dismissAfterError else { return }
         hasError = false
+        submitError = nil
         hasConversationNameUpdateError = false
         meetingPendingConversationNameUpdate = nil
         participantsNotAdded = []
@@ -247,6 +311,7 @@ package final class MeetingFormViewModel {
         } catch {
             let errorType = Swift.type(of: error)
             WireLogger.search.error("failed to save meeting: \(String(describing: errorType))")
+            submitError = error
             hasError = true
         }
     }

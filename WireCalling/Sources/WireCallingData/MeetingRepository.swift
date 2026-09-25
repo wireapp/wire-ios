@@ -112,7 +112,7 @@ public final class MeetingRepository: MeetingRepositoryProtocol {
             await storeMeeting(meeting)
             return await localStore.storedMeeting(id: meeting.id) ?? meeting
         } catch MeetingsAPIError.meetingNotFound {
-            await deleteLocalMeeting(id: id)
+            try await deleteLocalMeeting(id: id)
             return nil
         }
     }
@@ -132,20 +132,24 @@ public final class MeetingRepository: MeetingRepositoryProtocol {
         changeBroadcaster.broadcast()
     }
 
-    public func deleteLocalMeeting(id: QualifiedID) async {
-        await localStore.deleteMeeting(id: id)
-        changeBroadcaster.broadcast()
+    public func deleteLocalMeeting(id: QualifiedID) async throws {
+        defer { changeBroadcaster.broadcast() }
+        do {
+            try await localStore.deleteMeeting(id: id)
+        } catch {
+            WireLogger.meetings.error("failed to clean up meeting: \(String(describing: type(of: error)))")
+            throw DeleteMeetingUseCaseError.cleanupFailed
+        }
     }
 
     public func deleteMeeting(id: QualifiedID) async throws {
         do {
             try await meetingsAPI.deleteMeeting(id: id)
-        } catch MeetingsAPIError.meetingNotFound {
-            // The meeting is already gone from the backend,
-            // so only the local copy is left to delete.
+        } catch MeetingsAPIError.meetingNotFound, MeetingsAPIError.accessDenied, MeetingsAPIError.invalidOperation {
+            // A 404 can also mean the meeting expired or the caller is not its creator.
+            throw DeleteMeetingUseCaseError.notAllowed
         }
-        await localStore.deleteMeeting(id: id)
-        changeBroadcaster.broadcast()
+        try await deleteLocalMeeting(id: id)
     }
 
     public func fetchMeetings(in range: Range<Date>, offset: Int, limit: Int) async throws -> [Meeting] {

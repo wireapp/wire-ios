@@ -36,6 +36,9 @@ package final class MeetingsViewModel {
     private(set) var isDeleting = false
     var hasDeleteError = false
     private var failedMeetingToDelete: Meeting?
+    private var deleteError: DeleteMeetingUseCaseError?
+
+    var canRetryDelete: Bool { deleteError == nil }
 
     package var loadedMeetings: [Meeting] {
         loadedOccurrences.map(\.meeting)
@@ -80,12 +83,16 @@ package final class MeetingsViewModel {
 
     var deleteErrorTitle: String {
         let strings = L10n.Localizable.Meetings.DeleteModal.Error.self
+        if deleteError == .notAllowed { return strings.notAllowedTitle }
+        if deleteError == .cleanupFailed { return strings.cleanupFailedTitle }
         return failedMeetingToDelete.map { !isOrganizer($0) } == true
             ? strings.leaveConversationFailedTitle : strings.deleteFailedTitle
     }
 
     var deleteErrorMessage: String {
         let strings = L10n.Localizable.Meetings.DeleteModal.Error.self
+        if deleteError == .notAllowed { return strings.notAllowed }
+        if deleteError == .cleanupFailed { return strings.deleteSucceededButLocalCleanupFailed }
         return failedMeetingToDelete.map { !isOrganizer($0) } == true
             ? strings.leaveConversationFailed : strings.deleteFailed
     }
@@ -248,6 +255,7 @@ package final class MeetingsViewModel {
         isDeleting = true
         hasDeleteError = false
         failedMeetingToDelete = nil
+        deleteError = nil
         defer { isDeleting = false }
 
         do {
@@ -255,13 +263,17 @@ package final class MeetingsViewModel {
             loadedOccurrences.removeAll { $0.meeting.id == meeting.id }
         } catch {
             failedMeetingToDelete = meeting
+            deleteError = error as? DeleteMeetingUseCaseError
+            if deleteError == .cleanupFailed {
+                loadedOccurrences.removeAll { $0.meeting.id == meeting.id }
+            }
             hasDeleteError = true
             WireLogger.meetings.error("failed to delete meeting: \(String(reflecting: error))")
         }
     }
 
     func retryDelete() async {
-        guard let meeting = failedMeetingToDelete else { return }
+        guard canRetryDelete, let meeting = failedMeetingToDelete else { return }
         await deleteMeeting(meeting)
     }
 

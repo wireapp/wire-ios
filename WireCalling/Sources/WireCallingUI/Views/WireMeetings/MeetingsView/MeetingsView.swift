@@ -61,11 +61,17 @@ struct MeetingsView: View {
             viewModel.deleteErrorTitle,
             isPresented: $viewModel.hasDeleteError
         ) {
-            Button(L10n.Localizable.WireMeetings.retry) {
-                Task { await viewModel.retryDelete() }
+            if viewModel.canRetryDelete {
+                Button(L10n.Localizable.WireMeetings.retry) {
+                    Task { await viewModel.retryDelete() }
+                }
+                .accessibilityIdentifier("meetingDeleteRetryButton")
             }
-            .accessibilityIdentifier("meetingDeleteRetryButton")
-            Button(Strings.Delete.Alert.Cancel.button, role: .cancel) {}
+            Button(
+                viewModel.canRetryDelete
+                    ? Strings.Delete.Alert.Cancel.button : L10n.Localizable.WireMeetings.Schedule.Error.Alert.ok,
+                role: .cancel
+            ) {}
         } message: {
             Text(viewModel.deleteErrorMessage)
         }

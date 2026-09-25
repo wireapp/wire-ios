@@ -41,8 +41,16 @@ package struct DeleteMeetingUseCase: DeleteMeetingUseCaseProtocol {
             try await meetingRepository.deleteMeeting(id: meeting.id)
         } else {
             try await conversationRepository.leaveConversation(id: meeting.conversationID)
-            await meetingRepository.deleteLocalMeeting(id: meeting.id)
+            try await meetingRepository.deleteLocalMeeting(id: meeting.id)
         }
     }
+
+}
+
+package enum DeleteMeetingUseCaseError: Error, Equatable {
+
+    case notAllowed
+
+    case cleanupFailed
 
 }

@@ -19,6 +19,7 @@
 package import Foundation
 
 import WireFoundation
+import WireLogging
 
 package struct CreateMeetingUseCase: CreateMeetingUseCaseProtocol {
 
@@ -46,24 +47,37 @@ package struct CreateMeetingUseCase: CreateMeetingUseCaseProtocol {
             endTime: endTime,
             recurrence: recurrence
         )
-        // The backend creates a conversation for the meeting but doesn't
-        // notify this client about it, so pull it explicitly.
-        try await conversationRepository.pullConversation(
-            id: meeting.conversationID.id,
-            domain: meeting.conversationID.domain
-        )
-        // The backend doesn't name the conversation it creates for the
-        // meeting, so mirror the meeting title onto it.
-        try await conversationRepository.setConversationName(title, for: meeting.conversationID)
+        var isAddingParticipants = false
         do {
+            // The backend creates a conversation for the meeting but doesn't
+            // notify this client about it, so pull it explicitly.
+            try await conversationRepository.pullConversation(
+                id: meeting.conversationID.id,
+                domain: meeting.conversationID.domain
+            )
+            // The backend doesn't name the conversation it creates for the
+            // meeting, so mirror the meeting title onto it.
+            try await conversationRepository.setConversationName(title, for: meeting.conversationID)
+            isAddingParticipants = true
             try await conversationRepository.addParticipants(participants, to: meeting.conversationID)
         } catch let MeetingParticipantsError.failedToAddParticipants(participants) {
             await meetingRepository.storeMeeting(meeting)
             throw CreateMeetingUseCaseError.participantsNotAdded(meeting: meeting, participants: participants)
+        } catch let MeetingParticipantsError.failedToSetUpParticipants(participants, reasons) {
+            await meetingRepository.storeMeeting(meeting)
+            throw CreateMeetingUseCaseError.addParticipantsFailed(
+                participants: participants,
+                reasons: reasons
+            )
+        } catch {
+            WireLogger.meetings.error("failed to set up saved meeting: \(String(describing: type(of: error)))")
+            await meetingRepository.storeMeeting(meeting)
+            if isAddingParticipants, !participants.isEmpty {
+                throw CreateMeetingUseCaseError.addParticipantsFailed()
+            }
+            throw CreateMeetingUseCaseError.conversationSetupFailed
         }
-        // Store the meeting again now that its conversation exists locally,
-        // so the two are linked; meetings without a local conversation are
-        // not listed.
+        // Store the meeting again now that its conversation exists locally, so the two are linked.
         await meetingRepository.storeMeeting(meeting)
         return meeting
     }
@@ -72,6 +86,13 @@ package struct CreateMeetingUseCase: CreateMeetingUseCaseProtocol {
 
 package enum CreateMeetingUseCaseError: Error, Equatable {
 
+    case conversationSetupFailed
+
     case participantsNotAdded(meeting: Meeting, participants: [MeetingMember])
+
+    case addParticipantsFailed(
+        participants: [MeetingMember] = [],
+        reasons: [QualifiedID: MeetingParticipantFailureReason] = [:]
+    )
 
 }
