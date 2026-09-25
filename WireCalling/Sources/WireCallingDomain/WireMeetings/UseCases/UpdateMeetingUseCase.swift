@@ -19,6 +19,7 @@
 package import Foundation
 
 import WireFoundation
+import WireLogging
 
 package struct UpdateMeetingUseCase: UpdateMeetingUseCaseProtocol {
 
@@ -80,8 +81,26 @@ package struct UpdateMeetingUseCase: UpdateMeetingUseCaseProtocol {
             try await conversationRepository.addParticipants(membersToAdd, to: meeting.conversationID)
         } catch let MeetingParticipantsError.failedToAddParticipants(participants) {
             participantsNotAdded = participants
+        } catch let MeetingParticipantsError.failedToSetUpParticipants(participants, reasons) {
+            await meetingRepository.storeMeeting(updatedMeeting)
+            throw UpdateMeetingUseCaseError.addParticipantsFailed(
+                participants: participants,
+                reasons: reasons
+            )
+        } catch {
+            WireLogger.meetings.error("failed to add meeting participants: \(String(describing: type(of: error)))")
+            await meetingRepository.storeMeeting(updatedMeeting)
+            throw UpdateMeetingUseCaseError.addParticipantsFailed()
         }
-        try await conversationRepository.removeParticipants(membersToRemove, from: meeting.conversationID)
+        do {
+            try await conversationRepository.removeParticipants(membersToRemove, from: meeting.conversationID)
+        } catch {
+            WireLogger.meetings.error("failed to remove meeting participants: \(String(describing: type(of: error)))")
+            await meetingRepository.storeMeeting(updatedMeeting)
+            throw UpdateMeetingUseCaseError.removeParticipantsFailed(
+                participantsNotAdded: participantsNotAdded
+            )
+        }
         await meetingRepository.storeMeeting(updatedMeeting)
 
         if title != meeting.title {
@@ -124,5 +143,12 @@ package enum UpdateMeetingUseCaseError: Error, Equatable {
     case conversationNameUpdateFailed(updatedMeeting: Meeting, participantsNotAdded: [MeetingMember] = [])
 
     case participantsNotAdded(meeting: Meeting, participants: [MeetingMember])
+
+    case addParticipantsFailed(
+        participants: [MeetingMember] = [],
+        reasons: [QualifiedID: MeetingParticipantFailureReason] = [:]
+    )
+
+    case removeParticipantsFailed(participantsNotAdded: [MeetingMember] = [])
 
 }

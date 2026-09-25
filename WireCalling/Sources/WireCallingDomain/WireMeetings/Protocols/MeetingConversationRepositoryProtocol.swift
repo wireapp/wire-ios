@@ -47,4 +47,17 @@ public enum MeetingParticipantsError: Error, Equatable {
     /// The group is ready, but these participants could not be added.
     case failedToAddParticipants([MeetingMember])
 
+    /// Adding participants failed before the group was ready to join.
+    case failedToSetUpParticipants(
+        [MeetingMember],
+        reasons: [QualifiedID: MeetingParticipantFailureReason] = [:]
+    )
+
+}
+
+public enum MeetingParticipantFailureReason: Hashable, Sendable {
+
+    case nonFederatingBackends
+    case offlineBackend(domain: String)
+
 }
