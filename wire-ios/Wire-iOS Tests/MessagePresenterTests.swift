@@ -84,6 +84,86 @@ final class MessagePresenterTests: XCTestCase {
         XCTAssertNil(sut.videoPlayerObserver)
     }
 
+    func testThatMultiplePendingDownloadsAreObservedIndependently() {
+        // GIVEN
+        let messageA: MockMessage = MockMessageFactory.videoMessage()
+        let messageB: MockMessage = MockMessageFactory.videoMessage()
+        messageA.backingFileMessageData.fileURL = nil
+        messageB.backingFileMessageData.fileURL = nil
+
+        var onChangedByNonce: [UUID: (ZMConversationMessage) -> Void] = [:]
+        sut.makeFileDownloadObserver = { message, _, onChanged in
+            onChangedByNonce[message.nonce!] = onChanged
+            return FakeFileDownloadObserver()
+        }
+
+        let targetViewController = UIViewController()
+        rootViewController = targetViewController
+        sut.targetViewController = targetViewController
+        _ = targetViewController.view
+
+        // WHEN tapping both videos before either download completes
+        sut.openFileMessage(messageA, targetView: UIView())
+        sut.openFileMessage(messageB, targetView: UIView())
+
+        // THEN both are tracked as independent, still-pending downloads
+        XCTAssertEqual(sut.fileAvailabilityObservers.count, 2)
+        XCTAssertNotNil(onChangedByNonce[messageA.nonce!])
+        XCTAssertNotNil(onChangedByNonce[messageB.nonce!])
+
+        // WHEN messageB's download finishes first
+        let fileURL = Bundle(for: MockAudioRecorder.self).url(forResource: "video", withExtension: "mp4")
+        messageB.backingFileMessageData.fileURL = fileURL
+        messageB.backingFileMessageData.downloadState = .downloaded
+        onChangedByNonce[messageB.nonce!]?(messageB)
+
+        // THEN messageB opens, and messageA's pending observer is unaffected
+        XCTAssert(targetViewController.presentedViewController is AVPlayerViewController)
+        XCTAssertEqual(sut.fileAvailabilityObservers.count, 1)
+        XCTAssertNotNil(sut.fileAvailabilityObservers[messageA.nonce!])
+
+        targetViewController.presentedViewController?.beginAppearanceTransition(false, animated: false)
+        targetViewController.presentedViewController?.endAppearanceTransition()
+
+        // WHEN messageA's download finishes afterwards
+        messageA.backingFileMessageData.fileURL = fileURL
+        messageA.backingFileMessageData.downloadState = .downloaded
+        onChangedByNonce[messageA.nonce!]?(messageA)
+
+        // THEN messageA also opens
+        XCTAssert(targetViewController.presentedViewController is AVPlayerViewController)
+        XCTAssertTrue(sut.fileAvailabilityObservers.isEmpty)
+    }
+
+    func testThatObserverIsRemovedWhenDownloadConcludesWithoutSuccess() {
+        // GIVEN
+        let message: MockMessage = MockMessageFactory.videoMessage()
+        message.backingFileMessageData.fileURL = nil
+
+        var onChanged: ((ZMConversationMessage) -> Void)?
+        sut.makeFileDownloadObserver = { _, _, changed in
+            onChanged = changed
+            return FakeFileDownloadObserver()
+        }
+
+        let targetViewController = UIViewController()
+        rootViewController = targetViewController
+        sut.targetViewController = targetViewController
+        _ = targetViewController.view
+
+        // WHEN
+        sut.openFileMessage(message, targetView: UIView())
+        XCTAssertEqual(sut.fileAvailabilityObservers.count, 1)
+
+        // WHEN the download concludes without ever becoming available (failure/cancellation)
+        message.backingFileMessageData.downloadState = .remote
+        onChanged?(message)
+
+        // THEN the observer is cleaned up and no player is presented
+        XCTAssertTrue(sut.fileAvailabilityObservers.isEmpty)
+        XCTAssertNil(targetViewController.presentedViewController)
+    }
+
     // MARK: - Pass
 
     func testThatMakePassesViewControllerThrowsErrorForInvalidFileURL() async throws {
@@ -111,3 +191,7 @@ final class MessagePresenterTests: XCTestCase {
         // expected not to throw an error!
     }
 }
+
+/// Test double standing in for `MessageKeyPathObserver`, letting tests trigger the
+/// "download state changed" callback directly instead of going through a real `ZMUserSession`.
+private final class FakeFileDownloadObserver: FileDownloadObserving {}
