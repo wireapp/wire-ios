@@ -76,9 +76,9 @@ final class ChannelMessagingTests: WireUITestCase {
         let activeConversationPage = try await login(user: teamWithChannelConversation.teamOwner)
             .openConversation()
             .openPhotosAndGrantPermission()
+            .sendPing()
             .sendMessage(message)
             .recordAudioAndSend()
-            .sendPing()
             .openPhotos()
             .selectImageAndSend()
 
