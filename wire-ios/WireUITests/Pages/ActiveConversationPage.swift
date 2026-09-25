@@ -602,24 +602,30 @@ class ActiveConversationPage: PageModel {
         return self
     }
 
-    func openPhotos() throws -> ActiveConversationPage {
-        photoButton.waitAndTap()
-        return self
-    }
-
-    func selectImageAndSend(at index: Int = 3) throws -> ActiveConversationPage {
-        if !imageToChoose(at: index).waitForExistence(timeout: 5) {
+    func selectImageAndSend() throws -> ActiveConversationPage {
+        if !cameraRollButton.waitForExistence(timeout: 3) {
             photoButton.waitAndTap()
         }
+
         XCTAssertTrue(
-            imageToChoose(at: index).waitForExistence(timeout: 7),
-            "No image found in simulator photo library"
+            cameraRollButton.waitAndTap(),
+            "cameraRollButton did not show up"
         )
-        imageToChoose(at: index).waitAndTap()
+
+        let image = app.images.matching(NSPredicate(
+            format: "identifier == %@ AND NOT (label BEGINSWITH %@)",
+            Locators.PhotosAppPage.imageTile.rawValue,
+            "Video"
+        )).firstMatch
+        XCTAssertTrue(
+            image.waitForExistence(timeout: 10),
+            "No image found in camera roll"
+        )
+        image.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
 
         XCTAssertTrue(
             okToSend.waitForExistence(timeout: 3),
-            "OK button did not appear after selecting media"
+            "Seems like image is not tapped"
         )
         okToSend.waitAndTap()
         return self
