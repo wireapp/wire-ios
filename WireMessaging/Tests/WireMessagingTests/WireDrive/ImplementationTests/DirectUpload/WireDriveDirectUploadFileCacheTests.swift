@@ -40,13 +40,13 @@ final class WireDriveDirectUploadFileCacheTests {
     // MARK: - Staging
 
     @Test
-    func stagesAFileFromDisk() throws {
+    func stagesAFileFromDisk() async throws {
         // Given
         let uploadID = UUID()
         let source = try makeSourceFile(contents: "hello drive")
 
         // When
-        let staged = try sut.stage(
+        let staged = try await sut.stage(
             sourceURL: source,
             uploadID: uploadID,
             fileName: "report.pdf",
@@ -62,25 +62,25 @@ final class WireDriveDirectUploadFileCacheTests {
 
     /// The source may belong to Photos or a document provider, so it must be copied, never moved.
     @Test
-    func leavesTheSourceFileInPlace() throws {
+    func leavesTheSourceFileInPlace() async throws {
         // Given
         let source = try makeSourceFile(contents: "hello")
 
         // When
-        _ = try sut.stage(sourceURL: source, uploadID: UUID(), fileName: "a.txt", isSecurityScoped: false)
+        _ = try await sut.stage(sourceURL: source, uploadID: UUID(), fileName: "a.txt", isSecurityScoped: false)
 
         // Then
         #expect(FileManager.default.fileExists(atPath: source.path))
     }
 
     @Test
-    func stagesRawData() throws {
+    func stagesRawData() async throws {
         // Given
         let uploadID = UUID()
         let data = Data("photo bytes".utf8)
 
         // When
-        let staged = try sut.stage(data: data, uploadID: uploadID, fileName: "photo.jpg")
+        let staged = try await sut.stage(data: data, uploadID: uploadID, fileName: "photo.jpg")
 
         // Then
         #expect(staged.size == UInt64(data.count))
@@ -88,24 +88,24 @@ final class WireDriveDirectUploadFileCacheTests {
     }
 
     @Test
-    func throwsWhenTheSourceIsMissing() {
+    func throwsWhenTheSourceIsMissing() async {
         // Given
         let missing = directory.appendingPathComponent("nope.txt")
 
         // Then
-        #expect(throws: WireDriveDirectUploadStagingError.sourceUnreadable(missing)) {
-            try sut.stage(sourceURL: missing, uploadID: UUID(), fileName: "nope.txt", isSecurityScoped: false)
+        await #expect(throws: WireDriveDirectUploadStagingError.sourceUnreadable(missing)) {
+            try await sut.stage(sourceURL: missing, uploadID: UUID(), fileName: "nope.txt", isSecurityScoped: false)
         }
     }
 
     @Test
-    func overwritesAPreviousStagingAttemptForTheSameUpload() throws {
+    func overwritesAPreviousStagingAttemptForTheSameUpload() async throws {
         // Given
         let uploadID = UUID()
-        _ = try sut.stage(data: Data("first".utf8), uploadID: uploadID, fileName: "a.txt")
+        _ = try await sut.stage(data: Data("first".utf8), uploadID: uploadID, fileName: "a.txt")
 
         // When
-        let staged = try sut.stage(
+        let staged = try await sut.stage(
             sourceURL: try makeSourceFile(contents: "second"),
             uploadID: uploadID,
             fileName: "a.txt",
@@ -120,19 +120,19 @@ final class WireDriveDirectUploadFileCacheTests {
 
     /// Two files with the same name in one batch must not overwrite each other.
     @Test
-    func namesStagedFilesUniquelyPerUpload() throws {
+    func namesStagedFilesUniquelyPerUpload() async throws {
         // When
-        let first = try sut.stage(data: Data("a".utf8), uploadID: UUID(), fileName: "same.txt")
-        let second = try sut.stage(data: Data("b".utf8), uploadID: UUID(), fileName: "same.txt")
+        let first = await try sut.stage(data: Data("a".utf8), uploadID: UUID(), fileName: "same.txt")
+        let second = await try sut.stage(data: Data("b".utf8), uploadID: UUID(), fileName: "same.txt")
 
         // Then
         #expect(first.fileName != second.fileName)
     }
 
     @Test
-    func replacesPathSeparatorsInFileNames() throws {
+    func replacesPathSeparatorsInFileNames() async throws {
         // When
-        let staged = try sut.stage(data: Data("a".utf8), uploadID: UUID(), fileName: "a/b\\c\"d.txt")
+        let staged = try await sut.stage(data: Data("a".utf8), uploadID: UUID(), fileName: "a/b\\c\"d.txt")
 
         // Then — a separator would otherwise be read as a subdirectory.
         #expect(!staged.fileName.contains("/"))
@@ -141,12 +141,12 @@ final class WireDriveDirectUploadFileCacheTests {
     }
 
     @Test
-    func truncatesOverlongFileNamesAndKeepsTheExtension() throws {
+    func truncatesOverlongFileNamesAndKeepsTheExtension() async throws {
         // Given
         let longName = String(repeating: "a", count: 400) + ".pdf"
 
         // When
-        let staged = try sut.stage(data: Data("a".utf8), uploadID: UUID(), fileName: longName)
+        let staged = try await sut.stage(data: Data("a".utf8), uploadID: UUID(), fileName: longName)
 
         // Then — must stay within the file system's 255 byte limit, prefix included.
         #expect(staged.fileName.utf8.count <= 255)
@@ -163,7 +163,7 @@ final class WireDriveDirectUploadFileCacheTests {
     /// this asserts on what the store *requests* rather than on what the file system stored. The
     /// effective level can only be confirmed on a device.
     @Test
-    func requestsProtectionUntilFirstUserAuthenticationForStagedFiles() throws {
+    func requestsProtectionUntilFirstUserAuthenticationForStagedFiles() async throws {
         // Given
         let fileManager = SpyFileManager()
         let store = WireDriveDirectUploadFileCache(
@@ -172,7 +172,7 @@ final class WireDriveDirectUploadFileCacheTests {
         )
 
         // When
-        let staged = try store.stage(data: Data("a".utf8), uploadID: UUID(), fileName: "a.txt")
+        let staged = try await store.stage(data: Data("a".utf8), uploadID: UUID(), fileName: "a.txt")
 
         // Then
         let requested = fileManager.requestedProtection[staged.url.path]
@@ -180,14 +180,14 @@ final class WireDriveDirectUploadFileCacheTests {
     }
 
     @Test
-    func requestsProtectionUntilFirstUserAuthenticationForTheDirectory() throws {
+    func requestsProtectionUntilFirstUserAuthenticationForTheDirectory() async throws {
         // Given
         let fileManager = SpyFileManager()
         let stagingDirectory = directory.appendingPathComponent("protection-dir", isDirectory: true)
         let store = WireDriveDirectUploadFileCache(directory: stagingDirectory, fileManager: fileManager)
 
         // When
-        _ = try store.stage(data: Data("a".utf8), uploadID: UUID(), fileName: "a.txt")
+        _ = try await store.stage(data: Data("a".utf8), uploadID: UUID(), fileName: "a.txt")
 
         // Then
         let requested = fileManager.requestedProtection[stagingDirectory.path]
@@ -197,9 +197,9 @@ final class WireDriveDirectUploadFileCacheTests {
     // MARK: - Deletion
 
     @Test
-    func deletesAStagedFile() throws {
+    func deletesAStagedFile() async throws {
         // Given
-        let staged = try sut.stage(data: Data("a".utf8), uploadID: UUID(), fileName: "a.txt")
+        let staged = try await sut.stage(data: Data("a".utf8), uploadID: UUID(), fileName: "a.txt")
 
         // When
         try sut.delete(stagedFileName: staged.fileName)
@@ -216,10 +216,10 @@ final class WireDriveDirectUploadFileCacheTests {
     // MARK: - Orphan sweep
 
     @Test
-    func sweepsUnreferencedFilesOlderThanTheGracePeriod() throws {
+    func sweepsUnreferencedFilesOlderThanTheGracePeriod() async throws {
         // Given
-        let orphan = try sut.stage(data: Data("a".utf8), uploadID: UUID(), fileName: "orphan.txt")
-        let referenced = try sut.stage(data: Data("b".utf8), uploadID: UUID(), fileName: "keep.txt")
+        let orphan = try await sut.stage(data: Data("a".utf8), uploadID: UUID(), fileName: "orphan.txt")
+        let referenced = try await sut.stage(data: Data("b".utf8), uploadID: UUID(), fileName: "keep.txt")
         try backdate(orphan.url, by: -3600)
         try backdate(referenced.url, by: -3600)
 
@@ -234,9 +234,9 @@ final class WireDriveDirectUploadFileCacheTests {
     /// A file with no record may simply be mid-enqueue, since its record is written after the copy.
     /// The grace period is what stops the sweep racing that.
     @Test
-    func doesNotSweepRecentlyStagedFiles() throws {
+    func doesNotSweepRecentlyStagedFiles() async throws {
         // Given
-        let justStaged = try sut.stage(data: Data("a".utf8), uploadID: UUID(), fileName: "new.txt")
+        let justStaged = try await sut.stage(data: Data("a".utf8), uploadID: UUID(), fileName: "new.txt")
 
         // When
         try sut.sweepOrphans(referencedFileNames: [], gracePeriod: 3600)

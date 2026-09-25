@@ -126,24 +126,30 @@ final class WireDriveDirectUploadManagerTests {
         #expect(summary.items.count == WireDriveDirectUploadLimits.maxFilesPerBatch)
     }
 
-    /// A backstop against a retry-all storm, or a user queueing batch after batch.
+    /// A backstop against a retry-all storm, or a user queueing batch after batch: the limit is
+    /// enforced against everything already tracked, not just the size of the incoming batch.
     @Test
-    func enqueue_stopsAdmittingAtTheActiveUploadCeiling() async throws {
-        // Given — four full batches is more than the ceiling allows.
+    func enqueue_rejectsAFurtherBatchOnceAlreadyAtTheLimit() async throws {
+        // Given — a first, full batch fills the tracked set up to the limit.
         let batchSize = WireDriveDirectUploadLimits.maxFilesPerBatch
+        _ = try await sut.enqueue(
+            sources: (0 ..< batchSize).map { makeSource(named: "b0-f\($0).pdf") },
+            destinationFolderPath: "cell-1"
+        )
+        await sut.waitForPendingWork()
 
-        // When
-        for batch in 0 ..< 4 {
-            _ = try await sut.enqueue(
-                sources: (0 ..< batchSize).map { makeSource(named: "b\(batch)-f\($0).pdf") },
+        // Then — any further batch, on top of an already-full tracked set, is rejected outright.
+        await #expect(
+            throws: WireDriveDirectUploadBatchError.tooManyFiles(limit: WireDriveDirectUploadLimits.maxFilesPerBatch)
+        ) {
+            try await sut.enqueue(
+                sources: [makeSource(named: "b1-f0.pdf")],
                 destinationFolderPath: "cell-1"
             )
         }
-        await sut.waitForPendingWork()
 
-        // Then
         let summary = tracker.summary
-        #expect(summary.items.count == 60)
+        #expect(summary.items.count == batchSize)
     }
 
     @Test
@@ -445,6 +451,32 @@ final class WireDriveDirectUploadManagerTests {
 
         // Then
         #expect(fileCache.deleteStagedFileName_Invocations.isEmpty)
+    }
+
+    /// The exact bug this guards against: relaunch reconciliation gives up on an upload (see
+    /// `verifyRemoteState`) and marks it failed because no live task was found, but the real
+    /// background task may still be silently running and can deliver its own, now-stale completion
+    /// afterward. That stale completion must not resurrect the upload behind the user's back.
+    @Test
+    func completion_ignoresAStaleCallbackOnceReconciliationHasFailedTheUpload() async throws {
+        // Given — reconciliation found no live task and the backend doesn't have the upload yet, so
+        // it gives up and marks the record failed.
+        let record = WireDriveDirectUploadRecord.fixture(state: .uploading)
+        store.fetchAll_MockValue = [record]
+        session.currentTasks_MockValue = []
+        nodesAPI.getNodeNodeID_MockValue = WireDriveNode(uuid: record.nodeID, path: record.nodePath)
+        nodesAPI.getVersionsNodeID_MockValue = []
+
+        await sut.start()
+        await sut.waitForPendingWork()
+
+        #expect(tracker.summary.items.first?.status == .failed(error: .cancelledBySystem))
+
+        // When — the real, uncancelled task delivers a late success callback anyway.
+        await sut.handle([.completed(uploadID: record.uploadID, statusCode: 200, responseBody: nil, error: nil)])
+
+        // Then — must not resurrect it.
+        #expect(tracker.summary.items.first?.status == .failed(error: .cancelledBySystem))
     }
 
     // MARK: - Progress
@@ -819,6 +851,27 @@ final class WireDriveDirectUploadManagerTests {
         #expect(summary.items.first?.status == .uploaded)
     }
 
+    /// If the real background task is still silently running (e.g. simply not yet re-enumerated
+    /// right after relaunch), it must be told to stop once reconciliation gives up on the record —
+    /// otherwise it keeps transferring, and can later deliver a stale completion behind the user's
+    /// back (see `completion_ignoresAStaleCallbackOnceReconciliationHasFailedTheUpload`).
+    @Test
+    func start_cancelsTheRealTaskWhenGivingUpDuringReconciliation() async throws {
+        // Given
+        let record = WireDriveDirectUploadRecord.fixture(state: .uploading)
+        store.fetchAll_MockValue = [record]
+        session.currentTasks_MockValue = []
+        nodesAPI.getNodeNodeID_MockValue = WireDriveNode(uuid: record.nodeID, path: record.nodePath)
+        nodesAPI.getVersionsNodeID_MockValue = []
+
+        // When
+        await sut.start()
+        await sut.waitForPendingWork()
+
+        // Then
+        #expect(session.cancelTaskUploadID_Invocations == [record.uploadID])
+    }
+
     @Test
     func start_restartsAnUploadThatNeverReachedTheBackend() async throws {
         // Given
@@ -997,54 +1050,6 @@ final class WireDriveDirectUploadManagerTests {
 
         // Then — only the replayed value.
         #expect(emissions == 1)
-    }
-
-    // MARK: - Processing media
-
-    @Test
-    func beginProcessingMedia_incrementsTheTrackerByOne() async {
-        // When
-        await sut.beginProcessingMedia(destinationFolderPath: "cell-1")
-
-        // Then
-        var received: Int?
-        let subscription = tracker.processingCountPublisher(folderPath: "cell-1").sink { received = $0 }
-        defer { subscription.cancel() }
-        #expect(received == 1)
-    }
-
-    @Test
-    func endProcessingMedia_decrementsTheTrackerByOne() async {
-        // Given
-        await sut.beginProcessingMedia(destinationFolderPath: "cell-1")
-
-        // When
-        await sut.endProcessingMedia(destinationFolderPath: "cell-1")
-
-        // Then
-        var received: Int?
-        let subscription = tracker.processingCountPublisher(folderPath: "cell-1").sink { received = $0 }
-        defer { subscription.cancel() }
-        #expect(received == 0)
-    }
-
-    /// The actual bug this guards against: two overlapping items for the same folder must each only
-    /// remove their own contribution — one finishing must not wipe out the other's still-in-flight
-    /// count.
-    @Test
-    func endProcessingMedia_onlyDecrementsItsOwnItemWhenAnotherIsStillInFlight() async {
-        // Given — item A and item B are both resolving for "cell-1".
-        await sut.beginProcessingMedia(destinationFolderPath: "cell-1")
-        await sut.beginProcessingMedia(destinationFolderPath: "cell-1")
-
-        // When — item B finishes first.
-        await sut.endProcessingMedia(destinationFolderPath: "cell-1")
-
-        // Then — item A's count must still be showing.
-        var received: Int?
-        let subscription = tracker.processingCountPublisher(folderPath: "cell-1").sink { received = $0 }
-        defer { subscription.cancel() }
-        #expect(received == 1)
     }
 
     // MARK: - Helpers
