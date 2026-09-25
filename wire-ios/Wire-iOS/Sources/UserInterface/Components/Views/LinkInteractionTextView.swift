@@ -84,6 +84,55 @@ final class LinkInteractionTextView: UITextView {
         fatalError("init(coder:) has not been implemented")
     }
 
+    private var lastLayoutWidth: CGFloat?
+
+    // `intrinsicContentSize`'s default UITextView implementation must be recomputed whenever
+    // `bounds.width` changes width, the same way UILabel recomputes from
+    // `preferredMaxLayoutWidth`. Inside a chat bubble that hugs its content, Auto Layout
+    // narrows this view across candidate widths while solving; without invalidating here, a
+    // wrap decision made at an earlier (wider) candidate width would stick.
+    override func layoutSubviews() {
+        super.layoutSubviews()
+
+        if lastLayoutWidth != bounds.width {
+            lastLayoutWidth = bounds.width
+            invalidateIntrinsicContentSize()
+        }
+    }
+
+    // UITextView's own `sizeThatFits`/`intrinsicContentSize` under-measures paragraphs that
+    // use an explicit `NSTextTab` stop (as Down's list rendering does for the "1.\t" / "•\t"
+    // prefix): it can report a one-line width a few points narrower than what the text
+    // actually needs, so the container ends up one line too short and the last word of a
+    // single-item list silently falls off the bottom instead of wrapping (WPB-27203).
+    // `NSAttributedString.boundingRect` performs the same line-breaking TextKit does when it
+    // actually draws the text and measures tab stops correctly, so use it directly instead.
+    override var intrinsicContentSize: CGSize {
+        guard let attributedText, !attributedText.string.isEmpty else {
+            return super.intrinsicContentSize
+        }
+
+        let options: NSStringDrawingOptions = [.usesLineFragmentOrigin, .usesFontLeading]
+        let unboundedSize = CGSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)
+        let naturalWidth = attributedText.boundingRect(with: unboundedSize, options: options, context: nil).width
+
+        // Once Auto Layout has actually compressed us narrower than our natural (one-line)
+        // width, report the height needed to wrap at that narrower width; otherwise report
+        // the one-line height.
+        let measuredWidth = if bounds.width > 0, bounds.width < naturalWidth {
+            bounds.width
+        } else {
+            naturalWidth
+        }
+        let height = attributedText.boundingRect(
+            with: CGSize(width: measuredWidth, height: CGFloat.greatestFiniteMagnitude),
+            options: options,
+            context: nil
+        ).height
+
+        return CGSize(width: ceil(naturalWidth), height: ceil(height))
+    }
+
     override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
         let isInside = super.point(inside: point, with: event)
         guard !UIMenuController.shared.isMenuVisible else { return false }

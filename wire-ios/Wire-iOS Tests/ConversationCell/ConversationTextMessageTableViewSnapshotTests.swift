@@ -26,9 +26,9 @@ import XCTest
 /// `UITableView`, matching how `ConversationContentViewController` renders messages in
 /// production. This is deliberately different from `ConversationMessageSnapshotTestCase
 /// .verify(message:)`, which measures the bare cell view via a `UIStackView` and never
-/// exercises `ConversationMessageCellTableViewAdapter.systemLayoutSizeFitting` — so it cannot
-/// reproduce WPB-27203, where the adapter's self-sizing measurement under-reports the row
-/// height and the last word of a single-item list is clipped off.
+/// exercises the adapter's `systemLayoutSizeFitting` — so it cannot reproduce WPB-27203, where
+/// `LinkInteractionTextView`'s self-sizing measurement under-reported the row height for list
+/// items and clipped off the last word.
 final class ConversationTextMessageTableViewSnapshotTests: ZMSnapshotTestCase {
 
     var mockSelfUser: MockUserType!
@@ -83,6 +83,10 @@ final class ConversationTextMessageTableViewSnapshotTests: ZMSnapshotTestCase {
             wireMessagingFactory: factory
         )
 
+        // Cell descriptions only pick up the message (e.g. `isSentBySelfUser`, used to choose
+        // the own/other bubble alignment) once `updateMessage` runs, matching production.
+        sectionController.updateMessage(message)
+
         // A message maps to several rows (sender header, text content, footer…) — find the
         // one that actually renders the message text, not just the first (header) row.
         guard let cellDescription = sectionController.tableViewCellDescriptions.first(where: {
@@ -104,10 +108,7 @@ final class ConversationTextMessageTableViewSnapshotTests: ZMSnapshotTestCase {
         cell.backgroundColor = tableView.backgroundColor
 
         // Reproduces exactly how `UITableView.automaticDimension` sizes a self-sizing row —
-        // it asks the cell for its `systemLayoutSizeFitting` at the row's width. This is the
-        // same call `ConversationMessageCellTableViewAdapter.systemLayoutSizeFitting`
-        // overrides with a discarded "priming" measurement, which is the suspected cause of
-        // WPB-27203.
+        // it asks the cell for its `systemLayoutSizeFitting` at the row's width.
         let targetSize = CGSize(width: width, height: UIView.layoutFittingCompressedSize.height)
         let computedSize = cell.systemLayoutSizeFitting(
             targetSize,
@@ -123,7 +124,7 @@ final class ConversationTextMessageTableViewSnapshotTests: ZMSnapshotTestCase {
     }
 
     /// Regression test for WPB-27203: a single ordered list item rendered through the real
-    /// self-sizing table view cell, at the narrowest supported phone width.
+    /// self-sizing table view cell, at each supported phone width.
     func testSingleOrderedListItem_320() {
         verifyTableView(messageText: "1. One two", width: 320, named: "320")
     }
@@ -137,7 +138,7 @@ final class ConversationTextMessageTableViewSnapshotTests: ZMSnapshotTestCase {
     }
 
     /// Regression test for WPB-27203: a single unordered list item rendered through the real
-    /// self-sizing table view cell, at the narrowest supported phone width.
+    /// self-sizing table view cell, at each supported phone width.
     func testSingleUnorderedListItem_320() {
         verifyTableView(messageText: "- One two", width: 320, named: "320")
     }
@@ -148,6 +149,16 @@ final class ConversationTextMessageTableViewSnapshotTests: ZMSnapshotTestCase {
 
     func testSingleUnorderedListItem_414() {
         verifyTableView(messageText: "- One two", width: 414, named: "414")
+    }
+
+    /// Plain (non-list) text that wraps across multiple lines, to confirm the fix doesn't
+    /// affect ordinary paragraph self-sizing.
+    func testWrappingPlainText_320() {
+        verifyTableView(
+            messageText: "One two three four five six seven eight nine ten eleven twelve thirteen",
+            width: 320,
+            named: "320"
+        )
     }
 
 }
