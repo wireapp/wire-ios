@@ -40,7 +40,27 @@ final class MessagePresenter: NSObject {
     var mediaPlayerController: MediaPlayerController?
     var mediaPlaybackManager: MediaPlaybackManager?
     var videoPlayerObserver: NSObjectProtocol?
-    var fileAvailabilityObserver: MessageKeyPathObserver?
+
+    /// Keyed by message nonce so that downloads triggered by tapping several not-yet-downloaded
+    /// file/video messages in a row can all be observed concurrently, instead of a newer tap
+    /// silently discarding the pending observer (and therefore the completion callback) of an
+    /// earlier one. Entries are removed as soon as their download concludes, whether it
+    /// succeeded, failed, or was cancelled, so this never accumulates stale observers.
+    var fileAvailabilityObservers: [UUID: FileDownloadObserving] = [:]
+
+    /// Injectable so tests can simulate multiple concurrent pending downloads without a real `ZMUserSession`.
+    var makeFileDownloadObserver: (
+        _ message: ZMConversationMessage,
+        _ userSession: UserSession,
+        _ onChanged: @escaping (ZMConversationMessage) -> Void
+    ) -> FileDownloadObserving? = { message, userSession, onChanged in
+        MessageKeyPathObserver(
+            message: message,
+            userSession: userSession,
+            keypath: \.fileDownloadStateChanged,
+            onChanged
+        )
+    }
 
     private let userSession: UserSession
     private var documentInteractionController: UIDocumentInteractionController?
@@ -138,13 +158,18 @@ final class MessagePresenter: NSObject {
     func openFileMessage(_ message: ZMConversationMessage, targetView: UIView) {
 
         if !message.isFileDownloaded() {
+            guard let nonce = message.nonce else { return }
+
             message.fileMessageData?.requestFileDownload()
 
-            fileAvailabilityObserver = MessageKeyPathObserver(
-                message: message,
-                userSession: userSession,
-                keypath: \.fileAvailabilityChanged
-            ) { [weak self] message in
+            fileAvailabilityObservers[nonce] = makeFileDownloadObserver(message, userSession) { [weak self] message in
+                // Ignore the change that merely signals the download has started; wait for it to conclude.
+                guard message.fileMessageData?.downloadState != .downloading else { return }
+
+                // The download concluded, either way: stop observing so failed/cancelled
+                // downloads don't leave a stale observer behind.
+                self?.fileAvailabilityObservers[nonce] = nil
+
                 guard message.isFileDownloaded() else { return }
 
                 self?.openFileMessage(message, targetView: targetView)
@@ -205,7 +230,9 @@ final class MessagePresenter: NSObject {
         selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol,
         conversationCreationRepository: any ConversationCreationRepositoryProtocol
     ) {
-        fileAvailabilityObserver = nil
+        if let nonce = message.nonce {
+            fileAvailabilityObservers[nonce] = nil
+        }
         modalTargetController?.view.window?.endEditing(true)
 
         if Message.isLocation(message) {
