@@ -34,6 +34,12 @@ jobs:
           BASE_SHA=${{ github.event.pull_request.base.sha }}
           HEAD_SHA=${{ github.event.pull_request.head.sha }}
 
+          # Localization values come from the PR itself, so a value that
+          # happens to contain a line matching a fixed heredoc delimiter
+          # (e.g. "EOF") could truncate or corrupt the output. Use a
+          # random delimiter instead.
+          DELIM="EOF_$(uuidgen)"
+
           NEW_KEYS=""
 
           # .strings files: report keys whose name doesn't exist in the base
@@ -107,9 +113,9 @@ jobs:
           if [ -n "$NEW_KEYS" ]; then
             echo "has_new_strings=true" >> "$GITHUB_OUTPUT"
             {
-              echo 'new_keys<<EOF'
+              echo "new_keys<<$DELIM"
               echo "$NEW_KEYS"
-              echo EOF
+              echo "$DELIM"
             } >> "$GITHUB_OUTPUT"
 
             TICKET=$(echo "$PR_TITLE" | grep -oiE 'WPB-[0-9]+' | tr 'a-z' 'A-Z' | head -1 || true)
@@ -123,9 +129,9 @@ jobs:
             MESSAGE=$(printf 'New localization strings added\n\n%s\n\n%s\n**Author:** %s\n**PR:** %s' \
               "$BULLET_LIST" "$TICKET_LINE" "$PR_AUTHOR" "$PR_URL")
             {
-              echo 'message<<EOF'
+              echo "message<<$DELIM"
               echo "$MESSAGE"
-              echo EOF
+              echo "$DELIM"
             } >> "$GITHUB_OUTPUT"
           else
             echo "has_new_strings=false" >> "$GITHUB_OUTPUT"
