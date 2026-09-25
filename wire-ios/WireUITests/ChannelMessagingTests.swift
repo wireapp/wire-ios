@@ -79,6 +79,7 @@ final class ChannelMessagingTests: WireUITestCase {
             .sendMessage(message)
             .recordAudioAndSend()
             .sendPing()
+            .openPhotos()
             .selectImageAndSend()
 
         // THEN
