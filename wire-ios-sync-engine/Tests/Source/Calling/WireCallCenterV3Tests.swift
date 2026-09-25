@@ -2722,16 +2722,69 @@ extension WireCallCenterV3Tests {
     }
 
     func test_CallIsClosed_WhenConversationIsDeleted() throws {
-        // Given
-        groupConversation.isDeletedRemotely = true
-        let changeInfo = ConversationChangeInfo(object: groupConversation)
-        changeInfo.changedKeys = [#keyPath(ZMConversation.isDeletedRemotely)]
+        try checkActiveMeetingDeletion(dispatcherEnabled: true)
+    }
 
-        // When
-        sut.conversationDidChange(changeInfo)
+    func test_CallIsClosed_WhenConversationIsDeletedInBackground() throws {
+        try checkActiveMeetingDeletion(dispatcherEnabled: false)
+    }
 
-        // Then
+    private func checkActiveMeetingDeletion(dispatcherEnabled: Bool) throws {
+        groupConversation.groupType = .meeting
+        try uiMOC.save()
+
+        let dispatcher = NotificationDispatcher(managedObjectContext: uiMOC)
+        defer { dispatcher.tearDown() }
+        sut.createSnapshot(
+            callState: .established,
+            members: [],
+            callStarter: otherUserID,
+            video: false,
+            for: groupConversationID,
+            conversationType: .conference
+        )
+        sut.createSnapshot(
+            callState: .established,
+            members: [],
+            callStarter: otherUserID,
+            video: false,
+            for: oneOnOneConversationID,
+            conversationType: .oneToOne
+        )
+        XCTAssertEqual(sut.activeCalls.count, 2)
+        XCTAssertFalse(mockAVSWrapper.didCallEndCall)
+        dispatcher.isEnabled = dispatcherEnabled
+
+        let conversationObjectID = groupConversation.objectID
+        var deletionSave: Notification?
+        let token = NotificationCenter.default.addObserver(
+            forName: .NSManagedObjectContextDidSave,
+            object: syncMOC,
+            queue: nil
+        ) { deletionSave = $0 }
+        defer { NotificationCenter.default.removeObserver(token) }
+
+        try syncMOC.performAndWait {
+            let conversation = try XCTUnwrap(syncMOC.existingObject(with: conversationObjectID) as? ZMConversation)
+            conversation.isDeletedRemotely = true
+            try syncMOC.save()
+        }
+
+        uiMOC.mergeChanges(fromContextDidSave: try XCTUnwrap(deletionSave))
+        uiMOC.processPendingChanges()
+        dispatcher.didMergeChanges([conversationObjectID])
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        XCTAssertTrue(groupConversation.isDeletedRemotely)
         XCTAssertTrue(mockAVSWrapper.didCallEndCall)
+        XCTAssertFalse(sut.isActive(conversationId: groupConversationID))
+        XCTAssertEqual(sut.callState(conversationId: oneOnOneConversationID), .established)
+
+        mockAVSWrapper.didCallEndCall = false
+        oneOnOneConversation.userDefinedName = "Unrelated change"
+        try uiMOC.save()
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertFalse(mockAVSWrapper.didCallEndCall)
     }
 
     func test_CallIsClosed_WhenMlsConversationIsDegraded() throws {

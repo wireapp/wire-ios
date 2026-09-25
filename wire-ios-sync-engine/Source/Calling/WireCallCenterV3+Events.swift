@@ -107,13 +107,12 @@ extension WireCallCenterV3: ZMConversationObserver {
     }
 
     private func endCallIfNeeded(_ changeInfo: ConversationChangeInfo) {
-        guard let conversationId = changeInfo.conversation.avsIdentifier else { return }
+        guard
+            let conversationId = changeInfo.conversation.avsIdentifier,
+            !changeInfo.conversation.isDeletedRemotely
+        else { return }
 
-        if changeInfo.isDeletedChanged, changeInfo.conversation.isDeletedRemotely {
-            Self.logger.info("closing call because conversation was deleted")
-            closeCall(conversationId: conversationId)
-
-        } else if !changeInfo.conversation.isSelfAnActiveMember {
+        if !changeInfo.conversation.isSelfAnActiveMember {
             Self.logger.info("closing call because self user is not an active member")
             closeCall(conversationId: conversationId)
         }
