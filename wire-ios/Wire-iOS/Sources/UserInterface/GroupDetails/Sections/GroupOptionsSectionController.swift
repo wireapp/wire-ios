@@ -200,48 +200,4 @@ final class GroupOptionsSectionController: GroupDetailsSectionController {
         }
 
     }
-
-    // MARK: - Footer
-
-    func collectionView(
-        _ collectionView: UICollectionView,
-        layout collectionViewLayout: UICollectionViewLayout,
-        referenceSizeForFooterInSection section: Int
-    ) -> CGSize {
-
-        guard conversation.isWireDriveEnabled else {
-            return .zero
-        }
-
-        footerView.titleLabel.text = L10n.Localizable.GroupDetails.FileCollaborationCell.footer
-        footerView.size(fittingWidth: collectionView.bounds.width)
-        return footerView.bounds.size
-    }
-
-    override func collectionView(
-        _ collectionView: UICollectionView,
-        viewForSupplementaryElementOfKind kind: String,
-        at indexPath: IndexPath
-    ) -> UICollectionReusableView {
-        guard kind == UICollectionView.elementKindSectionFooter else {
-            return super.collectionView(
-                collectionView,
-                viewForSupplementaryElementOfKind: kind,
-                at: indexPath
-            )
-        }
-
-        let view = collectionView.dequeueReusableSupplementaryView(
-            ofKind: UICollectionView.elementKindSectionFooter,
-            withReuseIdentifier: SectionFooter.reuseIdentifier,
-            for: indexPath
-        ) as! SectionFooter
-
-        view.titleLabel.text = conversation.isWireDriveEnabled ? L10n.Localizable.GroupDetails.FileCollaborationCell
-            .footer : nil
-
-        return view
-
-    }
-
 }

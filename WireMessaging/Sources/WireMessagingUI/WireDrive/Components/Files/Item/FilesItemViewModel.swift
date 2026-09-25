@@ -76,7 +76,7 @@ final class FilesItemViewModel: ObservableObject {
     let isInRecycleBin: Bool
 
     var showReadOnlyIcon: Bool {
-        item.isReadOnly && isBrowsing
+       item.isReadOnly && isBrowsing
     }
 
     struct TagsInfo {
@@ -201,7 +201,7 @@ final class FilesItemViewModel: ObservableObject {
     func isActionDisabled(_ action: ItemAction) -> Bool {
         switch action {
         case .shareLink, .makeAvailableOffline, .removeAvailableOffline:
-            isDrivePermissionsFlagEnabled && item.isReadOnly && isBrowsing
+            item.isReadOnly && isBrowsing
         default:
             false
         }
@@ -295,7 +295,7 @@ final class FilesItemViewModel: ObservableObject {
     }
 
     var menuActions: Set<ItemAction> {
-        let isViewerMode = item.isReadOnly && isDrivePermissionsFlagEnabled
+        let isViewerMode = item.isReadOnly
 
         if isViewerMode {
             return viewerMenuActions

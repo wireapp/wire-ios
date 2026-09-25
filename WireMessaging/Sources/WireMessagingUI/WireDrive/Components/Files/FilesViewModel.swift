@@ -274,7 +274,7 @@ package final class FilesViewModel: ObservableObject {
             let isDismissed = cellName
                 .map(ConversationViewerAccessBannerDismissalStore.shared.isDismissed(forCellName:)) ?? false
             let isViewer = selfUser.role == .viewer
-            showReadOnlyBanner = isDrivePermissionsFlagEnabled && !isBrowsing && isViewer && !isDismissed &&
+            showReadOnlyBanner = !isBrowsing && isViewer && !isDismissed &&
                 !isRecycleBin
         }
     }

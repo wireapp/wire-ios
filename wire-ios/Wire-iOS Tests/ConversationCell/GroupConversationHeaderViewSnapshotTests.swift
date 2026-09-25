@@ -98,20 +98,6 @@ final class GroupConversationHeaderViewSnapshotTests: ZMSnapshotTestCase {
             .verify(matching: makeView(conversation: conversation, selfUser: selfUser))
     }
 
-    /// Group with Wire Drive enabled — shows the shared drive and message timer cells.
-    func testGroup_wireDriveEnabled() {
-        let selfUser = makeSelfUser(isTeamMember: true, canAddUsers: true)
-        let conversation = makeConversation(
-            displayName: "Drive Group",
-            teamID: selfUser.teamIdentifier,
-            participantNames: ["Alice"]
-        )
-        conversation.cellsState = .ready
-        snapshotHelper
-            .withUserInterfaceStyle(.light)
-            .verify(matching: makeView(conversation: conversation, selfUser: selfUser))
-    }
-
     /// Channel — uses channel-specific heading text.
     func testChannel() {
         let conversation = makeConversation(displayName: "My Channel", participantNames: ["Alice", "Bob"])

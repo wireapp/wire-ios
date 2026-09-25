@@ -72,18 +72,6 @@ final class ConversationSharedDriveSystemMessageCellSnapshotTests: XCTestCase {
             .verify(matching: view, named: "dark")
     }
 
-    func testSharedDrive() {
-        let view = makeSut(selfUserRole: .editor)
-
-        snapshotHelper
-            .withUserInterfaceStyle(.light)
-            .verify(matching: view, named: "light")
-
-        snapshotHelper
-            .withUserInterfaceStyle(.dark)
-            .verify(matching: view, named: "dark")
-    }
-
     // MARK: - Helpers
 
     private func makeSut(selfUserRole: WireDriveParticipant.Role) -> UIView {
