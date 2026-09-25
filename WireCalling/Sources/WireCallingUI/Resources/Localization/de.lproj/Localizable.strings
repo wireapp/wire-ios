@@ -83,8 +83,8 @@
 "wireMeetings.schedule.error.alert.ok" = "OK";
 "wireMeetings.schedule.participantsNotAdded.title" = "Meeting gespeichert";
 "wireMeetings.schedule.participantsNotAdded.message" = "Das Meeting wurde gespeichert, aber diese Benutzer konnten nicht hinzugefügt werden:\n\n%@";
-"wireMeetings.schedule.error.conversationName.title" = "Update incomplete";
-"wireMeetings.schedule.error.conversationName.message" = "The meeting title could not be updated everywhere. Please try again.";
+"wireMeetings.schedule.error.conversationName.title" = "Aktualisierung unvollständig";
+"wireMeetings.schedule.error.conversationName.message" = "Der Meeting-Titel konnte nicht überall aktualisiert werden. Bitte versuchen Sie es erneut.";
 "wireMeetings.schedule.error.conversationName.retry" = "Erneut versuchen";
 "wireMeetings.schedule.disableGuestAccess.alert.title" = "Gastzugang deaktivieren?";
 "wireMeetings.schedule.disableGuestAccess.alert.disable" = "Deaktivieren";
