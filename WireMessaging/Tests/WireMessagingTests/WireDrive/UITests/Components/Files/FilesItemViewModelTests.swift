@@ -49,7 +49,6 @@ final class FilesItemViewModelTests {
     private let fileCache = MockFileCache()
 
     init() async {
-        UserDefaults.standard.set(true, forKey: "enableDrivePermissions")
         localAssetRepository.observeAssetNodeID_MockValue = Just(WireDriveLocalAsset.fixture()).eraseToAnyPublisher()
         localAssetRepository.assetNodeID_MockValue = .fixture()
     }

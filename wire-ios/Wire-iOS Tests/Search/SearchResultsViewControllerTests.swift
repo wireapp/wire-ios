@@ -19,9 +19,94 @@
 import UIKit
 import XCTest
 @testable import Wire
+@testable import WireSyncEngine
 
 final class SearchResultsViewControllerTests: XCTestCase {
     weak var sut: SearchResultsViewController!
+    private var coreDataFixture: CoreDataFixture!
+
+    override func setUp() async throws {
+        try await super.setUp()
+        coreDataFixture = try await CoreDataFixture()
+    }
+
+    override func tearDown() {
+        coreDataFixture = nil
+        super.tearDown()
+    }
+
+    @MainActor
+    func testThatUpdateSectionsKeepsSearchUserBackedApps_ButExcludesExistingParticipants() throws {
+        let uiMOC = coreDataFixture.uiMOC!
+        let selfUser = coreDataFixture.selfUser!
+        let existingParticipantApp = coreDataFixture.otherUser!
+        existingParticipantApp.type = .app
+
+        let conversation = ZMConversation.createGroupConversation(
+            moc: uiMOC,
+            otherUser: existingParticipantApp,
+            selfUser: selfUser
+        )
+
+        // A collaborator app already known locally as a `ZMUser`, but NOT a participant of this conversation -
+        // wrapped in `ZMSearchUser`, as every apps search result is.
+        let knownCollaboratorAppUser = coreDataFixture.createUser(name: "Collaborator App")
+        knownCollaboratorAppUser.type = .app
+        let knownCollaboratorAppSearchResult = ZMSearchUser(
+            viewContext: uiMOC,
+            name: "Collaborator App",
+            handle: "collaborator-app",
+            accentColor: nil,
+            remoteIdentifier: knownCollaboratorAppUser.remoteIdentifier,
+            domain: knownCollaboratorAppUser.domain,
+            teamIdentifier: knownCollaboratorAppUser.teamIdentifier,
+            providerIdentifier: nil,
+            user: knownCollaboratorAppUser,
+            searchUsersCache: nil,
+            type: .app,
+            summary: nil,
+            isDeleted: false
+        )
+
+        // A collaborator app not known locally at all (no backing `ZMUser`) - the common case for apps
+        // resolved purely from `/teams/:tid/collaborators` + `/users`.
+        let remoteOnlyAppSearchResult = ZMSearchUser(
+            viewContext: uiMOC,
+            name: "Remote-Only App",
+            handle: "remote-only-app",
+            accentColor: nil,
+            remoteIdentifier: UUID(),
+            domain: nil,
+            teamIdentifier: UUID(),
+            providerIdentifier: nil,
+            user: nil,
+            searchUsersCache: nil,
+            type: .app,
+            summary: nil,
+            isDeleted: false
+        )
+
+        var searchResult = SearchResult()
+        searchResult.apps = [existingParticipantApp, knownCollaboratorAppSearchResult, remoteOnlyAppSearchResult]
+
+        let mockUserSession = UserSessionMock(mockUser: MockUserType.createSelfUser(name: selfUser.name ?? ""))
+        let sut = try XCTUnwrap(SearchResultsViewController(
+            userSelection: UserSelection(),
+            userSession: mockUserSession,
+            isAddingParticipants: true,
+            shouldIncludeGuests: true,
+            isFederationEnabled: false
+        ))
+        sut.filterConversation = conversation
+
+        sut.updateSections(withSearchResult: searchResult)
+
+        let remainingRemoteIdentifiers = Set(sut.appsSection.apps.map(\.remoteIdentifier))
+        XCTAssertEqual(remainingRemoteIdentifiers.count, 2)
+        XCTAssertFalse(remainingRemoteIdentifiers.contains(existingParticipantApp.remoteIdentifier))
+        XCTAssertTrue(remainingRemoteIdentifiers.contains(knownCollaboratorAppUser.remoteIdentifier))
+        XCTAssertTrue(remainingRemoteIdentifiers.contains(remoteOnlyAppSearchResult.remoteIdentifier))
+    }
 
     func testThatSearchResultsViewControllerIsNotRetained() {
         autoreleasepool {

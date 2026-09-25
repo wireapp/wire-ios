@@ -31,7 +31,8 @@ struct MLSMigrationFeatureConfigDecoder {
         return MLSMigrationFeatureConfig(
             status: payload.status.toAPIModel(),
             startTime: payload.config.startTime?.date,
-            finaliseRegardlessAfter: payload.config.finaliseRegardlessAfter?.date
+            finaliseRegardlessAfter: payload.config.finaliseRegardlessAfter?.date,
+            allowManualMigration: payload.config.allowManualMigration
         )
     }
 
@@ -39,6 +40,7 @@ struct MLSMigrationFeatureConfigDecoder {
 
         let startTime: UTCTime?
         let finaliseRegardlessAfter: UTCTime?
+        let allowManualMigration: Bool?
 
     }
 

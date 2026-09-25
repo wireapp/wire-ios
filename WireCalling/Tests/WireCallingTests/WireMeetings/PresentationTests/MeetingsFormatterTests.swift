@@ -31,14 +31,14 @@ struct MeetingsFormatterTests {
 
     var timeRangeCalendar: Calendar {
         var calendar = Calendar(identifier: .gregorian)
-        calendar.timeZone = .current
+        calendar.timeZone = TimeZone(secondsFromGMT: 0) ?? calendar.timeZone
         return calendar
     }
 
     var formatter: MeetingsFormatter {
         MeetingsFormatter(
             calendar: dayHeaderCalendar,
-            dateLocale: Locale(identifier: "en_US")
+            locale: Locale(identifier: "en_US")
         )
     }
 
@@ -74,36 +74,97 @@ struct MeetingsFormatterTests {
 
     // MARK: - Time Range Tests
 
-    @Test("timeRange zero-pads morning hours without a period")
-    func timeRange_sameMorningPeriod() throws {
-        let start = try makeTimeRangeDate(hour: 7, minute: 30)
-        let end = try makeTimeRangeDate(hour: 7, minute: 40)
+    @Test("timeRange respects 12-hour time settings")
+    func timeRange_respectsTwelveHourTimeSettings() throws {
+        let formatter = formatter(localeIdentifier: "en_US@hours=h12")
+        let start = try makeTimeRangeDate(hour: 14, minute: 0)
+        let end = try makeTimeRangeDate(hour: 15, minute: 15)
+        let result = formatter.timeRange(from: start, to: end)
 
-        #expect(formatter.timeRange(from: start, to: end) == "07:30 - 07:40")
+        #expect(result.contains("2:00"))
+        #expect(result.contains("3:15"))
+        #expect(result.contains("PM"))
+        #expect(!result.contains("14:00"))
+        #expect(!result.contains("15:15"))
     }
 
-    @Test("timeRange uses 24-hour afternoon hours")
-    func timeRange_sameAfternoonPeriod() throws {
+    @Test("timeRange respects 24-hour time settings")
+    func timeRange_respectsTwentyFourHourTimeSettings() throws {
+        let formatter = formatter(localeIdentifier: "en_GB")
+        let start = try makeTimeRangeDate(hour: 7, minute: 5)
+        let end = try makeTimeRangeDate(hour: 8, minute: 15)
+
+        #expect(formatter.timeRange(from: start, to: end) == "07:05 - 08:15")
+    }
+
+    @Test("time uses localized short time settings")
+    func time_usesLocalizedShortTimeSettings() throws {
+        let formatter = formatter(localeIdentifier: "en_US@hours=h12")
+        let date = try makeTimeRangeDate(hour: 14, minute: 5)
+        let result = formatter.time(date)
+
+        #expect(result.contains("2:05"))
+        #expect(result.contains("PM"))
+    }
+
+    @Test("time pads 24-hour time settings")
+    func time_padsTwentyFourHourTimeSettings() throws {
+        let formatter = formatter(localeIdentifier: "en_GB")
+        let date = try makeTimeRangeDate(hour: 7, minute: 5)
+
+        #expect(formatter.time(date) == "07:05")
+    }
+
+    @Test("date uses localized short date settings", arguments: [
+        ("en_US", "9/8/26"),
+        ("en_GB", "08/09/2026"),
+        ("de_DE", "08.09.26")
+    ])
+    func date_usesLocalizedShortDateSettings(localeIdentifier: String, expected: String) throws {
+        let formatter = formatter(localeIdentifier: localeIdentifier)
+        let date = try makeTimeRangeDate(hour: 14, minute: 5)
+
+        #expect(formatter.date(date) == expected)
+    }
+
+    @Test("refresh rebuilds time formatting with the latest locale provider value")
+    func refresh_rebuildsTimeFormattingWithLatestLocaleProviderValue() throws {
+        let calendar = timeRangeCalendar
+        var locale = Locale(identifier: "en_US@hours=h12")
+        let formatter = MeetingsFormatter(
+            calendarProvider: { calendar },
+            localeProvider: { locale }
+        )
         let start = try makeTimeRangeDate(hour: 14, minute: 0)
         let end = try makeTimeRangeDate(hour: 15, minute: 15)
 
+        #expect(formatter.timeRange(from: start, to: end).contains("PM"))
+
+        locale = Locale(identifier: "en_GB")
+        #expect(formatter.timeRange(from: start, to: end).contains("PM"))
+
+        formatter.refresh()
         #expect(formatter.timeRange(from: start, to: end) == "14:00 - 15:15")
     }
 
-    @Test("timeRange uses the same format across noon")
-    func timeRange_crossesPeriod() throws {
-        let start = try makeTimeRangeDate(hour: 11, minute: 30)
-        let end = try makeTimeRangeDate(hour: 13, minute: 15)
+    @Test("refresh rebuilds date formatting with the latest calendar provider value")
+    func refresh_rebuildsDateFormattingWithLatestCalendarProviderValue() throws {
+        var calendar = timeRangeCalendar
+        calendar.timeZone = try #require(TimeZone(secondsFromGMT: 0))
+        let locale = Locale(identifier: "en_GB")
+        let formatter = MeetingsFormatter(
+            calendarProvider: { calendar },
+            localeProvider: { locale }
+        )
+        let date = try Date.ISO8601FormatStyle().parse("2026-09-08T23:30:00Z")
 
-        #expect(formatter.timeRange(from: start, to: end) == "11:30 - 13:15")
-    }
+        #expect(formatter.date(date) == "08/09/2026")
 
-    @Test("timeRange formats midnight as zero and noon as twelve")
-    func timeRange_midnightAndNoon() throws {
-        let start = try makeTimeRangeDate(hour: 0, minute: 0)
-        let end = try makeTimeRangeDate(hour: 12, minute: 0)
+        calendar.timeZone = try #require(TimeZone(secondsFromGMT: 7200))
+        #expect(formatter.date(date) == "08/09/2026")
 
-        #expect(formatter.timeRange(from: start, to: end) == "00:00 - 12:00")
+        formatter.refresh()
+        #expect(formatter.date(date) == "09/09/2026")
     }
 
     private func makeDayHeaderDate(hour: Int, minute: Int) throws -> Date {
@@ -116,6 +177,13 @@ struct MeetingsFormatterTests {
         try #require(timeRangeCalendar.date(
             from: DateComponents(year: 2026, month: 9, day: 8, hour: hour, minute: minute)
         ))
+    }
+
+    private func formatter(localeIdentifier: String) -> MeetingsFormatter {
+        MeetingsFormatter(
+            calendar: timeRangeCalendar,
+            locale: Locale(identifier: localeIdentifier)
+        )
     }
 
 }
