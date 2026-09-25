@@ -104,14 +104,16 @@ extension UIAlertController {
 
         let createGuestLinkWithPasswordAction = UIAlertAction(
             title: GuestRoom.Create.LinkWithPassword.action,
-            style: .default
+            style: .default,
+            accessibilityIdentifier: Locators.GuestOptionsPage.createLinkWithPasswordAction.rawValue
         ) { _ in
             completion(.secure)
         }
 
         let createGuestLinkWithoutPasswordAction = UIAlertAction(
             title: GuestRoom.Create.LinkWithoutPassword.action,
-            style: .default
+            style: .default,
+            accessibilityIdentifier: Locators.GuestOptionsPage.createLinkWithoutPasswordAction.rawValue
         ) { _ in
             completion(.normal)
         }

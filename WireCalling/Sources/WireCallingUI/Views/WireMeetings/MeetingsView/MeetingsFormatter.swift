@@ -19,32 +19,62 @@
 package import Foundation
 
 package protocol MeetingsFormatterProtocol {
+    /// Refreshes calendar- and locale-dependent formatting state.
+    func refresh()
     func dayHeader(for date: Date, now: Date) -> String
     func date(_ date: Date) -> String
     func time(_ date: Date) -> String
     func timeRange(from start: Date, to end: Date) -> String
 }
 
-package struct MeetingsFormatter: MeetingsFormatterProtocol {
+package final class MeetingsFormatter: MeetingsFormatterProtocol {
 
     private typealias Strings = L10n.Localizable.WireMeetings.List
 
-    private let calendar: Calendar
-    private let dayHeaderDateFormatter: DateFormatter
-    private let dateFormatter: DateFormatter
-    private let timeFormatter: DateFormatter
+    private let calendarProvider: () -> Calendar
+    private let localeProvider: () -> Locale
+    private var calendar: Calendar
+    private var dayHeaderDateFormatter: DateFormatter
+    private var dateFormatter: DateFormatter
+    private var timeFormatter: DateFormatter
+
+    package convenience init() {
+        self.init(
+            calendarProvider: { .autoupdatingCurrent },
+            localeProvider: { .autoupdatingCurrent }
+        )
+    }
+
+    package convenience init(calendar: Calendar, locale: Locale) {
+        self.init(
+            calendarProvider: { calendar },
+            localeProvider: { locale }
+        )
+    }
 
     package init(
-        calendar: Calendar = .autoupdatingCurrent,
-        locale: Locale = .autoupdatingCurrent
+        calendarProvider: @escaping () -> Calendar,
+        localeProvider: @escaping () -> Locale
     ) {
+        self.calendarProvider = calendarProvider
+        self.localeProvider = localeProvider
+        let calendar = calendarProvider()
+        let locale = localeProvider()
+        let formatters = Self.makeFormatters(locale: locale, calendar: calendar)
         self.calendar = calendar
-        self.dayHeaderDateFormatter = DateFormatter.meetingDayHeaderDate(
-            locale: locale,
-            calendar: calendar
-        )
-        self.dateFormatter = DateFormatter.meetingDate(locale: locale, calendar: calendar)
-        self.timeFormatter = DateFormatter.meetingTime(locale: locale, calendar: calendar)
+        self.dayHeaderDateFormatter = formatters.dayHeaderDateFormatter
+        self.dateFormatter = formatters.dateFormatter
+        self.timeFormatter = formatters.timeFormatter
+    }
+
+    package func refresh() {
+        let calendar = calendarProvider()
+        let locale = localeProvider()
+        let formatters = Self.makeFormatters(locale: locale, calendar: calendar)
+        self.calendar = calendar
+        dayHeaderDateFormatter = formatters.dayHeaderDateFormatter
+        dateFormatter = formatters.dateFormatter
+        timeFormatter = formatters.timeFormatter
     }
 
     package func dayHeader(for date: Date, now: Date) -> String {
@@ -70,6 +100,21 @@ package struct MeetingsFormatter: MeetingsFormatterProtocol {
 
     package func timeRange(from start: Date, to end: Date) -> String {
         "\(time(start)) - \(time(end))"
+    }
+
+    private static func makeFormatters(
+        locale: Locale,
+        calendar: Calendar
+    ) -> (
+        dayHeaderDateFormatter: DateFormatter,
+        dateFormatter: DateFormatter,
+        timeFormatter: DateFormatter
+    ) {
+        (
+            dayHeaderDateFormatter: .meetingDayHeaderDate(locale: locale, calendar: calendar),
+            dateFormatter: .meetingDate(locale: locale, calendar: calendar),
+            timeFormatter: .meetingTime(locale: locale, calendar: calendar)
+        )
     }
 
 }

@@ -34,7 +34,6 @@ final class ConversationSharedDriveSystemMessageCellSnapshotTests: XCTestCase {
 
     override func setUp() {
         super.setUp()
-        DeveloperFlag.enableDrivePermissions.enable(false)
         snapshotHelper = SnapshotHelper()
     }
 
@@ -50,7 +49,6 @@ final class ConversationSharedDriveSystemMessageCellSnapshotTests: XCTestCase {
     // MARK: - Snapshot Tests
 
     func testSharedDrive_Editor_Role() {
-        DeveloperFlag.enableDrivePermissions.enable(true)
         let view = makeSut(selfUserRole: .editor)
 
         snapshotHelper
@@ -63,20 +61,7 @@ final class ConversationSharedDriveSystemMessageCellSnapshotTests: XCTestCase {
     }
 
     func testSharedDrive_Viewer_Role() {
-        DeveloperFlag.enableDrivePermissions.enable(true)
         let view = makeSut(selfUserRole: .viewer)
-
-        snapshotHelper
-            .withUserInterfaceStyle(.light)
-            .verify(matching: view, named: "light")
-
-        snapshotHelper
-            .withUserInterfaceStyle(.dark)
-            .verify(matching: view, named: "dark")
-    }
-
-    func testSharedDrive() {
-        let view = makeSut(selfUserRole: .editor)
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
