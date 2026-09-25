@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireLocators
 import WireUtilities
 
 extension CellConfiguration {
@@ -84,7 +85,7 @@ extension CellConfiguration {
     static func createLinkButton(action: @escaping Action) -> CellConfiguration {
         .leadingButton(
             title: L10n.Localizable.GuestRoom.Link.Button.title,
-            identifier: "",
+            identifier: Locators.GuestOptionsPage.createLinkButton.rawValue,
             action: action
         )
     }
