@@ -82,6 +82,9 @@ struct MeetingsView: View {
         .task {
             await viewModel.observeCurrentDate()
         }
+        .task {
+            await viewModel.observeSystemDateTimeChanges()
+        }
     }
 
     @ViewBuilder private var content: some View {
@@ -163,6 +166,8 @@ struct MeetingsView: View {
         .scrollContentBackground(.hidden)
         .background(ColorTheme.Backgrounds.surface.color)
         .refreshable {
+            // Let SwiftUI present the refresh control before a fast reload completes.
+            await Task.yield()
             await viewModel.loadInitialData()
         }
         .alert(
