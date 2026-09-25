@@ -76,7 +76,7 @@ final class FilesItemViewModel: ObservableObject {
     let isInRecycleBin: Bool
 
     var showReadOnlyIcon: Bool {
-       item.isReadOnly && isBrowsing
+        item.isReadOnly && isBrowsing
     }
 
     struct TagsInfo {
