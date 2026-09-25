@@ -625,35 +625,6 @@ class ActiveConversationPage: PageModel {
         return self
     }
 
-    func selectImageFromCameraRollAndSend(at index: Int = 3) throws -> ActiveConversationPage {
-        if !cameraRollButton.waitForExistence(timeout: 2) {
-            photoButton.waitAndTap()
-        }
-
-        XCTAssertTrue(
-            cameraRollButton.waitAndTap(),
-            "cameraRollButton did not show up"
-        )
-
-        let image = imageToChoose(at: index)
-        XCTAssertTrue(
-            image.waitForExistence(timeout: 10),
-            "No image found in simulator photo library"
-        )
-        if image.isHittable {
-            image.tap()
-        } else {
-            image.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
-        }
-
-        XCTAssertTrue(
-            okToSend.waitForExistence(timeout: 3),
-            "OK button did not appear after selecting media"
-        )
-        okToSend.waitAndTap()
-        return self
-    }
-
     func selectImageAndSendInDriveEnabledConversation(at index: Int = 3) throws -> ActiveConversationPage {
         if !imageToChoose(at: index).waitForExistence(timeout: 5) {
             photoButton.waitAndTap()

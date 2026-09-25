@@ -76,11 +76,10 @@ final class ChannelMessagingTests: WireUITestCase {
         let activeConversationPage = try await login(user: teamWithChannelConversation.teamOwner)
             .openConversation()
             .openPhotosAndGrantPermission()
-            // CI can show an empty inline picker right after the first Photos permission prompt.
-            .selectImageFromCameraRollAndSend()
-            .recordAudioAndSend()
             .sendMessage(message)
+            .recordAudioAndSend()
             .sendPing()
+            .selectImageAndSend()
 
         // THEN
 
