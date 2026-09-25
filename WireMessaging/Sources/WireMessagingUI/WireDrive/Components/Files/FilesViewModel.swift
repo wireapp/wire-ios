@@ -74,8 +74,6 @@ package final class FilesViewModel: ObservableObject {
     let triggerReload: PassthroughSubject<Void, Never>
     let title: String?
     var failedItemActions: [FilesViewItem.ID: FilesItemViewModel.ItemAction] = [:]
-    // TODO: [WPB-25941] Remove drive permissions flag when feature is complete
-    var isDrivePermissionsFlagEnabled: Bool = UserDefaults.standard.bool(forKey: "enableDrivePermissions")
 
     var selfUserRole: WireDriveConversation.Participant.Role {
         selfUser?.role ?? .viewer
@@ -96,7 +94,7 @@ package final class FilesViewModel: ObservableObject {
     }
 
     var navigationSubtitle: String? {
-        if selfUserRole == .viewer, !isBrowsing, isDrivePermissionsFlagEnabled {
+        if selfUserRole == .viewer, !isBrowsing {
             Strings.Files.ViewerAccess.navigationSubtitle
         } else {
             nil
@@ -276,7 +274,7 @@ package final class FilesViewModel: ObservableObject {
             let isDismissed = cellName
                 .map(ConversationViewerAccessBannerDismissalStore.shared.isDismissed(forCellName:)) ?? false
             let isViewer = selfUser.role == .viewer
-            showReadOnlyBanner = isDrivePermissionsFlagEnabled && !isBrowsing && isViewer && !isDismissed &&
+            showReadOnlyBanner = !isBrowsing && isViewer && !isDismissed &&
                 !isRecycleBin
         }
     }

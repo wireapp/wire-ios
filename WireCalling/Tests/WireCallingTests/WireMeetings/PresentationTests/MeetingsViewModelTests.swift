@@ -18,6 +18,7 @@
 
 import Foundation
 import Testing
+import UIKit
 import WireFoundation
 import WireFoundationSupport
 
@@ -367,6 +368,27 @@ struct MeetingsViewModelTests {
         #expect(groups[1].meetings.map(\.title) == ["Next day"])
     }
 
+    @Test("day grouping refresh uses the latest calendar provider value")
+    func dayGroupingRefresh_usesLatestCalendarProviderValue() throws {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = try #require(TimeZone(secondsFromGMT: 0))
+        let grouper = MeetingsGrouper(calendarProvider: { calendar })
+        let beforeMidnight = try Date.ISO8601FormatStyle().parse("2026-03-29T23:30:00Z")
+        let afterMidnight = try Date.ISO8601FormatStyle().parse("2026-03-30T00:30:00Z")
+        let occurrences = [
+            MeetingOccurrence(meeting: Meeting.fixture(title: "Before midnight", start: beforeMidnight)),
+            MeetingOccurrence(meeting: Meeting.fixture(title: "After midnight", start: afterMidnight))
+        ]
+
+        #expect(grouper.group(occurrences).count == 2)
+
+        calendar.timeZone = try #require(TimeZone(secondsFromGMT: 7200))
+        #expect(grouper.group(occurrences).count == 2)
+
+        grouper.refresh()
+        #expect(grouper.group(occurrences).count == 1)
+    }
+
     // MARK: - deleteMeeting
 
     @Test("deleteMeeting calls the use case with the correct ID and removes the meeting")
@@ -560,6 +582,85 @@ struct MeetingsViewModelTests {
         mockDateProvider.now = start.addingTimeInterval(60)
         viewModel.refreshCurrentDate()
         #expect(viewModel.isHappeningNow(meeting) == false)
+    }
+
+    @Test("system date and time changes refresh currentDate")
+    func systemDateTimeChanges_refreshCurrentDate() async {
+        let (changes, continuation) = AsyncStream<Void>.makeStream()
+        let task = Task {
+            await viewModel.observeSystemDateTimeChanges(changes)
+        }
+        let updatedDate = mockDateProvider.now.addingTimeInterval(3600)
+
+        mockDateProvider.now = updatedDate
+        continuation.yield(())
+        continuation.finish()
+
+        await task.value
+        #expect(viewModel.currentDate == updatedDate)
+    }
+
+    @Test("system date and time notifications are observed")
+    func systemDateTimeChanges_observesNotifications() async {
+        let notificationCenter = NotificationCenter()
+        let changes = MeetingsViewModel.systemDateTimeChanges(notificationCenter: notificationCenter)
+        var iterator = changes.makeAsyncIterator()
+        let expectedNotificationNames: Set<Notification.Name> = [
+            .NSCalendarDayChanged,
+            .NSSystemClockDidChange,
+            .NSSystemTimeZoneDidChange,
+            NSLocale.currentLocaleDidChangeNotification,
+            UIApplication.didBecomeActiveNotification,
+            UIApplication.significantTimeChangeNotification
+        ]
+
+        #expect(Set(MeetingsViewModel.systemDateTimeChangeNotificationNames) == expectedNotificationNames)
+
+        for name in expectedNotificationNames {
+            notificationCenter.post(name: name, object: nil)
+        }
+
+        for _ in expectedNotificationNames {
+            let change: Void? = await iterator.next()
+            #expect(change != nil)
+        }
+    }
+
+    @Test("system date and time changes refresh cached formatting")
+    func systemDateTimeChanges_refreshCachedFormatting() async throws {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = try #require(TimeZone(secondsFromGMT: 0))
+        var locale = Locale(identifier: "en_US@hours=h12")
+        let formatter = MeetingsFormatter(
+            calendarProvider: { calendar },
+            localeProvider: { locale }
+        )
+        let viewModel = MeetingsViewModel(
+            currentDateProvider: mockDateProvider,
+            formatter: formatter,
+            upcomingMeetingsUseCase: upcomingMeetingsUseCase,
+            observeMeetingChangesUseCase: observeMeetingChangesUseCase,
+            deleteMeetingUseCase: deleteMeetingUseCase,
+            selfUserID: Scaffolding.selfUserID,
+            observeAttendedMeetingsUseCase: observeAttendedMeetingsUseCase
+        )
+        let start = try Date.ISO8601FormatStyle().parse("2026-09-08T14:00:00Z")
+        let meeting = Meeting.fixture(title: "Meeting", start: start)
+
+        #expect(viewModel.formatTimeRange(for: meeting).contains("PM"))
+
+        locale = Locale(identifier: "en_GB")
+        #expect(viewModel.formatTimeRange(for: meeting).contains("PM"))
+
+        let (changes, continuation) = AsyncStream<Void>.makeStream()
+        let task = Task {
+            await viewModel.observeSystemDateTimeChanges(changes)
+        }
+        continuation.yield(())
+        continuation.finish()
+
+        await task.value
+        #expect(viewModel.formatTimeRange(for: meeting) == "14:00 - 15:00")
     }
 
     // MARK: - Formatting

@@ -153,13 +153,8 @@ extension ConversationLocalStore: @retroactive WireDriveConversationsLocalStoreP
                     let participants: [WireDriveParticipant] = conversation.participants
                         .compactMap { item -> WireDriveParticipant? in
                             guard let id = item.remoteIdentifier, let domain = item.domain else { return nil }
-                            // TODO: [WPB-25941] Remove developer flag when feature is complete
-                            let isDrivePermissionsEnabled = DeveloperFlag.enableDrivePermissions.isOn
-                            let role: WireDriveParticipant.Role = if isDrivePermissionsEnabled {
-                                conversation.matchesTeam(with: item) ? .editor : .viewer
-                            } else {
-                                .editor
-                            }
+                            let role: WireDriveParticipant.Role = conversation
+                                .matchesTeam(with: item) ? .editor : .viewer
 
                             let userType: WireDriveParticipant.UserType = if item.isFederated {
                                 .federated
