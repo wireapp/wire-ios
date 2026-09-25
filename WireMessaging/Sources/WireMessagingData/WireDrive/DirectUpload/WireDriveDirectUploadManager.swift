@@ -184,7 +184,7 @@ package final class WireDriveDirectUploadManager:
             throw WireDriveDirectUploadBatchError.noFiles
         }
 
-        guard records.count + sources.count <= WireDriveDirectUploadLimits.maxFilesPerBatch else {
+        guard activeRecords.count + sources.count <= WireDriveDirectUploadLimits.maxFilesPerBatch else {
             throw WireDriveDirectUploadBatchError.tooManyFiles(limit: WireDriveDirectUploadLimits.maxFilesPerBatch)
         }
 
