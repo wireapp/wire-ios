@@ -172,6 +172,11 @@ extension WireDriveDirectUploadManager {
             return
         }
 
+        guard record.state == .uploading else {
+            WireLogger.wireDrive.info("ignoring a stale completion for a drive upload no longer uploading")
+            return
+        }
+
         let outcome = classifier.classify(
             statusCode: statusCode,
             error: error,

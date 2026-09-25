@@ -235,6 +235,8 @@ extension WireDriveDirectUploadManager {
             WireLogger.wireDrive.info("could not verify drive upload remote state: \(error)")
         }
 
+        await session.cancelTask(uploadID: uploadID)
+
         guard fileCache.exists(stagedFileName: record.stagedFileName) else {
             await handleFailure(uploadID: uploadID, error: .fileNotFound)
             return
