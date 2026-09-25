@@ -40,7 +40,12 @@ final class MessagePresenter: NSObject {
     var mediaPlayerController: MediaPlayerController?
     var mediaPlaybackManager: MediaPlaybackManager?
     var videoPlayerObserver: NSObjectProtocol?
-    var fileAvailabilityObserver: MessageKeyPathObserver?
+
+    /// Keyed by message nonce so that downloads triggered by tapping several not-yet-downloaded
+    /// file/video messages in a row can all be observed concurrently, instead of a newer tap
+    /// silently discarding the pending observer (and therefore the completion callback) of an
+    /// earlier one.
+    private var fileAvailabilityObservers: [UUID: MessageKeyPathObserver] = [:]
 
     private let userSession: UserSession
     private var documentInteractionController: UIDocumentInteractionController?
@@ -138,15 +143,18 @@ final class MessagePresenter: NSObject {
     func openFileMessage(_ message: ZMConversationMessage, targetView: UIView) {
 
         if !message.isFileDownloaded() {
+            guard let nonce = message.nonce else { return }
+
             message.fileMessageData?.requestFileDownload()
 
-            fileAvailabilityObserver = MessageKeyPathObserver(
+            fileAvailabilityObservers[nonce] = MessageKeyPathObserver(
                 message: message,
                 userSession: userSession,
                 keypath: \.fileAvailabilityChanged
             ) { [weak self] message in
                 guard message.isFileDownloaded() else { return }
 
+                self?.fileAvailabilityObservers[nonce] = nil
                 self?.openFileMessage(message, targetView: targetView)
             }
 
@@ -205,7 +213,9 @@ final class MessagePresenter: NSObject {
         selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol,
         conversationCreationRepository: any ConversationCreationRepositoryProtocol
     ) {
-        fileAvailabilityObserver = nil
+        if let nonce = message.nonce {
+            fileAvailabilityObservers[nonce] = nil
+        }
         modalTargetController?.view.window?.endEditing(true)
 
         if Message.isLocation(message) {
