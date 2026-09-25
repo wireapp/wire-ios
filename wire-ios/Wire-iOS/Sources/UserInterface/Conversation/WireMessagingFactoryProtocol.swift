@@ -37,6 +37,14 @@ protocol WireMessagingFactoryProtocol {
     func makeFetchNodeUseCase() -> WireDriveFetchNodeUseCaseProtocol
     func makeFetchCachedNodeUseCase() -> WireDriveFetchCachedNodeUseCaseProtocol
 
+    /// Reconciles persisted Drive direct uploads and starts receiving background session events.
+
+    func startDirectUploads() async
+
+    /// Cancels every Drive direct upload and removes its state. For logout or account deletion.
+
+    func tearDownDirectUploads() async
+
     @MainActor
     func makeFilesView(
         cellName: String,
