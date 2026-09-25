@@ -83,8 +83,8 @@
 "wireMeetings.schedule.error.alert.ok" = "OK";
 "wireMeetings.schedule.participantsNotAdded.title" = "Встреча сохранена";
 "wireMeetings.schedule.participantsNotAdded.message" = "Встреча была сохранена, но не удалось добавить этих пользователей:\n\n%@";
-"wireMeetings.schedule.error.conversationName.title" = "Update incomplete";
-"wireMeetings.schedule.error.conversationName.message" = "The meeting title could not be updated everywhere. Please try again.";
+"wireMeetings.schedule.error.conversationName.title" = "Обновление не завершено";
+"wireMeetings.schedule.error.conversationName.message" = "Название встречи не удалось обновить везде. Пожалуйста, попробуйте еще раз.";
 "wireMeetings.schedule.error.conversationName.retry" = "Повторить";
 "wireMeetings.schedule.disableGuestAccess.alert.title" = "Отключить доступ гостей?";
 "wireMeetings.schedule.disableGuestAccess.alert.disable" = "Отключить";
