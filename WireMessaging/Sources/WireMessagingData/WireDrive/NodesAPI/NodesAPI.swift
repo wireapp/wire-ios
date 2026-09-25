@@ -86,6 +86,18 @@ package final actor NodesAPI: NodesAPIProtocol, WireDriveNodesRepositoryProtocol
         await awsClient.upload(path: path, node: node.toDTO(), versionID: versionID)
     }
 
+    package func presignedUploadURL(
+        node: WireDriveNode,
+        versionID: UUID,
+        expiration: TimeInterval
+    ) async throws -> URL {
+        try await awsClient.presignedPutURL(
+            node: node.toDTO(),
+            versionID: versionID,
+            expiration: expiration
+        )
+    }
+
     /// Deletes nodes by their `UUID`s.
     ///
     /// - Parameters:
