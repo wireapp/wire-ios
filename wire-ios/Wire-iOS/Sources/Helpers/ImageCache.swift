@@ -24,6 +24,28 @@ final class ImageCache<T: AnyObject> {
     var cache: NSCache<NSString, T> = NSCache()
     var processingQueue = DispatchQueue(label: "ImageCacheQueue", qos: .background, attributes: [.concurrent])
     var dispatchGroup: DispatchGroup = .init()
+
+    private var backgroundObserver: (any NSObjectProtocol)?
+
+    init() {
+        // Drop decoded images when the app is backgrounded. NSCache only evicts reliably
+        // while in the foreground, so without this the cached images stay resident and inflate
+        // the suspended app's memory footprint, making it a prime target for jetsam
+        // ("System Pressure" background terminations).
+        backgroundObserver = NotificationCenter.default.addObserver(
+            forName: UIApplication.didEnterBackgroundNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            self?.cache.removeAllObjects()
+        }
+    }
+
+    deinit {
+        if let backgroundObserver {
+            NotificationCenter.default.removeObserver(backgroundObserver)
+        }
+    }
 }
 
 extension UIImage {
