@@ -584,14 +584,8 @@ final class MarkdownTextViewTests: XCTestCase {
         checkAttributes(for: .none, inRange: wholeRange)
     }
 
-    // MARK: - Bar Button Taps (WPB-21257)
+    // MARK: - Bar Button Taps
 
-    // Regression test for WPB-21257: the formatting bar used to decide
-    // whether a tap should select or deselect a markdown based on the
-    // button's rendered icon color. That color could fall out of sync with
-    // the text view's real active markdown (e.g. because the bar was
-    // rebuilt every time it was shown again), which made tapping an
-    // actually-active format re-select it instead of turning it off.
     func testThatButtonTapDeselectsBasedOnActiveMarkdownRatherThanIconColor() {
         // GIVEN: bold is the active markdown and the bar icons reflect it
         bar.delegate = sut
@@ -602,9 +596,7 @@ final class MarkdownTextViewTests: XCTestCase {
         bar.updateIcons(for: sut.activeMarkdown)
 
         // Simulate the icon coloring falling out of sync with the real
-        // state, as happened when the bar was rebuilt every time it was
-        // shown again: the button now looks unselected even though bold
-        // is still the active markdown.
+        // active markdown state.
         bar.resetIcons()
 
         // WHEN: tapping bold, as a user attempting to turn it off
