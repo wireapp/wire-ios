@@ -245,6 +245,63 @@ struct MeetingsViewModelTests {
         #expect(viewModel.loadedMeetings == meetings)
     }
 
+    @Test("a meeting change event queues a reload after an in-flight silent refresh")
+    func meetingChangeEvent_queuesReloadAfterInFlightSilentRefresh() async {
+        let initial = Meeting.fixture(title: "Initial", start: mockDateProvider.now.addingTimeInterval(3600))
+        let stale = Meeting.fixture(title: "Stale", start: mockDateProvider.now.addingTimeInterval(3600))
+        let updated = Meeting.fixture(title: "Updated", start: mockDateProvider.now.addingTimeInterval(3600))
+        upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsClosure = { _, _ in
+            PaginatedMeetings(meetings: [initial], hasMore: false, nextOffset: 1)
+        }
+        await viewModel.loadInitialData()
+
+        let (fetchStarted, fetchStartedContinuation) = AsyncStream<Int>.makeStream()
+        var fetchStartedIterator = fetchStarted.makeAsyncIterator()
+        var fetchContinuations: [CheckedContinuation<PaginatedMeetings, Never>] = []
+        var fetchCount = 0
+        upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsClosure = { _, _ in
+            fetchCount += 1
+            let currentFetchCount = fetchCount
+            return await withCheckedContinuation { continuation in
+                fetchContinuations.append(continuation)
+                fetchStartedContinuation.yield(currentFetchCount)
+            }
+        }
+
+        let (systemChanges, systemContinuation) = AsyncStream<Void>.makeStream()
+        let systemTask = Task {
+            await viewModel.observeSystemDateTimeChanges(systemChanges)
+        }
+        systemContinuation.yield(())
+        systemContinuation.finish()
+        #expect(await fetchStartedIterator.next() == 1)
+
+        let (meetingChanges, meetingContinuation) = AsyncStream<Void>.makeStream()
+        observeMeetingChangesUseCase.invokeAsyncStreamVoidReturnValue = meetingChanges
+        let meetingTask = Task {
+            await viewModel.observeMeetingChanges()
+        }
+        meetingContinuation.yield(())
+        meetingContinuation.finish()
+        await meetingTask.value
+
+        #expect(upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsCallsCount == 2)
+
+        fetchContinuations[0].resume(
+            returning: PaginatedMeetings(meetings: [stale], hasMore: false, nextOffset: 1)
+        )
+        #expect(await fetchStartedIterator.next() == 2)
+        #expect(viewModel.isLoading == true)
+
+        fetchContinuations[1].resume(
+            returning: PaginatedMeetings(meetings: [updated], hasMore: false, nextOffset: 1)
+        )
+        await systemTask.value
+
+        #expect(viewModel.loadedMeetings.map(\.title) == ["Updated"])
+        #expect(upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsCallsCount == 3)
+    }
+
     // MARK: - observeAttendedMeetings
 
     @Test("the initially emitted set populates attendingConversationIDs and isAttending")

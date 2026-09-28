@@ -104,10 +104,15 @@ package final class MeetingsViewModel {
     private let initialPageSize: Int = 20
     /// Number of occurrences loaded by subsequent pagination requests.
     private let pageSize: Int = 20
-    /// Internal fetch guard used to prevent overlapping loads, independently of visible loading UI.
+    /// Tracks any in-flight meeting fetch, independently of `isLoading`.
+    /// Without this separate guard, silent system-date reloads would need to toggle
+    /// `isLoading` to prevent overlap, which would show the spinner for automatic refreshes.
     private var isFetching = false
-    /// Whether a silent system-date refresh should run after the active fetch finishes.
-    private var needsSilentReloadAfterFetch = false
+    /// Queues one reload request that arrived while another fetch was already running.
+    /// Without this follow-up state, refresh events would be consumed by the in-flight guard and
+    /// the list could keep stale meetings or stale date/time-zone based occurrences until another refresh happens.
+    /// If any queued reload requested visible loading UI, the follow-up reload preserves that.
+    private var queuedReloadShowsLoadingIndicator: Bool?
 
     private let grouper = MeetingsGrouper()
 
@@ -279,9 +284,7 @@ package final class MeetingsViewModel {
     /// change can insert or remove meetings anywhere in the loaded range.
     private func reloadLoadedMeetings(showsLoadingIndicator: Bool = true) async {
         guard !isFetching else {
-            if !showsLoadingIndicator {
-                needsSilentReloadAfterFetch = true
-            }
+            queuedReloadShowsLoadingIndicator = (queuedReloadShowsLoadingIndicator ?? false) || showsLoadingIndicator
             return
         }
 
@@ -322,9 +325,9 @@ package final class MeetingsViewModel {
             }
         }
 
-        if needsSilentReloadAfterFetch {
-            needsSilentReloadAfterFetch = false
-            await reloadLoadedMeetings(showsLoadingIndicator: false)
+        if let queuedReloadShowsLoadingIndicator {
+            self.queuedReloadShowsLoadingIndicator = nil
+            await reloadLoadedMeetings(showsLoadingIndicator: queuedReloadShowsLoadingIndicator)
         }
     }
 
