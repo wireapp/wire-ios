@@ -20,9 +20,12 @@
 #
 
 # Creates, updates, or removes the "new localization strings" PR comment.
+# Writes `comment_created` to GITHUB_OUTPUT as "true" only when the comment
+# didn't already exist, so callers can notify Wire on first introduction of
+# new strings without re-notifying on every subsequent edit.
 #
 # Required env: GITHUB_TOKEN, GITHUB_REPOSITORY, PR_NUMBER, HAS_NEW_STRINGS,
-# NEW_KEYS (only read when HAS_NEW_STRINGS is "true").
+# GITHUB_OUTPUT, NEW_KEYS (only read when HAS_NEW_STRINGS is "true").
 
 require 'json'
 require 'net/http'
@@ -63,12 +66,17 @@ def find_marker_comment(repo, pr_number, token)
   end
 end
 
+def write_output(name, value)
+  File.open(ENV.fetch('GITHUB_OUTPUT'), 'a') { |f| f.puts "#{name}=#{value}" }
+end
+
 existing = find_marker_comment(repo, pr_number, token)
 
 unless has_new_strings
   # A follow-up push may have removed the strings that triggered the original
   # reminder - drop the now-stale comment.
   api_request(Net::HTTP::Delete, "/repos/#{repo}/issues/comments/#{existing['id']}", token) if existing
+  write_output('comment_created', false)
   exit
 end
 
@@ -85,6 +93,8 @@ body = [
 
 if existing
   api_request(Net::HTTP::Patch, "/repos/#{repo}/issues/comments/#{existing['id']}", token, body: { body: body })
+  write_output('comment_created', false)
 else
   api_request(Net::HTTP::Post, "/repos/#{repo}/issues/#{pr_number}/comments", token, body: { body: body })
+  write_output('comment_created', true)
 end
