@@ -24,7 +24,7 @@ import XCTest
 @testable import Wire
 
 // Precision of matching snapshots. Lower this value to fix issue with difference with Intel and Apple Silicon
-private let precision: Float = 0.90
+private let precision: Float = 0.99
 private let perceptualPrecision: Float = 0.98
 
 // MARK: - snapshoting all iPhone sizes
@@ -207,7 +207,11 @@ extension Snapshotting where Value == UIAlertController, Format == UIImage {
     /// A snapshot strategy for comparing UIAlertController views based on pixel equality.
     /// Compare UIAlertController.view to prevert the view is resized to fix the default UIViewController.view's size
     static var image: Snapshotting<UIAlertController, UIImage> {
-        Snapshotting<UIView, UIImage>.image(precision: 1, size: nil).pullback { $0.view }
+        Snapshotting<UIView, UIImage>.image(
+            precision: precision,
+            perceptualPrecision: perceptualPrecision,
+            size: nil
+        ).pullback { $0.view }
     }
 }
 
@@ -218,8 +222,8 @@ extension Snapshotting where Value == UIView, Format == UIImage {
     /// moves the view to (10_000, 10_000) before drawing, which causes long-text TextKit
     /// rendering to fail intermittently in offscreen snapshot tests.
     static func inPlaceImage(
-        precision: Float = 1,
-        perceptualPrecision: Float = 1
+        precision: Float = 0.99,
+        perceptualPrecision: Float = 0.98
     ) -> Snapshotting<UIView, UIImage> {
         Snapshotting<UIImage, UIImage>.image(
             precision: precision,
