@@ -220,6 +220,8 @@ extension WireDriveDirectUploadManager {
             _ = try await nodesAPI.getNode(nodeID: record.nodeID)
             let versions = try await nodesAPI.getVersions(nodeID: record.nodeID)
 
+            guard records[uploadID]?.state == .uploading else { return }
+
             if versions.contains(where: { $0.id == record.versionID }) {
                 // The bytes already landed; nothing left to do but mark it done.
                 try? fileCache.delete(stagedFileName: record.stagedFileName)
@@ -234,6 +236,8 @@ extension WireDriveDirectUploadManager {
         } catch {
             WireLogger.wireDrive.info("could not verify drive upload remote state: \(error)")
         }
+
+        guard records[uploadID]?.state == .uploading else { return }
 
         await session.cancelTask(uploadID: uploadID)
 
