@@ -23,18 +23,11 @@ package import WireFoundation
 import UIKit
 import WireLogging
 
-import os
-
 @Observable
 @MainActor
 package final class MeetingsViewModel {
 
     private typealias Strings = L10n.Localizable.WireMeetings.List
-
-    private static let refreshLogger = Logger(
-        subsystem: Bundle.main.bundleIdentifier ?? "WireCalling",
-        category: "MeetingsRefresh"
-    )
 
     private(set) var loadedOccurrences: [MeetingOccurrence] = []
     private(set) var hasMore: Bool = false
@@ -210,37 +203,20 @@ package final class MeetingsViewModel {
 
     func refreshSystemDateTimeState() async {
         let applicationState = applicationStateProvider()
-        Self.refreshLogger.critical(
-            """
-            system date/time refresh received; isFetching=\(self.isFetching, privacy: .public), \
-            appState=\(applicationState.meetingsRefreshLogDescription, privacy: .public), \
-            pendingActiveReload=\(self.needsReloadWhenApplicationBecomesActive, privacy: .public), \
-            queuedReload=\(String(describing: self.queuedReloadShowsLoadingIndicator), privacy: .public), \
-            loadedOccurrences=\(self.loadedOccurrences.count, privacy: .public), \
-            futureOffset=\(self.futureOffset, privacy: .public)
-            """
-        )
+
         formatter.refresh()
         grouper.refresh()
         refreshCurrentDate()
-        logLoadedOccurrenceSnapshot(context: "after formatter refresh, before reload")
 
+        // System time changes can arrive while the app is backgrounded. Starting a fetch
+        // then can be suspended by iOS, so defer it until the did-become-active event.
         guard applicationState == .active else {
             needsReloadWhenApplicationBecomesActive = true
-            Self.refreshLogger.critical(
-                """
-                meetings reload deferred until app becomes active; \
-                appState=\(applicationState.meetingsRefreshLogDescription, privacy: .public), \
-                loadedOccurrences=\(self.loadedOccurrences.count, privacy: .public), \
-                futureOffset=\(self.futureOffset, privacy: .public)
-                """
-            )
             return
         }
 
         if needsReloadWhenApplicationBecomesActive {
             needsReloadWhenApplicationBecomesActive = false
-            Self.refreshLogger.critical("running deferred app-active meetings reload")
         }
 
         await reloadLoadedMeetings(showsLoadingIndicator: false)
@@ -328,26 +304,10 @@ package final class MeetingsViewModel {
     private func reloadLoadedMeetings(showsLoadingIndicator: Bool = true) async {
         guard !isFetching else {
             queuedReloadShowsLoadingIndicator = (queuedReloadShowsLoadingIndicator ?? false) || showsLoadingIndicator
-            Self.refreshLogger.critical(
-                """
-                reload queued while fetch is in flight; showsLoadingIndicator=\(showsLoadingIndicator, privacy: .public), \
-                queuedReload=\(String(describing: self.queuedReloadShowsLoadingIndicator), privacy: .public), \
-                loadedOccurrences=\(self.loadedOccurrences.count, privacy: .public), \
-                futureOffset=\(self.futureOffset, privacy: .public)
-                """
-            )
             return
         }
 
         let reloadSize = max(loadedOccurrences.count, initialPageSize)
-        Self.refreshLogger.critical(
-            """
-            reload starting immediately; showsLoadingIndicator=\(showsLoadingIndicator, privacy: .public), \
-            reloadSize=\(reloadSize, privacy: .public), \
-            loadedOccurrences=\(self.loadedOccurrences.count, privacy: .public), \
-            previousFutureOffset=\(self.futureOffset, privacy: .public)
-            """
-        )
         futureOffset = 0
         await load(pageSize: reloadSize, showsLoadingIndicator: showsLoadingIndicator)
     }
@@ -369,86 +329,26 @@ package final class MeetingsViewModel {
 
             do {
                 let requestedOffset = futureOffset
-                Self.refreshLogger.critical(
-                    """
-                    fetch starting; pageSize=\(pageSize, privacy: .public), \
-                    requestedOffset=\(requestedOffset, privacy: .public), \
-                    showsLoadingIndicator=\(showsLoadingIndicator, privacy: .public)
-                    """
-                )
-
                 let result = try await upcomingMeetingsUseCase.invoke(pageSize: pageSize, offset: requestedOffset)
                 if requestedOffset == 0 {
-                    Self.refreshLogger.critical(
-                        "fetch completed; replacing loaded occurrences with \(result.occurrences.count, privacy: .public) occurrences"
-                    )
                     loadedOccurrences = result.occurrences
                 } else {
-                    Self.refreshLogger.critical(
-                        """
-                        fetch completed; appending \(result.occurrences.count, privacy: .public) occurrences \
-                        to \(self.loadedOccurrences.count, privacy: .public) existing occurrences
-                        """
-                    )
                     loadedOccurrences += result.occurrences
                 }
 
                 futureOffset = result.nextOffset
                 hasMore = result.hasMore
-                Self.refreshLogger.critical(
-                    """
-                    fetch state updated; nextOffset=\(self.futureOffset, privacy: .public), \
-                    hasMore=\(self.hasMore, privacy: .public), \
-                    loadedOccurrences=\(self.loadedOccurrences.count, privacy: .public)
-                    """
-                )
-                logLoadedOccurrenceSnapshot(context: "after fetch result applied")
             } catch {
                 hasMore = false
                 hasLoadError = true
                 WireLogger.meetings.error("failed to fetch upcoming meetings: \(String(reflecting: error))")
-                Self.refreshLogger.critical(
-                    "fetch failed; queuedReload=\(String(describing: self.queuedReloadShowsLoadingIndicator), privacy: .public)"
-                )
             }
         }
 
         if let queuedReloadShowsLoadingIndicator {
             self.queuedReloadShowsLoadingIndicator = nil
-            Self.refreshLogger.critical(
-                "running queued reload; showsLoadingIndicator=\(queuedReloadShowsLoadingIndicator, privacy: .public)"
-            )
             await reloadLoadedMeetings(showsLoadingIndicator: queuedReloadShowsLoadingIndicator)
-        } else {
-            Self.refreshLogger.critical("fetch finished with no queued reload")
         }
-    }
-
-    private func logLoadedOccurrenceSnapshot(context: String) {
-        let occurrenceSummary = loadedOccurrences.prefix(3).enumerated().map { index, occurrence in
-            let day = formatter.dayHeader(for: occurrence.start, now: currentDate)
-            let time = formatter.timeRange(from: occurrence.start, to: occurrence.end)
-
-            return """
-            #\(index) title='\(occurrence.title)' start='\(occurrence.start)' day='\(day)' time='\(time)'
-            """
-        }.joined(separator: " | ")
-
-        let groupSummary = groupedUpcomingMeetings.prefix(3).map { group in
-            let day = formatter.dayHeader(for: group.day, now: currentDate)
-            return "\(day): \(group.meetings.count)"
-        }.joined(separator: " | ")
-
-        Self.refreshLogger.critical(
-            """
-            occurrence snapshot (\(context, privacy: .public)); \
-            currentDate=\(self.currentDate, privacy: .public), \
-            occurrences=\(self.loadedOccurrences.count, privacy: .public), \
-            groups=\(self.groupedUpcomingMeetings.count, privacy: .public), \
-            firstOccurrences=\(occurrenceSummary, privacy: .public), \
-            firstGroups=\(groupSummary, privacy: .public)
-            """
-        )
     }
 
 }
@@ -545,23 +445,6 @@ private final class DateTimeChangeNotificationObserver: @unchecked Sendable {
 
         debounceTask?.cancel()
         observers.forEach(notificationCenter.removeObserver)
-    }
-
-}
-
-private extension UIApplication.State {
-
-    var meetingsRefreshLogDescription: String {
-        switch self {
-        case .active:
-            "active"
-        case .inactive:
-            "inactive"
-        case .background:
-            "background"
-        @unknown default:
-            "unknown"
-        }
     }
 
 }
