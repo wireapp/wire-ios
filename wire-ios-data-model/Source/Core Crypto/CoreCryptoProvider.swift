@@ -205,6 +205,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
             _ = try await context.addCredential(credential: credential)
         }
         try await generateClientPublicKeys(with: coreCrypto, credentialType: .basic)
+        await retryEpochObserverRegistrationIfNecessary(with: coreCrypto)
     }
 
     @discardableResult
