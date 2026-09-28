@@ -507,8 +507,7 @@ extension AppRootRouter: AppStateCalculatorDelegate {
                 e2eIdentityCertificateUpdateStatus: userSession.e2eIdentityUpdateCertificateUpdateStatus(),
                 selfClientCertificateProvider: userSession.selfClientCertificateProvider,
                 targetVC: { [weak self] in self!.rootViewController }
-            ),
-            e2eiActivationDateRepository: userSession.e2eiActivationDateRepository
+            )
         )
     }
 }
