@@ -97,6 +97,12 @@ public extension E2eIdentityCertificate {
         notValidBefore <= comparedDate.now
     }
 
+    /// Whether this represents a real, issued certificate rather than the
+    /// placeholder returned for a client that has never enrolled.
+    var isEnrolled: Bool {
+        status != .notActivated
+    }
+
     func shouldUpdate(with gracePeriod: TimeInterval) -> Bool {
         let renewalNudgingDate = renewalNudgingDate(with: gracePeriod)
         return isExpired || (isActivated && comparedDate.now >= renewalNudgingDate)
