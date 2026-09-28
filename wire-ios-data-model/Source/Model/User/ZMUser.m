@@ -442,6 +442,15 @@ static NSString *const PrimaryKey = @"primaryKey";
     NSDictionary *qualifiedID = [transportData optionalDictionaryForKey:@"qualified_id"];
     if (qualifiedID != nil) {
         NSString *domain = [qualifiedID stringForKey:@"domain"];
+        // An empty domain must be treated the same as a missing one: fetchOrCreate/fetch (ZMUser+Create.swift,
+        // ZMManagedObject+Fetching.swift) already normalize "" to nil before comparing/storing. Without this,
+        // a row with domain == nil and a row with domain == "" for the same remoteIdentifier are treated as the
+        // same identity by ZMManagedObject's lenient domain-aware fetch predicate, but have different `primaryKey`
+        // values, so they can coexist despite the uniqueness constraint on `primaryKey` - producing exactly the
+        // kind of duplicate that trips the "more than one object" check.
+        if (domain.length == 0) {
+            domain = nil;
+        }
         NSUUID *remoteIdentifier = [NSUUID uuidWithTransportString:qualifiedID[@"id"]];
 
         if (self.domain == nil) {

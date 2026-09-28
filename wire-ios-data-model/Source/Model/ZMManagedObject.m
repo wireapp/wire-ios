@@ -346,7 +346,15 @@ static NSString * const KeysForCachedValuesKey = @"ZMKeysForCachedValues";
     fetchRequest.predicate = [NSPredicate predicateWithFormat:@"%K == %@", [self remoteIdentifierDataKey], uuid.data];
     fetchRequest.fetchLimit = 2; // We only want 1, but want to check if there are too many.
     NSArray *fetchResult = [moc executeFetchRequestOrAssert:fetchRequest];
-    RequireString([fetchResult count] <= 1, "More than one object with the same UUID: %s", uuid.transportString.UTF8String);
+    if (fetchResult.count > 1) {
+        // This should never happen (the two objects here are duplicates that shouldn't coexist),
+        // but crashing the app every time this identity is looked up leaves the user permanently
+        // stuck. Log it for visibility and carry on with one of the objects instead.
+        [WireLoggerObjC logDuplicateManagedObjectWithEntityName:self.entityName
+                                                remoteIdentifier:uuid.transportString
+                                                          domain:nil
+                                                           count:(NSInteger)fetchResult.count];
+    }
     return fetchResult.firstObject;
 }
 
@@ -393,7 +401,15 @@ static NSString * const KeysForCachedValuesKey = @"ZMKeysForCachedValues";
 
     fetchRequest.fetchLimit = 2; // We only want 1, but want to check if there are too many.
     NSArray *fetchResult = [moc executeFetchRequestOrAssert:fetchRequest];
-    RequireString([fetchResult count] <= 1, "More than one object with the same UUID: %s and domain: %s", uuid.transportString.UTF8String, domain.UTF8String);
+    if (fetchResult.count > 1) {
+        // This should never happen (the two objects here are duplicates that shouldn't coexist),
+        // but crashing the app every time this identity is looked up leaves the user permanently
+        // stuck. Log it for visibility and carry on with one of the objects instead.
+        [WireLoggerObjC logDuplicateManagedObjectWithEntityName:self.entityName
+                                                remoteIdentifier:uuid.transportString
+                                                          domain:domain
+                                                           count:(NSInteger)fetchResult.count];
+    }
     return fetchResult.firstObject;
 }
 

@@ -333,10 +333,17 @@ public extension ZMUser {
         }
 
         set {
+            // Normalize "" to nil here, once, rather than relying on every caller to do it: several call sites
+            // (e.g. ZMUser.m's updateWithTransportData:, UserProfilePayloadProcessor.swift) assign the backend's
+            // qualified_id.domain directly, which can be an empty string. Left un-normalized, a nil-domain row and
+            // an empty-string-domain row for the same remoteIdentifier get different `primaryKey` values (so the
+            // uniqueness constraint doesn't catch them) while still matching the same identity under
+            // ZMManagedObject's domain-aware fetch predicate - producing a duplicate.
+            let normalizedValue = (newValue?.isEmpty ?? false) ? nil : newValue
             willChangeValue(forKey: Self.domainKey)
-            primitiveDomain = newValue
+            primitiveDomain = normalizedValue
             didChangeValue(forKey: Self.domainKey)
-            updatePrimaryKey(remoteIdentifier: remoteIdentifier, domain: newValue)
+            updatePrimaryKey(remoteIdentifier: remoteIdentifier, domain: normalizedValue)
         }
     }
 

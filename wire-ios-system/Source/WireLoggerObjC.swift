@@ -36,4 +36,12 @@ public final class WireLoggerObjC: NSObject {
     static func logSaveCoreData(error: any Error) {
         WireLogger.localStorage.error("Failed to save: \(error)", attributes: .safePublic)
     }
+
+    @objc(logDuplicateManagedObjectWithEntityName:remoteIdentifier:domain:count:)
+    static func logDuplicateManagedObject(entityName: String, remoteIdentifier: String, domain: String?, count: Int) {
+        WireLogger.localStorage.error(
+            "Found \(count) \(entityName) objects for remoteIdentifier \(remoteIdentifier) and domain \(domain ?? "<nil>") where at most 1 was expected",
+            attributes: .safePublic
+        )
+    }
 }
