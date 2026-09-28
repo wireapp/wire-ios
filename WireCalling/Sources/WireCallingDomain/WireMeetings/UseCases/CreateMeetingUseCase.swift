@@ -70,7 +70,10 @@ package struct CreateMeetingUseCase: CreateMeetingUseCaseProtocol {
                 reasons: reasons
             )
         } catch {
-            WireLogger.meetings.error("failed to set up saved meeting: \(String(describing: type(of: error)))")
+            WireLogger.meetings.error(
+                "failed to set up saved meeting: \(String(describing: type(of: error)))",
+                attributes: .safePublic
+            )
             await meetingRepository.storeMeeting(meeting)
             if isAddingParticipants, !participants.isEmpty {
                 throw CreateMeetingUseCaseError.addParticipantsFailed()

@@ -88,14 +88,20 @@ package struct UpdateMeetingUseCase: UpdateMeetingUseCaseProtocol {
                 reasons: reasons
             )
         } catch {
-            WireLogger.meetings.error("failed to add meeting participants: \(String(describing: type(of: error)))")
+            WireLogger.meetings.error(
+                "failed to add meeting participants: \(String(describing: type(of: error)))",
+                attributes: .safePublic
+            )
             await meetingRepository.storeMeeting(updatedMeeting)
             throw UpdateMeetingUseCaseError.addParticipantsFailed()
         }
         do {
             try await conversationRepository.removeParticipants(membersToRemove, from: meeting.conversationID)
         } catch {
-            WireLogger.meetings.error("failed to remove meeting participants: \(String(describing: type(of: error)))")
+            WireLogger.meetings.error(
+                "failed to remove meeting participants: \(String(describing: type(of: error)))",
+                attributes: .safePublic
+            )
             await meetingRepository.storeMeeting(updatedMeeting)
             throw UpdateMeetingUseCaseError.removeParticipantsFailed(
                 participantsNotAdded: participantsNotAdded

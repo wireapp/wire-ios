@@ -175,11 +175,11 @@ struct MeetingConversationRepositoryBridge: MeetingConversationRepositoryProtoco
         let viewContext = contextProvider.viewContext
 
         try await viewContext.perform {
-            guard let conv = ZMConversation.existingObject(for: objectID, in: viewContext) else {
+            guard let conversation = ZMConversation.existingObject(for: objectID, in: viewContext) else {
                 throw MLSService.MLSGroupCreationError.failedToCreateGroup
             }
-            guard conv.userDefinedName != name else { return }
-            conv.userDefinedName = name
+            guard conversation.userDefinedName != name else { return }
+            conversation.userDefinedName = name
             guard viewContext.saveOrRollback() else { throw MLSService.MLSGroupCreationError.failedToCreateGroup }
         }
     }
@@ -288,6 +288,7 @@ struct MeetingConversationRepositoryBridge: MeetingConversationRepositoryProtoco
                 )
             }
         } catch let error as SendMLSMessageFailure {
+            // TODO: [WPB-25389] Verify whether establishGroup can throw SendMLSMessageFailure.
             switch error {
             case .nonFederatingDomains, .unreachableDomains:
                 guard !participants.isEmpty else { throw error }

@@ -137,7 +137,10 @@ public final class MeetingRepository: MeetingRepositoryProtocol {
         do {
             try await localStore.deleteMeeting(id: id)
         } catch {
-            WireLogger.meetings.error("failed to clean up meeting: \(String(describing: type(of: error)))")
+            WireLogger.meetings.error(
+                "failed to clean up meeting: \(String(describing: type(of: error)))",
+                attributes: .safePublic
+            )
             throw DeleteMeetingUseCaseError.cleanupFailed
         }
     }
