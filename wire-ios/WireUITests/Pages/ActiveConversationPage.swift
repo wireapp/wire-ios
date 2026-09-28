@@ -505,13 +505,17 @@ class ActiveConversationPage: PageModel {
     }
 
     func tapMention(ofUser name: String) throws -> UserProfilePage {
+        let mentionLabel = [
+            "@\(name)",
+            "@\(name.replacingOccurrences(of: " ", with: "\u{00A0}"))"
+        ]
         let mentionLink = app.links
-            .matching(NSPredicate(format: "label CONTAINS[c] %@", name))
+            .matching(NSPredicate(format: "label IN %@", mentionLabel))
             .firstMatch
 
         XCTAssertTrue(
             mentionLink.waitForExistence(timeout: 5),
-            "Expected mention link containing '\(name)' to appear"
+            "Expected mention link '\(mentionLabel[0])' should be showing"
         )
 
         mentionLink.tap()
