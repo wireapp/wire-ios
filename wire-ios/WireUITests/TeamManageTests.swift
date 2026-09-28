@@ -166,7 +166,7 @@ final class TeamManageTests: WireUITestCase {
     }
 
     @MainActor
-    func test_TeamMemberRemovedFromTeam_SeesSessionExpiredAlert_TC_11930() async throws {
+    func test_TeamMemberRemovedFromTeam_SeesSessionExpiredAlert_TC_12129() async throws {
 
         let (_, teamOwner) = try await UserHelper.default.registerUserAsTeamOwner()
         let ownerAccessToken = try await UserHelper.default.fetchAccessToken(

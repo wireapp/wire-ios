@@ -20,6 +20,7 @@ import Down
 import UIKit
 import WireCommonComponents
 import WireDesign
+import WireLocators
 import WireSyncEngine
 
 class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecuredLinkViewModelDelegate {
@@ -77,6 +78,7 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
             insets: UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
         )
 
+        button.accessibilityIdentifier = Locators.CreateSecureGuestLinkPage.generatePasswordButton.rawValue
         button.accessibilityLabel = SecureGuestLinkAccessibilityLocale.GeneratePasswordButton.description
         button.accessibilityHint = SecureGuestLinkAccessibilityLocale.GeneratePasswordButton.hint
         button.accessibilityTraits = [.button]
@@ -114,6 +116,7 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
         )
         textField.addRevealButton(delegate: self)
 
+        textField.accessibilityIdentifier = Locators.CreateSecureGuestLinkPage.passwordTextField.rawValue
         textField.accessibilityLabel = SecureGuestLinkAccessibilityLocale.SecuredGuestLinkPasswordTextfield.description
         textField.accessibilityHint = SecureGuestLinkAccessibilityLocale.SecuredGuestLinkPasswordTextfield.hint
 
@@ -157,6 +160,7 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
             setNewColors: true,
             style: .default
         )
+        textField.accessibilityIdentifier = Locators.CreateSecureGuestLinkPage.confirmPasswordTextField.rawValue
         textField.accessibilityLabel = SecureGuestLinkAccessibilityLocale.SecuredGuestLinkPasswordValidatedTextField
             .description
         textField.accessibilityHint = SecureGuestLinkAccessibilityLocale.SecuredGuestLinkPasswordValidatedTextField.hint
@@ -179,6 +183,7 @@ class CreateSecureGuestLinkViewController: UIViewController, CreatePasswordSecur
             fontSpec: .buttonBigSemibold
         )
 
+        button.accessibilityIdentifier = Locators.CreateSecureGuestLinkPage.createLinkButton.rawValue
         button.accessibilityLabel = SecureGuestLinkAccessibilityLocale.CreateLinkButton.description
         button.accessibilityHint = SecureGuestLinkAccessibilityLocale.CreateLinkButton.hint
         button.accessibilityTraits = [.button]
