@@ -139,6 +139,10 @@ final class ZClientControllerBuilder {
         )
 
         return fileManager.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
+            .appendingPathComponent(
+                "\(FileManager.cachesFolderPrefix)-\(account.userIdentifier.uuidString)",
+                isDirectory: true
+            )
             .appendingPathComponent(FileManager.driveUploadStagingFolderName, isDirectory: true)
     }
 

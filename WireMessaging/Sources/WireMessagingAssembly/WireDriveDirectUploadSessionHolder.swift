@@ -137,20 +137,6 @@ public final class WireDriveDirectUploadSessionHolder: Sendable {
         }
     }
 
-    // MARK: - Attaching
-
-    /// Routes the session's events to `sink`, draining anything buffered since launch.
-
-    func attach(userID: UUID, sink: any WireDriveDirectUploadEventSink) async {
-        await session(userID: userID).setEventSink(sink)
-    }
-
-    func detach(userID: UUID) async {
-        let identifier = Identifier.make(userID: userID)
-        let session = lock.withLock { $0.sessions[identifier] }
-        await session?.removeEventSink()
-    }
-
     /// Cancels every transfer for a user and forgets their session. For logout or account deletion.
 
     public func tearDown(userID: UUID) async {
