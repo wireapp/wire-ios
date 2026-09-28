@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireFoundation
 
 /// Represents the sound for types of notifications.
 public enum NotificationSound {
@@ -31,7 +32,12 @@ public enum NotificationSound {
 
     /// The name of the song.
     public var name: String {
-        defaultFileName
+        switch self {
+        case .newMessage:
+            NotificationSoundPreference.stored(in: Self.storage).notificationSoundName
+        case .call, .ping:
+            defaultFileName
+        }
     }
 
     // MARK: - Utilities
@@ -44,12 +50,4 @@ public enum NotificationSound {
         }
     }
 
-    // Unused - leaving this here in case we need to support custom sounds again in the future.
-    private var preferenceKey: String {
-        switch self {
-        case .call: "ZMCallSoundName"
-        case .ping: "ZMPingSoundName"
-        case .newMessage: "ZMMessageSoundName"
-        }
-    }
 }
