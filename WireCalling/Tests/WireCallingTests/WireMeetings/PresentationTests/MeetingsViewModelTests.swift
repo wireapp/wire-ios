@@ -593,7 +593,7 @@ struct MeetingsViewModelTests {
     func systemDateTimeChanges_refreshCurrentDate() async {
         let (changes, continuation) = AsyncStream<Void>.makeStream()
         let task = Task {
-            await viewModel.observeSystemDateTimeChanges(changes, debounceDuration: .zero)
+            await viewModel.observeSystemDateTimeChanges(changes)
         }
         let updatedDate = mockDateProvider.now.addingTimeInterval(3600)
 
@@ -619,7 +619,7 @@ struct MeetingsViewModelTests {
         }
         let (changes, continuation) = AsyncStream<Void>.makeStream()
         let task = Task {
-            await viewModel.observeSystemDateTimeChanges(changes, debounceDuration: .zero)
+            await viewModel.observeSystemDateTimeChanges(changes)
         }
         continuation.yield(())
         continuation.finish()
@@ -634,6 +634,8 @@ struct MeetingsViewModelTests {
 
     @Test("system date and time changes debounce consecutive refreshes")
     func systemDateTimeChanges_debouncesConsecutiveRefreshes() async {
+        let notificationCenter = NotificationCenter()
+        let changes = MeetingsViewModel.systemDateTimeChanges(notificationCenter: notificationCenter)
         let initial = Meeting.fixture(title: "Initial", start: mockDateProvider.now.addingTimeInterval(3600))
         let updated = Meeting.fixture(title: "Updated", start: mockDateProvider.now.addingTimeInterval(3600))
         var fetchCount = 0
@@ -644,14 +646,14 @@ struct MeetingsViewModelTests {
         }
         await viewModel.loadInitialData()
 
-        let (changes, continuation) = AsyncStream<Void>.makeStream()
         let task = Task {
-            await viewModel.observeSystemDateTimeChanges(changes, debounceDuration: .milliseconds(10))
+            await viewModel.observeSystemDateTimeChanges(changes)
         }
-        continuation.yield(())
-        continuation.yield(())
-        continuation.yield(())
-        continuation.finish()
+        notificationCenter.post(name: .NSSystemClockDidChange, object: nil)
+        notificationCenter.post(name: .NSSystemClockDidChange, object: nil)
+        notificationCenter.post(name: .NSSystemClockDidChange, object: nil)
+        try? await Task.sleep(for: .milliseconds(350))
+        task.cancel()
 
         await task.value
 
@@ -679,10 +681,8 @@ struct MeetingsViewModelTests {
             notificationCenter.post(name: name, object: nil)
         }
 
-        for _ in expectedNotificationNames {
-            let change: Void? = await iterator.next()
-            #expect(change != nil)
-        }
+        let change: Void? = await iterator.next()
+        #expect(change != nil)
     }
 
     @Test("system date and time changes refresh cached formatting")
@@ -713,7 +713,7 @@ struct MeetingsViewModelTests {
 
         let (changes, continuation) = AsyncStream<Void>.makeStream()
         let task = Task {
-            await viewModel.observeSystemDateTimeChanges(changes, debounceDuration: .zero)
+            await viewModel.observeSystemDateTimeChanges(changes)
         }
         continuation.yield(())
         continuation.finish()

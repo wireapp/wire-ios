@@ -174,29 +174,9 @@ package final class MeetingsViewModel {
         await observeSystemDateTimeChanges(Self.systemDateTimeChanges())
     }
 
-    func observeSystemDateTimeChanges(
-        _ changes: AsyncStream<Void>,
-        debounceDuration: Duration = .milliseconds(300)
-    ) async {
-        var refreshTask: Task<Void, Never>?
-        defer { refreshTask?.cancel() }
-
+    func observeSystemDateTimeChanges(_ changes: AsyncStream<Void>) async {
         for await _ in changes {
-            refreshTask?.cancel()
-            refreshTask = Task { @MainActor [debounceDuration] in
-                do {
-                    try await Task.sleep(for: debounceDuration)
-                } catch {
-                    return
-                }
-
-                guard !Task.isCancelled else { return }
-                await refreshSystemDateTimeState()
-            }
-        }
-
-        if !Task.isCancelled {
-            await refreshTask?.value
+            await refreshSystemDateTimeState()
         }
     }
 
@@ -335,12 +315,14 @@ package extension MeetingsViewModel {
     }
 
     static func systemDateTimeChanges(
-        notificationCenter: NotificationCenter = .default
+        notificationCenter: NotificationCenter = .default,
+        debounceDuration: Duration? = .milliseconds(300)
     ) -> AsyncStream<Void> {
         AsyncStream { continuation in
             let observer = DateTimeChangeNotificationObserver(
                 notificationCenter: notificationCenter,
                 names: systemDateTimeChangeNotificationNames,
+                debounceDuration: debounceDuration,
                 continuation: continuation
             )
 
@@ -355,32 +337,61 @@ package extension MeetingsViewModel {
 private final class DateTimeChangeNotificationObserver: @unchecked Sendable {
 
     private let notificationCenter: NotificationCenter
+    private let debounceDuration: Duration?
+    private let continuation: AsyncStream<Void>.Continuation
     private let lock = NSLock()
     private var observers: [any NSObjectProtocol] = []
+    private var debounceTask: Task<Void, Never>?
 
     init(
         notificationCenter: NotificationCenter,
         names: [Notification.Name],
+        debounceDuration: Duration?,
         continuation: AsyncStream<Void>.Continuation
     ) {
         self.notificationCenter = notificationCenter
+        self.debounceDuration = debounceDuration
+        self.continuation = continuation
         self.observers = names.map { name in
             notificationCenter.addObserver(
                 forName: name,
                 object: nil,
                 queue: .main
-            ) { _ in
-                continuation.yield(())
+            ) { [weak self] _ in
+                self?.notificationReceived()
             }
         }
+    }
+
+    private func notificationReceived() {
+        guard let debounceDuration else {
+            continuation.yield(())
+            return
+        }
+
+        lock.lock()
+        debounceTask?.cancel()
+        debounceTask = Task { [continuation] in
+            do {
+                try await Task.sleep(for: debounceDuration)
+            } catch {
+                return
+            }
+
+            continuation.yield(())
+        }
+        lock.unlock()
     }
 
     func invalidate() {
         lock.lock()
         let observers = observers
+        let debounceTask = debounceTask
         self.observers.removeAll()
+        self.debounceTask = nil
         lock.unlock()
 
+        debounceTask?.cancel()
         observers.forEach(notificationCenter.removeObserver)
     }
 
