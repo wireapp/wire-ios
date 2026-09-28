@@ -670,6 +670,57 @@ struct MeetingsViewModelTests {
         #expect(viewModel.loadedMeetings.map(\.title) == ["Updated"])
     }
 
+    @Test("system date and time changes schedule a silent reload after an in-flight fetch")
+    func systemDateTimeChanges_reloadAfterInFlightFetch() async {
+        let initial = Meeting.fixture(title: "Initial", start: mockDateProvider.now.addingTimeInterval(3600))
+        let updated = Meeting.fixture(title: "Updated", start: mockDateProvider.now.addingTimeInterval(3600))
+        let (fetchStarted, fetchStartedContinuation) = AsyncStream<Int>.makeStream()
+        var fetchStartedIterator = fetchStarted.makeAsyncIterator()
+        var fetchContinuations: [CheckedContinuation<PaginatedMeetings, Never>] = []
+        var fetchCount = 0
+        upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsClosure = { _, _ in
+            fetchCount += 1
+            let currentFetchCount = fetchCount
+            return await withCheckedContinuation { continuation in
+                fetchContinuations.append(continuation)
+                fetchStartedContinuation.yield(currentFetchCount)
+            }
+        }
+
+        let loadTask = Task {
+            await viewModel.loadInitialData()
+        }
+        #expect(await fetchStartedIterator.next() == 1)
+
+        let (changes, continuation) = AsyncStream<Void>.makeStream()
+        let observeTask = Task {
+            await viewModel.observeSystemDateTimeChanges(changes)
+        }
+        let updatedDate = mockDateProvider.now.addingTimeInterval(3600)
+        mockDateProvider.now = updatedDate
+        continuation.yield(())
+        await Task.yield()
+
+        #expect(viewModel.currentDate == updatedDate)
+        #expect(upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsCallsCount == 1)
+
+        fetchContinuations[0].resume(
+            returning: PaginatedMeetings(meetings: [initial], hasMore: false, nextOffset: 1)
+        )
+        #expect(await fetchStartedIterator.next() == 2)
+
+        fetchContinuations[1].resume(
+            returning: PaginatedMeetings(meetings: [updated], hasMore: false, nextOffset: 1)
+        )
+        continuation.finish()
+
+        await loadTask.value
+        await observeTask.value
+
+        #expect(viewModel.loadedMeetings.map(\.title) == ["Updated"])
+        #expect(upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsCallsCount == 2)
+    }
+
     @Test("system date and time changes debounce consecutive refreshes")
     func systemDateTimeChanges_debouncesConsecutiveRefreshes() async {
         let notificationCenter = NotificationCenter()

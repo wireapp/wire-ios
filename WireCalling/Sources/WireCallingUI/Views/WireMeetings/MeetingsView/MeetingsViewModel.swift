@@ -102,6 +102,7 @@ package final class MeetingsViewModel {
     private let initialPageSize: Int = 20
     private let pageSize: Int = 20
     private var isFetching = false
+    private var needsSilentReloadAfterFetch = false
 
     private let grouper = MeetingsGrouper()
 
@@ -272,7 +273,13 @@ package final class MeetingsViewModel {
     /// Re-fetches everything that is currently loaded in a single page, because a
     /// change can insert or remove meetings anywhere in the loaded range.
     private func reloadLoadedMeetings(showsLoadingIndicator: Bool = true) async {
-        guard !isFetching else { return }
+        guard !isFetching else {
+            if !showsLoadingIndicator {
+                needsSilentReloadAfterFetch = true
+            }
+            return
+        }
+
         let reloadSize = max(loadedOccurrences.count, initialPageSize)
         futureOffset = 0
         await load(pageSize: reloadSize, showsLoadingIndicator: showsLoadingIndicator)
@@ -284,27 +291,35 @@ package final class MeetingsViewModel {
             isLoading = true
         }
         hasLoadError = false
-        defer {
-            isFetching = false
-            if showsLoadingIndicator {
-                isLoading = false
+
+        do {
+            defer {
+                isFetching = false
+                if showsLoadingIndicator {
+                    isLoading = false
+                }
+            }
+
+            do {
+                let result = try await upcomingMeetingsUseCase.invoke(pageSize: pageSize, offset: futureOffset)
+                if futureOffset == 0 {
+                    loadedOccurrences = result.occurrences
+                } else {
+                    loadedOccurrences += result.occurrences
+                }
+
+                futureOffset = result.nextOffset
+                hasMore = result.hasMore
+            } catch {
+                hasMore = false
+                hasLoadError = true
+                WireLogger.meetings.error("failed to fetch upcoming meetings: \(String(reflecting: error))")
             }
         }
 
-        do {
-            let result = try await upcomingMeetingsUseCase.invoke(pageSize: pageSize, offset: futureOffset)
-            if futureOffset == 0 {
-                loadedOccurrences = result.occurrences
-            } else {
-                loadedOccurrences += result.occurrences
-            }
-
-            futureOffset = result.nextOffset
-            hasMore = result.hasMore
-        } catch {
-            hasMore = false
-            hasLoadError = true
-            WireLogger.meetings.error("failed to fetch upcoming meetings: \(String(reflecting: error))")
+        if needsSilentReloadAfterFetch {
+            needsSilentReloadAfterFetch = false
+            await reloadLoadedMeetings(showsLoadingIndicator: false)
         }
     }
 
