@@ -4770,8 +4770,8 @@
         },
         "de" : {
           "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@ updated this meeting to %2$@ · %3$@ to %4$@"
+            "state" : "translated",
+            "value" : "%1$@ hat dieses Meeting zu %2$@ · %3$@ zu %4$@ aktualisiert"
           }
         },
         "en" : {
