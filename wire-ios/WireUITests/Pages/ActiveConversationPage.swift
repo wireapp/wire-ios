@@ -436,6 +436,21 @@ class ActiveConversationPage: PageModel {
         return self
     }
 
+    @discardableResult
+    func reactToMessage(_ message: XCUIElement, withEmoji emoji: String) -> ActiveConversationPage {
+        XCTAssertTrue(
+            message.waitForExistence(timeout: 5),
+            "Expected message to react to was not found, possible that not being sent via testService"
+        )
+        message.press(forDuration: 1.0)
+        XCTAssertTrue(app.buttons[emoji].firstMatch.waitAndTap(), "Reaction button '\(emoji)' was not found")
+        return self
+    }
+
+    func reactionIndicator(emoji: String, count: Int = 1) -> XCUIElement {
+        app.descendants(matching: .any)["value: \(emoji), count: \(count)"].firstMatch
+    }
+
     func quotedContent(ofType type: String) -> XCUIElement {
         app.descendants(matching: .any)["quote.type.\(type)"].firstMatch
     }
