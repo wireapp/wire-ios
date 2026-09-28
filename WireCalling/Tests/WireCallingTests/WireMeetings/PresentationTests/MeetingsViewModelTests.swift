@@ -43,6 +43,11 @@ struct MeetingsViewModelTests {
         mockDateProvider.now = try Date.ISO8601FormatStyle().parse("2025-10-27T13:59:59Z")
         self.formatter = MeetingsFormatter()
         self.upcomingMeetingsUseCase = FetchUpcomingMeetingsUseCaseProtocolMock()
+        upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsReturnValue = PaginatedMeetings(
+            meetings: [],
+            hasMore: false,
+            nextOffset: 0
+        )
         self.observeMeetingChangesUseCase = ObserveMeetingChangesUseCaseProtocolMock()
         self.deleteMeetingUseCase = DeleteMeetingUseCaseProtocolMock()
         self.observeAttendedMeetingsUseCase = ObserveAttendedMeetingsUseCaseProtocolMock()
@@ -598,6 +603,33 @@ struct MeetingsViewModelTests {
 
         await task.value
         #expect(viewModel.currentDate == updatedDate)
+    }
+
+    @Test("system date and time changes reload loaded meetings")
+    func systemDateTimeChanges_reloadLoadedMeetings() async {
+        let initial = Meeting.fixture(title: "Initial", start: mockDateProvider.now.addingTimeInterval(3600))
+        let updated = Meeting.fixture(title: "Updated", start: mockDateProvider.now.addingTimeInterval(3600))
+        upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsClosure = { _, _ in
+            PaginatedMeetings(meetings: [initial], hasMore: false, nextOffset: 1)
+        }
+        await viewModel.loadInitialData()
+
+        upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsClosure = { _, _ in
+            PaginatedMeetings(meetings: [updated], hasMore: false, nextOffset: 1)
+        }
+        let (changes, continuation) = AsyncStream<Void>.makeStream()
+        let task = Task {
+            await viewModel.observeSystemDateTimeChanges(changes)
+        }
+        continuation.yield(())
+        continuation.finish()
+
+        await task.value
+
+        #expect(viewModel.loadedMeetings.map(\.title) == ["Updated"])
+        let lastInvocation = upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsReceivedInvocations.last
+        #expect(lastInvocation?.pageSize == 20)
+        #expect(lastInvocation?.offset == 0)
     }
 
     @Test("system date and time notifications are observed")

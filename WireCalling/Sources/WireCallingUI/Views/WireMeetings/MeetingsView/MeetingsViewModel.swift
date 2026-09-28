@@ -176,7 +176,7 @@ package final class MeetingsViewModel {
 
     func observeSystemDateTimeChanges(_ changes: AsyncStream<Void>) async {
         for await _ in changes {
-            refreshSystemDateTimeState()
+            await refreshSystemDateTimeState()
         }
     }
 
@@ -184,10 +184,11 @@ package final class MeetingsViewModel {
         currentDate = currentDateProvider.now
     }
 
-    func refreshSystemDateTimeState() {
+    func refreshSystemDateTimeState() async {
         formatter.refresh()
         grouper.refresh()
         refreshCurrentDate()
+        await reloadLoadedMeetings()
     }
 
     /// Meeting start times are always minute-aligned, so the refresh is scheduled on the
