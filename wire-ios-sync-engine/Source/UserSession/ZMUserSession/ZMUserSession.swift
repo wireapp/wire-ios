@@ -1188,7 +1188,7 @@ extension ZMUserSession: ZMNetworkStateDelegate {
             }
     }
 
-    /// Keeps the stored e2ei activation date in sync
+    /// Resets the e2ei grace-period clock whenever e2ei is enabled or disabled.
     private func observeE2EIActivationDate() {
         observeFeatureStates()
             .filter { $0.name == .e2ei }
