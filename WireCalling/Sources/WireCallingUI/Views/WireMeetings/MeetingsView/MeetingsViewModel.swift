@@ -20,6 +20,7 @@ package import Foundation
 package import WireCallingDomain
 package import WireFoundation
 
+import os
 import UIKit
 import WireLogging
 
@@ -101,6 +102,7 @@ package final class MeetingsViewModel {
     private var futureOffset: Int = 0
     private let initialPageSize: Int = 20
     private let pageSize: Int = 20
+    private var isFetching = false
 
     private let grouper = MeetingsGrouper()
 
@@ -130,14 +132,14 @@ package final class MeetingsViewModel {
     }
 
     func loadInitialData() async {
-        guard !isLoading else { return }
+        guard !isFetching else { return }
         futureOffset = 0
         hasMore = false
         await load(pageSize: initialPageSize)
     }
 
     func loadMoreIfNeeded() async {
-        guard hasMore, !isLoading else { return }
+        guard hasMore, !isFetching else { return }
         await load(pageSize: pageSize)
     }
 
@@ -185,10 +187,12 @@ package final class MeetingsViewModel {
     }
 
     func refreshSystemDateTimeState() async {
+        let logger = os.Logger(subsystem: Bundle.main.bundleIdentifier!, category: "refresh")
+        logger.critical("refreshing meetings view model")
         formatter.refresh()
         grouper.refresh()
         refreshCurrentDate()
-        await reloadLoadedMeetings()
+        await reloadLoadedMeetings(showsLoadingIndicator: false)
     }
 
     /// Meeting start times are always minute-aligned, so the refresh is scheduled on the
@@ -270,17 +274,25 @@ package final class MeetingsViewModel {
 
     /// Re-fetches everything that is currently loaded in a single page, because a
     /// change can insert or remove meetings anywhere in the loaded range.
-    private func reloadLoadedMeetings() async {
-        guard !isLoading else { return }
+    private func reloadLoadedMeetings(showsLoadingIndicator: Bool = true) async {
+        guard !isFetching else { return }
         let reloadSize = max(loadedOccurrences.count, initialPageSize)
         futureOffset = 0
-        await load(pageSize: reloadSize)
+        await load(pageSize: reloadSize, showsLoadingIndicator: showsLoadingIndicator)
     }
 
-    private func load(pageSize: Int) async {
-        isLoading = true
+    private func load(pageSize: Int, showsLoadingIndicator: Bool = true) async {
+        isFetching = true
+        if showsLoadingIndicator {
+            isLoading = true
+        }
         hasLoadError = false
-        defer { isLoading = false }
+        defer {
+            isFetching = false
+            if showsLoadingIndicator {
+                isLoading = false
+            }
+        }
 
         do {
             let result = try await upcomingMeetingsUseCase.invoke(pageSize: pageSize, offset: futureOffset)
