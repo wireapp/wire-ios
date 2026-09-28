@@ -98,10 +98,15 @@ package final class MeetingsViewModel {
     private let selfUserID: UUID
     private let observeAttendedMeetingsUseCase: (any ObserveAttendedMeetingsUseCaseProtocol)?
 
+    /// Offset for the next page of expanded future occurrences.
     private var futureOffset: Int = 0
+    /// Number of occurrences loaded for the first page and full-range refresh fallback.
     private let initialPageSize: Int = 20
+    /// Number of occurrences loaded by subsequent pagination requests.
     private let pageSize: Int = 20
+    /// Internal fetch guard used to prevent overlapping loads, independently of visible loading UI.
     private var isFetching = false
+    /// Whether a silent system-date refresh should run after the active fetch finishes.
     private var needsSilentReloadAfterFetch = false
 
     private let grouper = MeetingsGrouper()
