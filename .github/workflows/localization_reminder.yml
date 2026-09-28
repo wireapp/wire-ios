@@ -76,11 +76,7 @@ jobs:
             done <<< "$CHANGED_STRINGS"
           fi
 
-          # .xcstrings files hold every locale in one JSON file, so adding a
-          # translation for an existing key (e.g. Russian) can reshuffle
-          # unrelated lines and make them look "added" in a line-based diff.
-          # Compare key sets between base and head instead, same as the
-          # .strings case above, so only genuinely new keys are reported.
+          # Compare base and head key sets.
           CHANGED_XCSTRINGS=$(git diff --name-only "$BASE_SHA" "$HEAD_SHA" \
             | grep '\.xcstrings$' \
             | grep -v 'vendor/' \
