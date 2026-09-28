@@ -504,7 +504,7 @@ class ActiveConversationPage: PageModel {
         return self
     }
 
-    func tapMention(ofUser name: String) throws -> UserProfilePage {
+    func tapMention(ofUser name: String) throws -> UserDetailsPage {
         let mentionLabel = [
             "@\(name)",
             "@\(name.replacingOccurrences(of: " ", with: "\u{00A0}"))"
@@ -519,7 +519,7 @@ class ActiveConversationPage: PageModel {
         )
 
         mentionLink.tap()
-        return try UserProfilePage()
+        return try UserDetailsPage()
     }
 
     @discardableResult

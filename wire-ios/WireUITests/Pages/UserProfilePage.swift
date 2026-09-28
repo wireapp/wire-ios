@@ -63,7 +63,7 @@ class UserProfilePage: PageModel {
     }
 
     var userProfilePicture: XCUIElement {
-        app.descendants(matching: .any)[Locators.UserProfilePage.userProfilePicture.rawValue]
+        app.buttons[Locators.UserProfilePage.userProfilePicture.rawValue]
     }
 
     var createTeamButton: XCUIElement {

@@ -320,12 +320,12 @@ final class TeamManageTests: WireUITestCase {
         )
 
         // ...and taps the mention in the received message
-        let userProfilePage = try conversationPage
+        let userDetailsPage = try conversationPage
             .openConversation()
             .tapMention(ofUser: mentionedUser.name)
 
         // THEN the correct user's profile opens
-        userProfilePage
+        userDetailsPage
             .verifyName(mentionedUser.name)
             .verifyUsername(mentionedUser.username)
     }
