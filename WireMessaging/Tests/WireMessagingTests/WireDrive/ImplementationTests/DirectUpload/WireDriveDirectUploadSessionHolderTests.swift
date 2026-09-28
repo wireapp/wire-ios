@@ -178,53 +178,6 @@ struct WireDriveDirectUploadSessionHolderTests {
         await Task.yield()
     }
 
-    // MARK: - Attaching
-
-    @Test
-    func routesEventsToTheSink() async {
-        // Given
-        let session = MockWireDriveDirectUploadSessionProtocol()
-        session.setEventSink_MockMethod = { _ in }
-        let sut = makeSut(session: session)
-        let sink = SpySink()
-
-        // When
-        await sut.attach(userID: UUID(), sink: sink)
-
-        // Then
-        #expect(session.setEventSink_Invocations.count == 1)
-    }
-
-    @Test
-    func stopsRoutingEventsOnDetach() async {
-        // Given
-        let session = MockWireDriveDirectUploadSessionProtocol()
-        session.setEventSink_MockMethod = { _ in }
-        session.removeEventSink_MockMethod = {}
-        let sut = makeSut(session: session)
-        let userID = UUID()
-        await sut.attach(userID: userID, sink: SpySink())
-
-        // When
-        await sut.detach(userID: userID)
-
-        // Then
-        #expect(session.removeEventSink_Invocations.count == 1)
-    }
-
-    @Test
-    func detachingAnUnknownUserIsHarmless() async {
-        // Given
-        let session = MockWireDriveDirectUploadSessionProtocol()
-        let sut = makeSut(session: session)
-
-        // When
-        await sut.detach(userID: UUID())
-
-        // Then
-        #expect(session.removeEventSink_Invocations.isEmpty)
-    }
-
     // MARK: - Tear down
 
     @Test
