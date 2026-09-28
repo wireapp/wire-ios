@@ -44,9 +44,6 @@ package final class WireDriveDirectUploadManager:
 
         /// Pre-check and presign concurrency.
         static let maxConcurrentPreparations = 4
-
-        /// A ceiling on uploads with work left to do, as a backstop against a retry-all storm.
-        static let maxActiveUploads = 60
     }
 
     // MARK: - Dependencies
@@ -135,15 +132,14 @@ package final class WireDriveDirectUploadManager:
 
     package func start() async {
         guard !didStart else { return }
-        let persisted: [WireDriveDirectUploadRecord]
+
+        var persisted: [WireDriveDirectUploadRecord] = []
         do {
             persisted = try await store.fetchAll()
+            didStart = true
         } catch {
             WireLogger.wireDrive.error("failed to load persisted drive uploads, deferring start: \(error)")
-            return
         }
-
-        didStart = true
 
         for record in persisted where records[record.uploadID] == nil {
             records[record.uploadID] = record
@@ -151,9 +147,9 @@ package final class WireDriveDirectUploadManager:
 
         publishToTracker(replacingAll: true)
 
-        // Buffered events predate any task snapshot, so they must be applied first or a completed
-        // upload could be restarted.
         await session.setEventSink(self)
+
+        guard didStart else { return }
 
         await reconcile()
         sweepOrphanedStagedFiles()
@@ -184,7 +180,7 @@ package final class WireDriveDirectUploadManager:
             throw WireDriveDirectUploadBatchError.noFiles
         }
 
-        guard activeRecords.count + sources.count <= WireDriveDirectUploadLimits.maxFilesPerBatch else {
+        guard sources.count <= WireDriveDirectUploadLimits.maxFilesPerBatch else {
             throw WireDriveDirectUploadBatchError.tooManyFiles(limit: WireDriveDirectUploadLimits.maxFilesPerBatch)
         }
 
@@ -242,6 +238,12 @@ package final class WireDriveDirectUploadManager:
         try? await store.upsert(records: admitted)
         publishToTracker()
 
+        let uploadIDs = admitted.map(\.uploadID)
+        scheduleDeferred(batchID) { [weak self] in
+            await self?.prepareAndStart(uploadIDs: uploadIDs)
+        }
+
+        // Items above the limit will not be uploaded, surfaces up the error to the user.
         if admitted.count < staged.count {
             let admittedIDs = Set(admitted.map(\.uploadID))
             let dropped = staged.filter { !admittedIDs.contains($0.uploadID) }
@@ -250,16 +252,9 @@ package final class WireDriveDirectUploadManager:
                 try? fileCache.delete(stagedFileName: record.stagedFileName)
             }
 
-            WireLogger.wireDrive.warn(
-                "drive upload batch truncated: \(dropped.count) file(s) exceeded the active upload ceiling"
-            )
+            throw WireDriveDirectUploadBatchError.tooManyFiles(limit: WireDriveDirectUploadLimits.maxFilesPerBatch)
         }
-
-        let uploadIDs = admitted.map(\.uploadID)
-        scheduleDeferred(batchID) { [weak self] in
-            await self?.prepareAndStart(uploadIDs: uploadIDs)
-        }
-
+        
         return batchID
     }
 
@@ -363,7 +358,7 @@ package final class WireDriveDirectUploadManager:
     /// The prefix of `candidates` that fits within the active upload ceiling, oldest first.
 
     private func admissible(candidates: [WireDriveDirectUploadRecord]) -> [WireDriveDirectUploadRecord] {
-        let capacity = max(0, Constants.maxActiveUploads - activeRecords.count)
+        let capacity = max(0, WireDriveDirectUploadLimits.maxFilesPerBatch - activeRecords.count)
         guard capacity > 0 else { return [] }
 
         return candidates
