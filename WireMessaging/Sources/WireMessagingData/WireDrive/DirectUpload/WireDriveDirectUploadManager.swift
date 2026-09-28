@@ -243,9 +243,15 @@ package final class WireDriveDirectUploadManager:
         publishToTracker()
 
         if admitted.count < staged.count {
-            let dropped = staged.count - admitted.count
+            let admittedIDs = Set(admitted.map(\.uploadID))
+            let dropped = staged.filter { !admittedIDs.contains($0.uploadID) }
+
+            for record in dropped {
+                try? fileCache.delete(stagedFileName: record.stagedFileName)
+            }
+
             WireLogger.wireDrive.warn(
-                "drive upload batch truncated: \(dropped) file(s) exceeded the active upload ceiling"
+                "drive upload batch truncated: \(dropped.count) file(s) exceeded the active upload ceiling"
             )
         }
 
