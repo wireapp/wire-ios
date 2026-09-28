@@ -20,7 +20,6 @@ package import Foundation
 package import WireCallingDomain
 package import WireFoundation
 
-import os
 import UIKit
 import WireLogging
 
@@ -187,8 +186,6 @@ package final class MeetingsViewModel {
     }
 
     func refreshSystemDateTimeState() async {
-        let logger = os.Logger(subsystem: Bundle.main.bundleIdentifier!, category: "refresh")
-        logger.critical("refreshing meetings view model")
         formatter.refresh()
         grouper.refresh()
         refreshCurrentDate()
