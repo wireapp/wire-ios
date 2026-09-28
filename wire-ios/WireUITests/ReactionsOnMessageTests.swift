@@ -159,7 +159,61 @@ final class ReactionsOnMessageTests: WireUITestCase {
         // THEN - no reaction option offered
         XCTAssertFalse(
             app.buttons["❤️"].firstMatch.waitForExistence(timeout: 2),
-            "Reaction picker should not be offered for self-deleting messages"
+            "Reaction picker should not be shown for self-deleting messages"
+        )
+    }
+
+    @MainActor
+    func testEditingMessageRemovesReaction_TC_11828() async throws {
+
+        // GIVEN
+        let originalTextMessage = UserGenerator.generateRandomMessage()
+        let editedTextMessage = "\(originalTextMessage)-Edited"
+        let groupTeam = try await registerGroupTeam()
+
+        let activeConversationPage = try app.loginUser(
+            email: groupTeam.teamOwner.email,
+            password: groupTeam.teamOwner.password
+        )
+        .acceptPopup()
+        .openConversation()
+
+        let originalMessageId = try await testServicesClient.sendText(
+            user: groupTeam.teamMember,
+            text: originalTextMessage,
+            conversationId: groupTeam.conversationId,
+            domain: groupTeam.conversationDomain,
+            returnMessageId: true
+        )
+
+        let message = activeConversationPage.message(withText: originalTextMessage)
+
+        // WHEN - logged-in user reacts to the message
+        activeConversationPage.reactToMessage(message, withEmoji: "❤️")
+
+        // THEN
+        XCTAssertTrue(
+            activeConversationPage.reactionIndicator(emoji: "❤️").waitForExistence(timeout: 5),
+            "Expected reaction ❤️ was not shown on message"
+        )
+
+        // WHEN - sender edits the message
+        try await testServicesClient.updateText(
+            user: groupTeam.teamMember,
+            originalMessageId: originalMessageId,
+            newText: editedTextMessage,
+            conversationId: groupTeam.conversationId,
+            domain: groupTeam.conversationDomain
+        )
+
+        // THEN - edited message is shown and reaction is removed
+        XCTAssertTrue(
+            activeConversationPage.message(withText: editedTextMessage).waitForExistence(timeout: 5),
+            "Expected edited message was not found"
+        )
+        XCTAssertFalse(
+            activeConversationPage.reactionIndicator(emoji: "❤️").waitForExistence(timeout: 2),
+            "Reaction still shown after the message is edited"
         )
     }
 }
