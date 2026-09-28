@@ -36,6 +36,7 @@ final class GroupDetailsSharedDriveCellTests: CoreDataSnapshotTestCase {
         snapshotHelper = SnapshotHelper()
         cell = GroupDetailsSharedDriveCell(frame: CGRect(x: 0, y: 0, width: 350, height: 56))
         conversation = createGroupConversation()
+        conversation.cellsState = .ready
     }
 
     // MARK: - tearDown

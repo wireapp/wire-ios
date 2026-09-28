@@ -46,14 +46,14 @@ package struct DetermineAuthMethodUseCase: DetermineAuthMethodUseCaseProtocol {
 
             do {
                 let ssoCode = try await authenticationAPI.getSSOCode(forEmail: email)
-                return .loginViaSSO(code: ssoCode)
+                return .loginViaSSO(code: ssoCode, multiIngressIdentityProviderID: ssoCode)
             } catch AuthenticationAPIError.unsupportedEndpointForAPIVersion, AuthenticationAPIError.ssoCodeNotFound {
                 // back to default behaviour - no default sso code
                 return try await determineAuthMethod(email: email, domain: domain)
             }
 
         case let .ssoCode(ssoCode):
-            return .loginViaSSO(code: ssoCode)
+            return .loginViaSSO(code: ssoCode, multiIngressIdentityProviderID: ssoCode)
         }
     }
 
@@ -103,7 +103,7 @@ package struct DetermineAuthMethodUseCase: DetermineAuthMethodUseCaseProtocol {
             guard let ssoCode = configuration.ssoCode else {
                 throw AuthenticationAPIError.invalidResponse
             }
-            return .loginViaSSO(code: ssoCode)
+            return .loginViaSSO(code: ssoCode, multiIngressIdentityProviderID: ssoCode)
 
         case .backend:
             guard let configURL = configuration.backendURL else {

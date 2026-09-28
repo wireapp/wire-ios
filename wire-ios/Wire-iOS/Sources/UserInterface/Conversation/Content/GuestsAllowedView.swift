@@ -46,11 +46,10 @@ final class GuestsAllowedView: UIView {
         stackView.alignment = .leading
         stackView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(stackView)
-        // TODO: [WPB-25941] Remove developer flag when feature is complete
         [
             titleLabel,
             inviteButton,
-            isWireDriveEnabled && DeveloperFlag.enableDrivePermissions.isOn ? wireDriveViewerAccessLabel : nil
+            isWireDriveEnabled ? wireDriveViewerAccessLabel : nil
         ]
         .compactMap(\.self)
         .forEach(stackView.addArrangedSubview)
@@ -64,13 +63,10 @@ final class GuestsAllowedView: UIView {
         inviteButton.setTitle(buttonTitle, for: .normal)
         inviteButton.addTarget(self, action: #selector(handleInviteTapped), for: .touchUpInside)
 
-        // TODO: [WPB-25941] Remove developer flag when feature is complete
-        if isWireDriveEnabled, DeveloperFlag.enableDrivePermissions.isOn {
-            wireDriveViewerAccessLabel.text = System.FileCollaboration.DriveViewerAccess.title
-            wireDriveViewerAccessLabel.numberOfLines = 0
-            wireDriveViewerAccessLabel.textColor = ColorTheme.Backgrounds.onSurface
-            wireDriveViewerAccessLabel.font = FontSpec.mediumFont.font!
-        }
+        wireDriveViewerAccessLabel.text = System.FileCollaboration.DriveViewerAccess.title
+        wireDriveViewerAccessLabel.numberOfLines = 0
+        wireDriveViewerAccessLabel.textColor = ColorTheme.Backgrounds.onSurface
+        wireDriveViewerAccessLabel.font = FontSpec.mediumFont.font!
     }
 
     private func createConstraints() {

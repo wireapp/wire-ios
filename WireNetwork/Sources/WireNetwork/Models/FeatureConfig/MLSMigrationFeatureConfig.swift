@@ -34,14 +34,22 @@ public struct MLSMigrationFeatureConfig: Equatable, Sendable, Hashable {
 
     public let finaliseRegardlessAfter: Date?
 
+    /// Whether the user can manually trigger the migration.
+    ///
+    /// Available starting API v14.
+
+    public let allowManualMigration: Bool?
+
     public init(
         status: FeatureConfigStatus,
         startTime: Date? = nil,
-        finaliseRegardlessAfter: Date? = nil
+        finaliseRegardlessAfter: Date? = nil,
+        allowManualMigration: Bool? = nil
     ) {
         self.status = status
         self.startTime = startTime
         self.finaliseRegardlessAfter = finaliseRegardlessAfter
+        self.allowManualMigration = allowManualMigration
     }
 
 }

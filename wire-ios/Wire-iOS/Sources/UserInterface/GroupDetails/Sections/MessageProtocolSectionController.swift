@@ -195,14 +195,20 @@ final class MessageProtocolSectionController: GroupDetailsSectionController {
                 return false
             }
 
-            let isMLSMigrationFeatureEnabled = await userSession.clientSessionComponent?
-                .featureConfigRepository.isFeatureEnabled(.mlsMigration) ?? false
-
-            if !isMLSMigrationFeatureEnabled {
+            guard let mlsMigrationConfig = try? await userSession.clientSessionComponent?
+                .featureConfigRepository.fetchMLSMigrationConfig(),
+                mlsMigrationConfig.status == .enabled
+            else {
                 Self.logger.debug("manual MLS migration denied: mlsMigration feature is not enabled")
+                return false
             }
 
-            return isMLSMigrationFeatureEnabled
+            guard mlsMigrationConfig.config?.allowManualMigration == true else {
+                Self.logger.debug("manual MLS migration denied: manual migration is not allowed")
+                return false
+            }
+
+            return true
         }
     }
 

@@ -1,0 +1,189 @@
+name: Localization Reminder
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - '**/en.lproj/*.strings'
+      - '**/Base.lproj/*.strings'
+      - '**/*.xcstrings'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check-localizations:
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          fetch-depth: 0
+
+      - name: Collect new string keys and English values
+        id: check
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_AUTHOR: ${{ github.event.pull_request.user.login }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+        run: |
+          BASE_SHA=${{ github.event.pull_request.base.sha }}
+          HEAD_SHA=${{ github.event.pull_request.head.sha }}
+
+          NEW_KEYS=""
+
+          # .strings files: report keys whose name doesn't exist in the base
+          # file yet (a value-only edit of an existing key also shows up as a
+          # "+" diff line, so we compare key sets rather than diff output).
+          CHANGED_STRINGS=$(git diff --name-only "$BASE_SHA" "$HEAD_SHA" \
+            | grep -E '(en|Base)\.lproj/.*\.strings$' \
+            | grep -v 'vendor/' \
+            | grep -v 'Carthage/') || true
+
+          if [ -n "$CHANGED_STRINGS" ]; then
+            while IFS= read -r file; do
+              [ -z "$file" ] && continue
+              BASE_KEYS=$(git show "$BASE_SHA:$file" 2>/dev/null \
+                | grep -oE '^"[^"]+" *=' \
+                | sed -E 's/^"([^"]*)".*/\1/') || true
+              HEAD_LINES=$(git show "$HEAD_SHA:$file" 2>/dev/null \
+                | grep -E '^"[^"]+" *= *"') || true
+              [ -z "$HEAD_LINES" ] && continue
+
+              while IFS= read -r line; do
+                [ -z "$line" ] && continue
+                key=$(echo "$line" | sed -E 's/^"([^"]*)".*/\1/')
+                if ! printf '%s\n' "$BASE_KEYS" | grep -qxF "$key"; then
+                  value=$(echo "$line" | sed -E 's/^"[^"]*" *= *"(.*)";.*/\1/')
+                  ENTRY="\`$key\` = \"$value\""
+                  if [ -n "$NEW_KEYS" ]; then
+                    NEW_KEYS="$NEW_KEYS"$'\n'"$ENTRY"
+                  else
+                    NEW_KEYS="$ENTRY"
+                  fi
+                fi
+              done <<< "$HEAD_LINES"
+            done <<< "$CHANGED_STRINGS"
+          fi
+
+          # .xcstrings files: a genuinely new key always adds a new top-level
+          # "key" : { line, so this stays accurate even for value-only edits.
+          CHANGED_XCSTRINGS=$(git diff --name-only "$BASE_SHA" "$HEAD_SHA" \
+            | grep '\.xcstrings$' \
+            | grep -v 'vendor/' \
+            | grep -v 'Carthage/') || true
+
+          if [ -n "$CHANGED_XCSTRINGS" ]; then
+            for file in $CHANGED_XCSTRINGS; do
+              NEW_IN_FILE=$(git diff "$BASE_SHA" "$HEAD_SHA" -- "$file" \
+                | grep '^+' | grep -v '^+++' \
+                | grep -E '^\+    "[^"]+" : \{' \
+                | sed 's/^+    "\([^"]*\)".*/\1/') || true
+
+              while IFS= read -r key; do
+                [ -z "$key" ] && continue
+                EN_VALUE=$(jq -r --arg k "$key" \
+                  '.strings[$k].localizations.en.stringUnit.value // "(no English value)"' "$file")
+                ENTRY="\`$key\` = \"$EN_VALUE\""
+                if [ -n "$NEW_KEYS" ]; then
+                  NEW_KEYS="$NEW_KEYS"$'\n'"$ENTRY"
+                else
+                  NEW_KEYS="$ENTRY"
+                fi
+              done <<< "$NEW_IN_FILE"
+            done
+          fi
+
+          if [ -n "$NEW_KEYS" ]; then
+            echo "has_new_strings=true" >> "$GITHUB_OUTPUT"
+            {
+              echo 'new_keys<<EOF'
+              echo "$NEW_KEYS"
+              echo EOF
+            } >> "$GITHUB_OUTPUT"
+
+            TICKET=$(echo "$PR_TITLE" | grep -oiE 'WPB-[0-9]+' | tr 'a-z' 'A-Z' | head -1 || true)
+            if [ -n "$TICKET" ]; then
+              TICKET_LINE="**Jira ticket:** [$TICKET](https://wearezeta.atlassian.net/browse/$TICKET)"
+            else
+              TICKET_LINE="**Jira ticket:** none found in PR title"
+            fi
+
+            BULLET_LIST=$(echo "$NEW_KEYS" | sed 's/^/- /')
+            MESSAGE=$(printf 'New localization strings added\n\n%s\n\n%s\n**Author:** %s\n**PR:** %s' \
+              "$BULLET_LIST" "$TICKET_LINE" "$PR_AUTHOR" "$PR_URL")
+            MESSAGE_JSON=$(printf '%s' "$MESSAGE" | jq -Rs .)
+            echo "message_json=$MESSAGE_JSON" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_new_strings=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Post localization reminder
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+        env:
+          NEW_KEYS: ${{ steps.check.outputs.new_keys }}
+          HAS_NEW_STRINGS: ${{ steps.check.outputs.has_new_strings }}
+        with:
+          script: |
+            const MARKER = '<!-- localization-reminder -->'
+            const hasNewStrings = process.env.HAS_NEW_STRINGS === 'true'
+
+            const comments = await github.paginate(github.rest.issues.listComments, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            })
+            const existing = comments.find(c => c.body.includes(MARKER))
+
+            if (!hasNewStrings) {
+              // A follow-up push may have removed the strings that triggered
+              // the original reminder — drop the now-stale comment.
+              if (existing) {
+                await github.rest.issues.deleteComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  comment_id: existing.id,
+                })
+              }
+              return
+            }
+
+            const keys = process.env.NEW_KEYS.split('\n').filter(Boolean)
+            const bulletList = keys.map(k => `- ${k}`).join('\n')
+            const body = [
+              MARKER,
+              'Please make sure new localizations are translated once merged to develop.',
+              'We need 100% German translations before releasing.',
+              '',
+              '**New strings (English):**',
+              bulletList,
+            ].join('\n')
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              })
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              })
+            }
+
+      - name: Send Wire notification
+        if: steps.check.outputs.has_new_strings == 'true'
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_LOCALIZATIONS_WEBHOOK }}
+        uses: ./.github/actions/notify-wire
+        with:
+          notify: custom
+          text: ${{ steps.check.outputs.message_json }}

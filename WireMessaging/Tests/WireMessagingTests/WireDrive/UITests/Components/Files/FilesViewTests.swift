@@ -314,8 +314,6 @@ final class FilesViewTests: XCTestCase {
             downloadState: .downloaded(cacheKey: "")
         )
         let viewModel = FilesItemViewModel.make(item: item, asset: asset, isBrowsing: true)
-        // TODO: [WPB-25941] Remove when feature is complete
-        viewModel.isDrivePermissionsFlagEnabled = true
         let view = FilesItemView(viewModel: viewModel)
             .frame(width: 390)
 

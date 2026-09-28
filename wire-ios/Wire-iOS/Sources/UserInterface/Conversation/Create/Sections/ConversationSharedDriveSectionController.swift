@@ -86,11 +86,8 @@ extension ConversationCreateSharedDriveSectionController {
             return assertionFailure("'Learn more' substring missing in subtitle")
         }
 
-        // TODO: [WPB-25941] Remove developer flag when feature is complete
-        if DeveloperFlag.enableDrivePermissions.isOn {
-            attributedText.append(NSAttributedString(string: "\n\n"))
-            attributedText.append(sharedDriveAccessAttributedString())
-        }
+        attributedText.append(NSAttributedString(string: "\n\n"))
+        attributedText.append(sharedDriveAccessAttributedString())
 
         let fullRange = NSRange(location: 0, length: attributedText.length)
 
