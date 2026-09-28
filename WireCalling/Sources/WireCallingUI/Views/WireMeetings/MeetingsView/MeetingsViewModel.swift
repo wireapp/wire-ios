@@ -174,9 +174,29 @@ package final class MeetingsViewModel {
         await observeSystemDateTimeChanges(Self.systemDateTimeChanges())
     }
 
-    func observeSystemDateTimeChanges(_ changes: AsyncStream<Void>) async {
+    func observeSystemDateTimeChanges(
+        _ changes: AsyncStream<Void>,
+        debounceDuration: Duration = .milliseconds(300)
+    ) async {
+        var refreshTask: Task<Void, Never>?
+        defer { refreshTask?.cancel() }
+
         for await _ in changes {
-            await refreshSystemDateTimeState()
+            refreshTask?.cancel()
+            refreshTask = Task { @MainActor [debounceDuration] in
+                do {
+                    try await Task.sleep(for: debounceDuration)
+                } catch {
+                    return
+                }
+
+                guard !Task.isCancelled else { return }
+                await refreshSystemDateTimeState()
+            }
+        }
+
+        if !Task.isCancelled {
+            await refreshTask?.value
         }
     }
 

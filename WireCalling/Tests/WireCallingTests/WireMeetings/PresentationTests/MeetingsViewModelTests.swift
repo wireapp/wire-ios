@@ -593,7 +593,7 @@ struct MeetingsViewModelTests {
     func systemDateTimeChanges_refreshCurrentDate() async {
         let (changes, continuation) = AsyncStream<Void>.makeStream()
         let task = Task {
-            await viewModel.observeSystemDateTimeChanges(changes)
+            await viewModel.observeSystemDateTimeChanges(changes, debounceDuration: .zero)
         }
         let updatedDate = mockDateProvider.now.addingTimeInterval(3600)
 
@@ -619,7 +619,7 @@ struct MeetingsViewModelTests {
         }
         let (changes, continuation) = AsyncStream<Void>.makeStream()
         let task = Task {
-            await viewModel.observeSystemDateTimeChanges(changes)
+            await viewModel.observeSystemDateTimeChanges(changes, debounceDuration: .zero)
         }
         continuation.yield(())
         continuation.finish()
@@ -630,6 +630,33 @@ struct MeetingsViewModelTests {
         let lastInvocation = upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsReceivedInvocations.last
         #expect(lastInvocation?.pageSize == 20)
         #expect(lastInvocation?.offset == 0)
+    }
+
+    @Test("system date and time changes debounce consecutive refreshes")
+    func systemDateTimeChanges_debouncesConsecutiveRefreshes() async {
+        let initial = Meeting.fixture(title: "Initial", start: mockDateProvider.now.addingTimeInterval(3600))
+        let updated = Meeting.fixture(title: "Updated", start: mockDateProvider.now.addingTimeInterval(3600))
+        var fetchCount = 0
+        upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsClosure = { _, _ in
+            fetchCount += 1
+            let meetings = fetchCount == 1 ? [initial] : [updated]
+            return PaginatedMeetings(meetings: meetings, hasMore: false, nextOffset: 1)
+        }
+        await viewModel.loadInitialData()
+
+        let (changes, continuation) = AsyncStream<Void>.makeStream()
+        let task = Task {
+            await viewModel.observeSystemDateTimeChanges(changes, debounceDuration: .milliseconds(10))
+        }
+        continuation.yield(())
+        continuation.yield(())
+        continuation.yield(())
+        continuation.finish()
+
+        await task.value
+
+        #expect(viewModel.loadedMeetings.map(\.title) == ["Updated"])
+        #expect(upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsCallsCount == 2)
     }
 
     @Test("system date and time notifications are observed")
@@ -686,7 +713,7 @@ struct MeetingsViewModelTests {
 
         let (changes, continuation) = AsyncStream<Void>.makeStream()
         let task = Task {
-            await viewModel.observeSystemDateTimeChanges(changes)
+            await viewModel.observeSystemDateTimeChanges(changes, debounceDuration: .zero)
         }
         continuation.yield(())
         continuation.finish()
