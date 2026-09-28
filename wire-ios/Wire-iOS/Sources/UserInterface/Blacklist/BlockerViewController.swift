@@ -330,7 +330,6 @@ extension BlockerViewController {
     private func enrollCertificateAction() async {
         do {
             try await enrollCertificate()
-            sessionManager?.didEnrollCertificateSuccessfully()
         } catch {
             WireLogger.e2ei.warn("failed to enroll certificate: \(error)")
 
@@ -371,8 +370,9 @@ extension BlockerViewController {
 
             let successEnrollmentViewController = SuccessfulCertificateEnrollmentViewController()
             successEnrollmentViewController.certificateDetails = certificateChain
-            successEnrollmentViewController.onOkTapped = { viewController in
+            successEnrollmentViewController.onOkTapped = { [weak self] viewController in
                 viewController.dismiss(animated: true)
+                self?.sessionManager?.didEnrollCertificateSuccessfully()
             }
             successEnrollmentViewController.presentOverAll()
         } catch {
