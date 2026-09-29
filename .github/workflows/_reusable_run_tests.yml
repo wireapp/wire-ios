@@ -43,7 +43,7 @@ on:
       timeout_minutes:
         type: number
         required: false
-        default: 90
+        default: 120
 
     secrets:
       ZENKINS_USERNAME:
