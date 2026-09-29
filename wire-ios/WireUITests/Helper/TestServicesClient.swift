@@ -31,8 +31,10 @@ class TestServicesClient {
     }
 
     private static func testServiceURL() -> String {
-        let useInHouseServices = ProcessInfo.processInfo
-            .environment["USE_IN_HOUSE_SERVICES"]?.lowercased() == "true"
+        let environment = ProcessInfo.processInfo.environment
+        let flag = environment["USE_IN_HOUSE_SERVICES"]?.lowercased()
+        let flagUnset = flag?.isEmpty ?? true
+        let useInHouseServices = flag == "true" || (flagUnset && environment["CI"]?.lowercased() != "true")
         let hostname = useInHouseServices ? "kalium.qa.zinfra.io" : "localhost:8080"
 
         return "http://\(hostname)"

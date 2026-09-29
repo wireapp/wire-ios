@@ -261,7 +261,7 @@ struct EnvironmentVariables {
         let environment = ProcessInfo.processInfo.environment
         let flag = environment["USE_IN_HOUSE_SERVICES"]?.lowercased()
         let flagUnset = flag?.isEmpty ?? true
-        // Local runs keep using internal calling service, while Testservice stays local unless CI sets the flag.
+        // Local runs use in-house services by default
         let useInHouseServices = flag == "true" || (flagUnset && environment["CI"]?.lowercased() != "true")
 
         if useInHouseServices {
