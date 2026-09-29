@@ -71,4 +71,17 @@ class ConversationTests_Federation: ZMConversationTestsBase {
         // When / Then
         XCTAssertFalse(sut.isFederating(with: user))
     }
+
+    func testThatSettingEmptyDomainDirectlyIsTreatedAsNil() {
+        // When
+        sut.domain = ""
+
+        // Then
+        // The `domain` setter itself must normalize "" to nil, since call sites like
+        // ConversationEventPayloadProcessor.swift and ConversationLocalStore+Metadata.swift assign
+        // the backend's qualified_id.domain directly. Otherwise this conversation's `primaryKey`
+        // would differ from a row created with domain == nil for the same remoteIdentifier,
+        // producing an undetected duplicate (WPB-22498).
+        XCTAssertNil(sut.domain)
+    }
 }

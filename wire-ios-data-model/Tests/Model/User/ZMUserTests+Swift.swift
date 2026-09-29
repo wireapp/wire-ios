@@ -1195,6 +1195,35 @@ extension ZMUserTests_Swift {
 // MARK: - Domain tests
 
 extension ZMUserTests_Swift {
+    func testThatFetchDoesNotCrashWhenTwoUsersMatchTheSameIdentity() {
+        // given
+        // Two rows for the same identity should never happen (that's exactly what fetchOrCreate's
+        // sync-context discipline and the `primaryKey` uniqueness constraint are meant to
+        // prevent), but if it does, the lookup must not crash the app - see fix in
+        // ZMManagedObject.m (WPB-22498).
+        let uuid = UUID.create()
+
+        let first = ZMUser.insertNewObject(in: uiMOC)
+        first.remoteIdentifier = uuid
+
+        let second = ZMUser.insertNewObject(in: uiMOC)
+        second.remoteIdentifier = uuid
+
+        try! uiMOC.save()
+
+        // Drop uiMOC's own tracking of these objects so the lookup below is forced through a
+        // real NSFetchRequest (matching ZMManagedObject.m's registeredObjects-then-fetch-request
+        // flow), instead of short-circuiting on whichever one it finds already registered.
+        uiMOC.reset()
+
+        // when
+        let result = ZMUser.fetch(with: uuid, domain: nil, in: uiMOC)
+
+        // then
+        XCTAssertNotNil(result)
+        XCTAssertEqual(result?.remoteIdentifier, uuid)
+    }
+
     func testThatItTreatsEmptyDomainAsNil() {
         // given
         let uuid = UUID.create()
@@ -1207,6 +1236,23 @@ extension ZMUserTests_Swift {
             XCTAssertEqual(uuid, created.remoteIdentifier)
             XCTAssertEqual(nil, created.domain)
         }
+    }
+
+    func testThatSettingEmptyDomainDirectlyIsTreatedAsNil() {
+        // given
+        let user = ZMUser.insertNewObject(in: uiMOC)
+        user.remoteIdentifier = UUID.create()
+
+        // when
+        user.domain = ""
+
+        // then
+        // Not just fetchOrCreate (see testThatItTreatsEmptyDomainAsNil): the `domain` setter itself
+        // must normalize "" to nil, since other call sites (ZMUser.m's updateWithTransportData:,
+        // UserProfilePayloadProcessor.swift) assign the backend's qualified_id.domain directly.
+        // Otherwise this user's `primaryKey` would differ from a row created with domain == nil for
+        // the same remoteIdentifier, producing an undetected duplicate (WPB-22498).
+        XCTAssertNil(user.domain)
     }
 
     func testThatItIgnoresDomainWhenFederationIsDisabled() {
