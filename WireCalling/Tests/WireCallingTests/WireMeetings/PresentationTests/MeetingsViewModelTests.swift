@@ -59,7 +59,7 @@ struct MeetingsViewModelTests {
             deleteMeetingUseCase: deleteMeetingUseCase,
             selfUserID: Scaffolding.selfUserID,
             observeAttendedMeetingsUseCase: observeAttendedMeetingsUseCase,
-            applicationStateProvider: { .active }
+            isApplicationActiveProvider: { true }
         )
     }
 
@@ -389,7 +389,7 @@ struct MeetingsViewModelTests {
             observeMeetingChangesUseCase: observeMeetingChangesUseCase,
             deleteMeetingUseCase: deleteMeetingUseCase,
             selfUserID: Scaffolding.selfUserID,
-            applicationStateProvider: { .active }
+            isApplicationActiveProvider: { true }
         )
 
         // When
@@ -739,7 +739,7 @@ struct MeetingsViewModelTests {
             deleteMeetingUseCase: deleteMeetingUseCase,
             selfUserID: Scaffolding.selfUserID,
             observeAttendedMeetingsUseCase: observeAttendedMeetingsUseCase,
-            applicationStateProvider: { .inactive }
+            isApplicationActiveProvider: { false }
         )
         let initial = Meeting.fixture(title: "Initial", start: mockDateProvider.now.addingTimeInterval(3600))
         let updated = Meeting.fixture(title: "Updated", start: mockDateProvider.now.addingTimeInterval(3600))
@@ -883,7 +883,7 @@ struct MeetingsViewModelTests {
             deleteMeetingUseCase: deleteMeetingUseCase,
             selfUserID: Scaffolding.selfUserID,
             observeAttendedMeetingsUseCase: observeAttendedMeetingsUseCase,
-            applicationStateProvider: { .active }
+            isApplicationActiveProvider: { true }
         )
         let start = try Date.ISO8601FormatStyle().parse("2026-09-08T14:00:00Z")
         let meeting = Meeting.fixture(title: "Meeting", start: start)

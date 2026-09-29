@@ -17,10 +17,10 @@
 //
 
 package import Foundation
-package import UIKit
 package import WireCallingDomain
 package import WireFoundation
 
+import UIKit
 import WireLogging
 
 @Observable
@@ -97,7 +97,7 @@ package final class MeetingsViewModel {
     private let deleteMeetingUseCase: any DeleteMeetingUseCaseProtocol
     private let selfUserID: UUID
     private let observeAttendedMeetingsUseCase: (any ObserveAttendedMeetingsUseCaseProtocol)?
-    private let applicationStateProvider: () -> UIApplication.State
+    private let isApplicationActiveProvider: () -> Bool
 
     /// Offset for the next page of expanded future occurrences.
     private var futureOffset: Int = 0
@@ -114,9 +114,9 @@ package final class MeetingsViewModel {
     /// the list could keep stale meetings or stale date/time-zone based occurrences until another refresh happens.
     /// If any queued reload requested visible loading UI, the follow-up reload preserves that.
     private var queuedReloadShowsLoadingIndicator: Bool?
-    /// Bumped after locale, calendar, or time-zone changes so SwiftUI re-evaluates
-    /// formatter and grouper output that comes from private cached collaborators.
-    private(set) var dateTimeStateRevision = 0
+    /// Incremented whenever date/time formatting state is refreshed so SwiftUI re-evaluates
+    /// formatter and grouper output from private cached collaborators.
+    private var dateTimeStateRevision = 0
     private let grouper = MeetingsGrouper()
 
     package init(
@@ -127,7 +127,7 @@ package final class MeetingsViewModel {
         deleteMeetingUseCase: any DeleteMeetingUseCaseProtocol,
         selfUserID: UUID,
         observeAttendedMeetingsUseCase: (any ObserveAttendedMeetingsUseCaseProtocol)? = nil,
-        applicationStateProvider: @escaping () -> UIApplication.State = { UIApplication.shared.applicationState }
+        isApplicationActiveProvider: @escaping () -> Bool = { UIApplication.shared.applicationState == .active }
     ) {
         self.currentDateProvider = currentDateProvider
         self.formatter = formatter
@@ -136,7 +136,7 @@ package final class MeetingsViewModel {
         self.deleteMeetingUseCase = deleteMeetingUseCase
         self.selfUserID = selfUserID
         self.observeAttendedMeetingsUseCase = observeAttendedMeetingsUseCase
-        self.applicationStateProvider = applicationStateProvider
+        self.isApplicationActiveProvider = isApplicationActiveProvider
         self.currentDate = currentDateProvider.now
     }
 
@@ -203,7 +203,7 @@ package final class MeetingsViewModel {
     }
 
     func refreshSystemDateTimeState() async {
-        await refreshSystemDateTimeState(shouldReloadMeetings: applicationStateProvider() == .active)
+        await refreshSystemDateTimeState(shouldReloadMeetings: isApplicationActiveProvider())
     }
 
     func refreshSystemDateTimeStateAfterSceneBecameActive() async {
