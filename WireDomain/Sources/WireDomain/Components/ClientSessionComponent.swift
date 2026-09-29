@@ -744,6 +744,7 @@ public final class ClientSessionComponent {
         meetingsAPI: meetingsAPI,
         usersAPI: usersAPI,
         featureConfigLocalStore: featureConfigsLocalStore,
+        meetingLocalStore: MeetingLocalStore(context: syncContext),
         accountID: selfUserID
     )
 
@@ -758,7 +759,8 @@ public final class ClientSessionComponent {
         context: .init(
             conversationLocalStore: conversationLocalStore,
             userLocalStore: userLocalStore,
-            conversationsAPI: conversationsAPI
+            conversationsAPI: conversationsAPI,
+            meetingLocalStore: MeetingLocalStore(context: syncContext)
         ),
         validator: .init(
             userLocalStore: userLocalStore,

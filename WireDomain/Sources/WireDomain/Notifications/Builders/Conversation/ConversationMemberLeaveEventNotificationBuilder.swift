@@ -17,6 +17,8 @@
 //
 
 import UserNotifications
+import WireCallingData
+import WireCallingDomain
 import WireDataModel
 import WireNetwork
 
@@ -265,15 +267,18 @@ extension ConversationMemberLeaveEventNotificationBuilder {
         let conversationLocalStore: any ConversationLocalStoreProtocol
         let userLocalStore: any UserLocalStoreProtocol
         let conversationsAPI: (any ConversationsAPI)?
+        let meetingLocalStore: (any MeetingLocalStoreProtocol)?
 
         init(
             conversationLocalStore: any ConversationLocalStoreProtocol,
             userLocalStore: any UserLocalStoreProtocol,
-            conversationsAPI: (any ConversationsAPI)? = nil
+            conversationsAPI: (any ConversationsAPI)? = nil,
+            meetingLocalStore: (any MeetingLocalStoreProtocol)? = nil
         ) {
             self.conversationLocalStore = conversationLocalStore
             self.userLocalStore = userLocalStore
             self.conversationsAPI = conversationsAPI
+            self.meetingLocalStore = meetingLocalStore
         }
 
         func getConversation(
@@ -323,23 +328,28 @@ extension ConversationMemberLeaveEventNotificationBuilder {
                 return (true, localName)
             }
 
+            if let storedMeeting = await storedMeeting(conversationID: conversationID) {
+                return (true, localName ?? storedMeeting.title)
+            }
+
             guard let conversationsAPI,
                   await conversationLocalStore.conversationNeedsBackendUpdate(conversation) else {
                 return (false, nil)
             }
 
-            do {
-                let response = try await conversationsAPI.getConversations(for: [conversationID])
-                guard let remoteConversation = response.found.first else {
-                    return (true, localName)
-                }
-                guard remoteConversation.groupType == .meeting else {
-                    return (false, nil)
-                }
+            guard let remoteConversation = try? await conversationsAPI.getConversations(for: [conversationID]).found.first,
+                  remoteConversation.groupType == .meeting else {
+                return (false, nil)
+            }
 
-                return (true, localName ?? remoteConversation.name)
-            } catch {
-                return (true, localName)
+            return (true, localName ?? remoteConversation.name)
+        }
+
+        func storedMeeting(
+            conversationID: ConversationID
+        ) async -> Meeting? {
+            await meetingLocalStore?.storedMeetings().first {
+                $0.conversationID.id == conversationID.id && $0.conversationID.domain == conversationID.domain
             }
         }
 

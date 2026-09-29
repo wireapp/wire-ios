@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireCallingData
+import WireCallingDomain
 import WireDataModel
 import WireDataModelSupport
 import WireNetworkSupport
@@ -31,6 +33,7 @@ final class ConversationMemberLeaveEventNotificationBuilderTests: XCTestCase {
     private var userLocalStore: MockUserLocalStoreProtocol!
     private var featureStore: MockFeatureConfigLocalStoreProtocol!
     private var conversationsAPI: MockConversationsAPI!
+    private var meetingStore: MeetingStoreSpy!
 
     private var stack: CoreDataStack!
     private var coreDataStackHelper: CoreDataStackHelper!
@@ -45,6 +48,7 @@ final class ConversationMemberLeaveEventNotificationBuilderTests: XCTestCase {
         userLocalStore = MockUserLocalStoreProtocol()
         featureStore = MockFeatureConfigLocalStoreProtocol()
         conversationsAPI = MockConversationsAPI()
+        meetingStore = MeetingStoreSpy()
         modelHelper = ModelHelper()
         coreDataStackHelper = CoreDataStackHelper()
         stack = try await coreDataStackHelper.createStack()
@@ -57,6 +61,7 @@ final class ConversationMemberLeaveEventNotificationBuilderTests: XCTestCase {
         userLocalStore = nil
         featureStore = nil
         conversationsAPI = nil
+        meetingStore = nil
         try coreDataStackHelper.cleanupDirectory()
         modelHelper = nil
         coreDataStackHelper = nil
@@ -210,6 +215,23 @@ final class ConversationMemberLeaveEventNotificationBuilderTests: XCTestCase {
         XCTAssertEqual(conversationsAPI.getConversationsFor_Invocations, [[Scaffolding.conversationID]])
     }
 
+    func testGenerateMeetingCancellationNotification_WhenStoredMeetingMatchesConversation() async throws {
+        await setupMock(isGroup: true, isTeam: true)
+        await setupMeetingsFeature(isEnabled: true)
+        meetingStore.meetings = [Scaffolding.meeting]
+        conversationLocalStore.isMeetingConversation_MockValue = false
+        userLocalStore.isSelfUserIdDomain_MockValue = (
+            user: userLocalStore.fetchSelfUser_MockValue!,
+            isSelfUser: false
+        )
+        sut = makeSUT(featureConfigLocalStore: featureStore, meetingLocalStore: meetingStore)
+
+        let userNotification = await sut.buildMeetingCancellationContent(event: Scaffolding.selfUserRemovedEvent)
+
+        try assertMeetingCancellationNotification(try XCTUnwrap(userNotification))
+        XCTAssertTrue(conversationsAPI.getConversationsFor_Invocations.isEmpty)
+    }
+
     func testGenerateMeetingCancellationNotification_WhenStaleConversationCannotBeResolvedRemotely() async throws {
         await setupMock(isGroup: true, isTeam: true)
         await setupMeetingsFeature(isEnabled: true)
@@ -229,7 +251,7 @@ final class ConversationMemberLeaveEventNotificationBuilderTests: XCTestCase {
 
         let userNotification = await sut.buildMeetingCancellationContent(event: Scaffolding.selfUserRemovedEvent)
 
-        try assertMeetingCancellationNotification(try XCTUnwrap(userNotification), title: "")
+        XCTAssertNil(userNotification)
         XCTAssertEqual(conversationsAPI.getConversationsFor_Invocations, [[Scaffolding.conversationID]])
     }
 
@@ -398,13 +420,15 @@ final class ConversationMemberLeaveEventNotificationBuilderTests: XCTestCase {
 
     private func makeSUT(
         featureConfigLocalStore: (any FeatureConfigLocalStoreProtocol)? = nil,
-        conversationsAPI: (any ConversationsAPI)? = nil
+        conversationsAPI: (any ConversationsAPI)? = nil,
+        meetingLocalStore: (any MeetingLocalStoreProtocol)? = nil
     ) -> ConversationMemberLeaveEventNotificationBuilder {
         ConversationMemberLeaveEventNotificationBuilder(
             context: .init(
                 conversationLocalStore: conversationLocalStore,
                 userLocalStore: userLocalStore,
-                conversationsAPI: conversationsAPI
+                conversationsAPI: conversationsAPI,
+                meetingLocalStore: meetingLocalStore
             ),
             validator: .init(
                 userLocalStore: userLocalStore,
@@ -420,6 +444,15 @@ final class ConversationMemberLeaveEventNotificationBuilderTests: XCTestCase {
         static let conversationID = WireNetwork.QualifiedID(id: .mockID2, domain: "domain.com")
         static let userID = UserID(id: .mockID3, domain: "domain.com")
         static let selfUserID = UUID.mockID1
+        static let meeting = Meeting(
+            id: WireCallingDomain.QualifiedID(id: .mockID5, domain: "domain.com"),
+            title: conversationName,
+            start: .now,
+            end: .now.addingTimeInterval(3600),
+            recurrence: nil,
+            conversationID: WireCallingDomain.QualifiedID(id: conversationID.id, domain: conversationID.domain),
+            creatorID: WireCallingDomain.QualifiedID(id: userID.id, domain: userID.domain)
+        )
 
         static let selfUserRemovedEvent = ConversationMemberLeaveEvent(
             conversationID: conversationID,
@@ -436,6 +469,32 @@ final class ConversationMemberLeaveEventNotificationBuilderTests: XCTestCase {
             removedUserIDs: [.init(id: .mockID4, domain: "")],
             reason: .userRemoved
         )
+    }
+
+}
+
+private final class MeetingStoreSpy: MeetingLocalStoreProtocol, @unchecked Sendable {
+
+    var meetings: [Meeting] = []
+
+    func storedMeetings() async -> [Meeting] {
+        meetings
+    }
+
+    func storedMeeting(id: WireCallingDomain.QualifiedID) async -> Meeting? {
+        meetings.first { $0.id == id }
+    }
+
+    func storeMeeting(_ meeting: Meeting) async {
+        meetings.append(meeting)
+    }
+
+    func replaceAllMeetings(with meetings: [Meeting]) async {
+        self.meetings = meetings
+    }
+
+    func deleteMeeting(id: WireCallingDomain.QualifiedID) async {
+        meetings.removeAll { $0.id == id }
     }
 
 }
