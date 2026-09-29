@@ -96,6 +96,12 @@ final class LogOutHelper {
             guard let account = SessionManager.shared?.accountManager.selectedAccount else { return }
             SessionManager.shared?.delete(account: account)
         }
+        
+        Task {
+            let wireMessagingFactory = ZClientViewController.shared?.wireMessagingFactory
+            await wireMessagingFactory?.tearDownDirectUploads()
+        }
     }
+    
 
 }
