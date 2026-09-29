@@ -290,8 +290,11 @@ package final class WireDriveDirectUploadManager:
         publishToTracker(replacingAll: true)
     }
 
-    package func cancelAll() async {
-        let cancellable = records.values.filter { !$0.state.isTerminal }.map(\.uploadID)
+    package func cancelAll(in destinationFolderPath: String) async {
+        let cancellable = records.values.filter {
+            !$0.state.isTerminal && $0.destinationFolderPath == destinationFolderPath
+        }.map(\.uploadID)
+        
         guard !cancellable.isEmpty else { return }
 
         await session.cancelAllTasks()
@@ -321,9 +324,9 @@ package final class WireDriveDirectUploadManager:
         await prepareAndStart(uploadIDs: [uploadID])
     }
 
-    package func retryFailed() async {
+    package func retryAll(in destinationFolderPath: String) async {
         let retryable = records.values
-            .filter { $0.state == .failed && ($0.failure?.isRetryable ?? true) }
+            .filter { $0.state == .failed && ($0.failure?.isRetryable ?? true) && $0.destinationFolderPath == destinationFolderPath }
             .map(\.uploadID)
 
         for uploadID in retryable {
@@ -335,7 +338,7 @@ package final class WireDriveDirectUploadManager:
     ///
     /// Failed uploads are deliberately kept: they are still retryable, and forgetting them would
     /// take that away without the user asking for it.
-    package func clearFinished() async {
+    package func clearAll() async {
         let finished = records.values.filter { $0.state == .uploaded || $0.state == .cancelled }
         guard !finished.isEmpty else { return }
 

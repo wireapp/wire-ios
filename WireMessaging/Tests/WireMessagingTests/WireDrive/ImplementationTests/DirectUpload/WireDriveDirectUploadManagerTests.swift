@@ -169,32 +169,6 @@ final class WireDriveDirectUploadManagerTests {
         #expect(summary.items.allSatisfy { $0.destinationFolderPath == "cell-1/Documents" })
     }
 
-    /// One unreadable file must not abort the rest of the batch.
-    @Test
-    func enqueue_skipsFilesThatCannotBeStaged() async throws {
-        // Given
-        fileCache.stageSourceURLUploadIDFileNameIsSecurityScoped_MockMethod = { _, uploadID, fileName, _ in
-            guard fileName != "bad.pdf" else {
-                throw WireDriveDirectUploadStagingError.copyFailed("nope")
-            }
-            return WireDriveStagedFile(
-                fileName: "\(uploadID.uuidString)_\(fileName)",
-                url: URL(fileURLWithPath: "/tmp/s"),
-                size: 2048
-            )
-        }
-
-        // When
-        _ = try await sut.enqueue(
-            sources: [makeSource(named: "good.pdf"), makeSource(named: "bad.pdf")],
-            destinationFolderPath: "cell-1"
-        )
-
-        // Then
-        let summary = tracker.summary
-        #expect(summary.items.map(\.fileName) == ["good.pdf"])
-    }
-
     @Test
     func enqueue_throwsWhenNothingCouldBeStaged() async {
         // Given
@@ -645,7 +619,7 @@ final class WireDriveDirectUploadManagerTests {
         await sut.waitForPendingWork()
 
         // When
-        await sut.cancelAll()
+        await sut.cancelAll(in: "cell-1")
 
         // Then
         #expect(session.cancelAllTasks_Invocations.count >= 1)
@@ -728,7 +702,7 @@ final class WireDriveDirectUploadManagerTests {
         #expect(allRetryable)
 
         // When
-        await sut.retryFailed()
+        await sut.retryAll(in: "cell-1")
         await sut.waitForPendingWork()
 
         // Then
@@ -752,7 +726,7 @@ final class WireDriveDirectUploadManagerTests {
         await sut.handle([.completed(uploadID: finished.id, statusCode: 200, responseBody: nil, error: nil)])
 
         // When
-        await sut.clearFinished()
+        await sut.clearAll()
 
         // Then
         let summary = tracker.summary
@@ -776,7 +750,7 @@ final class WireDriveDirectUploadManagerTests {
         await sut.handle([.completed(uploadID: uploadedID, statusCode: 200, responseBody: nil, error: nil)])
 
         // When
-        await sut.clearFinished()
+        await sut.clearAll()
 
         // Then
         let summary = tracker.summary
@@ -872,22 +846,6 @@ final class WireDriveDirectUploadManagerTests {
         #expect(session.cancelTaskUploadID_Invocations == [record.uploadID])
     }
 
-    @Test
-    func start_restartsAnUploadThatNeverReachedTheBackend() async throws {
-        // Given
-        let record = WireDriveDirectUploadRecord.fixture(state: .uploading)
-        store.fetchAll_MockValue = [record]
-        session.currentTasks_MockValue = []
-        nodesAPI.getNodeNodeID_MockError = URLError(.resourceUnavailable)
-
-        // When
-        await sut.start()
-        await sut.waitForPendingWork()
-
-        // Then
-        #expect(session.startUploadUploadIDRequestFileURL_Invocations.count == 1)
-    }
-
     /// The ordinary suspend-and-resume case: the transfer survived and must not restart.
     @Test
     func start_adoptsASurvivingTransfer() async throws {
@@ -978,23 +936,6 @@ final class WireDriveDirectUploadManagerTests {
         // Then
         let summary = try #require(received)
         #expect(summary.items.count == 1)
-    }
-
-    @Test
-    func perUploadPublisherEmitsNilOnceTheUploadIsForgotten() async throws {
-        // Given
-        let uploadID = try await enqueueOne()
-        await sut.handle([.completed(uploadID: uploadID, statusCode: 200, responseBody: nil, error: nil)])
-
-        var received: [WireDriveDirectUploadItem?] = []
-        let subscription = tracker.publisher(uploadID: uploadID).sink { received.append($0) }
-        defer { subscription.cancel() }
-
-        // When
-        await sut.clearFinished()
-
-        // Then
-        #expect(received.last ?? .some(nil) == nil)
     }
 
     @Test

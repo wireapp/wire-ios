@@ -21,8 +21,8 @@ package import Foundation
 // sourcery: AutoMockable
 package protocol WireDriveCancelDirectUploadsUseCaseProtocol: Sendable {
 
-    /// Cancels every upload that still has work left to do.
+    /// Cancels every upload in a given destination folder path that still has work left to do.
 
-    func invoke() async
+    func invoke(destinationFolderPath: String) async
 
 }

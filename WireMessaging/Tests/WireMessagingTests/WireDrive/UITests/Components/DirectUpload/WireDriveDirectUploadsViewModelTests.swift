@@ -46,9 +46,9 @@ final class WireDriveDirectUploadsViewModelTests {
             folderPath == otherFolderPath ? otherFolderItems.eraseToAnyPublisher() : items.eraseToAnyPublisher()
         }
         cancelUpload.invokeUploadID_MockMethod = { _ in }
-        cancelUploads.invoke_MockMethod = {}
+        cancelUploads.invokeDestinationFolderPath_MockMethod = { _ in }
         retryUpload.invokeUploadID_MockMethod = { _ in }
-        retryFailedUploads.invoke_MockMethod = {}
+        retryFailedUploads.invokeDestinationFolderPath_MockMethod = { _ in }
         clearFinishedUploads.invoke_MockMethod = {}
     }
 
@@ -341,14 +341,14 @@ final class WireDriveDirectUploadsViewModelTests {
     func cancelAllForwardsToTheMechanism() async {
         let sut = makeSut()
         await sut.perform(.cancelAll)
-        #expect(cancelUploads.invoke_Invocations.count == 1)
+        #expect(cancelUploads.invokeDestinationFolderPath_Invocations.count == 1)
     }
 
     @Test
     func retryAllForwardsToTheMechanism() async {
         let sut = makeSut()
         await sut.perform(.retryAll)
-        #expect(retryFailedUploads.invoke_Invocations.count == 1)
+        #expect(retryFailedUploads.invokeDestinationFolderPath_Invocations.count == 1)
     }
 
     @Test

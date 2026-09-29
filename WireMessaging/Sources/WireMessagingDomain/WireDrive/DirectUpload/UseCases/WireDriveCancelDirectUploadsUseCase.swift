@@ -27,7 +27,7 @@ package struct WireDriveCancelDirectUploadsUseCase: WireDriveCancelDirectUploads
         self.uploadManager = uploadManager
     }
 
-    package func invoke() async {
-        await uploadManager.cancelAll()
+    package func invoke(destinationFolderPath: String) async {
+        await uploadManager.cancelAll(in: destinationFolderPath)
     }
 }

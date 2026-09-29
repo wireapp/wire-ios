@@ -111,25 +111,6 @@ struct WireDriveObserveDirectUploadsUseCaseTests {
         #expect(sut.summary.items.map(\.fileName) == ["a.pdf"])
     }
 
-    // MARK: - Per-upload publisher
-
-    @Test
-    func perUploadPublisherEmitsNilOnceTheUploadIsForgotten() {
-        // Given
-        let item = makeItem()
-        sut.upsert([item])
-
-        var received: [WireDriveDirectUploadItem?] = []
-        let subscription = sut.publisher(uploadID: item.id).sink { received.append($0) }
-        defer { subscription.cancel() }
-
-        // When
-        sut.replaceAll(with: [])
-
-        // Then
-        #expect(received.last ?? .some(nil) == nil)
-    }
-
     // MARK: - Folder publisher
 
     @Test

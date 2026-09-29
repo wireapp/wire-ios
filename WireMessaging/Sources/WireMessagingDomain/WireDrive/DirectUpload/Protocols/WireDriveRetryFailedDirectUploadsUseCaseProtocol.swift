@@ -21,8 +21,8 @@ package import Foundation
 // sourcery: AutoMockable
 package protocol WireDriveRetryFailedDirectUploadsUseCaseProtocol: Sendable {
 
-    /// Retries every failed upload that can still be retried.
+    /// Retries every failed upload in a given folder that can still be retried.
 
-    func invoke() async
+    func invoke(destinationFolderPath: String) async
 
 }

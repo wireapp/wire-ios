@@ -30,6 +30,6 @@ package struct WireDriveClearFinishedDirectUploadsUseCase: WireDriveClearFinishe
     }
 
     package func invoke() async {
-        await uploadManager.clearFinished()
+        await uploadManager.clearAll()
     }
 }

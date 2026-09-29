@@ -27,7 +27,7 @@ package struct WireDriveRetryFailedDirectUploadsUseCase: WireDriveRetryFailedDir
         self.uploadManager = uploadManager
     }
 
-    package func invoke() async {
-        await uploadManager.retryFailed()
+    package func invoke(destinationFolderPath: String) async {
+        await uploadManager.retryAll(in: destinationFolderPath)
     }
 }
