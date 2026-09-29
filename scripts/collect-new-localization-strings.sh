@@ -78,7 +78,8 @@ CHANGED_XCSTRINGS=$(git diff --name-only "$BASE_SHA" "$HEAD_SHA" \
   | grep -v 'Carthage/') || true
 
 if [ -n "$CHANGED_XCSTRINGS" ]; then
-  for file in $CHANGED_XCSTRINGS; do
+  while IFS= read -r file; do
+    [ -z "$file" ] && continue
     BASE_STRING_KEYS=$(git show "$BASE_SHA:$file" 2>/dev/null | jq -r '.strings | keys[]' 2>/dev/null) || true
     HEAD_STRING_KEYS=$(git show "$HEAD_SHA:$file" 2>/dev/null | jq -r '.strings | keys[]' 2>/dev/null) || true
     [ -z "$HEAD_STRING_KEYS" ] && continue
@@ -98,7 +99,7 @@ if [ -n "$CHANGED_XCSTRINGS" ]; then
         NEW_KEYS="$ENTRY"
       fi
     done <<< "$NEW_IN_FILE"
-  done
+  done <<< "$CHANGED_XCSTRINGS"
 fi
 
 if [ -n "$NEW_KEYS" ]; then
