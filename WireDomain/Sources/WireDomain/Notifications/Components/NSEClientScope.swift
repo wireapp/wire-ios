@@ -582,7 +582,8 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
     private var conversationMemberLeaveEventNotificationBuilder: ConversationMemberLeaveEventNotificationBuilder {
         let context = ConversationMemberLeaveEventNotificationBuilder.Context(
             conversationLocalStore: conversationLocalStore,
-            userLocalStore: userLocalStore
+            userLocalStore: userLocalStore,
+            conversationsAPI: ConversationsAPIBuilder(apiService: apiService).makeAPI(for: apiVersion)
         )
 
         let validator = ConversationMemberLeaveEventNotificationBuilder.Validator(

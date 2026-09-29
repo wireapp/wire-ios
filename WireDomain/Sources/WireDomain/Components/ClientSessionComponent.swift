@@ -757,7 +757,8 @@ public final class ClientSessionComponent {
     private lazy var conversationMemberLeaveEventNotificationBuilder = ConversationMemberLeaveEventNotificationBuilder(
         context: .init(
             conversationLocalStore: conversationLocalStore,
-            userLocalStore: userLocalStore
+            userLocalStore: userLocalStore,
+            conversationsAPI: conversationsAPI
         ),
         validator: .init(
             userLocalStore: userLocalStore,

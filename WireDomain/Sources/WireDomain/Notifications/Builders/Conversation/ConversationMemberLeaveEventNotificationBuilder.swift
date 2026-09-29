@@ -79,7 +79,11 @@ struct ConversationMemberLeaveEventNotificationBuilder: ConversationMemberLeaveE
         }
 
         let conversation = await context.getConversation(conversationID: event.conversationID)
-        guard await context.isMeetingConversation(conversation: conversation) else {
+        let meetingConversation = await context.meetingConversation(
+            conversation: conversation,
+            conversationID: event.conversationID
+        )
+        guard meetingConversation.isMeeting else {
             return nil
         }
 
@@ -89,7 +93,7 @@ struct ConversationMemberLeaveEventNotificationBuilder: ConversationMemberLeaveE
         }
 
         return buildMeetingCancellationNotification(
-            title: await context.conversationName(conversation: conversation) ?? "",
+            title: meetingConversation.name ?? "",
             senderName: senderName,
             selfUserID: selfUserID
         )
@@ -260,6 +264,17 @@ extension ConversationMemberLeaveEventNotificationBuilder {
     struct Context {
         let conversationLocalStore: any ConversationLocalStoreProtocol
         let userLocalStore: any UserLocalStoreProtocol
+        let conversationsAPI: (any ConversationsAPI)?
+
+        init(
+            conversationLocalStore: any ConversationLocalStoreProtocol,
+            userLocalStore: any UserLocalStoreProtocol,
+            conversationsAPI: (any ConversationsAPI)? = nil
+        ) {
+            self.conversationLocalStore = conversationLocalStore
+            self.userLocalStore = userLocalStore
+            self.conversationsAPI = conversationsAPI
+        }
 
         func getConversation(
             conversationID: ConversationID
@@ -295,6 +310,27 @@ extension ConversationMemberLeaveEventNotificationBuilder {
 
         func isMeetingConversation(conversation: ZMConversation) async -> Bool {
             await conversationLocalStore.isMeetingConversation(conversation)
+        }
+
+        func meetingConversation(
+            conversation: ZMConversation,
+            conversationID: ConversationID
+        ) async -> (isMeeting: Bool, name: String?) {
+            let localName = await conversationName(conversation: conversation)
+
+            let isLocalMeetingConversation = await isMeetingConversation(conversation: conversation)
+            guard !isLocalMeetingConversation else {
+                return (true, localName)
+            }
+
+            guard let conversationsAPI,
+                  await conversationLocalStore.conversationNeedsBackendUpdate(conversation),
+                  let remoteConversation = try? await conversationsAPI.getConversations(for: [conversationID]).found.first,
+                  remoteConversation.groupType == .meeting else {
+                return (false, nil)
+            }
+
+            return (true, localName ?? remoteConversation.name)
         }
 
         func selfUserID(selfUser: ZMUser) async -> UUID {
