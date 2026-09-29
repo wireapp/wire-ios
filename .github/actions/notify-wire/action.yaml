@@ -18,7 +18,7 @@ inputs:
     required: false
     default: "Tests"
   text:
-    description: "Custom message body, posted verbatim when notify is 'custom'. Must be a JSON string literal (e.g. produced by JSON.stringify) since it is interpolated directly into the Slack payload."
+    description: "Custom message body, posted verbatim when notify is 'custom'. Pass raw text (not JSON-encoded) — this action wraps it in toJSON() itself when building the Slack payload."
     required: false
     default: ""
 

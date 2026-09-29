@@ -20,9 +20,9 @@
 
 "meetings.list.loadError" = "Meetings konnten nicht geladen werden. Bitte versuchen Sie es erneut.";
 "meetings.deleteModal.error.deleteFailedTitle" = "Meeting konnte nicht gelöscht werden";
-"meetings.deleteModal.error.deleteFailed" = "Something went wrong while deleting the meeting. Please try again.";
+"meetings.deleteModal.error.deleteFailed" = "Beim Löschen des Meetings ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.";
 "meetings.deleteModal.error.leaveConversationFailedTitle" = "Meeting konnte nicht verlassen werden";
-"meetings.deleteModal.error.leaveConversationFailed" = "Something went wrong while leaving the meeting conversation. Please try again.";
+"meetings.deleteModal.error.leaveConversationFailed" = "Beim Verlassen des Meetings ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.";
 "wireMeetings.retry" = "Wiederholen";
 "wireMeetings.list.title" = "Meetings";
 "wireMeetings.list.tabs.past" = "Letzte";
@@ -61,11 +61,11 @@
 // MARK: - Schedule a meeting
 
 "meetings.scheduleModal.error.createFailedTitle" = "Meeting konnte nicht geplant werden";
-"meetings.scheduleModal.error.createFailed" = "Something went wrong while scheduling the meeting. Please try again.";
+"meetings.scheduleModal.error.createFailed" = "Beim Planen des Meetings ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.";
 "meetings.meetNowModal.error.createFailedTitle" = "Meeting konnte nicht gestartet werden";
-"meetings.meetNowModal.error.createFailed" = "Something went wrong while starting the meeting. Please try again.";
+"meetings.meetNowModal.error.createFailed" = "Beim Starten des Meetings ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.";
 "meetings.scheduleModal.error.updateFailedTitle" = "Meeting konnte nicht aktualisiert werden";
-"meetings.scheduleModal.error.updateFailed" = "Something went wrong while updating the meeting. Please try again.";
+"meetings.scheduleModal.error.updateFailed" = "Beim Aktualisieren des Meetings ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.";
 "wireMeetings.schedule.now.title" = "Meeting starten";
 "wireMeetings.schedule.future.title" = "Neues Meeting";
 "wireMeetings.schedule.edit.title" = "Meeting bearbeiten";
@@ -82,9 +82,9 @@
 "wireMeetings.schedule.error.alert.title" = "Ein Fehler ist aufgetreten";
 "wireMeetings.schedule.error.alert.ok" = "OK";
 "wireMeetings.schedule.participantsNotAdded.title" = "Meeting gespeichert";
-"wireMeetings.schedule.participantsNotAdded.message" = "The meeting was saved, but these users could not be added:\n\n%@";
-"wireMeetings.schedule.error.conversationName.title" = "Could not update call name";
-"wireMeetings.schedule.error.conversationName.message" = "The meeting title was updated, but the name shown in the call could not be updated. Please try again.";
+"wireMeetings.schedule.participantsNotAdded.message" = "Das Meeting wurde gespeichert, aber diese Benutzer konnten nicht hinzugefügt werden:\n\n%@";
+"wireMeetings.schedule.error.conversationName.title" = "Aktualisierung unvollständig";
+"wireMeetings.schedule.error.conversationName.message" = "Der Meeting-Titel konnte nicht überall aktualisiert werden. Bitte versuchen Sie es erneut.";
 "wireMeetings.schedule.error.conversationName.retry" = "Erneut versuchen";
 "wireMeetings.schedule.disableGuestAccess.alert.title" = "Gastzugang deaktivieren?";
 "wireMeetings.schedule.disableGuestAccess.alert.disable" = "Deaktivieren";
@@ -112,4 +112,4 @@
 "wireMeetings.schedule.members.contacts.title" = "Kontakte";
 
 "wireMeetings.schedule.error.expiredStartDate.title" = "Wählen Sie eine spätere Startzeit";
-"wireMeetings.schedule.error.expiredStartDate.message" = "Meetings can only be updated with a start time up to 24 hours in the past. Choose a later start time and save again.";
+"wireMeetings.schedule.error.expiredStartDate.message" = "Meetings können nur mit einer Startzeit von bis zu 24 Stunden in der Vergangenheit aktualisiert werden. Wählen Sie einen späteren Start aus und speichern Sie erneut.";

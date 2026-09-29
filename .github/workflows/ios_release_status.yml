@@ -125,6 +125,10 @@ jobs:
             // ── Jira lookups ──────────────────────────────────────────────────
             const projectVersions = await jira(`/rest/api/3/project/${project}/versions`);
 
+            // Sprint is a custom field whose id varies per Jira site — resolve it by name.
+            const jiraFields   = await jira('/rest/api/3/field');
+            const sprintFieldId = jiraFields.find(f => f.name === 'Sprint')?.id ?? null;
+
             const findJiraVersion = async (semver) => {
               const v = projectVersions.find(x => x.name === `iOS v${semver}`);
               if (!v) return null;
@@ -171,6 +175,21 @@ jobs:
               issues.slice(0, limit).map(i =>
                 `    • ${issueLink(i)} — ${i.fields.status.name} — ${i.fields.summary}`);
 
+            // Sprint field returns an array of sprint objects (past + current); pick the
+            // active one, falling back to the most recent when the ticket isn't in one yet.
+            const sprintOf = (issue) => {
+              const sprints = sprintFieldId ? issue.fields[sprintFieldId] : null;
+              if (!Array.isArray(sprints) || sprints.length === 0) return null;
+              return (sprints.find(s => s.state === 'active') ?? sprints[sprints.length - 1])?.name ?? null;
+            };
+
+            const partitionBySprint = (issues) => {
+              const scheduled = [];
+              const unscheduled = [];
+              for (const i of issues) (sprintOf(i) ? scheduled : unscheduled).push(i);
+              return { scheduled, unscheduled };
+            };
+
             // Edge/LTS: bullets headered by status name, with assignee inline.
             const assigneeOf = (issue) => issue.fields.assignee?.displayName ?? 'Unassigned';
             const renderGroupedByStatus = (issues, perGroupLimit = 10) => {
@@ -205,6 +224,14 @@ jobs:
               });
             };
 
+            // Scheduled (sprinted) tickets: same shape as the triage lines, with the
+            // sprint name prefixed to the summary.
+            const renderScheduled = (issues, scopeFn = null) =>
+              issues.map(i => {
+                const scope = scopeFn ? scopeFn(i) : null;
+                return `    • ${issueLink(i)}${scope ? ` — ${scope}` : ''} — ${sprintOf(i)} - ${i.fields.summary}`;
+              });
+
             // ── Edge: fixVersion ──────────────────────────────────────────────
             const edgeName       = `iOS v${edgeVersion}`;
             const edgeQ          = jqlEscape(edgeName);
@@ -221,9 +248,10 @@ jobs:
             const betaName          = `iOS v${betaVersion}`;
             const betaQ             = jqlEscape(betaName);
             const betaJira          = await findJiraVersion(betaVersion);
-            const betaAffectedJql   = `project = ${project} AND affectedVersion = "${betaQ}"`;
+            const betaAffectedJql   = `project = ${project} AND affectedVersion = "${betaQ}" AND status != "Done"`;
             const betaAffectedCount = await countIssues(betaAffectedJql);
-            const betaAffectedItems = betaAffectedCount > 0 ? (await listIssues(betaAffectedJql)).issues : [];
+            const betaFields        = ['summary', 'status', ...(sprintFieldId ? [sprintFieldId] : [])];
+            const betaAffectedItems = betaAffectedCount > 0 ? (await listIssues(betaAffectedJql, betaFields)).issues : [];
             const daysToBeta        = betaJira ? daysBetween(betaJira.releaseDate) : null;
 
             // ── Prod: affectedVersion + releaseDate ───────────────────────────
@@ -232,7 +260,8 @@ jobs:
             const prodJira          = await findJiraVersion(prodVersion);
             const prodAffectedJql   = `project = ${project} AND affectedVersion = "${prodQ}" AND status not in ("Done", "Rejected")`;
             const prodAffectedCount = await countIssues(prodAffectedJql);
-            const prodAffectedItems = prodAffectedCount > 0 ? (await listIssues(prodAffectedJql, ['summary', 'components'])).issues : [];
+            const prodFields        = ['summary', 'components', ...(sprintFieldId ? [sprintFieldId] : [])];
+            const prodAffectedItems = prodAffectedCount > 0 ? (await listIssues(prodAffectedJql, prodFields)).issues : [];
             const daysSinceProd     = prodJira ? -daysBetween(prodJira.releaseDate) : null;
 
             // ── LTS C Builds (optional, only if vars.LTS_RELEASE is set
@@ -285,7 +314,7 @@ jobs:
             const dateTitle = `*🚀 iOS Release Status — ${new Date().toDateString()}*`;
 
             // Edge
-            const edgeLines = [dateTitle, ''];
+            const edgeLines = [];
             edgeLines.push(`*🟢 Edge — ${releaseLink(edgeJira, edgeName)}*  _(develop)_`);
             edgeLines.push(`  • ${driverLabel(edgeJira?.driver)}`);
             if (daysToEdge != null) {
@@ -304,7 +333,7 @@ jobs:
             }
 
             // Beta
-            const betaLines = [dateTitle, ''];
+            const betaLines = [];
             betaLines.push(`*🔵 Beta — ${releaseLink(betaJira, betaName)}*  _(\`${betaBranch}\`)_`);
             betaLines.push(`  • ${driverLabel(betaJira?.driver)}`);
             if (daysToBeta != null) {
@@ -315,12 +344,19 @@ jobs:
             }
             betaLines.push(`  • ${betaAffectedCount} ticket(s) with affectedVersion`);
             if (betaAffectedCount > 0) {
-              betaLines.push(`  • 🔍 *Triage needed*`);
-              betaLines.push(...renderIssues(betaAffectedItems));
+              const { scheduled: betaScheduled, unscheduled: betaUnscheduled } = partitionBySprint(betaAffectedItems);
+              if (betaUnscheduled.length > 0) {
+                betaLines.push(`  • 🔍 *Triage needed*`);
+                betaLines.push(...renderIssues(betaUnscheduled));
+              }
+              if (betaScheduled.length > 0) {
+                betaLines.push(`  • 🗓️ *Scheduled tickets:*`);
+                betaLines.push(...renderScheduled(betaScheduled));
+              }
             }
 
             // Prod
-            const prodLines = [dateTitle, ''];
+            const prodLines = [];
             prodLines.push(`*⚪ Prod — ${releaseLink(prodJira, prodName)}*  _(\`${prodTag}\`)_`);
             prodLines.push(`  • ${driverLabel(prodJira?.driver)}`);
             if (daysSinceProd != null) {
@@ -330,14 +366,21 @@ jobs:
             }
             prodLines.push(`  • ${prodAffectedCount} ticket(s) with affectedVersion`);
             if (prodAffectedCount > 0) {
-              prodLines.push(`  • 🔍 *Triage needed*`);
-              prodLines.push(...renderWithScope(prodAffectedItems));
+              const { scheduled: prodScheduled, unscheduled: prodUnscheduled } = partitionBySprint(prodAffectedItems);
+              if (prodUnscheduled.length > 0) {
+                prodLines.push(`  • 🔍 *Triage needed*`);
+                prodLines.push(...renderWithScope(prodUnscheduled));
+              }
+              if (prodScheduled.length > 0) {
+                prodLines.push(`  • 🗓️ *Scheduled tickets:*`);
+                prodLines.push(...renderScheduled(prodScheduled, scopeOf));
+              }
             }
 
             // LTS C Builds (optional)
             let ltsLines = null;
             if (lts) {
-              ltsLines = [dateTitle, ''];
+              ltsLines = [];
               ltsLines.push(`*⬜ LTS C Builds - ${releaseLink(lts.ltsJira, lts.ltsName)} (\`${lts.ltsBranch}\`)*`);
               ltsLines.push(`  • ${driverLabel(lts.ltsJira?.driver)}`);
               if (lts.daysToLts != null) {
@@ -355,7 +398,7 @@ jobs:
             // GOV Builds (optional)
             let govLines = null;
             if (gov) {
-              govLines = [dateTitle, ''];
+              govLines = [];
               govLines.push(`*⬛ GOV Builds - ${releaseLink(gov.govJira, gov.govName)} (\`${gov.govBranch}\`)*`);
               govLines.push(`  • ${driverLabel(gov.govJira?.driver)}`);
               if (gov.daysToGov != null) {
@@ -377,6 +420,7 @@ jobs:
             const govMsg  = govLines ? govLines.join('\n') : '';
 
             // LTS/GOV are '' when their vars aren't configured — their post steps are skipped.
+            core.setOutput('date', dateTitle);
             core.setOutput('edge', edgeMsg);
             core.setOutput('beta', betaMsg);
             core.setOutput('prod', prodMsg);
@@ -384,8 +428,17 @@ jobs:
             core.setOutput('gov', govMsg);
 
             await core.summary
-              .addRaw([edgeMsg, betaMsg, prodMsg, ltsMsg, govMsg].filter(Boolean).join('\n\n'))
+              .addRaw([dateTitle, edgeMsg, betaMsg, prodMsg, ltsMsg, govMsg].filter(Boolean).join('\n\n'))
               .write();
+
+      - name: Post Date to Wire
+        if: ${{ env.HAS_SLACK_WEBHOOK == 'true' }}
+        uses: ./.github/actions/notify-wire
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_RELEASE_WEBHOOK }}
+        with:
+          notify: custom
+          text: ${{ steps.build.outputs.date }}
 
       - name: Post Edge to Wire
         if: ${{ env.HAS_SLACK_WEBHOOK == 'true' }}

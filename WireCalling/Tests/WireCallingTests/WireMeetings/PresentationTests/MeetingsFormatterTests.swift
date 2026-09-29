@@ -127,6 +127,46 @@ struct MeetingsFormatterTests {
         #expect(formatter.date(date) == expected)
     }
 
+    @Test("refresh rebuilds time formatting with the latest locale provider value")
+    func refresh_rebuildsTimeFormattingWithLatestLocaleProviderValue() throws {
+        let calendar = timeRangeCalendar
+        var locale = Locale(identifier: "en_US@hours=h12")
+        let formatter = MeetingsFormatter(
+            calendarProvider: { calendar },
+            localeProvider: { locale }
+        )
+        let start = try makeTimeRangeDate(hour: 14, minute: 0)
+        let end = try makeTimeRangeDate(hour: 15, minute: 15)
+
+        #expect(formatter.timeRange(from: start, to: end).contains("PM"))
+
+        locale = Locale(identifier: "en_GB")
+        #expect(formatter.timeRange(from: start, to: end).contains("PM"))
+
+        formatter.refresh()
+        #expect(formatter.timeRange(from: start, to: end) == "14:00 - 15:15")
+    }
+
+    @Test("refresh rebuilds date formatting with the latest calendar provider value")
+    func refresh_rebuildsDateFormattingWithLatestCalendarProviderValue() throws {
+        var calendar = timeRangeCalendar
+        calendar.timeZone = try #require(TimeZone(secondsFromGMT: 0))
+        let locale = Locale(identifier: "en_GB")
+        let formatter = MeetingsFormatter(
+            calendarProvider: { calendar },
+            localeProvider: { locale }
+        )
+        let date = try Date.ISO8601FormatStyle().parse("2026-09-08T23:30:00Z")
+
+        #expect(formatter.date(date) == "08/09/2026")
+
+        calendar.timeZone = try #require(TimeZone(secondsFromGMT: 7200))
+        #expect(formatter.date(date) == "08/09/2026")
+
+        formatter.refresh()
+        #expect(formatter.date(date) == "09/09/2026")
+    }
+
     private func makeDayHeaderDate(hour: Int, minute: Int) throws -> Date {
         try #require(dayHeaderCalendar.date(
             from: DateComponents(year: 2026, month: 9, day: 8, hour: hour, minute: minute)
