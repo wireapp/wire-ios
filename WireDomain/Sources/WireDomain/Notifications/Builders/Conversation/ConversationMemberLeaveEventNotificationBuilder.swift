@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import UserNotifications
 import WireDataModel
 import WireNetwork
 
@@ -61,6 +62,39 @@ struct ConversationMemberLeaveEventNotificationBuilder: ConversationMemberLeaveE
         )
     }
 
+    func buildMeetingCancellationContent(
+        event: ConversationMemberLeaveEvent
+    ) async -> UserNotification? {
+        let removedUserIDs = Set(event.removedUserIDs.compactMap(\.id))
+
+        guard let selfUserID = await validator.validateMeetingCancellation(
+            removedUserIDs: removedUserIDs,
+            senderID: event.senderID
+        ) else {
+            return nil
+        }
+
+        guard await validator.isMeetingsFeatureEnabled() else {
+            return nil
+        }
+
+        let conversation = await context.getConversation(conversationID: event.conversationID)
+        guard await context.isMeetingConversation(conversation: conversation) else {
+            return nil
+        }
+
+        let sender = await context.getSender(senderID: event.senderID)
+        guard let senderName = await context.senderName(sender: sender), !senderName.isEmpty else {
+            return nil
+        }
+
+        return buildMeetingCancellationNotification(
+            title: await context.conversationName(conversation: conversation) ?? "",
+            senderName: senderName,
+            selfUserID: selfUserID
+        )
+    }
+
     // MARK: - Build notifications
 
     private func buildMemberLeaveNotification(
@@ -98,6 +132,23 @@ struct ConversationMemberLeaveEventNotificationBuilder: ConversationMemberLeaveE
             conversationID: conversationID
         )
         content.threadIdentifier = conversationID.id.transportString()
+
+        return .text(content)
+    }
+
+    private func buildMeetingCancellationNotification(
+        title: String,
+        senderName: String,
+        selfUserID: UUID
+    ) -> UserNotification {
+        let content = UNMutableNotificationContent()
+        content.title = title
+        content.body = String.formated(key: "push.notification.body.senderCanceledMeeting", bundle: .module, senderName)
+        content.categoryIdentifier = NotificationCategory.meetingCancellation.rawValue
+        content.sound = .default
+        content.userInfo = [
+            NotificationUserInfoKey.selfUserID: selfUserID.uuidString
+        ]
 
         return .text(content)
     }
@@ -163,6 +214,15 @@ struct ConversationMemberLeaveEventNotificationBuilder: ConversationMemberLeaveE
 extension ConversationMemberLeaveEventNotificationBuilder {
     struct Validator {
         let userLocalStore: any UserLocalStoreProtocol
+        let featureConfigLocalStore: (any FeatureConfigLocalStoreProtocol)?
+
+        init(
+            userLocalStore: any UserLocalStoreProtocol,
+            featureConfigLocalStore: (any FeatureConfigLocalStoreProtocol)? = nil
+        ) {
+            self.userLocalStore = userLocalStore
+            self.featureConfigLocalStore = featureConfigLocalStore
+        }
 
         func validate(
             removedUserIDs: Set<UUID>
@@ -172,6 +232,28 @@ extension ConversationMemberLeaveEventNotificationBuilder {
             let selfUserID = await userLocalStore.id(for: selfUser)
 
             return removedUserIDs.contains(selfUserID)
+        }
+
+        func validateMeetingCancellation(
+            removedUserIDs: Set<UUID>,
+            senderID: UserID
+        ) async -> UUID? {
+            let selfUser = await userLocalStore.fetchSelfUser()
+            let selfUserID = await userLocalStore.id(for: selfUser)
+            guard removedUserIDs.contains(selfUserID) else { return nil }
+
+            let isSenderSelfUser = (try? await userLocalStore.isSelfUser(
+                id: senderID.id,
+                domain: senderID.domain
+            ).isSelfUser) ?? (senderID.id == selfUserID)
+
+            return isSenderSelfUser ? nil : selfUserID
+        }
+
+        func isMeetingsFeatureEnabled() async -> Bool {
+            guard let featureConfigLocalStore else { return true }
+            guard let feature = try? await featureConfigLocalStore.fetchFeature(name: .meetings) else { return false }
+            return await featureConfigLocalStore.isFeatureEnabled(feature: feature)
         }
     }
 
@@ -209,6 +291,10 @@ extension ConversationMemberLeaveEventNotificationBuilder {
 
         func isGroupConversation(conversation: ZMConversation) async -> Bool {
             await conversationLocalStore.isGroupConversation(conversation)
+        }
+
+        func isMeetingConversation(conversation: ZMConversation) async -> Bool {
+            await conversationLocalStore.isMeetingConversation(conversation)
         }
 
         func selfUserID(selfUser: ZMUser) async -> UUID {

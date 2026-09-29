@@ -43,7 +43,6 @@ package final class MeetingsViewModel {
 
     private(set) var currentDate: Date
 
-    /// Conversation ids of the meetings the self user is currently attending (joined a call in).
     private(set) var attendingConversationIDs: Set<QualifiedID> = []
 
     /// The meeting awaiting delete confirmation, or `nil` if no confirmation is in progress.

@@ -586,7 +586,8 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
         )
 
         let validator = ConversationMemberLeaveEventNotificationBuilder.Validator(
-            userLocalStore: userLocalStore
+            userLocalStore: userLocalStore,
+            featureConfigLocalStore: FeatureConfigLocalStore(context: coreDataStack.syncContext)
         )
 
         return ConversationMemberLeaveEventNotificationBuilder(

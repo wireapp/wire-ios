@@ -754,6 +754,17 @@ public final class ClientSessionComponent {
         accountID: selfUserID
     )
 
+    private lazy var conversationMemberLeaveEventNotificationBuilder = ConversationMemberLeaveEventNotificationBuilder(
+        context: .init(
+            conversationLocalStore: conversationLocalStore,
+            userLocalStore: userLocalStore
+        ),
+        validator: .init(
+            userLocalStore: userLocalStore,
+            featureConfigLocalStore: featureConfigsLocalStore
+        )
+    )
+
     private lazy var meetingCreateEventProcessor = MeetingCreateEventProcessor(
         repository: meetingRepository,
         conversationRepository: conversationRepository
@@ -772,7 +783,7 @@ public final class ClientSessionComponent {
         // Meeting notifications are only shown while the app is foregrounded.
         // Bail before the builders' REST calls so live-event processing isn't
         // blocked on network work whose result would be discarded anyway.
-        guard case .meeting = event, await completionHandlers.isApplicationActive() else { return }
+        guard await completionHandlers.isApplicationActive() else { return }
 
         let notification: UserNotification?
         switch event {
@@ -782,6 +793,8 @@ public final class ClientSessionComponent {
             notification = await meetingMemberAddEventNotificationBuilder.buildContent(event: event)
         case let .meeting(.update(event)):
             notification = await meetingUpdateEventNotificationBuilder.buildContent(event: event)
+        case let .conversation(.memberLeave(event)):
+            notification = await conversationMemberLeaveEventNotificationBuilder.buildMeetingCancellationContent(event: event)
         default:
             return
         }
