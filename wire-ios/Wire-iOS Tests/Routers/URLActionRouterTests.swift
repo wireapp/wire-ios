@@ -132,6 +132,39 @@ final class URLActionRouterTests: XCTestCase {
             return XCTFail("Failed to perform navigation")
         }
     }
+
+    func testThatMeetingsNotificationNavigates_WhenAuthenticatedRouterIsAvailable() {
+        // GIVEN
+        let viewController = UIViewController()
+        let authenticatedRouter = MockAuthenticatedRouter()
+        let router = TestableURLActionRouter(viewController: viewController, sessionManager: .none)
+        router.authenticatedRouter = authenticatedRouter
+
+        // WHEN
+        router.showMeetings()
+
+        // THEN
+        guard case .meetings = authenticatedRouter.didNavigateToDestination else {
+            return XCTFail("Failed to perform navigation")
+        }
+    }
+
+    func testThatMeetingsNotificationNavigates_WhenAuthenticatedRouterBecomesAvailable() {
+        // GIVEN
+        let viewController = UIViewController()
+        let authenticatedRouter = MockAuthenticatedRouter()
+        let router = TestableURLActionRouter(viewController: viewController, sessionManager: .none)
+        router.showMeetings()
+
+        // WHEN
+        router.authenticatedRouter = authenticatedRouter
+        router.performPendingActions()
+
+        // THEN
+        guard case .meetings = authenticatedRouter.didNavigateToDestination else {
+            return XCTFail("Failed to perform navigation")
+        }
+    }
 }
 
 final class MockAuthenticatedRouter: AuthenticatedRouterProtocol {

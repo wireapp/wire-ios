@@ -80,13 +80,12 @@ else
 fi
 echo ""
 
-# Workaround for carthage "The file couldn't be saved." error
-rm -rf ${TMPDIR}/TemporaryItems/*carthage*
-
 echo "ℹ️ Carthage bootstrap. This might take a while..."
 if [[ -n "${CI-}" ]]; then
     echo "Skipping Carthage bootstrap from setup.sh script since CI is defined"
 else
+    # Workaround for carthage "The file couldn't be saved." error
+    rm -rf ${TMPDIR}/TemporaryItems/*carthage*
     "$REPO_ROOT/scripts/carthage.sh" bootstrap --cache-builds --platform ios --use-xcframeworks
 fi
 echo ""

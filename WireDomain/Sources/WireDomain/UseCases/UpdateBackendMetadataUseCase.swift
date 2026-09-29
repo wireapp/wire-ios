@@ -49,9 +49,52 @@ public struct UpdateBackendMetadataUseCase: UpdateBackendMetadataUseCaseProtocol
         self.accountID = accountID
     }
 
+    /// Refreshes metadata before session creation when the client's production API versions have changed.
+    public func invokeIfNeeded() async throws -> ResolvedBackendMetadata {
+        try Task.checkCancellation()
+        let cachedMetadata = try backendStore.fetchBackendMetadata(accountID: accountID)
+        if let cachedMetadata,
+           journal[.resolvedBackendMetadataAPIVersions] ==
+           Set(APIVersion.productionVersions.map { String($0.rawValue) }) {
+            return cachedMetadata
+        }
+
+        let newMetadata: ResolvedBackendMetadata
+        do {
+            newMetadata = try await resolveBackendMetadataUseCase.invoke()
+        } catch {
+            try Task.checkCancellation()
+            // Preserve offline startup without marking the refresh complete, so a later session retries it.
+            guard let cachedMetadata else { throw error }
+            switch error {
+            case let error as URLError where error.code != .cancelled:
+                return cachedMetadata
+            case let error as FailureResponse where error.code == 429 || (500 ... 599).contains(error.code):
+                return cachedMetadata
+            case is DecodingError:
+                // A temporary proxy/backend outage can return HTML or an empty response.
+                return cachedMetadata
+            default:
+                throw error
+            }
+        }
+
+        try store(newMetadata, replacing: cachedMetadata)
+        return newMetadata
+    }
+
     public func invoke() async throws -> ResolvedBackendMetadata {
         let prevMetadata = try backendStore.fetchBackendMetadata(accountID: accountID)
         let newMetadata = try await resolveBackendMetadataUseCase.invoke()
+        try store(newMetadata, replacing: prevMetadata)
+        return newMetadata
+    }
+
+    private func store(
+        _ newMetadata: ResolvedBackendMetadata,
+        replacing prevMetadata: ResolvedBackendMetadata?
+    ) throws {
+        try Task.checkCancellation()
 
         if let prevMetadata, !prevMetadata.isFederationEnabled, newMetadata.isFederationEnabled {
             // Now that federation is enabled we'll start storing domains
@@ -62,7 +105,6 @@ public struct UpdateBackendMetadataUseCase: UpdateBackendMetadataUseCaseProtocol
         }
 
         try backendStore.storeBackendMetadata(newMetadata, for: accountID)
-
-        return newMetadata
+        journal[.resolvedBackendMetadataAPIVersions] = Set(APIVersion.productionVersions.map { String($0.rawValue) })
     }
 }

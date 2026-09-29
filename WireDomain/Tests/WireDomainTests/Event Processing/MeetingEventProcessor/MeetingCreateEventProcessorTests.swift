@@ -18,7 +18,6 @@
 
 import WireCallingData
 import WireCallingDomain
-import WireDataModelSupport
 import WireDomainSupport
 import WireNetwork
 import XCTest
@@ -79,7 +78,6 @@ final class MeetingCreateEventProcessorTests: XCTestCase {
         // Mock
 
         repository.pullMeetingIdQualifiedIDMeetingReturnValue = Scaffolding.meeting
-        conversationRepository.fetchConversationIdDomain_MockValue = .some(nil)
         conversationRepository.pullConversationIdDomain_MockMethod = { _, _ in }
 
         // When
@@ -103,19 +101,16 @@ final class MeetingCreateEventProcessorTests: XCTestCase {
     func testProcessEvent_It_Does_Not_Pull_Conversation_When_It_Is_Already_Known() async throws {
         // Mock
 
-        let coreDataStackHelper = CoreDataStackHelper()
-        let coreDataStack = try await coreDataStackHelper.createStack()
-        let context = coreDataStack.syncContext
-        let conversation = await context.perform {
-            ModelHelper().createGroupConversation(
-                id: Scaffolding.conversationID.id,
-                domain: Scaffolding.conversationID.domain,
-                in: context
-            )
-        }
-
-        repository.pullMeetingIdQualifiedIDMeetingReturnValue = Scaffolding.meeting
-        conversationRepository.fetchConversationIdDomain_MockValue = conversation
+        repository.pullMeetingIdQualifiedIDMeetingReturnValue = Meeting(
+            id: Scaffolding.meetingID,
+            title: Scaffolding.meeting.title,
+            start: Scaffolding.meeting.start,
+            end: Scaffolding.meeting.end,
+            recurrence: nil,
+            conversation: MeetingConversation(participants: []),
+            conversationID: Scaffolding.conversationID,
+            creatorID: Scaffolding.meeting.creatorID
+        )
 
         // When
 
@@ -125,8 +120,6 @@ final class MeetingCreateEventProcessorTests: XCTestCase {
 
         XCTAssertTrue(conversationRepository.pullConversationIdDomain_Invocations.isEmpty)
         XCTAssertTrue(repository.storeMeetingMeetingMeetingVoidReceivedInvocations.isEmpty)
-
-        try coreDataStackHelper.cleanupDirectory()
     }
 
     private enum Scaffolding {

@@ -73,18 +73,36 @@ public final class MainTabBarController<
         set { setFilesUI(newValue, animated: false) }
     }
 
+    /// The currently selected tab's content identity.
+    ///
+    /// Backed by ``orderedContents`` rather than the enum's `rawValue` directly:
+    /// which tabs are installed depends on feature flags (files, meetings), so
+    /// the physical index of a content drifts from its raw value whenever one of
+    /// them is off. Setting a content that isn't currently installed no-ops
+    /// rather than selecting the wrong tab.
     public var selectedContent: MainTabBarControllerContent {
-        get { .init(rawValue: selectedIndex) ?? .conversations }
-        set { selectedIndex = newValue.rawValue }
+        get {
+            orderedContents.indices.contains(selectedIndex)
+                ? orderedContents[selectedIndex]
+                : .conversations
+        }
+        set {
+            guard let index = orderedContents.firstIndex(of: newValue) else { return }
+            selectedIndex = index
+        }
     }
 
     // MARK: - Private Properties
 
-    private weak var conversationListNavigationController: UINavigationController!
-    private weak var archiveNavigationController: UINavigationController!
-    private weak var meetingsNavigationController: UINavigationController?
-    private weak var settingsNavigationController: UINavigationController!
-    private weak var filesNavigationController: UINavigationController? // shown conditionally - when wire drive is
+    // Strongly held (not `weak`) so newly-created nav controllers survive from
+    // their assignment in `setupTabs` / `setMeetingsUI` / `setFilesUI` until the
+    // tab bar controller adopts them via `setViewControllers`. `viewControllers`
+    // remains the source of truth for the actual tab list.
+    private var conversationListNavigationController: UINavigationController!
+    private var archiveNavigationController: UINavigationController!
+    private var meetingsNavigationController: UINavigationController?
+    private var settingsNavigationController: UINavigationController!
+    private var filesNavigationController: UINavigationController? // shown conditionally - when wire drive is
     // enabled.
 
     private weak var _conversationListUI: ConversationListUI?
@@ -96,6 +114,33 @@ public final class MainTabBarController<
     private weak var _settingsContentUI: UIViewController?
     private var showMeetings: Bool
     private var showFiles: Bool
+
+    /// Contents whose nav controller is currently installed, in canonical
+    /// visual order. Derived from `MainTabBarControllerContent.allCases` (which
+    /// is declared in visual order) filtered by which nav-controller refs are
+    /// non-nil, so there is nothing to keep in sync when tabs are added.
+    private var orderedContents: [MainTabBarControllerContent] {
+        MainTabBarControllerContent.allCases.filter { navController(for: $0) != nil }
+    }
+
+    /// The nav controller backing a given tab content, if installed.
+    private func navController(for content: MainTabBarControllerContent) -> UINavigationController? {
+        switch content {
+        case .conversations: conversationListNavigationController
+        case .files: filesNavigationController
+        case .meetings: meetingsNavigationController
+        case .archive: archiveNavigationController
+        case .settings: settingsNavigationController
+        }
+    }
+
+    /// The index at which a newly-installed tab should be inserted into
+    /// `viewControllers`, computed from the canonical order. Assumes `content`
+    /// is not already installed.
+    private func insertionIndex(for content: MainTabBarControllerContent) -> Int {
+        orderedContents.firstIndex(where: { $0.rawValue > content.rawValue })
+            ?? orderedContents.endIndex
+    }
 
     // MARK: - Life Cycle
 
@@ -131,26 +176,18 @@ public final class MainTabBarController<
         settingsNavigationController.navigationBar.isTranslucent = false
         self.settingsNavigationController = settingsNavigationController
 
-        var tabs: [UIViewController] = [
-            conversationListNavigationController,
-            archiveNavigationController,
-            settingsNavigationController
-        ]
-
-        if showFiles, let filesNavigationController {
-            tabs.insert(filesNavigationController, at: 1)
-        }
-
         if showMeetings {
             let meetingsNavigationController = UINavigationController()
             meetingsNavigationController.navigationBar.isTranslucent = false
             self.meetingsNavigationController = meetingsNavigationController
-
-            tabs.insert(meetingsNavigationController, at: 2)
         } else {
             meetingsNavigationController = nil
         }
-        setViewControllers(tabs, animated: false)
+
+        // Assemble the tab array in canonical visual order (as declared on the
+        // enum). `orderedContents` reads back the same way, so index ↔ content
+        // translation in `selectedContent` stays consistent.
+        setViewControllers(orderedContents.compactMap { navController(for: $0) }, animated: false)
 
         for content in MainTabBarControllerContent.allCases {
             switch content {
@@ -265,8 +302,13 @@ public final class MainTabBarController<
         if meetingsNavigationController == nil, meetingsUI != nil {
             let meetingsNavigationController = UINavigationController()
             meetingsNavigationController.navigationBar.isTranslucent = false
+            // Compute the insertion index BEFORE the property assignment:
+            // `insertionIndex` reads `orderedContents`, which reflects the
+            // installed nav controllers, so assigning first would include
+            // `.meetings` in the search and land it one slot too far right.
+            let insertIndex = insertionIndex(for: .meetings)
             self.meetingsNavigationController = meetingsNavigationController
-            viewControllers?.insert(meetingsNavigationController, at: 2)
+            viewControllers?.insert(meetingsNavigationController, at: insertIndex)
             setupMeetingsTabBarItem()
         }
 
@@ -343,8 +385,13 @@ public final class MainTabBarController<
         if filesNavigationController == nil {
             let filesNavigationController = UINavigationController()
             filesNavigationController.navigationBar.isTranslucent = false
+            // Compute the insertion index BEFORE the property assignment:
+            // `insertionIndex` reads `orderedContents`, which reflects the
+            // installed nav controllers, so assigning first would include
+            // `.files` in the search and land it one slot too far right.
+            let insertIndex = insertionIndex(for: .files)
             self.filesNavigationController = filesNavigationController
-            viewControllers?.insert(filesNavigationController, at: 1)
+            viewControllers?.insert(filesNavigationController, at: insertIndex)
             setupFilesTabBarItem()
         }
 

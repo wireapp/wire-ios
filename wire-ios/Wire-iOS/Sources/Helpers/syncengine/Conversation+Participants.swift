@@ -161,6 +161,8 @@ extension ZMConversation {
         switch error {
         case ConversationError.offline:
             showErrorAlert(title: ErrorString.title, message: ErrorString.offline)
+        case let ConversationRemoveParticipantError.requiresAdmin(eligibleMembers):
+            break
         default:
             showErrorAlert(title: ErrorString.title, message: ErrorString.cannotRemove)
         }

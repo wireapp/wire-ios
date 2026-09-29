@@ -353,7 +353,8 @@ final class ZClientViewController: UIViewController {
                 participantsService: ConversationParticipantsService(
                     context: userSession.contextProvider.syncContext,
                     localDomain: userSession.selfUser.domain
-                )
+                ),
+                isNetworkAvailable: { [userSession] in userSession.networkState != .offline }
             ),
             callRepository: MeetingCallRepositoryBridge(
                 userSession: userSession,
@@ -580,7 +581,7 @@ final class ZClientViewController: UIViewController {
     ///
     /// - Parameter focus: focus or not
     func selectIncomingContactRequestsAndFocus(onView focus: Bool) {
-        mainTabBarController.selectedIndex = MainTabBarControllerContent.conversations.rawValue
+        mainTabBarController.selectedContent = .conversations
         conversationListViewController.selectInboxAndFocusOnView(focus: focus)
     }
 

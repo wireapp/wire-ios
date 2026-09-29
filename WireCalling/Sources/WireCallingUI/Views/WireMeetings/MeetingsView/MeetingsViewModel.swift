@@ -16,10 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-package import WireCallingDomain
 package import Foundation
+package import WireCallingDomain
 package import WireFoundation
 
+import UIKit
 import WireLogging
 
 @Observable
@@ -30,7 +31,11 @@ package final class MeetingsViewModel {
 
     private(set) var loadedOccurrences: [MeetingOccurrence] = []
     private(set) var hasMore: Bool = false
+    private(set) var isLoading = false
+    private(set) var hasLoadError = false
+    private(set) var isDeleting = false
     var hasDeleteError = false
+    private var failedMeetingToDelete: Meeting?
 
     package var loadedMeetings: [Meeting] {
         loadedOccurrences.map(\.meeting)
@@ -54,11 +59,35 @@ package final class MeetingsViewModel {
     }
 
     var deleteConfirmationTitle: String {
-        isDeletingForSelf ? Strings.DeleteForMe.Alert.title : Strings.Delete.Alert.title
+        if isDeletingForSelf {
+            Strings.DeleteForMe.Alert.title
+        } else if meetingToDelete?.recurrence != nil {
+            Strings.DeleteRecurring.Alert.title
+        } else {
+            Strings.Delete.Alert.title
+        }
     }
 
     var deleteConfirmationMessage: String {
-        isDeletingForSelf ? Strings.DeleteForMe.Alert.subtitle : Strings.Delete.Alert.subtitle
+        if isDeletingForSelf {
+            Strings.DeleteForMe.Alert.subtitle
+        } else if meetingToDelete?.recurrence != nil {
+            Strings.DeleteRecurring.Alert.subtitle
+        } else {
+            Strings.Delete.Alert.subtitle
+        }
+    }
+
+    var deleteErrorTitle: String {
+        let strings = L10n.Localizable.Meetings.DeleteModal.Error.self
+        return failedMeetingToDelete.map { !isOrganizer($0) } == true
+            ? strings.leaveConversationFailedTitle : strings.deleteFailedTitle
+    }
+
+    var deleteErrorMessage: String {
+        let strings = L10n.Localizable.Meetings.DeleteModal.Error.self
+        return failedMeetingToDelete.map { !isOrganizer($0) } == true
+            ? strings.leaveConversationFailed : strings.deleteFailed
     }
 
     private let formatter: MeetingsFormatter
@@ -72,7 +101,6 @@ package final class MeetingsViewModel {
     private var futureOffset: Int = 0
     private let initialPageSize: Int = 20
     private let pageSize: Int = 20
-    private var isLoading: Bool = false
 
     private let grouper = MeetingsGrouper()
 
@@ -102,8 +130,8 @@ package final class MeetingsViewModel {
     }
 
     func loadInitialData() async {
+        guard !isLoading else { return }
         futureOffset = 0
-        loadedOccurrences = []
         hasMore = false
         await load(pageSize: initialPageSize)
     }
@@ -142,8 +170,24 @@ package final class MeetingsViewModel {
         }
     }
 
+    func observeSystemDateTimeChanges() async {
+        await observeSystemDateTimeChanges(Self.systemDateTimeChanges())
+    }
+
+    func observeSystemDateTimeChanges(_ changes: AsyncStream<Void>) async {
+        for await _ in changes {
+            refreshSystemDateTimeState()
+        }
+    }
+
     func refreshCurrentDate() {
         currentDate = currentDateProvider.now
+    }
+
+    func refreshSystemDateTimeState() {
+        formatter.refresh()
+        grouper.refresh()
+        refreshCurrentDate()
     }
 
     /// Meeting start times are always minute-aligned, so the refresh is scheduled on the
@@ -200,13 +244,25 @@ package final class MeetingsViewModel {
     }
 
     func deleteMeeting(_ meeting: Meeting) async {
+        guard !isDeleting else { return }
+        isDeleting = true
+        hasDeleteError = false
+        failedMeetingToDelete = nil
+        defer { isDeleting = false }
+
         do {
             try await deleteMeetingUseCase.invoke(meeting: meeting)
             loadedOccurrences.removeAll { $0.meeting.id == meeting.id }
         } catch {
+            failedMeetingToDelete = meeting
             hasDeleteError = true
             WireLogger.meetings.error("failed to delete meeting: \(String(reflecting: error))")
         }
+    }
+
+    func retryDelete() async {
+        guard let meeting = failedMeetingToDelete else { return }
+        await deleteMeeting(meeting)
     }
 
     // MARK: - Private Methods
@@ -222,6 +278,7 @@ package final class MeetingsViewModel {
 
     private func load(pageSize: Int) async {
         isLoading = true
+        hasLoadError = false
         defer { isLoading = false }
 
         do {
@@ -236,8 +293,74 @@ package final class MeetingsViewModel {
             hasMore = result.hasMore
         } catch {
             hasMore = false
+            hasLoadError = true
             WireLogger.meetings.error("failed to fetch upcoming meetings: \(String(reflecting: error))")
         }
+    }
+
+}
+
+package extension MeetingsViewModel {
+
+    static var systemDateTimeChangeNotificationNames: [Notification.Name] {
+        [
+            .NSCalendarDayChanged,
+            .NSSystemClockDidChange,
+            .NSSystemTimeZoneDidChange,
+            NSLocale.currentLocaleDidChangeNotification,
+            UIApplication.didBecomeActiveNotification,
+            UIApplication.significantTimeChangeNotification
+        ]
+    }
+
+    static func systemDateTimeChanges(
+        notificationCenter: NotificationCenter = .default
+    ) -> AsyncStream<Void> {
+        AsyncStream { continuation in
+            let observer = DateTimeChangeNotificationObserver(
+                notificationCenter: notificationCenter,
+                names: systemDateTimeChangeNotificationNames,
+                continuation: continuation
+            )
+
+            continuation.onTermination = { _ in
+                observer.invalidate()
+            }
+        }
+    }
+
+}
+
+private final class DateTimeChangeNotificationObserver: @unchecked Sendable {
+
+    private let notificationCenter: NotificationCenter
+    private let lock = NSLock()
+    private var observers: [any NSObjectProtocol] = []
+
+    init(
+        notificationCenter: NotificationCenter,
+        names: [Notification.Name],
+        continuation: AsyncStream<Void>.Continuation
+    ) {
+        self.notificationCenter = notificationCenter
+        self.observers = names.map { name in
+            notificationCenter.addObserver(
+                forName: name,
+                object: nil,
+                queue: .main
+            ) { _ in
+                continuation.yield(())
+            }
+        }
+    }
+
+    func invalidate() {
+        lock.lock()
+        let observers = observers
+        self.observers.removeAll()
+        lock.unlock()
+
+        observers.forEach(notificationCenter.removeObserver)
     }
 
 }

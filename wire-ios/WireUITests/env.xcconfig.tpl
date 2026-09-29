@@ -43,3 +43,6 @@ KEYCLOAK_ADMIN_PASSWORD=op://Test Automation/KEYCLOAK_QA_AUTOMATION/PASSWORD
 SSO_CLAIMED_USER_EMAIL=op://Test Automation/Staging Claimed Domain User/email
 SSO_CLAIMED_USER_PASSWORD=op://Test Automation/Staging Claimed Domain User/password
 SSO_CLAIMED_DOMAIN_CODE=op://Test Automation/Staging Claimed Domain User/SSO code
+CUSTOM_DOMAIN_REDIRECT_EMAIL=op://Test Automation/Custom Domain Redirect/redirectEmail
+CUSTOM_DOMAIN_REDIRECT_BACKEND_URL=op://Test Automation/Custom Domain Redirect/redirectBackendUrlTrimmed
+CUSTOM_DOMAIN_REDIRECT_IDP_DOMAIN=op://Test Automation/Custom Domain Redirect/redirectIdpDomain

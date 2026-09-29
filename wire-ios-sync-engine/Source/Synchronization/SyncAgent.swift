@@ -40,6 +40,10 @@ protocol SyncAgentProtocol {
 
 final class SyncAgent: NSObject, SyncAgentProtocol {
 
+    private struct PendingResume {
+        let callEventsOnly: Bool
+    }
+
     var isSyncV2Enabled: Bool {
         journal[.isSyncV2Enabled]
     }
@@ -68,6 +72,9 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
     private var incrementalSyncToken: IncrementalSync.Token?
     private var ongoingSyncTask: Task<Void, Never>?
     private var cancellables: Set<AnyCancellable> = .init()
+    private let suspendStateLock = NSLock()
+    private var isSuspendingSync = false
+    private var pendingResume: PendingResume?
 
     var syncRunning: Bool {
         ongoingSyncTask != nil || incrementalSyncToken != nil
@@ -123,6 +130,8 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
     /// - Parameter callEventsOnly: if the sync should be resumed only for calling events
 
     func resume(callEventsOnly: Bool = false) {
+        if deferResumeIfNeeded(callEventsOnly: callEventsOnly) { return }
+
         syncStateSubject.send(.idle)
 
         ongoingSyncTask = Task {
@@ -152,9 +161,27 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
         }
     }
 
+    private func deferResumeIfNeeded(callEventsOnly: Bool) -> Bool {
+        suspendStateLock.withLock {
+            guard isSuspendingSync else { return false }
+            if let pendingResume {
+                // full resume wins over call events only resume
+                self.pendingResume = PendingResume(callEventsOnly: pendingResume.callEventsOnly && callEventsOnly)
+            } else {
+                pendingResume = PendingResume(callEventsOnly: callEventsOnly)
+            }
+            return true
+        }
+    }
+
     /// Suspend any ongoing sync tasks.
 
     func suspend() async {
+        suspendStateLock.withLock {
+            pendingResume = nil
+            isSuspendingSync = true
+        }
+
         let backgroundActivity = BackgroundActivityFactory.shared.startBackgroundActivity(
             name: "suspending sync"
         )
@@ -180,6 +207,21 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
             BackgroundActivityFactory.shared.endBackgroundActivity(
                 backgroundActivity
             )
+        }
+
+        resumeAfterSuspendIfNeeded()
+    }
+
+    private func resumeAfterSuspendIfNeeded() {
+        let pending = suspendStateLock.withLock { () -> PendingResume? in
+            isSuspendingSync = false
+            let pending = pendingResume
+            pendingResume = nil
+            return pending
+        }
+
+        if let pending {
+            resume(callEventsOnly: pending.callEventsOnly)
         }
     }
 

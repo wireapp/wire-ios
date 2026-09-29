@@ -370,6 +370,37 @@ struct MeetingRepositoryTests {
         }
     }
 
+    @Test
+    func fetchMeetingsRetriesMissingConversationUntilResolved() async throws {
+        let pulls = ConversationPulls()
+        let sut = MeetingRepository(meetingsAPI: meetingsAPI, localStore: localStore) { [localStore] id in
+            if await pulls.record(id) == 1 {
+                throw URLError(.networkConnectionLost)
+            }
+            localStore.storedMeetingIdQualifiedIDMeetingReturnValue = Scaffolding.storedMeeting
+            localStore.storedMeetingsMeetingReturnValue = [Scaffolding.storedMeeting]
+        }
+        meetingsAPI.listMeetings_MockValue = [Scaffolding.meetingResponse]
+        localStore.storedMeetingsMeetingReturnValue = [Meeting(
+            id: Scaffolding.meetingID,
+            title: Scaffolding.meetingResponse.title,
+            start: Scaffolding.meetingResponse.startTime,
+            end: Scaffolding.meetingResponse.endTime,
+            recurrence: nil,
+            conversationID: Scaffolding.meetingResponse.conversationID,
+            creatorID: Scaffolding.meetingResponse.creatorID
+        )]
+
+        let unresolved = try await sut.fetchMeetings(in: Date.distantPast ..< Date.distantFuture, offset: 0, limit: 10)
+        #expect(unresolved.map(\.id) == [Scaffolding.meetingID])
+        #expect(unresolved.first?.conversation == nil)
+
+        let resolved = try await sut.fetchMeetings(in: Date.distantPast ..< Date.distantFuture, offset: 0, limit: 10)
+        #expect(resolved.first?.conversation?.participants == [Scaffolding.member])
+        _ = try await sut.fetchMeetings(in: Date.distantPast ..< Date.distantFuture, offset: 0, limit: 10)
+        #expect(await pulls.ids == Array(repeating: Scaffolding.meetingResponse.conversationID, count: 2))
+    }
+
     // MARK: - hasUpcomingMeetings
 
     @Test
@@ -476,6 +507,15 @@ struct MeetingRepositoryTests {
         #expect(localStore.storedMeetingIdQualifiedIDMeetingReceivedId == Scaffolding.meetingID)
         #expect(meeting == Scaffolding.storedMeeting)
         #expect(meeting?.conversation?.participants == [Scaffolding.member])
+    }
+
+    private actor ConversationPulls {
+        var ids: [WireNetwork.QualifiedID] = []
+
+        func record(_ id: WireNetwork.QualifiedID) -> Int {
+            ids.append(id)
+            return ids.count
+        }
     }
 
     private enum Scaffolding {

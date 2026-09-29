@@ -19,6 +19,7 @@
 enum MeetingEventCodingKeys: String, CodingKey {
 
     case qualifiedID = "qualified_id"
+    case qualifiedFrom = "qualified_from"
     case time
 
 }

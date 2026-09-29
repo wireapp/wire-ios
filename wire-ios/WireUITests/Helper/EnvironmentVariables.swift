@@ -35,6 +35,9 @@ struct EnvironmentVariables {
         case missingSSOClaimedUserEmail
         case missingSSOClaimedUserPassword
         case missingSSOClaimedDomainCode
+        case missingCustomDomainRedirectEmail
+        case missingCustomDomainRedirectBackendURL
+        case missingCustomDomainRedirectIdpDomain
 
         var errorDescription: String? {
             switch self {
@@ -54,6 +57,9 @@ struct EnvironmentVariables {
             case .missingSSOClaimedUserEmail: "Missing env var: SSO_CLAIMED_USER_EMAIL"
             case .missingSSOClaimedUserPassword: "Missing env var: SSO_CLAIMED_USER_PASSWORD"
             case .missingSSOClaimedDomainCode: "Missing env var: SSO_CLAIMED_DOMAIN_CODE"
+            case .missingCustomDomainRedirectEmail: "Missing env var: CUSTOM_DOMAIN_REDIRECT_EMAIL"
+            case .missingCustomDomainRedirectBackendURL: "Missing env var: CUSTOM_DOMAIN_REDIRECT_BACKEND_URL"
+            case .missingCustomDomainRedirectIdpDomain: "Missing env var: CUSTOM_DOMAIN_REDIRECT_IDP_DOMAIN"
             }
         }
     }
@@ -82,6 +88,9 @@ struct EnvironmentVariables {
     let ssoClaimedUserEmail: String
     let ssoClaimedUserPassword: String
     let ssoClaimedDomainCode: String
+    let customDomainRedirectEmail: String
+    let customDomainRedirectBackendURL: String
+    let customDomainRedirectIdpDomain: String
 
     init() throws {
         guard let backendURLString = ProcessInfo.processInfo.environment["BACKEND_URL"],
@@ -189,6 +198,23 @@ struct EnvironmentVariables {
             throw Failure.missingSSOClaimedDomainCode
         }
 
+        guard let customDomainRedirectEmail = ProcessInfo.processInfo.environment["CUSTOM_DOMAIN_REDIRECT_EMAIL"],
+              !customDomainRedirectEmail.isEmpty else {
+            throw Failure.missingCustomDomainRedirectEmail
+        }
+
+        guard let customDomainRedirectBackendURL = ProcessInfo.processInfo
+            .environment["CUSTOM_DOMAIN_REDIRECT_BACKEND_URL"],
+            !customDomainRedirectBackendURL.isEmpty else {
+            throw Failure.missingCustomDomainRedirectBackendURL
+        }
+
+        guard let customDomainRedirectIdpDomain = ProcessInfo.processInfo
+            .environment["CUSTOM_DOMAIN_REDIRECT_IDP_DOMAIN"],
+            !customDomainRedirectIdpDomain.isEmpty else {
+            throw Failure.missingCustomDomainRedirectIdpDomain
+        }
+
         self.stagingBackendURL = URL(string: "https://\(backendURLString)")!
         self.stagingInbucketURL = URL(string: "https://\(inbucketHostname)")!
         self.inbucketUsername = inbucketUsername
@@ -216,6 +242,9 @@ struct EnvironmentVariables {
         self.ssoClaimedUserEmail = ssoClaimedUserEmail
         self.ssoClaimedUserPassword = ssoClaimedUserPassword
         self.ssoClaimedDomainCode = ssoClaimedDomainCode
+        self.customDomainRedirectEmail = customDomainRedirectEmail
+        self.customDomainRedirectBackendURL = customDomainRedirectBackendURL
+        self.customDomainRedirectIdpDomain = customDomainRedirectIdpDomain
     }
 
     private static func callingServiceEnvironment(

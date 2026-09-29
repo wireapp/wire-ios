@@ -614,7 +614,11 @@ public final class ZMUserSession: NSObject {
             clientID: clientID,
             completionHandlers: .init(
                 onProcessedCallEvent: { [weak self] in self?.onProcessedCallEvent(callEventInfo: $0) },
-                onMeetingCancellation: { [weak self] in await self?.handleMeetingCancellationNotification($0) },
+                onMeetingNotification: { [weak self] in await self?.handleMeetingNotification($0) },
+                isApplicationActive: { [weak self] in
+                    guard let application = self?.application else { return false }
+                    return await MainActor.run { application.applicationState == .active }
+                },
                 onSelfClientInvalidated: { [weak self] in await self?.onSelfClientInvalidated() },
                 onAuthenticationFailure: { [weak self] in self?.onAuthenticationFailure() },
                 onProcessedTypingUsers: { [weak self] in self?.onProcessedTypingUsers(typingUsersInfo: $0) }
@@ -1239,7 +1243,8 @@ extension ZMUserSession: SyncAgentDelegate {
     }
 
     func syncAgentDidFailSyncing(_ syncAgent: SyncAgent, error: any Error) {
-        if Bundle.developerModeEnabled { // Only show sync error alert for debugging
+        // Only show unexpected sync errors for debugging.
+        if Bundle.developerModeEnabled, Self.shouldShowSyncErrorAlert(for: error) {
             let onRetry: () -> Void = { [weak self] in
                 self?.managedObjectContext.performGroupedBlock {
                     self?.isPerformingSync = true
@@ -1261,6 +1266,15 @@ extension ZMUserSession: SyncAgentDelegate {
             self?.isPerformingSync = false
             self?.updateNetworkState()
         }
+    }
+
+    static func shouldShowSyncErrorAlert(for error: any Error) -> Bool {
+        if case let BackoffRetrier.Failure.exceededMaxAttempts(latestError) = error {
+            return shouldShowSyncErrorAlert(for: latestError)
+        }
+        let error = error as NSError
+        return error.domain != NSURLErrorDomain
+            || error.code != URLError.notConnectedToInternet.rawValue
     }
 
     func didStartInitialSync() {

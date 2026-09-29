@@ -25,6 +25,7 @@ import WireFoundation
 struct MeetingFormView: View {
     private typealias Strings = L10n.Localizable.WireMeetings.Schedule
     private static let timePickerMinuteInterval = 15
+    @State private var formatter = MeetingsFormatter()
 
     @Environment(\.dismiss) private var dismiss
     @Environment(\.wireAccentColor) private var wireAccentColor
@@ -50,6 +51,9 @@ struct MeetingFormView: View {
                     isTitleFieldFocused = true
                 }
             }
+            .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in
+                formatter = MeetingsFormatter()
+            }
             .scrollContentBackground(.hidden)
             .background(ColorTheme.Backgrounds.background.color)
             .navigationTitle(navigationTitle)
@@ -61,10 +65,16 @@ struct MeetingFormView: View {
                     }
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(actionButtonLabel) {
-                        Task { await viewModel.submit() }
+                    if viewModel.isLoading {
+                        ProgressView()
+                            .accessibilityLabel(actionButtonLabel)
+                            .accessibilityIdentifier("meetingFormLoading")
+                    } else {
+                        Button(actionButtonLabel) {
+                            Task { await viewModel.submit() }
+                        }
+                        .disabled(!viewModel.isNextButtonEnabled)
                     }
-                    .disabled(!viewModel.isNextButtonEnabled || viewModel.isLoading)
                 }
             }
             .toolbarBackground(ColorTheme.Backgrounds.background.color, for: .navigationBar)
@@ -73,9 +83,19 @@ struct MeetingFormView: View {
             }
             .alert(isPresented: $viewModel.hasError) {
                 Alert(
-                    title: Text(Strings.Error.Alert.title),
+                    title: Text(errorContent.title),
+                    message: Text(errorContent.message),
                     dismissButton: .default(Text(Strings.Error.Alert.ok))
                 )
+            }
+            .alert(
+                Strings.ParticipantsNotAdded.title,
+                isPresented: $viewModel.hasParticipantsNotAddedAlert
+            ) {
+                Button(Strings.Error.Alert.ok, action: viewModel.acknowledgeParticipantsNotAdded)
+            } message: {
+                Text(Strings.ParticipantsNotAdded
+                    .message(viewModel.participantsNotAdded.map(\.name).joined(separator: ", ")))
             }
             .alert(
                 Strings.Error.ExpiredStartDate.title,
@@ -97,6 +117,18 @@ struct MeetingFormView: View {
             } message: {
                 Text(Strings.Error.ConversationName.message)
             }
+        }
+    }
+
+    private var errorContent: (title: String, message: String) {
+        typealias Errors = L10n.Localizable.Meetings
+        switch viewModel.mode {
+        case .instant:
+            return (Errors.MeetNowModal.Error.createFailedTitle, Errors.MeetNowModal.Error.createFailed)
+        case .scheduled:
+            return (Errors.ScheduleModal.Error.createFailedTitle, Errors.ScheduleModal.Error.createFailed)
+        case .edit:
+            return (Errors.ScheduleModal.Error.updateFailedTitle, Errors.ScheduleModal.Error.updateFailed)
         }
     }
 
@@ -223,7 +255,7 @@ struct MeetingFormView: View {
             Text(label)
             Spacer()
             pill(
-                text: DateFormatter.meetingDate.string(from: date.wrappedValue),
+                text: formatter.date(date.wrappedValue),
                 isSelected: expandedField == dateField
             ) {
                 toggleExpansion(dateField)
@@ -232,7 +264,7 @@ struct MeetingFormView: View {
             .disabled(!isDateFieldEnabled)
             .accessibilityHidden(!isDateFieldEnabled)
             pill(
-                text: DateFormatter.meetingTime.string(from: date.wrappedValue),
+                text: formatter.time(date.wrappedValue),
                 isSelected: expandedField == timeField
             ) {
                 toggleExpansion(timeField)

@@ -27,6 +27,9 @@ public protocol PresentationDelegate: AnyObject {
     /// Called when the conversation list should be shown
     func showConversationList()
 
+    /// Called when the meetings screen should be shown.
+    func showMeetings()
+
     /// Called when an user profile screen should be presented
     /// - parameter user: The user which the profile will belong to.
     func showUserProfile(user: UserType)
