@@ -102,7 +102,7 @@ final class AuthenticatedRouter {
             featureChangeActionsHandler: featureChangeActionsHandler
         )
 
-        self.featureChangeNotifier.presenter = self
+        featureChangeNotifier.presenter = self
 
         self.revokedCertificateObserverToken = notificationCenter.addObserver(
             forName: .presentRevokedCertificateWarningAlert,
