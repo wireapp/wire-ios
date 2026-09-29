@@ -23,10 +23,6 @@ import XCTest
 
 @testable import Wire
 
-// Precision of matching snapshots. Lower this value to fix issue with difference with Intel and Apple Silicon
-private let precision: Float = 0.99999
-private let perceptualPrecision: Float = 0.97
-
 // MARK: - snapshoting all iPhone sizes
 
 extension XCTestCase {
@@ -161,7 +157,10 @@ extension XCTestCase {
 
         let failure = verifySnapshot(
             of: value,
-            as: .image(precision: precision, perceptualPrecision: perceptualPrecision),
+            as: .image(
+                precision: SnapshotHelper.defaultPrecision,
+                perceptualPrecision: SnapshotHelper.defaultPerceptualPrecision
+            ),
             snapshotDirectory: snapshotDirectory(file: file),
             file: file,
             testName: testName,
@@ -188,7 +187,10 @@ extension XCTestCase {
 
         let failure = verifySnapshot(
             matching: value,
-            as: .inPlaceImage(precision: precision, perceptualPrecision: perceptualPrecision),
+            as: .inPlaceImage(
+                precision: SnapshotHelper.defaultPrecision,
+                perceptualPrecision: SnapshotHelper.defaultPerceptualPrecision
+            ),
             named: name,
             record: record,
             snapshotDirectory: snapshotDirectory(file: file),
@@ -208,8 +210,8 @@ extension Snapshotting where Value == UIAlertController, Format == UIImage {
     /// Compare UIAlertController.view to prevert the view is resized to fix the default UIViewController.view's size
     static var image: Snapshotting<UIAlertController, UIImage> {
         Snapshotting<UIView, UIImage>.image(
-            precision: precision,
-            perceptualPrecision: perceptualPrecision,
+            precision: SnapshotHelper.defaultPrecision,
+            perceptualPrecision: SnapshotHelper.defaultPerceptualPrecision,
             size: nil
         ).pullback { $0.view }
     }
@@ -222,8 +224,8 @@ extension Snapshotting where Value == UIView, Format == UIImage {
     /// moves the view to (10_000, 10_000) before drawing, which causes long-text TextKit
     /// rendering to fail intermittently in offscreen snapshot tests.
     static func inPlaceImage(
-        precision: Float = 0.99999,
-        perceptualPrecision: Float = 0.97
+        precision: Float = SnapshotHelper.defaultPrecision,
+        perceptualPrecision: Float = SnapshotHelper.defaultPerceptualPrecision
     ) -> Snapshotting<UIView, UIImage> {
         Snapshotting<UIImage, UIImage>.image(
             precision: precision,

@@ -26,8 +26,14 @@ import XCTest
 
 public struct SnapshotHelper {
 
-    private let precision: Float = 0.99999
-    private var perceptualPrecision: Float = 0.97
+    /// The default fraction of pixels that must match the reference snapshot.
+    public static let defaultPrecision: Float = 0.99999
+
+    /// The default similarity required for an individual pixel to count as matching.
+    public static let defaultPerceptualPrecision: Float = 0.97
+
+    private let precision = Self.defaultPrecision
+    private var perceptualPrecision = Self.defaultPerceptualPrecision
     private var traits = UITraitCollection()
     private var layout: SwiftUISnapshotLayout = .sizeThatFits
     /// If empty, the `SNAPSHOT_REFERENCE_DIR` environment variable is read.
