@@ -58,7 +58,8 @@ struct MeetingsViewModelTests {
             observeMeetingChangesUseCase: observeMeetingChangesUseCase,
             deleteMeetingUseCase: deleteMeetingUseCase,
             selfUserID: Scaffolding.selfUserID,
-            observeAttendedMeetingsUseCase: observeAttendedMeetingsUseCase
+            observeAttendedMeetingsUseCase: observeAttendedMeetingsUseCase,
+            applicationStateProvider: { .active }
         )
     }
 
@@ -387,7 +388,8 @@ struct MeetingsViewModelTests {
             upcomingMeetingsUseCase: upcomingMeetingsUseCase,
             observeMeetingChangesUseCase: observeMeetingChangesUseCase,
             deleteMeetingUseCase: deleteMeetingUseCase,
-            selfUserID: Scaffolding.selfUserID
+            selfUserID: Scaffolding.selfUserID,
+            applicationStateProvider: { .active }
         )
 
         // When
@@ -727,6 +729,39 @@ struct MeetingsViewModelTests {
         #expect(viewModel.loadedMeetings.map(\.title) == ["Updated"])
     }
 
+    @Test("scene activation reloads meetings even if application state is not active yet")
+    func sceneActivation_reloadLoadedMeetingsWhenApplicationStateLags() async {
+        let viewModel = MeetingsViewModel(
+            currentDateProvider: mockDateProvider,
+            formatter: formatter,
+            upcomingMeetingsUseCase: upcomingMeetingsUseCase,
+            observeMeetingChangesUseCase: observeMeetingChangesUseCase,
+            deleteMeetingUseCase: deleteMeetingUseCase,
+            selfUserID: Scaffolding.selfUserID,
+            observeAttendedMeetingsUseCase: observeAttendedMeetingsUseCase,
+            applicationStateProvider: { .inactive }
+        )
+        let initial = Meeting.fixture(title: "Initial", start: mockDateProvider.now.addingTimeInterval(3600))
+        let updated = Meeting.fixture(title: "Updated", start: mockDateProvider.now.addingTimeInterval(3600))
+        upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsClosure = { _, _ in
+            PaginatedMeetings(meetings: [initial], hasMore: false, nextOffset: 1)
+        }
+        await viewModel.loadInitialData()
+
+        upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsClosure = { _, _ in
+            PaginatedMeetings(meetings: [updated], hasMore: false, nextOffset: 1)
+        }
+        await viewModel.refreshSystemDateTimeState()
+
+        #expect(viewModel.loadedMeetings.map(\.title) == ["Initial"])
+        #expect(upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsCallsCount == 1)
+
+        await viewModel.refreshSystemDateTimeStateAfterSceneBecameActive()
+
+        #expect(viewModel.loadedMeetings.map(\.title) == ["Updated"])
+        #expect(upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsCallsCount == 2)
+    }
+
     @Test("system date and time changes schedule a silent reload after an in-flight fetch")
     func systemDateTimeChanges_reloadAfterInFlightFetch() async {
         let initial = Meeting.fixture(title: "Initial", start: mockDateProvider.now.addingTimeInterval(3600))
@@ -847,7 +882,8 @@ struct MeetingsViewModelTests {
             observeMeetingChangesUseCase: observeMeetingChangesUseCase,
             deleteMeetingUseCase: deleteMeetingUseCase,
             selfUserID: Scaffolding.selfUserID,
-            observeAttendedMeetingsUseCase: observeAttendedMeetingsUseCase
+            observeAttendedMeetingsUseCase: observeAttendedMeetingsUseCase,
+            applicationStateProvider: { .active }
         )
         let start = try Date.ISO8601FormatStyle().parse("2026-09-08T14:00:00Z")
         let meeting = Meeting.fixture(title: "Meeting", start: start)
