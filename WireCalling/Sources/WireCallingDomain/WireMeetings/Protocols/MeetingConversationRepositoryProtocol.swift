@@ -34,6 +34,10 @@ public protocol MeetingConversationRepositoryProtocol: Sendable {
     /// A conversation already missing from the backend is treated as success.
     func leaveConversation(id conversationID: QualifiedID) async throws
 
+    /// Delete the dedicated meeting conversation locally after backend deletion succeeds.
+    /// An ordinary group conversation linked to a meeting must remain intact.
+    func deleteConversation(id conversationID: QualifiedID) async throws
+
     /// Set the name of the underlying conversation.
     func setConversationName(_ name: String, for conversationID: QualifiedID) async throws
 
