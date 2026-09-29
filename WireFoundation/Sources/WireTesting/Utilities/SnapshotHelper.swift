@@ -26,8 +26,8 @@ import XCTest
 
 public struct SnapshotHelper {
 
-    private let precision: Float = 0.99
-    private var perceptualPrecision: Float = 0.98
+    private let precision: Float = 0.99999
+    private var perceptualPrecision: Float = 0.97
     private var traits = UITraitCollection()
     private var layout: SwiftUISnapshotLayout = .sizeThatFits
     /// If empty, the `SNAPSHOT_REFERENCE_DIR` environment variable is read.

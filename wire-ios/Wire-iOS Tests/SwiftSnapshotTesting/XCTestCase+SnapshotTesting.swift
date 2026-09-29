@@ -24,8 +24,8 @@ import XCTest
 @testable import Wire
 
 // Precision of matching snapshots. Lower this value to fix issue with difference with Intel and Apple Silicon
-private let precision: Float = 0.99
-private let perceptualPrecision: Float = 0.98
+private let precision: Float = 0.99999
+private let perceptualPrecision: Float = 0.97
 
 // MARK: - snapshoting all iPhone sizes
 
@@ -222,8 +222,8 @@ extension Snapshotting where Value == UIView, Format == UIImage {
     /// moves the view to (10_000, 10_000) before drawing, which causes long-text TextKit
     /// rendering to fail intermittently in offscreen snapshot tests.
     static func inPlaceImage(
-        precision: Float = 0.99,
-        perceptualPrecision: Float = 0.98
+        precision: Float = 0.99999,
+        perceptualPrecision: Float = 0.97
     ) -> Snapshotting<UIView, UIImage> {
         Snapshotting<UIImage, UIImage>.image(
             precision: precision,
@@ -267,9 +267,13 @@ extension Snapshotting where Value == UIView, Format == UIImage {
             }
 
             let renderer = UIGraphicsImageRenderer(bounds: view.bounds)
-            return renderer.image { _ in
+            let image = renderer.image { _ in
                 view.drawHierarchy(in: view.bounds, afterScreenUpdates: true)
             }
+
+            // Compare the PNG representation used by the reference images to avoid
+            // perceptual comparison failures caused by the renderer's in-memory color space.
+            return UIImage(data: image.pngData()!, scale: image.scale)!
         }
     }
 }

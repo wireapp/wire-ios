@@ -71,7 +71,7 @@ final class GroupConversationCellTests: XCTestCase {
         sut.configure(conversation: conversation)
 
         snapshotHelper
-            .withPerceptualPrecision(0.98)
+            .withPerceptualPrecision(0.97)
             .withUserInterfaceStyle(.light)
             .verify(
                 matching: sut,
@@ -82,7 +82,7 @@ final class GroupConversationCellTests: XCTestCase {
             )
 
         snapshotHelper
-            .withPerceptualPrecision(0.98)
+            .withPerceptualPrecision(0.97)
             .withUserInterfaceStyle(.dark)
             .verify(
                 matching: sut,
