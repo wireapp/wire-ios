@@ -171,7 +171,7 @@ final class ConversationReplyWithTextCell: UIView, ConversationMessageCell, Text
         messageTextView.attributedText = mutableText
 
         messageTextView.accessibilityIdentifier = object.isObfuscated
-            ? "Obfuscated message"
+            ? Locators.ActiveConversationPage.selfDeletedMessage.rawValue
             : Locators.ActiveConversationPage.message.rawValue
 
         applyStyle(isSentBySelfUser: object.isSentBySelfUser, accentColor: object.senderAccentColor)

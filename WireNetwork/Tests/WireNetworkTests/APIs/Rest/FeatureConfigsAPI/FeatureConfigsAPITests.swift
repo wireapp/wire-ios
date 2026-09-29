@@ -731,9 +731,25 @@ extension FeatureConfigsAPITests {
             .simplifiedUserConnectionRequestQRCode(.init(status: .disabled))
         ])
 
-        static let featureConfigsV14: Set<FeatureConfig> = featureConfigsV12.union([
+        static let featureConfigsV14: Set<FeatureConfig> = Set(
+            featureConfigsV12.filter { config in
+                if case .mlsMigration = config {
+                    return false
+                }
+                return true
+            }
+        )
+        .union([
             .assetAuditLog(.init(status: .enabled)),
-            .cellsInternal(.init(status: .enabled, backendURL: URL(string: "https://example.com")!))
+            .cellsInternal(.init(status: .enabled, backendURL: URL(string: "https://example.com")!)),
+            .mlsMigration(
+                .init(
+                    status: .enabled,
+                    startTime: dateV6(from: "2021-05-12T10:52:02Z"),
+                    finaliseRegardlessAfter: dateV6(from: "2021-05-12T10:52:02Z"),
+                    allowManualMigration: true
+                )
+            )
         ])
 
         static let featureConfigsV16: Set<FeatureConfig> = featureConfigsV14.union([

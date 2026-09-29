@@ -46,6 +46,7 @@ public final class Account: NSObject, Codable, @unchecked Sendable {
         case _teamImageData = "teamImage"
         case _unreadConversationCount = "unreadConversationCount"
         case _loginCredentials = "loginCredentials"
+        case _lastSSOIdentityProviderID = "lastSSOIdentityProviderID"
     }
 
     // MARK: - Private mutable properties with locked access
@@ -57,6 +58,7 @@ public final class Account: NSObject, Codable, @unchecked Sendable {
     private var _imageData: Data?
     private var _teamImageData: Data?
     private var _loginCredentials: LoginCredentials?
+    private var _lastSSOIdentityProviderID: UUID?
     private var _unreadConversationCount: Int = 0
 
     // MARK: - Public
@@ -96,6 +98,11 @@ public final class Account: NSObject, Codable, @unchecked Sendable {
     public var loginCredentials: LoginCredentials? {
         get { lock.withLock { _loginCredentials } }
         set { lock.withLock { _loginCredentials = newValue } }
+    }
+
+    public var lastSSOIdentityProviderID: UUID? {
+        get { lock.withLock { _lastSSOIdentityProviderID } }
+        set { lock.withLock { _lastSSOIdentityProviderID = newValue } }
     }
 
     public var unreadConversationCount: Int {
@@ -147,6 +154,7 @@ public final class Account: NSObject, Codable, @unchecked Sendable {
             _imageData = account._imageData
             _teamImageData = account._teamImageData
             _loginCredentials = account._loginCredentials
+            _lastSSOIdentityProviderID = account._lastSSOIdentityProviderID
             _handle = account._handle
             _backendName = account._backendName
         }

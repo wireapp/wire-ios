@@ -16,10 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-package import WireCallingDomain
 package import Foundation
+package import WireCallingDomain
 package import WireFoundation
 
+import UIKit
 import WireLogging
 
 @Observable
@@ -169,8 +170,24 @@ package final class MeetingsViewModel {
         }
     }
 
+    func observeSystemDateTimeChanges() async {
+        await observeSystemDateTimeChanges(Self.systemDateTimeChanges())
+    }
+
+    func observeSystemDateTimeChanges(_ changes: AsyncStream<Void>) async {
+        for await _ in changes {
+            refreshSystemDateTimeState()
+        }
+    }
+
     func refreshCurrentDate() {
         currentDate = currentDateProvider.now
+    }
+
+    func refreshSystemDateTimeState() {
+        formatter.refresh()
+        grouper.refresh()
+        refreshCurrentDate()
     }
 
     /// Meeting start times are always minute-aligned, so the refresh is scheduled on the
@@ -279,6 +296,71 @@ package final class MeetingsViewModel {
             hasLoadError = true
             WireLogger.meetings.error("failed to fetch upcoming meetings: \(String(reflecting: error))")
         }
+    }
+
+}
+
+package extension MeetingsViewModel {
+
+    static var systemDateTimeChangeNotificationNames: [Notification.Name] {
+        [
+            .NSCalendarDayChanged,
+            .NSSystemClockDidChange,
+            .NSSystemTimeZoneDidChange,
+            NSLocale.currentLocaleDidChangeNotification,
+            UIApplication.didBecomeActiveNotification,
+            UIApplication.significantTimeChangeNotification
+        ]
+    }
+
+    static func systemDateTimeChanges(
+        notificationCenter: NotificationCenter = .default
+    ) -> AsyncStream<Void> {
+        AsyncStream { continuation in
+            let observer = DateTimeChangeNotificationObserver(
+                notificationCenter: notificationCenter,
+                names: systemDateTimeChangeNotificationNames,
+                continuation: continuation
+            )
+
+            continuation.onTermination = { _ in
+                observer.invalidate()
+            }
+        }
+    }
+
+}
+
+private final class DateTimeChangeNotificationObserver: @unchecked Sendable {
+
+    private let notificationCenter: NotificationCenter
+    private let lock = NSLock()
+    private var observers: [any NSObjectProtocol] = []
+
+    init(
+        notificationCenter: NotificationCenter,
+        names: [Notification.Name],
+        continuation: AsyncStream<Void>.Continuation
+    ) {
+        self.notificationCenter = notificationCenter
+        self.observers = names.map { name in
+            notificationCenter.addObserver(
+                forName: name,
+                object: nil,
+                queue: .main
+            ) { _ in
+                continuation.yield(())
+            }
+        }
+    }
+
+    func invalidate() {
+        lock.lock()
+        let observers = observers
+        self.observers.removeAll()
+        lock.unlock()
+
+        observers.forEach(notificationCenter.removeObserver)
     }
 
 }

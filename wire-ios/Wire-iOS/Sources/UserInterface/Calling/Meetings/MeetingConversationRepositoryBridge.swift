@@ -32,6 +32,7 @@ struct MeetingConversationRepositoryBridge: MeetingConversationRepositoryProtoco
     let conversationRepository: ConversationRepository
     let contextProvider: any ContextProvider
     let participantsService: any ConversationParticipantsServiceInterface
+    let isNetworkAvailable: @MainActor () -> Bool
 
     func pullConversation(id: UUID, domain: String) async throws {
         try await conversationRepository.pullConversation(id: id, domain: domain)
@@ -117,6 +118,8 @@ struct MeetingConversationRepositoryBridge: MeetingConversationRepositoryProtoco
     }
 
     func leaveConversation(id conversationID: WireCallingDomain.QualifiedID) async throws {
+        guard await isNetworkAvailable() else { throw URLError(.notConnectedToInternet) }
+
         let syncContext = contextProvider.syncContext
         let resolved = await syncContext.perform {
             let conversation = ZMConversation.fetch(
@@ -146,6 +149,19 @@ struct MeetingConversationRepositoryBridge: MeetingConversationRepositoryProtoco
         } catch ConversationRemoveParticipantError.conversationNotFound {
             // The current user already left, so the requested state exists.
         }
+    }
+
+    func deleteConversation(id conversationID: WireCallingDomain.QualifiedID) async throws {
+        guard let conversation = await conversationRepository.fetchConversation(
+            id: conversationID.id,
+            domain: conversationID.domain
+        ) else { return }
+
+        let syncContext = contextProvider.syncContext
+        guard await syncContext.perform({ conversation.isMeeting }) else { return }
+
+        try await conversationRepository.deleteConversation(id: conversationID.id, domain: conversationID.domain)
+        try await syncContext.perform { try syncContext.save() }
     }
 
     func setConversationName(

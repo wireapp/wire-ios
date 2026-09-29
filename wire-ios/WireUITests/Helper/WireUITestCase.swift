@@ -53,6 +53,7 @@ class WireUITestCase: XCTestCase {
         ssoHelper = SSOHelper()
         app = XCUIApplication()
         app.launchEnvironment["UITEST_APPLOCK_TIMEOUT"] = "2"
+        app.launchEnvironment["UITEST_SELF_DELETING_TIMER_SECONDS"] = "3"
         app.launchEnvironment[UITestConfig.environmentKey] = uiTestConfig.encode()
         app.launchArguments = launchArguments
         var flags: [DeveloperFlag: Bool] = [.useWireAuthentication: true]

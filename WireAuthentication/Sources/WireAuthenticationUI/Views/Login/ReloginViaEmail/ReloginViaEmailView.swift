@@ -19,6 +19,7 @@
 import SwiftUI
 import WireAuthenticationAPI
 import WireDesign
+import WireLocators
 import WireNetwork
 import WireReusableUIComponents
 
@@ -145,6 +146,7 @@ package struct ReloginViaEmailView: View {
             passwordRules: "",
             isValidPassword: viewModel.isPasswordValid
         )
+        .accessibilityIdentifier(Locators.LoginPage.passwordSecureTextField.rawValue)
     }
 
     @ViewBuilder private var submitButton: some View {
@@ -159,6 +161,7 @@ package struct ReloginViaEmailView: View {
         .wireButtonStyle(.primary)
         .bold()
         .disabled(!viewModel.canSubmitCredentials)
+        .accessibilityIdentifier(Locators.LoginPage.nextButton.rawValue)
     }
 
     @ViewBuilder private var forgotPasswordButton: some View {
