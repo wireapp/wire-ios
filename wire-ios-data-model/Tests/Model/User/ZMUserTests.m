@@ -860,7 +860,29 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     XCTAssertEqualObjects(user.domain, qualifedIDPayload[@"domain"]);
 }
 
+- (void)testThatItNormalizesAnEmptyQualifiedIDDomainToNil
+{
+    // given
+    NSUUID *remoteIdentifier = [NSUUID createUUID];
 
+    NSDictionary *qualifedIDPayload = @{
+        @"id": remoteIdentifier.transportString,
+        @"domain": @""
+    };
+
+    ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
+    NSMutableDictionary *payload = [self samplePayloadForUserID:[NSUUID createUUID]];
+    payload[@"qualified_id"] = qualifedIDPayload;
+
+    // when
+    [user updateWithTransportData:payload authoritative:YES];
+
+    // then
+    // An empty domain must be treated the same as a missing one, otherwise this user would end up
+    // with a different `primaryKey` than a row created with domain == nil for the same
+    // remoteIdentifier, producing an undetected duplicate (WPB-22498).
+    XCTAssertNil(user.domain);
+}
 
 - (void)testThatItIsMarkedAsUpdatedFromBackendWhenUpdatingWithAuthoritativeData
 {
