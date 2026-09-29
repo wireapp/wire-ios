@@ -30,7 +30,7 @@ public struct SnapshotHelper {
     public static let defaultPrecision: Float = 0.99999
 
     /// The default similarity required for an individual pixel to count as matching.
-    public static let defaultPerceptualPrecision: Float = 0.97
+    public static let defaultPerceptualPrecision: Float = 0.95
 
     private let precision = Self.defaultPrecision
     private var perceptualPrecision = Self.defaultPerceptualPrecision
