@@ -26,8 +26,8 @@ import WireLogging
 /// A mismatch between a `nil` and an empty-string domain produced different `primaryKey` values for what is
 /// otherwise the same user, so the `primaryKey` uniqueness constraint didn't prevent the duplicate from being
 /// created. Left in place, the duplicate could later crash the app when both rows were fetched by identity.
-/// This migration keeps one user per (remoteIdentifier, domain) pair, marks it to be refetched from the backend,
-/// and deletes the other copies.
+/// This migration keeps one user per (remoteIdentifier, domain) pair, transfers the other copies' relationships
+/// onto it, marks it to be refetched from the backend, and deletes the other copies.
 struct AppVersionMigration_4_30_0: AppVersionMigration {
 
     let version: SemanticVersion = "4.30.0"
@@ -43,10 +43,17 @@ struct AppVersionMigration_4_30_0: AppVersionMigration {
 
         try await context.perform {
             let request = NSFetchRequest<ZMUser>(entityName: ZMUser.entityName())
+            // Deterministic order so the "kept" user (`duplicates.first`) is reproducible rather than
+            // depending on the store's unspecified default fetch order.
+            request.sortDescriptors = [NSSortDescriptor(key: "primaryKey", ascending: true)]
             let users = (try? context.fetch(request)) ?? []
 
             let duplicateGroups = Dictionary(grouping: users) {
-                UserIdentity(remoteIdentifier: $0.remoteIdentifier, domain: $0.domain)
+                // "" and nil both mean "no domain", so they must be treated as the same identity here.
+                UserIdentity(
+                    remoteIdentifier: $0.remoteIdentifier,
+                    domain: $0.domain?.isEmpty == true ? nil : $0.domain
+                )
             }.values.filter { $0.count > 1 }
 
             WireLogger.appVersionMigration.info(
@@ -59,11 +66,37 @@ struct AppVersionMigration_4_30_0: AppVersionMigration {
                 keptUser.needsToBeUpdatedFromBackend = true
 
                 for duplicate in duplicates.dropFirst() {
+                    transferRelationships(from: duplicate, to: keptUser)
                     context.delete(duplicate)
                 }
             }
 
             try context.save()
+        }
+    }
+
+    /// Moves every relationship still pointing at `duplicate` onto `keptUser` before `duplicate` is deleted,
+    /// so that Core Data's `Nullify` delete rules don't silently drop messages, connections, or reactions
+    /// that referenced the duplicate.
+    ///
+    /// `participantRoles` is skipped on purpose: it is `Cascade`-deleted with the duplicate instead, since
+    /// `keptUser` may already have its own role in the same conversations, and the backend conversation sync
+    /// (triggered by `needsToBeUpdatedFromBackend`) reconciles `keptUser`'s participation anyway.
+    private func transferRelationships(from duplicate: ZMUser, to keptUser: ZMUser) {
+        for relationship in duplicate.entity.relationshipsByName.values where relationship.name != "participantRoles" {
+            let name = relationship.name
+
+            if relationship.isOrdered {
+                let duplicateValues = duplicate.mutableOrderedSetValue(forKey: name)
+                keptUser.mutableOrderedSetValue(forKey: name).addObjects(from: duplicateValues.array)
+                duplicateValues.removeAllObjects()
+            } else if relationship.isToMany {
+                let duplicateValues = duplicate.mutableSetValue(forKey: name)
+                keptUser.mutableSetValue(forKey: name).addObjects(from: duplicateValues.allObjects)
+                duplicateValues.removeAllObjects()
+            } else if keptUser.value(forKey: name) == nil, let duplicateValue = duplicate.value(forKey: name) {
+                keptUser.setValue(duplicateValue, forKey: name)
+            }
         }
     }
 }

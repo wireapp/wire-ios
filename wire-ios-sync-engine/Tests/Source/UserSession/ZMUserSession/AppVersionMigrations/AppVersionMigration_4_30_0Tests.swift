@@ -49,9 +49,11 @@ struct AppVersionMigration_4_30_0Tests {
             keptUser?.needsToBeUpdatedFromBackend = false
             let duplicateUser = modelHelper.createUser(id: id, domain: domain, in: context)
             duplicateUser.needsToBeUpdatedFromBackend = false
-            // Force distinct primaryKey values so both rows survive the save: this reproduces
-            // WPB-22498, where two rows shared the same identity but not the same primaryKey.
-            duplicateUser.setValue("duplicate-\(id.uuidString)", forKey: "primaryKey")
+            // Force distinct, ordered primaryKey values so both rows survive the save (reproducing
+            // WPB-22498, where two rows shared the same identity but not the same primaryKey) and so
+            // the migration's deterministic "lowest primaryKey wins" tie-break keeps `keptUser`.
+            keptUser?.setValue("0-kept", forKey: "primaryKey")
+            duplicateUser.setValue("1-duplicate", forKey: "primaryKey")
             try context.save()
         }
 
@@ -93,6 +95,97 @@ struct AppVersionMigration_4_30_0Tests {
             let request = NSFetchRequest<ZMUser>(entityName: ZMUser.entityName())
             let remainingUsers = try context.fetch(request).filter { $0.remoteIdentifier == id }
             #expect(remainingUsers.count == 2)
+        }
+    }
+
+    @Test("Treats an empty-string domain and a nil domain as the same identity")
+    func testTreatsEmptyAndNilDomainAsDuplicates() async throws {
+        let context = stack.syncContext
+
+        let id = UUID()
+        var keptUser: ZMUser?
+
+        try await context.perform {
+            modelHelper.createSelfUser(in: context)
+            keptUser = modelHelper.createUser(id: id, domain: nil, in: context)
+            let duplicateUser = modelHelper.createUser(id: id, domain: nil, in: context)
+            // Bypass the normalizing `domain` setter to reproduce a pre-existing row whose domain
+            // was persisted as "" instead of nil (WPB-22498), rather than normalized at write time.
+            duplicateUser.setValue("", forKey: "domain")
+            keptUser?.setValue("0-kept", forKey: "primaryKey")
+            duplicateUser.setValue("1-duplicate", forKey: "primaryKey")
+            try context.save()
+        }
+
+        // WHEN
+        try await sut.perform()
+
+        // THEN
+        try await context.perform {
+            let request = NSFetchRequest<ZMUser>(entityName: ZMUser.entityName())
+            let remainingUsers = try context.fetch(request).filter { $0.remoteIdentifier == id }
+
+            #expect(remainingUsers.count == 1)
+            #expect(remainingUsers.first?.objectID == keptUser?.objectID)
+        }
+    }
+
+    @Test("Transfers a to-one relationship from the duplicate onto the kept user")
+    func testTransfersToOneRelationship() async throws {
+        let context = stack.syncContext
+
+        let id = UUID()
+        var keptUser: ZMUser?
+        var connection: ZMConnection?
+
+        try await context.perform {
+            modelHelper.createSelfUser(in: context)
+            keptUser = modelHelper.createUser(id: id, domain: "example.com", in: context)
+            let duplicateUser = modelHelper.createUser(id: id, domain: "example.com", in: context)
+            keptUser?.setValue("0-kept", forKey: "primaryKey")
+            duplicateUser.setValue("1-duplicate", forKey: "primaryKey")
+            (connection, _) = modelHelper.createConnection(status: .accepted, to: duplicateUser, in: context)
+            try context.save()
+        }
+
+        // WHEN
+        try await sut.perform()
+
+        // THEN
+        try await context.perform {
+            let survivor = try #require(keptUser)
+            #expect(survivor.connection?.objectID == connection?.objectID)
+            #expect(connection?.to?.objectID == survivor.objectID)
+        }
+    }
+
+    @Test("Transfers a to-many relationship from the duplicate onto the kept user")
+    func testTransfersToManyRelationship() async throws {
+        let context = stack.syncContext
+
+        let id = UUID()
+        var keptUser: ZMUser?
+        var client: UserClient?
+
+        try await context.perform {
+            modelHelper.createSelfUser(in: context)
+            keptUser = modelHelper.createUser(id: id, domain: "example.com", in: context)
+            let duplicateUser = modelHelper.createUser(id: id, domain: "example.com", in: context)
+            keptUser?.setValue("0-kept", forKey: "primaryKey")
+            duplicateUser.setValue("1-duplicate", forKey: "primaryKey")
+            client = modelHelper.createClient(for: duplicateUser)
+            try context.save()
+        }
+
+        // WHEN
+        try await sut.perform()
+
+        // THEN
+        try await context.perform {
+            let survivor = try #require(keptUser)
+            let transferredClient = try #require(client)
+            #expect(survivor.clients.contains(transferredClient))
+            #expect(transferredClient.user?.objectID == survivor.objectID)
         }
     }
 
