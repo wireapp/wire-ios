@@ -91,7 +91,8 @@ public final class MeetingRepository: MeetingRepositoryProtocol {
                 title: title,
                 startTime: startTime,
                 endTime: endTime,
-                recurrence: recurrence?.toNetworkRecurrence()
+                recurrence: recurrence?.toNetworkRecurrence(),
+                timeZoneIdentifier: TimeZone.current.identifier
             )
         )
         let meeting = response.toDomainMeeting()
