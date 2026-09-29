@@ -375,6 +375,17 @@
           }
         }
       }
+    },
+    "dummy.localizationReminder.test" : {
+      "comment" : "Dummy key to test the localization reminder workflow",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Dummy \"quoted\" value for reminder test"
+          }
+        }
+      }
     }
   },
   "version" : "1.0"
