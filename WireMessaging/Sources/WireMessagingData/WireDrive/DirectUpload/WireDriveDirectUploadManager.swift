@@ -254,7 +254,7 @@ package final class WireDriveDirectUploadManager:
 
             throw WireDriveDirectUploadBatchError.tooManyFiles(limit: WireDriveDirectUploadLimits.maxFilesPerBatch)
         }
-        
+
         return batchID
     }
 

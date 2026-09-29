@@ -48,7 +48,7 @@ public enum DeveloperFlag: String, CaseIterable {
     case useBackgroundActivityFactoryInAppBackgroundTaskExecuter
     case enableDriveDirectUploads
     case simulateAppTerminationInBackground
-    
+
 
     public var description: String {
         switch self {
@@ -123,13 +123,12 @@ public enum DeveloperFlag: String, CaseIterable {
 
         case .useBackgroundActivityFactoryInAppBackgroundTaskExecuter:
             "Turn on to use BackgroundActivityFactory in AppBackgroundTaskExecuter"
-            
+
         case .enableDriveDirectUploads:
             "Turn on to enable drive direct uploads"
-            
+
         case .simulateAppTerminationInBackground:
             "Turn on to simulate app termination in background"
-            
         }
     }
 
