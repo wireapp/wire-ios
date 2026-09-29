@@ -132,26 +132,6 @@ struct WireDriveDirectUploadRecordTests {
         #expect(!state.isTerminal)
     }
 
-    /// Determines whether cancelling has to clean up a partially created node on the backend.
-    @Test(arguments: [
-        WireDriveDirectUploadRecord.State.uploading,
-        .uploaded
-    ])
-    func recognisesStatesWithRemoteState(_ state: WireDriveDirectUploadRecord.State) {
-        #expect(state.hasRemoteState)
-    }
-
-    @Test(arguments: [
-        WireDriveDirectUploadRecord.State.staged,
-        .preChecked,
-        .awaitingStart,
-        .failed,
-        .cancelled
-    ])
-    func recognisesStatesWithoutRemoteState(_ state: WireDriveDirectUploadRecord.State) {
-        #expect(!state.hasRemoteState)
-    }
-
     /// Raw values are persisted, so they must never drift.
     @Test
     func persistedStateRawValuesAreStable() {

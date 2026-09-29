@@ -581,20 +581,6 @@ final class WireDriveDirectUploadManagerTests {
         #expect(tracker.summary.items.isEmpty)
     }
 
-    /// A direct upload always creates a new node, so the node itself is what needs removing.
-    @Test
-    func cancel_removesThePartiallyCreatedNode() async throws {
-        // Given
-        let uploadID = try await enqueueOne()
-
-        // When
-        await sut.cancel(uploadID: uploadID)
-        await sut.waitForPendingWork()
-
-        // Then
-        #expect(!nodesAPI.deleteNodesNodeIDsPermanently_Invocations.isEmpty)
-    }
-
     @Test
     func cancel_ignoresAnAlreadyFinishedUpload() async throws {
         // Given
@@ -622,7 +608,7 @@ final class WireDriveDirectUploadManagerTests {
         await sut.cancelAll(in: "cell-1")
 
         // Then
-        #expect(session.cancelAllTasks_Invocations.count >= 1)
+        #expect(session.cancelTaskUploadID_Invocations.count >= 1)
         #expect(tracker.summary.items.isEmpty)
     }
 

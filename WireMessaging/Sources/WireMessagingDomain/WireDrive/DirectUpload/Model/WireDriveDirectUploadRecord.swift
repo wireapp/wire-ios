@@ -57,15 +57,6 @@ package struct WireDriveDirectUploadRecord: Identifiable, Equatable, Hashable, S
             case .staged, .preChecked, .awaitingStart, .uploading: false
             }
         }
-
-        /// Whether the backend may already hold bytes for this upload.
-
-        package var hasRemoteState: Bool {
-            switch self {
-            case .uploading, .uploaded: true
-            case .staged, .preChecked, .awaitingStart, .failed, .cancelled: false
-            }
-        }
     }
 
     package var id: UUID { uploadID }

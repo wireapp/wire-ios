@@ -118,6 +118,7 @@ package final class WireDriveDirectUploadManager:
         deferredWork[key] = nil
     }
 
+    // Used for testing purposes only
     package func waitForPendingWork() async {
         while !deferredWork.isEmpty {
             let tasks = deferredWork.values.map(\.task)
@@ -238,7 +239,7 @@ package final class WireDriveDirectUploadManager:
         try? await store.upsert(records: admitted)
         publishToTracker()
 
-        let uploadIDs = admitted.map(\.uploadID)
+        let uploadIDs = admitted.sorted(by: { $0.fileSize < $1.fileSize }).map(\.uploadID)
         scheduleDeferred(batchID) { [weak self] in
             await self?.prepareAndStart(uploadIDs: uploadIDs)
         }
@@ -275,18 +276,6 @@ package final class WireDriveDirectUploadManager:
         await session.cancelTask(uploadID: uploadID)
         try? fileCache.delete(stagedFileName: record.stagedFileName)
 
-        if record.state.hasRemoteState {
-            let nodeID = record.nodeID
-            let nodesAPI = nodesAPI
-            scheduleDeferred(UUID()) {
-                do {
-                    _ = try await nodesAPI.deleteNodes(nodeIDs: [nodeID], permanently: true)
-                } catch {
-                    WireLogger.wireDrive.info("could not remove cancelled drive upload node: \(error)")
-                }
-            }
-        }
-
         publishToTracker(replacingAll: true)
     }
 
@@ -294,10 +283,8 @@ package final class WireDriveDirectUploadManager:
         let cancellable = records.values.filter {
             !$0.state.isTerminal && $0.destinationFolderPath == destinationFolderPath
         }.map(\.uploadID)
-        
-        guard !cancellable.isEmpty else { return }
 
-        await session.cancelAllTasks()
+        guard !cancellable.isEmpty else { return }
 
         for uploadID in cancellable {
             await cancel(uploadID: uploadID)
@@ -326,7 +313,10 @@ package final class WireDriveDirectUploadManager:
 
     package func retryAll(in destinationFolderPath: String) async {
         let retryable = records.values
-            .filter { $0.state == .failed && ($0.failure?.isRetryable ?? true) && $0.destinationFolderPath == destinationFolderPath }
+            .filter {
+                $0.state == .failed && ($0.failure?.isRetryable ?? true) && $0
+                    .destinationFolderPath == destinationFolderPath
+            }
             .map(\.uploadID)
 
         for uploadID in retryable {
