@@ -197,7 +197,7 @@ final class ConversationMemberLeaveEventNotificationBuilderTests: XCTestCase {
         await setupMeetingsFeature(isEnabled: true)
         conversationLocalStore.isMeetingConversation_MockValue = false
         conversationLocalStore.conversationNeedsBackendUpdate_MockValue = true
-        conversationLocalStore.nameFor_MockValue = nil
+        conversationLocalStore.nameFor_MockValue = .some(nil)
         conversationsAPI.getConversationsFor_MockValue = .init(
             found: [.init(name: Scaffolding.conversationName, groupType: .meeting)],
             notFound: [],
@@ -237,7 +237,7 @@ final class ConversationMemberLeaveEventNotificationBuilderTests: XCTestCase {
         await setupMeetingsFeature(isEnabled: true)
         conversationLocalStore.isMeetingConversation_MockValue = false
         conversationLocalStore.conversationNeedsBackendUpdate_MockValue = true
-        conversationLocalStore.nameFor_MockValue = nil
+        conversationLocalStore.nameFor_MockValue = .some(nil)
         conversationsAPI.getConversationsFor_MockValue = .init(
             found: [],
             notFound: [Scaffolding.conversationID],
