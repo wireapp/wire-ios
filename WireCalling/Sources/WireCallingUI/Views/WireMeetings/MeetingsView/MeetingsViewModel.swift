@@ -114,11 +114,6 @@ package final class MeetingsViewModel {
     /// the list could keep stale meetings or stale date/time-zone based occurrences until another refresh happens.
     /// If any queued reload requested visible loading UI, the follow-up reload preserves that.
     private var queuedReloadShowsLoadingIndicator: Bool?
-    /// Tracks a system-date reload that arrived while the app was inactive.
-    /// Without deferring it, iOS can suspend the background fetch and leave `isFetching` stuck,
-    /// causing later foreground refreshes to only queue behind a request that never completes.
-    private var needsReloadWhenApplicationBecomesActive = false
-
     private let grouper = MeetingsGrouper()
 
     package init(
@@ -209,14 +204,10 @@ package final class MeetingsViewModel {
         refreshCurrentDate()
 
         // System time changes can arrive while the app is backgrounded. Starting a fetch
-        // then can be suspended by iOS, so defer it until the did-become-active event.
+        // then can be suspended by iOS, so only refresh formatting state here and let
+        // `UIApplication.didBecomeActiveNotification` trigger the foreground reload.
         guard applicationState == .active else {
-            needsReloadWhenApplicationBecomesActive = true
             return
-        }
-
-        if needsReloadWhenApplicationBecomesActive {
-            needsReloadWhenApplicationBecomesActive = false
         }
 
         await reloadLoadedMeetings(showsLoadingIndicator: false)
