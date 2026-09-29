@@ -42,16 +42,12 @@ public final class WireLoggerObjC: NSObject {
     /// confirm from the logs alone (without needing a customer's database) that duplicate rows -
     /// rather than something else - caused a given symptom. Only reads attributes that are safe to
     /// share externally: the entity name, `primaryKey`, the looked-up `remoteIdentifier`, and `domain`.
-    /// Returns the combined details so the caller can include them in the crash message / assertion dump.
     @objc(logDuplicateManagedObjectsWithEntityName:remoteIdentifier:objects:)
-    static func logDuplicateManagedObjects(
-        entityName: String,
-        remoteIdentifier: String,
-        objects: [NSManagedObject]
-    ) -> String {
-        let summary = "Found \(objects.count) \(entityName) objects for remoteIdentifier \(remoteIdentifier) where at most 1 was expected"
-        WireLogger.localStorage.error(summary, attributes: .safePublic)
-        var lines = [summary]
+    static func logDuplicateManagedObjects(entityName: String, remoteIdentifier: String, objects: [NSManagedObject]) {
+        WireLogger.localStorage.error(
+            "Found \(objects.count) \(entityName) objects for remoteIdentifier \(remoteIdentifier) where at most 1 was expected",
+            attributes: .safePublic
+        )
 
         for object in objects {
             let attributes = object.entity.attributesByName
@@ -59,11 +55,10 @@ public final class WireLoggerObjC: NSObject {
                 (object.value(forKey: "primaryKey") as? String ?? "<nil>") : "<n/a>"
             let domain = attributes["domain"] != nil ? (object.value(forKey: "domain") as? String ?? "<nil>") : "<n/a>"
 
-            let line = "Duplicate object entity=\(entityName) primaryKey=\(primaryKey) remoteIdentifier=\(remoteIdentifier) domain=\(domain)"
-            WireLogger.localStorage.error(line, attributes: .safePublic)
-            lines.append(line)
+            WireLogger.localStorage.error(
+                "Duplicate object entity=\(entityName) primaryKey=\(primaryKey) remoteIdentifier=\(remoteIdentifier) domain=\(domain)",
+                attributes: .safePublic
+            )
         }
-
-        return lines.joined(separator: "; ")
     }
 }
