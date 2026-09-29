@@ -191,13 +191,13 @@ jobs:
         id: test-services
         if: ${{ inputs.run_critical_flows }}
         shell: bash
+        env:
+          IN_HOUSE_RUNNER: ${{ inputs.mac_runner == 'in-house' }}
         run: |
           set -euo pipefail
 
           ENV_FILE="wire-ios/WireUITests/env.xcconfig"
           [[ -f "$ENV_FILE" ]] || { echo "::error::env.xcconfig missing: $ENV_FILE" >&2; exit 1; }
-
-          IN_HOUSE_RUNNER="${{ inputs.mac_runner == 'in-house' }}"
 
           if [[ "$IN_HOUSE_RUNNER" == "true" ]]; then
             echo "USE_IN_HOUSE_SERVICES=true" >> "$ENV_FILE"
