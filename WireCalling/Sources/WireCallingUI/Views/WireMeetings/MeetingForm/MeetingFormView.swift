@@ -91,7 +91,7 @@ struct MeetingFormView: View {
                 )
             }
             .alert(
-                L10n.Localizable.Meetings.ScheduleModal.Error.addParticipantsFailed,
+                viewModel.mode.isEdit ? Strings.ParticipantsNotAdded.title : Strings.ParticipantsNotAdded.createdTitle,
                 isPresented: $viewModel.hasParticipantsNotAddedAlert
             ) {
                 Button(Strings.Error.Alert.ok, action: viewModel.acknowledgeParticipantsNotAdded)
