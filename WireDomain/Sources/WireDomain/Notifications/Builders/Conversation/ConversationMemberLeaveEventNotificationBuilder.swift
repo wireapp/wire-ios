@@ -324,13 +324,23 @@ extension ConversationMemberLeaveEventNotificationBuilder {
             }
 
             guard let conversationsAPI,
-                  await conversationLocalStore.conversationNeedsBackendUpdate(conversation),
-                  let remoteConversation = try? await conversationsAPI.getConversations(for: [conversationID]).found.first,
-                  remoteConversation.groupType == .meeting else {
+                  await conversationLocalStore.conversationNeedsBackendUpdate(conversation) else {
                 return (false, nil)
             }
 
-            return (true, localName ?? remoteConversation.name)
+            do {
+                let response = try await conversationsAPI.getConversations(for: [conversationID])
+                guard let remoteConversation = response.found.first else {
+                    return (true, localName)
+                }
+                guard remoteConversation.groupType == .meeting else {
+                    return (false, nil)
+                }
+
+                return (true, localName ?? remoteConversation.name)
+            } catch {
+                return (true, localName)
+            }
         }
 
         func selfUserID(selfUser: ZMUser) async -> UUID {

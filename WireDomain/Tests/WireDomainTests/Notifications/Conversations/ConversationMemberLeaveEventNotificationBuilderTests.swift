@@ -210,6 +210,51 @@ final class ConversationMemberLeaveEventNotificationBuilderTests: XCTestCase {
         XCTAssertEqual(conversationsAPI.getConversationsFor_Invocations, [[Scaffolding.conversationID]])
     }
 
+    func testGenerateMeetingCancellationNotification_WhenStaleConversationCannotBeResolvedRemotely() async throws {
+        await setupMock(isGroup: true, isTeam: true)
+        await setupMeetingsFeature(isEnabled: true)
+        conversationLocalStore.isMeetingConversation_MockValue = false
+        conversationLocalStore.conversationNeedsBackendUpdate_MockValue = true
+        conversationLocalStore.nameFor_MockValue = nil
+        conversationsAPI.getConversationsFor_MockValue = .init(
+            found: [],
+            notFound: [Scaffolding.conversationID],
+            failed: []
+        )
+        userLocalStore.isSelfUserIdDomain_MockValue = (
+            user: userLocalStore.fetchSelfUser_MockValue!,
+            isSelfUser: false
+        )
+        sut = makeSUT(featureConfigLocalStore: featureStore, conversationsAPI: conversationsAPI)
+
+        let userNotification = await sut.buildMeetingCancellationContent(event: Scaffolding.selfUserRemovedEvent)
+
+        try assertMeetingCancellationNotification(try XCTUnwrap(userNotification), title: "")
+        XCTAssertEqual(conversationsAPI.getConversationsFor_Invocations, [[Scaffolding.conversationID]])
+    }
+
+    func testGenerateMeetingCancellationNotification_WhenRemoteConversationIsNotMeeting() async throws {
+        await setupMock(isGroup: true, isTeam: true)
+        await setupMeetingsFeature(isEnabled: true)
+        conversationLocalStore.isMeetingConversation_MockValue = false
+        conversationLocalStore.conversationNeedsBackendUpdate_MockValue = true
+        conversationsAPI.getConversationsFor_MockValue = .init(
+            found: [.init(groupType: .group)],
+            notFound: [],
+            failed: []
+        )
+        userLocalStore.isSelfUserIdDomain_MockValue = (
+            user: userLocalStore.fetchSelfUser_MockValue!,
+            isSelfUser: false
+        )
+        sut = makeSUT(featureConfigLocalStore: featureStore, conversationsAPI: conversationsAPI)
+
+        let userNotification = await sut.buildMeetingCancellationContent(event: Scaffolding.selfUserRemovedEvent)
+
+        XCTAssertNil(userNotification)
+        XCTAssertEqual(conversationsAPI.getConversationsFor_Invocations, [[Scaffolding.conversationID]])
+    }
+
     func testGenerateMeetingCancellationNotification_WhenSelfUserRemovedThemselves() async throws {
         await setupMock(isGroup: true, isTeam: true)
         await setupMeetingsFeature(isEnabled: true)
@@ -296,13 +341,14 @@ final class ConversationMemberLeaveEventNotificationBuilderTests: XCTestCase {
     }
 
     private func assertMeetingCancellationNotification(
-        _ userNotification: UserNotification
+        _ userNotification: UserNotification,
+        title: String = Scaffolding.conversationName
     ) throws {
         guard case let .text(notificationContent) = userNotification else {
             return XCTFail()
         }
 
-        XCTAssertEqual(notificationContent.title, Scaffolding.conversationName)
+        XCTAssertEqual(notificationContent.title, title)
         XCTAssertEqual(
             notificationContent.body,
             String.formated(
