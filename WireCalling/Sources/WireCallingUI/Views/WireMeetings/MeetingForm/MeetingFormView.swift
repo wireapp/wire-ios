@@ -476,6 +476,10 @@ private struct MockSearchMembersUseCase: SearchMembersUseCaseProtocol {
         guard !query.isEmpty else { return members }
         return members.filter { $0.name.localizedCaseInsensitiveContains(query) }
     }
+
+    func searchGroups(query: String) async throws -> [MeetingGroup] { [] }
+
+    func members(in groupID: QualifiedID) async throws -> [MeetingMember] { [] }
 }
 
 private extension [MeetingMember] {

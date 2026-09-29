@@ -16,24 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-package struct SearchMembersUseCase: SearchMembersUseCaseProtocol {
+public struct MeetingGroup: Identifiable, Equatable, Sendable {
 
-    private let repository: any MeetingMemberRepositoryProtocol
+    public let id: QualifiedID
+    public let name: String
+    public let isChannel: Bool
 
-    package init(repository: any MeetingMemberRepositoryProtocol) {
-        self.repository = repository
-    }
-
-    package func invoke(query: String) async throws -> [MeetingMember] {
-        try await repository.search(query: query)
-    }
-
-    package func searchGroups(query: String) async throws -> [MeetingGroup] {
-        try await repository.searchGroups(query: query)
-    }
-
-    package func members(in groupID: QualifiedID) async throws -> [MeetingMember] {
-        try await repository.members(in: groupID)
+    public init(id: QualifiedID, name: String, isChannel: Bool) {
+        self.id = id
+        self.name = name
+        self.isChannel = isChannel
     }
 
 }
