@@ -852,7 +852,6 @@ struct MeetingsViewModelTests {
             .NSSystemClockDidChange,
             .NSSystemTimeZoneDidChange,
             NSLocale.currentLocaleDidChangeNotification,
-            UIApplication.didBecomeActiveNotification,
             UIApplication.significantTimeChangeNotification
         ]
 

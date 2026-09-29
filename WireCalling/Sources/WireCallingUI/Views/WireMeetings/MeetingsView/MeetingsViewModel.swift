@@ -368,7 +368,6 @@ package extension MeetingsViewModel {
             .NSSystemClockDidChange,
             .NSSystemTimeZoneDidChange,
             NSLocale.currentLocaleDidChangeNotification,
-            UIApplication.didBecomeActiveNotification,
             UIApplication.significantTimeChangeNotification
         ]
     }
