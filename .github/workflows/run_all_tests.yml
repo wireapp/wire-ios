@@ -27,6 +27,7 @@ jobs:
     with:
       all: true
       mac_runner: ${{ inputs.mac_runner }}
+      timeout_minutes: ${{ inputs.mac_runner == 'github' && 180 || 120 }}
       run_critical_flows: ${{ inputs.run_critical_flows }}
       notify: always
     secrets:
