@@ -731,6 +731,7 @@ public final class ClientSessionComponent {
     public private(set) lazy var meetingRepository = MeetingRepository(
         meetingsAPI: meetingsAPI,
         localStore: MeetingLocalStore(context: syncContext),
+        onMeetingCreated: reconcileMeetingReminder,
         pullConversation: { [conversationRepository, syncContext] id in
             try await conversationRepository.pullConversation(id: id.id, domain: id.domain)
             await syncContext.perform { _ = syncContext.saveOrRollback() }

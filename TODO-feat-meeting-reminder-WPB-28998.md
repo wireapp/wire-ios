@@ -38,7 +38,8 @@
 - [x] Add account-scoped scheduler reconciliation for one meeting: remove obsolete occurrence requests, replace current content, and skip duplicate or past occurrence starts. Other app event paths and the NSE still need to use it.
 - [x] Reconcile a one-time meeting reminder when the app processes `meeting.create`, including when its conversation was already known. Use generic notification text until the privacy setting is decided.
 - [x] Reconcile incoming `meeting.update` and `meeting.member-add` through the app event processor. Remove a stale one-time reminder if an update changes the meeting to recurring.
-- [ ] Reconcile app-originated creates and edits, recurring occurrences, and authoritative meeting-list refreshes.
+- [x] Reconcile the organizer's one-time meeting when the app's create request succeeds, even if this client receives no `meeting.create` event. A reminder failure must not make meeting creation appear to fail.
+- [ ] Reconcile app-originated edits, recurring occurrences, and authoritative meeting-list refreshes.
 - [x] On logout or account removal, start account-scoped cancellation for that account ID only; preserve reminders for other signed-in accounts. Covered foreground and background session logout, account deletion, and retained-account data purge (`SessionManager.logout(account:)`, `logoutCurrentSession`, and `logoutBackgroundSessionAndPurgeRetainedAccountData`).
 - [ ] Ensure logout cancellation completes reliably if the app closes immediately after logout; consider a startup sweep of reminders for accounts that are no longer signed in.
 - [ ] Reconcile from the NSE when it processes relevant meeting create, invitation, update, or cancellation events, including events for which no immediate notification is built. Fetch the latest meeting details where required, and finish within the NSE's limited runtime. Handle duplicate or out-of-order events safely.
