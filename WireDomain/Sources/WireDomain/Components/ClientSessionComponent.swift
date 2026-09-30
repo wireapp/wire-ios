@@ -20,6 +20,7 @@ import Combine
 import Foundation
 import UserNotifications
 import WireCallingData
+import WireCallingDomain
 import WireCoreCrypto
 import WireDataModel
 import WireFoundation
@@ -771,23 +772,28 @@ public final class ClientSessionComponent {
         )
     )
 
+    private lazy var reconcileMeetingReminder: @Sendable (Meeting) async throws -> Void = { [selfUserID] meeting in
+        // Recurring reminders need a bounded horizon. Until that is implemented, remove any
+        // one-time reminder left over when an update changes a meeting to recurring.
+        let occurrenceStarts = meeting.recurrence == nil ? [meeting.start] : []
+        try await MeetingReminderScheduler().reconcile(
+            accountID: selfUserID,
+            meetingID: meeting.id,
+            occurrenceStarts: occurrenceStarts
+        ) { occurrenceStart in
+            MeetingReminderNotificationContentBuilder().build(
+                meeting: meeting,
+                occurrenceStart: occurrenceStart,
+                accountID: selfUserID,
+                showMeetingTitle: false
+            )
+        }
+    }
+
     private lazy var meetingCreateEventProcessor = MeetingCreateEventProcessor(
         repository: meetingRepository,
         conversationRepository: conversationRepository,
-        reconcileReminder: { [selfUserID] meeting in
-            try await MeetingReminderScheduler().reconcile(
-                accountID: selfUserID,
-                meetingID: meeting.id,
-                occurrenceStarts: [meeting.start]
-            ) { occurrenceStart in
-                MeetingReminderNotificationContentBuilder().build(
-                    meeting: meeting,
-                    occurrenceStart: occurrenceStart,
-                    accountID: selfUserID,
-                    showMeetingTitle: false
-                )
-            }
-        }
+        reconcileReminder: reconcileMeetingReminder
     )
 
     private lazy var meetingDeleteEventProcessor = MeetingDeleteEventProcessor(
@@ -798,7 +804,8 @@ public final class ClientSessionComponent {
 
     private lazy var meetingUpdateEventProcessor = MeetingUpdateEventProcessor(
         repository: meetingRepository,
-        conversationRepository: conversationRepository
+        conversationRepository: conversationRepository,
+        reconcileReminder: reconcileMeetingReminder
     )
 
     private func handleBeforeProcessingLiveEvent(_ event: UpdateEvent) async {

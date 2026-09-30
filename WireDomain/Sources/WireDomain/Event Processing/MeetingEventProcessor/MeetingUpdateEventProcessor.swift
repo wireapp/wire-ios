@@ -17,12 +17,14 @@
 //
 
 import WireCallingDomain
+import WireLogging
 import WireNetwork
 
 struct MeetingUpdateEventProcessor: MeetingUpdateEventProcessorProtocol {
 
     let repository: any MeetingRepositoryProtocol
     let conversationRepository: any ConversationRepositoryProtocol
+    let reconcileReminder: @Sendable (Meeting) async throws -> Void
 
     func processEvent(_ event: MeetingUpdateEvent) async throws {
         // A nil meeting no longer exists on the backend; its local copy
@@ -35,6 +37,12 @@ struct MeetingUpdateEventProcessor: MeetingUpdateEventProcessorProtocol {
             domain: conversationID.domain
         )
         await repository.storeMeeting(meeting)
+
+        do {
+            try await reconcileReminder(meeting)
+        } catch {
+            WireLogger.eventProcessing.error("Failed to reconcile meeting reminder: \(error)")
+        }
     }
 
 }

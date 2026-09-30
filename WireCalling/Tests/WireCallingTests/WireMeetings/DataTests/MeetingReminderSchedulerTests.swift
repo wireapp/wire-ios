@@ -152,6 +152,26 @@ struct MeetingReminderSchedulerTests {
         #expect(center.addedRequests.isEmpty)
     }
 
+    @Test("removes a meeting's pending reminders when no occurrences are supplied")
+    func reconcilesEmptyOccurrences() async throws {
+        let center = NotificationCenterSpy()
+        let otherAccount = MeetingReminder(
+            accountID: UUID(),
+            meetingID: reminder.meetingID,
+            occurrenceStart: reminder.occurrenceStart
+        )
+        center.storedPendingIdentifiers = [reminder.identifier, otherAccount.identifier]
+
+        try await MeetingReminderScheduler(notificationCenter: center).reconcile(
+            accountID: reminder.accountID,
+            meetingID: reminder.meetingID,
+            occurrenceStarts: []
+        ) { _ in UNMutableNotificationContent() }
+
+        #expect(center.removedIdentifiers == [[reminder.identifier]])
+        #expect(center.addedRequests.isEmpty)
+    }
+
     @Test("cancels every pending occurrence for only the selected account and qualified meeting")
     func cancelsAllMeetingOccurrences() async {
         let center = NotificationCenterSpy()
