@@ -55,7 +55,7 @@ struct FilePreviewModifier: ViewModifier {
                     return resetState()
                 }
 
-                if previewItem.isReadOnly, isDrivePermissionsFlagEnabled {
+                if previewItem.isReadOnly {
                     // uses custom previewers with limited actions
                     isCustomPreviewerPresented = true
                 } else {
@@ -82,11 +82,6 @@ struct FilePreviewModifier: ViewModifier {
                 }
             })
             .quickLookPreview($url)
-    }
-
-    // TODO: [WPB-25941] Remove drive permissions flag when feature is complete
-    var isDrivePermissionsFlagEnabled: Bool {
-        UserDefaults.standard.bool(forKey: "enableDrivePermissions")
     }
 
     private func resetState() {

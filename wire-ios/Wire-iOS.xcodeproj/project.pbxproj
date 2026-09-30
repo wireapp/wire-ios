@@ -529,6 +529,7 @@
 				AudioRecordKeyboardViewControllerSnapshotTests.swift,
 				AudioRecordKeyboardViewControllerTests.swift,
 				AudioRecordViewControllerTests.swift,
+				Authentication/AccountAlreadyLoggedInPolicyTests.swift,
 				Authentication/AuthenticationInterfaceBuilderTests.swift,
 				Authentication/AuthenticationStateControllerTests.swift,
 				Authentication/CookieStorageTests.swift,

@@ -93,12 +93,14 @@ struct MeetingRow: View {
                             } label: {
                                 Label(Strings.Actions.delete, systemImage: "trash")
                             }
+                            .tint(ColorTheme.Base.error.color)
                         } else {
                             Button(role: .destructive) {
                                 onDelete()
                             } label: {
                                 Label(Strings.Actions.deleteForMe, systemImage: "trash")
                             }
+                            .tint(ColorTheme.Base.error.color)
                             .disabled(meeting.conversation == nil)
                             .accessibilityIdentifier(Locators.WireMeetings.MeetingRow.deleteForMeButton)
                         }

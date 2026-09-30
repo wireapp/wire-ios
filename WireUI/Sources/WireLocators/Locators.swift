@@ -270,6 +270,24 @@ public enum Locators {
         case memberCell
         case close
         case readReceiptsSwitch
+        case guestOptionsCell
+    }
+
+    public enum GuestOptionsPage: String {
+        case createLinkButton
+        case linkHeader
+        case secureLinkHeader
+        case linkText
+        case createLinkWithPasswordAction
+        case createLinkWithoutPasswordAction
+        case revokeLinkButton = "Revoke Link…"
+    }
+
+    public enum CreateSecureGuestLinkPage: AutoPrefixedEnum {
+        case generatePasswordButton
+        case passwordTextField
+        case confirmPasswordTextField
+        case createLinkButton
     }
 
     public enum ConversationNotificationOptionsPage: AutoPrefixedEnum {
@@ -707,6 +725,11 @@ public enum Locators {
             case deleteForMeButton = "Delete Meeting for Me Button"
             case joinButton = "Join Button"
         }
+    }
 
+    public enum SessionExpiredPage: String {
+
+        case alertTitle = "Your session expired"
+        case okButton = "OK"
     }
 }

@@ -32,7 +32,6 @@ final class GroupConversationHeaderViewSnapshotTests: ZMSnapshotTestCase {
 
     override func setUp() {
         super.setUp()
-        DeveloperFlag.enableDrivePermissions.enable(false)
         snapshotHelper = SnapshotHelper()
     }
 
@@ -86,7 +85,6 @@ final class GroupConversationHeaderViewSnapshotTests: ZMSnapshotTestCase {
 
     /// Group with drive enabled and guests allowed — shows the shared drive and message timer cells.
     func testGroup_guestsAllowed_withDriveEnabled() {
-        DeveloperFlag.enableDrivePermissions.enable(true)
         let selfUser = makeSelfUser(isTeamMember: true, canAddUsers: true)
         let conversation = makeConversation(
             displayName: "Open Group",
@@ -94,20 +92,6 @@ final class GroupConversationHeaderViewSnapshotTests: ZMSnapshotTestCase {
             participantNames: ["Alice"]
         )
         conversation.allowGuests = true
-        conversation.cellsState = .ready
-        snapshotHelper
-            .withUserInterfaceStyle(.light)
-            .verify(matching: makeView(conversation: conversation, selfUser: selfUser))
-    }
-
-    /// Group with Wire Drive enabled — shows the shared drive and message timer cells.
-    func testGroup_wireDriveEnabled() {
-        let selfUser = makeSelfUser(isTeamMember: true, canAddUsers: true)
-        let conversation = makeConversation(
-            displayName: "Drive Group",
-            teamID: selfUser.teamIdentifier,
-            participantNames: ["Alice"]
-        )
         conversation.cellsState = .ready
         snapshotHelper
             .withUserInterfaceStyle(.light)

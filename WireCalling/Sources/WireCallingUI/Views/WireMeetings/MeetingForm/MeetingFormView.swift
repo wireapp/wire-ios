@@ -25,7 +25,7 @@ import WireFoundation
 struct MeetingFormView: View {
     private typealias Strings = L10n.Localizable.WireMeetings.Schedule
     private static let timePickerMinuteInterval = 15
-    private let formatter = MeetingsFormatter()
+    @State private var formatter = MeetingsFormatter()
 
     @Environment(\.dismiss) private var dismiss
     @Environment(\.wireAccentColor) private var wireAccentColor
@@ -50,6 +50,9 @@ struct MeetingFormView: View {
                 if !viewModel.mode.isEdit {
                     isTitleFieldFocused = true
                 }
+            }
+            .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in
+                formatter = MeetingsFormatter()
             }
             .scrollContentBackground(.hidden)
             .background(ColorTheme.Backgrounds.background.color)
@@ -86,7 +89,7 @@ struct MeetingFormView: View {
                 )
             }
             .alert(
-                Strings.ParticipantsNotAdded.title,
+                viewModel.mode.isEdit ? Strings.ParticipantsNotAdded.title : Strings.ParticipantsNotAdded.createdTitle,
                 isPresented: $viewModel.hasParticipantsNotAddedAlert
             ) {
                 Button(Strings.Error.Alert.ok, action: viewModel.acknowledgeParticipantsNotAdded)
