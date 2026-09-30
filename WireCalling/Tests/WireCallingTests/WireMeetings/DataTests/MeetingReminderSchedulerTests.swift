@@ -172,6 +172,93 @@ struct MeetingReminderSchedulerTests {
         #expect(center.addedRequests.isEmpty)
     }
 
+    @Test("authoritative refresh replaces stale meetings and occurrences for only one account")
+    func reconcilesAllMeetings() async throws {
+        let center = NotificationCenterSpy()
+        center.status = .authorized
+        let removedMeeting = MeetingReminder(
+            accountID: reminder.accountID,
+            meetingID: QualifiedID(id: UUID(), domain: "example.com"),
+            occurrenceStart: reminder.occurrenceStart
+        )
+        let otherAccount = MeetingReminder(
+            accountID: UUID(),
+            meetingID: reminder.meetingID,
+            occurrenceStart: reminder.occurrenceStart
+        )
+        center.storedPendingIdentifiers = [
+            reminder.identifier,
+            removedMeeting.identifier,
+            otherAccount.identifier,
+            "unrelated"
+        ]
+        let updatedStart = reminder.occurrenceStart.addingTimeInterval(3600)
+
+        try await MeetingReminderScheduler(notificationCenter: center).reconcileAll(
+            accountID: reminder.accountID,
+            meetings: [makeMeeting(id: reminder.meetingID, start: updatedStart)],
+            occurrenceLimit: 5,
+            now: reminder.fireDate.addingTimeInterval(-1)
+        ) { _, _ in UNMutableNotificationContent() }
+
+        #expect(Set(center.removedIdentifiers.joined()) == Set([
+            reminder.identifier,
+            removedMeeting.identifier
+        ]))
+        #expect(center.addedRequests.map(\.identifier) == [MeetingReminder(
+            accountID: reminder.accountID,
+            meetingID: reminder.meetingID,
+            occurrenceStart: updatedStart
+        ).identifier])
+    }
+
+    @Test("authoritative empty list removes only this account's meeting reminders")
+    func reconcilesEmptyMeetingList() async throws {
+        let center = NotificationCenterSpy()
+        let otherAccount = MeetingReminder(
+            accountID: UUID(),
+            meetingID: reminder.meetingID,
+            occurrenceStart: reminder.occurrenceStart
+        )
+        center.storedPendingIdentifiers = [reminder.identifier, otherAccount.identifier]
+
+        try await MeetingReminderScheduler(notificationCenter: center).reconcileAll(
+            accountID: reminder.accountID,
+            meetings: [],
+            occurrenceLimit: 5
+        ) { _, _ in UNMutableNotificationContent() }
+
+        #expect(center.removedIdentifiers == [[reminder.identifier]])
+        #expect(center.addedRequests.isEmpty)
+    }
+
+    @Test("a scheduling failure does not prevent later meetings from being scheduled")
+    func reconciliationContinuesAfterAddError() async {
+        let center = NotificationCenterSpy()
+        center.status = .authorized
+        let firstMeeting = makeMeeting(id: reminder.meetingID, start: reminder.occurrenceStart)
+        let secondMeeting = makeMeeting(
+            id: QualifiedID(id: UUID(), domain: "example.com"),
+            start: reminder.occurrenceStart.addingTimeInterval(3600)
+        )
+        center.failingIdentifiers = [reminder.identifier]
+
+        await #expect(throws: TestError.addFailed) {
+            try await MeetingReminderScheduler(notificationCenter: center).reconcileAll(
+                accountID: reminder.accountID,
+                meetings: [firstMeeting, secondMeeting],
+                occurrenceLimit: 5,
+                now: reminder.fireDate.addingTimeInterval(-1)
+            ) { _, _ in UNMutableNotificationContent() }
+        }
+
+        #expect(center.addedRequests.map(\.identifier) == [MeetingReminder(
+            accountID: reminder.accountID,
+            meetingID: secondMeeting.id,
+            occurrenceStart: secondMeeting.start
+        ).identifier])
+    }
+
     @Test("cancels every pending occurrence for only the selected account and qualified meeting")
     func cancelsAllMeetingOccurrences() async {
         let center = NotificationCenterSpy()
@@ -271,6 +358,18 @@ struct MeetingReminderSchedulerTests {
         }
     }
 
+    private func makeMeeting(id: QualifiedID, start: Date) -> Meeting {
+        Meeting(
+            id: id,
+            title: "Team meeting",
+            start: start,
+            end: start.addingTimeInterval(3600),
+            recurrence: nil,
+            conversationID: QualifiedID(id: UUID(), domain: "example.com"),
+            creatorID: QualifiedID(id: UUID(), domain: "example.com")
+        )
+    }
+
 }
 
 private enum TestError: Error {
@@ -283,6 +382,7 @@ private final class NotificationCenterSpy: MeetingReminderNotificationCenter {
     var storedPendingIdentifiers: [String] = []
     var removedIdentifiers: [[String]] = []
     var addError: TestError?
+    var failingIdentifiers: Set<String> = []
 
     func authorizationStatus() async -> UNAuthorizationStatus {
         status
@@ -294,6 +394,7 @@ private final class NotificationCenterSpy: MeetingReminderNotificationCenter {
 
     func add(_ request: UNNotificationRequest) async throws {
         if let addError { throw addError }
+        if failingIdentifiers.contains(request.identifier) { throw TestError.addFailed }
         addedRequests.append(request)
     }
 

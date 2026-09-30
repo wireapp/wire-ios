@@ -35,6 +35,7 @@ public final class MeetingRepository: MeetingRepositoryProtocol {
     private let localStore: any MeetingLocalStoreProtocol
     private let onMeetingCreated: (@Sendable (Meeting) async throws -> Void)?
     private let onMeetingUpdated: (@Sendable (Meeting) async throws -> Void)?
+    private let onMeetingsRefreshed: (@Sendable ([Meeting]) async -> Void)?
     private let pullConversation: (@Sendable (QualifiedID) async throws -> Void)?
     private let changeBroadcaster = AsyncMulticaster<Void>()
 
@@ -45,12 +46,14 @@ public final class MeetingRepository: MeetingRepositoryProtocol {
         localStore: any MeetingLocalStoreProtocol,
         onMeetingCreated: (@Sendable (Meeting) async throws -> Void)? = nil,
         onMeetingUpdated: (@Sendable (Meeting) async throws -> Void)? = nil,
+        onMeetingsRefreshed: (@Sendable ([Meeting]) async -> Void)? = nil,
         pullConversation: (@Sendable (QualifiedID) async throws -> Void)? = nil
     ) {
         self.meetingsAPI = meetingsAPI
         self.localStore = localStore
         self.onMeetingCreated = onMeetingCreated
         self.onMeetingUpdated = onMeetingUpdated
+        self.onMeetingsRefreshed = onMeetingsRefreshed
         self.pullConversation = pullConversation
     }
 
@@ -148,6 +151,7 @@ public final class MeetingRepository: MeetingRepositoryProtocol {
         let meetings = responses.map { $0.toDomainMeeting() }
         await localStore.replaceAllMeetings(with: meetings)
         await resolveConversations(for: meetings)
+        await onMeetingsRefreshed?(meetings)
         changeBroadcaster.broadcast()
     }
 
@@ -201,6 +205,7 @@ public final class MeetingRepository: MeetingRepositoryProtocol {
             let meetings = try await meetingsAPI.listMeetings().map { $0.toDomainMeeting() }
             await localStore.replaceAllMeetings(with: meetings)
             await resolveConversations(for: meetings)
+            await onMeetingsRefreshed?(meetings)
         } catch {
             guard await !localStore.storedMeetings().isEmpty else { throw error }
         }

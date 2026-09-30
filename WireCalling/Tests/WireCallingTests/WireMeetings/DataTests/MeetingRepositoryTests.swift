@@ -168,6 +168,46 @@ struct MeetingRepositoryTests {
         #expect(await changes.next() != nil)
     }
 
+    @Test("successful full-list refreshes reconcile the authoritative meeting IDs")
+    func fullListRefreshesReconcileReminders() async throws {
+        let snapshots = MeetingSnapshots()
+        let sut = MeetingRepository(
+            meetingsAPI: meetingsAPI,
+            localStore: localStore,
+            onMeetingsRefreshed: { [snapshots] meetings in
+                await snapshots.record(meetings)
+            }
+        )
+        meetingsAPI.listMeetings_MockValue = [Scaffolding.meetingResponse]
+
+        try await sut.pullMeetings()
+        meetingsAPI.listMeetings_MockValue = []
+        localStore.storedMeetingsMeetingReturnValue = []
+        _ = try await sut.fetchMeetings(in: Date.distantPast ..< Date.distantFuture, offset: 0, limit: 10)
+
+        #expect(await snapshots.meetingIDs == [[Scaffolding.meetingID], []])
+    }
+
+    @Test("failed or unsupported list requests do not reconcile reminders")
+    func unsuccessfulFullListRefreshDoesNotReconcileReminders() async throws {
+        let snapshots = MeetingSnapshots()
+        let sut = MeetingRepository(
+            meetingsAPI: meetingsAPI,
+            localStore: localStore,
+            onMeetingsRefreshed: { [snapshots] meetings in
+                await snapshots.record(meetings)
+            }
+        )
+        meetingsAPI.listMeetings_MockError = MeetingsAPIError.unsupportedEndpointForAPIVersion
+        try await sut.pullMeetings()
+
+        meetingsAPI.listMeetings_MockError = MeetingsAPIError.accessDenied
+        localStore.storedMeetingsMeetingReturnValue = [Scaffolding.storedMeeting]
+        _ = try await sut.fetchMeetings(in: Date.distantPast ..< Date.distantFuture, offset: 0, limit: 10)
+
+        #expect(await snapshots.meetingIDs.isEmpty)
+    }
+
     // MARK: - deleteLocalMeeting
 
     @Test
@@ -655,6 +695,14 @@ struct MeetingRepositoryTests {
 
         func record(_ meeting: Meeting) {
             meetings.append(meeting)
+        }
+    }
+
+    private actor MeetingSnapshots {
+        private(set) var meetingIDs: [[WireNetwork.QualifiedID]] = []
+
+        func record(_ meetings: [Meeting]) {
+            meetingIDs.append(meetings.map(\.id))
         }
     }
 

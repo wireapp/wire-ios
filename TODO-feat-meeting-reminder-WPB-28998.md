@@ -34,14 +34,15 @@
 - [x] When the organizer deletes a meeting or a participant leaves it directly in the app, cancel that account's reminders after the server-side operation succeeds; this client may not receive its own delete event.
 - [x] Add localized reminder content for the occurrence start time, with either the meeting title or a generic title. Give it a reminder category and account ID so taps open the meetings screen for the correct account.
 - [ ] Decide when to show the meeting title based on notification privacy settings, translate the new reminder strings, and route a tap to the specific meeting.
-- [ ] Schedule and reconcile reminders after the app creates, edits, or syncs meetings. Handle full meeting-list replacement so obsolete reminders are removed.
+- [x] Schedule and reconcile reminders after the app creates, edits, or successfully syncs the authoritative meeting list. Remove obsolete reminders after full-list replacement without touching other accounts; leave pending reminders unchanged when listing fails.
 - [x] Add account-scoped scheduler reconciliation for one meeting: remove obsolete occurrence requests, replace current content, and skip duplicate or past occurrence starts. Other app event paths and the NSE still need to use it.
 - [x] Reconcile reminders when the app processes `meeting.create`, including when its conversation was already known. Use generic notification text until the privacy setting is decided.
 - [x] Reconcile incoming `meeting.update` and `meeting.member-add` through the app event processor, replacing obsolete occurrences when the schedule changes.
 - [x] Reconcile the organizer's meeting when the app's create request succeeds, even if this client receives no `meeting.create` event. A reminder failure must not make meeting creation appear to fail.
 - [x] Reconcile app-originated edits from the server's updated meeting, replacing occurrences when the start or recurrence changes. A scheduling failure must not make the edit appear to fail.
 - [x] Schedule the next five recurring occurrences when the app creates or receives a changed meeting.
-- [ ] Reconcile authoritative meeting-list refreshes and replenish recurring reminders during later app/NSE activity.
+- [x] Reconcile successful authoritative meeting-list refreshes (including the meetings UI's list refresh) and replenish each listed meeting's next five occurrences.
+- [ ] Replenish recurring reminders during later NSE activity and other app wakeups that do not fetch the meeting list.
 - [x] Add a reusable recurrence start calculator that excludes occurrences whose ten-minute fire time has passed and delegates time-zone, daylight-saving, interval, and end-date handling to `MeetingOccurrencePaginator`.
 - [x] On logout or account removal, start account-scoped cancellation for that account ID only; preserve reminders for other signed-in accounts. Covered foreground and background session logout, account deletion, and retained-account data purge (`SessionManager.logout(account:)`, `logoutCurrentSession`, and `logoutBackgroundSessionAndPurgeRetainedAccountData`).
 - [ ] Ensure logout cancellation completes reliably if the app closes immediately after logout; consider a startup sweep of reminders for accounts that are no longer signed in.

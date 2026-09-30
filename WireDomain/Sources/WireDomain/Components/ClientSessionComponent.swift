@@ -733,6 +733,26 @@ public final class ClientSessionComponent {
         localStore: MeetingLocalStore(context: syncContext),
         onMeetingCreated: reconcileMeetingReminder,
         onMeetingUpdated: reconcileMeetingReminder,
+        onMeetingsRefreshed: { [selfUserID] meetings in
+            let now = Date.now
+            do {
+                try await MeetingReminderScheduler().reconcileAll(
+                    accountID: selfUserID,
+                    meetings: meetings,
+                    occurrenceLimit: 5,
+                    now: now
+                ) { meeting, occurrenceStart in
+                    MeetingReminderNotificationContentBuilder().build(
+                        meeting: meeting,
+                        occurrenceStart: occurrenceStart,
+                        accountID: selfUserID,
+                        showMeetingTitle: false
+                    )
+                }
+            } catch {
+                WireLogger.meetings.error("Failed to reconcile refreshed meeting reminders: \(error)")
+            }
+        },
         pullConversation: { [conversationRepository, syncContext] id in
             try await conversationRepository.pullConversation(id: id.id, domain: id.domain)
             await syncContext.perform { _ = syncContext.saveOrRollback() }
