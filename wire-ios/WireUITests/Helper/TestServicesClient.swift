@@ -21,10 +21,24 @@ import ImageIO
 
 class TestServicesClient {
 
-    let testServiceURL = "http://localhost:8080"
+    let testServiceURL: String
     let CONNECT_TIMEOUT: TimeInterval = 120
     let RESPONSE_TIMEOUT: TimeInterval = 120
     private var instanceCache: [String: String] = [:]
+
+    init() {
+        self.testServiceURL = Self.testServiceURL()
+    }
+
+    private static func testServiceURL() -> String {
+        let environment = ProcessInfo.processInfo.environment
+        let flag = environment["USE_IN_HOUSE_SERVICES"]?.lowercased()
+        let flagUnset = flag?.isEmpty ?? true
+        let useInHouseServices = flag == "true" || (flagUnset && environment["CI"]?.lowercased() != "true")
+        let hostname = useInHouseServices ? "kalium.qa.zinfra.io" : "localhost:8080"
+
+        return "http://\(hostname)"
+    }
 
     // MARK: - Created instances log
 
