@@ -28,20 +28,23 @@
 
 ## Implementation
 
-- [ ] Add a small, shared meeting-reminder scheduler accessible from the app and NSE. Use `UNUserNotificationCenter` and an **absolute** fire date of occurrence start minus ten minutes; do not start a ten-minute timer when an event arrives.
-- [ ] Give each pending reminder a stable identifier containing account, qualified meeting ID, and occurrence start. Limit replacement/removal to reminders owned by this feature and account.
-- [ ] Build reminder content from the meeting title and occurrence time using existing localization, notification privacy, and account-routing conventions. Check notification authorization/settings before scheduling.
-- [ ] Reconcile pending reminders after the app creates, edits, deletes, or syncs meetings. On logout or account removal, cancel all feature-owned pending reminders for that account ID only; preserve reminders for other signed-in accounts. Cover foreground and background session logout, plus retained-account data purge (`SessionManager.logout(account:)`, `logoutCurrentSession`, and `logoutBackgroundSessionAndPurgeRetainedAccountData`). Also reconcile after full meeting-list replacement so obsolete reminders are removed.
+- [x] Add the `MeetingReminder` model and a `UNUserNotificationCenter` scheduler using an absolute occurrence start minus ten minutes. The scheduler skips past reminders and checks notification authorization.
+- [x] Give requests stable, feature-owned identifiers containing account, qualified meeting ID, and occurrence start. Add cancellation for one occurrence, all occurrences of one meeting, and all meeting reminders for one account without affecting other accounts.
+- [x] In app event processing, cancel reminders on `meeting.delete` and on `conversation.member-leave` for the signed-in user when the meeting-to-conversation mapping is stored locally.
+- [ ] Build reminder content from the meeting title and occurrence time using existing localization, notification privacy, and account-routing conventions.
+- [ ] Schedule and reconcile reminders after the app creates, edits, or syncs meetings. Handle full meeting-list replacement so obsolete reminders are removed.
+- [ ] On logout or account removal, call account-scoped cancellation for that account ID only; preserve reminders for other signed-in accounts. Cover foreground and background session logout, plus retained-account data purge (`SessionManager.logout(account:)`, `logoutCurrentSession`, and `logoutBackgroundSessionAndPurgeRetainedAccountData`).
 - [ ] Reconcile from the NSE when it processes relevant meeting create, invitation, update, or cancellation events, including events for which no immediate notification is built. Fetch the latest meeting details where required, and finish within the NSE's limited runtime. Handle duplicate or out-of-order events safely.
-- [ ] On `conversation.member-leave` for the signed-in user, cancel reminders for every meeting tied to that conversation. Run cancellation independently of `buildMeetingCancellationContent`: that method deliberately returns no visible cancellation notification for self-initiated leave and can also return nil when feature data or sender details are unavailable. Reuse the lookup and invitation-backed local storage from `dc883e4da8`, but retain a way to resolve feature-owned pending requests if the local meeting is absent. Do not treat a transient meeting API failure as a deletion.
+- [ ] Complete the self-removal cancellation path in the NSE, independently of `buildMeetingCancellationContent`: that method deliberately returns no visible cancellation notification for self-initiated leave and can also return nil when feature data or sender details are unavailable. Reuse the lookup and invitation-backed local storage from `dc883e4da8`, but retain a way to resolve feature-owned pending requests if the local meeting is absent. Do not treat a transient meeting API failure as a deletion.
 - [ ] When scheduling from an invitation, use the meeting response to establish the meeting-to-conversation mapping. Reconcile against a successful authoritative meeting-list refresh to remove stale reminders after missed events or removals.
 - [ ] Use `MeetingOccurrencePaginator` (or shared equivalent logic) for recurrence, including meeting time zone, daylight-saving changes, interval, and end date. Keep a bounded future window and replenish it on later app/NSE activity.
-- [ ] Handle meetings whose reminder time has passed, pending notification changes, authorization changes, and schedule failures without showing an obsolete reminder.
+- [ ] Handle pending notification changes, authorization changes, and schedule failures during reconciliation without showing an obsolete reminder. The scheduler already skips reminders whose fire time has passed.
 - [ ] Ensure foreground presentation and notification taps route to the correct account and meeting.
 
 ## Verification
 
-- [ ] Add focused tests for fire-date calculation, recurrence across daylight-saving changes, stable identifiers, duplicate events, and rescheduling/cancellation after edits and deletes.
+- [x] Add focused tests for absolute fire date, past and unauthorized reminders, stable identifier-based cancellation, account isolation, app meeting deletion, and app self-removal cancellation.
+- [ ] Add focused tests for recurrence across daylight-saving changes, duplicate events, and rescheduling/cancellation after edits and authoritative refreshes.
 - [ ] Test organizer and invitee flows, meetings created shortly before start, app termination, and a device that stays offline across a meeting change. With two accounts signed in, verify that logging out or removing one account cancels only its pending reminders, including when it is the background account; the other account's reminders must remain scheduled.
 - [ ] Test the local scheduling flow on a device or simulator; test the NSE path on a build that can receive Wire pushes.
 - [ ] Run the relevant SwiftFormat/SwiftLint checks and targeted tests. Record any build or push-testing limitation in the PR.
