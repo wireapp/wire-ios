@@ -414,6 +414,7 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
                 meetingsAPI: MeetingsAPIBuilder(apiService: apiService).makeAPI(for: apiVersion),
                 usersAPI: UsersAPIBuilder(apiService: apiService).makeAPI(for: apiVersion),
                 featureConfigLocalStore: FeatureConfigLocalStore(context: coreDataStack.syncContext),
+                meetingLocalStore: MeetingLocalStore(context: coreDataStack.syncContext),
                 accountID: dependency.accountID
             )
         }
@@ -582,11 +583,14 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
     private var conversationMemberLeaveEventNotificationBuilder: ConversationMemberLeaveEventNotificationBuilder {
         let context = ConversationMemberLeaveEventNotificationBuilder.Context(
             conversationLocalStore: conversationLocalStore,
-            userLocalStore: userLocalStore
+            userLocalStore: userLocalStore,
+            conversationsAPI: ConversationsAPIBuilder(apiService: apiService).makeAPI(for: apiVersion),
+            meetingLocalStore: MeetingLocalStore(context: coreDataStack.syncContext)
         )
 
         let validator = ConversationMemberLeaveEventNotificationBuilder.Validator(
-            userLocalStore: userLocalStore
+            userLocalStore: userLocalStore,
+            featureConfigLocalStore: FeatureConfigLocalStore(context: coreDataStack.syncContext)
         )
 
         return ConversationMemberLeaveEventNotificationBuilder(

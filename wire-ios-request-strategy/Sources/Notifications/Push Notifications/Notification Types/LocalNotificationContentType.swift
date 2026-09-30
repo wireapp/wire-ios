@@ -50,6 +50,7 @@ public enum LocalNotificationContentType: Equatable {
             self = .participantsAdded
 
         case .conversationMemberLeave:
+            guard conversation?.isMeeting != true else { return nil }
             self = .participantsRemoved(reason: event.participantsRemovedReason)
 
         case .conversationMessageTimerUpdate:
