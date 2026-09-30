@@ -17,18 +17,11 @@
 //
 
 import Foundation
+import WireCallingData
 import WireCallingDomain
-import WireNetwork
 
-struct MeetingDeleteEventProcessor: MeetingDeleteEventProcessorProtocol {
-
-    let repository: any MeetingRepositoryProtocol
-    let reminderCanceller: any MeetingReminderCancelling
-    let accountID: UUID
-
-    func processEvent(_ event: MeetingDeleteEvent) async {
-        await reminderCanceller.cancelAll(accountID: accountID, meetingID: event.meetingID)
-        await repository.deleteLocalMeeting(id: event.meetingID)
-    }
-
+protocol MeetingReminderCancelling {
+    func cancelAll(accountID: UUID, meetingID: WireCallingDomain.QualifiedID) async
 }
+
+extension MeetingReminderScheduler: MeetingReminderCancelling {}

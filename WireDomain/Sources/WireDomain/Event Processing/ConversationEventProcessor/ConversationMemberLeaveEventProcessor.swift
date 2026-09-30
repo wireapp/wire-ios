@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Foundation
+import WireCallingData
 import WireDataModel
 import WireNetwork
 
@@ -26,8 +28,19 @@ struct ConversationMemberLeaveEventProcessor: ConversationMemberLeaveEventProces
     }
 
     let repository: any ConversationRepositoryProtocol
+    let meetingLocalStore: any MeetingLocalStoreProtocol
+    let reminderCanceller: any MeetingReminderCancelling
+    let accountID: UUID
 
     func processEvent(_ event: ConversationMemberLeaveEvent) async throws {
+        if event.removedUserIDs.contains(where: { $0.id == accountID }) {
+            let meetings = await meetingLocalStore.storedMeetings()
+            for meeting in meetings where meeting.conversationID.id == event.conversationID.id
+                && meeting.conversationID.domain == event.conversationID.domain {
+                await reminderCanceller.cancelAll(accountID: accountID, meetingID: meeting.id)
+            }
+        }
+
         do {
             try await repository.removeMembers(
                 event.removedUserIDs,

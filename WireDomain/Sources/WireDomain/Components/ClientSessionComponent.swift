@@ -568,7 +568,10 @@ public final class ClientSessionComponent {
     )
 
     private lazy var conversationMemberLeaveEventProcessor = ConversationMemberLeaveEventProcessor(
-        repository: conversationRepository
+        repository: conversationRepository,
+        meetingLocalStore: MeetingLocalStore(context: syncContext),
+        reminderCanceller: MeetingReminderScheduler(),
+        accountID: selfUserID
     )
 
     private lazy var conversationMemberUpdateEventProcessor = ConversationMemberUpdateEventProcessor(
@@ -774,7 +777,9 @@ public final class ClientSessionComponent {
     )
 
     private lazy var meetingDeleteEventProcessor = MeetingDeleteEventProcessor(
-        repository: meetingRepository
+        repository: meetingRepository,
+        reminderCanceller: MeetingReminderScheduler(),
+        accountID: selfUserID
     )
 
     private lazy var meetingUpdateEventProcessor = MeetingUpdateEventProcessor(
