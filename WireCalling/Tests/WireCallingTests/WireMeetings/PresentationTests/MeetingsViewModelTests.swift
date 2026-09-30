@@ -791,7 +791,7 @@ struct MeetingsViewModelTests {
         let updatedDate = mockDateProvider.now.addingTimeInterval(3600)
         mockDateProvider.now = updatedDate
         continuation.yield(())
-        await Task.yield()
+        _ = await waitUntil { viewModel.currentDate == updatedDate }
 
         #expect(viewModel.currentDate == updatedDate)
         #expect(upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsCallsCount == 1)
@@ -930,6 +930,22 @@ struct MeetingsViewModelTests {
     func formatDay() {
         let day = mockDateProvider.now
         #expect(viewModel.formatDay(day) == formatter.dayHeader(for: day, now: mockDateProvider.now))
+    }
+
+    // MARK: - Async Helpers
+
+    private func waitUntil(
+        timeout: Duration = .seconds(1),
+        _ condition: () -> Bool
+    ) async -> Bool {
+        let clock = ContinuousClock()
+        let deadline = clock.now.advanced(by: timeout)
+
+        while !condition(), clock.now < deadline {
+            try? await Task.sleep(for: .milliseconds(1))
+        }
+
+        return condition()
     }
 
 }
