@@ -61,7 +61,7 @@
 
 - [x] Add focused tests for absolute fire date, past and unauthorized reminders, stable identifier-based cancellation, account isolation, event-driven cancellation, and direct app deletion or leave.
 - [x] Test reminder content with visible and hidden meeting titles, localized occurrence time, reminder category, and account ID.
-- [x] Test that a default tap on the reminder category opens the meetings screen for the notification's session.
+- [x] Test that a default tap on the reminder category opens the meetings screen for the notification's session. Verified in a WireSyncEngine test run with 20 passing tests after clearing DerivedData.
 - [ ] Add focused tests for recurrence across daylight-saving changes, duplicate events, and rescheduling/cancellation after edits and authoritative refreshes.
 - [x] Test scheduler reconciliation for an edited start, duplicate occurrence input, past occurrences, and isolation from other accounts and meetings.
 - [x] Test NSE meeting-event reminder routing for create, invitation, update, deletion, confirmed absence, and transient fetch failure.

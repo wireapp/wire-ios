@@ -86,6 +86,7 @@ struct MeetingReminderSchedulerTests {
 
         #expect(!scheduled)
         #expect(center.addedRequests.isEmpty)
+        #expect(center.removedIdentifiers == [[reminder.identifier]])
     }
 
     @Test("cancels only the specified occurrence")
@@ -170,6 +171,32 @@ struct MeetingReminderSchedulerTests {
 
         #expect(center.removedIdentifiers == [[reminder.identifier]])
         #expect(center.addedRequests.isEmpty)
+    }
+
+    @Test("a failed replacement removes its old request and still schedules later occurrences")
+    func reconciliationContinuesAfterOccurrenceError() async {
+        let center = NotificationCenterSpy()
+        center.status = .authorized
+        center.storedPendingIdentifiers = [reminder.identifier]
+        center.failingIdentifiers = [reminder.identifier]
+        let laterStart = reminder.occurrenceStart.addingTimeInterval(3600)
+        let laterReminder = MeetingReminder(
+            accountID: reminder.accountID,
+            meetingID: reminder.meetingID,
+            occurrenceStart: laterStart
+        )
+
+        await #expect(throws: TestError.addFailed) {
+            try await MeetingReminderScheduler(notificationCenter: center).reconcile(
+                accountID: reminder.accountID,
+                meetingID: reminder.meetingID,
+                occurrenceStarts: [reminder.occurrenceStart, laterStart],
+                now: reminder.fireDate.addingTimeInterval(-1)
+            ) { _ in UNMutableNotificationContent() }
+        }
+
+        #expect(center.removedIdentifiers == [[reminder.identifier]])
+        #expect(center.addedRequests.map(\.identifier) == [laterReminder.identifier])
     }
 
     @Test("authoritative refresh replaces stale meetings and occurrences for only one account")
@@ -372,6 +399,7 @@ struct MeetingReminderSchedulerTests {
                 now: reminder.fireDate.addingTimeInterval(-1)
             )
         }
+        #expect(center.removedIdentifiers == [[reminder.identifier]])
     }
 
     private func makeMeeting(id: QualifiedID, start: Date) -> Meeting {

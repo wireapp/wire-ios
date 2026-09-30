@@ -67,6 +67,7 @@ public struct MeetingReminderScheduler {
         case .authorized, .provisional:
             break
         default:
+            notificationCenter.removePendingNotificationRequests(withIdentifiers: [reminder.identifier])
             return false
         }
 
@@ -84,7 +85,13 @@ public struct MeetingReminderScheduler {
             content: content,
             trigger: UNCalendarNotificationTrigger(dateMatching: fireComponents, repeats: false)
         )
-        try await notificationCenter.add(request)
+        do {
+            try await notificationCenter.add(request)
+        } catch {
+            // An earlier request with this identifier may still have outdated content.
+            notificationCenter.removePendingNotificationRequests(withIdentifiers: [reminder.identifier])
+            throw error
+        }
         return true
     }
 
@@ -113,13 +120,19 @@ public struct MeetingReminderScheduler {
             notificationCenter.removePendingNotificationRequests(withIdentifiers: obsoleteIdentifiers)
         }
 
+        var firstError: (any Error)?
         for reminder in reminders.sorted(by: { $0.occurrenceStart < $1.occurrenceStart }) {
-            try await schedule(
-                reminder,
-                content: contentForOccurrence(reminder.occurrenceStart),
-                now: now
-            )
+            do {
+                try await schedule(
+                    reminder,
+                    content: contentForOccurrence(reminder.occurrenceStart),
+                    now: now
+                )
+            } catch {
+                if firstError == nil { firstError = error }
+            }
         }
+        if let firstError { throw firstError }
     }
 
     /// Replaces this account's reminders after a successful authoritative meeting-list refresh.
