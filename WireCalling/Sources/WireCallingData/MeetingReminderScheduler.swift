@@ -22,6 +22,7 @@ public import WireCallingDomain
 
 protocol MeetingReminderNotificationCenter {
     func authorizationStatus() async -> UNAuthorizationStatus
+    func pendingRequestIdentifiers() async -> [String]
     func add(_ request: UNNotificationRequest) async throws
     func removePendingNotificationRequests(withIdentifiers identifiers: [String])
 }
@@ -29,6 +30,14 @@ protocol MeetingReminderNotificationCenter {
 extension UNUserNotificationCenter: MeetingReminderNotificationCenter {
     func authorizationStatus() async -> UNAuthorizationStatus {
         await notificationSettings().authorizationStatus
+    }
+
+    func pendingRequestIdentifiers() async -> [String] {
+        await withCheckedContinuation { continuation in
+            getPendingNotificationRequests { requests in
+                continuation.resume(returning: requests.map(\.identifier))
+            }
+        }
     }
 }
 
@@ -81,6 +90,16 @@ public struct MeetingReminderScheduler {
 
     public func cancel(_ reminder: MeetingReminder) {
         notificationCenter.removePendingNotificationRequests(withIdentifiers: [reminder.identifier])
+    }
+
+    /// Requests cancellation of every pending occurrence for one qualified meeting and account.
+    public func cancelAll(accountID: UUID, meetingID: QualifiedID) async {
+        let prefix = MeetingReminder.identifierPrefix(accountID: accountID, meetingID: meetingID)
+        let identifiers = await notificationCenter.pendingRequestIdentifiers()
+            .filter { $0.hasPrefix(prefix) }
+
+        guard !identifiers.isEmpty else { return }
+        notificationCenter.removePendingNotificationRequests(withIdentifiers: identifiers)
     }
 
 }

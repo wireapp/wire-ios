@@ -37,12 +37,17 @@ public struct MeetingReminder: Hashable, Sendable {
     /// Namespaced so reconciliation can select only requests belonging to this feature.
     public var identifier: String {
         let startMilliseconds = Int64((occurrenceStart.timeIntervalSince1970 * 1000).rounded())
-        return [
+        return Self.identifierPrefix(accountID: accountID, meetingID: meetingID) + String(startMilliseconds)
+    }
+
+    /// Selects every pending occurrence for this account and qualified meeting.
+    public static func identifierPrefix(accountID: UUID, meetingID: QualifiedID) -> String {
+        [
             "wire.meeting-reminder.v1",
             accountID.uuidString,
             meetingID.id.uuidString,
             meetingID.domain,
-            String(startMilliseconds)
+            ""
         ].joined(separator: "|")
     }
 

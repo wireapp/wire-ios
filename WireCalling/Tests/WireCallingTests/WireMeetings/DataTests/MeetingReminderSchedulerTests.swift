@@ -97,6 +97,54 @@ struct MeetingReminderSchedulerTests {
         #expect(center.removedIdentifiers == [[reminder.identifier]])
     }
 
+    @Test("cancels every pending occurrence for only the selected account and qualified meeting")
+    func cancelsAllMeetingOccurrences() async {
+        let center = NotificationCenterSpy()
+        let laterOccurrence = MeetingReminder(
+            accountID: reminder.accountID,
+            meetingID: reminder.meetingID,
+            occurrenceStart: reminder.occurrenceStart.addingTimeInterval(3600)
+        )
+        let otherAccount = MeetingReminder(
+            accountID: UUID(),
+            meetingID: reminder.meetingID,
+            occurrenceStart: reminder.occurrenceStart
+        )
+        let otherDomain = MeetingReminder(
+            accountID: reminder.accountID,
+            meetingID: QualifiedID(id: reminder.meetingID.id, domain: "example.com.evil"),
+            occurrenceStart: reminder.occurrenceStart
+        )
+        center.storedPendingIdentifiers = [
+            reminder.identifier,
+            laterOccurrence.identifier,
+            otherAccount.identifier,
+            otherDomain.identifier,
+            "unrelated"
+        ]
+
+        await MeetingReminderScheduler(notificationCenter: center).cancelAll(
+            accountID: reminder.accountID,
+            meetingID: reminder.meetingID
+        )
+
+        #expect(center.removedIdentifiers.count == 1)
+        #expect(Set(center.removedIdentifiers[0]) == Set([reminder.identifier, laterOccurrence.identifier]))
+    }
+
+    @Test("does not remove pending requests when no occurrence matches")
+    func cancelAllWithoutMatches() async {
+        let center = NotificationCenterSpy()
+        center.storedPendingIdentifiers = ["unrelated"]
+
+        await MeetingReminderScheduler(notificationCenter: center).cancelAll(
+            accountID: reminder.accountID,
+            meetingID: reminder.meetingID
+        )
+
+        #expect(center.removedIdentifiers.isEmpty)
+    }
+
     @Test("propagates notification scheduling errors")
     func propagatesAddError() async {
         let center = NotificationCenterSpy()
@@ -121,11 +169,16 @@ private enum TestError: Error {
 private final class NotificationCenterSpy: MeetingReminderNotificationCenter {
     var status: UNAuthorizationStatus = .notDetermined
     var addedRequests: [UNNotificationRequest] = []
+    var storedPendingIdentifiers: [String] = []
     var removedIdentifiers: [[String]] = []
     var addError: TestError?
 
     func authorizationStatus() async -> UNAuthorizationStatus {
         status
+    }
+
+    func pendingRequestIdentifiers() async -> [String] {
+        storedPendingIdentifiers
     }
 
     func add(_ request: UNNotificationRequest) async throws {
