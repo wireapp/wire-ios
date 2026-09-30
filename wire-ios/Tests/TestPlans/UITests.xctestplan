@@ -50,6 +50,22 @@
             "value" : "$(CALLINGSERVICE_PASSWORD)"
           },
           {
+            "key" : "CALLINGSERVICE_INTERNAL_URL",
+            "value" : "$(CALLINGSERVICE_INTERNAL_URL)"
+          },
+          {
+            "key" : "CALLINGSERVICE_INTERNAL_USERNAME",
+            "value" : "$(CALLINGSERVICE_INTERNAL_USERNAME)"
+          },
+          {
+            "key" : "CALLINGSERVICE_INTERNAL_PASSWORD",
+            "value" : "$(CALLINGSERVICE_INTERNAL_PASSWORD)"
+          },
+          {
+            "key" : "USE_IN_HOUSE_SERVICES",
+            "value" : "$(USE_IN_HOUSE_SERVICES)"
+          },
+          {
             "key" : "BASIC_AUTH",
             "value" : "$(BASIC_AUTH)"
           },

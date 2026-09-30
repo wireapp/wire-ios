@@ -3,6 +3,14 @@ name: C1 C2 C3 Restricted
 on: 
   workflow_dispatch:
     inputs:
+      mac_runner:
+        description: 'macOS runner'
+        type: choice
+        options:
+          - in-house
+          - cirrus
+          - github
+        default: in-house
       column:
         description: 'Column (C1, C2, C3, all)'
         type: choice
@@ -34,6 +42,7 @@ jobs:
     if: ${{ inputs.column == 'C1' || inputs.column == 'all' }}
     uses: ./.github/workflows/_reusable_app_release.yml
     with:
+      mac_runner: ${{ inputs.mac_runner || vars.DEFAULT_MAC_RUNNER || 'in-house' }}
       fastlane_action: appstore_col_1_restricted
       is_cloud_build: false
       countly_enabled: false
@@ -47,6 +56,7 @@ jobs:
     if: ${{ inputs.column == 'C2' || inputs.column == 'all' }}
     uses: ./.github/workflows/_reusable_app_release.yml
     with:
+      mac_runner: ${{ inputs.mac_runner || vars.DEFAULT_MAC_RUNNER || 'in-house' }}
       fastlane_action: appstore_col_2_restricted
       is_cloud_build: false
       countly_enabled: false
@@ -60,6 +70,7 @@ jobs:
     if: ${{ inputs.column == 'C3' || inputs.column == 'all' }}
     uses: ./.github/workflows/_reusable_app_release.yml
     with:
+      mac_runner: ${{ inputs.mac_runner || vars.DEFAULT_MAC_RUNNER || 'in-house' }}
       fastlane_action: appstore_col_3_restricted
       is_cloud_build: false
       countly_enabled: false

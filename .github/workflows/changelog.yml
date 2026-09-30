@@ -4,7 +4,6 @@ on:
       is_cloud_build:
         required: true
         type: boolean
-        default: true
     outputs:
       changelog-url:
         description: "The url of the changelog can be downloaded from"

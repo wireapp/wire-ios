@@ -3,6 +3,9 @@ on:
     inputs:
       folders:
         type: string
+      mac_runner:
+        type: string
+        default: in-house
       all:
         type: boolean
         default: false
@@ -20,9 +23,8 @@ on:
         type: boolean
         required: true
       notify:
-        type: string
+        type: string # values: always | failure | never
         required: true
-        default: 'failure' # values: always | failure | never
 
     secrets:
       ZENKINS_USERNAME:
@@ -47,7 +49,13 @@ env: # https://docs.fastlane.tools/getting-started/ios/setup/
 jobs:
   run-tests:
     name: Run tests
-    runs-on: ghcr.io/cirruslabs/macos-runner:tahoe
+    runs-on: >-
+      ${{
+        inputs.mac_runner == 'in-house' && inputs.run_critical_flows && fromJSON('["self-hosted", "in-house", "ui-tests"]') ||
+        inputs.mac_runner == 'in-house' && fromJSON('["self-hosted", "in-house", "tests"]') ||
+        inputs.mac_runner == 'github' && 'macos-26' ||
+        'ghcr.io/cirruslabs/macos-runner:tahoe'
+      }}
     timeout-minutes: 90
     permissions:
       contents: read
@@ -56,6 +64,7 @@ jobs:
     outputs:
       xcresult_files: ${{ steps.find-xcresults.outputs.xcresult_files }}
     env:
+      IN_HOUSE_RUNNER: ${{ inputs.mac_runner == 'in-house' }}
       GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       GITHUB_USERNAME: ${{ secrets.ZENKINS_USERNAME }}
       SLACK_WEBHOOK_URL: ${{ secrets[inputs.notify_secret] }}
@@ -67,26 +76,28 @@ jobs:
           ref: ${{ inputs.branch }}
           lfs: 'true'
 
+      - name: Materialize Git LFS files
+        run: git lfs checkout
+
       - name: Sanitize branch name
+        env:
+          INPUT_BRANCH: ${{ inputs.branch }}
+          EVENT_NAME: ${{ github.event_name }}
+          HEAD_REF: ${{ github.head_ref }}
         run: |
-          if [ -n "${{ inputs.branch }}" ]; then
-            BRANCH="${{ inputs.branch }}"
-          elif [ "${{ github.event_name }}" == "pull_request" ] || [ "${{ github.event_name }}" == "merge_group" ]; then
-            BRANCH="${{ github.head_ref }}"
+          if [ -n "$INPUT_BRANCH" ]; then
+            BRANCH="$INPUT_BRANCH"
+          elif [ "$EVENT_NAME" == "pull_request" ] || [ "$EVENT_NAME" == "merge_group" ]; then
+            BRANCH="$HEAD_REF"
           else
             BRANCH="${GITHUB_REF#refs/heads/}"
           fi
           SANITIZED_BRANCH=$(echo "$BRANCH" | sed 's/[^a-zA-Z0-9._-]/_/g')
           echo "SANITIZED_BRANCH=$SANITIZED_BRANCH" | tee -a "$GITHUB_ENV"
     
-      - name: Retrieve Xcode version
-        run: |
-          echo "XCODE_VERSION=$(cat .xcode-version)" >> $GITHUB_OUTPUT
+      - name: Setup Xcode
         id: xcode-version
-
-      - uses: maxim-lobanov/setup-xcode@60606e260d2fc5762a71e64e74b2174e8ea3c8bd # v1.6.0
-        with:
-          xcode-version: ${{ steps.xcode-version.outputs.XCODE_VERSION }}
+        uses: ./.github/actions/setup-xcode
 
       - name: Load .env file
         uses: xom9ikk/dotenv@d0a56edc74279820eabbe34477511327e710d0de # v2.4.0
@@ -106,6 +117,7 @@ jobs:
 
         # Restore Swift Package Dependencies Cache
       - name: Restore Swift Package Dependencies Cache
+        if: ${{ inputs.mac_runner != 'in-house' }}
         id: cache-swift-packages
         uses: actions/cache@6f8efc29b200d32929f49075959781ed54ec270c # v3.5.0
         with:
@@ -123,6 +135,7 @@ jobs:
           bundler-cache: true
 
       - name: Install ImageMagick
+        if: ${{ inputs.mac_runner != 'in-house' }}
         uses: gerlero/brew-install@5e2f576b2a0ede9d50a5b08c0099c70fdda0b0b9 # v1.1.2
         with:
           packages: imagemagick ghostscript freetype
@@ -149,6 +162,11 @@ jobs:
         run: |
           bundle exec fastlane generate_env
 
+      - name: Configure test services
+        if: ${{ inputs.run_critical_flows }}
+        run: |
+          echo "USE_IN_HOUSE_SERVICES=$IN_HOUSE_RUNNER" >> wire-ios/WireUITests/env.xcconfig
+
       - name: "Test new critical flows"
         if: ${{ inputs.run_critical_flows }}
         run: |
@@ -163,6 +181,10 @@ jobs:
         if: ${{ inputs.test_dependencies == false }}
         run: |
           bundle exec fastlane test_only_frameworks folders:${{ inputs.folders }}
+
+      - name: Delete simulator
+        if: always()
+        run: bundle exec fastlane delete_test_simulator
 
       - name: Check for duplicate symbol implementations
         if: always()
@@ -272,7 +294,8 @@ jobs:
         with:
           name: Derived Data Xcode for ${{env.SANITIZED_BRANCH }} (${{ github.run_id }} - ${{ github.run_attempt}})
           path: |
-            /Users/runner/Library/Developer/Xcode/DerivedData/**/Logs/**
+            ~/Library/Developer/Xcode/DerivedData/**/Logs/**
+            DerivedData/**/Logs/**
             ~/Library/Logs/DiagnosticReports/**
 
       - name: Get Commit Info
@@ -317,11 +340,15 @@ jobs:
     if: always()
     steps:
       - name: Sanitize branch name
+        env:
+          INPUT_BRANCH: ${{ inputs.branch }}
+          EVENT_NAME: ${{ github.event_name }}
+          HEAD_REF: ${{ github.head_ref }}
         run: |
-          if [ -n "${{ inputs.branch }}" ]; then
-            BRANCH="${{ inputs.branch }}"
-          elif [ "${{ github.event_name }}" == "pull_request" ] || [ "${{ github.event_name }}" == "merge_group" ]; then
-            BRANCH="${{ github.head_ref }}"
+          if [ -n "$INPUT_BRANCH" ]; then
+            BRANCH="$INPUT_BRANCH"
+          elif [ "$EVENT_NAME" == "pull_request" ] || [ "$EVENT_NAME" == "merge_group" ]; then
+            BRANCH="$HEAD_REF"
           else
             BRANCH="${GITHUB_REF#refs/heads/}"
           fi
