@@ -38,7 +38,7 @@ package extension FilesViewModel {
     }
 
     var canUpload: Bool {
-        uploadDestinationPath != nil && isDriveDirectUploadsEnabled
+        uploadDestinationPath != nil && selfUserRole == .editor && isDriveDirectUploadsEnabled
     }
 
     func enqueueUploads(sources: [WireDriveDirectUploadSource]) async {
