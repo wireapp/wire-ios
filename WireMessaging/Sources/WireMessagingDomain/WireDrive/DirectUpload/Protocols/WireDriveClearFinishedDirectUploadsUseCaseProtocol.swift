@@ -24,6 +24,6 @@ package protocol WireDriveClearFinishedDirectUploadsUseCaseProtocol: Sendable {
     /// Forgets uploads that finished successfully or were cancelled.
     /// Failed uploads are left so they can still be retried.
 
-    func invoke() async
+    func invoke(destinationFolderPath: String) async
 
 }

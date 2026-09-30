@@ -712,7 +712,7 @@ final class WireDriveDirectUploadManagerTests {
         await sut.handle([.completed(uploadID: finished.id, statusCode: 200, responseBody: nil, error: nil)])
 
         // When
-        await sut.clearAll()
+        await sut.clearAll(in: "cell-1")
 
         // Then
         let summary = tracker.summary
@@ -736,7 +736,7 @@ final class WireDriveDirectUploadManagerTests {
         await sut.handle([.completed(uploadID: uploadedID, statusCode: 200, responseBody: nil, error: nil)])
 
         // When
-        await sut.clearAll()
+        await sut.clearAll(in: "cell-1")
 
         // Then
         let summary = tracker.summary
