@@ -54,12 +54,14 @@
 - [ ] Reconcile against a successful authoritative meeting-list refresh to remove stale reminders after missed events or removals.
 - [x] Use the shared `MeetingReminderOccurrenceCalculator` and `MeetingOccurrencePaginator` in the NSE for a bounded next-five window, including meeting time zone, daylight-saving changes, interval, and end date.
 - [ ] Handle pending notification changes, authorization changes, and schedule failures during reconciliation without showing an obsolete reminder. The scheduler already skips reminders whose fire time has passed.
-- [ ] Ensure foreground presentation and notification taps route to the correct account and meeting.
+- [x] Route reminder taps through the account ID in the notification payload to that account's meetings screen.
+- [ ] Decide and implement foreground reminder presentation, including the case where the user is already in the meeting. The existing foreground filter can suppress reminders for the active account.
 
 ## Verification
 
 - [x] Add focused tests for absolute fire date, past and unauthorized reminders, stable identifier-based cancellation, account isolation, event-driven cancellation, and direct app deletion or leave.
 - [x] Test reminder content with visible and hidden meeting titles, localized occurrence time, reminder category, and account ID.
+- [x] Test that a default tap on the reminder category opens the meetings screen for the notification's session.
 - [ ] Add focused tests for recurrence across daylight-saving changes, duplicate events, and rescheduling/cancellation after edits and authoritative refreshes.
 - [x] Test scheduler reconciliation for an edited start, duplicate occurrence input, past occurrences, and isolation from other accounts and meetings.
 - [x] Test NSE meeting-event reminder routing for create, invitation, update, deletion, confirmed absence, and transient fetch failure.
