@@ -250,7 +250,7 @@ jobs:
             **Tap on iOS device to install:** ${{ env.BUILD_INSTALL_LINK }}
             **AWS S3 Paths:**
             ```
-            ${{ steps.base64-decoded-S3_PATHS.outputs.decoded }}
+            ${{ replace(steps.base64-decoded-S3_PATHS.outputs.decoded, '_', '\_') }}
             ```
             **Triggered by:** ${{ github.triggering_actor }}
             **Runner:** ${{ runner.name }} (${{ inputs.mac_runner }})
