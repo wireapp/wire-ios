@@ -18,6 +18,7 @@
 
 import Foundation
 import Testing
+import WireFoundation
 
 @testable import WireCallingDomain
 

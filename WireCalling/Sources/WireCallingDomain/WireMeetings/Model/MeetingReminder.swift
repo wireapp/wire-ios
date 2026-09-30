@@ -18,6 +18,8 @@
 
 package import Foundation
 
+import WireFoundation
+
 /// Identifies one local reminder for one occurrence of a meeting on one account.
 package struct MeetingReminder: Hashable, Sendable {
 
