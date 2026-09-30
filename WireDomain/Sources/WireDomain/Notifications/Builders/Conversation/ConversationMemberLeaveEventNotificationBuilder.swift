@@ -325,7 +325,8 @@ extension ConversationMemberLeaveEventNotificationBuilder {
 
             let isLocalMeetingConversation = await isMeetingConversation(conversation: conversation)
             guard !isLocalMeetingConversation else {
-                return (true, localName)
+                let storedMeeting = await storedMeeting(conversationID: conversationID)
+                return (true, localName ?? storedMeeting?.title)
             }
 
             if let storedMeeting = await storedMeeting(conversationID: conversationID) {
@@ -337,8 +338,9 @@ extension ConversationMemberLeaveEventNotificationBuilder {
                 return (false, nil)
             }
 
-            guard let remoteConversation = try? await conversationsAPI.getConversations(for: [conversationID]).found.first,
-                  remoteConversation.groupType == .meeting else {
+            guard let remoteConversation = try? await conversationsAPI.getConversations(for: [conversationID]).found
+                .first,
+                remoteConversation.groupType == .meeting else {
                 return (false, nil)
             }
 

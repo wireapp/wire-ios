@@ -192,6 +192,23 @@ final class ConversationMemberLeaveEventNotificationBuilderTests: XCTestCase {
         try assertMeetingCancellationNotification(try XCTUnwrap(userNotification))
     }
 
+    func testGenerateMeetingCancellationNotification_WhenLocalMeetingConversationHasNoName() async throws {
+        await setupMock(isGroup: true, isTeam: true)
+        await setupMeetingsFeature(isEnabled: true)
+        conversationLocalStore.isMeetingConversation_MockValue = true
+        conversationLocalStore.nameFor_MockValue = .some(nil)
+        meetingStore.meetings = [Scaffolding.meeting]
+        userLocalStore.isSelfUserIdDomain_MockValue = (
+            user: userLocalStore.fetchSelfUser_MockValue!,
+            isSelfUser: false
+        )
+        sut = makeSUT(featureConfigLocalStore: featureStore, meetingLocalStore: meetingStore)
+
+        let userNotification = await sut.buildMeetingCancellationContent(event: Scaffolding.selfUserRemovedEvent)
+
+        try assertMeetingCancellationNotification(try XCTUnwrap(userNotification))
+    }
+
     func testGenerateMeetingCancellationNotification_WhenMeetingConversationOnlyExistsRemotely() async throws {
         await setupMock(isGroup: true, isTeam: true)
         await setupMeetingsFeature(isEnabled: true)
