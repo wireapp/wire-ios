@@ -17,12 +17,14 @@
 //
 
 import WireCallingDomain
+import WireLogging
 import WireNetwork
 
 struct MeetingCreateEventProcessor: MeetingCreateEventProcessorProtocol {
 
     let repository: any MeetingRepositoryProtocol
     let conversationRepository: any ConversationRepositoryProtocol
+    let reconcileReminder: @Sendable (Meeting) async throws -> Void
 
     func processEvent(_ event: MeetingCreateEvent) async throws {
         // A nil meeting no longer exists on the backend; its local copy
@@ -32,14 +34,23 @@ struct MeetingCreateEventProcessor: MeetingCreateEventProcessorProtocol {
         // The meeting's conversation arrives via its own conversation.create-meeting
         // event, but that event isn't guaranteed to have been processed before this
         // one. A stored reference without metadata also needs to be pulled.
-        guard meeting.conversation == nil else { return }
-        let conversationID = meeting.conversationID
+        if meeting.conversation == nil {
+            let conversationID = meeting.conversationID
 
-        try await conversationRepository.pullConversation(
-            id: conversationID.id,
-            domain: conversationID.domain
-        )
-        await repository.storeMeeting(meeting)
+            try await conversationRepository.pullConversation(
+                id: conversationID.id,
+                domain: conversationID.domain
+            )
+            await repository.storeMeeting(meeting)
+        }
+
+        // Recurring occurrence scheduling needs a bounded horizon and replenishment policy.
+        guard meeting.recurrence == nil else { return }
+        do {
+            try await reconcileReminder(meeting)
+        } catch {
+            WireLogger.eventProcessing.error("Failed to schedule meeting reminder: \(error)")
+        }
     }
 
 }

@@ -773,7 +773,21 @@ public final class ClientSessionComponent {
 
     private lazy var meetingCreateEventProcessor = MeetingCreateEventProcessor(
         repository: meetingRepository,
-        conversationRepository: conversationRepository
+        conversationRepository: conversationRepository,
+        reconcileReminder: { [selfUserID] meeting in
+            try await MeetingReminderScheduler().reconcile(
+                accountID: selfUserID,
+                meetingID: meeting.id,
+                occurrenceStarts: [meeting.start]
+            ) { occurrenceStart in
+                MeetingReminderNotificationContentBuilder().build(
+                    meeting: meeting,
+                    occurrenceStart: occurrenceStart,
+                    accountID: selfUserID,
+                    showMeetingTitle: false
+                )
+            }
+        }
     )
 
     private lazy var meetingDeleteEventProcessor = MeetingDeleteEventProcessor(
