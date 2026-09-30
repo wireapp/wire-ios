@@ -314,6 +314,27 @@ final class ZMUserSessionTests_PushNotifications: ZMUserSessionTestsBase {
         XCTAssertNil(mockSessionManager.lastRequestToShowMessage)
     }
 
+    func testThatForegroundMeetingReminderIsSuppressedOnlyForItsActiveConversation() {
+        let meetingConversationID = UUID()
+        let userInfo = NotificationUserInfo(storage: [
+            MeetingReminderUserInfoKey.conversationID: meetingConversationID.uuidString,
+            MeetingReminderUserInfoKey.conversationDomain: "example.com"
+        ])
+
+        XCTAssertFalse(MeetingReminderForegroundPolicy.shouldPresent(
+            userInfo: userInfo,
+            activeConversations: [(meetingConversationID, "example.com")]
+        ))
+        XCTAssertTrue(MeetingReminderForegroundPolicy.shouldPresent(
+            userInfo: userInfo,
+            activeConversations: [(meetingConversationID, "other.example.com")]
+        ))
+        XCTAssertTrue(MeetingReminderForegroundPolicy.shouldPresent(
+            userInfo: userInfo,
+            activeConversations: []
+        ))
+    }
+
     func testThatItCallsShowConversationButDoesNotCallBack_ForPushNotificationCategoryMissedCallWithCallBackAction() {
         // given
         syncMOC.performAndWait {

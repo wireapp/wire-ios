@@ -18,7 +18,7 @@
 
 public import Foundation
 
-/// Selects upcoming starts whose ten-minute reminder can still be scheduled.
+/// Selects upcoming starts, including short-notice meetings that need an immediate reminder.
 public struct MeetingReminderOccurrenceCalculator {
 
     public init() {}
@@ -26,16 +26,16 @@ public struct MeetingReminderOccurrenceCalculator {
     public func starts(for meeting: Meeting, after now: Date, limit: Int) -> [Date] {
         guard limit > 0 else { return [] }
 
-        // Request one extra occurrence because the first may be exactly at the fire-time boundary.
+        // Request one extra occurrence because the first may start exactly at `now`.
         let fetchLimit = limit == Int.max ? limit : limit + 1
         return Array(MeetingOccurrencePaginator().occurrences(
             for: [meeting],
-            startingAt: now.addingTimeInterval(MeetingReminder.leadTime),
+            startingAt: now,
             offset: 0,
             limit: fetchLimit
         )
         .map(\.start)
-        .filter { $0.addingTimeInterval(-MeetingReminder.leadTime) > now }
+        .filter { $0 > now }
         .prefix(limit))
     }
 

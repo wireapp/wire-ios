@@ -406,7 +406,7 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
             meetingsAPI: MeetingsAPIBuilder(apiService: apiService).makeAPI(for: apiVersion),
             localStore: MeetingLocalStore(context: coreDataStack.syncContext)
         )
-        let scheduler = MeetingReminderScheduler()
+        let scheduler = MeetingReminderScheduler(defaults: dependency.sharedUserDefaults)
 
         return MeetingEventReminderReconciler(
             pullMeeting: { try await repository.pullMeeting(id: $0) },
@@ -423,7 +423,7 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
                         meeting: meeting,
                         occurrenceStart: occurrenceStart,
                         accountID: accountID,
-                        showMeetingTitle: false
+                        showMeetingTitle: true
                     )
                 }
             },

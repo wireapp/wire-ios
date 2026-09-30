@@ -58,19 +58,47 @@ struct MeetingReminderSchedulerTests {
         #expect(trigger.dateComponents.calendar?.date(from: trigger.dateComponents) == reminder.fireDate)
     }
 
-    @Test("does not schedule a reminder whose fire date has passed")
-    func skipsPastReminder() async throws {
+    @Test("does not schedule a reminder after the meeting has started")
+    func skipsPastMeeting() async throws {
         let center = NotificationCenterSpy()
         center.status = .authorized
 
         let scheduled = try await MeetingReminderScheduler(notificationCenter: center).schedule(
             reminder,
             content: UNMutableNotificationContent(),
-            now: reminder.fireDate
+            now: reminder.occurrenceStart
         )
 
         #expect(!scheduled)
         #expect(center.addedRequests.isEmpty)
+    }
+
+    @Test("sends a short-notice reminder immediately and only once across scheduler instances")
+    func sendsShortNoticeReminderOnce() async throws {
+        let center = NotificationCenterSpy()
+        center.status = .authorized
+        let suite = UUID().uuidString
+        let defaults = try #require(UserDefaults(suiteName: suite))
+        defer { defaults.removePersistentDomain(forName: suite) }
+        let now = reminder.occurrenceStart.addingTimeInterval(-5 * 60)
+
+        try await MeetingReminderScheduler(notificationCenter: center, defaults: defaults).reconcile(
+            accountID: reminder.accountID,
+            meetingID: reminder.meetingID,
+            occurrenceStarts: [reminder.occurrenceStart],
+            now: now
+        ) { _ in UNMutableNotificationContent() }
+        try await MeetingReminderScheduler(notificationCenter: center, defaults: defaults).reconcile(
+            accountID: reminder.accountID,
+            meetingID: reminder.meetingID,
+            occurrenceStarts: [reminder.occurrenceStart],
+            now: now
+        ) { _ in UNMutableNotificationContent() }
+
+        #expect(center.addedRequests.count == 1)
+        let trigger = try #require(center.addedRequests.first?.trigger as? UNTimeIntervalNotificationTrigger)
+        #expect(trigger.timeInterval == 1)
+        #expect(!trigger.repeats)
     }
 
     @Test("does not schedule without notification authorization")
@@ -136,7 +164,7 @@ struct MeetingReminderSchedulerTests {
         #expect(center.addedRequests.first?.content.title == "Updated meeting")
     }
 
-    @Test("removes obsolete reminders when the occurrence's fire date has passed")
+    @Test("removes obsolete reminders when the meeting has started")
     func reconcilesPastOccurrences() async throws {
         let center = NotificationCenterSpy()
         center.status = .authorized
@@ -146,7 +174,7 @@ struct MeetingReminderSchedulerTests {
             accountID: reminder.accountID,
             meetingID: reminder.meetingID,
             occurrenceStarts: [reminder.occurrenceStart],
-            now: reminder.fireDate
+            now: reminder.occurrenceStart
         ) { _ in UNMutableNotificationContent() }
 
         #expect(center.removedIdentifiers == [[reminder.identifier]])

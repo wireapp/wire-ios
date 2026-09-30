@@ -733,10 +733,10 @@ public final class ClientSessionComponent {
         localStore: MeetingLocalStore(context: syncContext),
         onMeetingCreated: reconcileMeetingReminder,
         onMeetingUpdated: reconcileMeetingReminder,
-        onMeetingsRefreshed: { [selfUserID] meetings in
+        onMeetingsRefreshed: { [selfUserID, sharedUserDefaults] meetings in
             let now = Date.now
             do {
-                try await MeetingReminderScheduler().reconcileAll(
+                try await MeetingReminderScheduler(defaults: sharedUserDefaults).reconcileAll(
                     accountID: selfUserID,
                     meetings: meetings,
                     occurrenceLimit: 5,
@@ -746,7 +746,7 @@ public final class ClientSessionComponent {
                         meeting: meeting,
                         occurrenceStart: occurrenceStart,
                         accountID: selfUserID,
-                        showMeetingTitle: false
+                        showMeetingTitle: true
                     )
                 }
             } catch {
@@ -794,23 +794,24 @@ public final class ClientSessionComponent {
         )
     )
 
-    private lazy var reconcileMeetingReminder: @Sendable (Meeting) async throws -> Void = { [selfUserID] meeting in
-        let now = Date.now
-        let occurrenceStarts = MeetingReminderOccurrenceCalculator().starts(for: meeting, after: now, limit: 5)
-        try await MeetingReminderScheduler().reconcile(
-            accountID: selfUserID,
-            meetingID: meeting.id,
-            occurrenceStarts: occurrenceStarts,
-            now: now
-        ) { occurrenceStart in
-            MeetingReminderNotificationContentBuilder().build(
-                meeting: meeting,
-                occurrenceStart: occurrenceStart,
+    private lazy var reconcileMeetingReminder: @Sendable (Meeting) async throws -> Void =
+        { [selfUserID, sharedUserDefaults] meeting in
+            let now = Date.now
+            let occurrenceStarts = MeetingReminderOccurrenceCalculator().starts(for: meeting, after: now, limit: 5)
+            try await MeetingReminderScheduler(defaults: sharedUserDefaults).reconcile(
                 accountID: selfUserID,
-                showMeetingTitle: false
-            )
+                meetingID: meeting.id,
+                occurrenceStarts: occurrenceStarts,
+                now: now
+            ) { occurrenceStart in
+                MeetingReminderNotificationContentBuilder().build(
+                    meeting: meeting,
+                    occurrenceStart: occurrenceStart,
+                    accountID: selfUserID,
+                    showMeetingTitle: true
+                )
+            }
         }
-    }
 
     private lazy var meetingCreateEventProcessor = MeetingCreateEventProcessor(
         repository: meetingRepository,

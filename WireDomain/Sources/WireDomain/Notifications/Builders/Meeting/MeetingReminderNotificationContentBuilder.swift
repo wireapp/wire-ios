@@ -38,6 +38,14 @@ struct MeetingReminderNotificationContentBuilder {
         timeFormatter.dateStyle = .none
         timeFormatter.timeStyle = .short
 
+        let dateFormatter = DateFormatter()
+        dateFormatter.locale = locale
+        dateFormatter.timeZone = timeZone
+        dateFormatter.dateStyle = .medium
+        dateFormatter.timeStyle = .none
+
+        let occurrenceEnd = meeting.end.addingTimeInterval(occurrenceStart.timeIntervalSince(meeting.start))
+
         let content = UNMutableNotificationContent()
         content.title = showMeetingTitle && !meeting.title.isEmpty
             ? meeting.title
@@ -45,7 +53,9 @@ struct MeetingReminderNotificationContentBuilder {
         content.body = String.formated(
             key: "meeting_reminder.body",
             bundle: .module,
-            timeFormatter.string(from: occurrenceStart)
+            dateFormatter.string(from: occurrenceStart),
+            timeFormatter.string(from: occurrenceStart),
+            timeFormatter.string(from: occurrenceEnd)
         )
         content.categoryIdentifier = NotificationCategory.meetingReminder.rawValue
         content.sound = .default
@@ -59,9 +69,9 @@ struct MeetingReminderNotificationContentBuilder {
 
 }
 
-enum MeetingReminderUserInfoKey {
+public enum MeetingReminderUserInfoKey {
 
-    static let conversationID = "meetingReminderConversationID"
-    static let conversationDomain = "meetingReminderConversationDomain"
+    public static let conversationID = "meetingReminderConversationID"
+    public static let conversationDomain = "meetingReminderConversationDomain"
 
 }

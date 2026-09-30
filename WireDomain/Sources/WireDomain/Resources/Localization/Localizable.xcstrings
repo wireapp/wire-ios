@@ -2,13 +2,13 @@
   "sourceLanguage" : "en",
   "strings" : {
     "meeting_reminder.body" : {
-      "comment" : "Local meeting reminder: the meeting occurrence start time in the recipient's local time.",
+      "comment" : "Local meeting reminder: the occurrence date, start time, and end time in the recipient's local time.",
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Starts at %@"
+            "value" : "Starts %@ at %@, ends at %@"
           }
         }
       }
