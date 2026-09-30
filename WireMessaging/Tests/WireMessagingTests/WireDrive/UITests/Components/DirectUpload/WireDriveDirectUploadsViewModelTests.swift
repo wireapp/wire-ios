@@ -49,7 +49,7 @@ final class WireDriveDirectUploadsViewModelTests {
         cancelUploads.invokeDestinationFolderPath_MockMethod = { _ in }
         retryUpload.invokeUploadID_MockMethod = { _ in }
         retryFailedUploads.invokeDestinationFolderPath_MockMethod = { _ in }
-        clearFinishedUploads.invoke_MockMethod = {}
+        clearFinishedUploads.invokeDestinationFolderPath_MockMethod = { _ in }
     }
 
     // MARK: - Presentation
@@ -123,7 +123,7 @@ final class WireDriveDirectUploadsViewModelTests {
         await sut.dismiss()
 
         // Then
-        #expect(clearFinishedUploads.invoke_Invocations.count == 1)
+        #expect(clearFinishedUploads.invokeDestinationFolderPath_Invocations.count == 1)
         #expect(sut.presentation == .hidden)
     }
 

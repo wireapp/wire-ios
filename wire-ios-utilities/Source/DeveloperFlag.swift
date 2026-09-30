@@ -49,7 +49,6 @@ public enum DeveloperFlag: String, CaseIterable {
     case enableDriveDirectUploads
     case simulateAppTerminationInBackground
 
-
     public var description: String {
         switch self {
         case .createLegacyBackups:

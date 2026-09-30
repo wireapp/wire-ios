@@ -325,11 +325,10 @@ package final class WireDriveDirectUploadManager:
     }
 
     /// Forgets uploads that finished successfully or were cancelled.
-    ///
-    /// Failed uploads are deliberately kept: they are still retryable, and forgetting them would
-    /// take that away without the user asking for it.
-    package func clearAll() async {
-        let finished = records.values.filter { $0.state == .uploaded || $0.state == .cancelled }
+    package func clearAll(in destinationFolderPath: String) async {
+        let finished = records.values.filter {
+            ($0.state == .uploaded || $0.state == .cancelled) && $0.destinationFolderPath == destinationFolderPath
+        }
         guard !finished.isEmpty else { return }
 
         for record in finished {
