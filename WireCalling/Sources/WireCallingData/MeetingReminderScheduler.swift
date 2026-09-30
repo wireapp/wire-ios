@@ -102,4 +102,14 @@ public struct MeetingReminderScheduler {
         notificationCenter.removePendingNotificationRequests(withIdentifiers: identifiers)
     }
 
+    /// Requests cancellation of every pending meeting reminder for one account.
+    public func cancelAll(accountID: UUID) async {
+        let prefix = MeetingReminder.accountIdentifierPrefix(accountID: accountID)
+        let identifiers = await notificationCenter.pendingRequestIdentifiers()
+            .filter { $0.hasPrefix(prefix) }
+
+        guard !identifiers.isEmpty else { return }
+        notificationCenter.removePendingNotificationRequests(withIdentifiers: identifiers)
+    }
+
 }

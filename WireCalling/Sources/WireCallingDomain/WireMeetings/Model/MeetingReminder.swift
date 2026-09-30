@@ -42,13 +42,16 @@ public struct MeetingReminder: Hashable, Sendable {
 
     /// Selects every pending occurrence for this account and qualified meeting.
     public static func identifierPrefix(accountID: UUID, meetingID: QualifiedID) -> String {
-        [
-            "wire.meeting-reminder.v1",
-            accountID.uuidString,
+        accountIdentifierPrefix(accountID: accountID) + [
             meetingID.id.uuidString,
             meetingID.domain,
             ""
         ].joined(separator: "|")
+    }
+
+    /// Selects every pending meeting reminder for one account.
+    public static func accountIdentifierPrefix(accountID: UUID) -> String {
+        "wire.meeting-reminder.v1|\(accountID.uuidString)|"
     }
 
     public var fireDate: Date {

@@ -145,6 +145,42 @@ struct MeetingReminderSchedulerTests {
         #expect(center.removedIdentifiers.isEmpty)
     }
 
+    @Test("cancels all meeting reminders for one account while preserving other accounts")
+    func cancelsAllAccountReminders() async {
+        let center = NotificationCenterSpy()
+        let anotherMeeting = MeetingReminder(
+            accountID: reminder.accountID,
+            meetingID: QualifiedID(id: UUID(), domain: "example.com"),
+            occurrenceStart: reminder.occurrenceStart
+        )
+        let otherAccount = MeetingReminder(
+            accountID: UUID(),
+            meetingID: reminder.meetingID,
+            occurrenceStart: reminder.occurrenceStart
+        )
+        center.storedPendingIdentifiers = [
+            reminder.identifier,
+            anotherMeeting.identifier,
+            otherAccount.identifier,
+            "unrelated"
+        ]
+
+        await MeetingReminderScheduler(notificationCenter: center).cancelAll(accountID: reminder.accountID)
+
+        #expect(center.removedIdentifiers.count == 1)
+        #expect(Set(center.removedIdentifiers[0]) == Set([reminder.identifier, anotherMeeting.identifier]))
+    }
+
+    @Test("does not remove pending requests when the account has no meeting reminders")
+    func cancelAllAccountWithoutMatches() async {
+        let center = NotificationCenterSpy()
+        center.storedPendingIdentifiers = ["unrelated"]
+
+        await MeetingReminderScheduler(notificationCenter: center).cancelAll(accountID: reminder.accountID)
+
+        #expect(center.removedIdentifiers.isEmpty)
+    }
+
     @Test("propagates notification scheduling errors")
     func propagatesAddError() async {
         let center = NotificationCenterSpy()
