@@ -234,18 +234,6 @@ jobs:
         id: base64-decoded-S3_PATHS
         with:
           base64: ${{ env.S3_PATHS }}
-      # Wire's markdown rendering turns pairs of underscores into emphasis (even inside code blocks),
-      # so escape them to keep the S3 paths intact.
-      - name: Escape S3 paths for Wire
-        id: escaped-s3-paths
-        env:
-          DECODED_S3_PATHS: ${{ steps.base64-decoded-S3_PATHS.outputs.decoded }}
-        run: |
-          {
-            echo 'paths<<EOF_S3_PATHS'
-            printf '%s\n' "${DECODED_S3_PATHS//_/\\_}"
-            echo 'EOF_S3_PATHS'
-          } >> "$GITHUB_OUTPUT"
       - name: Notify on Wire if succeeded
         if: success()
         continue-on-error: true
@@ -262,7 +250,7 @@ jobs:
             **Tap on iOS device to install:** ${{ env.BUILD_INSTALL_LINK }}
             **AWS S3 Paths:**
             ```
-            ${{ steps.escaped-s3-paths.outputs.paths }}
+            ${{ steps.base64-decoded-S3_PATHS.outputs.decoded }}
             ```
             **Triggered by:** ${{ github.triggering_actor }}
             **Runner:** ${{ runner.name }} (${{ inputs.mac_runner }})
