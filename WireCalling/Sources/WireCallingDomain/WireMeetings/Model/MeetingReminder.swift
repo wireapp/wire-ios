@@ -16,27 +16,26 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-package import Foundation
-
-import WireFoundation
+public import Foundation
+public import WireFoundation
 
 /// Identifies one local reminder for one occurrence of a meeting on one account.
-package struct MeetingReminder: Hashable, Sendable {
+public struct MeetingReminder: Hashable, Sendable {
 
-    package static let leadTime: TimeInterval = 10 * 60
+    public static let leadTime: TimeInterval = 10 * 60
 
-    package let accountID: UUID
-    package let meetingID: QualifiedID
-    package let occurrenceStart: Date
+    public let accountID: UUID
+    public let meetingID: QualifiedID
+    public let occurrenceStart: Date
 
-    package init(accountID: UUID, meetingID: QualifiedID, occurrenceStart: Date) {
+    public init(accountID: UUID, meetingID: QualifiedID, occurrenceStart: Date) {
         self.accountID = accountID
         self.meetingID = meetingID
         self.occurrenceStart = occurrenceStart
     }
 
     /// Namespaced so reconciliation can select only requests belonging to this feature.
-    package var identifier: String {
+    public var identifier: String {
         let startMilliseconds = Int64((occurrenceStart.timeIntervalSince1970 * 1000).rounded())
         return [
             "wire.meeting-reminder.v1",
@@ -47,7 +46,7 @@ package struct MeetingReminder: Hashable, Sendable {
         ].joined(separator: "|")
     }
 
-    package var fireDate: Date {
+    public var fireDate: Date {
         occurrenceStart.addingTimeInterval(-Self.leadTime)
     }
 
