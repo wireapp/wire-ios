@@ -185,6 +185,18 @@ public struct MeetingReminderScheduler {
         notificationCenter.removePendingNotificationRequests(withIdentifiers: identifiers)
     }
 
+    /// Removes reminders for accounts that are no longer signed in while preserving other notifications.
+    public func cancelAll(exceptAccountIDs accountIDs: Set<UUID>) async {
+        let retainedPrefixes = accountIDs.map { MeetingReminder.accountIdentifierPrefix(accountID: $0) }
+        let identifiers = await notificationCenter.pendingRequestIdentifiers().filter { identifier in
+            identifier.hasPrefix(MeetingReminder.identifierNamespace)
+                && !retainedPrefixes.contains(where: identifier.hasPrefix)
+        }
+
+        guard !identifiers.isEmpty else { return }
+        notificationCenter.removePendingNotificationRequests(withIdentifiers: identifiers)
+    }
+
 }
 
 private struct ScheduledMeetingReminder {

@@ -45,7 +45,7 @@
 - [ ] Replenish recurring reminders during later NSE activity and other app wakeups that do not fetch the meeting list.
 - [x] Add a reusable recurrence start calculator that excludes occurrences whose ten-minute fire time has passed and delegates time-zone, daylight-saving, interval, and end-date handling to `MeetingOccurrencePaginator`.
 - [x] On logout or account removal, start account-scoped cancellation for that account ID only; preserve reminders for other signed-in accounts. Covered foreground and background session logout, account deletion, and retained-account data purge (`SessionManager.logout(account:)`, `logoutCurrentSession`, and `logoutBackgroundSessionAndPurgeRetainedAccountData`).
-- [ ] Ensure logout cancellation completes reliably if the app closes immediately after logout; consider a startup sweep of reminders for accounts that are no longer signed in.
+- [x] Persist account-scoped cancellation intent before logout's asynchronous notification-center work. On app startup, sweep feature-owned reminders for signed-out accounts and accounts with unfinished cancellation, preserving other signed-in accounts. Clear each intent only after the cancellation request is made.
 - [x] Reconcile from the NSE for meeting create, invitation, update, and deletion events, including events without visible notification content. Fetch the current meeting before scheduling; cancel on confirmed absence, but preserve pending reminders after a transient fetch failure.
 - [ ] Verify the reconciliation completes within the NSE's limited runtime; invitation and update paths currently fetch the meeting again for visible push content.
 - [x] Cancel reminders in the NSE on `conversation.member-leave` when the signed-in user is removed, before visible notification checks. Match locally stored meetings and feature-owned pending requests by account and qualified conversation ID, so cancellation still works if the local meeting is absent or no visible cancellation is built.
@@ -63,6 +63,7 @@
 - [x] Test scheduler reconciliation for an edited start, duplicate occurrence input, past occurrences, and isolation from other accounts and meetings.
 - [x] Test NSE meeting-event reminder routing for create, invitation, update, deletion, confirmed absence, and transient fetch failure.
 - [x] Test NSE self-removal cancellation with and without a stored meeting, other-user removal, and pending-request isolation by account and qualified conversation ID.
+- [x] Test persisted logout cancellation intent across journal instances, repeated requests for one account, and startup sweep isolation for another signed-in account.
 - [ ] Test organizer and invitee flows, meetings created shortly before start, app termination, and a device that stays offline across a meeting change. With two accounts signed in, verify that logging out or removing one account cancels only its pending reminders, including when it is the background account; the other account's reminders must remain scheduled. Check the asynchronous cancellation window when the app closes immediately after logout.
 - [ ] Test the local scheduling flow on a device or simulator; test the NSE path on a build that can receive Wire pushes.
 - [ ] Run the relevant SwiftFormat/SwiftLint checks and targeted tests. Record any build or push-testing limitation in the PR.

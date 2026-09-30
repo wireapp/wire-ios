@@ -35,4 +35,56 @@ public struct AccountMeetingReminderCanceller {
         await MeetingReminderScheduler().cancelAll(accountID: accountID)
     }
 
+    public func cancelAll(exceptAccountIDs accountIDs: Set<UUID>) async {
+        await MeetingReminderScheduler().cancelAll(exceptAccountIDs: accountIDs)
+    }
+
+}
+
+/// Persists logout cancellation until notification-center removal finishes.
+public struct MeetingReminderCancellationJournal {
+
+    private static let key = "pendingMeetingReminderCancellationAccountIDs"
+    private static let lock = NSLock()
+
+    private let defaults: UserDefaults
+
+    public init(defaults: UserDefaults) {
+        self.defaults = defaults
+    }
+
+    @discardableResult
+    public func record(accountID: UUID) -> UUID {
+        let token = UUID()
+        Self.lock.withLock {
+            var entries = defaults.dictionary(forKey: Self.key) as? [String: String] ?? [:]
+            entries[accountID.uuidString] = token.uuidString
+            defaults.set(entries, forKey: Self.key)
+            _ = defaults.synchronize()
+        }
+        return token
+    }
+
+    public func pending() -> [UUID: UUID] {
+        Self.lock.withLock {
+            let entries = defaults.dictionary(forKey: Self.key) as? [String: String] ?? [:]
+            return Dictionary(uniqueKeysWithValues: entries.compactMap { accountID, token in
+                guard let accountID = UUID(uuidString: accountID), let token = UUID(uuidString: token) else {
+                    return nil
+                }
+                return (accountID, token)
+            })
+        }
+    }
+
+    public func clear(accountID: UUID, token: UUID) {
+        Self.lock.withLock {
+            var entries = defaults.dictionary(forKey: Self.key) as? [String: String] ?? [:]
+            guard entries[accountID.uuidString] == token.uuidString else { return }
+            entries.removeValue(forKey: accountID.uuidString)
+            defaults.set(entries, forKey: Self.key)
+            _ = defaults.synchronize()
+        }
+    }
+
 }

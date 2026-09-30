@@ -23,6 +23,7 @@ public import WireFoundation
 public struct MeetingReminder: Hashable, Sendable {
 
     public static let leadTime: TimeInterval = 10 * 60
+    public static let identifierNamespace = "wire.meeting-reminder.v1|"
 
     public let accountID: UUID
     public let meetingID: QualifiedID
@@ -51,7 +52,7 @@ public struct MeetingReminder: Hashable, Sendable {
 
     /// Selects every pending meeting reminder for one account.
     public static func accountIdentifierPrefix(accountID: UUID) -> String {
-        "wire.meeting-reminder.v1|\(accountID.uuidString)|"
+        "\(identifierNamespace)\(accountID.uuidString)|"
     }
 
     public var fireDate: Date {

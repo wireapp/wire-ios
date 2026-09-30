@@ -657,6 +657,17 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     @MainActor
     public func start(connectionOptions: UIScene.ConnectionOptions) async {
+        let cancellationJournal = MeetingReminderCancellationJournal(defaults: sharedUserDefaults)
+        let pendingCancellations = cancellationJournal.pending()
+        let authenticatedAccountIDs = Set(accountManager.accounts.filter { environment.isAuthenticated($0) }
+            .map(\.userIdentifier))
+        await AccountMeetingReminderCanceller().cancelAll(
+            exceptAccountIDs: authenticatedAccountIDs.subtracting(pendingCancellations.keys)
+        )
+        for (accountID, token) in pendingCancellations {
+            cancellationJournal.clear(accountID: accountID, token: token)
+        }
+
         if
             let url = connectionOptions.urlContexts.first?.url, // Currently we only support one URL
             let urlAction = try? URLAction(url: url),
@@ -1212,8 +1223,13 @@ public final class SessionManager: NSObject, SessionManagerType {
     }
 
     private func cancelMeetingReminders(for accountID: UUID) {
-        Task {
+        let token = MeetingReminderCancellationJournal(defaults: sharedUserDefaults).record(accountID: accountID)
+        Task { [weak self] in
             await AccountMeetingReminderCanceller().cancelAll(accountID: accountID)
+            if let self {
+                MeetingReminderCancellationJournal(defaults: sharedUserDefaults)
+                    .clear(accountID: accountID, token: token)
+            }
         }
     }
 

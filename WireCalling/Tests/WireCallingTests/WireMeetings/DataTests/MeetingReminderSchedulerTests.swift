@@ -343,6 +343,22 @@ struct MeetingReminderSchedulerTests {
         #expect(center.removedIdentifiers.isEmpty)
     }
 
+    @Test("startup sweep removes only reminders for signed-out accounts")
+    func cancelsRemindersForMissingAccounts() async {
+        let center = NotificationCenterSpy()
+        let signedInAccount = UUID()
+        let retainedReminder = MeetingReminder(
+            accountID: signedInAccount,
+            meetingID: reminder.meetingID,
+            occurrenceStart: reminder.occurrenceStart
+        )
+        center.storedPendingIdentifiers = [reminder.identifier, retainedReminder.identifier, "unrelated"]
+
+        await MeetingReminderScheduler(notificationCenter: center).cancelAll(exceptAccountIDs: [signedInAccount])
+
+        #expect(center.removedIdentifiers == [[reminder.identifier]])
+    }
+
     @Test("propagates notification scheduling errors")
     func propagatesAddError() async {
         let center = NotificationCenterSpy()
