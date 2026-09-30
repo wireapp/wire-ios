@@ -96,6 +96,7 @@ package final class MeetingsViewModel {
     private let deleteMeetingUseCase: any DeleteMeetingUseCaseProtocol
     private let selfUserID: UUID
     private let observeAttendedMeetingsUseCase: (any ObserveAttendedMeetingsUseCaseProtocol)?
+    private let isApplicationActiveProvider: () -> Bool
 
     /// Offset for the next page of expanded future occurrences.
     private var futureOffset: Int = 0
@@ -112,7 +113,9 @@ package final class MeetingsViewModel {
     /// the list could keep stale meetings or stale date/time-zone based occurrences until another refresh happens.
     /// If any queued reload requested visible loading UI, the follow-up reload preserves that.
     private var queuedReloadShowsLoadingIndicator: Bool?
-
+    /// Incremented whenever date/time formatting state is refreshed so SwiftUI re-evaluates
+    /// formatter and grouper output from private cached collaborators.
+    private var dateTimeStateRevision = 0
     private let grouper = MeetingsGrouper()
 
     package init(
@@ -122,7 +125,8 @@ package final class MeetingsViewModel {
         observeMeetingChangesUseCase: any ObserveMeetingChangesUseCaseProtocol,
         deleteMeetingUseCase: any DeleteMeetingUseCaseProtocol,
         selfUserID: UUID,
-        observeAttendedMeetingsUseCase: (any ObserveAttendedMeetingsUseCaseProtocol)? = nil
+        observeAttendedMeetingsUseCase: (any ObserveAttendedMeetingsUseCaseProtocol)? = nil,
+        isApplicationActiveProvider: @escaping () -> Bool = { UIApplication.shared.applicationState == .active }
     ) {
         self.currentDateProvider = currentDateProvider
         self.formatter = formatter
@@ -131,13 +135,15 @@ package final class MeetingsViewModel {
         self.deleteMeetingUseCase = deleteMeetingUseCase
         self.selfUserID = selfUserID
         self.observeAttendedMeetingsUseCase = observeAttendedMeetingsUseCase
+        self.isApplicationActiveProvider = isApplicationActiveProvider
         self.currentDate = currentDateProvider.now
     }
 
     // MARK: - Public Interface
 
     var groupedUpcomingMeetings: GroupedMeetings {
-        grouper.group(loadedOccurrences)
+        _ = dateTimeStateRevision
+        return grouper.group(loadedOccurrences)
     }
 
     func loadInitialData() async {
@@ -196,9 +202,26 @@ package final class MeetingsViewModel {
     }
 
     func refreshSystemDateTimeState() async {
+        await refreshSystemDateTimeState(shouldReloadMeetings: isApplicationActiveProvider())
+    }
+
+    func refreshSystemDateTimeStateAfterSceneBecameActive() async {
+        await refreshSystemDateTimeState(shouldReloadMeetings: true)
+    }
+
+    private func refreshSystemDateTimeState(shouldReloadMeetings: Bool) async {
         formatter.refresh()
         grouper.refresh()
         refreshCurrentDate()
+        dateTimeStateRevision += 1
+
+        // System time changes can arrive while the app is backgrounded. Starting a fetch
+        // then can be suspended by iOS, so notification-driven refreshes only reload
+        // while active. Scene-phase refreshes already know the scene became active.
+        guard shouldReloadMeetings else {
+            return
+        }
+
         await reloadLoadedMeetings(showsLoadingIndicator: false)
     }
 
@@ -234,15 +257,18 @@ package final class MeetingsViewModel {
     }
 
     func formatDay(_ date: Date) -> String {
-        formatter.dayHeader(for: date, now: currentDate)
+        _ = dateTimeStateRevision
+        return formatter.dayHeader(for: date, now: currentDate)
     }
 
     func formatTimeRange(for meeting: Meeting) -> String {
-        formatter.timeRange(from: meeting.start, to: meeting.end)
+        _ = dateTimeStateRevision
+        return formatter.timeRange(from: meeting.start, to: meeting.end)
     }
 
     func formatTime(for occurrence: MeetingOccurrence) -> String {
-        formatter.timeRange(from: occurrence.start, to: occurrence.end)
+        _ = dateTimeStateRevision
+        return formatter.timeRange(from: occurrence.start, to: occurrence.end)
     }
 
     /// Deletes the meeting awaiting confirmation. Synchronous on purpose: it must capture
@@ -308,8 +334,9 @@ package final class MeetingsViewModel {
             }
 
             do {
-                let result = try await upcomingMeetingsUseCase.invoke(pageSize: pageSize, offset: futureOffset)
-                if futureOffset == 0 {
+                let requestedOffset = futureOffset
+                let result = try await upcomingMeetingsUseCase.invoke(pageSize: pageSize, offset: requestedOffset)
+                if requestedOffset == 0 {
                     loadedOccurrences = result.occurrences
                 } else {
                     loadedOccurrences += result.occurrences
@@ -340,7 +367,6 @@ package extension MeetingsViewModel {
             .NSSystemClockDidChange,
             .NSSystemTimeZoneDidChange,
             NSLocale.currentLocaleDidChangeNotification,
-            UIApplication.didBecomeActiveNotification,
             UIApplication.significantTimeChangeNotification
         ]
     }
