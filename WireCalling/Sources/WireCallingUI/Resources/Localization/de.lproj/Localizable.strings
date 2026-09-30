@@ -82,9 +82,10 @@
 "wireMeetings.schedule.error.alert.title" = "Ein Fehler ist aufgetreten";
 "wireMeetings.schedule.error.alert.ok" = "OK";
 "wireMeetings.schedule.participantsNotAdded.title" = "Meeting gespeichert";
-"wireMeetings.schedule.participantsNotAdded.message" = "Das Meeting wurde gespeichert, aber diese Benutzer konnten nicht hinzugefügt werden:\n\n%@";
+"wireMeetings.schedule.participantsNotAdded.createdTitle" = "Meeting erstellt";
+"wireMeetings.schedule.participantsNotAdded.message" = "Beachten Sie, dass die folgenden Personen nicht hinzugefügt werden konnten:\n\n%@";
 "wireMeetings.schedule.error.conversationName.title" = "Aktualisierung unvollständig";
-"wireMeetings.schedule.error.conversationName.message" = "Der Meeting-Titel konnte nicht überall aktualisiert werden. Bitte versuchen Sie es erneut.";
+"wireMeetings.schedule.error.conversationName.message" = "Der Titel der Meetings wurde aktualisiert, aber der Anruf kann noch den vorherigen Titel anzeigen. Bitte versuchen Sie es erneut.";
 "wireMeetings.schedule.error.conversationName.retry" = "Erneut versuchen";
 "wireMeetings.schedule.disableGuestAccess.alert.title" = "Gastzugang deaktivieren?";
 "wireMeetings.schedule.disableGuestAccess.alert.disable" = "Deaktivieren";
@@ -112,4 +113,4 @@
 "wireMeetings.schedule.members.contacts.title" = "Kontakte";
 
 "wireMeetings.schedule.error.expiredStartDate.title" = "Wählen Sie eine spätere Startzeit";
-"wireMeetings.schedule.error.expiredStartDate.message" = "Meetings können nur mit einer Startzeit von bis zu 24 Stunden in der Vergangenheit aktualisiert werden. Wählen Sie einen späteren Start aus und speichern Sie erneut.";
+"wireMeetings.schedule.error.expiredStartDate.message" = "Sie können nur Meetings bearbeiten, die vor weniger als 24 Stunden begonnen haben. Wählen Sie einen späteren Beginn aus und versuchen Sie es erneut.";

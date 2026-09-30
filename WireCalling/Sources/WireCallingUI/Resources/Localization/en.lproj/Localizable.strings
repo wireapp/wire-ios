@@ -22,7 +22,7 @@
 "meetings.deleteModal.error.deleteFailedTitle" = "Could not delete meeting";
 "meetings.deleteModal.error.deleteFailed" = "Something went wrong while deleting the meeting. Please try again.";
 "meetings.deleteModal.error.leaveConversationFailedTitle" = "Could not leave meeting";
-"meetings.deleteModal.error.leaveConversationFailed" = "Something went wrong while leaving the meeting conversation. Please try again.";
+"meetings.deleteModal.error.leaveConversationFailed" = "Something went wrong while leaving the meeting. Please try again.";
 "wireMeetings.retry" = "Retry";
 "wireMeetings.list.title" = "Meetings";
 "wireMeetings.list.tabs.past" = "Past";

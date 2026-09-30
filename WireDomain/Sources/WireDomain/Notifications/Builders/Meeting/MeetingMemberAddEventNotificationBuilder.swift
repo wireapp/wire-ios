@@ -18,6 +18,8 @@
 
 import Foundation
 import UserNotifications
+import WireCallingData
+import WireCallingDomain
 import WireNetwork
 
 protocol MeetingMemberAddEventNotificationBuilderProtocol {
@@ -31,9 +33,28 @@ struct MeetingMemberAddEventNotificationBuilder: MeetingMemberAddEventNotificati
     let meetingsAPI: any MeetingsAPI
     let usersAPI: any UsersAPI
     let featureConfigLocalStore: any FeatureConfigLocalStoreProtocol
+    let meetingLocalStore: (any MeetingLocalStoreProtocol)?
     let accountID: UUID
     var locale: Locale = .autoupdatingCurrent
     var timeZone: TimeZone = .autoupdatingCurrent
+
+    init(
+        meetingsAPI: any MeetingsAPI,
+        usersAPI: any UsersAPI,
+        featureConfigLocalStore: any FeatureConfigLocalStoreProtocol,
+        meetingLocalStore: (any MeetingLocalStoreProtocol)? = nil,
+        accountID: UUID,
+        locale: Locale = .autoupdatingCurrent,
+        timeZone: TimeZone = .autoupdatingCurrent
+    ) {
+        self.meetingsAPI = meetingsAPI
+        self.usersAPI = usersAPI
+        self.featureConfigLocalStore = featureConfigLocalStore
+        self.meetingLocalStore = meetingLocalStore
+        self.accountID = accountID
+        self.locale = locale
+        self.timeZone = timeZone
+    }
 
     func buildContent(event: MeetingMemberAddEvent) async -> UserNotification? {
         guard let feature = try? await featureConfigLocalStore.fetchFeature(name: .meetings) else { return nil }
@@ -43,6 +64,7 @@ struct MeetingMemberAddEventNotificationBuilder: MeetingMemberAddEventNotificati
         // The NSE stores events without running the application's meeting refresh,
         // so an invitation's meeting and inviter may not exist in the local store yet.
         guard let meeting = try? await meetingsAPI.getMeeting(id: event.meetingID) else { return nil }
+        await meetingLocalStore?.storeMeeting(meeting.toDomainMeeting())
         guard let inviter = try? await usersAPI.getUser(for: event.senderID), !inviter.name.isEmpty else { return nil }
 
         let dateFormatter = DateFormatter()
@@ -71,6 +93,48 @@ struct MeetingMemberAddEventNotificationBuilder: MeetingMemberAddEventNotificati
         content.sound = .default
         content.userInfo = [NotificationUserInfoKey.selfUserID: accountID.uuidString]
         return .text(content)
+    }
+
+}
+
+private extension MeetingResponse {
+
+    func toDomainMeeting() -> Meeting {
+        Meeting(
+            id: id,
+            title: title,
+            start: startTime,
+            end: endTime,
+            recurrence: recurrence?.toDomainRecurrence(),
+            timeZoneIdentifier: timeZoneIdentifier,
+            conversationID: conversationID,
+            creatorID: creatorID
+        )
+    }
+
+}
+
+private extension WireNetwork.MeetingRecurrence {
+
+    func toDomainRecurrence() -> WireCallingDomain.MeetingRecurrence {
+        WireCallingDomain.MeetingRecurrence(
+            frequency: frequency.toDomainFrequency(),
+            interval: interval ?? 1,
+            until: until
+        )
+    }
+
+}
+
+private extension MeetingFrequency {
+
+    func toDomainFrequency() -> WireCallingDomain.MeetingRecurrence.Frequency {
+        switch self {
+        case .daily: .daily
+        case .weekly: .weekly
+        case .monthly: .monthly
+        case .yearly: .yearly
+        }
     }
 
 }

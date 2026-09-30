@@ -26,6 +26,7 @@ struct MeetingsView: View {
 
     private typealias Strings = L10n.Localizable.WireMeetings.List
 
+    @Environment(\.scenePhase) private var scenePhase
     @State private var viewModel: MeetingsViewModel
 
     /// Called when the user chooses "Edit meeting" in a meeting's menu.
@@ -84,6 +85,11 @@ struct MeetingsView: View {
         }
         .task {
             await viewModel.observeSystemDateTimeChanges()
+        }
+        .onChange(of: scenePhase) { _, newPhase in
+            guard newPhase == .active else { return }
+
+            Task { await viewModel.refreshSystemDateTimeStateAfterSceneBecameActive() }
         }
     }
 
