@@ -732,6 +732,7 @@ public final class ClientSessionComponent {
         meetingsAPI: meetingsAPI,
         localStore: MeetingLocalStore(context: syncContext),
         onMeetingCreated: reconcileMeetingReminder,
+        onMeetingUpdated: reconcileMeetingReminder,
         pullConversation: { [conversationRepository, syncContext] id in
             try await conversationRepository.pullConversation(id: id.id, domain: id.domain)
             await syncContext.perform { _ = syncContext.saveOrRollback() }

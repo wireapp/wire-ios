@@ -34,6 +34,7 @@ public final class MeetingRepository: MeetingRepositoryProtocol {
     private let meetingsAPI: any MeetingsAPI
     private let localStore: any MeetingLocalStoreProtocol
     private let onMeetingCreated: (@Sendable (Meeting) async throws -> Void)?
+    private let onMeetingUpdated: (@Sendable (Meeting) async throws -> Void)?
     private let pullConversation: (@Sendable (QualifiedID) async throws -> Void)?
     private let changeBroadcaster = AsyncMulticaster<Void>()
 
@@ -43,11 +44,13 @@ public final class MeetingRepository: MeetingRepositoryProtocol {
         meetingsAPI: any MeetingsAPI,
         localStore: any MeetingLocalStoreProtocol,
         onMeetingCreated: (@Sendable (Meeting) async throws -> Void)? = nil,
+        onMeetingUpdated: (@Sendable (Meeting) async throws -> Void)? = nil,
         pullConversation: (@Sendable (QualifiedID) async throws -> Void)? = nil
     ) {
         self.meetingsAPI = meetingsAPI
         self.localStore = localStore
         self.onMeetingCreated = onMeetingCreated
+        self.onMeetingUpdated = onMeetingUpdated
         self.pullConversation = pullConversation
     }
 
@@ -108,7 +111,14 @@ public final class MeetingRepository: MeetingRepositoryProtocol {
         let meeting = response.toDomainMeeting()
         await storeMeeting(meeting)
         // The stored copy has its members populated from the conversation.
-        return await localStore.storedMeeting(id: meeting.id) ?? meeting
+        let storedMeeting = await localStore.storedMeeting(id: meeting.id) ?? meeting
+        do {
+            // This also removes an old one-time reminder if the meeting became recurring.
+            try await onMeetingUpdated?(storedMeeting)
+        } catch {
+            WireLogger.meetings.error("Failed to reconcile updated meeting reminder: \(error)")
+        }
+        return storedMeeting
     }
 
     public func storeMeeting(_ meeting: Meeting) async {
