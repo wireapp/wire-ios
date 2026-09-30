@@ -228,7 +228,6 @@ private extension FilesView {
             }
             .accessibilityIdentifier(Locators.WireDrive.FilesPage.createFile.rawValue)
 
-
             if viewModel.canUpload {
                 uploadActions
             }

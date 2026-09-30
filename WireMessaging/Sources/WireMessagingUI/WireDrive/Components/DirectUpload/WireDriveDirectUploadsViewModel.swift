@@ -128,14 +128,14 @@ package final class WireDriveDirectUploadsViewModel: ObservableObject {
 
     package func collapse() {
         Task {
-            await clearFinishedUploads.invoke()
+            await clearFinishedUploads.invoke(destinationFolderPath: currentFolderPath)
         }
 
         presentation = summary.activeCount > 0 || summary.failedCount > 0 ? .pill : .hidden
     }
 
     package func dismiss() async {
-        await clearFinishedUploads.invoke()
+        await clearFinishedUploads.invoke(destinationFolderPath: currentFolderPath)
 
         if summary.activeCount == 0 {
             presentation = .hidden

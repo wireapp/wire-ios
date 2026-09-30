@@ -678,7 +678,7 @@ extension WireDriveDirectUploadsViewModel {
         retryFailedUploads.invokeDestinationFolderPath_MockMethod = { _ in }
 
         let clearFinishedUploads = MockWireDriveClearFinishedDirectUploadsUseCaseProtocol()
-        clearFinishedUploads.invoke_MockMethod = {}
+        clearFinishedUploads.invokeDestinationFolderPath_MockMethod = { _ in }
 
         return WireDriveDirectUploadsViewModel(
             rootFolderPath: "preview-cell",
