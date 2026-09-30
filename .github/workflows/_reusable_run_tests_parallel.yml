@@ -127,6 +127,10 @@ jobs:
             bundle exec fastlane select_framework scheme:$scheme
           done
 
+      - name: Delete simulator
+        if: always()
+        run: bundle exec fastlane delete_test_simulator
+
       - name: Check for duplicate symbol implementations
         if: always()
         continue-on-error: true

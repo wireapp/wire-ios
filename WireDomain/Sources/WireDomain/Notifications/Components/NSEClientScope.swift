@@ -390,7 +390,9 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
     private var meetingEventNotificationBuilder: MeetingEventNotificationBuilder {
         shared {
             MeetingEventNotificationBuilder(
-                meetingDeleteEventBuilder: meetingDeleteEventNotificationBuilder
+                meetingDeleteEventBuilder: meetingDeleteEventNotificationBuilder,
+                meetingMemberAddEventBuilder: meetingMemberAddEventNotificationBuilder,
+                meetingUpdateEventBuilder: meetingUpdateEventNotificationBuilder
             )
         }
     }
@@ -400,6 +402,29 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
             MeetingDeleteEventNotificationBuilder(
                 meetingLocalStore: MeetingLocalStore(context: coreDataStack.syncContext),
                 userLocalStore: userLocalStore,
+                featureConfigLocalStore: FeatureConfigLocalStore(context: coreDataStack.syncContext),
+                accountID: dependency.accountID
+            )
+        }
+    }
+
+    private var meetingMemberAddEventNotificationBuilder: MeetingMemberAddEventNotificationBuilder {
+        shared {
+            MeetingMemberAddEventNotificationBuilder(
+                meetingsAPI: MeetingsAPIBuilder(apiService: apiService).makeAPI(for: apiVersion),
+                usersAPI: UsersAPIBuilder(apiService: apiService).makeAPI(for: apiVersion),
+                featureConfigLocalStore: FeatureConfigLocalStore(context: coreDataStack.syncContext),
+                meetingLocalStore: MeetingLocalStore(context: coreDataStack.syncContext),
+                accountID: dependency.accountID
+            )
+        }
+    }
+
+    private var meetingUpdateEventNotificationBuilder: MeetingUpdateEventNotificationBuilder {
+        shared {
+            MeetingUpdateEventNotificationBuilder(
+                meetingsAPI: MeetingsAPIBuilder(apiService: apiService).makeAPI(for: apiVersion),
+                usersAPI: UsersAPIBuilder(apiService: apiService).makeAPI(for: apiVersion),
                 featureConfigLocalStore: FeatureConfigLocalStore(context: coreDataStack.syncContext),
                 accountID: dependency.accountID
             )
@@ -456,6 +481,7 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
         let validator = ConversationCallingEventNotificationBuilder.Validator(
             userLocalStore: userLocalStore,
             conversationLocalStore: conversationLocalStore,
+            conversationsAPI: ConversationsAPIBuilder(apiService: apiService).makeAPI(for: apiVersion),
             userDefaults: dependency.sharedUserDefaults
         )
 
@@ -557,11 +583,14 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
     private var conversationMemberLeaveEventNotificationBuilder: ConversationMemberLeaveEventNotificationBuilder {
         let context = ConversationMemberLeaveEventNotificationBuilder.Context(
             conversationLocalStore: conversationLocalStore,
-            userLocalStore: userLocalStore
+            userLocalStore: userLocalStore,
+            conversationsAPI: ConversationsAPIBuilder(apiService: apiService).makeAPI(for: apiVersion),
+            meetingLocalStore: MeetingLocalStore(context: coreDataStack.syncContext)
         )
 
         let validator = ConversationMemberLeaveEventNotificationBuilder.Validator(
-            userLocalStore: userLocalStore
+            userLocalStore: userLocalStore,
+            featureConfigLocalStore: FeatureConfigLocalStore(context: coreDataStack.syncContext)
         )
 
         return ConversationMemberLeaveEventNotificationBuilder(
@@ -578,7 +607,8 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
 
         let validator = ConversationMemberJoinEventNotificationBuilder.Validator(
             userLocalStore: userLocalStore,
-            conversationLocalStore: conversationLocalStore
+            conversationLocalStore: conversationLocalStore,
+            conversationsAPI: ConversationsAPIBuilder(apiService: apiService).makeAPI(for: apiVersion)
         )
 
         return ConversationMemberJoinEventNotificationBuilder(

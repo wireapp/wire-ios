@@ -61,7 +61,8 @@ final class FeatureConfigsAPITests: XCTestCase {
             (.ok, "GetFeatureConfigsSuccessResponseV14"),
             (.ok, "GetFeatureConfigsSuccessResponseV14"),
             (.ok, "GetFeatureConfigsSuccessResponseV16"),
-            (.ok, "GetFeatureConfigsSuccessResponseV17")
+            (.ok, "GetFeatureConfigsSuccessResponseV16"),
+            (.ok, "GetFeatureConfigsSuccessResponseV18")
         ])
 
         try await apiSnapshotHelper.verifyRequestForAllAPIVersions(apiService: apiService) { sut in
@@ -287,14 +288,15 @@ final class FeatureConfigsAPITests: XCTestCase {
         }
     }
 
-    // MARK: - V14 to V16
+    // MARK: - V14 to V17
 
-    func testGetFeatureConfigs_SuccessResponse_200_V14_To_V16_Then_Verify_Requests() async throws {
+    func testGetFeatureConfigs_SuccessResponse_200_V14_To_V17_Then_Verify_Requests() async throws {
         // Given
-        let supportedVersions = [APIVersion.v14, .v15, .v16]
+        let supportedVersions = [APIVersion.v14, .v15, .v16, .v17]
         let apiService = MockAPIServiceProtocol.withResponses([
             (.ok, "GetFeatureConfigsSuccessResponseV14"),
             (.ok, "GetFeatureConfigsSuccessResponseV14"),
+            (.ok, "GetFeatureConfigsSuccessResponseV16"),
             (.ok, "GetFeatureConfigsSuccessResponseV16")
         ])
 
@@ -313,13 +315,13 @@ final class FeatureConfigsAPITests: XCTestCase {
         }
     }
 
-    // MARK: - V17
+    // MARK: - V18
 
-    func testGetFeatureConfigs_SuccessResponse_200_V17_And_Next_Versions_Then_Verify_Requests() async throws {
+    func testGetFeatureConfigs_SuccessResponse_200_V18_And_Next_Versions_Then_Verify_Requests() async throws {
         // Given
-        let supportedVersions = APIVersion.v17.andNextVersions
+        let supportedVersions = APIVersion.v18.andNextVersions
         let apiService = MockAPIServiceProtocol.withResponses(
-            Array(repeating: (.ok, "GetFeatureConfigsSuccessResponseV17"), count: supportedVersions.count)
+            Array(repeating: (.ok, "GetFeatureConfigsSuccessResponseV18"), count: supportedVersions.count)
         )
 
         // Then
@@ -328,7 +330,7 @@ final class FeatureConfigsAPITests: XCTestCase {
             let result = try await sut.getFeatureConfigs()
             // Then
             let resultSet = Set(result)
-            let expectedSet = Scaffolding.featureConfigsV17
+            let expectedSet = Scaffolding.featureConfigsV18
             XCTAssertEqual(resultSet, expectedSet)
         }
     }
@@ -729,16 +731,32 @@ extension FeatureConfigsAPITests {
             .simplifiedUserConnectionRequestQRCode(.init(status: .disabled))
         ])
 
-        static let featureConfigsV14: Set<FeatureConfig> = featureConfigsV12.union([
+        static let featureConfigsV14: Set<FeatureConfig> = Set(
+            featureConfigsV12.filter { config in
+                if case .mlsMigration = config {
+                    return false
+                }
+                return true
+            }
+        )
+        .union([
             .assetAuditLog(.init(status: .enabled)),
-            .cellsInternal(.init(status: .enabled, backendURL: URL(string: "https://example.com")!))
+            .cellsInternal(.init(status: .enabled, backendURL: URL(string: "https://example.com")!)),
+            .mlsMigration(
+                .init(
+                    status: .enabled,
+                    startTime: dateV6(from: "2021-05-12T10:52:02Z"),
+                    finaliseRegardlessAfter: dateV6(from: "2021-05-12T10:52:02Z"),
+                    allowManualMigration: true
+                )
+            )
         ])
 
         static let featureConfigsV16: Set<FeatureConfig> = featureConfigsV14.union([
             .meetings(.init(status: .enabled))
         ])
 
-        static let featureConfigsV17: Set<FeatureConfig> = featureConfigsV16.union([
+        static let featureConfigsV18: Set<FeatureConfig> = featureConfigsV16.union([
             .preventAdminlessGroups(.init(
                 status: .enabled,
                 promotionStrategy: "alphabetical",

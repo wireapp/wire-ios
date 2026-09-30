@@ -27,4 +27,7 @@ extension NetworkStack {
         return AuthenticationAPIBuilder(networkService: networkServices.rest).makeAPI(for: apiVersion)
     }
 
+    func makeAccessTokenExchange() async throws -> AccessTokenExchange {
+        AccessTokenExchange(networkService: try networkServices.rest)
+    }
 }

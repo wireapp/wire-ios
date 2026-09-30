@@ -153,8 +153,16 @@ class ConversationDetailsPage: PageModel {
         app.switches[Locators.ConversationDetailsPage.readReceiptsSwitch.rawValue].firstMatch
     }
 
+    var guestOptionsCell: XCUIElement {
+        app.descendants(matching: .any)[Locators.ConversationDetailsPage.guestOptionsCell.rawValue].firstMatch
+    }
+
     var notificationOptionsCell: XCUIElement {
         app.descendants(matching: .any)[Locators.ConversationDetailsPage.notificationOptionsCell.rawValue].firstMatch
+    }
+
+    var timeoutOptionsCell: XCUIElement {
+        app.descendants(matching: .any)["cell.groupdetails.timeoutoptions"].firstMatch
     }
 
     @discardableResult
@@ -163,12 +171,25 @@ class ConversationDetailsPage: PageModel {
         return self
     }
 
+    func openGuestOptions() throws -> GuestOptionsPage {
+        guestOptionsCell.waitAndTap()
+        return try GuestOptionsPage()
+    }
+
     func openNotificationOptions() throws -> ConversationNotificationOptionsPage {
         XCTAssertTrue(
             notificationOptionsCell.waitAndTap(),
             "Notification options cell did not appear"
         )
         return try ConversationNotificationOptionsPage()
+    }
+
+    func openTimeoutOptions() throws -> ConversationTimeoutOptionsPage {
+        XCTAssertTrue(
+            timeoutOptionsCell.waitAndTap(),
+            "Self-deleting messages options cell did not appear"
+        )
+        return try ConversationTimeoutOptionsPage()
     }
 
     @discardableResult

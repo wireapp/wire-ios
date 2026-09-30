@@ -19,6 +19,7 @@
 import AuthenticationServices
 import Foundation
 import WireAuthenticationAPI
+import WireLogging
 import WireNetwork
 
 @MainActor
@@ -29,6 +30,7 @@ package struct LoginViaSSOUseCase: LoginViaSSOUseCaseProtocol {
     private let ssoCallbackURLScheme: String
     private let verificationTokenGenerator: any SSOLoginVerificationTokenGeneratorProtocol
     private let webAuthenticator: any WebAuthenticatorProtocol
+    private let accessTokenExchange: any AccessTokenExchangeProtocol
     private let createAuthResultUseCase: any CreateAuthenticationResultUseCaseProtocol
 
     package init(
@@ -37,6 +39,7 @@ package struct LoginViaSSOUseCase: LoginViaSSOUseCaseProtocol {
         ssoCallbackURLScheme: String,
         verificationTokenGenerator: any SSOLoginVerificationTokenGeneratorProtocol,
         webAuthenticator: any WebAuthenticatorProtocol,
+        accessTokenExchange: any AccessTokenExchangeProtocol,
         createAuthResultUseCase: any CreateAuthenticationResultUseCaseProtocol
     ) {
         self.authenticationAPI = authenticationAPI
@@ -44,6 +47,7 @@ package struct LoginViaSSOUseCase: LoginViaSSOUseCaseProtocol {
         self.ssoCallbackURLScheme = ssoCallbackURLScheme
         self.verificationTokenGenerator = verificationTokenGenerator
         self.webAuthenticator = webAuthenticator
+        self.accessTokenExchange = accessTokenExchange
         self.createAuthResultUseCase = createAuthResultUseCase
     }
 
@@ -69,10 +73,30 @@ package struct LoginViaSSOUseCase: LoginViaSSOUseCaseProtocol {
             verificationToken: verificationToken
         )
 
+        // The SSO callback only carries cookies, never a bearer token, but
+        // `CreateAuthenticationResultUseCase` needs one to authenticate its
+        // `GET /system/settings` IdP-change-detection check. Exchange the
+        // cookies for a token here, before the account/session is persisted.
+        // Fails open (`nil`) so a transient exchange failure never blocks login.
+        let accessToken: AccessToken?
+        do {
+            accessToken = try await accessTokenExchange.exchange(
+                cookies: cookies,
+                clientID: nil,
+                lastKnownAccessToken: nil
+            )
+        } catch {
+            WireLogger.authentication.error(
+                "SSO login: failed to exchange cookies for an access token: \(String(describing: error))",
+                attributes: .safePublic
+            )
+            accessToken = nil
+        }
+
         return try await createAuthResultUseCase.invoke(
             userID: userID,
             cookies: cookies,
-            accessToken: nil,
+            accessToken: accessToken,
             emailCredentials: nil
         )
     }

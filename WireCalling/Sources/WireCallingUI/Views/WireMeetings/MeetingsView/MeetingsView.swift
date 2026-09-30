@@ -26,6 +26,7 @@ struct MeetingsView: View {
 
     private typealias Strings = L10n.Localizable.WireMeetings.List
 
+    @Environment(\.scenePhase) private var scenePhase
     @State private var viewModel: MeetingsViewModel
 
     /// Called when the user chooses "Edit meeting" in a meeting's menu.
@@ -49,11 +50,25 @@ struct MeetingsView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .background(ColorTheme.Backgrounds.surface.color)
+        .overlay {
+            if viewModel.isDeleting {
+                ProgressView()
+                    .controlSize(.large)
+                    .accessibilityLabel(Strings.Delete.Alert.Delete.button)
+                    .accessibilityIdentifier("meetingDeleteProgress")
+            }
+        }
         .alert(
-            Strings.Delete.Error.Alert.title,
+            viewModel.deleteErrorTitle,
             isPresented: $viewModel.hasDeleteError
         ) {
-            Button(Strings.Delete.Error.Alert.ok, role: .cancel) {}
+            Button(L10n.Localizable.WireMeetings.retry) {
+                Task { await viewModel.retryDelete() }
+            }
+            .accessibilityIdentifier("meetingDeleteRetryButton")
+            Button(Strings.Delete.Alert.Cancel.button, role: .cancel) {}
+        } message: {
+            Text(viewModel.deleteErrorMessage)
         }
         .task {
             await viewModel.loadInitialData()
@@ -68,22 +83,69 @@ struct MeetingsView: View {
         .task {
             await viewModel.observeCurrentDate()
         }
+        .task {
+            await viewModel.observeSystemDateTimeChanges()
+        }
+        .onChange(of: scenePhase) { _, newPhase in
+            guard newPhase == .active else { return }
+
+            Task { await viewModel.refreshSystemDateTimeStateAfterSceneBecameActive() }
+        }
     }
 
     @ViewBuilder private var content: some View {
 
         if viewModel.groupedUpcomingMeetings.isEmpty {
-            MeetingsEmptyStateView(
-                title: Strings.EmptyState.Next.title,
-                subtitle: Strings.EmptyState.Next.subtitle
-            )
+            if viewModel.isLoading {
+                ProgressView()
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .accessibilityLabel(Strings.title)
+                    .accessibilityIdentifier("meetingsLoadProgress")
+            } else if viewModel.hasLoadError {
+                loadError
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+            } else {
+                MeetingsEmptyStateView(
+                    title: Strings.EmptyState.Next.title,
+                    subtitle: Strings.EmptyState.Next.subtitle
+                )
+            }
         } else {
             meetingsList
         }
     }
 
+    private var loadError: some View {
+        VStack(spacing: 12) {
+            Text(L10n.Localizable.Meetings.List.loadError)
+                .font(for: .body1)
+                .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
+                .multilineTextAlignment(.center)
+            Button(L10n.Localizable.WireMeetings.retry) {
+                Task { await viewModel.loadInitialData() }
+            }
+            .wireButtonStyle(.tertiary)
+            .accessibilityIdentifier("meetingsLoadRetryButton")
+        }
+        .padding()
+    }
+
     @ViewBuilder private var meetingsList: some View {
         List {
+            if viewModel.hasLoadError {
+                loadError
+                    .frame(maxWidth: .infinity)
+                    .listRowSeparator(.hidden)
+                    .listRowBackground(Color.clear)
+            } else if viewModel.isLoading, !viewModel.hasMore {
+                ProgressView()
+                    .frame(maxWidth: .infinity)
+                    .listRowSeparator(.hidden)
+                    .listRowBackground(Color.clear)
+                    .accessibilityLabel(Strings.title)
+                    .accessibilityIdentifier("meetingsLoadProgress")
+            }
+
             GroupedSections(
                 groups: viewModel.groupedUpcomingMeetings,
                 formatDay: viewModel.formatDay(_:),
@@ -110,6 +172,8 @@ struct MeetingsView: View {
         .scrollContentBackground(.hidden)
         .background(ColorTheme.Backgrounds.surface.color)
         .refreshable {
+            // Let SwiftUI present the refresh control before a fast reload completes.
+            await Task.yield()
             await viewModel.loadInitialData()
         }
         .alert(
@@ -119,6 +183,7 @@ struct MeetingsView: View {
             Button(Strings.Delete.Alert.Delete.button, role: .destructive) {
                 viewModel.confirmDelete()
             }
+            .disabled(viewModel.isDeleting)
             Button(Strings.Delete.Alert.Cancel.button, role: .cancel) {}
         } message: {
             Text(viewModel.deleteConfirmationMessage)

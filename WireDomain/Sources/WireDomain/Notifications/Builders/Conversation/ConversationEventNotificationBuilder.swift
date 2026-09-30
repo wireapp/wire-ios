@@ -40,6 +40,13 @@ struct ConversationEventNotificationBuilder: ConversationEventNotificationBuilde
     func buildContent(
         event: ConversationEvent
     ) async throws -> [UserNotification]? {
+        if case let .memberLeave(memberLeaveEvent) = event,
+           let notification = await conversationMemberLeaveEventNotificationBuilder.buildMeetingCancellationContent(
+               event: memberLeaveEvent
+           ) {
+            return [notification]
+        }
+
         let canDisplayNotification = await validator.validate(
             conversationID: event.conversationID,
             senderID: event.senderID,
@@ -119,6 +126,9 @@ extension ConversationEventNotificationBuilder {
                 id: conversationID.id,
                 domain: conversationID.domain
             )
+
+            let isMeetingConversation = await conversationLocalStore.isMeetingConversation(conversation)
+            guard !isMeetingConversation else { return false }
 
             let conversationMutedMessages = await conversationLocalStore
                 .conversationMutedMessageTypesIncludingAvailability(

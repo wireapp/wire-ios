@@ -78,6 +78,7 @@ struct MeetingRow: View {
                                     .renderingMode(.template)
                             }
                         }
+                        .disabled(meeting.conversation == nil)
 
                         if isOrganizer {
                             Button {
@@ -85,18 +86,22 @@ struct MeetingRow: View {
                             } label: {
                                 Label(Strings.Actions.edit, systemImage: "pencil")
                             }
+                            .disabled(meeting.conversation == nil)
 
                             Button(role: .destructive) {
                                 onDelete()
                             } label: {
                                 Label(Strings.Actions.delete, systemImage: "trash")
                             }
+                            .tint(ColorTheme.Base.error.color)
                         } else {
                             Button(role: .destructive) {
                                 onDelete()
                             } label: {
                                 Label(Strings.Actions.deleteForMe, systemImage: "trash")
                             }
+                            .tint(ColorTheme.Base.error.color)
+                            .disabled(meeting.conversation == nil)
                             .accessibilityIdentifier(Locators.WireMeetings.MeetingRow.deleteForMeButton)
                         }
                     } label: {
@@ -152,6 +157,7 @@ struct MeetingRow: View {
             .background(ColorTheme.Base.primary(wireAccentColor).color, in: Capsule())
         }
         .buttonStyle(.plain)
+        .disabled(meeting.conversation == nil)
         .accessibilityIdentifier(Locators.WireMeetings.MeetingRow.joinButton)
         .accessibilityLabel(Text(L10n.Accessibility.WireMeetings.JoinButton.description))
     }

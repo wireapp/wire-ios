@@ -175,16 +175,26 @@ final class ConversationInputBarViewController: UIViewController,
 
     private var showDriveViewerBanner: Bool {
         conversation.isWireDriveEnabled && userSession.selfUser
-            .isGuest(in: conversation) && DeveloperFlag.enableDrivePermissions.isOn
+            .isGuest(in: conversation)
+    }
+
+    private var shouldShowDriveViewerBanner: Bool {
+        showDriveViewerBanner &&
+            !ConversationViewerAccessBannerDismissalStore.shared
+            .isDismissed(forCellName: conversation.wireDriveCellName)
     }
 
     // MARK: subviews
 
     lazy var inputBar: InputBar = {
+        let driveConfiguration: InputBar.DriveConfiguration? = if conversation.isWireDriveEnabled {
+            .init(cellName: conversation.wireDriveCellName, showBanner: shouldShowDriveViewerBanner)
+        } else {
+            nil
+        }
         let inputBar = InputBar(
             buttons: inputBarButtons,
-            isWireDriveEnabled: conversation.isWireDriveEnabled,
-            showDriveViewerBanner: showDriveViewerBanner
+            driveConfiguration: driveConfiguration
         )
         if !mediaShareRestrictionManager.canUseSpellChecking {
             inputBar.textView.spellCheckingType = .no
@@ -409,16 +419,13 @@ final class ConversationInputBarViewController: UIViewController,
             self.typingObserverToken = conversation.addTypingObserver(self)
         }
 
-        // TODO: [WPB-25941] Remove developer flag when feature is complete
-        if DeveloperFlag.enableDrivePermissions.isOn {
-            if conversation.isWireDriveEnabled, !conversation.isTeamConversation {
-                [photoButton, videoButton, sketchButton, uploadFileButton].forEach {
-                    $0.isEnabled = false
-                    $0.setBackgroundImageColor(
-                        ColorTheme.Buttons.Secondary.disabled,
-                        for: .disabled
-                    )
-                }
+        if conversation.isWireDriveEnabled, !conversation.isTeamConversation {
+            [photoButton, videoButton, sketchButton, uploadFileButton].forEach {
+                $0.isEnabled = false
+                $0.setBackgroundImageColor(
+                    ColorTheme.Buttons.Secondary.disabled,
+                    for: .disabled
+                )
             }
         }
 
@@ -504,6 +511,7 @@ final class ConversationInputBarViewController: UIViewController,
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        inputBar.hideDriveViewerBannerIfDismissed()
         updateButtonStates()
         inputBar.updateReturnKey()
         inputBar.updateEphemeralState()

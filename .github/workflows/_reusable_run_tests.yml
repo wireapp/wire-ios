@@ -3,6 +3,9 @@ on:
     inputs:
       folders:
         type: string
+      mac_runner:
+        type: string
+        default: in-house
       all:
         type: boolean
         default: false
@@ -64,7 +67,13 @@ env: # https://docs.fastlane.tools/getting-started/ios/setup/
 jobs:
   run-tests:
     name: Run tests
-    runs-on: ghcr.io/cirruslabs/macos-runner:tahoe
+    runs-on: >-
+      ${{
+        inputs.mac_runner == 'in-house' && inputs.run_critical_flows && fromJSON('["self-hosted", "in-house", "ui-tests"]') ||
+        inputs.mac_runner == 'in-house' && fromJSON('["self-hosted", "in-house", "tests"]') ||
+        inputs.mac_runner == 'github' && 'macos-26' ||
+        'ghcr.io/cirruslabs/macos-runner:tahoe'
+      }}
     timeout-minutes: ${{ inputs.timeout_minutes }}
     permissions:
       contents: read
@@ -76,12 +85,16 @@ jobs:
     env:
       GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       GITHUB_USERNAME: ${{ secrets.ZENKINS_USERNAME }}
+      KALIUM_TEST_SERVICE_ENABLED: ${{ inputs.run_critical_flows && inputs.mac_runner != 'in-house' }}
 
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ inputs.branch }}
           lfs: 'true'
+
+      - name: Materialize Git LFS files
+        run: git lfs checkout
 
       - name: Sanitize branch name
         env:
@@ -143,6 +156,8 @@ jobs:
 
       - name: Cache Swift Packages
         uses: ./.github/actions/cache-swift-packages
+        with:
+          cache_enabled: ${{ inputs.mac_runner != 'in-house' }}
 
       - name: Setup Ruby
         uses: ruby/setup-ruby@afeafc3d1ab54a631816aba4c914a0081c12ff2f # v1.310.0
@@ -173,8 +188,26 @@ jobs:
         run: |
           bundle exec fastlane generate_env
 
-      - name: Setup Kalium Testservice
+      - name: Configure test services
         if: ${{ inputs.run_critical_flows }}
+        shell: bash
+        env:
+          IN_HOUSE_RUNNER: ${{ inputs.mac_runner == 'in-house' }}
+        run: |
+          set -euo pipefail
+
+          ENV_FILE="wire-ios/WireUITests/env.xcconfig"
+          [[ -f "$ENV_FILE" ]] || { echo "::error::env.xcconfig missing: $ENV_FILE" >&2; exit 1; }
+
+          if [[ "$IN_HOUSE_RUNNER" == "true" ]]; then
+            echo "USE_IN_HOUSE_SERVICES=true" >> "$ENV_FILE"
+          fi
+
+          echo "Runner name: ${RUNNER_NAME:-unknown}"
+          echo "Use in-house services: $IN_HOUSE_RUNNER"
+
+      - name: Setup Kalium Testservice
+        if: ${{ env.KALIUM_TEST_SERVICE_ENABLED == 'true' }}
         uses: ./.github/actions/kalium-testservice/setup
 
       - name: "Test new critical flows"
@@ -195,7 +228,7 @@ jobs:
           fi
 
       - name: Stop Kalium Testservice
-        if: ${{ always() && inputs.run_critical_flows }}
+        if: ${{ always() && env.KALIUM_TEST_SERVICE_ENABLED == 'true' }}
         uses: ./.github/actions/kalium-testservice/stop
         with:
           print_logs_on_failure: ${{ job.status != 'success' }}
@@ -240,6 +273,11 @@ jobs:
           FOLDERS: ${{ inputs.folders }}
         run: |
           bundle exec fastlane test_only_frameworks folders:"$FOLDERS"
+
+      - name: Delete simulator
+        if: always()
+        run: |
+          bundle exec fastlane delete_test_simulator
 
       - name: Check for duplicate symbol implementations
         if: always()
@@ -429,7 +467,6 @@ jobs:
             ${{ steps.html-report-link.outputs.html_report_url != '' && format('**HTML report:** [download zip]({0})', steps.html-report-link.outputs.html_report_url) || '' }}
 
             ${{ steps.test-summary.outputs.report_message }}
-
   upload-test-results-datadadog:
     name: Upload to Datadog
     runs-on: ubuntu-24.04

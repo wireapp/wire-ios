@@ -18,6 +18,10 @@
 
 import Foundation
 
+/// Carries the configured `maxNumberAccounts` in the `userInfo` of an `.accountLimitReached` error,
+/// so the presenting UI can show the actual limit instead of a hardcoded one.
+public let ZMAccountLimitReachedMaxNumberAccountsKey = "account-limit-reached-max-number-accounts"
+
 public extension NSError {
 
     @objc(ZMUserSessionErrorDomain) static var userSessionErrorDomain = "ZMUserSession"

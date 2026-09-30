@@ -1,0 +1,5 @@
+{
+    "nomadProfiles": true,
+    "setEnableMls": true,
+    "setRestrictUserCreation": false
+}

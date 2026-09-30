@@ -264,8 +264,7 @@ class ConversationsPage: PageModel {
     func conversationNamesInOrder() throws -> [String] {
         try letTheSyncFinish()
         XCTAssertTrue(conversationCell.waitForExistence(timeout: 10), "No conversation cells appeared in the list")
-        return app.buttons
-            .matching(identifier: Locators.ConversationsPage.conversationCell.rawValue)
+        return conversationCells
             .allElementsBoundByIndex
             .sorted { $0.frame.minY < $1.frame.minY }
             .map(\.label)

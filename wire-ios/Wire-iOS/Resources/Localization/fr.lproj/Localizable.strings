@@ -971,6 +971,16 @@
 "shortcut.mark_all_as_read.title" = "Tout marquer comme lu";
 "meta.menu.configure_notifications" = "Notifications…";
 "meta.menu.open_self_profile" = "Ouvrir le Profil";
+"meta.menu.mls_migration.confirmation.title" = "Change protocol to MLS?";
+"meta.menu.mls_migration.confirmation.message" = "The standard messaging protocol will change from Proteus to Messaging Layer Security (MLS).";
+"meta.menu.mls_migration.confirmation.button" = "Change Protocol";
+"meta.menu.mls_migration.success.title" = "MLS migration completed";
+"meta.menu.mls_migration.success.message" = "The conversation now uses MLS.";
+"meta.menu.mls_migration.failure.title" = "MLS migration failed";
+"meta.menu.mls_migration.failure.conversation_not_found" = "The conversation could not be found.";
+"meta.menu.mls_migration.failure.unsupported_conversation" = "Only team group conversations can be migrated.";
+"meta.menu.mls_migration.failure.missing_mls_service" = "Unable to start the migration to MLS.";
+"meta.menu.mls_migration.failure.missing_mls_group_id" = "The conversation does not have an MLS group ID.";
 
 // Delete conversation
 "meta.menu.delete_content.dialog_title" = "Effacer le contenu?";
@@ -999,7 +1009,7 @@
 "admin_selection.title" = "New admin";
 "admin_selection.promote" = "Promote";
 "admin_selection.info_banner" = "After you promote a new admin, you leave the group.";
-"admin_selection.promotion_error" = "Failed to promote user to admin.";
+"admin_selection.promotion_error" = "Group member could not be promoted to admin.";
 
 // Last admin leave flow
 "last_admin_leave.title" = "Leave \"%@\"?";
@@ -1008,8 +1018,8 @@
 "last_admin_leave.no_eligible_candidates_message" = "You're the only admin. The other participants can't be admins.\nAdd at least one team member and promote them as an admin before you leave. Alternatively, delete the group if it is no longer needed.";
 "last_admin_leave.delete_group" = "Delete group";
 "last_admin_leave.promote_only_message" = "You're the only admin.\nPromote another participant before leaving.";
-"last_admin_leave.cannot_leave_title" = "Cannot leave \"%@\".";
-"last_admin_leave.cannot_leave_message" = "There are no eligible admins in this group. As a personal user, you can’t delete the group. To delete it, add another team member and assign them as an admin.";
+"last_admin_leave.cannot_leave_title" = "Leave \"%@\"?";
+"last_admin_leave.cannot_leave_message" = "Add at least one team member from the team that created this group and select them as an admin before you leave.";
 
 // Conversation Degraded (security level lowered)
 "meta.degraded.degradation_reason_message.singular" = "%@ utilise un nouvel appareil.";
@@ -1236,9 +1246,6 @@
 "self.settings.add_account_or_team.title" = "Add Account or Team";
 "self.settings.manage_team.title" = "Gérer l’équipe";
 "self.settings.add_account.title" = "Ajouter un compte";
-
-"self.settings.add_account.error.title" = "Trois comptes actifs";
-"self.settings.add_account.error.message" = "Vous ne pouvez vous connecter qu'à trois comptes à la fois. Déconnectez-vous de l'un d'entre eux pour en ajouter un autre.";
 
 "self.settings.switch_account.message" = "Vous êtes actuellement dans un appel avec ce compte.\nChanger de compte raccrochera l'autre appel.";
 "self.settings.switch_account.action" = "Changer quand même";
@@ -1810,7 +1817,6 @@
 "error.user.device_deleted_remotely" = "Vous avez été déconnecté depuis un autre appareil.";
 "error.user.last_identity_cant_be_deleted" = "An email address is required.";
 "error.user.account_suspended" = "Ce compte n'est plus autorisé à se connecter.";
-"error.user.account_limit_reached" = "Vous ne pouvez pas ajouter plus de 3 comptes.";
 "error.user.too_many_requests" = "Too many requests, please try again later.";
 
 "error.group_call.too_many_members_in_conversation.title" = "Trop de participants pour un appel";

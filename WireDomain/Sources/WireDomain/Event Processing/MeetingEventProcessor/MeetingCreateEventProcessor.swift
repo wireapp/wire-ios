@@ -31,14 +31,9 @@ struct MeetingCreateEventProcessor: MeetingCreateEventProcessorProtocol {
 
         // The meeting's conversation arrives via its own conversation.create-meeting
         // event, but that event isn't guaranteed to have been processed before this
-        // one. If the conversation isn't stored locally yet, pull it and store the
-        // meeting again so the two are linked; meetings without a locally stored
-        // conversation are not listed.
+        // one. A stored reference without metadata also needs to be pulled.
+        guard meeting.conversation == nil else { return }
         let conversationID = meeting.conversationID
-        guard await conversationRepository.fetchConversation(
-            id: conversationID.id,
-            domain: conversationID.domain
-        ) == nil else { return }
 
         try await conversationRepository.pullConversation(
             id: conversationID.id,

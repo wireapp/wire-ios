@@ -191,6 +191,8 @@ public enum Locators {
         case userCellName
         case labelSharedDriveON = "Shared Drive is on"
         case labelSelfDeletingMessagesOFF = "Self-deleting messages are off"
+        case selfDeletedMessage
+        case ephemeralCountdown
         case sharedFileLabel = "FileTransferTopLabel"
         case sharedFileDetailsLabel = "FileTransferBottomLabel"
         case fileTypeIcon = "FileTransferFileTypeIcon"
@@ -228,6 +230,10 @@ public enum Locators {
         case openOngoingCallButton
         case readReceiptsDisabledSystemMessage
         case readReceiptsEnabledSystemMessage
+        case replyOptionOnMessage = "Reply"
+        case replyPreviewView = "replyView"
+        case cancelReplyButton = "cancelReply"
+        case originalSender = "original.sender"
 
     }
 
@@ -264,6 +270,24 @@ public enum Locators {
         case memberCell
         case close
         case readReceiptsSwitch
+        case guestOptionsCell
+    }
+
+    public enum GuestOptionsPage: String {
+        case createLinkButton
+        case linkHeader
+        case secureLinkHeader
+        case linkText
+        case createLinkWithPasswordAction
+        case createLinkWithoutPasswordAction
+        case revokeLinkButton = "Revoke Link…"
+    }
+
+    public enum CreateSecureGuestLinkPage: AutoPrefixedEnum {
+        case generatePasswordButton
+        case passwordTextField
+        case confirmPasswordTextField
+        case createLinkButton
     }
 
     public enum ConversationNotificationOptionsPage: AutoPrefixedEnum {
@@ -272,10 +296,15 @@ public enum Locators {
         case nothingOption
     }
 
+    public enum ConversationTimeoutOptionsPage: AutoPrefixedEnum {
+        case timeOutOptionsCloseButton
+    }
+
     public enum ConversationDetailsActions: AutoPrefixedEnum {
         case archive
         case clearContent
         case leaveConversation
+        case migrateToMLS
         case moveToFolder
     }
 
@@ -696,6 +725,11 @@ public enum Locators {
             case deleteForMeButton = "Delete Meeting for Me Button"
             case joinButton = "Join Button"
         }
+    }
 
+    public enum SessionExpiredPage: String {
+
+        case alertTitle = "Your session expired"
+        case okButton = "OK"
     }
 }

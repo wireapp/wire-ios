@@ -75,6 +75,8 @@ public struct UpdateEventsAPIBuilder {
             UpdateEventsAPIV16(apiService: apiService)
         case .v17:
             UpdateEventsAPIV17(apiService: apiService)
+        case .v18:
+            UpdateEventsAPIV18(apiService: apiService)
         }
     }
 

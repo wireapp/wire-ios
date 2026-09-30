@@ -36,7 +36,10 @@ final class MeetingLocalStoreTests: XCTestCase {
     }
 
     override func setUp() async throws {
-        coreDataStackHelper = CoreDataStackHelper()
+        coreDataStackHelper = CoreDataStackHelper(
+            localDomain: Scaffolding.conversationID.domain,
+            isFederationEnabled: true
+        )
         modelHelper = ModelHelper()
         stack = try await coreDataStackHelper.createStack()
 
@@ -64,11 +67,13 @@ final class MeetingLocalStoreTests: XCTestCase {
                 domain: Scaffolding.creatorID.domain,
                 in: context
             )
-            _ = modelHelper!.createGroupConversation(
+            let conversation = modelHelper!.createGroupConversation(
                 id: Scaffolding.conversationID.id,
                 domain: Scaffolding.conversationID.domain,
                 in: context
             )
+            conversation.isPendingInitialFetch = false
+            conversation.groupType = .meeting
         }
 
         // When
@@ -94,6 +99,52 @@ final class MeetingLocalStoreTests: XCTestCase {
             XCTAssertEqual(storedMeeting.conversation?.remoteIdentifier, Scaffolding.conversationID.id)
             XCTAssertEqual(storedMeeting.creator?.remoteIdentifier, Scaffolding.creatorID.id)
         }
+    }
+
+    func testStoredMeeting_It_Preserves_Missing_Relationships_Without_Exposing_Incomplete_Conversation() async throws {
+        await sut.storeMeeting(Scaffolding.meeting)
+        await context.perform { [context] in context.reset() }
+
+        let storedMeeting = await sut.storedMeeting(id: Scaffolding.meetingID)
+        let meeting = try XCTUnwrap(storedMeeting)
+        XCTAssertEqual(meeting.conversationID, Scaffolding.conversationID)
+        XCTAssertEqual(meeting.creatorID, Scaffolding.creatorID)
+        XCTAssertEqual(meeting.title, Scaffolding.meeting.title)
+        XCTAssertNil(meeting.conversation)
+
+        try await context.perform { [context] in
+            let conversation = try XCTUnwrap(ZMConversation.fetch(
+                with: Scaffolding.conversationID.id,
+                domain: Scaffolding.conversationID.domain,
+                in: context
+            ))
+            XCTAssertTrue(conversation.needsToBeUpdatedFromBackend)
+            XCTAssertTrue(conversation.isPendingInitialFetch)
+            XCTAssertTrue(conversation.isMeeting)
+            conversation.conversationType = .group
+            conversation.isPendingInitialFetch = false
+            conversation.groupType = .group
+            let member = ModelHelper().createUser(
+                id: Scaffolding.memberAliceID.id,
+                domain: Scaffolding.memberAliceID.domain,
+                name: "Alice Archer",
+                in: context
+            )
+            conversation.addParticipantsAndUpdateConversationState(users: [member], role: nil)
+        }
+
+        let legacyMeeting = await sut.storedMeeting(id: Scaffolding.meetingID)
+        XCTAssertNil(legacyMeeting?.conversation)
+        await context.perform { [context] in
+            let conversation = ZMConversation.fetch(
+                with: Scaffolding.conversationID.id,
+                domain: Scaffolding.conversationID.domain,
+                in: context
+            )
+            conversation?.groupType = .meeting
+        }
+        let resolvedMeeting = await sut.storedMeeting(id: Scaffolding.meetingID)
+        XCTAssertEqual(resolvedMeeting?.conversation?.participants.map(\.qualifiedID), [Scaffolding.memberAliceID])
     }
 
     func testStoreMeeting_It_Updates_Existing_Stored_Meeting() async throws {
@@ -157,12 +208,14 @@ final class MeetingLocalStoreTests: XCTestCase {
                 domain: Scaffolding.creatorID.domain,
                 in: context
             )
-            _ = modelHelper!.createGroupConversation(
+            let conversation = modelHelper!.createGroupConversation(
                 id: Scaffolding.conversationID.id,
                 with: [selfUser, bob, alice],
                 domain: Scaffolding.conversationID.domain,
                 in: context
             )
+            conversation.isPendingInitialFetch = false
+            conversation.groupType = .meeting
         }
 
         await sut.storeMeeting(Scaffolding.meeting)
@@ -202,12 +255,14 @@ final class MeetingLocalStoreTests: XCTestCase {
                 domain: Scaffolding.creatorID.domain,
                 in: context
             )
-            _ = modelHelper!.createGroupConversation(
+            let conversation = modelHelper!.createGroupConversation(
                 id: Scaffolding.conversationID.id,
                 with: [alice],
                 domain: Scaffolding.conversationID.domain,
                 in: context
             )
+            conversation.isPendingInitialFetch = false
+            conversation.groupType = .meeting
         }
 
         await sut.storeMeeting(Scaffolding.meeting)

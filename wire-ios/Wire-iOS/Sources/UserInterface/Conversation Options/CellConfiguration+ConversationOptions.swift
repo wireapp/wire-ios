@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireLocators
 import WireUtilities
 
 extension CellConfiguration {
@@ -44,8 +45,7 @@ extension CellConfiguration {
         isEnabled: Bool,
         isDriveConversation: Bool
     ) -> CellConfiguration {
-        // TODO: [WPB-25941] Remove developer flag when feature is complete
-        let subtitle = if isDriveConversation, DeveloperFlag.enableDrivePermissions.isOn {
+        let subtitle = if isDriveConversation {
             L10n.Localizable.GuestRoom.AllowGuests.subtitle + "\n\n" + L10n.Localizable.GuestRoom.AllowGuests
                 .SharedDrive.subtitle
         } else {
@@ -85,7 +85,7 @@ extension CellConfiguration {
     static func createLinkButton(action: @escaping Action) -> CellConfiguration {
         .leadingButton(
             title: L10n.Localizable.GuestRoom.Link.Button.title,
-            identifier: "",
+            identifier: Locators.GuestOptionsPage.createLinkButton.rawValue,
             action: action
         )
     }
