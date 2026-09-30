@@ -23,7 +23,7 @@
 - [ ] Confirm whether reminders are on by default, respect muted meetings/conversations, and need a separate user setting.
 - [ ] Decide what to show when a meeting is created or learned about less than ten minutes before it starts: immediate reminder or none.
 - [ ] Decide whether a reminder should appear while Wire is in the foreground or while the user is already in that meeting.
-- [ ] Choose the amount of future recurring occurrences to keep scheduled and how to replenish them when the app or NSE next runs.
+- [x] Keep the next five recurring occurrences scheduled per meeting, as confirmed. Replenish them when the app or NSE next handles meeting data; broader refresh triggers remain to be implemented below.
 - [ ] Confirm acceptable reliability: client-only reminders can be stale or missing if the device does not receive a meeting change before the reminder time. If delivery must be guaranteed despite that, discuss backend-scheduled reminders.
 
 ## Implementation
@@ -36,11 +36,13 @@
 - [ ] Decide when to show the meeting title based on notification privacy settings, translate the new reminder strings, and route a tap to the specific meeting.
 - [ ] Schedule and reconcile reminders after the app creates, edits, or syncs meetings. Handle full meeting-list replacement so obsolete reminders are removed.
 - [x] Add account-scoped scheduler reconciliation for one meeting: remove obsolete occurrence requests, replace current content, and skip duplicate or past occurrence starts. Other app event paths and the NSE still need to use it.
-- [x] Reconcile a one-time meeting reminder when the app processes `meeting.create`, including when its conversation was already known. Use generic notification text until the privacy setting is decided.
-- [x] Reconcile incoming `meeting.update` and `meeting.member-add` through the app event processor. Remove a stale one-time reminder if an update changes the meeting to recurring.
-- [x] Reconcile the organizer's one-time meeting when the app's create request succeeds, even if this client receives no `meeting.create` event. A reminder failure must not make meeting creation appear to fail.
-- [x] Reconcile app-originated edits from the server's updated meeting, replacing a changed one-time start or removing a stale one-time reminder when recurrence is added. A scheduling failure must not make the edit appear to fail.
-- [ ] Schedule recurring occurrences and reconcile authoritative meeting-list refreshes.
+- [x] Reconcile reminders when the app processes `meeting.create`, including when its conversation was already known. Use generic notification text until the privacy setting is decided.
+- [x] Reconcile incoming `meeting.update` and `meeting.member-add` through the app event processor, replacing obsolete occurrences when the schedule changes.
+- [x] Reconcile the organizer's meeting when the app's create request succeeds, even if this client receives no `meeting.create` event. A reminder failure must not make meeting creation appear to fail.
+- [x] Reconcile app-originated edits from the server's updated meeting, replacing occurrences when the start or recurrence changes. A scheduling failure must not make the edit appear to fail.
+- [x] Schedule the next five recurring occurrences when the app creates or receives a changed meeting.
+- [ ] Reconcile authoritative meeting-list refreshes and replenish recurring reminders during later app/NSE activity.
+- [x] Add a reusable recurrence start calculator that excludes occurrences whose ten-minute fire time has passed and delegates time-zone, daylight-saving, interval, and end-date handling to `MeetingOccurrencePaginator`.
 - [x] On logout or account removal, start account-scoped cancellation for that account ID only; preserve reminders for other signed-in accounts. Covered foreground and background session logout, account deletion, and retained-account data purge (`SessionManager.logout(account:)`, `logoutCurrentSession`, and `logoutBackgroundSessionAndPurgeRetainedAccountData`).
 - [ ] Ensure logout cancellation completes reliably if the app closes immediately after logout; consider a startup sweep of reminders for accounts that are no longer signed in.
 - [ ] Reconcile from the NSE when it processes relevant meeting create, invitation, update, or cancellation events, including events for which no immediate notification is built. Fetch the latest meeting details where required, and finish within the NSE's limited runtime. Handle duplicate or out-of-order events safely.

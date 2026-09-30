@@ -495,9 +495,22 @@ struct MeetingRepositoryTests {
         #expect(meeting.conversation == nil)
     }
 
-    @Test("createMeeting reconciles a one-time reminder after storing the meeting")
-    func createMeetingReconcilesReminder() async throws {
-        meetingsAPI.createMeetingParameters_MockValue = Scaffolding.meetingResponse
+    @Test("createMeeting reconciles reminders after storing the meeting", arguments: [false, true])
+    func createMeetingReconcilesReminder(recurring: Bool) async throws {
+        let response = Scaffolding.meetingResponse
+        meetingsAPI.createMeetingParameters_MockValue = MeetingResponse(
+            id: response.id,
+            title: response.title,
+            creatorID: response.creatorID,
+            startTime: response.startTime,
+            endTime: response.endTime,
+            conversationID: response.conversationID,
+            invitedEmails: response.invitedEmails,
+            isTrial: response.isTrial,
+            createdAt: response.createdAt,
+            updatedAt: response.updatedAt,
+            recurrence: recurring ? WireNetwork.MeetingRecurrence(frequency: .daily, interval: 1, until: nil) : nil
+        )
         let createdMeetings = CreatedMeetings()
         let sut = MeetingRepository(
             meetingsAPI: meetingsAPI,
@@ -511,7 +524,7 @@ struct MeetingRepositoryTests {
             title: Scaffolding.meetingResponse.title,
             startTime: Scaffolding.meetingResponse.startTime,
             endTime: Scaffolding.meetingResponse.endTime,
-            recurrence: nil
+            recurrence: recurring ? WireCallingDomain.MeetingRecurrence(frequency: .daily, interval: 1) : nil
         )
 
         let recordedIDs = await createdMeetings.ids

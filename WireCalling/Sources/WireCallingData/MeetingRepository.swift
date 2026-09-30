@@ -82,12 +82,10 @@ public final class MeetingRepository: MeetingRepositoryProtocol {
         // The stored copy has its members populated from the conversation.
         // Until the conversation is pulled, its metadata remains unavailable.
         let storedMeeting = await localStore.storedMeeting(id: meeting.id) ?? meeting
-        if storedMeeting.recurrence == nil {
-            do {
-                try await onMeetingCreated?(storedMeeting)
-            } catch {
-                WireLogger.meetings.error("Failed to schedule created meeting reminder: \(error)")
-            }
+        do {
+            try await onMeetingCreated?(storedMeeting)
+        } catch {
+            WireLogger.meetings.error("Failed to schedule created meeting reminder: \(error)")
         }
         return storedMeeting
     }
@@ -113,7 +111,7 @@ public final class MeetingRepository: MeetingRepositoryProtocol {
         // The stored copy has its members populated from the conversation.
         let storedMeeting = await localStore.storedMeeting(id: meeting.id) ?? meeting
         do {
-            // This also removes an old one-time reminder if the meeting became recurring.
+            // This replaces pending occurrences when the meeting's recurrence changes.
             try await onMeetingUpdated?(storedMeeting)
         } catch {
             WireLogger.meetings.error("Failed to reconcile updated meeting reminder: \(error)")

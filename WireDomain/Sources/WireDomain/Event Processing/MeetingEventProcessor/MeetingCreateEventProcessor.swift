@@ -44,8 +44,6 @@ struct MeetingCreateEventProcessor: MeetingCreateEventProcessorProtocol {
             await repository.storeMeeting(meeting)
         }
 
-        // Recurring occurrence scheduling needs a bounded horizon and replenishment policy.
-        guard meeting.recurrence == nil else { return }
         do {
             try await reconcileReminder(meeting)
         } catch {

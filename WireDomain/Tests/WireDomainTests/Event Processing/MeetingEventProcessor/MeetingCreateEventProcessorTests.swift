@@ -142,7 +142,7 @@ final class MeetingCreateEventProcessorTests: XCTestCase {
         XCTAssertEqual(repository.storeMeetingMeetingMeetingVoidCallsCount, 1)
     }
 
-    func testProcessEvent_DoesNotReconcileReminder_WhenMeetingIsRecurring() async throws {
+    func testProcessEvent_ReconcilesReminder_WhenMeetingIsRecurring() async throws {
         repository.pullMeetingIdQualifiedIDMeetingReturnValue = Meeting(
             id: Scaffolding.meetingID,
             title: Scaffolding.meeting.title,
@@ -157,7 +157,7 @@ final class MeetingCreateEventProcessorTests: XCTestCase {
         try await sut.processEvent(Scaffolding.event)
 
         let recordedIDs = await reminderSpy.recordedMeetingIDs
-        XCTAssertTrue(recordedIDs.isEmpty)
+        XCTAssertEqual(recordedIDs, [Scaffolding.meetingID])
     }
 
     func testProcessEvent_DoesNotFail_WhenReminderSchedulingFails() async throws {

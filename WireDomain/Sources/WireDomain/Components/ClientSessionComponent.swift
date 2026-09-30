@@ -775,13 +775,13 @@ public final class ClientSessionComponent {
     )
 
     private lazy var reconcileMeetingReminder: @Sendable (Meeting) async throws -> Void = { [selfUserID] meeting in
-        // Recurring reminders need a bounded horizon. Until that is implemented, remove any
-        // one-time reminder left over when an update changes a meeting to recurring.
-        let occurrenceStarts = meeting.recurrence == nil ? [meeting.start] : []
+        let now = Date.now
+        let occurrenceStarts = MeetingReminderOccurrenceCalculator().starts(for: meeting, after: now, limit: 5)
         try await MeetingReminderScheduler().reconcile(
             accountID: selfUserID,
             meetingID: meeting.id,
-            occurrenceStarts: occurrenceStarts
+            occurrenceStarts: occurrenceStarts,
+            now: now
         ) { occurrenceStart in
             MeetingReminderNotificationContentBuilder().build(
                 meeting: meeting,
