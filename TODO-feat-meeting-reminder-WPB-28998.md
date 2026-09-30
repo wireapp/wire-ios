@@ -31,6 +31,7 @@
 - [x] Add the `MeetingReminder` model and a `UNUserNotificationCenter` scheduler using an absolute occurrence start minus ten minutes. The scheduler skips past reminders and checks notification authorization.
 - [x] Give requests stable, feature-owned identifiers containing account, qualified meeting ID, and occurrence start. Add cancellation for one occurrence, all occurrences of one meeting, and all meeting reminders for one account without affecting other accounts.
 - [x] In app event processing, cancel reminders on `meeting.delete` and on `conversation.member-leave` for the signed-in user when the meeting-to-conversation mapping is stored locally.
+- [x] When the organizer deletes a meeting or a participant leaves it directly in the app, cancel that account's reminders after the server-side operation succeeds; this client may not receive its own delete event.
 - [ ] Build reminder content from the meeting title and occurrence time using existing localization, notification privacy, and account-routing conventions.
 - [ ] Schedule and reconcile reminders after the app creates, edits, or syncs meetings. Handle full meeting-list replacement so obsolete reminders are removed.
 - [x] On logout or account removal, start account-scoped cancellation for that account ID only; preserve reminders for other signed-in accounts. Covered foreground and background session logout, account deletion, and retained-account data purge (`SessionManager.logout(account:)`, `logoutCurrentSession`, and `logoutBackgroundSessionAndPurgeRetainedAccountData`).
@@ -44,7 +45,7 @@
 
 ## Verification
 
-- [x] Add focused tests for absolute fire date, past and unauthorized reminders, stable identifier-based cancellation, account isolation, app meeting deletion, and app self-removal cancellation.
+- [x] Add focused tests for absolute fire date, past and unauthorized reminders, stable identifier-based cancellation, account isolation, event-driven cancellation, and direct app deletion or leave.
 - [ ] Add focused tests for recurrence across daylight-saving changes, duplicate events, and rescheduling/cancellation after edits and authoritative refreshes.
 - [ ] Test organizer and invitee flows, meetings created shortly before start, app termination, and a device that stays offline across a meeting change. With two accounts signed in, verify that logging out or removing one account cancels only its pending reminders, including when it is the background account; the other account's reminders must remain scheduled. Check the asynchronous cancellation window when the app closes immediately after logout.
 - [ ] Test the local scheduling flow on a device or simulator; test the NSE path on a build that can receive Wire pushes.

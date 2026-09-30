@@ -24,26 +24,31 @@ package struct DeleteMeetingUseCase: DeleteMeetingUseCaseProtocol {
 
     private let meetingRepository: any MeetingRepositoryProtocol
     private let conversationRepository: any MeetingConversationRepositoryProtocol
+    private let cancelReminders: @Sendable (UUID, QualifiedID) async -> Void
     private let selfUserID: UUID
 
     package init(
         meetingRepository: any MeetingRepositoryProtocol,
         conversationRepository: any MeetingConversationRepositoryProtocol,
+        cancelReminders: @escaping @Sendable (UUID, QualifiedID) async -> Void,
         selfUserID: UUID
     ) {
         self.meetingRepository = meetingRepository
         self.conversationRepository = conversationRepository
+        self.cancelReminders = cancelReminders
         self.selfUserID = selfUserID
     }
 
     package func invoke(meeting: Meeting) async throws {
         if meeting.creatorID.id == selfUserID {
             try await meetingRepository.deleteMeeting(id: meeting.id)
+            await cancelReminders(selfUserID, meeting.id)
             // The deleting client may not receive the conversation deletion event.
             try await conversationRepository.deleteConversation(id: meeting.conversationID)
         } else {
             try await conversationRepository.leaveConversation(id: meeting.conversationID)
             await meetingRepository.deleteLocalMeeting(id: meeting.id)
+            await cancelReminders(selfUserID, meeting.id)
         }
     }
 

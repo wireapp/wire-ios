@@ -28,6 +28,7 @@ struct DeleteMeetingUseCaseTests {
 
     private let meetingRepository = MeetingRepositoryProtocolMock()
     private let conversationRepository = MeetingConversationRepositoryProtocolMock()
+    private let reminderCanceller = ReminderCancellerSpy()
     private let meeting = Meeting(
         id: QualifiedID(id: UUID(), domain: "example.com"),
         title: "Team meeting",
@@ -50,6 +51,10 @@ struct DeleteMeetingUseCaseTests {
         #expect(conversationRepository.deleteConversationIdConversationIDQualifiedIDVoidReceivedConversationID
             == meeting.conversationID)
         #expect(conversationRepository.leaveConversationIdConversationIDQualifiedIDVoidCallsCount == 0)
+        let cancellations = await reminderCanceller.cancellations
+        #expect(cancellations.count == 1)
+        #expect(cancellations[0].accountID == meeting.creatorID.id)
+        #expect(cancellations[0].meetingID == meeting.id)
     }
 
     @Test("Failed host deletion keeps the local conversation")
@@ -61,25 +66,44 @@ struct DeleteMeetingUseCaseTests {
         }
 
         #expect(conversationRepository.deleteConversationIdConversationIDQualifiedIDVoidCallsCount == 0)
+        let cancellations = await reminderCanceller.cancellations
+        #expect(cancellations.isEmpty)
     }
 
     @Test("Participant deletion leaves the conversation without deleting it for everyone")
     func participantDeletionLeavesConversation() async throws {
-        try await makeUseCase(selfUserID: UUID()).invoke(meeting: meeting)
+        let participantID = UUID()
+        try await makeUseCase(selfUserID: participantID).invoke(meeting: meeting)
 
         #expect(conversationRepository.leaveConversationIdConversationIDQualifiedIDVoidReceivedConversationID
             == meeting.conversationID)
         #expect(meetingRepository.deleteLocalMeetingIdQualifiedIDVoidReceivedId == meeting.id)
         #expect(meetingRepository.deleteMeetingIdQualifiedIDVoidCallsCount == 0)
         #expect(conversationRepository.deleteConversationIdConversationIDQualifiedIDVoidCallsCount == 0)
+        let cancellations = await reminderCanceller.cancellations
+        #expect(cancellations.count == 1)
+        #expect(cancellations[0].accountID == participantID)
+        #expect(cancellations[0].meetingID == meeting.id)
     }
 
     private func makeUseCase(selfUserID: UUID) -> DeleteMeetingUseCase {
-        DeleteMeetingUseCase(
+        let reminderCanceller = reminderCanceller
+        return DeleteMeetingUseCase(
             meetingRepository: meetingRepository,
             conversationRepository: conversationRepository,
+            cancelReminders: { accountID, meetingID in
+                await reminderCanceller.cancelAll(accountID: accountID, meetingID: meetingID)
+            },
             selfUserID: selfUserID
         )
     }
 
+}
+
+private actor ReminderCancellerSpy {
+    private(set) var cancellations: [(accountID: UUID, meetingID: QualifiedID)] = []
+
+    func cancelAll(accountID: UUID, meetingID: QualifiedID) async {
+        cancellations.append((accountID, meetingID))
+    }
 }
