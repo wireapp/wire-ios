@@ -418,6 +418,27 @@ struct MeetingRepositoryTests {
         #expect(hasUpcoming)
     }
 
+    // MARK: - updateMeeting
+
+    @Test
+    func updateMeetingSendsCurrentTimeZone() async throws {
+        meetingsAPI.updateMeetingIdParameters_MockValue = Scaffolding.meetingResponse
+
+        _ = try await sut.updateMeeting(
+            id: Scaffolding.meetingID,
+            title: Scaffolding.meetingResponse.title,
+            startTime: Scaffolding.meetingResponse.startTime,
+            endTime: Scaffolding.meetingResponse.endTime,
+            recurrence: MeetingRecurrence(frequency: .weekly, interval: 1)
+        )
+
+        let parameters = try #require(meetingsAPI.updateMeetingIdParameters_Invocations.first?.parameters)
+        let payload = try #require(
+            JSONSerialization.jsonObject(with: JSONEncoder().encode(parameters)) as? [String: Any]
+        )
+        #expect(payload["tzid"] as? String == TimeZone.current.identifier)
+    }
+
     // MARK: - createMeeting
 
     @Test
