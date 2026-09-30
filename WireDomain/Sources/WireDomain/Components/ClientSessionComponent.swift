@@ -797,7 +797,8 @@ public final class ClientSessionComponent {
         case let .meeting(.update(event)):
             notification = await meetingUpdateEventNotificationBuilder.buildContent(event: event)
         case let .conversation(.memberLeave(event)):
-            notification = await conversationMemberLeaveEventNotificationBuilder.buildMeetingCancellationContent(event: event)
+            notification = await conversationMemberLeaveEventNotificationBuilder
+                .buildMeetingCancellationContent(event: event)
         default:
             return
         }
