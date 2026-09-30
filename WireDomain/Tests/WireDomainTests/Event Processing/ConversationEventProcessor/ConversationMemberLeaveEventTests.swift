@@ -20,7 +20,7 @@ import WireCallingData
 import WireCallingDomain
 import WireDomainSupport
 import XCTest
- 
+
 @testable import WireDomain
 @testable import WireNetwork
 

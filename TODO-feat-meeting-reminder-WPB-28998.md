@@ -33,7 +33,8 @@
 - [x] In app event processing, cancel reminders on `meeting.delete` and on `conversation.member-leave` for the signed-in user when the meeting-to-conversation mapping is stored locally.
 - [x] When the organizer deletes a meeting or a participant leaves it directly in the app, cancel that account's reminders after the server-side operation succeeds; this client may not receive its own delete event.
 - [x] Add reminder content with the meeting title, occurrence date, and local start and end times, following invitation notifications; use a generic title only when the meeting title is empty. Give it a reminder category and account ID so taps open the meetings screen for the correct account.
-- [ ] Confirm the reminder tap destination. New reminder strings currently have English source text and need the usual localization process.
+- [x] Keep reminder taps aligned with meeting invitations: open the correct account's meetings screen.
+- [ ] Add translations for the new reminder strings through the usual localization process; English source text is present.
 - [x] Schedule and reconcile reminders after the app creates, edits, or successfully syncs the authoritative meeting list. Remove obsolete reminders after full-list replacement without touching other accounts; leave pending reminders unchanged when listing fails.
 - [x] Add account-scoped scheduler reconciliation for one meeting: remove obsolete occurrence requests, replace current content, and skip duplicate or past occurrence starts.
 - [x] Reconcile reminders when the app processes `meeting.create`, including when its conversation was already known.
@@ -70,7 +71,7 @@
 - [x] Test persisted logout cancellation intent across journal instances, repeated requests for one account, and startup sweep isolation for another signed-in account.
 - [ ] Test organizer and invitee flows, meetings created shortly before start, app termination, and a device that stays offline across a meeting change. With two accounts signed in, verify that logging out or removing one account cancels only its pending reminders, including when it is the background account; the other account's reminders must remain scheduled. Check the asynchronous cancellation window when the app closes immediately after logout.
 - [ ] Test the local scheduling flow on a device or simulator; test the NSE path on a build that can receive Wire pushes.
-- [ ] Run the relevant SwiftFormat/SwiftLint checks and targeted tests. Record any build or push-testing limitation in the PR.
+- [x] Run SwiftFormat and SwiftLint on changed Swift files and targeted tests: 23 WireCalling and 3 WireDomain tests passed. The earlier reminder-tap run passed 20 WireSyncEngine tests; the new foreground test run was stopped on request after an Xcode cache failure. Record that and the push-testing limitation in the PR.
 - [ ] Review the final diff and use a conventional PR title referencing `WPB-28998`.
 
 ## Signed-build device checklist
