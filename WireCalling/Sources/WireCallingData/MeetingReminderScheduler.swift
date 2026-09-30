@@ -92,6 +92,36 @@ public struct MeetingReminderScheduler {
         notificationCenter.removePendingNotificationRequests(withIdentifiers: [reminder.identifier])
     }
 
+    /// Replaces this account's pending reminders for one meeting with the supplied occurrences.
+    /// Obsolete requests are removed before adding replacements so a changed start cannot fire twice.
+    public func reconcile(
+        accountID: UUID,
+        meetingID: QualifiedID,
+        occurrenceStarts: [Date],
+        now: Date = .now,
+        contentForOccurrence: (Date) -> UNNotificationContent
+    ) async throws {
+        let reminders = Set(occurrenceStarts).map {
+            MeetingReminder(accountID: accountID, meetingID: meetingID, occurrenceStart: $0)
+        }.filter { $0.fireDate > now }
+        let desiredIdentifiers = Set(reminders.map(\.identifier))
+        let prefix = MeetingReminder.identifierPrefix(accountID: accountID, meetingID: meetingID)
+        let obsoleteIdentifiers = await notificationCenter.pendingRequestIdentifiers()
+            .filter { $0.hasPrefix(prefix) && !desiredIdentifiers.contains($0) }
+
+        if !obsoleteIdentifiers.isEmpty {
+            notificationCenter.removePendingNotificationRequests(withIdentifiers: obsoleteIdentifiers)
+        }
+
+        for reminder in reminders.sorted(by: { $0.occurrenceStart < $1.occurrenceStart }) {
+            try await schedule(
+                reminder,
+                content: contentForOccurrence(reminder.occurrenceStart),
+                now: now
+            )
+        }
+    }
+
     /// Requests cancellation of every pending occurrence for one qualified meeting and account.
     public func cancelAll(accountID: UUID, meetingID: QualifiedID) async {
         let prefix = MeetingReminder.identifierPrefix(accountID: accountID, meetingID: meetingID)

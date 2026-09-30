@@ -97,6 +97,61 @@ struct MeetingReminderSchedulerTests {
         #expect(center.removedIdentifiers == [[reminder.identifier]])
     }
 
+    @Test("replaces an edited meeting's reminders without touching another account or meeting")
+    func reconcilesChangedStart() async throws {
+        let center = NotificationCenterSpy()
+        center.status = .authorized
+        let updatedStart = reminder.occurrenceStart.addingTimeInterval(3600)
+        let otherAccount = MeetingReminder(
+            accountID: UUID(),
+            meetingID: reminder.meetingID,
+            occurrenceStart: reminder.occurrenceStart
+        )
+        let otherMeeting = MeetingReminder(
+            accountID: reminder.accountID,
+            meetingID: QualifiedID(id: UUID(), domain: reminder.meetingID.domain),
+            occurrenceStart: reminder.occurrenceStart
+        )
+        center.storedPendingIdentifiers = [reminder.identifier, otherAccount.identifier, otherMeeting.identifier]
+
+        try await MeetingReminderScheduler(notificationCenter: center).reconcile(
+            accountID: reminder.accountID,
+            meetingID: reminder.meetingID,
+            occurrenceStarts: [updatedStart, updatedStart],
+            now: reminder.fireDate.addingTimeInterval(-1)
+        ) { _ in
+            let content = UNMutableNotificationContent()
+            content.title = "Updated meeting"
+            return content
+        }
+
+        #expect(center.removedIdentifiers == [[reminder.identifier]])
+        #expect(center.addedRequests.count == 1)
+        #expect(center.addedRequests.first?.identifier == MeetingReminder(
+            accountID: reminder.accountID,
+            meetingID: reminder.meetingID,
+            occurrenceStart: updatedStart
+        ).identifier)
+        #expect(center.addedRequests.first?.content.title == "Updated meeting")
+    }
+
+    @Test("removes obsolete reminders when the occurrence's fire date has passed")
+    func reconcilesPastOccurrences() async throws {
+        let center = NotificationCenterSpy()
+        center.status = .authorized
+        center.storedPendingIdentifiers = [reminder.identifier]
+
+        try await MeetingReminderScheduler(notificationCenter: center).reconcile(
+            accountID: reminder.accountID,
+            meetingID: reminder.meetingID,
+            occurrenceStarts: [reminder.occurrenceStart],
+            now: reminder.fireDate
+        ) { _ in UNMutableNotificationContent() }
+
+        #expect(center.removedIdentifiers == [[reminder.identifier]])
+        #expect(center.addedRequests.isEmpty)
+    }
+
     @Test("cancels every pending occurrence for only the selected account and qualified meeting")
     func cancelsAllMeetingOccurrences() async {
         let center = NotificationCenterSpy()

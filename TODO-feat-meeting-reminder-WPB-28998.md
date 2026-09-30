@@ -35,6 +35,7 @@
 - [x] Add localized reminder content for the occurrence start time, with either the meeting title or a generic title. Give it a reminder category and account ID so taps open the meetings screen for the correct account.
 - [ ] Decide when to show the meeting title based on notification privacy settings, translate the new reminder strings, and route a tap to the specific meeting.
 - [ ] Schedule and reconcile reminders after the app creates, edits, or syncs meetings. Handle full meeting-list replacement so obsolete reminders are removed.
+- [x] Add account-scoped scheduler reconciliation for one meeting: remove obsolete occurrence requests, replace current content, and skip duplicate or past occurrence starts. App and NSE callers still need to use it.
 - [x] On logout or account removal, start account-scoped cancellation for that account ID only; preserve reminders for other signed-in accounts. Covered foreground and background session logout, account deletion, and retained-account data purge (`SessionManager.logout(account:)`, `logoutCurrentSession`, and `logoutBackgroundSessionAndPurgeRetainedAccountData`).
 - [ ] Ensure logout cancellation completes reliably if the app closes immediately after logout; consider a startup sweep of reminders for accounts that are no longer signed in.
 - [ ] Reconcile from the NSE when it processes relevant meeting create, invitation, update, or cancellation events, including events for which no immediate notification is built. Fetch the latest meeting details where required, and finish within the NSE's limited runtime. Handle duplicate or out-of-order events safely.
@@ -49,6 +50,7 @@
 - [x] Add focused tests for absolute fire date, past and unauthorized reminders, stable identifier-based cancellation, account isolation, event-driven cancellation, and direct app deletion or leave.
 - [x] Test reminder content with visible and hidden meeting titles, localized occurrence time, reminder category, and account ID.
 - [ ] Add focused tests for recurrence across daylight-saving changes, duplicate events, and rescheduling/cancellation after edits and authoritative refreshes.
+- [x] Test scheduler reconciliation for an edited start, duplicate occurrence input, past occurrences, and isolation from other accounts and meetings.
 - [ ] Test organizer and invitee flows, meetings created shortly before start, app termination, and a device that stays offline across a meeting change. With two accounts signed in, verify that logging out or removing one account cancels only its pending reminders, including when it is the background account; the other account's reminders must remain scheduled. Check the asynchronous cancellation window when the app closes immediately after logout.
 - [ ] Test the local scheduling flow on a device or simulator; test the NSE path on a build that can receive Wire pushes.
 - [ ] Run the relevant SwiftFormat/SwiftLint checks and targeted tests. Record any build or push-testing limitation in the PR.
