@@ -617,11 +617,15 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
     }
 
     private var conversationMemberLeaveEventNotificationBuilder: ConversationMemberLeaveEventNotificationBuilder {
+        let accountID = dependency.accountID
+        let meetingStore = MeetingLocalStore(context: coreDataStack.syncContext)
+        let reminderScheduler = MeetingReminderScheduler()
+        let pendingRequestCanceller = MeetingReminderPendingRequestCanceller()
         let context = ConversationMemberLeaveEventNotificationBuilder.Context(
             conversationLocalStore: conversationLocalStore,
             userLocalStore: userLocalStore,
             conversationsAPI: ConversationsAPIBuilder(apiService: apiService).makeAPI(for: apiVersion),
-            meetingLocalStore: MeetingLocalStore(context: coreDataStack.syncContext)
+            meetingLocalStore: meetingStore
         )
 
         let validator = ConversationMemberLeaveEventNotificationBuilder.Validator(
@@ -631,7 +635,15 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
 
         return ConversationMemberLeaveEventNotificationBuilder(
             context: context,
-            validator: validator
+            validator: validator,
+            selfRemovalHandler: MeetingReminderSelfRemovalHandler(
+                accountID: accountID,
+                storedMeetings: { await meetingStore.storedMeetings() },
+                cancelMeeting: { await reminderScheduler.cancelAll(accountID: accountID, meetingID: $0) },
+                cancelPendingRequests: {
+                    await pendingRequestCanceller.cancel(accountID: accountID, conversationID: $0)
+                }
+            )
         )
     }
 

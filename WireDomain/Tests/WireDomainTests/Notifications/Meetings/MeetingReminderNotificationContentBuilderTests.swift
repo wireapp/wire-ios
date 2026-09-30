@@ -59,6 +59,10 @@ struct MeetingReminderNotificationContentBuilderTests {
         #expect(content.body == "Starts at \(timeFormatter.string(from: occurrenceStart))")
         #expect(content.categoryIdentifier == NotificationCategory.meetingReminder.rawValue)
         #expect(content.userInfo[NotificationUserInfoKey.selfUserID] as? String == accountID.uuidString)
+        #expect(content.userInfo[MeetingReminderUserInfoKey.conversationID] as? String
+            == meeting.conversationID.id.uuidString)
+        #expect(content.userInfo[MeetingReminderUserInfoKey.conversationDomain] as? String
+            == meeting.conversationID.domain)
         #expect(content.sound != nil)
     }
 

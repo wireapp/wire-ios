@@ -49,8 +49,19 @@ struct MeetingReminderNotificationContentBuilder {
         )
         content.categoryIdentifier = NotificationCategory.meetingReminder.rawValue
         content.sound = .default
-        content.userInfo = [NotificationUserInfoKey.selfUserID: accountID.uuidString]
+        content.userInfo = [
+            NotificationUserInfoKey.selfUserID: accountID.uuidString,
+            MeetingReminderUserInfoKey.conversationID: meeting.conversationID.id.uuidString,
+            MeetingReminderUserInfoKey.conversationDomain: meeting.conversationID.domain
+        ]
         return content
     }
+
+}
+
+enum MeetingReminderUserInfoKey {
+
+    static let conversationID = "meetingReminderConversationID"
+    static let conversationDomain = "meetingReminderConversationDomain"
 
 }

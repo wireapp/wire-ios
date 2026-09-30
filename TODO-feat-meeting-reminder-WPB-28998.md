@@ -48,7 +48,7 @@
 - [ ] Ensure logout cancellation completes reliably if the app closes immediately after logout; consider a startup sweep of reminders for accounts that are no longer signed in.
 - [x] Reconcile from the NSE for meeting create, invitation, update, and deletion events, including events without visible notification content. Fetch the current meeting before scheduling; cancel on confirmed absence, but preserve pending reminders after a transient fetch failure.
 - [ ] Verify the reconciliation completes within the NSE's limited runtime; invitation and update paths currently fetch the meeting again for visible push content.
-- [ ] Complete the self-removal cancellation path in the NSE, independently of `buildMeetingCancellationContent`: that method deliberately returns no visible cancellation notification for self-initiated leave and can also return nil when feature data or sender details are unavailable. Reuse the lookup and invitation-backed local storage from `dc883e4da8`, but retain a way to resolve feature-owned pending requests if the local meeting is absent. Do not treat a transient meeting API failure as a deletion.
+- [x] Cancel reminders in the NSE on `conversation.member-leave` when the signed-in user is removed, before visible notification checks. Match locally stored meetings and feature-owned pending requests by account and qualified conversation ID, so cancellation still works if the local meeting is absent or no visible cancellation is built.
 - [x] When scheduling from an invitation, use the fetched meeting to establish the meeting-to-conversation mapping in the NSE local store.
 - [ ] Reconcile against a successful authoritative meeting-list refresh to remove stale reminders after missed events or removals.
 - [x] Use the shared `MeetingReminderOccurrenceCalculator` and `MeetingOccurrencePaginator` in the NSE for a bounded next-five window, including meeting time zone, daylight-saving changes, interval, and end date.
@@ -62,6 +62,7 @@
 - [ ] Add focused tests for recurrence across daylight-saving changes, duplicate events, and rescheduling/cancellation after edits and authoritative refreshes.
 - [x] Test scheduler reconciliation for an edited start, duplicate occurrence input, past occurrences, and isolation from other accounts and meetings.
 - [x] Test NSE meeting-event reminder routing for create, invitation, update, deletion, confirmed absence, and transient fetch failure.
+- [x] Test NSE self-removal cancellation with and without a stored meeting, other-user removal, and pending-request isolation by account and qualified conversation ID.
 - [ ] Test organizer and invitee flows, meetings created shortly before start, app termination, and a device that stays offline across a meeting change. With two accounts signed in, verify that logging out or removing one account cancels only its pending reminders, including when it is the background account; the other account's reminders must remain scheduled. Check the asynchronous cancellation window when the app closes immediately after logout.
 - [ ] Test the local scheduling flow on a device or simulator; test the NSE path on a build that can receive Wire pushes.
 - [ ] Run the relevant SwiftFormat/SwiftLint checks and targeted tests. Record any build or push-testing limitation in the PR.
