@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireCallingDomain
+import WireLogging
 import WireNetwork
 
 protocol MeetingEventNotificationBuilderProtocol {
@@ -32,8 +34,24 @@ struct MeetingEventNotificationBuilder: MeetingEventNotificationBuilderProtocol 
 
     let meetingUpdateEventBuilder: any MeetingUpdateEventNotificationBuilderProtocol
 
+    let reminderReconciler: MeetingEventReminderReconciler?
+
+    init(
+        meetingDeleteEventBuilder: any MeetingDeleteEventNotificationBuilderProtocol,
+        meetingMemberAddEventBuilder: any MeetingMemberAddEventNotificationBuilderProtocol,
+        meetingUpdateEventBuilder: any MeetingUpdateEventNotificationBuilderProtocol,
+        reminderReconciler: MeetingEventReminderReconciler? = nil
+    ) {
+        self.meetingDeleteEventBuilder = meetingDeleteEventBuilder
+        self.meetingMemberAddEventBuilder = meetingMemberAddEventBuilder
+        self.meetingUpdateEventBuilder = meetingUpdateEventBuilder
+        self.reminderReconciler = reminderReconciler
+    }
+
     func buildContent(event: MeetingEvent) async -> UserNotification? {
-        switch event {
+        await reminderReconciler?.reconcile(event: event)
+
+        return switch event {
         case let .delete(event):
             await meetingDeleteEventBuilder.buildContent(event: event)
         case let .memberAdd(event):
@@ -42,6 +60,42 @@ struct MeetingEventNotificationBuilder: MeetingEventNotificationBuilderProtocol 
             await meetingUpdateEventBuilder.buildContent(event: event)
         default:
             nil
+        }
+    }
+
+}
+
+struct MeetingEventReminderReconciler {
+
+    let pullMeeting: (WireNetwork.QualifiedID) async throws -> Meeting?
+    let reconcileMeeting: (Meeting) async throws -> Void
+    let cancelMeeting: (WireNetwork.QualifiedID) async -> Void
+
+    func reconcile(event: MeetingEvent) async {
+        let meetingID: WireNetwork.QualifiedID
+
+        switch event {
+        case let .delete(event):
+            await cancelMeeting(event.meetingID)
+            return
+        case let .create(event):
+            meetingID = event.meetingID
+        case let .memberAdd(event):
+            meetingID = event.meetingID
+        case let .update(event):
+            meetingID = event.meetingID
+        }
+
+        do {
+            if let meeting = try await pullMeeting(meetingID) {
+                try await reconcileMeeting(meeting)
+            } else {
+                // The meeting API confirmed that this meeting no longer exists.
+                await cancelMeeting(meetingID)
+            }
+        } catch {
+            // Preserve pending requests if the current meeting could not be fetched.
+            WireLogger.meetings.error("Failed to reconcile NSE meeting reminder: \(error)")
         }
     }
 

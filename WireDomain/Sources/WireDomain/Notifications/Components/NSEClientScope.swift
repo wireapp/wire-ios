@@ -18,6 +18,8 @@
 
 import Foundation
 import NeedleFoundation
+import WireCallingData
+import WireCallingDomain
 import WireDataModel
 import WireLogging
 import WireNetwork
@@ -392,9 +394,43 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
             MeetingEventNotificationBuilder(
                 meetingDeleteEventBuilder: meetingDeleteEventNotificationBuilder,
                 meetingMemberAddEventBuilder: meetingMemberAddEventNotificationBuilder,
-                meetingUpdateEventBuilder: meetingUpdateEventNotificationBuilder
+                meetingUpdateEventBuilder: meetingUpdateEventNotificationBuilder,
+                reminderReconciler: meetingEventReminderReconciler
             )
         }
+    }
+
+    private var meetingEventReminderReconciler: MeetingEventReminderReconciler {
+        let accountID = dependency.accountID
+        let repository = MeetingRepository(
+            meetingsAPI: MeetingsAPIBuilder(apiService: apiService).makeAPI(for: apiVersion),
+            localStore: MeetingLocalStore(context: coreDataStack.syncContext)
+        )
+        let scheduler = MeetingReminderScheduler()
+
+        return MeetingEventReminderReconciler(
+            pullMeeting: { try await repository.pullMeeting(id: $0) },
+            reconcileMeeting: { meeting in
+                let now = Date.now
+                let occurrenceStarts = MeetingReminderOccurrenceCalculator().starts(for: meeting, after: now, limit: 5)
+                try await scheduler.reconcile(
+                    accountID: accountID,
+                    meetingID: meeting.id,
+                    occurrenceStarts: occurrenceStarts,
+                    now: now
+                ) { occurrenceStart in
+                    MeetingReminderNotificationContentBuilder().build(
+                        meeting: meeting,
+                        occurrenceStart: occurrenceStart,
+                        accountID: accountID,
+                        showMeetingTitle: false
+                    )
+                }
+            },
+            cancelMeeting: { meetingID in
+                await scheduler.cancelAll(accountID: accountID, meetingID: meetingID)
+            }
+        )
     }
 
     private var meetingDeleteEventNotificationBuilder: MeetingDeleteEventNotificationBuilder {
