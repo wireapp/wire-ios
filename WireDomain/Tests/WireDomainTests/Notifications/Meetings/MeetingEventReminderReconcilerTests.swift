@@ -71,6 +71,18 @@ final class MeetingEventReminderReconcilerTests: XCTestCase {
         XCTAssertTrue(spy.reconciledMeetings.isEmpty)
     }
 
+    func testSchedulingFailureStillReturnsFetchedMeetingForPushContent() async {
+        let spy = ReminderReconciliationSpy()
+        let meeting = makeMeeting()
+        spy.meeting = meeting
+        spy.reconcileError = ReminderFetchError.unavailable
+
+        let fetchedMeeting = await makeReconciler(spy: spy).reconcile(event: .update(.init(meetingID: meetingID)))
+
+        XCTAssertEqual(fetchedMeeting, meeting)
+        XCTAssertEqual(spy.reconciledMeetings, [meeting])
+    }
+
     func testCreateReconcilesWithoutVisibleNotification() async {
         let spy = ReminderReconciliationSpy()
         spy.meeting = makeMeeting()
@@ -107,7 +119,10 @@ final class MeetingEventReminderReconcilerTests: XCTestCase {
                 if let error = spy.fetchError { throw error }
                 return spy.meeting
             },
-            reconcileMeeting: { spy.reconciledMeetings.append($0) },
+            reconcileMeeting: {
+                spy.reconciledMeetings.append($0)
+                if let error = spy.reconcileError { throw error }
+            },
             cancelMeeting: { spy.cancelledIDs.append($0) }
         )
     }
@@ -117,6 +132,7 @@ final class MeetingEventReminderReconcilerTests: XCTestCase {
 private final class ReminderReconciliationSpy {
     var meeting: Meeting?
     var fetchError: (any Error)?
+    var reconcileError: (any Error)?
     var pulledIDs: [WireNetwork.QualifiedID] = []
     var reconciledMeetings: [Meeting] = []
     var cancelledIDs: [WireNetwork.QualifiedID] = []

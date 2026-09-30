@@ -49,15 +49,15 @@ struct MeetingEventNotificationBuilder: MeetingEventNotificationBuilderProtocol 
     }
 
     func buildContent(event: MeetingEvent) async -> UserNotification? {
-        await reminderReconciler?.reconcile(event: event)
+        let meeting = await reminderReconciler?.reconcile(event: event)
 
         return switch event {
         case let .delete(event):
             await meetingDeleteEventBuilder.buildContent(event: event)
         case let .memberAdd(event):
-            await meetingMemberAddEventBuilder.buildContent(event: event)
+            await meetingMemberAddEventBuilder.buildContent(event: event, meeting: meeting)
         case let .update(event):
-            await meetingUpdateEventBuilder.buildContent(event: event)
+            await meetingUpdateEventBuilder.buildContent(event: event, meeting: meeting)
         default:
             nil
         }
@@ -71,13 +71,14 @@ struct MeetingEventReminderReconciler {
     let reconcileMeeting: (Meeting) async throws -> Void
     let cancelMeeting: (WireNetwork.QualifiedID) async -> Void
 
-    func reconcile(event: MeetingEvent) async {
+    @discardableResult
+    func reconcile(event: MeetingEvent) async -> Meeting? {
         let meetingID: WireNetwork.QualifiedID
 
         switch event {
         case let .delete(event):
             await cancelMeeting(event.meetingID)
-            return
+            return nil
         case let .create(event):
             meetingID = event.meetingID
         case let .memberAdd(event):
@@ -88,7 +89,12 @@ struct MeetingEventReminderReconciler {
 
         do {
             if let meeting = try await pullMeeting(meetingID) {
-                try await reconcileMeeting(meeting)
+                do {
+                    try await reconcileMeeting(meeting)
+                } catch {
+                    WireLogger.meetings.error("Failed to schedule NSE meeting reminder: \(error)")
+                }
+                return meeting
             } else {
                 // The meeting API confirmed that this meeting no longer exists.
                 await cancelMeeting(meetingID)
@@ -97,6 +103,7 @@ struct MeetingEventReminderReconciler {
             // Preserve pending requests if the current meeting could not be fetched.
             WireLogger.meetings.error("Failed to reconcile NSE meeting reminder: \(error)")
         }
+        return nil
     }
 
 }
