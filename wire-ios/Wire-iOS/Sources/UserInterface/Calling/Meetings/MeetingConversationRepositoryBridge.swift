@@ -151,6 +151,19 @@ struct MeetingConversationRepositoryBridge: MeetingConversationRepositoryProtoco
         }
     }
 
+    func deleteConversation(id conversationID: WireCallingDomain.QualifiedID) async throws {
+        guard let conversation = await conversationRepository.fetchConversation(
+            id: conversationID.id,
+            domain: conversationID.domain
+        ) else { return }
+
+        let syncContext = contextProvider.syncContext
+        guard await syncContext.perform({ conversation.isMeeting }) else { return }
+
+        try await conversationRepository.deleteConversation(id: conversationID.id, domain: conversationID.domain)
+        try await syncContext.perform { try syncContext.save() }
+    }
+
     func setConversationName(
         _ name: String,
         for conversationID: WireCallingDomain.QualifiedID
