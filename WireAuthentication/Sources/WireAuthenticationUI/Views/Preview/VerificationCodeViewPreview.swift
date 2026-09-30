@@ -35,7 +35,7 @@ public struct VerificationCodeView_Previews: View {
             VerificationCodeView(factory: FakeVerificationCodeFactory(
                 email: "name.name@mail.com",
                 password: "password",
-                isSnapshotTesting: true
+                isSnapshotTesting: isSnapshotTesting
             ))
         }
     }
