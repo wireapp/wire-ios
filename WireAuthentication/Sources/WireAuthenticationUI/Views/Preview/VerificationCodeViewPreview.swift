@@ -34,7 +34,8 @@ public struct VerificationCodeView_Previews: View {
         NavigationStack {
             VerificationCodeView(factory: FakeVerificationCodeFactory(
                 email: "name.name@mail.com",
-                password: "password"
+                password: "password",
+                isSnapshotTesting: true
             ))
         }
     }
