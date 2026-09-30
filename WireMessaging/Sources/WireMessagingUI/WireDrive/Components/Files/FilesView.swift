@@ -301,7 +301,8 @@ private extension FilesView {
             Button {
                 Task {
                     pickedMedia = []
-                    _ = await PHPhotoLibrary.requestAuthorization(for: .readWrite)
+                    let result = await PHPhotoLibrary.requestAuthorization(for: .readWrite)
+                    guard result == .authorized else { return }
                     isMediaPickerPresented = true
                 }
             } label: {
@@ -322,7 +323,7 @@ private extension FilesView {
                     .tint(ColorTheme.Backgrounds.onBackground.color)
             }
         }
-        .accessibilityIdentifier(Locators.WireDrive.FilesPage.createFile.rawValue)
+        .accessibilityIdentifier(Locators.WireDrive.FilesPage.upload.rawValue)
     }
 
     func handleFileImport(_ result: Result<[URL], any Error>) async {

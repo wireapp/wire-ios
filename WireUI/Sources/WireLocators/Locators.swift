@@ -606,6 +606,7 @@ public enum Locators {
             case close
             case createFolder
             case createFile
+            case upload
             case recycleBin
             case sharedDrivePageHeader = "Shared Drive"
             case deleteOnBottomSheet = "Delete"
