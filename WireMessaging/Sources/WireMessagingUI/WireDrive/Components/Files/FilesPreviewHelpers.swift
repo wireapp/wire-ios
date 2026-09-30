@@ -122,7 +122,8 @@ extension FilesViewModel {
                 moveNode: WireDriveMoveNodeUseCase(
                     nodesRepository: previewNodesRepository(),
                     localAssetRepository: localAssetRepository
-                )
+                ),
+                enqueueUploads: MockWireDriveEnqueueDirectUploadsUseCaseProtocol()
             ),
             setNavigation: { _ in },
             isCellsStatePending: false,
@@ -653,3 +654,81 @@ let mockTags = [
     "charles-files-are-no-fun ",
     "🐝 "
 ]
+
+extension WireDriveDirectUploadsViewModel {
+
+    /// A stubbed instance of `WireDriveDirectUploadsViewModel` for SwiftUI previews.
+    @MainActor
+    static func preview(items: [WireDriveDirectUploadItem] = .previewBatch) -> WireDriveDirectUploadsViewModel {
+        let observeFolderUploads = MockWireDriveObserveFolderDirectUploadsUseCaseProtocol()
+        observeFolderUploads.invokeFolderPath_MockMethod = { _ in
+            Just(items).eraseToAnyPublisher()
+        }
+
+        let cancelUpload = MockWireDriveCancelDirectUploadUseCaseProtocol()
+        cancelUpload.invokeUploadID_MockMethod = { _ in }
+
+        let cancelUploads = MockWireDriveCancelDirectUploadsUseCaseProtocol()
+        cancelUploads.invokeDestinationFolderPath_MockMethod = { _ in }
+
+        let retryUpload = MockWireDriveRetryDirectUploadUseCaseProtocol()
+        retryUpload.invokeUploadID_MockMethod = { _ in }
+
+        let retryFailedUploads = MockWireDriveRetryFailedDirectUploadsUseCaseProtocol()
+        retryFailedUploads.invokeDestinationFolderPath_MockMethod = { _ in }
+
+        let clearFinishedUploads = MockWireDriveClearFinishedDirectUploadsUseCaseProtocol()
+        clearFinishedUploads.invokeDestinationFolderPath_MockMethod = { _ in }
+
+        return WireDriveDirectUploadsViewModel(
+            rootFolderPath: "preview-cell",
+            observeFolderUploads: observeFolderUploads,
+            cancelUpload: cancelUpload,
+            cancelUploads: cancelUploads,
+            retryUpload: retryUpload,
+            retryFailedUploads: retryFailedUploads,
+            clearFinishedUploads: clearFinishedUploads
+        )
+    }
+}
+
+extension [WireDriveDirectUploadItem] {
+
+    /// A batch covering every visible upload state.
+    static var previewBatch: [WireDriveDirectUploadItem] {
+        [
+            .preview(fileName: "MOV_567823.mp4", status: .uploading(progress: 0.35)),
+            .preview(fileName: "2025 Q2 Marketing Budget.xlsx", status: .uploaded),
+            .preview(fileName: "CDR_20220120 Accessibility Review.pdf", status: .uploaded),
+            .preview(
+                fileName: "2025 Q1 Marketing Budget.xlsx",
+                status: .failed(error: .serverError(statusCode: 503)),
+                isRetryable: true
+            ),
+            .preview(fileName: "Screenshot.png", status: .queued)
+        ]
+    }
+}
+
+extension WireDriveDirectUploadItem {
+
+    /// A stubbed instance of `WireDriveDirectUploadItem` for SwiftUI previews.
+    static func preview(
+        fileName: String,
+        status: Status,
+        isRetryable: Bool = false,
+        fileSize: UInt64 = 1_200_000
+    ) -> WireDriveDirectUploadItem {
+        WireDriveDirectUploadItem(
+            id: UUID(),
+            batchID: UUID(),
+            nodeID: UUID(),
+            fileName: fileName,
+            fileSize: fileSize,
+            destinationFolderPath: "cell-1/Documents",
+            status: status,
+            createdAt: Date(timeIntervalSince1970: 1_700_000_000),
+            isRetryable: isRetryable
+        )
+    }
+}

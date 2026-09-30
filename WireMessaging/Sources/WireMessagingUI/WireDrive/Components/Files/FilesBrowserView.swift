@@ -44,6 +44,8 @@ package struct FilesBrowserView: View {
             viewModel: viewModel,
             isBrowsing: isBrowsing,
             backgroundColor: ColorTheme.Backgrounds.surface.color,
+            // no tracker sheet in the Drive tab.
+            trackerHeight: 0,
             toolbarContent: { toolBarContent },
             sheetContent: { sheetContent($0) }
         )

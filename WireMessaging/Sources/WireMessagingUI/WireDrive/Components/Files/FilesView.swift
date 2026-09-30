@@ -17,11 +17,14 @@
 //
 
 import Combine
+import Photos
+import PhotosUI
 import QuickLook
 package import SwiftUI
 import WireDesign
 import WireFoundation
 import WireLocators
+import WireLogging
 import WireMessagingDomain
 import WireReusableUIComponents
 
@@ -36,13 +39,20 @@ package struct FilesView: View {
 
     let onOpenRecycleBin: () -> Void
     let onDismissContainer: () -> Void
+    let trackerHeight: CGFloat
+
+    @State private var isFileImporterPresented = false
+    @State private var isMediaPickerPresented = false
+    @State private var pickedMedia: [PhotosPickerItem] = []
 
     package init(
         viewModel: @autoclosure @escaping () -> FilesViewModel,
+        trackerHeight: CGFloat = 0,
         onOpenRecycleBin: @escaping () -> Void = {},
         onDismissContainer: @escaping () -> Void = {}
     ) {
         self._viewModel = StateObject(wrappedValue: viewModel())
+        self.trackerHeight = trackerHeight
         self.onOpenRecycleBin = onOpenRecycleBin
         self.onDismissContainer = onDismissContainer
     }
@@ -52,10 +62,30 @@ package struct FilesView: View {
             viewModel: viewModel,
             isBrowsing: isBrowsing,
             backgroundColor: ColorTheme.Backgrounds.background.color,
+            trackerHeight: trackerHeight,
             toolbarContent: { toolbarContent },
             sheetContent: { sheetContent($0) }
         )
         // FilesView-specific extras
+        .fileImporter(
+            isPresented: $isFileImporterPresented,
+            allowedContentTypes: [.item],
+            allowsMultipleSelection: true,
+            onCompletion: { result in
+                Task { await handleFileImport(result) }
+            }
+        )
+        .photosPicker(
+            isPresented: $isMediaPickerPresented,
+            selection: $pickedMedia,
+            maxSelectionCount: WireDriveDirectUploadLimits.maxFilesPerBatch,
+            matching: .any(of: [.images, .videos]),
+            photoLibrary: .shared()
+        )
+        .onChange(of: pickedMedia) { _, newValue in
+            guard !newValue.isEmpty else { return }
+            Task { await handleMediaPick(newValue) }
+        }
         .onReceive(viewModel.triggerReload) { _ in
             Task {
                 await viewModel.reload()
@@ -198,6 +228,10 @@ private extension FilesView {
             }
             .accessibilityIdentifier(Locators.WireDrive.FilesPage.createFile.rawValue)
 
+            if viewModel.canUpload {
+                uploadActions
+            }
+
             Button {
                 onOpenRecycleBin()
             } label: {
@@ -245,6 +279,83 @@ private extension FilesView {
 }
 
 // MARK: - folder menu title
+
+// MARK: - Uploads
+
+private extension FilesView {
+
+    @ViewBuilder var uploadActions: some View {
+        Menu {
+            Button {
+                isFileImporterPresented = true
+            } label: {
+                Label {
+                    Text(Strings.Files.Upload.Menu.file)
+                } icon: {
+                    Image(systemName: "document.badge.arrow.up")
+                        .tint(ColorTheme.Backgrounds.onBackground.color)
+                }
+            }
+            .accessibilityIdentifier(Locators.WireDrive.UploadsPage.uploadFile.rawValue)
+
+            Button {
+                Task {
+                    pickedMedia = []
+                    let result = await PHPhotoLibrary.requestAuthorization(for: .readWrite)
+                    guard result == .authorized else { return }
+                    isMediaPickerPresented = true
+                }
+            } label: {
+                Label {
+                    Text(Strings.Files.Upload.Menu.media)
+                } icon: {
+                    Image(systemName: "photo.badge.plus")
+                        .tint(ColorTheme.Backgrounds.onBackground.color)
+                }
+            }
+            .accessibilityIdentifier(Locators.WireDrive.UploadsPage.uploadMedia.rawValue)
+
+        } label: {
+            Label {
+                Text(Strings.Files.Upload.Menu.upload)
+            } icon: {
+                Image(systemName: "arrow.up.folder")
+                    .tint(ColorTheme.Backgrounds.onBackground.color)
+            }
+        }
+        .accessibilityIdentifier(Locators.WireDrive.FilesPage.upload.rawValue)
+    }
+
+    func handleFileImport(_ result: Result<[URL], any Error>) async {
+        switch result {
+        case let .success(urls):
+            // Document picker URLs are security scoped, so the uploader must be told to open access
+            // before reading them.
+            let sources = urls.map { url in
+                WireDriveDirectUploadSource(
+                    url: url,
+                    fileName: url.lastPathComponent,
+                    fileType: UTType(filenameExtension: url.pathExtension),
+                    isSecurityScoped: true
+                )
+            }
+            await viewModel.enqueueUploads(sources: sources)
+
+        case let .failure(error):
+            WireLogger.wireDrive.error("drive upload file import failed: \(error)")
+        }
+    }
+
+    func handleMediaPick(_ items: [PhotosPickerItem]) async {
+        var sources: [WireDriveDirectUploadSource?] = []
+
+        for item in items {
+            sources.append(await viewModel.resolveSource(from: item))
+        }
+
+        await viewModel.enqueueUploads(sources: sources.compactMap(\.self))
+    }
+}
 
 private extension FilesViewModel.FolderMenuOption {
     var title: String {
