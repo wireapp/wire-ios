@@ -100,6 +100,7 @@ package final class MeetingsViewModel {
     private var futureOffset: Int = 0
     private let initialPageSize: Int = 20
     private let pageSize: Int = 20
+    private let isSnapshotTesting: Bool
 
     private let grouper = MeetingsGrouper()
 
@@ -110,7 +111,8 @@ package final class MeetingsViewModel {
         observeMeetingChangesUseCase: any ObserveMeetingChangesUseCaseProtocol,
         deleteMeetingUseCase: any DeleteMeetingUseCaseProtocol,
         selfUserID: UUID,
-        observeAttendedMeetingsUseCase: (any ObserveAttendedMeetingsUseCaseProtocol)? = nil
+        observeAttendedMeetingsUseCase: (any ObserveAttendedMeetingsUseCaseProtocol)? = nil,
+        isSnapshotTesting: Bool = false
     ) {
         self.currentDateProvider = currentDateProvider
         self.formatter = formatter
@@ -120,6 +122,7 @@ package final class MeetingsViewModel {
         self.selfUserID = selfUserID
         self.observeAttendedMeetingsUseCase = observeAttendedMeetingsUseCase
         self.currentDate = currentDateProvider.now
+        self.isSnapshotTesting = isSnapshotTesting
     }
 
     // MARK: - Public Interface
@@ -129,7 +132,7 @@ package final class MeetingsViewModel {
     }
 
     func loadInitialData() async {
-        guard !isLoading else { return }
+        guard !isLoading, !isSnapshotTesting else { return }
         futureOffset = 0
         hasMore = false
         await load(pageSize: initialPageSize)
