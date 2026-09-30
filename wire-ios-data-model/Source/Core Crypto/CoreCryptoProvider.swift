@@ -142,6 +142,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
     private var database: Database?
     private var loadingCoreCrypto = false
     private var hasRegisteredEpochObserver = false
+    private var isMLSInitialised = false
     private var coreCryptoContinuations: [CheckedContinuation<CoreCrypto, Error>] = []
     private nonisolated(unsafe) var mlsTransport: MlsTransport?
     private let mlsTransportProxy: MlsTransportProxy
@@ -205,7 +206,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
             _ = try await context.addCredential(credential: credential)
         }
         try await generateClientPublicKeys(with: coreCrypto, credentialType: .basic)
-        await retryEpochObserverRegistrationIfNecessary(with: coreCrypto)
+        await didInitialiseMLS(with: coreCrypto)
     }
 
     @discardableResult
@@ -221,7 +222,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         }
 
         try await generateClientPublicKeys(with: coreCrypto, credentialType: .x509)
-        await retryEpochObserverRegistrationIfNecessary(with: coreCrypto)
+        await didInitialiseMLS(with: coreCrypto)
         return credentialRef
     }
 
@@ -236,7 +237,8 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
     }
 
     private func registerEpochObserverIfNecessary(with coreCrypto: CoreCrypto) async throws {
-        guard let epochObserver, !hasRegisteredEpochObserver else {
+        // Core Crypto can only observe epochs once MLS has been initialised.
+        guard let epochObserver, isMLSInitialised, !hasRegisteredEpochObserver else {
             return
         }
         WireLogger.mls.debug("registerEpochObserver")
@@ -244,12 +246,12 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         hasRegisteredEpochObserver = true
     }
 
-    /// Registering the observer fails until MLS is initialised, so retry once `mlsInit` has run.
-    private func retryEpochObserverRegistrationIfNecessary(with coreCrypto: CoreCrypto) async {
+    private func didInitialiseMLS(with coreCrypto: CoreCrypto) async {
+        isMLSInitialised = true
         do {
             try await registerEpochObserverIfNecessary(with: coreCrypto)
         } catch {
-            WireLogger.mls.error("Failed to register epoch observer after mls init: \(error)")
+            WireLogger.mls.error("Failed to register epoch observer: \(error)")
         }
     }
 
@@ -408,6 +410,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
 
                 try await $0.mlsInit(clientId: mlsClientID.cryptoId(), transport: self.mlsTransportProxy)
             }
+            isMLSInitialised = true
         } else {
             WireLogger.coreCrypto.info(
                 "no mlsClientID skipping mls init",
