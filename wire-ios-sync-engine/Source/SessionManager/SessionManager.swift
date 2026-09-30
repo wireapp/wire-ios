@@ -832,6 +832,7 @@ public final class SessionManager: NSObject, SessionManagerType {
     }
 
     fileprivate func tearDownSessionAndDelete(account: Account, eraseData: Bool) {
+        cancelMeetingReminders(for: account.userIdentifier)
         tearDownBackgroundSession(for: account.userIdentifier) {
             if eraseData {
                 self.deleteAccountData(for: account)
@@ -842,11 +843,15 @@ public final class SessionManager: NSObject, SessionManagerType {
     public func logout(account: Account, error: Error? = nil) {
         WireLogger.sessionManager.debug("Logging out account \(account.userIdentifier)...")
 
-        guard let isActiveSession = backgroundSessionStatus(for: account.userIdentifier) else { return }
+        guard let isActiveSession = backgroundSessionStatus(for: account.userIdentifier) else {
+            cancelMeetingReminders(for: account.userIdentifier)
+            return
+        }
 
         if isActiveSession {
             logoutCurrentSession(deleteCookie: true, deleteAccount: false, error: error)
         } else {
+            cancelMeetingReminders(for: account.userIdentifier)
             tearDownBackgroundSession(for: account.userIdentifier)
         }
     }
@@ -894,6 +899,7 @@ public final class SessionManager: NSObject, SessionManagerType {
             return
         }
 
+        cancelMeetingReminders(for: account.userIdentifier)
         state.withLockUnchecked { $0.backgroundUserSessions[account.userIdentifier] = nil }
         tearDownObservers(account: account.userIdentifier)
         notifyUserSessionDestroyed(account.userIdentifier)
@@ -953,6 +959,7 @@ public final class SessionManager: NSObject, SessionManagerType {
             delete(account: account, reason: .sessionExpired)
         } else {
             createUnauthenticatedSession(accountId: account.userIdentifier)
+            cancelMeetingReminders(for: account.userIdentifier)
 
             let error = NSError(
                 userSessionErrorCode: .accessTokenExpired,
@@ -1201,6 +1208,13 @@ public final class SessionManager: NSObject, SessionManagerType {
         }
 
         try deleteAccountData(for: account, keepAccountOnFailure: true)
+        cancelMeetingReminders(for: account.userIdentifier)
+    }
+
+    private func cancelMeetingReminders(for accountID: UUID) {
+        Task {
+            await AccountMeetingReminderCanceller().cancelAll(accountID: accountID)
+        }
     }
 
     /// Tears down any live background session for the account (if it isn't
