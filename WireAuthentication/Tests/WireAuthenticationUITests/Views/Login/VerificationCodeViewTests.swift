@@ -38,12 +38,7 @@ final class VerificationCodeViewTests: XCTestCase {
 
     @MainActor
     func testColorSchemeVariantsEmptyState() throws {
-        try XCTSkipIf(
-            true,
-            "The automatic verification request races with snapshot capture, changing the resend button state."
-        )
-
-        let view = VerificationCodeView_Previews(code: ["", "", "", "", "", ""])
+        let view = VerificationCodeView_Previews(code: ["", "", "", "", "", ""], isSnapshotTesting: true)
             .frame(width: testContainerSize.width, height: testContainerSize.height)
 
         snapshotHelper
@@ -56,12 +51,7 @@ final class VerificationCodeViewTests: XCTestCase {
 
     @MainActor
     func testDynamicTypeVariantsEmptyState() throws {
-        try XCTSkipIf(
-            true,
-            "The automatic verification request races with snapshot capture, changing the resend button state."
-        )
-
-        let view = VerificationCodeView_Previews(code: ["", "", "", "", "", ""])
+        let view = VerificationCodeView_Previews(code: ["", "", "", "", "", ""], isSnapshotTesting: true)
             .frame(width: testContainerSize.width, height: testContainerSize.height)
 
         for dynamicTypeSize in DynamicTypeSize.allCases {
