@@ -26,6 +26,15 @@
 - [x] Keep the next five recurring occurrences scheduled per meeting. Replenish them when the app or NSE next handles meeting data.
 - [x] Use client-only best-effort reminders. A device that misses meeting changes can have stale or missing reminders until its next successful reconciliation.
 
+## Review readiness
+
+- [x] Address the confirmed-absence create and update findings from the latest Copilot review (`f74140a770`).
+- [ ] Assess and address concurrent reminder reconciliation and cancellation across the app and NSE, so an older operation cannot restore stale requests.
+- [ ] Bound the total number of pending reminder requests across meetings and accounts, leaving capacity for other local notifications.
+- [ ] Respect the account's Meetings feature flag in app and NSE scheduling, and cancel pending reminders when that feature is disabled.
+- [ ] Review the final PR diff and current CI results after the remaining code changes.
+- [x] Use a conventional PR title referencing `WPB-28998`: `feat: add local meeting reminders - WPB-28998`.
+
 ## Implementation
 
 - [x] Add the `MeetingReminder` model and a `UNUserNotificationCenter` scheduler using an absolute occurrence start minus ten minutes, with one immediate reminder for short-notice occurrences. Skip meetings that have started and check notification authorization.
@@ -72,7 +81,6 @@
 - [ ] Test organizer and invitee flows, meetings created shortly before start, app termination, and a device that stays offline across a meeting change. With two accounts signed in, verify that logging out or removing one account cancels only its pending reminders, including when it is the background account; the other account's reminders must remain scheduled. Check the asynchronous cancellation window when the app closes immediately after logout.
 - [ ] Test the local scheduling flow on a device or simulator; test the NSE path on a build that can receive Wire pushes.
 - [x] Run SwiftFormat and SwiftLint on changed Swift files and targeted tests: 23 WireCalling and 3 WireDomain tests passed. The earlier reminder-tap run passed 20 WireSyncEngine tests; the new foreground test run was stopped on request after an Xcode cache failure. Record that and the push-testing limitation in the PR.
-- [ ] Review the final diff and use a conventional PR title referencing `WPB-28998`.
 
 ## Signed-build device checklist
 
