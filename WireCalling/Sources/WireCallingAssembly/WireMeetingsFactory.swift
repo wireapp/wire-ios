@@ -57,11 +57,13 @@ public struct WireMeetingsFactory {
             currentDateProvider: .system
         )
         let observeMeetingChangesUseCase = ObserveMeetingChangesUseCase(repository: meetingRepository)
+        // UserDefaults is thread safe but not marked as `Sendable`.
+        nonisolated(unsafe) let defaults = sharedUserDefaults
         let deleteMeetingUseCase = DeleteMeetingUseCase(
             meetingRepository: meetingRepository,
             conversationRepository: conversationRepository,
-            cancelReminders: { [sharedUserDefaults] accountID, meetingID in
-                await MeetingReminderScheduler(defaults: sharedUserDefaults)
+            cancelReminders: { accountID, meetingID in
+                await MeetingReminderScheduler(defaults: defaults)
                     .cancelAll(accountID: accountID, meetingID: meetingID)
             },
             selfUserID: selfUserID
