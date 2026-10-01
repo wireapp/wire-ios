@@ -41,7 +41,15 @@ package struct DeleteMeetingUseCase: DeleteMeetingUseCaseProtocol {
 
     package func invoke(meeting: Meeting) async throws {
         if meeting.creatorID.id == selfUserID {
-            try await meetingRepository.deleteMeeting(id: meeting.id)
+            do {
+                try await meetingRepository.deleteMeeting(id: meeting.id)
+            } catch DeleteMeetingUseCaseError.cleanupFailed {
+                // The server deletion succeeded, even though local cleanup failed.
+                await cancelReminders(selfUserID, meeting.id)
+                throw DeleteMeetingUseCaseError.cleanupFailed
+            } catch {
+                throw error
+            }
             await cancelReminders(selfUserID, meeting.id)
             // The deleting client may not receive the conversation deletion event.
             do {
@@ -51,8 +59,8 @@ package struct DeleteMeetingUseCase: DeleteMeetingUseCaseProtocol {
             }
         } else {
             try await conversationRepository.leaveConversation(id: meeting.conversationID)
-            try await meetingRepository.deleteLocalMeeting(id: meeting.id)
             await cancelReminders(selfUserID, meeting.id)
+            try await meetingRepository.deleteLocalMeeting(id: meeting.id)
         }
     }
 

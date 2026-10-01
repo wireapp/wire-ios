@@ -82,6 +82,21 @@ struct DeleteMeetingUseCaseTests {
         #expect(cancellations.isEmpty)
     }
 
+    @Test("Local cleanup failure after host deletion still cancels reminders")
+    func hostCleanupFailureCancelsReminders() async {
+        meetingRepository.deleteMeetingIdQualifiedIDVoidThrowableError = DeleteMeetingUseCaseError.cleanupFailed
+
+        await #expect(throws: DeleteMeetingUseCaseError.cleanupFailed) {
+            try await makeUseCase(selfUserID: meeting.creatorID.id).invoke(meeting: meeting)
+        }
+
+        #expect(conversationRepository.deleteConversationIdConversationIDQualifiedIDVoidCallsCount == 0)
+        let cancellations = await reminderCanceller.cancellations
+        #expect(cancellations.count == 1)
+        #expect(cancellations[0].accountID == meeting.creatorID.id)
+        #expect(cancellations[0].meetingID == meeting.id)
+    }
+
     @Test("Participant deletion leaves the conversation without deleting it for everyone")
     func participantDeletionLeavesConversation() async throws {
         let participantID = UUID()
@@ -96,6 +111,36 @@ struct DeleteMeetingUseCaseTests {
         #expect(cancellations.count == 1)
         #expect(cancellations[0].accountID == participantID)
         #expect(cancellations[0].meetingID == meeting.id)
+    }
+
+    @Test("Local cleanup failure after leaving still cancels reminders")
+    func participantCleanupFailureCancelsReminders() async {
+        let participantID = UUID()
+        meetingRepository.deleteLocalMeetingIdQualifiedIDVoidThrowableError = DeleteMeetingUseCaseError.cleanupFailed
+
+        await #expect(throws: DeleteMeetingUseCaseError.cleanupFailed) {
+            try await makeUseCase(selfUserID: participantID).invoke(meeting: meeting)
+        }
+
+        #expect(conversationRepository.leaveConversationIdConversationIDQualifiedIDVoidCallsCount == 1)
+        let cancellations = await reminderCanceller.cancellations
+        #expect(cancellations.count == 1)
+        #expect(cancellations[0].accountID == participantID)
+        #expect(cancellations[0].meetingID == meeting.id)
+    }
+
+    @Test("Failed participant leave keeps reminders")
+    func failedParticipantLeaveKeepsReminders() async {
+        conversationRepository.leaveConversationIdConversationIDQualifiedIDVoidThrowableError =
+            URLError(.notConnectedToInternet)
+
+        await #expect(throws: URLError.self) {
+            try await makeUseCase(selfUserID: UUID()).invoke(meeting: meeting)
+        }
+
+        #expect(meetingRepository.deleteLocalMeetingIdQualifiedIDVoidCallsCount == 0)
+        let cancellations = await reminderCanceller.cancellations
+        #expect(cancellations.isEmpty)
     }
 
     private func makeUseCase(selfUserID: UUID) -> DeleteMeetingUseCase {
