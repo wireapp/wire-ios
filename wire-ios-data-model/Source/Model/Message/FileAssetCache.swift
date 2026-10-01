@@ -524,6 +524,9 @@ public final class FileAssetCache: NSObject {
         encryptionKey: Data,
         sha256Digest: Data
     ) -> URL? {
+        WireLogger.assets.info(
+            "[WPB-28386] playback file requested: nonce=\(message.nonce?.transportString() ?? "nil") keyBytes=\(encryptionKey.count) sha256Bytes=\(sha256Digest.count)"
+        )
         guard let unencryptedKey = Self.cacheKeyForAsset(
             message,
             encrypted: false
@@ -533,6 +536,7 @@ public final class FileAssetCache: NSObject {
 
         // We already have a temp url for the decrypted asset.
         if let url = tempCache.assetURL(unencryptedKey) {
+            WireLogger.assets.info("[WPB-28386] playback file: using decrypted cache entry=\(unencryptedKey)")
             return url
         }
 
@@ -548,6 +552,9 @@ public final class FileAssetCache: NSObject {
                 sha256Digest: sha256Digest
             )
         else {
+            WireLogger.assets.warn(
+                "[WPB-28386] playback file: could not decrypt nonce=\(message.nonce?.transportString() ?? "nil")"
+            )
             return nil
         }
 
@@ -557,7 +564,11 @@ public final class FileAssetCache: NSObject {
             createdAt: message.serverTimestamp ?? Date()
         )
 
-        return tempCache.assetURL(unencryptedKey)
+        let url = tempCache.assetURL(unencryptedKey)
+        WireLogger.assets.info(
+            "[WPB-28386] playback file: decryptedBytes=\(decryptedData.count) temporaryFileAvailable=\(url != nil) entry=\(unencryptedKey)"
+        )
+        return url
     }
 
     // MARK: - Upload request data
@@ -705,19 +716,28 @@ public final class FileAssetCache: NSObject {
             !encryptionKey.isEmpty,
             !sha256Digest.isEmpty
         else {
+            WireLogger.assets.warn("[WPB-28386] decryptData: empty key or digest entry=\(key)")
             return nil
         }
 
         guard let encryptedData = cache.assetData(key) else {
+            WireLogger.assets.warn("[WPB-28386] decryptData: encrypted cache data missing entry=\(key)")
             return nil
         }
 
         guard encryptedData.zmSHA256Digest() == sha256Digest else {
+            WireLogger.assets.warn(
+                "[WPB-28386] decryptData: checksum mismatch encryptedBytes=\(encryptedData.count) entry=\(key)"
+            )
             cache.deleteAssetData(key)
             return nil
         }
 
-        return encryptedData.zmDecryptPrefixedPlainTextIV(key: encryptionKey)
+        let decryptedData = encryptedData.zmDecryptPrefixedPlainTextIV(key: encryptionKey)
+        WireLogger.assets.info(
+            "[WPB-28386] decryptData: checksum matched encryptedBytes=\(encryptedData.count) decryptedBytes=\(decryptedData?.count ?? -1) success=\(decryptedData != nil) entry=\(key)"
+        )
+        return decryptedData
     }
 
     // MARK: - Purge

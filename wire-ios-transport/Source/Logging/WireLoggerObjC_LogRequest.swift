@@ -29,6 +29,14 @@ extension WireLoggerObjC {
         WireLogger.network.log(response: response, body: body)
     }
 
+    @objc(logAssetDownloadTask:data:error:)
+    static func logAssetDownloadTask(_ task: URLSessionTask, data: Data?, error: NSError?) {
+        let response = task.response as? HTTPURLResponse
+        WireLogger.network.info(
+            "[WPB-28386] download transport completed: task=\(task.taskIdentifier) httpStatus=\(response?.statusCode ?? -1) receivedBytes=\(task.countOfBytesReceived) expectedBytes=\(task.countOfBytesExpectedToReceive) responseBytes=\(data?.count ?? -1) contentLength=\(response?.value(forHTTPHeaderField: "Content-Length") ?? "unknown") contentType=\(response?.mimeType ?? "unknown") errorDomain=\(error?.domain ?? "none") errorCode=\(error?.code ?? 0)"
+        )
+    }
+
     @objc(logRequestLoopAtPath:)
     static func logRequestLoop(at path: String) {
         if let endpointDescription = URL(string: path)?.endpointRemoteLogDescription {

@@ -177,7 +177,7 @@ public final class AssetV3DownloadRequestStrategy: AbstractRequestStrategy, ZMDo
 
         if decryptSuccess {
             WireLogger.assets.info(
-                "[WPB-28386] handleResponse: decrypt succeeded, hasDownloadedFile=\(assetClientMessage.hasDownloadedFile) nonce=\(assetClientMessage.nonce?.uuidString ?? "nil")"
+                "[WPB-28386] handleResponse: validation/storage succeeded (playback decryption is deferred), hasDownloadedFile=\(assetClientMessage.hasDownloadedFile) nonce=\(assetClientMessage.nonce?.uuidString ?? "nil")"
             )
             NotificationDispatcher.notifyNonCoreDataChanges(
                 objectID: assetClientMessage.objectID,
@@ -192,10 +192,14 @@ public final class AssetV3DownloadRequestStrategy: AbstractRequestStrategy, ZMDo
             let genericMessage = message.underlyingMessage,
             let asset = genericMessage.assetData
         else {
+            WireLogger.assets.warn("[WPB-28386] storeAndDecrypt: missing asset metadata")
             return false
         }
 
         let keys = (asset.uploaded.otrKey, asset.uploaded.sha256)
+        WireLogger.assets.info(
+            "[WPB-28386] storeAndDecrypt: nonce=\(message.nonce?.uuidString ?? "nil") metadataBytes=\(asset.original.size) downloadedEncryptedBytes=\(data.count) otrKeyBytes=\(keys.0.count) sha256Bytes=\(keys.1.count) encryption=\(asset.uploaded.encryption)"
+        )
 
         if asset.original.hasRasterImage {
             return validateAndStoreImage(
@@ -258,6 +262,9 @@ public final class AssetV3DownloadRequestStrategy: AbstractRequestStrategy, ZMDo
             data: data,
             for: message
         )
+        WireLogger.assets.info(
+            "[WPB-28386] validateAndStoreFile: checksum matched, encryptedBytes=\(data.count) cached=\(managedObjectContext.zm_fileAssetCache.hasEncryptedFileData(for: message)) nonce=\(message.nonce?.uuidString ?? "nil")"
+        )
 
         return true
     }
@@ -279,6 +286,9 @@ public final class AssetV3DownloadRequestStrategy: AbstractRequestStrategy, ZMDo
 
             let taskCreationHandler = ZMTaskCreatedHandler(on: managedObjectContext) { taskIdentifier in
                 assetClientMessage.associatedTaskIdentifier = taskIdentifier
+                WireLogger.assets.info(
+                    "[WPB-28386] download task created: task=\(taskIdentifier) nonce=\(assetClientMessage.nonce?.uuidString ?? "nil")"
+                )
             }
 
             let completionHandler = ZMCompletionHandler(on: managedObjectContext) { response in
