@@ -81,6 +81,12 @@ public struct E2EIdentityCertificateUpdateStatusUseCase: E2EIdentityCertificateU
             return .noAction
         }
 
+        guard certificate.isEnrolled else {
+            // No certificate has ever been enrolled, so there's nothing to update or expire.
+            // Enrollment is nudged separately (see IsE2EICertificateEnrollmentRequiredUseCase).
+            return .noAction
+        }
+
         if certificate.expiryDate.isInThePast {
             return .block
         }

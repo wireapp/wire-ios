@@ -629,6 +629,8 @@ public final class ZMUserSession: NSObject {
             observeSyncStateForAVS(syncStateSubject: syncStateSubject)
         }
 
+        observeE2EIActivationDate()
+
         coreCryptoProvider.registerMlsTransport(clientSessionComponent.mlsTransport)
 
         let syncAgent = SyncAgent(
@@ -1184,6 +1186,24 @@ extension ZMUserSession: ZMNetworkStateDelegate {
                 guard let self else { return }
                 notifyAVSOfLiveSyncState(isLiveSyncOngoing: isOngoing)
             }
+    }
+
+    /// Resets the e2ei grace-period clock whenever e2ei is enabled or disabled.
+    private func observeE2EIActivationDate() {
+        observeFeatureStates()
+            .filter { $0.name == .e2ei }
+            .sink { [weak self] featureState in
+                guard let self else { return }
+
+                if featureState.isEnabled {
+                    if e2eiActivationDateRepository.e2eiActivatedAt == nil {
+                        e2eiActivationDateRepository.storeE2EIActivationDate(.now)
+                    }
+                } else {
+                    e2eiActivationDateRepository.removeE2EIActivationDate()
+                }
+            }
+            .store(in: &cancellables)
     }
 
 }

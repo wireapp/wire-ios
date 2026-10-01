@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireDomain
 import WireLogging
 import WireSyncEngine
 import WireSystem
@@ -245,6 +246,38 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
         return e2eiActivatedAt.addingTimeInterval(gracePeriod)
     }
 
+}
+
+// MARK: - FeatureChangeHandler
+
+extension E2EINotificationActionsHandler: FeatureChangeHandler {
+
+    @MainActor
+    func alert(
+        for featureState: FeatureState,
+        acknowledger: FeatureChangeAcknowledger
+    ) async -> UIAlertController? {
+        guard featureState.name == .e2ei, featureState.isEnabled else { return nil }
+
+        // The user already has a valid certificate (e.g. e2ei was disabled then
+        // re-enabled) - nothing to prompt for.
+        guard await !selfClientCertificateProvider.hasCertificate else {
+            acknowledger.acknowledgeChange(for: .e2ei)
+            return nil
+        }
+
+        return UIAlertController.alertForE2EIChangeWithActions { [weak self] action in
+            acknowledger.acknowledgeChange(for: .e2ei)
+            switch action {
+            case .getCertificate:
+                Task { await self?.getCertificate() }
+            case .remindLater:
+                Task { await self?.snoozeReminder() }
+            case .learnMore:
+                break
+            }
+        }
+    }
 }
 
 extension UIAlertController {

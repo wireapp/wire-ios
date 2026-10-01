@@ -23,4 +23,17 @@ import WireDataModel
 public struct FeatureState {
     public let name: Feature.Name
     public let isEnabled: Bool
+
+    /// Whether the user still needs to be notified about this feature's current state.
+    public let needsToNotifyUser: Bool
+
+    public init(
+        name: Feature.Name,
+        isEnabled: Bool,
+        needsToNotifyUser: Bool = false
+    ) {
+        self.name = name
+        self.isEnabled = isEnabled
+        self.needsToNotifyUser = needsToNotifyUser
+    }
 }

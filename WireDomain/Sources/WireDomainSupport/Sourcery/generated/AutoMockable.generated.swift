@@ -2273,6 +2273,21 @@ public class MockFeatureConfigRepositoryProtocol: FeatureConfigRepositoryProtoco
         await mock(featureConfig)
     }
 
+    // MARK: - acknowledgeFeatureChange
+
+    public var acknowledgeFeatureChangeFor_Invocations: [Feature.Name] = []
+    public var acknowledgeFeatureChangeFor_MockMethod: ((Feature.Name) async -> Void)?
+
+    public func acknowledgeFeatureChange(for name: Feature.Name) async {
+        acknowledgeFeatureChangeFor_Invocations.append(name)
+
+        guard let mock = acknowledgeFeatureChangeFor_MockMethod else {
+            fatalError("no mock for `acknowledgeFeatureChangeFor`")
+        }
+
+        await mock(name)
+    }
+
     // MARK: - fetchAllowedGlobalOperations
 
     public var fetchAllowedGlobalOperations_Invocations: [Void] = []
