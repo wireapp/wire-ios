@@ -38,7 +38,8 @@ final class FeatureChangeNotifier {
     private let notificationCenter: NotificationCenter
     private let userSession: UserSession
     private let featureRepositoryProvider: any LegacyFeatureRepositoryProvider
-    private let featureChangeActionsHandler: E2EINotificationActions
+    private let handlers: [Feature.Name: any FeatureChangeHandler]
+    private let defaultHandler: any FeatureChangeHandler = DefaultFeatureChangeHandler()
 
     private var featureChangeObserverToken: Any?
     private var featureStateCancellable: AnyCancellable?
@@ -51,12 +52,12 @@ final class FeatureChangeNotifier {
         notificationCenter: NotificationCenter,
         userSession: UserSession,
         featureRepositoryProvider: any LegacyFeatureRepositoryProvider,
-        featureChangeActionsHandler: E2EINotificationActions
+        handlers: [Feature.Name: any FeatureChangeHandler] = [:]
     ) {
         self.notificationCenter = notificationCenter
         self.userSession = userSession
         self.featureRepositoryProvider = featureRepositoryProvider
-        self.featureChangeActionsHandler = featureChangeActionsHandler
+        self.handlers = handlers
 
         self.featureChangeObserverToken = notificationCenter.addObserver(
             forName: .featureDidChangeNotification,
@@ -84,49 +85,24 @@ final class FeatureChangeNotifier {
 
     private func notifyFeatureChange(_ note: Notification) {
         guard let change = note.object as? LegacyFeatureRepository.FeatureChange else { return }
-        present(change, acknowledger: featureRepositoryProvider.featureRepository)
-    }
-
-    private func notifyFeatureStateChange(_ featureState: FeatureState) {
-        guard let change = legacyFeatureChange(for: featureState) else { return }
-        present(change, acknowledger: self)
-    }
-
-    private func legacyFeatureChange(for featureState: FeatureState) -> LegacyFeatureRepository.FeatureChange? {
-        switch featureState.name {
-        case .e2ei:
-            return featureState.isEnabled ? .e2eIEnabled : nil
-
-        case .fileSharing:
-            return featureState.isEnabled ? .fileSharingEnabled : .fileSharingDisabled
-
-        case .conversationGuestLinks:
-            return featureState.isEnabled ? .conversationGuestLinksEnabled : .conversationGuestLinksDisabled
-
-        case .selfDeletingMessages:
-            guard featureState.isEnabled else { return .selfDeletingMessagesIsDisabled }
-
-            let enforcedTimeout = userSession.selfDeletingMessagesFeature.config.enforcedTimeoutSeconds
-            return .selfDeletingMessagesIsEnabled(enforcedTimeout: enforcedTimeout > 0 ? enforcedTimeout : nil)
-
-        default:
-            return nil
+        Task {
+            await present(featureState: change.featureState, acknowledger: featureRepositoryProvider.featureRepository)
         }
     }
 
-    private func present(
-        _ change: LegacyFeatureRepository.FeatureChange,
-        acknowledger: FeatureChangeAcknowledger
-    ) {
-        guard let alert = change.hasFurtherActions
-            ? UIAlertController.fromFeatureChangeWithActions(
-                change,
-                acknowledger: acknowledger,
-                actionsHandler: featureChangeActionsHandler
-            )
-            : UIAlertController.fromFeatureChange(change, acknowledger: acknowledger)
-        else { return }
+    private func notifyFeatureStateChange(_ featureState: FeatureState) {
+        Task {
+            await present(featureState: featureState, acknowledger: self)
+        }
+    }
 
+    @MainActor
+    private func present(
+        featureState: FeatureState,
+        acknowledger: FeatureChangeAcknowledger
+    ) async {
+        let handler = handlers[featureState.name] ?? defaultHandler
+        guard let alert = await handler.alert(for: featureState, acknowledger: acknowledger) else { return }
         presenter?.present(alert)
     }
 }

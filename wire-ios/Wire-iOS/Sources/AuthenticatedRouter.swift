@@ -71,7 +71,7 @@ final class AuthenticatedRouter {
         notificationCenter: NotificationCenter = .default,
         trackingManager: TrackingManager,
         featureRepositoryProvider: any LegacyFeatureRepositoryProvider,
-        featureChangeActionsHandler: E2EINotificationActionsHandler
+        featureChangeHandlers: [Feature.Name: any FeatureChangeHandler]
     ) {
         self.activeCallRouter = ActiveCallRouter(
             mainWindow: mainWindow,
@@ -100,7 +100,7 @@ final class AuthenticatedRouter {
             notificationCenter: notificationCenter,
             userSession: userSession,
             featureRepositoryProvider: featureRepositoryProvider,
-            featureChangeActionsHandler: featureChangeActionsHandler
+            handlers: featureChangeHandlers
         )
 
         featureChangeNotifier.presenter = self
