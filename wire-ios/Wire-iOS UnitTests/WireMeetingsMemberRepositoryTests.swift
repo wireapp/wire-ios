@@ -92,6 +92,7 @@ final class WireMeetingsMemberRepositoryTests: XCTestCase {
         try await context.perform { [self] in
             let (team, _, _) = modelHelper.createSelfTeam(numberOfUsers: 0, in: context)
             let guest = modelHelper.createUser(id: guestID.id, domain: guestID.domain, name: "Guest", in: context)
+            guest.handle = "old-handle"
             let former = modelHelper.createUser(domain: "wire.com", name: "Former member", in: context)
             let conversation = modelHelper.createGroupConversation(
                 id: groupID.id,
@@ -116,7 +117,11 @@ final class WireMeetingsMemberRepositoryTests: XCTestCase {
             failed: []
         )
         usersAPI.getUsersUserIDs_MockValue = .init(
-            found: [selfID, guestID, newID].map { makeProfile(id: $0, teamID: teamID) },
+            found: [
+                makeProfile(id: selfID, teamID: teamID),
+                makeProfile(id: guestID, teamID: teamID, name: "Updated member", handle: "updated-member"),
+                makeProfile(id: newID, teamID: teamID, name: "New member", handle: "new-member")
+            ],
             failed: []
         )
 
@@ -126,11 +131,17 @@ final class WireMeetingsMemberRepositoryTests: XCTestCase {
         XCTAssertEqual(Set(members.map(\.qualifiedID)), [selfID, guestID, newID])
         XCTAssertEqual(members.filter(\.isSelfUser).map(\.qualifiedID), [selfID])
         XCTAssertEqual(conversationsAPI.getConversationsFor_Invocations, [[groupID]])
+        XCTAssertEqual(members.first { $0.qualifiedID == guestID }?.name, "Updated member")
+        XCTAssertEqual(members.first { $0.qualifiedID == guestID }?.handle, "updated-member")
+        XCTAssertEqual(members.first { $0.qualifiedID == newID }?.name, "New member")
+        XCTAssertEqual(members.first { $0.qualifiedID == newID }?.handle, "new-member")
         let readContext = stack.newBackgroundContext()
-        let isStored = await readContext.perform {
-            ZMUser.fetch(with: newID.id, domain: newID.domain, in: readContext) != nil
+        let storedProfile = await readContext.perform {
+            let user = ZMUser.fetch(with: newID.id, domain: newID.domain, in: readContext)
+            return (user?.name, user?.handle)
         }
-        XCTAssertTrue(isStored)
+        XCTAssertEqual(storedProfile.0, "New member")
+        XCTAssertEqual(storedProfile.1, "new-member")
     }
 
     func testMembersFiltersGuestsAndRequiresCompleteProfiles() async throws {
@@ -224,9 +235,14 @@ final class WireMeetingsMemberRepositoryTests: XCTestCase {
         return conversation
     }
 
-    private func makeProfile(id: WireCallingDomain.QualifiedID, teamID: UUID?) -> WireNetwork.User {
+    private func makeProfile(
+        id: WireCallingDomain.QualifiedID,
+        teamID: UUID?,
+        name: String = "Member",
+        handle: String? = nil
+    ) -> WireNetwork.User {
         .init(
-            id: id, name: "Member", handle: nil, teamID: teamID, type: .regular, accentID: 0,
+            id: id, name: name, handle: handle, teamID: teamID, type: .regular, accentID: 0,
             assets: [], deleted: false, email: nil, expiresAt: nil, app: nil, service: nil,
             supportedProtocols: [.mls], legalholdStatus: .disabled
         )

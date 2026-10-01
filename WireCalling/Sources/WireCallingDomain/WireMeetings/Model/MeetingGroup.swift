@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+/// An existing group or channel used as the source for meeting participants.
+/// The source conversation is not attached to the meeting.
 public struct MeetingGroup: Identifiable, Equatable, Sendable {
 
     public let id: QualifiedID

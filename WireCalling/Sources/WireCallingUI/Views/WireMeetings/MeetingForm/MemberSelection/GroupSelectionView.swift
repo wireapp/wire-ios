@@ -31,60 +31,13 @@ struct GroupSelectionView: View {
     var body: some View {
         List {
             if viewModel.isSearchingGroups {
-                HStack {
-                    Spacer()
-                    ProgressView(Strings.Groups.loading)
-                    Spacer()
-                }
-                .listRowBackground(Color.clear)
-                .listRowSeparator(.hidden)
+                loadingView
             } else if viewModel.hasGroupSearchError {
-                ContentUnavailableView {
-                    Label(Strings.Error.title, systemImage: "exclamationmark.magnifyingglass")
-                } description: {
-                    Text(Strings.Error.description)
-                } actions: {
-                    Button(Strings.Retry.button, action: viewModel.retryGroupSearch)
-                        .wireButtonStyle(.tertiary)
-                        .accessibilityIdentifier("meetingGroupSearchRetry")
-                }
-                .listRowBackground(Color.clear)
-                .listRowSeparator(.hidden)
+                errorView
             } else if viewModel.groupSearchResults.isEmpty {
-                ContentUnavailableView(
-                    Strings.Groups.emptyTitle,
-                    systemImage: "person.3",
-                    description: Text(Strings.Groups.emptyDescription)
-                )
-                .listRowBackground(Color.clear)
-                .listRowSeparator(.hidden)
+                emptyView
             } else {
-                ForEach(viewModel.groupSearchResults) { group in
-                    Button {
-                        importGroup(group)
-                    } label: {
-                        HStack(spacing: 12) {
-                            Image(systemName: group.isChannel ? "number" : "person.3")
-                                .accessibilityHidden(true)
-                            VStack(alignment: .leading, spacing: 2) {
-                                Text(group.name)
-                                    .font(.body)
-                                Text(group.isChannel ? Strings.Groups.channel : Strings.Groups.group)
-                                    .font(.subheadline)
-                                    .foregroundStyle(ColorTheme.Base.secondaryText.color)
-                            }
-                            Spacer()
-                            if viewModel.isImportingGroup, selectedGroup == group {
-                                ProgressView()
-                                    .accessibilityLabel(Strings.Groups.importing)
-                            }
-                        }
-                    }
-                    .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
-                    .accessibilityLabel(group.name)
-                    .accessibilityValue(group.isChannel ? Strings.Groups.channel : Strings.Groups.group)
-                    .accessibilityIdentifier("meetingImportGroup-\(group.id)")
-                }
+                resultsView
             }
         }
         .disabled(viewModel.isImportingGroup)
@@ -110,6 +63,69 @@ struct GroupSelectionView: View {
             Button(Strings.Cancel.button, role: .cancel) {}
         } message: {
             Text(Strings.Error.description)
+        }
+    }
+
+    private var loadingView: some View {
+        HStack {
+            Spacer()
+            ProgressView(Strings.Groups.loading)
+            Spacer()
+        }
+        .listRowBackground(Color.clear)
+        .listRowSeparator(.hidden)
+    }
+
+    private var errorView: some View {
+        ContentUnavailableView {
+            Label(Strings.Error.title, systemImage: "exclamationmark.magnifyingglass")
+        } description: {
+            Text(Strings.Error.description)
+        } actions: {
+            Button(Strings.Retry.button, action: viewModel.retryGroupSearch)
+                .wireButtonStyle(.tertiary)
+                .accessibilityIdentifier("meetingGroupSearchRetry")
+        }
+        .listRowBackground(Color.clear)
+        .listRowSeparator(.hidden)
+    }
+
+    private var emptyView: some View {
+        ContentUnavailableView(
+            Strings.Groups.emptyTitle,
+            systemImage: "person.3",
+            description: Text(Strings.Groups.emptyDescription)
+        )
+        .listRowBackground(Color.clear)
+        .listRowSeparator(.hidden)
+    }
+
+    private var resultsView: some View {
+        ForEach(viewModel.groupSearchResults) { group in
+            Button {
+                importGroup(group)
+            } label: {
+                HStack(spacing: 12) {
+                    Image(systemName: group.isChannel ? "number" : "person.3")
+                        .accessibilityHidden(true)
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text(group.name)
+                            .font(.body)
+                        Text(group.isChannel ? Strings.Groups.channel : Strings.Groups.group)
+                            .font(.subheadline)
+                            .foregroundStyle(ColorTheme.Base.secondaryText.color)
+                    }
+                    Spacer()
+                    if viewModel.isImportingGroup, selectedGroup == group {
+                        ProgressView()
+                            .accessibilityLabel(Strings.Groups.importing)
+                    }
+                }
+            }
+            .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
+            .accessibilityLabel(group.name)
+            .accessibilityValue(group.isChannel ? Strings.Groups.channel : Strings.Groups.group)
+            .accessibilityIdentifier("meetingImportGroup-\(group.id)")
         }
     }
 

@@ -131,9 +131,12 @@ struct WireMeetingsMemberRepository: MeetingMemberRepositoryProtocol, @unchecked
             let teamID = profiles.found.first(where: { $0.id == sourceSelfID })?.teamID
         else { throw Failure.invalidMember }
 
-        let eligibleIDs = Set(profiles.found.filter {
-            $0.teamID == teamID && $0.id.domain == sourceSelfID.domain
-        }.map(\.id))
+        let eligibleProfiles = Dictionary(
+            profiles.found.filter {
+                $0.teamID == teamID && $0.id.domain == sourceSelfID.domain
+            }.map { ($0.id, $0) },
+            uniquingKeysWith: { first, _ in first }
+        )
 
         let context = userSession.contextProvider.syncContext
         return try await context.perform {
@@ -142,9 +145,12 @@ struct WireMeetingsMemberRepository: MeetingMemberRepositoryProtocol, @unchecked
                 sourceSelfID == .init(id: selfID.uuid, domain: selfID.domain)
             else { throw Failure.sourceUnavailable }
 
-            let result = memberIDs.filter { eligibleIDs.contains($0) }.map { id in
+            let result = memberIDs.compactMap { id -> MeetingMember? in
+                guard let profile = eligibleProfiles[id] else { return nil }
                 // Meeting edits resolve selected people from the local user store.
                 let user = ZMUser.fetchOrCreate(with: id.id, domain: id.domain, in: context)
+                user.name = profile.name
+                user.handle = profile.handle
                 let name = user.name ?? ""
                 return MeetingMember(
                     qualifiedID: id,

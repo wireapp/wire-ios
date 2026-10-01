@@ -118,7 +118,11 @@ final class MemberSelectionViewModel {
             return true
         } catch {
             guard !Task.isCancelled else { return false }
-            WireLogger.ui.warn("failed to import meeting members", attributes: .safePublic)
+            let error = error as NSError
+            WireLogger.ui.warn(
+                "failed to import meeting members <domain: \(error.domain), code: \(error.code)>",
+                attributes: .safePublic
+            )
             hasGroupImportError = true
             return false
         }
