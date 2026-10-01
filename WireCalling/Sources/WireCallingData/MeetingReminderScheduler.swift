@@ -47,7 +47,7 @@ public struct MeetingReminderScheduler {
     private let notificationCenter: any MeetingReminderNotificationCenter
     private let defaults: UserDefaults
 
-    public init(defaults: UserDefaults = .standard) {
+    public init(defaults: UserDefaults) {
         self.notificationCenter = UNUserNotificationCenter.current()
         self.defaults = defaults
     }
@@ -117,7 +117,7 @@ public struct MeetingReminderScheduler {
     }
 
     public func cancel(_ reminder: MeetingReminder) {
-        notificationCenter.removePendingNotificationRequests(withIdentifiers: [reminder.identifier])
+        removePendingRequests(withIdentifiers: [reminder.identifier])
     }
 
     /// Replaces this account's pending reminders for one meeting with the supplied occurrences.
@@ -138,7 +138,7 @@ public struct MeetingReminderScheduler {
             .filter { $0.hasPrefix(prefix) && !desiredIdentifiers.contains($0) }
 
         if !obsoleteIdentifiers.isEmpty {
-            notificationCenter.removePendingNotificationRequests(withIdentifiers: obsoleteIdentifiers)
+            removePendingRequests(withIdentifiers: obsoleteIdentifiers)
         }
 
         var firstError: (any Error)?
@@ -181,7 +181,7 @@ public struct MeetingReminderScheduler {
             .filter { $0.hasPrefix(accountPrefix) && !desiredIdentifiers.contains($0) }
 
         if !obsoleteIdentifiers.isEmpty {
-            notificationCenter.removePendingNotificationRequests(withIdentifiers: obsoleteIdentifiers)
+            removePendingRequests(withIdentifiers: obsoleteIdentifiers)
         }
 
         var firstError: (any Error)?
@@ -206,7 +206,7 @@ public struct MeetingReminderScheduler {
             .filter { $0.hasPrefix(prefix) }
 
         guard !identifiers.isEmpty else { return }
-        notificationCenter.removePendingNotificationRequests(withIdentifiers: identifiers)
+        removePendingRequests(withIdentifiers: identifiers)
     }
 
     /// Requests cancellation of every pending meeting reminder for one account.
@@ -216,7 +216,7 @@ public struct MeetingReminderScheduler {
             .filter { $0.hasPrefix(prefix) }
 
         guard !identifiers.isEmpty else { return }
-        notificationCenter.removePendingNotificationRequests(withIdentifiers: identifiers)
+        removePendingRequests(withIdentifiers: identifiers)
     }
 
     /// Removes reminders for accounts that are no longer signed in while preserving other notifications.
@@ -228,13 +228,32 @@ public struct MeetingReminderScheduler {
         }
 
         guard !identifiers.isEmpty else { return }
+        removePendingRequests(withIdentifiers: identifiers)
+    }
+
+    /// Forgets the scheduled state of explicitly removed requests so they can be scheduled again.
+    /// Requests that already fired are no longer pending, so their state still prevents a duplicate.
+    private func removePendingRequests(withIdentifiers identifiers: [String]) {
         notificationCenter.removePendingNotificationRequests(withIdentifiers: identifiers)
+        for (key, removed) in Dictionary(grouping: identifiers, by: Self.scheduledKey(forIdentifier:)) {
+            guard var scheduled = defaults.dictionary(forKey: key) as? [String: TimeInterval] else { continue }
+            removed.forEach { scheduled.removeValue(forKey: $0) }
+            defaults.set(scheduled, forKey: key)
+        }
     }
 
     private static func scheduledKey(for reminder: MeetingReminder) -> String {
-        "wire.meeting-reminder.scheduled|"
+        scheduledKeyPrefix
             + MeetingReminder.identifierPrefix(accountID: reminder.accountID, meetingID: reminder.meetingID)
     }
+
+    /// Request identifiers end with the occurrence start, after the meeting's identifier prefix.
+    private static func scheduledKey(forIdentifier identifier: String) -> String {
+        let meetingPrefix = identifier.lastIndex(of: "|").map { identifier[...$0] } ?? identifier[...]
+        return scheduledKeyPrefix + meetingPrefix
+    }
+
+    private static let scheduledKeyPrefix = "wire.meeting-reminder.scheduled|"
 
 }
 

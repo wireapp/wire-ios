@@ -127,6 +127,33 @@ struct MeetingReminderSchedulerTests {
         #expect(center.addedRequests.first?.trigger is UNCalendarNotificationTrigger)
     }
 
+    @Test("a cancelled calendar reminder is sent immediately when restored during the short-notice window")
+    func cancelledReminderCanBecomeImmediate() async throws {
+        let center = NotificationCenterSpy()
+        center.status = .authorized
+        let suite = UUID().uuidString
+        let defaults = try #require(UserDefaults(suiteName: suite))
+        defer { defaults.removePersistentDomain(forName: suite) }
+        let scheduler = MeetingReminderScheduler(notificationCenter: center, defaults: defaults)
+
+        try await scheduler.schedule(
+            reminder,
+            content: UNMutableNotificationContent(),
+            now: reminder.fireDate.addingTimeInterval(-1)
+        )
+        center.storedPendingIdentifiers = [reminder.identifier]
+        await scheduler.cancelAll(accountID: reminder.accountID)
+        center.storedPendingIdentifiers = []
+        try await scheduler.schedule(
+            reminder,
+            content: UNMutableNotificationContent(),
+            now: reminder.fireDate.addingTimeInterval(1)
+        )
+
+        #expect(center.addedRequests.count == 2)
+        #expect(center.addedRequests.last?.trigger is UNTimeIntervalNotificationTrigger)
+    }
+
     @Test("does not schedule without notification authorization")
     func skipsUnauthorizedReminder() async throws {
         let center = NotificationCenterSpy()

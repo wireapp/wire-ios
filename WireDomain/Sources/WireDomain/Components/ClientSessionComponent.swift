@@ -571,7 +571,7 @@ public final class ClientSessionComponent {
     private lazy var conversationMemberLeaveEventProcessor = ConversationMemberLeaveEventProcessor(
         repository: conversationRepository,
         meetingLocalStore: MeetingLocalStore(context: syncContext),
-        reminderCanceller: MeetingReminderScheduler(),
+        reminderCanceller: MeetingReminderScheduler(defaults: sharedUserDefaults),
         accountID: selfUserID
     )
 
@@ -635,8 +635,8 @@ public final class ClientSessionComponent {
 
     private lazy var featureConfigUpdateEventProcessor = FeatureConfigUpdateEventProcessor(
         repository: featureConfigRepository,
-        onMeetingsDisabled: { [selfUserID] in
-            await MeetingReminderScheduler().cancelAll(accountID: selfUserID)
+        onMeetingsDisabled: { [selfUserID, sharedUserDefaults] in
+            await MeetingReminderScheduler(defaults: sharedUserDefaults).cancelAll(accountID: selfUserID)
         }
     )
 
@@ -867,14 +867,15 @@ public final class ClientSessionComponent {
         repository: meetingRepository,
         conversationRepository: conversationRepository,
         reconcileReminder: reconcileMeetingReminder,
-        cancelReminder: { [selfUserID] meetingID in
-            await MeetingReminderScheduler().cancelAll(accountID: selfUserID, meetingID: meetingID)
+        cancelReminder: { [selfUserID, sharedUserDefaults] meetingID in
+            await MeetingReminderScheduler(defaults: sharedUserDefaults)
+                .cancelAll(accountID: selfUserID, meetingID: meetingID)
         }
     )
 
     private lazy var meetingDeleteEventProcessor = MeetingDeleteEventProcessor(
         repository: meetingRepository,
-        reminderCanceller: MeetingReminderScheduler(),
+        reminderCanceller: MeetingReminderScheduler(defaults: sharedUserDefaults),
         accountID: selfUserID
     )
 
@@ -882,8 +883,9 @@ public final class ClientSessionComponent {
         repository: meetingRepository,
         conversationRepository: conversationRepository,
         reconcileReminder: reconcileMeetingReminder,
-        cancelReminder: { [selfUserID] meetingID in
-            await MeetingReminderScheduler().cancelAll(accountID: selfUserID, meetingID: meetingID)
+        cancelReminder: { [selfUserID, sharedUserDefaults] meetingID in
+            await MeetingReminderScheduler(defaults: sharedUserDefaults)
+                .cancelAll(accountID: selfUserID, meetingID: meetingID)
         }
     )
 

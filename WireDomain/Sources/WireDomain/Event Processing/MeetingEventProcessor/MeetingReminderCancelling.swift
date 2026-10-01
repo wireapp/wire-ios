@@ -29,14 +29,18 @@ extension MeetingReminderScheduler: MeetingReminderCancelling {}
 /// Allows session management to remove reminders without depending on WireCallingData directly.
 public struct AccountMeetingReminderCanceller {
 
-    public init() {}
+    private let defaults: UserDefaults
+
+    public init(defaults: UserDefaults) {
+        self.defaults = defaults
+    }
 
     public func cancelAll(accountID: UUID) async {
-        await MeetingReminderScheduler().cancelAll(accountID: accountID)
+        await MeetingReminderScheduler(defaults: defaults).cancelAll(accountID: accountID)
     }
 
     public func cancelAll(exceptAccountIDs accountIDs: Set<UUID>) async {
-        await MeetingReminderScheduler().cancelAll(exceptAccountIDs: accountIDs)
+        await MeetingReminderScheduler(defaults: defaults).cancelAll(exceptAccountIDs: accountIDs)
     }
 
 }

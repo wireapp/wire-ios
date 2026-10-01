@@ -28,10 +28,12 @@ import WireFoundation
 public struct WireMeetingsFactory {
 
     private let selfUserID: UUID
+    private let sharedUserDefaults: UserDefaults
 
     @MainActor
-    public init(selfUserID: UUID) {
+    public init(selfUserID: UUID, sharedUserDefaults: UserDefaults) {
         self.selfUserID = selfUserID
+        self.sharedUserDefaults = sharedUserDefaults
     }
 
     @MainActor
@@ -58,8 +60,9 @@ public struct WireMeetingsFactory {
         let deleteMeetingUseCase = DeleteMeetingUseCase(
             meetingRepository: meetingRepository,
             conversationRepository: conversationRepository,
-            cancelReminders: { accountID, meetingID in
-                await MeetingReminderScheduler().cancelAll(accountID: accountID, meetingID: meetingID)
+            cancelReminders: { [sharedUserDefaults] accountID, meetingID in
+                await MeetingReminderScheduler(defaults: sharedUserDefaults)
+                    .cancelAll(accountID: accountID, meetingID: meetingID)
             },
             selfUserID: selfUserID
         )
