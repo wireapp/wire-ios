@@ -642,6 +642,13 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
                 accountID: accountID,
                 storedMeetings: { await meetingStore.storedMeetings() },
                 cancelMeeting: { await reminderScheduler.cancelAll(accountID: accountID, meetingID: $0) },
+                deleteMeeting: { meetingID in
+                    do {
+                        try await meetingStore.deleteMeeting(id: meetingID)
+                    } catch {
+                        WireLogger.meetings.error("Failed to remove NSE meeting after self-removal: \(error)")
+                    }
+                },
                 cancelPendingRequests: {
                     await pendingRequestCanceller.cancel(accountID: accountID, conversationID: $0)
                 }

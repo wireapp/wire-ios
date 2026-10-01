@@ -108,6 +108,8 @@ final class ConversationMemberLeaveEventProcessorTests: XCTestCase {
         XCTAssertEqual(reminderCanceller.cancellations.count, 1)
         XCTAssertEqual(reminderCanceller.cancellations[0].accountID, accountID)
         XCTAssertEqual(reminderCanceller.cancellations[0].meetingID, matchingMeeting.id)
+        XCTAssertEqual(meetingLocalStore.deletedMeetingIDs, [matchingMeeting.id])
+        XCTAssertEqual(meetingLocalStore.meetings.map(\.id), [otherDomain.id])
     }
 
     func testProcessEvent_DoesNotCancelWhenAnotherUserLeaves() async throws {
@@ -125,6 +127,7 @@ final class ConversationMemberLeaveEventProcessorTests: XCTestCase {
         try await sut.processEvent(event)
 
         XCTAssertTrue(reminderCanceller.cancellations.isEmpty)
+        XCTAssertTrue(meetingLocalStore.deletedMeetingIDs.isEmpty)
     }
 
     private enum Scaffolding {
@@ -155,12 +158,16 @@ final class ConversationMemberLeaveEventProcessorTests: XCTestCase {
 
 private final class MeetingLocalStoreSpy: MeetingLocalStoreProtocol, @unchecked Sendable {
     var meetings: [Meeting] = []
+    var deletedMeetingIDs: [WireCallingDomain.QualifiedID] = []
 
     func storedMeetings() async -> [Meeting] { meetings }
     func storedMeeting(id: WireCallingDomain.QualifiedID) async -> Meeting? { meetings.first { $0.id == id } }
     func storeMeeting(_ meeting: Meeting) async {}
     func replaceAllMeetings(with meetings: [Meeting]) async {}
-    func deleteMeeting(id: WireCallingDomain.QualifiedID) async {}
+    func deleteMeeting(id: WireCallingDomain.QualifiedID) async {
+        deletedMeetingIDs.append(id)
+        meetings.removeAll { $0.id == id }
+    }
 }
 
 private final class MemberLeaveReminderCancellerSpy: MeetingReminderCancelling {

@@ -26,6 +26,7 @@ struct MeetingReminderSelfRemovalHandler {
     let accountID: UUID
     let storedMeetings: () async -> [Meeting]
     let cancelMeeting: (WireNetwork.QualifiedID) async -> Void
+    let deleteMeeting: (WireNetwork.QualifiedID) async -> Void
     let cancelPendingRequests: (WireNetwork.QualifiedID) async -> Void
 
     func handle(event: ConversationMemberLeaveEvent) async {
@@ -34,6 +35,7 @@ struct MeetingReminderSelfRemovalHandler {
         let meetings = await storedMeetings()
         for meeting in meetings where meeting.conversationID == event.conversationID {
             await cancelMeeting(meeting.id)
+            await deleteMeeting(meeting.id)
         }
 
         // Pending requests also carry the conversation ID, so cancellation works

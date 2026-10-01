@@ -845,7 +845,10 @@ public final class ClientSessionComponent {
     private lazy var meetingCreateEventProcessor = MeetingCreateEventProcessor(
         repository: meetingRepository,
         conversationRepository: conversationRepository,
-        reconcileReminder: reconcileMeetingReminder
+        reconcileReminder: reconcileMeetingReminder,
+        cancelReminder: { [selfUserID] meetingID in
+            await MeetingReminderScheduler().cancelAll(accountID: selfUserID, meetingID: meetingID)
+        }
     )
 
     private lazy var meetingDeleteEventProcessor = MeetingDeleteEventProcessor(
@@ -857,7 +860,10 @@ public final class ClientSessionComponent {
     private lazy var meetingUpdateEventProcessor = MeetingUpdateEventProcessor(
         repository: meetingRepository,
         conversationRepository: conversationRepository,
-        reconcileReminder: reconcileMeetingReminder
+        reconcileReminder: reconcileMeetingReminder,
+        cancelReminder: { [selfUserID] meetingID in
+            await MeetingReminderScheduler().cancelAll(accountID: selfUserID, meetingID: meetingID)
+        }
     )
 
     private func handleBeforeProcessingLiveEvent(_ event: UpdateEvent) async {

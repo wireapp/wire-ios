@@ -37,6 +37,8 @@ final class MeetingReminderSelfRemovalHandlerTests: XCTestCase {
         await makeHandler(spy: spy).handle(event: makeEvent(removedUserID: accountID))
 
         XCTAssertEqual(spy.cancelledMeetingIDs, [meeting.id])
+        XCTAssertEqual(spy.deletedMeetingIDs, [meeting.id])
+        XCTAssertEqual(spy.meetings.count, 1)
         XCTAssertEqual(spy.pendingConversationIDs, [conversationID])
     }
 
@@ -46,6 +48,7 @@ final class MeetingReminderSelfRemovalHandlerTests: XCTestCase {
         await makeHandler(spy: spy).handle(event: makeEvent(removedUserID: accountID, senderID: accountID))
 
         XCTAssertTrue(spy.cancelledMeetingIDs.isEmpty)
+        XCTAssertTrue(spy.deletedMeetingIDs.isEmpty)
         XCTAssertEqual(spy.pendingConversationIDs, [conversationID])
     }
 
@@ -57,6 +60,7 @@ final class MeetingReminderSelfRemovalHandlerTests: XCTestCase {
 
         XCTAssertFalse(spy.didReadMeetings)
         XCTAssertTrue(spy.cancelledMeetingIDs.isEmpty)
+        XCTAssertTrue(spy.deletedMeetingIDs.isEmpty)
         XCTAssertTrue(spy.pendingConversationIDs.isEmpty)
     }
 
@@ -110,6 +114,10 @@ final class MeetingReminderSelfRemovalHandlerTests: XCTestCase {
                 return spy.meetings
             },
             cancelMeeting: { spy.cancelledMeetingIDs.append($0) },
+            deleteMeeting: { meetingID in
+                spy.deletedMeetingIDs.append(meetingID)
+                spy.meetings.removeAll { $0.id == meetingID }
+            },
             cancelPendingRequests: { spy.pendingConversationIDs.append($0) }
         )
     }
@@ -142,5 +150,6 @@ private final class SelfRemovalSpy {
     var meetings: [Meeting] = []
     var didReadMeetings = false
     var cancelledMeetingIDs: [WireNetwork.QualifiedID] = []
+    var deletedMeetingIDs: [WireNetwork.QualifiedID] = []
     var pendingConversationIDs: [WireNetwork.QualifiedID] = []
 }

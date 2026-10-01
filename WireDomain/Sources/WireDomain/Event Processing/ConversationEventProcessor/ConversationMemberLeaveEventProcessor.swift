@@ -19,6 +19,7 @@
 import Foundation
 import WireCallingData
 import WireDataModel
+import WireLogging
 import WireNetwork
 
 struct ConversationMemberLeaveEventProcessor: ConversationMemberLeaveEventProcessorProtocol {
@@ -38,6 +39,11 @@ struct ConversationMemberLeaveEventProcessor: ConversationMemberLeaveEventProces
             for meeting in meetings where meeting.conversationID.id == event.conversationID.id
                 && meeting.conversationID.domain == event.conversationID.domain {
                 await reminderCanceller.cancelAll(accountID: accountID, meetingID: meeting.id)
+                do {
+                    try await meetingLocalStore.deleteMeeting(id: meeting.id)
+                } catch {
+                    WireLogger.meetings.error("Failed to remove meeting after self-removal: \(error)")
+                }
             }
         }
 
