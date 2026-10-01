@@ -51,7 +51,7 @@ package struct DeleteMeetingUseCase: DeleteMeetingUseCaseProtocol {
             }
         } else {
             try await conversationRepository.leaveConversation(id: meeting.conversationID)
-            await meetingRepository.deleteLocalMeeting(id: meeting.id)
+            try await meetingRepository.deleteLocalMeeting(id: meeting.id)
             await cancelReminders(selfUserID, meeting.id)
         }
     }

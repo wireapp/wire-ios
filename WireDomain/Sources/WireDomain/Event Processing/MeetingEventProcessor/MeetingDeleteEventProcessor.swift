@@ -28,7 +28,6 @@ struct MeetingDeleteEventProcessor: MeetingDeleteEventProcessorProtocol {
 
     func processEvent(_ event: MeetingDeleteEvent) async {
         await reminderCanceller.cancelAll(accountID: accountID, meetingID: event.meetingID)
-        await repository.deleteLocalMeeting(id: event.meetingID)
         try? await repository.deleteLocalMeeting(id: event.meetingID)
     }
 
