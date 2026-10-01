@@ -174,7 +174,7 @@ extension ZMUserSession {
                 let activeConversations = calls.compactMap { conversation -> (id: UUID, domain: String)? in
                     guard let id = conversation.qualifiedID else { return nil }
                     return (id.uuid, id.domain)
-                } ?? []
+                }
                 shouldPresent = MeetingReminderForegroundPolicy.shouldPresent(
                     userInfo: userInfo,
                     activeConversations: activeConversations
