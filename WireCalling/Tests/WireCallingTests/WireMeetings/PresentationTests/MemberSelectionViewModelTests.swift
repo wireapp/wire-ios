@@ -161,6 +161,10 @@ struct MemberSelectionViewModelTests {
 
         viewModel.confirmSelection()
         #expect(onSelectRecorder.calls == [[.bob]])
+
+        searchMembersUseCase.membersInGroupIDQualifiedIDMeetingMemberReturnValue = [host]
+        #expect(await viewModel.importGroup(groupID))
+        #expect(viewModel.selectedMembers.isEmpty)
     }
 
     @Test("A failed import preserves the draft and can be retried")

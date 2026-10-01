@@ -32,6 +32,7 @@ struct WireMeetingsMemberRepository: MeetingMemberRepositoryProtocol, @unchecked
 
     let userSession: any UserSession
     let conversationsAPI: any ConversationsAPI
+    let usersAPI: any UsersAPI
 
     @MainActor
     func search(query: String) async throws -> [MeetingMember] {
@@ -123,6 +124,17 @@ struct WireMeetingsMemberRepository: MeetingMemberRepositoryProtocol, @unchecked
             return seen.insert(id).inserted ? id : nil
         }
 
+        let profiles = try await usersAPI.getUsers(userIDs: memberIDs)
+        guard
+            profiles.failed.isEmpty,
+            Set(profiles.found.map(\.id)) == Set(memberIDs),
+            let teamID = profiles.found.first(where: { $0.id == sourceSelfID })?.teamID
+        else { throw Failure.invalidMember }
+
+        let eligibleIDs = Set(profiles.found.filter {
+            $0.teamID == teamID && $0.id.domain == sourceSelfID.domain
+        }.map(\.id))
+
         let context = userSession.contextProvider.syncContext
         return try await context.perform {
             guard
@@ -130,7 +142,7 @@ struct WireMeetingsMemberRepository: MeetingMemberRepositoryProtocol, @unchecked
                 sourceSelfID == .init(id: selfID.uuid, domain: selfID.domain)
             else { throw Failure.sourceUnavailable }
 
-            let result = memberIDs.map { id in
+            let result = memberIDs.filter { eligibleIDs.contains($0) }.map { id in
                 // Meeting edits resolve selected people from the local user store.
                 let user = ZMUser.fetchOrCreate(with: id.id, domain: id.domain, in: context)
                 let name = user.name ?? ""

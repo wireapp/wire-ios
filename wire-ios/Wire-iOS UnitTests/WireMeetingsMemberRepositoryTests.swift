@@ -30,18 +30,25 @@ final class WireMeetingsMemberRepositoryTests: XCTestCase {
     private var stackHelper: CoreDataStackHelper!
     private var stack: CoreDataStack!
     private var conversationsAPI: MockConversationsAPI!
+    private var usersAPI: MockUsersAPI!
     private var sut: WireMeetingsMemberRepository!
     private let modelHelper = ModelHelper()
     private let selfID = WireCallingDomain.QualifiedID(id: UUID(), domain: "wire.com")
     private let groupID = WireCallingDomain.QualifiedID(id: UUID(), domain: "wire.com")
+    private let teamID = UUID()
 
     override func setUp() async throws {
         stackHelper = CoreDataStackHelper()
         stack = try await stackHelper.createStack()
         conversationsAPI = MockConversationsAPI()
+        usersAPI = MockUsersAPI()
         let session = UserSessionMock()
         session.coreDataStack = stack
-        sut = WireMeetingsMemberRepository(userSession: session, conversationsAPI: conversationsAPI)
+        sut = WireMeetingsMemberRepository(
+            userSession: session,
+            conversationsAPI: conversationsAPI,
+            usersAPI: usersAPI
+        )
         try await stack.syncContext.perform { [self] in
             modelHelper.createSelfUser(id: selfID.id, domain: selfID.domain, in: stack.syncContext)
             try stack.syncContext.save()
@@ -51,6 +58,7 @@ final class WireMeetingsMemberRepositoryTests: XCTestCase {
     override func tearDownWithError() throws {
         sut = nil
         conversationsAPI = nil
+        usersAPI = nil
         stack = nil
         try stackHelper.cleanupDirectory()
         stackHelper = nil
@@ -77,7 +85,7 @@ final class WireMeetingsMemberRepositoryTests: XCTestCase {
         XCTAssertEqual(allGroups.map(\.name), ["All hands channel", "All hands group", "Other group"])
     }
 
-    func testMembersUsesCurrentIDsIncludingGuestsAndSavesUnknownUsers() async throws {
+    func testMembersUsesCurrentTeamProfilesAndSavesUnknownUsers() async throws {
         let guestID = WireCallingDomain.QualifiedID(id: UUID(), domain: "wire.com")
         let newID = WireCallingDomain.QualifiedID(id: UUID(), domain: "wire.com")
         let context = stack.syncContext
@@ -107,6 +115,10 @@ final class WireMeetingsMemberRepositoryTests: XCTestCase {
             notFound: [],
             failed: []
         )
+        usersAPI.getUsersUserIDs_MockValue = .init(
+            found: [selfID, guestID, newID].map { makeProfile(id: $0, teamID: teamID) },
+            failed: []
+        )
 
         let members = try await sut.members(in: groupID)
 
@@ -119,6 +131,49 @@ final class WireMeetingsMemberRepositoryTests: XCTestCase {
             ZMUser.fetch(with: newID.id, domain: newID.domain, in: readContext) != nil
         }
         XCTAssertTrue(isStored)
+    }
+
+    func testMembersFiltersGuestsAndRequiresCompleteProfiles() async throws {
+        let memberID = WireCallingDomain.QualifiedID(id: UUID(), domain: "wire.com")
+        let federatedID = WireCallingDomain.QualifiedID(id: memberID.id, domain: "other.wire.com")
+        let host = makeProfile(id: selfID, teamID: teamID)
+        let teammate = makeProfile(id: .init(id: UUID(), domain: selfID.domain), teamID: teamID)
+        let guests = [
+            makeProfile(id: memberID, teamID: nil),
+            makeProfile(id: memberID, teamID: UUID()),
+            makeProfile(id: federatedID, teamID: teamID)
+        ]
+        for guest in guests {
+            conversationsAPI.getConversationsFor_MockValue = .init(
+                found: [.init(
+                    qualifiedID: groupID,
+                    type: .group,
+                    members: .init(
+                        others: [
+                            .init(qualifiedID: guest.id, conversationRole: "wire_admin"),
+                            .init(qualifiedID: teammate.id)
+                        ],
+                        selfMember: .init(qualifiedID: selfID)
+                    ),
+                    groupType: .channel
+                )],
+                notFound: [],
+                failed: []
+            )
+            usersAPI.getUsersUserIDs_MockValue = .init(found: [host, guest, teammate], failed: [])
+            let members = try await sut.members(in: groupID)
+            XCTAssertEqual(Set(members.map(\.qualifiedID)), [selfID, teammate.id])
+        }
+
+        for failedIDs in [[], [federatedID]] {
+            usersAPI.getUsersUserIDs_MockValue = .init(found: [host], failed: failedIDs)
+            do {
+                _ = try await sut.members(in: groupID)
+                XCTFail("Import must fail when a current member's profile cannot be checked")
+            } catch WireMeetingsMemberRepository.Failure.invalidMember {
+                // Expected; missing profiles must not become a partial import.
+            }
+        }
     }
 
     func testMembersDoesNotUseCachedMembershipWhenSourceCannotBeRead() async throws {
@@ -167,5 +222,13 @@ final class WireMeetingsMemberRepositoryTests: XCTestCase {
         )
         conversation.userDefinedName = name
         return conversation
+    }
+
+    private func makeProfile(id: WireCallingDomain.QualifiedID, teamID: UUID?) -> WireNetwork.User {
+        .init(
+            id: id, name: "Member", handle: nil, teamID: teamID, type: .regular, accentID: 0,
+            assets: [], deleted: false, email: nil, expiresAt: nil, app: nil, service: nil,
+            supportedProtocols: [.mls], legalholdStatus: .disabled
+        )
     }
 }

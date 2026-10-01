@@ -35,7 +35,7 @@ public protocol MeetingMemberRepositoryProtocol: Sendable {
     /// Returns groups and channels the current user has joined.
     func searchGroups(query: String) async throws -> [MeetingGroup]
 
-    /// Returns the source group's current members, including guests and the current user.
+    /// Returns current source-group members in the current user's team, including the current user.
     func members(in groupID: QualifiedID) async throws -> [MeetingMember]
 
 }
