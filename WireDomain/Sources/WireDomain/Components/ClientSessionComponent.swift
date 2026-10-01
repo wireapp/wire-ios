@@ -736,42 +736,41 @@ public final class ClientSessionComponent {
         localStore: MeetingLocalStore(context: syncContext),
         onMeetingCreated: reconcileMeetingReminder,
         onMeetingUpdated: reconcileMeetingReminder,
-        onMeetingsRefreshed: { [
-            selfUserID,
-            sharedUserDefaults,
-            conversationLocalStore,
-            featureConfigRepository
-        ] meetings in
-            let scheduler = MeetingReminderScheduler(defaults: sharedUserDefaults)
-            guard await featureConfigRepository.isFeatureEnabled(.meetings) else {
-                await scheduler.cancelAll(accountID: selfUserID)
-                return
-            }
-            let now = Date.now
-            let shouldHideNotification = await conversationLocalStore.shouldHideNotification()
-            do {
-                try await scheduler.reconcileAll(
-                    accountID: selfUserID,
-                    meetings: meetings,
-                    occurrenceLimit: 5,
-                    now: now
-                ) { meeting, occurrenceStart in
-                    MeetingReminderNotificationContentBuilder().build(
-                        meeting: meeting,
-                        occurrenceStart: occurrenceStart,
-                        accountID: selfUserID,
-                        showMeetingTitle: !shouldHideNotification
-                    )
-                }
-            } catch {
-                WireLogger.meetings.error("Failed to reconcile refreshed meeting reminders: \(error)")
-            }
+        onMeetingsRefreshed: { [weak self] meetings in
+            await self?.reconcileRefreshedMeetingReminders(meetings)
         },
         pullConversation: { [conversationRepository, syncContext] id in
             try await conversationRepository.pullConversation(id: id.id, domain: id.domain)
             await syncContext.perform { _ = syncContext.saveOrRollback() }
         }
     )
+
+    private func reconcileRefreshedMeetingReminders(_ meetings: [Meeting]) async {
+        let scheduler = MeetingReminderScheduler(defaults: sharedUserDefaults)
+        guard await featureConfigRepository.isFeatureEnabled(.meetings) else {
+            await scheduler.cancelAll(accountID: selfUserID)
+            return
+        }
+        let now = Date.now
+        let shouldHideNotification = await conversationLocalStore.shouldHideNotification()
+        do {
+            try await scheduler.reconcileAll(
+                accountID: selfUserID,
+                meetings: meetings,
+                occurrenceLimit: 5,
+                now: now
+            ) { meeting, occurrenceStart in
+                MeetingReminderNotificationContentBuilder().build(
+                    meeting: meeting,
+                    occurrenceStart: occurrenceStart,
+                    accountID: selfUserID,
+                    showMeetingTitle: !shouldHideNotification
+                )
+            }
+        } catch {
+            WireLogger.meetings.error("Failed to reconcile refreshed meeting reminders: \(error)")
+        }
+    }
 
     private lazy var meetingDeleteEventNotificationBuilder = MeetingDeleteEventNotificationBuilder(
         meetingLocalStore: MeetingLocalStore(context: syncContext),
