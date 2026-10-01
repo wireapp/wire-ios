@@ -29,11 +29,10 @@
 ## Review readiness
 
 - [x] Address the confirmed-absence create and update findings from the latest Copilot review (`f74140a770`).
-- [x] Serialize reminder mutations across the app and NSE with an app-group file lock, and reject reconciliations superseded by a newer account or meeting mutation.
-- [x] Bound pending reminders across meetings and accounts to the earliest 48 requests, reserving at least 16 slots for other local notifications.
-- [x] Respect the account's Meetings feature flag in app and NSE scheduling, and cancel pending reminders when that feature is disabled.
-- [x] Cancel reminders when the backend confirms meeting absence even if local cleanup fails; preserve transient fetch failures.
-- [x] Track successful scheduling per occurrence so a fired calendar reminder is not sent again during a short-notice refresh.
+- [x] Decided not to serialize reminder mutations across the app and NSE, and not to add a global pending-request budget. Reminders are best-effort; the next reconciliation and the startup sweep correct stale requests, and iOS keeps the soonest 64 pending requests.
+- [x] Respect the account's Meetings feature flag in app and NSE scheduling, and cancel pending reminders when that feature is disabled. The NSE leaves pending reminders untouched when the feature state is unknown.
+- [x] Decided not to special-case `cleanupFailed` after a confirmed meeting 404 in create/update processing; the next meeting-list refresh removes the obsolete reminder.
+- [x] Track scheduled occurrences per meeting so a fired calendar reminder is not sent again during a short-notice refresh.
 - [ ] Review the final PR diff and current CI results after the remaining code changes.
 - [x] Use a conventional PR title referencing `WPB-28998`: `feat: add local meeting reminders - WPB-28998`.
 

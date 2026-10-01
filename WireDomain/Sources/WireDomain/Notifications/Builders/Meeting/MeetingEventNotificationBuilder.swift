@@ -70,12 +70,14 @@ struct MeetingEventReminderReconciler {
     let pullMeeting: (WireNetwork.QualifiedID) async throws -> Meeting?
     let reconcileMeeting: (Meeting) async throws -> Void
     let cancelMeeting: (WireNetwork.QualifiedID) async -> Void
-    var isMeetingsEnabled: () async -> Bool = { true }
-    var cancelAccount: () async -> Void = {}
+    /// Returns `nil` when the feature state is unknown, which leaves pending reminders untouched.
+    let isMeetingsEnabled: () async -> Bool?
+    let cancelAccount: () async -> Void
 
     @discardableResult
     func reconcile(event: MeetingEvent) async -> Meeting? {
-        guard await isMeetingsEnabled() else {
+        guard let isMeetingsEnabled = await isMeetingsEnabled() else { return nil }
+        guard isMeetingsEnabled else {
             await cancelAccount()
             return nil
         }
@@ -105,10 +107,6 @@ struct MeetingEventReminderReconciler {
                 // The meeting API confirmed that this meeting no longer exists.
                 await cancelMeeting(meetingID)
             }
-        } catch DeleteMeetingUseCaseError.cleanupFailed {
-            // The backend confirmed absence; only deletion of the stale local copy failed.
-            await cancelMeeting(meetingID)
-            WireLogger.meetings.error("Failed to remove a deleted meeting from the NSE store")
         } catch {
             // Preserve pending requests if the current meeting could not be fetched.
             WireLogger.meetings.error("Failed to reconcile NSE meeting reminder: \(error)")

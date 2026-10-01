@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Darwin
 public import Foundation
 public import UserNotifications
 public import WireCallingDomain
@@ -45,20 +44,17 @@ extension UNUserNotificationCenter: MeetingReminderNotificationCenter {
 /// Schedules one reminder with a fixed UTC fire date. Event reconciliation is handled by callers.
 public struct MeetingReminderScheduler {
 
-    private static let pendingRequestLimit = 64
-    private static let reservedRequestCount = 16
-
     private let notificationCenter: any MeetingReminderNotificationCenter
     private let defaults: UserDefaults
 
-    public init(defaults: UserDefaults? = nil) {
+    public init(defaults: UserDefaults = .standard) {
         self.notificationCenter = UNUserNotificationCenter.current()
-        self.defaults = defaults ?? Self.sharedDefaults
+        self.defaults = defaults
     }
 
-    init(notificationCenter: any MeetingReminderNotificationCenter, defaults: UserDefaults? = nil) {
+    init(notificationCenter: any MeetingReminderNotificationCenter, defaults: UserDefaults = .standard) {
         self.notificationCenter = notificationCenter
-        self.defaults = defaults ?? UserDefaults(suiteName: "wire.meeting-reminder.test.\(UUID().uuidString)")!
+        self.defaults = defaults
     }
 
     /// Sends short-notice reminders immediately, once per occurrence, while the meeting is still upcoming.
@@ -67,34 +63,6 @@ public struct MeetingReminderScheduler {
         _ reminder: MeetingReminder,
         content: UNNotificationContent,
         now: Date = .now
-    ) async throws -> Bool {
-        let requestedAt = Date.now.timeIntervalSince1970
-        return try await withMutationLock {
-            guard shouldApplyMeetingMutation(requestedAt, reminder: reminder) else { return false }
-            defer { recordMeetingMutation(requestedAt, reminder: reminder) }
-            let pending = await notificationCenter.pendingRequestIdentifiers()
-            let retained = Self.retainedIdentifiers(
-                desired: [reminder],
-                pending: pending,
-                replacing: reminder.identifier
-            )
-            guard retained.contains(reminder.identifier) else { return false }
-            let overflow = pending.filter {
-                $0.hasPrefix(MeetingReminder.identifierNamespace) && !retained.contains($0)
-            }
-            if !overflow.isEmpty {
-                notificationCenter.removePendingNotificationRequests(withIdentifiers: overflow)
-                removeScheduledMarkers(for: overflow)
-            }
-            return try await scheduleUnlocked(reminder, content: content, now: now)
-        }
-    }
-
-    @discardableResult
-    private func scheduleUnlocked(
-        _ reminder: MeetingReminder,
-        content: UNNotificationContent,
-        now: Date
     ) async throws -> Bool {
         guard reminder.occurrenceStart > now else { return false }
 
@@ -108,7 +76,9 @@ public struct MeetingReminderScheduler {
 
         let isImmediate = reminder.fireDate <= now
         let scheduledKey = Self.scheduledKey(for: reminder)
-        if isImmediate, defaults.bool(forKey: scheduledKey) {
+        // Occurrence starts that were already scheduled for this meeting, keyed by request identifier.
+        let scheduled = defaults.dictionary(forKey: scheduledKey) as? [String: TimeInterval] ?? [:]
+        if isImmediate, scheduled[reminder.identifier] != nil {
             return false
         }
 
@@ -140,16 +110,14 @@ public struct MeetingReminderScheduler {
             throw error
         }
         // A calendar request may already have fired when a later refresh enters the short-notice window.
-        defaults.set(true, forKey: scheduledKey)
+        var upcoming = scheduled.filter { $0.value > now.timeIntervalSince1970 }
+        upcoming[reminder.identifier] = reminder.occurrenceStart.timeIntervalSince1970
+        defaults.set(upcoming, forKey: scheduledKey)
         return true
     }
 
-    public func cancel(_ reminder: MeetingReminder) async {
-        await withMutationLock {
-            notificationCenter.removePendingNotificationRequests(withIdentifiers: [reminder.identifier])
-            defaults.removeObject(forKey: Self.scheduledKey(for: reminder))
-            recordMeetingMutation(Date.now.timeIntervalSince1970, reminder: reminder)
-        }
+    public func cancel(_ reminder: MeetingReminder) {
+        notificationCenter.removePendingNotificationRequests(withIdentifiers: [reminder.identifier])
     }
 
     /// Replaces this account's pending reminders for one meeting with the supplied occurrences.
@@ -161,49 +129,22 @@ public struct MeetingReminderScheduler {
         now: Date = .now,
         contentForOccurrence: (Date) -> UNNotificationContent
     ) async throws {
-        let requestedAt = Date.now.timeIntervalSince1970
-        try await withMutationLock {
-            guard shouldApplyMeetingMutation(requestedAt, accountID: accountID, meetingID: meetingID) else {
-                return
-            }
-            defer { recordMeetingMutation(requestedAt, accountID: accountID, meetingID: meetingID) }
-            try await reconcileUnlocked(
-                accountID: accountID,
-                meetingID: meetingID,
-                occurrenceStarts: occurrenceStarts,
-                now: now,
-                contentForOccurrence: contentForOccurrence
-            )
-        }
-    }
-
-    private func reconcileUnlocked(
-        accountID: UUID,
-        meetingID: QualifiedID,
-        occurrenceStarts: [Date],
-        now: Date,
-        contentForOccurrence: (Date) -> UNNotificationContent
-    ) async throws {
         let reminders = Set(occurrenceStarts).map {
             MeetingReminder(accountID: accountID, meetingID: meetingID, occurrenceStart: $0)
         }.filter { $0.occurrenceStart > now }
+        let desiredIdentifiers = Set(reminders.map(\.identifier))
         let prefix = MeetingReminder.identifierPrefix(accountID: accountID, meetingID: meetingID)
-        let pending = await notificationCenter.pendingRequestIdentifiers()
-        let retained = Self.retainedIdentifiers(desired: reminders, pending: pending, replacing: prefix)
-        let obsoleteIdentifiers = pending.filter {
-            $0.hasPrefix(MeetingReminder.identifierNamespace) && !retained.contains($0)
-        }
+        let obsoleteIdentifiers = await notificationCenter.pendingRequestIdentifiers()
+            .filter { $0.hasPrefix(prefix) && !desiredIdentifiers.contains($0) }
 
         if !obsoleteIdentifiers.isEmpty {
             notificationCenter.removePendingNotificationRequests(withIdentifiers: obsoleteIdentifiers)
-            removeScheduledMarkers(for: obsoleteIdentifiers)
         }
 
         var firstError: (any Error)?
-        for reminder in reminders.filter({ retained.contains($0.identifier) })
-            .sorted(by: { $0.occurrenceStart < $1.occurrenceStart }) {
+        for reminder in reminders.sorted(by: { $0.occurrenceStart < $1.occurrenceStart }) {
             do {
-                try await scheduleUnlocked(
+                try await schedule(
                     reminder,
                     content: contentForOccurrence(reminder.occurrenceStart),
                     now: now
@@ -223,29 +164,6 @@ public struct MeetingReminderScheduler {
         now: Date = .now,
         contentForOccurrence: (Meeting, Date) -> UNNotificationContent
     ) async throws {
-        let requestedAt = Date.now.timeIntervalSince1970
-        try await withMutationLock {
-            guard requestedAt >= defaults.double(forKey: Self.anyMutationKey(accountID: accountID)) else {
-                return
-            }
-            defer { recordAccountMutation(requestedAt, accountID: accountID) }
-            try await reconcileAllUnlocked(
-                accountID: accountID,
-                meetings: meetings,
-                occurrenceLimit: occurrenceLimit,
-                now: now,
-                contentForOccurrence: contentForOccurrence
-            )
-        }
-    }
-
-    private func reconcileAllUnlocked(
-        accountID: UUID,
-        meetings: [Meeting],
-        occurrenceLimit: Int,
-        now: Date,
-        contentForOccurrence: (Meeting, Date) -> UNNotificationContent
-    ) async throws {
         let uniqueMeetings = Dictionary(meetings.map { ($0.id, $0) }, uniquingKeysWith: { _, latest in latest })
             .values
         let calculator = MeetingReminderOccurrenceCalculator()
@@ -257,27 +175,19 @@ public struct MeetingReminderScheduler {
                 )
             }
         }
+        let desiredIdentifiers = Set(desired.map(\.reminder.identifier))
         let accountPrefix = MeetingReminder.accountIdentifierPrefix(accountID: accountID)
-        let pending = await notificationCenter.pendingRequestIdentifiers()
-        let retained = Self.retainedIdentifiers(
-            desired: desired.map(\.reminder),
-            pending: pending,
-            replacing: accountPrefix
-        )
-        let obsoleteIdentifiers = pending.filter {
-            $0.hasPrefix(MeetingReminder.identifierNamespace) && !retained.contains($0)
-        }
+        let obsoleteIdentifiers = await notificationCenter.pendingRequestIdentifiers()
+            .filter { $0.hasPrefix(accountPrefix) && !desiredIdentifiers.contains($0) }
 
         if !obsoleteIdentifiers.isEmpty {
             notificationCenter.removePendingNotificationRequests(withIdentifiers: obsoleteIdentifiers)
-            removeScheduledMarkers(for: obsoleteIdentifiers)
         }
 
         var firstError: (any Error)?
-        for entry in desired.filter({ retained.contains($0.reminder.identifier) })
-            .sorted(by: { $0.reminder.fireDate < $1.reminder.fireDate }) {
+        for entry in desired.sorted(by: { $0.reminder.fireDate < $1.reminder.fireDate }) {
             do {
-                try await scheduleUnlocked(
+                try await schedule(
                     entry.reminder,
                     content: contentForOccurrence(entry.meeting, entry.reminder.occurrenceStart),
                     now: now
@@ -291,178 +201,39 @@ public struct MeetingReminderScheduler {
 
     /// Requests cancellation of every pending occurrence for one qualified meeting and account.
     public func cancelAll(accountID: UUID, meetingID: QualifiedID) async {
-        await withMutationLock {
-            let prefix = MeetingReminder.identifierPrefix(accountID: accountID, meetingID: meetingID)
-            let identifiers = await notificationCenter.pendingRequestIdentifiers()
-                .filter { $0.hasPrefix(prefix) }
-            if !identifiers.isEmpty {
-                notificationCenter.removePendingNotificationRequests(withIdentifiers: identifiers)
-            }
-            removeScheduledMarkers(matching: prefix)
-            recordMeetingMutation(Date.now.timeIntervalSince1970, accountID: accountID, meetingID: meetingID)
-        }
+        let prefix = MeetingReminder.identifierPrefix(accountID: accountID, meetingID: meetingID)
+        let identifiers = await notificationCenter.pendingRequestIdentifiers()
+            .filter { $0.hasPrefix(prefix) }
+
+        guard !identifiers.isEmpty else { return }
+        notificationCenter.removePendingNotificationRequests(withIdentifiers: identifiers)
     }
 
     /// Requests cancellation of every pending meeting reminder for one account.
     public func cancelAll(accountID: UUID) async {
-        await withMutationLock {
-            let prefix = MeetingReminder.accountIdentifierPrefix(accountID: accountID)
-            let identifiers = await notificationCenter.pendingRequestIdentifiers()
-                .filter { $0.hasPrefix(prefix) }
-            if !identifiers.isEmpty {
-                notificationCenter.removePendingNotificationRequests(withIdentifiers: identifiers)
-            }
-            removeScheduledMarkers(matching: prefix)
-            recordAccountMutation(Date.now.timeIntervalSince1970, accountID: accountID)
-        }
+        let prefix = MeetingReminder.accountIdentifierPrefix(accountID: accountID)
+        let identifiers = await notificationCenter.pendingRequestIdentifiers()
+            .filter { $0.hasPrefix(prefix) }
+
+        guard !identifiers.isEmpty else { return }
+        notificationCenter.removePendingNotificationRequests(withIdentifiers: identifiers)
     }
 
     /// Removes reminders for accounts that are no longer signed in while preserving other notifications.
     public func cancelAll(exceptAccountIDs accountIDs: Set<UUID>) async {
-        await withMutationLock {
-            let retainedPrefixes = accountIDs.map { MeetingReminder.accountIdentifierPrefix(accountID: $0) }
-            let identifiers = await notificationCenter.pendingRequestIdentifiers().filter { identifier in
-                identifier.hasPrefix(MeetingReminder.identifierNamespace)
-                    && !retainedPrefixes.contains(where: identifier.hasPrefix)
-            }
-            if !identifiers.isEmpty {
-                notificationCenter.removePendingNotificationRequests(withIdentifiers: identifiers)
-            }
-            for identifier in identifiers {
-                let accountPart = identifier.dropFirst(MeetingReminder.identifierNamespace.count).split(separator: "|")
-                    .first
-                if let accountPart, let accountID = UUID(uuidString: String(accountPart)) {
-                    recordAccountMutation(Date.now.timeIntervalSince1970, accountID: accountID)
-                }
-            }
-            let markerPrefix = Self.scheduledKeyPrefix
-            for key in defaults.dictionaryRepresentation().keys where key.hasPrefix(markerPrefix) {
-                let identifier = String(key.dropFirst(markerPrefix.count))
-                if !retainedPrefixes.contains(where: identifier.hasPrefix) {
-                    defaults.removeObject(forKey: key)
-                }
-            }
+        let retainedPrefixes = accountIDs.map { MeetingReminder.accountIdentifierPrefix(accountID: $0) }
+        let identifiers = await notificationCenter.pendingRequestIdentifiers().filter { identifier in
+            identifier.hasPrefix(MeetingReminder.identifierNamespace)
+                && !retainedPrefixes.contains(where: identifier.hasPrefix)
         }
-    }
 
-    private static let scheduledKeyPrefix = "wire.meeting-reminder.scheduled|"
-    private static let mutationKeyPrefix = "wire.meeting-reminder.mutation|"
-
-    private static func anyMutationKey(accountID: UUID) -> String {
-        mutationKeyPrefix + "any|" + accountID.uuidString
-    }
-
-    private static func accountMutationKey(accountID: UUID) -> String {
-        mutationKeyPrefix + "account|" + accountID.uuidString
-    }
-
-    private static func meetingMutationKey(accountID: UUID, meetingID: QualifiedID) -> String {
-        mutationKeyPrefix + MeetingReminder.identifierPrefix(accountID: accountID, meetingID: meetingID)
-    }
-
-    private func shouldApplyMeetingMutation(_ time: TimeInterval, reminder: MeetingReminder) -> Bool {
-        shouldApplyMeetingMutation(time, accountID: reminder.accountID, meetingID: reminder.meetingID)
-    }
-
-    private func shouldApplyMeetingMutation(_ time: TimeInterval, accountID: UUID, meetingID: QualifiedID) -> Bool {
-        time >= defaults.double(forKey: Self.accountMutationKey(accountID: accountID))
-            && time >= defaults.double(forKey: Self.meetingMutationKey(accountID: accountID, meetingID: meetingID))
-    }
-
-    private func recordMeetingMutation(_ time: TimeInterval, reminder: MeetingReminder) {
-        recordMeetingMutation(time, accountID: reminder.accountID, meetingID: reminder.meetingID)
-    }
-
-    private func recordMeetingMutation(_ time: TimeInterval, accountID: UUID, meetingID: QualifiedID) {
-        let meetingKey = Self.meetingMutationKey(accountID: accountID, meetingID: meetingID)
-        let anyKey = Self.anyMutationKey(accountID: accountID)
-        defaults.set(max(time, defaults.double(forKey: meetingKey)), forKey: meetingKey)
-        defaults.set(max(time, defaults.double(forKey: anyKey)), forKey: anyKey)
-    }
-
-    private func recordAccountMutation(_ time: TimeInterval, accountID: UUID) {
-        let accountKey = Self.accountMutationKey(accountID: accountID)
-        let anyKey = Self.anyMutationKey(accountID: accountID)
-        defaults.set(max(time, defaults.double(forKey: accountKey)), forKey: accountKey)
-        defaults.set(max(time, defaults.double(forKey: anyKey)), forKey: anyKey)
-    }
-
-    private static var sharedDefaults: UserDefaults {
-        guard let groupID = Bundle.main.object(forInfoDictionaryKey: "WireGroupId") as? String else {
-            return .standard
-        }
-        return UserDefaults(suiteName: "group.\(groupID)") ?? .standard
+        guard !identifiers.isEmpty else { return }
+        notificationCenter.removePendingNotificationRequests(withIdentifiers: identifiers)
     }
 
     private static func scheduledKey(for reminder: MeetingReminder) -> String {
-        scheduledKeyPrefix + reminder.identifier
-    }
-
-    private func removeScheduledMarkers(matching identifierPrefix: String) {
-        let prefix = Self.scheduledKeyPrefix + identifierPrefix
-        for key in defaults.dictionaryRepresentation().keys where key.hasPrefix(prefix) {
-            defaults.removeObject(forKey: key)
-        }
-    }
-
-    private func removeScheduledMarkers(for identifiers: [String]) {
-        for identifier in identifiers {
-            defaults.removeObject(forKey: Self.scheduledKeyPrefix + identifier)
-        }
-    }
-
-    private static func retainedIdentifiers(
-        desired: [MeetingReminder],
-        pending: [String],
-        replacing prefix: String
-    ) -> Set<String> {
-        let preserved = pending.filter { !$0.hasPrefix(prefix) }
-        let unrelatedCount = preserved.filter { !$0.hasPrefix(MeetingReminder.identifierNamespace) }.count
-        let budget = max(0, pendingRequestLimit - max(reservedRequestCount, unrelatedCount))
-        let candidates = Set(desired.map(\.identifier) + preserved.filter {
-            $0.hasPrefix(MeetingReminder.identifierNamespace)
-        })
-        return Set(candidates.sorted { first, second in
-            let firstStart = Int64(first.split(separator: "|").last ?? "") ?? .max
-            let secondStart = Int64(second.split(separator: "|").last ?? "") ?? .max
-            return firstStart == secondStart ? first < second : firstStart < secondStart
-        }.prefix(budget))
-    }
-
-    private func withMutationLock<Result>(_ operation: () async throws -> Result) async rethrows -> Result {
-        let descriptor = await Self.acquireMutationLock()
-        _ = defaults.synchronize()
-        defer {
-            _ = defaults.synchronize()
-            if descriptor >= 0 {
-                flock(descriptor, LOCK_UN)
-                close(descriptor)
-            }
-        }
-        return try await operation()
-    }
-
-    private static func acquireMutationLock() async -> Int32 {
-        let fileManager = FileManager.default
-        let directory: URL = if let groupID = Bundle.main.object(forInfoDictionaryKey: "WireGroupId") as? String,
-                                let sharedDirectory = fileManager
-                                .containerURL(forSecurityApplicationGroupIdentifier: "group.\(groupID)") {
-            sharedDirectory
-        } else {
-            fileManager.temporaryDirectory
-        }
-        let path = directory.appendingPathComponent("wire-meeting-reminders.lock").path
-        return await withCheckedContinuation { continuation in
-            DispatchQueue.global().async {
-                let descriptor = path.withCString { open($0, O_CREAT | O_RDWR, S_IRUSR | S_IWUSR) }
-                if descriptor >= 0, flock(descriptor, LOCK_EX) != 0 {
-                    close(descriptor)
-                    continuation.resume(returning: -1)
-                    return
-                }
-                continuation.resume(returning: descriptor)
-            }
-        }
+        "wire.meeting-reminder.scheduled|"
+            + MeetingReminder.identifierPrefix(accountID: reminder.accountID, meetingID: reminder.meetingID)
     }
 
 }

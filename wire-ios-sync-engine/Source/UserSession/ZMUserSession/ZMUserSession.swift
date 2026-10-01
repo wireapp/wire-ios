@@ -52,9 +52,7 @@ public final class ZMUserSession: NSObject {
 
     private(set) var isNetworkOnline = true
     private var syncStateCancellable: AnyCancellable?
-    private let meetingReminderContentRefreshLock = NSLock()
     private var meetingReminderContentRefreshTask: Task<Void, Never>?
-    private var isMeetingReminderContentRefreshStopped = false
 
     public private(set) var coreDataStack: CoreDataStack!
 
@@ -291,27 +289,14 @@ public final class ZMUserSession: NSObject {
                 NSNumber(value: newValue),
                 key: LocalNotificationDispatcher.ZMShouldHideNotificationContentKey
             )
-            guard let clientSessionComponent else { return }
-            meetingReminderContentRefreshLock.lock()
-            defer { meetingReminderContentRefreshLock.unlock() }
-            guard !isMeetingReminderContentRefreshStopped else { return }
-
-            let previousRefresh = meetingReminderContentRefreshTask
-            meetingReminderContentRefreshTask = Task { [weak clientSessionComponent] in
-                await previousRefresh?.value
-                guard !Task.isCancelled, let clientSessionComponent else { return }
-                await clientSessionComponent.refreshMeetingReminderContent(showMeetingTitle: !newValue)
+            if let clientSessionComponent {
+                let previousRefresh = meetingReminderContentRefreshTask
+                meetingReminderContentRefreshTask = Task {
+                    await previousRefresh?.value
+                    await clientSessionComponent.refreshMeetingReminderContent(showMeetingTitle: !newValue)
+                }
             }
         }
-    }
-
-    @discardableResult
-    func stopMeetingReminderContentRefreshes() -> Task<Void, Never>? {
-        meetingReminderContentRefreshLock.lock()
-        defer { meetingReminderContentRefreshLock.unlock() }
-        isMeetingReminderContentRefreshStopped = true
-        meetingReminderContentRefreshTask?.cancel()
-        return meetingReminderContentRefreshTask
     }
 
     /// - Note: this is safe if coredataStack and proteus are ready
@@ -819,7 +804,6 @@ public final class ZMUserSession: NSObject {
 
     public func tearDown() {
         guard !isTornDown else { return }
-        stopMeetingReminderContentRefreshes()
 
         Task {
             await clientSessionComponent?.workAgent.clearSchedulerQueue()

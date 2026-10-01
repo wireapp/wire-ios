@@ -71,24 +71,24 @@ final class MeetingEventReminderReconcilerTests: XCTestCase {
         XCTAssertTrue(spy.reconciledMeetings.isEmpty)
     }
 
-    func testConfirmedAbsenceCleanupFailureCancelsReminder() async {
+    func testDisabledMeetingsCancelsAccountWithoutFetching() async {
         let spy = ReminderReconciliationSpy()
-        spy.fetchError = DeleteMeetingUseCaseError.cleanupFailed
+        spy.isMeetingsEnabled = false
 
         await makeReconciler(spy: spy).reconcile(event: .update(.init(meetingID: meetingID)))
 
-        XCTAssertEqual(spy.cancelledIDs, [meetingID])
+        XCTAssertEqual(spy.cancelledAccountCount, 1)
+        XCTAssertTrue(spy.pulledIDs.isEmpty)
     }
 
-    func testDisabledMeetingsCancelsAccountWithoutFetching() async {
+    func testUnknownMeetingsFeaturePreservesPendingReminders() async {
         let spy = ReminderReconciliationSpy()
-        var reconciler = makeReconciler(spy: spy)
-        reconciler.isMeetingsEnabled = { false }
-        reconciler.cancelAccount = { spy.cancelledAccountCount += 1 }
+        spy.isMeetingsEnabled = nil
 
-        await reconciler.reconcile(event: .update(.init(meetingID: meetingID)))
+        await makeReconciler(spy: spy).reconcile(event: .delete(.init(meetingID: meetingID)))
 
-        XCTAssertEqual(spy.cancelledAccountCount, 1)
+        XCTAssertEqual(spy.cancelledAccountCount, 0)
+        XCTAssertTrue(spy.cancelledIDs.isEmpty)
         XCTAssertTrue(spy.pulledIDs.isEmpty)
     }
 
@@ -144,7 +144,9 @@ final class MeetingEventReminderReconcilerTests: XCTestCase {
                 spy.reconciledMeetings.append($0)
                 if let error = spy.reconcileError { throw error }
             },
-            cancelMeeting: { spy.cancelledIDs.append($0) }
+            cancelMeeting: { spy.cancelledIDs.append($0) },
+            isMeetingsEnabled: { spy.isMeetingsEnabled },
+            cancelAccount: { spy.cancelledAccountCount += 1 }
         )
     }
 
@@ -157,6 +159,7 @@ private final class ReminderReconciliationSpy {
     var pulledIDs: [WireNetwork.QualifiedID] = []
     var reconciledMeetings: [Meeting] = []
     var cancelledIDs: [WireNetwork.QualifiedID] = []
+    var isMeetingsEnabled: Bool? = true
     var cancelledAccountCount = 0
 }
 

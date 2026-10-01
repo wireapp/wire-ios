@@ -434,7 +434,7 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
                 await scheduler.cancelAll(accountID: accountID, meetingID: meetingID)
             },
             isMeetingsEnabled: {
-                guard let feature = try? await featureStore.fetchFeature(name: .meetings) else { return false }
+                guard let feature = try? await featureStore.fetchFeature(name: .meetings) else { return nil }
                 return await featureStore.isFeatureEnabled(feature: feature)
             },
             cancelAccount: {

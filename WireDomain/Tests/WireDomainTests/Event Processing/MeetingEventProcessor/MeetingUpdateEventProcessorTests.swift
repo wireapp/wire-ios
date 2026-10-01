@@ -87,20 +87,6 @@ final class MeetingUpdateEventProcessorTests: XCTestCase {
         XCTAssertTrue(cancelledIDs.isEmpty)
     }
 
-    func testProcessEvent_CancelsReminder_WhenRemoteAbsenceCleanupFails() async {
-        repository.pullMeetingIdQualifiedIDMeetingThrowableError = DeleteMeetingUseCaseError.cleanupFailed
-
-        do {
-            try await sut.processEvent(Scaffolding.event)
-            XCTFail("expected local cleanup failure")
-        } catch DeleteMeetingUseCaseError.cleanupFailed {
-            let cancelledIDs = await reminderSpy.cancelledMeetingIDs
-            XCTAssertEqual(cancelledIDs, [Scaffolding.meetingID])
-        } catch {
-            XCTFail("unexpected error: \(error)")
-        }
-    }
-
     func testProcessEvent_It_Pulls_Unknown_Conversation_And_Stores_Meeting_Again() async throws {
         // Mock
 

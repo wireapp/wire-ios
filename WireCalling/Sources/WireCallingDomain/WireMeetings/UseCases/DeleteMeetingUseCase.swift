@@ -66,7 +66,7 @@ package struct DeleteMeetingUseCase: DeleteMeetingUseCaseProtocol {
 
 }
 
-public enum DeleteMeetingUseCaseError: Error, Equatable {
+package enum DeleteMeetingUseCaseError: Error, Equatable {
 
     case notAllowed
 

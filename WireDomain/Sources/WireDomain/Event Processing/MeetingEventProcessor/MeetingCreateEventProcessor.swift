@@ -30,16 +30,9 @@ struct MeetingCreateEventProcessor: MeetingCreateEventProcessorProtocol {
     func processEvent(_ event: MeetingCreateEvent) async throws {
         // A nil meeting no longer exists on the backend; its local copy
         // was already deleted, so there is nothing left to link.
-        let meeting: Meeting
-        do {
-            guard let pulledMeeting = try await repository.pullMeeting(id: event.meetingID) else {
-                await cancelReminder(event.meetingID)
-                return
-            }
-            meeting = pulledMeeting
-        } catch DeleteMeetingUseCaseError.cleanupFailed {
+        guard let meeting = try await repository.pullMeeting(id: event.meetingID) else {
             await cancelReminder(event.meetingID)
-            throw DeleteMeetingUseCaseError.cleanupFailed
+            return
         }
 
         do {

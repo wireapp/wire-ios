@@ -1224,10 +1224,7 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     private func cancelMeetingReminders(for accountID: UUID) {
         let token = MeetingReminderCancellationJournal(defaults: sharedUserDefaults).record(accountID: accountID)
-        let refreshTask = backgroundUserSessions[accountID]?.stopMeetingReminderContentRefreshes()
         Task { [weak self] in
-            // A privacy refresh must finish before the final account cancellation.
-            await refreshTask?.value
             await AccountMeetingReminderCanceller().cancelAll(accountID: accountID)
             if let self {
                 MeetingReminderCancellationJournal(defaults: sharedUserDefaults)

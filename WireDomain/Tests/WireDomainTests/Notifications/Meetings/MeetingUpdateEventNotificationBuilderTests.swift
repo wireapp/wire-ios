@@ -152,7 +152,9 @@ final class MeetingUpdateEventNotificationBuilderTests: XCTestCase {
             reminderReconciler: MeetingEventReminderReconciler(
                 pullMeeting: { try await api.getMeeting(id: $0).toDomainMeeting() },
                 reconcileMeeting: { _ in },
-                cancelMeeting: { _ in }
+                cancelMeeting: { _ in },
+                isMeetingsEnabled: { true },
+                cancelAccount: {}
             )
         )
 
