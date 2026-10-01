@@ -161,6 +161,11 @@ public final class AssetV3DownloadRequestStrategy: AbstractRequestStrategy, ZMDo
             WireLogger.assets.warn(
                 "[WPB-28386] handleResponse: transient error \(response.httpStatus) for nonce=\(assetClientMessage.nonce?.uuidString ?? "nil"), isDownloading reset to false, will be retried"
             )
+            // Flush immediately: otherwise this change rides along with whatever the sync
+            // engine's next scheduled save happens to be, which during a large batch of
+            // other work (e.g. rejoining many MLS conversations after a backup restore)
+            // can leave the UI showing a stale "downloading" state for a long time.
+            managedObjectContext.saveOrRollback()
             return
         }
 
@@ -185,6 +190,11 @@ public final class AssetV3DownloadRequestStrategy: AbstractRequestStrategy, ZMDo
                 uiContext: managedObjectContext.zm_userInterface!
             )
         }
+
+        // Same reasoning as above: save right away so the sync -> UI context merge (and the
+        // resulting download-finished notification to the conversation cell / MessagePresenter)
+        // isn't left waiting behind whatever else the sync engine happens to save next.
+        managedObjectContext.saveOrRollback()
     }
 
     private func storeAndDecrypt(data: Data, for message: ZMAssetClientMessage) -> Bool {
