@@ -407,11 +407,13 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
             localStore: MeetingLocalStore(context: coreDataStack.syncContext)
         )
         let scheduler = MeetingReminderScheduler(defaults: dependency.sharedUserDefaults)
+        let notificationPrivacyStore = conversationLocalStore
 
         return MeetingEventReminderReconciler(
             pullMeeting: { try await repository.pullMeeting(id: $0) },
             reconcileMeeting: { meeting in
                 let now = Date.now
+                let shouldHideNotification = await notificationPrivacyStore.shouldHideNotification()
                 let occurrenceStarts = MeetingReminderOccurrenceCalculator().starts(for: meeting, after: now, limit: 5)
                 try await scheduler.reconcile(
                     accountID: accountID,
@@ -423,7 +425,7 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
                         meeting: meeting,
                         occurrenceStart: occurrenceStart,
                         accountID: accountID,
-                        showMeetingTitle: true
+                        showMeetingTitle: !shouldHideNotification
                     )
                 }
             },
