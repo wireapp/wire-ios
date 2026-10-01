@@ -158,7 +158,8 @@ jobs:
                 continue-on-error: true
                 uses: ./.github/actions/notify-wire
                 env:
-                    SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_CODE_REVIEW }}
+                    TEST_WIRE_WEBHOOK_URL: ${{ secrets.TEST_WIRE_WEBHOOK_URL }}
+                    TEST_WIRE_ACTIONS_TOKEN: ${{ secrets.TEST_WIRE_ACTIONS_TOKEN }}
                 with:
                     notify: custom
                     text: ${{ steps.build-summary.outputs.summary }}
