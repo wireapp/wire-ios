@@ -634,7 +634,10 @@ public final class ClientSessionComponent {
     )
 
     private lazy var featureConfigUpdateEventProcessor = FeatureConfigUpdateEventProcessor(
-        repository: featureConfigRepository
+        repository: featureConfigRepository,
+        onMeetingsDisabled: { [selfUserID] in
+            await MeetingReminderScheduler().cancelAll(accountID: selfUserID)
+        }
     )
 
     private lazy var federationConnectionRemovedEventProcessor = FederationConnectionRemovedEventProcessor(
@@ -733,11 +736,21 @@ public final class ClientSessionComponent {
         localStore: MeetingLocalStore(context: syncContext),
         onMeetingCreated: reconcileMeetingReminder,
         onMeetingUpdated: reconcileMeetingReminder,
-        onMeetingsRefreshed: { [selfUserID, sharedUserDefaults, conversationLocalStore] meetings in
+        onMeetingsRefreshed: { [
+            selfUserID,
+            sharedUserDefaults,
+            conversationLocalStore,
+            featureConfigRepository
+        ] meetings in
+            let scheduler = MeetingReminderScheduler(defaults: sharedUserDefaults)
+            guard await featureConfigRepository.isFeatureEnabled(.meetings) else {
+                await scheduler.cancelAll(accountID: selfUserID)
+                return
+            }
             let now = Date.now
             let shouldHideNotification = await conversationLocalStore.shouldHideNotification()
             do {
-                try await MeetingReminderScheduler(defaults: sharedUserDefaults).reconcileAll(
+                try await scheduler.reconcileAll(
                     accountID: selfUserID,
                     meetings: meetings,
                     occurrenceLimit: 5,
@@ -796,11 +809,16 @@ public final class ClientSessionComponent {
     )
 
     private lazy var reconcileMeetingReminder: @Sendable (Meeting) async throws -> Void =
-        { [selfUserID, sharedUserDefaults, conversationLocalStore] meeting in
+        { [selfUserID, sharedUserDefaults, conversationLocalStore, featureConfigRepository] meeting in
+            let scheduler = MeetingReminderScheduler(defaults: sharedUserDefaults)
+            guard await featureConfigRepository.isFeatureEnabled(.meetings) else {
+                await scheduler.cancelAll(accountID: selfUserID)
+                return
+            }
             let now = Date.now
             let shouldHideNotification = await conversationLocalStore.shouldHideNotification()
             let occurrenceStarts = MeetingReminderOccurrenceCalculator().starts(for: meeting, after: now, limit: 5)
-            try await MeetingReminderScheduler(defaults: sharedUserDefaults).reconcile(
+            try await scheduler.reconcile(
                 accountID: selfUserID,
                 meetingID: meeting.id,
                 occurrenceStarts: occurrenceStarts,
@@ -818,6 +836,10 @@ public final class ClientSessionComponent {
     /// Updates pending reminders after this account's notification-content setting changes.
     public func refreshMeetingReminderContent(showMeetingTitle: Bool) async {
         let scheduler = MeetingReminderScheduler(defaults: sharedUserDefaults)
+        guard await featureConfigRepository.isFeatureEnabled(.meetings) else {
+            await scheduler.cancelAll(accountID: selfUserID)
+            return
+        }
 
         if !showMeetingTitle {
             await scheduler.cancelAll(accountID: selfUserID)

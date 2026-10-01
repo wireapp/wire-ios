@@ -71,6 +71,27 @@ final class MeetingEventReminderReconcilerTests: XCTestCase {
         XCTAssertTrue(spy.reconciledMeetings.isEmpty)
     }
 
+    func testConfirmedAbsenceCleanupFailureCancelsReminder() async {
+        let spy = ReminderReconciliationSpy()
+        spy.fetchError = DeleteMeetingUseCaseError.cleanupFailed
+
+        await makeReconciler(spy: spy).reconcile(event: .update(.init(meetingID: meetingID)))
+
+        XCTAssertEqual(spy.cancelledIDs, [meetingID])
+    }
+
+    func testDisabledMeetingsCancelsAccountWithoutFetching() async {
+        let spy = ReminderReconciliationSpy()
+        var reconciler = makeReconciler(spy: spy)
+        reconciler.isMeetingsEnabled = { false }
+        reconciler.cancelAccount = { spy.cancelledAccountCount += 1 }
+
+        await reconciler.reconcile(event: .update(.init(meetingID: meetingID)))
+
+        XCTAssertEqual(spy.cancelledAccountCount, 1)
+        XCTAssertTrue(spy.pulledIDs.isEmpty)
+    }
+
     func testSchedulingFailureStillReturnsFetchedMeetingForPushContent() async {
         let spy = ReminderReconciliationSpy()
         let meeting = makeMeeting()
@@ -136,6 +157,7 @@ private final class ReminderReconciliationSpy {
     var pulledIDs: [WireNetwork.QualifiedID] = []
     var reconciledMeetings: [Meeting] = []
     var cancelledIDs: [WireNetwork.QualifiedID] = []
+    var cancelledAccountCount = 0
 }
 
 private enum ReminderFetchError: Error {

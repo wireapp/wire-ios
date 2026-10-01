@@ -29,9 +29,11 @@
 ## Review readiness
 
 - [x] Address the confirmed-absence create and update findings from the latest Copilot review (`f74140a770`).
-- [ ] Assess and address concurrent reminder reconciliation and cancellation across the app and NSE, so an older operation cannot restore stale requests.
-- [ ] Bound the total number of pending reminder requests across meetings and accounts, leaving capacity for other local notifications.
-- [ ] Respect the account's Meetings feature flag in app and NSE scheduling, and cancel pending reminders when that feature is disabled.
+- [x] Serialize reminder mutations across the app and NSE with an app-group file lock, and reject reconciliations superseded by a newer account or meeting mutation.
+- [x] Bound pending reminders across meetings and accounts to the earliest 48 requests, reserving at least 16 slots for other local notifications.
+- [x] Respect the account's Meetings feature flag in app and NSE scheduling, and cancel pending reminders when that feature is disabled.
+- [x] Cancel reminders when the backend confirms meeting absence even if local cleanup fails; preserve transient fetch failures.
+- [x] Track successful scheduling per occurrence so a fired calendar reminder is not sent again during a short-notice refresh.
 - [ ] Review the final PR diff and current CI results after the remaining code changes.
 - [x] Use a conventional PR title referencing `WPB-28998`: `feat: add local meeting reminders - WPB-28998`.
 
@@ -81,6 +83,7 @@
 - [ ] Test organizer and invitee flows, meetings created shortly before start, app termination, and a device that stays offline across a meeting change. With two accounts signed in, verify that logging out or removing one account cancels only its pending reminders, including when it is the background account; the other account's reminders must remain scheduled. Check the asynchronous cancellation window when the app closes immediately after logout.
 - [ ] Test the local scheduling flow on a device or simulator; test the NSE path on a build that can receive Wire pushes.
 - [x] Run SwiftFormat and SwiftLint on changed Swift files and targeted tests: 23 WireCalling and 3 WireDomain tests passed. The earlier reminder-tap run passed 20 WireSyncEngine tests; the new foreground test run was stopped on request after an Xcode cache failure. Record that and the push-testing limitation in the PR.
+- [x] Compile the new review fixes with build-only `WireCallingAll` and `WireDomain` Xcode builds; add regression tests without running them, per the request to stop tests.
 
 ## Signed-build device checklist
 

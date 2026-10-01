@@ -408,6 +408,7 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
         )
         let scheduler = MeetingReminderScheduler(defaults: dependency.sharedUserDefaults)
         let notificationPrivacyStore = conversationLocalStore
+        let featureStore = FeatureConfigLocalStore(context: coreDataStack.syncContext)
 
         return MeetingEventReminderReconciler(
             pullMeeting: { try await repository.pullMeeting(id: $0) },
@@ -431,6 +432,13 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
             },
             cancelMeeting: { meetingID in
                 await scheduler.cancelAll(accountID: accountID, meetingID: meetingID)
+            },
+            isMeetingsEnabled: {
+                guard let feature = try? await featureStore.fetchFeature(name: .meetings) else { return false }
+                return await featureStore.isFeatureEnabled(feature: feature)
+            },
+            cancelAccount: {
+                await scheduler.cancelAll(accountID: accountID)
             }
         )
     }

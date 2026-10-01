@@ -101,6 +101,58 @@ struct MeetingReminderSchedulerTests {
         #expect(!trigger.repeats)
     }
 
+    @Test("a calendar reminder that already fired is not sent again during a short-notice refresh")
+    func scheduledReminderDoesNotBecomeImmediateDuplicate() async throws {
+        let center = NotificationCenterSpy()
+        center.status = .authorized
+        let suite = UUID().uuidString
+        let defaults = try #require(UserDefaults(suiteName: suite))
+        defer { defaults.removePersistentDomain(forName: suite) }
+        let scheduler = MeetingReminderScheduler(notificationCenter: center, defaults: defaults)
+
+        try await scheduler.reconcile(
+            accountID: reminder.accountID,
+            meetingID: reminder.meetingID,
+            occurrenceStarts: [reminder.occurrenceStart],
+            now: reminder.fireDate.addingTimeInterval(-1)
+        ) { _ in UNMutableNotificationContent() }
+        try await scheduler.reconcile(
+            accountID: reminder.accountID,
+            meetingID: reminder.meetingID,
+            occurrenceStarts: [reminder.occurrenceStart],
+            now: reminder.fireDate.addingTimeInterval(1)
+        ) { _ in UNMutableNotificationContent() }
+
+        #expect(center.addedRequests.count == 1)
+        #expect(center.addedRequests.first?.trigger is UNCalendarNotificationTrigger)
+    }
+
+    @Test("scheduling a later occurrence does not replace an earlier occurrence's deduplication marker")
+    func scheduledMarkersArePerOccurrence() async throws {
+        let center = NotificationCenterSpy()
+        center.status = .authorized
+        let suite = UUID().uuidString
+        let defaults = try #require(UserDefaults(suiteName: suite))
+        defer { defaults.removePersistentDomain(forName: suite) }
+        let laterStart = reminder.occurrenceStart.addingTimeInterval(24 * 3600)
+        let scheduler = MeetingReminderScheduler(notificationCenter: center, defaults: defaults)
+
+        try await scheduler.reconcile(
+            accountID: reminder.accountID,
+            meetingID: reminder.meetingID,
+            occurrenceStarts: [reminder.occurrenceStart, laterStart],
+            now: reminder.fireDate.addingTimeInterval(-1)
+        ) { _ in UNMutableNotificationContent() }
+        try await scheduler.reconcile(
+            accountID: reminder.accountID,
+            meetingID: reminder.meetingID,
+            occurrenceStarts: [reminder.occurrenceStart, laterStart],
+            now: reminder.fireDate.addingTimeInterval(1)
+        ) { _ in UNMutableNotificationContent() }
+
+        #expect(center.addedRequests.filter { $0.identifier == reminder.identifier }.count == 1)
+    }
+
     @Test("does not schedule without notification authorization")
     func skipsUnauthorizedReminder() async throws {
         let center = NotificationCenterSpy()
@@ -118,10 +170,10 @@ struct MeetingReminderSchedulerTests {
     }
 
     @Test("cancels only the specified occurrence")
-    func cancelsReminder() {
+    func cancelsReminder() async {
         let center = NotificationCenterSpy()
 
-        MeetingReminderScheduler(notificationCenter: center).cancel(reminder)
+        await MeetingReminderScheduler(notificationCenter: center).cancel(reminder)
 
         #expect(center.removedIdentifiers == [[reminder.identifier]])
     }
@@ -265,6 +317,27 @@ struct MeetingReminderSchedulerTests {
             meetingID: reminder.meetingID,
             occurrenceStart: updatedStart
         ).identifier])
+    }
+
+    @Test("full reconciliation keeps the earliest reminders within the shared pending-request budget")
+    func limitsPendingRemindersAcrossMeetings() async throws {
+        let center = NotificationCenterSpy()
+        center.status = .authorized
+        let starts = (0 ..< 60).map { reminder.occurrenceStart.addingTimeInterval(Double($0) * 3600) }
+        let meetings = starts.map { makeMeeting(id: QualifiedID(id: UUID(), domain: "example.com"), start: $0) }
+        let expected = Set(meetings.prefix(48).map {
+            MeetingReminder(accountID: reminder.accountID, meetingID: $0.id, occurrenceStart: $0.start).identifier
+        })
+
+        try await MeetingReminderScheduler(notificationCenter: center).reconcileAll(
+            accountID: reminder.accountID,
+            meetings: meetings,
+            occurrenceLimit: 5,
+            now: reminder.fireDate.addingTimeInterval(-1)
+        ) { _, _ in UNMutableNotificationContent() }
+
+        #expect(center.addedRequests.count == 48)
+        #expect(Set(center.addedRequests.map(\.identifier)) == expected)
     }
 
     @Test("authoritative empty list removes only this account's meeting reminders")
