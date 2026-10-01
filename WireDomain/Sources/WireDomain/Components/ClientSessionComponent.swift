@@ -733,8 +733,9 @@ public final class ClientSessionComponent {
         localStore: MeetingLocalStore(context: syncContext),
         onMeetingCreated: reconcileMeetingReminder,
         onMeetingUpdated: reconcileMeetingReminder,
-        onMeetingsRefreshed: { [selfUserID, sharedUserDefaults] meetings in
+        onMeetingsRefreshed: { [selfUserID, sharedUserDefaults, conversationLocalStore] meetings in
             let now = Date.now
+            let shouldHideNotification = await conversationLocalStore.shouldHideNotification()
             do {
                 try await MeetingReminderScheduler(defaults: sharedUserDefaults).reconcileAll(
                     accountID: selfUserID,
@@ -746,7 +747,7 @@ public final class ClientSessionComponent {
                         meeting: meeting,
                         occurrenceStart: occurrenceStart,
                         accountID: selfUserID,
-                        showMeetingTitle: true
+                        showMeetingTitle: !shouldHideNotification
                     )
                 }
             } catch {
@@ -795,8 +796,9 @@ public final class ClientSessionComponent {
     )
 
     private lazy var reconcileMeetingReminder: @Sendable (Meeting) async throws -> Void =
-        { [selfUserID, sharedUserDefaults] meeting in
+        { [selfUserID, sharedUserDefaults, conversationLocalStore] meeting in
             let now = Date.now
+            let shouldHideNotification = await conversationLocalStore.shouldHideNotification()
             let occurrenceStarts = MeetingReminderOccurrenceCalculator().starts(for: meeting, after: now, limit: 5)
             try await MeetingReminderScheduler(defaults: sharedUserDefaults).reconcile(
                 accountID: selfUserID,
@@ -808,10 +810,37 @@ public final class ClientSessionComponent {
                     meeting: meeting,
                     occurrenceStart: occurrenceStart,
                     accountID: selfUserID,
-                    showMeetingTitle: true
+                    showMeetingTitle: !shouldHideNotification
                 )
             }
         }
+
+    /// Updates pending reminders after this account's notification-content setting changes.
+    public func refreshMeetingReminderContent(showMeetingTitle: Bool) async {
+        let scheduler = MeetingReminderScheduler(defaults: sharedUserDefaults)
+
+        if !showMeetingTitle {
+            await scheduler.cancelAll(accountID: selfUserID)
+        }
+
+        let meetings = await MeetingLocalStore(context: syncContext).storedMeetings()
+        do {
+            try await scheduler.reconcileAll(
+                accountID: selfUserID,
+                meetings: meetings,
+                occurrenceLimit: 5
+            ) { meeting, occurrenceStart in
+                MeetingReminderNotificationContentBuilder().build(
+                    meeting: meeting,
+                    occurrenceStart: occurrenceStart,
+                    accountID: selfUserID,
+                    showMeetingTitle: showMeetingTitle
+                )
+            }
+        } catch {
+            WireLogger.meetings.error("Failed to refresh meeting reminder content: \(error)")
+        }
+    }
 
     private lazy var meetingCreateEventProcessor = MeetingCreateEventProcessor(
         repository: meetingRepository,

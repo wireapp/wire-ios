@@ -288,6 +288,11 @@ public final class ZMUserSession: NSObject {
                 NSNumber(value: newValue),
                 key: LocalNotificationDispatcher.ZMShouldHideNotificationContentKey
             )
+            if let clientSessionComponent {
+                Task {
+                    await clientSessionComponent.refreshMeetingReminderContent(showMeetingTitle: !newValue)
+                }
+            }
         }
     }
 
