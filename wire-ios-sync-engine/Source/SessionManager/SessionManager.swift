@@ -657,13 +657,17 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     @MainActor
     public func start(connectionOptions: UIScene.ConnectionOptions) async {
+        // A logout may have been interrupted before its asynchronous reminder cancellation finished.
+        // Sweep stale reminders before loading any account session.
         let cancellationJournal = MeetingReminderCancellationJournal(defaults: sharedUserDefaults)
         let pendingCancellations = cancellationJournal.pending()
         let authenticatedAccountIDs = Set(accountManager.accounts.filter { environment.isAuthenticated($0) }
             .map(\.userIdentifier))
+        // An account can still appear authenticated while its cancellation is pending.
         await AccountMeetingReminderCanceller().cancelAll(
             exceptAccountIDs: authenticatedAccountIDs.subtracting(pendingCancellations.keys)
         )
+        // Token matching leaves a newer cancellation request intact if logout ran during this sweep.
         for (accountID, token) in pendingCancellations {
             cancellationJournal.clear(accountID: accountID, token: token)
         }
@@ -1222,6 +1226,8 @@ public final class SessionManager: NSObject, SessionManagerType {
         cancelMeetingReminders(for: account.userIdentifier)
     }
 
+    /// Starts account-scoped reminder cancellation and records the intent before launching the task.
+    /// The startup sweep retries it if the app exits before cancellation finishes.
     private func cancelMeetingReminders(for accountID: UUID) {
         let token = MeetingReminderCancellationJournal(defaults: sharedUserDefaults).record(accountID: accountID)
         Task { [weak self] in
