@@ -123,6 +123,11 @@ final class MarkdownBarView: UIView {
             button.layer.borderWidth = 1
             button.clipsToBounds = true
 
+            // These buttons sit edge-to-edge with no spacing, so the default
+            // hit-area padding would make adjacent buttons' tap targets
+            // overlap and steal taps meant for their neighbor.
+            button.hitAreaPadding = .zero
+
             button.setIconColor(enabledStateIconColor, for: .normal)
             button.setBorderColor(enabledStateBorderColor, for: .normal)
             button.setBackgroundImageColor(enabledStateBackgroundColor, for: .normal)
