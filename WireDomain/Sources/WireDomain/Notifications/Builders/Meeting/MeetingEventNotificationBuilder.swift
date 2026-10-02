@@ -66,6 +66,7 @@ struct MeetingEventNotificationBuilder: MeetingEventNotificationBuilderProtocol 
 
 }
 
+/// Updates reminders from meeting push events independently of whether they produce visible notification content.
 struct MeetingEventReminderReconciler {
 
     let pullMeeting: (WireNetwork.QualifiedID) async throws -> Meeting?

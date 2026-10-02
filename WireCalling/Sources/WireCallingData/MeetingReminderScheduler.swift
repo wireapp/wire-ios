@@ -20,6 +20,7 @@ public import Foundation
 public import UserNotifications
 public import WireCallingDomain
 
+/// Isolates notification-center access so reminder scheduling can be exercised with a test center.
 protocol MeetingReminderNotificationCenter {
     func authorizationStatus() async -> UNAuthorizationStatus
     func pendingRequestIdentifiers() async -> [String]

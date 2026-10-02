@@ -21,6 +21,7 @@ import UserNotifications
 import WireCallingDomain
 import WireNetwork
 
+/// Handles self-removal in the notification extension, including meetings absent from its local store.
 struct MeetingReminderSelfRemovalHandler {
 
     let accountID: UUID
@@ -45,6 +46,7 @@ struct MeetingReminderSelfRemovalHandler {
 
 }
 
+/// Finds an account's reminders by conversation metadata when the meeting ID is unavailable locally.
 struct MeetingReminderPendingRequestCanceller {
 
     let notificationCenter: UNUserNotificationCenter

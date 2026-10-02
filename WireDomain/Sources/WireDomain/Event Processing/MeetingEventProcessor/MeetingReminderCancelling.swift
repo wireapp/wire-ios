@@ -20,6 +20,7 @@ import Foundation
 import WireCallingData
 import WireCallingDomain
 
+/// Lets event processors cancel reminders without depending on the notification-center implementation.
 protocol MeetingReminderCancelling {
     func cancelAll(accountID: UUID, meetingID: WireCallingDomain.QualifiedID) async
 }
