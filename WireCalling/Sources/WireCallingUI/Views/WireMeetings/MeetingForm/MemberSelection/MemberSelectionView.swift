@@ -32,6 +32,16 @@ struct MemberSelectionView: View {
         NavigationStack {
             List {
                 Section {
+                    NavigationLink {
+                        GroupSelectionView(viewModel: viewModel)
+                    } label: {
+                        Label(Strings.Groups.importButton, systemImage: "person.3")
+                    }
+                    .accessibilityLabel(Strings.Groups.importButton)
+                    .accessibilityIdentifier("meetingImportFromGroup")
+                }
+
+                Section {
                     if viewModel.isSelectedExpanded {
                         ForEach(viewModel.selectedMembers, id: \.qualifiedID) { row(for: $0) }
                     }
@@ -191,7 +201,7 @@ struct MemberSelectionView: View {
 
 // MARK: - Preview
 
-#Preview("success") {
+#Preview("Meeting group import") {
     MemberSelectionView(viewModel: MemberSelectionViewModel(source: MockSearchMembersUseCase()))
 }
 
@@ -210,6 +220,11 @@ struct MemberSelectionView: View {
 private struct MockSearchMembersUseCase: SearchMembersUseCaseProtocol {
 
     let result: Result<[MeetingMember], any Error>
+    private let groups = [
+        MeetingGroup(id: QualifiedID(id: UUID(), domain: ""), name: "Design team", isChannel: false),
+        MeetingGroup(id: QualifiedID(id: UUID(), domain: ""), name: "All hands", isChannel: true)
+    ]
+    private let guest = MeetingMember(name: "Group guest", handle: "guest")
 
     init(members: [MeetingMember] = .mock) {
         self.result = .success(members)
@@ -227,6 +242,15 @@ private struct MockSearchMembersUseCase: SearchMembersUseCaseProtocol {
             guard !query.isEmpty else { return members }
             return members.filter { $0.name.localizedCaseInsensitiveContains(query) }
         }
+    }
+
+    func searchGroups(query: String) async throws -> [MeetingGroup] {
+        _ = try result.get()
+        return groups.filter { query.isEmpty || $0.name.localizedStandardContains(query) }
+    }
+
+    func members(in groupID: QualifiedID) async throws -> [MeetingMember] {
+        Array(try result.get().prefix(3)) + [guest]
     }
 }
 
