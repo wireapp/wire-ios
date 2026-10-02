@@ -168,6 +168,46 @@ struct MeetingRepositoryTests {
         #expect(await changes.next() != nil)
     }
 
+    @Test("successful full-list refreshes reconcile the authoritative meeting IDs")
+    func fullListRefreshesReconcileReminders() async throws {
+        let snapshots = MeetingSnapshots()
+        let sut = MeetingRepository(
+            meetingsAPI: meetingsAPI,
+            localStore: localStore,
+            onMeetingsRefreshed: { [snapshots] meetings in
+                await snapshots.record(meetings)
+            }
+        )
+        meetingsAPI.listMeetings_MockValue = [Scaffolding.meetingResponse]
+
+        try await sut.pullMeetings()
+        meetingsAPI.listMeetings_MockValue = []
+        localStore.storedMeetingsMeetingReturnValue = []
+        _ = try await sut.fetchMeetings(in: Date.distantPast ..< Date.distantFuture, offset: 0, limit: 10)
+
+        #expect(await snapshots.meetingIDs == [[Scaffolding.meetingID], []])
+    }
+
+    @Test("failed or unsupported list requests do not reconcile reminders")
+    func unsuccessfulFullListRefreshDoesNotReconcileReminders() async throws {
+        let snapshots = MeetingSnapshots()
+        let sut = MeetingRepository(
+            meetingsAPI: meetingsAPI,
+            localStore: localStore,
+            onMeetingsRefreshed: { [snapshots] meetings in
+                await snapshots.record(meetings)
+            }
+        )
+        meetingsAPI.listMeetings_MockError = MeetingsAPIError.unsupportedEndpointForAPIVersion
+        try await sut.pullMeetings()
+
+        meetingsAPI.listMeetings_MockError = MeetingsAPIError.accessDenied
+        localStore.storedMeetingsMeetingReturnValue = [Scaffolding.storedMeeting]
+        _ = try await sut.fetchMeetings(in: Date.distantPast ..< Date.distantFuture, offset: 0, limit: 10)
+
+        #expect(await snapshots.meetingIDs.isEmpty)
+    }
+
     // MARK: - deleteLocalMeeting
 
     @Test
@@ -375,13 +415,17 @@ struct MeetingRepositoryTests {
     @Test
     func fetchMeetingsRetriesMissingConversationUntilResolved() async throws {
         let pulls = ConversationPulls()
-        let sut = MeetingRepository(meetingsAPI: meetingsAPI, localStore: localStore) { [localStore] id in
-            if await pulls.record(id) == 1 {
-                throw URLError(.networkConnectionLost)
+        let sut = MeetingRepository(
+            meetingsAPI: meetingsAPI,
+            localStore: localStore,
+            pullConversation: { [localStore] id in
+                if await pulls.record(id) == 1 {
+                    throw URLError(.networkConnectionLost)
+                }
+                localStore.storedMeetingIdQualifiedIDMeetingReturnValue = Scaffolding.storedMeeting
+                localStore.storedMeetingsMeetingReturnValue = [Scaffolding.storedMeeting]
             }
-            localStore.storedMeetingIdQualifiedIDMeetingReturnValue = Scaffolding.storedMeeting
-            localStore.storedMeetingsMeetingReturnValue = [Scaffolding.storedMeeting]
-        }
+        )
         meetingsAPI.listMeetings_MockValue = [Scaffolding.meetingResponse]
         localStore.storedMeetingsMeetingReturnValue = [Meeting(
             id: Scaffolding.meetingID,
@@ -514,6 +558,126 @@ struct MeetingRepositoryTests {
         #expect(meeting.conversation == nil)
     }
 
+    @Test("createMeeting reconciles reminders after storing the meeting", arguments: [false, true])
+    func createMeetingReconcilesReminder(recurring: Bool) async throws {
+        let response = Scaffolding.meetingResponse
+        meetingsAPI.createMeetingParameters_MockValue = MeetingResponse(
+            id: response.id,
+            title: response.title,
+            creatorID: response.creatorID,
+            startTime: response.startTime,
+            endTime: response.endTime,
+            conversationID: response.conversationID,
+            invitedEmails: response.invitedEmails,
+            isTrial: response.isTrial,
+            createdAt: response.createdAt,
+            updatedAt: response.updatedAt,
+            recurrence: recurring ? WireNetwork.MeetingRecurrence(frequency: .daily, interval: 1, until: nil) : nil
+        )
+        let createdMeetings = CreatedMeetings()
+        let sut = MeetingRepository(
+            meetingsAPI: meetingsAPI,
+            localStore: localStore,
+            onMeetingCreated: { [createdMeetings] meeting in
+                await createdMeetings.record(meeting)
+            }
+        )
+
+        _ = try await sut.createMeeting(
+            title: Scaffolding.meetingResponse.title,
+            startTime: Scaffolding.meetingResponse.startTime,
+            endTime: Scaffolding.meetingResponse.endTime,
+            recurrence: recurring ? WireCallingDomain.MeetingRecurrence(frequency: .daily, interval: 1) : nil
+        )
+
+        let recordedIDs = await createdMeetings.ids
+        #expect(recordedIDs == [Scaffolding.meetingID])
+        #expect(localStore.storeMeetingMeetingMeetingVoidCallsCount == 1)
+    }
+
+    @Test("createMeeting succeeds when reminder reconciliation fails")
+    func createMeetingDoesNotFailForReminderError() async throws {
+        meetingsAPI.createMeetingParameters_MockValue = Scaffolding.meetingResponse
+        let sut = MeetingRepository(
+            meetingsAPI: meetingsAPI,
+            localStore: localStore,
+            onMeetingCreated: { _ in throw ReminderError.schedulingFailed }
+        )
+
+        let meeting = try await sut.createMeeting(
+            title: Scaffolding.meetingResponse.title,
+            startTime: Scaffolding.meetingResponse.startTime,
+            endTime: Scaffolding.meetingResponse.endTime,
+            recurrence: nil
+        )
+
+        #expect(meeting.id == Scaffolding.meetingID)
+    }
+
+    // MARK: - updateMeeting
+
+    @Test("updateMeeting reconciles the server's new start and recurrence", arguments: [false, true])
+    func updateMeetingReconcilesReminder(recurring: Bool) async throws {
+        let updatedStart = Scaffolding.meetingResponse.startTime.addingTimeInterval(3600)
+        let recurrence = recurring
+            ? WireNetwork.MeetingRecurrence(frequency: .daily, interval: 1, until: nil)
+            : nil
+        meetingsAPI.updateMeetingIdParameters_MockValue = MeetingResponse(
+            id: Scaffolding.meetingID,
+            title: Scaffolding.meetingResponse.title,
+            creatorID: Scaffolding.meetingResponse.creatorID,
+            startTime: updatedStart,
+            endTime: updatedStart.addingTimeInterval(3600),
+            conversationID: Scaffolding.meetingResponse.conversationID,
+            invitedEmails: [],
+            isTrial: false,
+            createdAt: Scaffolding.meetingResponse.createdAt,
+            updatedAt: Scaffolding.meetingResponse.updatedAt,
+            recurrence: recurrence
+        )
+        let updatedMeetings = UpdatedMeetings()
+        let sut = MeetingRepository(
+            meetingsAPI: meetingsAPI,
+            localStore: localStore,
+            onMeetingUpdated: { [updatedMeetings] meeting in
+                await updatedMeetings.record(meeting)
+            }
+        )
+
+        _ = try await sut.updateMeeting(
+            id: Scaffolding.meetingID,
+            title: Scaffolding.meetingResponse.title,
+            startTime: updatedStart,
+            endTime: updatedStart.addingTimeInterval(3600),
+            recurrence: recurring ? WireCallingDomain.MeetingRecurrence(frequency: .daily, interval: 1) : nil
+        )
+
+        let recorded = await updatedMeetings.meetings
+        #expect(recorded.map(\.start) == [updatedStart])
+        #expect((recorded.first?.recurrence != nil) == recurring)
+        #expect(localStore.storeMeetingMeetingMeetingVoidCallsCount == 1)
+    }
+
+    @Test("updateMeeting succeeds when reminder reconciliation fails")
+    func updateMeetingDoesNotFailForReminderError() async throws {
+        meetingsAPI.updateMeetingIdParameters_MockValue = Scaffolding.meetingResponse
+        let sut = MeetingRepository(
+            meetingsAPI: meetingsAPI,
+            localStore: localStore,
+            onMeetingUpdated: { _ in throw ReminderError.schedulingFailed }
+        )
+
+        let meeting = try await sut.updateMeeting(
+            id: Scaffolding.meetingID,
+            title: Scaffolding.meetingResponse.title,
+            startTime: Scaffolding.meetingResponse.startTime,
+            endTime: Scaffolding.meetingResponse.endTime,
+            recurrence: nil
+        )
+
+        #expect(meeting.id == Scaffolding.meetingID)
+    }
+
     @Test("pullMeeting returns the stored copy, which has its participants populated")
     func pullMeetingReturnsStoredCopy() async throws {
         // Mock
@@ -539,6 +703,34 @@ struct MeetingRepositoryTests {
             ids.append(id)
             return ids.count
         }
+    }
+
+    private actor CreatedMeetings {
+        private(set) var ids: [WireNetwork.QualifiedID] = []
+
+        func record(_ meeting: Meeting) {
+            ids.append(meeting.id)
+        }
+    }
+
+    private actor UpdatedMeetings {
+        private(set) var meetings: [Meeting] = []
+
+        func record(_ meeting: Meeting) {
+            meetings.append(meeting)
+        }
+    }
+
+    private actor MeetingSnapshots {
+        private(set) var meetingIDs: [[WireNetwork.QualifiedID]] = []
+
+        func record(_ meetings: [Meeting]) {
+            meetingIDs.append(meetings.map(\.id))
+        }
+    }
+
+    private enum ReminderError: Error {
+        case schedulingFailed
     }
 
     private enum Scaffolding {

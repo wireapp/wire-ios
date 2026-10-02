@@ -142,6 +142,27 @@ final class MeetingUpdateEventNotificationBuilderTests: XCTestCase {
         XCTAssertNotNil(result)
         XCTAssertEqual(meetingsAPI.requestedIDs, [Scaffolding.meetingID])
     }
+
+    func testUpdateUsesMeetingFetchedForReminderWithoutSecondMeetingRequest() async {
+        let api = meetingsAPI!
+        let builder = MeetingEventNotificationBuilder(
+            meetingDeleteEventBuilder: UnusedDeleteBuilder(),
+            meetingMemberAddEventBuilder: UnusedMemberAddBuilder(),
+            meetingUpdateEventBuilder: sut,
+            reminderReconciler: MeetingEventReminderReconciler(
+                pullMeeting: { try await api.getMeeting(id: $0).toDomainMeeting() },
+                reconcileMeeting: { _ in },
+                cancelMeeting: { _ in },
+                isMeetingsEnabled: { true },
+                cancelAccount: {}
+            )
+        )
+
+        let result = await builder.buildContent(event: .update(Scaffolding.event))
+
+        XCTAssertNotNil(result)
+        XCTAssertEqual(api.requestedIDs, [Scaffolding.meetingID])
+    }
 }
 
 private enum Scaffolding {

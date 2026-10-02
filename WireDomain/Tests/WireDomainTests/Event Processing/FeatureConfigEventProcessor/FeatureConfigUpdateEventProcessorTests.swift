@@ -61,6 +61,17 @@ final class FeatureConfigUpdateEventProcessorTests: XCTestCase {
         XCTAssertEqual(featureConfigRepository.updateFeatureConfig_Invocations, [Scaffolding.config])
     }
 
+    func testProcessEvent_CancelsReminders_WhenMeetingsIsDisabled() async {
+        var cancellationCount = 0
+        sut.onMeetingsDisabled = { cancellationCount += 1 }
+        let disabled = FeatureConfig.meetings(MeetingsFeatureConfig(status: .disabled))
+        featureConfigRepository.updateFeatureConfig_MockMethod = { _ in }
+
+        await sut.processEvent(FeatureConfigUpdateEvent(featureConfig: disabled))
+
+        XCTAssertEqual(cancellationCount, 1)
+    }
+
     private enum Scaffolding {
         static let config = FeatureConfig.mls(
             MLSFeatureConfig(
