@@ -26,6 +26,7 @@ struct MeetingsView: View {
 
     private typealias Strings = L10n.Localizable.WireMeetings.List
 
+    @Environment(\.scenePhase) private var scenePhase
     @State private var viewModel: MeetingsViewModel
 
     /// Called when the user chooses "Edit meeting" in a meeting's menu.
@@ -61,11 +62,17 @@ struct MeetingsView: View {
             viewModel.deleteErrorTitle,
             isPresented: $viewModel.hasDeleteError
         ) {
-            Button(L10n.Localizable.WireMeetings.retry) {
-                Task { await viewModel.retryDelete() }
+            if viewModel.canRetryDelete {
+                Button(L10n.Localizable.WireMeetings.retry) {
+                    Task { await viewModel.retryDelete() }
+                }
+                .accessibilityIdentifier("meetingDeleteRetryButton")
             }
-            .accessibilityIdentifier("meetingDeleteRetryButton")
-            Button(Strings.Delete.Alert.Cancel.button, role: .cancel) {}
+            Button(
+                viewModel.canRetryDelete
+                    ? Strings.Delete.Alert.Cancel.button : L10n.Localizable.WireMeetings.Schedule.Error.Alert.ok,
+                role: .cancel
+            ) {}
         } message: {
             Text(viewModel.deleteErrorMessage)
         }
@@ -84,6 +91,11 @@ struct MeetingsView: View {
         }
         .task {
             await viewModel.observeSystemDateTimeChanges()
+        }
+        .onChange(of: scenePhase) { _, newPhase in
+            guard newPhase == .active else { return }
+
+            Task { await viewModel.refreshSystemDateTimeStateAfterSceneBecameActive() }
         }
     }
 

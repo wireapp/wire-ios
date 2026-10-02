@@ -129,6 +129,7 @@ class MeetingsAPIV16: MeetingsAPIV15 {
 
         try ResponseParser()
             .success(code: .ok)
+            .failure(code: .forbidden, label: "invalid-op", error: MeetingsAPIError.invalidOperation)
             .failure(code: .forbidden, label: "access-denied", error: MeetingsAPIError.accessDenied)
             .failure(code: .notFound, label: "meeting-not-found", error: MeetingsAPIError.meetingNotFound)
             .parse(code: response.statusCode, data: data)

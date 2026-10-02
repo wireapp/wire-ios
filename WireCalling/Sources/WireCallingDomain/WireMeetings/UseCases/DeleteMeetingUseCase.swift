@@ -39,10 +39,24 @@ package struct DeleteMeetingUseCase: DeleteMeetingUseCaseProtocol {
     package func invoke(meeting: Meeting) async throws {
         if meeting.creatorID.id == selfUserID {
             try await meetingRepository.deleteMeeting(id: meeting.id)
+            // The deleting client may not receive the conversation deletion event.
+            do {
+                try await conversationRepository.deleteConversation(id: meeting.conversationID)
+            } catch {
+                throw DeleteMeetingUseCaseError.cleanupFailed
+            }
         } else {
             try await conversationRepository.leaveConversation(id: meeting.conversationID)
-            await meetingRepository.deleteLocalMeeting(id: meeting.id)
+            try await meetingRepository.deleteLocalMeeting(id: meeting.id)
         }
     }
+
+}
+
+package enum DeleteMeetingUseCaseError: Error, Equatable {
+
+    case notAllowed
+
+    case cleanupFailed
 
 }
