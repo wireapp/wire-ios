@@ -841,6 +841,7 @@ public final class ClientSessionComponent {
         }
 
         if !showMeetingTitle {
+            // Clear title-bearing requests first so a failed refresh cannot leave private content pending.
             await scheduler.cancelAll(accountID: selfUserID)
         }
 

@@ -49,6 +49,7 @@ struct MeetingEventNotificationBuilder: MeetingEventNotificationBuilderProtocol 
     }
 
     func buildContent(event: MeetingEvent) async -> UserNotification? {
+        // Reconcile even when the event has no visible notification, and reuse the fetched meeting below.
         let meeting = await reminderReconciler?.reconcile(event: event)
 
         return switch event {

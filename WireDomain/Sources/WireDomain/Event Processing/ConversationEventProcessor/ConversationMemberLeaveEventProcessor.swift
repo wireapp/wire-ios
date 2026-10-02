@@ -34,6 +34,7 @@ struct ConversationMemberLeaveEventProcessor: ConversationMemberLeaveEventProces
     let accountID: UUID
 
     func processEvent(_ event: ConversationMemberLeaveEvent) async throws {
+        // Cancel before the conversation update, which may fail or remove the meeting mapping.
         if event.removedUserIDs.contains(where: { $0.id == accountID }) {
             let meetings = await meetingLocalStore.storedMeetings()
             for meeting in meetings where meeting.conversationID.id == event.conversationID.id

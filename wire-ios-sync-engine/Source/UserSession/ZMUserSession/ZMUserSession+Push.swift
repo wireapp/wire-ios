@@ -170,6 +170,7 @@ extension ZMUserSession {
             let responder = self.sessionManager?.foregroundNotificationResponder
             let shouldPresent: Bool
             if categoryIdentifier == WireDomain.NotificationCategory.meetingReminder.rawValue {
+                // Reminders stay visible in the foreground unless this account is already in that meeting.
                 let calls = self.callCenter?.activeCallConversations(in: self) ?? []
                 let activeConversations = calls.compactMap { conversation -> (id: UUID, domain: String)? in
                     guard let id = conversation.qualifiedID else { return nil }

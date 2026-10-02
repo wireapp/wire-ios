@@ -35,6 +35,7 @@ struct MeetingUpdateEventProcessor: MeetingUpdateEventProcessorProtocol {
             return
         }
 
+        // Reconcile before the conversation pull, whose failure can stop processing this event.
         do {
             try await reconcileReminder(meeting)
         } catch {

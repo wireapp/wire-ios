@@ -152,6 +152,7 @@ public final class MeetingRepository: MeetingRepositoryProtocol {
         let meetings = responses.map { $0.toDomainMeeting() }
         await localStore.replaceAllMeetings(with: meetings)
         await resolveConversations(for: meetings)
+        // Only a successful full list can invalidate reminders for meetings missing from the response.
         await onMeetingsRefreshed?(meetings)
         changeBroadcaster.broadcast()
     }

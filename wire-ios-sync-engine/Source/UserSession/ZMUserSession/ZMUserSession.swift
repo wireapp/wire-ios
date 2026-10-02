@@ -290,6 +290,7 @@ public final class ZMUserSession: NSObject {
                 key: LocalNotificationDispatcher.ZMShouldHideNotificationContentKey
             )
             if let clientSessionComponent {
+                // Finish the previous refresh first so rapid privacy changes cannot restore an older title policy.
                 let previousRefresh = meetingReminderContentRefreshTask
                 meetingReminderContentRefreshTask = Task {
                     await previousRefresh?.value
