@@ -49,7 +49,8 @@ jobs:
         # spamming Wire on each commit.
         if: steps.comment.outputs.comment_created == 'true'
         env:
-          SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_LOCALIZATIONS_WEBHOOK }}
+          WIRE_WEBHOOK_URL: ${{ secrets.WIRE_IOS_LOCALIZATIONS_WEBHOOK }}
+          WIRE_WEBHOOK_TOKEN: ${{ secrets.WIRE_IOS_LOCALIZATIONS_WEBHOOK_TOKEN }}
         uses: ./.github/actions/notify-wire
         with:
           notify: custom

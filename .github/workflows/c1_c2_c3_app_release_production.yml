@@ -72,7 +72,8 @@ jobs:
       CLIENT_NAME_C1_C2_C3: ${{ secrets.CLIENT_NAME_C1_C2_C3 }}
       CLIENT_ID_C1_C2_C3: ${{ secrets.CLIENT_ID_C1_C2_C3 }}
       JIRA_TOKEN: ${{ secrets.JIRA_TOKEN }}
-      SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_BUILD_WEBHOOK }}
+      WIRE_WEBHOOK_URL: ${{ secrets.WIRE_IOS_BUILD_WEBHOOK }}
+      WIRE_WEBHOOK_TOKEN: ${{ secrets.WIRE_IOS_BUILD_WEBHOOK_TOKEN }}
 
 
   column_2_production:
@@ -112,7 +113,8 @@ jobs:
       CLIENT_NAME_C1_C2_C3: ${{ secrets.CLIENT_NAME_C1_C2_C3 }}
       CLIENT_ID_C1_C2_C3: ${{ secrets.CLIENT_ID_C1_C2_C3 }}
       JIRA_TOKEN: ${{ secrets.JIRA_TOKEN }}
-      SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_BUILD_WEBHOOK }}
+      WIRE_WEBHOOK_URL: ${{ secrets.WIRE_IOS_BUILD_WEBHOOK }}
+      WIRE_WEBHOOK_TOKEN: ${{ secrets.WIRE_IOS_BUILD_WEBHOOK_TOKEN }}
   
   column_3_production:
     if: ${{ inputs.column == 'C3' || inputs.column == 'all' }}
@@ -151,4 +153,5 @@ jobs:
       CLIENT_NAME_C1_C2_C3: ${{ secrets.CLIENT_NAME_C1_C2_C3 }}
       CLIENT_ID_C1_C2_C3: ${{ secrets.CLIENT_ID_C1_C2_C3 }}
       JIRA_TOKEN: ${{ secrets.JIRA_TOKEN }}
-      SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_BUILD_WEBHOOK }}
+      WIRE_WEBHOOK_URL: ${{ secrets.WIRE_IOS_BUILD_WEBHOOK }}
+      WIRE_WEBHOOK_TOKEN: ${{ secrets.WIRE_IOS_BUILD_WEBHOOK_TOKEN }}
