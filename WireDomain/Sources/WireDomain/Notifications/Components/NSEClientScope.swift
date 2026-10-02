@@ -156,11 +156,34 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
             eventStream = try await pullEventsUseCase.invoke(publicKeys: publicKeys)
         }
 
+        let notificationEventStream: AsyncStream<[UpdateEvent]>
+        if DeveloperFlag.enableNSEHelper.isOn {
+            var eventBatches: [[UpdateEvent]] = []
+            for await batch in eventStream {
+                eventBatches.append(batch)
+            }
+
+            let coordinator = callKitReportingCoordinator
+            try await processCallingEventsUseCase.invoke(
+                eventBatches: eventBatches,
+                callKitReportingCoordinator: coordinator
+            )
+
+            notificationEventStream = AsyncStream<[UpdateEvent]> { continuation in
+                for batch in eventBatches {
+                    continuation.yield(batch)
+                }
+                continuation.finish()
+            }
+        } else {
+            notificationEventStream = eventStream
+        }
+
         // Generate notifications from events.
         let notifications = try await generateNotificationsUseCase(
             eventID: eventID
         ).invoke(
-            updateEvents: eventStream
+            updateEvents: notificationEventStream
         )
 
         // Show notifications.
@@ -169,6 +192,38 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
         ).invoke(
             userNotifications: notifications
         )
+    }
+
+    // MARK: - Calling
+
+    private var callingService: any AVSCallingEventServiceProtocol {
+        shared {
+            AVSCallingEventService.shared(
+                userID: dependency.accountID.transportString(),
+                clientID: clientID
+            )
+        }
+    }
+
+    private var processCallingEventsUseCase: ProcessCallingEventsUseCaseProtocol {
+        shared {
+            ProcessCallingEventsUseCase(
+                callingService: callingService,
+                conversationLocalStore: conversationLocalStore,
+                userLocalStore: userLocalStore,
+                isFederationEnabled: isFederationEnabled,
+                accountID: dependency.accountID
+            )
+        }
+    }
+
+    private var callKitReportingCoordinator: CallKitReportingCoordinator {
+        shared {
+            CallKitReportingCoordinator(
+                accountID: dependency.accountID,
+                avsService: callingService
+            )
+        }
     }
 
     // MARK: - Pull events consumable notifications
