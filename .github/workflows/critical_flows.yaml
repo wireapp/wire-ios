@@ -64,7 +64,7 @@ jobs:
       run_critical_flows: true
       ui_test_tags: critical
       notify: always
-      timeout_minutes: 90
+      timeout_minutes: ${{ vars.DEFAULT_MAC_RUNNER == 'github' && 180 || 90 }}
     secrets:
       ZENKINS_USERNAME: ${{ secrets.ZENKINS_USERNAME }}
       DD_API_KEY: ${{ secrets.DD_API_KEY }}
@@ -90,7 +90,7 @@ jobs:
       rerun_failed_from_previous: ${{ inputs.rerun_failed_from_previous }}
       testiny_run_name: ${{ inputs.testiny_run_name }}
       notify: always
-      timeout_minutes: 150
+      timeout_minutes: ${{ inputs.mac_runner == 'github' && 180 || 150 }}
     secrets:
       ZENKINS_USERNAME: ${{ secrets.ZENKINS_USERNAME }}
       DD_API_KEY: ${{ secrets.DD_API_KEY }}
