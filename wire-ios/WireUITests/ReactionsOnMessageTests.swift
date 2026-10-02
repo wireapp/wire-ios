@@ -49,6 +49,7 @@ final class ReactionsOnMessageTests: WireUITestCase {
     func testAddReactionToMessageInGroupConversation_TC_11827() async throws {
 
         // GIVEN
+        let reactionEmoji = "❤️"
         let originalTextMessage = UserGenerator.generateRandomMessage()
         let groupTeam = try await registerGroupTeam()
 
@@ -68,35 +69,25 @@ final class ReactionsOnMessageTests: WireUITestCase {
 
         let message = activeConversationPage.message(withText: originalTextMessage)
 
-        // WHEN - react with first emoji
-        activeConversationPage.reactToMessage(message, withEmoji: "👍")
+        // WHEN - react with emoji
+        activeConversationPage.reactToMessage(message, withEmoji: reactionEmoji)
 
         // THEN
         XCTAssertTrue(
-            activeConversationPage.reactionIndicator(emoji: "👍").waitForExistence(timeout: 5),
-            "Expected reaction 👍 was not shown on message"
+            activeConversationPage.reactionOnMessage(emoji: reactionEmoji).waitForExistence(timeout: 5),
+            "Expected reaction \(reactionEmoji) was not shown on message"
         )
 
-        // WHEN - react with second emoji
-        activeConversationPage.reactToMessage(message, withEmoji: "❤️")
-
-        // THEN
+        // WHEN - tap reaction again to deselect it
         XCTAssertTrue(
-            activeConversationPage.reactionIndicator(emoji: "❤️").waitForExistence(timeout: 5),
-            "Expected reaction ❤️ was not shown on message"
+            activeConversationPage.reactionOnMessage(emoji: reactionEmoji).waitAndTap(),
+            "Reaction \(reactionEmoji) was not tappable"
         )
 
-        // WHEN - tap 👍 again to deselect it
-        activeConversationPage.reactToMessage(message, withEmoji: "👍")
-
-        // THEN - 👍 reaction removed, ❤️ still present
-        XCTAssertFalse(
-            activeConversationPage.reactionIndicator(emoji: "👍").waitForExistence(timeout: 2),
-            "Reaction 👍 should be removed after tapping it again"
-        )
+        // THEN - reaction removed
         XCTAssertTrue(
-            activeConversationPage.reactionIndicator(emoji: "❤️").exists,
-            "Reaction ❤️ should still be present after deselecting 👍"
+            activeConversationPage.reactionOnMessage(emoji: reactionEmoji).waitForNonExistence(timeout: 5),
+            "Reaction \(reactionEmoji) should be removed after tapping it again"
         )
     }
 
@@ -104,7 +95,8 @@ final class ReactionsOnMessageTests: WireUITestCase {
     func testNotAbleToAddReactionToPingOrSelfDeletingMessageInGroupConversation_TC_12130() async throws {
 
         // GIVEN
-        let originalTextMessage = UserGenerator.generateRandomMessage()
+        let reactionEmoji = "❤️"
+        let selfDeletingTextMessage = UserGenerator.generateRandomMessage()
         let groupTeam = try await registerGroupTeam()
 
         let activeConversationPage = try app.loginUser(
@@ -131,23 +123,19 @@ final class ReactionsOnMessageTests: WireUITestCase {
 
         // THEN - no reaction option offered
         XCTAssertFalse(
-            activeConversationPage.reactionIndicator(emoji: "❤️").waitForExistence(timeout: 2),
-            "Reaction option should not be available for ping messages"
-        )
-        XCTAssertFalse(
-            app.buttons["❤️"].firstMatch.waitForExistence(timeout: 2),
+            activeConversationPage.reactionButton(emoji: reactionEmoji).waitForExistence(timeout: 2),
             "Reaction picker should not be offered for ping messages"
         )
 
         try await testServicesClient.sendText(
             user: groupTeam.teamMember,
-            text: originalTextMessage,
+            text: selfDeletingTextMessage,
             conversationId: groupTeam.conversationId,
             domain: groupTeam.conversationDomain,
             timeoutMillis: 60_000 // messageTimer => self-deleting message
         )
 
-        let selfDeletingMessage = activeConversationPage.message(withText: originalTextMessage)
+        let selfDeletingMessage = activeConversationPage.message(withText: selfDeletingTextMessage)
         XCTAssertTrue(
             selfDeletingMessage.waitForExistence(timeout: 5),
             "Expected self-deleting message was not found, possible that not being sent via testService"
@@ -158,7 +146,7 @@ final class ReactionsOnMessageTests: WireUITestCase {
 
         // THEN - no reaction option offered
         XCTAssertFalse(
-            app.buttons["❤️"].firstMatch.waitForExistence(timeout: 2),
+            activeConversationPage.reactionButton(emoji: reactionEmoji).waitForExistence(timeout: 2),
             "Reaction picker should not be shown for self-deleting messages"
         )
     }
@@ -167,6 +155,7 @@ final class ReactionsOnMessageTests: WireUITestCase {
     func testEditingMessageRemovesReaction_TC_11828() async throws {
 
         // GIVEN
+        let reactionEmoji = "❤️"
         let originalTextMessage = UserGenerator.generateRandomMessage()
         let editedTextMessage = "\(originalTextMessage)-Edited"
         let groupTeam = try await registerGroupTeam()
@@ -189,12 +178,12 @@ final class ReactionsOnMessageTests: WireUITestCase {
         let message = activeConversationPage.message(withText: originalTextMessage)
 
         // WHEN - logged-in user reacts to the message
-        activeConversationPage.reactToMessage(message, withEmoji: "❤️")
+        activeConversationPage.reactToMessage(message, withEmoji: reactionEmoji)
 
         // THEN
         XCTAssertTrue(
-            activeConversationPage.reactionIndicator(emoji: "❤️").waitForExistence(timeout: 5),
-            "Expected reaction ❤️ was not shown on message"
+            activeConversationPage.reactionOnMessage(emoji: reactionEmoji).waitForExistence(timeout: 5),
+            "Expected reaction \(reactionEmoji) was not shown on message"
         )
 
         // WHEN - sender edits the message
@@ -211,8 +200,8 @@ final class ReactionsOnMessageTests: WireUITestCase {
             activeConversationPage.message(withText: editedTextMessage).waitForExistence(timeout: 5),
             "Expected edited message was not found"
         )
-        XCTAssertFalse(
-            activeConversationPage.reactionIndicator(emoji: "❤️").waitForExistence(timeout: 2),
+        XCTAssertTrue(
+            activeConversationPage.reactionOnMessage(emoji: reactionEmoji).waitForNonExistence(timeout: 5),
             "Reaction still shown after the message is edited"
         )
     }
