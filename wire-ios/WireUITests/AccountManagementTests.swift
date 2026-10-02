@@ -161,4 +161,31 @@ final class AccountManagementTests: WireUITestCase {
         _ = try ManagedDevicesPage()
             .removeFirstDeviceAndContinue(password: user.password)
     }
+
+    /// Ref Bug: [WPB-20932]
+    @MainActor
+    func testLoginAfterDeviceRemovedFromAnotherPlatform_TC_11584() async throws {
+        // GIVEN
+        let groupName = UserGenerator.generateRandomConversationName()
+        let (teamOwner, _, _, _) = try await UserHelper.default.registerTeam(
+            withMemberCount: 1,
+            conversation: .group(groupName)
+        )
+
+        _ = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
+            .acceptPopup()
+            .openConversation(named: groupName)
+            .sendMessage(UserGenerator.generateRandomMessage())
+            .fetchMessages()
+
+        // WHEN - the device is removed from another platform while the app is running
+        try await UserHelper.default.removeClient(of: teamOwner)
+
+        // AND - the app throws the user out right away, without restarting
+        _ = try SessionExpiredPage().confirm()
+
+        // THEN - the user logs in again
+        _ = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
+            .acceptPopup()
+    }
 }
