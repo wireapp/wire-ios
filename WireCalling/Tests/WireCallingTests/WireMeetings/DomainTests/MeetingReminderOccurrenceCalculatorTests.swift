@@ -46,8 +46,8 @@ struct MeetingReminderOccurrenceCalculatorTests {
         ])
     }
 
-    @Test("keeps an upcoming occurrence when its ten-minute fire time has passed")
-    func includesShortNoticeOccurrence() {
+    @Test("skips an occurrence whose ten-minute fire time has passed and keeps the limit")
+    func skipsShortNoticeOccurrence() {
         let meeting = makeMeeting(
             start: date("2026-03-28T08:00:00Z"),
             recurrence: MeetingRecurrence(frequency: .daily, interval: 1)
@@ -55,11 +55,11 @@ struct MeetingReminderOccurrenceCalculatorTests {
 
         let starts = MeetingReminderOccurrenceCalculator().starts(
             for: meeting,
-            after: date("2026-03-28T07:50:00Z"),
+            after: date("2026-03-28T07:55:00Z"),
             limit: 1
         )
 
-        #expect(starts == [date("2026-03-28T08:00:00Z")])
+        #expect(starts == [date("2026-03-29T07:00:00Z")]) // next day, 09:00 after the clock change
     }
 
     @Test("respects the recurrence end date")
@@ -97,8 +97,8 @@ struct MeetingReminderOccurrenceCalculatorTests {
         #expect(starts.last == date("2026-04-01T07:00:00Z"))
     }
 
-    @Test("includes a one-time meeting less than ten minutes away")
-    func includesShortNoticeMeeting() {
+    @Test("excludes a one-time meeting less than ten minutes away")
+    func excludesShortNoticeMeeting() {
         let meeting = makeMeeting(start: date("2026-03-28T08:00:00Z"), recurrence: nil)
 
         let starts = MeetingReminderOccurrenceCalculator().starts(
@@ -107,7 +107,7 @@ struct MeetingReminderOccurrenceCalculatorTests {
             limit: 1
         )
 
-        #expect(starts == [date("2026-03-28T08:00:00Z")])
+        #expect(starts.isEmpty)
     }
 
     private func makeMeeting(start: Date, recurrence: MeetingRecurrence?) -> Meeting {

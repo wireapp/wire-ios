@@ -661,7 +661,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         let pendingCancellations = cancellationJournal.pending()
         let authenticatedAccountIDs = Set(accountManager.accounts.filter { environment.isAuthenticated($0) }
             .map(\.userIdentifier))
-        await AccountMeetingReminderCanceller(defaults: sharedUserDefaults).cancelAll(
+        await AccountMeetingReminderCanceller().cancelAll(
             exceptAccountIDs: authenticatedAccountIDs.subtracting(pendingCancellations.keys)
         )
         for (accountID, token) in pendingCancellations {
@@ -1224,9 +1224,8 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     private func cancelMeetingReminders(for accountID: UUID) {
         let token = MeetingReminderCancellationJournal(defaults: sharedUserDefaults).record(accountID: accountID)
-        let canceller = AccountMeetingReminderCanceller(defaults: sharedUserDefaults)
         Task { [weak self] in
-            await canceller.cancelAll(accountID: accountID)
+            await AccountMeetingReminderCanceller().cancelAll(accountID: accountID)
             if let self {
                 MeetingReminderCancellationJournal(defaults: sharedUserDefaults)
                     .clear(accountID: accountID, token: token)

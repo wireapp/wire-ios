@@ -571,7 +571,7 @@ public final class ClientSessionComponent {
     private lazy var conversationMemberLeaveEventProcessor = ConversationMemberLeaveEventProcessor(
         repository: conversationRepository,
         meetingLocalStore: MeetingLocalStore(context: syncContext),
-        reminderCanceller: MeetingReminderScheduler(defaults: sharedUserDefaults),
+        reminderCanceller: MeetingReminderScheduler(),
         accountID: selfUserID
     )
 
@@ -635,8 +635,8 @@ public final class ClientSessionComponent {
 
     private lazy var featureConfigUpdateEventProcessor = FeatureConfigUpdateEventProcessor(
         repository: featureConfigRepository,
-        onMeetingsDisabled: { [selfUserID, sharedUserDefaults] in
-            await MeetingReminderScheduler(defaults: sharedUserDefaults).cancelAll(accountID: selfUserID)
+        onMeetingsDisabled: { [selfUserID] in
+            await MeetingReminderScheduler().cancelAll(accountID: selfUserID)
         }
     )
 
@@ -746,7 +746,7 @@ public final class ClientSessionComponent {
     )
 
     private func reconcileRefreshedMeetingReminders(_ meetings: [Meeting]) async {
-        let scheduler = MeetingReminderScheduler(defaults: sharedUserDefaults)
+        let scheduler = MeetingReminderScheduler()
         guard await featureConfigRepository.isFeatureEnabled(.meetings) else {
             await scheduler.cancelAll(accountID: selfUserID)
             return
@@ -808,8 +808,8 @@ public final class ClientSessionComponent {
     )
 
     private lazy var reconcileMeetingReminder: @Sendable (Meeting) async throws -> Void =
-        { [selfUserID, sharedUserDefaults, conversationLocalStore, featureConfigRepository] meeting in
-            let scheduler = MeetingReminderScheduler(defaults: sharedUserDefaults)
+        { [selfUserID, conversationLocalStore, featureConfigRepository] meeting in
+            let scheduler = MeetingReminderScheduler()
             guard await featureConfigRepository.isFeatureEnabled(.meetings) else {
                 await scheduler.cancelAll(accountID: selfUserID)
                 return
@@ -834,7 +834,7 @@ public final class ClientSessionComponent {
 
     /// Updates pending reminders after this account's notification-content setting changes.
     public func refreshMeetingReminderContent(showMeetingTitle: Bool) async {
-        let scheduler = MeetingReminderScheduler(defaults: sharedUserDefaults)
+        let scheduler = MeetingReminderScheduler()
         guard await featureConfigRepository.isFeatureEnabled(.meetings) else {
             await scheduler.cancelAll(accountID: selfUserID)
             return
@@ -867,15 +867,14 @@ public final class ClientSessionComponent {
         repository: meetingRepository,
         conversationRepository: conversationRepository,
         reconcileReminder: reconcileMeetingReminder,
-        cancelReminder: { [selfUserID, sharedUserDefaults] meetingID in
-            await MeetingReminderScheduler(defaults: sharedUserDefaults)
-                .cancelAll(accountID: selfUserID, meetingID: meetingID)
+        cancelReminder: { [selfUserID] meetingID in
+            await MeetingReminderScheduler().cancelAll(accountID: selfUserID, meetingID: meetingID)
         }
     )
 
     private lazy var meetingDeleteEventProcessor = MeetingDeleteEventProcessor(
         repository: meetingRepository,
-        reminderCanceller: MeetingReminderScheduler(defaults: sharedUserDefaults),
+        reminderCanceller: MeetingReminderScheduler(),
         accountID: selfUserID
     )
 
@@ -883,9 +882,8 @@ public final class ClientSessionComponent {
         repository: meetingRepository,
         conversationRepository: conversationRepository,
         reconcileReminder: reconcileMeetingReminder,
-        cancelReminder: { [selfUserID, sharedUserDefaults] meetingID in
-            await MeetingReminderScheduler(defaults: sharedUserDefaults)
-                .cancelAll(accountID: selfUserID, meetingID: meetingID)
+        cancelReminder: { [selfUserID] meetingID in
+            await MeetingReminderScheduler().cancelAll(accountID: selfUserID, meetingID: meetingID)
         }
     )
 

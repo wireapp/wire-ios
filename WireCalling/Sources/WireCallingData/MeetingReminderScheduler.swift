@@ -45,26 +45,23 @@ extension UNUserNotificationCenter: MeetingReminderNotificationCenter {
 public struct MeetingReminderScheduler {
 
     private let notificationCenter: any MeetingReminderNotificationCenter
-    private let defaults: UserDefaults
 
-    public init(defaults: UserDefaults) {
+    public init() {
         self.notificationCenter = UNUserNotificationCenter.current()
-        self.defaults = defaults
     }
 
-    init(notificationCenter: any MeetingReminderNotificationCenter, defaults: UserDefaults = .standard) {
+    init(notificationCenter: any MeetingReminderNotificationCenter) {
         self.notificationCenter = notificationCenter
-        self.defaults = defaults
     }
 
-    /// Sends short-notice reminders immediately, once per occurrence, while the meeting is still upcoming.
+    /// Skips occurrences whose fire date has passed; a meeting learned about late gets no reminder.
     @discardableResult
     public func schedule(
         _ reminder: MeetingReminder,
         content: UNNotificationContent,
         now: Date = .now
     ) async throws -> Bool {
-        guard reminder.occurrenceStart > now else { return false }
+        guard reminder.fireDate > now else { return false }
 
         switch await notificationCenter.authorizationStatus() {
         case .authorized, .provisional:
@@ -74,28 +71,15 @@ public struct MeetingReminderScheduler {
             return false
         }
 
-        let isImmediate = reminder.fireDate <= now
-        let scheduledKey = Self.scheduledKey(for: reminder)
-        // Occurrence starts that were already scheduled for this meeting, keyed by request identifier.
-        let scheduled = defaults.dictionary(forKey: scheduledKey) as? [String: TimeInterval] ?? [:]
-        if isImmediate, scheduled[reminder.identifier] != nil {
-            return false
-        }
-
-        let trigger: UNNotificationTrigger
-        if isImmediate {
-            trigger = UNTimeIntervalNotificationTrigger(timeInterval: 1, repeats: false)
-        } else {
-            var calendar = Calendar(identifier: .gregorian)
-            calendar.timeZone = TimeZone(secondsFromGMT: 0)!
-            var fireComponents = calendar.dateComponents(
-                [.year, .month, .day, .hour, .minute, .second],
-                from: reminder.fireDate
-            )
-            fireComponents.calendar = calendar
-            fireComponents.timeZone = calendar.timeZone
-            trigger = UNCalendarNotificationTrigger(dateMatching: fireComponents, repeats: false)
-        }
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = TimeZone(secondsFromGMT: 0)!
+        var fireComponents = calendar.dateComponents(
+            [.year, .month, .day, .hour, .minute, .second],
+            from: reminder.fireDate
+        )
+        fireComponents.calendar = calendar
+        fireComponents.timeZone = calendar.timeZone
+        let trigger = UNCalendarNotificationTrigger(dateMatching: fireComponents, repeats: false)
 
         let request = UNNotificationRequest(
             identifier: reminder.identifier,
@@ -109,15 +93,11 @@ public struct MeetingReminderScheduler {
             notificationCenter.removePendingNotificationRequests(withIdentifiers: [reminder.identifier])
             throw error
         }
-        // A calendar request may already have fired when a later refresh enters the short-notice window.
-        var upcoming = scheduled.filter { $0.value > now.timeIntervalSince1970 }
-        upcoming[reminder.identifier] = reminder.occurrenceStart.timeIntervalSince1970
-        defaults.set(upcoming, forKey: scheduledKey)
         return true
     }
 
     public func cancel(_ reminder: MeetingReminder) {
-        removePendingRequests(withIdentifiers: [reminder.identifier])
+        notificationCenter.removePendingNotificationRequests(withIdentifiers: [reminder.identifier])
     }
 
     /// Replaces this account's pending reminders for one meeting with the supplied occurrences.
@@ -131,14 +111,14 @@ public struct MeetingReminderScheduler {
     ) async throws {
         let reminders = Set(occurrenceStarts).map {
             MeetingReminder(accountID: accountID, meetingID: meetingID, occurrenceStart: $0)
-        }.filter { $0.occurrenceStart > now }
+        }.filter { $0.fireDate > now }
         let desiredIdentifiers = Set(reminders.map(\.identifier))
         let prefix = MeetingReminder.identifierPrefix(accountID: accountID, meetingID: meetingID)
         let obsoleteIdentifiers = await notificationCenter.pendingRequestIdentifiers()
             .filter { $0.hasPrefix(prefix) && !desiredIdentifiers.contains($0) }
 
         if !obsoleteIdentifiers.isEmpty {
-            removePendingRequests(withIdentifiers: obsoleteIdentifiers)
+            notificationCenter.removePendingNotificationRequests(withIdentifiers: obsoleteIdentifiers)
         }
 
         var firstError: (any Error)?
@@ -181,7 +161,7 @@ public struct MeetingReminderScheduler {
             .filter { $0.hasPrefix(accountPrefix) && !desiredIdentifiers.contains($0) }
 
         if !obsoleteIdentifiers.isEmpty {
-            removePendingRequests(withIdentifiers: obsoleteIdentifiers)
+            notificationCenter.removePendingNotificationRequests(withIdentifiers: obsoleteIdentifiers)
         }
 
         var firstError: (any Error)?
@@ -206,7 +186,7 @@ public struct MeetingReminderScheduler {
             .filter { $0.hasPrefix(prefix) }
 
         guard !identifiers.isEmpty else { return }
-        removePendingRequests(withIdentifiers: identifiers)
+        notificationCenter.removePendingNotificationRequests(withIdentifiers: identifiers)
     }
 
     /// Requests cancellation of every pending meeting reminder for one account.
@@ -216,7 +196,7 @@ public struct MeetingReminderScheduler {
             .filter { $0.hasPrefix(prefix) }
 
         guard !identifiers.isEmpty else { return }
-        removePendingRequests(withIdentifiers: identifiers)
+        notificationCenter.removePendingNotificationRequests(withIdentifiers: identifiers)
     }
 
     /// Removes reminders for accounts that are no longer signed in while preserving other notifications.
@@ -228,32 +208,8 @@ public struct MeetingReminderScheduler {
         }
 
         guard !identifiers.isEmpty else { return }
-        removePendingRequests(withIdentifiers: identifiers)
-    }
-
-    /// Forgets the scheduled state of explicitly removed requests so they can be scheduled again.
-    /// Requests that already fired are no longer pending, so their state still prevents a duplicate.
-    private func removePendingRequests(withIdentifiers identifiers: [String]) {
         notificationCenter.removePendingNotificationRequests(withIdentifiers: identifiers)
-        for (key, removed) in Dictionary(grouping: identifiers, by: Self.scheduledKey(forIdentifier:)) {
-            guard var scheduled = defaults.dictionary(forKey: key) as? [String: TimeInterval] else { continue }
-            removed.forEach { scheduled.removeValue(forKey: $0) }
-            defaults.set(scheduled, forKey: key)
-        }
     }
-
-    private static func scheduledKey(for reminder: MeetingReminder) -> String {
-        scheduledKeyPrefix
-            + MeetingReminder.identifierPrefix(accountID: reminder.accountID, meetingID: reminder.meetingID)
-    }
-
-    /// Request identifiers end with the occurrence start, after the meeting's identifier prefix.
-    private static func scheduledKey(forIdentifier identifier: String) -> String {
-        let meetingPrefix = identifier.lastIndex(of: "|").map { identifier[...$0] } ?? identifier[...]
-        return scheduledKeyPrefix + meetingPrefix
-    }
-
-    private static let scheduledKeyPrefix = "wire.meeting-reminder.scheduled|"
 
 }
 

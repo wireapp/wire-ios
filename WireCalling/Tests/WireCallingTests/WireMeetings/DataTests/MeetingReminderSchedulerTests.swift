@@ -73,85 +73,19 @@ struct MeetingReminderSchedulerTests {
         #expect(center.addedRequests.isEmpty)
     }
 
-    @Test("sends a short-notice reminder immediately and only once across scheduler instances")
-    func sendsShortNoticeReminderOnce() async throws {
+    @Test("does not send a late reminder for a meeting starting within ten minutes")
+    func skipsShortNoticeReminder() async throws {
         let center = NotificationCenterSpy()
         center.status = .authorized
-        let suite = UUID().uuidString
-        let defaults = try #require(UserDefaults(suiteName: suite))
-        defer { defaults.removePersistentDomain(forName: suite) }
-        let now = reminder.occurrenceStart.addingTimeInterval(-5 * 60)
 
-        try await MeetingReminderScheduler(notificationCenter: center, defaults: defaults).reconcile(
+        try await MeetingReminderScheduler(notificationCenter: center).reconcile(
             accountID: reminder.accountID,
             meetingID: reminder.meetingID,
             occurrenceStarts: [reminder.occurrenceStart],
-            now: now
-        ) { _ in UNMutableNotificationContent() }
-        try await MeetingReminderScheduler(notificationCenter: center, defaults: defaults).reconcile(
-            accountID: reminder.accountID,
-            meetingID: reminder.meetingID,
-            occurrenceStarts: [reminder.occurrenceStart],
-            now: now
+            now: reminder.occurrenceStart.addingTimeInterval(-5 * 60)
         ) { _ in UNMutableNotificationContent() }
 
-        #expect(center.addedRequests.count == 1)
-        let trigger = try #require(center.addedRequests.first?.trigger as? UNTimeIntervalNotificationTrigger)
-        #expect(trigger.timeInterval == 1)
-        #expect(!trigger.repeats)
-    }
-
-    @Test("a calendar reminder that already fired is not sent again during a short-notice refresh")
-    func scheduledReminderDoesNotBecomeImmediateDuplicate() async throws {
-        let center = NotificationCenterSpy()
-        center.status = .authorized
-        let suite = UUID().uuidString
-        let defaults = try #require(UserDefaults(suiteName: suite))
-        defer { defaults.removePersistentDomain(forName: suite) }
-        let scheduler = MeetingReminderScheduler(notificationCenter: center, defaults: defaults)
-
-        try await scheduler.reconcile(
-            accountID: reminder.accountID,
-            meetingID: reminder.meetingID,
-            occurrenceStarts: [reminder.occurrenceStart],
-            now: reminder.fireDate.addingTimeInterval(-1)
-        ) { _ in UNMutableNotificationContent() }
-        try await scheduler.reconcile(
-            accountID: reminder.accountID,
-            meetingID: reminder.meetingID,
-            occurrenceStarts: [reminder.occurrenceStart],
-            now: reminder.fireDate.addingTimeInterval(1)
-        ) { _ in UNMutableNotificationContent() }
-
-        #expect(center.addedRequests.count == 1)
-        #expect(center.addedRequests.first?.trigger is UNCalendarNotificationTrigger)
-    }
-
-    @Test("a cancelled calendar reminder is sent immediately when restored during the short-notice window")
-    func cancelledReminderCanBecomeImmediate() async throws {
-        let center = NotificationCenterSpy()
-        center.status = .authorized
-        let suite = UUID().uuidString
-        let defaults = try #require(UserDefaults(suiteName: suite))
-        defer { defaults.removePersistentDomain(forName: suite) }
-        let scheduler = MeetingReminderScheduler(notificationCenter: center, defaults: defaults)
-
-        try await scheduler.schedule(
-            reminder,
-            content: UNMutableNotificationContent(),
-            now: reminder.fireDate.addingTimeInterval(-1)
-        )
-        center.storedPendingIdentifiers = [reminder.identifier]
-        await scheduler.cancelAll(accountID: reminder.accountID)
-        center.storedPendingIdentifiers = []
-        try await scheduler.schedule(
-            reminder,
-            content: UNMutableNotificationContent(),
-            now: reminder.fireDate.addingTimeInterval(1)
-        )
-
-        #expect(center.addedRequests.count == 2)
-        #expect(center.addedRequests.last?.trigger is UNTimeIntervalNotificationTrigger)
+        #expect(center.addedRequests.isEmpty)
     }
 
     @Test("does not schedule without notification authorization")

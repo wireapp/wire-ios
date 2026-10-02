@@ -28,12 +28,10 @@ import WireFoundation
 public struct WireMeetingsFactory {
 
     private let selfUserID: UUID
-    private let sharedUserDefaults: UserDefaults
 
     @MainActor
-    public init(selfUserID: UUID, sharedUserDefaults: UserDefaults) {
+    public init(selfUserID: UUID) {
         self.selfUserID = selfUserID
-        self.sharedUserDefaults = sharedUserDefaults
     }
 
     @MainActor
@@ -57,14 +55,11 @@ public struct WireMeetingsFactory {
             currentDateProvider: .system
         )
         let observeMeetingChangesUseCase = ObserveMeetingChangesUseCase(repository: meetingRepository)
-        // UserDefaults is thread safe but not marked as `Sendable`.
-        nonisolated(unsafe) let defaults = sharedUserDefaults
         let deleteMeetingUseCase = DeleteMeetingUseCase(
             meetingRepository: meetingRepository,
             conversationRepository: conversationRepository,
             cancelReminders: { accountID, meetingID in
-                await MeetingReminderScheduler(defaults: defaults)
-                    .cancelAll(accountID: accountID, meetingID: meetingID)
+                await MeetingReminderScheduler().cancelAll(accountID: accountID, meetingID: meetingID)
             },
             selfUserID: selfUserID
         )

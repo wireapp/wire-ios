@@ -406,7 +406,7 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
             meetingsAPI: MeetingsAPIBuilder(apiService: apiService).makeAPI(for: apiVersion),
             localStore: MeetingLocalStore(context: coreDataStack.syncContext)
         )
-        let scheduler = MeetingReminderScheduler(defaults: dependency.sharedUserDefaults)
+        let scheduler = MeetingReminderScheduler()
         let notificationPrivacyStore = conversationLocalStore
         let featureStore = FeatureConfigLocalStore(context: coreDataStack.syncContext)
 
@@ -629,7 +629,7 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
     private var conversationMemberLeaveEventNotificationBuilder: ConversationMemberLeaveEventNotificationBuilder {
         let accountID = dependency.accountID
         let meetingStore = MeetingLocalStore(context: coreDataStack.syncContext)
-        let reminderScheduler = MeetingReminderScheduler(defaults: dependency.sharedUserDefaults)
+        let reminderScheduler = MeetingReminderScheduler()
         let pendingRequestCanceller = MeetingReminderPendingRequestCanceller()
         let context = ConversationMemberLeaveEventNotificationBuilder.Context(
             conversationLocalStore: conversationLocalStore,

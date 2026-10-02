@@ -18,7 +18,8 @@
 
 public import Foundation
 
-/// Selects upcoming starts, including short-notice meetings that need an immediate reminder.
+/// Selects upcoming starts whose reminder is still ahead. Occurrences starting within the
+/// reminder lead time get no reminder, so they are skipped rather than counted towards the limit.
 public struct MeetingReminderOccurrenceCalculator {
 
     public init() {}
@@ -26,16 +27,17 @@ public struct MeetingReminderOccurrenceCalculator {
     public func starts(for meeting: Meeting, after now: Date, limit: Int) -> [Date] {
         guard limit > 0 else { return [] }
 
-        // Request one extra occurrence because the first may start exactly at `now`.
+        let earliestStart = now.addingTimeInterval(MeetingReminder.leadTime)
+        // Request one extra occurrence because the first may start exactly at `earliestStart`.
         let fetchLimit = limit == Int.max ? limit : limit + 1
         return Array(MeetingOccurrencePaginator().occurrences(
             for: [meeting],
-            startingAt: now,
+            startingAt: earliestStart,
             offset: 0,
             limit: fetchLimit
         )
         .map(\.start)
-        .filter { $0 > now }
+        .filter { $0 > earliestStart }
         .prefix(limit))
     }
 
