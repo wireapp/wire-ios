@@ -21,6 +21,10 @@
 "meetings.list.loadError" = "Meetings konnten nicht geladen werden. Bitte versuchen Sie es erneut.";
 "meetings.deleteModal.error.deleteFailedTitle" = "Meeting konnte nicht gelöscht werden";
 "meetings.deleteModal.error.deleteFailed" = "Beim Löschen des Meetings ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.";
+"meetings.deleteModal.error.cleanupFailedTitle" = "Meeting gelöscht";
+"meetings.deleteModal.error.deleteSucceededButLocalCleanupFailed" = "The meeting was deleted, but something went wrong while cleaning up the conversation locally. Please refresh the meetings list if it still appears.";
+"meetings.deleteModal.error.notAllowedTitle" = "Meeting konnte nicht gelöscht werden";
+"meetings.deleteModal.error.notAllowed" = "Dieses Meeting kann nicht mehr gelöscht werden. Es ist möglicherweise bereits beendet oder Sie haben nicht die Berechtigung, es zu löschen.";
 "meetings.deleteModal.error.leaveConversationFailedTitle" = "Meeting konnte nicht verlassen werden";
 "meetings.deleteModal.error.leaveConversationFailed" = "Beim Verlassen des Meetings ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.";
 "wireMeetings.retry" = "Wiederholen";
@@ -60,12 +64,28 @@
 
 // MARK: - Schedule a meeting
 
+"meetings.error.setupFailedTitle" = "Could not finish meeting setup";
+"meetings.error.conversationSetupFailed" = "The meeting was saved, but something went wrong while setting up the conversation. Please try again.";
+"meetings.error.addParticipantsFailed" = "Das Meeting wurde gespeichert, aber einige Teilnehmer konnten nicht hinzugefügt werden. Bitte versuchen Sie es erneut.";
 "meetings.scheduleModal.error.createFailedTitle" = "Meeting konnte nicht geplant werden";
 "meetings.scheduleModal.error.createFailed" = "Beim Planen des Meetings ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.";
 "meetings.meetNowModal.error.createFailedTitle" = "Meeting konnte nicht gestartet werden";
 "meetings.meetNowModal.error.createFailed" = "Beim Starten des Meetings ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.";
 "meetings.scheduleModal.error.updateFailedTitle" = "Meeting konnte nicht aktualisiert werden";
 "meetings.scheduleModal.error.updateFailed" = "Beim Aktualisieren des Meetings ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.";
+"meetings.scheduleModal.error.editMeetingIdMissing" = "Beim Aktualisieren des Meetings ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.";
+"meetings.scheduleModal.error.removeParticipantsFailed" = "Das Meeting wurde aktualisiert, aber einige Teilnehmer konnten nicht entfernt werden. Bitte versuchen Sie es erneut.";
+"meetings.scheduleModal.error.addParticipantsFailed" = "Das Meeting wurde gespeichert, aber einige Teilnehmer konnten nicht hinzugefügt werden. Bitte versuchen Sie es erneut.";
+"failedToAddParticipantSingularNonFederatingBackends" = "**%@** konnte nicht zur Gruppe hinzugefügt werden, da das Backend nicht mit den Backends aller Teilnehmer verbunden ist.";
+"failedToAddParticipantSingularOfflineBackend" = "**%@** konnte nicht zur Gruppe hinzugefügt werden, da das Backend von **%@** nicht erreicht werden konnte.";
+"failedToAddParticipantSingularOfflineForTooLong" = "**%@** konnte der Gruppe nicht hinzugefügt werden.";
+"failedToAddParticipantsPlural" = "**%d Teilnehmer** konnten der Gruppe nicht hinzugefügt werden.";
+"failedToAddParticipantsPluralDetailsNonFederatingBackends" = "**%@** und **%@** konnten nicht zur Gruppe hinzugefügt werden, da ihre Backends nicht miteinander verbunden sind.";
+"failedToAddParticipantsPluralDetailsOfflineBackend" = "**%@** und **%@** konnten nicht zur Gruppe hinzugefügt werden, da das Backend von **%@** nicht erreicht werden konnte.";
+"failedToAddParticipantsPluralDetailsOfflineForTooLong" = "**%@** und **%@** konnten nicht zur Gruppe hinzugefügt werden.";
+"failedToAddParticipantsSingularDetailsNonFederatingBackends" = "**%@** konnte der Gruppe nicht hinzugefügt werden, da die Backends nicht miteinander verbunden sind.";
+"failedToAddParticipantsSingularDetailsOfflineBackend" = "**%@** konnte nicht zur Gruppe hinzugefügt werden, da das Backend von **%@** nicht erreicht werden konnte.";
+"failedToAddParticipantsSingularDetailsOfflineForTooLong" = "**%@** konnte der Gruppe nicht hinzugefügt werden.";
 "wireMeetings.schedule.now.title" = "Meeting starten";
 "wireMeetings.schedule.future.title" = "Neues Meeting";
 "wireMeetings.schedule.edit.title" = "Meeting bearbeiten";
