@@ -165,14 +165,14 @@ struct MeetingFormViewModelTests {
 
     // MARK: - Date Validation Tests
 
-    @Test("scheduled startDateRange begins at the first future quarter-hour")
-    func startDateRange_ScheduledModeStartsAtFirstFutureQuarterHour() throws {
+    @Test("scheduled startDateRange begins at the next minute")
+    func startDateRange_ScheduledModeStartsAtNextMinute() throws {
         dateProviderMock.now = try makeDate(year: 2026, month: 7, day: 6, hour: 14, minute: 18)
         let viewModel = makeViewModel(mode: .scheduled)
-        let nextQuarterHour = try makeDate(year: 2026, month: 7, day: 6, hour: 14, minute: 30)
-        #expect(viewModel.startDateRange.lowerBound == nextQuarterHour)
+        let nextMinute = try makeDate(year: 2026, month: 7, day: 6, hour: 14, minute: 19)
+        #expect(viewModel.startDateRange.lowerBound == nextMinute)
 
-        dateProviderMock.now = try makeDate(year: 2026, month: 7, day: 6, hour: 23, minute: 45)
+        dateProviderMock.now = try makeDate(year: 2026, month: 7, day: 6, hour: 23, minute: 59)
         let startOfNextDay = try makeDate(year: 2026, month: 7, day: 7, hour: 0, minute: 0)
         #expect(viewModel.startDateRange.lowerBound == startOfNextDay)
 
@@ -180,8 +180,8 @@ struct MeetingFormViewModelTests {
         #expect(exactBoundaryViewModel.startDate == startOfNextDay)
     }
 
-    @Test("scheduled mode starts at the next quarter-hour boundary")
-    func scheduledMode_StartsAtNextQuarterHourBoundary() throws {
+    @Test("scheduled mode starts at the next minute")
+    func scheduledMode_StartsAtNextMinute() throws {
         // Given
         dateProviderMock.now = try makeDate(year: 2026, month: 7, day: 6, hour: 14, minute: 2)
 
@@ -189,7 +189,7 @@ struct MeetingFormViewModelTests {
         let viewModel = makeViewModel(mode: .scheduled)
 
         // Then
-        let expectedStartDate = try makeDate(year: 2026, month: 7, day: 6, hour: 14, minute: 15)
+        let expectedStartDate = try makeDate(year: 2026, month: 7, day: 6, hour: 14, minute: 3)
         #expect(viewModel.startDate == expectedStartDate)
     }
 
@@ -198,13 +198,13 @@ struct MeetingFormViewModelTests {
         #expect(viewModel.endDateRange.lowerBound > viewModel.startDate)
     }
 
-    @Test("endDateRange ends at 23:45 on the start date")
+    @Test("endDateRange ends at 23:59 on the start date")
     func endDateRange_EndsAtLatestAvailableEndTime() throws {
         // Given
         viewModel.startDate = try makeDate(year: 2026, month: 7, day: 6, hour: 10, minute: 0)
 
         // Then
-        let expectedEndDate = try makeDate(year: 2026, month: 7, day: 6, hour: 23, minute: 45)
+        let expectedEndDate = try makeDate(year: 2026, month: 7, day: 6, hour: 23, minute: 59)
         #expect(viewModel.endDateRange.upperBound == expectedEndDate)
     }
 
@@ -217,7 +217,7 @@ struct MeetingFormViewModelTests {
         #expect(viewModel.endDate > viewModel.startDate)
     }
 
-    @Test("setting an end date past midnight is capped to 23:45 on the start date")
+    @Test("setting an end date past midnight is capped to 23:59 on the start date")
     func endDatePastMidnight_IsCappedToLatestAvailableEndTime() throws {
         // Given
         viewModel.startDate = try makeDate(year: 2026, month: 7, day: 6, hour: 22, minute: 30)
@@ -226,7 +226,7 @@ struct MeetingFormViewModelTests {
         viewModel.endDate = try makeDate(year: 2026, month: 7, day: 7, hour: 0, minute: 30)
 
         // Then
-        let expectedEndDate = try makeDate(year: 2026, month: 7, day: 6, hour: 23, minute: 45)
+        let expectedEndDate = try makeDate(year: 2026, month: 7, day: 6, hour: 23, minute: 59)
         #expect(viewModel.endDate == expectedEndDate)
     }
 
@@ -253,8 +253,8 @@ struct MeetingFormViewModelTests {
         #expect(viewModel.endDate == expectedEndDate)
     }
 
-    @Test("changing the start time to 23:30 caps the end time at 23:45")
-    func changingStartTimeTo2330_CapsEndTimeAt2345() throws {
+    @Test("changing the start time to 23:30 caps the end time at 23:59")
+    func changingStartTimeTo2330_CapsEndTimeAt2359() throws {
         // Given
         viewModel.startDate = try makeDate(year: 2026, month: 7, day: 6, hour: 14, minute: 30)
         viewModel.endDate = try makeDate(year: 2026, month: 7, day: 6, hour: 15, minute: 30)
@@ -263,18 +263,18 @@ struct MeetingFormViewModelTests {
         viewModel.startDate = try makeDate(year: 2026, month: 7, day: 6, hour: 23, minute: 30)
 
         // Then
-        let expectedEndDate = try makeDate(year: 2026, month: 7, day: 6, hour: 23, minute: 45)
+        let expectedEndDate = try makeDate(year: 2026, month: 7, day: 6, hour: 23, minute: 59)
         #expect(viewModel.endDate == expectedEndDate)
     }
 
-    @Test("changing the start time to 23:45 makes the end time match")
-    func changingStartTimeTo2345_MakesEndTimeMatch() throws {
+    @Test("changing the start time to 23:59 makes the end time match")
+    func changingStartTimeTo2359_MakesEndTimeMatch() throws {
         // Given
         viewModel.startDate = try makeDate(year: 2026, month: 7, day: 6, hour: 14, minute: 30)
         viewModel.endDate = try makeDate(year: 2026, month: 7, day: 6, hour: 15, minute: 30)
 
         // When
-        viewModel.startDate = try makeDate(year: 2026, month: 7, day: 6, hour: 23, minute: 45)
+        viewModel.startDate = try makeDate(year: 2026, month: 7, day: 6, hour: 23, minute: 59)
 
         // Then
         #expect(viewModel.endDate == viewModel.startDate)

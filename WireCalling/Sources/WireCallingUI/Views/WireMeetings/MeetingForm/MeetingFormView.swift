@@ -24,7 +24,8 @@ import WireFoundation
 
 struct MeetingFormView: View {
     private typealias Strings = L10n.Localizable.WireMeetings.Schedule
-    private static let timePickerMinuteInterval = 15
+    // Temporary playtest setting; production uses 15-minute steps.
+    private static let timePickerMinuteInterval = 1
     @State private var formatter = MeetingsFormatter()
 
     @Environment(\.dismiss) private var dismiss

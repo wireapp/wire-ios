@@ -62,13 +62,14 @@ package final class MeetingFormViewModel {
     private let currentDateProvider: any CurrentDateProviding
     private let onSuccess: (Meeting) -> Void
 
-    private static let timePickerMinuteInterval = 15
+    // Temporary playtest setting; production uses 15-minute steps.
+    private static let timePickerMinuteInterval = 1
     // Match the limits enforced by SimpleTextFieldValidator for conversation names.
     private static let maximumConversationNameLength = 64
     private static let maximumConversationNameByteLength = 256
 
-    /// The smallest selectable interval between start and end time.
-    private static let minimumDuration = TimeInterval(timePickerMinuteInterval) * TimeInterval.oneMinute
+    /// The minimum meeting duration when the selected day has room for it.
+    private static let minimumDuration = TimeInterval(15) * TimeInterval.oneMinute
 
     var meetingTitle: String = ""
 
@@ -81,7 +82,7 @@ package final class MeetingFormViewModel {
         }
     }
 
-    /// The end date follows the start date's calendar day and can't go past 23:45.
+    /// The end date follows the start date's calendar day and can't go past 23:59.
     var endDate: Date {
         didSet {
             let adjustedEndDate = Self.adjustedEndDate(endDate, forStartDate: startDate)
@@ -114,7 +115,7 @@ package final class MeetingFormViewModel {
         }
     }
 
-    /// Acceptance: the end picker must stay on the start date, with 23:45 as the latest available time.
+    /// The end picker stays on the start date, with 23:59 as the latest available time.
     var endDateRange: ClosedRange<Date> {
         let latestEndDate = Self.latestEndDate(for: startDate)
         let earliestEndDate = min(startDate.addingTimeInterval(Self.minimumDuration), latestEndDate)
@@ -398,7 +399,8 @@ package final class MeetingFormViewModel {
 
     private static func nextSelectableStartDate(after date: Date) -> Date {
         let rounded = date.roundedUpToNextMinuteInterval(timePickerMinuteInterval)
-        return rounded > date ? rounded : rounded.addingTimeInterval(minimumDuration)
+        let interval = TimeInterval(timePickerMinuteInterval) * TimeInterval.oneMinute
+        return rounded > date ? rounded : rounded.addingTimeInterval(interval)
     }
 
     private static func adjustedEndDate(
@@ -406,7 +408,7 @@ package final class MeetingFormViewModel {
         forStartDate startDate: Date,
         calendar: Calendar = .current
     ) -> Date {
-        // The hard limit is independent from the start time: no end time past 23:45 on the selected start date.
+        // The hard limit is independent from the start time: no end time past 23:59 on the selected start date.
         let latestEndDate = latestEndDate(for: startDate, calendar: calendar)
         if proposedEndDate > latestEndDate {
             return latestEndDate
@@ -431,7 +433,7 @@ package final class MeetingFormViewModel {
     private static func latestEndDate(for startDate: Date, calendar: Calendar = .current) -> Date {
         var components = calendar.dateComponents([.year, .month, .day], from: startDate)
         components.hour = 23
-        components.minute = 45
+        components.minute = 59
         components.second = 0
         components.nanosecond = 0
 
