@@ -22,7 +22,8 @@ public import WireFoundation
 /// Identifies one local reminder for one occurrence of a meeting on one account.
 public struct MeetingReminder: Hashable, Sendable {
 
-    public static let leadTime: TimeInterval = 10 * 60
+    // Temporary playtest lead time; production uses ten minutes.
+    public static let leadTime: TimeInterval = 60
     public static let identifierNamespace = "wire.meeting-reminder.v1|"
 
     public let accountID: UUID

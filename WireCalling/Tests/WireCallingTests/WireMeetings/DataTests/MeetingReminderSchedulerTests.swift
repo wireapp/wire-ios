@@ -73,7 +73,7 @@ struct MeetingReminderSchedulerTests {
         #expect(center.addedRequests.isEmpty)
     }
 
-    @Test("does not send a late reminder for a meeting starting within ten minutes")
+    @Test("does not send a late reminder for a meeting starting within one minute")
     func skipsShortNoticeReminder() async throws {
         let center = NotificationCenterSpy()
         center.status = .authorized
@@ -82,7 +82,7 @@ struct MeetingReminderSchedulerTests {
             accountID: reminder.accountID,
             meetingID: reminder.meetingID,
             occurrenceStarts: [reminder.occurrenceStart],
-            now: reminder.occurrenceStart.addingTimeInterval(-5 * 60)
+            now: reminder.occurrenceStart.addingTimeInterval(-30)
         ) { _ in UNMutableNotificationContent() }
 
         #expect(center.addedRequests.isEmpty)

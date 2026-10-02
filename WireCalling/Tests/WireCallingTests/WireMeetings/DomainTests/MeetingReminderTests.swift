@@ -32,11 +32,11 @@ struct MeetingReminderTests {
     )
     private let start = Date(timeIntervalSince1970: 1_800_000_000)
 
-    @Test("fires ten minutes before the occurrence starts")
+    @Test("fires one minute before the occurrence starts")
     func fireDate() {
         let reminder = MeetingReminder(accountID: accountID, meetingID: meetingID, occurrenceStart: start)
 
-        #expect(reminder.fireDate == start.addingTimeInterval(-600))
+        #expect(reminder.fireDate == start.addingTimeInterval(-60))
     }
 
     @Test("the same account, meeting, and occurrence produce the same identifier")

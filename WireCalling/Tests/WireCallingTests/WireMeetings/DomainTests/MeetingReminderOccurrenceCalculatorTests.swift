@@ -46,7 +46,7 @@ struct MeetingReminderOccurrenceCalculatorTests {
         ])
     }
 
-    @Test("skips an occurrence whose ten-minute fire time has passed and keeps the limit")
+    @Test("skips an occurrence whose one-minute fire time has passed and keeps the limit")
     func skipsShortNoticeOccurrence() {
         let meeting = makeMeeting(
             start: date("2026-03-28T08:00:00Z"),
@@ -55,7 +55,7 @@ struct MeetingReminderOccurrenceCalculatorTests {
 
         let starts = MeetingReminderOccurrenceCalculator().starts(
             for: meeting,
-            after: date("2026-03-28T07:55:00Z"),
+            after: date("2026-03-28T07:59:30Z"),
             limit: 1
         )
 
@@ -97,13 +97,13 @@ struct MeetingReminderOccurrenceCalculatorTests {
         #expect(starts.last == date("2026-04-01T07:00:00Z"))
     }
 
-    @Test("excludes a one-time meeting less than ten minutes away")
+    @Test("excludes a one-time meeting less than one minute away")
     func excludesShortNoticeMeeting() {
         let meeting = makeMeeting(start: date("2026-03-28T08:00:00Z"), recurrence: nil)
 
         let starts = MeetingReminderOccurrenceCalculator().starts(
             for: meeting,
-            after: date("2026-03-28T07:55:00Z"),
+            after: date("2026-03-28T07:59:30Z"),
             limit: 1
         )
 
