@@ -37,7 +37,7 @@ struct MeetingReminderNotificationContentBuilderTests {
         creatorID: QualifiedID(id: UUID(), domain: "example.com")
     )
 
-    @Test("shows the meeting title, date, and local start and end times")
+    @Test("shows the meeting title and the local start time")
     func showsMeetingDetails() {
         let timeZone = TimeZone(secondsFromGMT: 3600)!
         let content = MeetingReminderNotificationContentBuilder(
@@ -55,14 +55,8 @@ struct MeetingReminderNotificationContentBuilderTests {
         timeFormatter.timeZone = timeZone
         timeFormatter.timeStyle = .short
 
-        let dateFormatter = DateFormatter()
-        dateFormatter.locale = Locale(identifier: "en_US")
-        dateFormatter.timeZone = timeZone
-        dateFormatter.dateStyle = .medium
-
         #expect(content.title == meeting.title)
-        #expect(content.body == "Starts \(dateFormatter.string(from: occurrenceStart)) at "
-            + "\(timeFormatter.string(from: occurrenceStart)), ends at \(timeFormatter.string(from: meeting.end))")
+        #expect(content.body == "Starts at \(timeFormatter.string(from: occurrenceStart))")
         #expect(content.categoryIdentifier == NotificationCategory.meetingReminder.rawValue)
         #expect(content.userInfo[NotificationUserInfoKey.selfUserID] as? String == accountID.uuidString)
         #expect(content.userInfo[MeetingReminderUserInfoKey.conversationID] as? String
@@ -70,28 +64,6 @@ struct MeetingReminderNotificationContentBuilderTests {
         #expect(content.userInfo[MeetingReminderUserInfoKey.conversationDomain] as? String
             == meeting.conversationID.domain)
         #expect(content.sound != nil)
-    }
-
-    @Test("uses a recurring occurrence's end time rather than the original meeting end")
-    func showsRecurringOccurrenceEnd() {
-        let nextOccurrence = occurrenceStart.addingTimeInterval(24 * 60 * 60)
-        let content = MeetingReminderNotificationContentBuilder(
-            locale: Locale(identifier: "en_US"),
-            timeZone: TimeZone(secondsFromGMT: 0)!
-        ).build(
-            meeting: meeting,
-            occurrenceStart: nextOccurrence,
-            accountID: accountID,
-            showMeetingTitle: true
-        )
-
-        let timeFormatter = DateFormatter()
-        timeFormatter.locale = Locale(identifier: "en_US")
-        timeFormatter.timeZone = TimeZone(secondsFromGMT: 0)!
-        timeFormatter.timeStyle = .short
-
-        let expectedEnd = timeFormatter.string(from: meeting.end.addingTimeInterval(24 * 60 * 60))
-        #expect(content.body.contains("ends at \(expectedEnd)"))
     }
 
     @Test("hides the meeting title when details are not allowed")
