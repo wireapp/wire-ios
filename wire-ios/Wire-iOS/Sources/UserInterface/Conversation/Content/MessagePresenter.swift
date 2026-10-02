@@ -156,13 +156,27 @@ final class MessagePresenter: NSObject {
     // MARK: - File
 
     func openFileMessage(_ message: ZMConversationMessage, targetView: UIView) {
+        WireLogger.ui.info(
+            "[WPB-28386] openFileMessage: nonce=\(message.nonce?.uuidString ?? "nil") isFileDownloaded=\(message.isFileDownloaded())",
+            attributes: .safePublic
+        )
 
         if !message.isFileDownloaded() {
             guard let nonce = message.nonce else { return }
 
             message.fileMessageData?.requestFileDownload()
 
+            WireLogger.ui.info(
+                "[WPB-28386] openFileMessage: registering download observer nonce=\(nonce.uuidString)",
+                attributes: .safePublic
+            )
+
             fileAvailabilityObservers[nonce] = makeFileDownloadObserver(message, userSession) { [weak self] message in
+                WireLogger.ui.info(
+                    "[WPB-28386] openFileMessage observer fired: nonce=\(nonce.uuidString) downloadState=\(String(describing: message.fileMessageData?.downloadState)) isFileDownloaded=\(message.isFileDownloaded())",
+                    attributes: .safePublic
+                )
+
                 // Ignore the change that merely signals the download has started; wait for it to conclude.
                 guard message.fileMessageData?.downloadState != .downloading else { return }
 
@@ -182,6 +196,10 @@ final class MessagePresenter: NSObject {
             let fileMessageData = message.fileMessageData,
             fileMessageData.hasLocalFileData
         else {
+            WireLogger.ui.warn(
+                "[WPB-28386] openFileMessage: isFileDownloaded() true but fileMessageData/hasLocalFileData missing, nonce=\(message.nonce?.uuidString ?? "nil")",
+                attributes: .safePublic
+            )
             return
         }
 
@@ -191,23 +209,34 @@ final class MessagePresenter: NSObject {
             Task {
                 await openPassesViewController(fileMessageData: fileMessageData)
             }
-        } else if
-            fileMessageData.isVideo,
-            let fileURL = fileMessageData.temporaryURLToDecryptedFile(),
-            let mediaPlaybackManager {
-            let player = AVPlayer(url: fileURL)
-            mediaPlayerController = MediaPlayerController(
-                player: player,
-                message: message,
-                delegate: mediaPlaybackManager
+        } else if fileMessageData.isVideo {
+            let fileURL = fileMessageData.temporaryURLToDecryptedFile()
+            WireLogger.ui.info(
+                "[WPB-28386] openFileMessage: isVideo, temporaryURLToDecryptedFile=\(fileURL != nil) mediaPlaybackManager=\(mediaPlaybackManager != nil) nonce=\(message.nonce?.uuidString ?? "nil")",
+                attributes: .safePublic
             )
-            let playerViewController = AVPlayerViewController()
-            playerViewController.player = player
 
-            observePlayerDismissal()
+            if let fileURL, let mediaPlaybackManager {
+                let player = AVPlayer(url: fileURL)
+                mediaPlayerController = MediaPlayerController(
+                    player: player,
+                    message: message,
+                    delegate: mediaPlaybackManager
+                )
+                let playerViewController = AVPlayerViewController()
+                playerViewController.player = player
 
-            targetViewController?.present(playerViewController, animated: true) {
-                player.play()
+                observePlayerDismissal()
+
+                targetViewController?.present(playerViewController, animated: true) {
+                    player.play()
+                }
+            } else {
+                WireLogger.ui.warn(
+                    "[WPB-28386] openFileMessage: falling back to document controller for a video, nonce=\(message.nonce?.uuidString ?? "nil")",
+                    attributes: .safePublic
+                )
+                openDocumentController(for: message, targetView: targetView, withPreview: true)
             }
         } else {
             openDocumentController(for: message, targetView: targetView, withPreview: true)
