@@ -381,6 +381,34 @@ final class MarkdownTextViewTests: XCTestCase {
         checkAttributes(for: [.h3, .italic], inRange: NSRange(location: 0, length: text.length))
     }
 
+    func testThatSelectingListClearsHeader() {
+        // GIVEN
+        let text = "Oh Hai!"
+        select(.h1)
+        insertText(text)
+        checkAttributes(for: .h1, inRange: NSRange(location: 0, length: text.length))
+        // WHEN
+        select(.uList)
+        // THEN
+        XCTAssertEqual(sut.text, "- \(text)")
+        checkAttributes(for: .uList, inRange: NSRange(location: 0, length: text.length + 2))
+        XCTAssertEqual(sut.activeMarkdown, .uList)
+    }
+
+    func testThatSelectingHeaderClearsList() {
+        // GIVEN
+        let text = "Oh Hai!"
+        insertText(text)
+        select(.oList)
+        XCTAssertEqual(sut.text, "1. \(text)")
+        // WHEN
+        select(.h1)
+        // THEN
+        XCTAssertEqual(sut.text, text)
+        checkAttributes(for: .h1, inRange: NSRange(location: 0, length: text.length))
+        XCTAssertEqual(sut.activeMarkdown, .h1)
+    }
+
     func testThatInsertingNewLineAfterHeaderResetsActiveMarkdown() {
         // GIVEN
         let line1 = "Oh Hai!"
