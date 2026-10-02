@@ -37,7 +37,7 @@ runs:
     - name: Notify (custom message)
       if: ${{ inputs.notify == 'custom' }}
       continue-on-error: true
-      uses: wireapp/github-app/.github/actions/notify-wire@3a9c9d7e71d96d391951429c1d1bfbbee081ed8c # v1
+      uses: wireapp/github-app/.github/actions/notify-wire@892e1ef42f3d76ea45c9126610d8f1f4a9333854 # v0.0.1-rc.1
       with:
         webhook-url: ${{ env.WIRE_WEBHOOK_URL }}
         token: ${{ env.WIRE_WEBHOOK_TOKEN }}
@@ -46,7 +46,7 @@ runs:
     - name: Notify (always)
       if: ${{ inputs.notify == 'always' }}
       continue-on-error: true
-      uses: wireapp/github-app/.github/actions/notify-wire@3a9c9d7e71d96d391951429c1d1bfbbee081ed8c # v1
+      uses: wireapp/github-app/.github/actions/notify-wire@892e1ef42f3d76ea45c9126610d8f1f4a9333854 # v0.0.1-rc.1
       with:
         webhook-url: ${{ env.WIRE_WEBHOOK_URL }}
         token: ${{ env.WIRE_WEBHOOK_TOKEN }}
@@ -61,7 +61,7 @@ runs:
     - name: Notify (failure only)
       if: ${{ inputs.notify == 'failure' && (inputs.status == 'failure' || inputs.status == 'cancelled') }}
       continue-on-error: true
-      uses: wireapp/github-app/.github/actions/notify-wire@3a9c9d7e71d96d391951429c1d1bfbbee081ed8c # v1
+      uses: wireapp/github-app/.github/actions/notify-wire@892e1ef42f3d76ea45c9126610d8f1f4a9333854 # v0.0.1-rc.1
       with:
         webhook-url: ${{ env.WIRE_WEBHOOK_URL }}
         token: ${{ env.WIRE_WEBHOOK_TOKEN }}
