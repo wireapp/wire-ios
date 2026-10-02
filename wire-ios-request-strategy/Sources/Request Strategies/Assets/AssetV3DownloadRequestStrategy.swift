@@ -18,6 +18,7 @@
 
 import GenericMessageProtocol
 import WireImages
+import WireLogging
 import WireTransport
 
 private let zmLog = ZMSLog(tag: "Asset V3")
@@ -87,8 +88,21 @@ public final class AssetV3DownloadRequestStrategy: AbstractRequestStrategy, ZMDo
     func didRequestToDownloadAsset(_ objectID: NSManagedObjectID) {
         managedObjectContext.performGroupedBlock { [weak self] in
             guard let self else { return }
-            guard let object = try? managedObjectContext.existingObject(with: objectID) else { return }
-            guard let message = object as? ZMAssetClientMessage, !message.hasDownloadedFile else { return }
+            guard let object = try? managedObjectContext.existingObject(with: objectID) else {
+                WireLogger.assets.warn(
+                    "[WPB-28386] didRequestToDownloadAsset: could not fetch existing object for \(objectID)"
+                )
+                return
+            }
+            guard let message = object as? ZMAssetClientMessage, !message.hasDownloadedFile else {
+                WireLogger.assets.warn(
+                    "[WPB-28386] didRequestToDownloadAsset: not a downloadable ZMAssetClientMessage, or already downloaded - \(objectID)"
+                )
+                return
+            }
+            WireLogger.assets.info(
+                "[WPB-28386] didRequestToDownloadAsset: whitelisting nonce=\(message.nonce?.uuidString ?? "nil") version=\(message.version) transferState=\(message.transferState.rawValue) hasUploaded=\(message.underlyingMessage?.assetData?.hasUploaded ?? false) isDownloading(before)=\(message.isDownloading)"
+            )
             message.isDownloading = true
             assetDownstreamObjectSync.whiteListObject(message)
             RequestAvailableNotification.notifyNewRequestsAvailable(self)
@@ -101,7 +115,12 @@ public final class AssetV3DownloadRequestStrategy: AbstractRequestStrategy, ZMDo
             guard let message = managedObjectContext.registeredObject(for: objectID) as? ZMAssetClientMessage
             else { return }
             guard message.version >= 3 else { return }
-            guard let identifier = message.associatedTaskIdentifier else { return }
+            guard let identifier = message.associatedTaskIdentifier else {
+                WireLogger.assets.warn(
+                    "[WPB-28386] cancelOngoingRequestForAssetClientMessage: no associatedTaskIdentifier, isDownloading NOT reset (stays \(message.isDownloading)) - \(objectID)"
+                )
+                return
+            }
             applicationStatus?.requestCancellation.cancelTask(with: identifier)
             message.isDownloading = false
             message.associatedTaskIdentifier = nil
@@ -118,6 +137,10 @@ public final class AssetV3DownloadRequestStrategy: AbstractRequestStrategy, ZMDo
     ) {
         var decryptSuccess = false
 
+        WireLogger.assets.info(
+            "[WPB-28386] handleResponse: entered for nonce=\(assetClientMessage.nonce?.uuidString ?? "nil") result=\(response.result) httpStatus=\(response.httpStatus) rawDataBytes=\(response.rawData?.count ?? -1)"
+        )
+
         assetClientMessage.isDownloading = false
 
         if response.result == .success {
@@ -129,14 +152,28 @@ public final class AssetV3DownloadRequestStrategy: AbstractRequestStrategy, ZMDo
 //        -> retry the image request and do not delete the asset client message.
         else if response.result == .permanentError, response.httpStatus != 403 {
             zmLog.debug("asset unavailable on remote (\(response.httpStatus)), deleting")
+            WireLogger.assets.warn(
+                "[WPB-28386] handleResponse: permanent error \(response.httpStatus), deleting nonce=\(assetClientMessage.nonce?.uuidString ?? "nil")"
+            )
             managedObjectContext.delete(assetClientMessage)
         } else {
             zmLog.debug("error downloading asset (\(response.httpStatus))")
+            WireLogger.assets.warn(
+                "[WPB-28386] handleResponse: transient error \(response.httpStatus) for nonce=\(assetClientMessage.nonce?.uuidString ?? "nil"), isDownloading reset to false, will be retried"
+            )
+            // Flush immediately: otherwise this change rides along with whatever the sync
+            // engine's next scheduled save happens to be, which during a large batch of
+            // other work (e.g. rejoining many MLS conversations after a backup restore)
+            // can leave the UI showing a stale "downloading" state for a long time.
+            managedObjectContext.saveOrRollback()
             return
         }
 
         if !decryptSuccess {
             zmLog.debug("asset unavailable to decrypt, deleting")
+            WireLogger.assets.warn(
+                "[WPB-28386] handleResponse: decrypt/validation FAILED, deleting nonce=\(assetClientMessage.nonce?.uuidString ?? "nil")"
+            )
             managedObjectContext.delete(assetClientMessage)
         }
 
@@ -144,12 +181,20 @@ public final class AssetV3DownloadRequestStrategy: AbstractRequestStrategy, ZMDo
         assetClientMessage.updateCategoryCache()
 
         if decryptSuccess {
+            WireLogger.assets.info(
+                "[WPB-28386] handleResponse: validation/storage succeeded (playback decryption is deferred), hasDownloadedFile=\(assetClientMessage.hasDownloadedFile) nonce=\(assetClientMessage.nonce?.uuidString ?? "nil")"
+            )
             NotificationDispatcher.notifyNonCoreDataChanges(
                 objectID: assetClientMessage.objectID,
                 changedKeys: [#keyPath(ZMAssetClientMessage.hasDownloadedFile)],
                 uiContext: managedObjectContext.zm_userInterface!
             )
         }
+
+        // Same reasoning as above: save right away so the sync -> UI context merge (and the
+        // resulting download-finished notification to the conversation cell / MessagePresenter)
+        // isn't left waiting behind whatever else the sync engine happens to save next.
+        managedObjectContext.saveOrRollback()
     }
 
     private func storeAndDecrypt(data: Data, for message: ZMAssetClientMessage) -> Bool {
@@ -157,10 +202,14 @@ public final class AssetV3DownloadRequestStrategy: AbstractRequestStrategy, ZMDo
             let genericMessage = message.underlyingMessage,
             let asset = genericMessage.assetData
         else {
+            WireLogger.assets.warn("[WPB-28386] storeAndDecrypt: missing asset metadata")
             return false
         }
 
         let keys = (asset.uploaded.otrKey, asset.uploaded.sha256)
+        WireLogger.assets.info(
+            "[WPB-28386] storeAndDecrypt: nonce=\(message.nonce?.uuidString ?? "nil") metadataBytes=\(asset.original.size) downloadedEncryptedBytes=\(data.count) otrKeyBytes=\(keys.0.count) sha256Bytes=\(keys.1.count) encryption=\(asset.uploaded.encryption)"
+        )
 
         if asset.original.hasRasterImage {
             return validateAndStoreImage(
@@ -189,6 +238,9 @@ public final class AssetV3DownloadRequestStrategy: AbstractRequestStrategy, ZMDo
 
         guard data.zmSHA256Digest() == keys.sha256 else {
             zmLog.warn("v3 asset (image) message: \(asset), nonce:\(message.nonce!) digest is not valid, discarding...")
+            WireLogger.assets.warn(
+                "[WPB-28386] validateAndStoreImage: sha256 mismatch, nonce=\(message.nonce?.uuidString ?? "nil") expectedBytes=\(keys.sha256.count) actualBytes=\(data.zmSHA256Digest().count) dataBytes=\(data.count)"
+            )
             return false
         }
 
@@ -210,12 +262,18 @@ public final class AssetV3DownloadRequestStrategy: AbstractRequestStrategy, ZMDo
 
         guard data.zmSHA256Digest() == keys.sha256 else {
             zmLog.warn("v3 asset (file) message: \(asset), nonce:\(message.nonce!) digest is not valid, discarding...")
+            WireLogger.assets.warn(
+                "[WPB-28386] validateAndStoreFile: sha256 mismatch, nonce=\(message.nonce?.uuidString ?? "nil") expectedBytes=\(keys.sha256.count) actualBytes=\(data.zmSHA256Digest().count) dataBytes=\(data.count)"
+            )
             return false
         }
 
         managedObjectContext.zm_fileAssetCache.storeEncryptedFile(
             data: data,
             for: message
+        )
+        WireLogger.assets.info(
+            "[WPB-28386] validateAndStoreFile: checksum matched, encryptedBytes=\(data.count) cached=\(managedObjectContext.zm_fileAssetCache.hasEncryptedFileData(for: message)) nonce=\(message.nonce?.uuidString ?? "nil")"
         )
 
         return true
@@ -238,6 +296,9 @@ public final class AssetV3DownloadRequestStrategy: AbstractRequestStrategy, ZMDo
 
             let taskCreationHandler = ZMTaskCreatedHandler(on: managedObjectContext) { taskIdentifier in
                 assetClientMessage.associatedTaskIdentifier = taskIdentifier
+                WireLogger.assets.info(
+                    "[WPB-28386] download task created: task=\(taskIdentifier) nonce=\(assetClientMessage.nonce?.uuidString ?? "nil")"
+                )
             }
 
             let completionHandler = ZMCompletionHandler(on: managedObjectContext) { response in
@@ -252,6 +313,9 @@ public final class AssetV3DownloadRequestStrategy: AbstractRequestStrategy, ZMDo
             if let asset = assetClientMessage.underlyingMessage?.assetData {
                 let token = asset.uploaded.hasAssetToken ? asset.uploaded.assetToken : nil
                 let domain = asset.uploaded.assetDomain
+                WireLogger.assets.info(
+                    "[WPB-28386] request(forFetching:): nonce=\(assetClientMessage.nonce?.uuidString ?? "nil") assetID=\(asset.uploaded.assetID) hasToken=\(token != nil) domain=\"\(domain)\""
+                )
                 if let request = requestFactory.requestToGetAsset(
                     withKey: asset.uploaded.assetID,
                     token: token,
@@ -263,6 +327,13 @@ public final class AssetV3DownloadRequestStrategy: AbstractRequestStrategy, ZMDo
                     request.add(progressHandler)
                     return request
                 }
+                WireLogger.assets.error(
+                    "[WPB-28386] request(forFetching:): requestFactory returned nil (missing domain?) for nonce=\(assetClientMessage.nonce?.uuidString ?? "nil") apiVersion=\(apiVersion)"
+                )
+            } else {
+                WireLogger.assets.error(
+                    "[WPB-28386] request(forFetching:): assetClientMessage has no underlyingMessage.assetData - nonce=\(assetClientMessage.nonce?.uuidString ?? "nil")"
+                )
             }
         }
 

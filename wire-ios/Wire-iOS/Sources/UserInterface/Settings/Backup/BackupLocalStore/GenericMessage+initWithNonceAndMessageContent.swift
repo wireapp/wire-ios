@@ -20,6 +20,7 @@ import Foundation
 import GenericMessageProtocol
 import WireBackup
 import WireDataModel
+import WireLogging
 
 extension GenericMessage {
 
@@ -97,6 +98,11 @@ private extension Asset {
                 }
             }
         }
+
+        WireLogger.backupImport.info(
+            "[WPB-28386] restored Asset: mimeType=\(assetContent.mimeType) size=\(assetContent.size) assetID=\(assetContent.assetID) hasToken=\(assetContent.assetToken?.isEmpty == false) domain=\"\(assetContent.assetDomain ?? "")\" metadataCase=\(String(describing: assetContent.metadata))",
+            attributes: .safePublic
+        )
     }
 
 }

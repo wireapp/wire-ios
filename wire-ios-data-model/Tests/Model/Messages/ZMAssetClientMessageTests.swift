@@ -152,6 +152,34 @@ extension ZMAssetClientMessageTests {
         XCTAssertFalse(absoluteString.contains("../"))
     }
 
+    func testThatItAppendsFileExtension_WhenVideoNameHasNoExtension() throws {
+        // given
+        // Mimics a video message restored from a history backup where the sender never
+        // provided a filename, so the backup importer falls back to a bare "video" name.
+        guard let sut = appendFileMessage(to: conversation) else {
+            XCTFail("message not created")
+            return
+        }
+
+        let asset = GenericMessageProtocol.Asset.with {
+            $0.original = GenericMessageProtocol.Asset.Original.with {
+                $0.size = 1024
+                $0.mimeType = "video/mp4"
+                $0.name = "video"
+                $0.video = GenericMessageProtocol.Asset.VideoMetaData.with {
+                    $0.durationInMillis = 1000
+                }
+            }
+        }
+        try sut.setUnderlyingMessage(GenericMessage(content: asset, nonce: sut.nonce!))
+
+        // when
+        let temporaryFileURL = sut.temporaryURLToDecryptedFile()
+
+        // then
+        XCTAssertEqual(temporaryFileURL?.pathExtension, "mp4")
+    }
+
     func testThatItCreatesFileAssetMessageInTheRightStateToBeUploaded() {
         // given
         let sut = appendFileMessage(to: conversation)!
