@@ -238,9 +238,9 @@ public enum Locators {
         public static func reactionOnMessageIdentifier(emoji: String) -> String {
             switch emoji {
             case "❤️":
-                return "emojiHeart"
+                "emojiHeart"
             default:
-                return "emoji\(emoji.unicodeScalars.map { String(format: "%04X", $0.value) }.joined())"
+                "emoji\(emoji.unicodeScalars.map { String(format: "%04X", $0.value) }.joined())"
             }
         }
 
