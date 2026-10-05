@@ -275,6 +275,59 @@ final class MeetingsTests: WireUITestCase {
         XCTAssertEqual(Set(stored.map(\.id)), Set([oneOff.id, recurring.id]))
     }
 
+    @MainActor
+    func testMeetingsAreGroupedAndDisplayTheirDetails_TC_11933() async throws {
+        let (owner, members, _, _) = try await UserHelper.default.registerMeetingsTeam(
+            withMemberCount: 6,
+            names: ["Mira Host", "Aaron One", "Bella Two", "Clara Three", "Dario Four", "Elena Five", "Felix Six"]
+        )
+        try await registerClients(for: members)
+        let fixtures = try await MeetingsTestHelper(user: owner)
+        let now = day(0)
+        let morning = try await fixtures.create(
+            title: "Morning planning", start: day(0, hour: 10),
+            recurrence: MeetingRecurrence(frequency: .daily, interval: 1, until: day(0, hour: 11))
+        )
+        let afternoon = try await fixtures.create(title: "Afternoon review", start: day(0, hour: 14))
+        let tomorrow = try await fixtures.create(title: "Tomorrow planning", start: day(1))
+        let future = try await fixtures.create(title: "Future planning", start: day(3))
+        let expected = [morning, afternoon, tomorrow, future]
+
+        for locale in ["en_GB", "en_US@hours=h12"] {
+            let page = try launchMeetings(for: owner, now: now, locale: locale)
+            if locale == "en_GB" {
+                let form = try page.edit(morning)
+                try form.addParticipants(members)
+                try form.save()
+            }
+            let row = try page.showRow(morning)
+            XCTAssertEqual(row.staticTexts["meetingTitle"].label, morning.title)
+            XCTAssertEqual(row.staticTexts["meetingRecurrence"].label, "Daily")
+            XCTAssertTrue(row.staticTexts["meetingParticipantOverflow"].waitForExistence(timeout: 15))
+            XCTAssertEqual(row.staticTexts["meetingParticipantOverflow"].label, "+2")
+            for user in [owner] + Array(members.prefix(4)) {
+                // Registration adds a numeric suffix to the display name.
+                let suffix = try XCTUnwrap(user.name.split(separator: " ").last)
+                let initials = "\(user.name.prefix(1))\(suffix.prefix(1))"
+                let avatar = row.descendants(matching: .any)["meetingAvatar.\(user.id.uppercased())"].firstMatch
+                XCTAssertTrue(avatar.exists, "Missing avatar for \(user.name)")
+                XCTAssertEqual(avatar.label, initials)
+            }
+            let time = row.staticTexts["meetingTime"].label.replacingOccurrences(of: "\u{202F}", with: " ")
+            XCTAssertEqual(time, locale == "en_GB" ? "10:00 - 10:30" : "10:00 AM - 10:30 AM")
+            let afternoonRow = try page.showRow(afternoon)
+            let afternoonTime = afternoonRow.staticTexts["meetingTime"].label
+                .replacingOccurrences(of: "\u{202F}", with: " ")
+            XCTAssertEqual(afternoonTime, locale == "en_GB" ? "14:00 - 14:30" : "2:00 PM - 2:30 PM")
+            XCTAssertFalse(afternoonRow.staticTexts["meetingRecurrence"].exists)
+            try page.scrollToTop(first: morning)
+            for meeting in expected {
+                XCTAssertEqual(try page.showRow(meeting).staticTexts["meetingTitle"].label, meeting.title)
+            }
+            try page.assertRows(expected, now: now, locale: locale)
+        }
+    }
+
     private func registerClients(for users: [UserInfo]) async throws {
         for user in users {
             _ = try await testServicesClient.getInstanceId(
