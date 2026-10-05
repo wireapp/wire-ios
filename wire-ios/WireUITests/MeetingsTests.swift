@@ -90,7 +90,7 @@ final class MeetingsTests: WireUITestCase {
         let instant = try await meetings.create(title: "Meet now", start: now, duration: 3600)
         var singleMeetings: [MeetingResponse] = []
 
-        for offset in 2 ... 42 {
+        for offset in [3, 12, 22, 32] {
             singleMeetings.append(try await meetings.create(
                 title: "TC11936 scheduled \(offset)",
                 start: day(offset, hour: 8)
@@ -98,26 +98,20 @@ final class MeetingsTests: WireUITestCase {
         }
         let daily = try await meetings.create(
             title: "TC11936 finite daily recurrence",
-            start: day(10, hour: 9),
-            recurrence: MeetingRecurrence(frequency: .daily, interval: 1, until: day(13, hour: 9))
+            start: day(2, hour: 9),
+            recurrence: MeetingRecurrence(frequency: .daily, interval: 1, until: day(42, hour: 9))
         )
 
         let meetingsPage = try launchMeetings(for: owner, now: now, locale: "en_GB")
-        var expectedRows: [(MeetingResponse, Date)] = [(instant, now)]
-        for (index, meeting) in singleMeetings.enumerated() {
-            let offset = index + 2
-            expectedRows.append((meeting, day(offset, hour: 8)))
-            if (10 ... 13).contains(offset) {
-                expectedRows.append((daily, day(offset, hour: 9)))
-            }
-        }
-        try meetingsPage.assertOccurrences(expectedRows)
-        try meetingsPage.assertDayHeaders([now] + (2 ... 42).map { day($0) }, now: now, locale: "en_GB")
+        // Pagination uses occurrences. Keep 46 rows without creating 43 MLS conversations at login.
+        let expectedRows = [(instant, now)] + singleMeetings.map { ($0, $0.startTime) }
+            + (2 ... 42).map { (daily, day($0, hour: 9)) }
+        try meetingsPage.assertOccurrences(expectedRows, now: now, locale: "en_GB")
         XCTAssertFalse(app.buttons["Show More"].exists)
         XCTAssertFalse(app.buttons["Load More"].exists)
 
         try meetingsPage.scrollToTop(first: instant)
-        try meetingsPage.assertOccurrences(expectedRows)
+        try meetingsPage.assertOccurrences(expectedRows, now: now, locale: "en_GB")
     }
 
     @MainActor
