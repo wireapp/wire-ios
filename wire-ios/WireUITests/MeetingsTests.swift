@@ -193,15 +193,14 @@ final class MeetingsTests: WireUITestCase {
         app.activate()
         XCTAssertTrue(app.wait(for: .runningForeground, timeout: 5))
         XCTAssertTrue(page.row(deleted).waitToDisappear(timeout: 20))
-        try page.showRow(created)
         let expected = initial.filter { $0.id != moved.id && $0.id != deleted.id } + [moved, created]
         try page.assertOccurrences(
             expected.map { ($0, $0.startTime) } + recurringRows, now: day(0), locale: "en_GB"
         )
         XCTAssertFalse(page.row(deleted).exists)
-        try page.scrollToTop(first: expected[0])
         XCTAssertEqual(try page.showRow(moved).staticTexts["meetingTitle"].label, moved.title)
         XCTAssertEqual(try page.showRow(created).staticTexts["meetingTitle"].label, created.title)
+        try page.scrollToTop(first: expected[0])
     }
 
     @MainActor
