@@ -365,6 +365,50 @@ final class MeetingsTests: WireUITestCase {
         XCTAssertEqual(page.row(unchanged).staticTexts["meetingTitle"].label, unchanged.title)
     }
 
+    @MainActor
+    func testMeetingActionsForHostInviteeAndDeletedHost_TC_11939() async throws {
+        let (owner, members, qualifiedIDs, _) = try await UserHelper.default.registerMeetingsTeam(
+            withMemberCount: 2, names: ["Team owner", "Meeting host", "Meeting invitee"]
+        )
+        let host = members[0]
+        let invitee = members[1]
+        try await registerClients(for: [invitee])
+        let hostFixtures = try await MeetingsTestHelper(user: host)
+        let inviteeFixtures = try await MeetingsTestHelper(user: invitee)
+        let meeting = try await hostFixtures.create(title: "Member-host meeting", start: day(3))
+        let hostPage = try launchMeetings(for: host, now: day(0))
+        try hostPage.edit(meeting).addParticipants([invitee]).save()
+        try assertMenu(on: hostPage, meeting: meeting, isHost: true)
+
+        let page = try launchMeetings(for: invitee, now: day(0))
+        try assertMenu(on: page, meeting: meeting, isHost: false)
+        let hostAvatarID = "meetingAvatar.\(host.id.uppercased())"
+        XCTAssertTrue(page.row(meeting).descendants(matching: .any)[hostAvatarID].firstMatch.exists)
+        try await hostFixtures.selfUserAPI.deleteSelf(password: host.password)
+        var deletedHost = try await inviteeFixtures.usersAPI.getUser(for: qualifiedIDs[0])
+        for _ in 0 ..< 20 where deletedHost.deleted != true {
+            try await Task.sleep(for: .seconds(1))
+            deletedHost = try await inviteeFixtures.usersAPI.getUser(for: qualifiedIDs[0])
+        }
+        XCTAssertEqual(deletedHost.deleted, true, "The host account was not deleted")
+        UserHelper.default.createdUsers.removeAll { $0.id == host.id }
+        let survivingInvitee = try await inviteeFixtures.selfUserAPI.getSelfUser()
+        XCTAssertEqual(survivingInvitee.teamID, owner.teamID)
+        let remaining = try await inviteeFixtures.list()
+        XCTAssertTrue(
+            remaining.contains { $0.id == meeting.id },
+            "The backend removed the meeting with its host; the deleted-host test data is not supported"
+        )
+        // This role dataset starts after deletion; use a fresh view to exclude stale participant data.
+        let deletedHostPage = try launchMeetings(for: invitee, now: day(0))
+        let remainingRow = try deletedHostPage.showRow(meeting)
+        XCTAssertTrue(remainingRow.descendants(matching: .any)[
+            "meetingAvatar.\(invitee.id.uppercased())"
+        ].firstMatch.waitForExistence(timeout: 20))
+        XCTAssertFalse(remainingRow.descendants(matching: .any)[hostAvatarID].firstMatch.exists)
+        try assertMenu(on: deletedHostPage, meeting: meeting, isHost: false)
+    }
+
     private func registerClients(for users: [UserInfo]) async throws {
         for user in users {
             _ = try await testServicesClient.getInstanceId(
