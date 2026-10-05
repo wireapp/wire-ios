@@ -239,6 +239,43 @@ final class MeetingsTests: WireUITestCase {
         try page.assertRows([first, second])
     }
 
+    @MainActor
+    func testCompletedMeetingsRemainUntilLocalMidnight_TC_11934() async throws {
+        let (owner, _, _, _) = try await UserHelper.default.registerMeetingsTeam()
+        let fixtures = try await MeetingsTestHelper(user: owner)
+        let oneOff = try await fixtures.create(title: "Completed one-off", start: day(0, hour: 10))
+        let recurring = try await fixtures.create(
+            title: "Completed daily occurrence", start: day(0, hour: 11),
+            recurrence: MeetingRecurrence(frequency: .daily, interval: 1, until: day(1, hour: 11))
+        )
+        let calendar = Calendar.current
+        let beforeMidnight = try XCTUnwrap(calendar.date(bySettingHour: 23, minute: 59, second: 0, of: day(0)))
+        let afterMidnight = calendar.startOfDay(for: day(1)).addingTimeInterval(60)
+        let nextOccurrence = day(1, hour: 11)
+        XCTAssertLessThan(oneOff.endTime, beforeMidnight)
+        XCTAssertLessThan(recurring.endTime, beforeMidnight)
+        let clockID = UUID().uuidString
+        uiTestConfig.meetingsClockID = clockID
+        let page = try launchMeetings(for: owner, now: beforeMidnight)
+        try page.assertOccurrences([
+            (oneOff, oneOff.startTime), (recurring, recurring.startTime), (recurring, nextOccurrence)
+        ])
+        try page.assertDayHeaders([day(0), day(1)], now: beforeMidnight, locale: "en_GB")
+        try page.scrollToTop(first: oneOff)
+        XCTAssertTrue(page.row(oneOff).isHittable)
+        XCTAssertTrue(page.row(recurring).isHittable)
+
+        let name = "\(UITestConfig.meetingsClockNotificationPrefix).\(clockID)"
+        XCTAssertEqual(notify_post(name), UInt32(NOTIFY_STATUS_OK))
+        XCTAssertTrue(page.row(oneOff).waitToDisappear(timeout: 20))
+        XCTAssertTrue(page.row(recurring).waitToDisappear(timeout: 20))
+        XCTAssertTrue(page.row(recurring, start: nextOccurrence).waitForExistence(timeout: 20))
+        try page.assertOccurrences([(recurring, nextOccurrence)])
+        try page.assertDayHeaders([day(1)], now: afterMidnight, locale: "en_GB")
+        let stored = try await fixtures.list()
+        XCTAssertEqual(Set(stored.map(\.id)), Set([oneOff.id, recurring.id]))
+    }
+
     private func day(_ offset: Int, hour: Int = 9) -> Date {
         let calendar = Calendar.current
         let date = calendar.date(byAdding: .day, value: offset + 1, to: calendar.startOfDay(for: fixtureDate))!
