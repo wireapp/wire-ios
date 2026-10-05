@@ -58,6 +58,8 @@ class MeetingFormPage: PageModel {
     func addParticipants(_ users: [UserInfo]) throws -> MeetingFormPage {
         participantsButton.tap()
         XCTAssertTrue(memberSearchField.waitForExistence(timeout: 5), "Meeting member search did not appear")
+        let selectedSection = app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", "Selected (")).firstMatch
+        XCTAssertTrue(selectedSection.waitAndTap(), "Selected members section did not collapse")
 
         for user in users {
             memberSearchField.tap()
@@ -69,6 +71,11 @@ class MeetingFormPage: PageModel {
             XCTAssertTrue(memberSearchField.buttons["Clear text"].waitAndTap(), "Member search did not clear")
         }
 
+        let cancelSearch = try XCTUnwrap(
+            app.buttons.matching(identifier: "Cancel").allElementsBoundByIndex.first(where: \.isHittable),
+            "Member search Cancel button did not appear"
+        )
+        cancelSearch.tap()
         XCTAssertTrue(selectMembersButton.waitAndTap(), "Select members button did not appear")
         XCTAssertTrue(
             participantsButton.waitForExistence(timeout: 5),
