@@ -47,4 +47,24 @@ final class MeetingsTests: WireUITestCase {
         return try app.loginUser(email: user.email, password: user.password).acceptPopup().openMeetings()
     }
 
+    @MainActor
+    func testEmptyMeetingsListShowsCreationOptions_TC_11932() async throws {
+        let (teamOwner, _, _, _) = try await UserHelper.default.registerMeetingsTeam(withMemberCount: 0)
+        let meetingsPage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
+            .acceptPopup()
+            .openMeetings()
+
+        XCTAssertTrue(
+            meetingsPage.noUpcomingMeetingsText.waitForExistence(timeout: 10),
+            "The empty upcoming meetings message did not appear"
+        )
+        XCTAssertEqual(meetingsPage.meetingRows.count, 0, "The empty list contained meeting rows")
+        XCTAssertEqual(meetingsPage.dayHeaders.count, 0, "The empty list contained day headers")
+        XCTAssertTrue(meetingsPage.createMeetingButton.isEnabled, "The create meeting button was disabled")
+
+        meetingsPage.createMeetingButton.tap()
+
+        XCTAssertTrue(meetingsPage.meetNowOption.waitForExistence(timeout: 5), "Meet Now did not appear")
+        XCTAssertTrue(meetingsPage.scheduleMeetingOption.exists, "Schedule a Meeting did not appear")
+    }
 }
