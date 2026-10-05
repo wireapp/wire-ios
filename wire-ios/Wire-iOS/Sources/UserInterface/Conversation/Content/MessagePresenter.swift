@@ -264,6 +264,10 @@ final class MessagePresenter: NSObject {
         }
         modalTargetController?.view.window?.endEditing(true)
 
+        WireLogger.assets.info(
+            "[WPB-28386] MessagePresenter.open: nonce=\(message.nonce?.uuidString ?? "nil") isLocation=\(Message.isLocation(message)) isVideo=\(Message.isVideo(message)) isFileTransfer=\(Message.isFileTransfer(message)) isImage=\(Message.isImage(message)) canBeShared=\(message.canBeShared) canBeDownloaded=\(message.canBeDownloaded) fileMessageData=\(message.fileMessageData != nil)"
+        )
+
         if Message.isLocation(message) {
             openLocationMessage(message)
         } else if Message.isVideo(message), message.canBeShared {
