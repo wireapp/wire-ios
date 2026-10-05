@@ -123,6 +123,53 @@ final class MeetingsTests: WireUITestCase {
         try meetingsPage.assertOccurrences(expectedRows)
     }
 
+    @MainActor
+    func testDuplicateMeetingsKeepActionsBoundToSelectedRecord_TC_11942() async throws {
+        let (owner, _, _, _) = try await UserHelper.default.registerMeetingsTeam(withMemberCount: 0)
+        let fixtures = try await MeetingsTestHelper(user: owner)
+        let start = day(3, hour: 10)
+        let originalTitle = "TC11942 same visible details"
+        let first = try await fixtures.create(title: originalTitle, start: start)
+        let second = try await fixtures.create(title: originalTitle, start: start)
+        XCTAssertNotEqual(first.id, second.id, "The fixtures must be separate backend meeting records")
+
+        let page = try launchMeetings(for: owner, now: day(0))
+        let firstRow = page.row(first)
+        let secondRow = page.row(second)
+        XCTAssertTrue(firstRow.waitForExistence(timeout: 15), "First duplicate meeting did not appear")
+        XCTAssertTrue(secondRow.waitForExistence(timeout: 15), "Second duplicate meeting did not appear")
+        XCTAssertNotEqual(firstRow.identifier, secondRow.identifier)
+        XCTAssertEqual(page.meetingRows.count, 2)
+        XCTAssertEqual(firstRow.staticTexts["meetingTime"].label, secondRow.staticTexts["meetingTime"].label)
+        XCTAssertEqual(firstRow.staticTexts["meetingTitle"].label, originalTitle)
+        XCTAssertEqual(secondRow.staticTexts["meetingTitle"].label, originalTitle)
+
+        // Change only the selected second row. Its ID must stay stable, and
+        // the first duplicate must keep its original title.
+        let form = try page.edit(second)
+        form.replaceTitle(with: "TC11942 selected second")
+        _ = try form.save()
+
+        XCTAssertTrue(secondRow.staticTexts.matching(
+            NSPredicate(format: "label == %@", "TC11942 selected second")
+        ).firstMatch.waitForExistence(timeout: 15))
+        XCTAssertEqual(secondRow.staticTexts["meetingTitle"].label, "TC11942 selected second")
+        XCTAssertEqual(firstRow.staticTexts["meetingTitle"].label, originalTitle)
+
+        let backendRows = try await fixtures.list()
+        XCTAssertEqual(backendRows.first(where: { $0.id == first.id })?.title, originalTitle)
+        XCTAssertEqual(backendRows.first(where: { $0.id == second.id })?.title, "TC11942 selected second")
+
+        try page.openMenu(for: first)
+        XCTAssertTrue(app.buttons["Delete meeting for all"].waitAndTap())
+        XCTAssertTrue(app.alerts.buttons["Delete"].waitAndTap())
+        XCTAssertTrue(firstRow.waitToDisappear(timeout: 15))
+        try page.assertRows([second])
+        let remaining = try await fixtures.list()
+        XCTAssertEqual(remaining.map(\.id), [second.id])
+        XCTAssertEqual(remaining.first?.title, "TC11942 selected second")
+    }
+
     private func day(_ offset: Int, hour: Int = 9) -> Date {
         let calendar = Calendar.current
         let date = calendar.date(byAdding: .day, value: offset + 1, to: calendar.startOfDay(for: fixtureDate))!
