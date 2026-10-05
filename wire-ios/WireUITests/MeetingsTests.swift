@@ -84,6 +84,45 @@ final class MeetingsTests: WireUITestCase {
         XCTAssertFalse(fourWeekRow.staticTexts["Monthly"].exists)
     }
 
+    @MainActor
+    func testMeetingsPaginationKeepsOccurrenceOrderAfterScrollingBack_TC_11936() async throws {
+        let (owner, _, _, _) = try await UserHelper.default.registerMeetingsTeam(withMemberCount: 0)
+        let meetings = try await MeetingsTestHelper(user: owner)
+        let now = day(0)
+        // Meet Now uses the same API with a one-hour meeting that starts now.
+        let instant = try await meetings.create(title: "Meet now", start: now, duration: 3600)
+        var singleMeetings: [MeetingResponse] = []
+
+        for offset in 2 ... 42 {
+            singleMeetings.append(try await meetings.create(
+                title: "TC11936 scheduled \(offset)",
+                start: day(offset, hour: 8)
+            ))
+        }
+        let daily = try await meetings.create(
+            title: "TC11936 finite daily recurrence",
+            start: day(10, hour: 9),
+            recurrence: MeetingRecurrence(frequency: .daily, interval: 1, until: day(13, hour: 9))
+        )
+
+        let meetingsPage = try launchMeetings(for: owner, now: now, locale: "en_GB")
+        var expectedRows: [(MeetingResponse, Date)] = [(instant, now)]
+        for (index, meeting) in singleMeetings.enumerated() {
+            let offset = index + 2
+            expectedRows.append((meeting, day(offset, hour: 8)))
+            if (10 ... 13).contains(offset) {
+                expectedRows.append((daily, day(offset, hour: 9)))
+            }
+        }
+        try meetingsPage.assertOccurrences(expectedRows)
+        try meetingsPage.assertDayHeaders([now] + (2 ... 42).map { day($0) }, now: now, locale: "en_GB")
+        XCTAssertFalse(app.buttons["Show More"].exists)
+        XCTAssertFalse(app.buttons["Load More"].exists)
+
+        try meetingsPage.scrollToTop(first: instant)
+        try meetingsPage.assertOccurrences(expectedRows)
+    }
+
     private func day(_ offset: Int, hour: Int = 9) -> Date {
         let calendar = Calendar.current
         let date = calendar.date(byAdding: .day, value: offset + 1, to: calendar.startOfDay(for: fixtureDate))!
