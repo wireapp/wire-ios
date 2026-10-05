@@ -26,6 +26,64 @@ final class MeetingsTests: WireUITestCase {
 
     private let fixtureDate = Date()
 
+    @MainActor
+    func testRecurringMeetingsGroupOccurrencesByLocalDay_TC_11935() async throws {
+        let (owner, _, _, _) = try await UserHelper.default.registerMeetingsTeam(withMemberCount: 0)
+        let meetings = try await MeetingsTestHelper(user: owner)
+        let now = day(0)
+        let daily = try await meetings.create(
+            title: "TC11935 daily",
+            start: day(2, hour: 9),
+            recurrence: MeetingRecurrence(frequency: .daily, interval: 1, until: day(4, hour: 9))
+        )
+        let weekly = try await meetings.create(
+            title: "TC11935 weekly",
+            start: day(3, hour: 10),
+            recurrence: MeetingRecurrence(frequency: .weekly, interval: 1, until: day(17, hour: 10))
+        )
+        let everyTwoWeeks = try await meetings.create(
+            title: "TC11935 every two weeks",
+            start: day(4, hour: 11),
+            recurrence: MeetingRecurrence(frequency: .weekly, interval: 2, until: day(32, hour: 11))
+        )
+        let everyFourWeeks = try await meetings.create(
+            title: "TC11935 every four weeks",
+            start: day(5, hour: 12),
+            recurrence: MeetingRecurrence(frequency: .weekly, interval: 4, until: day(61, hour: 12))
+        )
+
+        let meetingsPage = try launchMeetings(for: owner, now: now, locale: "en_GB")
+        let expectedRows: [(MeetingResponse, Date)] = [
+            (daily, day(2, hour: 9)),
+            (daily, day(3, hour: 9)),
+            (weekly, day(3, hour: 10)),
+            (daily, day(4, hour: 9)),
+            (everyTwoWeeks, day(4, hour: 11)),
+            (everyFourWeeks, day(5, hour: 12)),
+            (weekly, day(10, hour: 10)),
+            (weekly, day(17, hour: 10)),
+            (everyTwoWeeks, day(18, hour: 11)),
+            (everyTwoWeeks, day(32, hour: 11)),
+            (everyFourWeeks, day(33, hour: 12)),
+            (everyFourWeeks, day(61, hour: 12))
+        ]
+        try meetingsPage.assertOccurrences(expectedRows)
+        try meetingsPage.assertDayHeaders(
+            [2, 3, 4, 5, 10, 17, 18, 32, 33, 61].map { day($0) }, now: now, locale: "en_GB"
+        )
+        try meetingsPage.scrollToTop(first: daily)
+
+        XCTAssertEqual(try meetingsPage.showRow(daily).staticTexts["meetingRecurrence"].label, "Daily")
+        XCTAssertTrue(try meetingsPage.showRow(weekly, start: day(3, hour: 10)).staticTexts["Weekly"].exists)
+        XCTAssertTrue(
+            try meetingsPage.showRow(everyTwoWeeks, start: day(4, hour: 11))
+                .staticTexts["Every 2 weeks"].exists
+        )
+        let fourWeekRow = try meetingsPage.showRow(everyFourWeeks, start: day(5, hour: 12))
+        XCTAssertTrue(fourWeekRow.staticTexts["Every 4 weeks"].exists)
+        XCTAssertFalse(fourWeekRow.staticTexts["Monthly"].exists)
+    }
+
     private func day(_ offset: Int, hour: Int = 9) -> Date {
         let calendar = Calendar.current
         let date = calendar.date(byAdding: .day, value: offset + 1, to: calendar.startOfDay(for: fixtureDate))!
