@@ -144,7 +144,7 @@ class MeetingsPage: PageModel {
         let actual = try scan(
             expected: expected,
             firstElement: row(first.0, start: first.1),
-            visibleIdentifiers: { visibleRows().map(\.identifier) },
+            visibleSnapshot: { visibleSnapshot(matchingPrefix: "row:") },
             itemName: "Meeting rows"
         )
         XCTAssertEqual(actual, expected, "Meeting rows did not match the expected order or count")
@@ -185,7 +185,7 @@ class MeetingsPage: PageModel {
         let actual = try scan(
             expected: expected,
             firstElement: firstHeader,
-            visibleIdentifiers: { visibleViewport().map(\.0) },
+            visibleSnapshot: { visibleSnapshot() },
             itemName: "Meeting rows and day headers"
         )
         XCTAssertEqual(actual, expected, "Meeting rows did not appear under their expected day headers")
@@ -202,7 +202,7 @@ class MeetingsPage: PageModel {
         let actual = try scan(
             expected: expected,
             firstElement: firstHeader,
-            visibleIdentifiers: { visibleDayHeaders().map(\.label) },
+            visibleSnapshot: { visibleSnapshot(matchingPrefix: "header:") },
             itemName: "Meeting day headers"
         )
         XCTAssertEqual(actual, expected, "Meeting day headers did not match the expected order or count")
@@ -230,7 +230,7 @@ class MeetingsPage: PageModel {
     private func scan(
         expected: [String],
         firstElement: XCUIElement,
-        visibleIdentifiers: () -> [String],
+        visibleSnapshot: () -> (identifiers: [String], viewport: [(String, CGFloat)]),
         itemName: String
     ) throws -> [String] {
         guard expected.count == Set(expected).count else {
@@ -241,7 +241,8 @@ class MeetingsPage: PageModel {
         var actualIndices: [Int] = []
         var previousIndices: [Int] = []
         for _ in 0 ..< 60 {
-            let identifiers = try waitForVisibleIdentifiers(visibleIdentifiers, itemName: itemName)
+            let snapshot = try waitForVisibleSnapshot(visibleSnapshot, itemName: itemName)
+            let identifiers = snapshot.identifiers
             guard identifiers.count == Set(identifiers).count else {
                 throw failure("\(itemName) repeated in one visible list snapshot")
             }
@@ -273,7 +274,7 @@ class MeetingsPage: PageModel {
             }
             previousIndices = indices
 
-            let viewport = visibleViewport()
+            let viewport = snapshot.viewport
             meetingsList.swipeUp()
             try waitForPaginationToFinish()
             if sameViewport(viewport, visibleViewport()) {
@@ -292,10 +293,10 @@ class MeetingsPage: PageModel {
         throw failure("\(itemName) did not finish scanning within 60 scroll attempts")
     }
 
-    private func waitForVisibleIdentifiers(
-        _ visibleIdentifiers: () -> [String],
+    private func waitForVisibleSnapshot(
+        _ visibleSnapshot: () -> (identifiers: [String], viewport: [(String, CGFloat)]),
         itemName: String
-    ) throws -> [String] {
+    ) throws -> (identifiers: [String], viewport: [(String, CGFloat)]) {
         let deadline = Date().addingTimeInterval(15)
         while Date() < deadline {
             let alert = app.alerts.firstMatch
@@ -304,20 +305,12 @@ class MeetingsPage: PageModel {
                 throw failure("\(itemName) scan blocked by app alert: \(labels.joined(separator: ", "))")
             }
 
-            let identifiers = visibleIdentifiers()
-            if !identifiers.isEmpty { return identifiers }
+            let snapshot = visibleSnapshot()
+            if !snapshot.identifiers.isEmpty { return snapshot }
             RunLoop.current.run(until: Date().addingTimeInterval(0.2))
         }
 
         throw failure("No hittable \(itemName.lowercased()) appeared within 15 seconds")
-    }
-
-    private func visibleRows() -> [XCUIElement] {
-        meetingsList.descendants(matching: .any)
-            .matching(NSPredicate(format: "identifier BEGINSWITH %@", "meetingRow."))
-            .allElementsBoundByIndex
-            .filter(\.isHittable)
-            .sorted { $0.frame.minY < $1.frame.minY }
     }
 
     private func visibleDayHeaders() -> [XCUIElement] {
@@ -328,9 +321,28 @@ class MeetingsPage: PageModel {
     }
 
     private func visibleViewport() -> [(String, CGFloat)] {
-        let rows = visibleRows().map { ("row:\($0.identifier)", $0.frame.minY) }
-        let headers = visibleDayHeaders().map { ("header:\($0.label)", $0.frame.minY) }
+        let rows = meetingsList.descendants(matching: .any)
+            .matching(NSPredicate(format: "identifier BEGINSWITH %@", "meetingRow."))
+            .allElementsBoundByIndex
+            .filter(\.isHittable)
+            .map { ("row:\($0.identifier)", $0.frame.minY) }
+        let headers = meetingsList.staticTexts.matching(identifier: "meetingsDayHeader")
+            .allElementsBoundByIndex
+            .filter(\.isHittable)
+            .map { ("header:\($0.label)", $0.frame.minY) }
         return (rows + headers).sorted { $0.1 < $1.1 }
+    }
+
+    private func visibleSnapshot(
+        matchingPrefix prefix: String? = nil
+    ) -> (identifiers: [String], viewport: [(String, CGFloat)]) {
+        let viewport = visibleViewport()
+        let identifiers = viewport.compactMap { identifier, _ -> String? in
+            guard let prefix else { return identifier }
+            guard identifier.hasPrefix(prefix) else { return nil }
+            return String(identifier.dropFirst(prefix.count))
+        }
+        return (identifiers, viewport)
     }
 
     private func sameViewport(_ first: [(String, CGFloat)], _ second: [(String, CGFloat)]) -> Bool {
