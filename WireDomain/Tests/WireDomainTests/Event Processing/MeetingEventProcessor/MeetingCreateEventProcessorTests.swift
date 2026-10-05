@@ -29,14 +29,23 @@ final class MeetingCreateEventProcessorTests: XCTestCase {
     private var sut: MeetingCreateEventProcessor!
     private var repository: MeetingRepositoryProtocolMock!
     private var conversationRepository: MockConversationRepositoryProtocol!
+    private var reminderSpy: ReminderSpy!
 
     override func setUp() async throws {
         try await super.setUp()
         repository = MeetingRepositoryProtocolMock()
         conversationRepository = MockConversationRepositoryProtocol()
+        let reminderSpy = ReminderSpy()
+        self.reminderSpy = reminderSpy
         sut = MeetingCreateEventProcessor(
             repository: repository,
-            conversationRepository: conversationRepository
+            conversationRepository: conversationRepository,
+            reconcileReminder: { [reminderSpy] meeting in
+                await reminderSpy.record(meeting)
+            },
+            cancelReminder: { [reminderSpy] meetingID in
+                await reminderSpy.recordCancellation(meetingID)
+            }
         )
     }
 
@@ -44,6 +53,7 @@ final class MeetingCreateEventProcessorTests: XCTestCase {
         try await super.tearDown()
         repository = nil
         conversationRepository = nil
+        reminderSpy = nil
         sut = nil
     }
 
@@ -72,6 +82,8 @@ final class MeetingCreateEventProcessorTests: XCTestCase {
         } catch {
             XCTAssertEqual(repository.pullMeetingIdQualifiedIDMeetingReceivedInvocations, [Scaffolding.meetingID])
         }
+        let cancelledIDs = await reminderSpy.cancelledMeetingIDs
+        XCTAssertTrue(cancelledIDs.isEmpty)
     }
 
     func testProcessEvent_It_Pulls_Unknown_Conversation_And_Stores_Meeting_Again() async throws {
@@ -120,6 +132,72 @@ final class MeetingCreateEventProcessorTests: XCTestCase {
 
         XCTAssertTrue(conversationRepository.pullConversationIdDomain_Invocations.isEmpty)
         XCTAssertTrue(repository.storeMeetingMeetingMeetingVoidReceivedInvocations.isEmpty)
+        let recordedIDs = await reminderSpy.recordedMeetingIDs
+        XCTAssertEqual(recordedIDs, [Scaffolding.meetingID])
+    }
+
+    func testProcessEvent_ReconcilesReminder_ForOneTimeMeeting() async throws {
+        repository.pullMeetingIdQualifiedIDMeetingReturnValue = Scaffolding.meeting
+        conversationRepository.pullConversationIdDomain_MockMethod = { _, _ in }
+
+        try await sut.processEvent(Scaffolding.event)
+
+        let recordedIDs = await reminderSpy.recordedMeetingIDs
+        XCTAssertEqual(recordedIDs, [Scaffolding.meetingID])
+        XCTAssertEqual(repository.storeMeetingMeetingMeetingVoidCallsCount, 1)
+    }
+
+    func testProcessEvent_ReconcilesReminder_WhenConversationPullFails() async {
+        repository.pullMeetingIdQualifiedIDMeetingReturnValue = Scaffolding.meeting
+        conversationRepository.pullConversationIdDomain_MockError = ConversationRepositoryError.conversationNotFound
+
+        do {
+            try await sut.processEvent(Scaffolding.event)
+            XCTFail("expected conversation pull to fail")
+        } catch {}
+
+        let recordedIDs = await reminderSpy.recordedMeetingIDs
+        XCTAssertEqual(recordedIDs, [Scaffolding.meetingID])
+    }
+
+    func testProcessEvent_CancelsReminder_WhenMeetingIsMissing() async throws {
+        try await sut.processEvent(Scaffolding.event)
+
+        let cancelledIDs = await reminderSpy.cancelledMeetingIDs
+        XCTAssertEqual(cancelledIDs, [Scaffolding.meetingID])
+    }
+
+    func testProcessEvent_ReconcilesReminder_WhenMeetingIsRecurring() async throws {
+        repository.pullMeetingIdQualifiedIDMeetingReturnValue = Meeting(
+            id: Scaffolding.meetingID,
+            title: Scaffolding.meeting.title,
+            start: Scaffolding.meeting.start,
+            end: Scaffolding.meeting.end,
+            recurrence: MeetingRecurrence(frequency: .daily, interval: 1, until: nil),
+            conversation: MeetingConversation(participants: []),
+            conversationID: Scaffolding.conversationID,
+            creatorID: Scaffolding.meeting.creatorID
+        )
+
+        try await sut.processEvent(Scaffolding.event)
+
+        let recordedIDs = await reminderSpy.recordedMeetingIDs
+        XCTAssertEqual(recordedIDs, [Scaffolding.meetingID])
+    }
+
+    func testProcessEvent_DoesNotFail_WhenReminderSchedulingFails() async throws {
+        repository.pullMeetingIdQualifiedIDMeetingReturnValue = Scaffolding.meeting
+        sut = MeetingCreateEventProcessor(
+            repository: repository,
+            conversationRepository: conversationRepository,
+            reconcileReminder: { _ in throw ReminderError.schedulingFailed },
+            cancelReminder: { _ in }
+        )
+        conversationRepository.pullConversationIdDomain_MockMethod = { _, _ in }
+
+        try await sut.processEvent(Scaffolding.event)
+
+        XCTAssertEqual(repository.storeMeetingMeetingMeetingVoidCallsCount, 1)
     }
 
     private enum Scaffolding {
@@ -151,6 +229,23 @@ final class MeetingCreateEventProcessorTests: XCTestCase {
 
     }
 
+}
+
+private enum ReminderError: Error {
+    case schedulingFailed
+}
+
+private actor ReminderSpy {
+    private(set) var recordedMeetingIDs: [WireCallingDomain.QualifiedID] = []
+    private(set) var cancelledMeetingIDs: [WireCallingDomain.QualifiedID] = []
+
+    func record(_ meeting: Meeting) {
+        recordedMeetingIDs.append(meeting.id)
+    }
+
+    func recordCancellation(_ meetingID: WireCallingDomain.QualifiedID) {
+        cancelledMeetingIDs.append(meetingID)
+    }
 }
 
 // duplicate symbols errors prevent using the autogenerated MeetingRepositoryProtocolMock from WireCallingDomainSupport

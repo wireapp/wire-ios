@@ -301,6 +301,40 @@ final class ZMUserSessionTests_PushNotifications: ZMUserSessionTestsBase {
         XCTAssertNil(mockSessionManager.lastRequestToShowMessage)
     }
 
+    func testThatDefaultTapOnMeetingReminderShowsMeetingsForItsSession() {
+        handle(
+            action: UNNotificationDefaultActionIdentifier,
+            category: WireDomain.NotificationCategory.meetingReminder.rawValue,
+            userInfo: NotificationUserInfo()
+        )
+
+        XCTAssertEqual(mockSessionManager.lastRequestToShowMeetings, sut)
+        XCTAssertNil(mockSessionManager.lastRequestToShowConversation)
+        XCTAssertNil(mockSessionManager.lastRequestToShowConversationsList)
+        XCTAssertNil(mockSessionManager.lastRequestToShowMessage)
+    }
+
+    func testThatForegroundMeetingReminderIsSuppressedOnlyForItsActiveConversation() {
+        let meetingConversationID = UUID()
+        let userInfo = NotificationUserInfo(storage: [
+            MeetingReminderUserInfoKey.conversationID: meetingConversationID.uuidString,
+            MeetingReminderUserInfoKey.conversationDomain: "example.com"
+        ])
+
+        XCTAssertFalse(MeetingReminderForegroundPolicy.shouldPresent(
+            userInfo: userInfo,
+            activeConversations: [(meetingConversationID, "example.com")]
+        ))
+        XCTAssertTrue(MeetingReminderForegroundPolicy.shouldPresent(
+            userInfo: userInfo,
+            activeConversations: [(meetingConversationID, "other.example.com")]
+        ))
+        XCTAssertTrue(MeetingReminderForegroundPolicy.shouldPresent(
+            userInfo: userInfo,
+            activeConversations: []
+        ))
+    }
+
     func testThatItCallsShowConversationButDoesNotCallBack_ForPushNotificationCategoryMissedCallWithCallBackAction() {
         // given
         syncMOC.performAndWait {
