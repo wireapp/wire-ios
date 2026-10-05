@@ -328,6 +328,43 @@ final class MeetingsTests: WireUITestCase {
         }
     }
 
+    @MainActor
+    func testInviteeListTracksHostMeetingChanges_TC_11938() async throws {
+        let (host, members, _, _) = try await UserHelper.default.registerMeetingsTeam(
+            withMemberCount: 1, names: ["Meeting host", "Meeting invitee"]
+        )
+        let invitee = try XCTUnwrap(members.first)
+        try await registerClients(for: [invitee])
+        let fixtures = try await MeetingsTestHelper(user: host)
+        let initial = try await fixtures.create(title: "Initial title", start: day(3, hour: 10))
+        let unchanged = try await fixtures.create(title: "Unchanged meeting", start: day(2))
+        let hostPage = try launchMeetings(for: host, now: day(0))
+        try hostPage.edit(unchanged).addParticipants([invitee]).save()
+        try hostPage.edit(initial).addParticipants([invitee]).save()
+
+        let page = try launchMeetings(for: invitee, now: day(0))
+        let initialRow = try page.showRow(initial)
+        XCTAssertEqual(initialRow.staticTexts["meetingTitle"].label, initial.title)
+        XCTAssertEqual(initialRow.staticTexts["meetingTime"].label, "10:00 - 10:30")
+        for user in [host, invitee] {
+            XCTAssertTrue(initialRow.descendants(matching: .any)["meetingAvatar.\(user.id.uppercased())"].exists)
+        }
+        try page.assertRows([unchanged, initial], now: day(0), locale: "en_GB")
+
+        let updated = try await fixtures.update(meeting: initial, title: "Host updated title", start: day(1, hour: 14))
+        let updatedRow = page.row(updated)
+        XCTAssertTrue(updatedRow.waitForExistence(timeout: 20))
+        XCTAssertTrue(initialRow.waitToDisappear(timeout: 20))
+        XCTAssertEqual(updatedRow.staticTexts["meetingTitle"].label, updated.title)
+        XCTAssertEqual(updatedRow.staticTexts["meetingTime"].label, "14:00 - 14:30")
+        try page.assertRows([updated, unchanged], now: day(0), locale: "en_GB")
+
+        try await fixtures.delete(updated)
+        XCTAssertTrue(updatedRow.waitToDisappear(timeout: 20))
+        try page.assertRows([unchanged])
+        XCTAssertEqual(page.row(unchanged).staticTexts["meetingTitle"].label, unchanged.title)
+    }
+
     private func registerClients(for users: [UserInfo]) async throws {
         for user in users {
             _ = try await testServicesClient.getInstanceId(
