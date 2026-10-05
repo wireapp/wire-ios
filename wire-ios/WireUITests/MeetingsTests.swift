@@ -205,6 +205,40 @@ final class MeetingsTests: WireUITestCase {
         XCTAssertEqual(try page.showRow(created).staticTexts["meetingTitle"].label, created.title)
     }
 
+    @MainActor
+    func testMeetingsListRetryAfterFetchFailure_TC_11947() async throws {
+        let (owner, _, _, _) = try await UserHelper.default.registerMeetingsTeam()
+        let fixtures = try await MeetingsTestHelper(user: owner)
+        let first = try await fixtures.create(title: "Retry first", start: day(1))
+        let second = try await fixtures.create(title: "Retry second", start: day(2))
+        let failureID = UUID().uuidString
+        let name = "\(UITestConfig.meetingsFailureNotificationPrefix).\(failureID)"
+        var token: Int32 = NOTIFY_TOKEN_INVALID
+        XCTAssertEqual(notify_register_check(name, &token), UInt32(NOTIFY_STATUS_OK))
+        defer { notify_cancel(token) }
+        XCTAssertEqual(notify_set_state(token, 0), UInt32(NOTIFY_STATUS_OK))
+        uiTestConfig.meetingsFailureID = failureID
+
+        let page = try launchMeetings(for: owner, now: day(0))
+        let progress = app.descendants(matching: .any)["meetingsLoadProgress"].firstMatch
+        XCTAssertTrue(progress.waitForExistence(timeout: 10))
+        XCTAssertFalse(page.noUpcomingMeetingsText.exists)
+        XCTAssertEqual(page.meetingRows.count, 0)
+        XCTAssertEqual(notify_set_state(token, 1), UInt32(NOTIFY_STATUS_OK))
+        let error = app.staticTexts["Could not load meetings. Please try again."]
+        let retry = app.buttons["meetingsLoadRetryButton"]
+        XCTAssertTrue(error.waitForExistence(timeout: 15))
+        XCTAssertTrue(retry.isEnabled)
+        XCTAssertFalse(page.noUpcomingMeetingsText.exists)
+
+        XCTAssertEqual(notify_set_state(token, 2), UInt32(NOTIFY_STATUS_OK))
+        retry.tap()
+        XCTAssertTrue(page.row(first).waitForExistence(timeout: 15))
+        XCTAssertFalse(error.exists)
+        XCTAssertFalse(retry.exists)
+        try page.assertRows([first, second])
+    }
+
     private func day(_ offset: Int, hour: Int = 9) -> Date {
         let calendar = Calendar.current
         let date = calendar.date(byAdding: .day, value: offset + 1, to: calendar.startOfDay(for: fixtureDate))!
