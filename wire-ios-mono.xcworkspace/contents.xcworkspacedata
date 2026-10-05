@@ -89,6 +89,9 @@
          location = "group:beta_app_release.yml">
       </FileRef>
       <FileRef
+         location = "group:localization_reminder.yml">
+      </FileRef>
+      <FileRef
          location = "group:create_release_branch.yml">
       </FileRef>
       <FileRef
