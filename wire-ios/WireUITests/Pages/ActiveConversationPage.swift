@@ -497,10 +497,29 @@ class ActiveConversationPage: PageModel {
     }
 
     func mentionUserAndSendMessage(nameOfUser: String) throws -> ActiveConversationPage {
+        try inputMessageField.tapIfKeyboardNotFocused().typeText("Hello ")
         mentionButton.tap()
         chooseUser(nameOfUser: nameOfUser)
         sendButton.tapAndWait()
         return self
+    }
+
+    func tapMention(ofUser name: String) throws -> UserDetailsPage {
+        let mentionLabel = [
+            "@\(name)",
+            "@\(name.replacingOccurrences(of: " ", with: "\u{00A0}"))"
+        ]
+        let mentionLink = app.links
+            .matching(NSPredicate(format: "label IN %@", mentionLabel))
+            .firstMatch
+
+        XCTAssertTrue(
+            mentionLink.waitForExistence(timeout: 5),
+            "Expected mention link '\(mentionLabel[0])' should be showing"
+        )
+
+        mentionLink.tap()
+        return try UserDetailsPage()
     }
 
     @discardableResult

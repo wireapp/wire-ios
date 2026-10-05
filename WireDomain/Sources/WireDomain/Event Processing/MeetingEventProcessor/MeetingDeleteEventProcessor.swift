@@ -24,7 +24,7 @@ struct MeetingDeleteEventProcessor: MeetingDeleteEventProcessorProtocol {
     let repository: any MeetingRepositoryProtocol
 
     func processEvent(_ event: MeetingDeleteEvent) async {
-        await repository.deleteLocalMeeting(id: event.meetingID)
+        try? await repository.deleteLocalMeeting(id: event.meetingID)
     }
 
 }

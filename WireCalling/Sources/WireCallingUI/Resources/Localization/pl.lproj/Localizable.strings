@@ -82,9 +82,10 @@
 "wireMeetings.schedule.error.alert.title" = "Coś poszło nie tak";
 "wireMeetings.schedule.error.alert.ok" = "OK";
 "wireMeetings.schedule.participantsNotAdded.title" = "Meeting saved";
-"wireMeetings.schedule.participantsNotAdded.message" = "The meeting was saved, but these users could not be added:\n\n%@";
+"wireMeetings.schedule.participantsNotAdded.createdTitle" = "Meeting created";
+"wireMeetings.schedule.participantsNotAdded.message" = "Be aware that the following people could not be added:\n\n%@";
 "wireMeetings.schedule.error.conversationName.title" = "Update incomplete";
-"wireMeetings.schedule.error.conversationName.message" = "The meeting title could not be updated everywhere. Please try again.";
+"wireMeetings.schedule.error.conversationName.message" = "The meeting title was updated, but the call may still show the previous title. Please try again.";
 "wireMeetings.schedule.error.conversationName.retry" = "Try again";
 "wireMeetings.schedule.disableGuestAccess.alert.title" = "Disable guest access?";
 "wireMeetings.schedule.disableGuestAccess.alert.disable" = "Disable";
@@ -112,4 +113,4 @@
 "wireMeetings.schedule.members.contacts.title" = "Kontakty";
 
 "wireMeetings.schedule.error.expiredStartDate.title" = "Choose a later start time";
-"wireMeetings.schedule.error.expiredStartDate.message" = "Meetings can only be updated with a start time up to 24 hours in the past. Choose a later start time and save again.";
+"wireMeetings.schedule.error.expiredStartDate.message" = "You can only edit meetings that started less than 24 hours ago. Please select a later start time and try again.";
