@@ -166,11 +166,18 @@ final class MeetingsTests: WireUITestCase {
         let (owner, _, _, _) = try await UserHelper.default.registerMeetingsTeam()
         let fixtures = try await MeetingsTestHelper(user: owner)
         var initial: [MeetingResponse] = []
-        for offset in 2 ... 41 {
+        for offset in 2 ... 6 {
             initial.append(try await fixtures.create(title: "Meeting \(offset)", start: day(offset)))
         }
+        let recurring = try await fixtures.create(
+            title: "Meetings across loaded pages", start: day(7),
+            recurrence: MeetingRecurrence(frequency: .daily, interval: 1, until: day(41))
+        )
+        let recurringRows = (7 ... 41).map { (recurring, day($0)) }
         let page = try launchMeetings(for: owner, now: day(0))
-        try page.assertRows(initial)
+        try page.assertOccurrences(
+            initial.map { ($0, $0.startTime) } + recurringRows, now: day(0), locale: "en_GB"
+        )
         try page.scrollToTop(first: initial[0])
         XCTAssertTrue(page.row(initial[0]).isHittable)
 
@@ -188,8 +195,9 @@ final class MeetingsTests: WireUITestCase {
         XCTAssertTrue(page.row(deleted).waitToDisappear(timeout: 20))
         try page.showRow(created)
         let expected = initial.filter { $0.id != moved.id && $0.id != deleted.id } + [moved, created]
-        try page.assertRows(expected)
-        try page.assertDayHeaders(expected.map(\.startTime), now: day(0), locale: "en_GB")
+        try page.assertOccurrences(
+            expected.map { ($0, $0.startTime) } + recurringRows, now: day(0), locale: "en_GB"
+        )
         XCTAssertFalse(page.row(deleted).exists)
         try page.scrollToTop(first: expected[0])
         XCTAssertEqual(try page.showRow(moved).staticTexts["meetingTitle"].label, moved.title)
