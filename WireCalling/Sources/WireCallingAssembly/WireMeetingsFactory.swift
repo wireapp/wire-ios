@@ -41,6 +41,16 @@ public struct WireMeetingsFactory {
         callRepository: any MeetingCallRepositoryProtocol,
         accentColorState: WireMeetingsAccentColorState
     ) -> UIViewController {
+        #if DEBUG
+            let currentDateProvider: any CurrentDateProviding = if let date = UITestConfig.environment?.meetingsDate {
+                MeetingsUITestDateProvider(now: date, clockID: UITestConfig.environment?.meetingsClockID)
+            } else {
+                .system
+            }
+        #else
+            let currentDateProvider: any CurrentDateProviding = .system
+        #endif
+
         let createMeetingUseCase = CreateMeetingUseCase(
             meetingRepository: meetingRepository,
             conversationRepository: conversationRepository
@@ -49,10 +59,22 @@ public struct WireMeetingsFactory {
             meetingRepository: meetingRepository,
             conversationRepository: conversationRepository
         )
-        let fetchUpcomingMeetingsUseCase = FetchUpcomingMeetingsUseCase(
+        let realFetchUseCase = FetchUpcomingMeetingsUseCase(
             repository: meetingRepository,
-            currentDateProvider: .system
+            currentDateProvider: currentDateProvider
         )
+        let fetchUpcomingMeetingsUseCase: any FetchUpcomingMeetingsUseCaseProtocol
+        #if DEBUG
+            if let failureID = UITestConfig.environment?.meetingsFailureID {
+                fetchUpcomingMeetingsUseCase = MeetingsUITestFetchUseCase(
+                    wrapping: realFetchUseCase, failureID: failureID
+                )
+            } else {
+                fetchUpcomingMeetingsUseCase = realFetchUseCase
+            }
+        #else
+            fetchUpcomingMeetingsUseCase = realFetchUseCase
+        #endif
         let observeMeetingChangesUseCase = ObserveMeetingChangesUseCase(repository: meetingRepository)
         let deleteMeetingUseCase = DeleteMeetingUseCase(
             meetingRepository: meetingRepository,
@@ -63,7 +85,7 @@ public struct WireMeetingsFactory {
         let joinMeetingCallUseCase = JoinMeetingCallUseCase(repository: callRepository)
         let searchMembersUseCase = SearchMembersUseCase(repository: memberRepository)
         let meetingsViewModel = AllMeetingsViewModel(
-            currentDateProvider: .system,
+            currentDateProvider: currentDateProvider,
             upcomingMeetingsUseCase: fetchUpcomingMeetingsUseCase,
             observeMeetingChangesUseCase: observeMeetingChangesUseCase,
             deleteMeetingUseCase: deleteMeetingUseCase,
@@ -76,7 +98,7 @@ public struct WireMeetingsFactory {
                     searchMembersUseCase: searchMembersUseCase,
                     createMeetingUseCase: createMeetingUseCase,
                     updateMeetingUseCase: updateMeetingUseCase,
-                    currentDateProvider: .system,
+                    currentDateProvider: currentDateProvider,
                     onSuccess: onSuccess
                 )
             }

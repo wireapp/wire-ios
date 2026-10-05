@@ -74,6 +74,7 @@ struct MeetingFormView: View {
                             Task { await viewModel.submit() }
                         }
                         .disabled(!viewModel.isNextButtonEnabled)
+                        .accessibilityIdentifier("meetingFormSave")
                     }
                 }
             }
@@ -148,6 +149,7 @@ struct MeetingFormView: View {
         Section {
             HStack {
                 TextField(Strings.SetupTitle.placeholder, text: $viewModel.meetingTitle)
+                    .accessibilityIdentifier("meetingFormTitle")
                     .focused($isTitleFieldFocused)
                 if !viewModel.meetingTitle.isEmpty {
                     Image(systemName: "xmark.circle.fill")
@@ -155,6 +157,7 @@ struct MeetingFormView: View {
                         .onTapGesture {
                             viewModel.clearTitle()
                         }
+                        .accessibilityIdentifier("meetingFormClearTitle")
                 }
             }
         } header: {

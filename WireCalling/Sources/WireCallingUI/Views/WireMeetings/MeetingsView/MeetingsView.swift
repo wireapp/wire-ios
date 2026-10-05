@@ -168,6 +168,7 @@ struct MeetingsView: View {
                 HStack {
                     Spacer()
                     ProgressView()
+                        .accessibilityIdentifier("meetingsPaginationProgress")
                     Spacer()
                 }
                 .listRowBackground(Color.clear)
@@ -175,6 +176,7 @@ struct MeetingsView: View {
             }
         }
         .listStyle(.grouped)
+        .accessibilityIdentifier("meetingsList")
         .scrollContentBackground(.hidden)
         .background(ColorTheme.Backgrounds.surface.color)
         .refreshable {
@@ -242,6 +244,7 @@ private struct GroupedSections: View {
                 }
             } header: {
                 SectionTitle(formatDay(dayGroup.day))
+                    .accessibilityIdentifier("meetingsDayHeader")
             }
         }
     }
