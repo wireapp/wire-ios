@@ -170,6 +170,41 @@ final class MeetingsTests: WireUITestCase {
         XCTAssertEqual(remaining.first?.title, "TC11942 selected second")
     }
 
+    @MainActor
+    func testMeetingsRefreshAfterBackgroundResume_TC_11944() async throws {
+        let (owner, _, _, _) = try await UserHelper.default.registerMeetingsTeam()
+        let fixtures = try await MeetingsTestHelper(user: owner)
+        var initial: [MeetingResponse] = []
+        for offset in 2 ... 41 {
+            initial.append(try await fixtures.create(title: "Meeting \(offset)", start: day(offset)))
+        }
+        let page = try launchMeetings(for: owner, now: day(0))
+        try page.assertRows(initial)
+        try page.scrollToTop(first: initial[0])
+        XCTAssertTrue(page.row(initial[0]).isHittable)
+
+        XCUIDevice.shared.press(.home)
+        XCTAssertTrue(app.wait(for: .runningBackground, timeout: 5))
+        let moved = try await fixtures.update(
+            meeting: initial[4], title: "Moved while backgrounded", start: day(42)
+        )
+        let deleted = initial[0]
+        try await fixtures.delete(deleted)
+        let created = try await fixtures.create(title: "Created while backgrounded", start: day(43))
+
+        app.activate()
+        XCTAssertTrue(app.wait(for: .runningForeground, timeout: 5))
+        XCTAssertTrue(page.row(deleted).waitToDisappear(timeout: 20))
+        try page.showRow(created)
+        let expected = initial.filter { $0.id != moved.id && $0.id != deleted.id } + [moved, created]
+        try page.assertRows(expected)
+        try page.assertDayHeaders(expected.map(\.startTime), now: day(0), locale: "en_GB")
+        XCTAssertFalse(page.row(deleted).exists)
+        try page.scrollToTop(first: expected[0])
+        XCTAssertEqual(try page.showRow(moved).staticTexts["meetingTitle"].label, moved.title)
+        XCTAssertEqual(try page.showRow(created).staticTexts["meetingTitle"].label, created.title)
+    }
+
     private func day(_ offset: Int, hour: Int = 9) -> Date {
         let calendar = Calendar.current
         let date = calendar.date(byAdding: .day, value: offset + 1, to: calendar.startOfDay(for: fixtureDate))!
