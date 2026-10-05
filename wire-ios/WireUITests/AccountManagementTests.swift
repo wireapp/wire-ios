@@ -176,15 +176,24 @@ final class AccountManagementTests: WireUITestCase {
             .acceptPopup()
             .openConversation(named: groupName)
             .sendMessage(UserGenerator.generateRandomMessage())
-            .fetchMessages()
+
+        let clientID = try await UserHelper.default.clientID(of: teamOwner)
+        _ = try await testServicesClient.getInstanceId(
+            email: teamOwner.email,
+            password: teamOwner.password,
+            name: teamOwner.name,
+            verificationCode: nil,
+            deviceName: "client-2",
+            useCache: false
+        )
 
         // WHEN - the device is removed from another platform while the app is running
-        try await UserHelper.default.removeClient(of: teamOwner)
+        try await UserHelper.default.removeClient(id: clientID, of: teamOwner)
 
         // AND - the app throws the user out right away, without restarting
         _ = try SessionExpiredPage().confirm()
 
-        // THEN - the user logs in again
+        // THEN - the user logs in again successfully
         _ = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
             .acceptPopup()
     }

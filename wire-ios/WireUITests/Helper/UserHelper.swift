@@ -367,7 +367,7 @@ final class UserHelper {
         }
     }
 
-    func removeClient(of user: UserInfo) async throws {
+    func clientID(of user: UserInfo) async throws -> UserClientID {
         let previousAccessToken = authenticationManager.accessToken
         defer { authenticationManager.accessToken = previousAccessToken }
         authenticationManager.accessToken = try await fetchAccessToken(email: user.email, password: user.password)
@@ -377,7 +377,15 @@ final class UserHelper {
             throw RuntimeError("Expected one client for \(user.email), found \(clients.count)")
         }
 
-        try await userClientsAPI.deleteClient(id: client.id, password: user.password)
+        return client.id
+    }
+
+    func removeClient(id: UserClientID, of user: UserInfo) async throws {
+        let previousAccessToken = authenticationManager.accessToken
+        defer { authenticationManager.accessToken = previousAccessToken }
+        authenticationManager.accessToken = try await fetchAccessToken(email: user.email, password: user.password)
+
+        try await userClientsAPI.deleteClient(id: id, password: user.password)
     }
 
     /// Register user in team as member
