@@ -29,7 +29,7 @@ on:
         required: true
       # Slack webhook this run should post to. Callers resolve which
       # environment-specific webhook to pass, e.g.
-      # `WIRE_WEBHOOK_URL: ${{ secrets.WIRE_IOS_CI_WEBHOOK }}`.
+      # `WIRE_WEBHOOK_URL: ${{ secrets.WIRE_IOS_CI_URL }}`.
       WIRE_WEBHOOK_URL:
         required: true
       WIRE_WEBHOOK_TOKEN:
