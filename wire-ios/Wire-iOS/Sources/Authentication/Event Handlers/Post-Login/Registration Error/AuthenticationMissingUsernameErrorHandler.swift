@@ -40,7 +40,52 @@ final class AuthenticationMissingUsernameErrorHandler: AuthenticationEventHandle
             return nil
         }
 
+        #if DEBUG
+            if let username = UserDefaults.standard.consumePendingDeveloperCredentialUsername(
+                for: statusProvider?.selfUser?.emailAddress
+            ) {
+                return [.hideLoadingView, .showLoadingView, .startPostLoginFlow, .setUsername(username)]
+            }
+        #endif
+
         return [.hideLoadingView, .startPostLoginFlow, .transition(.addUsername, mode: .reset)]
     }
 
 }
+
+#if DEBUG
+    extension UserDefaults {
+        func consumePendingDeveloperCredentialUsername(for email: String?) -> String? {
+            let usernameKey = "DeveloperCredentialQRCode.pendingUsername"
+            let emailKey = "DeveloperCredentialQRCode.pendingUsernameEmail"
+            let createdAtKey = "DeveloperCredentialQRCode.pendingUsernameCreatedAt"
+            let maxAge: TimeInterval = 10 * 60
+
+            if object(forKey: usernameKey) != nil, object(forKey: emailKey) == nil {
+                removeObject(forKey: usernameKey)
+            }
+
+            guard
+                let username = string(forKey: usernameKey),
+                let storedEmail = string(forKey: emailKey),
+                let email,
+                !username.isEmpty,
+                storedEmail.caseInsensitiveCompare(email) == .orderedSame
+            else {
+                return nil
+            }
+
+            guard Date().timeIntervalSince1970 - double(forKey: createdAtKey) <= maxAge else {
+                removeObject(forKey: usernameKey)
+                removeObject(forKey: emailKey)
+                removeObject(forKey: createdAtKey)
+                return nil
+            }
+
+            removeObject(forKey: usernameKey)
+            removeObject(forKey: emailKey)
+            removeObject(forKey: createdAtKey)
+            return username
+        }
+    }
+#endif
