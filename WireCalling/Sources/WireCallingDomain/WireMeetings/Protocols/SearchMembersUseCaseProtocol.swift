@@ -17,10 +17,13 @@
 //
 
 // sourcery: AutoMockable
-/// Searches the user's team for members so they can be added as participants
-/// to a meeting.
+/// Finds people and source groups for meeting participant selection.
 package protocol SearchMembersUseCaseProtocol: Sendable {
 
     func invoke(query: String) async throws -> [MeetingMember]
+
+    func searchGroups(query: String) async throws -> [MeetingGroup]
+
+    func members(in groupID: QualifiedID) async throws -> [MeetingMember]
 
 }

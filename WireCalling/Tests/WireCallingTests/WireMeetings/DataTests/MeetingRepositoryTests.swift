@@ -171,10 +171,10 @@ struct MeetingRepositoryTests {
     // MARK: - deleteLocalMeeting
 
     @Test
-    func deleteLocalMeetingDeletesMeetingFromLocalStore() async {
+    func deleteLocalMeetingDeletesMeetingFromLocalStore() async throws {
         // When
 
-        await sut.deleteLocalMeeting(id: Scaffolding.meetingID)
+        try await sut.deleteLocalMeeting(id: Scaffolding.meetingID)
 
         // Then
 
@@ -200,18 +200,20 @@ struct MeetingRepositoryTests {
     }
 
     @Test
-    func deleteMeetingDeletesLocalCopyWhenMeetingIsAlreadyGoneFromBackend() async throws {
+    func deleteMeetingKeepsLocalCopyWhenBackendReturnsNotFound() async {
         // Mock
 
         meetingsAPI.deleteMeetingId_MockError = MeetingsAPIError.meetingNotFound
 
         // When
 
-        try await sut.deleteMeeting(id: Scaffolding.meetingID)
+        await #expect(throws: DeleteMeetingUseCaseError.notAllowed) {
+            try await sut.deleteMeeting(id: Scaffolding.meetingID)
+        }
 
         // Then
 
-        #expect(localStore.deleteMeetingIdQualifiedIDVoidReceivedInvocations == [Scaffolding.meetingID])
+        #expect(localStore.deleteMeetingIdQualifiedIDVoidReceivedInvocations.isEmpty)
     }
 
     @Test
@@ -247,14 +249,14 @@ struct MeetingRepositoryTests {
     }
 
     @Test
-    func deleteLocalMeetingBroadcastsMeetingChange() async {
+    func deleteLocalMeetingBroadcastsMeetingChange() async throws {
         // Mock
 
         var changes = sut.observeMeetingChanges().makeAsyncIterator()
 
         // When
 
-        await sut.deleteLocalMeeting(id: Scaffolding.meetingID)
+        try await sut.deleteLocalMeeting(id: Scaffolding.meetingID)
 
         // Then
 
@@ -416,6 +418,27 @@ struct MeetingRepositoryTests {
 
         let hasUpcoming = try await sut.hasUpcomingMeetings(after: Scaffolding.referenceDate)
         #expect(hasUpcoming)
+    }
+
+    // MARK: - updateMeeting
+
+    @Test
+    func updateMeetingSendsCurrentTimeZone() async throws {
+        meetingsAPI.updateMeetingIdParameters_MockValue = Scaffolding.meetingResponse
+
+        _ = try await sut.updateMeeting(
+            id: Scaffolding.meetingID,
+            title: Scaffolding.meetingResponse.title,
+            startTime: Scaffolding.meetingResponse.startTime,
+            endTime: Scaffolding.meetingResponse.endTime,
+            recurrence: MeetingRecurrence(frequency: .weekly, interval: 1)
+        )
+
+        let parameters = try #require(meetingsAPI.updateMeetingIdParameters_Invocations.first?.parameters)
+        let payload = try #require(
+            JSONSerialization.jsonObject(with: JSONEncoder().encode(parameters)) as? [String: Any]
+        )
+        #expect(payload["tzid"] as? String == TimeZone.current.identifier)
     }
 
     // MARK: - createMeeting

@@ -52,6 +52,18 @@ struct DeleteMeetingUseCaseTests {
         #expect(conversationRepository.leaveConversationIdConversationIDQualifiedIDVoidCallsCount == 0)
     }
 
+    @Test("Failed conversation cleanup reports a deleted meeting")
+    func failedConversationCleanupReportsDeletedMeeting() async {
+        conversationRepository
+            .deleteConversationIdConversationIDQualifiedIDVoidThrowableError = CocoaError(.fileWriteUnknown)
+
+        await #expect(throws: DeleteMeetingUseCaseError.cleanupFailed) {
+            try await makeUseCase(selfUserID: meeting.creatorID.id).invoke(meeting: meeting)
+        }
+
+        #expect(meetingRepository.deleteMeetingIdQualifiedIDVoidCallsCount == 1)
+    }
+
     @Test("Failed host deletion keeps the local conversation")
     func failedHostDeletionKeepsConversation() async {
         meetingRepository.deleteMeetingIdQualifiedIDVoidThrowableError = URLError(.notConnectedToInternet)
