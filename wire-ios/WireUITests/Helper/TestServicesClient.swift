@@ -358,7 +358,7 @@ class TestServicesClient {
         }
 
         let messages = try JSONDecoder().decode([TestServiceMessage].self, from: responseData)
-        guard let message = messages.reversed().first(where: { $0.content?.value == text }) else {
+        guard let message = messages.reversed().first(where: { $0.content?.textValue == text }) else {
             throw RuntimeError("Message id not found for text \(text)")
         }
 
@@ -635,5 +635,10 @@ private struct TestServiceMessage: Decodable {
 }
 
 private struct TestServiceMessageContent: Decodable {
+    let text: String?
     let value: String?
+
+    var textValue: String? {
+        text ?? value
+    }
 }
