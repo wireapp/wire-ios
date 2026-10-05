@@ -67,10 +67,7 @@ final class MeetingsTests: WireUITestCase {
             (everyFourWeeks, day(33, hour: 12)),
             (everyFourWeeks, day(61, hour: 12))
         ]
-        try meetingsPage.assertOccurrences(expectedRows)
-        try meetingsPage.assertDayHeaders(
-            [2, 3, 4, 5, 10, 17, 18, 32, 33, 61].map { day($0) }, now: now, locale: "en_GB"
-        )
+        try meetingsPage.assertOccurrences(expectedRows, now: now, locale: "en_GB")
         try meetingsPage.scrollToTop(first: daily)
 
         XCTAssertEqual(try meetingsPage.showRow(daily).staticTexts["meetingRecurrence"].label, "Daily")
@@ -274,6 +271,32 @@ final class MeetingsTests: WireUITestCase {
         try page.assertDayHeaders([day(1)], now: afterMidnight, locale: "en_GB")
         let stored = try await fixtures.list()
         XCTAssertEqual(Set(stored.map(\.id)), Set([oneOff.id, recurring.id]))
+    }
+
+    private func registerClients(for users: [UserInfo]) async throws {
+        for user in users {
+            _ = try await testServicesClient.getInstanceId(
+                email: user.email, password: user.password, name: user.name, verificationCode: nil
+            )
+        }
+    }
+
+    @MainActor
+    private func assertMenu(on page: MeetingsPage, meeting: MeetingResponse, isHost: Bool) throws {
+        try page.openMenu(for: meeting)
+        XCTAssertTrue(app.buttons["Join now"].waitForExistence(timeout: 5))
+        XCTAssertTrue(app.buttons["Join now"].isEnabled)
+        XCTAssertEqual(app.buttons["Edit meeting"].exists, isHost)
+        XCTAssertEqual(app.buttons["Delete meeting for all"].exists, isHost)
+        XCTAssertEqual(app.buttons["Delete meeting for me"].exists, !isHost)
+        if isHost {
+            XCTAssertTrue(app.buttons["Edit meeting"].isEnabled)
+            XCTAssertTrue(app.buttons["Delete meeting for all"].isEnabled)
+        } else {
+            XCTAssertTrue(app.buttons["Delete meeting for me"].isEnabled)
+        }
+        app.navigationBars.staticTexts["Meetings"].tap()
+        XCTAssertTrue(app.buttons["Join now"].waitToDisappear(timeout: 5))
     }
 
     private func day(_ offset: Int, hour: Int = 9) -> Date {

@@ -150,30 +150,54 @@ class MeetingsPage: PageModel {
         XCTAssertEqual(actual, expected, "Meeting rows did not match the expected order or count")
     }
 
+    func assertRows(_ meetings: [WireNetwork.MeetingResponse], now: Date, locale: String) throws {
+        try assertOccurrences(meetings.map { ($0, $0.startTime) }, now: now, locale: locale)
+    }
+
+    func assertOccurrences(
+        _ occurrences: [(WireNetwork.MeetingResponse, Date)],
+        now: Date,
+        locale: String
+    ) throws {
+        let ordered = occurrences.sorted { $0.1 < $1.1 }
+        guard !ordered.isEmpty else {
+            XCTAssertEqual(meetingRows.count, 0, "The empty meetings list contained rows")
+            XCTAssertEqual(dayHeaders.count, 0, "The empty meetings list contained day headers")
+            return
+        }
+
+        let calendar = Calendar.current
+        let days = ordered.reduce(into: [Date]()) { groupedDays, occurrence in
+            let day = calendar.startOfDay(for: occurrence.1)
+            if !groupedDays.contains(where: { calendar.isDate($0, inSameDayAs: day) }) {
+                groupedDays.append(day)
+            }
+        }
+        let labels = dayHeaderLabels(for: days, now: now, locale: locale)
+        var expected: [String] = []
+        for (day, label) in zip(days, labels) {
+            expected.append("header:\(label)")
+            expected += ordered.filter { calendar.isDate($0.1, inSameDayAs: day) }
+                .map { "row:\(rowIdentifier($0.0, start: $0.1))" }
+        }
+
+        let firstHeader = dayHeaders.matching(NSPredicate(format: "label == %@", labels[0])).firstMatch
+        let actual = try scan(
+            expected: expected,
+            firstElement: firstHeader,
+            visibleIdentifiers: { visibleViewport().map(\.0) },
+            itemName: "Meeting rows and day headers"
+        )
+        XCTAssertEqual(actual, expected, "Meeting rows did not appear under their expected day headers")
+    }
+
     func assertDayHeaders(_ days: [Date], now: Date, locale: String) throws {
         guard !days.isEmpty else {
             XCTAssertEqual(dayHeaders.count, 0, "The empty meetings list contained day headers")
             return
         }
 
-        let calendar = Calendar.current
-        let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: locale)
-        formatter.calendar = calendar
-        formatter.timeZone = calendar.timeZone
-        formatter.setLocalizedDateFormatFromTemplate("EEEE MMMM d")
-
-        func label(for day: Date) -> String {
-            let date = formatter.string(from: day)
-            if calendar.isDate(day, inSameDayAs: now) { return "Today (\(date))" }
-            if let tomorrow = calendar.date(byAdding: .day, value: 1, to: now),
-               calendar.isDate(day, inSameDayAs: tomorrow) {
-                return "Tomorrow (\(date))"
-            }
-            return date
-        }
-
-        let expected = days.map(label)
+        let expected = dayHeaderLabels(for: days, now: now, locale: locale)
         let firstHeader = dayHeaders.matching(NSPredicate(format: "label == %@", expected[0])).firstMatch
         let actual = try scan(
             expected: expected,
@@ -182,6 +206,25 @@ class MeetingsPage: PageModel {
             itemName: "Meeting day headers"
         )
         XCTAssertEqual(actual, expected, "Meeting day headers did not match the expected order or count")
+    }
+
+    private func dayHeaderLabels(for days: [Date], now: Date, locale: String) -> [String] {
+        let calendar = Calendar.current
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: locale)
+        formatter.calendar = calendar
+        formatter.timeZone = calendar.timeZone
+        formatter.setLocalizedDateFormatFromTemplate("EEEE MMMM d")
+
+        return days.map { day in
+            let date = formatter.string(from: day)
+            if calendar.isDate(day, inSameDayAs: now) { return "Today (\(date))" }
+            if let tomorrow = calendar.date(byAdding: .day, value: 1, to: now),
+               calendar.isDate(day, inSameDayAs: tomorrow) {
+                return "Tomorrow (\(date))"
+            }
+            return date
+        }
     }
 
     private func scan(
@@ -198,7 +241,7 @@ class MeetingsPage: PageModel {
         var actualIndices: [Int] = []
         var previousIndices: [Int] = []
         for _ in 0 ..< 60 {
-            let identifiers = visibleIdentifiers()
+            let identifiers = try waitForVisibleIdentifiers(visibleIdentifiers, itemName: itemName)
             guard identifiers.count == Set(identifiers).count else {
                 throw failure("\(itemName) repeated in one visible list snapshot")
             }
@@ -247,6 +290,26 @@ class MeetingsPage: PageModel {
         }
 
         throw failure("\(itemName) did not finish scanning within 60 scroll attempts")
+    }
+
+    private func waitForVisibleIdentifiers(
+        _ visibleIdentifiers: () -> [String],
+        itemName: String
+    ) throws -> [String] {
+        let deadline = Date().addingTimeInterval(15)
+        while Date() < deadline {
+            let alert = app.alerts.firstMatch
+            if alert.exists {
+                let labels = alert.staticTexts.allElementsBoundByIndex.map(\.label)
+                throw failure("\(itemName) scan blocked by app alert: \(labels.joined(separator: ", "))")
+            }
+
+            let identifiers = visibleIdentifiers()
+            if !identifiers.isEmpty { return identifiers }
+            RunLoop.current.run(until: Date().addingTimeInterval(0.2))
+        }
+
+        throw failure("No hittable \(itemName.lowercased()) appeared within 15 seconds")
     }
 
     private func visibleRows() -> [XCUIElement] {

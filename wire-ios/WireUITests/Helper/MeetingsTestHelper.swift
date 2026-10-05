@@ -43,6 +43,14 @@ final class MeetingsTestHelper {
             .makeAPI(for: userHelper.apiVersion)
     }
 
+    var selfUserAPI: any SelfUserAPI {
+        SelfUserAPIBuilder(apiService: networkStack.apiService).makeAPI(for: UserHelper.default.apiVersion)
+    }
+
+    var usersAPI: any UsersAPI {
+        UsersAPIBuilder(apiService: networkStack.apiService).makeAPI(for: UserHelper.default.apiVersion)
+    }
+
     func create(
         title: String,
         start: Date,

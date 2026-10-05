@@ -27,8 +27,20 @@ class MeetingFormPage: PageModel {
         app.textFields["meetingFormTitle"]
     }
 
+    var participantsButton: XCUIElement {
+        app.buttons["meetingFormParticipants"]
+    }
+
     var saveButton: XCUIElement {
         app.buttons["meetingFormSave"]
+    }
+
+    var memberSearchField: XCUIElement {
+        app.searchFields["Enter a name"]
+    }
+
+    var selectMembersButton: XCUIElement {
+        app.buttons["meetingMembersSelect"]
     }
 
     @discardableResult
@@ -39,6 +51,29 @@ class MeetingFormPage: PageModel {
         }
         titleField.tap()
         titleField.typeText(title)
+        return self
+    }
+
+    @discardableResult
+    func addParticipants(_ users: [UserInfo]) throws -> MeetingFormPage {
+        participantsButton.tap()
+        XCTAssertTrue(memberSearchField.waitForExistence(timeout: 5), "Meeting member search did not appear")
+
+        for user in users {
+            memberSearchField.tap()
+            memberSearchField.typeText(user.name)
+
+            let member = app.buttons["meetingMember.\(user.id.uppercased())"]
+            XCTAssertTrue(member.waitAndTap(timeout: 10), "Meeting member '\(user.name)' did not appear")
+
+            XCTAssertTrue(memberSearchField.buttons["Clear text"].waitAndTap(), "Member search did not clear")
+        }
+
+        XCTAssertTrue(selectMembersButton.waitAndTap(), "Select members button did not appear")
+        XCTAssertTrue(
+            participantsButton.waitForExistence(timeout: 5),
+            "Meeting form did not return from member selection"
+        )
         return self
     }
 

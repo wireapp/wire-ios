@@ -84,6 +84,7 @@ struct MemberSelectionView: View {
                         viewModel.confirmSelection()
                         dismiss()
                     }
+                    .accessibilityIdentifier("meetingMembersSelect")
                 }
             }
         }
@@ -196,6 +197,7 @@ struct MemberSelectionView: View {
             }
         }
         .buttonStyle(.plain)
+        .accessibilityIdentifier("meetingMember.\(member.qualifiedID.id.uuidString)")
     }
 }
 

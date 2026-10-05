@@ -714,6 +714,10 @@ final class UserHelper {
             password: team.teamOwner.password
         )
         authenticationManager.accessToken = ownerAccessToken
+        team.teamOwner.id = try await selfUserAPI.getSelfUser().id.uuidString
+        for (member, qualifiedID) in zip(team.teamMembers, team.qualifiedIDs) {
+            member.id = qualifiedID.id.uuidString
+        }
 
         let backOffice = BackOffice(backendURL: backendURL)
         try await backOffice.unlockMeetingsFeature(teamId: teamID.uuidString, basicAuth: basicAuth())

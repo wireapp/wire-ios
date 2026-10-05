@@ -20,6 +20,7 @@ import SwiftUI
 import UIKit
 import WireCallingDomain
 import WireDesign
+import WireFoundation
 
 struct MemberAvatarsView: View {
     let members: [MeetingMember]
@@ -59,6 +60,7 @@ struct MemberAvatarsView: View {
 
                 if overflow > 0 {
                     Text("+\(overflow)")
+                        .accessibilityIdentifier("meetingParticipantOverflow")
                         .font(for: .subline1)
                         .foregroundStyle(ColorTheme.Base.secondaryText.color)
                 }
@@ -94,6 +96,7 @@ struct MemberAvatarsView: View {
             }
         }
         .frame(width: circleSize, height: circleSize)
+        .accessibilityIdentifier("meetingAvatar.\(member.qualifiedID.id.uuidString)")
         .clipShape(Circle())
         .overlay(
             Circle().strokeBorder(ColorTheme.Backgrounds.surface.color, lineWidth: 2)

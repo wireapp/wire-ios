@@ -226,6 +226,7 @@ struct MeetingFormView: View {
                 .contentShape(.rect)
             }
             .buttonStyle(.plain)
+            .accessibilityIdentifier("meetingFormParticipants")
         }
         .textCase(nil)
     }
