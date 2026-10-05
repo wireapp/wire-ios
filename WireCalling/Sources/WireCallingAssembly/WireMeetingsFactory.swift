@@ -21,6 +21,7 @@ public import UIKit
 public import WireCallingDomain
 
 import SwiftUI
+import WireCallingData
 import WireCallingUI
 import WireFoundation
 
@@ -79,6 +80,9 @@ public struct WireMeetingsFactory {
         let deleteMeetingUseCase = DeleteMeetingUseCase(
             meetingRepository: meetingRepository,
             conversationRepository: conversationRepository,
+            cancelReminders: { accountID, meetingID in
+                await MeetingReminderScheduler().cancelAll(accountID: accountID, meetingID: meetingID)
+            },
             selfUserID: selfUserID
         )
         let observeAttendedMeetingsUseCase = ObserveAttendedMeetingsUseCase(repository: callRepository)

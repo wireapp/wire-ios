@@ -21,9 +21,13 @@ import WireNetwork
 struct FeatureConfigUpdateEventProcessor: FeatureConfigUpdateEventProcessorProtocol {
 
     let repository: any FeatureConfigRepositoryProtocol
+    var onMeetingsDisabled: (() async -> Void)?
 
     func processEvent(_ event: FeatureConfigUpdateEvent) async {
         await repository.updateFeatureConfig(event.featureConfig)
+        if case let .meetings(config) = event.featureConfig, case .disabled = config.status {
+            await onMeetingsDisabled?()
+        }
     }
 
 }
