@@ -296,26 +296,27 @@ final class MeetingsTests: WireUITestCase {
         for locale in ["en_GB", "en_US@hours=h12"] {
             let page = try launchMeetings(for: owner, now: now, locale: locale)
             if locale == "en_GB" {
-                let form = try page.edit(morning)
+                let form = try page.edit(afternoon)
                 try form.addParticipants(members)
                 try form.save()
             }
             let row = try page.showRow(morning)
             XCTAssertEqual(row.staticTexts["meetingTitle"].label, morning.title)
             XCTAssertEqual(row.staticTexts["meetingRecurrence"].label, "Daily")
-            XCTAssertTrue(row.staticTexts["meetingParticipantOverflow"].waitForExistence(timeout: 15))
-            XCTAssertEqual(row.staticTexts["meetingParticipantOverflow"].label, "+2")
+            let afternoonRow = try page.showRow(afternoon)
+            XCTAssertTrue(afternoonRow.staticTexts["meetingParticipantOverflow"].waitForExistence(timeout: 15))
+            XCTAssertEqual(afternoonRow.staticTexts["meetingParticipantOverflow"].label, "+2")
             for user in [owner] + Array(members.prefix(4)) {
                 // Registration adds a numeric suffix to the display name.
                 let suffix = try XCTUnwrap(user.name.split(separator: " ").last)
                 let initials = "\(user.name.prefix(1))\(suffix.prefix(1))"
-                let avatar = row.descendants(matching: .any)["meetingAvatar.\(user.id.uppercased())"].firstMatch
+                let avatar = afternoonRow.descendants(matching: .any)["meetingAvatar.\(user.id.uppercased())"]
+                    .firstMatch
                 XCTAssertTrue(avatar.exists, "Missing avatar for \(user.name)")
                 XCTAssertEqual(avatar.label, initials)
             }
             let time = row.staticTexts["meetingTime"].label.replacingOccurrences(of: "\u{202F}", with: " ")
             XCTAssertEqual(time, locale == "en_GB" ? "10:00 - 10:30" : "10:00 AM - 10:30 AM")
-            let afternoonRow = try page.showRow(afternoon)
             let afternoonTime = afternoonRow.staticTexts["meetingTime"].label
                 .replacingOccurrences(of: "\u{202F}", with: " ")
             XCTAssertEqual(afternoonTime, locale == "en_GB" ? "14:00 - 14:30" : "2:00 PM - 2:30 PM")
