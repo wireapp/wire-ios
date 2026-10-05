@@ -36,7 +36,7 @@ jobs:
       # Optional: full branch name of an additionally tracked release (e.g. release/cycle-4.20).
       # When set, and the Jira version isn't yet released, an extra GOV section is appended to the report.
       GOV_RELEASE: ${{ vars.GOV_RELEASE }}
-      HAS_WIRE_WEBHOOK: ${{ secrets.WIRE_IOS_RELEASE_WEBHOOK != '' && secrets.WIRE_IOS_RELEASE_WEBHOOK_TOKEN != '' }}
+      HAS_WIRE_WEBHOOK: ${{ secrets.WIRE_IOS_RELEASE_URL != '' && secrets.WIRE_IOS_RELEASE_TOKEN != '' }}
     steps:
       # Needed so the local ./.github/actions/notify-wire composite action is available.
       # Only .github is required, and no LFS objects.
