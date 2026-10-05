@@ -162,11 +162,6 @@ jobs:
         run: |
           bundle exec fastlane generate_env
 
-      - name: Configure test services
-        if: ${{ inputs.run_critical_flows }}
-        run: |
-          echo "USE_IN_HOUSE_SERVICES=$IN_HOUSE_RUNNER" >> wire-ios/WireUITests/env.xcconfig
-
       - name: "Test new critical flows"
         if: ${{ inputs.run_critical_flows }}
         run: |

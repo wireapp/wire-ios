@@ -27,9 +27,6 @@ struct EnvironmentVariables {
         case missingCallingServiceURL
         case missingCallingServiceUsername
         case missingCallingServicePassword
-        case missingInternalCallingServiceURL
-        case missingInternalCallingServiceUsername
-        case missingInternalCallingServicePassword
         case missingCallingBackend
         case missingCallingInstanceTypeName
         case missingCallingInstanceTypeVersion
@@ -140,65 +137,18 @@ struct EnvironmentVariables {
         self.stagingInbucketURL = URL(string: "https://\(inbucketHostname)")!
         self.inbucketUsername = inbucketUsername
         self.inbucketPassword = inbucketPassword
-        let callingServiceEnvironment = try Self.callingServiceEnvironment(
-            defaultURLString: callingServiceURLString,
-            defaultUsername: callingServiceUsername,
-            defaultPassword: callingServicePassword
-        )
-        self.callingServiceUsername = callingServiceEnvironment.username
-        self.callingServicePassword = callingServiceEnvironment.password
+        self.callingServiceUsername = callingServiceUsername
+        self.callingServicePassword = callingServicePassword
         self.antaDeepLinkURL = URL(string: "https://\(antaDeeplinkURL)")!
         self.antaInbucketURL = URL(string: "https://\(antaInbucketURL)")!
         self.antaBackendURL = URL(string: "https://\(backendURLAntaString)")!
         self.bellaDeepLinkURL = URL(string: "https://\(bellaDeeplinkURL)")!
         self.bellaInbucketURL = URL(string: "https://\(bellaInbucketURL)")!
         self.bellaBackendURL = URL(string: "https://\(backendURLBellaString)")!
-        self.callingServiceURL = callingServiceEnvironment.url
+        self.callingServiceURL = URL(string: "https://\(callingServiceURLString)")!
         self.callingBackend = callingBackend
         self.callingInstanceTypeName = callingInstanceTypeName
         self.callingInstanceTypeVersion = callingInstanceTypeVersion
-    }
-
-    private static func callingServiceEnvironment(
-        defaultURLString: String,
-        defaultUsername: String,
-        defaultPassword: String
-    ) throws -> (url: URL, username: String, password: String) {
-        let environment = ProcessInfo.processInfo.environment
-        if environment["USE_IN_HOUSE_SERVICES"]?.lowercased() == "true" {
-            guard let internalURLString = environment["CALLINGSERVICE_INTERNAL_URL"],
-                  !internalURLString.isEmpty else {
-                throw Failure.missingInternalCallingServiceURL
-            }
-            guard let internalUsername = environment["CALLINGSERVICE_INTERNAL_USERNAME"],
-                  !internalUsername.isEmpty else {
-                throw Failure.missingInternalCallingServiceUsername
-            }
-            guard let internalPassword = environment["CALLINGSERVICE_INTERNAL_PASSWORD"],
-                  !internalPassword.isEmpty else {
-                throw Failure.missingInternalCallingServicePassword
-            }
-
-            return (
-                url: callingServiceURL(from: internalURLString, defaultScheme: "http"),
-                username: internalUsername,
-                password: internalPassword
-            )
-        }
-
-        return (
-            url: callingServiceURL(from: defaultURLString, defaultScheme: "https"),
-            username: defaultUsername,
-            password: defaultPassword
-        )
-    }
-
-    private static func callingServiceURL(from value: String, defaultScheme: String) -> URL {
-        if value.contains("://") {
-            URL(string: value)!
-        } else {
-            URL(string: "\(defaultScheme)://\(value)")!
-        }
     }
 
     var inbucketURL: URL {
