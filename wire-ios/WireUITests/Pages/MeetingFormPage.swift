@@ -60,6 +60,7 @@ class MeetingFormPage: PageModel {
     func addParticipants(_ users: [UserInfo]) throws -> MeetingFormPage {
         participantsButton.tap()
         XCTAssertTrue(memberSearchField.waitForExistence(timeout: 5), "Meeting member search did not appear")
+        memberSearchField.tap()
         let selectedSection = app.buttons.matching(
             NSPredicate(
                 format: "label BEGINSWITH %@",
