@@ -164,7 +164,7 @@ final class AccountManagementTests: WireUITestCase {
 
     /// Ref Bug: [WPB-20932]
     @MainActor
-    func testLoginAfterDeviceRemovedFromAnotherPlatform_TC_11584() async throws {
+    func testLoginAfterDeviceRemovedFromBackend_TC_11584() async throws {
         // GIVEN
         let groupName = UserGenerator.generateRandomConversationName()
         let (teamOwner, _, _, _) = try await UserHelper.default.registerTeam(
