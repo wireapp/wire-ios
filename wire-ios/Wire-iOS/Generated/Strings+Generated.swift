@@ -1219,6 +1219,20 @@ internal enum L10n {
       /// Your session expired
       internal static let title = L10n.tr("Localizable", "account_deleted_session_expired_alert.title", fallback: "Your session expired")
     }
+    internal enum AccountLimitAlert {
+      /// Later
+      internal static let later = L10n.tr("Localizable", "account_limit_alert.later", fallback: "Later")
+      /// Log out of current account
+      internal static let logout = L10n.tr("Localizable", "account_limit_alert.logout", fallback: "Log out of current account")
+      /// This device allows up to %d logged-in account(s).
+      /// 
+      /// Log out of your current account now, or choose Later to log out of another account from its profile.
+      internal static func message(_ p1: Int) -> String {
+        return L10n.tr("Localizable", "account_limit_alert.message", p1, fallback: "This device allows up to %d logged-in account(s).\n\nLog out of your current account now, or choose Later to log out of another account from its profile.")
+      }
+      /// Account limit reached
+      internal static let title = L10n.tr("Localizable", "account_limit_alert.title", fallback: "Account limit reached")
+    }
     internal enum AddEmailPasswordStep {
       internal enum CtaButton {
         /// Confirm

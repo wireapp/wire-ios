@@ -2049,6 +2049,10 @@ Enter your identity provider’s credentials in the next step to update the cert
 
 "account_deleted_missing_passcode_alert.title" = "No device passcode";
 "account_deleted_missing_passcode_alert.message" = "In order to use Wire, please set a passcode in your device settings.";
+"account_limit_alert.title" = "Account limit reached";
+"account_limit_alert.message" = "This device allows up to %d logged-in account(s).\n\nLog out of your current account now, or choose Later to log out of another account from its profile.";
+"account_limit_alert.logout" = "Log out of current account";
+"account_limit_alert.later" = "Later";
 
 // Button cell state
 "button_message_cell.state.unselected" = "unselected";

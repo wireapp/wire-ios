@@ -40,6 +40,8 @@ final class AppRootRouter {
     private let sessionManagerLifeCycleObserver: SessionManagerLifeCycleObserver
     private let foregroundNotificationFilter: ForegroundNotificationFilter
     private var authenticatedRouter: AuthenticatedRouter?
+    private var hasCheckedAccountLimit = false
+    private let logOutHelper = LogOutHelper(showLoading: {}, hideLoading: {})
 
     private var observerTokens: [NSObjectProtocol] = []
     private var authenticatedBlocks: [() -> Void] = []
@@ -448,7 +450,32 @@ extension AppRootRouter: AppStateCalculatorDelegate {
 
         self.authenticatedRouter = authenticatedRouter
 
-        replaceRootViewController(by: authenticatedRouter.zClientViewController, completion: completion)
+        replaceRootViewController(by: authenticatedRouter.zClientViewController) { [weak self] in
+            completion()
+            self?.presentAccountLimitAlertIfNeeded()
+        }
+    }
+
+    /// Shown once per cold start, when more accounts are logged in than the device allows.
+    @MainActor
+    private func presentAccountLimitAlertIfNeeded() {
+        guard !hasCheckedAccountLimit else { return }
+        hasCheckedAccountLimit = true
+
+        let maxAccounts = sessionManager.maxNumberAccounts
+        guard sessionManager.accountManager.numberOfAccounts > maxAccounts else { return }
+
+        let alert = UIAlertController(
+            title: L10n.Localizable.AccountLimitAlert.title,
+            message: L10n.Localizable.AccountLimitAlert.message(maxAccounts),
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(title: L10n.Localizable.AccountLimitAlert.later, style: .cancel))
+        alert.addAction(UIAlertAction(title: L10n.Localizable.AccountLimitAlert.logout, style: .destructive) { [weak self] _ in
+            guard let logOutViewController = self?.logOutHelper.makeLogOutViewControllerToPresent() else { return }
+            self?.rootViewController.present(logOutViewController, animated: true)
+        })
+        rootViewController.present(alert, animated: true)
     }
 
     private func showAppLock(userSession: UserSession, completion: @escaping () -> Void) {
