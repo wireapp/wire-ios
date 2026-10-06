@@ -26,6 +26,21 @@ struct ConversationMemberLeaveEventNotificationBuilder: ConversationMemberLeaveE
 
     let context: Context
     let validator: Validator
+    let selfRemovalHandler: MeetingReminderSelfRemovalHandler?
+
+    init(
+        context: Context,
+        validator: Validator,
+        selfRemovalHandler: MeetingReminderSelfRemovalHandler? = nil
+    ) {
+        self.context = context
+        self.validator = validator
+        self.selfRemovalHandler = selfRemovalHandler
+    }
+
+    func cancelMeetingReminders(event: ConversationMemberLeaveEvent) async {
+        await selfRemovalHandler?.handle(event: event)
+    }
 
     func buildContent(
         event: ConversationMemberLeaveEvent

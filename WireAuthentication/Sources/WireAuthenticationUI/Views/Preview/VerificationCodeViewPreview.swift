@@ -23,16 +23,19 @@ public struct VerificationCodeView_Previews: View {
     var email: String = ""
     var password: String = ""
     var code: [String]
+    var isSnapshotTesting: Bool
 
-    public init(code: [String], email: String = "", password: String = "") {
+    public init(code: [String], email: String = "", password: String = "", isSnapshotTesting: Bool = false) {
         self.code = code
+        self.isSnapshotTesting = isSnapshotTesting
     }
 
     public var body: some View {
         NavigationStack {
             VerificationCodeView(factory: FakeVerificationCodeFactory(
                 email: "name.name@mail.com",
-                password: "password"
+                password: "password",
+                isSnapshotTesting: isSnapshotTesting
             ))
         }
     }
