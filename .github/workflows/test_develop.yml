@@ -30,7 +30,7 @@ jobs:
       run_critical_flows: true
       ui_test_tags: "!critical"
       notify: always
-      timeout_minutes: ${{ (github.event_name == 'workflow_dispatch' && inputs.mac_runner || vars.DEFAULT_MAC_RUNNER) == 'github' && 180 || 120 }}
+      timeout_minutes: 120
     secrets:
       ZENKINS_USERNAME: ${{ secrets.ZENKINS_USERNAME }}
       DD_API_KEY: ${{ secrets.DD_API_KEY }}

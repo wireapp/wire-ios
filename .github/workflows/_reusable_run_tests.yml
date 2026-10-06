@@ -74,7 +74,8 @@ jobs:
         inputs.mac_runner == 'github' && 'macos-26' ||
         'ghcr.io/cirruslabs/macos-runner:tahoe'
       }}
-    timeout-minutes: ${{ inputs.timeout_minutes }}
+    # GitHub-hosted jobs use the default six-hour limit; other runners keep the configured timeout.
+    timeout-minutes: ${{ inputs.mac_runner == 'github' && 360 || inputs.timeout_minutes }}
     permissions:
       contents: read
       actions: read

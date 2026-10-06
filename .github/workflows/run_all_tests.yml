@@ -33,7 +33,7 @@ jobs:
       folders: ${{ inputs.folders }}
       all: ${{ inputs.folders == '' }}
       mac_runner: ${{ inputs.mac_runner }}
-      timeout_minutes: ${{ inputs.mac_runner == 'github' && 180 || 120 }}
+      timeout_minutes: 120
       run_critical_flows: ${{ inputs.run_critical_flows }}
       notify: always
     secrets:
