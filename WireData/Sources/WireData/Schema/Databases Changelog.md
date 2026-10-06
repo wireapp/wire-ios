@@ -10,6 +10,10 @@ As it is hard to spot changes from version to version of database models (.xcdat
 
 ## zmessaging
 
+### 2.143.0
+
+* added `PendingProposalTimer` entity, persisting when pending MLS proposals must be committed, separately from `Conversation`, so unrelated conversation saves cannot re-trigger commits
+
 ### 2.142.0
 
 * added `WireDriveDirectUpload` entity, tracking in-flight Wire Drive direct uploads so background transfers can be reconciled after the app is terminated and relaunched
