@@ -343,3 +343,5 @@
 "conversation.details.sharedDriveAccessSection.footer.title" = "Bearbeiter können auf alle Dateien zugreifen und diese verwalten. Betrachter können Dateien nur lesen; sie können keine Dateien oder Ordner hochladen, bearbeiten oder verwalten.";
 "conversation.details.sharedDriveAccessSection.footer.subtitle" = "Personen, die nicht zu dem Team gehören, das die Unterhaltung erstellt hat, sind standardmäßig Betrachter.";
 "conversation.details.sharedDriveAccessSection.you" = "Sie";
+"conversation.details.sharedDriveAccessSection.editor" = "Bearbeiter";
+"conversation.details.sharedDriveAccessSection.viewer" = "Betrachter";
