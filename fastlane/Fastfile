@@ -138,6 +138,7 @@ platform :ios do
 
     desc "Run UITests"
     lane :run_uitests do |options|
+        options[:parallel_workers] = ui_test_parallel_workers(options[:parallel_workers])
         schemes = ["WireUITests"]
         options[:testplan] = "UITests"
         options[:number_of_retries] = 1
@@ -159,9 +160,38 @@ platform :ios do
         begin
             run_tests_frameworks(schemes, options)
         rescue => e
-            device_id = ENV['IOS_SIM_ID']
-            sh "../scripts/zip_logs.sh 'com.wearezeta.zclient.alpha' 'group.com.wearezeta.zclient.alpha' 'app-group.zip' '#{device_id}'"
+            collect_ui_test_logs
             UI.test_failure!("Failing running tests #{e.to_s}")
+        end
+    end
+
+    def collect_ui_test_logs
+        simulator_id = ENV['IOS_SIM_ID'].to_s.strip
+        return if simulator_id.empty?
+
+        device_ids = [simulator_id]
+        begin
+            devices = JSON.parse(sh("xcrun", "simctl", "list", "devices", "--json", log: false)).fetch("devices")
+            runtime_devices = devices.values.find { |entries| entries.any? { |device| device["udid"] == simulator_id } } || []
+            simulator = runtime_devices.find { |device| device["udid"] == simulator_id }
+            if simulator
+                # CI simulator names are unique per job, so this excludes other runners' clones.
+                clone_name = /\AClone \d+ of #{Regexp.escape(simulator.fetch("name"))}\z/
+                runtime_devices.each do |device|
+                    device_ids << device.fetch("udid") if clone_name.match?(device["name"].to_s)
+                end
+            end
+        rescue => error
+            UI.important("Could not find parallel test simulators: #{error}")
+        end
+
+        device_ids.uniq.each do |device_id|
+            archive = device_id == simulator_id ? "app-group.zip" : "app-group-#{device_id}.zip"
+            begin
+                sh("../scripts/zip_logs.sh", "com.wearezeta.zclient.alpha", "group.com.wearezeta.zclient.alpha", archive, device_id)
+            rescue => error
+                UI.important("Could not collect app logs for simulator #{device_id}: #{error}")
+            end
         end
     end
 
@@ -672,6 +702,16 @@ platform :ios do
         # Disable verbose diagnostics as these are generally not useful and collecting them can cause 600 second delays per test scheme.
         xcargs = ["-collect-test-diagnostics never"]
         xcargs << "-test-repetition-relaunch-enabled YES" if scheme == "WireUITests" && build.number_of_retries > 0
+        if scheme == "WireUITests"
+            parallel_workers = ui_test_parallel_workers(options[:parallel_workers])
+            if parallel_workers > 1
+                UI.message("Running UITests with #{parallel_workers} parallel simulator workers")
+                xcargs << "-parallel-testing-enabled YES"
+                xcargs << "-parallel-testing-worker-count #{parallel_workers}"
+            else
+                xcargs << "-parallel-testing-enabled NO"
+            end
+        end
 
         output_directory = "#{build.artifact_path(with_filename: false)}/tests/#{scheme}"
 
@@ -703,6 +743,17 @@ platform :ios do
         run_tests_options[:skip_testing] = skip_testing if skip_testing.any?
 
         run_tests(run_tests_options)
+    end
+
+    def ui_test_parallel_workers(value)
+        return 1 if value.to_s.strip.empty?
+
+        count = value.to_i
+        unless count.between?(1, 4) && count.to_s == value.to_s.strip
+            UI.user_error!("parallel_workers must be 1, 2, 3, or 4")
+        end
+
+        count
     end
 
     def normalize_test_identifiers(value)

@@ -4,7 +4,11 @@
 Upload XCUITest results to Testiny via REST API.
 
 How it works
-- Reads an .xcresult
+- Reads .xcresult bundles sequentially and uploads each to the same run
+- Bundles represent independent test executions, not ordered retry attempts
+- Across bundles, FAILED takes precedence over PASSED, SKIPPED, and NOTRUN
+- Retry attempts inside a bundle use the final attempt
+- Retries split across separate bundles are not supported
 - Extracts Testiny case IDs from test names using the pattern: _TC_<id>[_<id>...]
   Examples:
     test_Login_TC_1234()            -> TC-1234
@@ -202,10 +206,8 @@ def parse_xcresult(path: str) -> List[FlatTest]:
     )
 
     if probe.returncode == 0:
-        try:
-            return parse_xcresult_new_api(path)
-        except Exception as e:
-            print(f"[WARN] New API failed ({e}), falling back to legacy")
+        # Legacy parsing does not preserve retry ordering. Surface modern API failures.
+        return parse_xcresult_new_api(path)
 
     return parse_xcresult_legacy(path)
 
@@ -385,30 +387,14 @@ def resolve_test_cases(tests: List[FlatTest], run_id: int):
 def parse_args():
     p = argparse.ArgumentParser(description="Send XCUITest results to Testiny.")
     src = p.add_mutually_exclusive_group(required=True)
-    src.add_argument("--xcresult")
+    src.add_argument("--xcresult", nargs="+", help="Result bundles to upload sequentially")
     src.add_argument("--junit")
     p.add_argument("--run-name", required=True)
     p.add_argument("--require-existing-run", action="store_true")
     return p.parse_args()
 
-def main():
-    args = parse_args()
-
-    if not TESTINY_API_KEY:
-        sys.exit("TESTINY_API_KEY not set")
-
-    if args.xcresult:
-        if not os.path.exists(args.xcresult):
-            sys.exit("XCResult not found")
-        tests = parse_xcresult(args.xcresult)
-    else:
-        if not os.path.exists(args.junit):
-            sys.exit("JUnit not found")
-        tests = parse_junit_xml(args.junit)
-
+def results_for_upload(tests: List[FlatTest], run_id: int):
     print(f"[INFO] {len(tests)} test(s) loaded")
-
-    run_id = resolve_run(args.run_name, args.require_existing_run)
 
     pending, untagged, missing, lookup_errors = resolve_test_cases(tests, run_id)
 
@@ -420,24 +406,6 @@ def main():
     if missing:
         print(f"[WARN] {len(missing)} TC id(s) not found in Testiny: {', '.join(missing)}")
 
-    dedup = {}
-    for r in pending:
-        dedup[f"{r.test_case_id}:{r.run_id}"] = r
-
-    final = list(dedup.values())
-
-    exit_code = 0
-    if final:
-        print(f"[INFO] Sending {len(final)} result(s)")
-        try:
-            bulk_send(final)
-            print("[OK] Upload successful")
-        except Exception as e:
-            print(f"[ERROR] Upload failed: {e}", file=sys.stderr)
-            exit_code = 1
-    else:
-        print("[INFO] No results to send")
-
     # Missing cases only warn, but a lookup that failed for another reason means
     # results were dropped without anybody knowing, so fail the run.
     if lookup_errors:
@@ -446,7 +414,47 @@ def main():
             "those results were not uploaded",
             file=sys.stderr,
         )
-        exit_code = 1
+    return pending, lookup_errors
+
+
+def main():
+    args = parse_args()
+
+    if not TESTINY_API_KEY:
+        sys.exit("TESTINY_API_KEY not set")
+
+    run_id = resolve_run(args.run_name, args.require_existing_run)
+    paths = sorted(set(args.xcresult)) if args.xcresult else [args.junit]
+    combined = {}
+    uploaded = {}
+    priority = {"NOTRUN": 0, "SKIPPED": 1, "PASSED": 2, "FAILED": 3}
+    exit_code = 0
+
+    for path in paths:
+        try:
+            tests = parse_xcresult(path) if args.xcresult else parse_junit_xml(path)
+            pending, lookup_errors = results_for_upload(tests, run_id)
+            if lookup_errors:
+                exit_code = 1
+
+            for result in pending:
+                key = result.test_case_id
+                previous = combined.get(key)
+                # Separate bundles have no reliable retry order. Never erase a failure.
+                if previous is None or priority[result.status] > priority[previous.status]:
+                    combined[key] = result
+
+            changed = [result for key, result in combined.items() if uploaded.get(key) != result.status]
+            if changed:
+                print(f"[INFO] Sending {len(changed)} result(s) from {path}")
+                bulk_send(changed)
+                uploaded.update((result.test_case_id, result.status) for result in changed)
+                print("[OK] Upload successful")
+            else:
+                print(f"[INFO] No new results to send from {path}")
+        except Exception as error:
+            print(f"[ERROR] Could not upload {path}: {error}", file=sys.stderr)
+            exit_code = 1
 
     append_ci_summary(run_id, args.run_name)
     sys.exit(exit_code)
