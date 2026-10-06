@@ -65,7 +65,7 @@ public class ConversationSharedDriveOptionsViewModel: ObservableObject {
 
         return verificationBadges + [userTypeBadge].compactMap(\.self)
     }
-    
+
     func role(for participant: WireDriveParticipant) -> String {
         switch participant.role {
         case .editor:

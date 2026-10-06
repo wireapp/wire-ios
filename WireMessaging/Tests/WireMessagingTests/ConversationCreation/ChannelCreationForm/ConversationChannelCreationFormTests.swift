@@ -212,7 +212,7 @@ final class ConversationChannelCreationFormTests: XCTestCase {
             .withUserInterfaceStyle(.dark)
             .verify(matching: view, named: "dark")
     }
-    
+
     @MainActor
     func testSharedDriveSection() {
         let viewModel = ConversationChannelCreationFormViewModel(
