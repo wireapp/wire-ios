@@ -22,6 +22,7 @@ import WireDataModelSupport
 
 @testable import WireSyncEngine
 
+@Suite(.serialized)
 struct AppVersionMigration_4_26_0Tests {
 
     let coreDataHelper = CoreDataStackHelper()
