@@ -52,7 +52,9 @@ on:
         required: true
       OP_SERVICE_ACCOUNT_TOKEN:
         required: true
-      SLACK_WEBHOOK_URL:
+      WIRE_WEBHOOK_URL:
+        required: true
+      WIRE_WEBHOOK_TOKEN:
         required: true
 
 env: # https://docs.fastlane.tools/getting-started/ios/setup/
@@ -433,7 +435,8 @@ jobs:
         continue-on-error: true
         if: ${{ inputs.notify == 'always' && always() }}
         env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          WIRE_WEBHOOK_URL: ${{ secrets.WIRE_WEBHOOK_URL }}
+          WIRE_WEBHOOK_TOKEN: ${{ secrets.WIRE_WEBHOOK_TOKEN }}
         with:
           notify: custom
           text: |
@@ -453,7 +456,8 @@ jobs:
         continue-on-error: true
         if: ${{ inputs.notify == 'failure' && failure() }}
         env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          WIRE_WEBHOOK_URL: ${{ secrets.WIRE_WEBHOOK_URL }}
+          WIRE_WEBHOOK_TOKEN: ${{ secrets.WIRE_WEBHOOK_TOKEN }}
         with:
           notify: custom
           text: |

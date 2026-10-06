@@ -235,6 +235,15 @@ public enum Locators {
         case cancelReplyButton = "cancelReply"
         case originalSender = "original.sender"
 
+        public static func reactionOnMessageIdentifier(emoji: String) -> String {
+            switch emoji {
+            case "❤️":
+                "emojiHeart"
+            default:
+                "emoji\(emoji.unicodeScalars.map { String(format: "%04X", $0.value) }.joined())"
+            }
+        }
+
     }
 
     public enum BackupOrRestorePage: String {

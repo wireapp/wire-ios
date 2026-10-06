@@ -305,7 +305,8 @@ jobs:
         continue-on-error: true
         uses: ./.github/actions/notify-wire
         env:
-          SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_RELEASE_WEBHOOK }}
+          WIRE_WEBHOOK_URL: ${{ secrets.WIRE_IOS_RELEASE_WEBHOOK }}
+          WIRE_WEBHOOK_TOKEN: ${{ secrets.WIRE_IOS_RELEASE_WEBHOOK_TOKEN }}
         with:
           notify: custom
           text: '**${{ env.RELEASE_BRANCH }}** branch has been created. please (re) target your work to this branch if necessary.'
