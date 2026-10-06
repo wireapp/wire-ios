@@ -81,7 +81,9 @@ on:
         required: true
       JIRA_TOKEN:
         required: false
-      SLACK_WEBHOOK_URL:
+      WIRE_WEBHOOK_URL:
+        required: true
+      WIRE_WEBHOOK_TOKEN:
         required: true
 
 env: # https://docs.fastlane.tools/getting-started/ios/setup/
@@ -238,7 +240,8 @@ jobs:
         if: success()
         continue-on-error: true
         env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          WIRE_WEBHOOK_URL: ${{ secrets.WIRE_WEBHOOK_URL }}
+          WIRE_WEBHOOK_TOKEN: ${{ secrets.WIRE_WEBHOOK_TOKEN }}
         uses: ./.github/actions/notify-wire
         with:
           notify: custom
@@ -258,7 +261,8 @@ jobs:
         if: failure()
         continue-on-error: true
         env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          WIRE_WEBHOOK_URL: ${{ secrets.WIRE_WEBHOOK_URL }}
+          WIRE_WEBHOOK_TOKEN: ${{ secrets.WIRE_WEBHOOK_TOKEN }}
         uses: ./.github/actions/notify-wire
         with:
           notify: custom

@@ -151,7 +151,8 @@ jobs:
       ZENKINS_USERNAME: ${{ secrets.ZENKINS_USERNAME }}
       DD_API_KEY: ${{ secrets.DD_API_KEY }}
       OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
-      SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_CI_WEBHOOK }}
+      WIRE_WEBHOOK_URL: ${{ secrets.WIRE_IOS_CI_URL }}
+      WIRE_WEBHOOK_TOKEN: ${{ secrets.WIRE_IOS_CI_TOKEN }}
 
   # ── Parallel ────────────────────────────────────────────────────────────────
   trigger_tests_pr_parallel:
@@ -166,4 +167,5 @@ jobs:
     secrets:
       ZENKINS_USERNAME: ${{ secrets.ZENKINS_USERNAME }}
       DD_API_KEY: ${{ secrets.DD_API_KEY }}
-      SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_CI_WEBHOOK }}
+      WIRE_WEBHOOK_URL: ${{ secrets.WIRE_IOS_CI_URL }}
+      WIRE_WEBHOOK_TOKEN: ${{ secrets.WIRE_IOS_CI_TOKEN }}
