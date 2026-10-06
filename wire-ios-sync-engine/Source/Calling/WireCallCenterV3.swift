@@ -75,6 +75,9 @@ public class WireCallCenterV3: NSObject {
     /// The snaphot of the call state for each non-idle conversation.
     var callSnapshots: [AVSIdentifier: CallSnapshot] = [:]
 
+    /// Group calls that the self user answered or started on another device.
+    var callsAnsweredElsewhere = Set<AVSIdentifier>()
+
     private var conversationDeletionObservers: [AVSIdentifier: ManagedObjectContextChangeObserver] = [:]
 
     /// Used to collect incoming events (e.g. from fetching the notification stream) until AVS is ready to process them.
@@ -173,6 +176,7 @@ extension WireCallCenterV3 {
         conversationDeletionObservers.removeValue(forKey: conversationId)
         callSnapshots.removeValue(forKey: conversationId)
         clientsRequestCompletionsByConversationId.removeValue(forKey: conversationId)
+        callsAnsweredElsewhere.remove(conversationId)
     }
 
     /// Creates a snapshot for the specified call and adds it to the `callSnapshots` array.
@@ -209,6 +213,7 @@ extension WireCallCenterV3 {
         let token = ConversationChangeInfo.add(observer: self, for: conversation)
         let group = conversation.conversationType == .group
 
+        callsAnsweredElsewhere.remove(conversationId)
         callSnapshots[conversationId] = CallSnapshot(
             messageProtocol: conversation.messageProtocol,
             callParticipants: callParticipants,

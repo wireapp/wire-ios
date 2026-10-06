@@ -298,6 +298,15 @@ extension WireCallCenterV3 {
         )
 
         handleEvent("closed-call") {
+            var reason = reason
+
+            if reason == .answeredElsewhere, self.callSnapshots[conversationId]?.isGroup == true {
+                self.callsAnsweredElsewhere.insert(conversationId)
+                reason = .stillOngoing
+            } else if reason == .normal, self.callsAnsweredElsewhere.contains(conversationId) {
+                reason = .answeredElsewhere
+            }
+
             self.handle(
                 callState: .terminating(reason: reason),
                 conversationId: conversationId,

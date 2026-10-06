@@ -62,6 +62,7 @@ struct ConversationCallingEventNotificationBuilder: ConversationCallingEventNoti
         let displayCallNotification = await validator.validateCallNotification(
             conversationID: resolvedConversationID,
             senderID: senderID,
+            accountID: accountID,
             eventTimestamp: time,
             callContent: callContent
         )
@@ -376,6 +377,7 @@ extension ConversationCallingEventNotificationBuilder {
             static let isAvsReady = "isAVSReady"
             static let isCallKitAvailable = "isCallKitAvailable"
             static let knownCalls = "knownCalls"
+            static let answeredElsewhereCall = "answeredElsewhereCall"
         }
 
         let userLocalStore: any UserLocalStoreProtocol
@@ -442,6 +444,7 @@ extension ConversationCallingEventNotificationBuilder {
         func validateCallNotification(
             conversationID: ConversationID,
             senderID: UserID,
+            accountID: UUID,
             eventTimestamp: Date?,
             callContent: CallContent
         ) async -> Bool {
@@ -467,6 +470,14 @@ extension ConversationCallingEventNotificationBuilder {
                 true
             let isCallerSelf = selfUser == caller
             let needsBackendUpdate = await conversationLocalStore.conversationNeedsBackendUpdate(conversation)
+            let isGroupConversation = await conversationLocalStore.isGroupConversation(conversation)
+            let wasAnsweredElsewhere = trackAnsweredElsewhereCall(
+                callContent: callContent,
+                conversationID: conversationID,
+                accountID: accountID,
+                isGroupConversation: isGroupConversation,
+                isCallerSelf: isCallerSelf
+            )
 
             // A meeting is joined deliberately from the meetings list, so neither its
             // incoming call nor the "called" notification after it ends are shown.
@@ -476,7 +487,9 @@ extension ConversationCallingEventNotificationBuilder {
             let isEndCall = callContent.isEndCall
             let isValidState = isIncomingCall || isEndCall
 
-            guard isValidState, !isCallerSelf, !isConversationMuted, !isMeetingConversation, !isCallTimeOut else {
+            guard isValidState, !isCallerSelf, !wasAnsweredElsewhere, !isConversationMuted, !isMeetingConversation,
+                  !isCallTimeOut
+            else {
                 return false
             }
 
@@ -498,6 +511,34 @@ extension ConversationCallingEventNotificationBuilder {
                 )
                 return false
             }
+        }
+
+        private func trackAnsweredElsewhereCall(
+            callContent: CallContent,
+            conversationID: ConversationID,
+            accountID: UUID,
+            isGroupConversation: Bool,
+            isCallerSelf: Bool
+        ) -> Bool {
+            guard isGroupConversation else { return false }
+
+            let key = "\(Constants.answeredElsewhereCall).\(accountID.uuidString).\(conversationID.domain).\(conversationID.id)"
+
+            if callContent.isStartCall {
+                if isCallerSelf {
+                    // This user's other client started or answered the group call.
+                    userDefaults.set(true, forKey: key)
+                } else if callContent.isIncomingCall {
+                    // A new incoming call must not inherit the previous call's state.
+                    userDefaults.removeObject(forKey: key)
+                }
+            }
+
+            guard callContent.isEndCall else { return false }
+
+            let wasAnsweredElsewhere = userDefaults.bool(forKey: key)
+            userDefaults.removeObject(forKey: key)
+            return wasAnsweredElsewhere
         }
 
     }

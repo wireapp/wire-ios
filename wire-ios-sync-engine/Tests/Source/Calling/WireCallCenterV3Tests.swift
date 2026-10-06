@@ -442,6 +442,122 @@ final class WireCallCenterV3Tests: MessagingTest {
         }
     }
 
+    func testThatGroupCallAnsweredElsewhereStaysOngoingAndDoesNotEndAsMissed() {
+        sut.handleIncomingCall(
+            conversationId: groupConversationID.serialized,
+            messageTime: Date(),
+            userId: otherUserID.serialized,
+            clientId: otherUserClientID,
+            isVideoCall: false,
+            shouldRing: true,
+            conversationType: .group
+        )
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        checkThatItPostsNotification(
+            expectedCallState: .incoming(isVideo: false, shouldRing: false, degraded: false),
+            expectedCallerId: otherUserID,
+            expectedConversationId: groupConversationID
+        ) {
+            sut.handleCallEnd(
+                reason: .answeredElsewhere,
+                conversationId: groupConversationID.serialized,
+                messageTime: nil,
+                userId: selfUserID.serialized
+            )
+        }
+
+        XCTAssertNotNil(sut.callSnapshots[groupConversationID])
+        XCTAssertTrue(sut.callsAnsweredElsewhere.contains(groupConversationID))
+
+        checkThatItPostsNotification(
+            expectedCallState: .terminating(reason: .answeredElsewhere),
+            expectedCallerId: otherUserID,
+            expectedConversationId: groupConversationID
+        ) {
+            sut.handleCallEnd(
+                reason: .normal,
+                conversationId: groupConversationID.serialized,
+                messageTime: Date(),
+                userId: selfUserID.serialized
+            )
+        }
+
+        XCTAssertNil(sut.callSnapshots[groupConversationID])
+        XCTAssertFalse(sut.callsAnsweredElsewhere.contains(groupConversationID))
+    }
+
+    func testThatOwnGroupCallStartedElsewhereDoesNotEndAsMissed() {
+        sut.handleIncomingCall(
+            conversationId: groupConversationID.serialized,
+            messageTime: Date(),
+            userId: selfUserID.serialized,
+            clientId: otherUserClientID,
+            isVideoCall: false,
+            shouldRing: false,
+            conversationType: .group
+        )
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        sut.handleCallEnd(
+            reason: .answeredElsewhere,
+            conversationId: groupConversationID.serialized,
+            messageTime: nil,
+            userId: selfUserID.serialized
+        )
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        checkThatItPostsNotification(
+            expectedCallState: .terminating(reason: .answeredElsewhere),
+            expectedCallerId: selfUserID,
+            expectedConversationId: groupConversationID
+        ) {
+            sut.handleCallEnd(
+                reason: .normal,
+                conversationId: groupConversationID.serialized,
+                messageTime: Date(),
+                userId: otherUserID.serialized
+            )
+        }
+    }
+
+    func testThatUnansweredGroupCallStillEndsNormally() {
+        sut.callsAnsweredElsewhere.insert(groupConversationID)
+
+        sut.handleIncomingCall(
+            conversationId: groupConversationID.serialized,
+            messageTime: Date(),
+            userId: otherUserID.serialized,
+            clientId: otherUserClientID,
+            isVideoCall: false,
+            shouldRing: true,
+            conversationType: .group
+        )
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertFalse(sut.callsAnsweredElsewhere.contains(groupConversationID))
+
+        sut.handleCallEnd(
+            reason: .stillOngoing,
+            conversationId: groupConversationID.serialized,
+            messageTime: nil,
+            userId: otherUserID.serialized
+        )
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        checkThatItPostsNotification(
+            expectedCallState: .terminating(reason: .normal),
+            expectedCallerId: otherUserID,
+            expectedConversationId: groupConversationID
+        ) {
+            sut.handleCallEnd(
+                reason: .normal,
+                conversationId: groupConversationID.serialized,
+                messageTime: Date(),
+                userId: selfUserID.serialized
+            )
+        }
+    }
+
     func testThatTheMediaStopppedCallHandlerPostsTheRightNotification() {
         // given
         sut.handleIncomingCall(
