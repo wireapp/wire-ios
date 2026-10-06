@@ -21,6 +21,18 @@ set -Eeuo pipefail
 
 XCRESULT_SEARCH_PATH="${1:-artifacts}"
 
+if [[ -n "${GITHUB_ENV:-}" ]]; then
+  echo "ALLURE_REPORT_AVAILABLE=false" >> "${GITHUB_ENV}"
+  echo "ALLURE_REPORT_REASON=Report-generation step did not complete." >> "${GITHUB_ENV}"
+fi
+
+report_unavailable() {
+  echo "::warning::$1"
+  if [[ -n "${GITHUB_ENV:-}" ]]; then
+    echo "ALLURE_REPORT_REASON=$1" >> "${GITHUB_ENV}"
+  fi
+}
+
 echo "🔍 Searching for .xcresults under: ${XCRESULT_SEARCH_PATH}"
 
 XCRESULTS=()
@@ -29,54 +41,38 @@ while IFS= read -r -d '' xc; do
 done < <(find "${XCRESULT_SEARCH_PATH}" -type d -name "*.xcresult" -print0 2>/dev/null || true)
 
 if [[ "${#XCRESULTS[@]}" -eq 0 ]]; then
-  echo "⚠️  No .xcresult found under ./${XCRESULT_SEARCH_PATH}. Skipping Allure report generation."
-  if [[ -n "${GITHUB_ENV:-}" ]]; then
-    echo "ALLURE_REPORT_AVAILABLE=false" >> "${GITHUB_ENV}"
-  fi
+  report_unavailable "No xcresult bundles found in the report search directory."
   exit 0
 fi
 
 rm -rf allure-reports
 mkdir -p allure-reports
 
-GENERATED_ANY=false
-
-for XCRESULT in "${XCRESULTS[@]}"; do
-  # Prefer parent schema name
-  SCHEME="$(basename "$(dirname "${XCRESULT}")")"
-  if [[ -z "${SCHEME}" ]]; then
-    SCHEME="$(basename "${XCRESULT}")"
-    SCHEME="${SCHEME%.xcresult}"
+XCRESULT="${XCRESULTS[0]}"
+if [[ "${#XCRESULTS[@]}" -gt 1 ]]; then
+  MERGE_DIR="$(mktemp -d)"
+  trap 'rm -rf "$MERGE_DIR"' EXIT
+  XCRESULT="$MERGE_DIR/combined.xcresult"
+  # Keep the merged bundle outside artifacts so other reporters only see originals.
+  if ! xcrun xcresulttool merge --output-path "$XCRESULT" "${XCRESULTS[@]}"; then
+    report_unavailable "xcresulttool could not merge the result bundles."
+    exit 0
   fi
+fi
 
-  OUT_DIR="allure-reports/${SCHEME}"
+if ! npx --yes allure awesome "$XCRESULT" --single-file -o allure-reports >/dev/null; then
+  report_unavailable "Allure report generation failed. See the report-generation log."
+  exit 0
+fi
 
-  rm -rf "${OUT_DIR}"
-  mkdir -p "${OUT_DIR}"
-
-  echo "🧪 Allure: ${SCHEME}"
-  if ! npx --yes allure awesome "${XCRESULT}" --single-file -o "${OUT_DIR}" >/dev/null; then
-    echo "⚠️  Allure generation failed for '${SCHEME}' (continuing)"
-    continue
-  fi
-
-  if [[ -f "${OUT_DIR}/index.html" ]]; then
-    GENERATED_ANY=true
-  else
-    echo "⚠️  Missing ${OUT_DIR}/index.html for '${SCHEME}' (continuing)"
-  fi
-done
+if [[ ! -f allure-reports/index.html ]]; then
+  report_unavailable "Allure did not produce allure-reports/index.html."
+  exit 0
+fi
 
 if [[ -n "${GITHUB_ENV:-}" ]]; then
-  if [[ "${GENERATED_ANY}" == "true" ]]; then
-    echo "ALLURE_REPORT_AVAILABLE=true" >> "${GITHUB_ENV}"
-  else
-    echo "ALLURE_REPORT_AVAILABLE=false" >> "${GITHUB_ENV}"
-  fi
+  echo "ALLURE_REPORT_AVAILABLE=true" >> "${GITHUB_ENV}"
+  echo "ALLURE_REPORT_REASON=" >> "${GITHUB_ENV}"
 fi
 
-if [[ "${GENERATED_ANY}" == "true" ]]; then
-  echo "✅ Allure reports generated under ./allure-reports"
-else
-  echo "⚠️  No Allure reports were generated."
-fi
+echo "✅ Allure report generated at ./allure-reports/index.html"

@@ -11,6 +11,15 @@ on:
           - cirrus
           - github
         default: in-house
+      uitest_parallel_workers:
+        description: 'UITest parallel simulator workers'
+        type: choice
+        options:
+          - '1'
+          - '2'
+          - '3'
+          - '4'
+        default: '2'
   schedule:
     - cron: "0 21 * * MON-FRI"
   
@@ -29,6 +38,7 @@ jobs:
       mac_runner: ${{ github.event_name == 'workflow_dispatch' && inputs.mac_runner || vars.DEFAULT_MAC_RUNNER }}
       run_critical_flows: true
       ui_test_tags: "!critical"
+      uitest_parallel_workers: ${{ github.event_name == 'workflow_dispatch' && inputs.uitest_parallel_workers || vars.UITEST_PARALLEL_WORKERS || '2' }}
       notify: always
       timeout_minutes: 120
     secrets:
