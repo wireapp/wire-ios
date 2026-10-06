@@ -63,12 +63,22 @@ die "Xcode version for the repository should be at least ${repository_xcode_vers
 
 REPO_ROOT=$(git rev-parse --show-toplevel)
 
+<<<<<<< HEAD
 if [[ "$TEST_ONLY" == "false" ]]; then
     echo "ℹ️ Installing Homebrew dependencies from Brewfile..."
     # Install dependencies from Brewfile (respects CI environment variable)
     brew bundle install
     echo ""
 fi
+=======
+if [[ "${IN_HOUSE_RUNNER:-false}" == "true" ]]; then
+    echo "Using preinstalled Homebrew dependencies on in-house runners"
+else
+    echo "ℹ️ Installing Homebrew dependencies from Brewfile..."
+    brew bundle install
+fi
+echo ""
+>>>>>>> b48a342937 (chore: have LTS branch use in house runners - WPB-28947 (#5345))
 
 if [[ -n "${CI-}" ]]; then
     echo "Running on CI, skipping git lfs install"
@@ -85,7 +95,11 @@ if [[ -n "${CI-}" ]]; then
     echo "Skipping Carthage bootstrap from setup.sh script since CI is defined"
 else
     # Workaround for carthage "The file couldn't be saved." error
+<<<<<<< HEAD
     rm -rf ${TMPDIR}/TemporaryItems/*carthage*
+=======
+    rm -rf "${TMPDIR}/TemporaryItems/"*carthage*
+>>>>>>> b48a342937 (chore: have LTS branch use in house runners - WPB-28947 (#5345))
     "$REPO_ROOT/scripts/carthage.sh" bootstrap --cache-builds --platform ios --use-xcframeworks
 fi
 echo ""
@@ -104,7 +118,24 @@ if [[ "$TEST_ONLY" == "false" ]]; then
     fi
     echo ""
 
+<<<<<<< HEAD
     echo "ℹ️ Fetching submodules..."
+=======
+echo "ℹ️ Installing AWS CLI..."
+if [[ -n "${CI-}" ]]; then
+    if [[ "${IN_HOUSE_RUNNER:-false}" == "true" ]]; then
+        command -v aws >/dev/null || die "AWS CLI must be preinstalled on in-house runners"
+    else
+        which aws || (curl "https://awscli.amazonaws.com/AWSCLIV2.pkg" -o "AWSCLIV2.pkg" && sudo installer -pkg AWSCLIV2.pkg -target /)
+    fi
+else
+    # Local Machine
+    echo "Skipping AWS CLI install because not running on CI"
+fi
+echo ""
+
+echo "ℹ️ Fetching submodules..."
+>>>>>>> b48a342937 (chore: have LTS branch use in house runners - WPB-28947 (#5345))
     git submodule update --init --recursive || true
     git submodule sync --recursive || true
     echo ""

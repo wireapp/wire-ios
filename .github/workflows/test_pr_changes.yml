@@ -142,6 +142,7 @@ jobs:
     if: ${{ needs.decide-strategy.outputs.use_parallel != 'true' }}
     uses: ./.github/workflows/_reusable_run_tests.yml
     with:
+      mac_runner: ${{ vars.DEFAULT_MAC_RUNNER || 'in-house' }}
       folders: ${{ join(fromJson(needs.detect-changes.outputs.folders), ',') }}
       mac_runner: ${{ vars.DEFAULT_MAC_RUNNER }}
       timeout_minutes: 120

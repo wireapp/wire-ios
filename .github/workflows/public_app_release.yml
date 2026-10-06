@@ -19,6 +19,7 @@ jobs:
   public_app_release:
     uses: ./.github/workflows/_reusable_app_release.yml
     with:
+      mac_runner: ${{ inputs.mac_runner || vars.DEFAULT_MAC_RUNNER || 'in-house' }}
       countly_enabled: true
       fastlane_action: appstore_public
       mac_runner: ${{ inputs.mac_runner || vars.DEFAULT_MAC_RUNNER }}

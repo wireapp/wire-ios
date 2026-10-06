@@ -3,7 +3,10 @@ require 'base64'
 require 'httparty'
 require 'json'
 require 'securerandom'
+<<<<<<< HEAD
 require 'set'
+=======
+>>>>>>> b48a342937 (chore: have LTS branch use in house runners - WPB-28947 (#5345))
 require 'fastlane/action'
 require_relative 'framework'
 
@@ -29,7 +32,11 @@ platform :ios do
         "Wire-#{SecureRandom.uuid}"
     end
 
+<<<<<<< HEAD
     def appstoreconnect_api_key_file_path
+=======
+    def appstoreconnect_api_key_file_path 
+>>>>>>> b48a342937 (chore: have LTS branch use in house runners - WPB-28947 (#5345))
         './fastlane/appstoreconnect_api_key.json'
     end
 
@@ -80,7 +87,11 @@ platform :ios do
     end
 
     before_all do |lane|
+<<<<<<< HEAD
         create_keychain_if_needed unless [:prepare_for_tests, :delete_test_simulator, :select_framework, :select_frameworks, :generate_framework_list, :list_schemes_json, :list_uitest_tags, :test_frameworks, :test_only_frameworks, :run_uitests, :generate_env].include?(lane)
+=======
+        create_keychain_if_needed unless [:prepare_for_tests, :delete_test_simulator, :select_framework, :select_frameworks, :generate_framework_list, :test_frameworks, :test_only_frameworks, :run_uitests, :generate_env].include?(lane)
+>>>>>>> b48a342937 (chore: have LTS branch use in house runners - WPB-28947 (#5345))
         `mkdir -p ./.post_build`
         Dir.chdir("..") do
             encoded_key = ENV['APPSTORE_API_KEY_BASE64']
@@ -92,7 +103,11 @@ platform :ios do
     end
 
     after_all do |lane|
+<<<<<<< HEAD
         delete_keychain_if_needed unless [:prepare_for_tests, :delete_test_simulator, :select_framework, :select_frameworks, :generate_framework_list, :list_schemes_json, :list_uitest_tags, :test_frameworks, :test_only_frameworks, :run_uitests, :generate_env].include?(lane)
+=======
+        delete_keychain_if_needed unless [:prepare_for_tests, :delete_test_simulator, :select_framework, :select_frameworks, :generate_framework_list, :test_frameworks, :test_only_frameworks, :run_uitests, :generate_env].include?(lane)
+>>>>>>> b48a342937 (chore: have LTS branch use in house runners - WPB-28947 (#5345))
     end
     
     desc "Test frameworks given folders"
@@ -403,7 +418,11 @@ platform :ios do
         build_and_upload_app(options)
     end
 
+<<<<<<< HEAD
     def run_tests_frameworks(schemas, options)
+=======
+    def run_tests_frameworks(schemas, options)        
+>>>>>>> b48a342937 (chore: have LTS branch use in house runners - WPB-28947 (#5345))
         xcodes(select_for_current_build_only: true)
         # hardcoded values that are required - not meaningful for testing
         options[:build_type] = "Development"
@@ -644,7 +663,7 @@ platform :ios do
                 xcargs: xcargs.join(' '),
                 cloned_source_packages_path: ENV['PACKAGES_DIR'],
                 disable_package_automatic_updates: true,
-                skip_package_dependencies_resolution: ENV["HAS_PACKAGES_CACHE_HIT"]
+                skip_package_dependencies_resolution: ENV["HAS_PACKAGES_CACHE_HIT"] == "true"
             )
         end
     end
@@ -658,11 +677,19 @@ platform :ios do
         end
     end
 
+<<<<<<< HEAD
     def test_plan(build, scheme, testplan, options = {})
         if ENV['IOS_SIM_ID'].to_s.empty?
             create_simulator_if_needed
         end
 
+=======
+    def test_plan(build, scheme, testplan)
+        if ENV['IOS_SIM_ID'].to_s.empty?
+            create_simulator_if_needed
+        end
+        
+>>>>>>> b48a342937 (chore: have LTS branch use in house runners - WPB-28947 (#5345))
         if ENV['IOS_SIM_ID'].to_s.empty?
             UI.user_error! "missing id for tests"
         end
@@ -922,6 +949,11 @@ platform :ios do
 
     def create_simulator_if_needed
         if is_running_on_ci
+<<<<<<< HEAD
+=======
+            return unless ENV['IOS_SIM_ID'].to_s.strip.empty?
+
+>>>>>>> b48a342937 (chore: have LTS branch use in house runners - WPB-28947 (#5345))
             simulator_name = simulator_name_for_testing
             UI.message "Create simulator #{simulator_name}"
             simulator_id = sh(
@@ -940,8 +972,12 @@ platform :ios do
             end
 
             sh("xcrun", "simctl", "boot", simulator_id, log: false)
+<<<<<<< HEAD
             sh("xcrun", "simctl", "bootstatus", simulator_id, "-b", log: false) # Wait for simulator to finish booting
             sh "../scripts/seed-simulator-media.sh"
+=======
+            sh("xcrun", "simctl", "bootstatus", simulator_id, "-b", log: false)
+>>>>>>> b48a342937 (chore: have LTS branch use in house runners - WPB-28947 (#5345))
             return
         end
 
@@ -1082,6 +1118,10 @@ platform :ios do
         changelog = changelog(build)
         `export TEMP='RELEASE_NOTES=#{Base64.strict_encode64(changelog)}' && echo $TEMP >> ./.post_build/.env`
     end
+<<<<<<< HEAD
+=======
+
+>>>>>>> b48a342937 (chore: have LTS branch use in house runners - WPB-28947 (#5345))
 end
 
 class Build

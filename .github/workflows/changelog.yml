@@ -12,10 +12,13 @@ on:
       is_cloud_build:
         required: true
         type: boolean
+<<<<<<< HEAD
         default: true
     secrets:
       JIRA_TOKEN:
         required: false
+=======
+>>>>>>> b48a342937 (chore: have LTS branch use in house runners - WPB-28947 (#5345))
     outputs:
       changelog-url:
         description: "The url of the changelog can be downloaded from"

@@ -46,6 +46,7 @@ jobs:
     if: ${{ inputs.column == 'C1' || inputs.column == 'all' }}
     uses: ./.github/workflows/_reusable_app_release.yml
     with:
+      mac_runner: ${{ inputs.mac_runner || vars.DEFAULT_MAC_RUNNER || 'in-house' }}
       fastlane_action: appstore_col_1_restricted
       is_cloud_build: false
       mac_runner: ${{ inputs.mac_runner || vars.DEFAULT_MAC_RUNNER }}
@@ -87,6 +88,7 @@ jobs:
     if: ${{ inputs.column == 'C2' || inputs.column == 'all' }}
     uses: ./.github/workflows/_reusable_app_release.yml
     with:
+      mac_runner: ${{ inputs.mac_runner || vars.DEFAULT_MAC_RUNNER || 'in-house' }}
       fastlane_action: appstore_col_2_restricted
       is_cloud_build: false
       mac_runner: ${{ inputs.mac_runner || vars.DEFAULT_MAC_RUNNER }}
@@ -128,6 +130,7 @@ jobs:
     if: ${{ inputs.column == 'C3' || inputs.column == 'all' }}
     uses: ./.github/workflows/_reusable_app_release.yml
     with:
+      mac_runner: ${{ inputs.mac_runner || vars.DEFAULT_MAC_RUNNER || 'in-house' }}
       fastlane_action: appstore_col_3_restricted
       is_cloud_build: false
       mac_runner: ${{ inputs.mac_runner || vars.DEFAULT_MAC_RUNNER }}
