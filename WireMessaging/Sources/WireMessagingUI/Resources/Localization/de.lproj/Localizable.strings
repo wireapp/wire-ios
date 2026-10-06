@@ -89,6 +89,7 @@
 "conversation.creationForm.wireCells.toggle" = "Geteiltes Drive";
 "conversation.creationForm.wireCells.description" = "Ermöglichen Sie den Teilnehmern, ihre Dokumente und Mediendateien in einem geteilten Drive zu verwalten. Dieser Vorgang kann nicht rückgängig gemacht werden.";
 "conversation.creationForm.wireCells.learnMore" = "Mehr erfahren";
+"conversation.creationForm.wireCells.sharedDriveAccess" = "Personen außerhalb Ihres Teams können Dateien lesen, jedoch weder hochladen noch bearbeiten.";
 
 
 // MARK: - Channel history

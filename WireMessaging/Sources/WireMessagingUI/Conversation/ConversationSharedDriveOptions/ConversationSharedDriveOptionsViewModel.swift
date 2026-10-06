@@ -20,6 +20,8 @@ import SwiftUI
 import WireDesign
 public import WireMessagingDomain
 
+private typealias Strings = L10n.Localizable.Conversation.Details
+
 @MainActor
 public class ConversationSharedDriveOptionsViewModel: ObservableObject {
     @Published var participants: [WireDriveParticipant]
@@ -62,5 +64,14 @@ public class ConversationSharedDriveOptionsViewModel: ObservableObject {
         }
 
         return verificationBadges + [userTypeBadge].compactMap(\.self)
+    }
+    
+    func role(for participant: WireDriveParticipant) -> String {
+        switch participant.role {
+        case .editor:
+            Strings.SharedDriveAccessSection.editor
+        case .viewer:
+            Strings.SharedDriveAccessSection.viewer
+        }
     }
 }
