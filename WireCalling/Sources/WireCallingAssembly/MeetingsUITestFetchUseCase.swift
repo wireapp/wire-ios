@@ -22,6 +22,8 @@
     import WireCallingDomain
     import WireFoundation
 
+    /// TC-11947 uses Darwin notification state to control fetches from the separate UI test process.
+    /// This tests loading, failure, and retry UI without changing the device's network connection.
     actor MeetingsUITestFetchUseCase: FetchUpcomingMeetingsUseCaseProtocol {
         private let wrapped: any FetchUpcomingMeetingsUseCaseProtocol
         private let token: Int32

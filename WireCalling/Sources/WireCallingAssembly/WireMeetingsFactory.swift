@@ -42,15 +42,7 @@ public struct WireMeetingsFactory {
         callRepository: any MeetingCallRepositoryProtocol,
         accentColorState: WireMeetingsAccentColorState
     ) -> UIViewController {
-        #if DEBUG
-            let currentDateProvider: any CurrentDateProviding = if let date = UITestConfig.environment?.meetingsDate {
-                MeetingsUITestDateProvider(now: date, clockID: UITestConfig.environment?.meetingsClockID)
-            } else {
-                .system
-            }
-        #else
-            let currentDateProvider: any CurrentDateProviding = .system
-        #endif
+        let currentDateProvider = makeCurrentDateProvider()
 
         let createMeetingUseCase = CreateMeetingUseCase(
             meetingRepository: meetingRepository,
@@ -60,22 +52,10 @@ public struct WireMeetingsFactory {
             meetingRepository: meetingRepository,
             conversationRepository: conversationRepository
         )
-        let realFetchUseCase = FetchUpcomingMeetingsUseCase(
-            repository: meetingRepository,
+        let fetchUpcomingMeetingsUseCase = makeFetchUpcomingMeetingsUseCase(
+            meetingRepository: meetingRepository,
             currentDateProvider: currentDateProvider
         )
-        let fetchUpcomingMeetingsUseCase: any FetchUpcomingMeetingsUseCaseProtocol
-        #if DEBUG
-            if let failureID = UITestConfig.environment?.meetingsFailureID {
-                fetchUpcomingMeetingsUseCase = MeetingsUITestFetchUseCase(
-                    wrapping: realFetchUseCase, failureID: failureID
-                )
-            } else {
-                fetchUpcomingMeetingsUseCase = realFetchUseCase
-            }
-        #else
-            fetchUpcomingMeetingsUseCase = realFetchUseCase
-        #endif
         let observeMeetingChangesUseCase = ObserveMeetingChangesUseCase(repository: meetingRepository)
         let deleteMeetingUseCase = DeleteMeetingUseCase(
             meetingRepository: meetingRepository,
@@ -115,6 +95,31 @@ public struct WireMeetingsFactory {
                 )
             )
         )
+    }
+
+    private func makeCurrentDateProvider() -> any CurrentDateProviding {
+        #if DEBUG
+            if let date = UITestConfig.environment?.meetingsDate {
+                return MeetingsUITestDateProvider(now: date, clockID: UITestConfig.environment?.meetingsClockID)
+            }
+        #endif
+        return .system
+    }
+
+    private func makeFetchUpcomingMeetingsUseCase(
+        meetingRepository: any MeetingRepositoryProtocol,
+        currentDateProvider: any CurrentDateProviding
+    ) -> any FetchUpcomingMeetingsUseCaseProtocol {
+        let fetchUseCase = FetchUpcomingMeetingsUseCase(
+            repository: meetingRepository,
+            currentDateProvider: currentDateProvider
+        )
+        #if DEBUG
+            if let failureID = UITestConfig.environment?.meetingsFailureID {
+                return MeetingsUITestFetchUseCase(wrapping: fetchUseCase, failureID: failureID)
+            }
+        #endif
+        return fetchUseCase
     }
 
 }
