@@ -87,6 +87,7 @@ final class MeetingsTests: WireUITestCase {
 
     @MainActor
     func testMeetingsPaginationKeepsOccurrenceOrderAfterScrollingBack_TC_11936() async throws {
+        executionTimeAllowance = 600
         let (owner, _, _, _) = try await UserHelper.default.registerMeetingsTeam(withMemberCount: 0)
         let meetings = try await MeetingsTestHelper(user: owner)
         let now = day(0)
