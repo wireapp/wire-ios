@@ -185,7 +185,8 @@ class ConversationsPage: PageModel {
     }
 
     func openMeetings() throws -> MeetingsPage {
-        XCTAssertTrue(app.tabBars.buttons["bottomBarMeetingsButton"].waitAndTap(timeout: 15))
+        XCTAssertTrue(app.tabBars.buttons[Locators.ConversationsPage.bottomBarMeetingsButton.rawValue]
+            .waitAndTap(timeout: 15))
         return try MeetingsPage()
     }
 

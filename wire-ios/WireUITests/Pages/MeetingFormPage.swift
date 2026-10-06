@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireLocators
 import XCTest
 
 class MeetingFormPage: PageModel {
@@ -24,15 +25,15 @@ class MeetingFormPage: PageModel {
     }
 
     var titleField: XCUIElement {
-        app.textFields["meetingFormTitle"]
+        app.textFields[Locators.WireMeetings.MeetingForm.title.rawValue]
     }
 
     var participantsButton: XCUIElement {
-        app.buttons["meetingFormParticipants"]
+        app.buttons[Locators.WireMeetings.MeetingForm.participants.rawValue]
     }
 
     var saveButton: XCUIElement {
-        app.buttons["meetingFormSave"]
+        app.buttons[Locators.WireMeetings.MeetingForm.save.rawValue]
     }
 
     var memberSearchField: XCUIElement {
@@ -40,12 +41,13 @@ class MeetingFormPage: PageModel {
     }
 
     var selectMembersButton: XCUIElement {
-        app.buttons["meetingMembersSelect"]
+        app.buttons[Locators.WireMeetings.MeetingForm.membersSelect.rawValue]
     }
 
     @discardableResult
     func replaceTitle(with title: String) -> MeetingFormPage {
-        let clearButton = app.descendants(matching: .any)["meetingFormClearTitle"].firstMatch
+        let clearButton = app.descendants(matching: .any)[Locators.WireMeetings.MeetingForm.clearTitle.rawValue]
+            .firstMatch
         if clearButton.exists {
             clearButton.tap()
         }
@@ -58,14 +60,19 @@ class MeetingFormPage: PageModel {
     func addParticipants(_ users: [UserInfo]) throws -> MeetingFormPage {
         participantsButton.tap()
         XCTAssertTrue(memberSearchField.waitForExistence(timeout: 5), "Meeting member search did not appear")
-        let selectedSection = app.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", "Selected (")).firstMatch
+        let selectedSection = app.buttons.matching(
+            NSPredicate(
+                format: "label BEGINSWITH %@",
+                Locators.WireMeetings.MeetingForm.selectedMembersSection.rawValue
+            )
+        ).firstMatch
         XCTAssertTrue(selectedSection.waitAndTap(), "Selected members section did not collapse")
 
         for user in users {
             memberSearchField.tap()
             memberSearchField.typeText(user.name)
 
-            let member = app.buttons["meetingMember.\(user.id.uppercased())"]
+            let member = app.buttons[Locators.WireMeetings.MeetingForm.memberIdentifier(user.id)]
             XCTAssertTrue(member.waitAndTap(timeout: 10), "Meeting member '\(user.name)' did not appear")
 
             XCTAssertTrue(memberSearchField.buttons["Clear text"].waitAndTap(), "Member search did not clear")

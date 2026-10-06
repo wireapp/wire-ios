@@ -61,7 +61,7 @@ struct MeetingRow: View {
             VStack(alignment: .leading, spacing: 2) {
                 HStack(alignment: .top) {
                     Text(meeting.title)
-                        .accessibilityIdentifier("meetingTitle")
+                        .accessibilityIdentifier(Locators.WireMeetings.MeetingRow.title)
                         .font(for: .body2)
                         .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
                         .lineLimit(2)
@@ -114,19 +114,19 @@ struct MeetingRow: View {
                             .contentShape(Rectangle())
                     }
                     .menuOrder(.fixed)
-                    .accessibilityIdentifier("meetingMenu")
+                    .accessibilityIdentifier(Locators.WireMeetings.MeetingRow.menu)
                     .padding(.vertical, -12)
                 }
 
                 HStack(spacing: 8) {
                     Text(formatTime(occurrence))
-                        .accessibilityIdentifier("meetingTime")
+                        .accessibilityIdentifier(Locators.WireMeetings.MeetingRow.time)
                         .font(for: .subline1)
                         .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
 
                     if let recurrence = meeting.recurrence {
                         recurrenceBadge(recurrence.title)
-                            .accessibilityIdentifier("meetingRecurrence")
+                            .accessibilityIdentifier(Locators.WireMeetings.MeetingRow.recurrence)
                     }
                 }
 
@@ -145,7 +145,11 @@ struct MeetingRow: View {
         }
         .accessibilityElement(children: .contain)
         .accessibilityIdentifier(
-            "meetingRow.\(meeting.id.domain).\(meeting.id.id.uuidString).\(Int(occurrence.start.timeIntervalSince1970))"
+            Locators.WireMeetings.MeetingRow.rowIdentifier(
+                domain: meeting.id.domain,
+                id: meeting.id.id,
+                start: occurrence.start
+            )
         )
     }
 

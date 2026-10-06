@@ -18,6 +18,7 @@
 
 import notify
 import WireFoundation
+import WireLocators
 import WireNetwork
 import XCTest
 
@@ -70,7 +71,10 @@ final class MeetingsTests: WireUITestCase {
         try meetingsPage.assertOccurrences(expectedRows, now: now, locale: "en_GB")
         try meetingsPage.scrollToTop(first: daily)
 
-        XCTAssertEqual(try meetingsPage.showRow(daily).staticTexts["meetingRecurrence"].label, "Daily")
+        XCTAssertEqual(
+            try meetingsPage.showRow(daily).staticTexts[Locators.WireMeetings.MeetingRow.recurrence.rawValue].label,
+            "Daily"
+        )
         XCTAssertTrue(try meetingsPage.showRow(weekly, start: day(3, hour: 10)).staticTexts["Weekly"].exists)
         XCTAssertTrue(
             try meetingsPage.showRow(everyTwoWeeks, start: day(4, hour: 11))
@@ -131,9 +135,12 @@ final class MeetingsTests: WireUITestCase {
         XCTAssertTrue(secondRow.waitForExistence(timeout: 15), "Second duplicate meeting did not appear")
         XCTAssertNotEqual(firstRow.identifier, secondRow.identifier)
         XCTAssertEqual(page.meetingRows.count, 2)
-        XCTAssertEqual(firstRow.staticTexts["meetingTime"].label, secondRow.staticTexts["meetingTime"].label)
-        XCTAssertEqual(firstRow.staticTexts["meetingTitle"].label, originalTitle)
-        XCTAssertEqual(secondRow.staticTexts["meetingTitle"].label, originalTitle)
+        XCTAssertEqual(
+            firstRow.staticTexts[Locators.WireMeetings.MeetingRow.time.rawValue].label,
+            secondRow.staticTexts[Locators.WireMeetings.MeetingRow.time.rawValue].label
+        )
+        XCTAssertEqual(firstRow.staticTexts[Locators.WireMeetings.MeetingRow.title.rawValue].label, originalTitle)
+        XCTAssertEqual(secondRow.staticTexts[Locators.WireMeetings.MeetingRow.title.rawValue].label, originalTitle)
 
         // Change only the selected second row. Its ID must stay stable, and
         // the first duplicate must keep its original title.
@@ -144,8 +151,11 @@ final class MeetingsTests: WireUITestCase {
         XCTAssertTrue(secondRow.staticTexts.matching(
             NSPredicate(format: "label == %@", "TC11942 selected second")
         ).firstMatch.waitForExistence(timeout: 15))
-        XCTAssertEqual(secondRow.staticTexts["meetingTitle"].label, "TC11942 selected second")
-        XCTAssertEqual(firstRow.staticTexts["meetingTitle"].label, originalTitle)
+        XCTAssertEqual(
+            secondRow.staticTexts[Locators.WireMeetings.MeetingRow.title.rawValue].label,
+            "TC11942 selected second"
+        )
+        XCTAssertEqual(firstRow.staticTexts[Locators.WireMeetings.MeetingRow.title.rawValue].label, originalTitle)
 
         let backendRows = try await fixtures.list()
         XCTAssertEqual(backendRows.first(where: { $0.id == first.id })?.title, originalTitle)
@@ -198,8 +208,14 @@ final class MeetingsTests: WireUITestCase {
             expected.map { ($0, $0.startTime) } + recurringRows, now: day(0), locale: "en_GB"
         )
         XCTAssertFalse(page.row(deleted).exists)
-        XCTAssertEqual(try page.showRow(moved).staticTexts["meetingTitle"].label, moved.title)
-        XCTAssertEqual(try page.showRow(created).staticTexts["meetingTitle"].label, created.title)
+        XCTAssertEqual(
+            try page.showRow(moved).staticTexts[Locators.WireMeetings.MeetingRow.title.rawValue].label,
+            moved.title
+        )
+        XCTAssertEqual(
+            try page.showRow(created).staticTexts[Locators.WireMeetings.MeetingRow.title.rawValue].label,
+            created.title
+        )
         try page.scrollToTop(first: expected[0])
     }
 
@@ -218,13 +234,14 @@ final class MeetingsTests: WireUITestCase {
         uiTestConfig.meetingsFailureID = failureID
 
         let page = try launchMeetings(for: owner, now: day(0))
-        let progress = app.descendants(matching: .any)["meetingsLoadProgress"].firstMatch
+        let progress = app.descendants(matching: .any)[Locators.WireMeetings.MeetingsPage.loadProgress.rawValue]
+            .firstMatch
         XCTAssertTrue(progress.waitForExistence(timeout: 10))
         XCTAssertFalse(page.noUpcomingMeetingsText.exists)
         XCTAssertEqual(page.meetingRows.count, 0)
         XCTAssertEqual(notify_set_state(token, 1), UInt32(NOTIFY_STATUS_OK))
         let error = app.staticTexts["Could not load meetings. Please try again."]
-        let retry = app.buttons["meetingsLoadRetryButton"]
+        let retry = app.buttons[Locators.WireMeetings.MeetingsPage.loadRetryButton.rawValue]
         XCTAssertTrue(error.waitForExistence(timeout: 15))
         XCTAssertTrue(retry.isEnabled)
         XCTAssertFalse(page.noUpcomingMeetingsText.exists)
@@ -300,29 +317,40 @@ final class MeetingsTests: WireUITestCase {
                 try form.save()
             }
             let row = try page.showRow(morning)
-            XCTAssertEqual(row.staticTexts["meetingTitle"].label, morning.title)
-            XCTAssertEqual(row.staticTexts["meetingRecurrence"].label, "Daily")
+            XCTAssertEqual(row.staticTexts[Locators.WireMeetings.MeetingRow.title.rawValue].label, morning.title)
+            XCTAssertEqual(row.staticTexts[Locators.WireMeetings.MeetingRow.recurrence.rawValue].label, "Daily")
             let afternoonRow = try page.showRow(afternoon)
-            XCTAssertTrue(afternoonRow.staticTexts["meetingParticipantOverflow"].waitForExistence(timeout: 15))
-            XCTAssertEqual(afternoonRow.staticTexts["meetingParticipantOverflow"].label, "+2")
+            XCTAssertTrue(afternoonRow.staticTexts[Locators.WireMeetings.MeetingRow.participantOverflow.rawValue]
+                .waitForExistence(timeout: 15))
+            XCTAssertEqual(
+                afternoonRow.staticTexts[Locators.WireMeetings.MeetingRow.participantOverflow.rawValue].label,
+                "+2"
+            )
             for user in [owner] + Array(members.prefix(4)) {
                 // Registration adds a numeric suffix to the display name.
                 let suffix = try XCTUnwrap(user.name.split(separator: " ").last)
                 let initials = "\(user.name.prefix(1))\(suffix.prefix(1))"
-                let avatar = afternoonRow.descendants(matching: .any)["meetingAvatar.\(user.id.uppercased())"]
+                let avatar = afternoonRow
+                    .descendants(matching: .any)[Locators.WireMeetings.MeetingRow.avatarIdentifier(user.id)]
                     .firstMatch
                 XCTAssertTrue(avatar.exists, "Missing avatar for \(user.name)")
                 XCTAssertEqual(avatar.label, initials)
             }
-            let time = row.staticTexts["meetingTime"].label.replacingOccurrences(of: "\u{202F}", with: " ")
+            let time = row.staticTexts[Locators.WireMeetings.MeetingRow.time.rawValue].label.replacingOccurrences(
+                of: "\u{202F}",
+                with: " "
+            )
             XCTAssertEqual(time, locale == "en_GB" ? "10:00 - 10:30" : "10:00 AM - 10:30 AM")
-            let afternoonTime = afternoonRow.staticTexts["meetingTime"].label
+            let afternoonTime = afternoonRow.staticTexts[Locators.WireMeetings.MeetingRow.time.rawValue].label
                 .replacingOccurrences(of: "\u{202F}", with: " ")
             XCTAssertEqual(afternoonTime, locale == "en_GB" ? "14:00 - 14:30" : "2:00 PM - 2:30 PM")
-            XCTAssertFalse(afternoonRow.staticTexts["meetingRecurrence"].exists)
+            XCTAssertFalse(afternoonRow.staticTexts[Locators.WireMeetings.MeetingRow.recurrence.rawValue].exists)
             try page.scrollToTop(first: morning)
             for meeting in expected {
-                XCTAssertEqual(try page.showRow(meeting).staticTexts["meetingTitle"].label, meeting.title)
+                XCTAssertEqual(
+                    try page.showRow(meeting).staticTexts[Locators.WireMeetings.MeetingRow.title.rawValue].label,
+                    meeting.title
+                )
             }
             try page.assertRows(expected, now: now, locale: locale)
         }
@@ -344,10 +372,11 @@ final class MeetingsTests: WireUITestCase {
 
         let page = try launchMeetings(for: invitee, now: day(0))
         let initialRow = try page.showRow(initial)
-        XCTAssertEqual(initialRow.staticTexts["meetingTitle"].label, initial.title)
-        XCTAssertEqual(initialRow.staticTexts["meetingTime"].label, "10:00 - 10:30")
+        XCTAssertEqual(initialRow.staticTexts[Locators.WireMeetings.MeetingRow.title.rawValue].label, initial.title)
+        XCTAssertEqual(initialRow.staticTexts[Locators.WireMeetings.MeetingRow.time.rawValue].label, "10:00 - 10:30")
         for user in [host, invitee] {
-            XCTAssertTrue(initialRow.descendants(matching: .any)["meetingAvatar.\(user.id.uppercased())"].exists)
+            XCTAssertTrue(initialRow
+                .descendants(matching: .any)[Locators.WireMeetings.MeetingRow.avatarIdentifier(user.id)].exists)
         }
         try page.assertRows([unchanged, initial], now: day(0), locale: "en_GB")
 
@@ -355,14 +384,17 @@ final class MeetingsTests: WireUITestCase {
         let updatedRow = page.row(updated)
         XCTAssertTrue(updatedRow.waitForExistence(timeout: 20))
         XCTAssertTrue(initialRow.waitToDisappear(timeout: 20))
-        XCTAssertEqual(updatedRow.staticTexts["meetingTitle"].label, updated.title)
-        XCTAssertEqual(updatedRow.staticTexts["meetingTime"].label, "14:00 - 14:30")
+        XCTAssertEqual(updatedRow.staticTexts[Locators.WireMeetings.MeetingRow.title.rawValue].label, updated.title)
+        XCTAssertEqual(updatedRow.staticTexts[Locators.WireMeetings.MeetingRow.time.rawValue].label, "14:00 - 14:30")
         try page.assertRows([updated, unchanged], now: day(0), locale: "en_GB")
 
         try await fixtures.delete(updated)
         XCTAssertTrue(updatedRow.waitToDisappear(timeout: 20))
         try page.assertRows([unchanged])
-        XCTAssertEqual(page.row(unchanged).staticTexts["meetingTitle"].label, unchanged.title)
+        XCTAssertEqual(
+            page.row(unchanged).staticTexts[Locators.WireMeetings.MeetingRow.title.rawValue].label,
+            unchanged.title
+        )
     }
 
     @MainActor
@@ -382,7 +414,7 @@ final class MeetingsTests: WireUITestCase {
 
         let page = try launchMeetings(for: invitee, now: day(0))
         try assertMenu(on: page, meeting: meeting, isHost: false)
-        let hostAvatarID = "meetingAvatar.\(host.id.uppercased())"
+        let hostAvatarID = Locators.WireMeetings.MeetingRow.avatarIdentifier(host.id)
         XCTAssertTrue(page.row(meeting).descendants(matching: .any)[hostAvatarID].firstMatch.exists)
         try await hostFixtures.selfUserAPI.deleteSelf(password: host.password)
         var deletedHost = try await inviteeFixtures.usersAPI.getUser(for: qualifiedIDs[0])
@@ -403,7 +435,7 @@ final class MeetingsTests: WireUITestCase {
         let deletedHostPage = try launchMeetings(for: invitee, now: day(0))
         let remainingRow = try deletedHostPage.showRow(meeting)
         XCTAssertTrue(remainingRow.descendants(matching: .any)[
-            "meetingAvatar.\(invitee.id.uppercased())"
+            Locators.WireMeetings.MeetingRow.avatarIdentifier(invitee.id)
         ].firstMatch.waitForExistence(timeout: 20))
         XCTAssertFalse(remainingRow.descendants(matching: .any)[hostAvatarID].firstMatch.exists)
         try assertMenu(on: deletedHostPage, meeting: meeting, isHost: false)

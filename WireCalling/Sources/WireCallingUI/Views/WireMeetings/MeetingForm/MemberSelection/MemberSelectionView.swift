@@ -20,6 +20,7 @@ import SwiftUI
 import WireCallingDomain
 import WireDesign
 import WireFoundation
+import WireLocators
 
 struct MemberSelectionView: View {
     private typealias Strings = L10n.Localizable.WireMeetings.Schedule.Members
@@ -84,7 +85,7 @@ struct MemberSelectionView: View {
                         viewModel.confirmSelection()
                         dismiss()
                     }
-                    .accessibilityIdentifier("meetingMembersSelect")
+                    .accessibilityIdentifier(Locators.WireMeetings.MeetingForm.membersSelect)
                 }
             }
         }
@@ -197,7 +198,7 @@ struct MemberSelectionView: View {
             }
         }
         .buttonStyle(.plain)
-        .accessibilityIdentifier("meetingMember.\(member.qualifiedID.id.uuidString)")
+        .accessibilityIdentifier(Locators.WireMeetings.MeetingForm.memberIdentifier(member.qualifiedID.id.uuidString))
     }
 }
 

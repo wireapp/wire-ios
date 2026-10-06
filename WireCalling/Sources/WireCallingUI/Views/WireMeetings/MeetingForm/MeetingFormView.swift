@@ -21,6 +21,7 @@ import WireCallingDomain
 import WireCallingDomainSupport
 import WireDesign
 import WireFoundation
+import WireLocators
 
 struct MeetingFormView: View {
     private typealias Strings = L10n.Localizable.WireMeetings.Schedule
@@ -74,7 +75,7 @@ struct MeetingFormView: View {
                             Task { await viewModel.submit() }
                         }
                         .disabled(!viewModel.isNextButtonEnabled)
-                        .accessibilityIdentifier("meetingFormSave")
+                        .accessibilityIdentifier(Locators.WireMeetings.MeetingForm.save)
                     }
                 }
             }
@@ -149,7 +150,7 @@ struct MeetingFormView: View {
         Section {
             HStack {
                 TextField(Strings.SetupTitle.placeholder, text: $viewModel.meetingTitle)
-                    .accessibilityIdentifier("meetingFormTitle")
+                    .accessibilityIdentifier(Locators.WireMeetings.MeetingForm.title)
                     .focused($isTitleFieldFocused)
                 if !viewModel.meetingTitle.isEmpty {
                     Image(systemName: "xmark.circle.fill")
@@ -157,7 +158,7 @@ struct MeetingFormView: View {
                         .onTapGesture {
                             viewModel.clearTitle()
                         }
-                        .accessibilityIdentifier("meetingFormClearTitle")
+                        .accessibilityIdentifier(Locators.WireMeetings.MeetingForm.clearTitle)
                 }
             }
         } header: {
@@ -226,7 +227,7 @@ struct MeetingFormView: View {
                 .contentShape(.rect)
             }
             .buttonStyle(.plain)
-            .accessibilityIdentifier("meetingFormParticipants")
+            .accessibilityIdentifier(Locators.WireMeetings.MeetingForm.participants)
         }
         .textCase(nil)
     }

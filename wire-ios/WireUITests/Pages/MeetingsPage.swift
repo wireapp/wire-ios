@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLocators
 import WireNetwork
 import XCTest
 
@@ -26,31 +27,34 @@ class MeetingsPage: PageModel {
     }
 
     var noUpcomingMeetingsText: XCUIElement {
-        app.staticTexts["No upcoming meetings yet"]
+        app.staticTexts[Locators.WireMeetings.MeetingsPage.noUpcomingMeetings.rawValue]
     }
 
     var meetingRows: XCUIElementQuery {
-        app.otherElements.matching(NSPredicate(format: "identifier BEGINSWITH %@", "meetingRow."))
+        app.otherElements.matching(NSPredicate(
+            format: "identifier BEGINSWITH %@",
+            Locators.WireMeetings.MeetingRow.rowPrefix.rawValue
+        ))
     }
 
     var dayHeaders: XCUIElementQuery {
-        app.staticTexts.matching(identifier: "meetingsDayHeader")
+        app.staticTexts.matching(identifier: Locators.WireMeetings.MeetingsPage.dayHeader.rawValue)
     }
 
     var meetingsList: XCUIElement {
-        app.descendants(matching: .any)["meetingsList"].firstMatch
+        app.descendants(matching: .any)[Locators.WireMeetings.MeetingsPage.list.rawValue].firstMatch
     }
 
     var createMeetingButton: XCUIElement {
-        app.buttons["scheduleMeetingBarButton"]
+        app.buttons[Locators.WireMeetings.MeetingsPage.scheduleButton.rawValue]
     }
 
     var meetNowOption: XCUIElement {
-        app.buttons["Meet Now"]
+        app.buttons[Locators.WireMeetings.MeetingsPage.meetNow.rawValue]
     }
 
     var scheduleMeetingOption: XCUIElement {
-        app.buttons["Schedule a Meeting"]
+        app.buttons[Locators.WireMeetings.MeetingsPage.scheduleMeeting.rawValue]
     }
 
     func row(_ meeting: WireNetwork.MeetingResponse, start: Date? = nil) -> XCUIElement {
@@ -58,7 +62,7 @@ class MeetingsPage: PageModel {
     }
 
     private func rowIdentifier(_ meeting: WireNetwork.MeetingResponse, start: Date) -> String {
-        "meetingRow.\(meeting.id.domain).\(meeting.id.id.uuidString).\(Int(start.timeIntervalSince1970))"
+        Locators.WireMeetings.MeetingRow.rowIdentifier(domain: meeting.id.domain, id: meeting.id.id, start: start)
     }
 
     func scrollToTop(first meeting: WireNetwork.MeetingResponse, start: Date? = nil) throws {
@@ -118,7 +122,8 @@ class MeetingsPage: PageModel {
 
     func openMenu(for meeting: WireNetwork.MeetingResponse, start: Date? = nil) throws {
         let meetingRow = try showRow(meeting, start: start)
-        let menuButton = meetingRow.descendants(matching: .any)["meetingMenu"].firstMatch
+        let menuButton = meetingRow.descendants(matching: .any)[Locators.WireMeetings.MeetingRow.menu.rawValue]
+            .firstMatch
         XCTAssertTrue(menuButton.waitAndTap(), "Meeting menu did not appear for '\(meeting.title)'")
     }
 
@@ -314,7 +319,7 @@ class MeetingsPage: PageModel {
     }
 
     private func visibleDayHeaders() -> [XCUIElement] {
-        meetingsList.staticTexts.matching(identifier: "meetingsDayHeader")
+        meetingsList.staticTexts.matching(identifier: Locators.WireMeetings.MeetingsPage.dayHeader.rawValue)
             .allElementsBoundByIndex
             .filter(\.isHittable)
             .sorted { $0.frame.minY < $1.frame.minY }
@@ -322,11 +327,15 @@ class MeetingsPage: PageModel {
 
     private func visibleViewport() -> [(String, CGFloat)] {
         let rows = meetingsList.descendants(matching: .any)
-            .matching(NSPredicate(format: "identifier BEGINSWITH %@", "meetingRow."))
+            .matching(NSPredicate(
+                format: "identifier BEGINSWITH %@",
+                Locators.WireMeetings.MeetingRow.rowPrefix.rawValue
+            ))
             .allElementsBoundByIndex
             .filter(\.isHittable)
             .map { ("row:\($0.identifier)", $0.frame.minY) }
-        let headers = meetingsList.staticTexts.matching(identifier: "meetingsDayHeader")
+        let headers = meetingsList.staticTexts
+            .matching(identifier: Locators.WireMeetings.MeetingsPage.dayHeader.rawValue)
             .allElementsBoundByIndex
             .filter(\.isHittable)
             .map { ("header:\($0.label)", $0.frame.minY) }
@@ -352,7 +361,8 @@ class MeetingsPage: PageModel {
     }
 
     private func waitForPaginationToFinish() throws {
-        let spinner = meetingsList.descendants(matching: .any)["meetingsPaginationProgress"].firstMatch
+        let spinner = meetingsList
+            .descendants(matching: .any)[Locators.WireMeetings.MeetingsPage.paginationProgress.rawValue].firstMatch
         guard spinner.exists, spinner.isHittable else { return }
         guard spinner.waitToDisappear(timeout: 15) else {
             throw failure("Meetings page loading did not finish within 15 seconds")
