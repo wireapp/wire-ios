@@ -43,7 +43,7 @@ on:
       timeout_minutes:
         type: number
         required: false
-        default: 90
+        default: 120
 
     secrets:
       ZENKINS_USERNAME:
@@ -52,7 +52,9 @@ on:
         required: true
       OP_SERVICE_ACCOUNT_TOKEN:
         required: true
-      SLACK_WEBHOOK_URL:
+      WIRE_WEBHOOK_URL:
+        required: true
+      WIRE_WEBHOOK_TOKEN:
         required: true
 
 env: # https://docs.fastlane.tools/getting-started/ios/setup/
@@ -74,7 +76,8 @@ jobs:
         inputs.mac_runner == 'github' && 'macos-26' ||
         'ghcr.io/cirruslabs/macos-runner:tahoe'
       }}
-    timeout-minutes: ${{ inputs.timeout_minutes }}
+    # GitHub-hosted jobs use the default six-hour limit; other runners keep the configured timeout.
+    timeout-minutes: ${{ inputs.mac_runner == 'github' && 360 || inputs.timeout_minutes }}
     permissions:
       contents: read
       actions: read
@@ -433,7 +436,8 @@ jobs:
         continue-on-error: true
         if: ${{ inputs.notify == 'always' && always() }}
         env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          WIRE_WEBHOOK_URL: ${{ secrets.WIRE_WEBHOOK_URL }}
+          WIRE_WEBHOOK_TOKEN: ${{ secrets.WIRE_WEBHOOK_TOKEN }}
         with:
           notify: custom
           text: |
@@ -453,7 +457,8 @@ jobs:
         continue-on-error: true
         if: ${{ inputs.notify == 'failure' && failure() }}
         env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          WIRE_WEBHOOK_URL: ${{ secrets.WIRE_WEBHOOK_URL }}
+          WIRE_WEBHOOK_TOKEN: ${{ secrets.WIRE_WEBHOOK_TOKEN }}
         with:
           notify: custom
           text: |
