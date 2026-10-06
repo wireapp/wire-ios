@@ -1,4 +1,5 @@
 name: "Add Allure report"
+description: "Generate and upload an Allure report from XCResult files."
 
 inputs:
   xcresult_search_path:

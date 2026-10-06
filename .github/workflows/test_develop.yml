@@ -2,6 +2,15 @@ name: Nightly Tests
 
 on:
   workflow_dispatch:
+    inputs:
+      mac_runner:
+        description: 'macOS runner'
+        type: choice
+        options:
+          - in-house
+          - cirrus
+          - github
+        default: in-house
   schedule:
     - cron: "0 21 * * MON-FRI"
   
@@ -12,13 +21,11 @@ concurrency:
 
 jobs:
   trigger_tests:
-    strategy:
-      matrix:
-        branch: [develop, release/cycle-4.15]  # List other branches here
     uses: ./.github/workflows/_reusable_run_tests.yml
     with:
+      mac_runner: ${{ inputs.mac_runner || vars.DEFAULT_MAC_RUNNER || 'in-house' }}
       all: true
-      branch: ${{ matrix.branch }}
+      branch: ${{ github.ref_name }}
       notify_secret: WIRE_IOS_NIGHTLY_WEBHOOK
       run_critical_flows: true
       notify: always

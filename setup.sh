@@ -46,9 +46,12 @@ die "Xcode version for the repository should be at least ${repository_xcode_vers
 
 REPO_ROOT=$(git rev-parse --show-toplevel)
 
-echo "ℹ️ Installing Homebrew dependencies from Brewfile..."
-# Install dependencies from Brewfile (respects CI environment variable)
-brew bundle install
+if [[ "${IN_HOUSE_RUNNER:-false}" == "true" ]]; then
+    echo "Using preinstalled Homebrew dependencies on in-house runners"
+else
+    echo "ℹ️ Installing Homebrew dependencies from Brewfile..."
+    brew bundle install
+fi
 echo ""
 
 if [[ -n "${CI-}" ]]; then
@@ -61,13 +64,12 @@ else
 fi
 echo ""
 
-# Workaround for carthage "The file couldn’t be saved." error
-rm -rf ${TMPDIR}/TemporaryItems/*carthage*
-
 echo "ℹ️ Carthage bootstrap. This might take a while..."
 if [[ -n "${CI-}" ]]; then
     echo "Skipping Carthage bootstrap from setup.sh script since CI is defined"
 else
+    # Workaround for carthage "The file couldn't be saved." error
+    rm -rf "${TMPDIR}/TemporaryItems/"*carthage*
     "$REPO_ROOT/scripts/carthage.sh" bootstrap --cache-builds --platform ios --use-xcframeworks
 fi
 echo ""
@@ -80,8 +82,11 @@ echo ""
 
 echo "ℹ️ Installing AWS CLI..."
 if [[ -n "${CI-}" ]]; then
-    # CI
-    which aws || (curl "https://awscli.amazonaws.com/AWSCLIV2.pkg" -o "AWSCLIV2.pkg" && sudo installer -pkg AWSCLIV2.pkg -target /)
+    if [[ "${IN_HOUSE_RUNNER:-false}" == "true" ]]; then
+        command -v aws >/dev/null || die "AWS CLI must be preinstalled on in-house runners"
+    else
+        which aws || (curl "https://awscli.amazonaws.com/AWSCLIV2.pkg" -o "AWSCLIV2.pkg" && sudo installer -pkg AWSCLIV2.pkg -target /)
+    fi
 else
     # Local Machine
     echo "Skipping AWS CLI install because not running on CI"

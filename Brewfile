@@ -8,4 +8,5 @@ brew "imagemagick" if ENV['CI']
 brew "ghostscript" if ENV['CI']
 
 # Development-only dependencies
+brew "xcodes" unless ENV['CI']
 brew "periphery" unless ENV['CI'] # no version support for periphery, using the latest
