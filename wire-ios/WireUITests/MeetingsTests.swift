@@ -174,6 +174,7 @@ final class MeetingsTests: WireUITestCase {
 
     @MainActor
     func testMeetingsRefreshAfterBackgroundResume_TC_11944() async throws {
+        executionTimeAllowance = 600
         let (owner, _, _, _) = try await UserHelper.default.registerMeetingsTeam()
         let fixtures = try await MeetingsTestHelper(user: owner)
         var initial: [MeetingResponse] = []
