@@ -53,8 +53,6 @@ public final class CommitPendingProposalsGenerator: NSObject, LiveGeneratorProto
 
     public func start() async {
         await context.perform { [self] in
-            migrateLegacyCommitDates()
-
             if fetchedResultsController == nil {
                 fetchedResultsController = createFetchedResultsController()
                 fetchedResultsController?.delegate = self
@@ -86,41 +84,13 @@ public final class CommitPendingProposalsGenerator: NSObject, LiveGeneratorProto
 
     private func createFetchedResultsController() -> NSFetchedResultsController<PendingProposalTimer> {
         let request = PendingProposalTimer.fetchRequest()
-        request.sortDescriptors = [NSSortDescriptor(key: "fireDate", ascending: true)]
+        request.sortDescriptors = [PendingProposalTimer.fireDateSortDescriptor]
         return NSFetchedResultsController(
             fetchRequest: request,
             managedObjectContext: context,
             sectionNameKeyPath: nil,
             cacheName: nil
         )
-    }
-
-    /// Before timers lived in their own entity, the date was stored on the conversation. Move any
-    /// leftover value so that proposals pending at the time of the upgrade are still committed.
-
-    private func migrateLegacyCommitDates() {
-        let request = ZMConversation.fetchRequest()
-        request.predicate = ZMConversation.commitPendingProposalDatePredicate()
-        guard let conversations = try? context.fetch(request) as? [ZMConversation], !conversations.isEmpty else {
-            return
-        }
-
-        for conversation in conversations {
-            if let date = conversation.commitPendingProposalDate,
-               let groupID = conversation.mlsGroupID,
-               let conversationID = conversation.remoteIdentifier {
-                PendingProposalTimer.schedule(
-                    mlsGroupID: groupID.data,
-                    conversationID: conversationID,
-                    conversationDomain: conversation.domain,
-                    fireDate: date,
-                    in: context
-                )
-            }
-            conversation.commitPendingProposalDate = nil
-        }
-
-        context.saveOrRollback()
     }
 
     private func cancelScheduledCommit(for groupData: Data) {

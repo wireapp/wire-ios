@@ -219,34 +219,6 @@ class CommitPendingProposalsGeneratorTests {
         #expect(secondItem?.conversationID == conversationID)
     }
 
-    @Test("It moves a date stored on the conversation to a timer on start")
-    func migratesLegacyDate() async throws {
-        // GIVEN
-        let conversationID = QualifiedID.random()
-        let context = coreDataStack.syncContext
-        await context.perform { [modelHelper] in
-            let conversation = modelHelper.createMLSConversation(
-                id: conversationID.uuid,
-                domain: conversationID.domain,
-                mlsGroupID: .random(),
-                with: [ZMUser.selfUser(in: context)],
-                in: context
-            )
-            conversation.commitPendingProposalDate = Date().addingTimeInterval(-10)
-        }
-
-        let (stream, streamContinuation) = AsyncStream.makeStream(of: CommitPendingProposalItem.self)
-        commitPendingProposalItemClosure = { streamContinuation.yield($0) }
-        var iterator = stream.makeAsyncIterator()
-
-        // WHEN
-        await sut.start()
-
-        // THEN
-        let item = await iterator.next()
-        #expect(item?.conversationID == conversationID)
-    }
-
     @discardableResult
     private func createPendingMLSConversation(id: QualifiedID, proposalDate: Date) async -> MLSGroupID {
         await coreDataStack.syncContext.perform { [context = coreDataStack.syncContext, modelHelper] in

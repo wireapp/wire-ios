@@ -52,6 +52,12 @@ public final class PendingProposalTimer: NSManagedObject {
         NSFetchRequest<PendingProposalTimer>(entityName: entityName)
     }
 
+    /// Sorts timers by the date at which they must fire, earliest first.
+
+    public static var fireDateSortDescriptor: NSSortDescriptor {
+        NSSortDescriptor(key: #keyPath(PendingProposalTimer.fireDate), ascending: true)
+    }
+
     public static func fetch(
         mlsGroupID: Data,
         in context: NSManagedObjectContext
@@ -87,9 +93,15 @@ public final class PendingProposalTimer: NSManagedObject {
             return timer
         }
 
-        if timer.conversationID != conversationID { timer.conversationID = conversationID }
-        if timer.conversationDomain != conversationDomain { timer.conversationDomain = conversationDomain }
-        if timer.fireDate != fireDate { timer.fireDate = fireDate }
+        if timer.conversationID != conversationID {
+            timer.conversationID = conversationID
+        }
+        if timer.conversationDomain != conversationDomain {
+            timer.conversationDomain = conversationDomain
+        }
+        if timer.fireDate != fireDate {
+            timer.fireDate = fireDate
+        }
         return timer
     }
 
