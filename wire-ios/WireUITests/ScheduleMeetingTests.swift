@@ -188,4 +188,34 @@ final class ScheduleMeetingTests: WireUITestCase {
         try await assertMembers(fixtures, meeting: meeting, host: host)
     }
 
+    @MainActor
+    func testScheduleFutureDateAndQuarterHourTimes_TC_11955() async throws {
+        let (host, _, _, _) = try await UserHelper.default.registerMeetingsTeam()
+        let fixtures = try await MeetingsTestHelper(user: host)
+        let page = try launchMeetings(for: host, now: date())
+        let form = try page.schedule()
+        form.replaceTitle(with: "TC11955 future date")
+        try form.selectStartDate(date(dayOffset: 1))
+        form.assertDateTimes(start: date(minute: 15, dayOffset: 1), end: date(hour: 11, minute: 15, dayOffset: 1))
+        XCTAssertFalse(app.buttons["meetingFormEndDate"].isHittable, "End date must not be editable")
+
+        for minute in [0, 15, 30, 45] {
+            form.selectTime(start: true, hour: 15, minute: minute)
+            form.assertDateTimes(
+                start: date(hour: 15, minute: minute, dayOffset: 1),
+                end: date(hour: 16, minute: minute, dayOffset: 1)
+            )
+        }
+        form.selectTime(start: false, hour: 16, minute: 30)
+        form.assertDateTimes(
+            start: date(hour: 15, minute: 45, dayOffset: 1),
+            end: date(hour: 16, minute: 30, dayOffset: 1)
+        )
+        _ = try form.save()
+        let meeting = try await onlyMeeting(fixtures, title: "TC11955 future date")
+        XCTAssertEqual(meeting.startTime, date(hour: 15, minute: 45, dayOffset: 1))
+        XCTAssertEqual(meeting.endTime, date(hour: 16, minute: 30, dayOffset: 1))
+        XCTAssertTrue(page.row(meeting).waitForExistence(timeout: 15))
+    }
+
 }
