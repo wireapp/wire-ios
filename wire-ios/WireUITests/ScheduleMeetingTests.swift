@@ -108,4 +108,26 @@ final class ScheduleMeetingTests: WireUITestCase {
         }
     }
 
+    @MainActor
+    func testDefaultScheduleDateAndDuration_TC_11950() async throws {
+        let (host, _, _, _) = try await UserHelper.default.registerMeetingsTeam()
+        let fixtures = try await MeetingsTestHelper(user: host)
+        let datasets: [(now: Date, start: Date, end: Date)] = [
+            (date(minute: 7), date(minute: 15), date(hour: 11, minute: 15)),
+            (date(), date(minute: 15), date(hour: 11, minute: 15)),
+            (date(hour: 23), date(hour: 23, minute: 15), date(hour: 23, minute: 45)),
+            (date(hour: 23, minute: 50), date(hour: 0, dayOffset: 1), date(hour: 1, dayOffset: 1)),
+            // A default at 23:45 has no valid end. Keep this assertion to expose the product defect.
+            (date(hour: 23, minute: 30), date(hour: 0, dayOffset: 1), date(hour: 1, dayOffset: 1))
+        ]
+        for dataset in datasets {
+            let page = try launchMeetings(for: host, now: dataset.now)
+            let form = try page.schedule()
+            form.assertDateTimes(start: dataset.start, end: dataset.end)
+            _ = try form.cancel()
+        }
+        let meetings = try await fixtures.list()
+        XCTAssertTrue(meetings.isEmpty)
+    }
+
 }
