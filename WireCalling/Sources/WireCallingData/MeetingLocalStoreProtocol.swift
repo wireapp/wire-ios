@@ -53,9 +53,10 @@ public protocol MeetingLocalStoreProtocol: Sendable {
     func replaceAllMeetings(with meetings: [Meeting]) async
 
     /// Deletes a locally stored meeting.
+    /// Missing meetings are a successful no-op; fetch and save failures are thrown.
     ///
     /// - Parameter id: The qualified id of the meeting to delete.
 
-    func deleteMeeting(id: QualifiedID) async
+    func deleteMeeting(id: QualifiedID) async throws
 
 }
