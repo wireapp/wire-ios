@@ -69,7 +69,7 @@ package struct FilesView: View {
         // FilesView-specific extras
         .fileImporter(
             isPresented: $isFileImporterPresented,
-            allowedContentTypes: [.item],
+            allowedContentTypes: [.data],
             allowsMultipleSelection: true,
             onCompletion: { result in
                 Task { await handleFileImport(result) }
