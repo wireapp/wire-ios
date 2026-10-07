@@ -126,6 +126,7 @@ package extension FilesViewModel {
             PHAssetResourceManager.default().writeData(for: resource, toFile: destination, options: options) { error in
                 if let error {
                     WireLogger.wireDrive.error("could not export picked asset for upload: \(error)")
+                    try? FileManager.default.removeItem(at: directory)
                     continuation.resume(returning: nil)
                     return
                 }
