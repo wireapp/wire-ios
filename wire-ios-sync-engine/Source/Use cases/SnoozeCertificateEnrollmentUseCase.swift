@@ -22,7 +22,7 @@ import WireFoundation
 
 // sourcery: AutoMockable
 public protocol SnoozeCertificateEnrollmentUseCaseProtocol {
-    func invoke(endOfPeriod: Date, isUpdateMode: Bool) async
+    func invoke(endOfPeriod: Date, isUpdateMode: Bool, onReminderDue: @escaping () async -> Void) async
 }
 
 final class SnoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCaseProtocol {
@@ -52,17 +52,23 @@ final class SnoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCa
 
     /// Schedules recurring actions to check for enrolling or updating E2EI certificate
     /// - Parameter isUpdateMode: If set to `true`, `checkForE2EICertificateExpiryStatus` to check for updating
-    /// certificate is scheduled else
-    /// `featureDidChangeNotification` is triggered to check for enrolling the certificate. By default, this is `false`.
-    func invoke(endOfPeriod: Date, isUpdateMode: Bool = false) async {
+    /// certificate is scheduled else `onReminderDue` is invoked to check for enrolling the certificate. By default,
+    /// this is `false`.
+    /// - Parameter onReminderDue: Invoked when the enrollment reminder becomes due (ignored when `isUpdateMode` is
+    /// `true`).
+    func invoke(endOfPeriod: Date, isUpdateMode: Bool = false, onReminderDue: @escaping () async -> Void) async {
         let timeProvider = SnoozeTimeProvider()
         let interval = timeProvider.getSnoozeTime(endOfPeriod: endOfPeriod)
-        await registerRecurringActionIfNeeded(isUpdateMode: isUpdateMode, interval: interval)
+        await registerRecurringActionIfNeeded(isUpdateMode: isUpdateMode, interval: interval, onReminderDue: onReminderDue)
     }
 
     // MARK: - Helpers
 
-    private func registerRecurringActionIfNeeded(isUpdateMode: Bool, interval: TimeInterval) async {
+    private func registerRecurringActionIfNeeded(
+        isUpdateMode: Bool,
+        interval: TimeInterval,
+        onReminderDue: @escaping () async -> Void
+    ) async {
         let isE2EIEnabled = await featureRepositoryContext.perform {
             self.featureRepository.fetchE2EI().isEnabled
         }
@@ -76,11 +82,7 @@ final class SnoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCa
             if isUpdateMode {
                 NotificationCenter.default.post(name: .checkForE2EICertificateExpiryStatus, object: nil)
             } else {
-                let notificationObject = LegacyFeatureRepository.FeatureChange.e2eIEnabled
-                NotificationCenter.default.post(
-                    name: .featureDidChangeNotification,
-                    object: notificationObject
-                )
+                await onReminderDue()
             }
         }
 
