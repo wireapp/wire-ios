@@ -18,6 +18,7 @@
 
 import GenericMessageProtocol
 import WireDataModel
+import WireFoundation
 import WireLogging
 import WireNetwork
 
@@ -51,6 +52,17 @@ struct ConversationCallingEventNotificationBuilder: ConversationCallingEventNoti
             }
             return QualifiedID(id: conversationUUID, domain: callingConversationID.domain)
         }()
+        let selfUser = await context.userLocalStore.fetchSelfUser()
+        let sender = await context.userLocalStore.fetchOrCreateUser(
+            id: senderID.id,
+            domain: senderID.domain
+        )
+        let wasAnsweredElsewhere = AnsweredElsewhereCallTracker(userDefaults: validator.userDefaults).track(
+            callContent: callContent,
+            conversationID: resolvedConversationID,
+            accountID: accountID,
+            isCallerSelf: selfUser == sender
+        )
         let displayCallKitNotification = await validator.validateCallKitNotification(
             conversationID: resolvedConversationID,
             senderID: senderID,
@@ -61,10 +73,10 @@ struct ConversationCallingEventNotificationBuilder: ConversationCallingEventNoti
 
         let displayCallNotification = await validator.validateCallNotification(
             conversationID: resolvedConversationID,
-            senderID: senderID,
-            accountID: accountID,
             eventTimestamp: time,
-            callContent: callContent
+            callContent: callContent,
+            isCallerSelf: selfUser == sender,
+            wasAnsweredElsewhere: wasAnsweredElsewhere
         )
 
         if displayCallKitNotification {
@@ -377,7 +389,6 @@ extension ConversationCallingEventNotificationBuilder {
             static let isAvsReady = "isAVSReady"
             static let isCallKitAvailable = "isCallKitAvailable"
             static let knownCalls = "knownCalls"
-            static let answeredElsewhereCall = "answeredElsewhereCall"
         }
 
         let userLocalStore: any UserLocalStoreProtocol
@@ -443,21 +454,14 @@ extension ConversationCallingEventNotificationBuilder {
         /// When a CallKit notification cannot be displayed, we'll try to validate a regular call notification.
         func validateCallNotification(
             conversationID: ConversationID,
-            senderID: UserID,
-            accountID: UUID,
             eventTimestamp: Date?,
-            callContent: CallContent
+            callContent: CallContent,
+            isCallerSelf: Bool,
+            wasAnsweredElsewhere: Bool
         ) async -> Bool {
             let conversation = await conversationLocalStore.fetchOrCreateConversation(
                 id: conversationID.id,
                 domain: conversationID.domain
-            )
-
-            let selfUser = await userLocalStore.fetchSelfUser()
-
-            let caller = await userLocalStore.fetchOrCreateUser(
-                id: senderID.id,
-                domain: senderID.domain
             )
 
             let serverTimeDelta = await conversationLocalStore.fetchServerTimeDelta()
@@ -468,14 +472,7 @@ extension ConversationCallingEventNotificationBuilder {
             let isConversationMuted = mutedMessagesTypes == .all
             let isCallTimeOut = eventTimestamp != nil ? Int(currentTimestamp.timeIntervalSince(eventTimestamp!)) > 30 :
                 true
-            let isCallerSelf = selfUser == caller
             let needsBackendUpdate = await conversationLocalStore.conversationNeedsBackendUpdate(conversation)
-            let wasAnsweredElsewhere = trackAnsweredElsewhereCall(
-                callContent: callContent,
-                conversationID: conversationID,
-                accountID: accountID,
-                isCallerSelf: isCallerSelf
-            )
 
             // A meeting is joined deliberately from the meetings list, so neither its
             // incoming call nor the "called" notification after it ends are shown.
@@ -509,31 +506,6 @@ extension ConversationCallingEventNotificationBuilder {
                 )
                 return false
             }
-        }
-
-        private func trackAnsweredElsewhereCall(
-            callContent: CallContent,
-            conversationID: ConversationID,
-            accountID: UUID,
-            isCallerSelf: Bool
-        ) -> Bool {
-            let key = "\(Constants.answeredElsewhereCall).\(accountID.uuidString).\(conversationID.domain).\(conversationID.id)"
-
-            if callContent.isStartCall {
-                if isCallerSelf {
-                    // The conversation type may still be unknown when this user's other client starts or answers.
-                    userDefaults.set(true, forKey: key)
-                } else if callContent.isIncomingCall {
-                    // A new incoming call must not inherit the previous call's state.
-                    userDefaults.removeObject(forKey: key)
-                }
-            }
-
-            guard callContent.isEndCall else { return false }
-
-            let wasAnsweredElsewhere = userDefaults.bool(forKey: key)
-            userDefaults.removeObject(forKey: key)
-            return wasAnsweredElsewhere
         }
 
     }

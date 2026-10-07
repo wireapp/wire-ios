@@ -38,6 +38,7 @@ struct CallContent: Decodable {
     let callerUserID: String?
     let callerClientID: String
     let responded: Bool
+    let conferenceTimestamp: String?
 
     enum CodingKeys: String, CodingKey {
         case type
@@ -45,6 +46,7 @@ struct CallContent: Decodable {
         case callerUserID = "src_userid"
         case callerClientID = "src_clientid"
         case responded = "resp"
+        case conferenceTimestamp = "timestamp"
     }
 
     struct Properties: Decodable {
