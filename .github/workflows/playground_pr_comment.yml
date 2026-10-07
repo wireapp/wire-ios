@@ -1,0 +1,43 @@
+name: Playground PR comment
+
+on:
+  issue_comment:
+    types: [created]
+
+permissions:
+  actions: write
+  contents: read
+  pull-requests: write
+
+jobs:
+  trigger:
+    # Only PR comments starting with /playground
+    if: ${{ github.event.issue.pull_request && startsWith(github.event.comment.body, '/playground') }}
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Trigger Playground build
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.issue.number }}
+          COMMENT_ID: ${{ github.event.comment.id }}
+          COMMENTER: ${{ github.event.comment.user.login }}
+        run: |
+          permission=$(gh api "repos/$GH_REPO/collaborators/$COMMENTER/permission" --jq .permission)
+          case "$permission" in
+            admin|maintain|write) ;;
+            *) echo "::error::$COMMENTER has no write access"; exit 1 ;;
+          esac
+
+          pr=$(gh pr view "$PR_NUMBER" --json headRefName,headRepository,headRepositoryOwner,title,isCrossRepository)
+          if [ "$(jq -r .isCrossRepository <<<"$pr")" = "true" ]; then
+            echo "::error::Playground builds are not supported for PRs from forks"; exit 1
+          fi
+          branch=$(jq -r .headRefName <<<"$pr")
+          keys=$(printf '%s %s' "$(jq -r .title <<<"$pr")" "$branch" | grep -oiE 'WPB-[0-9]+' | tr '[:lower:]' '[:upper:]' | sort -u | tr '\n' ' ')
+
+          gh workflow run playground.yml --ref "$branch" \
+            -f pr_number="$PR_NUMBER" \
+            -f jira_keys="$keys"
+
+          gh api -X POST "repos/$GH_REPO/issues/comments/$COMMENT_ID/reactions" -f content=rocket > /dev/null

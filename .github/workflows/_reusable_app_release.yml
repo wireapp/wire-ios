@@ -81,6 +81,8 @@ on:
         required: true
       JIRA_TOKEN:
         required: false
+      JIRA_COMMENT_TOKEN:
+        required: false
       WIRE_WEBHOOK_URL:
         required: true
       WIRE_WEBHOOK_TOKEN:
@@ -107,6 +109,10 @@ jobs:
     # GitHub-hosted jobs use the default six-hour limit; other runners keep the one-hour timeout.
     timeout-minutes: ${{ inputs.mac_runner == 'github' && 360 || 60 }}
     needs: changelog
+    outputs:
+      app_name: ${{ steps.build-info.outputs.app_name }}
+      build_version: ${{ steps.build-info.outputs.build_version }}
+      build_number: ${{ steps.build-info.outputs.build_number }}
     runs-on: >-
       ${{
         inputs.mac_runner == 'in-house' && fromJSON('["self-hosted", "in-house", "delivery"]') ||
@@ -233,6 +239,15 @@ jobs:
         uses: xom9ikk/dotenv@ac290ca23a42155a0cba1031d23afa46240116a9 # v2.3.0
         with:
           path: fastlane/.post_build
+      - name: Export build info
+        id: build-info
+        if: success()
+        run: |
+          {
+            echo "app_name=$APP_NAME"
+            echo "build_version=$BUILD_VERSION"
+            echo "build_number=$BUILD_NUMBER"
+          } >> "$GITHUB_OUTPUT"
       - uses: akiojin/decode-base64-github-action@82bef0d9c88d987dc48c45218029b8b8426b3e33 # v1.0.2
         id: base64-decoded-S3_PATHS
         with:
@@ -272,3 +287,41 @@ jobs:
             **Triggered by:** ${{ github.triggering_actor }}
             **Build log:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
             ${{ env.TESTFLIGHT_ERROR != '' && format('⚠️ **TestFlight:** {0}', env.TESTFLIGHT_ERROR) || '' }}
+
+  jira_comment:
+    needs: build_and_release
+    if: ${{ needs.build_and_release.result == 'success' && needs.build_and_release.outputs.build_number != '' }}
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Comment build on Jira tickets
+        continue-on-error: true
+        env:
+          JIRA_BASE_URL: https://wearezeta.atlassian.net
+          JIRA_TOKEN: ${{ secrets.JIRA_COMMENT_TOKEN }}
+          INPUT_KEYS: ${{ inputs.jira_keys }}
+          COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
+          APP_NAME: ${{ needs.build_and_release.outputs.app_name }}
+          BUILD_VERSION: ${{ needs.build_and_release.outputs.build_version }}
+          BUILD_NUMBER: ${{ needs.build_and_release.outputs.build_number }}
+        run: |
+          if [ -z "$JIRA_TOKEN" ]; then
+            echo "::warning::JIRA_COMMENT_TOKEN not set - skipping Jira comment"
+            exit 0
+          fi
+          keys="$INPUT_KEYS"
+          [ -z "$keys" ] && keys=$(printf '%s' "$COMMIT_MESSAGE" | head -n 1 | grep -oE 'WPB-[0-9]+' | sort -u | tr '\n' ' ')
+          if [ -z "$keys" ]; then
+            echo "No Jira key found - nothing to comment"
+            exit 0
+          fi
+          body="$APP_NAME (version: $BUILD_VERSION build: $BUILD_NUMBER) is now available on Testflight"
+          payload=$(jq -n --arg body "$body" '{body: $body}')
+          for key in $keys; do
+            # Jira API v2 accepts a plain text comment body
+            curl -sS --fail-with-body -u "$JIRA_TOKEN" \
+              -H "Content-Type: application/json" \
+              -X POST "$JIRA_BASE_URL/rest/api/2/issue/$key/comment" \
+              -d "$payload" > /dev/null \
+              && echo "Commented on $key" \
+              || echo "::warning::Could not comment on $key"
+          done
