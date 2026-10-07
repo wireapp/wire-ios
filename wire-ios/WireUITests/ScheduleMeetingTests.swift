@@ -130,4 +130,39 @@ final class ScheduleMeetingTests: WireUITestCase {
         XCTAssertTrue(meetings.isEmpty)
     }
 
+    @MainActor
+    func testScheduleMeetingTitleValidation_TC_11952() async throws {
+        let (host, _, _, _) = try await UserHelper.default.registerMeetingsTeam()
+        let fixtures = try await MeetingsTestHelper(user: host)
+        let page = try launchMeetings(for: host, now: date())
+        let form = try page.schedule()
+        XCTAssertFalse(form.saveButton.isEnabled)
+        form.replaceTitle(with: "   ")
+        XCTAssertFalse(form.saveButton.isEnabled)
+        let beforeValidTitle = try await fixtures.list()
+        XCTAssertTrue(beforeValidTitle.isEmpty)
+
+        let validTitle = String(repeating: "A", count: 64)
+        form.replaceTitle(with: validTitle)
+        XCTAssertEqual(form.titleField.value as? String, validTitle)
+        XCTAssertTrue(form.saveButton.isEnabled)
+        _ = try form.save()
+        let meeting = try await onlyMeeting(fixtures, title: validTitle)
+        XCTAssertTrue(page.row(meeting).waitForExistence(timeout: 15))
+
+        let invalidForm = try page.schedule()
+        let invalidTitle = String(repeating: "B", count: 65)
+        invalidForm.replaceTitle(with: invalidTitle)
+        XCTAssertEqual(invalidForm.titleField.value as? String, invalidTitle)
+        XCTAssertTrue(invalidForm.titleError.waitForExistence(timeout: 5))
+        XCTAssertFalse(invalidForm.saveButton.isEnabled)
+        // Fewer than 64 characters can still exceed the separate 256-byte limit.
+        invalidForm.replaceTitle(with: String(repeating: "🧑🏽‍💻", count: 32))
+        XCTAssertTrue(invalidForm.titleError.waitForExistence(timeout: 5))
+        XCTAssertFalse(invalidForm.saveButton.isEnabled)
+        _ = try invalidForm.cancel()
+        let remaining = try await fixtures.list()
+        XCTAssertEqual(remaining.map(\.id), [meeting.id], "The invalid title created a second meeting")
+    }
+
 }
