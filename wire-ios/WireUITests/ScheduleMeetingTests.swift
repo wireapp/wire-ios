@@ -369,4 +369,47 @@ final class ScheduleMeetingTests: WireUITestCase {
         try await assertMembers(fixtures, meeting: meeting, host: host, invitees: ids)
     }
 
+    @MainActor
+    func testRetryScheduleAfterControlledConnectionFailure_TC_11969() async throws {
+        let failureID = UUID().uuidString
+        let name = "\(UITestConfig.meetingsCreateFailureNotificationPrefix).\(failureID)"
+        var token: Int32 = NOTIFY_TOKEN_INVALID
+        XCTAssertEqual(notify_register_check(name, &token), UInt32(NOTIFY_STATUS_OK))
+        defer { notify_cancel(token) }
+        XCTAssertEqual(notify_set_state(token, 0), UInt32(NOTIFY_STATUS_OK))
+        uiTestConfig.meetingsCreateFailureID = failureID
+
+        let (host, _, _, _) = try await UserHelper.default.registerMeetingsTeam()
+        let fixtures = try await MeetingsTestHelper(user: host)
+        let page = try launchMeetings(for: host, now: date())
+        let form = try page.schedule()
+        let title = "TC11969 retained details"
+        form.replaceTitle(with: title)
+        form.selectRepeat("Weekly")
+        XCTAssertTrue(form.saveButton.waitAndTap())
+        XCTAssertTrue(form.loadingIndicator.waitForExistence(timeout: 10))
+        XCTAssertFalse(form.saveButton.exists, "A second submit action is available while creation is pending")
+        let whilePending = try await fixtures.list()
+        XCTAssertTrue(whilePending.isEmpty)
+
+        XCTAssertEqual(notify_set_state(token, 1), UInt32(NOTIFY_STATUS_OK))
+        let alert = app.alerts["Could not schedule meeting"]
+        XCTAssertTrue(alert.waitForExistence(timeout: 10))
+        XCTAssertTrue(alert.staticTexts["Something went wrong while scheduling the meeting. Please try again."].exists)
+        let afterFailure = try await fixtures.list()
+        XCTAssertTrue(afterFailure.isEmpty)
+        XCTAssertTrue(alert.buttons["OK"].waitAndTap())
+        XCTAssertEqual(form.titleField.value as? String, title)
+        form.assertDateTimes(start: date(minute: 15), end: date(hour: 11, minute: 15))
+        form.assertRepeat("Weekly")
+
+        XCTAssertEqual(notify_set_state(token, 2), UInt32(NOTIFY_STATUS_OK))
+        _ = try form.save()
+        let meeting = try await onlyMeeting(fixtures, title: title)
+        XCTAssertEqual(meeting.recurrence?.frequency, .weekly)
+        XCTAssertEqual(meeting.recurrence?.interval, 1)
+        XCTAssertEqual(meeting.startTime, date(minute: 15))
+        XCTAssertEqual(meeting.endTime, date(hour: 11, minute: 15))
+        XCTAssertTrue(page.row(meeting).waitForExistence(timeout: 15))
+    }
 }
