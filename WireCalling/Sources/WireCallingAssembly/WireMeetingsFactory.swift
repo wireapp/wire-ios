@@ -42,34 +42,11 @@ public struct WireMeetingsFactory {
         callRepository: any MeetingCallRepositoryProtocol,
         accentColorState: WireMeetingsAccentColorState
     ) -> UIViewController {
-        #if DEBUG
-            let uiTestConfig = UITestConfig.environment
-            let currentDateProvider: any CurrentDateProviding = if let date = uiTestConfig?.meetingsDate {
-                MeetingsUITestDateProvider(now: date)
-            } else {
-                .system
-            }
-        #else
-            let currentDateProvider: any CurrentDateProviding = .system
-        #endif
-
-        let realCreateMeetingUseCase = CreateMeetingUseCase(
+        let currentDateProvider = makeCurrentDateProvider()
+        let createMeetingUseCase = makeCreateMeetingUseCase(
             meetingRepository: meetingRepository,
             conversationRepository: conversationRepository
         )
-        #if DEBUG
-            let createMeetingUseCase: any CreateMeetingUseCaseProtocol = if let failureID = uiTestConfig?
-                .meetingsCreateFailureID {
-                MeetingsUITestCreateUseCase(
-                    wrapping: realCreateMeetingUseCase,
-                    failureID: failureID
-                )
-            } else {
-                realCreateMeetingUseCase
-            }
-        #else
-            let createMeetingUseCase: any CreateMeetingUseCaseProtocol = realCreateMeetingUseCase
-        #endif
         let updateMeetingUseCase = UpdateMeetingUseCase(
             meetingRepository: meetingRepository,
             conversationRepository: conversationRepository
@@ -117,6 +94,31 @@ public struct WireMeetingsFactory {
                 )
             )
         )
+    }
+
+    private func makeCurrentDateProvider() -> any CurrentDateProviding {
+        #if DEBUG
+            if let date = UITestConfig.environment?.meetingsDate {
+                return MeetingsUITestDateProvider(now: date)
+            }
+        #endif
+        return .system
+    }
+
+    private func makeCreateMeetingUseCase(
+        meetingRepository: any MeetingRepositoryProtocol,
+        conversationRepository: any MeetingConversationRepositoryProtocol
+    ) -> any CreateMeetingUseCaseProtocol {
+        let createUseCase = CreateMeetingUseCase(
+            meetingRepository: meetingRepository,
+            conversationRepository: conversationRepository
+        )
+        #if DEBUG
+            if let failureID = UITestConfig.environment?.meetingsCreateFailureID {
+                return MeetingsUITestCreateUseCase(wrapping: createUseCase, failureID: failureID)
+            }
+        #endif
+        return createUseCase
     }
 
 }

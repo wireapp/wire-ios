@@ -45,6 +45,7 @@
             recurrence: MeetingRecurrence?,
             participants: [MeetingMember]
         ) async throws -> Meeting {
+            // Darwin notification state controls a failure in the app process before the real create request.
             // The test controls each transition: pending (0), failed (1), restored (2).
             var state: UInt64 = 0
             repeat {
