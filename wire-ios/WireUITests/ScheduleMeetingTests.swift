@@ -218,4 +218,51 @@ final class ScheduleMeetingTests: WireUITestCase {
         XCTAssertTrue(page.row(meeting).waitForExistence(timeout: 15))
     }
 
+    @MainActor
+    func testScheduleOnlyValidSameDayTimes_TC_11957() async throws {
+        let (host, _, _, _) = try await UserHelper.default.registerMeetingsTeam()
+        let fixtures = try await MeetingsTestHelper(user: host)
+        let page = try launchMeetings(for: host, now: date(minute: 7))
+        let constrained = try page.schedule()
+        constrained.replaceTitle(with: "TC11957 picker constraints")
+        constrained.selectTime(start: true, hour: 9, minute: 0)
+        constrained.assertDateTimes(start: date(minute: 15), end: date(hour: 11, minute: 15))
+        constrained.selectTime(start: true, hour: 15, minute: 0)
+        constrained.selectTime(start: false, hour: 15, minute: 0)
+        constrained.assertDateTimes(start: date(hour: 15), end: date(hour: 15, minute: 15))
+        _ = try constrained.cancel()
+        let beforeScheduling = try await fixtures.list()
+        XCTAssertTrue(beforeScheduling.isEmpty)
+
+        for (hour, minute, endHour, endMinute) in [(15, 0, 16, 0), (23, 0, 23, 45), (23, 30, 23, 45)] {
+            let form = try page.schedule()
+            let title = "TC11957 \(hour):\(minute)"
+            form.replaceTitle(with: title)
+            form.selectTime(start: true, hour: hour, minute: minute)
+            form.assertDateTimes(start: date(hour: hour, minute: minute), end: date(hour: endHour, minute: endMinute))
+            _ = try form.save()
+            let meeting = try await onlyMeeting(fixtures, title: title)
+            XCTAssertEqual(meeting.startTime, date(hour: hour, minute: minute))
+            XCTAssertEqual(meeting.endTime, date(hour: endHour, minute: endMinute))
+            XCTAssertTrue(page.row(meeting).waitForExistence(timeout: 15))
+            try await fixtures.delete(meeting)
+            XCTAssertTrue(page.row(meeting).waitToDisappear(timeout: 15))
+        }
+
+        let invalid = try page.schedule()
+        invalid.replaceTitle(with: "TC11957 no later end")
+        invalid.selectTime(start: true, hour: 23, minute: 45)
+        // Disabled submission or an explicit rejection are both valid. A zero-length record is not.
+        if invalid.saveButton.isEnabled {
+            invalid.saveButton.tap()
+            XCTAssertTrue(
+                app.alerts["Could not schedule meeting"].waitForExistence(timeout: 30),
+                "An invalid range was not rejected"
+            )
+            XCTAssertTrue(invalid.titleField.exists, "The invalid form closed as if scheduling succeeded")
+        }
+        let afterInvalidRange = try await fixtures.list()
+        XCTAssertTrue(afterInvalidRange.isEmpty, "The 23:45 start created a meeting without a later end")
+    }
+
 }
