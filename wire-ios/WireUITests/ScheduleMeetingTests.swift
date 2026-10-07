@@ -345,4 +345,28 @@ final class ScheduleMeetingTests: WireUITestCase {
         XCTAssertTrue(meetings.isEmpty)
     }
 
+    @MainActor
+    func testScheduleMoreThanOneHundredParticipants_TC_11967() async throws {
+        // This case provisions 101 real MLS clients and selects them through the real picker.
+        // Keep its allowance separate from the ordinary five-minute cases.
+        executionTimeAllowance = 1800
+        let (host, users, ids, _) = try await UserHelper.default.registerMeetingsTeam(withMemberCount: 101)
+        XCTAssertEqual(users.count, 101, "The staging fixture must support 101 eligible team members")
+        try await registerClients(for: users)
+        let fixtures = try await MeetingsTestHelper(user: host)
+        let page = try launchMeetings(for: host, now: date())
+        let form = try page.schedule()
+        form.replaceTitle(with: "TC11967 101 invitees")
+        try form.addParticipants(Array(users.prefix(100)))
+        XCTAssertEqual(form.participantsButton.value as? String, "100")
+        try form.addParticipants([users[100]])
+        XCTAssertEqual(form.participantsButton.value as? String, "101", "The picker imposed a 100-user limit")
+        XCTAssertTrue(form.saveButton.isEnabled)
+        _ = try form.save(timeout: 180)
+
+        let meeting = try await onlyMeeting(fixtures, title: "TC11967 101 invitees")
+        XCTAssertTrue(page.row(meeting).waitForExistence(timeout: 30))
+        try await assertMembers(fixtures, meeting: meeting, host: host, invitees: ids)
+    }
+
 }
