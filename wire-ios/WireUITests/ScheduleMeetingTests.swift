@@ -317,10 +317,8 @@ final class ScheduleMeetingTests: WireUITestCase {
         let form = try page.schedule()
         form.openParticipants()
         XCTAssertTrue(form.member(users[0]).waitForExistence(timeout: 15), "Eligible team users did not appear")
-        XCTAssertTrue(form.selectedMembersButton.waitAndTap())
         for (index, user) in users.enumerated() {
-            form.searchMember(user.name)
-            XCTAssertTrue(form.member(user).waitAndTap(timeout: 10))
+            form.selectMember(user)
             XCTAssertEqual(form.selectedMembersButton.label, "Selected (\(index + 1))")
             form.clearMemberSearch()
         }
