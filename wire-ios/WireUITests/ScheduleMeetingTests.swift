@@ -265,4 +265,38 @@ final class ScheduleMeetingTests: WireUITestCase {
         XCTAssertTrue(afterInvalidRange.isEmpty, "The 23:45 start created a meeting without a later end")
     }
 
+    @MainActor
+    func testScheduleSupportedRecurrences_TC_11962() async throws {
+        let (host, _, _, _) = try await UserHelper.default.registerMeetingsTeam()
+        let fixtures = try await MeetingsTestHelper(user: host)
+        let page = try launchMeetings(for: host, now: date())
+        let options: [(title: String, frequency: MeetingFrequency, interval: Int, days: Int)] = [
+            ("Daily", .daily, 1, 1), ("Weekly", .weekly, 1, 7),
+            ("Every 2 weeks", .weekly, 2, 14), ("Every 4 weeks", .weekly, 4, 28)
+        ]
+        for option in options {
+            let form = try page.schedule()
+            form.replaceTitle(with: "TC11962 \(option.title)")
+            form.repeatButton.tap()
+            for title in ["Never"] + options.map(\.title) {
+                XCTAssertTrue(app.buttons[title].waitForExistence(timeout: 5))
+            }
+            XCTAssertFalse(app.buttons["Monthly"].exists)
+            XCTAssertFalse(app.buttons["Yearly"].exists)
+            app.buttons[option.title].tap()
+            _ = try form.save()
+            let meeting = try await onlyMeeting(fixtures, title: "TC11962 \(option.title)")
+            XCTAssertEqual(meeting.recurrence?.frequency, option.frequency)
+            XCTAssertEqual(meeting.recurrence?.interval, option.interval)
+            XCTAssertTrue(page.row(meeting).waitForExistence(timeout: 15))
+            let nextStart = Calendar.current.date(byAdding: .day, value: option.days, to: meeting.startTime)!
+            let nextRow = try page.showRow(meeting, start: nextStart)
+            XCTAssertEqual(nextRow.staticTexts["meetingTitle"].label, meeting.title)
+            XCTAssertEqual(nextRow.staticTexts["meetingRecurrence"].label, option.title)
+            try await fixtures.delete(meeting)
+            XCTAssertTrue(nextRow.waitToDisappear(timeout: 15))
+            XCTAssertTrue(page.noUpcomingMeetingsText.waitForExistence(timeout: 15))
+        }
+    }
+
 }
