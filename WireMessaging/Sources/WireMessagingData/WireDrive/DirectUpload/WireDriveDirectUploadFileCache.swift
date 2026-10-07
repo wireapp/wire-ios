@@ -37,6 +37,9 @@ package final class WireDriveDirectUploadFileCache: WireDriveDirectUploadFileCac
 
     private enum Constants {
         static let maxFileNameBytes = 200
+
+        /// Keeps a pathologically long extension from crowding out the base name or breaking the limit.
+        static let maxSuffixBytes = 32
     }
 
     private let directory: URL
@@ -229,15 +232,19 @@ package final class WireDriveDirectUploadFileCache: WireDriveDirectUploadFileCac
 
         let pathExtension = (fileName as NSString).pathExtension
         let base = (fileName as NSString).deletingPathExtension
-        let suffix = pathExtension.isEmpty ? "" : ".\(pathExtension)"
+        let suffix = pathExtension.isEmpty ? "" : truncate(".\(pathExtension)", toBytes: Constants.maxSuffixBytes)
         let allowance = Constants.maxFileNameBytes - suffix.utf8.count
 
+        return truncate(base, toBytes: allowance) + suffix
+    }
+
+    /// Cuts on character boundaries, so a multi-byte character is never split.
+    private func truncate(_ string: String, toBytes limit: Int) -> String {
         var truncated = ""
-        for character in base {
-            if truncated.utf8.count + String(character).utf8.count > allowance { break }
+        for character in string {
+            if truncated.utf8.count + String(character).utf8.count > limit { break }
             truncated.append(character)
         }
-
-        return truncated + suffix
+        return truncated
     }
 }

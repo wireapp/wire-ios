@@ -154,6 +154,19 @@ final class WireDriveDirectUploadFileCacheTests {
         #expect(sut.exists(stagedFileName: staged.fileName))
     }
 
+    @Test
+    func truncatesOverlongExtensionsWithinTheFileSystemLimit() async throws {
+        // Given
+        let longName = "report." + String(repeating: "x", count: 300)
+
+        // When
+        let staged = try await sut.stage(data: Data("a".utf8), uploadID: UUID(), fileName: longName)
+
+        // Then
+        #expect(staged.fileName.utf8.count <= 255)
+        #expect(sut.exists(stagedFileName: staged.fileName))
+    }
+
     // MARK: - Protection
 
     /// `nsurlsessiond` reads the file out of process, possibly while the device is locked, so
