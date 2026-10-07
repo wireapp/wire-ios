@@ -123,6 +123,8 @@ package final class MeetingsViewModel {
     /// Incremented whenever date/time formatting state is refreshed so SwiftUI re-evaluates
     /// formatter and grouper output from private cached collaborators.
     private var dateTimeStateRevision = 0
+    private let isSnapshotTesting: Bool
+
     private let grouper = MeetingsGrouper()
 
     package init(
@@ -133,7 +135,8 @@ package final class MeetingsViewModel {
         deleteMeetingUseCase: any DeleteMeetingUseCaseProtocol,
         selfUserID: UUID,
         observeAttendedMeetingsUseCase: (any ObserveAttendedMeetingsUseCaseProtocol)? = nil,
-        isApplicationActiveProvider: @escaping () -> Bool = { UIApplication.shared.applicationState == .active }
+        isApplicationActiveProvider: @escaping () -> Bool = { UIApplication.shared.applicationState == .active },
+        isSnapshotTesting: Bool = false
     ) {
         self.currentDateProvider = currentDateProvider
         self.formatter = formatter
@@ -144,6 +147,7 @@ package final class MeetingsViewModel {
         self.observeAttendedMeetingsUseCase = observeAttendedMeetingsUseCase
         self.isApplicationActiveProvider = isApplicationActiveProvider
         self.currentDate = currentDateProvider.now
+        self.isSnapshotTesting = isSnapshotTesting
     }
 
     // MARK: - Public Interface
@@ -154,7 +158,7 @@ package final class MeetingsViewModel {
     }
 
     func loadInitialData() async {
-        guard !isFetching else { return }
+        guard !isFetching, !isSnapshotTesting else { return }
         futureOffset = 0
         hasMore = false
         await load(pageSize: initialPageSize)
