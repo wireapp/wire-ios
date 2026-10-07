@@ -175,6 +175,7 @@ struct MeetingsView: View {
             }
         }
         .listStyle(.grouped)
+        .accessibilityIdentifier("meetingsList")
         .scrollContentBackground(.hidden)
         .background(ColorTheme.Backgrounds.surface.color)
         .refreshable {

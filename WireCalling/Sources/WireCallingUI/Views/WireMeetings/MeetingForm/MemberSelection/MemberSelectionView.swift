@@ -50,6 +50,7 @@ struct MemberSelectionView: View {
                         title: "\(Strings.Selected.title) (\(viewModel.selectedMembers.count))",
                         isExpanded: $viewModel.isSelectedExpanded
                     )
+                    .accessibilityIdentifier("meetingMembersSelected")
                 }
 
                 Section {
@@ -84,6 +85,7 @@ struct MemberSelectionView: View {
                         viewModel.confirmSelection()
                         dismiss()
                     }
+                    .accessibilityIdentifier("meetingMembersSelect")
                 }
             }
         }
@@ -196,6 +198,7 @@ struct MemberSelectionView: View {
             }
         }
         .buttonStyle(.plain)
+        .accessibilityIdentifier("meetingMember.\(member.qualifiedID.id.uuidString)")
     }
 }
 

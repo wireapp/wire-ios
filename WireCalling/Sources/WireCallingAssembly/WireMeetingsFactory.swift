@@ -42,17 +42,41 @@ public struct WireMeetingsFactory {
         callRepository: any MeetingCallRepositoryProtocol,
         accentColorState: WireMeetingsAccentColorState
     ) -> UIViewController {
-        let createMeetingUseCase = CreateMeetingUseCase(
+        #if DEBUG
+            let uiTestConfig = UITestConfig.environment
+            let currentDateProvider: any CurrentDateProviding = if let date = uiTestConfig?.meetingsDate {
+                MeetingsUITestDateProvider(now: date)
+            } else {
+                .system
+            }
+        #else
+            let currentDateProvider: any CurrentDateProviding = .system
+        #endif
+
+        let realCreateMeetingUseCase = CreateMeetingUseCase(
             meetingRepository: meetingRepository,
             conversationRepository: conversationRepository
         )
+        #if DEBUG
+            let createMeetingUseCase: any CreateMeetingUseCaseProtocol = if let failureID = uiTestConfig?
+                .meetingsCreateFailureID {
+                MeetingsUITestCreateUseCase(
+                    wrapping: realCreateMeetingUseCase,
+                    failureID: failureID
+                )
+            } else {
+                realCreateMeetingUseCase
+            }
+        #else
+            let createMeetingUseCase: any CreateMeetingUseCaseProtocol = realCreateMeetingUseCase
+        #endif
         let updateMeetingUseCase = UpdateMeetingUseCase(
             meetingRepository: meetingRepository,
             conversationRepository: conversationRepository
         )
         let fetchUpcomingMeetingsUseCase = FetchUpcomingMeetingsUseCase(
             repository: meetingRepository,
-            currentDateProvider: .system
+            currentDateProvider: currentDateProvider
         )
         let observeMeetingChangesUseCase = ObserveMeetingChangesUseCase(repository: meetingRepository)
         let deleteMeetingUseCase = DeleteMeetingUseCase(
@@ -67,7 +91,7 @@ public struct WireMeetingsFactory {
         let joinMeetingCallUseCase = JoinMeetingCallUseCase(repository: callRepository)
         let searchMembersUseCase = SearchMembersUseCase(repository: memberRepository)
         let meetingsViewModel = AllMeetingsViewModel(
-            currentDateProvider: .system,
+            currentDateProvider: currentDateProvider,
             upcomingMeetingsUseCase: fetchUpcomingMeetingsUseCase,
             observeMeetingChangesUseCase: observeMeetingChangesUseCase,
             deleteMeetingUseCase: deleteMeetingUseCase,
@@ -80,7 +104,7 @@ public struct WireMeetingsFactory {
                     searchMembersUseCase: searchMembersUseCase,
                     createMeetingUseCase: createMeetingUseCase,
                     updateMeetingUseCase: updateMeetingUseCase,
-                    currentDateProvider: .system,
+                    currentDateProvider: currentDateProvider,
                     onSuccess: onSuccess
                 )
             }
@@ -96,3 +120,9 @@ public struct WireMeetingsFactory {
     }
 
 }
+
+#if DEBUG
+    private struct MeetingsUITestDateProvider: CurrentDateProviding {
+        let now: Date
+    }
+#endif

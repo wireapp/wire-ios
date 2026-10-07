@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+public import Foundation
 
 /// Configuration values for UITests.
 public struct UITestConfig: Codable {
@@ -34,6 +34,13 @@ public struct UITestConfig: Codable {
 
     /// When `true`, audio recording UI uses a deterministic mock recorder.
     public var useMockAudioRecorder = false
+
+    /// A fixed current date for Meetings UI tests.
+    public var meetingsDate: Date?
+
+    /// A unique Darwin state name suffix for a controlled Meetings create failure.
+    public var meetingsCreateFailureID: String?
+    public static let meetingsCreateFailureNotificationPrefix = "com.wire.ios.uitests.meetings.create-failure"
 
     /// Developer flags to apply at launch, keyed by `DeveloperFlag.rawValue`.
     /// Overrides any flags already stored in `UserDefaults`.

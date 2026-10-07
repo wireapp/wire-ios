@@ -63,6 +63,7 @@ struct MeetingFormView: View {
                     Button(Strings.Cancel.button) {
                         dismiss()
                     }
+                    .accessibilityIdentifier("meetingFormCancel")
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     if viewModel.isLoading {
@@ -74,6 +75,7 @@ struct MeetingFormView: View {
                             Task { await viewModel.submit() }
                         }
                         .disabled(!viewModel.isNextButtonEnabled)
+                        .accessibilityIdentifier("meetingFormSave")
                     }
                 }
             }
@@ -148,6 +150,7 @@ struct MeetingFormView: View {
         Section {
             HStack {
                 TextField(Strings.SetupTitle.placeholder, text: $viewModel.meetingTitle)
+                    .accessibilityIdentifier("meetingFormTitle")
                     .focused($isTitleFieldFocused)
                 if !viewModel.meetingTitle.isEmpty {
                     Image(systemName: "xmark.circle.fill")
@@ -155,6 +158,7 @@ struct MeetingFormView: View {
                         .onTapGesture {
                             viewModel.clearTitle()
                         }
+                        .accessibilityIdentifier("meetingFormClearTitle")
                 }
             }
         } header: {
@@ -163,6 +167,7 @@ struct MeetingFormView: View {
             if viewModel.isMeetingTitleTooLong {
                 Text(Strings.SetupTitle.Error.tooLong)
                     .foregroundStyle(ColorTheme.Base.error.color)
+                    .accessibilityIdentifier("meetingFormTitleError")
             }
         }
         .textCase(nil)
@@ -193,6 +198,7 @@ struct MeetingFormView: View {
                         .tag(option)
                 }
             }
+            .accessibilityIdentifier("meetingFormRepeat")
         }
     }
 
@@ -223,6 +229,8 @@ struct MeetingFormView: View {
                 .contentShape(.rect)
             }
             .buttonStyle(.plain)
+            .accessibilityIdentifier("meetingFormParticipants")
+            .accessibilityValue(String(viewModel.selectedMembers.count))
         }
         .textCase(nil)
     }
@@ -246,7 +254,8 @@ struct MeetingFormView: View {
             Spacer()
             pill(
                 text: formatter.date(date.wrappedValue),
-                isSelected: expandedField == dateField
+                isSelected: expandedField == dateField,
+                identifier: dateField.accessibilityIdentifier
             ) {
                 toggleExpansion(dateField)
             }
@@ -255,7 +264,9 @@ struct MeetingFormView: View {
             .accessibilityHidden(!isDateFieldEnabled)
             pill(
                 text: formatter.time(date.wrappedValue),
-                isSelected: expandedField == timeField
+                isSelected: expandedField == timeField,
+                identifier: timeField.accessibilityIdentifier,
+                value: formatter.date(date.wrappedValue)
             ) {
                 toggleExpansion(timeField)
             }
@@ -265,6 +276,7 @@ struct MeetingFormView: View {
             DatePicker("", selection: pickerDate ?? date, in: range, displayedComponents: .date)
                 .datePickerStyle(.graphical)
                 .labelsHidden()
+                .accessibilityIdentifier("meetingFormDatePicker")
         }
         if expandedField == timeField {
             timePicker(date: pickerDate ?? date, range: range, maximumDate: maximumDate)
@@ -279,12 +291,15 @@ struct MeetingFormView: View {
             maximumDate: maximumDate,
             minuteInterval: Self.timePickerMinuteInterval
         )
+        .accessibilityIdentifier("meetingFormTimePicker")
         .id(Calendar.current.isDate(date.wrappedValue, equalTo: range.lowerBound, toGranularity: .hour))
     }
 
     private func pill(
         text: String,
         isSelected: Bool,
+        identifier: String,
+        value: String = "",
         action: @escaping () -> Void
     ) -> some View {
         let accentColor = ColorTheme.Base.primary(wireAccentColor).color
@@ -300,6 +315,8 @@ struct MeetingFormView: View {
                 .foregroundStyle(isSelected ? accentColor : Color.primary)
         }
         .buttonStyle(.plain)
+        .accessibilityIdentifier(identifier)
+        .accessibilityValue(value)
     }
 
     private func toggleExpansion(_ field: ExpandedField) {
@@ -311,6 +328,15 @@ struct MeetingFormView: View {
         case startTime
         case endDate
         case endTime
+
+        var accessibilityIdentifier: String {
+            switch self {
+            case .startDate: "meetingFormStartDate"
+            case .startTime: "meetingFormStartTime"
+            case .endDate: "meetingFormEndDate"
+            case .endTime: "meetingFormEndTime"
+            }
+        }
     }
 }
 
