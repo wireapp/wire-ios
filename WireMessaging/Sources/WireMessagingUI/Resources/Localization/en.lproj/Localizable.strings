@@ -193,6 +193,44 @@
 "conversation.wireCells.files.downloadingFile" = "Downloading file...";
 "conversation.wireCells.files.offlineModeHint" = "You can still access your offline files.";
 
+// MARK: - Shared Drive uploads
+
+"conversation.wireCells.files.upload.menu.upload" = "Upload";
+"conversation.wireCells.files.upload.menu.file" = "Upload file";
+"conversation.wireCells.files.upload.menu.media" = "Upload photo or video";
+
+"conversation.wireCells.files.upload.destination" = "to %@";
+
+"conversation.wireCells.files.upload.uploadingFile" = "Uploading file...";
+"conversation.wireCells.files.upload.uploadedFile" = "Uploaded";
+"conversation.wireCells.files.upload.failedFile" = "Couldn't upload file";
+
+"conversation.wireCells.files.upload.uploadingOne" = "Uploading 1 file";
+"conversation.wireCells.files.upload.uploadingMany" = "Uploading %d files";
+"conversation.wireCells.files.upload.completeOne" = "Upload complete";
+"conversation.wireCells.files.upload.completeMany" = "%d of %d uploaded";
+"conversation.wireCells.files.upload.progress" = "%d of %d uploaded";
+"conversation.wireCells.files.upload.failedOne" = "Couldn't upload file";
+"conversation.wireCells.files.upload.failedMany" = "Couldn't upload %d files";
+"conversation.wireCells.files.upload.someFailedOne" = "1 couldn't upload";
+"conversation.wireCells.files.upload.someFailedMany" = "%d couldn't upload";
+"conversation.wireCells.files.upload.tapToReview" = "Tap to review";
+
+"conversation.wireCells.files.upload.cancel" = "Cancel";
+"conversation.wireCells.files.upload.cancelAll" = "Cancel all";
+"conversation.wireCells.files.upload.retry" = "Retry";
+"conversation.wireCells.files.upload.retryAll" = "Retry all";
+
+"conversation.wireCells.files.upload.tooManyFiles.title" = "Too many files";
+"conversation.wireCells.files.upload.tooManyFiles.message" = "You can upload up to %d files at a time.";
+"conversation.wireCells.files.upload.prepareFailed.title" = "Upload couldn't start";
+"conversation.wireCells.files.upload.prepareFailed.message" = "\"%@\" couldn't be prepared for upload. Make sure the file is available and your device has enough free storage.";
+"conversation.wireCells.files.upload.importFailed.title" = "Couldn't import files";
+"conversation.wireCells.files.upload.importFailed.message" = "Some of the selected files couldn't be imported, so they weren't uploaded.";
+"conversation.wireCells.files.upload.permissionWarning.title" = "Wire needs access to your Photos";
+"conversation.wireCells.files.upload.permissionWarning.restrictions.message" = "Wire cannot access your library because restrictions are enabled.";
+"conversation.wireCells.files.upload.permissionWarning.denied.message" = "Go to Settings and allow Wire to access your photos.";
+
 // MARK: - Recycle Bin
 "conversation.wireCells.recycleBin.navigationTitle" = "Recycle Bin";
 "conversation.wireCells.recycleBin.noData.learnMore" = "Learn more about Recycle Bin";
