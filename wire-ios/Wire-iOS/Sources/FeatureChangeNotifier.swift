@@ -20,7 +20,6 @@ import Combine
 import UIKit
 import WireDataModel
 import WireDomain
-import WireSyncEngine
 
 protocol FeatureChangeAlertPresenting: AnyObject {
     func present(_ alert: UIAlertController)
@@ -28,13 +27,13 @@ protocol FeatureChangeAlertPresenting: AnyObject {
 
 /// Presents alerts for feature-config changes (e2ei, file sharing,
 /// self-deleting messages, conversation guest links), sourced from the
-/// `UserSession.observeFeatureStates()` publisher.
+/// `FeatureConfigRepositoryProtocol.observeFeatureStates()` publisher.
 
 final class FeatureChangeNotifier {
 
     // MARK: - Private Property
 
-    private let userSession: UserSession
+    private let featureConfigRepository: any FeatureConfigRepositoryProtocol
     private let handlers: [Feature.Name: any FeatureChangeHandler]
     private let defaultHandler: any FeatureChangeHandler = DefaultFeatureChangeHandler()
 
@@ -45,13 +44,13 @@ final class FeatureChangeNotifier {
     // MARK: - Init
 
     init(
-        userSession: UserSession,
+        featureConfigRepository: any FeatureConfigRepositoryProtocol,
         handlers: [Feature.Name: any FeatureChangeHandler] = [:]
     ) {
-        self.userSession = userSession
+        self.featureConfigRepository = featureConfigRepository
         self.handlers = handlers
 
-        self.featureStateCancellable = userSession.observeFeatureStates()
+        self.featureStateCancellable = featureConfigRepository.observeFeatureStates()
             .filter(\.needsToNotifyUser)
             .receive(on: DispatchQueue.main)
             .sink { [weak self] featureState in
@@ -84,7 +83,7 @@ extension FeatureChangeNotifier: FeatureChangeAcknowledger {
 
     func acknowledgeChange(for featureName: Feature.Name) {
         Task { [weak self] in
-            await self?.userSession.acknowledgeFeatureChange(for: featureName)
+            await self?.featureConfigRepository.acknowledgeFeatureChange(for: featureName)
         }
     }
 }

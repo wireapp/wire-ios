@@ -45,7 +45,7 @@ final class AuthenticatedRouter {
     private let zClientControllerBuilder: ZClientControllerBuilder
     private let activeCallRouter: ActiveCallRouter<TopOverlayPresenter>
     private let callEndedAnalyticsController: CallEndedAnalyticsController<WireCallCenterV3>
-    private let featureChangeNotifier: FeatureChangeNotifier
+    private let featureChangeNotifier: FeatureChangeNotifier?
     private var revokedCertificateObserverToken: Any?
 
     // MARK: - Public Property
@@ -94,12 +94,14 @@ final class AuthenticatedRouter {
             currentDateProvider: .system
         )
 
-        self.featureChangeNotifier = FeatureChangeNotifier(
-            userSession: userSession,
-            handlers: featureChangeHandlers
-        )
+        self.featureChangeNotifier = userSession.clientSessionComponent.map {
+            FeatureChangeNotifier(
+                featureConfigRepository: $0.featureConfigRepository,
+                handlers: featureChangeHandlers
+            )
+        }
 
-        featureChangeNotifier.presenter = self
+        featureChangeNotifier?.presenter = self
 
         self.revokedCertificateObserverToken = notificationCenter.addObserver(
             forName: .presentRevokedCertificateWarningAlert,

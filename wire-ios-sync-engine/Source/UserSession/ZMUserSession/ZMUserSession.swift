@@ -1190,7 +1190,9 @@ extension ZMUserSession: ZMNetworkStateDelegate {
 
     /// Resets the e2ei grace-period clock whenever e2ei is enabled or disabled.
     private func observeE2EIActivationDate() {
-        observeFeatureStates()
+        guard let featureConfigRepository = clientSessionComponent?.featureConfigRepository else { return }
+
+        featureConfigRepository.observeFeatureStates()
             .filter { $0.name == .e2ei }
             .sink { [weak self] featureState in
                 guard let self else { return }
