@@ -299,4 +299,50 @@ final class ScheduleMeetingTests: WireUITestCase {
         }
     }
 
+    @MainActor
+    func testManageScheduleParticipants_TC_11964() async throws {
+        let (host, users, _, _) = try await UserHelper.default.registerMeetingsTeam(
+            withMemberCount: 3, names: ["Schedule Host", "Schedule Alice", "Schedule Bob", "Schedule Carol"]
+        )
+        try await registerClients(for: users)
+        let fixtures = try await MeetingsTestHelper(user: host)
+        let page = try launchMeetings(for: host, now: date())
+        let form = try page.schedule()
+        form.openParticipants()
+        XCTAssertTrue(form.member(users[0]).waitForExistence(timeout: 15), "Eligible team users did not appear")
+        XCTAssertTrue(form.selectedMembersButton.waitAndTap())
+        for (index, user) in users.enumerated() {
+            form.searchMember(user.name)
+            XCTAssertTrue(form.member(user).waitAndTap(timeout: 10))
+            XCTAssertEqual(form.selectedMembersButton.label, "Selected (\(index + 1))")
+            form.clearMemberSearch()
+        }
+        form.searchMember(host.name)
+        XCTAssertTrue(app.staticTexts["No result found"].waitForExistence(timeout: 10))
+        XCTAssertFalse(form.member(host).exists, "The host can be added twice")
+        form.clearMemberSearch()
+        form.searchMember(users[0].name)
+        XCTAssertTrue(app.staticTexts["No result found"].waitForExistence(timeout: 10))
+        XCTAssertFalse(form.member(users[0]).exists, "A selected user is still an add candidate")
+        form.clearMemberSearch()
+        try form.confirmParticipants()
+        XCTAssertEqual(form.participantsButton.value as? String, "3")
+
+        form.openParticipants()
+        for user in users {
+            XCTAssertTrue(form.member(user).waitForExistence(timeout: 10))
+            XCTAssertEqual(app.buttons.matching(identifier: "meetingMember.\(user.id.uppercased())").count, 1)
+        }
+        XCTAssertTrue(form.member(users[1]).waitAndTap())
+        XCTAssertEqual(form.selectedMembersButton.label, "Selected (2)")
+        try form.confirmParticipants()
+        XCTAssertEqual(form.participantsButton.value as? String, "2")
+        XCTAssertTrue(form.participantsButton.label.contains(users[0].name))
+        XCTAssertTrue(form.participantsButton.label.contains(users[2].name))
+        XCTAssertFalse(form.participantsButton.label.contains(users[1].name))
+        _ = try form.cancel()
+        let meetings = try await fixtures.list()
+        XCTAssertTrue(meetings.isEmpty)
+    }
+
 }
