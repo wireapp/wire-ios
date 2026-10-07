@@ -108,7 +108,12 @@ final class LinkInteractionTextView: UITextView {
     // `NSAttributedString.boundingRect` performs the same line-breaking TextKit does when it
     // actually draws the text and measures tab stops correctly, so use it directly instead.
     override var intrinsicContentSize: CGSize {
-        guard let attributedText, !attributedText.string.isEmpty else {
+        // Only text with tab stops (list prefixes) is mis-measured by UITextView, so leave
+        // everything else on the superclass sizing. `boundingRect` also ignores
+        // `maximumNumberOfLines`, so line-limited containers (collapsed previews) stay there too.
+        guard let attributedText,
+              attributedText.string.contains("\t"),
+              textContainer.maximumNumberOfLines == 0 else {
             return super.intrinsicContentSize
         }
 
