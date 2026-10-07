@@ -235,6 +235,15 @@ public enum Locators {
         case cancelReplyButton = "cancelReply"
         case originalSender = "original.sender"
 
+        public static func reactionOnMessageIdentifier(emoji: String) -> String {
+            switch emoji {
+            case "❤️":
+                "emojiHeart"
+            default:
+                "emoji\(emoji.unicodeScalars.map { String(format: "%04X", $0.value) }.joined())"
+            }
+        }
+
     }
 
     public enum BackupOrRestorePage: String {
@@ -270,6 +279,24 @@ public enum Locators {
         case memberCell
         case close
         case readReceiptsSwitch
+        case guestOptionsCell
+    }
+
+    public enum GuestOptionsPage: String {
+        case createLinkButton
+        case linkHeader
+        case secureLinkHeader
+        case linkText
+        case createLinkWithPasswordAction
+        case createLinkWithoutPasswordAction
+        case revokeLinkButton = "Revoke Link…"
+    }
+
+    public enum CreateSecureGuestLinkPage: AutoPrefixedEnum {
+        case generatePasswordButton
+        case passwordTextField
+        case confirmPasswordTextField
+        case createLinkButton
     }
 
     public enum ConversationNotificationOptionsPage: AutoPrefixedEnum {

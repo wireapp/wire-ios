@@ -436,6 +436,27 @@ class ActiveConversationPage: PageModel {
         return self
     }
 
+    func reactionButton(emoji: String) -> XCUIElement {
+        app.buttons[emoji].firstMatch
+    }
+
+    @discardableResult
+    func reactToMessage(_ message: XCUIElement, withEmoji emoji: String) -> ActiveConversationPage {
+        XCTAssertTrue(
+            message.waitForExistence(timeout: 5),
+            "Expected message to react to was not found, possible that not being sent via testService"
+        )
+        message.press(forDuration: 1.0)
+        XCTAssertTrue(reactionButton(emoji: emoji).waitAndTap(), "Reaction button '\(emoji)' was not found")
+        return self
+    }
+
+    func reactionOnMessage(emoji: String) -> XCUIElement {
+        app.descendants(matching: .any).matching(
+            identifier: Locators.ActiveConversationPage.reactionOnMessageIdentifier(emoji: emoji)
+        ).firstMatch
+    }
+
     func quotedContent(ofType type: String) -> XCUIElement {
         app.descendants(matching: .any)["quote.type.\(type)"].firstMatch
     }
@@ -497,10 +518,29 @@ class ActiveConversationPage: PageModel {
     }
 
     func mentionUserAndSendMessage(nameOfUser: String) throws -> ActiveConversationPage {
+        try inputMessageField.tapIfKeyboardNotFocused().typeText("Hello ")
         mentionButton.tap()
         chooseUser(nameOfUser: nameOfUser)
         sendButton.tapAndWait()
         return self
+    }
+
+    func tapMention(ofUser name: String) throws -> UserDetailsPage {
+        let mentionLabel = [
+            "@\(name)",
+            "@\(name.replacingOccurrences(of: " ", with: "\u{00A0}"))"
+        ]
+        let mentionLink = app.links
+            .matching(NSPredicate(format: "label IN %@", mentionLabel))
+            .firstMatch
+
+        XCTAssertTrue(
+            mentionLink.waitForExistence(timeout: 5),
+            "Expected mention link '\(mentionLabel[0])' should be showing"
+        )
+
+        mentionLink.tap()
+        return try UserDetailsPage()
     }
 
     @discardableResult
@@ -602,29 +642,43 @@ class ActiveConversationPage: PageModel {
         return self
     }
 
-    func openPhotos() throws -> ActiveConversationPage {
-        photoButton.waitAndTap()
-        return self
-    }
-
-    func selectImageAndSend(at index: Int = 3) throws -> ActiveConversationPage {
-        if !imageToChoose(at: index).waitForExistence(timeout: 2) {
+    func selectImageAndSend() throws -> ActiveConversationPage {
+        if !cameraRollButton.waitForExistence(timeout: 3) {
             photoButton.waitAndTap()
         }
-        imageToChoose(at: index).waitAndTap()
+
+        XCTAssertTrue(
+            cameraRollButton.waitAndTap(),
+            "cameraRollButton did not show up"
+        )
+
+        let image = app.images.matching(NSPredicate(
+            format: "identifier == %@ AND NOT (label BEGINSWITH %@)",
+            Locators.PhotosAppPage.imageTile.rawValue,
+            "Video"
+        )).firstMatch
+        XCTAssertTrue(
+            image.waitForExistence(timeout: 10),
+            "No image found in camera roll"
+        )
+        image.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
 
         XCTAssertTrue(
             okToSend.waitForExistence(timeout: 3),
-            "OK button did not appear after selecting media"
+            "Seems like image is not tapped"
         )
         okToSend.waitAndTap()
         return self
     }
 
     func selectImageAndSendInDriveEnabledConversation(at index: Int = 3) throws -> ActiveConversationPage {
-        if !imageToChoose(at: index).waitForExistence(timeout: 2) {
+        if !imageToChoose(at: index).waitForExistence(timeout: 5) {
             photoButton.waitAndTap()
         }
+        XCTAssertTrue(
+            imageToChoose(at: index).waitForExistence(timeout: 5),
+            "No image found in simulator photo library"
+        )
         imageToChoose(at: index).waitAndTap()
 
         XCTAssertTrue(

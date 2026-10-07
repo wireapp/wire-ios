@@ -25,7 +25,7 @@ import WireFoundation
 struct MeetingFormView: View {
     private typealias Strings = L10n.Localizable.WireMeetings.Schedule
     private static let timePickerMinuteInterval = 15
-    private let formatter = MeetingsFormatter()
+    @State private var formatter = MeetingsFormatter()
 
     @Environment(\.dismiss) private var dismiss
     @Environment(\.wireAccentColor) private var wireAccentColor
@@ -50,6 +50,9 @@ struct MeetingFormView: View {
                 if !viewModel.mode.isEdit {
                     isTitleFieldFocused = true
                 }
+            }
+            .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in
+                formatter = MeetingsFormatter()
             }
             .scrollContentBackground(.hidden)
             .background(ColorTheme.Backgrounds.background.color)
@@ -80,19 +83,20 @@ struct MeetingFormView: View {
             }
             .alert(isPresented: $viewModel.hasError) {
                 Alert(
-                    title: Text(errorContent.title),
-                    message: Text(errorContent.message),
-                    dismissButton: .default(Text(Strings.Error.Alert.ok))
+                    title: Text(viewModel.errorTitle),
+                    message: Text(MeetingParticipantErrorFormatter.attributed(viewModel.errorMessage)),
+                    dismissButton: .default(Text(Strings.Error.Alert.ok)) {
+                        if viewModel.dismissAfterError { dismiss() }
+                    }
                 )
             }
             .alert(
-                Strings.ParticipantsNotAdded.title,
+                viewModel.mode.isEdit ? Strings.ParticipantsNotAdded.title : Strings.ParticipantsNotAdded.createdTitle,
                 isPresented: $viewModel.hasParticipantsNotAddedAlert
             ) {
                 Button(Strings.Error.Alert.ok, action: viewModel.acknowledgeParticipantsNotAdded)
             } message: {
-                Text(Strings.ParticipantsNotAdded
-                    .message(viewModel.participantsNotAdded.map(\.name).joined(separator: ", ")))
+                Text(MeetingParticipantErrorFormatter.attributed(viewModel.participantsNotAddedMessage))
             }
             .alert(
                 Strings.Error.ExpiredStartDate.title,
@@ -111,21 +115,10 @@ struct MeetingFormView: View {
                 Button(Strings.Error.ConversationName.retry) {
                     Task { await viewModel.retryConversationNameUpdate() }
                 }
+                Button(Strings.Error.Alert.ok, role: .cancel) { dismiss() }
             } message: {
-                Text(Strings.Error.ConversationName.message)
+                Text(MeetingParticipantErrorFormatter.attributed(viewModel.conversationNameErrorMessage))
             }
-        }
-    }
-
-    private var errorContent: (title: String, message: String) {
-        typealias Errors = L10n.Localizable.Meetings
-        switch viewModel.mode {
-        case .instant:
-            return (Errors.MeetNowModal.Error.createFailedTitle, Errors.MeetNowModal.Error.createFailed)
-        case .scheduled:
-            return (Errors.ScheduleModal.Error.createFailedTitle, Errors.ScheduleModal.Error.createFailed)
-        case .edit:
-            return (Errors.ScheduleModal.Error.updateFailedTitle, Errors.ScheduleModal.Error.updateFailed)
         }
     }
 
@@ -473,6 +466,10 @@ private struct MockSearchMembersUseCase: SearchMembersUseCaseProtocol {
         guard !query.isEmpty else { return members }
         return members.filter { $0.name.localizedCaseInsensitiveContains(query) }
     }
+
+    func searchGroups(query: String) async throws -> [MeetingGroup] { [] }
+
+    func members(in groupID: QualifiedID) async throws -> [MeetingMember] { [] }
 }
 
 private extension [MeetingMember] {

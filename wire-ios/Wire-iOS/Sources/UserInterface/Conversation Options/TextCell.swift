@@ -19,6 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireDesign
+import WireLocators
 
 final class TextCell: UITableViewCell, CellConfigurationConfigurable {
 
@@ -30,6 +31,7 @@ final class TextCell: UITableViewCell, CellConfigurationConfigurable {
 
         contentView.addSubview(container)
         container.addSubview(label)
+        label.accessibilityIdentifier = Locators.GuestOptionsPage.linkText.rawValue
         label.font = FontSpec(.normal, .light).font
         label.lineBreakMode = .byClipping
         label.numberOfLines = 0

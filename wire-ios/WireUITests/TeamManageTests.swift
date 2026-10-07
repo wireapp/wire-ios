@@ -166,7 +166,7 @@ final class TeamManageTests: WireUITestCase {
     }
 
     @MainActor
-    func test_TeamMemberRemovedFromTeam_SeesSessionExpiredAlert_TC_11930() async throws {
+    func test_TeamMemberRemovedFromTeam_SeesSessionExpiredAlert_TC_12129() async throws {
 
         let (_, teamOwner) = try await UserHelper.default.registerUserAsTeamOwner()
         let ownerAccessToken = try await UserHelper.default.fetchAccessToken(
@@ -284,5 +284,49 @@ final class TeamManageTests: WireUITestCase {
             fetchMessages.contains(where: { $0.contains("@") && $0.contains(teamMembers[1].name) }),
             "Expected mention '@\(teamMembers[1].name)' not found in sent messages: \(fetchMessages)"
         )
+    }
+
+    @MainActor
+    func testUserAbleToOpenUserProfileOnTappingMention_TC_11826() async throws {
+
+        // GIVEN
+        let (teamOwner, teamMembers, _, _) = try await UserHelper.default
+            .registerTeam(
+                withMemberCount: 2,
+                conversation: .group(UserGenerator.generateRandomConversationName())
+            )
+        let mentionedUser = teamMembers[0]
+        let receivingUser = teamMembers[1]
+
+        _ = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
+            .acceptPopup()
+            .openUserProfilePage()
+            .tapAddAccountOrTeamButton()
+
+        // WHEN owner sends a message mentioning mentionedUser, then receivingUser opens the conversation
+        let conversationPage = try app.loginUser(email: receivingUser.email, password: receivingUser.password)
+            .acceptPopup()
+            .openUserProfilePage()
+            .switchUserAccountForUser(withName: teamOwner.name)
+            .openConversation()
+            .mentionUserAndSendMessage(nameOfUser: mentionedUser.name)
+            .goBackToConversationPage()
+            .openUserProfilePage()
+            .switchUserAccountForUser(withName: receivingUser.name)
+
+        XCTAssertTrue(
+            conversationPage.unreadMessagesCount.waitForExistence(timeout: 5),
+            "Unread messages count element did not appear for \(receivingUser.name)"
+        )
+
+        // ...and taps the mention in the received message
+        let userDetailsPage = try conversationPage
+            .openConversation()
+            .tapMention(ofUser: mentionedUser.name)
+
+        // THEN the correct user's profile opens
+        userDetailsPage
+            .verifyName(mentionedUser.name)
+            .verifyUsername(mentionedUser.username)
     }
 }

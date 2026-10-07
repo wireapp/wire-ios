@@ -82,9 +82,10 @@
 "wireMeetings.schedule.error.alert.title" = "Что-то пошло не так";
 "wireMeetings.schedule.error.alert.ok" = "OK";
 "wireMeetings.schedule.participantsNotAdded.title" = "Встреча сохранена";
-"wireMeetings.schedule.participantsNotAdded.message" = "Встреча была сохранена, но не удалось добавить этих пользователей:\n\n%@";
-"wireMeetings.schedule.error.conversationName.title" = "Не удалось обновить имя вызова";
-"wireMeetings.schedule.error.conversationName.message" = "Название встречи было обновлено, но имя, указанное в вызове, обновить не удалось. Пожалуйста, попробуйте снова.";
+"wireMeetings.schedule.participantsNotAdded.createdTitle" = "Встреча создана";
+"wireMeetings.schedule.participantsNotAdded.message" = "Обратите внимание, что следующих пользователей не удалось добавить:\n\n%@";
+"wireMeetings.schedule.error.conversationName.title" = "Обновление не завершено";
+"wireMeetings.schedule.error.conversationName.message" = "Название встречи было обновлено, но в приглашении может по-прежнему отображаться прежнее название. Пожалуйста, попробуйте еще раз.";
 "wireMeetings.schedule.error.conversationName.retry" = "Повторить";
 "wireMeetings.schedule.disableGuestAccess.alert.title" = "Отключить доступ гостей?";
 "wireMeetings.schedule.disableGuestAccess.alert.disable" = "Отключить";
@@ -112,4 +113,4 @@
 "wireMeetings.schedule.members.contacts.title" = "Контакты";
 
 "wireMeetings.schedule.error.expiredStartDate.title" = "Выберите более позднее время начала";
-"wireMeetings.schedule.error.expiredStartDate.message" = "Время начала встречи можно изменить только на период не более чем за 24 часа до текущего момента. Выберите более позднее время начала и сохраните изменения заново.";
+"wireMeetings.schedule.error.expiredStartDate.message" = "Вы можете редактировать только те встречи, которые начались менее 24 часов назад. Пожалуйста, выберите более позднее время начала и попробуйте еще раз.";
