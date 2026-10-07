@@ -598,7 +598,8 @@ public extension WireCallCenterV3 {
                 conversationId: conversationId,
                 callerId: callerId,
                 messageTime: nil,
-                previousCallState: previousSnapshot?.callState
+                previousCallState: previousSnapshot?.callState,
+                callEndReason: nil
             ).post(in: context.notificationContext)
         }
 
@@ -692,7 +693,8 @@ public extension WireCallCenterV3 {
                 conversationId: conversationId,
                 callerId: selfUserId,
                 messageTime: nil,
-                previousCallState: previousCallState
+                previousCallState: previousCallState,
+                callEndReason: nil
             ).post(in: context.notificationContext)
         }
 

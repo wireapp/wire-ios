@@ -49,6 +49,17 @@ struct CallContent: Decodable {
         case conferenceTimestamp = "timestamp"
     }
 
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        type = try container.decode(String.self, forKey: .type)
+        properties = try container.decodeIfPresent(Properties.self, forKey: .properties)
+        callerUserID = try container.decodeIfPresent(String.self, forKey: .callerUserID)
+        callerClientID = try container.decode(String.self, forKey: .callerClientID)
+        responded = try container.decode(Bool.self, forKey: .responded)
+        conferenceTimestamp = (try? container.decode(String.self, forKey: .conferenceTimestamp))
+            ?? (try? container.decode(UInt64.self, forKey: .conferenceTimestamp)).map(String.init)
+    }
+
     struct Properties: Decodable {
         private let videoSend: String
 

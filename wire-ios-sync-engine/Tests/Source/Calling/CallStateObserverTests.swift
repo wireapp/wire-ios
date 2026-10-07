@@ -112,14 +112,16 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
             conversation: conversationUI,
             caller: senderUI,
             timestamp: nil,
-            previousCallState: nil
+            previousCallState: nil,
+            callEndReason: nil
         )
         sut.callCenterDidChange(
             callState: .terminating(reason: .canceled),
             conversation: conversationUI,
             caller: senderUI,
             timestamp: nil,
-            previousCallState: firstCallState
+            previousCallState: firstCallState,
+            callEndReason: nil
         )
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -141,14 +143,16 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
             conversation: conversationUI,
             caller: senderUI,
             timestamp: nil,
-            previousCallState: nil
+            previousCallState: nil,
+            callEndReason: nil
         )
         sut.callCenterDidChange(
             callState: .terminating(reason: .canceled),
             conversation: conversationUI,
             caller: senderUI,
             timestamp: nil,
-            previousCallState: nil
+            previousCallState: nil,
+            callEndReason: nil
         )
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -188,7 +192,8 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
                 conversation: conversationUI,
                 caller: senderUI,
                 timestamp: nil,
-                previousCallState: nil
+                previousCallState: nil,
+                callEndReason: nil
             )
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -238,7 +243,8 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
             conversation: conversationUI,
             caller: senderUI,
             timestamp: Date(),
-            previousCallState: nil
+            previousCallState: nil,
+            callEndReason: nil
         )
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -263,7 +269,8 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
             conversation: conversationUI,
             caller: senderUI,
             timestamp: nil,
-            previousCallState: nil
+            previousCallState: nil,
+            callEndReason: nil
         )
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -283,7 +290,8 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
             conversation: conversationUI,
             caller: senderUI,
             timestamp: Date(),
-            previousCallState: nil
+            previousCallState: nil,
+            callEndReason: nil
         )
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -301,7 +309,8 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
             conversation: conversationUI,
             caller: senderUI,
             timestamp: nil,
-            previousCallState: nil
+            previousCallState: nil,
+            callEndReason: nil
         )
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -341,7 +350,8 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
             conversation: conversationUI,
             caller: senderUI,
             timestamp: nil,
-            previousCallState: nil
+            previousCallState: nil,
+            callEndReason: nil
         )
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
     }
@@ -378,7 +388,8 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
             conversation: conversationUI,
             caller: senderUI,
             timestamp: nil,
-            previousCallState: nil
+            previousCallState: nil,
+            callEndReason: nil
         )
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
     }
@@ -408,7 +419,8 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
             conversation: conversationUI,
             caller: senderUI,
             timestamp: Date(),
-            previousCallState: nil
+            previousCallState: nil,
+            callEndReason: nil
         )
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -428,7 +440,8 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
             conversation: conversationUI,
             caller: senderUI,
             timestamp: Date(),
-            previousCallState: nil
+            previousCallState: nil,
+            callEndReason: nil
         )
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
 
@@ -451,14 +464,16 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
             conversation: conversationUI,
             caller: senderUI,
             timestamp: nil,
-            previousCallState: nil
+            previousCallState: nil,
+            callEndReason: nil
         )
         sut.callCenterDidChange(
             callState: .terminating(reason: .normal),
             conversation: conversationUI,
             caller: senderUI,
             timestamp: nil,
-            previousCallState: nil
+            previousCallState: nil,
+            callEndReason: nil
         )
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -480,14 +495,16 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
             conversation: conversationUI,
             caller: senderUI,
             timestamp: nil,
-            previousCallState: nil
+            previousCallState: nil,
+            callEndReason: nil
         )
         sut.callCenterDidChange(
             callState: .terminating(reason: .answeredElsewhere),
             conversation: conversationUI,
             caller: senderUI,
             timestamp: nil,
-            previousCallState: nil
+            previousCallState: nil,
+            callEndReason: nil
         )
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -512,7 +529,8 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
             conversation: conversationUI,
             caller: senderUI,
             timestamp: nil,
-            previousCallState: nil
+            previousCallState: nil,
+            callEndReason: nil
         )
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         uiMOC.refreshAllObjects()
@@ -540,7 +558,8 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
             conversation: conversationUI,
             caller: senderUI,
             timestamp: nil,
-            previousCallState: nil
+            previousCallState: nil,
+            callEndReason: nil
         )
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -618,7 +637,8 @@ class CallStateObserverTests: DatabaseTest, CallNotificationStyleProvider {
             conversation: conversationUI,
             caller: senderUI,
             timestamp: Date(),
-            previousCallState: nil
+            previousCallState: nil,
+            callEndReason: nil
         )
 
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))

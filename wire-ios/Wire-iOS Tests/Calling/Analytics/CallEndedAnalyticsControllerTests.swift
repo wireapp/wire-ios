@@ -85,7 +85,8 @@ final class CallEndedAnalyticsControllerTests: XCTestCase {
             conversationId: conversationID,
             callerId: secondUser.avsIdentifier,
             messageTime: mockDateProvider.now,
-            previousCallState: nil
+            previousCallState: nil,
+            callEndReason: nil
         ).post(in: viewContext.notificationContext)
 
         mockDateProvider.now.addTimeInterval(3)
@@ -96,7 +97,8 @@ final class CallEndedAnalyticsControllerTests: XCTestCase {
             conversationId: conversationID,
             callerId: secondUser.avsIdentifier,
             messageTime: mockDateProvider.now,
-            previousCallState: nil
+            previousCallState: nil,
+            callEndReason: nil
         ).post(in: viewContext.notificationContext)
 
         // Then
@@ -133,7 +135,8 @@ final class CallEndedAnalyticsControllerTests: XCTestCase {
             conversationId: conversationID,
             callerId: secondUser.avsIdentifier,
             messageTime: mockDateProvider.now,
-            previousCallState: nil
+            previousCallState: nil,
+            callEndReason: nil
         ).post(in: viewContext.notificationContext)
 
         mockDateProvider.now.addTimeInterval(1)
@@ -144,7 +147,8 @@ final class CallEndedAnalyticsControllerTests: XCTestCase {
             conversationId: conversationID,
             callerId: secondUser.avsIdentifier,
             messageTime: mockDateProvider.now,
-            previousCallState: nil
+            previousCallState: nil,
+            callEndReason: nil
         ).post(in: viewContext.notificationContext)
 
         mockDateProvider.now.addTimeInterval(3)
@@ -155,7 +159,8 @@ final class CallEndedAnalyticsControllerTests: XCTestCase {
             conversationId: conversationID,
             callerId: secondUser.avsIdentifier,
             messageTime: mockDateProvider.now,
-            previousCallState: nil
+            previousCallState: nil,
+            callEndReason: nil
         ).post(in: viewContext.notificationContext)
 
         // Then
@@ -200,7 +205,8 @@ final class CallEndedAnalyticsControllerTests: XCTestCase {
             conversationId: conversationID,
             callerId: secondUser.avsIdentifier,
             messageTime: mockDateProvider.now,
-            previousCallState: nil
+            previousCallState: nil,
+            callEndReason: nil
         ).post(in: viewContext.notificationContext)
 
         mockDateProvider.now.addTimeInterval(1)
@@ -211,7 +217,8 @@ final class CallEndedAnalyticsControllerTests: XCTestCase {
             conversationId: conversationID,
             callerId: secondUser.avsIdentifier,
             messageTime: mockDateProvider.now,
-            previousCallState: nil
+            previousCallState: nil,
+            callEndReason: nil
         ).post(in: viewContext.notificationContext)
 
         mockDateProvider.now.addTimeInterval(3)
@@ -228,7 +235,8 @@ final class CallEndedAnalyticsControllerTests: XCTestCase {
             conversationId: conversationID,
             callerId: secondUser.avsIdentifier,
             messageTime: mockDateProvider.now,
-            previousCallState: nil
+            previousCallState: nil,
+            callEndReason: nil
         ).post(in: viewContext.notificationContext)
 
         // Then
@@ -264,7 +272,8 @@ final class CallEndedAnalyticsControllerTests: XCTestCase {
             conversationId: conversation0ID,
             callerId: secondUser.avsIdentifier,
             messageTime: mockDateProvider.now,
-            previousCallState: nil
+            previousCallState: nil,
+            callEndReason: nil
         ).post(in: viewContext.notificationContext)
 
         mockDateProvider.now.addTimeInterval(1)
@@ -277,7 +286,8 @@ final class CallEndedAnalyticsControllerTests: XCTestCase {
             conversationId: conversation0ID,
             callerId: secondUser.avsIdentifier,
             messageTime: mockDateProvider.now,
-            previousCallState: nil
+            previousCallState: nil,
+            callEndReason: nil
         ).post(in: viewContext.notificationContext)
 
         mockDateProvider.now.addTimeInterval(3)
@@ -290,7 +300,8 @@ final class CallEndedAnalyticsControllerTests: XCTestCase {
             conversationId: conversation1ID,
             callerId: thirdUser.avsIdentifier,
             messageTime: mockDateProvider.now,
-            previousCallState: nil
+            previousCallState: nil,
+            callEndReason: nil
         ).post(in: viewContext.notificationContext)
 
         mockDateProvider.now.addTimeInterval(3)
@@ -303,7 +314,8 @@ final class CallEndedAnalyticsControllerTests: XCTestCase {
             conversationId: conversation1ID,
             callerId: thirdUser.avsIdentifier,
             messageTime: mockDateProvider.now,
-            previousCallState: nil
+            previousCallState: nil,
+            callEndReason: nil
         ).post(in: viewContext.notificationContext)
 
         mockDateProvider.now.addTimeInterval(3)
@@ -316,7 +328,8 @@ final class CallEndedAnalyticsControllerTests: XCTestCase {
             conversationId: conversation0ID,
             callerId: secondUser.avsIdentifier,
             messageTime: mockDateProvider.now,
-            previousCallState: nil
+            previousCallState: nil,
+            callEndReason: nil
         ).post(in: viewContext.notificationContext)
 
         // Then

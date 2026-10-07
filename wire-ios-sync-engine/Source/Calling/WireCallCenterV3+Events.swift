@@ -58,7 +58,8 @@ extension WireCallCenterV3: ZMConversationObserver {
                     conversationId: conversationId,
                     callerId: callerId,
                     messageTime: Date(),
-                    previousCallState: previousSnapshot.callState
+                    previousCallState: previousSnapshot.callState,
+                    callEndReason: nil
                 )
                 notification.post(in: context.notificationContext)
             }

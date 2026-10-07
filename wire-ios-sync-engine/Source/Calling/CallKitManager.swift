@@ -804,23 +804,6 @@ extension CallKitManager: WireCallCenterCallStateObserver, WireCallCenterMissedC
         conversation: ZMConversation,
         caller: UserType,
         timestamp: Date?,
-        previousCallState: CallState?
-    ) {
-        callCenterDidChange(
-            callState: callState,
-            conversation: conversation,
-            caller: caller,
-            timestamp: timestamp,
-            previousCallState: previousCallState,
-            callEndReason: nil
-        )
-    }
-
-    public func callCenterDidChange(
-        callState: CallState,
-        conversation: ZMConversation,
-        caller: UserType,
-        timestamp: Date?,
         previousCallState: CallState?,
         callEndReason: CallClosedReason?
     ) {

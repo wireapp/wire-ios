@@ -67,6 +67,30 @@ final class ConversationCallingEventNotificationBuilderTests: XCTestCase {
 
     // MARK: - CallKit Tests
 
+    func testCallContentDecodesConferenceTimestampWithoutDroppingCall() {
+        let timestamps: [(String, String?)] = [
+            ("\"1000\"", "1000"),
+            ("1000", "1000"),
+            ("{\"unexpected\":true}", nil)
+        ]
+
+        for (timestamp, expected) in timestamps {
+            var calling = Calling()
+            calling.content = """
+            {
+                "type": "CONFSTART",
+                "src_clientid": "clientid",
+                "resp": false,
+                "timestamp": \(timestamp)
+            }
+            """
+
+            let content = CallContent.decode(from: calling)
+            XCTAssertEqual(content?.type, CallContent.CallType.confStart)
+            XCTAssertEqual(content?.conferenceTimestamp, expected)
+        }
+    }
+
     func testGenerateCallKitNotification_Is_Group_Conversation_And_Is_Team_User() async throws {
 
         // Mock

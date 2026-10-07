@@ -101,14 +101,7 @@ public protocol WireCallCenterCallStateObserver: AnyObject {
     /// - parameter conversation: where the call is ongoing
     /// - parameter caller: user which initiated the call
     /// - parameter timestamp: when the call state change occured
-    func callCenterDidChange(
-        callState: CallState,
-        conversation: ZMConversation,
-        caller: UserType,
-        timestamp: Date?,
-        previousCallState: CallState?
-    )
-
+    /// - parameter callEndReason: why the call ended, when available
     func callCenterDidChange(
         callState: CallState,
         conversation: ZMConversation,
@@ -117,25 +110,6 @@ public protocol WireCallCenterCallStateObserver: AnyObject {
         previousCallState: CallState?,
         callEndReason: CallClosedReason?
     )
-}
-
-public extension WireCallCenterCallStateObserver {
-    func callCenterDidChange(
-        callState: CallState,
-        conversation: ZMConversation,
-        caller: UserType,
-        timestamp: Date?,
-        previousCallState: CallState?,
-        callEndReason: CallClosedReason?
-    ) {
-        callCenterDidChange(
-            callState: callState,
-            conversation: conversation,
-            caller: caller,
-            timestamp: timestamp,
-            previousCallState: previousCallState
-        )
-    }
 }
 
 public struct WireCallCenterCallStateNotification: SelfPostingNotification {
@@ -156,7 +130,7 @@ public struct WireCallCenterCallStateNotification: SelfPostingNotification {
         callerId: AVSIdentifier,
         messageTime: Date?,
         previousCallState: CallState?,
-        callEndReason: CallClosedReason? = nil
+        callEndReason: CallClosedReason?
     ) {
         self.context = context
         self.callState = callState
@@ -344,7 +318,8 @@ extension WireCallCenterV3 {
                     conversation: conversation,
                     caller: caller,
                     timestamp: note.messageTime,
-                    previousCallState: note.previousCallState
+                    previousCallState: note.previousCallState,
+                    callEndReason: note.callEndReason
                 )
             }
         }
@@ -386,7 +361,8 @@ extension WireCallCenterV3 {
                     conversation: conversation,
                     caller: caller,
                     timestamp: note.messageTime,
-                    previousCallState: note.previousCallState
+                    previousCallState: note.previousCallState,
+                    callEndReason: note.callEndReason
                 )
             }
         }
