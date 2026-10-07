@@ -50,6 +50,7 @@ final class UserHelper {
     let conversationsAPI: ConversationsAPI
     let connectionsAPI: ConnectionsAPI
     let accountsAPI: AccountsAPI
+    let userClientsAPI: UserClientsAPI
 
     private let cookieStorage = MockCookieStorage()
     private let authenticationManager = MockAuthManager()
@@ -111,6 +112,7 @@ final class UserHelper {
         self.conversationsAPI = ConversationsAPIBuilder(apiService: networkStack.apiService).makeAPI(for: apiVersion)
         self.connectionsAPI = ConnectionsAPIBuilder(apiService: networkStack.apiService).makeAPI(for: apiVersion)
         self.accountsAPI = AccountsAPIBuilder(apiService: networkStack.apiService).makeAPI(for: apiVersion)
+        self.userClientsAPI = UserClientsAPIBuilder(apiService: networkStack.apiService).makeAPI(for: apiVersion)
         self.environment = environment
     }
 
@@ -363,6 +365,27 @@ final class UserHelper {
         guard response.statusCode == 200 else {
             throw RuntimeError("disableConsentPopup failed with code \(response.statusCode)")
         }
+    }
+
+    func clientID(of user: UserInfo) async throws -> UserClientID {
+        let previousAccessToken = authenticationManager.accessToken
+        defer { authenticationManager.accessToken = previousAccessToken }
+        authenticationManager.accessToken = try await fetchAccessToken(email: user.email, password: user.password)
+
+        let clients = try await userClientsAPI.getSelfClients()
+        guard let client = clients.first, clients.count == 1 else {
+            throw RuntimeError("Expected one client for \(user.email), found \(clients.count)")
+        }
+
+        return client.id
+    }
+
+    func removeClient(id: UserClientID, of user: UserInfo) async throws {
+        let previousAccessToken = authenticationManager.accessToken
+        defer { authenticationManager.accessToken = previousAccessToken }
+        authenticationManager.accessToken = try await fetchAccessToken(email: user.email, password: user.password)
+
+        try await userClientsAPI.deleteClient(id: id, password: user.password)
     }
 
     /// Register user in team as member
