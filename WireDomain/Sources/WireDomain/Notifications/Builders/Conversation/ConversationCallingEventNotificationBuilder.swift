@@ -470,12 +470,10 @@ extension ConversationCallingEventNotificationBuilder {
                 true
             let isCallerSelf = selfUser == caller
             let needsBackendUpdate = await conversationLocalStore.conversationNeedsBackendUpdate(conversation)
-            let isGroupConversation = await conversationLocalStore.isGroupConversation(conversation)
             let wasAnsweredElsewhere = trackAnsweredElsewhereCall(
                 callContent: callContent,
                 conversationID: conversationID,
                 accountID: accountID,
-                isGroupConversation: isGroupConversation,
                 isCallerSelf: isCallerSelf
             )
 
@@ -517,16 +515,13 @@ extension ConversationCallingEventNotificationBuilder {
             callContent: CallContent,
             conversationID: ConversationID,
             accountID: UUID,
-            isGroupConversation: Bool,
             isCallerSelf: Bool
         ) -> Bool {
-            guard isGroupConversation else { return false }
-
             let key = "\(Constants.answeredElsewhereCall).\(accountID.uuidString).\(conversationID.domain).\(conversationID.id)"
 
             if callContent.isStartCall {
                 if isCallerSelf {
-                    // This user's other client started or answered the group call.
+                    // The conversation type may still be unknown when this user's other client starts or answers.
                     userDefaults.set(true, forKey: key)
                 } else if callContent.isIncomingCall {
                     // A new incoming call must not inherit the previous call's state.
