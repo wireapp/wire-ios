@@ -734,6 +734,8 @@ public enum Locators {
             case participants = "meetingFormParticipants"
             case membersSelect = "meetingMembersSelect"
             case membersSelected = "meetingMembersSelected"
+            case membersSelectedExpanded = "meetingMembersSelected.expanded"
+            case membersSelectedCollapsed = "meetingMembersSelected.collapsed"
             case cancel = "meetingFormCancel"
             case startDate = "meetingFormStartDate"
             case startTime = "meetingFormStartTime"

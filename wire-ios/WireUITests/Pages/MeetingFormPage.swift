@@ -49,7 +49,13 @@ class MeetingFormPage: PageModel {
     var startTimeButton: XCUIElement { app.buttons[Locators.WireMeetings.MeetingForm.startTime.rawValue] }
     var endTimeButton: XCUIElement { app.buttons[Locators.WireMeetings.MeetingForm.endTime.rawValue] }
     var repeatButton: XCUIElement { app.buttons[Locators.WireMeetings.MeetingForm.repeatOption.rawValue] }
-    var selectedMembersButton: XCUIElement { app.buttons[Locators.WireMeetings.MeetingForm.membersSelected.rawValue] }
+    var selectedMembersButton: XCUIElement {
+        app.buttons.matching(NSPredicate(
+            format: "identifier BEGINSWITH %@",
+            Locators.WireMeetings.MeetingForm.membersSelected.rawValue + "."
+        )).firstMatch
+    }
+
     var titleError: XCUIElement { app.staticTexts[Locators.WireMeetings.MeetingForm.titleError.rawValue] }
     var loadingIndicator: XCUIElement { app.progressIndicators[Locators.WireMeetings.MeetingForm.loading.rawValue] }
 
@@ -130,6 +136,18 @@ class MeetingFormPage: PageModel {
         XCTAssertTrue(memberSearchField.buttons["Clear text"].waitAndTap())
     }
 
+    func selectMember(_ user: UserInfo) {
+        searchMember(user.name)
+        let expanded = app.buttons[Locators.WireMeetings.MeetingForm.membersSelectedExpanded.rawValue]
+        let collapsed = app.buttons[Locators.WireMeetings.MeetingForm.membersSelectedCollapsed.rawValue]
+        XCTAssertTrue(selectedMembersButton.waitForExistence(timeout: 5))
+        if expanded.exists {
+            XCTAssertTrue(expanded.waitAndTap())
+        }
+        XCTAssertTrue(collapsed.waitForExistence(timeout: 5), "Selected members section did not collapse")
+        XCTAssertTrue(member(user).waitAndTap(timeout: 10), "Meeting member '\(user.name)' was not tappable")
+    }
+
     func confirmParticipants() throws {
         let cancelSearch = app.buttons.matching(identifier: "Cancel").allElementsBoundByIndex.first(where: \.isHittable)
         if let cancelSearch, !selectMembersButton.isHittable { cancelSearch.tap() }
@@ -152,11 +170,9 @@ class MeetingFormPage: PageModel {
     @discardableResult
     func addParticipants(_ users: [UserInfo]) throws -> MeetingFormPage {
         openParticipants()
-        XCTAssertTrue(selectedMembersButton.waitAndTap(), "Selected members section did not collapse")
 
         for user in users {
-            searchMember(user.name)
-            XCTAssertTrue(member(user).waitAndTap(timeout: 10), "Meeting member '\(user.name)' did not appear")
+            selectMember(user)
             clearMemberSearch()
         }
 
