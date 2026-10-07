@@ -85,14 +85,8 @@ package struct WireDriveDirectUploadRecord: Identifiable, Equatable, Hashable, S
 
     package var attemptCount: Int
 
-    package var sessionIdentifier: String?
-
-    /// The `URLSessionTask.taskIdentifier`, or `nil` when no task exists.
-    package var taskIdentifier: Int?
-
     package var presignedURL: URL?
     package var presignedURLExpiresAt: Date?
-    package var presignedRequestHeaders: [String: String]
 
     package var failure: WireDriveUploadError?
 
@@ -111,11 +105,8 @@ package struct WireDriveDirectUploadRecord: Identifiable, Equatable, Hashable, S
         createdAt: Date,
         updatedAt: Date,
         attemptCount: Int = 0,
-        sessionIdentifier: String? = nil,
-        taskIdentifier: Int? = nil,
         presignedURL: URL? = nil,
         presignedURLExpiresAt: Date? = nil,
-        presignedRequestHeaders: [String: String] = [:],
         failure: WireDriveUploadError? = nil
     ) {
         self.uploadID = uploadID
@@ -132,11 +123,8 @@ package struct WireDriveDirectUploadRecord: Identifiable, Equatable, Hashable, S
         self.createdAt = createdAt
         self.updatedAt = updatedAt
         self.attemptCount = attemptCount
-        self.sessionIdentifier = sessionIdentifier
-        self.taskIdentifier = taskIdentifier
         self.presignedURL = presignedURL
         self.presignedURLExpiresAt = presignedURLExpiresAt
-        self.presignedRequestHeaders = presignedRequestHeaders
         self.failure = failure
     }
 

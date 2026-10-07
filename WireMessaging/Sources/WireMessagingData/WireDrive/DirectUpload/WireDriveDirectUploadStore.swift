@@ -142,11 +142,8 @@ private extension ManagedUpload {
             createdAt: createdAt,
             updatedAt: updatedAt,
             attemptCount: Int(attemptCount),
-            sessionIdentifier: sessionIdentifier,
-            taskIdentifier: taskIdentifier >= 0 ? Int(taskIdentifier) : nil,
             presignedURL: presignedURL.flatMap(URL.init(string:)),
             presignedURLExpiresAt: presignedURLExpiresAt,
-            presignedRequestHeaders: presignedRequestHeaders.flatMap(Self.decodeHeaders) ?? [:],
             failure: WireDriveUploadError(
                 reasonCode: WireDriveUploadError.ReasonCode(rawValue: failureReasonCode) ?? .none,
                 message: failureMessage
@@ -169,25 +166,10 @@ private extension ManagedUpload {
         createdAt = record.createdAt
         updatedAt = record.updatedAt
         attemptCount = Int16(clamping: record.attemptCount)
-        sessionIdentifier = record.sessionIdentifier
-        taskIdentifier = record.taskIdentifier.map(Int64.init) ?? -1
         presignedURL = record.presignedURL?.absoluteString
         presignedURLExpiresAt = record.presignedURLExpiresAt
-        presignedRequestHeaders = record.presignedRequestHeaders.isEmpty
-            ? nil
-            : Self.encodeHeaders(record.presignedRequestHeaders)
         failureReasonCode = (record.failure?.reasonCode ?? .none).rawValue
         failureMessage = record.failure?.reasonMessage
-    }
-
-    static func encodeHeaders(_ headers: [String: String]) -> String? {
-        guard let data = try? JSONEncoder().encode(headers) else { return nil }
-        return String(data: data, encoding: .utf8)
-    }
-
-    static func decodeHeaders(_ json: String) -> [String: String]? {
-        guard let data = json.data(using: .utf8) else { return nil }
-        return try? JSONDecoder().decode([String: String].self, from: data)
     }
 }
 

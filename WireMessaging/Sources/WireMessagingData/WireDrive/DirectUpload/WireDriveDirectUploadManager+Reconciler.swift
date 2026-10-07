@@ -28,7 +28,7 @@ package extension WireDriveDirectUploadManager {
         package enum Action: Sendable, Equatable {
 
             /// A live task was found for a record that claims to be uploading. Rebind to it.
-            case adoptTask(uploadID: UUID, taskIdentifier: Int, bytesSent: Int64, totalBytes: Int64)
+            case adoptTask(uploadID: UUID, bytesSent: Int64, totalBytes: Int64)
 
             /// The completion callback appears to be in flight. Wait briefly before deciding.
             case awaitCompletion(uploadID: UUID, taskIdentifier: Int)
@@ -140,7 +140,6 @@ package extension WireDriveDirectUploadManager {
         private func adopting(_ snapshot: WireDriveDirectUploadTaskSnapshot, uploadID: UUID) -> Action {
             .adoptTask(
                 uploadID: uploadID,
-                taskIdentifier: snapshot.taskIdentifier,
                 bytesSent: snapshot.bytesSent,
                 totalBytes: snapshot.totalBytes
             )
@@ -171,11 +170,10 @@ extension WireDriveDirectUploadManager {
 
     func execute(_ action: Reconciler.Action) async {
         switch action {
-        case let .adoptTask(uploadID, taskIdentifier, bytesSent, totalBytes):
+        case let .adoptTask(uploadID, bytesSent, totalBytes):
             // The transfer survived: rebind to it rather than starting a second one.
             await transition(uploadID: uploadID) {
                 $0.state = .uploading
-                $0.taskIdentifier = taskIdentifier
             }
 
             if totalBytes > 0 {
@@ -227,7 +225,6 @@ extension WireDriveDirectUploadManager {
                 try? fileCache.delete(stagedFileName: record.stagedFileName)
                 await transition(uploadID: uploadID) {
                     $0.state = .uploaded
-                    $0.taskIdentifier = nil
                 }
                 progress[uploadID] = 1
                 publishToTracker()

@@ -304,7 +304,6 @@ package final class WireDriveDirectUploadManager:
             $0.attemptCount = 0
             $0.presignedURL = nil
             $0.presignedURLExpiresAt = nil
-            $0.taskIdentifier = nil
         }
 
         publishToTracker()
@@ -527,22 +526,16 @@ extension WireDriveDirectUploadManager {
         var request = URLRequest(url: presignedURL)
         request.httpMethod = "PUT"
 
-        for (field, value) in record.presignedRequestHeaders {
-            request.setValue(value, forHTTPHeaderField: field)
-        }
-
-        guard let taskIdentifier = await attempt(uploadID: uploadID, operation: {
+        guard await attempt(uploadID: uploadID, operation: {
             try session.startUpload(
                 uploadID: uploadID,
                 request: request,
                 fileURL: fileCache.url(stagedFileName: record.stagedFileName)
             )
-        }) else { return }
+        }) != nil else { return }
 
         await transition(uploadID: uploadID) {
             $0.state = .uploading
-            $0.taskIdentifier = taskIdentifier
-            $0.sessionIdentifier = self.session.identifier
             $0.attemptCount += 1
         }
     }
@@ -551,7 +544,6 @@ extension WireDriveDirectUploadManager {
         await transition(uploadID: uploadID) {
             $0.state = .failed
             $0.failure = error
-            $0.taskIdentifier = nil
         }
 
         progress[uploadID] = nil

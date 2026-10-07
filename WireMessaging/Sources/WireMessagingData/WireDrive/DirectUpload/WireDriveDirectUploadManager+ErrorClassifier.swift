@@ -196,7 +196,6 @@ extension WireDriveDirectUploadManager {
             await transition(uploadID: uploadID) {
                 $0.state = .uploaded
                 $0.failure = nil
-                $0.taskIdentifier = nil
             }
             publishToTracker()
 
@@ -223,7 +222,6 @@ extension WireDriveDirectUploadManager {
         WireLogger.wireDrive.info("silently restarting drive upload, reason: \(reason)")
 
         await transition(uploadID: uploadID) { record in
-            record.taskIdentifier = nil
             record.failure = nil
 
             switch reason {
@@ -264,7 +262,6 @@ extension WireDriveDirectUploadManager {
 
         await transition(uploadID: uploadID) {
             $0.state = .preChecked
-            $0.taskIdentifier = nil
         }
         progress[uploadID] = nil
         publishToTracker()

@@ -41,11 +41,8 @@ struct WireDriveDirectUploadStoreTests {
         let record = WireDriveDirectUploadRecord.fixture(
             state: .uploading,
             attemptCount: 2,
-            sessionIdentifier: "com.wire.drive.upload-abc",
-            taskIdentifier: 7,
             presignedURL: URL(string: "https://example.com/put?X-Amz-Signature=abc")!,
             presignedURLExpiresAt: Date(timeIntervalSince1970: 1_700_000_900),
-            presignedRequestHeaders: ["x-amz-meta-extra": "value"],
             failure: .serverError(statusCode: 503)
         )
 
@@ -62,11 +59,8 @@ struct WireDriveDirectUploadStoreTests {
         // Given
         let record = WireDriveDirectUploadRecord.fixture(
             mimeType: nil,
-            sessionIdentifier: nil,
-            taskIdentifier: nil,
             presignedURL: nil,
             presignedURLExpiresAt: nil,
-            presignedRequestHeaders: [:],
             failure: nil
         )
 

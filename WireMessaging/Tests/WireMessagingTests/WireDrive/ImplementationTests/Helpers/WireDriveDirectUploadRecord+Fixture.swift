@@ -37,11 +37,8 @@ extension WireDriveDirectUploadRecord {
         createdAt: Date = Date(timeIntervalSince1970: 1_700_000_000),
         updatedAt: Date = Date(timeIntervalSince1970: 1_700_000_000),
         attemptCount: Int = 0,
-        sessionIdentifier: String? = nil,
-        taskIdentifier: Int? = nil,
         presignedURL: URL? = nil,
         presignedURLExpiresAt: Date? = nil,
-        presignedRequestHeaders: [String: String] = [:],
         failure: WireDriveUploadError? = nil
     ) -> Self {
         WireDriveDirectUploadRecord(
@@ -59,11 +56,8 @@ extension WireDriveDirectUploadRecord {
             createdAt: createdAt,
             updatedAt: updatedAt,
             attemptCount: attemptCount,
-            sessionIdentifier: sessionIdentifier,
-            taskIdentifier: taskIdentifier,
             presignedURL: presignedURL,
             presignedURLExpiresAt: presignedURLExpiresAt,
-            presignedRequestHeaders: presignedRequestHeaders,
             failure: failure
         )
     }

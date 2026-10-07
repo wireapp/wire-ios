@@ -87,7 +87,7 @@ struct WireDriveDirectUploadManagerReconcilerTests {
         // Then
         #expect(
             actions == [
-                .adoptTask(uploadID: record.uploadID, taskIdentifier: 42, bytesSent: 512, totalBytes: 2048)
+                .adoptTask(uploadID: record.uploadID, bytesSent: 512, totalBytes: 2048)
             ]
         )
     }
@@ -113,7 +113,7 @@ struct WireDriveDirectUploadManagerReconcilerTests {
         // Then
         #expect(
             actions == [
-                .adoptTask(uploadID: record.uploadID, taskIdentifier: 7, bytesSent: 1024, totalBytes: 2048)
+                .adoptTask(uploadID: record.uploadID, bytesSent: 1024, totalBytes: 2048)
             ]
         )
     }
