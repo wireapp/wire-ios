@@ -27,21 +27,17 @@ protocol FeatureChangeAlertPresenting: AnyObject {
 }
 
 /// Presents alerts for feature-config changes (e2ei, file sharing,
-/// self-deleting messages, conversation guest links), sourced from either
-/// the legacy `.featureDidChangeNotification` or the new
+/// self-deleting messages, conversation guest links), sourced from the
 /// `UserSession.observeFeatureStates()` publisher.
 
 final class FeatureChangeNotifier {
 
     // MARK: - Private Property
 
-    private let notificationCenter: NotificationCenter
     private let userSession: UserSession
-    private let featureRepositoryProvider: any LegacyFeatureRepositoryProvider
     private let handlers: [Feature.Name: any FeatureChangeHandler]
     private let defaultHandler: any FeatureChangeHandler = DefaultFeatureChangeHandler()
 
-    private var featureChangeObserverToken: Any?
     private var featureStateCancellable: AnyCancellable?
 
     weak var presenter: FeatureChangeAlertPresenting?
@@ -49,23 +45,11 @@ final class FeatureChangeNotifier {
     // MARK: - Init
 
     init(
-        notificationCenter: NotificationCenter,
         userSession: UserSession,
-        featureRepositoryProvider: any LegacyFeatureRepositoryProvider,
         handlers: [Feature.Name: any FeatureChangeHandler] = [:]
     ) {
-        self.notificationCenter = notificationCenter
         self.userSession = userSession
-        self.featureRepositoryProvider = featureRepositoryProvider
         self.handlers = handlers
-
-        self.featureChangeObserverToken = notificationCenter.addObserver(
-            forName: .featureDidChangeNotification,
-            object: nil,
-            queue: .main
-        ) { [weak self] notification in
-            self?.notifyFeatureChange(notification)
-        }
 
         self.featureStateCancellable = userSession.observeFeatureStates()
             .filter(\.needsToNotifyUser)
@@ -75,20 +59,7 @@ final class FeatureChangeNotifier {
             }
     }
 
-    deinit {
-        if let featureChangeObserverToken {
-            notificationCenter.removeObserver(featureChangeObserverToken)
-        }
-    }
-
     // MARK: - Private Method
-
-    private func notifyFeatureChange(_ note: Notification) {
-        guard let change = note.object as? LegacyFeatureRepository.FeatureChange else { return }
-        Task {
-            await present(featureState: change.featureState, acknowledger: featureRepositoryProvider.featureRepository)
-        }
-    }
 
     private func notifyFeatureStateChange(_ featureState: FeatureState) {
         Task {
@@ -117,11 +88,3 @@ extension FeatureChangeNotifier: FeatureChangeAcknowledger {
         }
     }
 }
-
-// MARK: - LegacyFeatureRepositoryProvider
-
-protocol LegacyFeatureRepositoryProvider {
-    var featureRepository: LegacyFeatureRepository { get }
-}
-
-extension ZMUserSession: LegacyFeatureRepositoryProvider {}
