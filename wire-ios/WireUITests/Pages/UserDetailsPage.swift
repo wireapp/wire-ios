@@ -57,6 +57,28 @@ class UserDetailsPage: PageModel {
         userNameInfo.value as? String
     }
 
+    @discardableResult
+    func verifyName(_ name: String) -> UserDetailsPage {
+        XCTAssertEqual(
+            nameInfo.value as? String ?? nameInfo.label,
+            name,
+            "Name did not match \(name)"
+        )
+        return self
+    }
+
+    @discardableResult
+    func verifyUsername(_ username: String) -> UserDetailsPage {
+        let expectedUsername = "@\(username)"
+
+        XCTAssertEqual(
+            userNameInfo.value as? String ?? userNameInfo.label,
+            expectedUsername,
+            "Username did not match \(expectedUsername)"
+        )
+        return self
+    }
+
     func sendConnectionRequest() -> UserDetailsPage {
         connectButton.tap()
         return self

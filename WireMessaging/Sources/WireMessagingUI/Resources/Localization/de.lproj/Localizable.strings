@@ -89,6 +89,7 @@
 "conversation.creationForm.wireCells.toggle" = "Geteiltes Drive";
 "conversation.creationForm.wireCells.description" = "Ermöglichen Sie den Teilnehmern, ihre Dokumente und Mediendateien in einem geteilten Drive zu verwalten. Dieser Vorgang kann nicht rückgängig gemacht werden.";
 "conversation.creationForm.wireCells.learnMore" = "Mehr erfahren";
+"conversation.creationForm.wireCells.sharedDriveAccess" = "Personen außerhalb Ihres Teams können Dateien lesen, jedoch weder hochladen noch bearbeiten.";
 
 
 // MARK: - Channel history
@@ -348,3 +349,5 @@
 "conversation.details.sharedDriveAccessSection.footer.title" = "Bearbeiter können auf alle Dateien zugreifen und diese verwalten. Betrachter können Dateien nur lesen; sie können keine Dateien oder Ordner hochladen, bearbeiten oder verwalten.";
 "conversation.details.sharedDriveAccessSection.footer.subtitle" = "Personen, die nicht zu dem Team gehören, das die Unterhaltung erstellt hat, sind standardmäßig Betrachter.";
 "conversation.details.sharedDriveAccessSection.you" = "Sie";
+"conversation.details.sharedDriveAccessSection.editor" = "Bearbeiter";
+"conversation.details.sharedDriveAccessSection.viewer" = "Betrachter";
