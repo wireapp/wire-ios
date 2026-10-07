@@ -1222,16 +1222,26 @@ internal enum L10n {
     internal enum AccountLimitAlert {
       /// Later
       internal static let later = L10n.tr("Localizable", "account_limit_alert.later", fallback: "Later")
-      /// Log out of current account
-      internal static let logout = L10n.tr("Localizable", "account_limit_alert.logout", fallback: "Log out of current account")
-      /// This device allows up to %d logged-in account(s).
-      /// 
-      /// Log out of your current account now, or choose Later to log out of another account from its profile.
-      internal static func message(_ p1: Int) -> String {
-        return L10n.tr("Localizable", "account_limit_alert.message", p1, fallback: "This device allows up to %d logged-in account(s).\n\nLog out of your current account now, or choose Later to log out of another account from its profile.")
+      /// Log out of this account
+      internal static let logout = L10n.tr("Localizable", "account_limit_alert.logout", fallback: "Log out of this account")
+      internal enum Message {
+        internal enum MaxOne {
+          /// You can only use one account at once on this device. Log out of this account or select Later to log out of the other account.
+          internal static let removeOne = L10n.tr("Localizable", "account_limit_alert.message.max_one.remove_one", fallback: "You can only use one account at once on this device. Log out of this account or select Later to log out of the other account.")
+          /// You can only use one account at once on this device. Log out of this account or select Later to log out of the other accounts.
+          internal static let removeTwo = L10n.tr("Localizable", "account_limit_alert.message.max_one.remove_two", fallback: "You can only use one account at once on this device. Log out of this account or select Later to log out of the other accounts.")
+        }
+        internal enum MaxTwo {
+          /// You can only use two accounts at once on this device. Log out of this account or select Later to log out of the other account.
+          internal static let removeOne = L10n.tr("Localizable", "account_limit_alert.message.max_two.remove_one", fallback: "You can only use two accounts at once on this device. Log out of this account or select Later to log out of the other account.")
+        }
       }
-      /// Account limit reached
-      internal static let title = L10n.tr("Localizable", "account_limit_alert.title", fallback: "Account limit reached")
+      internal enum Title {
+        /// Remove an account
+        internal static let removeOne = L10n.tr("Localizable", "account_limit_alert.title.remove_one", fallback: "Remove an account")
+        /// Remove 2 accounts
+        internal static let removeTwo = L10n.tr("Localizable", "account_limit_alert.title.remove_two", fallback: "Remove 2 accounts")
+      }
     }
     internal enum AddEmailPasswordStep {
       internal enum CtaButton {
@@ -5743,6 +5753,16 @@ internal enum L10n {
         internal enum AddAccount {
           /// Add an account
           internal static let title = L10n.tr("Localizable", "self.settings.add_account.title", fallback: "Add an account")
+          internal enum Error {
+            /// Plural format key: "%#@number_of_accounts@"
+            internal static func message(_ p1: Int) -> String {
+              return L10n.tr("Localizable", "self.settings.add_account.error.message", p1, fallback: "Plural format key: \"%#@number_of_accounts@\"")
+            }
+            /// Plural format key: "%#@number_of_accounts@"
+            internal static func title(_ p1: Int) -> String {
+              return L10n.tr("Localizable", "self.settings.add_account.error.title", p1, fallback: "Plural format key: \"%#@number_of_accounts@\"")
+            }
+          }
         }
         internal enum AddAccountOrTeam {
           /// Add Account or Team

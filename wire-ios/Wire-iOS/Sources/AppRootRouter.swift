@@ -463,18 +463,33 @@ extension AppRootRouter: AppStateCalculatorDelegate {
         hasCheckedAccountLimit = true
 
         let maxAccounts = sessionManager.maxNumberAccounts
-        guard sessionManager.accountManager.numberOfAccounts > maxAccounts else { return }
+        let excessAccounts = sessionManager.accountManager.numberOfAccounts - maxAccounts
+        guard excessAccounts > 0 else { return }
+
+        let removesTwo = excessAccounts >= 2
+        let title = removesTwo
+            ? L10n.Localizable.AccountLimitAlert.Title.removeTwo
+            : L10n.Localizable.AccountLimitAlert.Title.removeOne
+        let message = switch (maxAccounts, removesTwo) {
+        case (1, true): L10n.Localizable.AccountLimitAlert.Message.MaxOne.removeTwo
+        case (1, false): L10n.Localizable.AccountLimitAlert.Message.MaxOne.removeOne
+        default: L10n.Localizable.AccountLimitAlert.Message.MaxTwo.removeOne
+        }
 
         let alert = UIAlertController(
-            title: L10n.Localizable.AccountLimitAlert.title,
-            message: L10n.Localizable.AccountLimitAlert.message(maxAccounts),
+            title: title,
+            message: message,
             preferredStyle: .alert
         )
         alert.addAction(UIAlertAction(title: L10n.Localizable.AccountLimitAlert.later, style: .cancel))
-        alert.addAction(UIAlertAction(title: L10n.Localizable.AccountLimitAlert.logout, style: .destructive) { [weak self] _ in
-            guard let logOutViewController = self?.logOutHelper.makeLogOutViewControllerToPresent() else { return }
-            self?.rootViewController.present(logOutViewController, animated: true)
-        })
+        alert
+            .addAction(UIAlertAction(
+                title: L10n.Localizable.AccountLimitAlert.logout,
+                style: .destructive
+            ) { [weak self] _ in
+                guard let logOutViewController = self?.logOutHelper.makeLogOutViewControllerToPresent() else { return }
+                self?.rootViewController.present(logOutViewController, animated: true)
+            })
         rootViewController.present(alert, animated: true)
     }
 
