@@ -228,6 +228,7 @@ extension WireCallCenterV3 {
         )
 
         handleEvent("answered-call") {
+            self.callsAnsweredElsewhere.remove(conversationId)
             let callState = CallState.answered(degraded: self.isDegraded(conversationId: conversationId))
             self.handle(callState: callState, conversationId: conversationId)
         }
@@ -256,6 +257,7 @@ extension WireCallCenterV3 {
         )
 
         handleEvent("established-call") {
+            self.callsAnsweredElsewhere.remove(conversationId)
             // WORKAROUND: the call established handler is called once for every participant in a
             // group call. Until that's no longer the case we must take care to only set establishedDate once.
             if self.callState(conversationId: conversationId) != .established {
@@ -303,8 +305,12 @@ extension WireCallCenterV3 {
             if reason == .answeredElsewhere, self.callSnapshots[conversationId]?.isGroup == true {
                 self.callsAnsweredElsewhere.insert(conversationId)
                 reason = .stillOngoing
-            } else if reason == .normal, self.callsAnsweredElsewhere.contains(conversationId) {
-                reason = .answeredElsewhere
+            } else if reason != .stillOngoing {
+                let wasAnsweredElsewhere = self.callsAnsweredElsewhere.remove(conversationId) != nil
+                if reason == .normal, wasAnsweredElsewhere {
+                    reason = .answeredElsewhere
+                }
+                self.clearAnsweredElsewhereNotificationState(conversationId: conversationId)
             }
 
             self.handle(

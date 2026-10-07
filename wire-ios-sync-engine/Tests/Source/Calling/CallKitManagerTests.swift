@@ -1154,6 +1154,24 @@ class CallKitManagerTest: DatabaseTest {
         XCTAssertEqual(callKitProvider.lastEndedReason, .answeredElsewhere)
     }
 
+    func testThatOngoingGroupCallAnsweredElsewhereEndsCallKitCallAsAnsweredElsewhere() {
+        let conversation = conversation()
+        let otherUser = otherUser(moc: uiMOC)
+        sut.reportIncomingCall(from: otherUser, in: conversation, hasVideo: false)
+
+        sut.callCenterDidChange(
+            callState: .incoming(isVideo: false, shouldRing: false, degraded: false),
+            conversation: conversation,
+            caller: otherUser,
+            timestamp: nil,
+            previousCallState: .incoming(isVideo: false, shouldRing: true, degraded: false),
+            callEndReason: .answeredElsewhere
+        )
+
+        XCTAssertEqual(callKitProvider.timesReportCallEndedAtCalled, 1)
+        XCTAssertEqual(callKitProvider.lastEndedReason, .answeredElsewhere)
+    }
+
     // MARK: - Rejecting Calls
 
     func test_itProcessesCallEventsBeforeRejectingCall() {

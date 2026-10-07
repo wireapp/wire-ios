@@ -19,6 +19,7 @@
 import avs
 import Combine
 import Foundation
+import enum WireFoundation.AnsweredElsewhereCallKey
 import WireLogging
 
 /// WireCallCenter is used for making Wire calls and observing their state. There can only be one instance of the
@@ -176,7 +177,6 @@ extension WireCallCenterV3 {
         conversationDeletionObservers.removeValue(forKey: conversationId)
         callSnapshots.removeValue(forKey: conversationId)
         clientsRequestCompletionsByConversationId.removeValue(forKey: conversationId)
-        callsAnsweredElsewhere.remove(conversationId)
     }
 
     /// Creates a snapshot for the specified call and adds it to the `callSnapshots` array.
@@ -214,6 +214,9 @@ extension WireCallCenterV3 {
         let group = conversation.conversationType == .group
 
         callsAnsweredElsewhere.remove(conversationId)
+        if callStarter != selfUserId {
+            clearAnsweredElsewhereNotificationState(conversationId: conversationId)
+        }
         callSnapshots[conversationId] = CallSnapshot(
             messageProtocol: conversation.messageProtocol,
             callParticipants: callParticipants,
@@ -245,6 +248,14 @@ extension WireCallCenterV3 {
             Self.logger.info("closing call because conversation was deleted")
             closeCall(conversationId: conversationId)
         }
+    }
+
+    func clearAnsweredElsewhereNotificationState(conversationId: AVSIdentifier) {
+        let key = AnsweredElsewhereCallKey.make(
+            accountID: selfUserId.identifier,
+            conversationID: conversationId.identifier
+        )
+        VoIPPushHelper.storage.removeObject(forKey: key)
     }
 
 }
@@ -1188,6 +1199,7 @@ extension WireCallCenterV3 {
         callState.logState()
 
         var callState = callState
+        var callEndReason: CallClosedReason?
 
         if case .terminating(reason: .stillOngoing) = callState {
 
@@ -1195,6 +1207,9 @@ extension WireCallCenterV3 {
                 callState = .terminating(reason: .securityDegraded)
             } else if canJoinCall(conversationId: conversationId) {
                 callState = .incoming(isVideo: false, shouldRing: false, degraded: false)
+                if callsAnsweredElsewhere.contains(conversationId) {
+                    callEndReason = .answeredElsewhere
+                }
             }
         }
 
@@ -1226,7 +1241,8 @@ extension WireCallCenterV3 {
                 conversationId: conversationId,
                 callerId: callerId,
                 messageTime: messageTime,
-                previousCallState: previousCallState
+                previousCallState: previousCallState,
+                callEndReason: callEndReason
             )
             notification.post(in: context.notificationContext)
         }

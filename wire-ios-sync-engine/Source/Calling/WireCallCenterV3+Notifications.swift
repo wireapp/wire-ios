@@ -108,6 +108,34 @@ public protocol WireCallCenterCallStateObserver: AnyObject {
         timestamp: Date?,
         previousCallState: CallState?
     )
+
+    func callCenterDidChange(
+        callState: CallState,
+        conversation: ZMConversation,
+        caller: UserType,
+        timestamp: Date?,
+        previousCallState: CallState?,
+        callEndReason: CallClosedReason?
+    )
+}
+
+public extension WireCallCenterCallStateObserver {
+    func callCenterDidChange(
+        callState: CallState,
+        conversation: ZMConversation,
+        caller: UserType,
+        timestamp: Date?,
+        previousCallState: CallState?,
+        callEndReason: CallClosedReason?
+    ) {
+        callCenterDidChange(
+            callState: callState,
+            conversation: conversation,
+            caller: caller,
+            timestamp: timestamp,
+            previousCallState: previousCallState
+        )
+    }
 }
 
 public struct WireCallCenterCallStateNotification: SelfPostingNotification {
@@ -119,6 +147,25 @@ public struct WireCallCenterCallStateNotification: SelfPostingNotification {
     let callerId: AVSIdentifier
     let messageTime: Date?
     let previousCallState: CallState?
+    let callEndReason: CallClosedReason?
+
+    init(
+        context: NSManagedObjectContext?,
+        callState: CallState,
+        conversationId: AVSIdentifier,
+        callerId: AVSIdentifier,
+        messageTime: Date?,
+        previousCallState: CallState?,
+        callEndReason: CallClosedReason? = nil
+    ) {
+        self.context = context
+        self.callState = callState
+        self.conversationId = conversationId
+        self.callerId = callerId
+        self.messageTime = messageTime
+        self.previousCallState = previousCallState
+        self.callEndReason = callEndReason
+    }
 }
 
 // MARK: - Missed call observer
@@ -262,7 +309,8 @@ extension WireCallCenterV3 {
                     conversation: conversation,
                     caller: caller,
                     timestamp: note.messageTime,
-                    previousCallState: note.previousCallState
+                    previousCallState: note.previousCallState,
+                    callEndReason: note.callEndReason
                 )
             }
         }

@@ -806,6 +806,24 @@ extension CallKitManager: WireCallCenterCallStateObserver, WireCallCenterMissedC
         timestamp: Date?,
         previousCallState: CallState?
     ) {
+        callCenterDidChange(
+            callState: callState,
+            conversation: conversation,
+            caller: caller,
+            timestamp: timestamp,
+            previousCallState: previousCallState,
+            callEndReason: nil
+        )
+    }
+
+    public func callCenterDidChange(
+        callState: CallState,
+        conversation: ZMConversation,
+        caller: UserType,
+        timestamp: Date?,
+        previousCallState: CallState?,
+        callEndReason: CallClosedReason?
+    ) {
         logger.info("received new call state: \(callState)")
 
         switch callState {
@@ -829,12 +847,13 @@ extension CallKitManager: WireCallCenterCallStateObserver, WireCallCenterMissedC
                 )
 
             } else {
-                logger.info("will report call ended, reason unanswered")
+                let reason = callEndReason?.CXCallEndedReason ?? .unanswered
+                logger.info("will report call ended, reason \(reason)")
 
                 reportCallEnded(
                     in: conversation,
                     atTime: timestamp,
-                    reason: .unanswered
+                    reason: reason
                 )
             }
 
