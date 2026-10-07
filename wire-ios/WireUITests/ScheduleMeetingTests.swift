@@ -165,4 +165,27 @@ final class ScheduleMeetingTests: WireUITestCase {
         XCTAssertEqual(remaining.map(\.id), [meeting.id], "The invalid title created a second meeting")
     }
 
+    @MainActor
+    func testScheduleMeetingWithoutInvitees_TC_11954() async throws {
+        let (host, _, _, _) = try await UserHelper.default.registerMeetingsTeam()
+        let fixtures = try await MeetingsTestHelper(user: host)
+        let page = try launchMeetings(for: host, now: date())
+        let form = try page.schedule()
+        let title = "TC11954 host only"
+        form.replaceTitle(with: title)
+        XCTAssertEqual(form.participantsButton.value as? String, "0")
+        form.assertRepeat("Never")
+        form.assertDateTimes(start: date(minute: 15), end: date(hour: 11, minute: 15))
+        _ = try form.save()
+
+        let meeting = try await onlyMeeting(fixtures, title: title)
+        XCTAssertNil(meeting.recurrence)
+        XCTAssertEqual(meeting.startTime, date(minute: 15))
+        XCTAssertEqual(meeting.endTime, date(hour: 11, minute: 15))
+        let row = page.row(meeting)
+        XCTAssertTrue(row.waitForExistence(timeout: 15), "The new meeting did not appear without refresh")
+        XCTAssertEqual(row.staticTexts["meetingTitle"].label, title)
+        try await assertMembers(fixtures, meeting: meeting, host: host)
+    }
+
 }
