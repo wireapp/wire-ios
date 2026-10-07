@@ -21,6 +21,7 @@ import WireCallingDomain
 import WireCallingDomainSupport
 import WireDesign
 import WireFoundation
+import WireLocators
 
 struct MeetingFormView: View {
     private typealias Strings = L10n.Localizable.WireMeetings.Schedule
@@ -63,19 +64,19 @@ struct MeetingFormView: View {
                     Button(Strings.Cancel.button) {
                         dismiss()
                     }
-                    .accessibilityIdentifier("meetingFormCancel")
+                    .accessibilityIdentifier(Locators.WireMeetings.MeetingForm.cancel)
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     if viewModel.isLoading {
                         ProgressView()
                             .accessibilityLabel(actionButtonLabel)
-                            .accessibilityIdentifier("meetingFormLoading")
+                            .accessibilityIdentifier(Locators.WireMeetings.MeetingForm.loading)
                     } else {
                         Button(actionButtonLabel) {
                             Task { await viewModel.submit() }
                         }
                         .disabled(!viewModel.isNextButtonEnabled)
-                        .accessibilityIdentifier("meetingFormSave")
+                        .accessibilityIdentifier(Locators.WireMeetings.MeetingForm.save)
                     }
                 }
             }
@@ -150,7 +151,7 @@ struct MeetingFormView: View {
         Section {
             HStack {
                 TextField(Strings.SetupTitle.placeholder, text: $viewModel.meetingTitle)
-                    .accessibilityIdentifier("meetingFormTitle")
+                    .accessibilityIdentifier(Locators.WireMeetings.MeetingForm.title)
                     .focused($isTitleFieldFocused)
                 if !viewModel.meetingTitle.isEmpty {
                     Image(systemName: "xmark.circle.fill")
@@ -158,7 +159,7 @@ struct MeetingFormView: View {
                         .onTapGesture {
                             viewModel.clearTitle()
                         }
-                        .accessibilityIdentifier("meetingFormClearTitle")
+                        .accessibilityIdentifier(Locators.WireMeetings.MeetingForm.clearTitle)
                 }
             }
         } header: {
@@ -167,7 +168,7 @@ struct MeetingFormView: View {
             if viewModel.isMeetingTitleTooLong {
                 Text(Strings.SetupTitle.Error.tooLong)
                     .foregroundStyle(ColorTheme.Base.error.color)
-                    .accessibilityIdentifier("meetingFormTitleError")
+                    .accessibilityIdentifier(Locators.WireMeetings.MeetingForm.titleError)
             }
         }
         .textCase(nil)
@@ -198,7 +199,7 @@ struct MeetingFormView: View {
                         .tag(option)
                 }
             }
-            .accessibilityIdentifier("meetingFormRepeat")
+            .accessibilityIdentifier(Locators.WireMeetings.MeetingForm.repeatOption)
         }
     }
 
@@ -229,7 +230,7 @@ struct MeetingFormView: View {
                 .contentShape(.rect)
             }
             .buttonStyle(.plain)
-            .accessibilityIdentifier("meetingFormParticipants")
+            .accessibilityIdentifier(Locators.WireMeetings.MeetingForm.participants)
             .accessibilityValue(String(viewModel.selectedMembers.count))
         }
         .textCase(nil)
@@ -276,7 +277,7 @@ struct MeetingFormView: View {
             DatePicker("", selection: pickerDate ?? date, in: range, displayedComponents: .date)
                 .datePickerStyle(.graphical)
                 .labelsHidden()
-                .accessibilityIdentifier("meetingFormDatePicker")
+                .accessibilityIdentifier(Locators.WireMeetings.MeetingForm.datePicker)
         }
         if expandedField == timeField {
             timePicker(date: pickerDate ?? date, range: range, maximumDate: maximumDate)
@@ -291,7 +292,7 @@ struct MeetingFormView: View {
             maximumDate: maximumDate,
             minuteInterval: Self.timePickerMinuteInterval
         )
-        .accessibilityIdentifier("meetingFormTimePicker")
+        .accessibilityIdentifier(Locators.WireMeetings.MeetingForm.timePicker)
         .id(Calendar.current.isDate(date.wrappedValue, equalTo: range.lowerBound, toGranularity: .hour))
     }
 
@@ -331,10 +332,10 @@ struct MeetingFormView: View {
 
         var accessibilityIdentifier: String {
             switch self {
-            case .startDate: "meetingFormStartDate"
-            case .startTime: "meetingFormStartTime"
-            case .endDate: "meetingFormEndDate"
-            case .endTime: "meetingFormEndTime"
+            case .startDate: Locators.WireMeetings.MeetingForm.startDate.rawValue
+            case .startTime: Locators.WireMeetings.MeetingForm.startTime.rawValue
+            case .endDate: Locators.WireMeetings.MeetingForm.endDate.rawValue
+            case .endTime: Locators.WireMeetings.MeetingForm.endTime.rawValue
             }
         }
     }

@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLocators
 import WireNetwork
 import XCTest
 
@@ -26,19 +27,22 @@ class MeetingsPage: PageModel {
     }
 
     var createMeetingButton: XCUIElement {
-        app.buttons["scheduleMeetingBarButton"]
+        app.buttons[Locators.WireMeetings.MeetingsPage.scheduleButton.rawValue]
     }
 
     var noUpcomingMeetingsText: XCUIElement {
-        app.staticTexts["No upcoming meetings yet"]
+        app.staticTexts[Locators.WireMeetings.MeetingsPage.noUpcomingMeetings.rawValue]
     }
 
     var meetingRows: XCUIElementQuery {
-        app.otherElements.matching(NSPredicate(format: "identifier BEGINSWITH %@", "meetingRow."))
+        app.otherElements.matching(NSPredicate(
+            format: "identifier BEGINSWITH %@",
+            Locators.WireMeetings.MeetingRow.rowPrefix.rawValue
+        ))
     }
 
     var scheduleMeetingOption: XCUIElement {
-        app.buttons["Schedule a Meeting"]
+        app.buttons[Locators.WireMeetings.MeetingsPage.scheduleMeeting.rawValue]
     }
 
     func schedule() throws -> MeetingFormPage {
@@ -53,7 +57,7 @@ class MeetingsPage: PageModel {
 
     @discardableResult
     func showRow(_ meeting: MeetingResponse, start: Date? = nil) throws -> XCUIElement {
-        let list = app.descendants(matching: .any)["meetingsList"].firstMatch
+        let list = app.descendants(matching: .any)[Locators.WireMeetings.MeetingsPage.list.rawValue].firstMatch
         guard list.waitForExistence(timeout: 10) else {
             throw RuntimeError("Meetings list did not appear")
         }
@@ -74,6 +78,6 @@ class MeetingsPage: PageModel {
     }
 
     private func rowIdentifier(_ meeting: MeetingResponse, start: Date) -> String {
-        "meetingRow.\(meeting.id.domain).\(meeting.id.id.uuidString).\(Int(start.timeIntervalSince1970))"
+        Locators.WireMeetings.MeetingRow.rowIdentifier(domain: meeting.id.domain, id: meeting.id.id, start: start)
     }
 }

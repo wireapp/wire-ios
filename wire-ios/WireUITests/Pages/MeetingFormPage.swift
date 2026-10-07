@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireLocators
 import XCTest
 
 class MeetingFormPage: PageModel {
@@ -24,15 +25,15 @@ class MeetingFormPage: PageModel {
     }
 
     var titleField: XCUIElement {
-        app.textFields["meetingFormTitle"]
+        app.textFields[Locators.WireMeetings.MeetingForm.title.rawValue]
     }
 
     var participantsButton: XCUIElement {
-        app.buttons["meetingFormParticipants"]
+        app.buttons[Locators.WireMeetings.MeetingForm.participants.rawValue]
     }
 
     var saveButton: XCUIElement {
-        app.buttons["meetingFormSave"]
+        app.buttons[Locators.WireMeetings.MeetingForm.save.rawValue]
     }
 
     var memberSearchField: XCUIElement {
@@ -40,20 +41,20 @@ class MeetingFormPage: PageModel {
     }
 
     var selectMembersButton: XCUIElement {
-        app.buttons["meetingMembersSelect"]
+        app.buttons[Locators.WireMeetings.MeetingForm.membersSelect.rawValue]
     }
 
-    var cancelButton: XCUIElement { app.buttons["meetingFormCancel"] }
-    var startDateButton: XCUIElement { app.buttons["meetingFormStartDate"] }
-    var startTimeButton: XCUIElement { app.buttons["meetingFormStartTime"] }
-    var endTimeButton: XCUIElement { app.buttons["meetingFormEndTime"] }
-    var repeatButton: XCUIElement { app.buttons["meetingFormRepeat"] }
-    var selectedMembersButton: XCUIElement { app.buttons["meetingMembersSelected"] }
-    var titleError: XCUIElement { app.staticTexts["meetingFormTitleError"] }
-    var loadingIndicator: XCUIElement { app.progressIndicators["meetingFormLoading"] }
+    var cancelButton: XCUIElement { app.buttons[Locators.WireMeetings.MeetingForm.cancel.rawValue] }
+    var startDateButton: XCUIElement { app.buttons[Locators.WireMeetings.MeetingForm.startDate.rawValue] }
+    var startTimeButton: XCUIElement { app.buttons[Locators.WireMeetings.MeetingForm.startTime.rawValue] }
+    var endTimeButton: XCUIElement { app.buttons[Locators.WireMeetings.MeetingForm.endTime.rawValue] }
+    var repeatButton: XCUIElement { app.buttons[Locators.WireMeetings.MeetingForm.repeatOption.rawValue] }
+    var selectedMembersButton: XCUIElement { app.buttons[Locators.WireMeetings.MeetingForm.membersSelected.rawValue] }
+    var titleError: XCUIElement { app.staticTexts[Locators.WireMeetings.MeetingForm.titleError.rawValue] }
+    var loadingIndicator: XCUIElement { app.progressIndicators[Locators.WireMeetings.MeetingForm.loading.rawValue] }
 
     func member(_ user: UserInfo) -> XCUIElement {
-        app.buttons["meetingMember.\(user.id.uppercased())"]
+        app.buttons[Locators.WireMeetings.MeetingForm.memberIdentifier(user.id)]
     }
 
     @discardableResult
@@ -87,7 +88,7 @@ class MeetingFormPage: PageModel {
 
     func selectStartDate(_ date: Date) throws {
         XCTAssertTrue(startDateButton.waitAndTap())
-        let picker = app.descendants(matching: .any)["meetingFormDatePicker"].firstMatch
+        let picker = app.descendants(matching: .any)[Locators.WireMeetings.MeetingForm.datePicker.rawValue].firstMatch
         XCTAssertTrue(picker.waitForExistence(timeout: 5))
         // Use the full calendar date. A bare day number can select an adjacent month.
         let formatter = DateFormatter()
@@ -138,7 +139,8 @@ class MeetingFormPage: PageModel {
 
     @discardableResult
     func replaceTitle(with title: String) -> MeetingFormPage {
-        let clearButton = app.descendants(matching: .any)["meetingFormClearTitle"].firstMatch
+        let clearButton = app.descendants(matching: .any)[Locators.WireMeetings.MeetingForm.clearTitle.rawValue]
+            .firstMatch
         if clearButton.exists {
             clearButton.tap()
         }

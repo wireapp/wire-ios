@@ -19,6 +19,7 @@
 import Foundation
 import notify
 import WireFoundation
+import WireLocators
 import WireNetwork
 import XCTest
 
@@ -184,7 +185,7 @@ final class ScheduleMeetingTests: WireUITestCase {
         XCTAssertEqual(meeting.endTime, date(hour: 11, minute: 15))
         let row = page.row(meeting)
         XCTAssertTrue(row.waitForExistence(timeout: 15), "The new meeting did not appear without refresh")
-        XCTAssertEqual(row.staticTexts["meetingTitle"].label, title)
+        XCTAssertEqual(row.staticTexts[Locators.WireMeetings.MeetingRow.title.rawValue].label, title)
         try await assertMembers(fixtures, meeting: meeting, host: host)
     }
 
@@ -197,7 +198,10 @@ final class ScheduleMeetingTests: WireUITestCase {
         form.replaceTitle(with: "TC11955 future date")
         try form.selectStartDate(date(dayOffset: 1))
         form.assertDateTimes(start: date(minute: 15, dayOffset: 1), end: date(hour: 11, minute: 15, dayOffset: 1))
-        XCTAssertFalse(app.buttons["meetingFormEndDate"].isHittable, "End date must not be editable")
+        XCTAssertFalse(
+            app.buttons[Locators.WireMeetings.MeetingForm.endDate.rawValue].isHittable,
+            "End date must not be editable"
+        )
 
         for minute in [0, 15, 30, 45] {
             form.selectTime(start: true, hour: 15, minute: minute)
@@ -291,8 +295,11 @@ final class ScheduleMeetingTests: WireUITestCase {
             XCTAssertTrue(page.row(meeting).waitForExistence(timeout: 15))
             let nextStart = Calendar.current.date(byAdding: .day, value: option.days, to: meeting.startTime)!
             let nextRow = try page.showRow(meeting, start: nextStart)
-            XCTAssertEqual(nextRow.staticTexts["meetingTitle"].label, meeting.title)
-            XCTAssertEqual(nextRow.staticTexts["meetingRecurrence"].label, option.title)
+            XCTAssertEqual(nextRow.staticTexts[Locators.WireMeetings.MeetingRow.title.rawValue].label, meeting.title)
+            XCTAssertEqual(
+                nextRow.staticTexts[Locators.WireMeetings.MeetingRow.recurrence.rawValue].label,
+                option.title
+            )
             try await fixtures.delete(meeting)
             XCTAssertTrue(nextRow.waitToDisappear(timeout: 15))
             XCTAssertTrue(page.noUpcomingMeetingsText.waitForExistence(timeout: 15))
@@ -331,7 +338,10 @@ final class ScheduleMeetingTests: WireUITestCase {
         form.openParticipants()
         for user in users {
             XCTAssertTrue(form.member(user).waitForExistence(timeout: 10))
-            XCTAssertEqual(app.buttons.matching(identifier: "meetingMember.\(user.id.uppercased())").count, 1)
+            XCTAssertEqual(
+                app.buttons.matching(identifier: Locators.WireMeetings.MeetingForm.memberIdentifier(user.id)).count,
+                1
+            )
         }
         XCTAssertTrue(form.member(users[1]).waitAndTap())
         XCTAssertEqual(form.selectedMembersButton.label, "Selected (2)")

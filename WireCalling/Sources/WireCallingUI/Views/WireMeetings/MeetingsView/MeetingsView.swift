@@ -20,6 +20,7 @@ import SwiftUI
 import WireCallingDomain
 import WireDesign
 import WireFoundation
+import WireLocators
 import WireReusableUIComponents
 
 struct MeetingsView: View {
@@ -175,7 +176,7 @@ struct MeetingsView: View {
             }
         }
         .listStyle(.grouped)
-        .accessibilityIdentifier("meetingsList")
+        .accessibilityIdentifier(Locators.WireMeetings.MeetingsPage.list)
         .scrollContentBackground(.hidden)
         .background(ColorTheme.Backgrounds.surface.color)
         .refreshable {
