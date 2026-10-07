@@ -301,8 +301,7 @@ private extension FilesView {
             Button {
                 Task {
                     pickedMedia = []
-                    let result = await PHPhotoLibrary.requestAuthorization(for: .readWrite)
-                    guard result == .authorized else { return }
+                    guard await viewModel.requestPhotosPermissions() else { return }
                     isMediaPickerPresented = true
                 }
             } label: {
@@ -343,17 +342,12 @@ private extension FilesView {
 
         case let .failure(error):
             WireLogger.wireDrive.error("drive upload file import failed: \(error)")
+            viewModel.showImportFailedAlert()
         }
     }
 
     func handleMediaPick(_ items: [PhotosPickerItem]) async {
-        var sources: [WireDriveDirectUploadSource?] = []
-
-        for item in items {
-            sources.append(await viewModel.resolveSource(from: item))
-        }
-
-        await viewModel.enqueueUploads(sources: sources.compactMap(\.self))
+        await viewModel.enqueueUploads(mediaItems: items)
     }
 }
 

@@ -37,11 +37,32 @@ package extension FilesViewModel {
         UserDefaults.standard.bool(forKey: "enableDriveDirectUploads")
     }
 
+    private static var pickedMediaDirectoryName: String { "drive-upload-picked" }
+
     var canUpload: Bool {
         uploadDestinationPath != nil && selfUserRole == .editor && isDriveDirectUploadsEnabled
     }
 
+    func requestPhotosPermissions() async -> Bool {
+        let result = await PHPhotoLibrary.requestAuthorization(for: .readWrite)
+        switch result {
+        case .restricted:
+            showRestrictedPermissionsAlert()
+            return false
+        case .denied, .notDetermined:
+            showDeniedPermissionsAlert()
+            return false
+        case .authorized, .limited:
+            fallthrough
+        @unknown default:
+            return true
+        }
+    }
+
     func enqueueUploads(sources: [WireDriveDirectUploadSource]) async {
+        // Only exports owned by Wire are cleaned up; document-picker originals are never touched.
+        defer { removeTemporaryExports(of: sources) }
+
         guard let destinationFolderPath = uploadDestinationPath, !sources.isEmpty else { return }
 
         do {
@@ -50,13 +71,33 @@ package extension FilesViewModel {
                 destinationFolderPath: destinationFolderPath
             )
         } catch let error as WireDriveDirectUploadBatchError {
-            handle(error)
+            showBatchErrorAlert(error)
         } catch {
             WireLogger.wireDrive.error("failed to enqueue drive uploads: \(error)")
+            alert = .unknownError
         }
     }
 
-    func resolveSource(from item: PhotosPickerItem) async -> WireDriveDirectUploadSource? {
+    func enqueueUploads(mediaItems: [PhotosPickerItem]) async {
+        var sources: [WireDriveDirectUploadSource] = []
+        var failedImports = 0
+
+        for item in mediaItems {
+            if let source = await resolveSource(from: item) {
+                sources.append(source)
+            } else {
+                failedImports += 1
+            }
+        }
+
+        await enqueueUploads(sources: sources)
+
+        if failedImports > 0, alert == nil {
+            showImportFailedAlert()
+        }
+    }
+
+    private func resolveSource(from item: PhotosPickerItem) async -> WireDriveDirectUploadSource? {
         guard let identifier = item.itemIdentifier else { return nil }
 
         let fetchResult = PHAsset.fetchAssets(withLocalIdentifiers: [identifier], options: nil)
@@ -67,7 +108,7 @@ package extension FilesViewModel {
         else { return nil }
 
         let directory = FileManager.default.temporaryDirectory
-            .appendingPathComponent("drive-upload-picked/\(UUID().uuidString)", isDirectory: true)
+            .appendingPathComponent("\(Self.pickedMediaDirectoryName)/\(UUID().uuidString)", isDirectory: true)
 
         do {
             try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
@@ -100,7 +141,43 @@ package extension FilesViewModel {
         }
     }
 
-    private func handle(_ error: WireDriveDirectUploadBatchError) {
+    private func removeTemporaryExports(of sources: [WireDriveDirectUploadSource]) {
+        for source in sources where !source.isSecurityScoped {
+            let directory = source.url.deletingLastPathComponent()
+            guard directory.deletingLastPathComponent().lastPathComponent == Self.pickedMediaDirectoryName else {
+                continue
+            }
+            try? FileManager.default.removeItem(at: directory)
+        }
+    }
+
+    // Error handling
+
+    private func showRestrictedPermissionsAlert() {
+        alert = AlertModel(
+            title: Strings.PermissionWarning.title,
+            message: Strings.PermissionWarning.Restrictions.message,
+            actionsButtons: []
+        )
+    }
+
+    private func showDeniedPermissionsAlert() {
+        alert = AlertModel(
+            title: Strings.PermissionWarning.title,
+            message: Strings.PermissionWarning.Denied.message,
+            actionsButtons: []
+        )
+    }
+
+    func showImportFailedAlert() {
+        alert = AlertModel(
+            title: Strings.ImportFailed.title,
+            message: Strings.ImportFailed.message,
+            actionsButtons: []
+        )
+    }
+
+    func showBatchErrorAlert(_ error: WireDriveDirectUploadBatchError) {
         switch error {
         case let .tooManyFiles(limit):
             alert = AlertModel(
@@ -114,6 +191,11 @@ package extension FilesViewModel {
 
         case let .stagingFailed(fileName, message):
             WireLogger.wireDrive.error("could not stage \(fileName) for upload: \(message)")
+            alert = AlertModel(
+                title: Strings.PrepareFailed.title,
+                message: Strings.PrepareFailed.message(fileName),
+                actionsButtons: []
+            )
         }
     }
 }

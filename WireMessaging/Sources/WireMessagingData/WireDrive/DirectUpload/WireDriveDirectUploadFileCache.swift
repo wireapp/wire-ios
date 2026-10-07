@@ -100,7 +100,6 @@ package final class WireDriveDirectUploadFileCache: WireDriveDirectUploadFileCac
                 try fileManager.removeItem(at: destination)
             }
             try fileManager.copyItem(at: sourceURL, to: destination)
-            try? fileManager.removeItem(at: sourceURL)
         } catch {
             throw WireDriveDirectUploadStagingError.copyFailed(error.localizedDescription)
         }

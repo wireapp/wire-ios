@@ -223,6 +223,13 @@
 
 "conversation.wireCells.files.upload.tooManyFiles.title" = "Too many files";
 "conversation.wireCells.files.upload.tooManyFiles.message" = "You can upload up to %d files at a time.";
+"conversation.wireCells.files.upload.prepareFailed.title" = "Upload couldn't start";
+"conversation.wireCells.files.upload.prepareFailed.message" = "\"%@\" couldn't be prepared for upload. Make sure the file is available and your device has enough free storage.";
+"conversation.wireCells.files.upload.importFailed.title" = "Couldn't import files";
+"conversation.wireCells.files.upload.importFailed.message" = "Some of the selected files couldn't be imported, so they weren't uploaded.";
+"conversation.wireCells.files.upload.permissionWarning.title" = "Wire needs access to your Photos";
+"conversation.wireCells.files.upload.permissionWarning.restrictions.message" = "Wire cannot access your library because restrictions are enabled.";
+"conversation.wireCells.files.upload.permissionWarning.denied.message" = "Go to Settings and allow Wire to access your photos.";
 
 // MARK: - Recycle Bin
 "conversation.wireCells.recycleBin.navigationTitle" = "Recycle Bin";

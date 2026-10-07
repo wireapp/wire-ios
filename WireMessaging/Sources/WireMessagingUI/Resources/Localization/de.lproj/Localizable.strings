@@ -192,6 +192,12 @@
 "conversation.wireCells.files.downloadingFile" = "Datei wird heruntergeladen...";
 "conversation.wireCells.files.offlineModeHint" = "Sie können weiterhin auf Ihre Offline-Dateien zugreifen.";
 
+// MARK: - Shared Drive uploads
+
+"conversation.wireCells.files.upload.permissionWarning.title" = "Wire needs access to your Photos";
+"conversation.wireCells.files.upload.permissionWarning.restrictions.message" = "Wire konnte nicht auf Ihre Bibliothek zugreifen, da Einschränkungen aktiviert sind.";
+"conversation.wireCells.files.upload.permissionWarning.denied.message" = "Erlauben Sie Wire Zugriff auf Ihre Fotos in den Einstellungen.";
+
 // MARK: - Recycle Bin
 "conversation.wireCells.recycleBin.navigationTitle" = "Papierkorb";
 "conversation.wireCells.recycleBin.noData.learnMore" = "Erfahren Sie mehr über den Papierkorb";
