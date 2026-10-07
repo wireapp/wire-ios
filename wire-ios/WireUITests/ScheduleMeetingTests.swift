@@ -79,4 +79,33 @@ final class ScheduleMeetingTests: WireUITestCase {
         XCTAssertEqual(members.others.count, invitees.count, "The conversation has missing or duplicate invitees")
     }
 
+    @MainActor
+    func testCancelScheduleMeeting_TC_11948() async throws {
+        let (host, _, _, _) = try await UserHelper.default.registerMeetingsTeam()
+        let fixtures = try await MeetingsTestHelper(user: host)
+        for locale in ["en_GB", "en_US"] {
+            let page = try launchMeetings(for: host, now: date(minute: 7), locale: locale)
+            let form = try page.schedule()
+            XCTAssertTrue(form.titleField.exists)
+            XCTAssertTrue(form.participantsButton.exists)
+            XCTAssertTrue(form.repeatButton.exists)
+            form.assertDateTimes(start: date(minute: 15), end: date(hour: 11, minute: 15), locale: locale)
+            XCTAssertFalse(form.saveButton.isEnabled)
+            _ = try form.cancel()
+            XCTAssertTrue(page.noUpcomingMeetingsText.waitForExistence(timeout: 10))
+            let afterEmptyCancel = try await fixtures.list()
+            XCTAssertTrue(afterEmptyCancel.isEmpty)
+
+            let changedForm = try page.schedule()
+            changedForm.replaceTitle(with: "TC11948 discarded")
+            changedForm.selectRepeat("Daily")
+            XCTAssertTrue(changedForm.saveButton.isEnabled)
+            _ = try changedForm.cancel()
+            XCTAssertTrue(page.noUpcomingMeetingsText.waitForExistence(timeout: 10))
+            XCTAssertEqual(page.meetingRows.count, 0)
+            let afterChangedCancel = try await fixtures.list()
+            XCTAssertTrue(afterChangedCancel.isEmpty)
+        }
+    }
+
 }
