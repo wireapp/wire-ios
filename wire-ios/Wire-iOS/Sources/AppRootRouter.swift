@@ -537,7 +537,6 @@ extension AppRootRouter: AppStateCalculatorDelegate {
             legacyEnvironment: sessionManager.environment,
             newEnvironment: newEnvironment,
             trackingManager: trackingManager,
-            featureRepositoryProvider: userSession,
             featureChangeHandlers: [
                 .e2ei: e2eiNotificationActionsHandler,
                 .selfDeletingMessages: SelfDeletingMessagesChangeHandler(userSession: userSession)

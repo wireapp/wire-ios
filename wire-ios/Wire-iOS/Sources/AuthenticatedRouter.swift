@@ -70,7 +70,6 @@ final class AuthenticatedRouter {
         // TODO: [WPB-18798] remove legacyEnvironment and newEnvironment properties when ticket is implemented
         notificationCenter: NotificationCenter = .default,
         trackingManager: TrackingManager,
-        featureRepositoryProvider: any LegacyFeatureRepositoryProvider,
         featureChangeHandlers: [Feature.Name: any FeatureChangeHandler]
     ) {
         self.activeCallRouter = ActiveCallRouter(
@@ -97,9 +96,7 @@ final class AuthenticatedRouter {
         )
 
         self.featureChangeNotifier = FeatureChangeNotifier(
-            notificationCenter: notificationCenter,
             userSession: userSession,
-            featureRepositoryProvider: featureRepositoryProvider,
             handlers: featureChangeHandlers
         )
 
