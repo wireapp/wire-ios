@@ -18,7 +18,9 @@
 
 public import Foundation
 
+/// Names the shared preference that records conference participation on another device.
 public enum AnsweredElsewhereCallKey {
+    /// Returns the same key in the app and notification service extension for an account and conversation.
     public static func make(accountID: UUID, conversationID: UUID) -> String {
         "answeredElsewhereCall.\(accountID.uuidString).\(conversationID.uuidString)"
     }

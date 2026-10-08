@@ -20,6 +20,7 @@ import Foundation
 import WireFoundation
 import WireNetwork
 
+/// Tracks conference participation across notification events using app-group preferences.
 struct AnsweredElsewhereCallTracker {
     private struct Marker: Codable {
         let conferenceTimestamp: String?
@@ -31,6 +32,8 @@ struct AnsweredElsewhereCallTracker {
 
     let userDefaults: UserDefaults
 
+    /// Records a self `CONFSTART`, clears markers on an unmatched incoming start, and consumes one on `CONFEND`.
+    /// - Returns: `true` when the end event consumes a recent participation marker.
     func track(
         callContent: CallContent,
         conversationID: ConversationID,

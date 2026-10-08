@@ -38,6 +38,8 @@ struct CallContent: Decodable {
     let callerUserID: String?
     let callerClientID: String
     let responded: Bool
+    /// The AVS `CONFSTART` SFT timestamp, used as a best-effort conference identifier.
+    /// `nil` if the field is absent or cannot be decoded.
     let conferenceTimestamp: String?
 
     enum CodingKeys: String, CodingKey {
