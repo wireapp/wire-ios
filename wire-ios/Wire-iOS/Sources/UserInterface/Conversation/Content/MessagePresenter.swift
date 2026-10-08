@@ -48,6 +48,11 @@ final class MessagePresenter: NSObject {
     /// succeeded, failed, or was cancelled, so this never accumulates stale observers.
     var fileAvailabilityObservers: [UUID: FileDownloadObserving] = [:]
 
+    /// The notification dispatcher is switched off while an initial sync runs (e.g. right after a
+    /// backup restore), so a download that finishes during that window never notifies
+    /// `fileAvailabilityObservers`. These tokens re-check the pending downloads once the sync ends.
+    private var initialSyncObservers: [UUID: Any] = [:]
+
     /// Injectable so tests can simulate multiple concurrent pending downloads without a real `ZMUserSession`.
     var makeFileDownloadObserver: (
         _ message: ZMConversationMessage,
@@ -171,6 +176,28 @@ final class MessagePresenter: NSObject {
                 attributes: .safePublic
             )
 
+            initialSyncObservers[nonce] = NotificationInContext.addObserver(
+                name: .initialSync,
+                context: userSession.notificationContext
+            ) { [weak self] _ in
+                DispatchQueue.main.async {
+                    guard let self, self.fileAvailabilityObservers[nonce] != nil else { return }
+
+                    // One-shot: later syncs must not reopen a stale message.
+                    self.initialSyncObservers[nonce] = nil
+
+                    WireLogger.ui.info(
+                        "[WPB-28386] openFileMessage: initial sync finished, re-checking nonce=\(nonce.uuidString) isFileDownloaded=\(message.isFileDownloaded())",
+                        attributes: .safePublic
+                    )
+
+                    guard message.isFileDownloaded() else { return }
+
+                    self.fileAvailabilityObservers[nonce] = nil
+                    self.openFileMessage(message, targetView: targetView)
+                }
+            }
+
             fileAvailabilityObservers[nonce] = makeFileDownloadObserver(message, userSession) { [weak self] message in
                 WireLogger.ui.info(
                     "[WPB-28386] openFileMessage observer fired: nonce=\(nonce.uuidString) downloadState=\(String(describing: message.fileMessageData?.downloadState)) isFileDownloaded=\(message.isFileDownloaded())",
@@ -183,6 +210,7 @@ final class MessagePresenter: NSObject {
                 // The download concluded, either way: stop observing so failed/cancelled
                 // downloads don't leave a stale observer behind.
                 self?.fileAvailabilityObservers[nonce] = nil
+                self?.initialSyncObservers[nonce] = nil
 
                 guard message.isFileDownloaded() else { return }
 
@@ -261,6 +289,7 @@ final class MessagePresenter: NSObject {
     ) {
         if let nonce = message.nonce {
             fileAvailabilityObservers[nonce] = nil
+            initialSyncObservers[nonce] = nil
         }
         modalTargetController?.view.window?.endEditing(true)
 
