@@ -125,6 +125,55 @@ final class BackOffice {
         }
     }
 
+    func unlockMeetingsFeature(teamId: String, basicAuth: String) async throws {
+        let endpoint = backendURL
+            .appendingPathComponent("i")
+            .appendingPathComponent("teams")
+            .appendingPathComponent(teamId)
+            .appendingPathComponent("features")
+            .appendingPathComponent("meetings")
+            .appendingPathComponent("unlocked")
+
+        let (data, code) = try await sendRequest(
+            endpoint: endpoint,
+            method: .put,
+            body: Data("{}".utf8),
+            basicAuth: normalizeBasicAuth(basicAuth)
+        )
+
+        guard code.statusCode == 200 else {
+            throw RuntimeError(
+                "unlockMeetingsFeature failed: HTTP \(code.statusCode) \(String(data: data, encoding: .utf8) ?? "")"
+            )
+        }
+    }
+
+    func enableMeetingsFeature(teamId: String, apiVersion: APIVersion, accessToken: String) async throws {
+        let endpoint = backendURL
+            .appendingPathComponent(String(describing: apiVersion))
+            .appendingPathComponent("teams")
+            .appendingPathComponent(teamId)
+            .appendingPathComponent("features")
+            .appendingPathComponent("meetings")
+        let body = try JSONSerialization.data(withJSONObject: ["status": "enabled"])
+        let (data, response) = try await httpClient.send(
+            url: endpoint,
+            method: .put,
+            body: body,
+            headers: [
+                HttpClient.HeaderKey.contentType: HttpClient.ContentType.jsonUtf8,
+                HttpClient.HeaderKey.accept: HttpClient.ContentType.json,
+                HttpClient.HeaderKey.authorization: "Bearer \(accessToken)"
+            ]
+        )
+
+        guard response.statusCode == 200 else {
+            throw RuntimeError(
+                "enableMeetingsFeature failed: HTTP \(response.statusCode) \(String(data: data, encoding: .utf8) ?? "")"
+            )
+        }
+    }
+
     private func getCellsFeature(teamId: String, basicAuth: String) async throws -> CellsFeatureResponse {
 
         let endpoint = backendURL
