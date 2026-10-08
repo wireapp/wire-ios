@@ -24,6 +24,10 @@ import WireFoundation
 
 final class MeetingLocalStore: MeetingLocalStoreProtocol, @unchecked Sendable {
 
+    enum Error: Swift.Error, Equatable {
+        case failedToSave
+    }
+
     private let context: NSManagedObjectContext
 
     init(context: NSManagedObjectContext) {
@@ -76,15 +80,15 @@ final class MeetingLocalStore: MeetingLocalStoreProtocol, @unchecked Sendable {
         }
     }
 
-    func deleteMeeting(id: WireCallingDomain.QualifiedID) async {
-        await context.perform { [context] in
+    func deleteMeeting(id: WireCallingDomain.QualifiedID) async throws {
+        try await context.perform { [context] in
             let request = StoredMeeting.fetchRequest()
             request.predicate = Self.predicate(id: .init(uuid: id.id, domain: id.domain))
             request.fetchLimit = 1
-            guard let storedMeeting = try? context.fetch(request).first else { return }
+            guard let storedMeeting = try context.fetch(request).first else { return }
 
             context.delete(storedMeeting)
-            _ = context.saveOrRollback()
+            guard context.saveOrRollback() else { throw Error.failedToSave }
         }
     }
 

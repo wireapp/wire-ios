@@ -66,9 +66,9 @@ public extension WireDriveConversation {
             case proteusVerified
         }
 
-        public enum Role: String, Sendable {
-            case editor = "Editor"
-            case viewer = "Viewer"
+        public enum Role: Sendable {
+            case editor
+            case viewer
         }
 
         public enum State: Sendable, Hashable {

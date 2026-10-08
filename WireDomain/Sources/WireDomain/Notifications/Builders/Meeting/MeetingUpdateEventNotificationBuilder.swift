@@ -18,11 +18,21 @@
 
 import Foundation
 import UserNotifications
+import WireCallingDomain
 import WireNetwork
 
 protocol MeetingUpdateEventNotificationBuilderProtocol {
 
     func buildContent(event: MeetingUpdateEvent) async -> UserNotification?
+    func buildContent(event: MeetingUpdateEvent, meeting: Meeting?) async -> UserNotification?
+
+}
+
+extension MeetingUpdateEventNotificationBuilderProtocol {
+
+    func buildContent(event: MeetingUpdateEvent, meeting: Meeting?) async -> UserNotification? {
+        await buildContent(event: event)
+    }
 
 }
 
@@ -36,10 +46,20 @@ struct MeetingUpdateEventNotificationBuilder: MeetingUpdateEventNotificationBuil
     var timeZone: TimeZone = .autoupdatingCurrent
 
     func buildContent(event: MeetingUpdateEvent) async -> UserNotification? {
+        await buildContent(event: event, meeting: nil)
+    }
+
+    func buildContent(event: MeetingUpdateEvent, meeting resolvedMeeting: Meeting?) async -> UserNotification? {
         guard let feature = try? await featureConfigLocalStore.fetchFeature(name: .meetings) else { return nil }
         guard await featureConfigLocalStore.isFeatureEnabled(feature: feature) else { return nil }
 
-        guard let meeting = try? await meetingsAPI.getMeeting(id: event.meetingID) else { return nil }
+        let meeting: Meeting
+        if let resolvedMeeting {
+            meeting = resolvedMeeting
+        } else {
+            guard let response = try? await meetingsAPI.getMeeting(id: event.meetingID) else { return nil }
+            meeting = response.toDomainMeeting()
+        }
         // Only the meeting's owner can edit it, so treat a self-owned meeting as
         // a change made on another device and skip the notification.
         guard meeting.creatorID.id != accountID else { return nil }
@@ -67,9 +87,9 @@ struct MeetingUpdateEventNotificationBuilder: MeetingUpdateEventNotificationBuil
             key: "push.notification.body.senderUpdatedMeeting",
             bundle: .module,
             host.name,
-            dateFormatter.string(from: meeting.startTime),
-            timeFormatter.string(from: meeting.startTime),
-            timeFormatter.string(from: meeting.endTime)
+            dateFormatter.string(from: meeting.start),
+            timeFormatter.string(from: meeting.start),
+            timeFormatter.string(from: meeting.end)
         )
         content.categoryIdentifier = NotificationCategory.meetingUpdate.rawValue
         content.sound = .default

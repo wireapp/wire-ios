@@ -20,12 +20,14 @@ import SwiftUI
 import WireCallingDomain
 import WireDesign
 import WireFoundation
+import WireLocators
 import WireReusableUIComponents
 
 struct MeetingsView: View {
 
     private typealias Strings = L10n.Localizable.WireMeetings.List
 
+    @Environment(\.scenePhase) private var scenePhase
     @State private var viewModel: MeetingsViewModel
 
     /// Called when the user chooses "Edit meeting" in a meeting's menu.
@@ -61,11 +63,17 @@ struct MeetingsView: View {
             viewModel.deleteErrorTitle,
             isPresented: $viewModel.hasDeleteError
         ) {
-            Button(L10n.Localizable.WireMeetings.retry) {
-                Task { await viewModel.retryDelete() }
+            if viewModel.canRetryDelete {
+                Button(L10n.Localizable.WireMeetings.retry) {
+                    Task { await viewModel.retryDelete() }
+                }
+                .accessibilityIdentifier("meetingDeleteRetryButton")
             }
-            .accessibilityIdentifier("meetingDeleteRetryButton")
-            Button(Strings.Delete.Alert.Cancel.button, role: .cancel) {}
+            Button(
+                viewModel.canRetryDelete
+                    ? Strings.Delete.Alert.Cancel.button : L10n.Localizable.WireMeetings.Schedule.Error.Alert.ok,
+                role: .cancel
+            ) {}
         } message: {
             Text(viewModel.deleteErrorMessage)
         }
@@ -85,6 +93,11 @@ struct MeetingsView: View {
         .task {
             await viewModel.observeSystemDateTimeChanges()
         }
+        .onChange(of: scenePhase) { _, newPhase in
+            guard newPhase == .active else { return }
+
+            Task { await viewModel.refreshSystemDateTimeStateAfterSceneBecameActive() }
+        }
     }
 
     @ViewBuilder private var content: some View {
@@ -94,7 +107,7 @@ struct MeetingsView: View {
                 ProgressView()
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .accessibilityLabel(Strings.title)
-                    .accessibilityIdentifier("meetingsLoadProgress")
+                    .accessibilityIdentifier(Locators.WireMeetings.MeetingsPage.loadProgress)
             } else if viewModel.hasLoadError {
                 loadError
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -119,7 +132,7 @@ struct MeetingsView: View {
                 Task { await viewModel.loadInitialData() }
             }
             .wireButtonStyle(.tertiary)
-            .accessibilityIdentifier("meetingsLoadRetryButton")
+            .accessibilityIdentifier(Locators.WireMeetings.MeetingsPage.loadRetryButton)
         }
         .padding()
     }
@@ -137,7 +150,7 @@ struct MeetingsView: View {
                     .listRowSeparator(.hidden)
                     .listRowBackground(Color.clear)
                     .accessibilityLabel(Strings.title)
-                    .accessibilityIdentifier("meetingsLoadProgress")
+                    .accessibilityIdentifier(Locators.WireMeetings.MeetingsPage.loadProgress)
             }
 
             GroupedSections(
@@ -156,6 +169,7 @@ struct MeetingsView: View {
                 HStack {
                     Spacer()
                     ProgressView()
+                        .accessibilityIdentifier(Locators.WireMeetings.MeetingsPage.paginationProgress)
                     Spacer()
                 }
                 .listRowBackground(Color.clear)
@@ -163,6 +177,7 @@ struct MeetingsView: View {
             }
         }
         .listStyle(.grouped)
+        .accessibilityIdentifier(Locators.WireMeetings.MeetingsPage.list)
         .scrollContentBackground(.hidden)
         .background(ColorTheme.Backgrounds.surface.color)
         .refreshable {
@@ -230,6 +245,7 @@ private struct GroupedSections: View {
                 }
             } header: {
                 SectionTitle(formatDay(dayGroup.day))
+                    .accessibilityIdentifier(Locators.WireMeetings.MeetingsPage.dayHeader)
             }
         }
     }
