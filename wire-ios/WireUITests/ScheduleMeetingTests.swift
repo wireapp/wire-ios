@@ -118,7 +118,6 @@ final class ScheduleMeetingTests: WireUITestCase {
             (date(), date(minute: 15), date(hour: 11, minute: 15)),
             (date(hour: 23), date(hour: 23, minute: 15), date(hour: 23, minute: 45)),
             (date(hour: 23, minute: 50), date(hour: 0, dayOffset: 1), date(hour: 1, dayOffset: 1)),
-            // A default at 23:45 has no valid end. Keep this assertion to expose the product defect.
             (date(hour: 23, minute: 30), date(hour: 0, dayOffset: 1), date(hour: 1, dayOffset: 1))
         ]
         for dataset in datasets {
