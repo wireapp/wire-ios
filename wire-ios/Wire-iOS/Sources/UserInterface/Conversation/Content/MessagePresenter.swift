@@ -267,7 +267,6 @@ final class MessagePresenter: NSObject {
         }
         modalTargetController?.view.window?.endEditing(true)
 
-
         if Message.isLocation(message) {
             openLocationMessage(message)
         } else if Message.isVideo(message), message.canBeShared {

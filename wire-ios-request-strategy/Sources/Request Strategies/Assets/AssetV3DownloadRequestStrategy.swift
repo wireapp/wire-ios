@@ -119,7 +119,6 @@ public final class AssetV3DownloadRequestStrategy: AbstractRequestStrategy, ZMDo
     ) {
         var decryptSuccess = false
 
-
         assetClientMessage.isDownloading = false
 
         if response.result == .success {

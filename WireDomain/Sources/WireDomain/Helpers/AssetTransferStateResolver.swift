@@ -51,7 +51,6 @@ public struct AssetTransferStateResolver: AssetTransferStateResolverProtocol {
             return
         }
 
-
         switch status {
         case let .uploaded(data) where data.hasAssetID:
             assetMessage.updateTransferState(
