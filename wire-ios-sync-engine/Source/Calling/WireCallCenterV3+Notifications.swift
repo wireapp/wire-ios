@@ -122,24 +122,6 @@ public struct WireCallCenterCallStateNotification: SelfPostingNotification {
     let messageTime: Date?
     let previousCallState: CallState?
     let callEndReason: CallClosedReason?
-
-    init(
-        context: NSManagedObjectContext?,
-        callState: CallState,
-        conversationId: AVSIdentifier,
-        callerId: AVSIdentifier,
-        messageTime: Date?,
-        previousCallState: CallState?,
-        callEndReason: CallClosedReason?
-    ) {
-        self.context = context
-        self.callState = callState
-        self.conversationId = conversationId
-        self.callerId = callerId
-        self.messageTime = messageTime
-        self.previousCallState = previousCallState
-        self.callEndReason = callEndReason
-    }
 }
 
 // MARK: - Missed call observer
