@@ -524,7 +524,16 @@ final class MarkdownTextView: NextResponderTextView {
 
         // remove list md from whole line
         guard let newLineRange = currentLineRange else { return }
+        activeMarkdown.subtract([.oList, .uList])
         remove([.oList, .uList], from: newLineRange)
+    }
+
+    /// Removes any header styling from the current line.
+    private func removeHeader() {
+        guard let range = currentLineRange else { return }
+        let headers: Markdown = [.h1, .h2, .h3]
+        activeMarkdown.subtract(headers)
+        remove(headers, from: range)
     }
 
     /// Replaces the range with the text and attempts to restore the selection.
@@ -557,6 +566,9 @@ extension MarkdownTextView: MarkdownBarViewDelegate {
 
         switch markdown {
         case .h1, .h2, .h3:
+            // headers and lists are mutually exclusive block-level formats
+            removeListItem()
+
             // apply header to the whole line
             if let range = currentLineRange {
                 // remove any existing header styles before adding new header
@@ -567,9 +579,11 @@ extension MarkdownTextView: MarkdownBarViewDelegate {
             }
 
         case .oList:
+            removeHeader()
             insertListItem(type: .number)
 
         case .uList:
+            removeHeader()
             insertListItem(type: .bullet)
 
         case .code:
