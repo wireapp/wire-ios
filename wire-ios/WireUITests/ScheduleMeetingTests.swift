@@ -382,9 +382,13 @@ final class ScheduleMeetingTests: WireUITestCase {
         let failureID = UUID().uuidString
         let name = "\(UITestConfig.meetingsCreateFailureNotificationPrefix).\(failureID)"
         var token: Int32 = NOTIFY_TOKEN_INVALID
-        XCTAssertEqual(notify_register_check(name, &token), UInt32(NOTIFY_STATUS_OK))
+        guard notify_register_check(name, &token) == UInt32(NOTIFY_STATUS_OK) else {
+            throw RuntimeError("Meeting create control could not be registered")
+        }
         defer { notify_cancel(token) }
-        XCTAssertEqual(notify_set_state(token, 0), UInt32(NOTIFY_STATUS_OK))
+        guard notify_set_state(token, 0) == UInt32(NOTIFY_STATUS_OK) else {
+            throw RuntimeError("Meeting create control could not hold the request")
+        }
         uiTestConfig.meetingsCreateFailureID = failureID
 
         let (host, _, _, _) = try await UserHelper.default.registerMeetingsTeam()
@@ -394,24 +398,33 @@ final class ScheduleMeetingTests: WireUITestCase {
         let title = "TC11969 retained details"
         form.replaceTitle(with: title)
         form.selectRepeat("Weekly")
-        XCTAssertTrue(form.saveButton.waitAndTap())
-        XCTAssertTrue(form.loadingIndicator.waitForExistence(timeout: 10))
-        XCTAssertFalse(form.saveButton.exists, "A second submit action is available while creation is pending")
+        guard form.saveButton.waitAndTap() else { throw RuntimeError("Schedule button was not available") }
+        guard form.loadingIndicator.waitForExistence(timeout: 10), !form.saveButton.exists else {
+            throw RuntimeError("Scheduling did not show a loading indicator without a second submit action")
+        }
         let whilePending = try await fixtures.list()
-        XCTAssertTrue(whilePending.isEmpty)
+        guard whilePending.isEmpty else { throw RuntimeError("A meeting was created while the request was pending") }
 
-        XCTAssertEqual(notify_set_state(token, 1), UInt32(NOTIFY_STATUS_OK))
+        guard notify_set_state(token, 1) == UInt32(NOTIFY_STATUS_OK) else {
+            throw RuntimeError("Meeting create control could not fail the request")
+        }
         let alert = app.alerts["Could not schedule meeting"]
-        XCTAssertTrue(alert.waitForExistence(timeout: 10))
-        XCTAssertTrue(alert.staticTexts["Something went wrong while scheduling the meeting. Please try again."].exists)
+        guard alert.waitForExistence(timeout: 10),
+              alert.staticTexts["Something went wrong while scheduling the meeting. Please try again."].exists else {
+            throw RuntimeError("The expected scheduling error did not appear")
+        }
         let afterFailure = try await fixtures.list()
-        XCTAssertTrue(afterFailure.isEmpty)
-        XCTAssertTrue(alert.buttons["OK"].waitAndTap())
+        guard afterFailure.isEmpty else { throw RuntimeError("The failed request created a meeting") }
+        guard alert.buttons["OK"].waitAndTap() else {
+            throw RuntimeError("The scheduling error could not be dismissed")
+        }
         XCTAssertEqual(form.titleField.value as? String, title)
         form.assertDateTimes(start: date(minute: 15), end: date(hour: 11, minute: 15))
         form.assertRepeat("Weekly")
 
-        XCTAssertEqual(notify_set_state(token, 2), UInt32(NOTIFY_STATUS_OK))
+        guard notify_set_state(token, 2) == UInt32(NOTIFY_STATUS_OK) else {
+            throw RuntimeError("Meeting create control could not restore the request")
+        }
         _ = try form.save()
         let meeting = try await onlyMeeting(fixtures, title: title)
         XCTAssertEqual(meeting.recurrence?.frequency, .weekly)
