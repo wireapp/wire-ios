@@ -70,7 +70,7 @@ public final class WireDatadog {
         RUM.enable(
             with: RUM.Configuration(
                 applicationID: applicationID,
-                appHangThreshold: 0.25
+                appHangThreshold: 2
             )
         )
 
