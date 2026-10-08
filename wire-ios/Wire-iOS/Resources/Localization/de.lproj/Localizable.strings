@@ -2195,3 +2195,11 @@
 "account_blocked.generic_error.alert.switch_accounts" = "Konto wechseln";
 "account_blocked.generic_error.alert.send_logs" = "Fehlerbericht senden";
 "account_blocked.generic_error.alert.retry" = "Wiederholen";
+
+"account_limit_alert.title.remove_one" = "Ein Konto entfernen";
+"account_limit_alert.title.remove_two" = "2 Konten entfernen";
+"account_limit_alert.message.max_one.remove_one" = "Auf diesem Gerät können Sie jeweils nur ein Benutzerkonto verwenden. Melden Sie sich von diesem Konto ab oder wählen Sie „Später“, um sich von dem anderen Konto abzumelden.";
+"account_limit_alert.message.max_one.remove_two" = "Auf diesem Gerät können Sie jeweils nur ein Benutzerkonto verwenden. Melden Sie sich von diesem Konto ab oder wählen Sie „Später“, um sich von den anderen Konten abzumelden.";
+"account_limit_alert.message.max_two.remove_one" = "Auf diesem Gerät können Sie nur zwei Benutzerkonten gleichzeitig verwenden. Melden Sie sich von diesem Konto ab oder wählen Sie „Später“, um sich vom anderen Konto abzumelden.";
+"account_limit_alert.logout" = "Von diesem Konto abmelden";
+"account_limit_alert.later" = "Später";
