@@ -22,12 +22,12 @@ import XCTest
 /// [core-messenger]
 final class BackupRestoreVideoTests: WireUITestCase {
 
-    /// Reproduces WPB-28386: a video received from another device and never played before the backup
+    /// A video received from another device and never played before the backup
     /// must play on the first tap after the backup is restored, in a freshly launched app.
     ///
     /// Requires the local Kalium test service, see `wire-ios/WireUITests/README`.
     @MainActor
-    func testRestoredBackupAfterKillingAppPlaysVideoFromOtherDeviceOnFirstTap_WPB_28386() async throws {
+    func testRestoredBackupAfterKillingAppPlaysVideoFromOtherDeviceOnFirstTap_TC_12157() async throws {
 
         // GIVEN user A received a video from another device (the test service) and did not play it
         let groupName = UserGenerator.generateRandomConversationName()
