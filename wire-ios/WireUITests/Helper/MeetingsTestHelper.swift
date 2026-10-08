@@ -40,9 +40,51 @@ final class MeetingsTestHelper {
             authenticationManager: authenticationManager
         )
         self.networkStack = networkStack
-        self.api = MeetingsAPIBuilder(apiService: networkStack.apiService).makeAPI(for: userHelper.apiVersion)
-        self.conversationsAPI = ConversationsAPIBuilder(apiService: networkStack.apiService)
+        self.api = MeetingsAPIBuilder(apiService: self.networkStack.apiService)
             .makeAPI(for: userHelper.apiVersion)
+        self.conversationsAPI = ConversationsAPIBuilder(apiService: self.networkStack.apiService)
+            .makeAPI(for: userHelper.apiVersion)
+    }
+
+    var selfUserAPI: any SelfUserAPI {
+        SelfUserAPIBuilder(apiService: networkStack.apiService).makeAPI(for: UserHelper.default.apiVersion)
+    }
+
+    var usersAPI: any UsersAPI {
+        UsersAPIBuilder(apiService: networkStack.apiService).makeAPI(for: UserHelper.default.apiVersion)
+    }
+
+    func create(
+        title: String,
+        start: Date,
+        duration: TimeInterval = 1800,
+        recurrence: MeetingRecurrence? = nil
+    ) async throws -> MeetingResponse {
+        try await api.createMeeting(parameters: CreateMeetingParameters(
+            title: title,
+            startTime: start,
+            endTime: start.addingTimeInterval(duration),
+            timeZoneIdentifier: TimeZone.current.identifier,
+            recurrence: recurrence
+        ))
+    }
+
+    func update(
+        meeting: MeetingResponse,
+        title: String? = nil,
+        start: Date? = nil
+    ) async throws -> MeetingResponse {
+        let duration = meeting.endTime.timeIntervalSince(meeting.startTime)
+        return try await api.updateMeeting(
+            id: meeting.id,
+            parameters: UpdateMeetingParameters(
+                title: title,
+                startTime: start,
+                endTime: start?.addingTimeInterval(duration),
+                recurrence: meeting.recurrence,
+                timeZoneIdentifier: meeting.timeZoneIdentifier
+            )
+        )
     }
 
     func list() async throws -> [MeetingResponse] {
@@ -52,5 +94,4 @@ final class MeetingsTestHelper {
     func delete(_ meeting: MeetingResponse) async throws {
         try await api.deleteMeeting(id: meeting.id)
     }
-
 }

@@ -35,6 +35,10 @@ public struct UITestConfig: Codable {
     /// When `true`, audio recording UI uses a deterministic mock recorder.
     public var useMockAudioRecorder = false
 
+    /// Developer flags to apply at launch, keyed by `DeveloperFlag.rawValue`.
+    /// Overrides any flags already stored in `UserDefaults`.
+    public var developerFlags: [String: Bool] = [:]
+
     /// A fixed current date for Meetings UI tests.
     public var meetingsDate: Date?
 
@@ -42,9 +46,13 @@ public struct UITestConfig: Codable {
     public var meetingsCreateFailureID: String?
     public static let meetingsCreateFailureNotificationPrefix = "com.wire.ios.uitests.meetings.create-failure"
 
-    /// Developer flags to apply at launch, keyed by `DeveloperFlag.rawValue`.
-    /// Overrides any flags already stored in `UserDefaults`.
-    public var developerFlags: [String: Bool] = [:]
+    /// A unique notification name suffix to advance the Meetings test clock across local midnight.
+    public var meetingsClockID: String?
+    public static let meetingsClockNotificationPrefix = "com.wire.ios.uitests.meetings.advance-local-day"
+
+    /// A unique Darwin state name suffix for a controlled Meetings fetch failure.
+    public var meetingsFailureID: String?
+    public static let meetingsFailureNotificationPrefix = "com.wire.ios.uitests.meetings.fetch-failure"
 
     // MARK: - Init
 

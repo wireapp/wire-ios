@@ -89,7 +89,7 @@
 "conversation.creationForm.wireCells.toggle" = "Общий диск";
 "conversation.creationForm.wireCells.description" = "Разрешить участникам управлять своими документами и медиа файлами в общем диске. Это действие не может быть отменено.";
 "conversation.creationForm.wireCells.learnMore" = "Подробнее";
-
+"conversation.creationForm.wireCells.sharedDriveAccess" = "Пользователи, не входящие в вашу команду, могут просматривать файлы, но не могут их загружать или редактировать.";
 
 // MARK: - Channel history
 "conversation.channelHistory.upgradeBanner.title" = "Показывать старые сообщения?";
@@ -342,3 +342,5 @@
 "conversation.details.sharedDriveAccessSection.footer.title" = "Редакторы имеют доступ ко всем файлам и могут управлять ими. Пользователи с правами на просмотр могут только просматривать файлы; они не могут загружать, редактировать или управлять файлами и папками.";
 "conversation.details.sharedDriveAccessSection.footer.subtitle" = "Пользователи, не входящие в команду, создавшую обсуждение, по умолчанию обладают только правами на просмотр.";
 "conversation.details.sharedDriveAccessSection.you" = "Вы";
+"conversation.details.sharedDriveAccessSection.editor" = "Редактор";
+"conversation.details.sharedDriveAccessSection.viewer" = "Просмотрщик";

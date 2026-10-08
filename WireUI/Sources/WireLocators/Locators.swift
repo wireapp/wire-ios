@@ -744,6 +744,7 @@ public enum Locators {
             case loading = "meetingFormLoading"
             case datePicker = "meetingFormDatePicker"
             case timePicker = "meetingFormTimePicker"
+            case selectedMembersSection = "Selected ("
 
             public static func memberIdentifier(_ id: String) -> String {
                 "meetingMember.\(id.uppercased())"
@@ -751,8 +752,13 @@ public enum Locators {
         }
 
         public enum MeetingsPage: String {
+            case loadProgress = "meetingsLoadProgress"
+            case loadRetryButton = "meetingsLoadRetryButton"
+            case paginationProgress = "meetingsPaginationProgress"
             case list = "meetingsList"
+            case dayHeader = "meetingsDayHeader"
             case scheduleButton = "scheduleMeetingBarButton"
+            case meetNow = "Meet Now"
             case scheduleMeeting = "Schedule a Meeting"
             case noUpcomingMeetings = "No upcoming meetings yet"
         }
@@ -763,14 +769,20 @@ public enum Locators {
 
         public enum MeetingRow: String {
             case title = "meetingTitle"
+            case menu = "meetingMenu"
             case time = "meetingTime"
             case recurrence = "meetingRecurrence"
+            case participantOverflow = "meetingParticipantOverflow"
             case rowPrefix = "meetingRow."
             case deleteForMeButton = "Delete Meeting for Me Button"
             case joinButton = "Join Button"
 
             public static func rowIdentifier(domain: String, id: UUID, start: Date) -> String {
                 "meetingRow.\(domain).\(id.uuidString).\(Int(start.timeIntervalSince1970))"
+            }
+
+            public static func avatarIdentifier(_ id: String) -> String {
+                "meetingAvatar.\(id.uppercased())"
             }
         }
     }

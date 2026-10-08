@@ -114,6 +114,7 @@ struct MeetingRow: View {
                             .contentShape(Rectangle())
                     }
                     .menuOrder(.fixed)
+                    .accessibilityIdentifier(Locators.WireMeetings.MeetingRow.menu)
                     .padding(.vertical, -12)
                 }
 
@@ -145,7 +146,9 @@ struct MeetingRow: View {
         .accessibilityElement(children: .contain)
         .accessibilityIdentifier(
             Locators.WireMeetings.MeetingRow.rowIdentifier(
-                domain: meeting.id.domain, id: meeting.id.id, start: occurrence.start
+                domain: meeting.id.domain,
+                id: meeting.id.id,
+                start: occurrence.start
             )
         )
     }

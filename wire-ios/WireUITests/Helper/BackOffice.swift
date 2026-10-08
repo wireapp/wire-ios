@@ -134,16 +134,16 @@ final class BackOffice {
             .appendingPathComponent("meetings")
             .appendingPathComponent("unlocked")
 
-        let (data, response) = try await sendRequest(
+        let (data, code) = try await sendRequest(
             endpoint: endpoint,
             method: .put,
             body: Data("{}".utf8),
             basicAuth: normalizeBasicAuth(basicAuth)
         )
 
-        guard response.statusCode == 200 else {
+        guard code.statusCode == 200 else {
             throw RuntimeError(
-                "unlockMeetingsFeature failed: HTTP \(response.statusCode) \(String(data: data, encoding: .utf8) ?? "")"
+                "unlockMeetingsFeature failed: HTTP \(code.statusCode) \(String(data: data, encoding: .utf8) ?? "")"
             )
         }
     }

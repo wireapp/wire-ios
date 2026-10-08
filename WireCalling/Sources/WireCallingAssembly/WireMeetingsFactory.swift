@@ -43,6 +43,7 @@ public struct WireMeetingsFactory {
         accentColorState: WireMeetingsAccentColorState
     ) -> UIViewController {
         let currentDateProvider = makeCurrentDateProvider()
+
         let createMeetingUseCase = makeCreateMeetingUseCase(
             meetingRepository: meetingRepository,
             conversationRepository: conversationRepository
@@ -51,8 +52,8 @@ public struct WireMeetingsFactory {
             meetingRepository: meetingRepository,
             conversationRepository: conversationRepository
         )
-        let fetchUpcomingMeetingsUseCase = FetchUpcomingMeetingsUseCase(
-            repository: meetingRepository,
+        let fetchUpcomingMeetingsUseCase = makeFetchUpcomingMeetingsUseCase(
+            meetingRepository: meetingRepository,
             currentDateProvider: currentDateProvider
         )
         let observeMeetingChangesUseCase = ObserveMeetingChangesUseCase(repository: meetingRepository)
@@ -99,7 +100,7 @@ public struct WireMeetingsFactory {
     private func makeCurrentDateProvider() -> any CurrentDateProviding {
         #if DEBUG
             if let date = UITestConfig.environment?.meetingsDate {
-                return MeetingsUITestDateProvider(now: date)
+                return MeetingsUITestDateProvider(now: date, clockID: UITestConfig.environment?.meetingsClockID)
             }
         #endif
         return .system
@@ -121,10 +122,20 @@ public struct WireMeetingsFactory {
         return createUseCase
     }
 
-}
-
-#if DEBUG
-    private struct MeetingsUITestDateProvider: CurrentDateProviding {
-        let now: Date
+    private func makeFetchUpcomingMeetingsUseCase(
+        meetingRepository: any MeetingRepositoryProtocol,
+        currentDateProvider: any CurrentDateProviding
+    ) -> any FetchUpcomingMeetingsUseCaseProtocol {
+        let fetchUseCase = FetchUpcomingMeetingsUseCase(
+            repository: meetingRepository,
+            currentDateProvider: currentDateProvider
+        )
+        #if DEBUG
+            if let failureID = UITestConfig.environment?.meetingsFailureID {
+                return MeetingsUITestFetchUseCase(wrapping: fetchUseCase, failureID: failureID)
+            }
+        #endif
+        return fetchUseCase
     }
-#endif
+
+}
