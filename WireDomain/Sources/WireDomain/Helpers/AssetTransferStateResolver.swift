@@ -47,15 +47,10 @@ public struct AssetTransferStateResolver: AssetTransferStateResolverProtocol {
         context: NSManagedObjectContext
     ) {
         guard let assetData = genericMessage.assetData, let status = assetData.status else {
-            WireLogger.assets.warn(
-                "[WPB-28386] resolveTransferState: no assetData/status, nonce=\(assetMessage.nonce?.uuidString ?? "nil") - transferState left at \(assetMessage.transferState.rawValue)"
-            )
+            WireLogger.assets.warn("resolve transfer state: no asset data or status")
             return
         }
 
-        WireLogger.assets.info(
-            "[WPB-28386] resolveTransferState: nonce=\(assetMessage.nonce?.uuidString ?? "nil") hasOriginal=\(assetData.hasOriginal) hasPreview=\(assetData.hasPreview) hasUploaded=\(assetData.hasUploaded) status=\(status)"
-        )
 
         switch status {
         case let .uploaded(data) where data.hasAssetID:
@@ -76,9 +71,7 @@ public struct AssetTransferStateResolver: AssetTransferStateResolverProtocol {
             }
 
         default:
-            WireLogger.assets.warn(
-                "[WPB-28386] resolveTransferState: unhandled status branch for nonce=\(assetMessage.nonce?.uuidString ?? "nil"), transferState left at \(assetMessage.transferState.rawValue)"
-            )
+            WireLogger.assets.warn("resolve transfer state: unhandled upload status")
         }
     }
 

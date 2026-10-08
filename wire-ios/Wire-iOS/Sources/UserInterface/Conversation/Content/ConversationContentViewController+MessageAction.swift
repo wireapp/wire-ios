@@ -35,14 +35,7 @@ extension ConversationContentViewController {
         let isImage = Message.isImage(message)
         let isLocation = Message.isLocation(message)
 
-        WireLogger.assets.info(
-            "[WPB-28386] presentDetails: nonce=\(message.nonce?.uuidString ?? "nil") isFile=\(isFile) isImage=\(isImage) isLocation=\(isLocation)"
-        )
-
         guard isFile || isImage || isLocation else {
-            WireLogger.assets.warn(
-                "[WPB-28386] presentDetails: bailing out, not file/image/location - nonce=\(message.nonce?.uuidString ?? "nil")"
-            )
             return
         }
 
@@ -124,9 +117,6 @@ extension ConversationContentViewController {
                 }
             }
         case .present:
-            WireLogger.assets.info(
-                "[WPB-28386] messageAction .present: nonce=\(message.nonce?.uuidString ?? "nil")"
-            )
             dataSource.selectedMessage = message
             presentDetails(for: message)
         case .save:

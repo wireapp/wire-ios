@@ -18,7 +18,6 @@
 
 import GenericMessageProtocol
 import WireBackup
-import WireLogging
 
 extension MessageBackupModel.Content {
 
@@ -85,11 +84,6 @@ extension MessageBackupModel.Content {
             let original = asset.hasOriginal ? asset.original : nil,
             let uploaded = asset.hasUploaded ? asset.uploaded : nil
         else { return nil }
-
-        WireLogger.backupExport.info(
-            "[WPB-28386] exporting Asset: mimeType=\(original.hasMimeType ? original.mimeType : "nil") originalSize=\(original.size) assetID=\(uploaded.assetID)",
-            attributes: .safePublic
-        )
 
         self = .asset(
             mimeType: original.hasMimeType ? original.mimeType : "application/octet-stream",

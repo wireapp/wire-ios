@@ -161,20 +161,10 @@ final class MessagePresenter: NSObject {
     // MARK: - File
 
     func openFileMessage(_ message: ZMConversationMessage, targetView: UIView) {
-        WireLogger.ui.info(
-            "[WPB-28386] openFileMessage: nonce=\(message.nonce?.uuidString ?? "nil") isFileDownloaded=\(message.isFileDownloaded())",
-            attributes: .safePublic
-        )
-
         if !message.isFileDownloaded() {
             guard let nonce = message.nonce else { return }
 
             message.fileMessageData?.requestFileDownload()
-
-            WireLogger.ui.info(
-                "[WPB-28386] openFileMessage: registering download observer nonce=\(nonce.uuidString)",
-                attributes: .safePublic
-            )
 
             initialSyncObservers[nonce] = NotificationInContext.addObserver(
                 name: .initialSync,
@@ -186,10 +176,7 @@ final class MessagePresenter: NSObject {
                     // One-shot: later syncs must not reopen a stale message.
                     self.initialSyncObservers[nonce] = nil
 
-                    WireLogger.ui.info(
-                        "[WPB-28386] openFileMessage: initial sync finished, re-checking nonce=\(nonce.uuidString) isFileDownloaded=\(message.isFileDownloaded())",
-                        attributes: .safePublic
-                    )
+                    WireLogger.ui.debug("initial sync finished, re-checking pending file download")
 
                     guard message.isFileDownloaded() else { return }
 
@@ -199,10 +186,6 @@ final class MessagePresenter: NSObject {
             }
 
             fileAvailabilityObservers[nonce] = makeFileDownloadObserver(message, userSession) { [weak self] message in
-                WireLogger.ui.info(
-                    "[WPB-28386] openFileMessage observer fired: nonce=\(nonce.uuidString) downloadState=\(String(describing: message.fileMessageData?.downloadState)) isFileDownloaded=\(message.isFileDownloaded())",
-                    attributes: .safePublic
-                )
 
                 // Ignore the change that merely signals the download has started; wait for it to conclude.
                 guard message.fileMessageData?.downloadState != .downloading else { return }
@@ -225,7 +208,7 @@ final class MessagePresenter: NSObject {
             fileMessageData.hasLocalFileData
         else {
             WireLogger.ui.warn(
-                "[WPB-28386] openFileMessage: isFileDownloaded() true but fileMessageData/hasLocalFileData missing, nonce=\(message.nonce?.uuidString ?? "nil")",
+                "file is marked as downloaded but has no local file data",
                 attributes: .safePublic
             )
             return
@@ -239,10 +222,6 @@ final class MessagePresenter: NSObject {
             }
         } else if fileMessageData.isVideo {
             let fileURL = fileMessageData.temporaryURLToDecryptedFile()
-            WireLogger.ui.info(
-                "[WPB-28386] openFileMessage: isVideo, temporaryURLToDecryptedFile=\(fileURL != nil) mediaPlaybackManager=\(mediaPlaybackManager != nil) nonce=\(message.nonce?.uuidString ?? "nil")",
-                attributes: .safePublic
-            )
 
             if let fileURL, let mediaPlaybackManager {
                 let player = AVPlayer(url: fileURL)
@@ -261,7 +240,7 @@ final class MessagePresenter: NSObject {
                 }
             } else {
                 WireLogger.ui.warn(
-                    "[WPB-28386] openFileMessage: falling back to document controller for a video, nonce=\(message.nonce?.uuidString ?? "nil")",
+                    "no playable file URL or playback manager, falling back to document controller for a video",
                     attributes: .safePublic
                 )
                 openDocumentController(for: message, targetView: targetView, withPreview: true)
@@ -293,9 +272,6 @@ final class MessagePresenter: NSObject {
         }
         modalTargetController?.view.window?.endEditing(true)
 
-        WireLogger.assets.info(
-            "[WPB-28386] MessagePresenter.open: nonce=\(message.nonce?.uuidString ?? "nil") isLocation=\(Message.isLocation(message)) isVideo=\(Message.isVideo(message)) isFileTransfer=\(Message.isFileTransfer(message)) isImage=\(Message.isImage(message)) canBeShared=\(message.canBeShared) canBeDownloaded=\(message.canBeDownloaded) fileMessageData=\(message.fileMessageData != nil)"
-        )
 
         if Message.isLocation(message) {
             openLocationMessage(message)

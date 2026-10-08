@@ -349,9 +349,6 @@ willPerformHTTPRedirection:(NSHTTPURLResponse * __unused)response
     Check(URLSession == self.backingSession);
     NSObject<ZMURLSessionDelegate> *delegate = (id) self.delegate;
     ZMLogDebug(@"-- <%@ %p> delegate <%@: %p>", self.class, self, delegate.class, delegate);
-    if ([task isKindOfClass:NSURLSessionDownloadTask.class]) {
-        [WireLoggerObjC logAssetDownloadTask:task data:[self dataForTask:task] error:error];
-    }
     [delegate URLSession:self
          taskDidComplete:task
         transportRequest:[self requestForTask:task]
