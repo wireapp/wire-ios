@@ -91,7 +91,6 @@
 "conversation.creationForm.wireCells.learnMore" = "Mehr erfahren";
 "conversation.creationForm.wireCells.sharedDriveAccess" = "Personen außerhalb Ihres Teams können Dateien lesen, jedoch weder hochladen noch bearbeiten.";
 
-
 // MARK: - Channel history
 "conversation.channelHistory.upgradeBanner.title" = "Ältere Nachrichten anzeigen?";
 "conversation.channelHistory.upgradeBanner.message" = "Upgraden Sie auf eine kostenpflichtige Version, um Channel-Mitgliedern den gesamten Gesprächsverlauf zu bieten.";

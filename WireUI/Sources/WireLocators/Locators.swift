@@ -61,6 +61,7 @@ public enum Locators {
         case bottomBarRecentListButton
         case bottomBarSettingsButton
         case bottomBarDriveButton
+        case bottomBarMeetingsButton
         case createGroupOrSearchButton
         case conversationSearchBar
         case conversationSearchClearButton = "Clear text"
@@ -752,13 +753,52 @@ public enum Locators {
 
     public enum WireMeetings {
 
+        public enum MeetingForm: String {
+            case save = "meetingFormSave"
+            case title = "meetingFormTitle"
+            case clearTitle = "meetingFormClearTitle"
+            case participants = "meetingFormParticipants"
+            case membersSelect = "meetingMembersSelect"
+            case selectedMembersSection = "Selected ("
+
+            public static func memberIdentifier(_ id: String) -> String {
+                "meetingMember.\(id.uppercased())"
+            }
+        }
+
+        public enum MeetingsPage: String {
+            case loadProgress = "meetingsLoadProgress"
+            case loadRetryButton = "meetingsLoadRetryButton"
+            case paginationProgress = "meetingsPaginationProgress"
+            case list = "meetingsList"
+            case dayHeader = "meetingsDayHeader"
+            case scheduleButton = "scheduleMeetingBarButton"
+            case meetNow = "Meet Now"
+            case scheduleMeeting = "Schedule a Meeting"
+            case noUpcomingMeetings = "No upcoming meetings yet"
+        }
+
         public enum MeetingDetails: String {
             case attendingLabel = "Attending Label"
         }
 
         public enum MeetingRow: String {
+            case title = "meetingTitle"
+            case menu = "meetingMenu"
+            case time = "meetingTime"
+            case recurrence = "meetingRecurrence"
+            case participantOverflow = "meetingParticipantOverflow"
+            case rowPrefix = "meetingRow."
             case deleteForMeButton = "Delete Meeting for Me Button"
             case joinButton = "Join Button"
+
+            public static func rowIdentifier(domain: String, id: UUID, start: Date) -> String {
+                "meetingRow.\(domain).\(id.uuidString).\(Int(start.timeIntervalSince1970))"
+            }
+
+            public static func avatarIdentifier(_ id: String) -> String {
+                "meetingAvatar.\(id.uppercased())"
+            }
         }
     }
 
