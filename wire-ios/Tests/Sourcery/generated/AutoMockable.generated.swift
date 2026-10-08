@@ -32,6 +32,7 @@ import WireAccountImageUI
 import WireMessagingDomain
 import WireMessagingUI
 import WireFoundation
+import WireDomain
 
 @testable import Wire
 @testable import WireCommonComponents
@@ -747,6 +748,56 @@ class MockDidPresentNotificationPermissionHintUseCaseProtocol: DidPresentNotific
         }
 
         mock()
+    }
+
+}
+
+class MockFeatureChangeAlertPresenting: FeatureChangeAlertPresenting {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - present
+
+    var present_Invocations: [UIAlertController] = []
+    var present_MockMethod: ((UIAlertController) -> Void)?
+
+    func present(_ alert: UIAlertController) {
+        present_Invocations.append(alert)
+
+        guard let mock = present_MockMethod else {
+            fatalError("no mock for `present`")
+        }
+
+        mock(alert)
+    }
+
+}
+
+class MockFeatureChangeHandler: FeatureChangeHandler {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - alert
+
+    var alertForAcknowledger_Invocations: [(featureState: FeatureState, acknowledger: FeatureChangeAcknowledger)] = []
+    var alertForAcknowledger_MockMethod: ((FeatureState, FeatureChangeAcknowledger) async -> UIAlertController?)?
+    var alertForAcknowledger_MockValue: UIAlertController??
+
+    @MainActor
+    func alert(for featureState: FeatureState, acknowledger: FeatureChangeAcknowledger) async -> UIAlertController? {
+        alertForAcknowledger_Invocations.append((featureState: featureState, acknowledger: acknowledger))
+
+        if let mock = alertForAcknowledger_MockMethod {
+            return await mock(featureState, acknowledger)
+        } else if let mock = alertForAcknowledger_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `alertForAcknowledger`")
+        }
     }
 
 }

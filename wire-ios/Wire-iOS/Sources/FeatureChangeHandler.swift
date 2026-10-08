@@ -23,6 +23,8 @@ import WireDomain
 /// Decides how to react to a given feature's state, e.g. whether to present
 /// an alert (and which one) or silently acknowledge it. Features with no
 /// custom handling fall back to `DefaultFeatureChangeHandler`.
+
+// sourcery: AutoMockable
 protocol FeatureChangeHandler {
     @MainActor
     func alert(
