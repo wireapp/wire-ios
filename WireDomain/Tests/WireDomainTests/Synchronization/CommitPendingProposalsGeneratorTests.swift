@@ -219,6 +219,42 @@ class CommitPendingProposalsGeneratorTests {
         #expect(secondItem?.conversationID == conversationID)
     }
 
+    @Test("It still generates an item when rescheduling a timer reorders it before another timer")
+    func reorderedTimerGeneratesItem() async throws {
+        // GIVEN
+        let firstID = QualifiedID.random()
+        let secondID = QualifiedID.random()
+        await createPendingMLSConversation(id: firstID, proposalDate: Date().addingTimeInterval(30))
+        let secondGroupID = await createPendingMLSConversation(id: secondID, proposalDate: Date().addingTimeInterval(60))
+
+        let (stream, streamContinuation) = AsyncStream.makeStream(of: CommitPendingProposalItem.self)
+        commitPendingProposalItemClosure = { streamContinuation.yield($0) }
+        var iterator = stream.makeAsyncIterator()
+
+        await sut.start()
+
+        // WHEN — the second timer moves before the first one
+        let context = coreDataStack.syncContext
+        await context.perform {
+            PendingProposalTimer.schedule(
+                mlsGroupID: secondGroupID.data,
+                conversationID: secondID.uuid,
+                conversationDomain: secondID.domain,
+                fireDate: Date().addingTimeInterval(0.5),
+                in: context
+            )
+            context.saveOrRollback()
+        }
+
+        // THEN
+        let item = await withTaskCancellationHandler {
+            await iterator.next()
+        } onCancel: {
+            streamContinuation.finish()
+        }
+        #expect(item?.conversationID == secondID)
+    }
+
     @discardableResult
     private func createPendingMLSConversation(id: QualifiedID, proposalDate: Date) async -> MLSGroupID {
         await coreDataStack.syncContext.perform { [context = coreDataStack.syncContext, modelHelper] in

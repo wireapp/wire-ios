@@ -919,6 +919,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             ) else {
                 return
             }
+            PendingProposalTimer.remove(mlsGroupID: mlsGroupID.data, in: context)
             conversation.mlsGroupID = nil
             context.saveOrRollback()
         }

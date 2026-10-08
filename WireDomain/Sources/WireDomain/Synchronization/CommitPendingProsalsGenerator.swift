@@ -191,10 +191,11 @@ extension CommitPendingProposalsGenerator: NSFetchedResultsControllerDelegate {
         }
 
         switch type {
-        case .insert, .update:
+        case .insert, .update, .move:
+            // `.move` is reported when a changed `fireDate` reorders the results sorted by it.
             scheduleCommitIfNeeded(for: timer)
 
-        case .move, .delete:
+        case .delete:
             cancelScheduledCommit(for: timer.mlsGroupID)
 
         @unknown default:
