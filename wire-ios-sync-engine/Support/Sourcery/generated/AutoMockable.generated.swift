@@ -1100,17 +1100,17 @@ public class MockSnoozeCertificateEnrollmentUseCaseProtocol: SnoozeCertificateEn
 
     // MARK: - invoke
 
-    public var invokeEndOfPeriodIsUpdateMode_Invocations: [(endOfPeriod: Date, isUpdateMode: Bool)] = []
-    public var invokeEndOfPeriodIsUpdateMode_MockMethod: ((Date, Bool) async -> Void)?
+    public var invokeEndOfPeriodIsUpdateModeOnReminderDue_Invocations: [(endOfPeriod: Date, isUpdateMode: Bool, onReminderDue: () async -> Void)] = []
+    public var invokeEndOfPeriodIsUpdateModeOnReminderDue_MockMethod: ((Date, Bool, @escaping () async -> Void) async -> Void)?
 
-    public func invoke(endOfPeriod: Date, isUpdateMode: Bool) async {
-        invokeEndOfPeriodIsUpdateMode_Invocations.append((endOfPeriod: endOfPeriod, isUpdateMode: isUpdateMode))
+    public func invoke(endOfPeriod: Date, isUpdateMode: Bool, onReminderDue: @escaping () async -> Void) async {
+        invokeEndOfPeriodIsUpdateModeOnReminderDue_Invocations.append((endOfPeriod: endOfPeriod, isUpdateMode: isUpdateMode, onReminderDue: onReminderDue))
 
-        guard let mock = invokeEndOfPeriodIsUpdateMode_MockMethod else {
-            fatalError("no mock for `invokeEndOfPeriodIsUpdateMode`")
+        guard let mock = invokeEndOfPeriodIsUpdateModeOnReminderDue_MockMethod else {
+            fatalError("no mock for `invokeEndOfPeriodIsUpdateModeOnReminderDue`")
         }
 
-        await mock(endOfPeriod, isUpdateMode)
+        await mock(endOfPeriod, isUpdateMode, onReminderDue)
     }
 
 }

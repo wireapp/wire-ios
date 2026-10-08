@@ -18,6 +18,7 @@
 
 import UIKit
 import WireDataModel
+import WireDomain
 import WireFoundation
 import WireLogging
 import WireNetwork
@@ -44,10 +45,7 @@ final class AuthenticatedRouter {
     private let zClientControllerBuilder: ZClientControllerBuilder
     private let activeCallRouter: ActiveCallRouter<TopOverlayPresenter>
     private let callEndedAnalyticsController: CallEndedAnalyticsController<WireCallCenterV3>
-    private let featureRepositoryProvider: any LegacyFeatureRepositoryProvider
-    private let featureChangeActionsHandler: E2EINotificationActions
-    private let e2eiActivationDateRepository: any E2EIActivationDateRepositoryProtocol
-    private var featureChangeObserverToken: Any?
+    private let featureChangeNotifier: FeatureChangeNotifier?
     private var revokedCertificateObserverToken: Any?
 
     // MARK: - Public Property
@@ -71,9 +69,7 @@ final class AuthenticatedRouter {
         // TODO: [WPB-18798] remove legacyEnvironment and newEnvironment properties when ticket is implemented
         notificationCenter: NotificationCenter = .default,
         trackingManager: TrackingManager,
-        featureRepositoryProvider: any LegacyFeatureRepositoryProvider,
-        featureChangeActionsHandler: E2EINotificationActionsHandler,
-        e2eiActivationDateRepository: any E2EIActivationDateRepositoryProtocol
+        featureChangeHandlers: [Feature.Name: any FeatureChangeHandler]
     ) {
         self.activeCallRouter = ActiveCallRouter(
             mainWindow: mainWindow,
@@ -89,9 +85,6 @@ final class AuthenticatedRouter {
         )
 
         self.notificationCenter = notificationCenter
-        self.featureRepositoryProvider = featureRepositoryProvider
-        self.featureChangeActionsHandler = featureChangeActionsHandler
-        self.e2eiActivationDateRepository = e2eiActivationDateRepository
 
         self.callEndedAnalyticsController = .init(
             contextProvider: userSession.contextProvider,
@@ -101,13 +94,14 @@ final class AuthenticatedRouter {
             currentDateProvider: .system
         )
 
-        self.featureChangeObserverToken = notificationCenter.addObserver(
-            forName: .featureDidChangeNotification,
-            object: nil,
-            queue: .main
-        ) { [weak self] notification in
-            self?.notifyFeatureChange(notification)
+        self.featureChangeNotifier = userSession.clientSessionComponent.map {
+            FeatureChangeNotifier(
+                featureConfigRepository: $0.featureConfigRepository,
+                handlers: featureChangeHandlers
+            )
         }
+
+        featureChangeNotifier?.presenter = self
 
         self.revokedCertificateObserverToken = notificationCenter.addObserver(
             forName: .presentRevokedCertificateWarningAlert,
@@ -119,36 +113,9 @@ final class AuthenticatedRouter {
     }
 
     deinit {
-        if let featureChangeObserverToken {
-            notificationCenter.removeObserver(featureChangeObserverToken)
-        }
-
         if let revokedCertificateObserverToken {
             notificationCenter.removeObserver(revokedCertificateObserverToken)
         }
-    }
-
-    private func notifyFeatureChange(_ note: Notification) {
-        guard
-            let change = note.object as? LegacyFeatureRepository.FeatureChange,
-            let alert = change.hasFurtherActions
-            ? UIAlertController.fromFeatureChangeWithActions(
-                change,
-                acknowledger: featureRepositoryProvider
-                    .featureRepository,
-                actionsHandler: featureChangeActionsHandler
-            )
-            : UIAlertController.fromFeatureChange(
-                change,
-                acknowledger: featureRepositoryProvider.featureRepository
-            )
-        else { return }
-
-        if change == .e2eIEnabled, e2eiActivationDateRepository.e2eiActivatedAt == nil {
-            e2eiActivationDateRepository.storeE2EIActivationDate(Date.now)
-        }
-
-        _zClientViewController?.present(alert, animated: true)
     }
 
     private func notifyRevokedCertificate() {
@@ -158,8 +125,18 @@ final class AuthenticatedRouter {
             sessionManager.logoutCurrentSession()
         }
 
+        present(alert)
+    }
+}
+
+// MARK: - FeatureChangeAlertPresenting
+
+extension AuthenticatedRouter: FeatureChangeAlertPresenting {
+
+    func present(_ alert: UIAlertController) {
         _zClientViewController?.present(alert, animated: true)
     }
+
 }
 
 // MARK: - AuthenticatedRouterProtocol
@@ -189,9 +166,3 @@ extension AuthenticatedRouter: AuthenticatedRouterProtocol {
         }
     }
 }
-
-protocol LegacyFeatureRepositoryProvider {
-    var featureRepository: LegacyFeatureRepository { get }
-}
-
-extension ZMUserSession: LegacyFeatureRepositoryProvider {}

@@ -684,15 +684,6 @@ public extension LegacyFeatureRepository {
         case conversationGuestLinksEnabled
         case conversationGuestLinksDisabled
         case e2eIEnabled
-
-        public var hasFurtherActions: Bool {
-            switch self {
-            case .e2eIEnabled:
-                true
-            default:
-                false
-            }
-        }
     }
 
 }

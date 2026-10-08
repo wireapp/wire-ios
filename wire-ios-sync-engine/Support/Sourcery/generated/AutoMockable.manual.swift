@@ -492,6 +492,15 @@ public class MockUserSession: UserSession {
 
     public var underlyingE2eiFeature: Feature.E2EI!
 
+    // MARK: - selfDeletingMessagesFeature
+
+    public var selfDeletingMessagesFeature: Feature.SelfDeletingMessages {
+        get { return underlyingSelfDeletingMessagesFeature }
+        set(value) { underlyingSelfDeletingMessagesFeature = value }
+    }
+
+    public var underlyingSelfDeletingMessagesFeature: Feature.SelfDeletingMessages!
+
     // MARK: - mlsFeature
 
     public var mlsFeature: Feature.MLS {
