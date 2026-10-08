@@ -298,7 +298,7 @@ final class WireDriveTests: WireUITestCase {
     }
 
     @MainActor
-    func testCreatingFile_DocumentSpreadsheetPresentation() async throws {
+    func testCreatingFile_DocumentSpreadsheetPresentation_TC_12152() async throws {
 
         // GIVEN
         let teamOwner = try await createDriveEnabledConversation(
