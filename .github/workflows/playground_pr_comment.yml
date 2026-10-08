@@ -11,8 +11,8 @@ permissions:
 
 jobs:
   trigger:
-    # Only PR comments starting with /playground
-    if: ${{ github.event.issue.pull_request && startsWith(github.event.comment.body, '/playground') }}
+    # Only PR comments starting with /playground, from org members/collaborators
+    if: ${{ github.event.issue.pull_request && startsWith(github.event.comment.body, '/playground') && contains(fromJSON('["OWNER","MEMBER","COLLABORATOR"]'), github.event.comment.author_association) }}
     runs-on: ubuntu-24.04
     steps:
       - name: Trigger Playground build
