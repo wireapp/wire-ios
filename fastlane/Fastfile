@@ -2,6 +2,7 @@ require 'git'
 require 'base64'
 require 'httparty'
 require 'json'
+require 'securerandom'
 require 'fastlane/action'
 require_relative 'framework'
 
@@ -21,6 +22,10 @@ platform :ios do
   
     def ios_version
         ENV['IOS_VERSION']
+    end
+
+    def simulator_name_for_testing
+        "Wire-#{SecureRandom.uuid}"
     end
 
     def appstoreconnect_api_key_file_path 
@@ -49,9 +54,32 @@ platform :ios do
         end
     end
 
+    def delete_test_simulator_if_needed
+        return unless is_running_on_ci
+
+        simulator_id = ENV['IOS_SIM_ID'].to_s.strip
+        return if simulator_id.empty?
+
+        begin
+            sh("xcrun", "simctl", "shutdown", simulator_id, log: false)
+        rescue => error
+            UI.important("Failed to shut down simulator #{simulator_id}: #{error}")
+        end
+
+        begin
+            sh("xcrun", "simctl", "delete", simulator_id, log: false)
+        rescue => error
+            UI.important("Failed to delete simulator #{simulator_id}: #{error}")
+        end
+
+        ENV.delete('IOS_SIM_ID')
+        if ENV['GITHUB_ENV']
+            File.open(ENV['GITHUB_ENV'], 'a') { |file| file.puts('IOS_SIM_ID=') }
+        end
+    end
+
     before_all do |lane|
-        ensure_xcode_version
-        create_keychain_if_needed unless [:prepare_for_tests, :select_framework, :select_frameworks, :generate_framework_list, :test_frameworks, :test_only_frameworks, :run_uitests, :generate_env].include?(lane)
+        create_keychain_if_needed unless [:prepare_for_tests, :delete_test_simulator, :select_framework, :select_frameworks, :generate_framework_list, :test_frameworks, :test_only_frameworks, :run_uitests, :generate_env].include?(lane)
         `mkdir -p ./.post_build`
         Dir.chdir("..") do
             encoded_key = ENV['APPSTORE_API_KEY_BASE64']
@@ -63,7 +91,7 @@ platform :ios do
     end
 
     after_all do |lane|
-        delete_keychain_if_needed unless [:prepare_for_tests, :select_framework, :select_frameworks, :generate_framework_list, :test_frameworks, :test_only_frameworks, :run_uitests].include?(lane)
+        delete_keychain_if_needed unless [:prepare_for_tests, :delete_test_simulator, :select_framework, :select_frameworks, :generate_framework_list, :test_frameworks, :test_only_frameworks, :run_uitests, :generate_env].include?(lane)
     end
     
     desc "Test frameworks given folders"
@@ -178,11 +206,15 @@ platform :ios do
         create_simulator_if_needed
     end
 
+    desc "Delete test simulator"
+    lane :delete_test_simulator do
+        delete_test_simulator_if_needed
+    end
+
     desc "Build & Upload Edge build"
     lane :development do |options|
         options[:build_type] = "Development"
         options[:upload_testflight] = true
-        options[:upload_dsyms_to_datadog] = true
         options[:extra_distribution_groups] = ["Wire Employees"]
         options[:produce_debug_builds] = true
         options[:countly_api_key] = ENV['COUNTLY_INTERNAL_KEY']
@@ -195,7 +227,6 @@ platform :ios do
     lane :playground do |options|
         options[:build_type] = "Playground"
         options[:upload_testflight] = true
-        options[:upload_dsyms_to_datadog] = true
         options[:extra_distribution_groups] = ["Wire Employees", "Externals - Non Wire Employees"]
         options[:produce_debug_builds] = true
         options[:countly_api_key] = ENV['COUNTLY_INTERNAL_KEY']
@@ -208,7 +239,6 @@ platform :ios do
     lane :testflight_beta do |options|
         options[:build_type] = "Beta"
         options[:upload_testflight] = true
-        options[:upload_dsyms_to_datadog] = true
         options[:produce_debug_builds] = true
         options[:countly_api_key] = ENV['COUNTLY_INTERNAL_KEY']
         options[:extra_distribution_groups] = ["Wire Employees", "Externals - Non Wire Employees"]
@@ -293,6 +323,7 @@ platform :ios do
     end
 
     def run_tests_frameworks(schemas, options)        
+        xcodes(select_for_current_build_only: true)
         # hardcoded values that are required - not meaningful for testing
         options[:build_type] = "Development"
         options[:build_number] = 1
@@ -328,6 +359,7 @@ platform :ios do
 
  
     def build_and_upload_app(options)
+        xcodes(select_for_current_build_only: true)
         options[:build_number] = generate_build_number
         prepare_for_release(options)
         build = Build.new(options: options)
@@ -359,10 +391,6 @@ platform :ios do
         sha256(options)
         upload_s3(options)
         save_changelog_to_env(options)
-       
-        if options[:upload_dsyms_to_datadog] || false
-            upload_dsyms_to_datadog(options)
-        end
     end
 
     def save_app_name(name)
@@ -456,8 +484,6 @@ platform :ios do
 
     # Fetch dependencies and prepare for building a release
     def prepare_for_release(options)
-        xcode_version = options[:xcode_version]
-
         build_type = options[:build_type]
         # Delete configurations in case we switch to different branch or repo
         sh "rm -rf ../Configuration"
@@ -537,7 +563,7 @@ platform :ios do
                 xcargs: xcargs.join(' '),
                 cloned_source_packages_path: ENV['PACKAGES_DIR'],
                 disable_package_automatic_updates: true,
-                skip_package_dependencies_resolution: ENV["HAS_PACKAGES_CACHE_HIT"]
+                skip_package_dependencies_resolution: ENV["HAS_PACKAGES_CACHE_HIT"] == "true"
             )
         end
     end
@@ -552,11 +578,11 @@ platform :ios do
     end
 
     def test_plan(build, scheme, testplan)
-        if ENV['IOS_SIM_ID'].nil?
+        if ENV['IOS_SIM_ID'].to_s.empty?
             create_simulator_if_needed
         end
         
-        if ENV['IOS_SIM_ID'].nil?
+        if ENV['IOS_SIM_ID'].to_s.empty?
             UI.user_error! "missing id for tests"
         end
 
@@ -586,6 +612,31 @@ platform :ios do
     end
 
     def create_simulator_if_needed
+        if is_running_on_ci
+            return unless ENV['IOS_SIM_ID'].to_s.strip.empty?
+
+            simulator_name = simulator_name_for_testing
+            UI.message "Create simulator #{simulator_name}"
+            simulator_id = sh(
+                "xcrun",
+                "simctl",
+                "create",
+                simulator_name,
+                iPhoneNameForTesting,
+                "iOS#{ios_version}",
+                log: false
+            ).strip
+
+            ENV['IOS_SIM_ID'] = simulator_id
+            if ENV['GITHUB_ENV']
+                File.open(ENV['GITHUB_ENV'], 'a') { |file| file.puts("IOS_SIM_ID=#{simulator_id}") }
+            end
+
+            sh("xcrun", "simctl", "boot", simulator_id, log: false)
+            sh("xcrun", "simctl", "bootstatus", simulator_id, "-b", log: false)
+            return
+        end
+
         devices = `xcrun simctl list`
         UI.message("Available simulators:\n#{devices}")
 
@@ -711,18 +762,6 @@ platform :ios do
         `export TEMP='RELEASE_NOTES=#{Base64.strict_encode64(changelog)}' && echo $TEMP >> ./.post_build/.env`
     end
 
-    # Upload dsyms to Datadog
-    def upload_dsyms_to_datadog(options)
-        build = Build.new(options: options)
-        
-        upload_symbols_to_datadog(
-            api_key: ENV["DATADOG_API_KEY"],
-            dsym_paths: [
-                "#{build.artifact_path(with_filename: true)}.app.dSYM.zip"
-            ],
-            site: "datadoghq.eu"
-        )
-    end
 end
 
 class Build

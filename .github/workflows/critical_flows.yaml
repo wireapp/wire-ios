@@ -2,6 +2,15 @@ name: Critical Flows
 
 on:
   workflow_dispatch:
+    inputs:
+      mac_runner:
+        description: 'macOS runner'
+        type: choice
+        options:
+          - in-house
+          - cirrus
+          - github
+        default: in-house
   push:
     branches:
       - 'develop'
@@ -17,6 +26,7 @@ jobs:
   critical_flows:
     uses: ./.github/workflows/_reusable_run_tests.yml
     with:
+      mac_runner: ${{ inputs.mac_runner || vars.DEFAULT_MAC_RUNNER || 'in-house' }}
       all: false
       notify_secret: WIRE_IOS_QA_WEBHOOK
       test_dependencies: false

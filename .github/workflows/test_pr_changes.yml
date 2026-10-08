@@ -99,6 +99,7 @@ jobs:
     name: PR Tests
     uses: ./.github/workflows/_reusable_run_tests.yml
     with:
+      mac_runner: ${{ vars.DEFAULT_MAC_RUNNER || 'in-house' }}
       folders: ${{ join(fromJson(needs.detect-changes.outputs.folders), ',') }}
       notify_secret: WIRE_IOS_CI_WEBHOOK
       test_dependencies: ${{ github.event_name != 'pull_request' || startsWith(github.base_ref, 'release/cycle') }} # run on merge_queue or release branch PRs

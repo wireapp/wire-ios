@@ -1,6 +1,16 @@
 name: Public AppStore
 
-on: workflow_dispatch
+on:
+  workflow_dispatch:
+    inputs:
+      mac_runner:
+        description: 'macOS runner'
+        type: choice
+        options:
+          - in-house
+          - cirrus
+          - github
+        default: in-house
 
 permissions: 
   checks: write
@@ -9,6 +19,7 @@ jobs:
   public_app_release:
     uses: ./.github/workflows/_reusable_app_release.yml
     with:
+      mac_runner: ${{ inputs.mac_runner || vars.DEFAULT_MAC_RUNNER || 'in-house' }}
       countly_enabled: true
       fastlane_action: appstore_public
       notify_secret: WIRE_IOS_BUILD_WEBHOOK
