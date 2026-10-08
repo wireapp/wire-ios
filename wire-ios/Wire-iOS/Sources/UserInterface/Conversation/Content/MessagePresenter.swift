@@ -41,16 +41,11 @@ final class MessagePresenter: NSObject {
     var mediaPlaybackManager: MediaPlaybackManager?
     var videoPlayerObserver: NSObjectProtocol?
 
-    /// Keyed by message nonce so that downloads triggered by tapping several not-yet-downloaded
-    /// file/video messages in a row can all be observed concurrently, instead of a newer tap
-    /// silently discarding the pending observer (and therefore the completion callback) of an
-    /// earlier one. Entries are removed as soon as their download concludes, whether it
-    /// succeeded, failed, or was cancelled, so this never accumulates stale observers.
+    /// Observers waiting for a file download to conclude, keyed by message nonce.
     var fileAvailabilityObservers: [UUID: FileDownloadObserving] = [:]
 
-    /// The notification dispatcher is switched off while an initial sync runs (e.g. right after a
-    /// backup restore), so a download that finishes during that window never notifies
-    /// `fileAvailabilityObservers`. These tokens re-check the pending downloads once the sync ends.
+    /// Re-checks pending downloads once the initial sync ends, because change notifications
+    /// are not delivered while it runs.
     private var initialSyncObservers: [UUID: Any] = [:]
 
     /// Injectable so tests can simulate multiple concurrent pending downloads without a real `ZMUserSession`.
