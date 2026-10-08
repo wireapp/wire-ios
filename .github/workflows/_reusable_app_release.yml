@@ -27,6 +27,9 @@ on:
       produce_debug_builds:
         type: boolean
         default: false
+      jira_keys:
+        type: string
+        default: ''
 
     secrets:
       KEYCHAIN_PASSWORD:
