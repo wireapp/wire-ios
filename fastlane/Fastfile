@@ -3,7 +3,10 @@ require 'base64'
 require 'httparty'
 require 'json'
 require 'securerandom'
+<<<<<<< HEAD
 require 'set'
+=======
+>>>>>>> acbdfaade4 (chore: have 4.16.4 branch use in house runners (cherry pick from LTS) - WPB-28947 (#5351))
 require 'fastlane/action'
 require_relative 'framework'
 
@@ -29,7 +32,11 @@ platform :ios do
         "Wire-#{SecureRandom.uuid}"
     end
 
+<<<<<<< HEAD
     def appstoreconnect_api_key_file_path
+=======
+    def appstoreconnect_api_key_file_path 
+>>>>>>> acbdfaade4 (chore: have 4.16.4 branch use in house runners (cherry pick from LTS) - WPB-28947 (#5351))
         './fastlane/appstoreconnect_api_key.json'
     end
 
@@ -80,7 +87,11 @@ platform :ios do
     end
 
     before_all do |lane|
+<<<<<<< HEAD
         create_keychain_if_needed unless [:prepare_for_tests, :delete_test_simulator, :select_framework, :select_frameworks, :generate_framework_list, :list_schemes_json, :list_uitest_tags, :test_frameworks, :test_only_frameworks, :run_uitests, :generate_env].include?(lane)
+=======
+        create_keychain_if_needed unless [:prepare_for_tests, :delete_test_simulator, :select_framework, :select_frameworks, :generate_framework_list, :test_frameworks, :test_only_frameworks, :run_uitests, :generate_env].include?(lane)
+>>>>>>> acbdfaade4 (chore: have 4.16.4 branch use in house runners (cherry pick from LTS) - WPB-28947 (#5351))
         `mkdir -p ./.post_build`
         Dir.chdir("..") do
             encoded_key = ENV['APPSTORE_API_KEY_BASE64']
@@ -92,7 +103,11 @@ platform :ios do
     end
 
     after_all do |lane|
+<<<<<<< HEAD
         delete_keychain_if_needed unless [:prepare_for_tests, :delete_test_simulator, :select_framework, :select_frameworks, :generate_framework_list, :list_schemes_json, :list_uitest_tags, :test_frameworks, :test_only_frameworks, :run_uitests, :generate_env].include?(lane)
+=======
+        delete_keychain_if_needed unless [:prepare_for_tests, :delete_test_simulator, :select_framework, :select_frameworks, :generate_framework_list, :test_frameworks, :test_only_frameworks, :run_uitests, :generate_env].include?(lane)
+>>>>>>> acbdfaade4 (chore: have 4.16.4 branch use in house runners (cherry pick from LTS) - WPB-28947 (#5351))
     end
     
     desc "Test frameworks given folders"
@@ -282,7 +297,6 @@ platform :ios do
     lane :development do |options|
         options[:build_type] = "Development"
         options[:upload_testflight] = true
-        options[:upload_dsyms_to_datadog] = true
         options[:extra_distribution_groups] = ["Wire Employees"]
         options[:produce_debug_builds] = true
         options[:countly_api_key] = ENV['COUNTLY_INTERNAL_KEY']
@@ -295,7 +309,6 @@ platform :ios do
     lane :playground do |options|
         options[:build_type] = "Playground"
         options[:upload_testflight] = true
-        options[:upload_dsyms_to_datadog] = true
         options[:extra_distribution_groups] = ["Wire Employees", "Externals - Non Wire Employees"]
         options[:produce_debug_builds] = true
         options[:countly_api_key] = ENV['COUNTLY_INTERNAL_KEY']
@@ -308,7 +321,6 @@ platform :ios do
     lane :testflight_beta do |options|
         options[:build_type] = "Beta"
         options[:upload_testflight] = true
-        options[:upload_dsyms_to_datadog] = true
         options[:produce_debug_builds] = true
         options[:countly_api_key] = ENV['COUNTLY_INTERNAL_KEY']
         options[:extra_distribution_groups] = ["Wire Employees", "Externals - Non Wire Employees"]
@@ -406,7 +418,11 @@ platform :ios do
         build_and_upload_app(options)
     end
 
+<<<<<<< HEAD
     def run_tests_frameworks(schemas, options)
+=======
+    def run_tests_frameworks(schemas, options)        
+>>>>>>> acbdfaade4 (chore: have 4.16.4 branch use in house runners (cherry pick from LTS) - WPB-28947 (#5351))
         xcodes(select_for_current_build_only: true)
         # hardcoded values that are required - not meaningful for testing
         options[:build_type] = "Development"
@@ -475,10 +491,6 @@ platform :ios do
         sha256(options)
         upload_s3(options)
         save_changelog_to_env(options)
-       
-        if options[:upload_dsyms_to_datadog] || false
-            upload_dsyms_to_datadog(options)
-        end
     end
 
     def save_app_name(name)
@@ -651,7 +663,7 @@ platform :ios do
                 xcargs: xcargs.join(' '),
                 cloned_source_packages_path: ENV['PACKAGES_DIR'],
                 disable_package_automatic_updates: true,
-                skip_package_dependencies_resolution: ENV["HAS_PACKAGES_CACHE_HIT"]
+                skip_package_dependencies_resolution: ENV["HAS_PACKAGES_CACHE_HIT"] == "true"
             )
         end
     end
@@ -665,11 +677,19 @@ platform :ios do
         end
     end
 
+<<<<<<< HEAD
     def test_plan(build, scheme, testplan, options = {})
         if ENV['IOS_SIM_ID'].to_s.empty?
             create_simulator_if_needed
         end
 
+=======
+    def test_plan(build, scheme, testplan)
+        if ENV['IOS_SIM_ID'].to_s.empty?
+            create_simulator_if_needed
+        end
+        
+>>>>>>> acbdfaade4 (chore: have 4.16.4 branch use in house runners (cherry pick from LTS) - WPB-28947 (#5351))
         if ENV['IOS_SIM_ID'].to_s.empty?
             UI.user_error! "missing id for tests"
         end
@@ -923,6 +943,11 @@ platform :ios do
 
     def create_simulator_if_needed
         if is_running_on_ci
+<<<<<<< HEAD
+=======
+            return unless ENV['IOS_SIM_ID'].to_s.strip.empty?
+
+>>>>>>> acbdfaade4 (chore: have 4.16.4 branch use in house runners (cherry pick from LTS) - WPB-28947 (#5351))
             simulator_name = simulator_name_for_testing
             UI.message "Create simulator #{simulator_name}"
             simulator_id = sh(
@@ -941,8 +966,12 @@ platform :ios do
             end
 
             sh("xcrun", "simctl", "boot", simulator_id, log: false)
+<<<<<<< HEAD
             sh("xcrun", "simctl", "bootstatus", simulator_id, "-b", log: false) # Wait for simulator to finish booting
             sh "../scripts/seed-simulator-media.sh"
+=======
+            sh("xcrun", "simctl", "bootstatus", simulator_id, "-b", log: false)
+>>>>>>> acbdfaade4 (chore: have 4.16.4 branch use in house runners (cherry pick from LTS) - WPB-28947 (#5351))
             return
         end
 
@@ -1084,18 +1113,6 @@ platform :ios do
         `export TEMP='RELEASE_NOTES=#{Base64.strict_encode64(changelog)}' && echo $TEMP >> ./.post_build/.env`
     end
 
-    # Upload dsyms to Datadog
-    def upload_dsyms_to_datadog(options)
-        build = Build.new(options: options)
-        
-        upload_symbols_to_datadog(
-            api_key: ENV["DATADOG_API_KEY"],
-            dsym_paths: [
-                "#{build.artifact_path(with_filename: true)}.app.dSYM.zip"
-            ],
-            site: "datadoghq.eu"
-        )
-    end
 end
 
 class Build

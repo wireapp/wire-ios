@@ -37,13 +37,16 @@ on:
         required: false
         default: ''
       notify:
-        type: string
+        type: string # values: always | failure | never
         required: true
+<<<<<<< HEAD
         default: 'failure' # values: always | failure | never
       timeout_minutes:
         type: number
         required: false
         default: 120
+=======
+>>>>>>> acbdfaade4 (chore: have 4.16.4 branch use in house runners (cherry pick from LTS) - WPB-28947 (#5351))
 
     secrets:
       ZENKINS_USERNAME:
@@ -76,8 +79,12 @@ jobs:
         inputs.mac_runner == 'github' && 'macos-26' ||
         'ghcr.io/cirruslabs/macos-runner:tahoe'
       }}
+<<<<<<< HEAD
     # GitHub-hosted jobs use the default six-hour limit; other runners keep the configured timeout.
     timeout-minutes: ${{ inputs.mac_runner == 'github' && 360 || inputs.timeout_minutes }}
+=======
+    timeout-minutes: 90
+>>>>>>> acbdfaade4 (chore: have 4.16.4 branch use in house runners (cherry pick from LTS) - WPB-28947 (#5351))
     permissions:
       contents: read
       actions: read
@@ -86,6 +93,7 @@ jobs:
     outputs:
       xcresult_files: ${{ steps.find-xcresults.outputs.xcresult_files }}
     env:
+      IN_HOUSE_RUNNER: ${{ inputs.mac_runner == 'in-house' }}
       GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       GITHUB_USERNAME: ${{ secrets.ZENKINS_USERNAME }}
       KALIUM_TEST_SERVICE_ENABLED: ${{ inputs.run_critical_flows && inputs.mac_runner != 'in-house' }}
@@ -102,6 +110,7 @@ jobs:
       - name: Sanitize branch name
         env:
           INPUT_BRANCH: ${{ inputs.branch }}
+<<<<<<< HEAD
           GH_EVENT_NAME: ${{ github.event_name }}
           GH_HEAD_REF: ${{ github.head_ref }}
         run: |
@@ -109,6 +118,15 @@ jobs:
             BRANCH="$INPUT_BRANCH"
           elif [ "$GH_EVENT_NAME" == "pull_request" ] || [ "$GH_EVENT_NAME" == "merge_group" ]; then
             BRANCH="$GH_HEAD_REF"
+=======
+          EVENT_NAME: ${{ github.event_name }}
+          HEAD_REF: ${{ github.head_ref }}
+        run: |
+          if [ -n "$INPUT_BRANCH" ]; then
+            BRANCH="$INPUT_BRANCH"
+          elif [ "$EVENT_NAME" == "pull_request" ] || [ "$EVENT_NAME" == "merge_group" ]; then
+            BRANCH="$HEAD_REF"
+>>>>>>> acbdfaade4 (chore: have 4.16.4 branch use in house runners (cherry pick from LTS) - WPB-28947 (#5351))
           else
             BRANCH="${GITHUB_REF#refs/heads/}"
           fi
@@ -157,8 +175,16 @@ jobs:
         if: steps.cache-carthage.outputs.cache-hit != 'true'
         run: ./scripts/carthage.sh bootstrap --platform ios --use-xcframeworks
 
+<<<<<<< HEAD
       - name: Cache Swift Packages
         uses: ./.github/actions/cache-swift-packages
+=======
+        # Restore Swift Package Dependencies Cache
+      - name: Restore Swift Package Dependencies Cache
+        if: ${{ inputs.mac_runner != 'in-house' }}
+        id: cache-swift-packages
+        uses: actions/cache@6f8efc29b200d32929f49075959781ed54ec270c # v3.5.0
+>>>>>>> acbdfaade4 (chore: have 4.16.4 branch use in house runners (cherry pick from LTS) - WPB-28947 (#5351))
         with:
           cache_enabled: ${{ inputs.mac_runner != 'in-house' }}
 
@@ -167,6 +193,15 @@ jobs:
         with:
           bundler-cache: true
 
+<<<<<<< HEAD
+=======
+      - name: Install ImageMagick
+        if: ${{ inputs.mac_runner != 'in-house' }}
+        uses: gerlero/brew-install@5e2f576b2a0ede9d50a5b08c0099c70fdda0b0b9 # v1.1.2
+        with:
+          packages: imagemagick ghostscript freetype
+
+>>>>>>> acbdfaade4 (chore: have 4.16.4 branch use in house runners (cherry pick from LTS) - WPB-28947 (#5351))
       - name: Display all fastlane lanes
         if: ${{ contains(inputs.folders, 'fastlane') || inputs.all }}
         run: |
@@ -281,6 +316,10 @@ jobs:
         if: always()
         run: |
           bundle exec fastlane delete_test_simulator
+
+      - name: Delete simulator
+        if: always()
+        run: bundle exec fastlane delete_test_simulator
 
       - name: Check for duplicate symbol implementations
         if: always()
@@ -419,7 +458,8 @@ jobs:
         with:
           name: Derived Data Xcode for ${{env.SANITIZED_BRANCH }} (${{ github.run_id }} - ${{ github.run_attempt}})
           path: |
-            /Users/runner/Library/Developer/Xcode/DerivedData/**/Logs/**
+            ~/Library/Developer/Xcode/DerivedData/**/Logs/**
+            DerivedData/**/Logs/**
             ~/Library/Logs/DiagnosticReports/**
 
       - name: Get Commit Info

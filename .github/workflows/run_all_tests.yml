@@ -3,11 +3,14 @@ name: Run all tests
 on:
   workflow_dispatch:
     inputs:
+<<<<<<< HEAD
       folders:
         description: 'Comma-separated framework folders (e.g. wire-ios-sync-engine,WireNetwork); leave empty to run all'
         type: string
         required: false
         default: ''
+=======
+>>>>>>> acbdfaade4 (chore: have 4.16.4 branch use in house runners (cherry pick from LTS) - WPB-28947 (#5351))
       mac_runner:
         description: 'macOS runner'
         type: choice
@@ -30,10 +33,16 @@ jobs:
   trigger_tests:
     uses: ./.github/workflows/_reusable_run_tests.yml
     with:
+<<<<<<< HEAD
       folders: ${{ inputs.folders }}
       all: ${{ inputs.folders == '' }}
       mac_runner: ${{ inputs.mac_runner }}
       timeout_minutes: 120
+=======
+      mac_runner: ${{ inputs.mac_runner || vars.DEFAULT_MAC_RUNNER || 'in-house' }}
+      all: true
+      notify_secret: WIRE_IOS_CI_WEBHOOK
+>>>>>>> acbdfaade4 (chore: have 4.16.4 branch use in house runners (cherry pick from LTS) - WPB-28947 (#5351))
       run_critical_flows: ${{ inputs.run_critical_flows }}
       notify: always
     secrets:

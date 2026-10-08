@@ -21,12 +21,21 @@ concurrency:
 
 jobs:
   trigger_tests:
+<<<<<<< HEAD
     if: ${{ github.ref == 'refs/heads/develop' }}
     uses: ./.github/workflows/_reusable_run_tests.yml
     with:
       all: false
       branch: develop
       mac_runner: ${{ github.event_name == 'workflow_dispatch' && inputs.mac_runner || vars.DEFAULT_MAC_RUNNER }}
+=======
+    uses: ./.github/workflows/_reusable_run_tests.yml
+    with:
+      mac_runner: ${{ inputs.mac_runner || vars.DEFAULT_MAC_RUNNER || 'in-house' }}
+      all: true
+      branch: ${{ github.ref_name }}
+      notify_secret: WIRE_IOS_NIGHTLY_WEBHOOK
+>>>>>>> acbdfaade4 (chore: have 4.16.4 branch use in house runners (cherry pick from LTS) - WPB-28947 (#5351))
       run_critical_flows: true
       ui_test_tags: "!critical"
       notify: always

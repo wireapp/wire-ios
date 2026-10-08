@@ -72,7 +72,11 @@ on:
       COUNTLY_PRODUCTION_KEY:
         required: true
       COUNTLY_INTERNAL_KEY:
+<<<<<<< HEAD
         required: true
+=======
+        required: true  
+>>>>>>> acbdfaade4 (chore: have 4.16.4 branch use in house runners (cherry pick from LTS) - WPB-28947 (#5351))
       CLIENT_NAME_C1_C2_C3:
         required: true
       CLIENT_ID_C1_C2_C3:
@@ -114,6 +118,18 @@ jobs:
         'ghcr.io/cirruslabs/macos-runner:tahoe'
       }}
     env:
+<<<<<<< HEAD
+=======
+      IN_HOUSE_RUNNER: ${{ inputs.mac_runner == 'in-house' }}
+      KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+      MATCH_KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+      APPSTORE_API_KEY_BASE64: ${{ secrets.APPSTORE_API_KEY_BASE64 }}
+      MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+      WIRE_INTERNAL_GITHUB_USER: ${{ secrets.WIRE_INTERNAL_GITHUB_USER }}
+      WIRE_INTERNAL_GITHUB_TOKEN: ${{ secrets.WIRE_INTERNAL_GITHUB_TOKEN }}
+      APPCENTER_API_TOKEN: ${{ secrets.APPCENTER_API_TOKEN }}
+      APPCENTER_OWNER_NAME: "Wire"
+>>>>>>> acbdfaade4 (chore: have 4.16.4 branch use in house runners (cherry pick from LTS) - WPB-28947 (#5351))
       S3_BUCKET: "z-lohika"
       REPO_ROOT: ${{ github.workspace }}
       PACKAGES_DIR: ${{ github.workspace }}/DerivedData/CachedSwiftPackages
@@ -151,8 +167,16 @@ jobs:
         if: steps.cache-carthage.outputs.cache-hit != 'true'
         run: ./scripts/carthage.sh bootstrap --platform ios --use-xcframeworks
 
+<<<<<<< HEAD
       - name: Cache Swift Packages
         uses: ./.github/actions/cache-swift-packages
+=======
+         # Restore Swift Package Dependencies Cache
+      - name: Restore Swift Package Dependencies Cache
+        if: ${{ inputs.mac_runner != 'in-house' }}
+        id: cache-swift-packages
+        uses: actions/cache@6f8efc29b200d32929f49075959781ed54ec270c # v3.5.0
+>>>>>>> acbdfaade4 (chore: have 4.16.4 branch use in house runners (cherry pick from LTS) - WPB-28947 (#5351))
         with:
           cache_enabled: ${{ inputs.mac_runner != 'in-house' }}
 
@@ -166,8 +190,12 @@ jobs:
         uses: gerlero/brew-install@5e2f576b2a0ede9d50a5b08c0099c70fdda0b0b9 # v1.1.2
         with:
           packages: imagemagick ghostscript freetype
+<<<<<<< HEAD
           cache: false
 
+=======
+          
+>>>>>>> acbdfaade4 (chore: have 4.16.4 branch use in house runners (cherry pick from LTS) - WPB-28947 (#5351))
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@7474bc4690e29a8392af63c5b98e7449536d5c3a # v4.3.1
         with:
@@ -175,8 +203,14 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-west-1
       - name: Trigger build
+<<<<<<< HEAD
+=======
+        run: bundle exec fastlane "$FASTLANE_ACTION"
+>>>>>>> acbdfaade4 (chore: have 4.16.4 branch use in house runners (cherry pick from LTS) - WPB-28947 (#5351))
         env:
+          FASTLANE_ACTION: ${{ inputs.fastlane_action }}
           HAS_PACKAGES_CACHE_HIT: ${{ steps.cache-swift-packages.outputs.cache-hit == 'true' }}
+<<<<<<< HEAD
           FASTLANE_ACTION: ${{ inputs.fastlane_action }}
           KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
           MATCH_KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
@@ -203,6 +237,8 @@ jobs:
           COUNTLY_INTERNAL_KEY: ${{ secrets.COUNTLY_INTERNAL_KEY }}
         run: bundle exec fastlane "$FASTLANE_ACTION"
 
+=======
+>>>>>>> acbdfaade4 (chore: have 4.16.4 branch use in house runners (cherry pick from LTS) - WPB-28947 (#5351))
       - name: Delete simulator
         if: ${{ always() && inputs.skip_security_tests == false }}
         run: bundle exec fastlane delete_test_simulator
@@ -217,7 +253,8 @@ jobs:
         with:
           name: build-logs (${{ github.run_id }} - ${{ github.run_attempt}})
           path: |
-            /Users/runner/Library/Developer/Xcode/DerivedData/**/Logs/**
+            ~/Library/Developer/Xcode/DerivedData/**/Logs/**
+            DerivedData/**/Logs/**
             ~/Library/Logs/DiagnosticReports/**
             build/**
 

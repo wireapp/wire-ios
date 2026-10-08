@@ -279,7 +279,11 @@ GEM
     unicode-emoji (4.3.0)
     uri (1.1.1)
     word_wrap (1.0.0)
+<<<<<<< HEAD
     xcodeproj (1.28.1)
+=======
+    xcodeproj (1.27.0)
+>>>>>>> acbdfaade4 (chore: have 4.16.4 branch use in house runners (cherry pick from LTS) - WPB-28947 (#5351))
       CFPropertyList (>= 2.3.3, < 4.0)
       atomos (~> 0.1.3)
       base64

@@ -30,6 +30,7 @@ jobs:
     if: ${{ github.ref != format('refs/heads/{0}', vars.LTS_RELEASE) }}
     uses: ./.github/workflows/_reusable_app_release.yml
     with:
+      mac_runner: ${{ inputs.mac_runner || vars.DEFAULT_MAC_RUNNER || 'in-house' }}
       countly_enabled: true
       datadog_enabled: true
       fastlane_action: testflight_beta
