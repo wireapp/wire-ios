@@ -3,6 +3,14 @@ name: Run all tests
 on:
   workflow_dispatch:
     inputs:
+      mac_runner:
+        description: 'macOS runner'
+        type: choice
+        options:
+          - in-house
+          - cirrus
+          - github
+        default: in-house
       run_critical_flows:
         description: 'Run critical flows'
         type: boolean
@@ -17,6 +25,7 @@ jobs:
   trigger_tests:
     uses: ./.github/workflows/_reusable_run_tests.yml
     with:
+      mac_runner: ${{ inputs.mac_runner || vars.DEFAULT_MAC_RUNNER || 'in-house' }}
       all: true
       notify_secret: WIRE_IOS_CI_WEBHOOK
       run_critical_flows: ${{ inputs.run_critical_flows }}
