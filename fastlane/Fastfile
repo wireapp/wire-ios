@@ -282,6 +282,7 @@ platform :ios do
     lane :development do |options|
         options[:build_type] = "Development"
         options[:upload_testflight] = true
+        options[:upload_dsyms_to_datadog] = true
         options[:extra_distribution_groups] = ["Wire Employees"]
         options[:produce_debug_builds] = true
         options[:countly_api_key] = ENV['COUNTLY_INTERNAL_KEY']
@@ -294,6 +295,7 @@ platform :ios do
     lane :playground do |options|
         options[:build_type] = "Playground"
         options[:upload_testflight] = true
+        options[:upload_dsyms_to_datadog] = true
         options[:extra_distribution_groups] = ["Wire Employees", "Externals - Non Wire Employees"]
         options[:produce_debug_builds] = true
         options[:countly_api_key] = ENV['COUNTLY_INTERNAL_KEY']
@@ -306,6 +308,7 @@ platform :ios do
     lane :testflight_beta do |options|
         options[:build_type] = "Beta"
         options[:upload_testflight] = true
+        options[:upload_dsyms_to_datadog] = true
         options[:produce_debug_builds] = true
         options[:countly_api_key] = ENV['COUNTLY_INTERNAL_KEY']
         options[:extra_distribution_groups] = ["Wire Employees", "Externals - Non Wire Employees"]
@@ -472,6 +475,10 @@ platform :ios do
         sha256(options)
         upload_s3(options)
         save_changelog_to_env(options)
+       
+        if options[:upload_dsyms_to_datadog] || false
+            upload_dsyms_to_datadog(options)
+        end
     end
 
     def save_app_name(name)
@@ -669,12 +676,6 @@ platform :ios do
 
         ENV['TEST_RUNNER_CI'] = ENV['CI']
 
-        # Disable verbose diagnostics as these are generally not useful and collecting them can cause 600 second delays per test scheme.
-        xcargs = ["-collect-test-diagnostics never"]
-        xcargs << "-test-repetition-relaunch-enabled YES" if scheme == "WireUITests" && build.number_of_retries > 0
-
-        output_directory = "#{build.artifact_path(with_filename: false)}/tests/#{scheme}"
-
         run_tests_options = {
             step_name: "🧪 Running tests for scheme: #{scheme}",
             testplan: testplan,
@@ -688,14 +689,14 @@ platform :ios do
             buildlog_path: build.build_path,
             result_bundle: true,
             # suppress_xcode_output: true,
-            output_directory: output_directory,
+            output_directory: "#{build.artifact_path(with_filename: false)}/tests/#{scheme}",
             output_types: "junit",
             cloned_source_packages_path: ENV['PACKAGES_DIR'],
             disable_package_automatic_updates: true,
             skip_package_dependencies_resolution: true,
             number_of_retries: build.number_of_retries,
             output_remove_retry_attempts: options[:output_remove_retry_attempts].to_s == "true",
-            xcargs: xcargs.join(" ")
+            xcargs: "-collect-test-diagnostics never" # Disable verbose diagnostics as these are generally not useful and collecting them can cause 600 second delays per test scheme.
         }
         only_testing = normalize_test_identifiers(options[:only_testing])
         skip_testing = normalize_test_identifiers(options[:skip_testing])
@@ -1081,6 +1082,19 @@ platform :ios do
         build = Build.new(options: options)
         changelog = changelog(build)
         `export TEMP='RELEASE_NOTES=#{Base64.strict_encode64(changelog)}' && echo $TEMP >> ./.post_build/.env`
+    end
+
+    # Upload dsyms to Datadog
+    def upload_dsyms_to_datadog(options)
+        build = Build.new(options: options)
+        
+        upload_symbols_to_datadog(
+            api_key: ENV["DATADOG_API_KEY"],
+            dsym_paths: [
+                "#{build.artifact_path(with_filename: true)}.app.dSYM.zip"
+            ],
+            site: "datadoghq.eu"
+        )
     end
 end
 
