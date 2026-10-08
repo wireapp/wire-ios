@@ -77,7 +77,7 @@ class TeamsAPIV2: TeamsAPIV1 {
         return try ResponseParser()
             // The specs mention, that the backend currently doesn't paginate for this endpoint.
             .success(code: .ok, type: TeamMemberListResponseV0.self)
-            .failure(code: .badRequest, error: TeamsAPIError.invalidQueryParmeter)
+            .failure(code: .badRequest, error: TeamsAPIError.invalidQueryParameter)
             .failure(code: .forbidden, label: "no-team-member", error: TeamsAPIError.selfUserIsNotTeamMember)
             .failure(code: .notFound, error: TeamsAPIError.teamNotFound)
             .parse(code: response.statusCode, data: data)

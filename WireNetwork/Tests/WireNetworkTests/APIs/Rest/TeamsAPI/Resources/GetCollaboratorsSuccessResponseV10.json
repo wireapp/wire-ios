@@ -1,0 +1,10 @@
+[
+    {
+        "permissions": [
+            "create_team_conversation",
+            "implicit_connection"
+        ],
+        "team": "9f00f4e7-2426-4d6d-b2b1-9190b204556f",
+        "user": "c05922f8-2b42-45c6-911a-56394ab8474d"
+    }
+]

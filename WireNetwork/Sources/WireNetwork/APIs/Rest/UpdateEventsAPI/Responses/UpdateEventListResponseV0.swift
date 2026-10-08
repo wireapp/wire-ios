@@ -37,6 +37,9 @@ struct UpdateEventListResponseV0: Decodable, ToAPIModelConvertible {
             $0.toAPIModel()
         }
 
+        // The backend guarantees that this endpoint never returns transient events,
+        // so `lastNonTransientEvent` will always equal `eventEnvelopes.last` and
+        // pagination cannot stall on a page of only transient events.
         let lastNonTransientEvent = eventEnvelopes.last {
             !$0.isTransient
         }

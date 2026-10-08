@@ -205,9 +205,9 @@ extension String {
     }
 
     func localized(pov pointOfView: PointOfView) -> String {
+        guard pointOfView != .none else { return localized }
         let povPath = self + "-" + pointOfView.suffix
         let povVersion = povPath.localized
-
         if povVersion != povPath, !povVersion.isEmpty {
             return povVersion
         } else {
@@ -257,6 +257,18 @@ extension NSMutableAttributedString {
         guard substringRange.location != NSNotFound else { return }
 
         addAttributes(attributes, range: substringRange)
+    }
+
+    /// Adds line spacing to all runs while preserving other paragraph style attributes
+    /// (e.g. blockquote indentation set by the Down markdown renderer).
+    func mergeLineSpacing(_ lineSpacing: CGFloat) {
+        let fullRange = NSRange(location: 0, length: length)
+        enumerateAttribute(.paragraphStyle, in: fullRange, options: []) { value, range, _ in
+            let style = (value as? NSParagraphStyle)?
+                .mutableCopy() as? NSMutableParagraphStyle ?? NSMutableParagraphStyle()
+            style.lineSpacing = lineSpacing
+            addAttribute(.paragraphStyle, value: style as NSParagraphStyle, range: range)
+        }
     }
 
 }

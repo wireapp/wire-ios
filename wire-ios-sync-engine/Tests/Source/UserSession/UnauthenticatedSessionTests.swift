@@ -16,13 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireNetwork
 import WireTesting
+import WireTransportSupport
 import XCTest
 @testable import WireSyncEngine
 
 final class TestUnauthenticatedTransportSession: NSObject, UnauthenticatedTransportSessionProtocol {
 
-    public var cookieStorage = ZMPersistentCookieStorage()
+    public var cookieStorage = LegacyCookieStorage(testingWithUserIdentifier: UUID())
 
     var nextEnqueueResult: EnqueueResult = .nilRequest
     var lastEnqueuedRequest: ZMTransportRequest?
@@ -210,7 +212,7 @@ public final class UnauthenticatedSessionTests: ZMTBaseTest {
 
         // then
         XCTAssertEqual(account.userIdentifier, userId)
-        XCTAssertNotNil(transportSession.environment.cookieStorage(for: account).authenticationCookieData)
+        XCTAssertTrue(transportSession.environment.cookieStorage(for: account).hasAuthenticationCookie)
     }
 
     func testThatItParsesCookieDataAndDoesCallTheDelegateIfTheCookieIsValidAndThereIsAUserIdKeyId() throws {
@@ -224,7 +226,34 @@ public final class UnauthenticatedSessionTests: ZMTBaseTest {
 
         // then
         XCTAssertEqual(account.userIdentifier, userId)
-        XCTAssertNotNil(transportSession.environment.cookieStorage(for: account).authenticationCookieData)
+        XCTAssertTrue(transportSession.environment.cookieStorage(for: account).hasAuthenticationCookie)
+    }
+
+    func testThatUpgradingStoresTheSSOIdentityProviderIDOnTheAccount() throws {
+        // given
+        let userID = UUID.create()
+        let identityProviderID = UUID.create()
+        let newEnvironment = NewEnvironment(
+            backendEnvironment: backendEnvironment(),
+            metadata: ResolvedBackendMetadata(
+                apiVersion: .v8,
+                domain: "example.com",
+                isFederationEnabled: false
+            ),
+            cookies: [],
+            proxyCredentials: nil
+        )
+
+        // when
+        sut.upgradeToAuthenticatedSession(
+            with: UserInfo(identifier: userID, cookies: []),
+            newEnvironment: newEnvironment,
+            multiIngressIdentityProviderID: identityProviderID
+        )
+
+        // then
+        let account = try XCTUnwrap(mockDelegate.createdAccounts.first)
+        XCTAssertEqual(account.lastSSOIdentityProviderID, identityProviderID)
     }
 
     func testThatItDoesNotParseAnAccountWithWrongUserIdKey() {
@@ -285,6 +314,27 @@ public final class UnauthenticatedSessionTests: ZMTBaseTest {
         XCTAssertLessThanOrEqual(mockDelegate.createdAccounts.count, 1, line: line)
         if mockDelegate.createdAccounts.isEmpty { throw NSError(domain: "No account", code: 1) }
         return mockDelegate.createdAccounts.first!
+    }
+
+    private func backendEnvironment() -> BackendEnvironment2 {
+        let url = URL(string: "https://example.com")!
+        return BackendEnvironment2(
+            title: "Example",
+            environmentType: .default,
+            config: .init(
+                endpoints: .init(
+                    restAPIURL: url,
+                    websocketURL: url,
+                    blacklistURL: url,
+                    teamsURL: url,
+                    accountsURL: url,
+                    websiteURL: url,
+                    countlyURL: nil
+                ),
+                pinnedKeys: [],
+                proxyConfig: nil
+            )
+        )
     }
 }
 

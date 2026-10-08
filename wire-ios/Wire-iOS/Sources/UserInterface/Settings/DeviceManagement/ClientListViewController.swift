@@ -25,8 +25,6 @@ import WireReusableUIComponents
 import WireSettingsUI
 import WireSyncEngine
 
-private let zmLog = ZMSLog(tag: "UI")
-
 final class ClientListViewController: UIViewController,
     UITableViewDelegate,
     UITableViewDataSource,
@@ -315,7 +313,7 @@ final class ClientListViewController: UIViewController,
             await dismissLoadingView()
         }
 
-        zmLog.error("Clients request failed: \(error.localizedDescription)")
+        WireLogger.ui.error("Clients request failed: \(error.localizedDescription)")
 
         let alert = UIAlertController(
             title: title,

@@ -56,7 +56,7 @@ public struct WireDriveDraft: Hashable, Sendable {
 
     /// The URL of the asset that contains the file data.
 
-    package let assetURL: URL
+    public let assetURL: URL
 
     /// The type of the file, represented as a Uniform Type Identifier (UTType). This value is determined locally.
 
@@ -87,6 +87,14 @@ public struct WireDriveDraft: Hashable, Sendable {
 
     public let metadata: Metadata?
 
+    /// Optional data associated to an image.
+    public let data: Data?
+
+    /// Optional unique identifier from the device’s Photos library, matching `PHAsset.localIdentifier` or
+    /// `PHPickerResult.assetIdentifier`.
+    /// Used to manage drafts in conversation previews.
+    public let localIdentifier: String?
+
     package init(
         nodeID: UUID,
         versionID: UUID,
@@ -97,7 +105,9 @@ public struct WireDriveDraft: Hashable, Sendable {
         bytes: Int,
         mimeType: String?,
         requiresCleanup: Bool,
-        metadata: Metadata?
+        metadata: Metadata?,
+        data: Data?,
+        localIdentifier: String?
     ) {
         self.nodeID = nodeID
         self.versionID = versionID
@@ -109,5 +119,17 @@ public struct WireDriveDraft: Hashable, Sendable {
         self.mimeType = mimeType
         self.requiresCleanup = requiresCleanup
         self.metadata = metadata
+        self.data = data
+        self.localIdentifier = localIdentifier
+    }
+}
+
+public extension WireDriveDraft {
+    var isImage: Bool {
+        fileType?.conforms(to: .image) ?? (data != nil)
+    }
+
+    var isVideo: Bool {
+        fileType?.conforms(to: .movie) ?? false
     }
 }

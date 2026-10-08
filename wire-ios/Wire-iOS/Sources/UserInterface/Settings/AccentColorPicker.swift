@@ -35,17 +35,21 @@ struct AccentColorPicker: View {
 
     @ViewBuilder private var accentColorList: some View {
         List(AccentColor.allCases, id: \.self) { color in
-            cell(for: color)
-                .listRowBackground(Color(SemanticColors.View.backgroundUserCell))
-                .contentShape(Rectangle())
-                .onTapGesture {
-                    selectedColor = color
-                    onColorSelect?(color)
-                }
+            Button {
+                selectedColor = color
+                onColorSelect?(color)
+            } label: {
+                cell(for: color)
+                    .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .listRowBackground(ColorTheme.Backgrounds.surface.color)
+            .accessibilityLabel(color.name)
+            .accessibilityAddTraits(selectedColor == color ? .isSelected : [])
         }
         .listStyle(.plain)
         .modifier(ListBackgroundStyleModifier())
-        .background(Color(SemanticColors.View.backgroundDefault))
+        .background(ColorTheme.Backgrounds.background.color)
     }
 
     @ViewBuilder
@@ -64,7 +68,7 @@ struct AccentColorPicker: View {
             // Checkmark view
             if selectedColor == color {
                 Image(systemName: "checkmark")
-                    .foregroundColor(Color(SemanticColors.Icon.foregroundDefaultBlack))
+                    .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
             }
         }
     }

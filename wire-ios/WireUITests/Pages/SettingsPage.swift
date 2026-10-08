@@ -33,19 +33,40 @@ class SettingsPage: PageModel {
         app.cells[Locators.SettingsPage.optionsCell.rawValue].firstMatch
     }
 
+    var devicesMenu: XCUIElement {
+        app.cells["devicesCell"].firstMatch
+    }
+
     var conversationsTab: XCUIElement {
         app.buttons[Locators.ConversationsPage.bottomBarRecentListButton.rawValue]
     }
 
+    @discardableResult
     func openAccountSettings() throws -> AccountSettingsPage {
         XCTAssertTrue(accountSettingsMenu.waitForExistence(timeout: 3))
         accountSettingsMenu.tap()
         return try AccountSettingsPage()
     }
 
+    var shareDebugBanner: XCUIElement {
+        app.buttons[Locators.SettingsPage.shareDebugBanner.rawValue].firstMatch
+    }
+
     func openOptionsMenu() throws -> OptionsOnSettingsPage {
         optionsMenu.tap()
         return try OptionsOnSettingsPage()
+    }
+
+    func openDevices() throws -> DevicesPage {
+        devicesMenu.tap()
+        return try DevicesPage()
+    }
+
+    @discardableResult
+    func tapShareDebugBanner() throws -> ShareDebugReportPage {
+        XCTAssertTrue(shareDebugBanner.waitForExistence(timeout: 5))
+        shareDebugBanner.tap()
+        return try ShareDebugReportPage()
     }
 
     func switchToConversationsTab() throws -> ConversationsPage {

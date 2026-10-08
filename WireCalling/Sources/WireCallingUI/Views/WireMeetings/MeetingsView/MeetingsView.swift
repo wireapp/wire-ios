@@ -18,121 +18,187 @@
 
 import SwiftUI
 import WireCallingDomain
-import WireCallingDomainSupport
 import WireDesign
+import WireFoundation
+import WireLocators
+import WireReusableUIComponents
 
 struct MeetingsView: View {
 
     private typealias Strings = L10n.Localizable.WireMeetings.List
 
-    @ObservedObject private var viewModel: MeetingsViewModel
+    @Environment(\.scenePhase) private var scenePhase
+    @State private var viewModel: MeetingsViewModel
 
-    init(viewModel: MeetingsViewModel) {
+    /// Called when the user chooses "Edit meeting" in a meeting's menu.
+    /// Presenting the edit UI is up to the owner of this view.
+    private let onEditMeeting: (Meeting) -> Void
+    private let onJoinMeeting: (MeetingOccurrence) -> Void
+
+    init(
+        viewModel: MeetingsViewModel,
+        onEditMeeting: @escaping (Meeting) -> Void = { _ in },
+        onJoinMeeting: @escaping (MeetingOccurrence) -> Void = { _ in }
+    ) {
         self.viewModel = viewModel
+        self.onEditMeeting = onEditMeeting
+        self.onJoinMeeting = onJoinMeeting
     }
 
     var body: some View {
         VStack {
-            Picker("", selection: $viewModel.selectedTab) {
-                ForEach(MeetingsViewModel.Tab.allCases, id: \.self) { tab in
-                    Text(tab.title).tag(tab)
-                }
-            }
-            .pickerStyle(.segmented)
-            .padding(.horizontal, 16)
-            .padding(.top, 12)
-            .accessibilityIdentifier("meetingsListPicker")
-
             content.frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .background(ColorTheme.Backgrounds.surface.color)
-        .onAppear {
-            viewModel.loadInitialData()
-        }
-        .onChange(of: viewModel.selectedTab) { _, newValue in
-            if newValue == .past {
-                viewModel.refreshPastMeetings()
-            } else {
-                viewModel.refreshOngoingMeetings()
+        .overlay {
+            if viewModel.isDeleting {
+                ProgressView()
+                    .controlSize(.large)
+                    .accessibilityLabel(Strings.Delete.Alert.Delete.button)
+                    .accessibilityIdentifier("meetingDeleteProgress")
             }
+        }
+        .alert(
+            viewModel.deleteErrorTitle,
+            isPresented: $viewModel.hasDeleteError
+        ) {
+            if viewModel.canRetryDelete {
+                Button(L10n.Localizable.WireMeetings.retry) {
+                    Task { await viewModel.retryDelete() }
+                }
+                .accessibilityIdentifier("meetingDeleteRetryButton")
+            }
+            Button(
+                viewModel.canRetryDelete
+                    ? Strings.Delete.Alert.Cancel.button : L10n.Localizable.WireMeetings.Schedule.Error.Alert.ok,
+                role: .cancel
+            ) {}
+        } message: {
+            Text(viewModel.deleteErrorMessage)
+        }
+        .task {
+            await viewModel.loadInitialData()
+        }
+        .task {
+            // Never returns on its own; the task is cancelled by SwiftUI when the view disappears.
+            await viewModel.observeMeetingChanges()
+        }
+        .task {
+            await viewModel.observeAttendedMeetings()
+        }
+        .task {
+            await viewModel.observeCurrentDate()
+        }
+        .task {
+            await viewModel.observeSystemDateTimeChanges()
+        }
+        .onChange(of: scenePhase) { _, newPhase in
+            guard newPhase == .active else { return }
+
+            Task { await viewModel.refreshSystemDateTimeStateAfterSceneBecameActive() }
         }
     }
 
     @ViewBuilder private var content: some View {
-        if viewModel.selectedTab == .next {
-            if viewModel.ongoingMeetings.isEmpty, viewModel.groupedNextMeetings.isEmpty {
+
+        if viewModel.groupedUpcomingMeetings.isEmpty {
+            if viewModel.isLoading {
+                ProgressView()
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .accessibilityLabel(Strings.title)
+                    .accessibilityIdentifier(Locators.WireMeetings.MeetingsPage.loadProgress)
+            } else if viewModel.hasLoadError {
+                loadError
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+            } else {
                 MeetingsEmptyStateView(
                     title: Strings.EmptyState.Next.title,
                     subtitle: Strings.EmptyState.Next.subtitle
                 )
-            } else {
-                nextTabContent
             }
         } else {
-            if viewModel.groupedPastMeetings.isEmpty {
-                MeetingsEmptyStateView(
-                    title: Strings.EmptyState.Past.title,
-                    subtitle: Strings.EmptyState.Past.subtitle
-                )
-            } else {
-                pastTabContent
-            }
+            meetingsList
         }
     }
 
-    @ViewBuilder private var nextTabContent: some View {
-        List {
-            if !viewModel.ongoingMeetings.isEmpty {
-                Section {
-                    ForEach(viewModel.ongoingMeetings, id: \.id) { meeting in
-                        MeetingRow(meeting: meeting)
-                    }
-                } header: {
-                    SectionTitle(Strings.Header.ongoing)
-                }
+    private var loadError: some View {
+        VStack(spacing: 12) {
+            Text(L10n.Localizable.Meetings.List.loadError)
+                .font(for: .body1)
+                .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
+                .multilineTextAlignment(.center)
+            Button(L10n.Localizable.WireMeetings.retry) {
+                Task { await viewModel.loadInitialData() }
             }
+            .wireButtonStyle(.tertiary)
+            .accessibilityIdentifier(Locators.WireMeetings.MeetingsPage.loadRetryButton)
+        }
+        .padding()
+    }
+
+    @ViewBuilder private var meetingsList: some View {
+        List {
+            if viewModel.hasLoadError {
+                loadError
+                    .frame(maxWidth: .infinity)
+                    .listRowSeparator(.hidden)
+                    .listRowBackground(Color.clear)
+            } else if viewModel.isLoading, !viewModel.hasMore {
+                ProgressView()
+                    .frame(maxWidth: .infinity)
+                    .listRowSeparator(.hidden)
+                    .listRowBackground(Color.clear)
+                    .accessibilityLabel(Strings.title)
+                    .accessibilityIdentifier(Locators.WireMeetings.MeetingsPage.loadProgress)
+            }
+
             GroupedSections(
-                groups: viewModel.groupedNextMeetings,
+                groups: viewModel.groupedUpcomingMeetings,
                 formatDay: viewModel.formatDay(_:),
-                formatTime: viewModel.formatTime(_:)
+                formatTime: viewModel.formatTime(for:),
+                isAttending: viewModel.isAttending(_:),
+                isHappeningNow: viewModel.isHappeningNow(_:),
+                isOrganizer: viewModel.isOrganizer(_:),
+                onEdit: { onEditMeeting($0) },
+                onDelete: { viewModel.meetingToDelete = $0 },
+                onJoin: { onJoinMeeting($0) }
             )
 
-            if viewModel.showMoreButton {
-                Button {
-                    viewModel.showAll = true
-                } label: {
-                    Text(Strings.Actions.showAll)
-                        .font(for: .buttonBig)
+            if viewModel.hasMore {
+                HStack {
+                    Spacer()
+                    ProgressView()
+                        .accessibilityIdentifier(Locators.WireMeetings.MeetingsPage.paginationProgress)
+                    Spacer()
                 }
-                .wireButtonStyle(.secondary)
                 .listRowBackground(Color.clear)
+                .task { await viewModel.loadMoreIfNeeded() }
             }
         }
-        .listStyle(.insetGrouped)
+        .listStyle(.grouped)
+        .accessibilityIdentifier(Locators.WireMeetings.MeetingsPage.list)
         .scrollContentBackground(.hidden)
         .background(ColorTheme.Backgrounds.surface.color)
         .refreshable {
-            viewModel.refreshOngoingMeetings()
-            viewModel.showAll = false
+            // Let SwiftUI present the refresh control before a fast reload completes.
+            await Task.yield()
+            await viewModel.loadInitialData()
+        }
+        .alert(
+            viewModel.deleteConfirmationTitle,
+            isPresented: $viewModel.isDeleteConfirmationPresented
+        ) {
+            Button(Strings.Delete.Alert.Delete.button, role: .destructive) {
+                viewModel.confirmDelete()
+            }
+            .disabled(viewModel.isDeleting)
+            Button(Strings.Delete.Alert.Cancel.button, role: .cancel) {}
+        } message: {
+            Text(viewModel.deleteConfirmationMessage)
         }
     }
 
-    @ViewBuilder private var pastTabContent: some View {
-        List {
-            GroupedSections(
-                groups: viewModel.groupedPastMeetings,
-                formatDay: viewModel.formatDay(_:),
-                formatTime: viewModel.formatTime(_:)
-            )
-        }
-        .listStyle(.insetGrouped)
-        .scrollContentBackground(.hidden)
-        .background(ColorTheme.Backgrounds.surface.color)
-        .refreshable {
-            viewModel.refreshPastMeetings()
-        }
-    }
 }
 
 @ViewBuilder
@@ -145,84 +211,200 @@ private func SectionTitle(_ text: String) -> some View {
 }
 
 private struct GroupedSections: View {
-    let groups: [(day: Date, timeSlots: [(time: Date, meetings: [Meeting])])]
+    let groups: [(day: Date, meetings: [MeetingOccurrence])]
     let formatDay: (Date) -> String
-    let formatTime: (Date) -> String
+    let formatTime: (MeetingOccurrence) -> String
+    let isAttending: (MeetingOccurrence) -> Bool
+    let isHappeningNow: (MeetingOccurrence) -> Bool
+    let isOrganizer: (Meeting) -> Bool
+    let onEdit: (Meeting) -> Void
+    let onDelete: (Meeting) -> Void
+    let onJoin: (MeetingOccurrence) -> Void
+
+    @Environment(\.wireAccentColor) private var wireAccentColor
+
     var body: some View {
         ForEach(groups, id: \.day) { dayGroup in
             Section {
-                ForEach(dayGroup.timeSlots, id: \.time) { slot in
-                    Section {
-                        ForEach(slot.meetings, id: \.id) { meeting in
-                            MeetingRow(meeting: meeting)
-                        }
-                    } header: {
-                        Text(formatTime(slot.time))
-                            .font(for: .subline1)
-                            .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
-                    }
+                ForEach(dayGroup.meetings, id: \.id) { occurrence in
+                    let isLive = isHappeningNow(occurrence)
+
+                    MeetingRow(
+                        occurrence: occurrence,
+                        formatTime: formatTime,
+                        isOrganizer: isOrganizer(occurrence.meeting),
+                        isAttending: isAttending(occurrence),
+                        isLive: isLive,
+                        onEdit: { onEdit(occurrence.meeting) },
+                        onDelete: { onDelete(occurrence.meeting) },
+                        onJoin: { onJoin(occurrence) }
+                    )
+                    .listRowBackground(
+                        isLive ? Color(wireAccentColor.secondaryUIColor) : Color.clear
+                    )
                 }
             } header: {
                 SectionTitle(formatDay(dayGroup.day))
+                    .accessibilityIdentifier(Locators.WireMeetings.MeetingsPage.dayHeader)
             }
         }
     }
 }
 
-// MARK: - Row
-
-private struct MeetingRow: View {
-    let meeting: Meeting
-    var body: some View {
-        HStack(alignment: .top, spacing: 12) {
-            ZStack {
-                RoundedRectangle(cornerRadius: 10, style: .continuous)
-                    .fill(ColorTheme.Backgrounds.surface.color)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 10, style: .continuous)
-                            .strokeBorder(ColorTheme.Strokes.outline.color, lineWidth: 1)
-                    )
-                    .frame(width: 31, height: 31)
-
-                Image(systemName: "video.fill").font(.system(size: 15))
-            }
-
-            VStack(alignment: .leading, spacing: 2) {
-                Text(meeting.title)
-                    .font(for: .body2)
-                    .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
-                    .lineLimit(2)
-
-                Text("Meeting date")
-                    .font(for: .subline1)
-                    .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
-
-                HStack(spacing: 6) {
-                    Label("Design", systemImage: "person.3.fill")
-                        .font(for: .subline1)
-                        .foregroundStyle(ColorTheme.Base.secondaryText.color)
-                }
-                .padding(.top, 2)
-            }
-
-            Spacer()
-
-            Image(systemName: "ellipsis")
-                .rotationEffect(.degrees(90))
-                .foregroundStyle(ColorTheme.Buttons.Secondary.onEnabled.color)
-        }
-        .contentShape(Rectangle())
-        .padding(.vertical, 6)
-    }
+#Preview("empty") {
+    MeetingsView(
+        viewModel: MeetingsViewModel(
+            currentDateProvider: .system,
+            formatter: MeetingsFormatter(),
+            upcomingMeetingsUseCase: PreviewFetchUpcomingMeetingsUseCase(),
+            observeMeetingChangesUseCase: PreviewObserveMeetingChangesUseCase(),
+            deleteMeetingUseCase: PreviewDeleteMeetingUseCase(),
+            selfUserID: previewSelfUserID
+        )
+    )
 }
 
-#Preview {
-    MeetingsView(viewModel: MeetingsViewModel(
-        repository: MockMeetingsRepositoryProtocol(),
-        currentDateProvider: .system,
-        formatter: MeetingsFormatter(),
-        pastMeetingsUseCase: MockFetchPastMeetingsUseCaseProtocol(),
-        upcomingMeetingsUseCase: MockFetchUpcomingMeetingsUseCaseProtocol()
+#Preview("non-empty") {
+    MeetingsView(
+        viewModel: MeetingsViewModel(
+            currentDateProvider: .system,
+            formatter: MeetingsFormatter(),
+            upcomingMeetingsUseCase: PreviewFetchUpcomingMeetingsUseCase(meetings: previewMeetings()),
+            observeMeetingChangesUseCase: PreviewObserveMeetingChangesUseCase(),
+            deleteMeetingUseCase: PreviewDeleteMeetingUseCase(),
+            selfUserID: previewSelfUserID
+        )
     )
-    )
+}
+
+private struct PreviewFetchUpcomingMeetingsUseCase: FetchUpcomingMeetingsUseCaseProtocol {
+
+    var meetings = [Meeting]()
+
+    func invoke(pageSize: Int, offset: Int) async throws -> PaginatedMeetings {
+        .init(meetings: meetings, hasMore: false, nextOffset: 0)
+    }
+
+}
+
+private struct PreviewObserveMeetingChangesUseCase: ObserveMeetingChangesUseCaseProtocol {
+
+    func invoke() -> AsyncStream<Void> {
+        AsyncStream { $0.finish() }
+    }
+
+}
+
+private struct PreviewDeleteMeetingUseCase: DeleteMeetingUseCaseProtocol {
+
+    func invoke(meeting: Meeting) async throws {}
+
+}
+
+private let previewSelfUserID = UUID()
+
+private func previewMeetings() -> [Meeting] {
+    let calendar = Calendar.current
+    let now = Date()
+
+    func day(_ offset: Int, hour: Int, minute: Int = 0) -> Date {
+        calendar.date(
+            bySettingHour: hour,
+            minute: minute,
+            second: 0,
+            of: calendar.date(byAdding: .day, value: offset, to: calendar.startOfDay(for: now))!
+        )!
+    }
+
+    func member(_ name: String) -> MeetingMember {
+        let initials = name
+            .split(separator: " ")
+            .compactMap(\.first)
+            .prefix(2)
+            .map(String.init)
+            .joined()
+        let colors = WireAccentColor.allCases
+        let accentColor = colors[abs(name.hashValue) % colors.count]
+        return MeetingMember(
+            qualifiedID: QualifiedID(id: UUID(), domain: ""),
+            name: name,
+            handle: name.lowercased().replacingOccurrences(of: " ", with: ""),
+            isSelfUser: false,
+            initials: initials.uppercased(),
+            accentColor: accentColor,
+            avatarImageData: nil
+        )
+    }
+
+    func meeting(_ title: String, start: Date, end: Date, members: [MeetingMember] = []) -> Meeting {
+        Meeting(
+            id: QualifiedID(id: UUID(), domain: ""),
+            title: title,
+            start: start,
+            end: end,
+            recurrence: nil,
+            conversation: MeetingConversation(participants: Set(members)),
+            conversationID: QualifiedID(id: UUID(), domain: ""),
+            creatorID: QualifiedID(id: previewSelfUserID, domain: "")
+        )
+    }
+
+    return [
+        // TODAY — two meetings at the same time to exercise time grouping
+        meeting(
+            "Standup",
+            start: day(0, hour: 7),
+            end: day(0, hour: 7, minute: 30)
+        ),
+        meeting(
+            "iOS team update",
+            start: day(0, hour: 7),
+            end: day(0, hour: 7, minute: 20),
+            members: [member("Alice Smith")]
+        ),
+        meeting(
+            "Candidate interview",
+            start: day(0, hour: 16),
+            end: day(0, hour: 16, minute: 45),
+            members: [member("Bob Jones")]
+        ),
+        meeting(
+            "Design review",
+            start: day(0, hour: 17),
+            end: day(0, hour: 18),
+            members: [member("Carla Diaz")]
+        ),
+
+        // TOMORROW
+        meeting(
+            "Sprint planning",
+            start: day(1, hour: 7),
+            end: day(1, hour: 8),
+            members: [member("Dan Ford")]
+        ),
+        meeting(
+            "Daily sync",
+            start: day(1, hour: 7),
+            end: day(1, hour: 7, minute: 20),
+            members: [member("Eve North"), member("Finn Ray")]
+        ),
+        meeting(
+            "Architecture Forum",
+            start: day(1, hour: 13),
+            end: day(1, hour: 14),
+            members: [member("Grace Kim"), member("Hugo Vela"), member("Ivan Cole")]
+        ),
+
+        // NEXT WEEK — many members to exercise the "+N" overflow
+        meeting(
+            "Sprint Review (all teams)",
+            start: day(7, hour: 16),
+            end: day(7, hour: 16, minute: 30),
+            members: [
+                member("Alice Smith"), member("Bob Jones"), member("Carla Diaz"),
+                member("Dan Ford"), member("Eve North"), member("Finn Ray"),
+                member("Grace Kim")
+            ]
+        )
+    ]
 }

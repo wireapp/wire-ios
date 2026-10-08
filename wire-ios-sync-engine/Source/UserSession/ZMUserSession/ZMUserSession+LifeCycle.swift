@@ -23,13 +23,6 @@ public extension ZMUserSession {
 
     func application(
         _ application: ZMApplication,
-        didFinishLaunching launchOptions: [UIApplication.LaunchOptionsKey: Any?]
-    ) {
-        startEphemeralTimers()
-    }
-
-    func application(
-        _ application: ZMApplication,
         handleEventsForBackgroundURLSession identifier: String,
         completionHandler: @escaping () -> Void
     ) {

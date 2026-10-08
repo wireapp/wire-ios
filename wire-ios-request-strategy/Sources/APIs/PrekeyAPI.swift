@@ -172,8 +172,20 @@ class PrekeyAPIV14: PrekeyAPIV13 {
     override var apiVersion: APIVersion { .v14 }
 }
 
-final class PrekeyAPIV15: PrekeyAPIV14 {
+class PrekeyAPIV15: PrekeyAPIV14 {
     override var apiVersion: APIVersion { .v15 }
+}
+
+class PrekeyAPIV16: PrekeyAPIV15 {
+    override var apiVersion: APIVersion { .v16 }
+}
+
+class PrekeyAPIV17: PrekeyAPIV16 {
+    override var apiVersion: APIVersion { .v17 }
+}
+
+final class PrekeyAPIV18: PrekeyAPIV17 {
+    override var apiVersion: APIVersion { .v18 }
 }
 
 extension Collection<QualifiedClientID> {

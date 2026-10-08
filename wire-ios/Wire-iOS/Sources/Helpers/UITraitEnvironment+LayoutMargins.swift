@@ -50,6 +50,13 @@ struct HorizontalMargins {
     static func conversationHorizontalMargins(
         windowWidth: CGFloat? = UIApplication.shared.delegate?.window??.frame.width ?? UIScreen.main.bounds.width
     ) -> HorizontalMargins {
+        // The regular/compact split below is only meaningful for iPad split view widths.
+        // On iPhone, a transient window width (e.g. from a rotation attempt) must never
+        // select the wider iPad margins.
+        guard UIDevice.current.userInterfaceIdiom == .pad else {
+            return HorizontalMargins(userInterfaceSizeClass: .compact)
+        }
+
         let userInterfaceSizeClass: UIUserInterfaceSizeClass
 
             // On iPad 9.7 inch 2/3 mode, right view's width is 396pt, use the compact mode's narrower margin

@@ -24,6 +24,7 @@ import WireDesign
 import WireNetwork
 import WireReusableUIComponents
 import WireSyncEngine
+import WireSystem
 
 // MARK: - AppRootRouter
 
@@ -40,6 +41,7 @@ final class AppRootRouter {
     private let sessionManagerLifeCycleObserver: SessionManagerLifeCycleObserver
     private let foregroundNotificationFilter: ForegroundNotificationFilter
     private var authenticatedRouter: AuthenticatedRouter?
+    private let sceneConnectionOptions: UIScene.ConnectionOptions
 
     private var observerTokens: [NSObjectProtocol] = []
     private var authenticatedBlocks: [() -> Void] = []
@@ -48,11 +50,10 @@ final class AppRootRouter {
     // MARK: - Private Set Property
 
     let sessionManager: SessionManager
+    let backgroundTaskExecuter: any BackgroundTaskExecuter
 
     private let mainWindow: UIWindow
-    private let screenCurtainWindow = ScreenCurtainWindow()
-
-    private var lastLaunchOptions: LaunchOptions?
+    private let screenCurtainWindow: ScreenCurtainWindow
 
     private var rootViewController: UIViewController {
         mainWindow.rootViewController!
@@ -71,11 +72,18 @@ final class AppRootRouter {
         mainWindow: UIWindow,
         sessionManager: SessionManager,
         appStateCalculator: AppStateCalculator,
-        trackingManager: TrackingManager
+        trackingManager: TrackingManager,
+        backgroundTaskExecuter: any BackgroundTaskExecuter,
+        sceneConnectionOptions: UIScene.ConnectionOptions
     ) {
         self.defaultEnvironment = defaultEnvironment
         self.mainWindow = mainWindow
+        guard let windowScene = mainWindow.windowScene else {
+            fatalError("mainWindow must be attached to a UIWindowScene")
+        }
+        self.screenCurtainWindow = ScreenCurtainWindow(windowScene: windowScene)
         self.sessionManager = sessionManager
+        self.backgroundTaskExecuter = backgroundTaskExecuter
         self.appStateCalculator = appStateCalculator
         self.urlActionRouter = URLActionRouter(
             viewController: mainWindow.rootViewController!,
@@ -85,6 +93,7 @@ final class AppRootRouter {
         self.foregroundNotificationFilter = ForegroundNotificationFilter()
         self.sessionManagerLifeCycleObserver = SessionManagerLifeCycleObserver()
         self.trackingManager = trackingManager
+        self.sceneConnectionOptions = sceneConnectionOptions
 
         sessionManagerLifeCycleObserver.sessionManager = sessionManager
         foregroundNotificationFilter.sessionManager = sessionManager
@@ -106,9 +115,8 @@ final class AppRootRouter {
     // MARK: - Public implementation
 
     @MainActor
-    func start(launchOptions: LaunchOptions) {
-        lastLaunchOptions = launchOptions
-        showInitial(launchOptions: launchOptions)
+    func start() {
+        showInitial()
     }
 
     func openDeepLinkURL(_ deepLinkURL: URL) -> Bool {
@@ -327,10 +335,10 @@ extension AppRootRouter: AppStateCalculatorDelegate {
 
     // MARK: - Navigation Helpers
 
-    private func showInitial(launchOptions: LaunchOptions) {
-        enqueueTransition(to: .headless) { [weak self] in
+    private func showInitial() {
+        enqueueTransition(to: .headless) { [weak self, sceneConnectionOptions] in
             Task { @MainActor in
-                await self?.sessionManager.start(launchOptions: launchOptions)
+                await self?.sessionManager.start(connectionOptions: sceneConnectionOptions)
             }
         }
     }
@@ -443,6 +451,18 @@ extension AppRootRouter: AppStateCalculatorDelegate {
         userSession: UserSession,
         completion: @escaping () -> Void
     ) {
+        // Re-use the existing router when transitioning back from `.locked` (EAR unlock),
+        // so the current zClientViewController and its navigation focus are preserved.
+        if let existingRouter = authenticatedRouter {
+            let existingZClient = existingRouter.zClientViewController
+            if mainWindow.rootViewController === existingZClient {
+                completion()
+            } else {
+                replaceRootViewController(by: existingZClient, completion: completion)
+            }
+            return
+        }
+
         guard let authenticatedRouter = buildAuthenticatedRouter(
             account: userSession.contextProvider.account,
             userSession: userSession,
@@ -464,11 +484,10 @@ extension AppRootRouter: AppStateCalculatorDelegate {
 
     @MainActor
     private func retryStart(completion: @escaping () -> Void) {
-        guard let launchOptions = lastLaunchOptions else { return }
         completion()
-        enqueueTransition(to: .headless) { [weak self] in
+        enqueueTransition(to: .headless) { [weak self, sceneConnectionOptions] in
             Task { @MainActor in
-                await self?.sessionManager.start(launchOptions: launchOptions)
+                await self?.sessionManager.start(connectionOptions: sceneConnectionOptions)
             }
         }
     }
@@ -537,6 +556,14 @@ extension AppRootRouter {
             presentAlertForDeletedAccountIfNeeded(error)
             sessionManager.processPendingURLActionDoesNotRequireAuthentication()
         case .authenticated:
+            // Hide the screen curtain proactively: by the time we reach this point
+            // the rootViewController is the unlocked content, so waiting for
+            // `UIApplication.didBecomeActiveNotification` (which can lag behind the
+            // EAR unlock by an entire sync cycle) just keeps the curtain visible
+            // longer than needed. `applicationWillResignActive` will re-show it if
+            // the app resigns active later.
+            screenCurtainWindow.isHidden = true
+            authenticatedRouter?.prepareForRootReplacement()
             // This is needed to display an ongoing call when coming from the background.
             authenticatedRouter?.updateActiveCallPresentationState()
             urlActionRouter.authenticatedRouter = authenticatedRouter
@@ -555,7 +582,9 @@ extension AppRootRouter {
 
     private func resetAuthenticatedRouterIfNeeded(for appState: AppState) {
         switch appState {
-        case .authenticated: break
+        // Keep the router alive across `.locked` so unlocking restores the
+        // existing zClientViewController instead of rebuilding the whole UI.
+        case .authenticated, .locked: break
         default:
             authenticatedRouter = nil
         }
@@ -595,46 +624,62 @@ extension AppRootRouter {
     }
 
     private func presentAlertForDeletedAccountIfNeeded(_ error: NSError?) {
-        guard
-            error?.userSessionErrorCode == .accountDeleted,
-            let reason = error?.userInfo[ZMAccountDeletedReasonKey] as? ZMAccountDeletedReason
-        else {
-            return
-        }
+        switch error?.userSessionErrorCode {
+        case .accountDeleted:
+            guard let reason = error?.userInfo[ZMAccountDeletedReasonKey] as? ZMAccountDeletedReason else {
+                return
+            }
 
-        switch reason {
-        case .sessionExpired:
-            let alert = UIAlertController(
-                title: L10n.Localizable.AccountDeletedSessionExpiredAlert.title,
-                message: L10n.Localizable.AccountDeletedSessionExpiredAlert.message,
-                preferredStyle: .alert
-            )
-            alert.addAction(UIAlertAction(
-                title: L10n.Localizable.General.ok,
-                style: .cancel
-            ))
-            rootViewController.present(alert, animated: true)
+            switch reason {
+            case .sessionExpired:
+                presentSessionExpiredAlert()
 
-        case .biometricPasscodeNotAvailable:
-            let alert = UIAlertController(
-                title: L10n.Localizable.AccountDeletedMissingPasscodeAlert.title,
-                message: L10n.Localizable.AccountDeletedMissingPasscodeAlert.message,
-                preferredStyle: .alert
-            )
-            alert.addAction(UIAlertAction(
-                title: L10n.Localizable.General.ok,
-                style: .cancel
-            ))
-            rootViewController.present(alert, animated: true)
+            case .biometricPasscodeNotAvailable:
+                let alert = UIAlertController(
+                    title: L10n.Localizable.AccountDeletedMissingPasscodeAlert.title,
+                    message: L10n.Localizable.AccountDeletedMissingPasscodeAlert.message,
+                    preferredStyle: .alert
+                )
+                alert.addAction(UIAlertAction(
+                    title: L10n.Localizable.General.ok,
+                    style: .cancel
+                ))
+                UIApplication.shared.topmostViewController(onlyFullScreen: false)?.present(alert, animated: true)
 
-        case .databaseWiped:
-            let wipeCompletionViewController = WipeCompletionViewController()
-            wipeCompletionViewController.modalPresentationStyle = .fullScreen
-            rootViewController.present(wipeCompletionViewController, animated: true)
+            case .databaseWiped:
+                let wipeCompletionViewController = WipeCompletionViewController()
+                wipeCompletionViewController.modalPresentationStyle = .fullScreen
+                UIApplication.shared.topmostViewController(onlyFullScreen: false)?.present(
+                    wipeCompletionViewController,
+                    animated: true
+                )
+
+            default:
+                break
+            }
+
+        case .accessTokenExpired:
+            // Reached e.g. when the self user is removed from the team: the backend
+            // revokes the access token before (or instead of) the account-deleted
+            // event ever gets processed, so this case needs its own alert too.
+            presentSessionExpiredAlert()
 
         default:
             break
         }
+    }
+
+    private func presentSessionExpiredAlert() {
+        let alert = UIAlertController(
+            title: L10n.Localizable.AccountDeletedSessionExpiredAlert.title,
+            message: L10n.Localizable.AccountDeletedSessionExpiredAlert.message,
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(
+            title: L10n.Localizable.General.ok,
+            style: .cancel
+        ))
+        UIApplication.shared.topmostViewController(onlyFullScreen: false)?.present(alert, animated: true)
     }
 }
 
@@ -666,7 +711,6 @@ extension AppRootRouter: ApplicationStateObserving {
     }
 
     func applicationDidBecomeActive() {
-        updateOverlayWindowFrame()
         teamMetadataRefresher.triggerRefreshIfNeeded()
     }
 
@@ -674,17 +718,18 @@ extension AppRootRouter: ApplicationStateObserving {
         let unreadConversations = sessionManager.accountManager.totalUnreadCount
         UIApplication.shared.applicationIconBadgeNumber = unreadConversations
     }
+}
 
-    func applicationWillEnterForeground() {
-        updateOverlayWindowFrame()
+// MARK: - Scene lifecycle
+
+extension AppRootRouter {
+
+    func sceneWillResignActive() {
+        screenCurtainWindow.showIfNeeded()
     }
 
-    func updateOverlayWindowFrame(size: CGSize? = nil) {
-        if let size {
-            screenCurtainWindow.frame.size = size
-        } else {
-            screenCurtainWindow.frame = mainWindow.screen.bounds
-        }
+    func sceneDidBecomeActive() {
+        screenCurtainWindow.hide()
     }
 }
 

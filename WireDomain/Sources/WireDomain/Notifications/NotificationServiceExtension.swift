@@ -20,6 +20,7 @@ import NeedleFoundation
 import UserNotifications
 import WireDataModel
 import WireLogging
+import WireUtilitiesPackage
 
 /// Receives and process a push notification through a flow of several steps:
 /// 1. Process push notification request (`ProcessNotificationRequestStep`)
@@ -30,12 +31,15 @@ import WireLogging
 ///
 /// These sequential steps represents the NSE dependency graph (using Needle).
 
-public final class NotificationServiceExtension: NotificationServiceProtocol {
+public final class NotificationServiceExtension {
 
     // MARK: - Properties
 
-    private let logger = WireLogger.notifications
+    private let logger: WireLogger
     private var onGoingTask: Task<Void, Never>?
+    private let request: UNNotificationRequest
+    private let contentHandler: (UNNotificationContent) -> Void
+    private let didComplete: () -> Void
 
     private let currentAppVersion: String
     private let currentBuildNumber: String
@@ -44,6 +48,7 @@ public final class NotificationServiceExtension: NotificationServiceProtocol {
     private let cookieEncryptionKey: Data
     private let minTLSVersion: String?
     private let preferredAPIVersion: UInt?
+    private let mainAppRequiredGate: MainAppRequiredGate
 
     public init(
         currentAppVersion: String,
@@ -52,8 +57,16 @@ public final class NotificationServiceExtension: NotificationServiceProtocol {
         sharedUserDefaults: UserDefaults,
         cookieEncryptionKey: Data,
         minTLSVersion: String?,
-        preferredAPIVersion: UInt?
+        preferredAPIVersion: UInt?,
+        request: UNNotificationRequest,
+        contentHandler: @escaping (UNNotificationContent) -> Void,
+        didComplete: @escaping () -> Void
     ) {
+        // Avoid `WireLogger.notifications` as we want a logger specific to this NSE instance.
+        self.logger = WireLogger(tag: "notifications", instanceAttributes: [.notificationRequestID: request.identifier])
+        self.request = request
+        self.contentHandler = contentHandler
+        self.didComplete = didComplete
         self.currentAppVersion = currentAppVersion
         self.currentBuildNumber = currentBuildNumber
         self.appContainerURL = appContainerURL
@@ -61,27 +74,21 @@ public final class NotificationServiceExtension: NotificationServiceProtocol {
         self.cookieEncryptionKey = cookieEncryptionKey
         self.minTLSVersion = minTLSVersion
         self.preferredAPIVersion = preferredAPIVersion
+        self.mainAppRequiredGate = MainAppRequiredGate(userDefaults: sharedUserDefaults)
+
         registerProviderFactories()
         logger.info("initializing new notification service", attributes: .newNSE, .safePublic)
     }
 
     // MARK: - Notifications
 
-    public func didReceive(
-        _ request: UNNotificationRequest,
-        withContentHandler contentHandler: @escaping (UNNotificationContent) -> Void
-    ) {
-
-        if onGoingTask != nil {
-            logger.warn(
-                "onGoingtask not null: a notification is already being processed",
-                attributes: .newNSE, .safePublic
-            )
-        }
-
+    public func execute() {
         let notificationContentHandler: (UNNotificationContent) -> Void = { [weak self] in
+            guard let self else { return }
+
             contentHandler($0) // Finishes current notification flow by calling system built-in handler.
-            self?.onGoingTask = nil // Current notification flow was completed, nil out the task.
+            didComplete()
+            onGoingTask = nil // Current notification flow was completed, nil out the task.
         }
 
         onGoingTask = Task {
@@ -95,6 +102,7 @@ public final class NotificationServiceExtension: NotificationServiceProtocol {
             }
 
             do {
+
                 let nseFlow = try NSEFlow(
                     currentAppVersion: currentAppVersion,
                     currentBuildNumber: currentBuildNumber,
@@ -110,16 +118,62 @@ public final class NotificationServiceExtension: NotificationServiceProtocol {
                     contentHandler: notificationContentHandler
                 )
             } catch {
-                // TODO: [WPB-19762] show errors
                 logError(error)
-                notificationContentHandler(.emptyNotification)
+
+                if let accountID = MainAppRequiredGate.isMainAppRequiredErrorFoAccount(error),
+                   mainAppRequiredGate.shouldNotify(accountID: accountID) {
+
+                    notificationContentHandler(mainAppRequiredNotification(for: request, accountID: accountID))
+                } else if DeveloperFlag.showNSEErrors.isOn {
+                    notificationContentHandler(errorNotification(for: error))
+                } else {
+                    notificationContentHandler(.emptyNotification)
+                }
             }
         }
     }
 
-    public func serviceExtensionTimeWillExpire() {
-        logger.warn("new notification service will expire", attributes: .newNSE, .safePublic)
+    public var hasOnGoingTask: Bool {
+        onGoingTask != nil
+    }
+
+    public func cancel() async {
+        logger.warn("will cancel ongoing task", attributes: .newNSE, .safePublic)
         onGoingTask?.cancel()
+        if DeveloperFlag.showNSEErrors.isOn {
+            let content = UNMutableNotificationContent()
+            content.title = "NSE Error"
+            content.body = "NSE will expire"
+            content.interruptionLevel = .active
+            contentHandler(content)
+        }
+        await onGoingTask?.value
+    }
+}
+
+// MARK: - Error notification
+
+extension NotificationServiceExtension {
+    private func mainAppRequiredNotification(
+        for request: UNNotificationRequest,
+        accountID: UUID
+    ) -> UNMutableNotificationContent {
+        mainAppRequiredGate.markNotified(accountID: accountID)
+
+        let content = UNMutableNotificationContent()
+        content.title = String(localized: "notification_service_extension.error.open_app.title", bundle: .module)
+        content.body = String(localized: "notification_service_extension.error.open_app.message", bundle: .module)
+        content.interruptionLevel = .active
+        content.sound = request.content.sound
+        return content
+    }
+
+    private func errorNotification(for error: any Error) -> UNMutableNotificationContent {
+        let content = UNMutableNotificationContent()
+        content.title = "NSE Error"
+        content.body = String(describing: error)
+        content.interruptionLevel = .active
+        return content
     }
 }
 
@@ -185,9 +239,9 @@ extension NotificationServiceExtension {
 
     private func logUserError(_ error: NSEUserScope.Failure) {
         switch error {
-        case let .mainAppRequired(message):
-            logger.error(
-                "Main app required, need to open main app: \(String(describing: error))",
+        case let .mainAppRequired(message, _):
+            logger.warn(
+                "Main app required, need to open main app: \(message)",
                 attributes: .newNSE, .safePublic
             )
         case let .failedToFetchBackendEnvironment(error):

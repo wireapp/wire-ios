@@ -20,5 +20,6 @@ public extension Payload {
     enum ConversationGroupType: String, Codable {
         case group = "group_conversation"
         case channel
+        case meeting
     }
 }

@@ -1,0 +1,38 @@
+name: "Generate Test summary"
+description: "Parse xcresult bundles and expose an XCTest summary"
+
+inputs:
+  xcresult_search_path:
+    description: "Directory to search for .xcresult bundles"
+    required: false
+    default: "artifacts"
+
+outputs:
+  passed:
+    description: "Number of passed tests"
+    value: ${{ steps.extract.outputs.passed }}
+  failed:
+    description: "Number of failed tests"
+    value: ${{ steps.extract.outputs.failed }}
+  skipped:
+    description: "Number of skipped tests"
+    value: ${{ steps.extract.outputs.skipped }}
+  total:
+    description: "Total number of tests"
+    value: ${{ steps.extract.outputs.total }}
+  failed_details:
+    description: "Failed test names with one-line error summary"
+    value: ${{ steps.extract.outputs.failed_details }}
+  report_message:
+    description: "Formatted message with test counts and failed test details"
+    value: ${{ steps.extract.outputs.report_message }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Extract summary from xcresult
+      id: extract
+      shell: bash
+      env:
+        XCRESULT_SEARCH_PATH: ${{ inputs.xcresult_search_path }}
+      run: bash "$GITHUB_WORKSPACE/scripts/extract-summary.sh"

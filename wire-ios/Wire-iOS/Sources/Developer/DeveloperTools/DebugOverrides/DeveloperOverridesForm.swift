@@ -33,7 +33,7 @@ struct DeveloperOverridesForm: View {
         Form {
             Section("build number") {
                 TextField("e.g. 12345", text: $buildNumber)
-                Text("Use can set this to a blacklisted build number to simulate account blocking.")
+                Text("You can set this to a blacklisted build number to simulate account blocking.")
                     .foregroundStyle(.secondary)
             }
 

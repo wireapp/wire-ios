@@ -25,11 +25,12 @@ public protocol WireDriveUploadDraftUseCaseProtocol: Sendable {
 
     /// Uploads the file at `fileURL` to the drive server.
 
-    func invoke(fileURL: URL) async throws
+    func invoke(fileURL: URL, localIdentifier: String?) async throws
 
     /// Creates a file using `imageData` and uploads it to the drive server.
+    /// When an `existingNodeID` is provided, an existing asset is being updated.
 
-    func invoke(data: Data, type: UTType) async throws
+    func invoke(data: Data, type: UTType, localIdentifier: String?, existingNodeID: UUID?) async throws
 
     var charactersToReplace: [Character] { get }
 }

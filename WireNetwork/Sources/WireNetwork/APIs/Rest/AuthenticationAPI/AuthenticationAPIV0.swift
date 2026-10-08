@@ -200,10 +200,24 @@ class AuthenticationAPIV0: AuthenticationAPI, VersionedAPI {
             .build()
 
         let (data, response) = try await networkService.executeRequest(request)
-        return try ResponseParser()
-            .success(code: .ok)
-            .failure(code: .badRequest, label: "bad-request", error: AuthenticationAPIError.invalidEmail)
-            .parse(code: response.statusCode, data: data)
+
+        guard let responseHeaders = response.allHeaderFields as? [String: String] else {
+            throw AuthenticationAPIError.invalidResponse
+        }
+
+        do {
+            return try ResponseParser()
+                .success(code: .ok)
+                .failure(code: .badRequest, label: "bad-request", error: AuthenticationAPIError.invalidEmail)
+                .failure(code: .tooManyRequests, decodableError: FailureResponseV0.self)
+                .parse(code: response.statusCode, data: data)
+        } catch let error as FailureResponseV0 {
+            if error.code == HTTPStatusCode.tooManyRequests.rawValue, error.label == "too-many-requests" {
+                let retryAfter = responseHeaders["retry-after"].flatMap { TimeInterval($0) }
+                throw AuthenticationAPIError.tooManyRequests(error.message, retyAfter: retryAfter)
+            }
+            throw error
+        }
     }
 
     func getActivationCode(forEmail email: String, basicAuth: String) async throws -> (code: String, key: String) {
@@ -275,12 +289,15 @@ class AuthenticationAPIV0: AuthenticationAPI, VersionedAPI {
             .withBody(body, contentType: .json)
             .build()
 
-        let (_, response) = try await networkService.executeRequest(request)
+        let (data, response) = try await networkService.executeRequest(request)
 
         try ResponseParser()
             .success(code: .ok)
             .failure(code: .badRequest, label: "bad-request", error: AuthenticationAPIError.invalidEmail)
-            .parse(code: response.statusCode, data: nil)
+            .parse(
+                code: response.statusCode,
+                data: response.statusCode == HTTPStatusCode.ok.rawValue ? nil : data
+            )
     }
 
     func requestEmailVerificationCode(for email: String) async throws {

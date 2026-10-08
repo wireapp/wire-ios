@@ -17,9 +17,8 @@
 //
 
 import UIKit
+import WireLogging
 import WireSystem
-
-private let log = ZMSLog(tag: "link opening")
 
 enum MapsOpeningOption: Int, LinkOpeningOption {
     case apple
@@ -51,9 +50,9 @@ enum MapsOpeningOption: Int, LinkOpeningOption {
 extension URL {
 
     func openAsLocation() -> Bool {
-        log.debug("Trying to open \"\(self)\" as location")
+        WireLogger.ui.debug("Trying to open \"\(self)\" as location")
         let saved = MapsOpeningOption.storedPreference
-        log.debug("Saved option to open a location: \(saved.displayString)")
+        WireLogger.ui.debug("Saved option to open a location: \(saved.displayString)")
 
         switch saved {
         case .apple: return false

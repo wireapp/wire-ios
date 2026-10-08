@@ -41,7 +41,10 @@ class ProteusServiceTests: XCTestCase {
         mockCoreCrypto = MockCoreCryptoProtocol()
         mockCoreCrypto.mockTransaction(context: mockCoreCryptoContext)
         mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
-        mockCoreCryptoProvider.coreCrypto_MockValue = mockCoreCrypto
+        mockCoreCryptoProvider.coreCrypto_MockValue = SafeCoreCrypto(
+            backgroundTaskExecuter: PassthroughTaskExecuter(),
+            coreCrypto: mockCoreCrypto
+        )
         sut = ProteusService(coreCryptoProvider: mockCoreCryptoProvider)
     }
 
@@ -304,6 +307,40 @@ class ProteusServiceTests: XCTestCase {
         }
 
         XCTAssertEqual(encryptCalls, 1)
+    }
+
+    // MARK: - Prekey generation
+
+    func test_GeneratePrekey_Success() async throws {
+        // Given
+        let prekeyID: UInt16 = 42
+        let prekeyData = Data([1, 2, 3])
+
+        // Mock
+        mockCoreCryptoContext.proteusNewPrekeyAuto_MockMethod = {
+            .init(id: prekeyID, pkb: prekeyData)
+        }
+
+        // When
+        let prekey = try await sut.generatePrekey()
+
+        // Then
+        XCTAssertEqual(prekey.id, prekeyID)
+        XCTAssertEqual(prekey.prekey, prekeyData.base64EncodedString())
+        XCTAssertEqual(mockCoreCryptoContext.proteusNewPrekeyAuto_Invocations.count, 1)
+    }
+
+    func test_GeneratePrekey_Failure() async throws {
+        // Mock
+        mockCoreCryptoContext.proteusNewPrekeyAuto_MockMethod = {
+            throw MockError()
+        }
+
+        // Then
+        await assertItThrows(error: ProteusService.PrekeyError.failedToGeneratePrekey) {
+            // When
+            _ = try await sut.generatePrekey()
+        }
     }
 
     // MARK: - Session deletion

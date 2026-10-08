@@ -65,6 +65,7 @@ public final class WireAuthenticationBridge {
         case didRewindToThisView
         case backendSwitchRequested(configURL: URL)
         case updateAnotherAccountExistence(newValue: Bool)
+        case authenticationFailed(title: String, message: String)
 
     }
 

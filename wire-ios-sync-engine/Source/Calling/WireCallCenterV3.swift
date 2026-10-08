@@ -75,6 +75,8 @@ public class WireCallCenterV3: NSObject {
     /// The snaphot of the call state for each non-idle conversation.
     var callSnapshots: [AVSIdentifier: CallSnapshot] = [:]
 
+    private var conversationDeletionObservers: [AVSIdentifier: ManagedObjectContextChangeObserver] = [:]
+
     /// Used to collect incoming events (e.g. from fetching the notification stream) until AVS is ready to process them.
     var bufferedEvents: [CallEvent] = []
 
@@ -106,6 +108,8 @@ public class WireCallCenterV3: NSObject {
 
     let localDomain: String?
     let isFederationEnabled: Bool
+
+    var mlsConferenceSetupTimeout: Duration = .seconds(10)
 
     // MARK: - Initialization
 
@@ -155,6 +159,7 @@ public class WireCallCenterV3: NSObject {
 
     func tearDown() {
         isEnabled = false
+        conversationDeletionObservers.removeAll()
     }
 
 }
@@ -165,6 +170,7 @@ extension WireCallCenterV3 {
 
     /// Removes the participantSnapshot and remove the conversation from the list of ignored conversations.
     func clearSnapshot(conversationId: AVSIdentifier) {
+        conversationDeletionObservers.removeValue(forKey: conversationId)
         callSnapshots.removeValue(forKey: conversationId)
         clientsRequestCompletionsByConversationId.removeValue(forKey: conversationId)
     }
@@ -219,6 +225,21 @@ extension WireCallCenterV3 {
             videoGridPresentationMode: .allVideoStreams,
             conversationObserverToken: token
         )
+
+        // Conversation change notifications are disabled in the background, but calls can remain active.
+        conversationDeletionObservers[conversationId] = ManagedObjectContextChangeObserver(
+            context: moc
+        ) { [weak self, weak conversation] in
+            guard
+                let self,
+                isEnabled,
+                conversation?.isDeletedRemotely == true,
+                conversationDeletionObservers.removeValue(forKey: conversationId) != nil
+            else { return }
+
+            Self.logger.info("closing call because conversation was deleted")
+            closeCall(conversationId: conversationId)
+        }
     }
 
 }
@@ -515,6 +536,7 @@ public extension WireCallCenterV3 {
         case missingAVSConversationType
         case missingConferencingPermission
         case failedToSetupMLSConference
+        case mlsConferenceSetupTimeout
         case unknown
 
     }
@@ -625,6 +647,8 @@ public extension WireCallCenterV3 {
             isConferenceCall: conversationType.isConference
         )
 
+        let isMeeting = conversation.isMeeting
+
         if conversationType.isConference, !canStartConferenceCalls {
             if let context = uiMOC {
                 WireCallCenterConferenceCallingUnavailableNotification().post(in: context.notificationContext)
@@ -663,7 +687,8 @@ public extension WireCallCenterV3 {
                 conversationId: conversationId,
                 callType: callType,
                 conversationType: conversationType,
-                useCBR: useConstantBitRateAudio
+                useCBR: useConstantBitRateAudio,
+                isMeeting: isMeeting
             )
 
             guard started else {
@@ -740,7 +765,8 @@ public extension WireCallCenterV3 {
             Task {
                 do {
                     // Join the subgroup or create it if it doesn't exist
-                    let subgroupID = try await mlsService.createOrJoinSubgroup(
+                    let subgroupID = try await self.createOrJoinSubgroupWithTimeout(
+                        using: mlsService,
                         parentQualifiedID: parentQualifiedID,
                         parentID: parentGroupID
                     )
@@ -820,6 +846,34 @@ public extension WireCallCenterV3 {
                     self.onMLSConferenceFailure(id: conversationID)
                 }
             }
+        }
+    }
+
+    /// Joins (or creates) the MLS subgroup, enforcing `mlsConferenceSetupTimeout`.
+    ///
+    /// If the network call doesn't complete in time, throws `Failure.mlsConferenceSetupTimeout`
+    /// instead of leaving the user stuck in "Connecting…".
+    private func createOrJoinSubgroupWithTimeout(
+        using mlsService: MLSServiceInterface,
+        parentQualifiedID: QualifiedID,
+        parentID: MLSGroupID
+    ) async throws -> MLSGroupID {
+        try await withThrowingTaskGroup(of: MLSGroupID.self) { group in
+            group.addTask {
+                try await mlsService.createOrJoinSubgroup(
+                    parentQualifiedID: parentQualifiedID,
+                    parentID: parentID
+                )
+            }
+            group.addTask {
+                try await Task.sleep(for: self.mlsConferenceSetupTimeout)
+                throw Failure.mlsConferenceSetupTimeout
+            }
+            defer { group.cancelAll() }
+            guard let result = try await group.next() else {
+                throw Failure.mlsConferenceSetupTimeout
+            }
+            return result
         }
     }
 
@@ -1062,7 +1116,7 @@ extension WireCallCenterV3 {
 
         guard
             let context = uiMOC,
-            let conversationType = conversationType(from: callEvent)
+            let conversation = conversationInfo(from: callEvent.conversationId)
         else {
             Self.logger.warn("can't handle call event: unable to determine conversation type")
             return
@@ -1070,7 +1124,8 @@ extension WireCallCenterV3 {
 
         let result = avsWrapper.received(
             callEvent: callEvent,
-            conversationType: conversationType
+            conversationType: conversation.type,
+            isMeeting: conversation.isMeeting
         )
 
         if let error = result {
@@ -1082,26 +1137,34 @@ extension WireCallCenterV3 {
         }
     }
 
-    private func conversationType(from callEvent: CallEvent) -> AVSConversationType? {
-        conversationType(from: callEvent.conversationId)
+    func conversationType(from conversationId: AVSIdentifier) -> AVSConversationType? {
+        conversationInfo(from: conversationId)?.type
     }
 
-    func conversationType(from conversationId: AVSIdentifier) -> AVSConversationType? {
+    /// The AVS-relevant properties of the conversation.
+    private func conversationInfo(
+        from conversationId: AVSIdentifier
+    ) -> (type: AVSConversationType, isMeeting: Bool)? {
         guard let context = uiMOC else { return nil }
 
-        var conversationType: AVSConversationType?
+        var info: (type: AVSConversationType, isMeeting: Bool)?
 
         context.performAndWait {
-            if let conversation = ZMConversation.fetch(
-                with: conversationId.identifier,
-                domain: conversationId.domain,
-                in: context
-            ) {
-                conversationType = getAVSConversationType(for: conversation)
+            guard
+                let conversation = ZMConversation.fetch(
+                    with: conversationId.identifier,
+                    domain: conversationId.domain,
+                    in: context
+                ),
+                let conversationType = getAVSConversationType(for: conversation)
+            else {
+                return
             }
+
+            info = (conversationType, conversation.isMeeting)
         }
 
-        return conversationType
+        return info
     }
 
     /// Handles a change in calling state.

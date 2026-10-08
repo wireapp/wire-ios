@@ -18,7 +18,7 @@
 
 #import <Foundation/Foundation.h>
 
-
+extern NSString * const ZMCookieKeyKey;
 
 @interface NSUserDefaults (SharedUserDefaults)
 

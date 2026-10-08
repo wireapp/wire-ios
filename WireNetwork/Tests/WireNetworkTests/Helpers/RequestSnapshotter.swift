@@ -139,8 +139,7 @@ final class RequestSnapshotter {
     }
 
     private var defaultRecordMode: SnapshotTestingConfiguration.Record? {
-        let ci = ProcessInfo.processInfo.environment["CI"]
-        return (ci == nil || ci?.isEmpty == true) ? .missing : .never
+        ProcessInfo.processInfo.environment["CI"] == "true" ? .never : .missing
     }
 
 }

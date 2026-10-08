@@ -60,8 +60,14 @@ public enum Locators {
 
         case bottomBarRecentListButton
         case bottomBarSettingsButton
+        case bottomBarDriveButton
+        case bottomBarMeetingsButton
         case createGroupOrSearchButton
+        case conversationSearchBar
+        case conversationSearchClearButton = "Clear text"
         case conversationCell
+        case unblockOptionOnContextMenu
+        case joinCallButton = "Join"
         case blockOptionOnContextMenu = "Block…"
         case clearOptionOnContextMenu = "Clear Content…"
         case clearButtonOnBottomSheet
@@ -74,11 +80,17 @@ public enum Locators {
         case loadBar
         case addToFavourite = "Add to Favorites"
         case removeFromFavourite = "Remove from Favorites"
+        case moveToFolderOptionOnContextMenu = "Move to…"
         case filterConversations = "Filter conversations"
-        case filterByFavourites = "Show all favorite conversations"
-        case filterByOneOnOneConversation = "Show all one on one conversations"
-        case textFilteredByFavourites = "Filtered by Favorites"
-        case textFilteredByOneOnOne = "Filtered by 1:1 Conversations"
+        case filterByFavourites
+        case filterByGroups
+        case filterByChannels
+        case filterByOneOnOneConversation
+        case filterByFolders
+        case textFilteredByFavourites
+        case textFilteredByGroups
+        case textFilteredByChannels
+        case textFilteredByOneOnOne
         case userRemovedSystemMessage
         case connectionRequestsCell
         case unreadMessageCount
@@ -89,6 +101,28 @@ public enum Locators {
 
         case accountCell
         case optionsCell
+        case shareDebugBanner
+    }
+
+    public enum ShareDebugReportPage: String {
+
+        case actionSheet = "Having trouble?"
+        case shareViaWireButton = "ShareDebugReportPage.shareViaWireButton"
+        case sendEmailButton = "ShareDebugReportPage.sendEmailButton"
+        case shareButton = "ShareDebugReportPage.shareButton"
+        case cancelButton = "ShareDebugReportPage.cancelButton"
+    }
+
+    public enum ShareViaWirePage: AutoPrefixedEnum {
+
+        case sendButton
+        case closeButton
+    }
+
+    public enum ActivitySheetPage: String {
+
+        case sheet = "ActivityListView"
+        case saveToFiles = "Save to Files"
     }
 
     public enum AccountSettingsPage: String {
@@ -96,9 +130,17 @@ public enum Locators {
         // TODO: [WPB-21952] Improve these identifiers later.
         // We are keeping the current title+field identifiers for now to avoid
         // changing existing references across the app.
+        case accountHeader = "Account"
+        case pictureCell
+        case profilePictureImagePreview
+        case colorCell
+        case conversationBackgroundSwitch = "ConversationBackgroundSwitch"
         case nameField = "NameField"
+        case nameFieldDisabled = "NameFieldDisabled"
         case usernameField = "UsernameField"
+        case usernameFieldDisabled = "UsernameFieldDisabled"
         case emailField = "EmailField"
+        case emailFieldDisabled = "EmailFieldDisabled"
         case domainFieldDisabled = "DomainFieldDisabled"
         case backuporRestoreField = "Back up or RestoreField"
         case resetPasswordField = "Reset Password"
@@ -108,31 +150,101 @@ public enum Locators {
 
     }
 
+    public enum ThemeSettingsPage: AutoPrefixedEnum {
+
+        case lightOption
+        case darkOption
+        case systemOption
+    }
+
+    public enum DeviceDetailsPage: String {
+
+        case removeDeviceButton
+        case verifiedSwitch
+        case ok = "OK"
+    }
+
+    public enum DevicesPage: String {
+
+        case deviceNameLabel = "device name"
+        case title = "Devices"
+    }
+
     public enum ActiveConversationPage: String {
 
         case videoCallBarButton
         case inputField
         case sendButton
-        case conversationBackButton
         case authorName
+        case conversationTitleLabel
         case conversationTitleButton
         case conversationDetailsButton
         case sharedDriveButton
         case ephemeralTimeSelectionButton
         case message
-        case imageCell = "ImageCell"
+        case linkPreviewCell
+        case imageCell
+        case videoCell
+        case videoPlayButton
+        case imagePreview
+        case videoPreview
         case mentionButton
         case userCellName
         case labelSharedDriveON = "Shared Drive is on"
         case labelSelfDeletingMessagesOFF = "Self-deleting messages are off"
+        case selfDeletedMessage
+        case ephemeralCountdown
         case sharedFileLabel = "FileTransferTopLabel"
+        case sharedFileDetailsLabel = "FileTransferBottomLabel"
         case fileTypeIcon = "FileTransferFileTypeIcon"
         case sketchButton
         case canvas
         case canvasSendButton
+        case canvasConfirmButton
         case attachmentImagePreview
         case attachmentVideoPreview
         case classifiedBanner = "ClassificationBannerClassified"
+        case photoButton
+        case cameraRollButton
+        case uploadFileButton
+        case locationButton
+        case add = "Add"
+        case browse = "Browse"
+        case open = "Open"
+        case allowFullAccess = "Allow Full Access"
+        case sendLocation
+        case selectedAddress
+        case locationCell
+        case locationMap
+        case ok = "OK"
+        case audioButton
+        case startRecording
+        case stopRecording
+        case helium = "Helium"
+        case sendAudio
+        case playAudioFile
+        case recordingTime
+        case showOtherRowButton
+        case pingButton
+        case guestsArePresent = "Guests are present"
+        case conversationBackground
+        case openOngoingCallButton
+        case readReceiptsDisabledSystemMessage
+        case readReceiptsEnabledSystemMessage
+        case replyOptionOnMessage = "Reply"
+        case replyPreviewView = "replyView"
+        case cancelReplyButton = "cancelReply"
+        case originalSender = "original.sender"
+
+        public static func reactionOnMessageIdentifier(emoji: String) -> String {
+            switch emoji {
+            case "❤️":
+                "emojiHeart"
+            default:
+                "emoji\(emoji.unicodeScalars.map { String(format: "%04X", $0.value) }.joined())"
+            }
+        }
+
     }
 
     public enum BackupOrRestorePage: String {
@@ -140,6 +252,7 @@ public enum Locators {
         case backUpNow
         case restoreFromBackupButton
         case browse = "Browse"
+        case historyRestoredAlert = "Your history is restored."
     }
 
     public enum CreatingBackupPage: AutoPrefixedEnum {
@@ -161,15 +274,58 @@ public enum Locators {
         case title
         case addParticipantsButton
         case moreOptionsButton
+        case notificationOptionsCell
         case userCellName
+        case adminCell
+        case memberCell
         case close
+        case readReceiptsSwitch
+        case guestOptionsCell
+    }
 
+    public enum GuestOptionsPage: String {
+        case createLinkButton
+        case linkHeader
+        case secureLinkHeader
+        case linkText
+        case createLinkWithPasswordAction
+        case createLinkWithoutPasswordAction
+        case revokeLinkButton = "Revoke Link…"
+    }
+
+    public enum CreateSecureGuestLinkPage: AutoPrefixedEnum {
+        case generatePasswordButton
+        case passwordTextField
+        case confirmPasswordTextField
+        case createLinkButton
+    }
+
+    public enum ConversationNotificationOptionsPage: AutoPrefixedEnum {
+        case everythingOption
+        case mentionsAndRepliesOption
+        case nothingOption
+    }
+
+    public enum ConversationTimeoutOptionsPage: AutoPrefixedEnum {
+        case timeOutOptionsCloseButton
     }
 
     public enum ConversationDetailsActions: AutoPrefixedEnum {
         case archive
         case clearContent
         case leaveConversation
+        case migrateToMLS
+        case moveToFolder
+    }
+
+    public enum LastAdminLeaveAlert: AutoPrefixedEnum {
+        case promoteNewAdmin
+        case deleteGroup
+    }
+
+    public enum AdminSelectionPage: AutoPrefixedEnum {
+        case promoteButton
+        case userCell
     }
 
     public enum UserProfilePage: AutoPrefixedEnum {
@@ -183,6 +339,21 @@ public enum Locators {
         case addAccountOrTeamButton
         case userProfilePicture
         case close
+        case status
+    }
+
+    public enum UserProfileQRCodePage: AutoPrefixedEnum {
+        case qrCodeImage
+        case shareProfileLinkButton
+        case shareQRCodeButton
+    }
+
+    public enum UserProfileStatusPicker: String {
+        case none
+        case available
+        case busy
+        case away
+        case okButton = "OK"
     }
 
     public enum CreateGroupPage: AutoPrefixedEnum {
@@ -215,6 +386,14 @@ public enum Locators {
         case save
     }
 
+    public enum UsernameUpdatePage: String {
+
+        case usernameField
+        case save = "Save"
+        case username = "Username"
+        case handleTextField
+    }
+
     public enum NewConversationPage: String {
 
         case createNewGroupButton
@@ -223,6 +402,7 @@ public enum Locators {
         case cancel
         case usernameCell
         case createNewChannelButton
+        case userCellInContactList
     }
 
     public enum OnMyiPhonePage: String {
@@ -233,9 +413,24 @@ public enum Locators {
 
     }
 
+    public enum FilesAppPage: String {
+
+        case browse = "Browse"
+        case done = "Done"
+        case onMyIPhone = "On My iPhone"
+        case search = "Search"
+        case share = "Share"
+        case nameContains = "Name Contains"
+        case moreOptions = "OverflowBarButtonItem"
+        case select = "Select"
+    }
+
     public enum OptionsOnSettingsPage: String {
 
+        case theme = "Theme"
+        case themeCell
         case lockWithPasscode = "Lock With Passcode"
+        case createLinkPreviews = "Create Link Previews"
     }
 
     public enum SaveBackupFileBottomSheetPage: String {
@@ -278,6 +473,14 @@ public enum Locators {
         case confirmUsernameButton
     }
 
+    public enum ManageDevicesPage: String {
+
+        case manageDevices
+        case removeDevice = "minus.circle.fill"
+        case deleteDevice = "Delete"
+        case ok = "OK"
+    }
+
     public enum TeamSetupStepsPage: AutoPrefixedEnum {
 
         case checkbox
@@ -314,16 +517,25 @@ public enum Locators {
 
     public enum ShareExtensionPage: String {
 
-        case imageTile = "PXGGridLayout-Info"
-        case shareButton = "PUOneUpBarButtonItemIdentifierShare"
-        case chooseConversations = "Choose"
         case sendButtonOnShareExtension
+        case messageField
+        case wire = "Wire"
+        case chooseConversations = "Choose"
+    }
+
+    public enum PhotosAppPage: String {
+
+        case select = "Select"
+        case imageTile = "PXGGridLayout-Info"
+        case shareButton = "Share"
         case continueButton = "Continue"
+
     }
 
     public enum IncomingCallPage: String {
 
         case acceptCall = "Accept"
+        case declineCall
         case turnOffMicrophone = "Microphone"
     }
 
@@ -334,8 +546,13 @@ public enum Locators {
 
     public enum OngoingCallPage: String {
 
-        case endOngoingCallButton = "End call"
+        case cameraButton = "CallVideoButton"
+        case endOngoingCallButton = "EndCallButton"
+        case microphoneButton = "CallMuteButton"
+        case speakerButton = "CallSpeakerButton"
         case timeLabel
+        case minimizeCall
+        case sharesScreenDescription = "Shares screen"
 
         public static func participantIdentifier(_ name: String) -> String {
             "audioView.\(name).minimized.inactive"
@@ -387,6 +604,7 @@ public enum Locators {
 
         public enum FileMenu: String {
             case deleteToRecycleBin
+            case deletePermanently
             case restore
 
             public var identifier: String {
@@ -423,7 +641,9 @@ public enum Locators {
             case close
         }
 
+        /// UI elements for both file or folder creation.
         public enum CreateFilePage: String {
+            case createFolderPageHeader = "Create folder"
             case cancelButton
             case createButton
         }
@@ -470,5 +690,95 @@ public enum Locators {
             case confirmDeleteButton
             case confirmRestoreButton
         }
+
+        public enum RecycleBinPage: String {
+            case deletePermanently = "Delete Permanently"
+        }
+
+        public enum ConversationDetailsSharedDriveOptionsPage: AutoPrefixedEnum {
+            case toggleSectionTitle
+            case toggle
+            case toggleSectionFooter
+            case participantsSectionHeader
+            case participantsSectionFooterTitle
+            case participantsSectionFooterSubtitle
+            case participantName
+            case participantHandle
+            case participantRole
+        }
+    }
+
+    public enum BlockerPage: String {
+
+        case mainContent
+        case clientObsoleteAlertTitle = "Update required"
+
+    }
+
+    public enum SSOWebLoginPage: String {
+        case username = "Username"
+        case signInButton = "Sign In"
+
+    }
+
+    public enum AlertActions: AutoPrefixedEnum {
+        case confirm
+    }
+
+    public enum WireMeetings {
+
+        public enum MeetingForm: String {
+            case save = "meetingFormSave"
+            case title = "meetingFormTitle"
+            case clearTitle = "meetingFormClearTitle"
+            case participants = "meetingFormParticipants"
+            case membersSelect = "meetingMembersSelect"
+            case selectedMembersSection = "Selected ("
+
+            public static func memberIdentifier(_ id: String) -> String {
+                "meetingMember.\(id.uppercased())"
+            }
+        }
+
+        public enum MeetingsPage: String {
+            case loadProgress = "meetingsLoadProgress"
+            case loadRetryButton = "meetingsLoadRetryButton"
+            case paginationProgress = "meetingsPaginationProgress"
+            case list = "meetingsList"
+            case dayHeader = "meetingsDayHeader"
+            case scheduleButton = "scheduleMeetingBarButton"
+            case meetNow = "Meet Now"
+            case scheduleMeeting = "Schedule a Meeting"
+            case noUpcomingMeetings = "No upcoming meetings yet"
+        }
+
+        public enum MeetingDetails: String {
+            case attendingLabel = "Attending Label"
+        }
+
+        public enum MeetingRow: String {
+            case title = "meetingTitle"
+            case menu = "meetingMenu"
+            case time = "meetingTime"
+            case recurrence = "meetingRecurrence"
+            case participantOverflow = "meetingParticipantOverflow"
+            case rowPrefix = "meetingRow."
+            case deleteForMeButton = "Delete Meeting for Me Button"
+            case joinButton = "Join Button"
+
+            public static func rowIdentifier(domain: String, id: UUID, start: Date) -> String {
+                "meetingRow.\(domain).\(id.uuidString).\(Int(start.timeIntervalSince1970))"
+            }
+
+            public static func avatarIdentifier(_ id: String) -> String {
+                "meetingAvatar.\(id.uppercased())"
+            }
+        }
+    }
+
+    public enum SessionExpiredPage: String {
+
+        case alertTitle = "Your session expired"
+        case okButton = "OK"
     }
 }

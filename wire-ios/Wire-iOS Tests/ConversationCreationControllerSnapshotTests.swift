@@ -88,7 +88,7 @@ final class ConversationCreationControllerSnapshotTests: XCTestCase {
 
     private func createSut(
         isTeamMember: Bool,
-        messageProtocol: Feature.MLS.Config.MessageProtocol = .proteus
+        messageProtocol: Feature.MLS.Config.MessageProtocol = .proteus,
     ) async {
         let mockSelfUser = MockUserType.createSelfUser(name: "Alice", inTeam: isTeamMember ? UUID() : nil)
         let mockUserSession = UserSessionMock(mockUser: mockSelfUser)

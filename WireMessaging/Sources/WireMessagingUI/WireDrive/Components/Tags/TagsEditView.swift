@@ -162,13 +162,13 @@ struct TagsEditView: View {
 
     @ViewBuilder
     private func tagNameValidationError() -> some View {
-        if let message = viewModel.validationErrorMessage(for: viewModel.validationState) {
+        if let message = viewModel.validationErrorMessage {
             validationText(message)
         }
     }
 
     private func addEnteredTag() {
-        if viewModel.validationState == .valid {
+        if viewModel.validationResult == .valid {
             withAnimation {
                 viewModel.addTag(viewModel.enteredTag)
                 viewModel.enteredTag = ""
@@ -320,7 +320,9 @@ struct TagsEditView: View {
         isEditable: false,
         publicLinkID: nil,
         conversationName: "Conversation 1",
-        size: nil
+        isReadOnly: false,
+        size: nil,
+        thumbnailURL: nil
     )
 
     let mockAPI = {

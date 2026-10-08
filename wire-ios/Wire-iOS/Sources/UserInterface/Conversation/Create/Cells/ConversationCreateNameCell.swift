@@ -48,6 +48,7 @@ final class ConversationCreateNameCell: UICollectionViewCell {
         setupStackView()
         setupGroupNameLabel()
         setupTextField()
+        setupAccessibility()
         setupConstraints()
         setupNotifications()
     }
@@ -70,6 +71,14 @@ final class ConversationCreateNameCell: UICollectionViewCell {
         textField.layer.borderColor = SemanticColors.SearchBar.borderInputView.cgColor
         textField.font = .font(for: .body1)
         stackView.addArrangedSubview(textField)
+    }
+
+    private func setupAccessibility() {
+        isAccessibilityElement = false
+        contentView.isAccessibilityElement = false
+        groupNameLabel.isAccessibilityElement = true
+        textField.accessibilityLabel = groupNameLabel.text
+        accessibilityElements = [groupNameLabel, textField]
     }
 
     private func setupConstraints() {

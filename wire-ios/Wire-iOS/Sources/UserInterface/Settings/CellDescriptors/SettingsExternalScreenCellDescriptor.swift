@@ -34,6 +34,7 @@ class SettingsExternalScreenCellDescriptor: SettingsGroupCellDescriptorType, Set
     let settingsTopLevelMenuItem: SettingsTopLevelMenuItem?
 
     private let accessoryView: AccessoryView?
+    private let accessibilityTraits: UIAccessibilityTraits?
 
     weak var group: SettingsGroupCellDescriptorType?
     weak var viewController: UIViewController?
@@ -42,7 +43,11 @@ class SettingsExternalScreenCellDescriptor: SettingsGroupCellDescriptorType, Set
 
     let presentationAction: () -> (UIViewController?)
 
-    convenience init(title: String, presentationAction: @escaping () -> (UIViewController?)) {
+    convenience init(
+        title: String,
+        presentationAction: @escaping () -> (UIViewController?),
+        accessibilityTraits: UIAccessibilityTraits? = nil
+    ) {
         self.init(
             title: title,
             isDestructive: false,
@@ -52,7 +57,8 @@ class SettingsExternalScreenCellDescriptor: SettingsGroupCellDescriptorType, Set
             previewGenerator: nil,
             icon: .none,
             copiableText: nil,
-            settingsTopLevelMenuItem: nil
+            settingsTopLevelMenuItem: nil,
+            accessibilityTraits: accessibilityTraits
         )
     }
 
@@ -64,7 +70,8 @@ class SettingsExternalScreenCellDescriptor: SettingsGroupCellDescriptorType, Set
         previewGenerator: PreviewGeneratorType? = .none,
         icon: StyleKitIcon? = nil,
         accessoryView: AccessoryView? = .automatic,
-        copiableText: String? = nil
+        copiableText: String? = nil,
+        accessibilityTraits: UIAccessibilityTraits? = nil
     ) {
         self.init(
             title: title,
@@ -76,7 +83,8 @@ class SettingsExternalScreenCellDescriptor: SettingsGroupCellDescriptorType, Set
             icon: icon,
             accessoryView: accessoryView,
             copiableText: copiableText,
-            settingsTopLevelMenuItem: nil
+            settingsTopLevelMenuItem: nil,
+            accessibilityTraits: accessibilityTraits
         )
     }
 
@@ -90,7 +98,8 @@ class SettingsExternalScreenCellDescriptor: SettingsGroupCellDescriptorType, Set
         icon: StyleKitIcon? = nil,
         accessoryView: AccessoryView? = .automatic,
         copiableText: String?,
-        settingsTopLevelMenuItem: SettingsTopLevelMenuItem?
+        settingsTopLevelMenuItem: SettingsTopLevelMenuItem?,
+        accessibilityTraits: UIAccessibilityTraits? = nil
     ) {
         self.title = title
         self.destructive = isDestructive
@@ -102,6 +111,7 @@ class SettingsExternalScreenCellDescriptor: SettingsGroupCellDescriptorType, Set
         self.accessoryView = accessoryView
         self.copiableText = copiableText
         self.settingsTopLevelMenuItem = settingsTopLevelMenuItem
+        self.accessibilityTraits = accessibilityTraits
     }
 
     func select(_ value: SettingsPropertyValue, sender: UIView) {
@@ -158,6 +168,9 @@ class SettingsExternalScreenCellDescriptor: SettingsGroupCellDescriptorType, Set
                 groupCell.showExternalLinkAccessoryView()
             case .none:
                 groupCell.hideAccessoryView()
+            }
+            if let accessibilityTraits {
+                groupCell.accessibilityTraits = accessibilityTraits
             }
         }
     }

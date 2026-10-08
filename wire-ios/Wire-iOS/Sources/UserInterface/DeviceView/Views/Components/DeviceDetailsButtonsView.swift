@@ -30,9 +30,14 @@ struct DeviceDetailsButtonsView: View {
                 await viewModel.enrollClient()
             }
         } label: {
-            Text(L10n.Localizable.Device.Details.Section.E2ei.getCertificate)
-                .foregroundStyle(Color(uiColor: SemanticColors.Label.textDefault))
-                .font(FontSpec.normalRegularFont.swiftUIFont.bold())
+            HStack {
+                Text(L10n.Localizable.Device.Details.Section.E2ei.getCertificate)
+                    .foregroundStyle(Color(uiColor: SemanticColors.Label.textDefault))
+                    .font(FontSpec.normalRegularFont.swiftUIFont.bold())
+                Spacer(minLength: 0)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .contentShape(Rectangle())
         }
     }
 
@@ -42,11 +47,14 @@ struct DeviceDetailsButtonsView: View {
                 await viewModel.enrollClient()
             }
         } label: {
-            VStack(alignment: .leading) {
+            HStack {
                 Text(L10n.Localizable.Device.Details.Section.E2ei.updateCertificate)
                     .foregroundStyle(Color(uiColor: SemanticColors.Label.textDefault))
                     .font(FontSpec.normalRegularFont.swiftUIFont.bold())
+                Spacer(minLength: 0)
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .contentShape(Rectangle())
         }
     }
 
@@ -65,6 +73,8 @@ struct DeviceDetailsButtonsView: View {
                         .renderingMode(.template)
                         .foregroundColor(Color(uiColor: SemanticColors.Label.textDefault))
                 }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .contentShape(Rectangle())
             }
         )
     }

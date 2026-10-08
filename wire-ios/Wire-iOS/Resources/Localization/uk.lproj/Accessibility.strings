@@ -15,12 +15,12 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
+
 /// Naming convention:
 ///
 /// The names of all accessibility strings should follow the format:
 ///
 ///  "<screen>.<component>.<usage>"
-
 
 "peoplepicker.upgrade_banner.close_button.label" = "Close team creation option";
 
@@ -38,12 +38,12 @@
 "conversation.hideFormattingButton.description" = "Приховати параметри форматування";
 "conversation.timerButton.description" = "Встановіть таймер для тимчасових повідомлень";
 "conversation.mentionButton.description" = "Згадати когось";
-"conversation.cameraButton.description" = "Зробити або вибрати знімок";
-"conversation.sketchButton.description" = "Відкрити ескіз для малювання чи запису";
+"conversation.cameraButton.description" = "Take or select a photo";
+"conversation.sketchButton.description" = "Open sketch to draw or write";
 "conversation.gifButton.description" = "Вибрати GIF";
 "conversation.audioButton.description" = "Записати аудіоповідомлення";
 "conversation.pingButton.description" = "Надіслати пінг";
-"conversation.uploadFileButton.description" = "Поділитися файлом";
+"conversation.uploadFileButton.description" = "Share a file";
 "conversation.locationButton.description" = "Поділися розташуванням";
 "conversation.videoButton.description" = "Записати відео";
 "conversation.moreButton.description" = "Відкрити більше налаштувань повідомлень";
@@ -54,6 +54,10 @@
 "conversation.timerForSelfDeletingMessagesDay.value" = "%@ день";
 "conversation.timerForSelfDeletingMessagesWeek.value" = "%@ тиждень";
 "conversation.timerForSelfDeletingMessagesWeeks.value" = "%@ тижнів";
+"conversation.cameraButtonDisabled.description" = "Take or select a photo, disabled in viewer access";
+"conversation.sketchButtonDisabled.description" = "Open sketch to draw or write, disabled in viewer access";
+"conversation.uploadFileButtonDisabled.description" = "Share a file, disabled in viewer access";
+"conversation.videoButtonDisabled.description" = "Record a video, disabled in viewer access";
 
 "conversation.headerButton.description" = "Застосувати заголовок";
 "conversation.boldButton.description" = "Застосувати жирний текст";
@@ -130,6 +134,7 @@
 "sketch.drawButton.hint" = "Торкніться двічі, щоб увімкнути або вимкнути";
 "sketch.selectEmojiButton.description" = "Виберіть смайлик";
 "sketch.sendButton.description" = "Надіслати";
+"sketch.confirmButton.description" = "Підтвердити";
 "sketch.undoButton.description" = "Скасувати останній крок";
 "sketch.closeButton.description" = "Закрити ескіз";
 
@@ -152,6 +157,7 @@
 "settings.deviceCount.hint" = "%@ пристроїв в користуванні";
 "settings.closeButton.description" = "Закрити налаштування";
 "settings.backButton.description" = "Повернутися до налаштувань";
+"settings.shareDebugInfoBanner.arrow" = "Double tap to open more options";
 
 "accountSettings.backButton.description" = "Повернутися до розділу Акаунт";
 
@@ -219,7 +225,7 @@
 "conversationsList.mentionStatus.value" = "Вас хтось згадав";
 "conversationsList.replyStatus.value" = "Відповісти";
 "conversationsList.badgeView.value" = "Нові повідомлення: %d";
-"conversationsList.itemCell.hint" = "Торкніться двічі, щоб відкрити розмову";
+"conversationsList.itemCell.hint" = "Double tap to open conversation. Triple tap to open conversation options";
 "conversationsList.itemCell.avatar.group.label" = "Group";
 "conversationsList.itemCell.avatar.channel.label" = "Channel";
 "conversationsList.joinButton.description" = "Приєднатись";
@@ -341,3 +347,9 @@
 
 "webAuth.urlLabel.description" = "Identity Provider URL";
 "webAuth.urlLabel.hint" = "Select to open the complete URL.";
+
+// MARK: - Admin Selection
+
+"adminSelection.searchBar.clearButton.description" = "Clear search";
+"adminSelection.candidateRow.hint" = "Double tap to select as new admin";
+"adminSelection.deleteGroupButton.hint" = "Deletes the group permanently";

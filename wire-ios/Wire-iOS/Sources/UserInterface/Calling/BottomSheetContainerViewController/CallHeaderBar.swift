@@ -46,6 +46,7 @@ final class CallHeaderBar: UIView {
         minimalizeButton.setImage(UIImage(systemName: "chevron.down"), for: .normal)
         minimalizeButton.tintColor = SemanticColors.View.backgroundDefaultBlack
         minimalizeButton.accessibilityLabel = L10n.Accessibility.Calling.HeaderBar.description
+        minimalizeButton.accessibilityIdentifier = Locators.OngoingCallPage.minimizeCall.rawValue
         [minimalizeButton, titleLabel].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
         verticalStackView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(minimalizeButton)

@@ -22,7 +22,7 @@ import XCTest
 final class CoreDataMessagingMigrationVersionTests: XCTestCase {
 
     func testCurrentVersionIsPartOfEnum() throws {
-        let currentModelVersion = CoreDataStack.loadMessagingModel().version
+        let currentModelVersion = CoreDataStack.messagingModel.version
         let migrationVersion = CoreDataMessagingMigrationVersion.allCases.first { version in
             version.dataModelVersion == currentModelVersion
         }

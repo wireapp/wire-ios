@@ -18,6 +18,7 @@
 
 import SwiftUI
 import WireCommonComponents
+import WireCoreCrypto
 import WireDataModel
 import WireDomain
 import WireNetwork
@@ -142,7 +143,10 @@ final class DeveloperToolsViewModel: ObservableObject {
                 .text(TextItem(title: "App version", value: appVersion)),
                 .text(TextItem(title: "Build number", value: buildNumber)),
                 .text(TextItem(title: "Bundle Identifier", value: bundleIdentifier)),
-                .text(TextItem(title: "Last version migration", value: lastCompletedAppMigration ?? "None"))
+                .text(TextItem(title: "Last version migration", value: lastCompletedAppMigration ?? "None")),
+                .destination(DestinationItem(title: "CoreCrypto", makeView: {
+                    AnyView(CoreCryptoMetadataView())
+                }))
             ]
         ))
     }
@@ -247,7 +251,8 @@ final class DeveloperToolsViewModel: ObservableObject {
             sections.append(Section(
                 header: "Datadog",
                 items: [
-                    .text(TextItem(title: "User ID", value: datadogUserIdentifier))
+                    .text(TextItem(title: "User ID", value: datadogUserIdentifier)),
+                    .button(.init(title: "Crash Report Test", action: { fatal("crash app") }))
                 ]
             ))
         }

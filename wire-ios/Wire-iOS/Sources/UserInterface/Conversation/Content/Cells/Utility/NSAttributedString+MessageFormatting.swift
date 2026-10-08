@@ -22,6 +22,7 @@ import WireDataModel
 import WireDesign
 import WireFoundation
 import WireLinkPreview
+import WireLogging
 import WireUtilities
 
 extension NSAttributedString {
@@ -86,10 +87,12 @@ extension NSAttributedString {
     fileprivate static func defaultMarkdownStyle() -> DownStyle {
         let style = DownStyle.normal
 
-        style.baseFont = UIFont.normalLightFont
-        style.baseFontColor = SemanticColors.Label.textDefault
+        style.baseFont = UIFont.font(for: .body1)
+        style.baseFontColor = ColorTheme.Backgrounds.onBackground
         style.baseParagraphStyle = paragraphStyle
         style.listItemPrefixColor = style.baseFontColor.withAlphaComponent(0.64)
+        style.quoteColor = style.baseFontColor.withAlphaComponent(0.6)
+        style.quoteParagraphStyle = paragraphStyle.indentedBy(points: 10)
 
         return style
     }
@@ -97,6 +100,7 @@ extension NSAttributedString {
     static func formatForPreview(
         message: TextMessageData,
         inputMode: Bool,
+        textColor: UIColor = ColorTheme.Backgrounds.onBackground,
         accentColor: AccentColor
     ) -> NSAttributedString {
         var plainText = message.messageText ?? ""
@@ -106,6 +110,12 @@ extension NSAttributedString {
 
         // Perform markdown parsing
         let markdownText = NSMutableAttributedString.markdown(from: plainText, style: previewStyle)
+
+        // Reply previews are line-limited (`maximumNumberOfLines = 4`), and the layout
+        // blanks `markdown(from:)` inserts between list items would each consume one
+        // of those visible slots. Drop them so the preview shows 4 real items, not
+        // 2 items + 2 blanks.
+        markdownText.stripLayoutBlankLines()
 
         // Highlight mentions using previously inserted text markers
         markdownText
@@ -131,7 +141,7 @@ extension NSAttributedString {
         markdownText.removeAttribute(.link, range: NSRange(location: 0, length: markdownText.length))
         markdownText.addAttribute(
             .foregroundColor,
-            value: SemanticColors.Label.textDefault,
+            value: textColor,
             range: NSRange(location: 0, length: markdownText.length)
         )
         return markdownText
@@ -220,6 +230,24 @@ extension NSMutableAttributedString {
         }
     }
 
+    /// Remove the 1pt-tall blank-line characters that
+    /// `NSAttributedString.insertEmptyLinesAtParagraphBreaks` inserts between markdown
+    /// list items. Reply-preview cells limit the text container to a fixed line count,
+    /// where those layout blanks would otherwise eat visible rows.
+    func stripLayoutBlankLines() {
+        let nsString = mutableString as NSString
+        var indicesToRemove: [Int] = []
+        for i in 0 ..< length where nsString.character(at: i) == 0x0A {
+            if let ps = attribute(.paragraphStyle, at: i, effectiveRange: nil) as? NSParagraphStyle,
+               ps.minimumLineHeight == 1, ps.maximumLineHeight == 1 {
+                indicesToRemove.append(i)
+            }
+        }
+        for index in indicesToRemove.reversed() {
+            deleteCharacters(in: NSRange(location: index, length: 1))
+        }
+    }
+
     func removeTrailingLink(for linkPreview: LinkMetadata) {
         let text = string
 
@@ -245,14 +273,57 @@ private extension String {
     mutating func replaceMentionsWithTextMarkers(mentions: [Mention]) -> [TextMarker<Mention>] {
         mentions.sorted(by: {
             $0.range.location > $1.range.location
-        }).compactMap { mention in
-            guard let range = Range(mention.range, in: self) else { return nil }
+        }).compactMap { mention -> TextMarker<Mention>? in
+            // All mentions are expected to have a @ prefix and the range
+            // of the mention should include this prefix (and not just the
+            // name). Eg "Hello @bob" should have a mention range of
+            // NSRange(location: 6, length: 4). If it doesn't, it will
+            // be rendered incorrectly.
+            //
+            // But we suspect in some cases the sender might be only
+            // specifying a mention range that covers the name and not
+            // the @ prefix (i.e NSRange(location: 7, length: 3)).
+            //
+            // To handle this case, we check if the range includes the @
+            // and if it doesn't adjust the range so that it does.
+            var adjustedRange = mention.range
 
-            let name = String(self[range].dropFirst()) // drop @
-            let textObject = TextMarker<Mention>(mention, replacementText: name)
+            if adjustedRange.location > 0, adjustedRange.location < utf16.count {
+                let utf16View = self.utf16
+                let charIndex = utf16View.index(utf16View.startIndex, offsetBy: adjustedRange.location)
 
+                if charIndex < utf16View.endIndex {
+                    let charAtLocation = utf16View[charIndex]
+
+                    // If the range doesn't start with '@', check if the character before does
+                    if charAtLocation != 64 { // '@' in UTF-16
+                        let prevIndex = utf16View.index(before: charIndex)
+                        if prevIndex >= utf16View.startIndex, utf16View[prevIndex] == 64 {
+                            // Adjust range to include the '@'
+                            adjustedRange.location -= 1
+                            adjustedRange.length += 1
+                        }
+                    }
+                }
+            }
+
+            guard let range = Range(adjustedRange, in: self) else { return nil }
+            let name = String(self[range])
+
+            // Final validation: ensure the extracted name starts with '@'
+            guard name.hasPrefix("@") else {
+                WireLogger.messaging.error("Mention range does not start with '@': \(mention.range), text: '\(name)'")
+                return nil
+            }
+
+            // Create a corrected mention with the adjusted range
+            let correctedMention = Mention(range: adjustedRange, user: mention.user)
+
+            // Strip the '@' from the name since the mention rendering code adds it back
+            let nameWithoutAt = name.hasPrefix("@") ? String(name.dropFirst()) : name
+
+            let textObject = TextMarker<Mention>(correctedMention, replacementText: nameWithoutAt)
             replaceSubrange(range, with: textObject.token)
-
             return textObject
         }
     }
@@ -270,6 +341,21 @@ private extension IndexSet {
         includedIndexSet.insert(integersIn: range)
 
         self = includedIndexSet.subtracting(excludedIndexSet)
+    }
+
+}
+
+// extension from Down
+private extension NSParagraphStyle {
+
+    func indentedBy(points: CGFloat) -> NSParagraphStyle {
+        let copy = mutableCopy() as! NSMutableParagraphStyle
+        copy.firstLineHeadIndent += points
+        copy.headIndent += points
+        copy.tabStops = copy.tabStops.map {
+            NSTextTab(textAlignment: $0.alignment, location: $0.location + points)
+        }
+        return copy as NSParagraphStyle
     }
 
 }

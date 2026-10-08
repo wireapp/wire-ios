@@ -76,8 +76,8 @@
       ignoresPersistentStateOnLaunch = "NO"
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
-      enableGPUValidationMode = "1"
-      allowLocationSimulation = "YES">
+      allowLocationSimulation = "YES"
+      showNonLocalizedStrings = "YES">
       <BuildableProductRunnable
          runnableDebuggingMode = "0">
          <BuildableReference
@@ -99,10 +99,6 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-com.apple.SwiftUI.DisableSolarium YES"
-            isEnabled = "YES">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "-NSShowNonLocalizedStrings YES"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument

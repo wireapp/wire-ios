@@ -27,7 +27,7 @@ final class DeveloperDebugActionsViewModelTests: XCTestCase {
 
         // when
         // then
-        XCTAssertEqual(viewModel.debugItems.count, 17)
+        XCTAssertEqual(viewModel.debugItems.count, 19)
     }
 
     // MARK: - Helpers

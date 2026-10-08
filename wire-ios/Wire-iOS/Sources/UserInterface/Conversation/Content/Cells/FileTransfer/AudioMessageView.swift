@@ -20,9 +20,9 @@ import avs
 import UIKit
 import WireCommonComponents
 import WireDesign
+import WireLocators
+import WireLogging
 import WireSyncEngine
-
-private let zmLog = ZMSLog(tag: "UI")
 
 final class AudioMessageView: UIView, TransferView {
 
@@ -93,7 +93,7 @@ final class AudioMessageView: UIView, TransferView {
         backgroundColor = SemanticColors.View.backgroundCollectionCell
 
         playButton.addTarget(self, action: #selector(AudioMessageView.onActionButtonPressed(_:)), for: .touchUpInside)
-        playButton.accessibilityIdentifier = "AudioActionButton"
+        playButton.accessibilityIdentifier = Locators.ActiveConversationPage.playAudioFile.rawValue
         playButton.layer.masksToBounds = true
 
         downloadProgressView.isUserInteractionEnabled = false
@@ -180,6 +180,7 @@ final class AudioMessageView: UIView, TransferView {
 
     func setUserSession(userSession: UserSession) {
         guard self.userSession !== userSession else { return }
+        self.userSession = userSession
 
         if let userSession = userSession as? ZMUserSession {
             callStateObserverToken = WireCallCenterV3.addCallStateObserver(
@@ -351,7 +352,7 @@ final class AudioMessageView: UIView, TransferView {
                     let earliestEndDate = Date(timeIntervalSinceNow: duration)
                     self?.extendEphemeralTimerIfNeeded(to: earliestEndDate)
                 } else {
-                    zmLog.warn("Cannot load track \(track): \(String(describing: error))")
+                    WireLogger.ui.warn("Cannot load track \(track): \(String(describing: error))")
                 }
             }
         } else {
@@ -478,7 +479,7 @@ final class AudioMessageView: UIView, TransferView {
                 AVSMediaManager.sharedInstance().playbackRoute = .speaker
             }
         } catch {
-            zmLog.error("Cannot set AVAudioSession category: \(error)")
+            WireLogger.ui.error("Cannot set AVAudioSession category: \(error)")
         }
     }
 

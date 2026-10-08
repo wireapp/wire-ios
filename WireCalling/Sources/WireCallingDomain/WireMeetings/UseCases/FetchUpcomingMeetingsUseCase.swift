@@ -16,49 +16,77 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 package import WireFoundation
 
-package struct FetchUpcomingMeetingsUseCase: FetchUpcomingMeetingsUseCaseProtocol {
+import Foundation
 
-    private let repository: any MeetingsRepositoryProtocol
+package actor FetchUpcomingMeetingsUseCase: FetchUpcomingMeetingsUseCaseProtocol {
+
+    private static let sourceMeetingFetchLimit = Int.max / 2
+
+    private let repository: any MeetingRepositoryProtocol
     private let currentDateProvider: any CurrentDateProviding
-    private let grouper: MeetingsGrouper
-    private let calendar = Calendar.current
+    private let occurrencePaginator = MeetingOccurrencePaginator()
+    private var sourceMeetingSnapshot: SourceMeetingSnapshot?
 
     package init(
-        repository: any MeetingsRepositoryProtocol,
-        currentDateProvider: any CurrentDateProviding,
-        grouper: MeetingsGrouper = MeetingsGrouper()
+        repository: any MeetingRepositoryProtocol,
+        currentDateProvider: any CurrentDateProviding
     ) {
         self.repository = repository
         self.currentDateProvider = currentDateProvider
-        self.grouper = grouper
     }
 
-    package func invoke(limitToTwoDays: Bool, pageSize: Int, offset: Int) -> PaginatedGroupedMeetings {
-        let now = currentDateProvider.now
-        var meetings = repository.fetchMeetingsStarting(
-            after: now,
-            offset: offset,
-            limit: pageSize
-        )
-
-        if limitToTwoDays {
-            guard let tomorrowEnd = calendar.todayAndTomorrowRange(using: currentDateProvider)?.end else {
-                return PaginatedGroupedMeetings(groups: [], hasMore: false, nextOffset: offset)
-            }
-            meetings = meetings.filter { $0.start < tomorrowEnd }
+    package func invoke(pageSize: Int, offset: Int) async throws -> PaginatedMeetings {
+        let pageSize = max(pageSize, 0)
+        let offset = max(offset, 0)
+        guard pageSize > 0 else {
+            return PaginatedMeetings(occurrences: [], hasMore: false, nextOffset: offset)
         }
-        let hasMore = meetings.count > pageSize
-        let paginatedMeetings = hasMore ? Array(meetings.prefix(pageSize)) : meetings
-        let groups = grouper.group(paginatedMeetings, byHours: true, sort: .ascending)
 
-        return PaginatedGroupedMeetings(
-            groups: groups,
+        let snapshot = try await sourceMeetingSnapshot(refresh: offset == 0)
+        let occurrences = occurrencePaginator.occurrences(
+            for: snapshot.meetings,
+            startingAt: snapshot.startOfToday,
+            offset: offset,
+            limit: pageSize + 1
+        )
+
+        let hasMore = occurrences.count > pageSize
+        let page = hasMore ? Array(occurrences.prefix(pageSize)) : occurrences
+
+        return PaginatedMeetings(
+            occurrences: page,
             hasMore: hasMore,
-            nextOffset: offset + pageSize
+            nextOffset: offset + page.count
         )
     }
 
+    private func sourceMeetingSnapshot(refresh: Bool) async throws -> SourceMeetingSnapshot {
+        if !refresh, let sourceMeetingSnapshot {
+            return sourceMeetingSnapshot
+        }
+
+        // Occurrence pagination works on expanded rows, not raw meeting rows. We refresh
+        // and load all source meetings at the start of a paging session, then reuse that
+        // snapshot for load-more requests so scrolling does not repeatedly hit the backend
+        // and reload the full local meeting set.
+        let calendar = Calendar.current
+        let snapshot = SourceMeetingSnapshot(
+            startOfToday: calendar.startOfDay(for: currentDateProvider.now),
+            meetings: try await repository.fetchMeetings(
+                in: Date.distantPast ..< Date.distantFuture,
+                offset: 0,
+                limit: Self.sourceMeetingFetchLimit
+            )
+        )
+        sourceMeetingSnapshot = snapshot
+        return snapshot
+    }
+
+}
+
+private struct SourceMeetingSnapshot: Sendable {
+    let startOfToday: Date
+    let meetings: [Meeting]
 }

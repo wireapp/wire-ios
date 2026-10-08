@@ -18,9 +18,8 @@
 
 import Foundation
 import WireCommonComponents
+import WireLogging
 import WireUtilities
-
-private let zmLog = ZMSLog(tag: "UI")
 
 final class ExtensionBackupExcluder: BackupExcluder {
 
@@ -33,7 +32,7 @@ final class ExtensionBackupExcluder: BackupExcluder {
         do {
             try ExtensionBackupExcluder.exclude(filesToExclude: filesToExclude)
         } catch {
-            zmLog.error("Cannot exclude file from the backup: \(self): \(error)")
+            WireLogger.shareExtension.error("Cannot exclude file from the backup: \(self): \(error)")
         }
     }
 

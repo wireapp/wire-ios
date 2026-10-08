@@ -1,5 +1,6 @@
 // swift-tools-version: 6.2
 
+import Foundation
 import PackageDescription
 
 let WireTestingPackage = Target.Dependency.product(name: "WireTestingPackage", package: "WireFoundation")
@@ -7,14 +8,18 @@ let WireTestingPackage = Target.Dependency.product(name: "WireTestingPackage", p
 let package = Package(
     name: "WireCalling",
     defaultLocalization: "en",
-    platforms: [.iOS("17.0"), .macOS(.v12)],
+    platforms: [.iOS(.v17), .macOS(.v12)],
     products: [
         .library(name: "WireCallingDomain", targets: ["WireCallingDomain"]),
+        .library(name: "WireCallingDomainSupport", targets: ["WireCallingDomainSupport"]),
+        .library(name: "WireCallingData", targets: ["WireCallingData"]),
         .library(name: "WireCallingAssembly", targets: ["WireCallingAssembly"]),
         .library(name: "WireCallingUI", targets: ["WireCallingUI"])
     ],
     dependencies: [
+        .package(path: "../WireData"),
         .package(path: "../WireFoundation"),
+        .package(path: "../WireNetwork"),
         .package(path: "../WirePlugins"),
         .package(path: "../WireLogging"),
         .package(name: "WireUI", path: "../WireUI")
@@ -39,7 +44,9 @@ let package = Package(
             name: "WireCallingData",
             dependencies: [
                 "WireCallingDomain",
-                "WireLogging"
+                "WireData",
+                "WireLogging",
+                "WireNetwork"
             ]
         ),
         .target(
@@ -47,7 +54,8 @@ let package = Package(
             dependencies: [
                 "WireCallingDomain",
                 "WireCallingUI",
-                "WireCallingData"
+                "WireCallingData",
+                .product(name: "WireDesign", package: "WireUI")
             ]
         ),
         .target(
@@ -56,20 +64,23 @@ let package = Package(
                 "WireCallingDomain",
                 "WireCallingDomainSupport",
                 .product(name: "WireDesign", package: "WireUI"),
-                .product(name: "WireReusableUIComponents", package: "WireUI"),
-                "WireFoundation"
+                "WireFoundation",
+                "WireLogging",
+                .product(name: "WireReusableUIComponents", package: "WireUI")
             ],
             plugins: [.plugin(name: "SwiftGenPlugin", package: "WirePlugins")]
         ),
         .testTarget(
             name: "WireCallingTests",
             dependencies: [
+                "WireCallingAssembly",
                 "WireCallingUI",
                 "WireCallingDomain",
                 "WireCallingDomainSupport",
                 "WireCallingData",
                 .product(name: "WireDesign", package: "WireUI"),
-                .product(name: "WireFoundationSupport", package: "WireFoundation")
+                .product(name: "WireFoundationSupport", package: "WireFoundation"),
+                .product(name: "WireNetworkSupport", package: "WireNetwork")
             ],
         ),
     ]
@@ -81,9 +92,17 @@ for target in package.targets {
     }
 }
 
-for target in package.targets {
+// open --env CI wire-ios-mono.xcworkspace
+// or
+// CI= swift build
+let isCI = ProcessInfo.processInfo.environment["CI"] != nil
+
+for target in package.targets where target.type != .binary {
     target.swiftSettings = (target.swiftSettings ?? []) + [
+        .enableUpcomingFeature("ExistentialAny"),
         .enableUpcomingFeature("InternalImportsByDefault"),
-        .enableUpcomingFeature("ExistentialAny")
-    ]
+        .enableUpcomingFeature("MemberImportVisibility"),
+        .enableUpcomingFeature("StrictMemorySafety"),
+        isCI ? .unsafeFlags(["-warnings-as-errors"]) : nil
+    ].compactMap(\.self)
 }

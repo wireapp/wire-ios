@@ -19,25 +19,113 @@
 import Foundation
 public import UIKit
 
+public typealias WireDriveParticipant = WireDriveConversation.Participant
+
 /// A conversation with enabled Drive.
 /// Wire Drive file nodes are linked to one of this conversations.
 public struct WireDriveConversation: Sendable, Hashable, Identifiable {
     public let id: String
     public let name: String
     public let kind: Kind?
-    public let participants: Set<Participant>
+    public let participants: Set<WireDriveParticipant>
 
     public init(
         id: String,
         name: String,
         kind: Kind? = nil,
-        participants: Set<Participant>
+        participants: Set<WireDriveParticipant>
     ) {
         self.id = id
         self.name = name
         self.kind = kind
         self.participants = participants
     }
+}
+
+public extension WireDriveConversation {
+    struct Participant: Sendable, Hashable, Identifiable {
+        public let handle: String
+        public let displayName: String
+        public let id: String
+        public let isSelfUser: Bool
+        public let role: Role
+        public let verificationBadges: [VerificationBadge]
+        public let userType: UserType
+        public let state: State
+        public let iconData: IconData?
+
+        public enum UserType: Sendable, Hashable {
+            case federated
+            case external
+            case member
+            case guest
+        }
+
+        public enum VerificationBadge: Sendable, Hashable {
+            case e2EICertified
+            case proteusVerified
+        }
+
+        public enum Role: Sendable {
+            case editor
+            case viewer
+        }
+
+        public enum State: Sendable, Hashable {
+            case none
+            case pendingApproval
+            case blocked
+        }
+
+        public struct IconData: Sendable, Hashable {
+            public let initials: String
+            public let color: UIColor
+            public let image: UIImage?
+
+            public init(
+                initials: String,
+                color: UIColor,
+                image: UIImage?
+            ) {
+                self.initials = initials
+                self.color = color
+                self.image = image
+            }
+        }
+
+        public init(
+            handle: String,
+            displayName: String,
+            role: Role,
+            isSelfUser: Bool,
+            id: String,
+            userType: UserType,
+            verificationBadges: [VerificationBadge] = [],
+            state: State = .none,
+            iconData: IconData? = nil
+        ) {
+            self.handle = handle
+            self.isSelfUser = isSelfUser
+            self.displayName = displayName
+            self.role = role
+            self.id = id
+            self.userType = userType
+            self.verificationBadges = verificationBadges
+            self.state = state
+            self.iconData = iconData
+        }
+
+        // MARK: - Hashable
+
+        public func hash(into hasher: inout Hasher) {
+            hasher.combine(id)
+        }
+
+        public static func == (lhs: WireDriveParticipant, rhs: WireDriveParticipant) -> Bool {
+            lhs.id == rhs.id
+        }
+    }
+
 }
 
 public extension WireDriveConversation {
@@ -48,79 +136,66 @@ public extension WireDriveConversation {
 }
 
 public extension WireDriveConversation {
-    struct Participant: Sendable, Hashable, Identifiable {
-        public let handle: String
-        public let displayName: String
-        public let id: String
-        public let isSelfUser: Bool
-
-        public struct IconData: Sendable, Hashable {
-            public let initials: String
-            public let color: UIColor
-            public let image: UIImage?
-
-            public init(initials: String, color: UIColor, image: UIImage?) {
-                self.initials = initials
-                self.color = color
-                self.image = image
-            }
-        }
-
-        public let iconData: IconData?
-
-        public init(
-            handle: String,
-            displayName: String,
-            isSelfUser: Bool,
-            id: String,
-            iconData: IconData? = nil
-        ) {
-            self.handle = handle
-            self.isSelfUser = isSelfUser
-            self.displayName = displayName
-            self.id = id
-            self.iconData = iconData
-        }
-
-        // MARK: - Hashable
-
-        public func hash(into hasher: inout Hasher) {
-            hasher.combine(id)
-        }
-
-        public static func == (lhs: Participant, rhs: Participant) -> Bool {
-            lhs.id == rhs.id
-        }
-    }
-}
-
-public extension WireDriveConversation {
     static func mocked() -> Self {
         .init(id: UUID().uuidString, name: "Conversation 1", participants: [])
     }
 }
 
 public extension Collection<WireDriveConversation> {
-    static func mocked() -> [Element] {
+    static func mocked(selfUserRole: WireDriveConversation.Participant.Role = .editor) -> [Element] {
         [
-            .init(id: "1234", name: "Conversation 1", participants: Set([WireDriveConversation.Participant].mocked())),
-            .init(id: "5678", name: "Conversation 2", participants: Set([WireDriveConversation.Participant].mocked())),
+            .init(
+                id: "2b7d1f2c-74bf-4256-a746-8112e006dcd6",
+                name: "Conversation 1",
+                participants: Set([WireDriveParticipant].mocked(selfUserRole: selfUserRole))
+            ),
+            .init(
+                id: "5678",
+                name: "Conversation 2",
+                participants: Set([WireDriveParticipant].mocked())
+            ),
             .init(
                 id: "5678",
                 name: "Conversation 3",
                 kind: .group,
-                participants: Set([WireDriveConversation.Participant].mocked())
+                participants: Set([WireDriveParticipant].mocked())
             )
         ]
     }
 }
 
-public extension Collection<WireDriveConversation.Participant> {
-    static func mocked() -> [Element] {
+public extension Collection<WireDriveParticipant> {
+    static func mocked(selfUserRole: WireDriveParticipant.Role = .editor) -> [Element] {
         [
-            .init(handle: "walterwhite", displayName: "Heisenberg", isSelfUser: false, id: UUID().uuidString),
-            .init(handle: "jessepinkman", displayName: "The Cook", isSelfUser: false, id: UUID().uuidString),
-            .init(handle: "tucosalamanca", displayName: "Tuco", isSelfUser: false, id: UUID().uuidString)
+            .init(
+                handle: "walterwhite",
+                displayName: "Heisenberg",
+                role: selfUserRole,
+                isSelfUser: true,
+                id: UUID().uuidString,
+                userType: .member,
+                verificationBadges: [.e2EICertified],
+                iconData: .init(initials: "WW", color: .blue, image: nil)
+            ),
+            .init(
+                handle: "jessepinkman",
+                displayName: "The Cook",
+                role: .viewer,
+                isSelfUser: false,
+                id: UUID().uuidString,
+                userType: .member,
+                verificationBadges: [.e2EICertified, .proteusVerified],
+                iconData: .init(initials: "JP", color: .brown, image: nil)
+            ),
+            .init(
+                handle: "tucosalamanca",
+                displayName: "Tuco",
+                role: .editor,
+                isSelfUser: false,
+                id: UUID().uuidString,
+                userType: .member,
+                iconData: nil
+            )
         ]
     }
 }

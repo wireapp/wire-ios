@@ -20,9 +20,8 @@ import avs
 import Foundation
 import WireCommonComponents
 import WireDesign
+import WireLogging
 import WireSystem
-
-private let zmLog = ZMSLog(tag: "UI")
 
 extension String {
     @discardableResult
@@ -30,7 +29,7 @@ extension String {
         do {
             try FileManager.default.removeItem(atPath: self)
         } catch {
-            zmLog.error("Cannot delete file: \(self): \(error)")
+            WireLogger.ui.error("Cannot delete file: \(self): \(error)")
             return false
         }
         return true
@@ -161,7 +160,7 @@ extension AVSAudioEffectType: CustomStringConvertible {
         type(of: self).wr_convertQueue.async {
 
             let result = AVSAudioEffect().applyWav(nil, inFile: inPath, outFile: outPath, effect: self, nr_flag: true)
-            zmLog.info("applyEffect \(self) from \(inPath) to \(outPath): \(result)")
+            WireLogger.ui.info("applyEffect \(self) from \(inPath) to \(outPath): \(result)")
             DispatchQueue.main.async {
                 completion?()
             }

@@ -10,10 +10,7 @@
   ],
   "defaultOptions" : {
     "environmentVariableEntries" : [
-      {
-        "key" : "CI",
-        "value" : "${CI}"
-      }
+
     ],
     "targetForVariableExpansion" : {
       "containerPath" : "container:WireCanvas.xcodeproj",

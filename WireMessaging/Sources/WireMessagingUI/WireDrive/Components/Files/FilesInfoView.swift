@@ -101,7 +101,7 @@ struct FilesInfoView: View {
                 }
             case let .recycleBin(isFolder):
                 if isFolder {
-                    nil
+                    Strings.RecycleBin.EmptyFolder.title
                 } else {
                     Strings.Files.NoData.title
                 }

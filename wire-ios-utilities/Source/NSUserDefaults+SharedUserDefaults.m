@@ -22,6 +22,8 @@
 #import <CommonCrypto/CommonCrypto.h>
 
 
+NSString * const ZMCookieKeyKey = @"ZMCookieKey";
+
 @implementation NSUserDefaults (SharedUserDefaults)
 
 + (NSString *)groupName
@@ -43,18 +45,17 @@
 
 + (NSData *)cookiesKey
 {
-    static NSString * const CookieKeyKey = @"ZMCookieKey";
     NSUserDefaults *sharedDefaults = [NSUserDefaults sharedUserDefaults];
-    NSData *key = [sharedDefaults dataForKey:CookieKeyKey];
+    NSData *key = [sharedDefaults dataForKey:ZMCookieKeyKey];
     if (key == nil) {
         
 #if TARGET_OS_IPHONE
         //On older versions we stored key in standard user defaults.
         //We need to check for key there first and save it to shared defaults.
         //This way extension can use it to decrypt cookies stored in keychain
-        key = [[NSUserDefaults standardUserDefaults] dataForKey:CookieKeyKey];
+        key = [[NSUserDefaults standardUserDefaults] dataForKey:ZMCookieKeyKey];
         if (key != nil) {
-            [[NSUserDefaults standardUserDefaults] removeObjectForKey:CookieKeyKey];
+            [[NSUserDefaults standardUserDefaults] removeObjectForKey:ZMCookieKeyKey];
         }
         else {
 #endif
@@ -68,7 +69,7 @@
         }
 #endif
         
-        [sharedDefaults setObject:key forKey:CookieKeyKey];
+        [sharedDefaults setObject:key forKey:ZMCookieKeyKey];
     }
     return key;
 }

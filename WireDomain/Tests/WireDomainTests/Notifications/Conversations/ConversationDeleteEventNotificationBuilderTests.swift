@@ -135,6 +135,11 @@ final class ConversationDeleteEventNotificationBuilderTests: XCTestCase {
 
         // Then
         XCTAssertNil(userNotification)
+
+        conversationLocalStore.isGroupConversation_MockValue = true
+        conversationLocalStore.isMeetingConversation_MockValue = true
+        let meetingNotification = await sut.buildContent(event: Scaffolding.event)
+        XCTAssertNil(meetingNotification)
     }
 
     private func internalTest_assertNotificationContent(
@@ -204,6 +209,7 @@ final class ConversationDeleteEventNotificationBuilderTests: XCTestCase {
         userLocalStore.nameFor_MockValue = Scaffolding.senderName
         conversationLocalStore.nameFor_MockValue = Scaffolding.conversationName
         conversationLocalStore.isGroupConversation_MockValue = isGroup
+        conversationLocalStore.isMeetingConversation_MockValue = false
         userLocalStore.fetchSelfUser_MockValue = await context.perform { [self] in
             modelHelper.createSelfUser(in: context)
         }

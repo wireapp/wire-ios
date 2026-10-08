@@ -1,0 +1,67 @@
+//
+// Wire
+// Copyright (C) 2026 Wire Swiss GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+//
+
+public import Foundation
+
+// sourcery: AutoMockable
+public protocol MeetingConversationRepositoryProtocol: Sendable {
+
+    /// Fetch and setup conversation if needed.
+    func pullConversation(id: UUID, domain: String) async throws
+
+    /// Add participants to the underlying MLS conversation.
+    func addParticipants(_ participants: [MeetingMember], to conversationID: QualifiedID) async throws
+
+    /// Remove participants from the underlying MLS conversation.
+    func removeParticipants(_ participants: [MeetingMember], from conversationID: QualifiedID) async throws
+
+    /// Leave the meeting conversation as the current user.
+    /// A conversation already missing from the backend is treated as success.
+    func leaveConversation(id conversationID: QualifiedID) async throws
+
+    /// Delete the dedicated meeting conversation locally after backend deletion succeeds.
+    /// An ordinary group conversation linked to a meeting must remain intact.
+    func deleteConversation(id conversationID: QualifiedID) async throws
+
+    /// Set the name of the underlying conversation.
+    func setConversationName(_ name: String, for conversationID: QualifiedID) async throws
+
+    /// Update the name of the underlying conversation and await the backend response.
+    func updateConversationName(_ name: String, for conversationID: QualifiedID) async throws
+
+}
+
+public enum MeetingParticipantsError: Error, Equatable {
+
+    /// The group is ready, but these participants could not be added.
+    case failedToAddParticipants([MeetingMember])
+
+    /// Adding participants failed before the group was ready to join.
+    case failedToSetUpParticipants(
+        [MeetingMember],
+        reasons: [QualifiedID: MeetingParticipantFailureReason] = [:]
+    )
+
+}
+
+public enum MeetingParticipantFailureReason: Hashable, Sendable {
+
+    case nonFederatingBackends
+    case offlineBackend(domain: String)
+
+}

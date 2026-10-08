@@ -80,7 +80,8 @@ struct ContentView: View {
                         ]
                     )
                 ),
-                registrationAnalyticsTracker: MockPersonalAccountCreationAnalyticsTracker()
+                registrationAnalyticsTracker: MockPersonalAccountCreationAnalyticsTracker(),
+                overrideAllowEmailLoginOnly: false
             ).view
     }
 

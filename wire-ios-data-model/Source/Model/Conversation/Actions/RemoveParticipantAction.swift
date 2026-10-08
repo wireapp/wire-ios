@@ -18,11 +18,13 @@
 
 import Foundation
 
-public enum ConversationRemoveParticipantError: Error {
+public enum ConversationRemoveParticipantError: Error, Equatable {
     case unknown
     case invalidOperation
     case conversationNotFound
     case failedToRemoveMLSMembers
+    // Otherwise, the conversation would be left without an admin.
+    case requiresAdmin([EligibleMember])
 }
 
 public class RemoveParticipantAction: EntityAction {
@@ -37,5 +39,23 @@ public class RemoveParticipantAction: EntityAction {
     public required init(user: ZMUser, conversation: ZMConversation) {
         self.userID = user.objectID
         self.conversationID = conversation.objectID
+    }
+}
+
+public extension ConversationRemoveParticipantError {
+    struct EligibleMember: Equatable {
+        public let id: UUID
+        public let domain: String
+
+        public init?(payload: [AnyHashable: Any]) {
+            guard
+                let id = payload["id"] as? String,
+                let uuid = UUID(uuidString: id),
+                let domain = payload["domain"] as? String
+            else { return nil }
+
+            self.id = uuid
+            self.domain = domain
+        }
     }
 }

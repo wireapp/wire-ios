@@ -17,15 +17,15 @@
 //
 
 import UIKit
+import WireLogging
 import WireSystem
-
-private let zmLog = ZMSLog(tag: "UI")
 
 final class SettingsPropertySelectValueCellDescriptor: SettingsPropertyCellDescriptorType {
     static let cellType: SettingsTableCellProtocol.Type = SettingsValueCell.self
     let value: SettingsPropertyValue
     let title: String
     let identifier: String?
+    let accessibilityValueGenerator: AccessibilityValueGeneratorType?
 
     typealias SelectActionType = (SettingsPropertySelectValueCellDescriptor) -> Void
     let selectAction: SelectActionType?
@@ -40,6 +40,7 @@ final class SettingsPropertySelectValueCellDescriptor: SettingsPropertyCellDescr
         value: SettingsPropertyValue,
         title: String,
         identifier: String? = .none,
+        accessibilityValueGenerator: AccessibilityValueGeneratorType? = .none,
         selectAction: SelectActionType? = .none,
         backgroundColor: UIColor? = .none
     ) {
@@ -47,12 +48,17 @@ final class SettingsPropertySelectValueCellDescriptor: SettingsPropertyCellDescr
         self.value = value
         self.title = title
         self.identifier = identifier
+        self.accessibilityValueGenerator = accessibilityValueGenerator
         self.selectAction = selectAction
         self.backgroundColor = backgroundColor
     }
 
     func featureCell(_ cell: SettingsCellType) {
         cell.titleText = title
+        if let valueCell = cell as? SettingsTableCell {
+            valueCell.accessibilityIdentifier = identifier
+            valueCell.accessibilityValue = accessibilityValueGenerator?(self)
+        }
         if let valueCell = cell as? SettingsValueCell {
             valueCell.accessoryType = settingsProperty.value() == value ? .checkmark : .none
         }
@@ -62,7 +68,7 @@ final class SettingsPropertySelectValueCellDescriptor: SettingsPropertyCellDescr
         do {
             try settingsProperty.set(newValue: self.value, resultHandler: { _ in })
         } catch {
-            zmLog.error("Cannot set property: \(error)")
+            WireLogger.ui.error("Cannot set property: \(error)")
         }
 
         selectAction?(self)

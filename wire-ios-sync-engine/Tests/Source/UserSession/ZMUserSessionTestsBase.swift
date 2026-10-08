@@ -17,8 +17,10 @@
 //
 
 import Combine
+import WireDataModel
 import WireDataModelSupport
 import WireDomain
+import WireDomainSupport
 import WireLoggingSupport
 import WireNetwork
 import WireRequestStrategySupport
@@ -36,8 +38,8 @@ class ZMUserSessionTestsBase: MessagingTest {
     var backendEnvironment: WireTransport.BackendEnvironment!
     var wireAPIBackendEnvironment: WireNetwork.BackendEnvironment!
     var transportSession: RecordingMockTransportSession!
-    var cookieStorage: ZMPersistentCookieStorage!
-    var validCookie: Data!
+    var cookieStorage: LegacyCookieStorage!
+    var validCookies: [HTTPCookie]!
     var baseURL: URL!
     var mediaManager: MediaManagerType!
     var flowManagerMock: FlowManagerMock!
@@ -88,10 +90,8 @@ class ZMUserSessionTestsBase: MessagingTest {
             proxySettings: nil
         )
 
-        cookieStorage = ZMPersistentCookieStorage(
-            forServerName: "usersessiontest.example.com",
-            userIdentifier: .create(),
-            useCache: true
+        cookieStorage = LegacyCookieStorage(
+            testingWithUserIdentifier: .create()
         )
 
         transportSession = RecordingMockTransportSession(cookieStorage: cookieStorage)
@@ -103,8 +103,6 @@ class ZMUserSessionTestsBase: MessagingTest {
         mockEARService.setInitialEARFlagValue_MockMethod = { _ in }
 
         mockMLSService = MockMLSServiceInterface()
-        mockMLSService.onNewCRLsDistributionPoints_MockValue = PassthroughSubject<CRLsDistributionPoints, Never>()
-            .eraseToAnyPublisher()
         mockMLSService.epochChanges_MockValue = .init { continuation in
             continuation.yield(MLSGroupID.random())
             continuation.finish()
@@ -120,7 +118,7 @@ class ZMUserSessionTestsBase: MessagingTest {
 
         _ = waitForAllGroupsToBeEmpty(withTimeout: 0.5)
 
-        validCookie = HTTPCookie.validCookieData()
+        validCookies = HTTPCookie.validCookies()
     }
 
     override func tearDown() {
@@ -133,7 +131,7 @@ class ZMUserSessionTestsBase: MessagingTest {
         wireAPIBackendEnvironment = nil
         baseURL = nil
         cookieStorage = nil
-        validCookie = nil
+        validCookies = nil
         mockSessionManager = nil
         mockMLSService = nil
         transportSession = nil
@@ -156,7 +154,10 @@ class ZMUserSessionTestsBase: MessagingTest {
         let mockCoreCrypto = MockCoreCryptoProtocol()
         mockCoreCrypto.registerEpochObserver_MockMethod = { _ in }
         mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
-        mockCoreCryptoProvider.coreCrypto_MockValue = mockCoreCrypto
+        mockCoreCryptoProvider.coreCrypto_MockValue = SafeCoreCrypto(
+            backgroundTaskExecuter: PassthroughTaskExecuter(),
+            coreCrypto: mockCoreCrypto
+        )
 
         let mockContextStorable = MockLAContextStorable()
         mockContextStorable.clear_MockMethod = {}
@@ -168,6 +169,13 @@ class ZMUserSessionTestsBase: MessagingTest {
             storage: UserDefaults.temporary()
         )
         let logFilesProvider = LogFilesProvidingMock()
+
+        let updateBackendMetadataUseCase = MockUpdateBackendMetadataUseCaseProtocol()
+        updateBackendMetadataUseCase.invoke_MockValue = ResolvedBackendMetadata(
+            apiVersion: .v15,
+            domain: "example.com",
+            isFederationEnabled: true
+        )
 
         var builder = ZMUserSessionBuilder()
         builder.withAllDependencies(
@@ -193,7 +201,8 @@ class ZMUserSessionTestsBase: MessagingTest {
             minTLSVersion: nil,
             journal: journal,
             logFilesProvider: logFilesProvider,
-            faultyMLSRemovalKeysByDomain: [:]
+            faultyMLSRemovalKeysByDomain: [:],
+            updateBackendMetadataUseCase: updateBackendMetadataUseCase
         )
 
         let userSession = builder.build()
@@ -217,7 +226,7 @@ class ZMUserSessionTestsBase: MessagingTest {
         syncMOC.performAndWait {
             syncMOC.setPersistentStoreMetadata("clientID", key: ZMPersistedClientIdKey)
             ZMUser.selfUser(in: syncMOC).remoteIdentifier = UUID.create()
-            cookieStorage.authenticationCookieData = validCookie
+            try? cookieStorage.storeCookies(validCookies)
         }
     }
 
@@ -226,7 +235,7 @@ class ZMUserSessionTestsBase: MessagingTest {
             syncMOC.setPersistentStoreMetadata("clientID", key: ZMPersistedClientIdKey)
             ZMUser.selfUser(in: syncMOC).remoteIdentifier = UUID.create()
         }
-        cookieStorage.authenticationCookieData = validCookie
+        try? cookieStorage.storeCookies(validCookies)
     }
 
     private func clearCache() {

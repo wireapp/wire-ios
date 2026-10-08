@@ -85,7 +85,7 @@ package struct DetermineAuthMethodView: View {
         .navigationDestination(for: DetermineAuthMethodDestination.self) {
             destinationView(for: $0)
         }
-        .fullScreenCover(item: $viewModel.modalDestination) {
+        .fullScreenCover(item: $viewModel.modalDestination, onDismiss: viewModel.onModalDismissed) {
             sheetView(for: $0)
                 .presentationBackground(Color.black.opacity(0.7))
         }
@@ -112,6 +112,7 @@ package struct DetermineAuthMethodView: View {
         Text(Strings.Identity.Input.body)
             .multilineTextAlignment(.center)
             .font(for: .body1)
+            .accessibilityHeading(.h1)
             .lineLimit(nil)
             .fixedSize(horizontal: false, vertical: true)
             .padding(.trailing)
@@ -121,8 +122,8 @@ package struct DetermineAuthMethodView: View {
         VStack(alignment: .leading, spacing: 8) {
             LabeledTextField(
                 isMandatory: false,
-                placeholder: Strings.Identity.Input.Field.placeholder,
-                title: Strings.Identity.Input.Field.title,
+                placeholder: inputFieldPlaceholder,
+                title: inputFieldTitle,
                 string: $viewModel.emailOrSSOCode,
                 keyboardType: .emailAddress,
                 textContentType: .username
@@ -131,6 +132,22 @@ package struct DetermineAuthMethodView: View {
             .lineLimit(nil)
             .fixedSize(horizontal: false, vertical: true)
             .accessibilityIdentifier(Locators.WelcomePage.emailTextField.rawValue)
+        }
+    }
+
+    private var inputFieldTitle: String {
+        if viewModel.overrideAllowEmailLoginOnly {
+            Strings.Identity.Input.Field.EmailOnly.title
+        } else {
+            Strings.Identity.Input.Field.title
+        }
+    }
+
+    private var inputFieldPlaceholder: String {
+        if viewModel.overrideAllowEmailLoginOnly {
+            Strings.Identity.Input.Field.EmailOnly.placeholder
+        } else {
+            Strings.Identity.Input.Field.placeholder
         }
     }
 
@@ -150,7 +167,7 @@ package struct DetermineAuthMethodView: View {
             }
         })
         .wireButtonStyle(.primary)
-        .disabled(viewModel.isNextButtonEnabled || viewModel.isLoading)
+        .disabled(!viewModel.isNextButtonEnabled || viewModel.isLoading)
         .accessibilityIdentifier(Locators.WelcomePage.nextButton.rawValue)
     }
 
@@ -198,13 +215,11 @@ package struct DetermineAuthMethodView: View {
             environment
         ):
             SwitchBackendConfirmation(environment: environment) { didConfirm in
-                guard didConfirm else { return }
-                Task {
-                    await viewModel.switchBackend(
-                        email: email,
-                        environment: environment
-                    )
-                }
+                viewModel.confirmBackendSwitch(
+                    didConfirm: didConfirm,
+                    email: email,
+                    environment: environment
+                )
             }
         }
     }

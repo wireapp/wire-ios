@@ -50,6 +50,7 @@ extern NSString *const ZMConversationUserDefinedNameKey;
 extern NSString *const ZMNormalizedUserDefinedNameKey;
 extern NSString *const ZMConversationListIndicatorKey;
 extern NSString *const ZMConversationConversationTypeKey;
+extern NSString *const ZMConversationEffectiveConversationTypeKey;
 extern NSString *const ZMConversationGroupTypeKey;
 extern NSString *const ZMConversationNeedsToDownloadRolesKey;
 extern NSString *const ZMConversationIsForcedReadOnlyKey;
@@ -109,9 +110,13 @@ NS_ASSUME_NONNULL_END
 @property (readonly, nonatomic, nonnull) NSMutableSet<ZMMessage *> *mutableMessages;
 @property (readonly, nonatomic, nonnull) NSSet<ZMMessage *> *hiddenMessages;
 @property (readonly, nonatomic) enum ZMConnectionStatus relatedConnectionState; // This is a computed property, needed for snapshoting
-@property (nonatomic, nonnull) ZMUser *creator;
+@property (nonatomic, nullable) ZMUser *creator;
 @property (nonatomic, nullable) NSDate *lastModifiedDate;
 @property (nonatomic) ZMConversationType conversationType;
+/// Persisted mirror of the computed `conversationType` (including the team-1:1 / service promotion).
+/// Maintained in `-willSave` so conversation-list predicates can be evaluated by the store (SQLite) instead of in
+/// memory. Do not read this for display; use `conversationType`.
+@property (nonatomic) ZMConversationType effectiveConversationType;
 @property (nonatomic, readonly) BOOL isSelfConversation;
 @property (nonatomic, copy, nullable) NSString *normalizedUserDefinedName;
 @property (nonatomic) NSTimeInterval lastReadTimestampSaveDelay;

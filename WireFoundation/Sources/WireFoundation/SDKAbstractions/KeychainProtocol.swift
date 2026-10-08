@@ -23,20 +23,20 @@ public protocol KeychainProtocol: Sendable {
 
     func addItem(
         query: Set<KeychainQueryItem>
-    ) async throws
+    ) throws
 
     func updateItem(
         query: Set<KeychainQueryItem>,
         attributesToUpdate: Set<KeychainQueryItem>
-    ) async throws
+    ) throws
 
     func fetchItem<T>(
         query: Set<KeychainQueryItem>
-    ) async throws -> T?
+    ) throws -> T?
 
     func deleteItem(
         query: Set<KeychainQueryItem>
-    ) async throws
+    ) throws
 
 }
 
@@ -51,14 +51,20 @@ public enum KeychainQueryItem: Hashable, Equatable, Sendable {
 
     case service(String)
     case account(String)
+    case generic(Data)
     case itemClass(ItemClass)
     case accessible(ItemAccessibility)
     case returningData(Bool)
     case data(Data)
+    case returningAttributes(Bool)
 
     public enum ItemClass: Equatable, Sendable {
 
         case genericPassword
+        case internetPassword
+        case certificate
+        case key
+        case identity
 
     }
 
@@ -76,8 +82,23 @@ public enum KeychainQueryItem: Hashable, Equatable, Sendable {
         case let .account(string):
             (kSecAttrAccount, string)
 
+        case let .generic(data):
+            (kSecAttrGeneric, data)
+
         case .itemClass(.genericPassword):
             (kSecClass, kSecClassGenericPassword)
+
+        case .itemClass(.internetPassword):
+            (kSecClass, kSecClassInternetPassword)
+
+        case .itemClass(.certificate):
+            (kSecClass, kSecClassCertificate)
+
+        case .itemClass(.key):
+            (kSecClass, kSecClassKey)
+
+        case .itemClass(.identity):
+            (kSecClass, kSecClassIdentity)
 
         case .accessible(.afterFirstUnlock):
             (kSecAttrAccessible, kSecAttrAccessibleAfterFirstUnlock)
@@ -87,6 +108,9 @@ public enum KeychainQueryItem: Hashable, Equatable, Sendable {
 
         case let .data(data):
             (kSecValueData, data)
+
+        case let .returningAttributes(bool):
+            (kSecReturnAttributes, bool)
         }
     }
 

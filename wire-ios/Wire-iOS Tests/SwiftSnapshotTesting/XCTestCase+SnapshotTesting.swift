@@ -23,10 +23,6 @@ import XCTest
 
 @testable import Wire
 
-// Precision of matching snapshots. Lower this value to fix issue with difference with Intel and Apple Silicon
-private let precision: Float = 0.90
-private let perceptualPrecision: Float = 0.98
-
 // MARK: - snapshoting all iPhone sizes
 
 extension XCTestCase {
@@ -50,6 +46,18 @@ extension XCTestCase {
         for width in widths {
             widthConstraint.constant = width
 
+            // UILabel caches intrinsicContentSize based on the
+            // preferredMaxLayoutWidth observed during the previous layout pass.
+            // When the container is reused across widths, that cached value is
+            // stale and labels end up with a frame too short for their wrapped
+            // text — lines overlap. Invalidate recursively and run two layout
+            // passes so the new width propagates to preferredMaxLayoutWidth,
+            // then to the height.
+            invalidateIntrinsicContentSizes(in: container)
+            container.setNeedsLayout()
+            container.layoutIfNeeded()
+            container.layoutIfNeeded()
+
             configuration?(container)
 
             verifyWithWidthInName(
@@ -60,6 +68,13 @@ extension XCTestCase {
                 testName: testName,
                 line: line
             )
+        }
+    }
+
+    private func invalidateIntrinsicContentSizes(in view: UIView) {
+        view.invalidateIntrinsicContentSize()
+        for subview in view.subviews {
+            invalidateIntrinsicContentSizes(in: subview)
         }
     }
 
@@ -142,7 +157,10 @@ extension XCTestCase {
 
         let failure = verifySnapshot(
             of: value,
-            as: .image(precision: precision, perceptualPrecision: perceptualPrecision),
+            as: .image(
+                precision: SnapshotHelper.defaultPrecision,
+                perceptualPrecision: SnapshotHelper.defaultPerceptualPrecision
+            ),
             snapshotDirectory: snapshotDirectory(file: file),
             file: file,
             testName: testName,
@@ -169,7 +187,10 @@ extension XCTestCase {
 
         let failure = verifySnapshot(
             matching: value,
-            as: .image(precision: precision, perceptualPrecision: perceptualPrecision),
+            as: .inPlaceImage(
+                precision: SnapshotHelper.defaultPrecision,
+                perceptualPrecision: SnapshotHelper.defaultPerceptualPrecision
+            ),
             named: name,
             record: record,
             snapshotDirectory: snapshotDirectory(file: file),
@@ -188,7 +209,83 @@ extension Snapshotting where Value == UIAlertController, Format == UIImage {
     /// A snapshot strategy for comparing UIAlertController views based on pixel equality.
     /// Compare UIAlertController.view to prevert the view is resized to fix the default UIViewController.view's size
     static var image: Snapshotting<UIAlertController, UIImage> {
-        Snapshotting<UIView, UIImage>.image(precision: 1, size: nil).pullback { $0.view }
+        Snapshotting<UIView, UIImage>.image(
+            precision: SnapshotHelper.defaultPrecision,
+            perceptualPrecision: SnapshotHelper.defaultPerceptualPrecision,
+            size: nil
+        ).pullback { $0.view }
+    }
+}
+
+extension Snapshotting where Value == UIView, Format == UIImage {
+
+    /// Renders the view in a real key window at origin (0, 0) so that UITextView/TextKit
+    /// has a non-offscreen host. The default `.image(drawHierarchyInKeyWindow:)` strategy
+    /// moves the view to (10_000, 10_000) before drawing, which causes long-text TextKit
+    /// rendering to fail intermittently in offscreen snapshot tests.
+    static func inPlaceImage(
+        precision: Float = SnapshotHelper.defaultPrecision,
+        perceptualPrecision: Float = SnapshotHelper.defaultPerceptualPrecision
+    ) -> Snapshotting<UIView, UIImage> {
+        Snapshotting<UIImage, UIImage>.image(
+            precision: precision,
+            perceptualPrecision: perceptualPrecision
+        )
+        .pullback { (view: UIView) -> UIImage in
+            view.setNeedsLayout()
+            view.layoutIfNeeded()
+            let size = view.bounds.size
+
+            // Find the host app's UIWindowScene so we can create a new window attached
+            // to a real screen. iOS's render-server pass only fully renders content
+            // for views in windows that have a windowScene — a detached UIWindow can
+            // silently drop tall UITextView content.
+            let windowScene = UIApplication.shared
+                .connectedScenes
+                .compactMap { $0 as? UIWindowScene }
+                .first
+
+            let window = if let windowScene {
+                UIWindow(windowScene: windowScene)
+            } else {
+                UIWindow(frame: .zero)
+            }
+            window.frame = CGRect(origin: .zero, size: size)
+            let rootViewController = UIViewController()
+            window.rootViewController = rootViewController
+            window.makeKeyAndVisible()
+            rootViewController.view.frame = window.bounds
+            rootViewController.view.addSubview(view)
+            view.frame = CGRect(origin: .zero, size: size)
+
+            // Force TextKit 1 layout managers in the subtree to fully lay out their
+            // text containers before drawing — without this, long text in UITextViews
+            // can render as blank.
+            forceTextKitLayout(in: view)
+
+            defer {
+                view.removeFromSuperview()
+                window.isHidden = true
+            }
+
+            let renderer = UIGraphicsImageRenderer(bounds: view.bounds)
+            let image = renderer.image { _ in
+                view.drawHierarchy(in: view.bounds, afterScreenUpdates: true)
+            }
+
+            // Compare the PNG representation used by the reference images to avoid
+            // perceptual comparison failures caused by the renderer's in-memory color space.
+            return UIImage(data: image.pngData()!, scale: image.scale)!
+        }
+    }
+}
+
+private func forceTextKitLayout(in view: UIView) {
+    if let textView = view as? UITextView {
+        textView.layoutManager.ensureLayout(for: textView.textContainer)
+    }
+    for subview in view.subviews {
+        forceTextKitLayout(in: subview)
     }
 }
 
@@ -203,6 +300,16 @@ extension UIView {
         layoutIfNeeded()
 
         return widthConstraint
+    }
+
+    // Walks the view tree and clears all CAAnimations. Use after triggering a
+    // loading/spinner state so snapshots capture a deterministic frame instead
+    // of one driven by wall-clock animation phase.
+    func removeAllAnimationsRecursively() {
+        layer.removeAllAnimations()
+        for subview in subviews {
+            subview.removeAllAnimationsRecursively()
+        }
     }
 }
 

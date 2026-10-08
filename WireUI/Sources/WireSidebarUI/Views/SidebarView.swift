@@ -27,6 +27,7 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
     public var accountInfo: SidebarAccountInfo?
     @Binding public var selectedMenuItem: SidebarSelectableMenuItem
     public var showUnreadFilters: Bool
+    public var showChannels: Bool
     public var showMeetings: Bool
     public var showFiles: Bool
 
@@ -46,6 +47,7 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
         accountInfo: SidebarAccountInfo,
         selectedMenuItem: Binding<SidebarSelectableMenuItem>,
         showUnreadFilters: Bool,
+        showChannels: Bool,
         showMeetings: Bool,
         showFiles: Bool,
         accountImageAction: @escaping () -> Void,
@@ -57,6 +59,7 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
         self.accountInfo = accountInfo
         _selectedMenuItem = selectedMenuItem
         self.showUnreadFilters = showUnreadFilters
+        self.showChannels = showChannels
         self.showMeetings = showMeetings
         self.showFiles = showFiles
         self.accountImageAction = accountImageAction
@@ -129,7 +132,11 @@ public struct SidebarView<AccountImageView: View, LegalHoldIndicatorView: View>:
             selectableMenuItem(.all)
             selectableMenuItem(.favorites)
             selectableMenuItem(.groups)
-            selectableMenuItem(.channels)
+
+            if showChannels {
+                selectableMenuItem(.channels)
+            }
+
             selectableMenuItem(.oneOnOne)
 
             // Conditional unread filters

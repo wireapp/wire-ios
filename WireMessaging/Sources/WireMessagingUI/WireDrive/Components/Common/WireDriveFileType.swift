@@ -90,6 +90,8 @@ extension WireDriveFileType {
             .archive
         case "txt":
             .text
+        case "m4a":
+            .audio
         default:
             nil
         }

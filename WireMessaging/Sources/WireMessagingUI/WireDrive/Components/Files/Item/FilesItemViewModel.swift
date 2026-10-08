@@ -18,9 +18,11 @@
 
 import Combine
 import Foundation
+import WireLocators
 import WireMessagingDomain
 
 private typealias Strings = L10n.Localizable.Conversation.WireCells
+private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
 
 /// A view model for a single item in the `FilesView`.
 ///
@@ -32,7 +34,8 @@ final class FilesItemViewModel: ObservableObject {
 
     private let nodeID: UUID
     let item: FilesViewItem
-    private let localAssetRepository: any WireDriveLocalAssetRepositoryProtocol
+    private let observeAssetUseCase: WireDriveObserveAssetUseCase
+    private let getAssetUseCase: WireDriveGetAssetUseCase
     private var cancellables = Set<AnyCancellable>()
 
     enum ItemAction {
@@ -47,11 +50,14 @@ final class FilesItemViewModel: ObservableObject {
         case restore
         case deleteToRecycleBin
         case deletePermanently
+        case makeAvailableOffline
+        case removeAvailableOffline
     }
 
     let onItemAction: (ItemAction, FilesViewItem) async -> Void
 
     @Published private var asset: WireDriveLocalAsset?
+    @Published var thumbnailURL: URL?
     @Published var fileTracker: WireDriveFileUITracker
     @Published var isPresentingDeleteFilePermanentlyConfirmation = false
     @Published var isPresentingDeleteFolderPermanentlyConfirmation = false
@@ -60,14 +66,18 @@ final class FilesItemViewModel: ObservableObject {
     @Published var isPresentingRestoreFileConfirmation = false
     @Published var isPresentingRestoreFolderConfirmation = false
     @Published var isPresentingRestoreParentConfirmation = false
-    @Published var menuActions: Set<ItemAction> = []
+
+    @Published private var networkMonitor = NetworkMonitor.shared
 
     let fileName: String
     let subtitle: String?
     let icon: WireDriveFileType
-
     let isBrowsing: Bool
     let isInRecycleBin: Bool
+
+    var showReadOnlyIcon: Bool {
+        item.isReadOnly && isBrowsing
+    }
 
     struct TagsInfo {
         let firstTag: String?
@@ -84,7 +94,8 @@ final class FilesItemViewModel: ObservableObject {
         item: FilesViewItem,
         selectedSortingKey: FilesSortingViewModel.SortingKey?,
         conversationName: String?,
-        localAssetRepository: any WireDriveLocalAssetRepositoryProtocol,
+        observeAssetUseCase: WireDriveObserveAssetUseCase,
+        getAssetUseCase: WireDriveGetAssetUseCase,
         onItemAction: @escaping (ItemAction, FilesViewItem) async -> Void,
         locale: Locale = .autoupdatingCurrent,
         calendar: Calendar = .autoupdatingCurrent,
@@ -108,24 +119,27 @@ final class FilesItemViewModel: ObservableObject {
             timeZone: timeZone
         )
         self.icon = item.icon
-        self.localAssetRepository = localAssetRepository
+        self.observeAssetUseCase = observeAssetUseCase
+        self.getAssetUseCase = getAssetUseCase
 
         self.isBrowsing = isBrowsing
         self.isInRecycleBin = isInRecycleBin
 
         self.fileTracker = .init()
         fileTracker.onSmallFileLoaded = { [weak self] in
+            guard let asset = self?.asset, !asset.isAvailableOffline else { return }
             self?.performAction(.primaryAction)
         }
 
-        self.menuActions = makeMenuActions()
-
-        localAssetRepository.observeAsset(nodeID: nodeID).sink { [weak self] asset in
-            self?.asset = asset
+        observeAssetUseCase.invoke(nodeID: nodeID).sink { [weak self] asset in
+            guard let self else { return }
+            self.asset = asset
             if let asset {
-                self?.fileTracker.handleDownloadState(fromAsset: asset)
+                fileTracker.handleDownloadState(fromAsset: asset)
             }
         }.store(in: &cancellables)
+
+        setThumbnailURL()
     }
 
     var nameOfTopmostFolderInRecycleBin: String {
@@ -133,13 +147,22 @@ final class FilesItemViewModel: ObservableObject {
     }
 
     var isDownloadOptionAvailable: Bool {
-        guard item.kind == .file else { return false }
+        guard item.kind == .file, !isOffline else { return false }
 
         return switch fileTracker.state {
         case .loaded:
             false
         default:
             true
+        }
+    }
+
+    var isDownloadingForOfflineUse: Bool {
+        switch fileTracker.state {
+        case .loading where asset?.isAvailableOffline == true:
+            true
+        default:
+            false
         }
     }
 
@@ -156,6 +179,47 @@ final class FilesItemViewModel: ObservableObject {
         item.isEditable
     }
 
+    private func setThumbnailURL() {
+        Task {
+            thumbnailURL = switch item.icon {
+            case .video, .image:
+                if isOffline {
+                    // use full asset
+                    try? await getAssetUseCase.invoke(
+                        nodeID: nodeID,
+                        eTag: item.eTag
+                    )
+                } else {
+                    item.thumbnailURL
+                }
+            default:
+                nil
+            }
+        }
+    }
+
+    func isActionDisabled(_ action: ItemAction) -> Bool {
+        switch action {
+        case .shareLink, .makeAvailableOffline, .removeAvailableOffline:
+            item.isReadOnly && isBrowsing
+        default:
+            false
+        }
+    }
+
+    func accessibilitylabel(for action: ItemAction) -> String {
+        switch action {
+        case .makeAvailableOffline where showReadOnlyIcon:
+            Accessibility.Files.ViewerAccess.makeAvailableOffline
+        case .shareLink where showReadOnlyIcon:
+            Accessibility.Files.ViewerAccess.shareLink
+        case .deletePermanently:
+            Locators.WireDrive.RecycleBinPage.deletePermanently.rawValue
+        default:
+            "\(action)"
+        }
+    }
+
     func performAction(_ action: ItemAction) {
         switch action {
         case .restore:
@@ -164,6 +228,8 @@ final class FilesItemViewModel: ObservableObject {
             showDeleteConfirmation(deletePermanently: true)
         case .deleteToRecycleBin:
             showDeleteConfirmation(deletePermanently: false)
+        case .makeAvailableOffline, .removeAvailableOffline:
+            Task { await onItemAction(action, item) }
         default:
             Task { await onItemAction(action, item) }
         }
@@ -200,6 +266,9 @@ final class FilesItemViewModel: ObservableObject {
         if permanently {
             await onItemAction(.deletePermanently, item)
         } else {
+            if let asset, asset.isAvailableOffline {
+                await onItemAction(.removeAvailableOffline, item)
+            }
             await onItemAction(.deleteToRecycleBin, item)
         }
     }
@@ -208,6 +277,117 @@ final class FilesItemViewModel: ObservableObject {
         await onItemAction(.restore, item)
     }
 
+    var isOffline: Bool {
+        networkMonitor.currentStatus == .disconnected
+    }
+
+    var tagsInfo: TagsInfo {
+        let additionalTags = item.tags.count - 1
+        let formattedNumber: String? = if additionalTags > 0 {
+            additionalTagNumberFormatter.string(for: additionalTags) ?? "+\(additionalTags)"
+        } else {
+            nil
+        }
+        return .init(
+            firstTag: item.tags.sortedAlphabetically.first,
+            additionalTagsIndicator: formattedNumber
+        )
+    }
+
+    var menuActions: Set<ItemAction> {
+        let isViewerMode = item.isReadOnly
+
+        if isViewerMode {
+            return viewerMenuActions
+        } else {
+            return editorMenuActions
+        }
+
+    }
+
+    private var viewerMenuActions: Set<ItemAction> {
+        var actions: Set<ItemAction> = []
+
+        actions.insert(.primaryAction)
+
+        if !isInRecycleBin, !isOffline, isBrowsing {
+            actions.insert(.shareLink) // action visible to the user but disabled
+        }
+
+        if !isEditable, !isInRecycleBin, isBrowsing, item.kind == .file {
+            // actions visible to the user but disabled
+            if isAvailableOffline {
+                actions.insert(.removeAvailableOffline)
+            } else {
+                if !isOffline {
+                    actions.insert(.makeAvailableOffline)
+                }
+            }
+        }
+
+        return actions
+    }
+
+    private var editorMenuActions: Set<ItemAction> {
+        var actions: Set<ItemAction> = []
+
+        actions.insert(.primaryAction)
+
+        if !isInRecycleBin, !isOffline {
+            actions.insert(.shareLink)
+        }
+
+        if !isEditable, !isInRecycleBin, item.kind == .file {
+            if isAvailableOffline {
+                actions.insert(.removeAvailableOffline)
+            } else {
+                if !isOffline {
+                    actions.insert(.makeAvailableOffline)
+                }
+            }
+        }
+
+        if !isBrowsing, !isOffline {
+            if isInRecycleBin {
+                actions.formUnion([.restore, .deletePermanently])
+            } else {
+                if item.kind == .file, isEditable {
+                    actions.insert(.showVersionHistory)
+                }
+                actions.formUnion([
+                    .moveToFolder,
+                    .rename,
+                    .editTags,
+                    .deleteToRecycleBin
+                ])
+
+                if isEditable {
+                    actions.insert(.edit)
+                }
+            }
+        }
+
+        return actions
+    }
+
+    var isAvailableOffline: Bool {
+        let isAvailableOffline = (try? getAssetUseCase.asset(nodeID: nodeID)?.isAvailableOffline) ?? false
+        let isDownloaded = switch fileTracker.state {
+        case .loaded:
+            true
+        default:
+            false
+        }
+
+        let isFolder = item.kind == .folder
+
+        return isAvailableOffline && isDownloaded && !isFolder
+    }
+}
+
+// MARK: - Formatting
+
+private extension FilesItemViewModel {
     private static func subtitle(
         selectedSortingKey: FilesSortingViewModel.SortingKey?,
         isBrowsing: Bool,
@@ -238,8 +418,8 @@ final class FilesItemViewModel: ObservableObject {
                     primary = Strings.AllFiles.Item.subtitle(ownedBy, conversationName)
                 }
             case .size:
-                if let conversationName,
-                   let size = formattedFileSize(size: size) {
+                if let conversationName {
+                    let size = formattedFileSize(size: size)
                     primary = Strings.AllFiles.Item.subtitle(size, conversationName)
                 }
             default:
@@ -258,11 +438,17 @@ final class FilesItemViewModel: ObservableObject {
         } else {
             switch selectedSortingKey {
             case .date:
-                if let ownedBy {
-                    primary = Strings.Files.Item.subtitle(Strings.Sorting.Key.date, ownedBy)
+                if let ownedBy, let date = formattedDate(
+                    modifiedAt: modifiedAt,
+                    locale: locale,
+                    calendar: calendar,
+                    timeZone: timeZone
+                ) {
+                    primary = Strings.Files.Item.subtitle(date, ownedBy)
                 }
             case .size:
-                if let size = formattedFileSize(size: size), let ownedBy {
+                if let ownedBy {
+                    let size = formattedFileSize(size: size)
                     primary = Strings.Files.Item.subtitle(size, ownedBy)
                 }
             default:
@@ -279,12 +465,12 @@ final class FilesItemViewModel: ObservableObject {
         }
     }
 
-    private static func formattedFileSize(size: UInt64?) -> String? {
-        guard let size else { return nil }
+    private static func formattedFileSize(size: UInt64?) -> String {
         let formatter = ByteCountFormatter()
         formatter.allowedUnits = [.useBytes, .useKB, .useMB, .useGB]
         formatter.countStyle = .file
-        return formatter.string(fromByteCount: Int64(size))
+        formatter.allowsNonnumericFormatting = false
+        return formatter.string(fromByteCount: Int64(size ?? 0))
     }
 
     private static func formattedDate(
@@ -325,49 +511,6 @@ final class FilesItemViewModel: ObservableObject {
                 [modifiedAt, ownedBy].compactMap(\.self).first
             }
         }
-    }
-
-    var tagsInfo: TagsInfo {
-        let additionalTags = item.tags.count - 1
-        let formattedNumber: String? = if additionalTags > 0 {
-            additionalTagNumberFormatter.string(for: additionalTags) ?? "+\(additionalTags)"
-        } else {
-            nil
-        }
-        return .init(
-            firstTag: item.tags.sortedAlphabetically.first,
-            additionalTagsIndicator: formattedNumber
-        )
-    }
-
-    private func makeMenuActions() -> Set<ItemAction> {
-        var actions: Set<ItemAction> = []
-
-        if !isInRecycleBin {
-            actions.insert(.primaryAction)
-            actions.insert(.shareLink)
-        }
-
-        if !isBrowsing {
-            if isInRecycleBin {
-                actions.insert(.restore)
-                actions.insert(.deletePermanently)
-            } else {
-                if item.kind == .file, isEditable {
-                    actions.insert(.showVersionHistory)
-                }
-                actions.insert(.moveToFolder)
-                actions.insert(.rename)
-                actions.insert(.editTags)
-                actions.insert(.deleteToRecycleBin)
-
-                if isEditable {
-                    actions.insert(.edit)
-                }
-            }
-        }
-
-        return actions
     }
 }
 

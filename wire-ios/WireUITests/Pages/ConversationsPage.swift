@@ -44,6 +44,28 @@ class ConversationsPage: PageModel {
         app.buttons[Locators.ConversationsPage.conversationCell.rawValue]
     }
 
+    var conversationCells: XCUIElementQuery {
+        app.buttons.matching(identifier: Locators.ConversationsPage.conversationCell.rawValue)
+    }
+
+    var joinCallButton: XCUIElement {
+        app.buttons[Locators.ConversationsPage.joinCallButton.rawValue]
+    }
+
+    var conversationSearchBar: XCUIElement {
+        app.searchFields[Locators.ConversationsPage.conversationSearchBar.rawValue].firstMatch
+    }
+
+    func conversationCell(named name: String) -> XCUIElement {
+        app.buttons.matching(
+            NSPredicate(
+                format: "identifier == %@ AND label == %@",
+                Locators.ConversationsPage.conversationCell.rawValue,
+                name
+            )
+        ).firstMatch
+    }
+
     var unreadMessagesCount: XCUIElement {
         app.staticTexts[Locators.ConversationsPage.unreadMessageCount.rawValue]
     }
@@ -52,12 +74,24 @@ class ConversationsPage: PageModel {
         app.staticTexts[Locators.ConversationsPage.textFilteredByFavourites.rawValue]
     }
 
+    var textFilteredByGroups: XCUIElement {
+        app.staticTexts[Locators.ConversationsPage.textFilteredByGroups.rawValue]
+    }
+
+    var textFilteredByChannels: XCUIElement {
+        app.staticTexts[Locators.ConversationsPage.textFilteredByChannels.rawValue]
+    }
+
     var textFilteredByOneOnOne: XCUIElement {
         app.staticTexts[Locators.ConversationsPage.textFilteredByOneOnOne.rawValue]
     }
 
     var blockButtonOnMoreOptions: XCUIElement {
         app.buttons[Locators.ConversationsPage.blockOptionOnContextMenu.rawValue]
+    }
+
+    var unblockButtonOnMoreOptions: XCUIElement {
+        app.buttons[Locators.ConversationsPage.unblockOptionOnContextMenu.rawValue]
     }
 
     var clearButtonOnMoreOptions: XCUIElement {
@@ -72,12 +106,36 @@ class ConversationsPage: PageModel {
         app.buttons[Locators.ConversationsPage.removeFromFavourite.rawValue]
     }
 
+    var moveToFolderButtonOnMoreOptions: XCUIElement {
+        app.buttons[Locators.ConversationsPage.moveToFolderOptionOnContextMenu.rawValue]
+    }
+
+    private var createNewFolderButton: XCUIElement {
+        app.buttons["button.newfolder.create"].firstMatch
+    }
+
+    private var newFolderNameInput: XCUIElement {
+        app.textFields["input.newfolder.name"].firstMatch
+    }
+
     var filterByFavourite: XCUIElement {
         app.buttons[Locators.ConversationsPage.filterByFavourites.rawValue]
     }
 
+    var filterByGroupConversation: XCUIElement {
+        app.buttons[Locators.ConversationsPage.filterByGroups.rawValue]
+    }
+
+    var filterByChannelConversation: XCUIElement {
+        app.buttons[Locators.ConversationsPage.filterByChannels.rawValue]
+    }
+
     var filterByOneOnOneConversation: XCUIElement {
         app.buttons[Locators.ConversationsPage.filterByOneOnOneConversation.rawValue]
+    }
+
+    var filterByFolderConversation: XCUIElement {
+        app.buttons[Locators.ConversationsPage.filterByFolders.rawValue]
     }
 
     var filterConversationsButton: XCUIElement {
@@ -113,7 +171,7 @@ class ConversationsPage: PageModel {
     }
 
     func getGroupName() -> String? {
-        conversationCell.label as? String
+        conversationCell.label
     }
 
     func openSettings() throws -> SettingsPage {
@@ -124,6 +182,12 @@ class ConversationsPage: PageModel {
     func openArchived() throws -> ArchivedConversationsPage {
         archivedButton.tap()
         return try ArchivedConversationsPage()
+    }
+
+    func openMeetings() throws -> MeetingsPage {
+        XCTAssertTrue(app.tabBars.buttons[Locators.ConversationsPage.bottomBarMeetingsButton.rawValue]
+            .waitAndTap(timeout: 15))
+        return try MeetingsPage()
     }
 
     func openUserProfilePage() throws -> UserProfilePage {
@@ -137,6 +201,21 @@ class ConversationsPage: PageModel {
         return try NewConversationPage()
     }
 
+    @discardableResult
+    func searchConversation(named name: String) throws -> ConversationsPage {
+        try conversationSearchBar.tapIfKeyboardNotFocused().typeText(name)
+        return self
+    }
+
+    @discardableResult
+    func clearConversationSearch() throws -> ConversationsPage {
+        let clearButton = conversationSearchBar.buttons[
+            Locators.ConversationsPage.conversationSearchClearButton.rawValue
+        ].firstMatch
+        XCTAssertTrue(clearButton.waitAndTap(), "Conversation search clear button did not appear")
+        return self
+    }
+
     func openPendingRequest() throws -> ConnectionRequestsPage {
         try letTheSyncFinish()
 
@@ -147,6 +226,13 @@ class ConversationsPage: PageModel {
 
         connectionsRequestCell.tap()
         return try ConnectionRequestsPage()
+    }
+
+    func verifyDriveTabButtonIsHidden() {
+        XCTAssertFalse(
+            app.tabBars.buttons[Locators.ConversationsPage.bottomBarDriveButton.rawValue]
+                .waitForExistence(timeout: 2)
+        )
     }
 
     @discardableResult
@@ -167,14 +253,82 @@ class ConversationsPage: PageModel {
         return try ActiveConversationPage()
     }
 
+    /// Opens the conversation whose name matches `name`.
     @discardableResult
-    func longPressForMoreOptionOnConversation() throws -> ConversationsPage {
-        conversationCell.press(forDuration: 1.0)
+    func openConversation(named name: String) throws -> ActiveConversationPage {
+        try letTheSyncFinish()
+        let cell = conversationCell(named: name)
+        XCTAssertTrue(
+            cell.waitForExistence(timeout: 10),
+            "Conversation '\(name)' did not appear in the list"
+        )
+        cell.waitAndTap()
+        return try ActiveConversationPage()
+    }
+
+    /// Names of the conversation cells, ordered top-to-bottom as displayed in the list.
+    func conversationNamesInOrder() throws -> [String] {
+        try letTheSyncFinish()
+        XCTAssertTrue(conversationCell.waitForExistence(timeout: 10), "No conversation cells appeared in the list")
+        return conversationCells
+            .allElementsBoundByIndex
+            .sorted { $0.frame.minY < $1.frame.minY }
+            .map(\.label)
+    }
+
+    @discardableResult
+    func openConversationWithGuest(groupName: String) throws -> ActiveConversationPage {
+        try letTheSyncFinish()
+        let groupConversationWithGuestCell = app.buttons
+            .matching(
+                NSPredicate(
+                    format: "identifier == %@ AND label CONTAINS[c] %@",
+                    Locators.ConversationsPage.conversationCell.rawValue,
+                    groupName
+                )
+            )
+            .firstMatch
+
+        XCTAssertTrue(
+            groupConversationWithGuestCell.waitForExistence(timeout: 5),
+            "Group conversation with guest cell did not appear"
+        )
+
+        let maxDuration: TimeInterval = 10
+        let start = Date()
+
+        while !videoCallButton.exists, Date().timeIntervalSince(start) < maxDuration {
+            if groupConversationWithGuestCell.isHittable {
+                groupConversationWithGuestCell.tap()
+                break
+            }
+            RunLoop.current.run(until: Date().addingTimeInterval(1.0))
+        }
+        return try ActiveConversationPage()
+    }
+
+    func joinOngoingCall(groupName: String) throws -> OngoingCallPage {
+        joinCallButton.waitAndTap()
+        return try OngoingCallPage()
+    }
+
+    @discardableResult
+    func longPressForMoreOptionOnConversation(named name: String? = nil) throws -> ConversationsPage {
+        let targetConversation = name.map { conversationCell(named: $0) } ?? conversationCell
+        targetConversation.press(forDuration: 1.0)
         return try ConversationsPage()
     }
 
+    @discardableResult
     func blockUser() throws -> ConversationsPage {
         blockButtonOnMoreOptions.tap()
+        blockButtonOnBottomSheet.tap()
+        return self
+    }
+
+    @discardableResult
+    func unblockUser() throws -> ConversationsPage {
+        unblockButtonOnMoreOptions.tap()
         blockButtonOnBottomSheet.tap()
         return self
     }
@@ -204,15 +358,60 @@ class ConversationsPage: PageModel {
         return self
     }
 
+    func moveConversationToNewFolder(named folderName: String) throws -> ConversationsPage {
+        XCTAssertTrue(moveToFolderButtonOnMoreOptions.waitAndTap(), "Move to folder option did not appear")
+        XCTAssertTrue(createNewFolderButton.waitAndTap(), "Create new folder button did not appear")
+        XCTAssertTrue(
+            newFolderNameInput.waitForExistence(timeout: 5),
+            "New folder name input did not appear"
+        )
+        newFolderNameInput.tap()
+        newFolderNameInput.typeText(folderName)
+        XCTAssertTrue(
+            createNewFolderButton.waitAndTap(),
+            "Create folder button did not appear"
+        )
+        XCTAssertTrue(
+            newFolderNameInput.waitToDisappear(timeout: 10),
+            "New folder name input did not disappear after creating folder"
+        )
+        return self
+    }
+
     func filterConversationByFavourite() throws -> ConversationsPage {
         filterConversationsButton.tap()
         filterByFavourite.tap()
         return self
     }
 
+    func filterConversationByGroup() throws -> ConversationsPage {
+        filterConversationsButton.tap()
+        filterByGroupConversation.tap()
+        return self
+    }
+
+    func filterConversationByChannel() throws -> ConversationsPage {
+        filterConversationsButton.tap()
+        filterByChannelConversation.tap()
+        return self
+    }
+
     func filterConversationByOneOnOne() throws -> ConversationsPage {
         filterConversationsButton.tap()
         filterByOneOnOneConversation.tap()
+        return self
+    }
+
+    func filterConversationByFolder(named name: String) throws -> ConversationsPage {
+        filterConversationsButton.tap()
+        filterByFolderConversation.tap()
+        let folder = app.descendants(matching: .any)
+            .matching(NSPredicate(format: "label == %@", name))
+            .firstMatch
+        XCTAssertTrue(
+            folder.waitAndTap(),
+            "Folder \(name) did not appear"
+        )
         return self
     }
 

@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireFoundation
 
 private var zmLog = ZMSLog(tag: "ConversationListObserverCenter")
 
@@ -55,8 +56,14 @@ public class ConversationListObserverCenter: NSObject, ZMConversationObserver, C
 
     weak var managedObjectContext: NSManagedObjectContext!
 
-    fileprivate init(managedObjectContext: NSManagedObjectContext) {
+    private let reloadDebouncer: LeadingTrailingDebouncer
+
+    init(
+        managedObjectContext: NSManagedObjectContext,
+        debouncer: LeadingTrailingDebouncer = LeadingTrailingDebouncer(cooldownTime: 1.0)
+    ) {
         self.managedObjectContext = managedObjectContext
+        self.reloadDebouncer = debouncer
     }
 
     /// Adds a conversationList to the objects to observe or replace any existing snapshot
@@ -224,6 +231,16 @@ public class ConversationListObserverCenter: NSObject, ZMConversationObserver, C
         // list snapshots are automatically re-created when the lists are re-created and `recreateSnapshot(for
         // conversation:)` is called
         zmLog.debug(#function)
+
+        // Coalesce bursts of `startObserving()` (e.g. one per incremental-sync cycle at launch) so the expensive
+        // full list rebuild runs at most once per cooldown window instead of once per call.
+        reloadDebouncer.call(id: nil) { [weak self] in
+            self?.reloadAllLists()
+        }
+    }
+
+    private func reloadAllLists() {
+        guard !isTornDown, let managedObjectContext else { return }
 
         managedObjectContext.conversationListDirectory().refetchAllLists(in: managedObjectContext)
 

@@ -84,6 +84,16 @@ final class SidebarViewControllerSnapshotTests: XCTestCase {
     }
 
     @available(iOS 17, *) @MainActor
+    func testChannelsItemUIFontDarkUserInterfaceStyle() {
+        let sut = SidebarViewControllerPreview(showChannels: true)
+        sut.view.frame.size = .init(width: 1024, height: 768)
+        sut.traitOverrides.userInterfaceIdiom = .pad
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: sut)
+    }
+
+    @available(iOS 17, *) @MainActor
     func testMeetingsItemUIFontDarkUserInterfaceStyle() {
         let sut = SidebarViewControllerPreview(showMeetings: true)
         sut.view.frame.size = .init(width: 1024, height: 768)

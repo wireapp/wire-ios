@@ -28,7 +28,7 @@ struct PreferredAPIVersionView: View {
 
     var body: some View {
         List(viewModel.sections, rowContent: sectionView(for:))
-            .navigationTitle("Preferred API version")
+            .navigationTitle(Text(verbatim: "Preferred API version"))
             .navigationBarTitleDisplayMode(.inline)
     }
 

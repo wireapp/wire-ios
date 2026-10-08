@@ -43,11 +43,6 @@
 
 @implementation ZMBaseManagedObjectTest
 
-- (BOOL)shouldUseRealKeychain;
-{
-    return NO;
-}
-
 - (BOOL)shouldUseInMemoryStore;
 {
     return YES;
@@ -80,8 +75,6 @@
 - (void)setUp;
 {
     [super setUp];
-
-    [ZMPersistentCookieStorage setDoNotPersistToKeychain:!self.shouldUseRealKeychain];
 
     self.originalConversationLastReadTimestampTimerValue = ZMConversationDefaultLastReadTimestampSaveDelay;
     ZMConversationDefaultLastReadTimestampSaveDelay = 0.02;
@@ -226,7 +219,7 @@
     selfUser = [ZMUser selfUserInContext:moc];
     selfUser.remoteIdentifier = selfUser.remoteIdentifier ?: [NSUUID createUUID];
     UserClient *selfClient = [UserClient insertNewObjectInManagedObjectContext:moc];
-    selfClient.remoteIdentifier = [NSString randomRemoteIdentifier];
+    selfClient.remoteIdentifier = [NSString randomClientIdentifier];
     selfClient.user = selfUser;
     
     [moc setPersistentStoreMetadata:selfClient.remoteIdentifier forKey:ZMPersistedClientIdKey];

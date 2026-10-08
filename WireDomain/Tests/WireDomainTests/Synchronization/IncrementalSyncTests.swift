@@ -46,6 +46,7 @@ final class IncrementalSyncTests: XCTestCase {
     var cancellables: Set<AnyCancellable>!
     var earService: MockEARServiceInterface!
     fileprivate var notificationContext: MockNotificationContext!
+    var liveEventsObservedBeforeProcessing: [UpdateEvent]!
 
     override func setUp() {
         journal = Journal(
@@ -65,6 +66,7 @@ final class IncrementalSyncTests: XCTestCase {
         cancellables = Set<AnyCancellable>()
         earService = MockEARServiceInterface()
         notificationContext = MockNotificationContext()
+        liveEventsObservedBeforeProcessing = []
 
         earService.underlyingIsLocked = false
         earService.fetchPublicKeys_MockMethod = { nil }
@@ -83,11 +85,15 @@ final class IncrementalSyncTests: XCTestCase {
             liveBrokenGroupSubject: liveBrokenGroupSubject,
             journal: journal,
             mlsGroupRepairAgent: mlsGroupRepairAgent,
-            earService: earService
+            earService: earService,
+            backgroundTaskExecuter: PassthroughTaskExecuter(),
+            beforeProcessingLiveEvent: { [weak self] event in
+                self?.liveEventsObservedBeforeProcessing.append(event)
+            }
         )
     }
 
-    override func tearDown() {
+    override func tearDown() async throws {
         sut = nil
         journal = nil
         pushChannelAPI = nil
@@ -101,6 +107,7 @@ final class IncrementalSyncTests: XCTestCase {
         liveBrokenGroupSubject = nil
         mlsGroupRepairAgent = nil
         cancellables = nil
+        liveEventsObservedBeforeProcessing = nil
     }
 
     func test_perform_pendingEventsExist() async throws {
@@ -221,6 +228,10 @@ final class IncrementalSyncTests: XCTestCase {
                 Scaffolding.event4,
                 Scaffolding.event5
             ].flatMap(\.events)
+        )
+        XCTAssertEqual(
+            liveEventsObservedBeforeProcessing,
+            [Scaffolding.event4, Scaffolding.event5].flatMap(\.events)
         )
 
         // Then pending events were deleted.
@@ -391,10 +402,12 @@ final class IncrementalSyncTests: XCTestCase {
         let task = Task {
             try await sut.perform()
         }
+        task.cancel()
 
         // Then
         do {
             _ = try await task.value
+            XCTFail("Expected CancellationError to be thrown")
         } catch {
             XCTAssertEqual(pushChannel.close_Invocations.count, 1)
             XCTAssertTrue(error is CancellationError)
@@ -420,6 +433,87 @@ final class IncrementalSyncTests: XCTestCase {
         // Then
         XCTAssertEqual(messageLocalStore.addPotentialGapSystemMessage_Invocations.count, 1)
         XCTAssertEqual(updateEventsStore.resetLastEventID_Invocations.count, 1)
+    }
+
+    func test_perform_CancelledDuringLargeBatch_CancellationCheckIsReached() async throws {
+        // Given: A large batch of stored events
+        let largeEventCount = 100
+        var largeEventBatch: [(UpdateEventEnvelope, NSManagedObjectID)] = []
+        for i in 0 ..< largeEventCount {
+            let event = Scaffolding.createEvent(
+                message: "message \(i)",
+                timeIntervalSinceNow: TimeInterval(-i)
+            )
+            largeEventBatch.append((event, NSManagedObjectID()))
+        }
+
+        updateEventsStore.fetchStoredEventEnvelopesLimitPrivateKeysBackgroundAccessibleOnly_MockMethod = { _, _, _ in
+            let result = largeEventBatch
+            largeEventBatch = []
+            return result
+        }
+
+        updateEventsStore.deleteNextPendingEventsWith_MockMethod = { _ in }
+        updateEventsStore.calculateLastUnreadMessages_MockMethod = {}
+        databaseSaver.save_MockMethod = {}
+        updateEventsSync.pullPublicKeys_MockMethod = { _ in AsyncStream { [] } }
+
+        // Setup push channel
+        let pushChannel = MockPushChannelProtocol()
+        pushChannel.open_MockValue = AsyncThrowingStream { _ in }
+        pushChannel.close_MockMethod = {}
+        pushChannelAPI.createPushChannelClientID_MockMethod = { _ in pushChannel }
+
+        // Cancel the task after processing a few events to simulate
+        // cancellation during the batch processing
+        var processedEventCount = 0
+        let cancelAfterCount = 10
+        let expectation = expectation(description: "task cancelled")
+        var taskToCancel: Task<Void, any Error>?
+
+        processor.processEvent_MockMethod = { _ in
+            processedEventCount += 1
+            if processedEventCount == cancelAfterCount {
+                taskToCancel?.cancel()
+                expectation.fulfill()
+            }
+        }
+
+        // When: Start sync and cancel during processing
+        taskToCancel = Task {
+            _ = try await self.sut.perform()
+        }
+
+        // Wait for cancellation to occur
+        await fulfillment(of: [expectation], timeout: 5)
+
+        // Then: Should throw CancellationError
+        do {
+            _ = try await taskToCancel!.value
+            XCTFail("Expected CancellationError to be thrown")
+        } catch is CancellationError {
+            // Expected - cancellation check was reached
+            XCTAssertTrue(true, "Cancellation check was successfully reached during batch processing")
+        } catch {
+            XCTFail("Expected CancellationError but got: \(error)")
+        }
+
+        // Verify that:
+        // 1. Some events were processed (at least up to the cancellation point)
+        XCTAssertGreaterThanOrEqual(processedEventCount, cancelAfterCount)
+
+        // 2. Not all events were processed (cancellation stopped processing)
+        XCTAssertLessThan(processedEventCount, largeEventCount)
+
+        // 3. Push channel was closed
+        XCTAssertEqual(pushChannel.close_Invocations.count, 1)
+
+        // 4. Partial batch was committed (only the events processed before cancellation)
+        XCTAssertEqual(updateEventsStore.deleteNextPendingEventsWith_Invocations.count, 1)
+        XCTAssertLessThan(
+            updateEventsStore.deleteNextPendingEventsWith_Invocations[0].count,
+            largeEventCount
+        )
     }
 
     // MARK: - EAR Database Lock Tests

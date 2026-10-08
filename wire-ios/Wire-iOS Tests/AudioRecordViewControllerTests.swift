@@ -17,6 +17,7 @@
 //
 
 import avs
+import WireTestingPackage
 import XCTest
 @testable import Wire
 
@@ -43,12 +44,18 @@ final class AudioRecordViewControllerTests: XCTestCase {
     var sut: AudioRecordViewController!
     fileprivate var delegate: MockAudioRecordViewControllerDelegate!
     var userSession: UserSessionMock!
+    var audioRecorder: MockAudioRecorder!
+    private var snapshotHelper: SnapshotHelper!
 
     override func setUp() {
         super.setUp()
+        snapshotHelper = SnapshotHelper()
         accentColor = .blue
         userSession = UserSessionMock()
-        sut = AudioRecordViewController(userSession: userSession)
+        // Use a mock recorder so no real recordLevelCallBack fires extra
+        // SCSiriWaveformView phase advances between init and snapshot.
+        audioRecorder = MockAudioRecorder()
+        sut = AudioRecordViewController(audioRecorder: audioRecorder, userSession: userSession)
         delegate = MockAudioRecordViewControllerDelegate()
         sut.delegate = delegate
         sut.updateTimeLabel(123)
@@ -59,6 +66,8 @@ final class AudioRecordViewControllerTests: XCTestCase {
         sut = nil
         delegate = nil
         userSession = nil
+        audioRecorder = nil
+        snapshotHelper = nil
 
         super.tearDown()
     }
@@ -68,9 +77,12 @@ final class AudioRecordViewControllerTests: XCTestCase {
         testName: String = #function,
         line: UInt = #line
     ) {
-
-        verifyInAllPhoneWidths(
-            matching: sut.prepareForSnapshot(),
+        let view = sut.prepareForSnapshot()
+        _ = view.addWidthConstraint(width: 375)
+        view.setNeedsLayout()
+        view.layoutIfNeeded()
+        snapshotHelper.verify(
+            matching: view,
             file: file,
             testName: testName,
             line: line

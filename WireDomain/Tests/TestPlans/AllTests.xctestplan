@@ -15,10 +15,7 @@
       }
     ],
     "environmentVariableEntries" : [
-      {
-        "key" : "CI",
-        "value" : "${CI}"
-      }
+
     ],
     "language" : "en",
     "region" : "DE",
@@ -31,6 +28,7 @@
   },
   "testTargets" : [
     {
+      "parallelizable" : false,
       "target" : {
         "containerPath" : "container:",
         "identifier" : "WireDomainPackageTests",

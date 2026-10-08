@@ -20,8 +20,6 @@ import Foundation
 import WireDataModel
 import WireSystem
 
-private let log = ZMSLog(tag: "Authentication")
-
 /// A type of object that observes changes from an authentication state controller.
 
 protocol AuthenticationStateControllerDelegate: AnyObject {

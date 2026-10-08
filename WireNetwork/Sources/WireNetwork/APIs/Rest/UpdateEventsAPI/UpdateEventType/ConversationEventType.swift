@@ -23,7 +23,9 @@ enum ConversationEventType: String {
     case accessUpdate = "conversation.access-update"
     case codeUpdate = "conversation.code-update"
     case create = "conversation.create"
+    case createMeeting = "conversation.create-meeting"
     case delete = "conversation.delete"
+    case deleteMeeting = "conversation.delete-meeting"
     case memberJoin = "conversation.member-join"
     case memberLeave = "conversation.member-leave"
     case memberUpdate = "conversation.member-update"
@@ -37,4 +39,5 @@ enum ConversationEventType: String {
     case typing = "conversation.typing"
     case addPermissionUpdate = "conversation.add-permission-update"
     case mlsReset = "conversation.mls-reset"
+    case adminlessReminder = "conversation.adminless-reminder"
 }

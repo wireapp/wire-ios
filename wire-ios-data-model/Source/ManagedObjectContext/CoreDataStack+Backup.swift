@@ -110,7 +110,7 @@ public extension CoreDataStack {
         let metadataURL = backupDirectory.appendingPathComponent(metadataFilename)
 
         let task = Task.detached {
-            let model = CoreDataStack.loadMessagingModel()
+            let model = CoreDataStack.messagingModel
             let coordinator = NSPersistentStoreCoordinator(managedObjectModel: model)
 
             // Create target directory
@@ -211,7 +211,7 @@ public extension CoreDataStack {
             } catch {
                 throw BackupImportError.failedToCopy(error)
             }
-            let currentModel = CoreDataStack.loadMessagingModel()
+            let currentModel = CoreDataStack.messagingModel
 
             guard let backupModel = managedObjectModel(for: metadata.modelVersion) else {
                 throw BackupImportError.missingModelVersion(metadata.modelVersion)
@@ -235,7 +235,7 @@ public extension CoreDataStack {
                 )
                 let options = NSPersistentStoreCoordinator.persistentStoreOptions(supportsMigration: false)
 
-                WireLogger.localStorage.debug("backup: import prepare", attributes: .safePublic)
+                WireLogger.localStorage.info("backup: import prepare", attributes: .safePublic)
                 try prepareStoreForBackupImport(coordinator: coordinator, location: backupStoreFile, options: options)
 
                 let tp = TimePoint(interval: 60.0, label: "db migration")
@@ -250,7 +250,7 @@ public extension CoreDataStack {
                 }
 
                 // Import the persistent store to the account data directory
-                WireLogger.localStorage.debug(
+                WireLogger.localStorage.info(
                     "backup: import the persistent store to the account data directory",
                     attributes: .safePublic
                 )

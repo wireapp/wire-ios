@@ -20,7 +20,7 @@ import UIKit
 
 extension ConversationContentViewController {
     var headerHeight: CGFloat {
-        let height: CGFloat = 20
+        let height: CGFloat = 22
 
         if tableView.bounds.size.height <= 0 {
             tableView.setNeedsLayout()
@@ -41,10 +41,22 @@ extension ConversationContentViewController {
         return CGRect(origin: .zero, size: requiredSize)
     }
 
+    func compressedHeaderViewFrame(view: UIView) -> CGRect {
+        let fittingSize = CGSize(width: tableView.bounds.size.width, height: 1)
+        let requiredSize = view.systemLayoutSizeFitting(
+            fittingSize,
+            withHorizontalFittingPriority: .required,
+            verticalFittingPriority: .fittingSizeLevel
+        )
+        return CGRect(origin: .zero, size: requiredSize)
+    }
+
     func updateHeaderHeight() {
         guard let headerView = tableView.tableHeaderView else { return }
 
-        headerView.frame = headerViewFrame(view: headerView)
+        headerView.frame = headerUsesCompressedHeight
+            ? compressedHeaderViewFrame(view: headerView)
+            : headerViewFrame(view: headerView)
         tableView.tableHeaderView = headerView
     }
 }

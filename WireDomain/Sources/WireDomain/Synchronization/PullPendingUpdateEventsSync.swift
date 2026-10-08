@@ -94,8 +94,8 @@ public struct PullPendingUpdateEventsSync: PullPendingUpdateEventsSyncProtocol {
             var lastEnvelopeID: UUID?
 
             // We are decrypting the batch within one core crypto transaction
-            try await coreCryptoProvider.coreCrypto().extendedTransaction { context in
-                WireLogger.sync.debug(
+            try await coreCryptoProvider.coreCrypto().transaction { context in
+                WireLogger.sync.info(
                     "decrypting batch of \(envelopes.count) envelopes",
                     attributes: .safePublic
                 )

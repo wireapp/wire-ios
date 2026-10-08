@@ -18,8 +18,63 @@
 
 import XCTest
 
+/// [core-messenger]
 final class PersonalUsersTests: WireUITestCase {
 
+    private typealias ConversationFilterTeam = (
+        teamOwner: UserInfo,
+        teamMember: UserInfo,
+        groupName: String,
+        channelName: String
+    )
+
+    @MainActor
+    private func registerTeamForConversationFilter() async throws -> ConversationFilterTeam {
+        let groupName = UserGenerator.generateRandomConversationName()
+        let channelName = UserGenerator.generateRandomConversationName()
+        let (teamOwner, teamMembers, qualifiedIDs, _) = try await UserHelper.default.registerTeam(
+            withMemberCount: 1,
+            conversation: .channel(channelName)
+        )
+
+        try await UserHelper.default.createGroupConversations(
+            qualifiedIds: qualifiedIDs,
+            owner: teamOwner,
+            groupName: groupName
+        )
+
+        return (
+            teamOwner,
+            try XCTUnwrap(teamMembers.first),
+            groupName,
+            channelName
+        )
+    }
+
+    @MainActor
+    private func loginAndCreateOneOnOneConversation(for user: UserInfo) throws -> ConversationsPage {
+        try app.loginUser(email: user.email, password: user.password)
+            .acceptPopup()
+            .tapPlusButtonToCreateGroup()
+            .openUserDetailsInContactList()
+            .tapStartConversationButton()
+            .goBackToConversationPage()
+    }
+
+    @MainActor
+    private func createConnectedPersonalUsers() async throws -> (userA: UserInfo, userB: UserInfo) {
+        var userA = try await UserHelper.default.createPersonalUser()
+        let userB = try await UserHelper.default.createPersonalUser()
+        let domain = BackendTarget.staging.domainInfo
+
+        try await UserHelper.default.login(user: &userA)
+        try await UserHelper.default.sendConnectionRequestToUser(domain: domain, userId: userB.id)
+        try await UserHelper.default.acceptConnectionRequestFromUser(domain: domain, user1: userB, userId: userA.id)
+
+        return (userA, userB)
+    }
+
+    /// [critical]
     @MainActor
     func testRegisterAsPersonalUser_TC_8971() async throws {
         let user = UserGenerator.generateUniqueUserInfo()
@@ -37,7 +92,7 @@ final class PersonalUsersTests: WireUITestCase {
             .tapContinueButton()
             .tapAcceptButton()
 
-        let verificationCode = try await InbucketClient.getVerificationCode(email: user.email)
+        let verificationCode = try await InbucketClient.getVerificationCode(email: user.email, backend: .staging)
 
         let setUsernamePage = try verificationPage
             .enterVerificationCodeAndConfirm(verificationCode)
@@ -57,9 +112,10 @@ final class PersonalUsersTests: WireUITestCase {
         XCTAssertEqual(accountPage.getEmail(), user.email, "Email didn't contain \(user.email)")
     }
 
+    /// [critical]
     @MainActor
     func testLoginAsExistingPersonalUser_TC_8804() async throws {
-        let user = try await userHelper.createPersonalUser()
+        let user = try await UserHelper.default.createPersonalUser()
 
         let firstTimePage = try app.loginUser(email: user.email, password: user.password)
         _ = try  firstTimePage.acceptPopup()
@@ -69,18 +125,20 @@ final class PersonalUsersTests: WireUITestCase {
             .enterPassword(user.password)
     }
 
+    /// [critical]
     @MainActor
-    func testPersonalAccountLifecycle_TC_8807_TC_8810_TC_8819_TC_8826_TC_8867_TC_9450() async throws {
-        let userA = try await userHelper.createPersonalUser()
-        let userB = try await userHelper.createPersonalUser()
-        let messageFromUserB = "Hello from \(userB.name)"
+    func testSearchUserAndConnectionRequestLifecycle_TC_8806_8807_8808_8809_8810() async throws {
+        let userA = try await UserHelper.default.createPersonalUser()
+        let userB = try await UserHelper.default.createPersonalUser()
+        let userC = try await UserHelper.default.createPersonalUser()
+        let domain = BackendTarget.staging.domainInfo
 
         let userDetailsPage = try app.loginUser(email: userA.email, password: userA.password)
             .acceptPopup()
             .tapPlusButtonToCreateGroup()
             .tapSearchBox()
             .searchUserByUserHandle(userB.username)
-            .tapSearchedUserCell()
+            .tapSearchedUserCell(handle: userB.username)
 
         let userNameB = try XCTUnwrap(userDetailsPage.getUserName())
         XCTAssertEqual(userNameB, "@\(userB.username)", "username didn't match @\(userB.username)")
@@ -90,6 +148,7 @@ final class PersonalUsersTests: WireUITestCase {
             .closeNewConversationPage()
             .openUserProfilePage()
             .tapAddAccountOrTeamButton()
+
         let connectionRequestsPage = try app.loginUser(email: userB.email, password: userB.password)
             .acceptPopup()
             .openPendingRequest()
@@ -97,47 +156,129 @@ final class PersonalUsersTests: WireUITestCase {
         let userNameA = try XCTUnwrap(connectionRequestsPage.getUserName())
         XCTAssertEqual(userNameA, "@\(userA.username)", "username didn't match @\(userA.username)")
 
-        var conversationsPage = try connectionRequestsPage.acceptConnectionRequest()
-            .sendMessage(messageFromUserB)
+        let conversationsPage = try connectionRequestsPage.acceptConnectionRequest()
             .goBackToConversationPage()
 
         let nameA = try XCTUnwrap(conversationsPage.getNameLabel())
         XCTAssertEqual(nameA, userA.name, "name didn't match \(userA.name)")
 
-        conversationsPage = try conversationsPage.openUserProfilePage()
-            .switchUserAccountForUser(withName: userA.name)
+        try await UserHelper.default.sendConnectionRequestToUser(domain: domain, userId: userB.id)
 
-        let nameUserB = try XCTUnwrap(conversationsPage.getNameLabel())
-        XCTAssertEqual(nameUserB, userB.name, "name didn't match \(userB.name)")
+        let secondConnectionRequestsPage = try conversationsPage.openPendingRequest()
+        let userNameC = try XCTUnwrap(secondConnectionRequestsPage.getUserName())
+        XCTAssertEqual(userNameC, "@\(userC.username)", "username didn't match @\(userC.username)")
 
-        let activeConversationPage = try conversationsPage.openConversation()
+        let otherUserConversationPage = try secondConnectionRequestsPage.rejectConnectionRequest()
+            .goBackToConversationPage()
 
-        let fetchMessages = activeConversationPage.fetchMessages()
-        XCTAssertTrue(
-            fetchMessages.contains(messageFromUserB),
-            "Expected message '\(messageFromUserB)' not found in sent messages: \(fetchMessages)"
+        XCTAssertFalse(
+            otherUserConversationPage.conversationCell(named: userC.name).exists,
+            "Conversation with rejected user \(userC.name) is still shown after rejecting @\(userC.username) request"
         )
+    }
 
-        var accountSettingsPage = try activeConversationPage.goBackToConversationPage()
+    /// [critical]
+    @MainActor
+    func testPersonalUserCanAddGuestToExistingGroup_TC_11641() async throws {
+        // GIVEN
+        let groupName = UserGenerator.generateRandomConversationName()
+        let (userA, userB) = try await createConnectedPersonalUsers()
+
+        let activeConversationPage = try app.loginUser(email: userA.email, password: userA.password)
+            .acceptPopup()
+            .tapPlusButtonToCreateGroup()
+            .tapNewGroupButton()
+            .enterGroupName(groupName)
+            .skipSelectingMembers()
+
+        // WHEN
+        let conversationDetailsPage = try activeConversationPage
+            .openConversationDetails()
+            .appParticipantToConversation()
+            .searchUserByNameOrUsername(userB.name)
+            .tapMemberCells(withLabelPrefixes: [userB.name])
+            .addSelectedParticipant()
+
+        // THEN
+        XCTAssertTrue(
+            conversationDetailsPage.userCell(named: userB.name).waitForExistence(timeout: 5),
+            "Guest user \(userB.name) is not present in group \(groupName)"
+        )
+    }
+
+    @MainActor
+    func testPersonalUserCanCreateGroupWithGuest_TC_11642() async throws {
+        // GIVEN
+        let groupName = UserGenerator.generateRandomConversationName()
+        let (userA, userB) = try await createConnectedPersonalUsers()
+
+        // WHEN
+        let conversationDetailsPage = try app.loginUser(email: userA.email, password: userA.password)
+            .acceptPopup()
+            .tapPlusButtonToCreateGroup()
+            .tapNewGroupButton()
+            .enterGroupName(groupName)
+            .searchUserByNameOrUsername(userB.name)
+            .tapMemberCells(withLabelPrefixes: [userB.name])
+            .doneSelectingMembers()
+            .openConversationDetails()
+
+        // THEN
+        XCTAssertTrue(
+            conversationDetailsPage.userCell(named: userB.name).waitForExistence(timeout: 5),
+            "Guest user \(userB.name) is not present in newly created group \(groupName)"
+        )
+    }
+
+    /// [critical]
+    @MainActor
+    func testBlockAndDeleteUser_TC_8867_9450() async throws {
+
+        let userB = try await UserHelper.default.createPersonalUser()
+        let userA = try await UserHelper.default.createPersonalUser()
+        let domain = BackendTarget.staging.domainInfo
+
+        try await UserHelper.default.sendConnectionRequestToUser(domain: domain, userId: userB.id)
+        try await UserHelper.default.acceptConnectionRequestFromUser(domain: domain, user1: userB, userId: userA.id)
+
+        _ = try app.loginUser(email: userA.email, password: userA.password)
+            .acceptPopup()
+            .openUserProfilePage()
+            .tapAddAccountOrTeamButton()
+
+        let conversationsPage = try app.loginUser(email: userB.email, password: userB.password)
+            .acceptPopup()
             .longPressForMoreOptionOnConversation()
             .blockUser()
-            .openSettings()
-            .openAccountSettings()
 
-        let accountNameUserA = try XCTUnwrap(accountSettingsPage.getAccountName())
+        let blockedConversationCell = conversationsPage.conversationCell.buttons[userA.name]
+
+        XCTAssertFalse(
+            blockedConversationCell.exists,
+            "Blocked conversation is still visible after blocking"
+        )
+
+        var accountSettingsPage = try conversationsPage.openSettings()
+            .openAccountSettings()
+        let accountNameUserB = try XCTUnwrap(accountSettingsPage.getAccountName())
+
         accountSettingsPage = try accountSettingsPage.deleteAccount()
             .openSettings()
             .openAccountSettings()
 
-        let accountNameUserB = try XCTUnwrap(accountSettingsPage.getAccountName())
+        let accountNameUserA = try XCTUnwrap(accountSettingsPage.getAccountName())
 
-        XCTAssertNotEqual(accountNameUserA, accountNameUserB, "Account name didn't change after deleting")
+        XCTAssertNotEqual(
+            accountNameUserA,
+            accountNameUserB,
+            "Account name didn't change after deleting, still showing deleted one"
+        )
     }
 
     @MainActor
     func testAddConversationAsFavourite_TC_8869() async throws {
         let groupName = UserGenerator.generateRandomConversationName()
-        let (teamOwner, _, _, _) = try await userHelper
+        let (teamOwner, _, _, _) = try await UserHelper.default
             .registerTeam(
                 withMemberCount: 1,
                 conversation: .group(groupName)
@@ -158,7 +299,7 @@ final class PersonalUsersTests: WireUITestCase {
     @MainActor
     func testFilterConversationByFavourite_TC_8874() async throws {
         let groupName = UserGenerator.generateRandomConversationName()
-        let (teamOwner, _, _, _) = try await userHelper
+        let (teamOwner, _, _, _) = try await UserHelper.default
             .registerTeam(
                 withMemberCount: 1,
                 conversation: .group(groupName)
@@ -174,7 +315,7 @@ final class PersonalUsersTests: WireUITestCase {
 
         XCTAssertTrue(
             conversationsPage.textFilteredByFavourites.exists,
-            "'Filtered by Favorites' label did not appear"
+            "Favorites filter label did not appear"
         )
 
         XCTAssertTrue(
@@ -197,7 +338,96 @@ final class PersonalUsersTests: WireUITestCase {
 
         XCTAssertTrue(
             conversationsPage.textFilteredByOneOnOne.exists,
-            "'Filtered by Favorites' label did not appear"
+            "OneOnOne filter label did not appear"
+        )
+    }
+
+    @MainActor
+    func testFilterConversationByGroupsChannelsAndOneOnOne_TC_8875_8876_8877() async throws {
+        // GIVEN
+        let team = try await registerTeamForConversationFilter()
+
+        // WHEN
+        let conversationsPage = try loginAndCreateOneOnOneConversation(for: team.teamOwner)
+
+        // WHEN - Filtering by group
+        _ = try conversationsPage.filterConversationByGroup()
+
+        // THEN
+        XCTAssertTrue(
+            conversationsPage.conversationCell(named: team.groupName).waitForExistence(timeout: 5),
+            "Group conversation did not appear"
+        )
+
+        // WHEN - Filtering by channel
+        _ = try conversationsPage.filterConversationByChannel()
+
+        // THEN
+        XCTAssertTrue(
+            conversationsPage.conversationCell(named: team.channelName).waitForExistence(timeout: 5),
+            "Channel conversation did not appear"
+        )
+
+        // WHEN - Filtering by OneOnOne
+        _ = try conversationsPage.filterConversationByOneOnOne()
+
+        // THEN
+        XCTAssertTrue(
+            conversationsPage.conversationCell(named: team.teamMember.name).waitForExistence(timeout: 5),
+            "OneOnOne conversation did not appear"
+        )
+    }
+
+    @MainActor
+    func testMoveConversationToFolderAndFilterByFolder_TC_8870_8878() async throws {
+        // GIVEN
+        let team = try await registerTeamForConversationFilter()
+
+        // WHEN
+        let conversationsPage = try app.loginUser(email: team.teamOwner.email, password: team.teamOwner.password)
+            .acceptPopup()
+            .longPressForMoreOptionOnConversation(named: team.groupName)
+            .moveConversationToNewFolder(named: team.groupName)
+            .filterConversationByFolder(named: team.groupName)
+
+        // THEN
+        XCTAssertTrue(
+            conversationsPage
+                .conversationCell(named: team.groupName)
+                .waitForExistence(timeout: 5),
+            "Conversation moved to folder did not appear in folder filter"
+        )
+
+        XCTAssertEqual(
+            conversationsPage.conversationCells.count,
+            1,
+            "Expected only one conversation to be visible after filtering by folder"
+        )
+    }
+
+    @MainActor
+    func testSearchConversation_TC_8866() async throws {
+        // GIVEN
+        let team = try await registerTeamForConversationFilter()
+
+        let conversationsPage = try app.loginUser(email: team.teamOwner.email, password: team.teamOwner.password)
+            .acceptPopup()
+
+        //  Search by group and verify
+        try conversationsPage.searchConversation(named: team.groupName)
+        XCTAssertTrue(
+            conversationsPage.conversationCell(named: team.groupName).waitForExistence(timeout: 3) &&
+                conversationsPage.conversationCells.count == 1,
+            "Expected conversation 'Group' not in search result"
+        )
+
+        // Search by channel and verify
+        try conversationsPage.clearConversationSearch()
+            .searchConversation(named: team.channelName)
+        XCTAssertTrue(
+            conversationsPage.conversationCell(named: team.channelName).waitForExistence(timeout: 3) &&
+                conversationsPage.conversationCells.count == 1,
+            "Expected conversation 'Channel' not in search result"
         )
     }
 }

@@ -248,6 +248,13 @@ final class MockConversationsAPIProtocol: ConversationsAPI {
         fatalError("not implemented")
     }
 
+    func updateConversationName(
+        _ name: String,
+        for conversationID: WireNetwork.QualifiedID
+    ) async throws -> WireNetwork.ConversationRenameEvent? {
+        fatalError("not implemented")
+    }
+
     func createGroupConversation(
         parameters: WireNetwork.CreateGroupConversationParameters
     ) async throws -> WireNetwork.Conversation {
@@ -266,6 +273,21 @@ final class MockConversationsAPIProtocol: ConversationsAPI {
         conversationID: WireFoundation.QualifiedID,
         allowGuests: Bool,
         allowApps: Bool
+    ) async throws {
+        fatalError("not implemented")
+    }
+
+    func updateRole(
+        _ role: String,
+        userID: WireNetwork.UserID,
+        conversationID: WireNetwork.ConversationID
+    ) async throws {
+        fatalError("not implemented")
+    }
+
+    func removeParticipant(
+        userID: WireNetwork.UserID,
+        conversationID: WireNetwork.ConversationID
     ) async throws {
         fatalError("not implemented")
     }

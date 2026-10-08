@@ -484,6 +484,18 @@ class MessageAPIV14: MessageAPIV13 {
     override var apiVersion: APIVersion { .v14 }
 }
 
-final class MessageAPIV15: MessageAPIV14 {
+class MessageAPIV15: MessageAPIV14 {
     override var apiVersion: APIVersion { .v15 }
+}
+
+class MessageAPIV16: MessageAPIV15 {
+    override var apiVersion: APIVersion { .v16 }
+}
+
+class MessageAPIV17: MessageAPIV16 {
+    override var apiVersion: APIVersion { .v17 }
+}
+
+final class MessageAPIV18: MessageAPIV17 {
+    override var apiVersion: APIVersion { .v18 }
 }

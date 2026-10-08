@@ -110,7 +110,8 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
             conversationCreationRepository: MockConversationCreationRepositoryProtocol(),
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase,
             areLegacyBotsAvailable: false,
-            isAppsFeatureEnabled: false
+            isAppsFeatureEnabled: false,
+            wireMessagingFactory: MockWireMessagingFactoryProtocol()
         )
 
         // THEN
@@ -134,7 +135,8 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
             conversationCreationRepository: MockConversationCreationRepositoryProtocol(),
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase,
             areLegacyBotsAvailable: false,
-            isAppsFeatureEnabled: false
+            isAppsFeatureEnabled: false,
+            wireMessagingFactory: MockWireMessagingFactoryProtocol()
         )
 
         // THEN
@@ -169,7 +171,8 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
             conversationCreationRepository: MockConversationCreationRepositoryProtocol(),
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase,
             areLegacyBotsAvailable: false,
-            isAppsFeatureEnabled: false
+            isAppsFeatureEnabled: false,
+            wireMessagingFactory: MockWireMessagingFactoryProtocol()
         )
 
         // THEN
@@ -193,7 +196,8 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
             conversationCreationRepository: MockConversationCreationRepositoryProtocol(),
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase,
             areLegacyBotsAvailable: false,
-            isAppsFeatureEnabled: false
+            isAppsFeatureEnabled: false,
+            wireMessagingFactory: MockWireMessagingFactoryProtocol()
         )
 
         // THEN
@@ -216,7 +220,8 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
             conversationCreationRepository: MockConversationCreationRepositoryProtocol(),
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase,
             areLegacyBotsAvailable: false,
-            isAppsFeatureEnabled: false
+            isAppsFeatureEnabled: false,
+            wireMessagingFactory: MockWireMessagingFactoryProtocol()
         )
 
         // THEN
@@ -241,7 +246,8 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
             conversationCreationRepository: MockConversationCreationRepositoryProtocol(),
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase,
             areLegacyBotsAvailable: false,
-            isAppsFeatureEnabled: false
+            isAppsFeatureEnabled: false,
+            wireMessagingFactory: MockWireMessagingFactoryProtocol()
         )
 
         snapshotHelper.verify(matching: sut)
@@ -264,7 +270,8 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
             conversationCreationRepository: MockConversationCreationRepositoryProtocol(),
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase,
             areLegacyBotsAvailable: false,
-            isAppsFeatureEnabled: false
+            isAppsFeatureEnabled: false,
+            wireMessagingFactory: MockWireMessagingFactoryProtocol()
         )
 
         // THEN
@@ -288,7 +295,8 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
             conversationCreationRepository: MockConversationCreationRepositoryProtocol(),
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase,
             areLegacyBotsAvailable: false,
-            isAppsFeatureEnabled: false
+            isAppsFeatureEnabled: false,
+            wireMessagingFactory: MockWireMessagingFactoryProtocol()
         )
 
         // THEN
@@ -312,7 +320,8 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
             conversationCreationRepository: MockConversationCreationRepositoryProtocol(),
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase,
             areLegacyBotsAvailable: false,
-            isAppsFeatureEnabled: false
+            isAppsFeatureEnabled: false,
+            wireMessagingFactory: MockWireMessagingFactoryProtocol()
         )
 
         // THEN
@@ -336,7 +345,8 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
             conversationCreationRepository: MockConversationCreationRepositoryProtocol(),
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase,
             areLegacyBotsAvailable: false,
-            isAppsFeatureEnabled: false
+            isAppsFeatureEnabled: false,
+            wireMessagingFactory: MockWireMessagingFactoryProtocol()
         )
 
         // THEN
@@ -362,7 +372,8 @@ final class GroupDetailsViewControllerSnapshotTests: XCTestCase {
             conversationCreationRepository: MockConversationCreationRepositoryProtocol(),
             isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase,
             areLegacyBotsAvailable: false,
-            isAppsFeatureEnabled: false
+            isAppsFeatureEnabled: false,
+            wireMessagingFactory: MockWireMessagingFactoryProtocol()
         )
 
         snapshotHelper.verify(matching: sut)

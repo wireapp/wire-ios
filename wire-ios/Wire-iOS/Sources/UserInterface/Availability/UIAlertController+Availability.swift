@@ -18,6 +18,7 @@
 
 import UIKit
 import WireDataModel
+import WireLocators
 
 extension UIAlertController {
 
@@ -66,14 +67,31 @@ extension UIAlertController {
         )
 
         for availability in Availability.allCases {
-            alert.addAction(UIAlertAction(title: availability.localizedName, style: .default, handler: { _ in
+            let action = UIAlertAction(title: availability.localizedName, style: .default, handler: { _ in
                 handler(availability)
-            }))
+            })
+            action.accessibilityIdentifier = availability.accessibilityIdentifier
+            alert.addAction(action)
         }
 
         alert.popoverPresentationController?.permittedArrowDirections = [.up, .down]
         alert.addAction(UIAlertAction(title: AvailabilityMessageLocale.cancel, style: .cancel, handler: nil))
 
         return alert
+    }
+}
+
+private extension Availability {
+    var accessibilityIdentifier: String {
+        switch self {
+        case .none:
+            Locators.UserProfileStatusPicker.none.rawValue
+        case .available:
+            Locators.UserProfileStatusPicker.available.rawValue
+        case .busy:
+            Locators.UserProfileStatusPicker.busy.rawValue
+        case .away:
+            Locators.UserProfileStatusPicker.away.rawValue
+        }
     }
 }

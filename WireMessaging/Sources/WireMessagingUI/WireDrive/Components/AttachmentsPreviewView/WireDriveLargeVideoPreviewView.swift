@@ -19,9 +19,11 @@
 import SwiftUI
 import WireDesign
 import WireFoundation
+import WireLocators
 import WireMessagingDomain
 
 private typealias Strings = L10n.Localizable.Conversation.WireCells
+private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
 
 struct WireDriveLargeVideoPreviewView: View {
     private static let errorMessage = L10n.Localizable.Conversation.Message
@@ -33,10 +35,13 @@ struct WireDriveLargeVideoPreviewView: View {
     private static let defaultAspectRatio = CGFloat(16.0 / 9.0)
     private static let previewCornerRadius = 10.0
 
+    @ScaledMetric private var scale: CGFloat = 1
+
     let url: URL?
     var imageAspectRatio: CGFloat = defaultAspectRatio
     let duration: String?
     let state: WireDriveFileUITracker.State
+    let isAvailableOffline: Bool
 
     @Environment(\.wireAccentColor) private var wireAccentColor
 
@@ -54,6 +59,11 @@ struct WireDriveLargeVideoPreviewView: View {
                     durationView(duration: duration)
                 }
             }
+            .overlay(alignment: .topTrailing) {
+                if isAvailableOffline {
+                    availableOfflineIcon()
+                }
+            }
             .background(ColorTheme.Backgrounds.surfaceVariant.color)
         }
     }
@@ -68,6 +78,7 @@ struct WireDriveLargeVideoPreviewView: View {
                 image
                     .resizable()
                     .aspectRatio(imageAspectRatio, contentMode: .fit)
+                    .accessibilityIdentifier(Locators.ActiveConversationPage.videoPreview.rawValue)
                     .overlay {
                         switch state {
                         case .notLoaded, .loaded:
@@ -163,17 +174,62 @@ struct WireDriveLargeVideoPreviewView: View {
                 )
             )
     }
+
+    @ViewBuilder
+    private func availableOfflineIcon() -> some View {
+        Image(systemName: "arrow.down.circle.fill")
+            .resizable()
+            .frame(width: 12 * scale, height: 11 + scale)
+            .foregroundStyle(ColorTheme.Base.secondaryText.color, .white)
+            .accessibilityLabel(Accessibility.Files.availableOffline)
+            .padding(6)
+    }
 }
 
 #Preview {
-    WireDriveLargeVideoPreviewView(
-        url: URL(
-            string:
-            "https://i.kym-cdn.com/entries/icons/facebook/000/018/012/this_is_fine.jpg"
+    let previewCases: [(
+        url: URL?,
+        state: WireDriveFileUITracker.State
+    )] = [
+        (
+            url: URL(string: "https://i.kym-cdn.com/entries/icons/facebook/000/018/012/this_is_fine.jpg"),
+            state: .loading(progress: 0.7, isLargeFile: false)
         ),
-        imageAspectRatio: CGFloat(16.0 / 9.0),
-        duration: "02:34",
-        state: .loading(progress: 0.7, isLargeFile: false)
-    )
-    .padding()
+        (
+            url: URL(string: "https://i.kym-cdn.com/entries/icons/facebook/000/018/012/this_is_fine.jpg"),
+            state: .loaded(showReadyToOpen: true)
+        ),
+        (
+            url: URL(string: "https://i.kym-cdn.com/entries/icons/facebook/000/018/012/this_is_fine.jpg"),
+            state: .loaded(showReadyToOpen: false)
+        ),
+        (
+            url: URL(string: "https://i.kym-cdn.com/entries/icons/facebook/000/018/012/this_is_fine.jpg"),
+            state: .notLoaded
+        ),
+        (
+            url: URL(string: "https://i.kym-cdn.com/entries/icons/facebook/000/018/012/this_is_fine.jpg"),
+            state: .failed
+        ),
+        (
+            url: URL?.none,
+            state: .loaded(showReadyToOpen: true)
+        )
+    ]
+    ScrollView {
+        VStack {
+            ForEach(0 ..< previewCases.count, id: \.self) { index in
+                let data = previewCases[index]
+
+                WireDriveLargeVideoPreviewView(
+                    url: data.url,
+                    imageAspectRatio: CGFloat(16.0 / 9.0),
+                    duration: "02:34",
+                    state: data.state,
+                    isAvailableOffline: true
+                )
+                .padding(.horizontal)
+            }
+        }
+    }
 }

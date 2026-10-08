@@ -21,28 +21,19 @@ public import Foundation
 // sourcery: AutoMockable
 public protocol LogFilesProviding {
 
-    /// Generates a zip file containing all log files and returns its data before removing the files
-    ///
-    /// - Returns: the log files archive data
+    /// All log file URLs to include in the archive.
+    var logFileURLs: [URL] { get }
 
-    func generateLogFilesData() throws -> Data
-
-    /// Generates a zip file containing all log files
-    ///
-    /// - Returns: the log files archive URL
-
-    func generateLogFilesZip() throws -> URL
+    /// Returns system and app info, optionally including journal entries for the given user.
+    func info(selfUserID: UUID?) -> String
 
     /// Clears the logs directory.
-    /// Call once you are done using the URL returned by `generateLogFilesZip` to clean up.
-
+    /// Call once you are done using the URL returned by `CreateDebugReportUseCase` to clean up.
     func clearLogsDirectory(fileManager: FileManager) throws
 
     /// Clears individual log files from their source locations.
-
     func removeLogFiles(fileManager: FileManager) throws
 
-    /// Deletes all log-related legacy archives
-
+    /// Deletes all log-related legacy archives.
     func removeLegacyLogArchives() throws
 }

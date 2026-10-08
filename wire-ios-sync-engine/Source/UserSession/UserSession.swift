@@ -226,6 +226,8 @@ public protocol UserSession: AnyObject {
 
     var isWireDriveEnabled: Bool { get }
 
+    var isMeetingsEnabled: Bool { get }
+
     var wireDriveBackendURL: URL? { get }
 
     var isEnterpriseUser: Bool { get }
@@ -253,6 +255,8 @@ public protocol UserSession: AnyObject {
     // MARK: Use Cases
 
     var getUserClientFingerprint: GetUserClientFingerprintUseCaseProtocol { get }
+
+    var resetProteusSession: ResetProteusSessionUseCaseProtocol { get }
 
     var isUserE2EICertifiedUseCase: IsUserE2EICertifiedUseCaseProtocol { get }
 

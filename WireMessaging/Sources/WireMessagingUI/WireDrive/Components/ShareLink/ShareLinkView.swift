@@ -314,7 +314,9 @@ struct ShareLinkView: View {
         isEditable: false,
         publicLinkID: UUID().uuidString,
         conversationName: "Conversation 1",
-        size: nil
+        isReadOnly: false,
+        size: nil,
+        thumbnailURL: nil
     )
 
     let mockAPI = {
@@ -345,6 +347,10 @@ struct ShareLinkView: View {
     )
 
     ShareLinkView(
-        viewModel: .init(fileItem: item, useCases: useCases)
+        viewModel: .init(
+            fileItem: item,
+            useCases: useCases,
+            onLinkStateChanged: { _ in }
+        )
     )
 }

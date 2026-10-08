@@ -1106,6 +1106,24 @@ final class WireCallCenterV3Tests: MessagingTest {
             // then
             XCTAssertEqual(mockAVSWrapper.startCallArguments?.conversationType, AVSConversationType.conference)
             XCTAssertEqual(mockAVSWrapper.startCallArguments?.callType, AVSCallType.normal)
+            XCTAssertEqual(mockAVSWrapper.startCallArguments?.isMeeting, false)
+        }
+    }
+
+    func testThatItStartsACall_conference_meeting() throws {
+        // given
+        groupConversation.groupType = .meeting
+
+        try checkThatItPostsNotification(
+            expectedCallState: .outgoing(isVideo: false, degraded: false),
+            expectedCallerId: selfUserID,
+            expectedConversationId: groupConversationID
+        ) {
+            // when
+            try sut.startCall(in: groupConversation, isVideo: false)
+
+            // then
+            XCTAssertEqual(mockAVSWrapper.startCallArguments?.isMeeting, true)
         }
     }
 
@@ -1350,12 +1368,13 @@ final class WireCallCenterV3Tests: MessagingTest {
 
         // then
         XCTAssertEqual((sut.avsWrapper as! MockAVSWrapper).receivedCallEvents.count, 1)
-        if let (event, conversationType) = (sut.avsWrapper as! MockAVSWrapper).receivedCallEvents.last {
+        if let (event, conversationType, isMeeting) = (sut.avsWrapper as! MockAVSWrapper).receivedCallEvents.last {
             XCTAssertEqual(event.conversationId, oneOnOneConversationID)
             XCTAssertEqual(event.userId, userId)
             XCTAssertEqual(event.clientId, clientId)
             XCTAssertEqual(event.data, data)
             XCTAssertEqual(conversationType, .oneToOne)
+            XCTAssertFalse(isMeeting)
         }
     }
 
@@ -2703,16 +2722,69 @@ extension WireCallCenterV3Tests {
     }
 
     func test_CallIsClosed_WhenConversationIsDeleted() throws {
-        // Given
-        groupConversation.isDeletedRemotely = true
-        let changeInfo = ConversationChangeInfo(object: groupConversation)
-        changeInfo.changedKeys = [#keyPath(ZMConversation.isDeletedRemotely)]
+        try checkActiveMeetingDeletion(dispatcherEnabled: true)
+    }
 
-        // When
-        sut.conversationDidChange(changeInfo)
+    func test_CallIsClosed_WhenConversationIsDeletedInBackground() throws {
+        try checkActiveMeetingDeletion(dispatcherEnabled: false)
+    }
 
-        // Then
+    private func checkActiveMeetingDeletion(dispatcherEnabled: Bool) throws {
+        groupConversation.groupType = .meeting
+        try uiMOC.save()
+
+        let dispatcher = NotificationDispatcher(managedObjectContext: uiMOC)
+        defer { dispatcher.tearDown() }
+        sut.createSnapshot(
+            callState: .established,
+            members: [],
+            callStarter: otherUserID,
+            video: false,
+            for: groupConversationID,
+            conversationType: .conference
+        )
+        sut.createSnapshot(
+            callState: .established,
+            members: [],
+            callStarter: otherUserID,
+            video: false,
+            for: oneOnOneConversationID,
+            conversationType: .oneToOne
+        )
+        XCTAssertEqual(sut.activeCalls.count, 2)
+        XCTAssertFalse(mockAVSWrapper.didCallEndCall)
+        dispatcher.isEnabled = dispatcherEnabled
+
+        let conversationObjectID = groupConversation.objectID
+        var deletionSave: Notification?
+        let token = NotificationCenter.default.addObserver(
+            forName: .NSManagedObjectContextDidSave,
+            object: syncMOC,
+            queue: nil
+        ) { deletionSave = $0 }
+        defer { NotificationCenter.default.removeObserver(token) }
+
+        try syncMOC.performAndWait {
+            let conversation = try XCTUnwrap(syncMOC.existingObject(with: conversationObjectID) as? ZMConversation)
+            conversation.isDeletedRemotely = true
+            try syncMOC.save()
+        }
+
+        uiMOC.mergeChanges(fromContextDidSave: try XCTUnwrap(deletionSave))
+        uiMOC.processPendingChanges()
+        dispatcher.didMergeChanges([conversationObjectID])
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        XCTAssertTrue(groupConversation.isDeletedRemotely)
         XCTAssertTrue(mockAVSWrapper.didCallEndCall)
+        XCTAssertFalse(sut.isActive(conversationId: groupConversationID))
+        XCTAssertEqual(sut.callState(conversationId: oneOnOneConversationID), .established)
+
+        mockAVSWrapper.didCallEndCall = false
+        oneOnOneConversation.userDefinedName = "Unrelated change"
+        try uiMOC.save()
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertFalse(mockAVSWrapper.didCallEndCall)
     }
 
     func test_CallIsClosed_WhenMlsConversationIsDegraded() throws {
@@ -2746,6 +2818,111 @@ extension WireCallCenterV3Tests {
 
         // Then
         XCTAssertTrue(mockAVSWrapper.didCallEndCall)
+    }
+
+}
+
+// MARK: - TimesOut
+
+extension WireCallCenterV3Tests {
+
+    func testThatItEndsTheMLSConferenceCall_WhenJoiningSubgroupTimesOut() throws {
+        // Given
+        groupConversation.messageProtocol = .mls
+        groupConversation.mlsGroupID = .random()
+
+        let mlsService = MockMLSServiceInterface()
+
+        mlsService.createOrJoinSubgroupParentQualifiedIDParentID_MockMethod = { _, _ in
+            try await Task.sleep(for: .seconds(2))
+            return MLSGroupID(Data.random())
+        }
+
+        let didLeaveSubconversation = customExpectation(description: "didLeaveSubconversation")
+        mlsService.leaveSubconversationParentQualifiedIDParentGroupIDSubconversationType_MockMethod = { _, _, _ in
+            didLeaveSubconversation.fulfill()
+        }
+
+        syncMOC.performAndWait { syncMOC.mlsService = mlsService }
+
+        sut.mlsConferenceSetupTimeout = .milliseconds(200)
+
+        customExpectation(
+            forNotification: WireCallCenterCallStateNotification.notificationName,
+            object: nil
+        ) { wrappedNote in
+            guard let note = wrappedNote
+                .userInfo?[WireCallCenterCallStateNotification.userInfoKey] as? WireCallCenterCallStateNotification,
+                note.conversationId == self.groupConversationID,
+                case .terminating(reason: .unknown) = note.callState
+            else { return false }
+            return true
+        }
+
+        // When
+        try sut.startCall(in: groupConversation, isVideo: false)
+
+        // Then
+        XCTAssert(waitForCustomExpectations(withTimeout: 1.0))
+
+        XCTAssertNil(
+            mockAVSWrapper.startCallArguments,
+            "AVS startCall must not be invoked when subgroup join times out"
+        )
+        XCTAssertEqual(
+            sut.callState(conversationId: groupConversationID),
+            .none,
+            "Snapshot should be cleared after the timeout terminates the call"
+        )
+    }
+
+    func testThatItEndsTheMLSConferenceCall_WhenJoiningSubgroupFails() throws {
+        // Given
+        groupConversation.messageProtocol = .mls
+        groupConversation.mlsGroupID = .random()
+
+        struct JoinSubgroupError: Error {}
+
+        let mlsService = MockMLSServiceInterface()
+
+        mlsService.createOrJoinSubgroupParentQualifiedIDParentID_MockMethod = { _, _ in
+            throw JoinSubgroupError()
+        }
+
+        let didLeaveSubconversation = customExpectation(description: "didLeaveSubconversation")
+        mlsService.leaveSubconversationParentQualifiedIDParentGroupIDSubconversationType_MockMethod = { _, _, _ in
+            didLeaveSubconversation.fulfill()
+        }
+
+        syncMOC.performAndWait { syncMOC.mlsService = mlsService }
+
+        customExpectation(
+            forNotification: WireCallCenterCallStateNotification.notificationName,
+            object: nil
+        ) { wrappedNote in
+            guard let note = wrappedNote
+                .userInfo?[WireCallCenterCallStateNotification.userInfoKey] as? WireCallCenterCallStateNotification,
+                note.conversationId == self.groupConversationID,
+                case .terminating(reason: .unknown) = note.callState
+            else { return false }
+            return true
+        }
+
+        // When
+        try sut.startCall(in: groupConversation, isVideo: false)
+
+        // Then
+        XCTAssert(waitForCustomExpectations(withTimeout: 1.0))
+
+        XCTAssertNil(
+            mockAVSWrapper.startCallArguments,
+            "AVS startCall must not be invoked when subgroup join fails"
+        )
+        XCTAssertEqual(
+            sut.callState(conversationId: groupConversationID),
+            .none,
+            "Snapshot should be cleared after the failure terminates the call"
+        )
     }
 
 }

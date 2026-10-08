@@ -18,7 +18,7 @@
 
 import Foundation
 
-class BackendMetadataAPIUnversioned: BackendMetadataAPI {
+final class BackendMetadataAPIUnversioned: BackendMetadataAPI {
 
     // MARK: - Properties
 

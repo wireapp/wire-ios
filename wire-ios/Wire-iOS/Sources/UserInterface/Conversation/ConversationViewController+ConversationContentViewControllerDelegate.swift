@@ -23,8 +23,6 @@ import WireLogging
 import WireSyncEngine
 import WireSystem
 
-private let zmLog = ZMSLog(tag: "ConversationViewController+ConversationContentViewControllerDelegate")
-
 extension ConversationViewController: ConversationContentViewControllerDelegate {
 
     func didSwipeToReact(
@@ -149,7 +147,7 @@ extension ConversationViewController: ConversationContentViewControllerDelegate 
         presentGuestOptionsFrom sourceView: UIView
     ) {
         guard conversation.conversationType == .group else {
-            zmLog.error("Illegal Operation: Trying to show guest options for non-group conversation")
+            WireLogger.ui.error("Illegal Operation: Trying to show guest options for non-group conversation")
             return
         }
 
@@ -166,7 +164,8 @@ extension ConversationViewController: ConversationContentViewControllerDelegate 
                 conversationCreationRepository: conversationCreationRepository,
                 isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase,
                 areLegacyBotsAvailable: areLegacyBotsAvailable,
-                isAppsFeatureEnabled: isAppsFeatureEnabled
+                isAppsFeatureEnabled: isAppsFeatureEnabled,
+                wireMessagingFactory: wireMessagingFactory
             )
             let navigationController = UINavigationController(rootViewController: groupDetailsViewController)
             groupDetailsViewController.presentGuestOptions(animated: false)

@@ -16,67 +16,96 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import SwiftUI
 package import WireCallingDomain
-import WireCallingDomainSupport
+package import Foundation
 package import WireFoundation
-package import WireReusableUIComponents
+
+import SwiftUI
+import WireCallingDomainSupport
+import WireLogging
 
 /// ViewModel responsible for the AllMeetingsView screen.
 /// Owns the MeetingsViewModel for data logic and handles navigation actions.
-package final class AllMeetingsViewModel: ObservableObject {
+@Observable
+@MainActor
+package final class AllMeetingsViewModel {
+
+    private let makeFormViewModel: @MainActor (
+        _ mode: MeetingFormViewModel.Mode,
+        _ onSuccess: @escaping (Meeting) -> Void
+    ) -> MeetingFormViewModel
 
     package let meetingsViewModel: MeetingsViewModel
 
-    @Published var isCreateInstantMeetingPresented: Bool = false
-    @Published var isScheduleMeetingPresented: Bool = false
+    var presentedFormMode: MeetingFormViewModel.Mode?
+    var hasJoinError = false
 
-    private let passwordValidator: any PasswordValidator
-    private let isContextMenuAllowed: Bool
+    private let joinMeetingCallUseCase: any JoinMeetingCallUseCaseProtocol
 
     package init(
-        repository: any MeetingsRepositoryProtocol,
         currentDateProvider: any CurrentDateProviding,
         formatter: MeetingsFormatter = MeetingsFormatter(),
-        pastMeetingsUseCase: any FetchPastMeetingsUseCaseProtocol,
         upcomingMeetingsUseCase: any FetchUpcomingMeetingsUseCaseProtocol,
-        passwordValidator: any PasswordValidator,
-        isContextMenuAllowed: Bool
+        observeMeetingChangesUseCase: any ObserveMeetingChangesUseCaseProtocol,
+        deleteMeetingUseCase: any DeleteMeetingUseCaseProtocol,
+        selfUserID: UUID,
+        observeAttendedMeetingsUseCase: (any ObserveAttendedMeetingsUseCaseProtocol)? = nil,
+        joinMeetingCallUseCase: any JoinMeetingCallUseCaseProtocol,
+        makeFormViewModel: @escaping @MainActor (
+            _ mode: MeetingFormViewModel.Mode,
+            _ onSuccess: @escaping (Meeting) -> Void
+        ) -> MeetingFormViewModel
     ) {
         self.meetingsViewModel = MeetingsViewModel(
-            repository: repository,
             currentDateProvider: currentDateProvider,
             formatter: formatter,
-            pastMeetingsUseCase: pastMeetingsUseCase,
-            upcomingMeetingsUseCase: upcomingMeetingsUseCase
+            upcomingMeetingsUseCase: upcomingMeetingsUseCase,
+            observeMeetingChangesUseCase: observeMeetingChangesUseCase,
+            deleteMeetingUseCase: deleteMeetingUseCase,
+            selfUserID: selfUserID,
+            observeAttendedMeetingsUseCase: observeAttendedMeetingsUseCase
         )
-        self.passwordValidator = passwordValidator
-        self.isContextMenuAllowed = isContextMenuAllowed
+        self.joinMeetingCallUseCase = joinMeetingCallUseCase
+        self.makeFormViewModel = makeFormViewModel
     }
 
     // MARK: - Public Interface
 
     func createInstantMeetingTapped() {
-        isCreateInstantMeetingPresented = true
+        presentedFormMode = .instant
     }
 
     func scheduleMeetingTapped() {
-        isScheduleMeetingPresented = true
+        presentedFormMode = .scheduled
     }
 
-    func makeCreateInstantMeetingViewModel() -> CreateInstantMeetingViewModel {
-        CreateInstantMeetingViewModel(
-            passwordValidator: passwordValidator,
-            isContextMenuAllowed: isContextMenuAllowed
-        )
+    func editMeetingTapped(_ meeting: Meeting) {
+        presentedFormMode = .edit(meeting)
     }
 
-    func makeScheduleMeetingViewModel() -> ScheduleMeetingViewModel {
-        ScheduleMeetingViewModel(
-            passwordValidator: passwordValidator,
-            isContextMenuAllowed: isContextMenuAllowed
-        )
+    func joinMeetingTapped(_ occurrence: MeetingOccurrence) async {
+        await joinCall(conversationID: occurrence.conversationID)
+    }
+
+    func makeMeetingFormViewModel(mode: MeetingFormViewModel.Mode) -> MeetingFormViewModel {
+        makeFormViewModel(mode) { [weak self] meeting in
+            guard let self else { return }
+            presentedFormMode = nil
+            if case .instant = mode {
+                Task { await self.joinCall(conversationID: meeting.conversationID) }
+            }
+        }
+    }
+
+    // MARK: - Private Helpers
+
+    private func joinCall(conversationID: QualifiedID) async {
+        do {
+            try await joinMeetingCallUseCase.invoke(conversationID: conversationID)
+        } catch {
+            hasJoinError = true
+            WireLogger.meetings.error("failed to join meeting call: \(String(reflecting: error))")
+        }
     }
 
 }

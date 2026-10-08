@@ -31,7 +31,13 @@ struct ScreenCurtainView: View {
             }
             Spacer()
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(.black)
+        // Ignore all safe areas (incl. the keyboard) so the curtain fully covers the screen.
+        // Otherwise, when the keyboard is visible (e.g. on the AppLock passcode screen),
+        // SwiftUI's keyboard avoidance shrinks the black background to the keyboard top,
+        // leaving an uncovered gray bar when the app resigns active.
+        .ignoresSafeArea()
     }
 }
 

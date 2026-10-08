@@ -17,9 +17,8 @@
 //
 
 import Foundation
+import WireLogging
 import WireSystem
-
-private let zmLog = ZMSLog(tag: "URL Helper")
 
 extension URL {
     func decode<T>(_ type: T.Type) throws -> T where T: Decodable {
@@ -27,7 +26,7 @@ extension URL {
         do {
             data = try Data(contentsOf: self)
         } catch {
-            zmLog.error("Failed to load \(type) at path: \(self), error: \(error)")
+            WireLogger.system.error("Failed to load \(type) at path: \(self), error: \(error)")
             throw error
         }
 
@@ -36,7 +35,7 @@ extension URL {
         do {
             return try decoder.decode(type, from: data)
         } catch {
-            zmLog.error("Failed to parse JSON at path: \(self), error: \(error)")
+            WireLogger.system.error("Failed to parse JSON at path: \(self), error: \(error)")
             throw error
         }
     }

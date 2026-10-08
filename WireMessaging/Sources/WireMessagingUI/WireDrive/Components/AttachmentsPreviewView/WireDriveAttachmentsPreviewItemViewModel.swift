@@ -48,6 +48,7 @@ final class WireDriveAttachmentsPreviewItemViewModel: ObservableObject {
     @Published private var node: WireDriveNode?
     @Published private var isDeleted: Bool
     @Published var fileTracker: WireDriveFileUITracker
+    @Published var quickPreviewItem: QuickPreviewItem?
 
     init(
         attachment: WireDriveMessageAttachment,
@@ -72,6 +73,7 @@ final class WireDriveAttachmentsPreviewItemViewModel: ObservableObject {
         self.isDeleted = false
         self.fileTracker = .init()
         fileTracker.onSmallFileLoaded = { [weak self] in
+            guard let asset = self?.asset, !asset.isAvailableOffline else { return }
             Task { await self?.handleAsset() }
         }
 
@@ -128,7 +130,7 @@ final class WireDriveAttachmentsPreviewItemViewModel: ObservableObject {
     }
 
     private var preview: WireDriveNodePreview? {
-        node?.previews.sorted(by: { $0.dimension < $1.dimension }).last
+        node?.previews.max(by: { $0.dimension < $1.dimension })
     }
 
     private var isProcessing: Bool {
@@ -186,7 +188,7 @@ final class WireDriveAttachmentsPreviewItemViewModel: ObservableObject {
                 _ = try await getAssetUseCase.invoke(nodeID: nodeID, eTag: eTag)
             case .loaded:
                 let url = try await getAssetUseCase.invoke(nodeID: nodeID, eTag: eTag)
-                QuickLookPreviewPresenter.present(url: url)
+                quickPreviewItem = QuickPreviewItem.fromNode(node, url: url)
             case .loading:
                 await getAssetUseCase.cancelDownload(nodeID: nodeID)
             }
@@ -227,6 +229,18 @@ final class WireDriveAttachmentsPreviewItemViewModel: ObservableObject {
 
         let duration = Duration.milliseconds(durationInMS)
         return duration.formatted(.time(pattern: .minuteSecond))
+    }
+
+    var isAvailableOffline: Bool {
+        let isAvailableOffline = (try? localAssetRepository.asset(nodeID: nodeID)?.isAvailableOffline) ?? false
+        let isDownloaded = switch fileTracker.state {
+        case .loaded:
+            true
+        default:
+            false
+        }
+
+        return isAvailableOffline && isDownloaded
     }
 
     // MARK: - Private

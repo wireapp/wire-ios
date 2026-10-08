@@ -44,17 +44,20 @@ public actor AuthenticationManager: AuthenticationManagerProtocol {
     }
 
     private var currentToken: CurrentToken?
+    private let userID: UUID
     private let clientID: String?
     private let cookieStorage: any CookieStorageProtocol
     private let networkService: any NetworkServiceProtocol
     private let onAuthenticationFailure: () -> Void
 
     public init(
+        userID: UUID,
         clientID: String?,
         cookieStorage: any CookieStorageProtocol,
         networkService: any NetworkServiceProtocol,
         onAuthenticationFailure: @escaping () -> Void
     ) {
+        self.userID = userID
         self.clientID = clientID
         self.cookieStorage = cookieStorage
         self.networkService = networkService
@@ -123,7 +126,7 @@ public actor AuthenticationManager: AuthenticationManagerProtocol {
                 switch authenticationError {
                 case .invalidCredentials:
                     // can't recover, deleting cookies and logging out
-                    try await cookieStorage.removeCookies()
+                    try cookieStorage.removeCookies(userID: userID)
                     WireLogger.authentication.info(
                         "Removed cookies (invalidCredentials)", attributes: .safePublic
                     )
@@ -143,35 +146,14 @@ public actor AuthenticationManager: AuthenticationManagerProtocol {
         lastKnownToken: AccessToken?
     ) -> Task<AccessToken, any Error> {
         Task {
-            let cookies = try await cookieStorage.fetchCookies()
+            let cookies = try cookieStorage.fetchCookies(userID: userID)
 
-            var requestBuilder = try URLRequestBuilder(path: "/access")
-                .withMethod(.post)
-                .withAcceptType(.json)
-                .withCookies(cookies)
-
-            if let clientID {
-                requestBuilder = requestBuilder.withQueryItem(
-                    name: "client_id",
-                    value: clientID
+            return try await AccessTokenExchange(networkService: networkService)
+                .exchange(
+                    cookies: cookies,
+                    clientID: clientID,
+                    lastKnownAccessToken: lastKnownToken
                 )
-            }
-
-            var request = requestBuilder.build()
-
-            if let lastKnownToken {
-                request.setAccessToken(lastKnownToken)
-            }
-
-            let (data, response) = try await networkService.executeRequest(request)
-
-            let decoder = JSONDecoder()
-            decoder.keyDecodingStrategy = .convertFromSnakeCase
-
-            return try ResponseParser(decoder: decoder)
-                .success(code: .ok, type: AccessTokenPayload.self)
-                .failure(code: .forbidden, label: "invalid-credentials", error: Failure.invalidCredentials)
-                .parse(code: response.statusCode, data: data)
         }
     }
 
@@ -182,24 +164,6 @@ extension AccessToken {
     var isExpiring: Bool {
         let secondsRemaining = expirationDate.timeIntervalSinceNow
         return secondsRemaining < 40
-    }
-
-}
-
-private struct AccessTokenPayload: Decodable, ToAPIModelConvertible {
-
-    let user: UUID
-    let accessToken: String
-    let tokenType: String
-    let expiresIn: Int
-
-    func toAPIModel() -> AccessToken {
-        AccessToken(
-            userID: user,
-            token: accessToken,
-            type: tokenType,
-            expirationDate: Date(timeIntervalSinceNow: TimeInterval(expiresIn))
-        )
     }
 
 }

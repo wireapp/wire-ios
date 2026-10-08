@@ -112,6 +112,8 @@ protocol GroupDetailsConversation {
 
     var isE2EIEnabled: Bool { get }
 
+    var isSelfADriveEditor: Bool { get }
+
 }
 
 typealias GroupDetailsConversationType = Conversation & GroupDetailsConversation
@@ -132,6 +134,10 @@ extension ZMConversation: GroupDetailsConversation {
         guard let context = managedObjectContext else { return false }
         let feature = LegacyFeatureRepository(context: context).fetchE2EI()
         return feature.status == .enabled
+    }
+
+    var isSelfADriveEditor: Bool {
+        isTeamConversation
     }
 
 }

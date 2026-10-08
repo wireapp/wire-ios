@@ -84,7 +84,7 @@ extension CoreDataStack {
 
         let task = Task.detached {
             do {
-                let model = CoreDataStack.loadMessagingModel()
+                let model = CoreDataStack.messagingModel
                 let coordinator = NSPersistentStoreCoordinator(managedObjectModel: model)
 
                 // Create target directory

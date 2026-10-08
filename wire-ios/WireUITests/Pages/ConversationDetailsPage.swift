@@ -58,6 +58,35 @@ class ConversationDetailsPage: PageModel {
         app.staticTexts.matching(identifier: Locators.ConversationDetailsPage.userCellName.rawValue)
     }
 
+    var cannotLeaveAlert: XCUIElement {
+        app.alerts.firstMatch
+    }
+
+    func userCell(named name: String) -> XCUIElement {
+        let predicate = NSPredicate(format: "label CONTAINS %@", name)
+        return userCells.matching(predicate).firstMatch
+    }
+
+    func adminCell(named name: String) -> XCUIElement {
+        let predicate = NSPredicate(format: "label CONTAINS %@", name)
+        return app.cells
+            .matching(identifier: Locators.ConversationDetailsPage.adminCell.rawValue)
+            .matching(predicate)
+            .firstMatch
+    }
+
+    func memberCell(named name: String) -> XCUIElement {
+        let predicate = NSPredicate(format: "label CONTAINS %@", name)
+        return app.cells
+            .matching(identifier: Locators.ConversationDetailsPage.memberCell.rawValue)
+            .matching(predicate)
+            .firstMatch
+    }
+
+    func guestIcon(forUserNamed name: String) -> XCUIElement {
+        memberCell(named: name).images["img.guest"]
+    }
+
     func openUserDetailsPage(byName name: String) throws -> UserDetailsPage {
         let predicate = NSPredicate(format: "label == %@", name)
         userCells.matching(predicate).firstMatch.tap()
@@ -80,6 +109,10 @@ class ConversationDetailsPage: PageModel {
         return try ConversationsPage()
     }
 
+    func unarchiveOptionsConversationDetails() throws -> ConversationsPage {
+        try archiveOptionsConversationDetails()
+    }
+
     func clearContentOptionsConversationDetails() throws -> Self {
         clearContentOptionConversationDetailsButton.tap()
         return self
@@ -87,6 +120,90 @@ class ConversationDetailsPage: PageModel {
 
     func leaveOptionsConversationDetails() throws -> Self {
         leaveConversationOptionConversationDetailsButton.tap()
+        return self
+    }
+
+    func tapCannotLeaveAlert() throws -> Self {
+        if cannotLeaveAlert.waitForExistence(timeout: 1) {
+            cannotLeaveAlert.buttons.firstMatch.tap()
+        }
+        return self
+    }
+
+    func tapPromoteNewAdmin() throws -> AdminSelectionPage {
+        promoteNewAdminButton.waitAndTap()
+        return try AdminSelectionPage()
+    }
+
+    var promoteNewAdminButton: XCUIElement {
+        app.buttons[Locators.LastAdminLeaveAlert.promoteNewAdmin.rawValue].firstMatch
+    }
+
+    func tapDeleteConversationAndConfirm() throws -> ConversationsPage {
+        deleteConversationButton.waitAndTap()
+        app.buttons[Locators.AlertActions.confirm.rawValue].firstMatch.waitAndTap()
+        return try ConversationsPage()
+    }
+
+    var deleteConversationButton: XCUIElement {
+        app.buttons[Locators.LastAdminLeaveAlert.deleteGroup.rawValue].firstMatch
+    }
+
+    var readReceiptsSwitch: XCUIElement {
+        app.switches[Locators.ConversationDetailsPage.readReceiptsSwitch.rawValue].firstMatch
+    }
+
+    var guestOptionsCell: XCUIElement {
+        app.descendants(matching: .any)[Locators.ConversationDetailsPage.guestOptionsCell.rawValue].firstMatch
+    }
+
+    var notificationOptionsCell: XCUIElement {
+        app.descendants(matching: .any)[Locators.ConversationDetailsPage.notificationOptionsCell.rawValue].firstMatch
+    }
+
+    var timeoutOptionsCell: XCUIElement {
+        app.descendants(matching: .any)["cell.groupdetails.timeoutoptions"].firstMatch
+    }
+
+    @discardableResult
+    func toggleGroupReadReceipts() -> ConversationDetailsPage {
+        readReceiptsSwitch.waitAndTap()
+        return self
+    }
+
+    func openGuestOptions() throws -> GuestOptionsPage {
+        guestOptionsCell.waitAndTap()
+        return try GuestOptionsPage()
+    }
+
+    func openNotificationOptions() throws -> ConversationNotificationOptionsPage {
+        XCTAssertTrue(
+            notificationOptionsCell.waitAndTap(),
+            "Notification options cell did not appear"
+        )
+        return try ConversationNotificationOptionsPage()
+    }
+
+    func openTimeoutOptions() throws -> ConversationTimeoutOptionsPage {
+        XCTAssertTrue(
+            timeoutOptionsCell.waitAndTap(),
+            "Self-deleting messages options cell did not appear"
+        )
+        return try ConversationTimeoutOptionsPage()
+    }
+
+    @discardableResult
+    func assertNotificationStatus(
+        _ notificationMode: ConversationNotificationOptionsPage.NotificationMode,
+    ) -> Self {
+        XCTAssertTrue(
+            notificationOptionsCell.waitForExistence(timeout: 2),
+            "Notification options cell did not appear",
+        )
+        XCTAssertTrue(
+            notificationOptionsCell.label.contains(notificationMode.title),
+            "Notification options cell did not show \(notificationMode.title)",
+        )
         return self
     }
 
@@ -111,7 +228,8 @@ class ConversationDetailsPage: PageModel {
     @discardableResult
     func leaveAndClearConversation() throws -> ConversationDetailsPage {
         leaveAndClearConversationButtonOnBottomSheet.waitAndTap()
-        return try ConversationDetailsPage()
+        leaveAndClearConversationButtonOnBottomSheet.waitToDisappear(andThenWaitFor: navigationTitleView)
+        return self
     }
 
     var clearButtonOnBottomSheet: XCUIElement {
@@ -125,5 +243,4 @@ class ConversationDetailsPage: PageModel {
     var leaveAndClearConversationButtonOnBottomSheet: XCUIElement {
         app.buttons[Locators.ConversationsPage.leaveAndClearButtonOnBottomSheet.rawValue].firstMatch
     }
-
 }

@@ -31,6 +31,13 @@ class SettingsBaseTableViewController: UIViewController {
 
     let settingsCoordinator: AnySettingsCoordinator
 
+    var footerViewController: UIViewController? {
+        didSet {
+            guard isViewLoaded else { return }
+            installFooterViewController()
+        }
+    }
+
     fileprivate final class IntrinsicSizeTableView: UITableView {
         override var contentSize: CGSize {
             didSet {
@@ -73,6 +80,22 @@ class SettingsBaseTableViewController: UIViewController {
         createTableView()
         view.addSubview(topSeparator)
         createConstraints()
+        installFooterViewController()
+    }
+
+    private func installFooterViewController() {
+        guard let footer = footerViewController else { return }
+
+        addChild(footer)
+        footer.view.translatesAutoresizingMaskIntoConstraints = false
+        footerContainer.addSubview(footer.view)
+        NSLayoutConstraint.activate([
+            footer.view.topAnchor.constraint(equalTo: footerContainer.topAnchor, constant: 12),
+            footer.view.leadingAnchor.constraint(equalTo: footerContainer.leadingAnchor, constant: 16),
+            footer.view.trailingAnchor.constraint(equalTo: footerContainer.trailingAnchor, constant: -16),
+            footer.view.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -12)
+        ])
+        footer.didMove(toParent: self)
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -91,6 +114,7 @@ class SettingsBaseTableViewController: UIViewController {
         tableView.estimatedRowHeight = 56
         view.addSubview(tableView)
         view.addSubview(footerContainer)
+        footerContainer.backgroundColor = SemanticColors.View.backgroundDefault
         footerContainer.addSubview(footerSeparator)
         footerSeparator.inverse = true
     }

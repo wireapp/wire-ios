@@ -31,6 +31,7 @@ extension ZMConversation {
         private var conversation: ZMConversation
         private var token: NSObjectProtocol?
         private let userSession: ZMUserSession
+        var isTeamAdmin: Bool { userSession.selfUser.canManageTeam }
         var messageProtocol: MessageProtocol { conversation.messageProtocol }
         let areLegacyBotsAvailable: Bool
         let isAppsFeatureEnabled: Bool
@@ -94,6 +95,10 @@ extension ZMConversation {
 
         var areAppsPresent: Bool {
             conversation.areAppsPresent
+        }
+
+        var isDriveConversation: Bool {
+            conversation.isWireDriveEnabled
         }
 
         func setAllowGuests(_ allowGuests: Bool, completion: @escaping (Result<Void, Error>) -> Void) {

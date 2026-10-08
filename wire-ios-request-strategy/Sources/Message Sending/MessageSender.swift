@@ -58,7 +58,8 @@ public final class MessageSender: MessageSenderInterface {
         incrementalSyncObserver: IncrementalSyncObserverProtocol,
         initiateResetMLSConversationUseCase: InitiateResetMLSConversationUseCaseProtocol,
         featureRepository: LegacyFeatureRepositoryInterface,
-        apiVersion: WireTransport.APIVersion?
+        apiVersion: WireTransport.APIVersion?,
+        backgroundTaskExecuter: any BackgroundTaskExecuter
     ) {
         self.apiProvider = apiProvider
         self.sessionEstablisher = sessionEstablisher
@@ -69,6 +70,7 @@ public final class MessageSender: MessageSenderInterface {
         self.initiateResetMLSConversationUseCase = initiateResetMLSConversationUseCase
         self.featureRepository = featureRepository
         self.apiVersion = apiVersion
+        self.backgroundTaskExecuter = backgroundTaskExecuter
     }
 
     private let featureRepository: LegacyFeatureRepositoryInterface
@@ -84,9 +86,10 @@ public final class MessageSender: MessageSenderInterface {
     private let maxRetryAttempts = 3
     private var retryCount = 0
     private let apiVersion: WireTransport.APIVersion?
+    private let backgroundTaskExecuter: any BackgroundTaskExecuter
 
     public func broadcastMessage(message: any ProteusMessage) async throws {
-        try await withExpiringActivity(reason: "broadcast Message") { [self] in
+        try await withBackgroundTask(name: "broadcast Message", executer: backgroundTaskExecuter) { [self] in
             let logAttributes = await logAttributesBuilder.logAttributes(message)
             WireLogger.messaging.debug("broadcast message", attributes: logAttributes)
 
@@ -104,7 +107,7 @@ public final class MessageSender: MessageSenderInterface {
     }
 
     public func sendMessage(message: any SendableMessage) async throws {
-        try await withExpiringActivity(reason: "send Message") { [self] in
+        try await withBackgroundTask(name: "send Message", executer: backgroundTaskExecuter) { [self] in
             let logAttributes = await logAttributesBuilder.logAttributes(message)
             WireLogger.messaging.debug("send message - start wait for quick sync to finish", attributes: logAttributes)
 
@@ -400,8 +403,18 @@ public final class MessageSender: MessageSenderInterface {
         }
 
         do {
-            if mlsStatus?.isOne(of: .pendingJoinAfterReset, .pendingJoin) == true,
-               conversationID.domain == mlsService.localDomain {
+            let conversationExists = try await mlsService.conversationExists(groupID: groupID)
+            let isUnestablishedGroup: Bool = if conversationExists {
+                try await mlsService.epoch(for: groupID) == 0
+            } else {
+                false
+            }
+
+            if isUnestablishedGroup, conversationID.domain == mlsService.localDomain {
+                try await mlsService.wipeGroup(groupID)
+                try await mlsService.reEstablishPendingGroup(groupID: groupID)
+            } else if mlsStatus?.isOne(of: .pendingJoinAfterReset, .pendingJoin) == true,
+                      conversationID.domain == mlsService.localDomain {
                 try await mlsService.reEstablishPendingGroup(groupID: groupID)
             }
 

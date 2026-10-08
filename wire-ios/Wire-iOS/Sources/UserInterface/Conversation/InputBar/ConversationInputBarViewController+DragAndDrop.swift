@@ -17,10 +17,9 @@
 //
 
 import UIKit
+import WireLogging
 import WireSyncEngine
 import WireSystem
-
-private let zmLog = ZMSLog(tag: "Drag and drop images")
 
 extension ConversationInputBarViewController: UIDropInteractionDelegate {
 
@@ -39,7 +38,7 @@ extension ConversationInputBarViewController: UIDropInteractionDelegate {
                 itemProvider.loadObject(ofClass: UIImage.self, completionHandler: { object, error in
 
                     guard error == nil
-                    else { return zmLog.error("Failed to load dragged item: \(error!.localizedDescription)") }
+                    else { return WireLogger.ui.error("Failed to load dragged item: \(error!.localizedDescription)") }
                     guard let draggedImage = object as? UIImage else { return }
 
                     DispatchQueue.main.async {

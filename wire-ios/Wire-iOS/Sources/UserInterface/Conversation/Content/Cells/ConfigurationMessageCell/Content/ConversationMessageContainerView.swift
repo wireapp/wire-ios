@@ -41,7 +41,7 @@ final class ConversationMessageContainerView: UIView {
             backgroundColor = if isBubble {
                 switch bubbleStyle {
                 case .otherMessage:
-                    SemanticColors.ChatBubble.backgroundOtherMessage
+                    ColorTheme.OthersChatBubbles.primary
                 case let .ownMessage(userColor: color):
                     color
                 }

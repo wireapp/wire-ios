@@ -57,7 +57,7 @@ REPOSITORY_XCODE_VERSION=( ${repository_xcode_version//./ } )
 
 [[ ${LOCAL_XCODE_VERSION[0]} -gt ${REPOSITORY_XCODE_VERSION[0]} ||
 ( ${LOCAL_XCODE_VERSION[0]} -eq ${REPOSITORY_XCODE_VERSION[0]} && ${LOCAL_XCODE_VERSION[1]} -ge ${REPOSITORY_XCODE_VERSION[1]} ) ]] ||
-die "Xcode version for the repository should be at least ${repository_xcode_version}. The current local version is ${local_xcode_version}. If you have multiple versions of Xcode installed, please run: sudo xcode-select --switch /Applications/Xcode_${repository_xcode_version}.app"
+die "Xcode version for the repository should be at least ${repository_xcode_version}. The current local version is ${local_xcode_version}. If you have multiple versions of Xcode installed, please run: sudo xcode-select --switch /Applications/Xcode_${repository_xcode_version}.app or export the DEVELOPER_DIR to avoid making this change globally."
 
 # SETUP
 
@@ -80,13 +80,12 @@ else
 fi
 echo ""
 
-# Workaround for carthage "The file couldn't be saved." error
-rm -rf ${TMPDIR}/TemporaryItems/*carthage*
-
 echo "ℹ️ Carthage bootstrap. This might take a while..."
 if [[ -n "${CI-}" ]]; then
     echo "Skipping Carthage bootstrap from setup.sh script since CI is defined"
 else
+    # Workaround for carthage "The file couldn't be saved." error
+    rm -rf ${TMPDIR}/TemporaryItems/*carthage*
     "$REPO_ROOT/scripts/carthage.sh" bootstrap --cache-builds --platform ios --use-xcframeworks
 fi
 echo ""

@@ -26,7 +26,6 @@
 #import "ZMTransportSession+internal.h"
 #import "ZMTransportCodec.h"
 #import "ZMTransportRequest+Internal.h"
-#import "ZMPersistentCookieStorage.h"
 #import "ZMTaskIdentifierMap.h"
 #import "ZMReachability.h"
 #import "Collections+ZMTSafeTypes.h"
@@ -56,7 +55,7 @@ static NSInteger const DefaultMaximumRequests = 6;
 @property (nonatomic) NSURL *websocketURL;
 @property (nonatomic) id<BackendEnvironmentProvider> environment;
 @property (nonatomic) NSOperationQueue *workQueue;
-@property (nonatomic) ZMPersistentCookieStorage *cookieStorage;
+@property (nonatomic) LegacyCookieStorage *cookieStorage;
 @property (nonatomic) BOOL tornDown;
 @property (nonatomic) NSString *applicationGroupIdentifier;
 
@@ -103,16 +102,16 @@ static NSInteger const DefaultMaximumRequests = 6;
 - (instancetype)initWithEnvironment:(id<BackendEnvironmentProvider>)environment
                       proxyUsername:(NSString *) proxyUsername
                       proxyPassword:(NSString *) proxyPassword
-                      cookieStorage:(ZMPersistentCookieStorage *)cookieStorage
+                      cookieStorage:(LegacyCookieStorage *)cookieStorage
                        reachability:(id<ReachabilityProvider, TearDownCapable>)reachability
                  initialAccessToken:(ZMAccessToken *)initialAccessToken
          applicationGroupIdentifier:(NSString *)applicationGroupIdentifier
-                 applicationVersion:(NSString *)appliationVersion
+                 applicationVersion:(NSString *)applicationVersion
                       minTLSVersion:(NSString * _Nullable)minTLSVersion
                        selfClientID:(nullable NSString *)selfClientID
                     isSyncV2Enabled:(bool)isSyncV2Enabled
 {
-    NSString *userAgent = [ZMUserAgent userAgentWithAppVersion:appliationVersion];
+    NSString *userAgent = [ZMUserAgent userAgentWithAppVersion:applicationVersion];
     NSUUID *userIdentifier = cookieStorage.userIdentifier;
     NSOperationQueue *queue = [NSOperationQueue zm_serialQueueWithName:[ZMTransportSession identifierWithPrefix:@"ZMTransportSession" userIdentifier:userIdentifier]];
     ZMSDispatchGroup *group = [[ZMSDispatchGroup alloc] initWithLabel:[ZMTransportSession identifierWithPrefix:@"ZMTransportSession init" userIdentifier:userIdentifier]];
@@ -181,7 +180,7 @@ static NSInteger const DefaultMaximumRequests = 6;
                                  environment:(id<BackendEnvironmentProvider>)environment
                                proxyUsername:(NSString *)proxyUsername
                                proxyPassword:(NSString *)proxyPassword
-                               cookieStorage:(ZMPersistentCookieStorage *)cookieStorage
+                               cookieStorage:(LegacyCookieStorage *)cookieStorage
                           initialAccessToken:(ZMAccessToken *)initialAccessToken
                                    userAgent:(NSString *)userAgent
                                minTLSVersion:(NSString * _Nullable)minTLSVersion
@@ -509,7 +508,13 @@ static NSInteger const DefaultMaximumRequests = 6;
 
 - (void)processCookieResponse:(NSHTTPURLResponse *)HTTPResponse;
 {
-    [self.cookieStorage setCookieDataFromResponse:HTTPResponse forURL:HTTPResponse.URL];
+    NSURL *URL = HTTPResponse.URL;
+
+    if (URL == nil) {
+        return;
+    }
+
+    [self.cookieStorage setCookieDataFromResponse:HTTPResponse forURL:URL];
 }
 
 - (void)handlerDidReceiveAccessToken:(ZMAccessTokenHandler *)handler

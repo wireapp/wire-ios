@@ -25,10 +25,13 @@ final class AssetCell: UICollectionViewCell {
 
     let imageView = UIImageView()
     let durationView = UILabel()
+    var checkMarkView = UIImageView()
 
     var imageRequestTag: PHImageRequestID = PHInvalidImageRequestID
     var representedAssetIdentifier: String!
     var manager: ImageManagerProtocol!
+    var isWireDriveEnabled: Bool = false
+    var accentColor: UIColor!
 
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -45,7 +48,10 @@ final class AssetCell: UICollectionViewCell {
         durationView.font = FontSpec(.small, .light).font!
         contentView.addSubview(durationView)
 
-        [imageView, durationView].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
+        checkMarkView.isHidden = true
+        contentView.addSubview(checkMarkView)
+
+        [imageView, durationView, checkMarkView].forEach { $0.translatesAutoresizingMaskIntoConstraints = false }
         NSLayoutConstraint.activate([
             imageView.topAnchor.constraint(equalTo: contentView.topAnchor),
             imageView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
@@ -54,8 +60,18 @@ final class AssetCell: UICollectionViewCell {
             durationView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor),
             durationView.leftAnchor.constraint(equalTo: contentView.leftAnchor),
             durationView.rightAnchor.constraint(equalTo: contentView.rightAnchor),
-            durationView.heightAnchor.constraint(equalToConstant: 20)
+            durationView.heightAnchor.constraint(equalToConstant: 20),
+            checkMarkView.heightAnchor.constraint(equalToConstant: 20),
+            checkMarkView.widthAnchor.constraint(equalTo: checkMarkView.heightAnchor),
+            checkMarkView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -5),
+            checkMarkView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -5)
         ])
+    }
+
+    override var isSelected: Bool {
+        didSet {
+            updateCheckmarkButton()
+        }
     }
 
     @available(*, unavailable)
@@ -70,6 +86,14 @@ final class AssetCell: UICollectionViewCell {
         options.isSynchronous = false
         return options
     }()
+
+    private func updateCheckmarkButton() {
+        guard isWireDriveEnabled else { return }
+        let config = UIImage.SymbolConfiguration(paletteColors: [.white, accentColor])
+        let image = UIImage(systemName: "checkmark.circle.fill", withConfiguration: config)
+        checkMarkView.image = image
+        checkMarkView.isHidden = !isSelected
+    }
 
     var asset: PHAsset? {
         didSet {

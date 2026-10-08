@@ -246,7 +246,7 @@ public struct SharingSessionLoader {
             api: api
         )
 
-        return await useCase.invoke()
+        return await useCase.invoke().isBuildBlacklisted
     }
 
     private func makeSharingSession(
@@ -260,12 +260,11 @@ public struct SharingSessionLoader {
         coreDataStack: CoreDataStack
     ) async throws -> SharingSession {
         let legacyEnvironment = BackendEnvironment(environment)
-        // Don't cache the cookie because if the user logs out and back in again in the main app
-        // process, then the cached cookie will be invalid.
-        let legacyCookieStorage = ZMPersistentCookieStorage(
-            forServerName: legacyEnvironment.backendURL.host!,
+        let legacyCookieStorage = LegacyCookieStorage(
             userIdentifier: accountID,
-            useCache: false
+            cookieStorage: CookieStorage(
+                cookieEncryptionKey: UserDefaults.cookiesKey()
+            )
         )
         guard legacyCookieStorage.hasAuthenticationCookie else {
             throw Failure.mainAppRequired(message: "no authentication cookie")
@@ -297,6 +296,9 @@ public struct SharingSessionLoader {
             linkPreviewDetector: applicationStatusDirectory.linkPreviewDetector,
             managedObjectContext: coreDataStack.syncContext
         )
+
+        let backgroundTaskExecuter = PassthroughTaskExecuter()
+
         let strategyFactory = StrategyFactory(
             syncContext: coreDataStack.syncContext,
             applicationStatus: applicationStatusDirectory,
@@ -304,7 +306,8 @@ public struct SharingSessionLoader {
             transportSession: transportSession,
             initiateResetMLSConversationUseCase: NullInitiateResetMLSConversationUseCase(),
             apiVersion: .init(rawValue: Int32(backendMetadata.apiVersion.rawValue)),
-            localDomain: backendMetadata.domain
+            localDomain: backendMetadata.domain,
+            backgroundTaskExecuter: backgroundTaskExecuter
         )
         let requestGeneratorStore = RequestGeneratorStore(
             strategies: strategyFactory.strategies,
@@ -336,7 +339,8 @@ public struct SharingSessionLoader {
             syncContext: coreDataStack.syncContext,
             coreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManager(journal: journal),
             allowCreation: false,
-            localDomain: backendMetadata.domain
+            localDomain: backendMetadata.domain,
+            backgroundTaskExecuter: backgroundTaskExecuter
         )
         let featureRepository = LegacyFeatureRepository(context: coreDataStack.syncContext)
         let mlsActionExecutor = MLSActionExecutor(
@@ -358,9 +362,7 @@ public struct SharingSessionLoader {
             localDomain: backendMetadata.domain
         )
         let cookieStorage = CookieStorage(
-            userID: accountID,
-            cookieEncryptionKey: UserDefaults.cookiesKey(),
-            keychain: Keychain()
+            cookieEncryptionKey: UserDefaults.cookiesKey()
         )
         let userSessionComponent = UserSessionComponent(
             currentBuildNumber: buildNumber,
@@ -380,10 +382,12 @@ public struct SharingSessionLoader {
             mlsDecryptionService: mlsService,
             proteusService: proteusService,
             coreCryptoProvider: coreCryptoProvider,
-            faultyMLSRemovalKeysByDomain: [:] // not relevant
+            faultyMLSRemovalKeysByDomain: [:], // not relevant
+            backgroundTaskExecuter: backgroundTaskExecuter
         )
         let completionHandlers = ClientSessionComponent.CompletionHandlers(
             onProcessedCallEvent: { _ in },
+            isApplicationActive: { false },
             onSelfClientInvalidated: {},
             onAuthenticationFailure: {},
             onProcessedTypingUsers: { _ in }

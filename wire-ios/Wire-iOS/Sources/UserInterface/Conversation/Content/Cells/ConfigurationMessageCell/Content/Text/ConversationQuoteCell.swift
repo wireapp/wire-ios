@@ -41,23 +41,28 @@ final class ConversationReplyContentView: UIView {
         let accentColor: AccentColor
         let messageReplyAttachmentsViewModel: MessageReplyAttachmentsViewModel?
         weak var delegate: ConversationMessageCellDelegate?
+        var isSentBySelfUser: Bool = false
+        var senderAccentColor: WireAccentColor = .default
+
+        /// `true` when there is a quote but the quoted message is `nil` because it was deleted
+        /// (as opposed to a quote we cannot resolve / are not allowed to see).
+        var quotedMessageWasDeleted: Bool = false
 
         static func == (lhs: Configuration, rhs: Configuration) -> Bool {
             lhs.accentColor == rhs.accentColor &&
-                lhs.quotedMessage == rhs.quotedMessage
+                lhs.quotedMessage == rhs.quotedMessage &&
+                lhs.isSentBySelfUser == rhs.isSentBySelfUser &&
+                lhs.quotedMessageWasDeleted == rhs.quotedMessageWasDeleted
         }
 
         var showDetails: Bool {
-            guard let message = quotedMessage,
-                  message.isText
-                  || message.isLocation
-                  || message.isAudio
-                  || message.isImage
-                  || message.isVideo
-                  || message.isFile else {
-                return false
-            }
-            return true
+            guard let message = quotedMessage else { return false }
+            return message.isText
+                || message.isLocation
+                || message.isAudio
+                || message.isImage
+                || message.isVideo
+                || message.isFile
         }
 
         var isEdited: Bool {
@@ -111,11 +116,25 @@ final class ConversationReplyContentView: UIView {
         }
 
         private func setupContent() -> Content {
-            typealias LabelColors = SemanticColors.Label
+            let textColor: UIColor = isSentBySelfUser ? ColorTheme.OwnChatBubbles.onPrimary : ColorTheme
+                .OthersChatBubbles.onPrimary
             let attributes: [NSAttributedString.Key: Any] = [
                 .font: UIFont.smallSemiboldFont,
-                .foregroundColor: LabelColors.textDefault
+                .foregroundColor: textColor
             ]
+            // A nil quote means the original message is not in our copy of the conversation: it
+            // was either deleted or we simply cannot see it (e.g. joined the conversation later).
+            // The two are distinguished upstream via `quotedMessageWasDeleted`.
+            guard quotedMessage != nil else {
+                let attributes: [NSAttributedString.Key: AnyObject] = [
+                    .font: UIFont.mediumFont.italic,
+                    .foregroundColor: textColor
+                ]
+                let string = quotedMessageWasDeleted
+                    ? L10n.Localizable.Content.Message.Reply.deletedMessage
+                    : L10n.Localizable.Content.Message.Reply.brokenMessage
+                return .text(NSAttributedString(string: string, attributes: attributes))
+            }
             switch quotedMessage {
             case let message? where message.isMultipart:
                 let data = message.textMessageData
@@ -125,6 +144,7 @@ final class ConversationReplyContentView: UIView {
                         .formatForPreview(
                             message: data,
                             inputMode: false,
+                            textColor: textColor,
                             accentColor: accentColor
                         )
                 }
@@ -138,25 +158,26 @@ final class ConversationReplyContentView: UIView {
                         .formatForPreview(
                             message: data,
                             inputMode: false,
+                            textColor: textColor,
                             accentColor: accentColor
                         )
                 )
 
             case let message? where message.isLocation:
                 let location = message.locationMessageData!
-                let imageIcon = NSTextAttachment.textAttachment(for: .locationPin, with: LabelColors.textDefault)
+                let imageIcon = NSTextAttachment.templateTextAttachment(for: .locationPin)
                 let initialString = NSAttributedString(attachment: imageIcon) + "  " +
                     (location.name ?? MessagePreview.location).localizedUppercase
                 return .text(initialString && attributes)
 
             case let message? where message.isAudio:
-                let imageIcon = NSTextAttachment.textAttachment(for: .microphone, with: LabelColors.textDefault)
+                let imageIcon = NSTextAttachment.templateTextAttachment(for: .microphone)
                 let initialString = NSAttributedString(attachment: imageIcon) + "  " + MessagePreview.audio
                     .localizedUppercase
                 return .text(initialString && attributes)
 
             case let message? where message.isImage && !message.canBeShared:
-                let imageIcon = NSTextAttachment.textAttachment(for: .photo, with: LabelColors.textDefault)
+                let imageIcon = NSTextAttachment.templateTextAttachment(for: .photo)
                 let initialString = NSAttributedString(attachment: imageIcon) + "  " + MessagePreview.image
                     .localizedUppercase
                 return .text(initialString && attributes)
@@ -165,7 +186,7 @@ final class ConversationReplyContentView: UIView {
                 return .imagePreview(thumbnail: message.imageMessageData!.image, isVideo: false)
 
             case let message? where message.isVideo && !message.canBeShared:
-                let imageIcon = NSTextAttachment.textAttachment(for: .camera, with: LabelColors.textDefault)
+                let imageIcon = NSTextAttachment.templateTextAttachment(for: .camera)
                 let initialString = NSAttributedString(attachment: imageIcon) + "  " + MessagePreview.video
                     .localizedUppercase
                 return .text(initialString && attributes)
@@ -175,7 +196,7 @@ final class ConversationReplyContentView: UIView {
 
             case let message? where message.isFile:
                 let fileData = message.fileMessageData!
-                let imageIcon = NSTextAttachment.textAttachment(for: .document, with: LabelColors.textDefault)
+                let imageIcon = NSTextAttachment.templateTextAttachment(for: .document)
                 let initialString = NSAttributedString(attachment: imageIcon) + "  " +
                     (fileData.filename ?? MessagePreview.file).localizedUppercase
                 return .text(initialString && attributes)
@@ -183,8 +204,7 @@ final class ConversationReplyContentView: UIView {
             default:
                 let attributes: [NSAttributedString.Key: AnyObject] = [
                     .font: UIFont.mediumFont.italic,
-                    .foregroundColor: LabelColors
-                        .textCollectionSecondary
+                    .foregroundColor: textColor
                 ]
                 return .text(NSAttributedString(
                     string: L10n.Localizable.Content.Message.Reply.brokenMessage,
@@ -286,7 +306,18 @@ final class ConversationReplyContentView: UIView {
         restrictionLabel.isHidden = !object.showRestriction
         contentAttachmentsView.isHidden = true
 
-        senderComponent.senderName = object.senderName
+        let quotedAccentColor = object.quotedMessage?.senderUser?.wireAccentColor ?? .default
+        if object.isSentBySelfUser {
+            senderComponent.label.attributedText = nil
+            senderComponent.label.textColor = ColorTheme.OwnChatBubbles.primaryOnSecondary(quotedAccentColor)
+            timestampLabel.textColor = ColorTheme.OwnChatBubbles.onSecondary
+            senderComponent.senderName = object.senderName
+        } else {
+            senderComponent.label.attributedText = nil
+            senderComponent.label.textColor = ColorTheme.OthersChatBubbles.primaryOnSecondary(quotedAccentColor)
+            timestampLabel.textColor = ColorTheme.OthersChatBubbles.onSecondary
+            senderComponent.senderName = object.senderName
+        }
         senderComponent.indicatorIcon = object.isEdited ? StyleKitIcon.pencil.makeImage(
             size: 8,
             color: SemanticColors.Icon.foregroundDefault
@@ -348,105 +379,9 @@ final class ConversationReplyContentView: UIView {
             contentAttachmentsView.addSubview(messageReplyAttachmentView!)
             messageReplyAttachmentView!.fitIn(view: contentAttachmentsView)
         }
+
     }
 
-}
-
-final class ConversationReplyCell: UIView, ConversationMessageCell {
-
-    typealias Configuration = ConversationReplyContentView.Configuration
-
-    var isSelected: Bool = false
-
-    let contentView: ConversationReplyContentView
-    var container: ReplyRoundCornersView
-
-    weak var delegate: ConversationMessageCellDelegate?
-    weak var message: ZMConversationMessage?
-    weak var actionController: ConversationMessageActionController?
-
-    override init(frame: CGRect) {
-        self.contentView = ConversationReplyContentView()
-        self.container = ReplyRoundCornersView(containedView: contentView)
-        super.init(frame: frame)
-        configureSubviews()
-        configureConstraints()
-    }
-
-    @available(*, unavailable)
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    private func configureSubviews() {
-        container.addTarget(self, action: #selector(onTap), for: .touchUpInside)
-        container.translatesAutoresizingMaskIntoConstraints = false
-        addSubview(container)
-    }
-
-    private func configureConstraints() {
-        container.fitIn(view: self, insets: .zero)
-    }
-
-    func configure(with object: Configuration, animated: Bool) {
-        contentView.configure(with: object)
-    }
-
-    func prepareForReuse() {
-        contentView.onPrepareForReuse()
-    }
-
-    @objc
-    func onTap() {
-        delegate?.perform(action: .openQuote, for: message!, view: self)
-    }
-
-}
-
-final class ConversationReplyCellDescription: ConversationMessageCellDescription {
-
-    typealias View = ConversationReplyCell
-
-    var configuration: View.Configuration
-
-    var topMargin: CGFloat = 8
-    var bottomMargin: CGFloat = 0
-
-    let supportsActions = false
-    let containsHighlightableContent: Bool = true
-    let shouldAlignMessageContentForBubbles: Bool = true
-
-    weak var message: ZMConversationMessage? {
-        didSet {
-            if let quoteMessage = message?.textMessageData?.quoteMessage {
-                configuration.quotedMessage = quoteMessage
-            }
-        }
-    }
-
-    weak var delegate: ConversationMessageCellDelegate? {
-        didSet {
-            configuration.delegate = delegate
-        }
-    }
-
-    weak var actionController: ConversationMessageActionController?
-
-    let accessibilityLabel: String? = L10n.Localizable.Content.Message.originalLabel
-    let accessibilityIdentifier: String? = "ReplyCell"
-
-    init(
-        quotedMessage: ZMConversationMessage?,
-        accentColor: AccentColor,
-        messageReplyAttachmentsViewModel: MessageReplyAttachmentsViewModel? = nil
-    ) {
-        self.configuration = View
-            .Configuration(
-                quotedMessage: quotedMessage,
-                accentColor: accentColor,
-                messageReplyAttachmentsViewModel: messageReplyAttachmentsViewModel
-            )
-    }
 }
 
 private extension ZMConversationMessage {

@@ -55,6 +55,10 @@ class NewConversationPage: PageModel {
         app.buttons[Locators.NewConversationPage.cancel.rawValue]
     }
 
+    var userCellInContactList: XCUIElement {
+        app.descendants(matching: .any)[Locators.NewConversationPage.userCellInContactList.rawValue].firstMatch
+    }
+
     func tapSearchBox() -> NewConversationPage {
         searchByNameOrUsernameSearchBox.tap()
         return self
@@ -91,5 +95,11 @@ class NewConversationPage: PageModel {
         cancelButtonOnSearchedUserPage.tap()
         cancelButtonOnNewConversation.tap()
         return try ConversationsPage()
+    }
+
+    func openUserDetailsInContactList() throws -> UserDetailsPage {
+        userCellInContactList.tap()
+        return try UserDetailsPage()
+
     }
 }

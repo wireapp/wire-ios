@@ -37,8 +37,16 @@ class ConversationIconBasedCell<CellDescription: ConversationMessageCellDescript
         false
     }
 
+    var imageContainerWidth: CGFloat = 46 {
+        didSet {
+            guard !shouldRemoveInnerPaddingForBubbles, containerWidthConstraint != nil else { return }
+            containerWidthConstraint.constant = imageContainerWidth
+        }
+    }
+
     private var containerWidthConstraint: NSLayoutConstraint!
     private var imageContainerLeadingConstraint: NSLayoutConstraint!
+    var imageContainerHeightConstraint: NSLayoutConstraint!
     private var textLabelTrailingConstraint: NSLayoutConstraint!
     private var textLabelLeadingConstraint: NSLayoutConstraint!
     private var textLabelTopConstraint: NSLayoutConstraint!
@@ -146,19 +154,20 @@ class ConversationIconBasedCell<CellDescription: ConversationMessageCellDescript
         } else {
             imageContainerLeadingConstraint = imageContainer.leadingAnchor.constraint(equalTo: leadingAnchor)
             containerWidthConstraint = imageContainer.widthAnchor
-                .constraint(equalToConstant: conversationHorizontalMargins.left)
+                .constraint(equalToConstant: imageContainerWidth)
             textLabelLeadingConstraint = textLabel.leadingAnchor.constraint(equalTo: imageContainer.trailingAnchor)
             textLabelTrailingConstraint = textLabel.trailingAnchor.constraint(
                 lessThanOrEqualTo: trailingAnchor,
                 constant: trailingTextMargin
             )
         }
+        imageContainerHeightConstraint = imageContainer.heightAnchor.constraint(equalTo: imageView.heightAnchor)
         NSLayoutConstraint.activate([
             // imageContainer
             containerWidthConstraint,
             imageContainerLeadingConstraint,
             imageContainer.topAnchor.constraint(equalTo: topContentView.bottomAnchor, constant: 0),
-            imageContainer.heightAnchor.constraint(equalTo: imageView.heightAnchor),
+            imageContainerHeightConstraint,
             imageContainer.bottomAnchor.constraint(lessThanOrEqualTo: bottomAnchor, constant: 0),
 
             // imageView
@@ -189,7 +198,11 @@ class ConversationIconBasedCell<CellDescription: ConversationMessageCellDescript
             bottomContentView.topAnchor.constraint(greaterThanOrEqualTo: textLabel.bottomAnchor),
             bottomContentView.trailingAnchor.constraint(equalTo: trailingAnchor),
             bottomContentView.bottomAnchor.constraint(equalTo: bottomAnchor),
-            contentViewTopConstraint
+            contentViewTopConstraint,
+            // Resist expansion from stack-view fill pressure (priority 250) while allowing
+            // subclasses that add content to bottomContentView to override at required (1000).
+            bottomContentView.heightAnchor.constraint(equalToConstant: 0)
+                .withPriority(UILayoutPriority(rawValue: 251))
         ])
     }
 
@@ -200,7 +213,7 @@ class ConversationIconBasedCell<CellDescription: ConversationMessageCellDescript
             containerWidthConstraint.constant = 32.0
             textLabelTrailingConstraint.constant = 0
         } else {
-            containerWidthConstraint.constant = conversationHorizontalMargins.left
+            containerWidthConstraint.constant = imageContainerWidth
             textLabelTrailingConstraint.constant = trailingTextMargin
         }
     }

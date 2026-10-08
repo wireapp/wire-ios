@@ -33,13 +33,19 @@ public enum DeveloperFlag: String, CaseIterable {
     case forceDatabaseLoadingFailure
     case ignoreIncomingEvents
     case newRegistration
+    case noAPNSTokenCache
     case showCreateMLSGroupToggle
     case showUnreadConversationsFilter
     case skipMLSMessagesDecryption
     case useWireAuthentication
-    case wireMeetings
     case lowKeyPackageCount
     case enabledCCDebugLogs
+    case shakeToReport
+    case showNSEErrors
+    case simulateMainAppRequiredError
+    case simulateUnestablishedMLSGroup
+    case unSafeLogsForPublic
+    case useBackgroundActivityFactoryInAppBackgroundTaskExecuter
 
     public var description: String {
         switch self {
@@ -76,6 +82,9 @@ public enum DeveloperFlag: String, CaseIterable {
         case .newRegistration:
             "Turn on to use the new registration flow"
 
+        case .noAPNSTokenCache:
+            "Turn on to always request the APNS token from the system instead of reading a cached one"
+
         case .showUnreadConversationsFilter:
             "Turn on to show the new conversation filter options"
 
@@ -88,14 +97,29 @@ public enum DeveloperFlag: String, CaseIterable {
         case .consumableNotifications:
             "Turn on to enable consumable notifications"
 
-        case .wireMeetings:
-            "Turn on to enable Wire meetings"
-
         case .lowKeyPackageCount:
             "Turn on to set the minimum number of packages to 1"
 
         case .enabledCCDebugLogs:
             "Turn on to enable Core Crypto debug logs"
+
+        case .shakeToReport:
+            "Turn on to enable default shake gesture to present debug report share sheet. Shake again to present DeveloperTools once debug report share sheet presented"
+
+        case .showNSEErrors:
+            "Turn on to show Notification Service Extension errors as notifications"
+
+        case .simulateMainAppRequiredError:
+            "Turn on to force a 'main app required' error in the Notification Service and Share Extensions"
+
+        case .simulateUnestablishedMLSGroup:
+            "Turn on to leave the next locally created MLS group unestablished at epoch 0"
+
+        case .unSafeLogsForPublic:
+            "Turn on to write all logs (including debug and non-public) to disk in release builds"
+
+        case .useBackgroundActivityFactoryInAppBackgroundTaskExecuter:
+            "Turn on to use BackgroundActivityFactory in AppBackgroundTaskExecuter"
         }
     }
 
@@ -130,6 +154,8 @@ public enum DeveloperFlag: String, CaseIterable {
             "ForceDatabaseLoadingFailure"
         case .ignoreIncomingEvents:
             "IgnoreIncomingEventsEnabled"
+        case .noAPNSTokenCache:
+            "NoAPNSTokenCacheEnabled"
         case .useWireAuthentication:
             "WireAuthenticationEnabled"
         default:

@@ -19,9 +19,8 @@
 import UIKit
 import WireCommonComponents
 import WireDesign
+import WireLogging
 import WireSystem
-
-private let zmLog = ZMSLog(tag: "TokenField")
 
 final class TokenField: UIView {
     let accessoryButtonSize: CGFloat = 32
@@ -788,8 +787,6 @@ extension TokenField: UITextViewDelegate {
     }
 
     func textViewDidChangeSelection(_ textView: UITextView) {
-        zmLog.debug("Selection changed: NSStringFromRange(textView.selectedRange)")
-
         var modifiedSelectionRange = NSRange(location: 0, length: 0)
         var hasModifiedSelection = false
 
@@ -802,10 +799,9 @@ extension TokenField: UITextViewDelegate {
                     modifiedSelectionRange = (hasModifiedSelection ? modifiedSelectionRange : range).union(range)
                     hasModifiedSelection = true
                 }
-                zmLog
-                    .info(
-                        "    person attachement: \(tokenAttachment.token.title) at range: \(range) selected: \(tokenAttachment.isSelected)"
-                    )
+                WireLogger.ui.info(
+                    "TokenField:     person attachment: \(tokenAttachment.token.title) at range: \(range) selected: \(tokenAttachment.isSelected)"
+                )
             }
         }
 

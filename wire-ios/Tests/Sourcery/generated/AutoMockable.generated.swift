@@ -27,8 +27,11 @@
 import CoreLocation
 import SwiftUI
 import WireDataModel
+import WireNetwork
 import WireSyncEngine
 import WireAccountImageUI
+import WireCallingAssembly
+import WireCallingDomain
 import WireMessagingDomain
 import WireMessagingUI
 import WireFoundation
@@ -195,6 +198,57 @@ class MockAppStateCalculatorDelegate: AppStateCalculatorDelegate {
         }
 
         mock(appStateCalculator, appState, completion)
+    }
+
+}
+
+public class MockBackgroundTaskApplication: BackgroundTaskApplication, @unchecked Sendable {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+    // MARK: - backgroundTimeRemaining
+
+    public var backgroundTimeRemaining: TimeInterval {
+        get { return underlyingBackgroundTimeRemaining }
+        set(value) { underlyingBackgroundTimeRemaining = value }
+    }
+
+    public var underlyingBackgroundTimeRemaining: TimeInterval!
+
+
+    // MARK: - beginBackgroundTask
+
+    public var beginBackgroundTaskWithNameExpirationHandler_Invocations: [(taskName: String?, handler: (@MainActor @Sendable () -> Void)?)] = []
+    public var beginBackgroundTaskWithNameExpirationHandler_MockMethod: ((String?, (@MainActor @Sendable () -> Void)?) -> UIBackgroundTaskIdentifier)?
+    public var beginBackgroundTaskWithNameExpirationHandler_MockValue: UIBackgroundTaskIdentifier?
+
+    public func beginBackgroundTask(withName taskName: String?, expirationHandler handler: (@MainActor @Sendable () -> Void)?) -> UIBackgroundTaskIdentifier {
+        beginBackgroundTaskWithNameExpirationHandler_Invocations.append((taskName: taskName, handler: handler))
+
+        if let mock = beginBackgroundTaskWithNameExpirationHandler_MockMethod {
+            return mock(taskName, handler)
+        } else if let mock = beginBackgroundTaskWithNameExpirationHandler_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `beginBackgroundTaskWithNameExpirationHandler`")
+        }
+    }
+
+    // MARK: - endBackgroundTask
+
+    public var endBackgroundTask_Invocations: [UIBackgroundTaskIdentifier] = []
+    public var endBackgroundTask_MockMethod: ((UIBackgroundTaskIdentifier) -> Void)?
+
+    public func endBackgroundTask(_ identifier: UIBackgroundTaskIdentifier) {
+        endBackgroundTask_Invocations.append(identifier)
+
+        guard let mock = endBackgroundTask_MockMethod else {
+            fatalError("no mock for `endBackgroundTask`")
+        }
+
+        mock(identifier)
     }
 
 }
@@ -475,6 +529,60 @@ class MockConversationUserClientDetailsActions: ConversationUserClientDetailsAct
 
 }
 
+class MockCreateDebugReportUseCaseProtocol: CreateDebugReportUseCaseProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - invoke
+
+    var invoke_Invocations: [Void] = []
+    var invoke_MockError: Error?
+    var invoke_MockMethod: (() async throws -> URL)?
+    var invoke_MockValue: URL?
+
+    func invoke() async throws -> URL {
+        invoke_Invocations.append(())
+
+        if let error = invoke_MockError {
+            throw error
+        }
+
+        if let mock = invoke_MockMethod {
+            return try await mock()
+        } else if let mock = invoke_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `invoke`")
+        }
+    }
+
+    // MARK: - invokeData
+
+    var invokeData_Invocations: [Void] = []
+    var invokeData_MockError: Error?
+    var invokeData_MockMethod: (() async throws -> Data)?
+    var invokeData_MockValue: Data?
+
+    func invokeData() async throws -> Data {
+        invokeData_Invocations.append(())
+
+        if let error = invokeData_MockError {
+            throw error
+        }
+
+        if let mock = invokeData_MockMethod {
+            return try await mock()
+        } else if let mock = invokeData_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `invokeData`")
+        }
+    }
+
+}
+
 class MockCreateGroupConversationViewControllerBuilderProtocol: CreateGroupConversationViewControllerBuilderProtocol {
 
     // MARK: - Life cycle
@@ -648,16 +756,16 @@ class MockDeviceDetailsViewActions: DeviceDetailsViewActions {
     // MARK: - resetSession
 
     var resetSession_Invocations: [Void] = []
-    var resetSession_MockMethod: (() -> Void)?
+    var resetSession_MockMethod: (() async -> Void)?
 
-    func resetSession() {
+    func resetSession() async {
         resetSession_Invocations.append(())
 
         guard let mock = resetSession_MockMethod else {
             fatalError("no mock for `resetSession`")
         }
 
-        mock()
+        await mock()
     }
 
     // MARK: - updateVerified
@@ -911,6 +1019,37 @@ class MockNetworkStatusViewDelegate: NetworkStatusViewDelegate {
         }
 
         mock(networkStatusView, animated, state)
+    }
+
+}
+
+class MockOAuthUseCaseInterface: OAuthUseCaseInterface {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - invoke
+
+    var invokeParametersOnWebViewPresentingOnWebViewDismissed_Invocations: [(parameters: OAuthParameters, onWebViewPresenting: (@MainActor () -> Void)?, onWebViewDismissed: (@MainActor () -> Void)?)] = []
+    var invokeParametersOnWebViewPresentingOnWebViewDismissed_MockError: Error?
+    var invokeParametersOnWebViewPresentingOnWebViewDismissed_MockMethod: ((OAuthParameters, (@MainActor () -> Void)?, (@MainActor () -> Void)?) async throws -> OAuthResponse)?
+    var invokeParametersOnWebViewPresentingOnWebViewDismissed_MockValue: OAuthResponse?
+
+    func invoke(parameters: OAuthParameters, onWebViewPresenting: (@MainActor () -> Void)?, onWebViewDismissed: (@MainActor () -> Void)?) async throws -> OAuthResponse {
+        invokeParametersOnWebViewPresentingOnWebViewDismissed_Invocations.append((parameters: parameters, onWebViewPresenting: onWebViewPresenting, onWebViewDismissed: onWebViewDismissed))
+
+        if let error = invokeParametersOnWebViewPresentingOnWebViewDismissed_MockError {
+            throw error
+        }
+
+        if let mock = invokeParametersOnWebViewPresentingOnWebViewDismissed_MockMethod {
+            return try await mock(parameters, onWebViewPresenting, onWebViewDismissed)
+        } else if let mock = invokeParametersOnWebViewPresentingOnWebViewDismissed_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `invokeParametersOnWebViewPresentingOnWebViewDismissed`")
+        }
     }
 
 }
@@ -1444,98 +1583,6 @@ class MockSelfProfileViewControllerBuilderProtocol: SelfProfileViewControllerBui
 
 }
 
-class MockSettingsDebugReportRouterProtocol: SettingsDebugReportRouterProtocol {
-
-    // MARK: - Life cycle
-
-
-
-    // MARK: - presentMailComposer
-
-    var presentMailComposer_Invocations: [Void] = []
-    var presentMailComposer_MockMethod: (() -> Void)?
-
-    @MainActor
-    func presentMailComposer() {
-        presentMailComposer_Invocations.append(())
-
-        guard let mock = presentMailComposer_MockMethod else {
-            fatalError("no mock for `presentMailComposer`")
-        }
-
-        mock()
-    }
-
-    // MARK: - presentFallbackAlert
-
-    var presentFallbackAlertSender_Invocations: [UIView] = []
-    var presentFallbackAlertSender_MockMethod: ((UIView) -> Void)?
-
-    func presentFallbackAlert(sender: UIView) {
-        presentFallbackAlertSender_Invocations.append(sender)
-
-        guard let mock = presentFallbackAlertSender_MockMethod else {
-            fatalError("no mock for `presentFallbackAlertSender`")
-        }
-
-        mock(sender)
-    }
-
-    // MARK: - presentShareViewController
-
-    var presentShareViewControllerDestinationsDebugReport_Invocations: [(destinations: [ZMConversation], debugReport: ShareableDebugReport)] = []
-    var presentShareViewControllerDestinationsDebugReport_MockMethod: (([ZMConversation], ShareableDebugReport) -> Void)?
-
-    func presentShareViewController(destinations: [ZMConversation], debugReport: ShareableDebugReport) {
-        presentShareViewControllerDestinationsDebugReport_Invocations.append((destinations: destinations, debugReport: debugReport))
-
-        guard let mock = presentShareViewControllerDestinationsDebugReport_MockMethod else {
-            fatalError("no mock for `presentShareViewControllerDestinationsDebugReport`")
-        }
-
-        mock(destinations, debugReport)
-    }
-
-}
-
-class MockSettingsDebugReportViewModelProtocol: SettingsDebugReportViewModelProtocol {
-
-    // MARK: - Life cycle
-
-
-
-    // MARK: - sendReport
-
-    var sendReportSender_Invocations: [UIView] = []
-    var sendReportSender_MockMethod: ((UIView) -> Void)?
-
-    func sendReport(sender: UIView) {
-        sendReportSender_Invocations.append(sender)
-
-        guard let mock = sendReportSender_MockMethod else {
-            fatalError("no mock for `sendReportSender`")
-        }
-
-        mock(sender)
-    }
-
-    // MARK: - shareReport
-
-    var shareReport_Invocations: [Void] = []
-    var shareReport_MockMethod: (() async -> Void)?
-
-    func shareReport() async {
-        shareReport_Invocations.append(())
-
-        guard let mock = shareReport_MockMethod else {
-            fatalError("no mock for `shareReport`")
-        }
-
-        await mock()
-    }
-
-}
-
 class MockShouldPresentNotificationPermissionHintUseCaseProtocol: ShouldPresentNotificationPermissionHintUseCaseProtocol {
 
     // MARK: - Life cycle
@@ -1706,20 +1753,20 @@ class MockWireMeetingsFactoryProtocol: WireMeetingsFactoryProtocol {
 
     // MARK: - makeMeetingsView
 
-    var makeMeetingsView_Invocations: [Void] = []
-    var makeMeetingsView_MockMethod: (() -> UIViewController)?
-    var makeMeetingsView_MockValue: UIViewController?
+    var makeMeetingsViewMeetingRepositoryMemberRepositoryConversationRepositoryCallRepositoryAccentColorState_Invocations: [(meetingRepository: any MeetingRepositoryProtocol, memberRepository: any MeetingMemberRepositoryProtocol, conversationRepository: any MeetingConversationRepositoryProtocol, callRepository: any MeetingCallRepositoryProtocol, accentColorState: WireMeetingsAccentColorState)] = []
+    var makeMeetingsViewMeetingRepositoryMemberRepositoryConversationRepositoryCallRepositoryAccentColorState_MockMethod: ((any MeetingRepositoryProtocol, any MeetingMemberRepositoryProtocol, any MeetingConversationRepositoryProtocol, any MeetingCallRepositoryProtocol, WireMeetingsAccentColorState) -> UIViewController)?
+    var makeMeetingsViewMeetingRepositoryMemberRepositoryConversationRepositoryCallRepositoryAccentColorState_MockValue: UIViewController?
 
     @MainActor
-    func makeMeetingsView() -> UIViewController {
-        makeMeetingsView_Invocations.append(())
+    func makeMeetingsView(meetingRepository: any MeetingRepositoryProtocol, memberRepository: any MeetingMemberRepositoryProtocol, conversationRepository: any MeetingConversationRepositoryProtocol, callRepository: any MeetingCallRepositoryProtocol, accentColorState: WireMeetingsAccentColorState) -> UIViewController {
+        makeMeetingsViewMeetingRepositoryMemberRepositoryConversationRepositoryCallRepositoryAccentColorState_Invocations.append((meetingRepository: meetingRepository, memberRepository: memberRepository, conversationRepository: conversationRepository, callRepository: callRepository, accentColorState: accentColorState))
 
-        if let mock = makeMeetingsView_MockMethod {
-            return mock()
-        } else if let mock = makeMeetingsView_MockValue {
+        if let mock = makeMeetingsViewMeetingRepositoryMemberRepositoryConversationRepositoryCallRepositoryAccentColorState_MockMethod {
+            return mock(meetingRepository, memberRepository, conversationRepository, callRepository, accentColorState)
+        } else if let mock = makeMeetingsViewMeetingRepositoryMemberRepositoryConversationRepositoryCallRepositoryAccentColorState_MockValue {
             return mock
         } else {
-            fatalError("no mock for `makeMeetingsView`")
+            fatalError("no mock for `makeMeetingsViewMeetingRepositoryMemberRepositoryConversationRepositoryCallRepositoryAccentColorState`")
         }
     }
 
@@ -1946,6 +1993,25 @@ class MockWireMessagingFactoryProtocol: WireMessagingFactoryProtocol {
             return mock
         } else {
             fatalError("no mock for `makeConversationCellProviderInsetsProvider`")
+        }
+    }
+
+    // MARK: - makeConversationSharedDrivedOptionsView
+
+    var makeConversationSharedDrivedOptionsViewParticipantsOnClose_Invocations: [(participants: [WireDriveParticipant], onClose: () -> Void)] = []
+    var makeConversationSharedDrivedOptionsViewParticipantsOnClose_MockMethod: (([WireDriveParticipant], @escaping () -> Void) -> UIViewController)?
+    var makeConversationSharedDrivedOptionsViewParticipantsOnClose_MockValue: UIViewController?
+
+    @MainActor
+    func makeConversationSharedDrivedOptionsView(participants: [WireDriveParticipant], onClose: @escaping () -> Void) -> UIViewController {
+        makeConversationSharedDrivedOptionsViewParticipantsOnClose_Invocations.append((participants: participants, onClose: onClose))
+
+        if let mock = makeConversationSharedDrivedOptionsViewParticipantsOnClose_MockMethod {
+            return mock(participants, onClose)
+        } else if let mock = makeConversationSharedDrivedOptionsViewParticipantsOnClose_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `makeConversationSharedDrivedOptionsViewParticipantsOnClose`")
         }
     }
 

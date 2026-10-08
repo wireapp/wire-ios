@@ -53,7 +53,7 @@ package struct DeleteDraftUseCase: WireDriveDeleteDraftUseCaseProtocol {
         }
         await draftRepository.deleteDraft(nodeID: nodeID, cellName: cellName)
 
-        if draft.requiresCleanup {
+        if draft.requiresCleanup, fileManager.fileExists(atPath: draft.assetURL.path) {
             try fileManager.removeItem(at: draft.assetURL)
         }
     }

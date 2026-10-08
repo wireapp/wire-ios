@@ -26,15 +26,30 @@ import XCTest
 
 public struct SnapshotHelper {
 
-    private var perceptualPrecision: Float = 1
+    /// The default fraction of pixels that must match the reference snapshot.
+    public static let defaultPrecision: Float = 0.99999
+
+    /// The default similarity required for an individual pixel to count as matching.
+    public static let defaultPerceptualPrecision: Float = 0.95
+
+    private let precision = Self.defaultPrecision
+    private var perceptualPrecision = Self.defaultPerceptualPrecision
     private var traits = UITraitCollection()
     private var layout: SwiftUISnapshotLayout = .sizeThatFits
     /// If empty, the `SNAPSHOT_REFERENCE_DIR` environment variable is read.
     private var snapshotReferenceDirectory = ""
 
     private var defaultRecordMode: SnapshotTestingConfiguration.Record? {
-        let ci = ProcessInfo.processInfo.environment["CI"]
-        return (ci == nil || ci?.isEmpty == true) ? .missing : .never
+        let ciEnv = ProcessInfo.processInfo.environment["CI"]
+        let recordEnv = ProcessInfo.processInfo.environment["SNAPSHOT_TESTING_RECORD"]
+
+        if ciEnv == "true" {
+            return .never
+        } else if let recordEnv, let record = SnapshotTestingConfiguration.Record(rawValue: recordEnv) {
+            return record
+        } else {
+            return .missing
+        }
     }
 
     public init() {}
@@ -195,6 +210,7 @@ public struct SnapshotHelper {
             let failure = verifySnapshot(
                 of: value,
                 as: .image(
+                    precision: precision,
                     perceptualPrecision: perceptualPrecision,
                     layout: layout,
                     traits: traits
@@ -360,7 +376,7 @@ public struct SnapshotHelper {
         matching value: UIViewController,
         size: CGSize? = nil,
         named name: String? = nil,
-        record recording: Bool = false,
+        record recording: Bool? = nil,
         file: StaticString = #filePath,
         testName: String = #function,
         safeArea: UIEdgeInsets = .zero,
@@ -373,7 +389,10 @@ public struct SnapshotHelper {
         withSnapshotTesting(record: defaultRecordMode) {
             let failure = verifySnapshot(
                 of: value,
-                as: config.map { .image(on: $0, perceptualPrecision: perceptualPrecision, traits: traits) } ?? .image(
+                as: config.map {
+                    .image(on: $0, precision: precision, perceptualPrecision: perceptualPrecision, traits: traits)
+                } ?? .image(
+                    precision: precision,
                     perceptualPrecision: perceptualPrecision,
                     traits: traits
                 ),
@@ -411,7 +430,7 @@ public struct SnapshotHelper {
         withSnapshotTesting(record: defaultRecordMode) {
             let failure = verifySnapshot(
                 of: value,
-                as: .image(perceptualPrecision: perceptualPrecision, traits: traits),
+                as: .image(precision: precision, perceptualPrecision: perceptualPrecision, traits: traits),
                 named: name,
                 record: record,
                 snapshotDirectory: snapshotDirectory,
@@ -460,7 +479,7 @@ public struct SnapshotHelper {
         for (config, name) in allDevices {
             let failure = verifySnapshot(
                 of: value,
-                as: .image(on: config, perceptualPrecision: perceptualPrecision),
+                as: .image(on: config, precision: precision, perceptualPrecision: perceptualPrecision),
                 named: name,
                 snapshotDirectory: snapshotDirectory,
                 file: file,
@@ -497,6 +516,7 @@ public struct SnapshotHelper {
                     of: value,
                     as: .image(
                         on: config,
+                        precision: precision,
                         perceptualPrecision: perceptualPrecision
                     ),
                     named: name, snapshotDirectory: snapshotDirectory,
@@ -522,7 +542,7 @@ public struct SnapshotHelper {
     public func verify(
         matching value: UIImage,
         named name: String? = nil,
-        record recording: Bool = false,
+        record recording: Bool? = nil,
         file: StaticString = #filePath,
         testName: String = #function,
         line: UInt = #line
@@ -532,7 +552,7 @@ public struct SnapshotHelper {
         withSnapshotTesting(record: defaultRecordMode) {
             let failure = verifySnapshot(
                 of: value,
-                as: .image,
+                as: .image(precision: precision, perceptualPrecision: perceptualPrecision),
                 named: name,
                 record: recording,
                 snapshotDirectory: snapshotDirectory,
@@ -582,6 +602,8 @@ public struct SnapshotHelper {
                 let failure = verifySnapshot(
                     of: value,
                     as: .image(
+                        precision: precision,
+                        perceptualPrecision: perceptualPrecision,
                         traits: .init(preferredContentSizeCategory: contentSize)
                     ),
                     named: name,

@@ -85,7 +85,7 @@ final class ConversationTableViewDataSource: NSObject {
 
     var contentWidth: CGFloat = UIScreen.main.bounds.width {
         didSet {
-            guard UIDevice.current.userInterfaceIdiom == .pad else { return }
+            guard contentWidth != oldValue else { return }
             resetSectionControllers()
         }
     }
@@ -1019,7 +1019,6 @@ extension ConversationTableViewDataSource {
             cellDescription is ConversationFileMessageCellDescription ||
             cellDescription is ConversationImageMessageCellDescription ||
             cellDescription is ConversationVideoMessageCellDescription ||
-            cellDescription is ConversationReplyCellDescription ||
             cellDescription is ConversationCollapsedMessageCellDescription {
             // no stack cell description and no sender is shown, so collapse the space if needed
             true

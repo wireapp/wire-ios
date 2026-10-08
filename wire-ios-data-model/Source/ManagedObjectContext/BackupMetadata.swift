@@ -46,7 +46,7 @@ public struct BackupMetadata: Codable {
         userIdentifier: UUID,
         clientIdentifier: String,
         appVersionProvider: VersionProvider = Bundle.main,
-        modelVersionProvider: VersionProvider = CoreDataStack.loadMessagingModel()
+        modelVersionProvider: VersionProvider = CoreDataStack.messagingModel
     ) {
         self.init(
             appVersion: appVersionProvider.version,
@@ -117,7 +117,7 @@ public extension BackupMetadata {
 
     func verify(
         using userIdentifier: UUID,
-        modelVersionProvider: VersionProvider = CoreDataStack.loadMessagingModel()
+        modelVersionProvider: VersionProvider = CoreDataStack.messagingModel
     ) -> VerificationError? {
         guard self.userIdentifier == userIdentifier else { return .userMismatch }
         let current = Version(string: modelVersionProvider.version)

@@ -15,12 +15,12 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
+
 /// Naming convention:
 ///
 /// The names of all accessibility strings should follow the format:
 ///
 ///  "<screen>.<component>.<usage>"
-
 
 "peoplepicker.upgrade_banner.close_button.label" = "Team-Erstellungsoption schließen";
 
@@ -54,6 +54,10 @@
 "conversation.timerForSelfDeletingMessagesDay.value" = "%@ Tag";
 "conversation.timerForSelfDeletingMessagesWeek.value" = "%@ Woche";
 "conversation.timerForSelfDeletingMessagesWeeks.value" = "%@ Wochen";
+"conversation.cameraButtonDisabled.description" = "Foto aufnehmen oder auswählen, deaktiviert für Betrachter";
+"conversation.sketchButtonDisabled.description" = " Skizze zum Zeichnen oder Schreiben öffnen, deaktiviert für Betrachter";
+"conversation.uploadFileButtonDisabled.description" = "Datei teilen, deaktiviert für Betrachter";
+"conversation.videoButtonDisabled.description" = "Video aufnehmen, deaktiviert für Betrachter";
 
 "conversation.headerButton.description" = "Überschrift benutzen";
 "conversation.boldButton.description" = "Fettdruck benutzen";
@@ -130,6 +134,7 @@
 "sketch.drawButton.hint" = " Zum Aktivieren oder Deaktivieren doppeltippen";
 "sketch.selectEmojiButton.description" = "Emoji auswählen";
 "sketch.sendButton.description" = "Senden";
+"sketch.confirmButton.description" = "Bestätigen";
 "sketch.undoButton.description" = "Letzten Schritt rückgängig machen";
 "sketch.closeButton.description" = "Skizze schließen";
 
@@ -152,6 +157,7 @@
 "settings.deviceCount.hint" = "%@ verwendete Geräte";
 "settings.closeButton.description" = "Einstellungen schließen";
 "settings.backButton.description" = "Zurück zu Einstellungen";
+"settings.shareDebugInfoBanner.arrow" = "Doppeltippen, um weitere Optionen zu öffnen";
 
 "accountSettings.backButton.description" = "Zurück zum Benutzerkonto";
 
@@ -219,7 +225,7 @@
 "conversationsList.mentionStatus.value" = "Sie wurden erwähnt";
 "conversationsList.replyStatus.value" = "Antworten";
 "conversationsList.badgeView.value" = "Neue Nachrichten: %d";
-"conversationsList.itemCell.hint" = "Doppeltippen, um Unterhaltung zu öffnen";
+"conversationsList.itemCell.hint" = "Doppeltippen, um die Unterhaltung zu öffnen. Dreifachtippen, um die Unterhaltungsoptionen zu öffnen";
 "conversationsList.itemCell.avatar.group.label" = "Gruppe";
 "conversationsList.itemCell.avatar.channel.label" = "Channel";
 "conversationsList.joinButton.description" = "Beitreten";
@@ -341,3 +347,9 @@
 
 "webAuth.urlLabel.description" = "Identity-Provider-URL";
 "webAuth.urlLabel.hint" = "Auswählen, um die vollständige URL zu öffnen.";
+
+// MARK: - Admin Selection
+
+"adminSelection.searchBar.clearButton.description" = "Suche löschen";
+"adminSelection.candidateRow.hint" = "Doppeltippen, um als neuen Admin auszuwählen";
+"adminSelection.deleteGroupButton.hint" = "Löscht die Gruppe dauerhaft";

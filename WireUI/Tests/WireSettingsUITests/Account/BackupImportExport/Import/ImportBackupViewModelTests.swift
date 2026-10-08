@@ -40,6 +40,8 @@ final class ImportBackupViewModelTests: XCTestCase {
 
     private var fileManager: FileManager { .default }
 
+    private typealias GenericErrorStrings = L10n.Localizable.ImportBackup.Alert.GenericError
+
     override func setUp() async throws {
 
         temporaryDirectory = try fileManager.url(
@@ -420,6 +422,63 @@ final class ImportBackupViewModelTests: XCTestCase {
         // Then
         wait(forConditionToBeTrue: sut.isAlertPresented, timeout: 3)
         XCTAssertFalse(sut.alertContent.title.isEmpty)
+    }
+
+    func testConfirmOverwrite_whenUseCaseCreationFails_showsGenericAlert() {
+        // Given - destructive import requires confirmation first
+        let sut = sut as ImportBackupViewModel
+        mockImportBackupUseCase.isImportDestructive = true
+
+        sut.pickedBackupFile(result: .success(temporaryFile))
+        wait(forConditionToBeTrue: sut.isImportConfirmationPresented, timeout: 3)
+
+        // When - creating the use case throws on confirmation (error escapes `startImport`)
+        mockFactory.errorToThrow = NSError(domain: "test", code: 999)
+        sut.confirmOverwrite()
+
+        // Then - a populated generic alert is shown rather than a stale/blank one
+        wait(forConditionToBeTrue: sut.isAlertPresented, timeout: 3)
+        XCTAssertEqual(sut.alertContent.title, GenericErrorStrings.title)
+        XCTAssertEqual(sut.alertContent.message, GenericErrorStrings.message)
+        XCTAssertFalse(sut.alertContent.action.isEmpty)
+    }
+
+    func testEnterPassword_whenUseCaseCreationFails_showsGenericAlert() {
+        // Given - reach the password prompt
+        let sut = sut as ImportBackupViewModel
+        mockImportBackupUseCase.isImportDestructive = false
+        mockCoordinator.startImportForPassword_MockMethod = { _, _ in
+            let (stream, continuation) = AsyncThrowingStream<ImportBackupProgress, any Error>.makeStream()
+            continuation.finish(throwing: ImportBackupError.passwordRequired)
+            return stream
+        }
+
+        sut.pickedBackupFile(result: .success(temporaryFile))
+        wait(forConditionToBeTrue: sut.isEnterBackupPasswordPresented, timeout: 3)
+
+        // When - creating the use case throws on retry (error escapes `startImport`)
+        mockFactory.errorToThrow = NSError(domain: "test", code: 999)
+        sut.enterPassword("pw")
+
+        // Then - a populated generic alert is shown rather than a blank one
+        wait(forConditionToBeTrue: sut.isAlertPresented, timeout: 3)
+        XCTAssertEqual(sut.alertContent.title, GenericErrorStrings.title)
+        XCTAssertEqual(sut.alertContent.message, GenericErrorStrings.message)
+        XCTAssertFalse(sut.alertContent.action.isEmpty)
+    }
+
+    func testPickBackupFileWithGenericFailure_showsGenericAlert() {
+        // Given
+        let sut = sut as ImportBackupViewModel
+
+        // When - a non-`invalidFileExtension` error is reported
+        sut.pickedBackupFile(result: .failure(NSError(domain: "test", code: 123)))
+
+        // Then - the default branch now shows a populated generic alert rather than a blank one
+        wait(forConditionToBeTrue: sut.isAlertPresented, timeout: 3)
+        XCTAssertEqual(sut.alertContent.title, GenericErrorStrings.title)
+        XCTAssertEqual(sut.alertContent.message, GenericErrorStrings.message)
+        XCTAssertFalse(sut.alertContent.action.isEmpty)
     }
 
     // MARK: - State Transition Tests

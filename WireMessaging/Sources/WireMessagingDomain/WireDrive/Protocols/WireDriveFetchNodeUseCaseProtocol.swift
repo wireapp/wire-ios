@@ -18,7 +18,12 @@
 
 public import Foundation
 
-// sourcery: AutoMockable
+// NOTE: This protocol is intentionally NOT annotated `// sourcery: AutoMockable`. Its mock is
+// hand-written in `WireMessagingDomainSupport/MockWireDriveFetchNodeUseCaseProtocol.swift` because
+// `invoke(nodeID:)` is called concurrently (one TaskGroup child per attachment in
+// `MessageReplyAttachmentsViewModel.latestVisibleAttachments`). The AutoMockable-generated mock is
+// `@unchecked Sendable` but records invocations by appending to an array without synchronisation,
+// which is a data race that crashes under concurrent calls. The manual mock locks that recording.
 public protocol WireDriveFetchNodeUseCaseProtocol: Sendable {
     func invoke(nodeID: UUID) async throws -> WireDriveNode?
 }

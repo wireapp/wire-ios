@@ -30,12 +30,13 @@ enum ConversationActionType {
     case removed(reason: ZMParticipantsRemovedReason)
     case left
     case teamMemberLeave
+    case promoted
 
     /// Some actions only involve the sender, others involve other users too.
     var involvesUsersOtherThanSender: Bool {
         switch self {
-        case .left, .teamMemberLeave, .added(herself: true): false
-        default:                                             true
+        case .left, .teamMemberLeave, .added(herself: true), .promoted: false
+        default:                                                         true
         }
     }
 
@@ -53,6 +54,7 @@ enum ConversationActionType {
         case .started, .none:                   .conversation
         case .added:                            .plus
         case .removed, .left, .teamMemberLeave: .minus
+        case .promoted:                         .groupAdmin
         }
 
         return icon.makeImage(size: .tiny, color: color)
@@ -63,13 +65,14 @@ extension ZMConversationMessage {
     var actionType: ConversationActionType {
         guard let systemMessage = systemMessageData else { return .none }
         switch systemMessage.systemMessageType {
-        case .participantsRemoved:  return systemMessage.userIsTheSender
+        case .participantsRemoved:      return systemMessage.userIsTheSender
             ? .left
             : .removed(reason: systemMessage.participantsRemovedReason)
-        case .participantsAdded:    return .added(herself: systemMessage.userIsTheSender)
-        case .newConversation:      return .started(name: systemMessage.text)
-        case .teamMemberLeave:      return .teamMemberLeave
-        default:                    return .none
+        case .participantsAdded:        return .added(herself: systemMessage.userIsTheSender)
+        case .newConversation:          return .started(name: systemMessage.text)
+        case .teamMemberLeave:          return .teamMemberLeave
+        case .promotedToGroupAdmin:     return .promoted
+        default:                        return .none
         }
     }
 }

@@ -189,6 +189,7 @@ final class ConversationChannelCreationFormTests: XCTestCase {
             channelName: "",
             channelInvitePolicy: .admins,
             channelHistoryOption: .off,
+            isTeamAdmin: false,
             areAppsSupported: false,
             appsAllowed: true,
             guestsAllowed: true,
@@ -202,6 +203,36 @@ final class ConversationChannelCreationFormTests: XCTestCase {
             viewModel: viewModel
         )
         .frame(width: 375, height: 800)
+        .padding()
+
+        snapshotHelper
+            .withUserInterfaceStyle(.light)
+            .verify(matching: view, named: "light")
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: view, named: "dark")
+    }
+
+    @MainActor
+    func testSharedDriveSection() {
+        let viewModel = ConversationChannelCreationFormViewModel(
+            channelName: "",
+            channelInvitePolicy: .admins,
+            channelHistoryOption: .off,
+            isTeamAdmin: false,
+            areAppsSupported: false,
+            appsAllowed: false,
+            guestsAllowed: false,
+            readReceiptsEnabled: false,
+            isUserPremium: true,
+            isWireDriveEnabled: true,
+            teamsURL: URL(string: "https://wire.com")!,
+            onFormValidityUpdate: { _ in }
+        )
+        let view = ConversationChannelCreationForm(
+            viewModel: viewModel
+        )
+        .frame(width: 375, height: 1000)
         .padding()
 
         snapshotHelper
@@ -227,6 +258,7 @@ private extension ConversationChannelCreationFormViewModel {
             channelName: channelName,
             channelInvitePolicy: .admins,
             channelHistoryOption: .off,
+            isTeamAdmin: false,
             areAppsSupported: true,
             appsAllowed: true,
             guestsAllowed: true,

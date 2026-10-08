@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireLogging
 import WireNetwork
 import WireUtilities
 
@@ -132,6 +133,10 @@ extension UnauthenticatedSession: UnauthenticatedSessionStatusDelegate {
         delegate?.sessionIsAllowedToCreateNewAccount(self) ?? false
     }
 
+    var maxNumberAccounts: Int {
+        delegate?.sessionMaxNumberAccounts(self) ?? SessionManager.defaultMaxNumberAccounts
+    }
+
 }
 
 extension UnauthenticatedSession: URLActionProcessor {
@@ -162,8 +167,13 @@ extension UnauthenticatedSession: UserInfoParser {
     public func upgradeToAuthenticatedSession(with userInfo: UserInfo) {
         let account = Account(userName: "", userIdentifier: userInfo.identifier)
         let cookieStorage = transportSession.environment.cookieStorage(for: account)
-        cookieStorage.authenticationCookieData = userInfo.cookieData
-        authenticationStatus.authenticationCookieData = userInfo.cookieData
+        do {
+            try cookieStorage.storeCookies(userInfo.cookies)
+        } catch {
+            let errorDescription = (error as NSError).safeForLoggingDescription
+            WireLogger.authentication.critical("Failed to store cookies: \(errorDescription)", attributes: .safePublic)
+        }
+        authenticationStatus.didReceiveAuthenticationCookies = true
         delegate?.session(
             session: self,
             createdAccount: account,
@@ -173,12 +183,19 @@ extension UnauthenticatedSession: UserInfoParser {
 
     public func upgradeToAuthenticatedSession(
         with userInfo: UserInfo,
-        newEnvironment: NewEnvironment
+        newEnvironment: NewEnvironment,
+        multiIngressIdentityProviderID: UUID?
     ) {
         let account = Account(userName: "", userIdentifier: userInfo.identifier)
+        account.lastSSOIdentityProviderID = multiIngressIdentityProviderID
         let cookieStorage = transportSession.environment.cookieStorage(for: account)
-        cookieStorage.authenticationCookieData = userInfo.cookieData
-        authenticationStatus.authenticationCookieData = userInfo.cookieData
+        do {
+            try cookieStorage.storeCookies(userInfo.cookies)
+        } catch {
+            let errorDescription = (error as NSError).safeForLoggingDescription
+            WireLogger.authentication.critical("Failed to store cookies: \(errorDescription)", attributes: .safePublic)
+        }
+        authenticationStatus.didReceiveAuthenticationCookies = true
         delegate?.session(
             session: self,
             createdAccount: account,

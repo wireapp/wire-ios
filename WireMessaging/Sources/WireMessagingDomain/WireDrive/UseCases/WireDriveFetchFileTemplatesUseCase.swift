@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-package import Foundation
+import Foundation
 
 /// Fetches templates useable for document creation (.docx, .pptx, .xlsx. etc)
 package struct WireDriveFetchFileTemplatesUseCase: WireDriveFetchFileTemplatesUseCaseProtocol {
@@ -30,7 +30,28 @@ package struct WireDriveFetchFileTemplatesUseCase: WireDriveFetchFileTemplatesUs
     }
 
     package func invoke() async throws -> [WireDriveFileTemplate] {
-        try await repository.getTemplates()
+        // TODO: [WPB-22926] Replace hard coded values with server values when GET/ templates endpoint ready.
+        // Do `try await repository.getTemplates()`
+        [
+            .init(
+                kind: .document,
+                editable: true,
+                label: "Microsoft Word",
+                id: "01-Microsoft Word.docx"
+            ),
+            .init(
+                kind: .spreadsheet,
+                editable: true,
+                label: "Microsoft Excel",
+                id: "02-Microsoft Excel.xlsx"
+            ),
+            .init(
+                kind: .presentation,
+                editable: true,
+                label: "Microsoft PowerPoint",
+                id: "03-Microsoft PowerPoint.pptx"
+            )
+        ]
     }
 
 }

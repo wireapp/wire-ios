@@ -89,7 +89,8 @@ extension WireNetwork.MLSMigrationFeatureConfig {
     func toDomainModel() -> Feature.MLSMigration.Config {
         .init(
             startTime: startTime,
-            finaliseRegardlessAfter: finaliseRegardlessAfter
+            finaliseRegardlessAfter: finaliseRegardlessAfter,
+            allowManualMigration: allowManualMigration
         )
     }
 
@@ -137,6 +138,17 @@ extension WireNetwork.CellsInternalFeatureConfig {
     func toDomainModel() -> Feature.CellsInternal.Config {
         Feature.CellsInternal.Config(
             backend: .init(url: backendURL)
+        )
+    }
+}
+
+extension WireNetwork.PreventAdminlessGroupsFeatureConfig {
+    func toDomainModel() -> Feature.PreventAdminlessGroups.Config {
+        .init(
+            promotionStrategy: Feature.PreventAdminlessGroups
+                .PromotionStrategy(rawValue: promotionStrategy) ?? .alphabetical,
+            deletionTimeout: deletionTimeout,
+            reminderTimeouts: reminderTimeouts
         )
     }
 }

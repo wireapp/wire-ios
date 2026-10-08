@@ -19,11 +19,13 @@
 import WireFoundation
 import XCTest
 
+/// [core-messenger]
 final class TeamManageTests: WireUITestCase {
 
+    /// [critical]
     @MainActor
     func testMigratePersonalUserToTeam_TC_9452() async throws {
-        let user = try await userHelper.createPersonalUser()
+        let user = try await UserHelper.default.createPersonalUser()
 
         let conversationPage = try app.loginUser(email: user.email, password: user.password)
             .acceptPopup()
@@ -41,19 +43,20 @@ final class TeamManageTests: WireUITestCase {
         XCTAssertTrue(userProfilePage.manageTeamButton.exists, "Manage Team button is not visible")
     }
 
+    /// [critical]
     @MainActor
     func testPersonalUserInvitedToTeam_TC_9453() async throws {
-        let teamOwner = try await userHelper.createPersonalUser()
-        let teamID = try await userHelper.upgradePersonalToTeam(
+        let teamOwner = try await UserHelper.default.createPersonalUser()
+        let teamID = try await UserHelper.default.upgradePersonalToTeam(
             teamName: teamOwner.teamName
         )
 
-        let ownerAccessToken = try await userHelper.fetchAccessToken(
+        let ownerAccessToken = try await UserHelper.default.fetchAccessToken(
             email: teamOwner.email,
             password: teamOwner.password
         )
 
-        let (_, memberUser) = try await userHelper.registerUsersAsTeamMember(
+        let (_, memberUser) = try await UserHelper.default.registerUsersAsTeamMember(
             ownerAccessToken: ownerAccessToken.token,
             teamID: teamID
         )
@@ -73,15 +76,16 @@ final class TeamManageTests: WireUITestCase {
             .enterPassword(memberUser.password)
     }
 
+    /// [critical]
     @MainActor
     func testTeamOwnerGroupCreatedAndSendMessage_TC_9454() async throws {
 
         let groupName = UserGenerator.generateRandomConversationName()
         let messageFromOwner = UserGenerator.generateRandomMessage()
 
-        let (_, teamOwner) = try await userHelper.registerUserAsTeamOwner()
+        let (_, teamOwner) = try await UserHelper.default.registerUserAsTeamOwner()
 
-        let teamMemberNames = try await userHelper.registerTeamWith2Members(teamOwner: teamOwner)
+        let teamMemberNames = try await UserHelper.default.registerTeamWith2Members(teamOwner: teamOwner)
 
         let activeConversationPage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
             .acceptPopup()
@@ -102,12 +106,13 @@ final class TeamManageTests: WireUITestCase {
         )
     }
 
+    /// [critical]
     @MainActor
     func testGroupAdminRemoveAndAddParticipantFromGroup_TC_9455() async throws {
 
         let groupName = UserGenerator.generateRandomConversationName()
-        let (_, teamOwner) = try await userHelper.registerUserAsTeamOwner()
-        let ownerAccessToken = try await userHelper.fetchAccessToken(
+        let (_, teamOwner) = try await UserHelper.default.registerUserAsTeamOwner()
+        let ownerAccessToken = try await UserHelper.default.fetchAccessToken(
             email: teamOwner.email,
             password: teamOwner.password
         )
@@ -118,7 +123,7 @@ final class TeamManageTests: WireUITestCase {
         var teamMembers: [UserInfo] = []
 
         for _ in 0 ..< countOfMembers {
-            let (qualifiedId, teamMember) = try await userHelper.registerUsersAsTeamMember(
+            let (qualifiedId, teamMember) = try await UserHelper.default.registerUsersAsTeamMember(
                 ownerAccessToken: ownerAccessToken.token,
                 teamID: teamID
             )
@@ -126,7 +131,7 @@ final class TeamManageTests: WireUITestCase {
             teamMembers.append(teamMember)
         }
 
-        try await userHelper.createGroupConversations(
+        try await UserHelper.default.createGroupConversations(
             qualifiedIds: qualifiedIds,
             owner: teamOwner,
             groupName: groupName
@@ -160,37 +165,92 @@ final class TeamManageTests: WireUITestCase {
         )
     }
 
-    /// [WPB-3772] Bug: Opening an archived conversation unarchives it
     @MainActor
-    func testArchivedConversationUnarchivesWhenOpened_TC_8872() async throws {
+    func test_TeamMemberRemovedFromTeam_SeesSessionExpiredAlert_TC_12129() async throws {
+
+        let (_, teamOwner) = try await UserHelper.default.registerUserAsTeamOwner()
+        let ownerAccessToken = try await UserHelper.default.fetchAccessToken(
+            email: teamOwner.email,
+            password: teamOwner.password
+        )
+        let teamID = try XCTUnwrap(teamOwner.teamID)
+
+        let (memberQualifiedID, teamMember) = try await UserHelper.default.registerUsersAsTeamMember(
+            ownerAccessToken: ownerAccessToken.token,
+            teamID: teamID
+        )
+
+        let firstTimePage = try app.loginUser(email: teamMember.email, password: teamMember.password)
+        _ = try firstTimePage
+            .acceptPopupOnTeamMemberSetup()
+            .setUsername(teamMember.username)
+
+        try await UserHelper.default.removeTeamMember(
+            ownerAccessToken: ownerAccessToken.token,
+            ownerPassword: teamOwner.password,
+            teamID: teamID,
+            userID: memberQualifiedID.id
+        )
+
+        _ = try SessionExpiredPage().confirm()
+    }
+
+    @MainActor
+    func testArchiveOpenAndUnarchiveConversation_TC_8872_8873() async throws {
         let groupName = UserGenerator.generateRandomConversationName()
 
-        let (_, teamOwner) = try await userHelper.registerUserAsTeamOwner()
+        let (teamOwner, _, _, _) = try await UserHelper.default.registerTeam(
+            withMemberCount: 1,
+            conversation: .group(groupName)
+        )
 
-        let teamNames = try await userHelper.registerTeamWith2Members(teamOwner: teamOwner)
-
+        // Archive the group via conversation details.
         let archivedConversationPage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
             .acceptPopup()
-            .tapPlusButtonToCreateGroup()
-            .tapNewGroupButton()
-            .enterGroupName(groupName)
-            .tapMemberCells(withLabelPrefixes: teamNames)
-            .doneSelectingMembers()
+            .openConversation()
             .openConversationDetails()
             .moreOptionsConversationDetails()
             .archiveOptionsConversationDetails()
             .openArchived()
+
+        XCTAssertTrue(
+            archivedConversationPage.conversationExists(withName: groupName),
+            "Group \(groupName) not showing in archived"
+        )
+
+        let stillArchivedPage = try archivedConversationPage
             .openConversation()
             .goBackToConversationPage()
             .openArchived()
 
-        XCTAssertTrue(archivedConversationPage.conversationExists(withName: groupName))
+        // [WPB-3772]: BUG: just opening an archived conversation must not unarchive it.
+        XCTAssertTrue(
+            stillArchivedPage.conversationExists(withName: groupName),
+            "Group \(groupName) gets unarchived after only opening it"
+        )
+
+        let conversationsPage = try stillArchivedPage
+            .openConversation()
+            .openConversationDetails()
+            .moreOptionsConversationDetails()
+            .unarchiveOptionsConversationDetails()
+
+        XCTAssertTrue(
+            conversationsPage.conversationCell(named: groupName).waitForExistence(timeout: 5),
+            "Group \(groupName) should be back in the recent conversation list after unarchiving"
+        )
+
+        XCTAssertFalse(
+            try conversationsPage.openArchived().conversationExists(withName: groupName),
+            "Group \(groupName) should no longer be in the archived list after unarchiving"
+        )
     }
 
+    /// [critical]
     @MainActor
     func testMentionUserInGroup_TC_8865() async throws {
 
-        let (teamOwner, teamMembers, _, _) = try await userHelper
+        let (teamOwner, teamMembers, _, _) = try await UserHelper.default
             .registerTeam(
                 withMemberCount: 4,
                 conversation: .group(UserGenerator.generateRandomConversationName())
@@ -224,5 +284,49 @@ final class TeamManageTests: WireUITestCase {
             fetchMessages.contains(where: { $0.contains("@") && $0.contains(teamMembers[1].name) }),
             "Expected mention '@\(teamMembers[1].name)' not found in sent messages: \(fetchMessages)"
         )
+    }
+
+    @MainActor
+    func testUserAbleToOpenUserProfileOnTappingMention_TC_11826() async throws {
+
+        // GIVEN
+        let (teamOwner, teamMembers, _, _) = try await UserHelper.default
+            .registerTeam(
+                withMemberCount: 2,
+                conversation: .group(UserGenerator.generateRandomConversationName())
+            )
+        let mentionedUser = teamMembers[0]
+        let receivingUser = teamMembers[1]
+
+        _ = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
+            .acceptPopup()
+            .openUserProfilePage()
+            .tapAddAccountOrTeamButton()
+
+        // WHEN owner sends a message mentioning mentionedUser, then receivingUser opens the conversation
+        let conversationPage = try app.loginUser(email: receivingUser.email, password: receivingUser.password)
+            .acceptPopup()
+            .openUserProfilePage()
+            .switchUserAccountForUser(withName: teamOwner.name)
+            .openConversation()
+            .mentionUserAndSendMessage(nameOfUser: mentionedUser.name)
+            .goBackToConversationPage()
+            .openUserProfilePage()
+            .switchUserAccountForUser(withName: receivingUser.name)
+
+        XCTAssertTrue(
+            conversationPage.unreadMessagesCount.waitForExistence(timeout: 5),
+            "Unread messages count element did not appear for \(receivingUser.name)"
+        )
+
+        // ...and taps the mention in the received message
+        let userDetailsPage = try conversationPage
+            .openConversation()
+            .tapMention(ofUser: mentionedUser.name)
+
+        // THEN the correct user's profile opens
+        userDetailsPage
+            .verifyName(mentionedUser.name)
+            .verifyUsername(mentionedUser.username)
     }
 }

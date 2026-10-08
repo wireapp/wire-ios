@@ -19,6 +19,7 @@
 import LocalAuthentication
 import UIKit
 import WireCommonComponents
+import WireLocators
 import WireSettingsUI
 import WireSyncEngine
 
@@ -263,12 +264,31 @@ extension SettingsCellDescriptorFactory {
         settingsCoordinator: AnySettingsCoordinator,
         userSession: UserSession
     ) -> SettingsCellDescriptorType {
+        let accessibilityValue: AccessibilityValueGeneratorType = { _ in
+            let value = property.value().value() as? Int
+            let option = value.flatMap { SettingsColorScheme(rawValue: $0) } ?? .defaultPreference
+            #if DEBUG
+                return "\(option.keyValueString)|\(ColorScheme.default.variant.keyValueString)"
+            #else
+                return option.displayString
+            #endif
+        }
         let cells = SettingsColorScheme.allCases.map { option -> SettingsPropertySelectValueCellDescriptor in
+            let identifier = switch option {
+            case .light:
+                Locators.ThemeSettingsPage.lightOption.rawValue
+            case .dark:
+                Locators.ThemeSettingsPage.darkOption.rawValue
+            case .system:
+                Locators.ThemeSettingsPage.systemOption.rawValue
+            }
 
             return SettingsPropertySelectValueCellDescriptor(
                 settingsProperty: property,
                 value: SettingsPropertyValue(option.rawValue),
-                title: option.displayString
+                title: option.displayString,
+                identifier: identifier,
+                accessibilityValueGenerator: accessibilityValue
             )
         }
 
@@ -282,8 +302,9 @@ extension SettingsCellDescriptorFactory {
         return SettingsGroupCellDescriptor(
             items: [section],
             title: property.propertyName.settingsPropertyLabelText,
-            identifier: nil,
+            identifier: Locators.OptionsOnSettingsPage.themeCell.rawValue,
             previewGenerator: preview,
+            accessibilityValueGenerator: accessibilityValue,
             accessibilityBackButtonText: L10n.Accessibility.OptionsSettings.BackButton.description,
             settingsTopLevelMenuItem: nil,
             settingsCoordinator: settingsCoordinator,
@@ -400,3 +421,16 @@ extension SettingsCellDescriptorFactory {
         !SecurityFlags.forceEncryptionAtRest.isEnabled && settingsPropertyFactory.isAppLockAvailable
     }
 }
+
+#if DEBUG
+    private extension ColorSchemeVariant {
+        var keyValueString: String {
+            switch self {
+            case .dark:
+                "dark"
+            case .light:
+                "light"
+            }
+        }
+    }
+#endif

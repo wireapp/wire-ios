@@ -16,43 +16,110 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-import WireCallingDomain
-import WireCallingUI
+public import Foundation
 public import UIKit
+public import WireCallingDomain
+
 import SwiftUI
 import WireCallingData
-public import WireReusableUIComponents
+import WireCallingUI
+import WireFoundation
 
 public struct WireMeetingsFactory {
-    private let passwordValidator: any PasswordValidator
-    private let isContextMenuAllowed: Bool
+
+    private let selfUserID: UUID
 
     @MainActor
-    public init(passwordValidator: any PasswordValidator, isContextMenuAllowed: Bool) {
-        self.passwordValidator = passwordValidator
-        self.isContextMenuAllowed = isContextMenuAllowed
+    public init(selfUserID: UUID) {
+        self.selfUserID = selfUserID
     }
-}
 
-public extension WireMeetingsFactory {
     @MainActor
-    func makeMeetingsView() -> UIViewController {
-        let meetingsViewModel = AllMeetingsViewModel(
-            repository: MeetingsRepository.demo(),
-            currentDateProvider: .system,
-            pastMeetingsUseCase: FetchPastMeetingsUseCase(
-                repository: MeetingsRepository.demo(),
-                currentDateProvider: .system
-            ),
-            upcomingMeetingsUseCase: FetchUpcomingMeetingsUseCase(
-                repository: MeetingsRepository.demo(),
-                currentDateProvider: .system
-            ),
-            passwordValidator: passwordValidator,
-            isContextMenuAllowed: isContextMenuAllowed
+    public func makeMeetingsView(
+        meetingRepository: any MeetingRepositoryProtocol,
+        memberRepository: any MeetingMemberRepositoryProtocol,
+        conversationRepository: any MeetingConversationRepositoryProtocol,
+        callRepository: any MeetingCallRepositoryProtocol,
+        accentColorState: WireMeetingsAccentColorState
+    ) -> UIViewController {
+        let currentDateProvider = makeCurrentDateProvider()
+
+        let createMeetingUseCase = CreateMeetingUseCase(
+            meetingRepository: meetingRepository,
+            conversationRepository: conversationRepository
         )
-
-        return UIHostingController(rootView: AllMeetingsView(viewModel: meetingsViewModel))
+        let updateMeetingUseCase = UpdateMeetingUseCase(
+            meetingRepository: meetingRepository,
+            conversationRepository: conversationRepository
+        )
+        let fetchUpcomingMeetingsUseCase = makeFetchUpcomingMeetingsUseCase(
+            meetingRepository: meetingRepository,
+            currentDateProvider: currentDateProvider
+        )
+        let observeMeetingChangesUseCase = ObserveMeetingChangesUseCase(repository: meetingRepository)
+        let deleteMeetingUseCase = DeleteMeetingUseCase(
+            meetingRepository: meetingRepository,
+            conversationRepository: conversationRepository,
+            cancelReminders: { accountID, meetingID in
+                await MeetingReminderScheduler().cancelAll(accountID: accountID, meetingID: meetingID)
+            },
+            selfUserID: selfUserID
+        )
+        let observeAttendedMeetingsUseCase = ObserveAttendedMeetingsUseCase(repository: callRepository)
+        let joinMeetingCallUseCase = JoinMeetingCallUseCase(repository: callRepository)
+        let searchMembersUseCase = SearchMembersUseCase(repository: memberRepository)
+        let meetingsViewModel = AllMeetingsViewModel(
+            currentDateProvider: currentDateProvider,
+            upcomingMeetingsUseCase: fetchUpcomingMeetingsUseCase,
+            observeMeetingChangesUseCase: observeMeetingChangesUseCase,
+            deleteMeetingUseCase: deleteMeetingUseCase,
+            selfUserID: selfUserID,
+            observeAttendedMeetingsUseCase: observeAttendedMeetingsUseCase,
+            joinMeetingCallUseCase: joinMeetingCallUseCase,
+            makeFormViewModel: { mode, onSuccess in
+                MeetingFormViewModel(
+                    mode: mode,
+                    searchMembersUseCase: searchMembersUseCase,
+                    createMeetingUseCase: createMeetingUseCase,
+                    updateMeetingUseCase: updateMeetingUseCase,
+                    currentDateProvider: currentDateProvider,
+                    onSuccess: onSuccess
+                )
+            }
+        )
+        return UIHostingController(
+            rootView: AnyView(
+                WireMeetingsRootView(
+                    viewModel: meetingsViewModel,
+                    accentColorState: accentColorState
+                )
+            )
+        )
     }
+
+    private func makeCurrentDateProvider() -> any CurrentDateProviding {
+        #if DEBUG
+            if let date = UITestConfig.environment?.meetingsDate {
+                return MeetingsUITestDateProvider(now: date, clockID: UITestConfig.environment?.meetingsClockID)
+            }
+        #endif
+        return .system
+    }
+
+    private func makeFetchUpcomingMeetingsUseCase(
+        meetingRepository: any MeetingRepositoryProtocol,
+        currentDateProvider: any CurrentDateProviding
+    ) -> any FetchUpcomingMeetingsUseCaseProtocol {
+        let fetchUseCase = FetchUpcomingMeetingsUseCase(
+            repository: meetingRepository,
+            currentDateProvider: currentDateProvider
+        )
+        #if DEBUG
+            if let failureID = UITestConfig.environment?.meetingsFailureID {
+                return MeetingsUITestFetchUseCase(wrapping: fetchUseCase, failureID: failureID)
+            }
+        #endif
+        return fetchUseCase
+    }
+
 }

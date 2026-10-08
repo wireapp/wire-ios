@@ -153,6 +153,11 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
 
     func performPendingJoins() async throws
 
+    /// Recovers one bounded batch of pending conversations.
+    ///
+    /// - Returns: `true` when another pending batch remains after this batch completed successfully.
+    func recoverPendingConversationBatchIfNeeded() async -> Bool
+
     /// Wipes the group from core crypto's storage
     ///
     /// - Parameter groupID: The ID of the group to wipe

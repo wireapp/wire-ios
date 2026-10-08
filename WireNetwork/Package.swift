@@ -4,7 +4,7 @@ import PackageDescription
 
 let package = Package(
     name: "WireNetwork",
-    platforms: [.iOS("17.0"), .macOS(.v12)],
+    platforms: [.iOS(.v17), .macOS(.v12)],
     products: [
         .library(name: "WireNetwork", targets: ["WireNetwork"]),
         .library(name: "WireNetworkSupport", targets: ["WireNetworkSupport"])
@@ -50,9 +50,11 @@ let package = Package(
                 .process("APIs/Rest/ConnectionsAPI/Resources"),
                 .process("APIs/Rest/ConversationsAPI/Resources"),
                 .process("APIs/Rest/FeatureConfigsAPI/Resources"),
+                .process("APIs/Rest/MeetingsAPI/Resources"),
                 .process("APIs/Rest/MLSAPI/Resources"),
                 .process("APIs/Rest/Search/Resources"),
                 .process("APIs/Rest/SelfUserAPI/Resources"),
+                .process("APIs/Rest/SystemSettingsAPI/Resources"),
                 .process("APIs/Rest/TeamsAPI/Resources"),
                 .process("APIs/Rest/UpdateEventsAPI/Resources"),
                 .process("APIs/Rest/UserClientsAPI/Resources"),

@@ -36,14 +36,9 @@ extension TagsEditView {
         @Published var isPerformingSave = false
         @Published var isSaveErrorMessagePresented = false
 
-        let dismiss = PassthroughSubject<Void, Never>()
+        private let validator = TextValidator()
 
-        enum ValidationState {
-            case valid
-            case empty
-            case tooLong
-            case invalidCharacters
-        }
+        let dismiss = PassthroughSubject<Void, Never>()
 
         init(fileItem: FilesViewItem, useCases: UseCases, postSaveAction: @escaping () async -> Void) {
             self.fileItem = fileItem
@@ -76,35 +71,12 @@ extension TagsEditView {
             }
         }
 
-        var validationState: ValidationState {
-            let isEmpty = enteredTag.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-            let tooLong = enteredTag.count > 30
-            let containsInvalidCharacters = enteredTag.contains { invalidCharacters.contains($0) }
-
-            return if isEmpty {
-                .empty
-            } else if tooLong {
-                .tooLong
-            } else if containsInvalidCharacters {
-                .invalidCharacters
-            } else {
-                .valid
-            }
+        var validationResult: TextValidator.ValidationResult {
+            validator.validate(enteredTag, for: .fileTag)
         }
 
-        func validationErrorMessage(for validationState: ValidationState) -> String? {
-            switch validationState {
-            case .tooLong:
-                return L10n.Localizable.Conversation.WireCells.Tags.Error.nameTooLong
-            case .invalidCharacters:
-                let message = L10n.Localizable.Conversation.WireCells.Tags.Error.specialCharacters
-                let nonBreakingSpace = "\u{A0}"
-                let invalidCharactersFormatted = invalidCharacters.map { String($0) }
-                    .joined(separator: nonBreakingSpace)
-                return message.replacing("{0}", with: invalidCharactersFormatted)
-            default:
-                return nil
-            }
+        var validationErrorMessage: String? {
+            validationResult.firstLocalizedViolationMessage(for: .fileTag)
         }
 
         var hasChanges: Bool {

@@ -3,6 +3,7 @@
     "name": "mlsMigration",
     "data": {
         "config": {
+            "allowManualMigration": true,
             "startTime": "2024-06-04T15:03:07Z",
             "finaliseRegardlessAfter": "2025-06-04T15:03:07Z"
         },

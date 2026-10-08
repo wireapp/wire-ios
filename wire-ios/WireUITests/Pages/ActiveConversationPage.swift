@@ -38,7 +38,10 @@ class ActiveConversationPage: PageModel {
     }
 
     var conversationBackButton: XCUIElement {
-        app.buttons[Locators.ActiveConversationPage.conversationBackButton.rawValue]
+        // The conversation now uses the system back button (see `configureBackButton(hasUnread:)`),
+        // whose accessibility identifier is not exposed to XCUITest. Match it positionally, the same
+        // way `OptionsOnSettingsPage` taps the Settings back button.
+        app.navigationBars.buttons.element(boundBy: 0)
     }
 
     var senderNameLabel: XCUIElement {
@@ -46,7 +49,7 @@ class ActiveConversationPage: PageModel {
     }
 
     var messageLabels: XCUIElementQuery {
-        app.descendants(matching: .any).matching(identifier: Locators.ActiveConversationPage.message.rawValue)
+        app.descendants(matching: .textView).matching(identifier: Locators.ActiveConversationPage.message.rawValue)
     }
 
     var mentionButton: XCUIElement {
@@ -61,6 +64,10 @@ class ActiveConversationPage: PageModel {
         app.buttons[Locators.ActiveConversationPage.conversationTitleButton.rawValue].firstMatch
     }
 
+    var imageCell: XCUIElement {
+        app.descendants(matching: .any)[Locators.ActiveConversationPage.imageCell.rawValue].firstMatch
+    }
+
     var conversationDetailsButton: XCUIElement {
         app.buttons[Locators.ActiveConversationPage.conversationDetailsButton.rawValue]
     }
@@ -69,8 +76,36 @@ class ActiveConversationPage: PageModel {
         app.buttons[Locators.ActiveConversationPage.ephemeralTimeSelectionButton.rawValue]
     }
 
-    var imageCell: XCUIElement {
-        app.otherElements[Locators.ActiveConversationPage.imageCell.rawValue]
+    var selfDeletingMessageTimerPicker: XCUIElement {
+        app.pickerWheels.firstMatch
+    }
+
+    var videoCell: XCUIElement {
+        app.descendants(matching: .any)[Locators.ActiveConversationPage.videoCell.rawValue].firstMatch
+    }
+
+    var videoPlayButton: XCUIElement {
+        app.descendants(matching: .any)[Locators.ActiveConversationPage.videoPlayButton.rawValue].firstMatch
+    }
+
+    var imagePreview: XCUIElement {
+        app.descendants(matching: .any)[Locators.ActiveConversationPage.imagePreview.rawValue].firstMatch
+    }
+
+    var videoPreview: XCUIElement {
+        app.descendants(matching: .any)[Locators.ActiveConversationPage.videoPreview.rawValue].firstMatch
+    }
+
+    var replyMenuButton: XCUIElement {
+        app.buttons[Locators.ActiveConversationPage.replyOptionOnMessage.rawValue].firstMatch
+    }
+
+    var replyPreviewView: XCUIElement {
+        app.otherElements[Locators.ActiveConversationPage.replyPreviewView.rawValue].firstMatch
+    }
+
+    var cancelReplyButton: XCUIElement {
+        app.buttons[Locators.ActiveConversationPage.cancelReplyButton.rawValue]
     }
 
     var userRemovedSystemMessage: XCUIElement {
@@ -81,12 +116,33 @@ class ActiveConversationPage: PageModel {
         app.staticTexts.matching(identifier: Locators.ActiveConversationPage.sharedFileLabel.rawValue)
     }
 
+    var fileDetailLabels: XCUIElementQuery {
+        app.staticTexts.matching(identifier: Locators.ActiveConversationPage.sharedFileDetailsLabel.rawValue)
+    }
+
     var fileTypeIcons: XCUIElementQuery {
         app.images.matching(identifier: Locators.ActiveConversationPage.fileTypeIcon.rawValue)
     }
 
+    func conversationTitle(named name: String) -> XCUIElement {
+        app.staticTexts.matching(
+            NSPredicate(
+                format: "identifier == %@ AND label == %@",
+                Locators.ActiveConversationPage.conversationTitleLabel.rawValue,
+                name
+            )
+        ).firstMatch
+    }
+
+    var ephemeralIndicatorButton: XCUIElement {
+        app.buttons["ephemeralTimeIndicatorButton"].firstMatch
+    }
+
     var labelSharedDriveIsOn: XCUIElement {
-        app.staticTexts[Locators.ActiveConversationPage.labelSharedDriveON.rawValue]
+        app.links.containing(NSPredicate(
+            format: "value CONTAINS[c] %@",
+            Locators.ActiveConversationPage.labelSharedDriveON.rawValue
+        )).firstMatch
     }
 
     var sharedDriveButton: XCUIElement {
@@ -113,12 +169,213 @@ class ActiveConversationPage: PageModel {
         app.images[Locators.ActiveConversationPage.attachmentImagePreview.rawValue]
     }
 
+    var attachmentVideoPreview: XCUIElement {
+        app.images[Locators.ActiveConversationPage.attachmentVideoPreview.rawValue]
+    }
+
     var classifiedBanner: XCUIElement {
         app.otherElements[Locators.ActiveConversationPage.classifiedBanner.rawValue]
     }
 
+    var guestsArePresentBanner: XCUIElement {
+        app.staticTexts[Locators.ActiveConversationPage.guestsArePresent.rawValue]
+    }
+
+    var conversationBackground: XCUIElement {
+        app.descendants(matching: .any)[Locators.ActiveConversationPage.conversationBackground.rawValue].firstMatch
+    }
+
     var userLeftSystemMessage: XCUIElement {
         app.descendants(matching: .any)[Locators.ConversationsPage.useLeftSystemMessage.rawValue]
+    }
+
+    var photoButton: XCUIElement {
+        app.buttons[Locators.ActiveConversationPage.photoButton.rawValue]
+    }
+
+    var cameraRollButton: XCUIElement {
+        app.buttons[Locators.ActiveConversationPage.cameraRollButton.rawValue]
+    }
+
+    var uploadFileButton: XCUIElement {
+        app.buttons[Locators.ActiveConversationPage.uploadFileButton.rawValue].firstMatch
+    }
+
+    var addButton: XCUIElement {
+        app.buttons[Locators.ActiveConversationPage.add.rawValue].firstMatch
+    }
+
+    var locationButton: XCUIElement {
+        app.buttons[Locators.ActiveConversationPage.locationButton.rawValue].firstMatch
+    }
+
+    var sendLocationButton: XCUIElement {
+        app.buttons[Locators.ActiveConversationPage.sendLocation.rawValue].firstMatch
+    }
+
+    var selectedAddress: XCUIElement {
+        app.staticTexts[Locators.ActiveConversationPage.selectedAddress.rawValue].firstMatch
+    }
+
+    var locationCell: XCUIElement {
+        app.descendants(matching: .any)[Locators.ActiveConversationPage.locationCell.rawValue].firstMatch
+    }
+
+    var browseFileOption: XCUIElement {
+        app.buttons[Locators.ActiveConversationPage.browse.rawValue].firstMatch
+    }
+
+    var openFileButton: XCUIElement {
+        app.buttons[Locators.ActiveConversationPage.open.rawValue].firstMatch
+    }
+
+    var okToSend: XCUIElement {
+        app.buttons[Locators.ActiveConversationPage.ok.rawValue].firstMatch
+    }
+
+    var audioButton: XCUIElement {
+        app.buttons[Locators.ActiveConversationPage.audioButton.rawValue].firstMatch
+    }
+
+    var startRecording: XCUIElement {
+        app.buttons[Locators.ActiveConversationPage.startRecording.rawValue].firstMatch
+    }
+
+    var stopRecording: XCUIElement {
+        app.buttons[Locators.ActiveConversationPage.stopRecording.rawValue].firstMatch
+    }
+
+    var heliumButton: XCUIElement {
+        app.descendants(matching: .any)[Locators.ActiveConversationPage.helium.rawValue].firstMatch
+    }
+
+    var sendAudioButton: XCUIElement {
+        app.buttons[Locators.ActiveConversationPage.sendAudio.rawValue].firstMatch
+    }
+
+    var playAudioFile: XCUIElement {
+        app.buttons[Locators.ActiveConversationPage.playAudioFile.rawValue].firstMatch
+    }
+
+    var recordingTimeLabel: XCUIElement {
+        app.staticTexts[Locators.ActiveConversationPage.recordingTime.rawValue]
+    }
+
+    var showOtherRowButton: XCUIElement {
+        app.buttons[Locators.ActiveConversationPage.showOtherRowButton.rawValue]
+    }
+
+    var pingButton: XCUIElement {
+        app.buttons[Locators.ActiveConversationPage.pingButton.rawValue]
+    }
+
+    var openOngoingCallButton: XCUIElement {
+        app.buttons[Locators.ActiveConversationPage.openOngoingCallButton.rawValue]
+    }
+
+    var linkPreviewCell: XCUIElement {
+        app.cells[Locators.ActiveConversationPage.linkPreviewCell.rawValue].firstMatch
+    }
+
+    var latestMessageCell: XCUIElement {
+        conversationBackground.cells.element(boundBy: 0)
+    }
+
+    var ephemeralCountdownLabel: XCUIElement {
+        app.staticTexts[Locators.ActiveConversationPage.ephemeralCountdown.rawValue].firstMatch
+    }
+
+    var selfDeletedMessage: XCUIElement {
+        app.textViews[Locators.ActiveConversationPage.selfDeletedMessage.rawValue].firstMatch
+    }
+
+    var quotedOriginalSender: XCUIElement {
+        app.descendants(matching: .any)[Locators.ActiveConversationPage.originalSender.rawValue].firstMatch
+    }
+
+    @discardableResult
+    func verifyEphemeralIndicatorShows(_ timerValue: String) -> ActiveConversationPage {
+        let indicatorButtonWithTimerValue = app.buttons.matching(
+            NSPredicate(
+                format: "identifier == %@ AND value == %@",
+                "ephemeralTimeIndicatorButton",
+                timerValue
+            )
+        ).firstMatch
+
+        XCTAssertTrue(
+            indicatorButtonWithTimerValue.waitForExistence(timeout: 5),
+            "Expected self-deleting timer indicator to show '\(timerValue)'"
+        )
+        return self
+    }
+
+    @discardableResult
+    func verifyInputFieldShowsSelfDeletingPlaceholder() -> ActiveConversationPage {
+        let inputFieldWithSelfDeletingPlaceholder = app.textViews.matching(
+            NSPredicate(
+                format: "identifier == %@ AND value == %@",
+                Locators.ActiveConversationPage.inputField.rawValue,
+                "Self-deleting message"
+            )
+        ).firstMatch
+
+        XCTAssertTrue(
+            inputFieldWithSelfDeletingPlaceholder.waitForExistence(timeout: 5),
+            "Expected input field placeholder to show 'Self-deleting message'"
+        )
+        return self
+    }
+
+    func receivedFileMessage(named fileName: String) -> XCUIElement {
+        let predicate = NSPredicate(
+            format: "label CONTAINS[c] %@",
+            "File name: \(fileName.uppercased())"
+        )
+        return app.buttons.matching(predicate).firstMatch
+    }
+
+    func fileAttachment(name: String, type: String) -> XCUIElement {
+        app.buttons.containing(
+            NSPredicate(format: "label CONTAINS[c] %@ AND label CONTAINS[c] %@", name, type)
+        ).firstMatch
+    }
+
+    func fileLabel(containing name: String) -> XCUIElement {
+        fileLabels.matching(NSPredicate(format: "label CONTAINS[c] %@", name)).firstMatch
+    }
+
+    func fileDetails(containing text: String) -> XCUIElement {
+        fileDetailLabels.matching(NSPredicate(format: "label CONTAINS[c] %@", text)).firstMatch
+    }
+
+    func fileCell(named fileName: String) -> XCUIElement {
+        let displayedFileName = (fileName as NSString).deletingPathExtension
+        let fileExtension = (fileName as NSString).pathExtension
+
+        return app.cells["\(displayedFileName), \(fileExtension)"].firstMatch
+    }
+
+    @discardableResult
+    func selectSelfDeletingMessageTimer(_ duration: String) -> ActiveConversationPage {
+        selfDeletingMessageButton.waitAndTap()
+        XCTAssertTrue(
+            selfDeletingMessageTimerPicker.waitForExistence(timeout: 3),
+            "Self-deleting message timer picker did not appear"
+        )
+        selfDeletingMessageTimerPicker.adjust(toPickerWheelValue: duration)
+        selfDeletingMessageButton.waitAndTap()
+        return self
+    }
+
+    /// Photos grid sorts newest-first; 3 seeded videos always occupy indices 0-2,
+    /// so the first real image sits at index 3.
+    func imageToChoose(at index: Int = 3) -> XCUIElement {
+        app.images.element(boundBy: index).firstMatch
+    }
+
+    func videoToChoose(at index: Int = 0) -> XCUIElement {
+        app.images.element(boundBy: index).firstMatch
     }
 
     func fetchMessages() -> [String] {
@@ -143,9 +400,99 @@ class ActiveConversationPage: PageModel {
         return files
     }
 
+    func fetchFileDetails() -> [String] {
+        var files: [String] = []
+        for i in 0 ..< fileDetailLabels.count {
+            let element = fileDetailLabels.element(boundBy: i)
+            files.append(element.label)
+        }
+        return files
+    }
+
+    @discardableResult
     func sendMessage(_ message: String) throws -> ActiveConversationPage {
         try inputMessageField.tapIfKeyboardNotFocused().typeText(message)
         sendButton.tap()
+        return self
+    }
+
+    /// Locates the message bubble by its exact content, for replying to it.
+    func message(withText text: String) -> XCUIElement {
+        messageLabels.matching(NSPredicate(format: "value == %@", text)).firstMatch
+    }
+
+    /// Long-presses the given message element, taps Reply, then types and sends the reply text.
+    @discardableResult
+    func replyToMessage(_ message: XCUIElement, withText replyText: String) throws -> ActiveConversationPage {
+        XCTAssertTrue(
+            message.waitForExistence(timeout: 5),
+            "Expected message to reply to was not found, possible that not being sent via testService"
+        )
+        message.press(forDuration: 1.0)
+        XCTAssertTrue(replyMenuButton.waitAndTap(), "Reply button was not found")
+        XCTAssertTrue(replyPreviewView.waitForExistence(timeout: 3), "Reply preview did not appear in input bar")
+        try inputMessageField.tapIfKeyboardNotFocused().typeText(replyText)
+        sendButton.tap()
+        return self
+    }
+
+    func reactionButton(emoji: String) -> XCUIElement {
+        app.buttons[emoji].firstMatch
+    }
+
+    @discardableResult
+    func reactToMessage(_ message: XCUIElement, withEmoji emoji: String) -> ActiveConversationPage {
+        XCTAssertTrue(
+            message.waitForExistence(timeout: 5),
+            "Expected message to react to was not found, possible that not being sent via testService"
+        )
+        message.press(forDuration: 1.0)
+        XCTAssertTrue(reactionButton(emoji: emoji).waitAndTap(), "Reaction button '\(emoji)' was not found")
+        return self
+    }
+
+    func reactionOnMessage(emoji: String) -> XCUIElement {
+        app.descendants(matching: .any).matching(
+            identifier: Locators.ActiveConversationPage.reactionOnMessageIdentifier(emoji: emoji)
+        ).firstMatch
+    }
+
+    func quotedContent(ofType type: String) -> XCUIElement {
+        app.descendants(matching: .any)["quote.type.\(type)"].firstMatch
+    }
+
+    func quotedText(containing text: String) -> XCUIElement {
+        let predicate = NSPredicate(
+            format: "identifier == %@ AND (value CONTAINS[c] %@ OR label CONTAINS[c] %@)",
+            "quote.type.text",
+            text,
+            text
+        )
+        return app.textViews.matching(predicate).firstMatch
+    }
+
+    @discardableResult
+    func verifyReplySent(
+        replyText: String,
+        quotedContentType: String,
+        quotedSenderName: String,
+        quotedText: String? = nil,
+    ) -> ActiveConversationPage {
+        XCTAssertTrue(
+            quotedContent(ofType: quotedContentType).waitForExistence(timeout: 5),
+            "Quoted content of type '\(quotedContentType)' not found in reply",
+        )
+        if let quotedText {
+            XCTAssertTrue(
+                self.quotedText(containing: quotedText).waitForExistence(timeout: 5),
+                "Quoted message text '\(quotedText)' not found in reply",
+            )
+        }
+        XCTAssertTrue(
+            quotedOriginalSender.label.contains(quotedSenderName),
+            "Quoted message sender '\(quotedOriginalSender.label)' didn't contain expected value \(quotedSenderName)",
+        )
+        verifyMessageSent(replyText)
         return self
     }
 
@@ -156,8 +503,8 @@ class ActiveConversationPage: PageModel {
     }
 
     func openConversationDetails() throws -> ConversationDetailsPage {
-        conversationTitleButton.tap()
-        conversationDetailsButton.tap()
+        conversationTitleButton.waitAndTap()
+        conversationDetailsButton.waitAndTap()
         return try ConversationDetailsPage()
     }
 
@@ -171,10 +518,29 @@ class ActiveConversationPage: PageModel {
     }
 
     func mentionUserAndSendMessage(nameOfUser: String) throws -> ActiveConversationPage {
+        try inputMessageField.tapIfKeyboardNotFocused().typeText("Hello ")
         mentionButton.tap()
         chooseUser(nameOfUser: nameOfUser)
-        sendButton.tap()
+        sendButton.tapAndWait()
         return self
+    }
+
+    func tapMention(ofUser name: String) throws -> UserDetailsPage {
+        let mentionLabel = [
+            "@\(name)",
+            "@\(name.replacingOccurrences(of: " ", with: "\u{00A0}"))"
+        ]
+        let mentionLink = app.links
+            .matching(NSPredicate(format: "label IN %@", mentionLabel))
+            .firstMatch
+
+        XCTAssertTrue(
+            mentionLink.waitForExistence(timeout: 5),
+            "Expected mention link '\(mentionLabel[0])' should be showing"
+        )
+
+        mentionLink.tap()
+        return try UserDetailsPage()
     }
 
     @discardableResult
@@ -188,12 +554,512 @@ class ActiveConversationPage: PageModel {
 
     func waitToUploadToFinishAndSend() {
         XCTAssertTrue(attachmentImagePreview.waitForExistence(timeout: 3))
-        sendButton.waitAndTap()
+
+        XCTAssertTrue(
+            sendButton.waitAndTap(timeout: 10),
+            "Send button did not become hittable for attachment"
+        )
+
+        XCTAssertTrue(attachmentImagePreview.waitForNonExistence(timeout: 10))
+    }
+
+    @discardableResult
+    func sendAttachments() -> ActiveConversationPage {
+        XCTAssertTrue(
+            sendButton.waitAndTap(timeout: 10),
+            "Send button did not become hittable for attachment"
+        )
+        return self
     }
 
     func openSharedDrive() throws -> SharedDriveFilesPage {
         conversationTitleButton.waitAndTap()
         sharedDriveButton.tap()
         return try SharedDriveFilesPage()
+    }
+
+    func verifyCanAccessSharedDrive() {
+        conversationTitleButton.waitAndTap()
+        XCTAssertTrue(sharedDriveButton.exists)
+    }
+
+    @MainActor
+    @discardableResult
+    func verifyConversationBackgroundColor(
+        _ color: AccountSettingsPage.ProfileColor,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) async throws -> ActiveConversationPage {
+        let background = conversationBackground
+        XCTAssertTrue(
+            background.waitForExistence(timeout: 5),
+            "Conversation background element did not appear",
+            file: file,
+            line: line
+        )
+        let backgroundColor = try XCTUnwrap(
+            background.value as? String,
+            "Conversation background color value did not appear",
+            file: file,
+            line: line
+        )
+        XCTAssertNotEqual(
+            backgroundColor,
+            "default",
+            "Conversation background should not be default when accentID \(color.accentID) is selected",
+            file: file,
+            line: line
+        )
+        let selfUser = try await UserHelper.default.selfUserAPI.getSelfUser()
+        XCTAssertEqual(
+            selfUser.accentID,
+            color.accentID,
+            "Self user accent ID should match \(color.accentID)",
+            file: file,
+            line: line
+        )
+        return self
+    }
+
+    func openPhotosAndGrantPermission() throws -> ActiveConversationPage {
+        photoButton.waitAndTap()
+
+        let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
+
+        let allowButton = springboard.buttons["Allow"].firstMatch
+        if allowButton.waitForExistence(timeout: 2) {
+            allowButton.tap()
+        }
+
+        let allowFullAccessButton = springboard.buttons[
+            Locators.ActiveConversationPage.allowFullAccess.rawValue
+        ].firstMatch
+        if allowFullAccessButton.waitForExistence(timeout: 2) {
+            allowFullAccessButton.tap()
+        }
+
+        app.activate()
+        return self
+    }
+
+    func selectImageAndSend() throws -> ActiveConversationPage {
+        if !cameraRollButton.waitForExistence(timeout: 3) {
+            photoButton.waitAndTap()
+        }
+
+        XCTAssertTrue(
+            cameraRollButton.waitAndTap(),
+            "cameraRollButton did not show up"
+        )
+
+        let image = app.images.matching(NSPredicate(
+            format: "identifier == %@ AND NOT (label BEGINSWITH %@)",
+            Locators.PhotosAppPage.imageTile.rawValue,
+            "Video"
+        )).firstMatch
+        XCTAssertTrue(
+            image.waitForExistence(timeout: 10),
+            "No image found in camera roll"
+        )
+        image.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
+
+        XCTAssertTrue(
+            okToSend.waitForExistence(timeout: 3),
+            "Seems like image is not tapped"
+        )
+        okToSend.waitAndTap()
+        return self
+    }
+
+    func selectImageAndSendInDriveEnabledConversation(at index: Int = 3) throws -> ActiveConversationPage {
+        if !imageToChoose(at: index).waitForExistence(timeout: 5) {
+            photoButton.waitAndTap()
+        }
+        XCTAssertTrue(
+            imageToChoose(at: index).waitForExistence(timeout: 5),
+            "No image found in simulator photo library"
+        )
+        imageToChoose(at: index).waitAndTap()
+
+        XCTAssertTrue(
+            attachmentImagePreview.waitForExistence(timeout: 5),
+            "Image attachment preview did not appear"
+        )
+
+        XCTAssertTrue(
+            sendButton.waitAndTap(timeout: 10),
+            "Send button did not become hittable for attachment"
+        )
+        return self
+    }
+
+    func selectVideoFromCameraRoll() throws -> ActiveConversationPage {
+        if !cameraRollButton.waitForExistence(timeout: 2) {
+            photoButton.waitAndTap()
+        }
+
+        XCTAssertTrue(
+            cameraRollButton.waitAndTap(),
+            "cameraRollButton did not show up"
+        )
+
+        // NOTE: Tap the center via coordinates because Photos grid cells are often not directly hittable in UITests
+
+        let video = app.images.matching(NSPredicate(
+            format: "identifier == %@ AND label BEGINSWITH %@",
+            Locators.PhotosAppPage.imageTile.rawValue,
+            "Video"
+        )).firstMatch
+        XCTAssertTrue(video.waitForExistence(timeout: 8), "No video found in camera roll")
+        video.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
+
+        XCTAssertTrue(
+            addButton.waitAndTap(),
+            "Not able to add media after selecting"
+        )
+
+        XCTAssertTrue(
+            attachmentVideoPreview.waitForExistence(timeout: 5),
+            "Video attachment preview did not appear"
+        )
+        return self
+    }
+
+    func selectVideoAndSend(at index: Int = 0) throws -> ActiveConversationPage {
+        if !videoToChoose(at: index).waitForExistence(timeout: 2) {
+            photoButton.waitAndTap()
+        }
+        videoToChoose(at: index).waitAndTap()
+
+        XCTAssertTrue(
+            okToSend.waitForExistence(timeout: 3),
+            "OK button did not appear after selecting media"
+        )
+        okToSend.waitAndTap()
+        return self
+    }
+
+    @discardableResult
+    func uploadFile(named fileName: String = "testFile.pdf") -> ActiveConversationPage {
+        if !uploadFileButton.waitForExistence(timeout: 2) || !uploadFileButton.isHittable {
+            showOtherRowButton.waitAndTap()
+        }
+
+        uploadFileButton.waitAndTap()
+        browseFileOption.waitAndTap()
+
+        if browseFileOption.waitForExistence(timeout: 3), !browseFileOption.isSelected {
+            browseFileOption.tap()
+        }
+
+        XCTAssertTrue(
+            fileCell(named: fileName).waitForExistence(timeout: 5),
+            "Seeded file '\(fileName)' didn't show up"
+        )
+        fileCell(named: fileName).waitAndTap()
+
+        XCTAssertTrue(
+            openFileButton.waitForExistence(timeout: 5),
+            "Open button didn't show up"
+        )
+        openFileButton.waitAndTap()
+        return self
+    }
+
+    @MainActor
+    @discardableResult
+    func recordAudioAndSend() async throws -> ActiveConversationPage {
+        audioButton.waitAndTap()
+        app.dismissAllowIfPresent()
+
+        if !startRecording.waitForExistence(timeout: 1) || !startRecording.isHittable {
+            if audioButton.waitForExistence(timeout: 2), audioButton.isHittable {
+                audioButton.tap()
+            }
+        }
+        startRecording.waitAndTap()
+        XCTAssertTrue(
+            stopRecording.waitForExistence(timeout: 5),
+            "Audio recording not started"
+        )
+
+        stopRecording.waitAndTap()
+        heliumButton.waitAndTap()
+        sendAudioButton.waitAndTap()
+        return self
+    }
+
+    func receivedPing(for sender: String) -> XCUIElement {
+        let label = NSPredicate(
+            format: "label CONTAINS[c] %@ AND label CONTAINS[c] %@",
+            sender,
+            "pinged"
+        )
+        return app.otherElements.containing(label).firstMatch
+    }
+
+    @discardableResult
+    func sendPing() -> ActiveConversationPage {
+        showOtherRowButton.waitAndTap()
+        pingButton.waitAndTap()
+        return self
+    }
+
+    @discardableResult
+    func verifyPingSent(
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) throws -> ActiveConversationPage {
+        XCTAssertTrue(
+            app.otherElements.containing(
+                NSPredicate(format: "label CONTAINS %@", "You pinged")
+            ).firstMatch.waitForExistence(timeout: 2),
+            "Expected ping message not found",
+            file: file,
+            line: line
+        )
+        return self
+    }
+
+    @discardableResult
+    func selectAndSendLocation() -> ActiveConversationPage {
+        showOtherRowButton.waitAndTap()
+        locationButton.waitAndTap()
+        app.dismissAllowIfPresent()
+        XCTAssertTrue(
+            selectedAddress.waitForExistence(timeout: 5),
+            "Selected address did not appear"
+        )
+        sendLocationButton.waitAndTap()
+        return self
+    }
+
+    @discardableResult
+    func verifyLocationShared() -> ActiveConversationPage {
+        XCTAssertTrue(
+            locationCell.waitForExistence(timeout: 10),
+            "Expected location message not found"
+        )
+        return self
+    }
+
+    func openLocationInDefaultMapsApp(locationName: String) {
+        let locationMap = app.descendants(matching: .any)
+            .matching(identifier: Locators.ActiveConversationPage.locationMap.rawValue)
+            .matching(NSPredicate(format: "label CONTAINS[c] %@", locationName))
+            .firstMatch
+
+        XCTAssertTrue(
+            locationMap.waitAndTap(),
+            "Location \(locationName) could not be opened"
+        )
+
+        let mapsApp = XCUIApplication(bundleIdentifier: "com.apple.Maps")
+        XCTAssertTrue(
+            mapsApp.wait(for: .runningForeground, timeout: 5),
+            "Expected location to open in Maps"
+        )
+    }
+
+    @discardableResult
+    func verifyMessageSent(
+        _ message: String,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> ActiveConversationPage {
+        XCTAssertTrue(
+            app.textViews.matching(NSPredicate(format: "label == %@", message)).firstMatch.waitForExistence(timeout: 5),
+            file: file,
+            line: line
+        )
+        return self
+    }
+
+    @discardableResult
+    func verifyMessageTimerSystemMessage(_ duration: String) -> ActiveConversationPage {
+        let parts = duration.split(separator: " ").map(String.init)
+        let (number, unit) = (parts[0], parts[1])
+        XCTAssertTrue(
+            app.descendants(matching: .any)
+                .matching(NSPredicate(
+                    format: "label CONTAINS[c] %@ AND label CONTAINS[c] %@ AND label CONTAINS[c] %@",
+                    "set the message timer to", number, unit
+                ))
+                .firstMatch
+                .waitForExistence(timeout: 5),
+            "Expected 'set the message timer to \(duration)' system message not found"
+        )
+        return self
+    }
+
+    @discardableResult
+    func verifySharedFile(
+        name: String,
+        type: String,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> ActiveConversationPage {
+        let attachment = fileAttachment(name: name, type: type)
+
+        XCTAssertTrue(
+            attachment.waitForExistence(timeout: 5),
+            "Expected \(type) attachment '\(name)' not found",
+            file: file,
+            line: line
+        )
+        return self
+    }
+
+    @discardableResult
+    func verifyImagePreviewIsVisible(
+    ) -> ActiveConversationPage {
+        XCTAssertTrue(
+            imagePreview.waitForExistence(timeout: 10),
+            "Image preview did not appear"
+        )
+        return self
+    }
+
+    @discardableResult
+    func verifyVideoPreviewIsVisible(
+    ) -> ActiveConversationPage {
+        XCTAssertTrue(
+            videoPreview.waitForExistence(timeout: 10),
+            "Video preview did not appear"
+        )
+        return self
+    }
+
+    @discardableResult
+    func verifyGIFReceived(
+    ) -> ActiveConversationPage {
+        XCTAssertTrue(
+            imageCell.waitForExistence(timeout: 10),
+            "Expected GIF image not found",
+        )
+
+        XCTAssertTrue(
+            waitForChangingFrame(in: imageCell),
+            "Expected GIF image to animate",
+        )
+
+        return self
+    }
+
+    private func waitForChangingFrame(
+        in element: XCUIElement,
+        timeout: TimeInterval = 5
+    ) -> Bool {
+        let deadline = Date().addingTimeInterval(timeout)
+
+        repeat {
+            RunLoop.current.run(until: Date().addingTimeInterval(0.5))
+            if isChangingFrame(in: element) {
+                return true
+            }
+        } while Date() < deadline
+
+        return false
+    }
+
+    private func isChangingFrame(
+        in element: XCUIElement,
+        frameCount: Int = 6,
+        delay: TimeInterval = 0.2
+    ) -> Bool {
+        var screenshots = Set<Data>()
+
+        for index in 0 ..< frameCount {
+            screenshots.insert(element.screenshot().pngRepresentation)
+            guard index < frameCount - 1 else { continue }
+            RunLoop.current.run(until: Date().addingTimeInterval(delay))
+        }
+
+        return screenshots.count > 1
+    }
+
+    @discardableResult
+    func verifyReadReceiptsSystemMessage(
+        enabled: Bool,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> ActiveConversationPage {
+        let identifier = enabled
+            ? Locators.ActiveConversationPage.readReceiptsEnabledSystemMessage.rawValue
+            : Locators.ActiveConversationPage.readReceiptsDisabledSystemMessage.rawValue
+        XCTAssertTrue(
+            app.descendants(matching: .any)[identifier].firstMatch.waitForExistence(timeout: 10),
+            "Expected read-receipts system message with identifier '\(identifier)' not found",
+            file: file,
+            line: line
+        )
+        return self
+    }
+
+    func verifyLinkPreviewCell(
+        shouldExist: Bool = true,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> ActiveConversationPage {
+        if shouldExist {
+            XCTAssertTrue(
+                linkPreviewCell.waitForExistence(timeout: 10),
+                "Link preview cell did not appear",
+                file: file,
+                line: line
+            )
+        } else {
+            XCTAssertFalse(
+                linkPreviewCell.waitForExistence(timeout: 3),
+                "Link preview cell should not appear",
+                file: file,
+                line: line
+            )
+        }
+        return self
+    }
+
+    @discardableResult
+    func verifyMessageExpired(
+        timeout: TimeInterval = 20
+    ) -> ActiveConversationPage {
+        XCTAssertTrue(
+            selfDeletedMessage.waitForExistence(timeout: timeout),
+            "Expected self-deleting message to expire but it did not"
+        )
+        return self
+    }
+
+    @discardableResult
+    func verifyEphemeralCountdownVisible() -> ActiveConversationPage {
+        XCTAssertTrue(
+            ephemeralCountdownLabel.waitForExistence(timeout: 5),
+            "Expected self-deleting message countdown label to appear"
+        )
+        XCTAssertFalse(
+            ephemeralCountdownLabel.label.isEmpty,
+            "Expected self-deleting message countdown label to show remaining time"
+        )
+        return self
+    }
+
+    func initiateCall() throws -> OngoingCallPage {
+        videoCallButton.waitAndTap()
+        app.dismissAllowIfPresent()
+        return try OngoingCallPage()
+    }
+
+    func resumeCallUI() throws -> OngoingCallPage {
+        openOngoingCallButton.waitAndTap()
+        return try OngoingCallPage()
+    }
+
+    @discardableResult
+    func verifyNoCallOngoingAfterHangUp() throws -> ActiveConversationPage {
+        XCTAssertTrue(
+            openOngoingCallButton.waitForNonExistence(timeout: 4),
+            "Ongoing call still visible after hanging up the call"
+        )
+        return self
     }
 }

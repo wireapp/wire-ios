@@ -31,8 +31,11 @@ public struct GetUserAccountImageSourceUseCase: GetUserAccountImageSourceUseCase
         account: Account
     ) async throws -> AccountImageSource {
 
-        // user's custom image
-        if let data = account.imageData, let accountImage = UIImage(data: data) {
+        // user's custom image (check account first, fall back to user
+        // in case it's not set on account yet).
+        if
+            let data = account.imageData ?? user.imageData(for: .preview),
+            let accountImage = UIImage(data: data) {
             return .image(accountImage)
         }
 

@@ -22,8 +22,8 @@
 @import OCMock;
 
 #import "ZMAccessTokenHandler.h"
-#import "ZMPersistentCookieStorage.h"
 @import WireTransport.Testing;
+@import WireTransportSupport;
 #import "ZMURLSession.h"
 #import "NSError+ZMTransportSession.h"
 #import "Fakes.h"
@@ -35,7 +35,7 @@
 @property (nonatomic) ZMAccessToken *expiredAccessToken;
 @property (nonatomic) id urlSession;
 
-@property (nonatomic) ZMPersistentCookieStorage *cookieStorage;
+@property (nonatomic) LegacyCookieStorage *cookieStorage;
 @property (nonatomic) NSOperationQueue *queue;
 @property (nonatomic) FakeExponentialBackoff *backoff;
 @property (nonatomic) FakeDelegate *delegate;
@@ -64,10 +64,6 @@
 
 - (void)setUp {
     [super setUp];
-#if TARGET_IPHONE_SIMULATOR
-    [ZMPersistentCookieStorage setDoNotPersistToKeychain:YES];
-#endif
-    NSURL *baseURL = [NSURL URLWithString:@"https://www.example.com"];
 
     self.taskCount = 0;
     self.failureCount = 0;
@@ -77,7 +73,7 @@
     self.userIdentifier = [NSUUID createUUID];
     self.urlSession = [OCMockObject niceMockForClass:[ZMURLSession class]];
 
-    self.cookieStorage = [ZMPersistentCookieStorage storageForServerName:baseURL.host userIdentifier:self.userIdentifier useCache:YES];
+    self.cookieStorage = [[LegacyCookieStorage alloc] initWithTestingWithUserIdentifier:self.userIdentifier];
     [self setAuthenticationCookieData];
 
     self.queue = [NSOperationQueue mainQueue];
@@ -112,10 +108,6 @@
     self.recordedResponse = nil;
     self.userIdentifier = nil;
     
-#if TARGET_IPHONE_SIMULATOR
-    [ZMPersistentCookieStorage setDoNotPersistToKeychain:NO];
-#endif
-    
     [super tearDown];
 }
 
@@ -129,7 +121,7 @@
                                                              HTTPVersion:@""
                                                             headerFields:headers];
     [self.cookieStorage setCookieDataFromResponse:response forURL:URL];
-    XCTAssertNotNil(self.cookieStorage.authenticationCookieData);
+    XCTAssertTrue(self.cookieStorage.hasAuthenticationCookie);
 }
 
 - (void)invokeAccessTokenRenewalFailureHandler:(ZMTransportResponse *)response
@@ -387,7 +379,7 @@
     [self.sut consumeRequestWithTask:task data:nil session:self.urlSession shouldRetry:YES apiVersion:0];
     
     // then
-    XCTAssertNotNil(self.cookieStorage.authenticationCookieData);
+    XCTAssertTrue(self.cookieStorage.hasAuthenticationCookie);
 }
 
 
@@ -633,7 +625,7 @@
 - (void)testThatIt_ClearsCookie_IfItReceivesA_ZMTransportResponseStatusPermanentError_Not420Or429Status
 {
     // given
-    XCTAssertNotNil(self.cookieStorage.authenticationCookieData);
+    XCTAssertTrue(self.cookieStorage.hasAuthenticationCookie);
     
     FakeTransportResponse *testResponse = [FakeTransportResponse testResponse];
     [testResponse setResult:ZMTransportResponseStatusPermanentError];
@@ -642,13 +634,13 @@
     [self.sut processAccessTokenResponse:(id)testResponse];
     
     // then
-    XCTAssertNil(self.cookieStorage.authenticationCookieData);
+    XCTAssertFalse(self.cookieStorage.hasAuthenticationCookie);
 }
 
 - (void)testThatIt_DoesNot_ClearsCookie_IfItReceivesA_ZMTransportResponseStatusPermanentError_429Status
 {
     // given
-    XCTAssertNotNil(self.cookieStorage.authenticationCookieData);
+    XCTAssertTrue(self.cookieStorage.hasAuthenticationCookie);
     
     FakeTransportResponse *testResponse = [FakeTransportResponse testResponse];
     [testResponse setResult:ZMTransportResponseStatusPermanentError];
@@ -658,13 +650,13 @@
     [self.sut processAccessTokenResponse:(id)testResponse];
     
     // then
-    XCTAssertNotNil(self.cookieStorage.authenticationCookieData);
+    XCTAssertTrue(self.cookieStorage.hasAuthenticationCookie);
 }
 
 - (void)testThatIt_DoesNot_ClearsCookie_IfItReceivesA_ZMTransportResponseStatusPermanentError_420Status
 {
     // given
-    XCTAssertNotNil(self.cookieStorage.authenticationCookieData);
+    XCTAssertTrue(self.cookieStorage.hasAuthenticationCookie);
     
     FakeTransportResponse *testResponse = [FakeTransportResponse testResponse];
     [testResponse setResult:ZMTransportResponseStatusPermanentError];
@@ -674,13 +666,13 @@
     [self.sut processAccessTokenResponse:(id)testResponse];
     
     // then
-    XCTAssertNotNil(self.cookieStorage.authenticationCookieData);
+    XCTAssertTrue(self.cookieStorage.hasAuthenticationCookie);
 }
 
 - (void)testThatIt_DoesNot_ClearsCookie_IfItReceivesA_ZMTransportResponseStatusTemporaryError
 {
     // given
-    XCTAssertNotNil(self.cookieStorage.authenticationCookieData);
+    XCTAssertTrue(self.cookieStorage.hasAuthenticationCookie);
     
     FakeTransportResponse *testResponse = [FakeTransportResponse testResponse];
     [testResponse setResult:ZMTransportResponseStatusTemporaryError];
@@ -689,13 +681,13 @@
     [self.sut processAccessTokenResponse:(id)testResponse];
     
     // then
-    XCTAssertNotNil(self.cookieStorage.authenticationCookieData);
+    XCTAssertTrue(self.cookieStorage.hasAuthenticationCookie);
 }
 
 - (void)testThatItDeletesTheCookieDataIfItDoesNotReceiveANewToken
 {
     // given
-    XCTAssertNotNil(self.cookieStorage.authenticationCookieData);
+    XCTAssertTrue(self.cookieStorage.hasAuthenticationCookie);
     
     FakeTransportResponse *response = [FakeTransportResponse testResponse];
     [response setResult:ZMTransportResponseStatusSuccess];
@@ -704,7 +696,7 @@
     [self.sut processAccessTokenResponse:(id)response];
     
     // then
-    XCTAssertNil(self.cookieStorage.authenticationCookieData);
+    XCTAssertFalse(self.cookieStorage.hasAuthenticationCookie);
 }
 
 - (void)testThatItForwardsTheResponseToTheFailureHandlerIfItDoesNotReceiveANewToken

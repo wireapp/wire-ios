@@ -27,4 +27,10 @@ public struct UserList: Equatable {
     /// List of user IDs for which a user couldn't be retrieved.
 
     public let failed: [UserID]
+
+    public init(found: [User], failed: [UserID]) {
+        self.found = found
+        self.failed = failed
+    }
+
 }

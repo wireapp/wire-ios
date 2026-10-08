@@ -105,7 +105,14 @@ struct StorableFeatureConfigUpdateEvent: Equatable, Codable, Sendable {
                 StorableMLSMigrationFeatureConfig(
                     status: StorableFeatureConfigStatus(config.status),
                     startTime: config.startTime,
-                    finaliseRegardlessAfter: config.finaliseRegardlessAfter
+                    finaliseRegardlessAfter: config.finaliseRegardlessAfter,
+                    allowManualMigration: config.allowManualMigration
+                )
+            )
+        case let .meetings(config):
+            .meetings(
+                StorableBasicFeatureConfig(
+                    status: StorableFeatureConfigStatus(config.status)
                 )
             )
         case let .selfDeletingMessages(config):
@@ -137,6 +144,15 @@ struct StorableFeatureConfigUpdateEvent: Equatable, Codable, Sendable {
                     status: StorableFeatureConfigStatus(
                         config.status
                     )
+                )
+            )
+        case let .preventAdminlessGroups(config):
+            .preventAdminlessGroups(
+                StorablePreventAdminlessGroupsFeatureConfig(
+                    status: StorableFeatureConfigStatus(config.status),
+                    promotionStrategy: config.promotionStrategy,
+                    deletionTimeout: config.deletionTimeout,
+                    reminderTimeouts: config.reminderTimeouts
                 )
             )
         case let .simplifiedUserConnectionRequestQRCode(config):
@@ -245,7 +261,14 @@ struct StorableFeatureConfigUpdateEvent: Equatable, Codable, Sendable {
                 MLSMigrationFeatureConfig(
                     status: config.status.toAPIModel(),
                     startTime: config.startTime,
-                    finaliseRegardlessAfter: config.finaliseRegardlessAfter
+                    finaliseRegardlessAfter: config.finaliseRegardlessAfter,
+                    allowManualMigration: config.allowManualMigration
+                )
+            )
+        case let .meetings(config):
+            .meetings(
+                MeetingsFeatureConfig(
+                    status: config.status.toAPIModel()
                 )
             )
         case let .selfDeletingMessages(config):
@@ -274,6 +297,15 @@ struct StorableFeatureConfigUpdateEvent: Equatable, Codable, Sendable {
             .consumableNotifications(
                 ConsumableNotificationsFeatureConfig(
                     status: config.status.toAPIModel()
+                )
+            )
+        case let .preventAdminlessGroups(config):
+            .preventAdminlessGroups(
+                PreventAdminlessGroupsFeatureConfig(
+                    status: config.status.toAPIModel(),
+                    promotionStrategy: config.promotionStrategy,
+                    deletionTimeout: config.deletionTimeout,
+                    reminderTimeouts: config.reminderTimeouts
                 )
             )
         case let .simplifiedUserConnectionRequestQRCode(config):
@@ -320,6 +352,7 @@ enum StorableFeatureConfig: Equatable, Codable, Sendable {
     case fileSharing(StorableBasicFeatureConfig)
     case mls(StorableMLSFeatureConfig)
     case mlsMigration(StorableMLSMigrationFeatureConfig)
+    case meetings(StorableBasicFeatureConfig)
     case selfDeletingMessages(StorableSelfDeletingMessagesFeatureConfig)
     case channels(StorableChannelsFeatureConfig)
     case allowedGlobalOperations(StorableAllowedGlobalOperationsFeatureConfig)
@@ -327,6 +360,7 @@ enum StorableFeatureConfig: Equatable, Codable, Sendable {
     case simplifiedUserConnectionRequestQRCode(StorableBasicFeatureConfig)
     case cells(StorableBasicFeatureConfig)
     case cellsInternal(StorableCellsInternalFeatureConfig)
+    case preventAdminlessGroups(StorablePreventAdminlessGroupsFeatureConfig)
     case unknown(featureName: String)
 
 }
@@ -414,6 +448,7 @@ struct StorableMLSMigrationFeatureConfig: Equatable, Codable, Sendable {
     let status: StorableFeatureConfigStatus
     let startTime: Date?
     let finaliseRegardlessAfter: Date?
+    let allowManualMigration: Bool?
 
 }
 
@@ -471,4 +506,11 @@ struct StorableChannelsFeatureConfig: Codable, Equatable, Sendable {
 struct StorableCellsInternalFeatureConfig: Codable, Equatable, Sendable {
     let status: StorableFeatureConfigStatus
     let backendURL: URL
+}
+
+struct StorablePreventAdminlessGroupsFeatureConfig: Codable, Equatable, Sendable {
+    let status: StorableFeatureConfigStatus
+    let promotionStrategy: String
+    let deletionTimeout: Int
+    let reminderTimeouts: [Int]
 }

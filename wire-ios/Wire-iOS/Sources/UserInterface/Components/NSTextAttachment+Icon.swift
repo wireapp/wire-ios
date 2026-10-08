@@ -26,6 +26,18 @@ extension NSTextAttachment {
         self.init(image: .init(resource: imageResource))
     }
 
+    /// Creates a template-mode attachment whose tint is controlled by the `.foregroundColor`
+    /// attribute of the surrounding `NSAttributedString`, adapting automatically to dark/light mode.
+    static func templateTextAttachment(
+        for icon: StyleKitIcon,
+        iconSize: StyleKitIcon.Size = 10,
+        verticalCorrection: CGFloat = 0
+    ) -> NSTextAttachment {
+        let image = icon.makeImage(size: iconSize, color: .black)
+            .withRenderingMode(.alwaysTemplate)
+        return makeAttachment(image: image, iconSize: iconSize, verticalCorrection: verticalCorrection)
+    }
+
     static func textAttachment(
         for icon: StyleKitIcon,
         with color: UIColor,

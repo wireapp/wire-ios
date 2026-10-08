@@ -51,7 +51,7 @@ final class PullMLSOneOnOneSyncTests: XCTestCase {
     func testPull() async throws {
         // Mock
         api.getMLSOneToOneConversationUserIDIn_MockValue = (Scaffolding.conversation, Scaffolding.mlsPublicKeys)
-        store.storeConversationTimestampIsFederationEnabledIsMLSEnabled_MockMethod = { _, _, _, _ in }
+        store.storeConversationTimestampIsFederationEnabledIsMLSEnabledMarkAsRead_MockMethod = { _, _, _, _, _ in }
 
         // When
         let (mlsGroupID, publicKeys) = try await sut.pull(
@@ -65,7 +65,7 @@ final class PullMLSOneOnOneSyncTests: XCTestCase {
         XCTAssertEqual(apiInvocations[0].userID, Scaffolding.userID.uuidString.lowercased())
         XCTAssertEqual(apiInvocations[0].domain, Scaffolding.userDomain)
 
-        let storeInvocations = store.storeConversationTimestampIsFederationEnabledIsMLSEnabled_Invocations
+        let storeInvocations = store.storeConversationTimestampIsFederationEnabledIsMLSEnabledMarkAsRead_Invocations
         try XCTAssertCount(storeInvocations, count: 1)
         XCTAssertEqual(storeInvocations[0].conversation, Scaffolding.conversation.toDomainModel())
         XCTAssertEqual(storeInvocations[0].isFederationEnabled, Scaffolding.isFederationEnabled)

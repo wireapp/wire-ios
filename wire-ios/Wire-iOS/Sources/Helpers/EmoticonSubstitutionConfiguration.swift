@@ -16,9 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireLogging
 import WireSystem
-
-private let zmLog = ZMSLog(tag: "EmoticonSubstitutionConfiguration")
 
 final class EmoticonSubstitutionConfiguration {
 
@@ -46,7 +45,7 @@ final class EmoticonSubstitutionConfiguration {
             let data = try Data(contentsOf: URL(fileURLWithPath: filePath), options: .mappedIfSafe)
             jsonResult = try JSONSerialization.jsonObject(with: data, options: .mutableLeaves) as? [String: String]
         } catch {
-            zmLog.error("Failed to parse JSON at path: \(filePath), error: \(error)")
+            WireLogger.ui.error("Failed to parse JSON at path: \(filePath), error: \(error)")
             fatal("\(error)")
         }
 

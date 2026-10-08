@@ -21,10 +21,11 @@ import Photos
 import UIKit
 import WireCommonComponents
 import WireDesign
+import WireFoundation
+import WireLogging
+import WireMessagingUI
 import WireReusableUIComponents
 import WireSyncEngine
-
-private let zmLog = ZMSLog(tag: "UI")
 
 // MARK: - CameraKeyboardViewControllerDelegate
 
@@ -32,6 +33,7 @@ protocol CameraKeyboardViewControllerDelegate: AnyObject {
     func cameraKeyboardViewController(
         _ controller: CameraKeyboardViewController,
         didSelectVideo: URL,
+        withLocalIdentifier id: String?,
         duration: TimeInterval
     )
     func cameraKeyboardViewController(
@@ -39,6 +41,12 @@ protocol CameraKeyboardViewControllerDelegate: AnyObject {
         didSelectImage image: SendableImage,
         isFromCamera: Bool
     )
+
+    func cameraKeyboardViewController(
+        _ controller: CameraKeyboardViewController,
+        didDeselectImage image: PHAsset
+    )
+
     func cameraKeyboardViewControllerWantsToOpenFullScreenCamera(_ controller: CameraKeyboardViewController)
     func cameraKeyboardViewControllerWantsToOpenCameraRoll(_ controller: CameraKeyboardViewController)
 }
@@ -75,6 +83,9 @@ class CameraKeyboardViewController: UIViewController {
     private let mediaSharingRestrictionsMananger: MediaShareRestrictionManager
     private let userSession: UserSession
 
+    private let isWireDriveEnabled: Bool
+    private let attachmentsCarouselViewModel: AttachmentsCarouselViewModel
+
     let assetLibrary: AssetLibrary?
     let imageManagerType: ImageManagerProtocol.Type
 
@@ -93,9 +104,13 @@ class CameraKeyboardViewController: UIViewController {
         splitLayoutObservable: SplitLayoutObservable,
         imageManagerType: ImageManagerProtocol.Type = PHImageManager.self,
         permissions: PhotoPermissionsController = PhotoPermissionsControllerStrategy(),
+        attachmentsCarouselViewModel: AttachmentsCarouselViewModel,
+        isWireDriveEnabled: Bool = false,
         userSession: UserSession
     ) {
         self.userSession = userSession
+        self.isWireDriveEnabled = isWireDriveEnabled
+        self.attachmentsCarouselViewModel = attachmentsCarouselViewModel
         self.mediaSharingRestrictionsMananger = MediaShareRestrictionManager(
             sessionRestriction: userSession as? ZMUserSession
         )
@@ -249,7 +264,7 @@ class CameraKeyboardViewController: UIViewController {
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.translatesAutoresizingMaskIntoConstraints = false
-        collectionView.allowsMultipleSelection = false
+        collectionView.allowsMultipleSelection = isWireDriveEnabled
         collectionView.allowsSelection = true
         collectionView.backgroundColor = UIColor.clear
         collectionView.bounces = false
@@ -322,6 +337,7 @@ class CameraKeyboardViewController: UIViewController {
             let name = PHAssetResource.assetResources(for: asset).first?.originalFilename
 
             let image = SendableImage(
+                localIdentifier: asset.localIdentifier,
                 name: name,
                 utType: utType,
                 data: returnData
@@ -356,9 +372,7 @@ class CameraKeyboardViewController: UIViewController {
                         completeBlock(data, info?["PHImageFileUTIKey"] as? String)
                     } else {
                         options.isSynchronous = true
-                        DispatchQueue.main.async {
-                            self.activityIndicator.start()
-                        }
+                        self.showActivityIndicator(true)
 
                         self.imageManagerType.defaultInstance.requestImage(
                             for: asset,
@@ -366,15 +380,13 @@ class CameraKeyboardViewController: UIViewController {
                             contentMode: .aspectFit,
                             options: options,
                             resultHandler: { image, info in
-                                DispatchQueue.main.async {
-                                    self.activityIndicator.stop()
-                                }
+                                self.showActivityIndicator(false)
 
                                 if let image {
                                     let data = image.jpegData(compressionQuality: 0.9)
                                     completeBlock(data, info?["PHImageFileUTIKey"] as? String)
                                 } else {
-                                    zmLog.error("Failure: cannot fetch image")
+                                    WireLogger.ui.error("Failure: cannot fetch image")
                                 }
                             }
                         )
@@ -392,17 +404,13 @@ class CameraKeyboardViewController: UIViewController {
 
                 guard let data else {
                     options.isNetworkAccessAllowed = true
-                    DispatchQueue.main.async {
-                        self.activityIndicator.start()
-                    }
+                    self.showActivityIndicator(true)
 
                     self.imageManagerType.defaultInstance
                         .requestImageData(for: asset, options: options) { data, uti, _, _ in
-                            DispatchQueue.main.async {
-                                self.activityIndicator.stop()
-                            }
+                            self.showActivityIndicator(false)
                             guard let data else {
-                                zmLog.error("Failure: cannot fetch image")
+                                WireLogger.ui.error("Failure: cannot fetch image")
                                 return
                             }
 
@@ -418,27 +426,22 @@ class CameraKeyboardViewController: UIViewController {
     }
 
     private func forwardSelectedVideoAsset(_ asset: PHAsset) {
-        activityIndicator.start()
+        showActivityIndicator(true)
         let fileLengthLimit: UInt64 = userSession.maxUploadFileSize
+        let localIdentifier = asset.localIdentifier
 
         asset.getVideoURL { url in
-            DispatchQueue.main.async {
-                self.activityIndicator.stop()
-            }
+            self.showActivityIndicator(false)
 
             guard let url else { return }
 
-            DispatchQueue.main.async {
-                self.activityIndicator.start()
-            }
+            self.showActivityIndicator(true)
 
             AVURLAsset.convertVideoToUploadFormat(
                 at: url,
                 fileLengthLimit: Int64(fileLengthLimit)
             ) { resultURL, asset, error in
-                DispatchQueue.main.async {
-                    self.activityIndicator.stop()
-                }
+                self.showActivityIndicator(false)
 
                 guard error == nil,
                       let resultURL,
@@ -448,12 +451,19 @@ class CameraKeyboardViewController: UIViewController {
                     self.delegate?.cameraKeyboardViewController(
                         self,
                         didSelectVideo: resultURL,
+                        withLocalIdentifier: localIdentifier,
                         duration: CMTimeGetSeconds(asset.duration)
                     )
                 }
             }
         }
 
+    }
+
+    func showActivityIndicator(_ show: Bool) {
+        DispatchQueue.main.async {
+            show ? self.activityIndicator.start() : self.activityIndicator.stop()
+        }
     }
 
 }
@@ -520,15 +530,22 @@ extension CameraKeyboardViewController: UICollectionViewDelegateFlowLayout, UICo
                 return deniedAuthorizationCell(for: .photos, collectionView: collectionView, indexPath: indexPath)
             }
 
+            let accentColor = WireAccentColor(rawValue: userSession.selfUser.accentColorValue) ?? .default
+
             let cell = collectionView.dequeueReusableCell(
                 withReuseIdentifier: AssetCell.reuseIdentifier,
                 for: indexPath
             ) as! AssetCell
 
             cell.manager = imageManagerType.defaultInstance
+            cell.isWireDriveEnabled = isWireDriveEnabled
+            cell.accentColor = accentColor.uiColor
 
             if let asset = try? assetLibrary?.asset(atIndex: UInt((indexPath as NSIndexPath).row)) {
                 cell.asset = asset
+                if attachmentsCarouselViewModel.draftsLocalIdentifiers.contains(asset.localIdentifier) {
+                    collectionView.selectItem(at: indexPath, animated: true, scrollPosition: [])
+                }
             }
 
             return cell
@@ -608,6 +625,50 @@ extension CameraKeyboardViewController: UICollectionViewDelegateFlowLayout, UICo
             default:
                 // not supported
                 break
+            }
+        }
+    }
+
+    func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
+        guard let asset = try? assetLibrary?.asset(atIndex: UInt((indexPath as NSIndexPath).row)) else {
+            return
+        }
+
+        delegate?.cameraKeyboardViewController(self, didDeselectImage: asset)
+    }
+
+    var selectedAssetIdentifiers: [String] {
+        guard let assetLibrary,
+              let selectedIndexPaths = collectionView.indexPathsForSelectedItems else {
+            return []
+        }
+        return selectedIndexPaths
+            .filter { CameraKeyboardSection(rawValue: UInt($0.section)) == .photos }
+            .compactMap { try? assetLibrary.asset(atIndex: UInt($0.item)).localIdentifier }
+    }
+
+    func deselectItem(withLocalIdentifier localIdentifier: String) {
+        guard let assetLibrary else { return }
+
+        for index in 0 ..< assetLibrary.count {
+            guard let asset = try? assetLibrary.asset(atIndex: index) else { continue }
+            if asset.localIdentifier == localIdentifier {
+                let indexPath = IndexPath(item: Int(index), section: Int(CameraKeyboardSection.photos.rawValue))
+                collectionView.deselectItem(at: indexPath, animated: true)
+                return
+            }
+        }
+    }
+
+    func selectItem(withLocalIdentifier localIdentifier: String) {
+        guard let assetLibrary else { return }
+
+        for index in 0 ..< assetLibrary.count {
+            guard let asset = try? assetLibrary.asset(atIndex: index) else { continue }
+            if asset.localIdentifier == localIdentifier {
+                let indexPath = IndexPath(item: Int(index), section: Int(CameraKeyboardSection.photos.rawValue))
+                collectionView.selectItem(at: indexPath, animated: true, scrollPosition: [])
+                return
             }
         }
     }

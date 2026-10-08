@@ -173,10 +173,29 @@ final class ConversationInputBarViewController: UIViewController,
 
     let videoButton: IconButton = .init()
 
+    private var showDriveViewerBanner: Bool {
+        conversation.isWireDriveEnabled && userSession.selfUser
+            .isGuest(in: conversation)
+    }
+
+    private var shouldShowDriveViewerBanner: Bool {
+        showDriveViewerBanner &&
+            !ConversationViewerAccessBannerDismissalStore.shared
+            .isDismissed(forCellName: conversation.wireDriveCellName)
+    }
+
     // MARK: subviews
 
     lazy var inputBar: InputBar = {
-        let inputBar = InputBar(buttons: inputBarButtons, isWireDriveEnabled: conversation.isWireDriveEnabled)
+        let driveConfiguration: InputBar.DriveConfiguration? = if conversation.isWireDriveEnabled {
+            .init(cellName: conversation.wireDriveCellName, showBanner: shouldShowDriveViewerBanner)
+        } else {
+            nil
+        }
+        let inputBar = InputBar(
+            buttons: inputBarButtons,
+            driveConfiguration: driveConfiguration
+        )
         if !mediaShareRestrictionManager.canUseSpellChecking {
             inputBar.textView.spellCheckingType = .no
         }
@@ -237,9 +256,9 @@ final class ConversationInputBarViewController: UIViewController,
     let publishDraftsUseCase: WireDrivePublishDraftsUseCaseProtocol
     let clearPublishedDraftsUseCase: WireDriveClearPublishedDraftsUseCaseProtocol
     private let observeDraftsUseCase: WireDriveObserveDraftsUseCaseProtocol
-    private let deleteDraftUseCase: WireDriveDeleteDraftUseCaseProtocol
+    let deleteDraftUseCase: WireDriveDeleteDraftUseCaseProtocol
     private let retryUploadDraftUseCase: WireDriveRetryUploadDraftUseCaseProtocol
-    private let attachmentsCarouselViewModel = AttachmentsCarouselViewModel()
+    let attachmentsCarouselViewModel = AttachmentsCarouselViewModel()
 
     private var inputBarButtons: [IconButton] {
         var buttonsArray: [IconButton] = []
@@ -400,6 +419,16 @@ final class ConversationInputBarViewController: UIViewController,
             self.typingObserverToken = conversation.addTypingObserver(self)
         }
 
+        if conversation.isWireDriveEnabled, !conversation.isTeamConversation {
+            [photoButton, videoButton, sketchButton, uploadFileButton].forEach {
+                $0.isEnabled = false
+                $0.setBackgroundImageColor(
+                    ColorTheme.Buttons.Secondary.disabled,
+                    for: .disabled
+                )
+            }
+        }
+
         setupNotificationCenter()
         setupInputLanguageObserver()
         setupViews()
@@ -482,6 +511,7 @@ final class ConversationInputBarViewController: UIViewController,
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        inputBar.hideDriveViewerBannerIfDismissed()
         updateButtonStates()
         inputBar.updateReturnKey()
         inputBar.updateEphemeralState()
@@ -535,6 +565,7 @@ final class ConversationInputBarViewController: UIViewController,
         hourglassButton.layer.borderWidth = 1
         hourglassButton.setIconColor(SemanticColors.Button.textInputBarItemEnabled, for: .normal)
         hourglassButton.setBackgroundImageColor(SemanticColors.Button.backgroundInputBarItemEnabled, for: .normal)
+        hourglassButton.setBackgroundImageColor(ColorTheme.Buttons.Secondary.disabled, for: .disabled)
         hourglassButton.setBorderColor(SemanticColors.Button.borderInputBarItemEnabled, for: .normal)
 
     }
@@ -596,8 +627,17 @@ final class ConversationInputBarViewController: UIViewController,
         updateButtonStates()
     }
 
+    /// Hides the input bar when the self user has blocked the other user, so it can be replaced by
+    /// the "You blocked this user" bar. See `ConversationViewController`.
+    var isHiddenForBlockedUser = false {
+        didSet {
+            guard isHiddenForBlockedUser != oldValue else { return }
+            updateInputBarVisibility()
+        }
+    }
+
     func updateInputBarVisibility() {
-        view.isHidden = conversation.isReadOnly
+        view.isHidden = conversation.isReadOnly || isHiddenForBlockedUser
     }
 
     @objc
@@ -746,7 +786,7 @@ final class ConversationInputBarViewController: UIViewController,
                 AVSMediaManager.sharedInstance().playKnockSound()
                 self.notificationFeedbackGenerator.notificationOccurred(.success)
             } catch {
-                Logging.messageProcessing.warn("Failed to append knock. Reason: \(error.localizedDescription)")
+                WireLogger.messageProcessing.warn("Failed to append knock. Reason: \(error.localizedDescription)")
             }
         }
 
@@ -1095,6 +1135,12 @@ extension ConversationInputBarViewController: UIGestureRecognizerDelegate {
     }
 
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+        let didTouchWireDriveAttachments = touch.view?.isDescendant(of: inputBar.attachmentsContainer) == true
+        // discards gesture, already handled by `AttachmentsCarouselItemView`
+        if didTouchWireDriveAttachments {
+            return false
+        }
+
         if singleTapGestureRecognizer == gestureRecognizer {
             return true
         }
@@ -1133,10 +1179,33 @@ extension ConversationInputBarViewController: UIGestureRecognizerDelegate {
         let carouselViewController = UIHostingController(
             rootView: AttachmentsCarousel(
                 viewModel: attachmentsCarouselViewModel,
-                onTap: { WireLogger.conversation.debug("Did tap draft attachment: \($0)") },
-                onRemove: { [deleteDraftUseCase] item in
+                onTap: { [weak self] item in
+                    guard let self, let draft = attachmentsCarouselViewModel.draft(for: item) else { return }
+
+                    if draft.isImage, let data = draft.data {
+                        let sendableImage = SendableImage(
+                            id: draft.nodeID,
+                            name: nil,
+                            utType: nil,
+                            data: data
+                        )
+
+                        showConfirmationForImage(sendableImage, isFromCamera: false)
+                    } else if draft.isVideo {
+                        showConfirmationForVideo(url: draft.assetURL)
+                    }
+                },
+                onRemove: { [attachmentsCarouselViewModel, deleteDraftUseCase] item in
+                    let draft = attachmentsCarouselViewModel.draft(for: item)
+
                     Task.detached {
                         try? await deleteDraftUseCase.invoke(nodeID: item.id)
+
+                        if let localIdentifier = draft?.localIdentifier {
+                            await self.cameraKeyboardViewController?.deselectItem(
+                                withLocalIdentifier: localIdentifier
+                            )
+                        }
                     }
                 },
                 onRetry: { [retryUploadDraftUseCase] item in
@@ -1166,15 +1235,15 @@ extension ConversationInputBarViewController: UIGestureRecognizerDelegate {
     }
 
     private func setupInputBar() {
-        audioButton.accessibilityIdentifier = "audioButton"
+        audioButton.accessibilityIdentifier = Locators.ActiveConversationPage.audioButton.rawValue
         videoButton.accessibilityIdentifier = "videoButton"
-        photoButton.accessibilityIdentifier = "photoButton"
+        photoButton.accessibilityIdentifier = Locators.ActiveConversationPage.photoButton.rawValue
         uploadFileButton.accessibilityIdentifier = "uploadFileButton"
         sketchButton.accessibilityIdentifier = Locators.ActiveConversationPage.sketchButton.rawValue
-        pingButton.accessibilityIdentifier = "pingButton"
-        locationButton.accessibilityIdentifier = "locationButton"
+        pingButton.accessibilityIdentifier = Locators.ActiveConversationPage.pingButton.rawValue
+        locationButton.accessibilityIdentifier = Locators.ActiveConversationPage.locationButton.rawValue
         gifButton.accessibilityIdentifier = "gifButton"
-        mentionButton.accessibilityIdentifier = "mentionButton"
+        mentionButton.accessibilityIdentifier = Locators.ActiveConversationPage.mentionButton.rawValue
         markdownButton.accessibilityIdentifier = "markdownButton"
 
         inputBarButtons.forEach {
@@ -1194,15 +1263,19 @@ extension ConversationInputBarViewController: UIGestureRecognizerDelegate {
     private func setupAccessibility() {
         typealias Conversation = L10n.Accessibility.Conversation
 
-        photoButton.accessibilityLabel = Conversation.CameraButton.description
+        photoButton.accessibilityLabel = showDriveViewerBanner ? Conversation.CameraButtonDisabled
+            .description : Conversation.CameraButton.description
         mentionButton.accessibilityLabel = Conversation.MentionButton.description
-        sketchButton.accessibilityLabel = Conversation.SketchButton.description
+        sketchButton.accessibilityLabel = showDriveViewerBanner ? Conversation.SketchButtonDisabled
+            .description : Conversation.SketchButton.description
         gifButton.accessibilityLabel = Conversation.GifButton.description
         audioButton.accessibilityLabel = Conversation.AudioButton.description
         pingButton.accessibilityLabel = Conversation.PingButton.description
-        uploadFileButton.accessibilityLabel = Conversation.UploadFileButton.description
+        uploadFileButton.accessibilityLabel = showDriveViewerBanner ? Conversation.UploadFileButtonDisabled
+            .description : Conversation.UploadFileButton.description
         locationButton.accessibilityLabel = Conversation.LocationButton.description
-        videoButton.accessibilityLabel = Conversation.VideoButton.description
+        videoButton.accessibilityLabel = showDriveViewerBanner ? Conversation.VideoButtonDisabled
+            .description : Conversation.VideoButton.description
         hourglassButton.accessibilityLabel = Conversation.TimerButton.description
         sendButton.accessibilityLabel = Conversation.SendButton.description
     }
@@ -1249,7 +1322,7 @@ extension ConversationInputBarViewController: UIGestureRecognizerDelegate {
         ])
     }
 
-    private func useWireDrive() -> Bool {
+    func useWireDrive() -> Bool {
         userSession.isWireDriveEnabled && conversation.isWireDriveEnabled
     }
 
@@ -1259,9 +1332,19 @@ extension ConversationInputBarViewController: UIGestureRecognizerDelegate {
         Task.detached { [weak self, observeDraftsUseCase, attachmentsCarouselViewModel] in
             let observed = await observeDraftsUseCase.invoke()
             for await drafts in observed {
+                let previousIdentifiers = Set(await attachmentsCarouselViewModel.draftsLocalIdentifiers)
                 await attachmentsCarouselViewModel.update(with: drafts)
                 await self?.syncCarouselVisible(drafts: drafts)
                 await self?.setAttachments(drafts: drafts)
+
+                let newIdentifiers = Set(drafts.compactMap(\.localIdentifier))
+                for identifier in previousIdentifiers.symmetricDifference(newIdentifiers) {
+                    if previousIdentifiers.contains(identifier) {
+                        await self?.cameraKeyboardViewController?.deselectItem(withLocalIdentifier: identifier)
+                    } else {
+                        await self?.cameraKeyboardViewController?.selectItem(withLocalIdentifier: identifier)
+                    }
+                }
             }
         }
     }

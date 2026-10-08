@@ -41,6 +41,14 @@ class BackupOrRestorePage: PageModel {
         app.tabBars.buttons[Locators.BackupOrRestorePage.browse.rawValue].firstMatch
     }
 
+    var historyRestoredAlert: XCUIElement {
+        app.alerts[Locators.SetPasswordPage.historyRestoredAlert.rawValue]
+    }
+
+    var OKButtonOnAlert: XCUIElement {
+        app.buttons[Locators.SetPasswordPage.ok.rawValue]
+    }
+
     func tapBackupNow() throws -> SetPasswordPage {
         backupNowButton.tap()
         return try SetPasswordPage()
@@ -57,5 +65,10 @@ class BackupOrRestorePage: PageModel {
     func goBackToAccountPage() throws -> AccountSettingsPage {
         backToPreviousPage.tap()
         return try AccountSettingsPage()
+    }
+
+    func acceptHistoryrestoredAlert() throws -> BackupOrRestorePage {
+        OKButtonOnAlert.tap()
+        return try BackupOrRestorePage()
     }
 }

@@ -156,6 +156,7 @@ private enum StorableConversationGroupType: String, Codable, Sendable {
 
     case group
     case channel
+    case meeting
 
     init(_ value: WireNetwork.ConversationGroupType) {
         switch value {
@@ -163,6 +164,8 @@ private enum StorableConversationGroupType: String, Codable, Sendable {
             self = .group
         case .channel:
             self = .channel
+        case .meeting:
+            self = .meeting
         }
     }
 
@@ -172,6 +175,8 @@ private enum StorableConversationGroupType: String, Codable, Sendable {
             .group
         case .channel:
             .channel
+        case .meeting:
+            .meeting
         }
     }
 

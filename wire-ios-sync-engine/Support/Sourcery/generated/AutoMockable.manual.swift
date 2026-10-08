@@ -511,7 +511,9 @@ public class MockUserSession: UserSession {
     public var underlyingMlsFeature: Feature.MLS!
 
     public var isWireDriveEnabled: Bool = false
-    
+
+    public var isMeetingsEnabled: Bool = false
+
     public var wireDriveBackendURL: URL? = nil
 
     public var isEnterpriseUser: Bool = false
@@ -546,6 +548,15 @@ public class MockUserSession: UserSession {
     }
 
     public var underlyingGetUserClientFingerprint: GetUserClientFingerprintUseCaseProtocol!
+
+    // MARK: - resetProteusSession
+
+    public var resetProteusSession: ResetProteusSessionUseCaseProtocol {
+        get { return underlyingResetProteusSession }
+        set(value) { underlyingResetProteusSession = value }
+    }
+
+    public var underlyingResetProteusSession: ResetProteusSessionUseCaseProtocol!
 
     // MARK: - isUserE2EICertifiedUseCase
 

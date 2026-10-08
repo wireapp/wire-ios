@@ -18,6 +18,7 @@
 
 import avs
 import Foundation
+import WireLogging
 
 private let zmLog = ZMSLog(tag: "calling")
 
@@ -30,13 +31,14 @@ public protocol AVSWrapperType {
         conversationId: AVSIdentifier,
         callType: AVSCallType,
         conversationType: AVSConversationType,
-        useCBR: Bool
+        useCBR: Bool,
+        isMeeting: Bool
     ) -> Bool
     func answerCall(conversationId: AVSIdentifier, callType: AVSCallType, useCBR: Bool) -> Bool
     func endCall(conversationId: AVSIdentifier)
     func rejectCall(conversationId: AVSIdentifier)
     func close()
-    func received(callEvent: CallEvent, conversationType: AVSConversationType) -> CallError?
+    func received(callEvent: CallEvent, conversationType: AVSConversationType, isMeeting: Bool) -> CallError?
     func setVideoState(conversationId: AVSIdentifier, videoState: VideoState)
     func handleResponse(httpStatus: Int, reason: String, context: WireCallMessageToken)
     func handleSFTResponse(data: Data?, context: WireCallMessageToken)
@@ -141,14 +143,16 @@ public final class AVSWrapper: AVSWrapperType {
         conversationId: AVSIdentifier,
         callType: AVSCallType,
         conversationType: AVSConversationType,
-        useCBR: Bool
+        useCBR: Bool,
+        isMeeting: Bool
     ) -> Bool {
         let didStart = wcall_start(
             handle,
             conversationId.serialized,
             callType.rawValue,
             conversationType.rawValue,
-            useCBR ? 1 : 0
+            useCBR ? 1 : 0,
+            isMeeting ? 1 : 0
         )
         return didStart == 0
     }
@@ -214,7 +218,11 @@ public final class AVSWrapper: AVSWrapperType {
     }
 
     /// Notifies AVS that we received a remote event.
-    public func received(callEvent: CallEvent, conversationType: AVSConversationType) -> CallError? {
+    public func received(
+        callEvent: CallEvent,
+        conversationType: AVSConversationType,
+        isMeeting: Bool
+    ) -> CallError? {
         var result: CallError?
 
         callEvent.data.withUnsafeBytes { (pointer: UnsafeRawBufferPointer) in
@@ -235,7 +243,8 @@ public final class AVSWrapper: AVSWrapperType {
                 callEvent.conversationId.serialized,
                 callEvent.userId.serialized,
                 callEvent.clientId,
-                conversationType.rawValue
+                conversationType.rawValue,
+                isMeeting ? 1 : 0
             ))
         }
 
@@ -444,17 +453,20 @@ public final class AVSWrapper: AVSWrapperType {
     }
 
     private let networkQualityHandler: Handler
-        .NetworkQualityChange = { conversationIdRef, userIdRef, clientIdRef, quality, _, _, _, contextRef in
-            AVSWrapper.withCallCenter(contextRef, conversationIdRef, userIdRef, clientIdRef, quality) {
+        .NetworkQualityChange = { conversationIdRef, userIdRef, clientIdRef, qualityInfoRef, contextRef in
+            AVSWrapper.withCallCenter(contextRef, conversationIdRef, userIdRef, clientIdRef, qualityInfoRef) {
                 // For conference calls, userId and clientId will be respectively "sft" and "SFT".
                 // This means we cannot create an AVSIdentifier for the userId, because we intentionally crash when the
                 // identifier isn't formatted as expected.
                 // Instead, we pass the values as Strings and let the handler process them
+                guard let quality = AVSWrapper.parseNetworkQuality(from: $4) else {
+                    return
+                }
                 $0.handleNetworkQualityChange(
                     conversationId: $1,
                     userId: $2,
                     clientId: $3,
-                    quality: $4
+                    quality: quality
                 )
             }
         }
@@ -501,4 +513,15 @@ public final class AVSWrapper: AVSWrapperType {
         }
     }
 
+    static func parseNetworkQuality(from qualityInfo: String) -> NetworkQuality? {
+        guard let data = qualityInfo.data(using: .utf8) else { return nil }
+
+        do {
+            let payload = try JSONDecoder().decode(NetworkQualityPayload.self, from: data)
+            return NetworkQuality(rawValue: payload.quality)
+        } catch {
+            WireLogger.avs.error("Failed to parse NetworkQualityPayload from \(qualityInfo)")
+            return nil
+        }
+    }
 }

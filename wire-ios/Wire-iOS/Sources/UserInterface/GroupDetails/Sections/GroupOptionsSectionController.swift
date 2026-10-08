@@ -18,6 +18,7 @@
 
 import Foundation
 import WireDataModel
+import WireUtilities
 
 protocol GroupOptionsSectionControllerDelegate: AnyObject {
     func presentTimeoutOptions(animated: Bool)
@@ -26,6 +27,7 @@ protocol GroupOptionsSectionControllerDelegate: AnyObject {
     func presentNotificationsOptions(animated: Bool)
     func presentAccessOptions(animated: Bool)
     func presentChannelHistoryOptions(animated: Bool)
+    func presentSharedDriveOptions(animated: Bool)
 }
 
 final class GroupOptionsSectionController: GroupDetailsSectionController {
@@ -38,7 +40,7 @@ final class GroupOptionsSectionController: GroupDetailsSectionController {
         case guests
         case services
         case timeout
-        case fileCollaboration // keep at the last position
+        case sharedDrive // keep at the last position
 
         /// Returns `true` if the option is presented to the user or `false` otherwise.
 
@@ -52,7 +54,7 @@ final class GroupOptionsSectionController: GroupDetailsSectionController {
                 return user.canModifyChannelAccessLevelSettings(in: conversation)
             case .notifications:
                 return user.canModifyNotificationSettings(in: conversation)
-            case .fileCollaboration:
+            case .sharedDrive:
                 return conversation.isWireDriveEnabled
             case .guests:
                 return user.canModifyGuestsAccessControlSettings(in: conversation)
@@ -89,7 +91,7 @@ final class GroupOptionsSectionController: GroupDetailsSectionController {
             case .services: GroupDetailsServicesCell.zm_reuseIdentifier
             case .timeout: GroupDetailsTimeoutOptionsCell.zm_reuseIdentifier
             case .notifications: GroupDetailsNotificationOptionsCell.zm_reuseIdentifier
-            case .fileCollaboration: GroupDetailsFileCollaborationCell.zm_reuseIdentifier
+            case .sharedDrive: GroupDetailsSharedDriveCell.zm_reuseIdentifier
             case .channelAccess: GroupDetailsAccessOptionsCell.zm_reuseIdentifier
             case .channelHistoryDepth: GroupDetailsChannelHistoryOptionsCell.zm_reuseIdentifier
             }
@@ -142,7 +144,7 @@ final class GroupOptionsSectionController: GroupDetailsSectionController {
         collectionView.flatMap(GroupDetailsNotificationOptionsCell.register)
         collectionView.flatMap(GroupDetailsAccessOptionsCell.register)
         collectionView.flatMap(GroupDetailsChannelHistoryOptionsCell.register)
-        collectionView.flatMap(GroupDetailsFileCollaborationCell.register)
+        collectionView.flatMap(GroupDetailsSharedDriveCell.register)
         collectionView.flatMap(SectionFooter.register)
     }
 
@@ -193,53 +195,9 @@ final class GroupOptionsSectionController: GroupDetailsSectionController {
             delegate?.presentAccessOptions(animated: true)
         case .channelHistoryDepth:
             delegate?.presentChannelHistoryOptions(animated: true)
-        case .fileCollaboration:
-            break // no op
+        case .sharedDrive:
+            delegate?.presentSharedDriveOptions(animated: true)
         }
 
     }
-
-    // MARK: - Footer
-
-    func collectionView(
-        _ collectionView: UICollectionView,
-        layout collectionViewLayout: UICollectionViewLayout,
-        referenceSizeForFooterInSection section: Int
-    ) -> CGSize {
-
-        guard conversation.isWireDriveEnabled else {
-            return .zero
-        }
-
-        footerView.titleLabel.text = L10n.Localizable.GroupDetails.FileCollaborationCell.footer
-        footerView.size(fittingWidth: collectionView.bounds.width)
-        return footerView.bounds.size
-    }
-
-    override func collectionView(
-        _ collectionView: UICollectionView,
-        viewForSupplementaryElementOfKind kind: String,
-        at indexPath: IndexPath
-    ) -> UICollectionReusableView {
-        guard kind == UICollectionView.elementKindSectionFooter else {
-            return super.collectionView(
-                collectionView,
-                viewForSupplementaryElementOfKind: kind,
-                at: indexPath
-            )
-        }
-
-        let view = collectionView.dequeueReusableSupplementaryView(
-            ofKind: UICollectionView.elementKindSectionFooter,
-            withReuseIdentifier: SectionFooter.reuseIdentifier,
-            for: indexPath
-        ) as! SectionFooter
-
-        view.titleLabel.text = conversation.isWireDriveEnabled ? L10n.Localizable.GroupDetails.FileCollaborationCell
-            .footer : nil
-
-        return view
-
-    }
-
 }

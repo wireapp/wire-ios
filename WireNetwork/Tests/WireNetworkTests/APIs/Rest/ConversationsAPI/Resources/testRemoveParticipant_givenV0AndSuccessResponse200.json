@@ -1,0 +1,28 @@
+{
+  "conversation": "0c2779c4-f2e5-4220-a6ae-696dd9112484",
+  "data": {
+    "qualified_user_ids": [
+      {
+        "domain": "staging.zinfra.io",
+        "id": "49a8049e-e478-4ef0-9184-18ff78aa2ea4"
+      }
+    ],
+    "reason": "left",
+    "user_ids": [
+      "49a8049e-e478-4ef0-9184-18ff78aa2ea4"
+    ]
+  },
+  "from": "49a8049e-e478-4ef0-9184-18ff78aa2ea4",
+  "qualified_conversation": {
+    "domain": "staging.zinfra.io",
+    "id": "0c2779c4-f2e5-4220-a6ae-696dd9112484"
+  },
+  "qualified_from": {
+    "domain": "staging.zinfra.io",
+    "id": "49a8049e-e478-4ef0-9184-18ff78aa2ea4"
+  },
+  "team": "de72c676-6309-4618-913c-493cc261ae4b",
+  "time": "2026-07-30T13:16:32.826Z",
+  "type": "conversation.member-leave",
+  "via": "user"
+}

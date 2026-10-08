@@ -57,7 +57,7 @@ final class GetE2eIdentityCertificatesUseCaseTests: XCTestCase {
         status: DeviceStatus
     ) -> WireCoreCrypto.WireIdentity {
         .init(
-            clientId: clientID,
+            clientId: try! MLSClientID(rawValue: clientID)?.cryptoId(),
             status: status,
             thumbprint: "QrsvPI0PDiJyAgsF-p3HoSyWLGWjyKwMdqlL0zWZOew",
             credentialType: .x509,

@@ -61,7 +61,21 @@ struct DeveloperE2eiView: View {
                     }
                 }
 
-                Button(String("Enroll"), action: { viewModel.enrollCertificate() })
+                VStack(alignment: .leading) {
+                    Button(String("Enroll"), action: { viewModel.enrollCertificate() })
+                    footNote(
+                        "Starts the enrollment flow with the selected expiration time."
+                    )
+                }
+
+                VStack(alignment: .leading) {
+                    Button(String("Show update certificate alert")) {
+                        viewModel.showUpdateCertificateAlert(canRemindLater: false)
+                    }
+                    footNote(
+                        "Manually triggers the \"Update Certificate\" popup. Tapping \"Update Certificate\" in the alert starts the enrollment flow with the selected expiration time."
+                    )
+                }
             }
 
             Section("Certificate Revocation Lists") {
@@ -74,12 +88,6 @@ struct DeveloperE2eiView: View {
                     description: "Sets the CRL expiration time to 1 minute. Enable to force refresh the CRLs when the app comes to the foreground (at least one minute after the CRL has been fetched the 1st time). -  Best to enable before login.",
                     binding: binding(for: .forceCRLExpiryAfterOneMinute)
                 )
-                VStack(alignment: .leading) {
-                    Button(String("Clear CRL expiration dates"), action: { viewModel.removeAllExpirationDates() })
-                    footNote(
-                        "Clears the CRL expiration dates from storage. Will force the CRLs to be refetched when discovering distribution points"
-                    )
-                }
             }
 
             Section("CRLs expiration dates") {
@@ -101,8 +109,6 @@ struct DeveloperE2eiView: View {
                         }
                     }
                 }
-
-                Button(String("Refresh"), action: { viewModel.refreshCRLExpirationDates() })
             }
         }
     }

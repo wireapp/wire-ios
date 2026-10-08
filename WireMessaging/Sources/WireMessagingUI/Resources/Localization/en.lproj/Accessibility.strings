@@ -69,3 +69,14 @@
 "conversation.wireCells.files.video" = "Video";
 "conversation.wireCells.files.folder" = "Folder";
 "conversation.wireCells.files.text" = "Text";
+"conversation.wireCells.files.availableOffline" = "Available offline";
+
+// MARK: - Viewer access
+"conversation.wireCells.files.readOnly" = "Viewer access";
+"conversation.wireCells.files.viewerAccess.banner.close" = "Close access info";
+"conversation.wireCells.files.viewerAccess.shareLink" = "Share via link, disabled in viewer access";
+"conversation.wireCells.files.viewerAccess.makeAvailableOffline" = "Make available offline, disabled in viewer access";
+
+// MARK: - Conversation details shared drive options
+"conversation.details.sharedDrive.closeButton" = "Close conversation details";
+

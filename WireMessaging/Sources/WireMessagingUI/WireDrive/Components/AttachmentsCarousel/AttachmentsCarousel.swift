@@ -79,6 +79,7 @@ private struct AttachmentsCarouselItemView: View {
         ZStack {
             ZStack {
                 content
+                    .contentShape(Rectangle()) // Constrains the tappable content area of the view.
                     .onTapGesture(perform: onTap)
             }
             .aspectRatio(item.aspectRatio, contentMode: .fill)
@@ -119,7 +120,8 @@ private struct AttachmentsCarouselItemView: View {
                 labelText: item.name,
                 state: fileTrackerState(for: item),
                 isDraftPreview: true,
-                minHeight: 72
+                minHeight: 72,
+                isAvailableOffline: false
             )
         }
     }

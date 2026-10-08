@@ -15,8 +15,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
-// General strings
 
+// General strings
 "general.ok" = "Tamam";
 "general.next" = "İleri";
 "general.cancel" = "İptal";
@@ -148,6 +148,7 @@
 
 
 // Conversation List - Filter Conversations
+"conversation_list.context_menu.title" = "%@ options";
 "conversation_list.filter.all_conversations.title" = "All Conversations";
 "conversation_list.filter.favorites.title" = "Favoriler";
 "conversation_list.filter.groups.title" = "Gruplar";
@@ -261,6 +262,7 @@
 "conversation.voiceover.value.disabled" = "devre dışı";
 
 "conversation.status.secutity_alert.default" = "Yeni güvenlik uyarısı";
+"conversation.status.scheduled_for_deletion" = "Will be deleted soon";
 
 "conversation.status.typing" = "Bir mesaj yazıyor…";
 "conversation.status.typing.group" = "%@: bir mesaj yazıyor…";
@@ -317,6 +319,7 @@
 "conversation.input_bar.verified" = "Doğrulandı";
 "conversation.input_bar.placeholder" = "Bir mesaj yazın";
 "conversation.input_bar.placeholder_ephemeral" = "Kendini silen mesaj";
+"conversation.input_bar.blocked_user" = "You blocked this user";
 
 "conversation.input_bar.audio_message.tooltip.pull_send" = "Göndermek için kaydırın";
 "conversation.input_bar.audio_message.tooltip.tap_send" = "Göndermek için tıkla";
@@ -368,6 +371,7 @@
 "conversation.create.apps.subtitle" = "Open this conversation to apps.";
 "conversation.create.apps_disabled.title" = "Your team doesn't use apps yet";
 "conversation.create.apps_disabled.message" = "To improve your workflow with apps, your team needs configuration. Please contact your team admin.";
+"conversation.create.apps_disabled_as_admin.message" = "To improve your workflow with apps, your team needs configuration.";
 "conversation.create.receipts.title" = "Okundu bilgisi";
 "conversation.create.receipts.subtitle" = "Bu açıkken, insanlar bu görüşmedeki mesajlarının ne zaman okunduğunu görebilir.";
 "conversation.create.mls.title" = "Protocol";
@@ -386,6 +390,7 @@
 "conversation.create.file_management.title" = "Shared Drive";
 "conversation.create.file_management.subtitle" = "Enable participants to manage their documents and media files in a shared Drive. This can’t be undone.";
 "conversation.create.file_management.learnMore" = "Daha fazla bilgi";
+"conversation.create.file_management.sharedDriveAccess" = "People outside your team can view files, not upload or edit.";
 
 "conversation.input_bar.ongoing_call_alert.title" = "Devam eden arama";
 "conversation.input_bar.ongoing_call_alert.audio.message" = "Görüşme sırasında sesli mesaj kaydedemezsiniz.";
@@ -567,6 +572,7 @@
 "content.system.conversation.you.removed" = "%@, %@'i sildi";
 "content.system.conversation.you.removed.legalhold" = "%@ were removed from this conversation because legal hold has been activated.";
 "content.system.conversation.you.left" = "%@ ayrıldı";
+"content.system.conversation.you.promoted" = "%@ were promoted to group admin";
 "content.system.conversation.team.member-leave" = "%@ takımdan çıkarıldı.";
 "content.system.conversation.guest.joined" = "%@ katıldı";
 "content.system.conversation.guest.you_joined" = "Katıldınız";
@@ -634,7 +640,12 @@
 "content.system.channel.guest.joined" = "%@ joined the channel";
 "content.system.channel.guest.you_joined" = "You joined the channel";
 
-"content.system.file_collaboration.enabled" = "Shared Drive is on";
+"content.system.file_collaboration.sharedDriveState" = "Shared Drive is %@";
+"content.system.file_collaboration.sharedDriveState.enabled" = "on";
+"content.system.file_collaboration.enabled.editor_access" = "You have editor access. People outside your team only have viewer access.";
+"content.system.file_collaboration.enabled.viewer_access" = "You can view, but you can’t upload, edit, or manage files.";
+"content.system.file_collaboration.enabled.learn_more" = "Daha fazla bilgi";
+"content.system.file_collaboration.drive_viewer_access.title" = "People outside your team can join this conversation as viewers.";
 
 // read receipt
 
@@ -659,6 +670,11 @@
 "content.system.message_legal_hold.disabled" = "Bu konuşma için yasal bekletme özelliği devre dışı bırakıldı";
 
 "content.system.message_legal_hold.learn_more" = "Daha fazla bilgi";
+
+// automatic conversation deletion
+
+"content.system.message_conversation_scheduled_for_deletion.text" = "This group will be automatically deleted on %@, as there are no eligible group admins.";
+"content.system.message_conversation_scheduled_for_deletion.read_more.text" = "Read more";
 
 //
 "content.system.is_verified" = "Tüm parmak izleri doğrulanmış";
@@ -734,6 +750,7 @@
 "content.message.reply.original_timestamp.date" = "%@ kaynağındaki orijinal mesaj";
 "content.message.reply.original_timestamp.time" = "%@ kaynağındaki orijinal mesaj";
 "content.message.reply.broken_message" = "Bu mesajı göremezsiniz.";
+"content.message.reply.deleted_message" = "Deleted message";
 "content.message.reply.edited_message" = "Düzenlenen";
 
 "content.message.open_link_alert.title" = "Bağlantıyı Ziyaret Et";
@@ -954,6 +971,16 @@
 "shortcut.mark_all_as_read.title" = "Tümünü Okundu olarak İşaretle";
 "meta.menu.configure_notifications" = "Bildirimler…";
 "meta.menu.open_self_profile" = "Profili Aç";
+"meta.menu.mls_migration.confirmation.title" = "Change protocol to MLS?";
+"meta.menu.mls_migration.confirmation.message" = "The standard messaging protocol will change from Proteus to Messaging Layer Security (MLS).";
+"meta.menu.mls_migration.confirmation.button" = "Change Protocol";
+"meta.menu.mls_migration.success.title" = "MLS migration completed";
+"meta.menu.mls_migration.success.message" = "The conversation now uses MLS.";
+"meta.menu.mls_migration.failure.title" = "MLS migration failed";
+"meta.menu.mls_migration.failure.conversation_not_found" = "The conversation could not be found.";
+"meta.menu.mls_migration.failure.unsupported_conversation" = "Only team group conversations can be migrated.";
+"meta.menu.mls_migration.failure.missing_mls_service" = "Unable to start the migration to MLS.";
+"meta.menu.mls_migration.failure.missing_mls_group_id" = "The conversation does not have an MLS group ID.";
 
 // Delete conversation
 "meta.menu.delete_content.dialog_title" = "İçerik temizlensin mi?";
@@ -977,6 +1004,22 @@
 "meta.leave_conversation_button_cancel" = "İptal";
 "meta.leave_conversation_button_leave" = "Ayrıl";
 "meta.leave_conversation_button_leave_and_delete" = "Ayrıl ve içeriği temizle";
+
+// Admin selection (promote new admin before leaving)
+"admin_selection.title" = "New admin";
+"admin_selection.promote" = "Promote";
+"admin_selection.info_banner" = "After you promote a new admin, you leave the group.";
+"admin_selection.promotion_error" = "Group member could not be promoted to admin.";
+
+// Last admin leave flow
+"last_admin_leave.title" = "Leave \"%@\"?";
+"last_admin_leave.promote_or_delete_message" = "You're the only admin.\nPromote another participant before leaving, or delete the group if it is no longer needed.";
+"last_admin_leave.promote_new_admin" = "Promote new admin";
+"last_admin_leave.no_eligible_candidates_message" = "You're the only admin. The other participants can't be admins.\nAdd at least one team member and promote them as an admin before you leave. Alternatively, delete the group if it is no longer needed.";
+"last_admin_leave.delete_group" = "Delete group";
+"last_admin_leave.promote_only_message" = "You're the only admin.\nPromote another participant before leaving.";
+"last_admin_leave.cannot_leave_title" = "Leave \"%@\"?";
+"last_admin_leave.cannot_leave_message" = "Add at least one team member from the team that created this group and select them as an admin before you leave.";
 
 // Conversation Degraded (security level lowered)
 "meta.degraded.degradation_reason_message.singular" = "%@ yeni bir cihaz kullanmaya başladı.";
@@ -1020,11 +1063,11 @@
 "profile.connection_request_dialog.button_cancel" = "Yoksay";
 "profile.connection_request_dialog.button_connect" = "Bağlan";
 
-// Delete group
-"conversation.delete_request_dialog.title" = "Grup sohbeti silinsin mi?";
-"conversation.delete_request_dialog.message" = "Bu, tüm cihazlardaki tüm katılımcılar için grubu ve tüm içeriği siler. İçeriği geri yüklemek için bir seçenek yoktur. Tüm katılımcılara bildirilecektir.";
-"conversation.delete_request_error_dialog.title" = "An error occurred while trying to delete the group %@. Please try again.";
-"conversation.delete_request_error_dialog.button_delete_group" = "Grubu sil";
+// Delete conversation
+"conversation.delete_request_dialog.title" = "Delete conversation?";
+"conversation.delete_request_dialog.message" = "This will delete the conversation and all content for all participants on all devices. There is no option to restore the content. All participants will be notified.";
+"conversation.delete_request_error_dialog.title" = "An error occurred while trying to delete the conversation %@. Please try again.";
+"conversation.delete_request_error_dialog.button_delete_group" = "Delete Conversation";
 
 // Cancel connection request
 "profile.cancel_connection_request_dialog.title" = "İstek iptal edilsin mi?";
@@ -1052,7 +1095,7 @@
 "profile.read_receipts_disabled_memo.header" = "OKUNDU BİLGİLERİNİ DEVRE DIŞI BIRAKTINIZ";
 "profile.read_receipts_memo.body" = "Her iki taraf da okundu bilgisini açarsa, mesajların ne zaman okunduğunu görebilirsiniz.\n\nBu seçeneği hesap ayarlarınızdan değiştirebilirsiniz.";
 
-"profile.group_admin_status_memo.body" = "When this is on, the admin can add or remove people and apps, update group settings, and change a participant's role.";
+"profile.group_admin_status_memo.body" = "When this is on, the admin can add or remove people and apps, update conversation settings, and change a participant's role.";
 
 "profile.extended_metadata.header" = "Bilgi";
 
@@ -1063,8 +1106,9 @@
 "profile.details.partner" = "external";
 "profile.details.federated" = "Federe";
 "profile.details.blocking_reason" = "This user is blocked due to legal hold. [LEARN MORE](%@)";
-"profile.details.identity_warning" = "Get certainty about %@’s identity before connecting.";
-"profile.details.requested_identity_warning" = "Please verify the person's identity before accepting the connection request.";
+"profile.details.identity_warning" = "Get certainty about %@’s identity before connecting.\nWire’s Support team will never reach out to you in the app.";
+"profile.details.requested_identity_warning" = "Please verify the person's identity before accepting the connection request.\nWire’s Support team will never reach out to you in the app.";
+"profile.details.report_misuse" = "Report misuse";
 "profile.details.title.unavailable" = "Name not available";
 
 // Device list
@@ -1112,6 +1156,8 @@
 "group_details.channel_history_options_cell.title" = "Conversation history";
 "group_details.file_collaboration_cell.title" = "Shared Drive";
 "group_details.file_collaboration_cell.subtitle" = "Açık";
+"group_details.file_collaboration_cell.subtitle.editor_access" = "Editor access";
+"group_details.file_collaboration_cell.subtitle.viewer_access" = "Viewer access";
 "group_details.file_collaboration_cell.footer" = "Permanently on for this conversation";
 "group_details.timeout_options_disabled.footer" = "The feature is not available for conversations with a shared Drive.";
 
@@ -1154,8 +1200,8 @@
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Self profile
-// QRCode
 
+// QRCode
 "qrcode.title" = "Share Profile";
 "qrcode.share_message" = "Share your profile to connect easily with other people. You must still accept a connection request before you two can start communicating.";
 "qrcode.share_profile_link.button.title" = "Share Profile Link";
@@ -1200,9 +1246,6 @@
 "self.settings.add_account_or_team.title" = "Add Account or Team";
 "self.settings.manage_team.title" = "Takımı Yönet";
 "self.settings.add_account.title" = "Bir hesap ekle";
-
-"self.settings.add_account.error.title" = "Üç hesap aktif";
-"self.settings.add_account.error.message" = "Tek seferde üç hesapla giriş yapabilirsiniz. Başka bir tane eklemek için birinden çıkış yapın.";
 
 "self.settings.switch_account.message" = "Bu hesapta bir çağrı etkin.\nHesapların değiştirilmesi mevcut aramayı kapatacaktır.";
 "self.settings.switch_account.action" = "Yine de değiştir";
@@ -1435,16 +1478,41 @@
 "self.settings.technical_report_section.title" = "Hata Ayıklama Raporu";
 "self.settings.technical_report.send_report" = "Send Report";
 "self.settings.technical_report.share_report" = "Share Report Via Wire";
-"self.settings.technical_report.mail.subject" = "Wire Hata Ayıklama Raporu";
+"self.settings.technical_report.mail.subject" = "Issue report";
 "self.settings.technical_report.include_log" = "Detaylı günlüğü ekle";
 "self.settings.technical_report.info" = "If you encounter unexpected behaviour or a bug while using Wire, you can send a bug report to our support team from here. The bug report could contain personal information. \n\nYou can also share your debug logs directly with your team admin via Wire.";
 "self.settings.technical_report.privacy_warning" = "Detaylı günlükler kişisel verilerinizi içerebilir";
 "self.settings.technical_report.no_mail_alert" = "Posta istemcisi algılanmadı. \"Tamam\" düğmesine dokunun ve günlükleri aşağıdakilere manuel olarak gönderin: ";
 
-"self.settings.technical_report.mail_body.firstline" = "Please fill in the following";
-"self.settings.technical_report.mail_body.section1" = "Date and Time of the issue occured:";
-"self.settings.technical_report.mail_body.section2" = "What Happened:";
-"self.settings.technical_report.mail_body.section3" = "Steps to reproduce (if relevant):";
+"self.settings.technical_report.mail_body.firstline" = "Explain what happened so that we can understand and reproduce the problem:";
+"self.settings.technical_report.mail_body.section1" = "What Happened?";
+"self.settings.technical_report.mail_body.section2" = "When did it happen?";
+"self.settings.technical_report.mail_body.section3" = "Add steps to reproduce (if relevant):";
+
+// Share Debug Report Banner
+"self.settings.share_debug_report.banner.title" = "Having trouble?";
+"self.settings.share_debug_report.banner.message" = "To improve Wire's quality, please send us your feedback and let us know about any problems.";
+"self.settings.share_debug_report.creating_report" = "Creating debug report...";
+"self.settings.share_debug_report.action_sheet.title" = "Having trouble?";
+"self.settings.share_debug_report.action_sheet.message" = "You can send your report to Wire support, share it with your administrator directly via Wire or any other app.";
+"self.settings.share_debug_report.action_sheet.share_via_wire" = "Share via Wire";
+"self.settings.share_debug_report.action_sheet.send_email" = "Send email to Support";
+"self.settings.share_debug_report.action_sheet.share" = "Share";
+
+
+// Settings - DebugTools
+
+"settings.debugging_tools.unread_conversations.not_found" = "No unread conversation";
+"settings.debugging_tools.unread_conversations.found" = "Found an unread conversation:";
+"settings.debugging_tools.unread_conversations.action_copy" = "Kopyala";
+"settings.debugging_tools.debug_command.title" = "Debug command";
+"settings.debugging_tools.debug_command.command_not_recognized" = "Command not recognized";
+"settings.debugging_tools.repair_mls_removal_keys.use_case_unavailable" = "Error: Repair use case not available";
+"settings.debugging_tools.repair_mls_removal_keys.success_title" = "Faulty MLS Removal Keys Repair";
+"settings.debugging_tools.repair_mls_removal_keys.success_message" = "Found: %d faulty conversation(s)\nRepaired: %d conversation(s)";
+"settings.debugging_tools.repair_mls_removal_keys.failure_title" = "Repair Failed";
+"settings.debugging_tools.repair_mls_removal_keys.failure_message" = "Error: %@";
+
 // Password reset
 "self.settings.password_reset_menu.title" = "Parolayı Sıfırla";
 
@@ -1524,6 +1592,7 @@
 
 "guest_room.allow_guests.title" = "Misafirlere izin ver";
 "guest_room.allow_guests.subtitle" = "Open this conversation to people outside your team.";
+"guest_room.allow_guests.shared_drive.subtitle" = "Guests can’t upload, edit, or manage files in Shared Drive.";
 "guest_room.remove_guests.message" = "Current guests will be removed from the conversation. New guests will not be allowed.";
 "guest_room.remove_guests.action" = "Kaldır";
 "guest_room.revoke_link.message" = "Yeni misafirler bu bağlantıya katılamayacaklar. Mevcut misafirler ise hala erişime sahip olacaktır.";
@@ -1618,6 +1687,10 @@
 "login.sso.backend_switch.title" = "Yönlendiriliyor...";
 "login.sso.backend_switch.subtitle" = "Özel kurumsal hizmetinize yönlendiriliyorsunuz.";
 "login.sso.backend_switch.information" = "Provide credentials only if you're sure this is your organization's log in.";
+
+"sso_identity_changed.title" = "Identity provider changed";
+"sso_identity_changed.message" = "This account was used with a different identity provider. Continuing will delete all conversations from this device.\nTo keep your data, select Cancel, then log in with your previous identity provider.";
+"sso_identity_changed.delete_data_and_continue" = "Delete data and continue";
 
 "registration.no_history.logged_out.hero" = "Bu cihazdan daha önce Wire kullanmışsınız.";
 "registration.no_history.logged_out.subtitle" = "Bu sürede gönderilen mesajlar gözükmeyecektir.";
@@ -1744,7 +1817,6 @@
 "error.user.device_deleted_remotely" = "Başka bir cihaz tarafından oturumunuz kapatıldı.";
 "error.user.last_identity_cant_be_deleted" = "An email address is required.";
 "error.user.account_suspended" = "Bu hesap artık giriş yapmak için yeterli yetkiye sahip değil.";
-"error.user.account_limit_reached" = "3'ten fazla hesap ekleyemezsiniz.";
 "error.user.too_many_requests" = "Too many requests, please try again later.";
 
 "error.group_call.too_many_members_in_conversation.title" = "Aramak için çok insan var";

@@ -18,6 +18,7 @@
 
 import Photos
 import UIKit
+import WireLogging
 import WireSystem
 import WireUtilities
 
@@ -48,8 +49,6 @@ protocol AssetCreationRequestProtocol: AnyObject {
 
 extension PHAssetChangeRequest: AssetChangeRequestProtocol {}
 extension PHAssetCreationRequest: AssetCreationRequestProtocol {}
-
-private let log = ZMSLog(tag: "SavableImage")
 
 final class SavableImage: NSObject {
 
@@ -82,7 +81,7 @@ final class SavableImage: NSObject {
         do {
             try data.write(to: url, options: .atomic)
         } catch {
-            log.error("error writing image data to \(url): \(error)")
+            WireLogger.ui.error("SavableImage: error writing image data to \(url): \(error)")
         }
 
         return url
@@ -137,7 +136,7 @@ final class SavableImage: NSObject {
     }
 
     private func warnAboutError(_ error: Error) {
-        log.error("error saving image: \(error)")
+        WireLogger.ui.error("SavableImage: error saving image: \(error)")
 
         let alert = UIAlertController(
             title: L10n.Localizable.Library.Alert.PermissionWarning.title,

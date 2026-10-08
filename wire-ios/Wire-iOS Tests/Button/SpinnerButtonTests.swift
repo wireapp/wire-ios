@@ -51,6 +51,7 @@ final class SpinnerButtonTests: XCTestCase {
 
         // WHEN
         sut.isLoading = true
+        freezeSpinnerAnimation()
 
         // THEN
         verifyInWidths(
@@ -81,6 +82,7 @@ final class SpinnerButtonTests: XCTestCase {
         ColorScheme.default.variant = .dark
         createSut()
         sut.isLoading = true
+        freezeSpinnerAnimation()
 
         verifyInAllPhoneWidths(
             matching: sut,
@@ -91,10 +93,18 @@ final class SpinnerButtonTests: XCTestCase {
         ColorScheme.default.variant = .light
         createSut()
         sut.isLoading = true
+        freezeSpinnerAnimation()
         verifyInAllPhoneWidths(
             matching: sut,
             snapshotBackgroundColor: UIColor.from(scheme: .contentBackground),
             named: "light"
         )
+    }
+
+    // Strip the spinner's rotation animation after it's added so snapshots
+    // render the icon at its natural orientation instead of a wall-clock-driven
+    // phase. Layer-speed pauses leave the captured beginTime non-deterministic.
+    private func freezeSpinnerAnimation() {
+        sut.removeAllAnimationsRecursively()
     }
 }

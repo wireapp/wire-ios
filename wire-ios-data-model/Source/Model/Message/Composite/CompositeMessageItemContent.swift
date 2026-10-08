@@ -79,6 +79,10 @@ extension CompositeMessageItemContent: TextMessageData {
         false
     }
 
+    var quotedMessageIsDeleted: Bool {
+        false
+    }
+
     func fetchLinkPreviewImageData(
         queue: DispatchQueue,
         completionHandler: @escaping (_ imageData: Data?) -> Void

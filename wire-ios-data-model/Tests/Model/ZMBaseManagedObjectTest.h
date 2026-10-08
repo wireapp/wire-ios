@@ -45,7 +45,6 @@
 @property (nonatomic, readonly, nonnull) NSManagedObjectContext *uiMOC;
 @property (nonatomic, readonly, nonnull) NSManagedObjectContext *syncMOC;
 
-@property (nonatomic, readonly) BOOL shouldUseRealKeychain;
 @property (nonatomic, readonly) BOOL shouldUseInMemoryStore;
 
 /// reset ui and sync contexts

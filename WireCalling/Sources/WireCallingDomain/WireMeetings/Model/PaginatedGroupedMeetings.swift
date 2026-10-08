@@ -16,15 +16,28 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-package import Foundation
+package struct PaginatedMeetings {
 
-package typealias MeetingTimeSlot = (time: Date, meetings: [Meeting])
-package typealias GroupedMeetings = [(day: Date, timeSlots: [MeetingTimeSlot])]
-
-package struct PaginatedGroupedMeetings {
-
-    package let groups: GroupedMeetings
+    package let occurrences: [MeetingOccurrence]
     package let hasMore: Bool
     package let nextOffset: Int
+
+    package var meetings: [Meeting] {
+        occurrences.map(\.meeting)
+    }
+
+    package init(occurrences: [MeetingOccurrence], hasMore: Bool, nextOffset: Int) {
+        self.occurrences = occurrences
+        self.hasMore = hasMore
+        self.nextOffset = nextOffset
+    }
+
+    package init(meetings: [Meeting], hasMore: Bool, nextOffset: Int) {
+        self.init(
+            occurrences: meetings.map { MeetingOccurrence(meeting: $0) },
+            hasMore: hasMore,
+            nextOffset: nextOffset
+        )
+    }
 
 }

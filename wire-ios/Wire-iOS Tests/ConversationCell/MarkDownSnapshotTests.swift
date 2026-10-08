@@ -59,6 +59,27 @@ final class MarkDownSnapshotTests: ConversationMessageSnapshotTestCase {
         verify(message: message)
     }
 
+    /// Renders a markdown blockquote — verifies the BlockquoteLayoutManager draws the
+    /// vertical accent bar to the left of the quoted text.
+    func testBlockquote() {
+        let messageText =
+            """
+            Here's what they said:
+
+            > The wretch often disguises himself, but you will know him at once by his rough voice and his black feet.
+
+            We should be on guard.
+            """
+
+        let message = MockMessageFactory.textMessage(
+            withText: messageText,
+            sender: mockSelfUser,
+            includingRichMedia: false
+        )
+
+        verify(message: message)
+    }
+
     /// compare with above tests, the line spacing should be the same for both case.
     func testNoMentrionParagraph() {
         let messageText =

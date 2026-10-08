@@ -56,6 +56,8 @@ extension ConversationEvent {
             event.senderID
         case let .mlsReset(event):
             event.senderID
+        case let .adminlessReminder(event):
+            event.senderID
         }
     }
 
@@ -95,6 +97,8 @@ extension ConversationEvent {
             event.conversationID
         case let .mlsReset(event):
             event.conversationID
+        case let .adminlessReminder(event):
+            event.conversationID
         }
     }
 
@@ -117,6 +121,8 @@ extension ConversationEvent {
         case let .proteusMessageAdd(event):
             event.timestamp
         case let .rename(event):
+            event.timestamp
+        case let .adminlessReminder(event):
             event.timestamp
         default:
             nil

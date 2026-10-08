@@ -52,4 +52,23 @@ class CreatingBackupPage: PageModel {
         return try SaveBackupFileBottomSheetPage()
     }
 
+    func verifyBackupIsCreatedSuccessfully(
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) {
+        XCTAssertTrue(
+            backupSuccessfullyCreatedLabel.exists,
+            "Backup is unsuccessful",
+            file: file,
+            line: line
+        )
+
+        XCTAssertEqual(
+            getBackupProgressValue(),
+            "100%",
+            "Progress is not 100%",
+            file: file,
+            line: line
+        )
+    }
 }

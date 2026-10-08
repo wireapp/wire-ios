@@ -38,7 +38,13 @@ extension SessionManager {
     // MARK: - Token registration
 
     public func configurePushToken(session: ZMUserSession) {
-        guard let localToken = pushTokenService.localToken else {
+        if DeveloperFlag.noAPNSTokenCache.isOn {
+            WireLogger.push.info("configurePushToken: requesting fresh token from iOS")
+            application.registerForRemoteNotifications()
+            return
+        }
+
+        guard pushTokenService.localToken != nil else {
             WireLogger.push.info("no local token, will generate one")
             generateLocalToken(session: session)
             return
@@ -83,6 +89,39 @@ extension SessionManager {
             }
             session.syncManagedObjectContext.leaveAllGroups(groups)
         }
+    }
+
+    @MainActor
+    func uploadPushToken(sessions: [ZMUserSession]) async {
+        WireLogger.push.info("uploadPushToken: uploading for \(sessions.count) sessions", attributes: .safePublic)
+
+        for (index, session) in sessions.enumerated() {
+            guard let clientID = session.selfUserClient?.remoteIdentifier else {
+                WireLogger.push.warn("uploadPushToken: session \(index) has no client id", attributes: .safePublic)
+                continue
+            }
+
+            do {
+                try await syncLocalTokenWithRemote(
+                    clientID: clientID,
+                    in: session.notificationContext
+                )
+
+                WireLogger.push.info("uploadPushToken: success for session \(index)", attributes: .safePublic)
+            } catch {
+                let error = error as NSError
+
+                WireLogger.push.error(
+                    "uploadPushToken: failed for session \(index): \(error.safeForLoggingDescription)",
+                    attributes: .safePublic
+                )
+            }
+        }
+    }
+
+    @concurrent
+    private func syncLocalTokenWithRemote(clientID: String, in context: NotificationContext) async throws {
+        try await pushTokenService.syncLocalTokenWithRemote(clientID: clientID, in: context)
     }
 
 }

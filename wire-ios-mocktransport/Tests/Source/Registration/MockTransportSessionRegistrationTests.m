@@ -126,46 +126,23 @@
     XCTAssertEqualObjects([(NSHTTPCookie *)cookies.firstObject name], @"zuid");
 }
 
-- (void)testThatRegistrationWithEmailStoresCookiesIfPolicyIsAlways
+- (void)testThatRegistrationWithEmailStoresCookies
 {
     // GIVEN
-    [ZMPersistentCookieStorage setCookiesPolicy:NSHTTPCookieAcceptPolicyAlways];
     NSDictionary *payload = @{
                               @"name" : @"Someone someone",
                               @"email" : @"someone@example.com",
                               @"password" : @"supersecure",
                               };
-    
+
     // WHEN
     __unused ZMTransportResponse *response = [self responseForPayload:payload path:@"/register" method:ZMTransportRequestMethodPost apiVersion:0];
-    
+
     // expect
-    __block NSData *cookieData;
-    [[(id) self.sut.cookieStorage expect] setAuthenticationCookieData:ZM_ARG_SAVE(cookieData)];
-    
+    [[(id) self.sut.cookieStorage expect] storeCookies:OCMOCK_ANY error:[OCMArg anyObjectRef]];
+
     WaitForAllGroupsToBeEmpty(0.5);
 }
-
-- (void)testThatRegistrationWithEmailDoesNotStoreCookiesIfPolicyIsNever
-{
-    // GIVEN
-    [ZMPersistentCookieStorage setCookiesPolicy:NSHTTPCookieAcceptPolicyAlways];
-    NSDictionary *payload = @{
-                              @"name" : @"Someone someone",
-                              @"email" : @"someone@example.com",
-                              @"password" : @"supersecure",
-                              };
-    
-    // WHEN
-    __unused ZMTransportResponse *response = [self responseForPayload:payload path:@"/register" method:ZMTransportRequestMethodPost apiVersion:0];
-    
-    // expect
-    __block NSData *cookieData;
-    [[(id) self.sut.cookieStorage reject] setAuthenticationCookieData:ZM_ARG_SAVE(cookieData)];
-    
-    WaitForAllGroupsToBeEmpty(0.5);
-}
-
 
 - (void)testThatRegistrationCreatesAUserWithNoValidatedEmail
 {
@@ -374,17 +351,16 @@
                               @"phone_code" : self.sut.phoneVerificationCodeForRegistration,
                               };
     [self requestVerificationCodeForPhone:phone];
-    
+
     // expect
-    __block NSData *cookieData;
-    [[(id) self.sut.cookieStorage expect] setAuthenticationCookieData:ZM_ARG_SAVE(cookieData)];
-    
+    [[(id) self.sut.cookieStorage expect] storeCookies:OCMOCK_ANY error:[OCMArg anyObjectRef]];
+
     // WHEN
     ZMTransportResponse *response = [self responseForPayload:payload path:@"/register" method:ZMTransportRequestMethodPost apiVersion:0];
-    
+
     // THEN
     XCTAssertEqual(response.HTTPStatus, 200);
-    XCTAssertNotNil(cookieData);
+    [(id)self.sut.cookieStorage verify];
 }
 
 - (void)testThatRegistrationWithPhoneNumberReturns409ItThereIsAlreadyAUserWithThatPhone

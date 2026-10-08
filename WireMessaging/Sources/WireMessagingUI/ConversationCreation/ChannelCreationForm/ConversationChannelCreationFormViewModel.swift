@@ -78,11 +78,12 @@ public final class ConversationChannelCreationFormViewModel: ObservableObject {
     @Published var channelHistoryOption: ChannelHistoryOption
     @Published var channelHistoryOptionCustom: ChannelHistoryOption.Custom = .init()
     @Published var showUpgradeBanner: Bool = false
+    @Published private(set) var isTeamAdmin: Bool
     @Published private(set) var areAppsSupported: Bool
     @Published var appsAllowed: Bool
     @Published var guestsAllowed: Bool
     @Published var readReceiptsEnabled: Bool
-    @Published var fileManagementEnabled: Bool = false
+    @Published var sharedDriveEnabled: Bool = false
     @Published public private(set) var isFormValid: Bool
 
     let teamsURL: URL
@@ -97,6 +98,7 @@ public final class ConversationChannelCreationFormViewModel: ObservableObject {
         // channelAccess: ChannelAccessOption = .private,
         channelInvitePolicy: ChannelInvitePolicyOption,
         channelHistoryOption: ChannelHistoryOption,
+        isTeamAdmin: Bool,
         areAppsSupported: Bool,
         appsAllowed: Bool,
         guestsAllowed: Bool,
@@ -113,6 +115,7 @@ public final class ConversationChannelCreationFormViewModel: ObservableObject {
         self.channelAccess = .private // channelAccess
         self.channelInvitePolicy = channelInvitePolicy
         self.channelHistoryOption = channelHistoryOption
+        self.isTeamAdmin = isTeamAdmin
         self.areAppsSupported = areAppsSupported
         self.appsAllowed = appsAllowed && areAppsSupported
         self.guestsAllowed = guestsAllowed
@@ -210,7 +213,7 @@ public final class ConversationChannelCreationFormViewModel: ObservableObject {
                     guestsAllowed: guestsAllowed,
                     readReceiptsEnabled: readReceiptsEnabled,
                     historyDepth: getHistoryDepth(),
-                    fileManagementEnabled: fileManagementEnabled
+                    sharedDriveEnabled: sharedDriveEnabled
                 )
             }
             .get()

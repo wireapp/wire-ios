@@ -102,6 +102,10 @@ public enum FeatureConfig: Equatable, Sendable, Hashable {
 
     case mlsMigration(MLSMigrationFeatureConfig)
 
+    /// Config for the *Meetings* feature.
+
+    case meetings(MeetingsFeatureConfig)
+
     /// Config for the *Self Deleting Messages* feature.
     ///
     /// *Self Deleting Messages* enables team admins
@@ -132,10 +136,17 @@ public enum FeatureConfig: Equatable, Sendable, Hashable {
     ///
     /// When this feature is enabled, additional metadata is provided
     /// to the backend when uploading an asset so that an audit log
-    /// can be constructed for future referece, such as for security
+    /// can be constructed for future reference, such as for security
     /// review.
 
     case assetAuditLog(AssetAuditLogFeatureConfig)
+
+    /// Config for the **Prevent Adminless Groups** feature.
+    ///
+    /// When enabled, the last admin of a group is prompted to assign a
+    /// replacement admin before leaving the conversation.
+
+    case preventAdminlessGroups(PreventAdminlessGroupsFeatureConfig)
 
     /// An unknown feature.
 

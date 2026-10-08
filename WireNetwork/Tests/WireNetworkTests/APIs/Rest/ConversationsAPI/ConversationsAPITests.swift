@@ -798,6 +798,34 @@ final class ConversationsAPITests: XCTestCase {
         XCTAssertEqual(conversation.addPermission, .everyone) // Can be decoded in API >= v8
     }
 
+    func testGetConversations_givenV16AndSuccessResponse200_thenVerifyResponse() async throws {
+        // given
+        let versions = APIVersion.v16.andNextVersions
+        let apiService = MockAPIServiceProtocol.withResponses(
+            .init(repeating: (.ok, "testGetConversations_givenV16AndSuccessResponse200"), count: versions.count)
+        )
+
+        let ids = [
+            QualifiedID(
+                id: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!,
+                domain: "example.com"
+            )
+        ]
+
+        // when
+        // then
+        for sut in versions.map({ $0.buildAPI(apiService: apiService) }) {
+            let list = try await sut.getConversations(for: ids)
+
+            XCTAssertEqual(list.found.count, 1)
+            XCTAssertEqual(list.notFound.count, 1)
+            XCTAssertEqual(list.failed.count, 1)
+
+            let conversation = try XCTUnwrap(list.found.first)
+            XCTAssertEqual(conversation.groupType, .meeting)
+        }
+    }
+
     // MARK: - GetMLSOneToOneConversation
 
     func testGetMLSOneToOneConversation_Success_Response_V10_AndNext_Versions() async throws {
@@ -1732,6 +1760,27 @@ final class ConversationsAPITests: XCTestCase {
         }
     }
 
+    func testCreateGroupConversation_givenV8_To_V15_Unsupported_Meeting_Creation() async throws {
+
+        // given
+        let unsupportedVersions = APIVersion.v8.andNextVersions.filter { $0 < .v16 }
+        let apiService = MockAPIServiceProtocol.withError(statusCode: .unreachable, label: "")
+        let suts = unsupportedVersions.map { $0.buildAPI(apiService: apiService) }
+
+        // when
+        // then
+
+        XCTAssertEqual(suts.count, unsupportedVersions.count)
+
+        for sut in suts {
+            await XCTAssertThrowsErrorAsync(ConversationsAPIError.invalidBody) {
+                _ = try await sut.createGroupConversation(
+                    parameters: Scaffolding.createMeetingParameters
+                )
+            }
+        }
+    }
+
     func testCreateGroupConversation_givenV8_And_Channel_Creation_AndSuccessResponse201_thenVerifyRespons(
     ) async throws {
 
@@ -2086,6 +2135,79 @@ final class ConversationsAPITests: XCTestCase {
         }
     }
 
+    func testUpdateRole_givenV0_AndSuccessResponse200_thenVerifyResponse() async throws {
+        // given
+        let supportedVersions = APIVersion.v0.andNextVersions
+        let mocks: [MockAPIServiceProtocol.Response] = Array(
+            repeating: (.ok, nil),
+            count: supportedVersions.count
+        )
+
+        let apiService = MockAPIServiceProtocol.withResponses(mocks)
+
+        let suts = supportedVersions.map { $0.buildAPI(apiService: apiService) }
+
+        // when
+        // then
+
+        XCTAssertEqual(suts.count, supportedVersions.count)
+
+        for sut in suts {
+            try await sut.updateRole(
+                "wire_admin",
+                userID: .mockID1,
+                conversationID: .mockID2
+            )
+        }
+    }
+
+    func testRemoveParticipant_givenV0_AndSuccessResponse200_thenVerifyResponse() async throws {
+        // given
+        let supportedVersions = APIVersion.v0.andNextVersions
+        let mocks: [MockAPIServiceProtocol.Response] = Array(
+            repeating: (.ok, "testRemoveParticipant_givenV0AndSuccessResponse200"),
+            count: supportedVersions.count
+        )
+
+        let apiService = MockAPIServiceProtocol.withResponses(mocks)
+
+        let suts = supportedVersions.map { $0.buildAPI(apiService: apiService) }
+
+        // when
+        // then
+
+        XCTAssertEqual(suts.count, supportedVersions.count)
+
+        for sut in suts {
+            try await sut.removeParticipant(
+                userID: .mockID1,
+                conversationID: .mockID2
+            )
+        }
+    }
+
+    func testCreateGroup_DoesNotEncodeEmptyAccessRolesInBody_GivenV0_V2_V3_V8_V10() async throws {
+        // given
+        let apiVersions = [APIVersion.v0, .v2, .v3, .v8, .v10]
+        let apiService = MockAPIServiceProtocol.withResponses([])
+
+        let suts = apiVersions.map { $0.buildAPI(apiService: apiService) }
+
+        // when
+        XCTAssertEqual(suts.count, apiVersions.count)
+
+        // then
+        try await apiSnapshotHelper.verifyRequest(
+            for: apiVersions,
+            apiService: apiService
+        ) { sut in
+            // when
+            _ = try? await sut.createGroupConversation(
+                parameters: Scaffolding.createGroupConversationWithEmptyAccessRolesParameters
+            )
+        }
+    }
+
     private enum Scaffolding {
         static let userID = "99db9768-04e3-4b5d-9268-831b6a25c4ab"
         static let domain = "domain.com"
@@ -2107,6 +2229,35 @@ final class ConversationsAPITests: XCTestCase {
             teamID: .mockID1,
             isReadReceiptsEnabled: true,
             skipCreator: false
+        )
+
+        static let createGroupConversationWithEmptyAccessRolesParameters = CreateGroupConversationParameters(
+            groupType: .group,
+            messageProtocol: .mls,
+            creatorClientID: UUID.mockID1.uuidString,
+            qualifiedUserIDs: [.mockID1],
+            unqualifiedUserIDs: [.mockID2],
+            name: "test",
+            accessMode: [.invite],
+            accessRoles: [],
+            legacyAccessRole: nil,
+            teamID: .mockID1,
+            isReadReceiptsEnabled: true,
+            skipCreator: false
+        )
+
+        static let createMeetingParameters = CreateGroupConversationParameters(
+            groupType: .meeting,
+            messageProtocol: .mls,
+            creatorClientID: UUID.mockID1.uuidString,
+            qualifiedUserIDs: [.mockID1],
+            unqualifiedUserIDs: [.mockID2],
+            name: "test",
+            accessMode: [.code, .invite],
+            accessRoles: [.teamMember],
+            legacyAccessRole: .teamMember,
+            teamID: .mockID1,
+            isReadReceiptsEnabled: true
         )
 
         static let createChannelParameters = CreateGroupConversationParameters(

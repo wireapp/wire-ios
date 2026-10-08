@@ -19,6 +19,7 @@
 import avs
 import Foundation
 import WireCommonComponents
+import WireLogging
 import WireSyncEngine
 import WireSystem
 
@@ -36,8 +37,6 @@ enum MediaManagerSound: String {
     case camera
     case someoneLeavesVoiceChannelSound = "talk_later"
 }
-
-private let zmLog = ZMSLog(tag: "AVSMediaManager CustomSounds")
 
 extension AVSMediaManager {
     private static var MediaManagerSoundConfig: [AnyHashable: Any]?
@@ -69,7 +68,7 @@ extension AVSMediaManager {
             let soundConfig = NSDictionary(contentsOfFile: path) as? [AnyHashable: Any]
 
             if soundConfig == nil {
-                zmLog.error("Couldn't load sound config file: \(path)")
+                WireLogger.avs.error("CustomSounds: Couldn't load sound config file: \(path)")
                 return
             }
 

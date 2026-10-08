@@ -45,11 +45,12 @@ public final class UserSessionComponent {
     private let coreCryptoProvider: any CoreCryptoProviderProtocol
 
     private let faultyMLSRemovalKeysByDomain: [String: [String]]
+    private let backgroundTaskExecuter: any BackgroundTaskExecuter
 
     public init(
         currentBuildNumber: String,
         selfUserID: UUID,
-        cookieStorage: any CookieStorageProtocol,
+        cookieStorage: any WireNetwork.CookieStorageProtocol,
         restNetworkService: NetworkService,
         websocketNetworkService: NetworkService,
         blacklistNetworkService: NetworkService,
@@ -64,7 +65,8 @@ public final class UserSessionComponent {
         mlsDecryptionService: any MLSDecryptionServiceInterface,
         proteusService: any ProteusServiceInterface,
         coreCryptoProvider: any CoreCryptoProviderProtocol,
-        faultyMLSRemovalKeysByDomain: [String: [String]]
+        faultyMLSRemovalKeysByDomain: [String: [String]],
+        backgroundTaskExecuter: any BackgroundTaskExecuter
     ) {
         self.currentBuildNumber = currentBuildNumber
         self.selfUserID = selfUserID
@@ -84,9 +86,10 @@ public final class UserSessionComponent {
         self.coreCryptoProvider = coreCryptoProvider
         self.sharedContainerURL = sharedContainerURL
         self.faultyMLSRemovalKeysByDomain = faultyMLSRemovalKeysByDomain
+        self.backgroundTaskExecuter = backgroundTaskExecuter
     }
 
-    private let cookieStorage: any CookieStorageProtocol
+    private let cookieStorage: any WireNetwork.CookieStorageProtocol
 
     // MARK: - Children
 
@@ -112,7 +115,8 @@ public final class UserSessionComponent {
             proteusService: proteusService,
             coreCryptoProvider: coreCryptoProvider,
             completionHandlers: completionHandlers,
-            faultyMLSRemovalKeysByDomain: faultyMLSRemovalKeysByDomain
+            faultyMLSRemovalKeysByDomain: faultyMLSRemovalKeysByDomain,
+            backgroundTaskExecuter: backgroundTaskExecuter
         )
     }
 

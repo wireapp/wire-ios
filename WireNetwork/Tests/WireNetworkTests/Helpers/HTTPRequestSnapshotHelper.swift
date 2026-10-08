@@ -25,8 +25,7 @@ import struct WireNetwork.HTTPRequest
 struct HTTPRequestSnapshotHelper {
 
     private var defaultRecordMode: SnapshotTestingConfiguration.Record? {
-        let ci = ProcessInfo.processInfo.environment["CI"]
-        return (ci == nil || ci?.isEmpty == true) ? .missing : .never
+        ProcessInfo.processInfo.environment["CI"] == "true" ? .never : .missing
     }
 
     /// Snapshot test a given request

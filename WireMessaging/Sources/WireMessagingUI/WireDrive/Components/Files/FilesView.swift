@@ -52,7 +52,6 @@ package struct FilesView: View {
             viewModel: viewModel,
             isBrowsing: isBrowsing,
             backgroundColor: ColorTheme.Backgrounds.background.color,
-            navigationTitle: viewModel.navigationTitle,
             toolbarContent: { toolbarContent },
             sheetContent: { sheetContent($0) }
         )
@@ -68,7 +67,7 @@ package struct FilesView: View {
                 Task { await viewModel.reload() }
             },
             content: { item in
-                viewModel.editFileView(item: item)
+                EditFileView(viewModel: viewModel.editFileViewModel(item: item))
             }
         )
     }
@@ -79,13 +78,27 @@ package struct FilesView: View {
 private extension FilesView {
 
     @ToolbarContentBuilder var toolbarContent: some ToolbarContent {
+        ToolbarItem(placement: .principal) {
+            VStack(spacing: 0) {
+                Text(viewModel.navigationTitle)
+                    .font(for: .h3)
+                    .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
+
+                if let navigationSubtitle = viewModel.navigationSubtitle {
+                    Text(navigationSubtitle)
+                        .font(for: .subline1)
+                        .foregroundStyle(ColorTheme.Base.secondaryText.color)
+                }
+            }
+        }
+
         if !viewModel.folderMenuOptions.isEmpty {
             ToolbarTitleMenu {
                 toolBarTitleMenuContent()
             }
         }
 
-        if !viewModel.isRecycleBin {
+        if !viewModel.isRecycleBin, !viewModel.isOffline {
             ToolbarItem(placement: .navigationBarTrailing) {
                 moreActionsButton
             }
@@ -121,6 +134,34 @@ private extension FilesView {
 
     var moreActionsButton: some View {
         Menu {
+            switch viewModel.selfUserRole {
+            case .editor:
+                editorActions
+            case .viewer:
+                viewerActions
+            }
+        } label: {
+            Image(systemName: "ellipsis.circle")
+        }
+        .tint(ColorTheme.Base.primary(accentColor).color)
+    }
+
+    private var viewerActions: some View {
+        Button {
+            onOpenRecycleBin()
+        } label: {
+            Label {
+                Text(Strings.Files.openRecycleBin)
+            } icon: {
+                Image(systemName: "trash")
+                    .tint(ColorTheme.Backgrounds.onBackground.color)
+            }
+        }
+        .accessibilityIdentifier(Locators.WireDrive.FilesPage.recycleBin.rawValue)
+    }
+
+    private var editorActions: some View {
+        Group {
             Button {
                 viewModel.onCreate(target: .folder)
             } label: {
@@ -128,7 +169,7 @@ private extension FilesView {
                     Text(Strings.Files.List.createFolder)
                 } icon: {
                     Image(systemName: "folder.badge.plus")
-                        .tint(SemanticColors.Icon.foregroundDefaultBlack.color)
+                        .tint(ColorTheme.Backgrounds.onBackground.color)
                 }
             }
             .accessibilityIdentifier(Locators.WireDrive.FilesPage.createFolder.rawValue)
@@ -142,7 +183,7 @@ private extension FilesView {
                             Text(template.kind.title)
                         } icon: {
                             Image(systemName: template.kind.systemImage)
-                                .tint(SemanticColors.Icon.foregroundDefaultBlack.color)
+                                .tint(ColorTheme.Backgrounds.onBackground.color)
                         }
                     }
                 }
@@ -152,7 +193,7 @@ private extension FilesView {
                     Text(Strings.Files.List.createFile)
                 } icon: {
                     Image(systemName: "document.badge.plus")
-                        .tint(SemanticColors.Icon.foregroundDefaultBlack.color)
+                        .tint(ColorTheme.Backgrounds.onBackground.color)
                 }
             }
             .accessibilityIdentifier(Locators.WireDrive.FilesPage.createFile.rawValue)
@@ -164,27 +205,25 @@ private extension FilesView {
                     Text(Strings.Files.openRecycleBin)
                 } icon: {
                     Image(systemName: "trash")
-                        .tint(SemanticColors.Icon.foregroundDefaultBlack.color)
+                        .tint(ColorTheme.Backgrounds.onBackground.color)
                 }
             }
             .accessibilityIdentifier(Locators.WireDrive.FilesPage.recycleBin.rawValue)
-        } label: {
-            Image(systemName: "ellipsis.circle")
         }
-        .tint(ColorTheme.Base.primary(accentColor).color)
     }
 }
 
 // MARK: - Sheet Navigation
 
 private extension FilesView {
-
     @ViewBuilder
     func sheetContent(_ navigationItem: FilesViewModel.SheetNavigation) -> some View {
         switch navigationItem {
-        case let .editTags(fileItem: fileItem):
+        case let .create(target):
+            CreateFileView(viewModel: viewModel.createFileViewModel(target: target))
+        case let .editTags(fileItem: item):
             TagsEditView(
-                fileItem: fileItem,
+                fileItem: item,
                 useCases: .init(
                     updateTags: viewModel.useCases.updateTags,
                     getSuggestions: viewModel.useCases.getTagSuggestions
@@ -193,22 +232,21 @@ private extension FilesView {
                     await viewModel.reload()
                 }
             )
-        case let .shareLink(shareLinkView):
-            shareLinkView
-        case let .renameFile(fileRenameView):
-            fileRenameView
-        case let .create(folderView):
-            folderView
-        case let .versionHistory(versionHistoryView):
-            versionHistoryView
-        case let .moveToFolder(fileItem):
-            viewModel.moveToFolderView(item: fileItem)
+        case let .shareLink(item):
+            ShareLinkView(viewModel: viewModel.shareLinkViewModel(item: item))
+        case let .renameFile(item):
+            FileRenameView(viewModel: viewModel.fileRenameViewModel(item: item))
+        case let .versionHistory(item):
+            FileVersioningView(viewModel: viewModel.fileVersioningViewModel(item: item))
+        case let .moveToFolder(item):
+            MoveToFolderView(viewModel: viewModel.moveToFolderViewModel(item: item))
         }
     }
 }
 
-private extension FilesViewModel.FolderMenuOption {
+// MARK: - folder menu title
 
+private extension FilesViewModel.FolderMenuOption {
     var title: String {
         switch self {
         case let .folder(_, title):
@@ -217,11 +255,44 @@ private extension FilesViewModel.FolderMenuOption {
             Strings.Files.navigationTitle
         }
     }
-
 }
 
-#Preview {
+// MARK: - template / create file
+
+private extension WireDriveFileTemplate.Kind {
+    var title: String {
+        switch self {
+        case .document:
+            Strings.Files.List.CreateFile.document
+        case .spreadsheet:
+            Strings.Files.List.CreateFile.spreadsheet
+        case .presentation:
+            Strings.Files.List.CreateFile.presentation
+        }
+    }
+
+    var systemImage: String {
+        switch self {
+        case .document:
+            "text.document"
+        case .spreadsheet:
+            "tablecells"
+        case .presentation:
+            "sparkles.tv"
+        }
+    }
+}
+
+// MARK: - Preview
+
+#Preview("Editor mode") {
     NavigationStack {
         FilesView(viewModel: .preview())
+    }
+}
+
+#Preview("Viewer mode") {
+    NavigationStack {
+        FilesView(viewModel: .preview(isBrowsing: false, selfUserRole: .viewer))
     }
 }

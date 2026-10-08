@@ -1,0 +1,15 @@
+version: 2
+updates:
+  - package-ecosystem: "swift"
+    directory: "/wire-ios-mono.xcworkspace/xcshareddata/swiftpm"
+    schedule:
+      interval: "weekly"
+    cooldown:
+      default-days: 7
+
+  - package-ecosystem: "bundler"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    cooldown:
+      default-days: 7

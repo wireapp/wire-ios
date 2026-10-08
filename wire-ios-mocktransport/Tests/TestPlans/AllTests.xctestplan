@@ -15,10 +15,7 @@
       }
     ],
     "environmentVariableEntries" : [
-      {
-        "key" : "CI",
-        "value" : "${CI}"
-      }
+
     ],
     "language" : "en",
     "region" : "DE",

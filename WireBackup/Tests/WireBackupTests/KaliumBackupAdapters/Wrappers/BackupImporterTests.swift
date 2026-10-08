@@ -39,6 +39,7 @@ struct BackupImporterTests {
     func testPeekingIntoBackupFilesFromAllPlatforms(resource: String) async throws {
 
         let workDirectoryURL = URL(fileURLWithPath: NSTemporaryDirectory())
+            .appendingPathComponent(UUID().uuidString)
         defer { try? FileManager.default.removeItem(at: workDirectoryURL) }
 
         let importer = BackupImporter(
@@ -67,6 +68,7 @@ struct BackupImporterTests {
     func testImportingBackupFilesFromAllPlatforms(resource: String) async throws {
 
         let workDirectoryURL = URL(fileURLWithPath: NSTemporaryDirectory())
+            .appendingPathComponent(UUID().uuidString)
         defer { try? FileManager.default.removeItem(at: workDirectoryURL) }
 
         let importer = BackupImporter(

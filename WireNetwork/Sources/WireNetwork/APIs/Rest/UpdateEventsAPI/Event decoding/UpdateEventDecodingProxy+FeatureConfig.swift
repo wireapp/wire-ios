@@ -85,6 +85,11 @@ extension UpdateEventDecodingProxy {
                 let event = FeatureConfigUpdateEvent(featureConfig: .mlsMigration(config))
                 updateEvent = .featureConfig(.update(event))
 
+            case "meetings":
+                let config = try MeetingsFeatureConfigDecoder().decode(from: container)
+                let event = FeatureConfigUpdateEvent(featureConfig: .meetings(config))
+                updateEvent = .featureConfig(.update(event))
+
             case "selfDeletingMessages":
                 let config = try SelfDeletingMessagesFeatureConfigDecoder().decode(from: container)
                 let event = FeatureConfigUpdateEvent(featureConfig: .selfDeletingMessages(config))
@@ -93,6 +98,11 @@ extension UpdateEventDecodingProxy {
             case "assetAuditLog":
                 let config = try AssetAuditLogFeatureConfigDecoder().decode(from: container)
                 let event = FeatureConfigUpdateEvent(featureConfig: .assetAuditLog(config))
+                updateEvent = .featureConfig(.update(event))
+
+            case "preventAdminlessGroups":
+                let config = try PreventAdminlessGroupsFeatureConfigDecoder().decode(from: container)
+                let event = FeatureConfigUpdateEvent(featureConfig: .preventAdminlessGroups(config))
                 updateEvent = .featureConfig(.update(event))
 
             case "simplifiedUserConnectionRequestQRCode":

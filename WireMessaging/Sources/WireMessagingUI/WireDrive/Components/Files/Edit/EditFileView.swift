@@ -17,7 +17,6 @@
 //
 
 import SwiftUI
-import WebKit
 import WireLocators
 
 // MARK: - EditFileView
@@ -76,21 +75,5 @@ struct EditFileView<ViewModel>: View where ViewModel: EditFileViewModelProtocol 
             }
         )
         .accessibilityIdentifier(Locators.WireDrive.EditFilePage.close)
-    }
-}
-
-// MARK: - WebView
-
-private struct WebView: UIViewRepresentable {
-
-    let url: URL
-
-    func makeUIView(context: Context) -> WKWebView {
-        WKWebView()
-    }
-
-    func updateUIView(_ webView: WKWebView, context: Context) {
-        let request = URLRequest(url: url)
-        webView.load(request)
     }
 }

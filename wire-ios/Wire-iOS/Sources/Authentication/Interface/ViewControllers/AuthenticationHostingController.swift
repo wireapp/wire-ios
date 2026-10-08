@@ -100,7 +100,11 @@ final class AuthenticationHostingController<Content: View>: UIHostingController<
     }
 
     func displayError(_ error: any Error) {
-        // no op
+        let localizedError = error as? any LocalizedError
+        bridge.sendInboundEvent(.authenticationFailed(
+            title: localizedError?.errorDescription ?? error.localizedDescription,
+            message: localizedError?.failureReason ?? ""
+        ))
     }
 
     func didRewindToThisView() {

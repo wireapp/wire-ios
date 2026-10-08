@@ -16,8 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Foundation
+import UIKit
 import WireLocators
 import XCTest
+import ZXingCpp
 
 class OngoingCallPage: PageModel {
 
@@ -33,9 +36,321 @@ class OngoingCallPage: PageModel {
         app.buttons[Locators.OngoingCallPage.endOngoingCallButton.rawValue]
     }
 
+    var microphoneButton: XCUIElement {
+        app.buttons[Locators.OngoingCallPage.microphoneButton.rawValue]
+    }
+
+    var cameraButton: XCUIElement {
+        app.buttons[Locators.OngoingCallPage.cameraButton.rawValue]
+    }
+
+    var speakerButton: XCUIElement {
+        app.buttons[Locators.OngoingCallPage.speakerButton.rawValue]
+    }
+
+    var minimizeCallButton: XCUIElement {
+        app.buttons[Locators.OngoingCallPage.minimizeCall.rawValue]
+    }
+
+    var turnOnCameraButton: XCUIElement {
+        app.buttons.matching(NSPredicate(format: "label CONTAINS[c] %@", "Turn on camera")).firstMatch
+    }
+
+    var turnOffCameraButton: XCUIElement {
+        app.buttons.matching(NSPredicate(format: "label CONTAINS[c] %@", "Turn off camera")).firstMatch
+    }
+
+    var flipCameraButton: XCUIElement {
+        app.buttons["CallFlipCameraButton"].firstMatch
+    }
+
+    func participant(named name: String) -> XCUIElement {
+        app.buttons[Locators.OngoingCallPage.participantIdentifier(name)]
+    }
+
+    func callTile(named name: String) -> XCUIElement {
+        app.buttons.matching(
+            NSPredicate(
+                format: """
+                (identifier BEGINSWITH %@ OR identifier BEGINSWITH %@) AND
+                identifier CONTAINS %@
+                """,
+                "audioView.",
+                "videoView.",
+                ".\(name)."
+            )
+        ).firstMatch
+    }
+
+    @discardableResult
+    func verifyParticipantsShownInOrder(
+        _ expectedNames: [String]
+    ) -> OngoingCallPage {
+        for name in expectedNames {
+            _ = callTile(named: name).waitForExistence(timeout: 15)
+        }
+
+        XCTAssertEqual(
+            visibleParticipantNames(from: expectedNames),
+            expectedNames,
+            "Call participant tiles are not shown in expected order"
+        )
+        return self
+    }
+
+    private func visibleParticipantNames(from expectedNames: [String]) -> [String] {
+        let tiles = app.buttons.matching(
+            NSPredicate(
+                format: "identifier BEGINSWITH %@ OR identifier BEGINSWITH %@",
+                "audioView.",
+                "videoView."
+            )
+        ).allElementsBoundByIndex
+
+        var seenNames = Set<String>()
+        return tiles.compactMap { tile in
+            guard let name = expectedNames.first(where: { tile.identifier.contains(".\($0).") }),
+                  seenNames.insert(name).inserted else {
+                return nil
+            }
+            return name
+        }
+    }
+
+    func verifyGroupNameAndTimerShowingOnceCallJoined(groupName: String) {
+        XCTAssertTrue(
+            timeLabel.waitForExistence(timeout: 10),
+            "Call timer is not showing"
+        )
+        XCTAssertTrue(
+            app.staticTexts[groupName].waitForExistence(timeout: 5),
+            "Group name mismatch"
+        )
+    }
+
+    func videoView(for participantName: String) -> XCUIElement {
+        app.descendants(matching: .any).matching(
+            NSPredicate(
+                format: """
+                (identifier BEGINSWITH %@ OR label CONTAINS[c] %@) AND
+                (identifier CONTAINS[c] %@ OR label CONTAINS[c] %@) AND
+                (identifier CONTAINS[c] %@ OR identifier CONTAINS[c] %@ OR label CONTAINS[c] %@)
+                """,
+                "videoView",
+                participantName,
+                participantName,
+                participantName,
+                "minimized",
+                "maximized",
+                "Camera on"
+            )
+        ).firstMatch
+    }
+
+    func screenSharingView(for participantName: String) -> XCUIElement {
+        app.descendants(matching: .any).matching(
+            NSPredicate(
+                format: "label CONTAINS[c] %@ AND label CONTAINS[c] %@",
+                participantName,
+                Locators.OngoingCallPage.sharesScreenDescription.rawValue
+            )
+        ).firstMatch
+    }
+
+    @discardableResult
+    func isOtherParticipantVideoTileVisible(
+        for participantName: String,
+        timeout: TimeInterval = 20
+    ) -> OngoingCallPage {
+        let tile = videoView(for: participantName)
+        XCTAssertTrue(
+            tile.waitForExistence(timeout: timeout),
+            "Remote video is not visible for \(participantName)"
+        )
+
+        XCTAssertTrue(
+            tile.identifier.localizedCaseInsensitiveContains(participantName) ||
+                tile.label.localizedCaseInsensitiveContains(participantName),
+            "Remote video tile did not match participant \(participantName). Identifier: \(tile.identifier). Label: \(tile.label)"
+        )
+        return self
+    }
+
+    @discardableResult
+    func isOtherParticipantScreenSharingVisible(
+        for participantName: String,
+        timeout: TimeInterval = 15
+    ) -> OngoingCallPage {
+        let tile = screenSharingView(for: participantName)
+        XCTAssertTrue(
+            tile.waitForExistence(timeout: timeout),
+            "screen share is not visible for \(participantName)"
+        )
+        return self
+    }
+
+    /// Verifies QR payloads rendered inside another participant's screen-share tile.
+    @discardableResult
+    func verifyScreenSharingQRCodes(
+        for participantName: String,
+        expectedContentInQRCode: [String],
+    ) -> OngoingCallPage {
+        let tile = screenSharingView(for: participantName)
+        let expectedPayloads = Set(expectedContentInQRCode)
+        let deadline = Date().addingTimeInterval(6)
+        var decodedPayloads = Set<String>()
+
+        repeat {
+            decodedPayloads = Set(readQRCodes(from: tile.screenshot()))
+            if expectedPayloads.isSubset(of: decodedPayloads) {
+                return self
+            }
+
+            RunLoop.current.run(until: Date().addingTimeInterval(2))
+        } while Date() < deadline
+
+        XCTAssertTrue(
+            expectedPayloads.isSubset(of: decodedPayloads),
+            "Expected QR payloads \(expectedPayloads.sorted()) for \(participantName), decoded \(decodedPayloads.sorted())"
+        )
+        return self
+    }
+
+    /// Reads QR codes from an XCTest screenshot using ZXing and returns decoded text values.
+    func readQRCodes(from screenshot: XCUIScreenshot) -> [String] {
+        guard let cgImage = screenshot.image.cgImage else {
+            return []
+        }
+
+        let options = ZXIReaderOptions()
+        options.tryHarder = true
+        options.tryRotate = true
+        options.tryInvert = true
+        options.maxNumberOfSymbols = 10
+
+        let reader = ZXIBarcodeReader(options: options)
+        let results = (try? reader.read(cgImage)) ?? []
+
+        return results.map(\.text).filter { !$0.isEmpty }
+    }
+
+    private func tapEndCallButton() {
+        endCallButton.tapAndWait()
+    }
+
+    @discardableResult
+    func toggleMicrophone() -> OngoingCallPage {
+        microphoneButton.tapAndWait()
+        return self
+    }
+
+    @discardableResult
+    func toggleCamera() -> OngoingCallPage {
+        cameraButton.tapAndWait()
+        app.dismissAllowIfPresent()
+        return self
+    }
+
+    @discardableResult
+    func toggleSpeaker() -> OngoingCallPage {
+        speakerButton.tapAndWait()
+        return self
+    }
+
     func endOngoingCall() throws -> ConversationsPage {
-        endCallButton.tap()
+        tapEndCallButton()
         return try ConversationsPage()
     }
 
+    func hangUpOngoingCall() throws -> ActiveConversationPage {
+        tapEndCallButton()
+        return try ActiveConversationPage()
+    }
+
+    func minimizeCallUI() throws -> ActiveConversationPage {
+        minimizeCallButton.tap()
+        return try ActiveConversationPage()
+    }
+
+    @discardableResult
+    func verifyMicrophoneToggle() -> OngoingCallPage {
+        toggleMicrophone()
+        XCTAssertEqual(
+            microphoneButton.label,
+            "Turn on microphone",
+            "Microphone should be OFF after tapping the microphone button"
+        )
+
+        toggleMicrophone()
+        XCTAssertEqual(
+            microphoneButton.label,
+            "Turn off microphone",
+            "Microphone should be ON after tapping the microphone button again"
+        )
+        return self
+    }
+
+    @discardableResult
+    func verifyCameraToggle() -> OngoingCallPage {
+        toggleCamera()
+        XCTAssertEqual(
+            cameraButton.label,
+            "Turn off camera",
+            "Camera should be ON after tapping the camera button"
+        )
+
+        toggleCamera()
+        XCTAssertEqual(
+            cameraButton.label,
+            "Turn on camera",
+            "Camera should be OFF after tapping the camera button again"
+        )
+        return self
+    }
+
+    @discardableResult
+    func verifySpeakerToggle() -> OngoingCallPage {
+        toggleSpeaker()
+        XCTAssertEqual(
+            speakerButton.label,
+            "Turn off speaker",
+            "Speaker should be ON after tapping the speaker button"
+        )
+
+        toggleSpeaker()
+        XCTAssertEqual(
+            speakerButton.label,
+            "Turn on speaker",
+            "Speaker should be OFF after tapping the speaker button again"
+        )
+        return self
+    }
+
+    @discardableResult
+    func turnOnVideo() throws -> OngoingCallPage {
+        if turnOnCameraButton.waitAndTap(timeout: 5) {
+            app.dismissAllowIfPresent(timeout: 2)
+            return self
+        }
+
+        XCTAssertTrue(cameraButton.waitAndTap(timeout: 5), "Camera button is not visible")
+        app.dismissAllowIfPresent(timeout: 2)
+        return self
+    }
+
+    @discardableResult
+    func flipCamera() throws -> OngoingCallPage {
+        XCTAssertTrue(flipCameraButton.waitAndTap(timeout: 5), "Flip camera button is not visible")
+        return self
+    }
+
+    @discardableResult
+    func turnOffVideo() throws -> OngoingCallPage {
+        if turnOffCameraButton.waitAndTap(timeout: 5) {
+            return self
+        }
+
+        XCTAssertTrue(cameraButton.waitAndTap(timeout: 5), "Camera button is not visible")
+        return self
+    }
 }

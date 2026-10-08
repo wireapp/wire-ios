@@ -59,6 +59,7 @@ struct ZMUserSessionBuilder {
     private var journal: Journal?
     private var logFilesProvider: LogFilesProviding?
     private var faultyMLSRemovalKeysByDomain: [String: [String]]?
+    private var updateBackendMetadataUseCase: (any UpdateBackendMetadataUseCaseProtocol)?
 
     // MARK: - Initialize
 
@@ -93,16 +94,15 @@ struct ZMUserSessionBuilder {
             let wireAPIBackendEnvironment,
             let apiVersion,
             let journal,
-            let logFilesProvider
+            let logFilesProvider,
+            let updateBackendMetadataUseCase
         else {
             fatalError("cannot build 'ZMUserSession' without required dependencies")
         }
 
         let keychain = WireFoundation.Keychain()
         let cookieStorage = CookieStorage(
-            userID: userId,
-            cookieEncryptionKey: UserDefaults.cookiesKey(),
-            keychain: keychain
+            cookieEncryptionKey: UserDefaults.cookiesKey()
         )
 
         let serverTrustValidator = ServerTrustValidator(
@@ -172,7 +172,9 @@ struct ZMUserSessionBuilder {
             journal: journal,
             logFilesProvider: logFilesProvider,
             cookieStorage: cookieStorage,
-            faultyMLSRemovalKeysByDomain: faultyMLSRemovalKeysByDomain ?? [:]
+            faultyMLSRemovalKeysByDomain: faultyMLSRemovalKeysByDomain ?? [:],
+            updateBackendMetadataUseCase: updateBackendMetadataUseCase,
+            backgroundTaskExecuter: PassthroughTaskExecuter()
         )
     }
 
@@ -201,7 +203,8 @@ struct ZMUserSessionBuilder {
         minTLSVersion: String?,
         journal: Journal,
         logFilesProvider: LogFilesProviding,
-        faultyMLSRemovalKeysByDomain: [String: [String]]
+        faultyMLSRemovalKeysByDomain: [String: [String]],
+        updateBackendMetadataUseCase: any UpdateBackendMetadataUseCaseProtocol
     ) {
         // reused dependencies
 
@@ -253,6 +256,7 @@ struct ZMUserSessionBuilder {
             apiVersion: BackendInfo.apiVersion
         )
         let recurringActionService = recurringActionService ?? RecurringActionService(
+            userID: userId,
             storage: sharedUserDefaults,
             dateProvider: .system
         )
@@ -292,6 +296,7 @@ struct ZMUserSessionBuilder {
         self.journal = journal
         self.logFilesProvider = logFilesProvider
         self.faultyMLSRemovalKeysByDomain = faultyMLSRemovalKeysByDomain
+        self.updateBackendMetadataUseCase = updateBackendMetadataUseCase
     }
 
     // MARK: UserSesssionDependencies

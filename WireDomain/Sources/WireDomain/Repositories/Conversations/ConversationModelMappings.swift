@@ -223,6 +223,8 @@ extension WireNetwork.ConversationGroupType {
             .group
         case .channel:
             .channel
+        case .meeting:
+            .meeting
         }
     }
 

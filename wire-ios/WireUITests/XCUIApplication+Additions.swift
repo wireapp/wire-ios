@@ -16,8 +16,17 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireFoundation
 import WireUtilities
 import XCTest
+
+extension UITestConfig {
+    /// Gets or sets a `DeveloperFlag` value by its typed enum case.
+    subscript(flag: DeveloperFlag) -> Bool {
+        get { developerFlags[flag.rawValue] ?? false }
+        set { developerFlags[flag.rawValue] = newValue }
+    }
+}
 
 extension XCUIApplication {
 

@@ -19,6 +19,7 @@
 import UIKit
 import WireDataModel
 import WireDesign
+import WireLocators
 import WireSyncEngine
 
 /// Observes events from the message toolbox.
@@ -153,7 +154,7 @@ final class MessageToolboxView: UIView {
         let label = UILabel()
         label.lineBreakMode = .byTruncatingMiddle
         label.numberOfLines = 1
-        label.accessibilityIdentifier = "EphemeralCountdown"
+        label.accessibilityIdentifier = Locators.ActiveConversationPage.ephemeralCountdown.rawValue
         label.isAccessibilityElement = true
         label.setContentHuggingPriority(.required, for: .horizontal)
         label.setContentCompressionResistancePriority(.required, for: .horizontal)

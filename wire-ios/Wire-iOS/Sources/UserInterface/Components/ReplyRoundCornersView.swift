@@ -18,6 +18,7 @@
 
 import UIKit
 import WireDesign
+import WireFoundation
 import WireSyncEngine
 import WireUtilities
 
@@ -48,6 +49,7 @@ final class ReplyRoundCornersView: UIControl {
 
     private func setupSubviews() {
         layer.cornerRadius = ConversationMessageContainerView.bubbleCornerRadius
+        layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         layer.borderWidth = 1
         layer.borderColor = ViewColors.backgroundSeparatorCell.cgColor
         layer.masksToBounds = true
@@ -81,6 +83,10 @@ final class ReplyRoundCornersView: UIControl {
             highlightLayer.bottomAnchor.constraint(equalTo: bottomAnchor),
             highlightLayer.trailingAnchor.constraint(equalTo: trailingAnchor)
         ])
+    }
+
+    func setAccentBarHidden(_ hidden: Bool) {
+        grayBoxView.isHidden = hidden
     }
 
     // MARK: - UIControl

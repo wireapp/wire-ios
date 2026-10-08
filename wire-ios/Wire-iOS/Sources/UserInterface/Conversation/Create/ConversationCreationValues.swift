@@ -40,7 +40,7 @@ final class ConversationCreationValues {
     var allowGuests: Bool
     var allowApps: Bool
     var enableReceipts: Bool
-    var enableFileManagement: Bool
+    var enableSharedDrive: Bool
     var encryptionProtocol: MessageProtocol
 
     var participants: UserSet {
@@ -75,7 +75,7 @@ final class ConversationCreationValues {
         allowGuests: Bool = true,
         allowApps: Bool = true,
         enableReceipts: Bool = true,
-        enableFileManagement: Bool = false,
+        enableSharedDrive: Bool = false,
         encryptionProtocol: MessageProtocol,
         selfUser: UserType
     ) {
@@ -85,9 +85,11 @@ final class ConversationCreationValues {
         self.name = name
         self.unfilteredParticipants = participants
         self.allowGuests = allowGuests
-        self.allowApps = isAppsFeatureEnabled ? allowApps : false
+        self.allowApps = allowApps &&
+            (encryptionProtocol == .mls && isAppsFeatureEnabled || encryptionProtocol == .proteus &&
+                areLegacyBotsAvailable)
         self.enableReceipts = enableReceipts
-        self.enableFileManagement = enableFileManagement
+        self.enableSharedDrive = enableSharedDrive
         self.encryptionProtocol = encryptionProtocol
         self.selfUser = selfUser
     }

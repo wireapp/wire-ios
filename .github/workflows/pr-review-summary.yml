@@ -13,12 +13,18 @@ on:
 jobs:
     pr-review-summary:
         runs-on: ubuntu-24.04
-        env:
-            SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_CODE_REVIEW }}
         steps:
+            # Needed so the local ./.github/actions/notify-wire composite action is available.
+            # Only .github is required, and no LFS objects.
+            -   name: Checkout
+                uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+                with:
+                    sparse-checkout: .github
+                    lfs: 'false'
+
             -   name: Build summary message
                 id: build-summary
-                uses: actions/github-script@v7
+                uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7.1.0
                 with:
                     script: |
                         const REQUIRED_APPROVALS = 2;
@@ -36,7 +42,15 @@ jobs:
                             per_page: 100,
                         });
 
-                        const openPRs = prs.filter(pr => !pr.draft);
+                        const hasLabel = (pr, name) => pr.labels.some(l => l.name.toLowerCase() === name);
+                        const isWIP = (pr) => /\b(wip)\b|\[wip\]/i.test(pr.title) || hasLabel(pr, 'wip');
+                        const hasStaleLabel = (pr) => hasLabel(pr, 'stale');
+
+                        const totalPRs    = prs.length;
+                        const draftOrWIP  = prs.filter(pr => pr.draft || isWIP(pr));
+                        const openPRs     = prs.filter(pr => !pr.draft && !isWIP(pr));
+                        const stalePRs    = prs.filter(hasStaleLabel);
+                        const cherryPicks = prs.filter(pr => hasLabel(pr, 'cherry-pick'));
 
                         // ── 2. For each PR collect review state ──────────────────────────────────
                         const readyToMerge = [];  // ≥ REQUIRED_APPROVALS approvals
@@ -96,6 +110,14 @@ jobs:
                         lines.push(`**📋 PR Review Summary — ${new Date().toDateString()}**`);
                         lines.push('');
 
+                        lines.push('**Totals**');
+                        lines.push(`  • Total open PRs: ${totalPRs}`);
+                        lines.push(`  • Ready to review: ${openPRs.length}`);
+                        lines.push(`  • Draft or WIP: ${draftOrWIP.length}`);
+                        lines.push(`  • Stale: ${stalePRs.length}`);
+                        lines.push(`  • Cherry-picks 🍒: ${cherryPicks.length}`);
+                        lines.push('');
+
                         const reviewers = Object.keys(reviewerMap).sort();
                         if (reviewers.length === 0) {
                             lines.push('✅ No PRs are waiting for a reviewer right now.');
@@ -130,12 +152,14 @@ jobs:
                             }
                         }
 
-                        return lines.join('\n');
+                        core.setOutput('summary', lines.join('\n'));
 
             -   name: Post to Wire
                 continue-on-error: true
-                uses: 8398a7/action-slack@v3
+                uses: ./.github/actions/notify-wire
+                env:
+                    WIRE_WEBHOOK_URL: ${{ secrets.WIRE_IOS_TEAM_URL }}
+                    WIRE_WEBHOOK_TOKEN: ${{ secrets.WIRE_IOS_TEAM_TOKEN }}
                 with:
-                    status: custom
-                    custom_payload: |
-                        { "text": ${{ steps.build-summary.outputs.result }} }
+                    notify: custom
+                    text: ${{ steps.build-summary.outputs.summary }}

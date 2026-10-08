@@ -83,6 +83,11 @@ extension Alert {
         message: L10n.Localizable.SwitchBackend.Error.Message.loggedIn
     )
 
+    static let switchBackendBlocked = Alert(
+        title: L10n.Localizable.SwitchBackend.Error.Title.blocked,
+        message: L10n.Localizable.SwitchBackend.Error.Message.blocked
+    )
+
     static let unknownError = Alert(
         title: Title.general,
         message: Message.general
@@ -101,6 +106,11 @@ extension Alert {
     static let incorrectSSOCode = Alert(
         title: Title.incorrectSsoCode,
         message: Message.incorrectSsoCode
+    )
+
+    static let alreadyLoggedIn = Alert(
+        title: Title.alreadyLoggedIn,
+        message: Message.alreadyLoggedIn
     )
 
     static let termsOfUse = Alert(

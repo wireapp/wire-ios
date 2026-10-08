@@ -67,6 +67,26 @@ extension IconButton {
         )
     }
 
+    static func checkmarkButton() -> IconButton {
+
+        let sendButtonIconColor = SemanticColors.Icon.foregroundDefaultWhite
+
+        return .init(
+            icon: .checkmark,
+            accessibilityId: Locators.ActiveConversationPage.sendButton.rawValue,
+            backgroundColor: [
+                UIControl.State.normal.rawValue: UIColor.accent(),
+                UIControl.State.highlighted.rawValue: UIColor.accentDarken,
+                UIControl.State.disabled.rawValue: SemanticColors.Button.backgroundSendDisabled
+            ],
+            iconColor: [
+                UIControl.State.normal.rawValue: sendButtonIconColor,
+                UIControl.State.highlighted.rawValue: sendButtonIconColor,
+                UIControl.State.disabled.rawValue: sendButtonIconColor
+            ]
+        )
+    }
+
     private convenience init(
         icon: StyleKitIcon,
         size: StyleKitIcon.Size = .tiny,

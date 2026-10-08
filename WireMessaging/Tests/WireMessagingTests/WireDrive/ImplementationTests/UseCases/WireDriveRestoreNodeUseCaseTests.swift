@@ -37,6 +37,7 @@ final class WireDriveRestoreNodeUseCaseTests {
         )
     }
 
+    @Test
     func `It invokes methods to restore version and updates asset locally`() async throws {
         // given
         nodeCache.setItemFor_MockMethod = { _, _ in }
@@ -55,6 +56,7 @@ final class WireDriveRestoreNodeUseCaseTests {
         #expect(localAssetRepository.refreshAssetMetadataNodeID_Invocations.count == 1)
     }
 
+    @Test
     func `It fails restoring a version`() async throws {
         // given
         repository.restoreVersionNodeIDVersionID_MockError = NSError(domain: "any", code: 0)

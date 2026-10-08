@@ -22,13 +22,25 @@ import WireDataModel
 import WireDesign
 
 final class WarningLabelView: UIView {
-    private let stackView = UIStackView(axis: .horizontal)
-    private let imageView = UIImageView(image: UIImage(named: "Info"))
+    private let stackView = UIStackView(axis: .vertical)
 
-    private let label = DynamicFontLabel(
-        style: .h5,
-        color: SemanticColors.Label.textErrorDefault
-    )
+    private let textView: UITextView = {
+        let textView = UITextView()
+        textView.isEditable = false
+        textView.isScrollEnabled = false
+        textView.backgroundColor = .clear
+        textView.textContainerInset = .zero
+        textView.textContainer.lineFragmentPadding = 0
+        textView.adjustsFontForContentSizeCategory = true
+        return textView
+    }()
+
+    private static let paragraphStyle: NSParagraphStyle = {
+        let style = NSMutableParagraphStyle()
+        style.paragraphSpacing = 8
+        style.alignment = .center
+        return style
+    }()
 
     // MARK: - Setup
 
@@ -45,22 +57,19 @@ final class WarningLabelView: UIView {
     private func setupViews() {
         stackView.translatesAutoresizingMaskIntoConstraints = false
         addSubview(stackView)
-        stackView.alignment = .top
+        stackView.alignment = .center
         stackView.spacing = 10
-        imageView.tintColor = SemanticColors.Icon.foregroundDefaultRed
-        stackView.addArrangedSubview(imageView)
-        label.numberOfLines = 0
-        stackView.addArrangedSubview(label)
+        textView.linkTextAttributes = [
+            .foregroundColor: SemanticColors.Label.textErrorDefault,
+            .underlineStyle: NSUnderlineStyle.single.rawValue
+        ]
+        stackView.addArrangedSubview(textView)
         NSLayoutConstraint.activate(
-            [
-                imageView.widthAnchor.constraint(equalToConstant: 16.0),
-                imageView.heightAnchor.constraint(equalToConstant: 16.0)
-            ] +
-                NSLayoutConstraint.forView(
-                    view: stackView,
-                    inContainer: self,
-                    withInsets: .zero
-                )
+            NSLayoutConstraint.forView(
+                view: stackView,
+                inContainer: self,
+                withInsets: .zero
+            )
         )
     }
 
@@ -68,14 +77,31 @@ final class WarningLabelView: UIView {
         typealias profileDetails = L10n.Localizable.Profile.Details
         if user.isPendingApprovalBySelfUser {
             isHidden = false
-            label.text = profileDetails.requestedIdentityWarning
+            textView.attributedText = attributedWarning(profileDetails.requestedIdentityWarning)
         }
         guard let name = user.name else {
             isHidden = true
             return
         }
         isHidden = user.isConnected || user.isTeamMember || user.isSelfUser
-        label.text = profileDetails.identityWarning(name)
+        textView.attributedText = attributedWarning(profileDetails.identityWarning(name))
+    }
 
+    private func attributedWarning(_ text: String) -> NSAttributedString {
+        let linkText = L10n.Localizable.Profile.Details.reportMisuse
+        let fullText = "\(text)\n\(linkText)"
+        let result = NSMutableAttributedString(
+            string: fullText,
+            attributes: [
+                .paragraphStyle: Self.paragraphStyle,
+                .font: UIFont.font(for: .h5),
+                .foregroundColor: SemanticColors.Label.textErrorDefault
+            ]
+        )
+        let linkRange = (fullText as NSString).range(of: linkText, options: .backwards)
+        if linkRange.location != NSNotFound {
+            result.addAttribute(.link, value: WireURLs.shared.reportAbuse, range: linkRange)
+        }
+        return result
     }
 }

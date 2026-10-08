@@ -28,6 +28,7 @@ enum NavigationDestination {
     case userProfile(WireDataModel.UserType)
     case connectionRequest(WireDataModel.QualifiedID)
     case conversationList
+    case meetings
 }
 
 protocol AuthenticatedRouterProtocol: AnyObject {
@@ -52,7 +53,7 @@ final class AuthenticatedRouter {
 
     // MARK: - Public Property
 
-    private weak var _zClientViewController: ZClientViewController?
+    private var _zClientViewController: ZClientViewController?
 
     @MainActor var zClientViewController: ZClientViewController {
         let zClientViewController = _zClientViewController ?? zClientControllerBuilder(router: self)
@@ -170,6 +171,10 @@ extension AuthenticatedRouter: AuthenticatedRouterProtocol {
         activeCallRouter.updateActiveCallPresentationState()
     }
 
+    func prepareForRootReplacement() {
+        activeCallRouter.prepareForRootReplacement()
+    }
+
     func minimizeCallOverlay(animated: Bool, completion: Completion?) {
         activeCallRouter.minimizeCall(animated: animated, completion: completion)
     }
@@ -182,6 +187,15 @@ extension AuthenticatedRouter: AuthenticatedRouterProtocol {
             _zClientViewController?.showConnectionRequest(qualifiedID: qualifiedID)
         case .conversationList:
             _zClientViewController?.showConversationList()
+        case .meetings:
+            Task { @MainActor in
+                // The meetings tab is only installed when the feature is enabled at setup
+                // (see ZClientViewController.setupSplitViewController). A notification
+                // created while enabled can be tapped after the feature was disabled;
+                // guarding here avoids selecting a tab that isn't in the tab bar.
+                guard zClientViewController.userSession.isMeetingsEnabled else { return }
+                await zClientViewController.mainCoordinator.showMeetings()
+            }
         case let .userProfile(user):
             Task { @MainActor in
                 await _zClientViewController?.showUserProfile(user: user)

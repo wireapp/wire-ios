@@ -19,6 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireDesign
+import WireLocators
 
 // MARK: - InputBarRowConstants
 
@@ -109,7 +110,7 @@ final class InputBarButtonsView: UIView {
         }
 
         buttonInnerContainer.clipsToBounds = true
-        expandRowButton.accessibilityIdentifier = "showOtherRowButton"
+        expandRowButton.accessibilityIdentifier = Locators.ActiveConversationPage.showOtherRowButton.rawValue
         expandRowButton.accessibilityLabel = L10n.Accessibility.Conversation.MoreButton.description
         expandRowButton.hitAreaPadding = .zero
         expandRowButton.setIcon(.ellipsis, size: .tiny, for: [])

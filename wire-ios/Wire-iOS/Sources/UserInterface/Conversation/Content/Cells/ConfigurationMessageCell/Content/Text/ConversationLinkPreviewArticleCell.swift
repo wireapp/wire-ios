@@ -18,6 +18,7 @@
 
 import UIKit
 import WireDataModel
+import WireLocators
 import WireSyncEngine
 
 final class ConversationLinkPreviewArticleCell: UIView, ConversationMessageCell, ContextMenuDelegate {
@@ -130,7 +131,8 @@ final class ConversationLinkPreviewArticleCellDescription: ConversationMessageCe
     let shouldAlignMessageContentForBubbles: Bool = true
 
     var accessibilityIdentifier: String? {
-        configuration.isObfuscated ? "ObfuscatedLinkPreviewCell" : "LinkPreviewCell"
+        configuration.isObfuscated ? "ObfuscatedLinkPreviewCell" : Locators.ActiveConversationPage.linkPreviewCell
+            .rawValue
     }
 
     let accessibilityLabel: String?

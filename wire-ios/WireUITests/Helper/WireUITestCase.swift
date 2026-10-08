@@ -19,37 +19,46 @@
 // Methods to reset app or simulator caused issues, so instead
 // of using a script in the scheme, we delete the app using springboard
 
+import WireFoundation
+import WireUtilities
 import XCTest
 
 class WireUITestCase: XCTestCase {
 
     var app: XCUIApplication!
     let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
-    var userHelper: UserHelper!
+    var ssoHelper: SSOHelper!
     let testServicesClient = TestServicesClient()
     var callingServiceClient: CallingServiceClient!
+    var callingManager: CallingManager!
+    var uiTestConfig = UITestConfig()
     private var notificationPermissionMonitor: NSObjectProtocol?
 
+    @MainActor
     override func setUpWithError() throws {
         // Tap "Allow" on permission alert from a previous failed test, so next test is not blocked
-        dismissAllowIfPresent()
+        XCUIApplication().dismissAllowIfPresent()
         XCUIApplication().terminate()
         callingServiceClient = try CallingServiceClient()
+        callingManager = CallingManager(client: callingServiceClient)
         registerNotificationPermissionMonitor()
+        uiTestConfig.useTripleTapForShakeGesture = true
+        uiTestConfig.useMockAudioRecorder = true
 
         let launchArguments = [
             "-resetData",
             "--useEnvStaging"
         ]
 
-        userHelper = UserHelper()
-
+        ssoHelper = SSOHelper()
         app = XCUIApplication()
         app.launchEnvironment["UITEST_APPLOCK_TIMEOUT"] = "2"
+        app.launchEnvironment["UITEST_SELF_DELETING_TIMER_SECONDS"] = "3"
+        app.launchEnvironment[UITestConfig.environmentKey] = uiTestConfig.encode()
         app.launchArguments = launchArguments
-        app.setDeveloperFlags([
-            .useWireAuthentication: true
-        ])
+        var flags: [DeveloperFlag: Bool] = [.useWireAuthentication: true]
+        flags.merge(additionalDeveloperFlags()) { _, new in new }
+        app.setDeveloperFlags(flags)
         app.launch()
 
         // In UI tests it is usually best to stop immediately when a failure occurs
@@ -57,10 +66,14 @@ class WireUITestCase: XCTestCase {
         continueAfterFailure = false
     }
 
+    @MainActor
     override func tearDown() async throws {
-        await callingServiceClient.destroyCreatedInstances()
-        await userHelper.deleteCreatedUsers()
-        userHelper = nil
+        app?.terminate()
+        app = nil
+        await callingServiceClient?.destroyCreatedInstances()
+        await testServicesClient.deleteInstances()
+        await UserHelper.deleteCreatedUsers()
+        await ssoHelper?.cleanUpSSOResources()
     }
 
     func setCustomBackend(byDeeplink deeplink: URL, timeout: TimeInterval = 5, domainInfo: String) {
@@ -103,17 +116,6 @@ class WireUITestCase: XCTestCase {
 
         let deeplink = try EnvironmentVariables().deepLinkURL(for: target)
         setCustomBackend(byDeeplink: deeplink, domainInfo: target.domainInfo)
-        // need to change for Inbucket
-        BackendContext.current = target
-    }
-
-    func dismissAllowIfPresent(timeout: TimeInterval = 1.0) {
-        let alert = springboard.alerts.firstMatch
-        guard alert.waitForExistence(timeout: timeout) else { return }
-
-        if alert.buttons["Allow"].exists {
-            alert.buttons["Allow"].tap()
-        }
     }
 
     @MainActor
@@ -130,7 +132,7 @@ class WireUITestCase: XCTestCase {
 
         notificationPermissionMonitor =
             addUIInterruptionMonitor(withDescription: "Notifications Permission Alert") { alertElement -> Bool in
-                let notifPermission = "Would Like to Send You Notifications"
+                let notifPermission = "Would Like to"
                 let allowButton = alertElement.buttons["Allow"].firstMatch
 
                 guard alertElement.label.contains(notifPermission),
@@ -141,5 +143,38 @@ class WireUITestCase: XCTestCase {
                 allowButton.tap()
                 return true
             }
+    }
+
+    func additionalDeveloperFlags() -> [DeveloperFlag: Bool] { [:] }
+
+    func simulateShakeGesture() {
+        app.tap(withNumberOfTaps: 3, numberOfTouches: 1)
+    }
+
+    /// Manually switches the preferred API version via the developer tools menu (accessible by
+    /// shaking the device). Selecting a version force-quits the app, so it is relaunched afterwards.
+    @MainActor
+    func switchToPreferredAPIVersion(_ version: String) throws {
+        simulateShakeGesture()
+        try DeveloperToolsPage()
+            .openPreferredAPIVersion()
+            .selectVersion(version)
+        app.launch()
+    }
+}
+
+extension XCUIApplication {
+    func dismissAllowIfPresent(timeout: TimeInterval = 1.0) {
+        let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
+        let alert = springboard.alerts.firstMatch
+        guard alert.waitForExistence(timeout: timeout) else { return }
+
+        let allowButtons = ["Allow While Using App", "Allow"]
+        guard let button = allowButtons
+            .map({ alert.buttons[$0] })
+            .first(where: { $0.exists }) else {
+            return
+        }
+        button.waitAndTap()
     }
 }

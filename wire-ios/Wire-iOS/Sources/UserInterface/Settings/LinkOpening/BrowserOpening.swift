@@ -17,9 +17,8 @@
 //
 
 import UIKit
+import WireLogging
 import WireSystem
-
-private let log = ZMSLog(tag: "link opening")
 
 enum BrowserOpeningOption: Int, LinkOpeningOption {
 
@@ -61,28 +60,28 @@ enum BrowserOpeningOption: Int, LinkOpeningOption {
 extension URL {
 
     func openAsLink() -> Bool {
-        log.debug("Trying to open \"\(self)\" in thrid party browser")
+        WireLogger.ui.debug("Trying to open \"\(self)\" in third party browser")
         let saved = BrowserOpeningOption.storedPreference
-        log.debug("Saved option to open a regular link: \(saved.displayString)")
+        WireLogger.ui.debug("Saved option to open a regular link: \(saved.displayString)")
         let app = UIApplication.shared
 
         switch saved {
         case .safari: return false
         case .chrome:
             guard let url = chromeURL, app.canOpenURL(url) else { return false }
-            log.debug("Trying to open chrome app using \"\(url)\"")
+            WireLogger.ui.debug("Trying to open chrome app using \"\(url)\"")
             app.open(url)
         case .firefox:
             guard let url = firefoxURL, app.canOpenURL(url) else { return false }
-            log.debug("Trying to open firefox app using \"\(url)\"")
+            WireLogger.ui.debug("Trying to open firefox app using \"\(url)\"")
             app.open(url)
         case .snowhaze:
             guard let url = snowhazeURL, app.canOpenURL(url) else { return false }
-            log.debug("Trying to open snowhaze app using \"\(url)\"")
+            WireLogger.ui.debug("Trying to open snowhaze app using \"\(url)\"")
             app.open(url)
         case .brave:
             guard let url = braveURL, app.canOpenURL(url) else { return false }
-            log.debug("Trying to open brave app using \"\(url)\"")
+            WireLogger.ui.debug("Trying to open brave app using \"\(url)\"")
             app.open(url)
         }
 

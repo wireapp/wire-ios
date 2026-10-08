@@ -29,6 +29,7 @@ protocol ConversationGuestOptionsViewModelConfiguration: AnyObject {
     var isConversationFromSelfTeam: Bool { get }
     var allowGuestsChangedHandler: ((Bool) -> Void)? { get set }
     var guestLinkFeatureStatusChangedHandler: ((GuestLinkFeatureStatus) -> Void)? { get set }
+    var isDriveConversation: Bool { get }
     func setAllowGuests(_ allowGuests: Bool, completion: @escaping (Result<Void, Error>) -> Void)
     func fetchConversationLink(completion: @escaping (Result<(uri: String?, secured: Bool), Error>) -> Void)
     func deleteLink(completion: @escaping (Result<Void, Error>) -> Void)
@@ -165,7 +166,8 @@ final class ConversationGuestOptionsViewModel {
         var rows: [CellConfiguration] = [.allowGuestsToogle(
             get: { [unowned self] in return configuration.allowGuests },
             set: { [unowned self] in setAllowGuests($0, view: $1) },
-            isEnabled: configuration.isConversationFromSelfTeam
+            isEnabled: configuration.isConversationFromSelfTeam,
+            isDriveConversation: configuration.isDriveConversation
         )]
         guard configuration.allowGuests else {
             return rows

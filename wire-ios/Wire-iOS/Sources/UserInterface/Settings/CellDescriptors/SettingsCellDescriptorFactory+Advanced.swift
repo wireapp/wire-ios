@@ -32,9 +32,8 @@ extension SettingsCellDescriptorFactory {
         mainCoordinator: any MainCoordinatorProtocol
     ) -> any SettingsCellDescriptorType {
         let items = [
-            troubleshootingSection(userSession: userSession, mainCoordinator: mainCoordinator),
-            debuggingToolsSection,
-            pushSection
+            pushSection,
+            debuggingToolsSection
         ]
 
         return SettingsGroupCellDescriptor(
@@ -50,55 +49,23 @@ extension SettingsCellDescriptorFactory {
 
     // MARK: - Sections
 
-    private func troubleshootingSection(
-        userSession: UserSession,
-        mainCoordinator: any MainCoordinatorProtocol
-    ) -> SettingsSectionDescriptor {
-        let submitDebugButton = SettingsExternalScreenCellDescriptor(
-            title: SelfSettingsAdvancedLocale.Troubleshooting.SubmitDebug.title,
-            presentationAction: { () -> (UIViewController?) in
-                let router = SettingsDebugReportRouter(userSession: userSession, mainCoordinator: mainCoordinator)
-                let shareFile = ShareFileUseCase(contextProvider: userSession.contextProvider)
-                let fetchShareableConversations = FetchShareableConversationsUseCase(
-                    contextProvider: userSession
-                        .contextProvider
-                )
-                let viewModel = SettingsDebugReportViewModel(
-                    router: router,
-                    shareFile: shareFile,
-                    fetchShareableConversations: fetchShareableConversations,
-                    fileMetaDataGenerator: FileMetaDataGenerator()
-                )
-                let viewController = SettingsDebugReportViewController(viewModel: viewModel)
-                router.viewController = viewController
-                return viewController
-            }
-        )
-
-        return SettingsSectionDescriptor(
-            cellDescriptors: [submitDebugButton],
-            header: SelfSettingsAdvancedLocale.Troubleshooting.title,
-            footer: SelfSettingsAdvancedLocale.Troubleshooting.SubmitDebug.subtitle
-        )
-    }
-
     private var pushSection: SettingsSectionDescriptor {
         let pushButton = SettingsExternalScreenCellDescriptor(
             title: SelfSettingsAdvancedLocale.ResetPushToken.title,
             isDestructive: false,
             presentationStyle: .modal,
             presentationAction: { [weak userSession] () -> (UIViewController?) in
-                (userSession as? ZMUserSession)?.validatePushToken()
+                (userSession as? ZMUserSession)?.refreshPushToken()
                 return self.pushButtonAlertController
             }
         )
 
         return SettingsSectionDescriptor(
             cellDescriptors: [pushButton],
-            header: .none,
+            header: SelfSettingsAdvancedLocale.Troubleshooting.title,
             footer: SelfSettingsAdvancedLocale.ResetPushToken.subtitle,
             visibilityAction: { _ in
-                true
+                !DeveloperFlag.noAPNSTokenCache.isOn
             }
         )
     }
@@ -135,7 +102,10 @@ extension SettingsCellDescriptorFactory {
         )
 
         // Section
-        return SettingsSectionDescriptor(cellDescriptors: [debuggingToolsGroup])
+        return SettingsSectionDescriptor(
+            cellDescriptors: [debuggingToolsGroup],
+            header: DeveloperFlag.noAPNSTokenCache.isOn ? SelfSettingsAdvancedLocale.Troubleshooting.title : nil
+        )
     }
 
     // MARK: - Helpers

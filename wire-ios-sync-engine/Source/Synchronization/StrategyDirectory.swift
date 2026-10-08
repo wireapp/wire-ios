@@ -42,7 +42,6 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
     init(
         contextProvider: ContextProvider,
         applicationStatusDirectory: ApplicationStatusDirectory,
-        cookieStorage: ZMPersistentCookieStorage,
         pushMessageHandler: PushMessageHandler,
         flowManager: FlowManagerType,
         localNotificationDispatcher: LocalNotificationDispatcher,
@@ -56,7 +55,6 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
         self.strategies = Self.buildStrategies(
             contextProvider: contextProvider,
             applicationStatusDirectory: applicationStatusDirectory,
-            cookieStorage: cookieStorage,
             pushMessageHandler: pushMessageHandler,
             flowManager: flowManager,
             localNotificationDispatcher: localNotificationDispatcher,
@@ -90,7 +88,6 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
     static func buildStrategies(
         contextProvider: ContextProvider,
         applicationStatusDirectory: ApplicationStatusDirectory,
-        cookieStorage: ZMPersistentCookieStorage,
         pushMessageHandler: PushMessageHandler,
         flowManager: FlowManagerType,
         localNotificationDispatcher: LocalNotificationDispatcher,
@@ -133,8 +130,7 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
             ),
             DeleteAccountRequestStrategy(
                 withManagedObjectContext: syncMOC,
-                applicationStatus: applicationStatusDirectory,
-                cookieStorage: cookieStorage
+                applicationStatus: applicationStatusDirectory
             ),
             AssetV3UploadRequestStrategy(
                 withManagedObjectContext: syncMOC,
@@ -193,6 +189,11 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 managedObjectContext: syncMOC,
                 localDomain: metadata.domain,
                 isFederationEnabled: metadata.isFederationEnabled
+            ),
+            SearchUserImageStrategy(
+                applicationStatus: applicationStatusDirectory,
+                managedObjectContext: syncMOC,
+                searchUsersCache: searchUsersCache
             ),
             ConnectionRequestStrategy(
                 withManagedObjectContext: syncMOC,
@@ -307,7 +308,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
         flowManager: FlowManagerType,
         incrementalSyncObserver: IncrementalSyncObserverProtocol,
         initiateResetMLSConversationUseCase: WireRequestStrategy.InitiateResetMLSConversationUseCaseProtocol,
-        metadata: BackendMetadataProvider
+        metadata: BackendMetadataProvider,
+        backgroundTaskExecuter: any BackgroundTaskExecuter
     ) {
         syncContext.performAndWait {
             let httpClient = HttpClientImpl(
@@ -329,7 +331,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 incrementalSyncObserver: incrementalSyncObserver,
                 initiateResetMLSConversationUseCase: initiateResetMLSConversationUseCase,
                 featureRepository: LegacyFeatureRepository(context: syncContext),
-                apiVersion: metadata.apiVersion
+                apiVersion: metadata.apiVersion,
+                backgroundTaskExecuter: backgroundTaskExecuter
             )
 
             let strategies: [Any] = [

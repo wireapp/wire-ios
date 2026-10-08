@@ -23,7 +23,11 @@ import WireLogging
 extension ZMUserSession {
 
     var updateProteusToMLSMigrationStatusAction: RecurringAction {
-        .init(id: #function, interval: .oneDay) { [weak self] in
+        .init(
+            id: #function,
+            shouldRunEveryLaunch: true,
+            interval: .oneDay
+        ) { [weak self] in
             guard
                 let self,
                 await viewContext.perform({ self.mlsFeature.isEnabled })
@@ -43,7 +47,11 @@ extension ZMUserSession {
     }
 
     var refreshUsersMissingMetadataAction: RecurringAction {
-        .init(id: #function, interval: 3 * .oneHour) { [weak self] in
+        .init(
+            id: #function,
+            shouldRunEveryLaunch: false,
+            interval: 3 * .oneHour
+        ) { [weak self] in
             guard let context = self?.syncContext else {
                 return
             }
@@ -62,7 +70,11 @@ extension ZMUserSession {
     }
 
     var refreshConversationsMissingMetadataAction: RecurringAction {
-        .init(id: #function, interval: 3 * .oneHour) { [weak self] in
+        .init(
+            id: #function,
+            shouldRunEveryLaunch: false,
+            interval: 3 * .oneHour
+        ) { [weak self] in
             guard let context = self?.syncContext else {
                 return
             }
@@ -82,7 +94,11 @@ extension ZMUserSession {
     }
 
     var refreshTeamMetadataAction: RecurringAction {
-        .init(id: #function, interval: .oneDay) { [weak self] in
+        .init(
+            id: #function,
+            shouldRunEveryLaunch: false,
+            interval: .oneDay
+        ) { [weak self] in
             guard let context = self?.syncContext else {
                 return
             }
@@ -97,7 +113,11 @@ extension ZMUserSession {
     }
 
     var refreshFederationCertificatesAction: RecurringAction {
-        .init(id: #function, interval: .oneDay) { [weak self] in
+        .init(
+            id: #function,
+            shouldRunEveryLaunch: false,
+            interval: .oneDay
+        ) { [weak self] in
             do {
                 guard let self else { return }
 
@@ -109,18 +129,6 @@ extension ZMUserSession {
                 try await e2eiRepository.fetchFederationCertificates()
             } catch {
                 WireLogger.e2ei.error("Failed to refresh federation certificates: \(error)")
-            }
-        }
-    }
-
-    var checkBuildBlacklistAction: RecurringAction {
-        .init(id: #function, interval: .oneHour * 6) { [weak self] in
-            guard let self else { return }
-            let useCase = userSessionComponent.makeIsBuildBlacklistedUseCase()
-            let isBuildBlacklisted = (try? await useCase.invoke()) ?? false
-            if isBuildBlacklisted {
-                self.isBuildBlacklisted = true
-                delegate?.userSessionDidDiscoverBuildIsBlacklisted()
             }
         }
     }

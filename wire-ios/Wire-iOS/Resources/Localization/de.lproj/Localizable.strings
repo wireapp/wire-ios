@@ -15,8 +15,8 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
-// General strings
 
+// General strings
 "general.ok" = "OK";
 "general.next" = "Weiter";
 "general.cancel" = "Abbrechen";
@@ -148,6 +148,7 @@
 
 
 // Conversation List - Filter Conversations
+"conversation_list.context_menu.title" = "%@ Optionen";
 "conversation_list.filter.all_conversations.title" = "Alle Unterhaltungen";
 "conversation_list.filter.favorites.title" = "Favoriten";
 "conversation_list.filter.groups.title" = "Gruppen";
@@ -261,6 +262,7 @@
 "conversation.voiceover.value.disabled" = "deaktiviert";
 
 "conversation.status.secutity_alert.default" = "Neue Sicherheitswarnung";
+"conversation.status.scheduled_for_deletion" = "Wird bald gelöscht";
 
 "conversation.status.typing" = "Schreibt eine Nachricht…";
 "conversation.status.typing.group" = "%@: schreibt eine Nachricht…";
@@ -317,6 +319,7 @@
 "conversation.input_bar.verified" = "Überprüft";
 "conversation.input_bar.placeholder" = "Eine Nachricht schreiben";
 "conversation.input_bar.placeholder_ephemeral" = "Selbstlöschende Nachricht";
+"conversation.input_bar.blocked_user" = "Sie haben diesen Nutzer blockiert";
 
 "conversation.input_bar.audio_message.tooltip.pull_send" = "Zum Senden nach oben Wischen";
 "conversation.input_bar.audio_message.tooltip.tap_send" = "Zum Senden tippen";
@@ -368,6 +371,7 @@
 "conversation.create.apps.subtitle" = "Öffnen Sie diese Unterhaltung für Apps.";
 "conversation.create.apps_disabled.title" = "Ihr Team verwendet noch keine Apps";
 "conversation.create.apps_disabled.message" = "Um Ihren Workflow mit Apps zu verbessern, muss Ihr Team angepasst werden. Bitte wenden Sie sich an Ihren Team-Admin.";
+"conversation.create.apps_disabled_as_admin.message" = "Um Ihren Workflow mit Apps zu verbessern, muss Ihr Team angepasst werden.";
 "conversation.create.receipts.title" = "Lesebestätigungen";
 "conversation.create.receipts.subtitle" = "Wenn diese Option aktiviert ist, können Sender sehen, wenn ihre Nachrichten gelesen werden.";
 "conversation.create.mls.title" = "Protokoll";
@@ -386,6 +390,7 @@
 "conversation.create.file_management.title" = "Geteiltes Drive";
 "conversation.create.file_management.subtitle" = "Ermöglichen Sie den Teilnehmern, ihre Dokumente und Mediendateien in Geteiltes Drive zu verwalten. Dieser Vorgang kann nicht rückgängig gemacht werden.";
 "conversation.create.file_management.learnMore" = "Mehr erfahren";
+"conversation.create.file_management.sharedDriveAccess" = "Personen außerhalb Ihres Teams können Dateien lesen, jedoch weder hochladen noch bearbeiten.";
 
 "conversation.input_bar.ongoing_call_alert.title" = "Aktiver Anruf";
 "conversation.input_bar.ongoing_call_alert.audio.message" = "Audionachrichten können während eines Anrufs nicht aufgenommen werden.";
@@ -567,6 +572,7 @@
 "content.system.conversation.you.removed" = "%@ haben %@ entfernt";
 "content.system.conversation.you.removed.legalhold" = "%@ wurden aus dieser Unterhaltung entfernt, da die gesetzliche Aufbewahrung aktiviert wurde.";
 "content.system.conversation.you.left" = "%@ haben die Unterhaltung verlassen";
+"content.system.conversation.you.promoted" = "Sie wurden zum Gruppen-Admin ernannt";
 "content.system.conversation.team.member-leave" = "%@ wurde aus dem Team entfernt.";
 "content.system.conversation.guest.joined" = "%@ ist beigetreten";
 "content.system.conversation.guest.you_joined" = "Sie sind beigetreten";
@@ -634,7 +640,12 @@
 "content.system.channel.guest.joined" = "%@ ist dem Channel beigetreten";
 "content.system.channel.guest.you_joined" = "Sie sind dem Channel beigetreten";
 
-"content.system.file_collaboration.enabled" = "Geteiltes Drive aktiv";
+"content.system.file_collaboration.sharedDriveState" = "Geteiltes Drive ist %@";
+"content.system.file_collaboration.sharedDriveState.enabled" = "an";
+"content.system.file_collaboration.enabled.editor_access" = "Sie haben Bearbeitungsrechte. Personen außerhalb Ihres Teams haben lediglich Leserechte.";
+"content.system.file_collaboration.enabled.viewer_access" = "Sie können Dateien lesen, aber nicht hochladen, bearbeiten oder verwalten.";
+"content.system.file_collaboration.enabled.learn_more" = "Mehr erfahren";
+"content.system.file_collaboration.drive_viewer_access.title" = "Personen außerhalb Ihres Teams können an dieser Unterhaltung als Betrachter beitreten.";
 
 // read receipt
 
@@ -659,6 +670,11 @@
 "content.system.message_legal_hold.disabled" = "Die gesetzliche Aufbewahrung wurde für diese Unterhaltung deaktiviert";
 
 "content.system.message_legal_hold.learn_more" = "Mehr erfahren";
+
+// automatic conversation deletion
+
+"content.system.message_conversation_scheduled_for_deletion.text" = "Diese Gruppe wird am %@ automatisch gelöscht, da es keine berechtigten Gruppen-Admins gibt.";
+"content.system.message_conversation_scheduled_for_deletion.read_more.text" = "Mehr erfahren";
 
 //
 "content.system.is_verified" = "Alle Fingerabdrücke sind überprüft";
@@ -734,6 +750,7 @@
 "content.message.reply.original_timestamp.date" = "Ursprüngliche Nachricht vom %@";
 "content.message.reply.original_timestamp.time" = "Ursprüngliche Nachricht von %@";
 "content.message.reply.broken_message" = "Diese Nachricht ist nicht sichtbar.";
+"content.message.reply.deleted_message" = "Gelöschte Nachricht";
 "content.message.reply.edited_message" = "Bearbeitet";
 
 "content.message.open_link_alert.title" = "Link öffnen";
@@ -954,6 +971,16 @@
 "shortcut.mark_all_as_read.title" = "Alle als gelesen markieren";
 "meta.menu.configure_notifications" = "Benachrichtigungen…";
 "meta.menu.open_self_profile" = "Profil öffnen";
+"meta.menu.mls_migration.confirmation.title" = "Protokoll auf MLS umstellen?";
+"meta.menu.mls_migration.confirmation.message" = "Das Standard-Nachrichtenprotokoll wird von Proteus auf Messaging-Layer-Security (MLS) umgestellt.";
+"meta.menu.mls_migration.confirmation.button" = "Protokoll umstellen";
+"meta.menu.mls_migration.success.title" = "Umstellung auf MLS abgeschlossen";
+"meta.menu.mls_migration.success.message" = "Die Unterhaltung verwendet jetzt MLS.";
+"meta.menu.mls_migration.failure.title" = "Umstellung auf MLS fehlgeschlagen";
+"meta.menu.mls_migration.failure.conversation_not_found" = "Die Unterhaltung wurde nicht gefunden.";
+"meta.menu.mls_migration.failure.unsupported_conversation" = "Es können nur Gruppenunterhaltungen von Teams umgestellt werden.";
+"meta.menu.mls_migration.failure.missing_mls_service" = "Die Umstellung auf MLS konnte nicht gestartet werden.";
+"meta.menu.mls_migration.failure.missing_mls_group_id" = "Die Unterhaltung hat keine MLS-Gruppen-ID.";
 
 // Delete conversation
 "meta.menu.delete_content.dialog_title" = "Verlauf löschen?";
@@ -977,6 +1004,22 @@
 "meta.leave_conversation_button_cancel" = "Abbrechen";
 "meta.leave_conversation_button_leave" = "Verlassen";
 "meta.leave_conversation_button_leave_and_delete" = "Verlassen und Verlauf löschen";
+
+// Admin selection (promote new admin before leaving)
+"admin_selection.title" = "Neuer Admin";
+"admin_selection.promote" = "Ernennen";
+"admin_selection.info_banner" = "Nachdem Sie einen neuen Admin ernannt haben, verlassen Sie die Gruppe.";
+"admin_selection.promotion_error" = "Gruppen-Mitglied konnte nicht zum Admin ernannt werden.";
+
+// Last admin leave flow
+"last_admin_leave.title" = "\"%s\" verlassen?";
+"last_admin_leave.promote_or_delete_message" = "Sie sind der einzige Admin.\nErnennen Sie vor dem Verlassen der Gruppe einen anderen Teilnehmer zum Admin oder löschen Sie die Gruppe, wenn sie nicht mehr benötigt wird.";
+"last_admin_leave.promote_new_admin" = "Neuen Admin ernennen";
+"last_admin_leave.no_eligible_candidates_message" = "Sie sind der einzige Admin. Die anderen Teilnehmer können keine Admins sein.\nFügen Sie mindestens ein Team-Mitglied hinzu und ernennen Sie es zum Admin, bevor Sie gehen. Alternativ löschen Sie die Gruppe, wenn sie nicht mehr benötigt wird.";
+"last_admin_leave.delete_group" = "Gruppe löschen";
+"last_admin_leave.promote_only_message" = "Sie sind der einzige Admin.\nErnennen Sie einen anderen Teilnehmer, bevor Sie gehen.";
+"last_admin_leave.cannot_leave_title" = "\"%s\" verlassen?";
+"last_admin_leave.cannot_leave_message" = "Fügen Sie mindestens ein Team-Mitglied aus dem Team hinzu, das diese Gruppe erstellt hat, und ernennen Sie es zum  Admin, bevor Sie die Gruppe verlassen.";
 
 // Conversation Degraded (security level lowered)
 "meta.degraded.degradation_reason_message.singular" = "%@ hat begonnen, ein neues Gerät zu nutzen.";
@@ -1020,11 +1063,11 @@
 "profile.connection_request_dialog.button_cancel" = "Ignorieren";
 "profile.connection_request_dialog.button_connect" = "Kontaktanfrage";
 
-// Delete group
-"conversation.delete_request_dialog.title" = "Gruppenunterhaltung löschen?";
-"conversation.delete_request_dialog.message" = "Dies wird die Gruppe und alle Inhalte für alle Teilnehmer auf allen Geräten löschen. Es gibt keine Möglichkeit, den Inhalt wiederherzustellen. Alle Teilnehmer werden darüber benachrichtigt.";
-"conversation.delete_request_error_dialog.title" = "Beim Löschen der Gruppe %@ ist ein Fehler aufgetreten. Bitte erneut versuchen.";
-"conversation.delete_request_error_dialog.button_delete_group" = "Gruppe löschen";
+// Delete conversation
+"conversation.delete_request_dialog.title" = "Unterhaltung löschen?";
+"conversation.delete_request_dialog.message" = "Dies wird die Unterhaltung und alle Inhalte für alle Teilnehmer auf allen Geräten löschen. Es gibt keine Möglichkeit, den Inhalt wiederherzustellen. Alle Teilnehmer werden darüber benachrichtigt.";
+"conversation.delete_request_error_dialog.title" = "Beim Löschen der Unterhaltung %@ ist ein Fehler aufgetreten. Bitte erneut versuchen.";
+"conversation.delete_request_error_dialog.button_delete_group" = "Unterhaltung löschen";
 
 // Cancel connection request
 "profile.cancel_connection_request_dialog.title" = "Kontaktanfrage abbrechen?";
@@ -1063,8 +1106,9 @@
 "profile.details.partner" = "extern";
 "profile.details.federated" = "Föderiert";
 "profile.details.blocking_reason" = "Dieser Nutzer ist aufgrund der gesetzlichen Aufbewahrung gesperrt. [MEHR ERFAHREN](%@)";
-"profile.details.identity_warning" = "Verschaffen Sie sich Gewissheit über die Identität von %@, bevor Sie den Kontakt hinzufügen.";
-"profile.details.requested_identity_warning" = "Bitte überprüfen Sie die Identität der Person, bevor Sie die Kontaktanfrage annehmen.";
+"profile.details.identity_warning" = "Verschaffen Sie sich Gewissheit über die Identität von %@, bevor Sie den Kontakt hinzufügen.\nDas Support-Team von Wire wird Sie niemals über die App kontaktieren.";
+"profile.details.requested_identity_warning" = "Bitte überprüfen Sie die Identität der Person, bevor Sie die Kontaktanfrage annehmen.\nDas Support-Team von Wire wird Sie niemals über die App kontaktieren.";
+"profile.details.report_misuse" = "Missbrauch melden";
 "profile.details.title.unavailable" = "Name nicht verfügbar";
 
 // Device list
@@ -1112,6 +1156,8 @@
 "group_details.channel_history_options_cell.title" = "Gesprächsverlauf";
 "group_details.file_collaboration_cell.title" = "Geteiltes Drive";
 "group_details.file_collaboration_cell.subtitle" = "An";
+"group_details.file_collaboration_cell.subtitle.editor_access" = "Bearbeiter-Zugriff";
+"group_details.file_collaboration_cell.subtitle.viewer_access" = "Betrachter-Zugriff";
 "group_details.file_collaboration_cell.footer" = "Dauerhaft aktiv für diese Unterhaltung";
 "group_details.timeout_options_disabled.footer" = "Die Funktion ist für Unterhaltungen mit Geteiltes Drive nicht verfügbar.";
 
@@ -1154,8 +1200,8 @@
 
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Self profile
-// QRCode
 
+// QRCode
 "qrcode.title" = "Profil teilen";
 "qrcode.share_message" = "Teilen Sie Ihr Profil, um einfach mit anderen Personen in Kontakt zu treten. Sie müssen noch die Kontaktanfrage akzeptieren, bevor sie miteinander kommunizieren können.";
 "qrcode.share_profile_link.button.title" = "Profil-Link teilen";
@@ -1200,9 +1246,6 @@
 "self.settings.add_account_or_team.title" = "Konto oder Team hinzufügen";
 "self.settings.manage_team.title" = "Team verwalten";
 "self.settings.add_account.title" = "Ein Konto hinzufügen";
-
-"self.settings.add_account.error.title" = "Drei Benutzerkonten sind aktiv";
-"self.settings.add_account.error.message" = "Sie können nur mit drei Konten gleichzeitig angemeldet sein. Melden Sie sich von einem Konto ab, um ein weiteres hinzuzufügen.";
 
 "self.settings.switch_account.message" = "In diesem Konto ist ein Anruf aktiv.\nEin Wechsel der Konten beendet den aktuellen Anruf.";
 "self.settings.switch_account.action" = "Trotzdem wechseln";
@@ -1349,7 +1392,7 @@
 
 // By popular demand
 "self.settings.popular_demand.title" = "Auf allgemeinen Wunsch";
-"self.settings.popular_demand.send_button.title" = "Senden Taste";
+"self.settings.popular_demand.send_button.title" = "Senden-Taste";
 "self.settings.popular_demand.send_button.footer" = "Deaktivieren, um Nachrichten mit der Enter-Taste zu senden.";
 "self.settings.popular_demand.dark_mode.footer" = "Zwischen dunklem und hellem Hintergrund wechseln.";
 
@@ -1435,16 +1478,41 @@
 "self.settings.technical_report_section.title" = "Fehlerbericht";
 "self.settings.technical_report.send_report" = "Protokoll senden";
 "self.settings.technical_report.share_report" = "Protokoll über Wire teilen";
-"self.settings.technical_report.mail.subject" = "Fehlerbericht";
+"self.settings.technical_report.mail.subject" = "Problem melden";
 "self.settings.technical_report.include_log" = "Detaillierten Verlauf hinzufügen";
 "self.settings.technical_report.info" = "Wenn Sie während der Benutzung von Wire auf unerwartetes Verhalten oder einen Fehler stoßen, können Sie von hier aus ein Protokoll an unser Support-Team senden. Das Protokoll könnte persönliche Informationen enthalten. \n\nSie können Ihre Protokolle auch direkt mit Ihrem Team-Administrator via Wire teilen.";
 "self.settings.technical_report.privacy_warning" = "Detaillierte Protokolle können personenbezogene Daten enthalten.";
 "self.settings.technical_report.no_mail_alert" = "Kein Mail-Client erkannt. Wählen Sie \"OK\" und senden Sie die Protokolle manuell an: ";
 
-"self.settings.technical_report.mail_body.firstline" = "Füllen Sie bitte die folgenden Felder aus";
-"self.settings.technical_report.mail_body.section1" = "Datum und Zeit, zu der das Problem auftrat";
-"self.settings.technical_report.mail_body.section2" = "Was passiert ist:";
-"self.settings.technical_report.mail_body.section3" = "Schritte zum Nachstellen des Problems (falls relevant):";
+"self.settings.technical_report.mail_body.firstline" = "Erklären Sie, was passiert ist, damit wir das Problem verstehen und reproduzieren können:";
+"self.settings.technical_report.mail_body.section1" = "Was ist passiert?";
+"self.settings.technical_report.mail_body.section2" = "Wann ist es passiert?";
+"self.settings.technical_report.mail_body.section3" = "Fügen Sie Schritte zum Reproduzieren des Problems hinzu (falls relevant):";
+
+// Share Debug Report Banner
+"self.settings.share_debug_report.banner.title" = "Haben Sie Schwierigkeiten?";
+"self.settings.share_debug_report.banner.message" = "Teilen Sie Ihr Feedback und helfen Sie uns, Wire zu verbessern.";
+"self.settings.share_debug_report.creating_report" = "Fehlerbericht wird erstellt...";
+"self.settings.share_debug_report.action_sheet.title" = "Haben Sie Schwierigkeiten?";
+"self.settings.share_debug_report.action_sheet.message" = "Sie können Ihren Bericht an den Wire-Support senden oder ihn direkt über Wire oder eine andere App an Ihren Admin weiterleiten.";
+"self.settings.share_debug_report.action_sheet.share_via_wire" = "Über Wire teilen";
+"self.settings.share_debug_report.action_sheet.send_email" = "E-Mail an Support senden";
+"self.settings.share_debug_report.action_sheet.share" = "Teilen";
+
+
+// Settings - DebugTools
+
+"settings.debugging_tools.unread_conversations.not_found" = "Keine ungelesene Unterhaltung";
+"settings.debugging_tools.unread_conversations.found" = "Ungelesene Unterhaltung gefunden:";
+"settings.debugging_tools.unread_conversations.action_copy" = "Kopieren";
+"settings.debugging_tools.debug_command.title" = "Befehl zur Fehlerbehebung";
+"settings.debugging_tools.debug_command.command_not_recognized" = "Befehl nicht erkannt";
+"settings.debugging_tools.repair_mls_removal_keys.use_case_unavailable" = "Fehler: Anwendungsfall Reparatur nicht verfügbar";
+"settings.debugging_tools.repair_mls_removal_keys.success_title" = "Fehlerhaftes MLS Entfernen der Schlüssel Reparatur";
+"settings.debugging_tools.repair_mls_removal_keys.success_message" = "Gefunden: %d fehlerhaft(e) Unterhaltung(en)\nRepariert: %d Unterhaltung(en)";
+"settings.debugging_tools.repair_mls_removal_keys.failure_title" = "Reparatur fehlgeschlagen";
+"settings.debugging_tools.repair_mls_removal_keys.failure_message" = "Fehler: %@";
+
 // Password reset
 "self.settings.password_reset_menu.title" = "Passwort zurücksetzen";
 
@@ -1470,7 +1538,7 @@
 "name.guidance.tooshort" = "Mindestens 2 Zeichen";
 "name.guidance.toolong" = "Zu viele Zeichen";
 
-"email.placeholder" = "E-Mail";
+"email.placeholder" = "E-Mail-Adresse";
 "email.guidance.invalid" = "Ungültige E-Mail-Adresse";
 "email.guidance.tooshort" = "E-Mail-Adresse ist zu kurz";
 "email.guidance.toolong" = "Zu viele Zeichen";
@@ -1524,6 +1592,7 @@
 
 "guest_room.allow_guests.title" = "Gäste zulassen";
 "guest_room.allow_guests.subtitle" = "Öffne diese Unterhaltung für Personen außerhalb des Teams.";
+"guest_room.allow_guests.shared_drive.subtitle" = "Gäste können in Geteiltes Drive keine Dateien hochladen, bearbeiten oder verwalten.";
 "guest_room.remove_guests.message" = "Aktuelle Gäste werden aus der Unterhaltung entfernt. Neue Gäste können nicht hinzugefügt werden.";
 "guest_room.remove_guests.action" = "Entfernen";
 "guest_room.revoke_link.message" = "Neue Gäste werden sich nicht mehr mit diesem Link anmelden können. Aktuelle Gäste haben weiterhin Zugang zum Gästebereich.";
@@ -1618,6 +1687,10 @@
 "login.sso.backend_switch.title" = "Weiterleitung...";
 "login.sso.backend_switch.subtitle" = "Sie werden zu Ihrem speziellen Unternehmensservice weitergeleitet.";
 "login.sso.backend_switch.information" = "Geben Sie Ihre Zugangsdaten nur dann an, wenn Sie sicher sind, dass dies das Login Ihrer Organisation ist.";
+
+"sso_identity_changed.title" = "Identitätsanbieter geändert";
+"sso_identity_changed.message" = "Dieses Benutzerkonto wurde mit einem anderen Identitätsanbieter verwendet. Wenn Sie fortfahren, werden alle Unterhaltungen von diesem Gerät gelöscht.\nUm Ihre Daten zu behalten, wählen Sie „Abbrechen“ und melden Sie sich anschließend mit Ihrem bisherigen Identitätsanbieter an.";
+"sso_identity_changed.delete_data_and_continue" = "Daten löschen und fortfahren";
 
 "registration.no_history.logged_out.hero" = "Sie haben Wire auf diesem Gerät bereits verwendet.";
 "registration.no_history.logged_out.subtitle" = "Nachrichten, die in der Zwischenzeit gesendet wurden, werden nicht angezeigt.";
@@ -1739,12 +1812,11 @@
 "error.user.network_error" = "Es gibt ein Problem mit Ihrem Netzwerk. Bitte versuchen Sie es später noch einmal.";
 "error.user.email_is_taken" = "Die verwendete E-Mail-Adresse wurde bereits registriert. Bitte versuchen Sie es mit einer anderen.";
 "error.user.verification_code_invalid" = "Bitte geben Sie einen gültigen Bestätigungscode ein.";
-"error.user.verification_code_too_many" = "Wir haben Ihnen bereits einen Code geschickt. Tippe nach 10 Minuten auf \"Erneut senden\" um einen neuen Code zu erhalten.";
+"error.user.verification_code_too_many" = "Wir haben Ihnen bereits einen Code geschickt. Tippen Sie nach 10 Minuten auf \"Erneut senden\" um einen neuen Code zu erhalten.";
 "error.user.registration_unknown_error" = "Ein Fehler ist aufgetreten, bitte erneut versuchen.";
 "error.user.device_deleted_remotely" = "Sie wurden von einem anderen Gerät abgemeldet.";
 "error.user.last_identity_cant_be_deleted" = "Eine E-Mail-Adresse ist erforderlich.";
 "error.user.account_suspended" = "Benutzerkonto ist nicht mehr zur Anmeldung berechtigt.";
-"error.user.account_limit_reached" = "Es können maximal 3 Konten genutzt werden.";
 "error.user.too_many_requests" = "Zu viele Anfragen. Bitte versuchen Sie es später erneut.";
 
 "error.group_call.too_many_members_in_conversation.title" = "Zu viele Teilnehmer";

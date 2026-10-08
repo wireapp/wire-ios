@@ -88,7 +88,8 @@ class SnapshotCenterTests: BaseZMMessageTests {
             "labels": 0,
             "nonTeamRoles": 0,
             "lastServerSyncedActiveParticipants": 0,
-            "wireCellsMessageAttachmentDrafts": 0
+            "wireCellsMessageAttachmentDrafts": 0,
+            "meetings": 0
         ]
 
         expectedAttributes.forEach {
@@ -97,7 +98,7 @@ class SnapshotCenterTests: BaseZMMessageTests {
         XCTAssertEqual(snapshot.toManyRelationships, expectedToManyRelationships)
     }
 
-    func testThatItSnapshotsSetValues() {
+    func testThatItSnapshotsSetValues() throws {
         // given
         let conv = ZMConversation.insertNewObject(in: uiMOC)
         conv.conversationType = .group
@@ -159,11 +160,12 @@ class SnapshotCenterTests: BaseZMMessageTests {
             "labels": 0,
             "nonTeamRoles": 0,
             "lastServerSyncedActiveParticipants": 0,
-            "wireCellsMessageAttachmentDrafts": 0
+            "wireCellsMessageAttachmentDrafts": 0,
+            "meetings": 0
         ]
 
         let expectedToOneRelationships: [String: NSManagedObjectID] =
-            ["creator": conv.creator.objectID]
+            ["creator": try XCTUnwrap(conv.creator?.objectID)]
 
         expectedAttributes.forEach {
             XCTAssertEqual(snapshot.attributes[$0] ?? nil, $1, "values for \($0) don't match")
@@ -217,7 +219,8 @@ class SnapshotCenterTests: BaseZMMessageTests {
             "labels",
             "nonTeamRoles",
             "lastServerSyncedActiveParticipants",
-            "wireCellsMessageAttachmentDrafts"
+            "wireCellsMessageAttachmentDrafts",
+            "meetings"
         ]))
     }
 

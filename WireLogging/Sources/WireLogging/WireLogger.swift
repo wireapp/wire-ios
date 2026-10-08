@@ -32,11 +32,13 @@ public struct WireLogger: LoggerProtocol, Sendable {
     private nonisolated(unsafe) static var provider: (any LoggerProtocol)?
 
     public let tag: String
+    private let instanceAttributes: LogAttributes
 
     // MARK: - Initialization
 
-    public init(tag: String) {
+    public init(tag: String, instanceAttributes: LogAttributes = [:]) {
         self.tag = tag
+        self.instanceAttributes = instanceAttributes
     }
 
     // MARK: - LoggerProtocol
@@ -46,43 +48,46 @@ public struct WireLogger: LoggerProtocol, Sendable {
     }
 
     public func debug(_ message: any LogConvertible, attributes: LogAttributes...) {
-        guard shouldLogMessage(message) else { return }
-        Self.provider?.debug(message, attributes: finalizedAttributes(attributes))
+        guard let provider = Self.provider, let rendered = render(message) else { return }
+        provider.debug(rendered, attributes: finalizedAttributes(attributes))
     }
 
     public func info(_ message: any LogConvertible, attributes: LogAttributes...) {
-        guard shouldLogMessage(message) else { return }
-        Self.provider?.info(message, attributes: finalizedAttributes(attributes))
+        guard let provider = Self.provider, let rendered = render(message) else { return }
+        provider.info(rendered, attributes: finalizedAttributes(attributes))
     }
 
     public func notice(_ message: any LogConvertible, attributes: LogAttributes...) {
-        guard shouldLogMessage(message) else { return }
-        Self.provider?.notice(message, attributes: finalizedAttributes(attributes))
+        guard let provider = Self.provider, let rendered = render(message) else { return }
+        provider.notice(rendered, attributes: finalizedAttributes(attributes))
     }
 
     public func warn(_ message: any LogConvertible, attributes: LogAttributes...) {
-        guard shouldLogMessage(message) else { return }
-        Self.provider?.warn(message, attributes: finalizedAttributes(attributes))
+        guard let provider = Self.provider, let rendered = render(message) else { return }
+        provider.warn(rendered, attributes: finalizedAttributes(attributes))
     }
 
     public func error(_ message: any LogConvertible, attributes: LogAttributes...) {
-        guard shouldLogMessage(message) else { return }
-        Self.provider?.error(message, attributes: finalizedAttributes(attributes))
+        guard let provider = Self.provider, let rendered = render(message) else { return }
+        provider.error(rendered, attributes: finalizedAttributes(attributes))
     }
 
     public func critical(_ message: any LogConvertible, attributes: LogAttributes...) {
-        guard shouldLogMessage(message) else { return }
-        Self.provider?.critical(message, attributes: finalizedAttributes(attributes))
+        guard let provider = Self.provider, let rendered = render(message) else { return }
+        provider.critical(rendered, attributes: finalizedAttributes(attributes))
     }
 
     // MARK: - Private Helpers
 
-    private func shouldLogMessage(_ message: any LogConvertible) -> Bool {
-        !message.logDescription.isEmpty
+    /// Renders the message to its `String` description exactly once, returning `nil`
+    /// for empty messages so they can be skipped.
+    private func render(_ message: any LogConvertible) -> String? {
+        let rendered = message.logDescription
+        return rendered.isEmpty ? nil : rendered
     }
 
     private func finalizedAttributes(_ attributes: [LogAttributes]) -> LogAttributes {
-        var finalizedAttributes = flattenArray(attributes)
+        var finalizedAttributes = flattenArray(attributes + [instanceAttributes])
 
         if !tag.isEmpty {
             finalizedAttributes[.tag] = tag

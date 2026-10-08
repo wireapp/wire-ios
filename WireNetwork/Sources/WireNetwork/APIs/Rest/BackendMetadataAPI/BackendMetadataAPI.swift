@@ -19,7 +19,7 @@
 import Foundation
 
 // sourcery: AutoMockable
-public protocol BackendMetadataAPI {
+public protocol BackendMetadataAPI: Sendable {
 
     /// Fetch the info of the local backend.
 

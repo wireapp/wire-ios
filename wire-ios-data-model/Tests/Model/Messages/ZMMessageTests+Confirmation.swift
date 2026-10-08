@@ -57,6 +57,32 @@ extension ZMMessageTests_Confirmation {
         XCTAssertFalse(message.needsReadConfirmation)
     }
 
+    func testThatMessageDoesntNeedReadConfirmation_InAnMLSGroup_WhenItExpectsReadConfirmation() {
+        // given
+        let user = createUser(in: uiMOC)
+        let conversation = createConversation(in: uiMOC)
+        conversation.messageProtocol = .mls
+
+        let message = insertMessage(conversation, fromSender: user, timestamp: Date()) as! ZMClientMessage
+        message.expectsReadConfirmation = true
+
+        // then
+        XCTAssertFalse(message.needsReadConfirmation)
+    }
+
+    func testThatMessageNeedsReadConfirmation_InAMixedGroup_WhenItExpectsReadConfirmation() {
+        // given
+        let user = createUser(in: uiMOC)
+        let conversation = createConversation(in: uiMOC)
+        conversation.messageProtocol = .mixed
+
+        let message = insertMessage(conversation, fromSender: user, timestamp: Date()) as! ZMClientMessage
+        message.expectsReadConfirmation = true
+
+        // then
+        XCTAssertTrue(message.needsReadConfirmation)
+    }
+
     func testThatMessageDoesntExpectReadConfirmation_InAGroup_ForMessagesSentBySelfUser() {
         // given
         let conversation = createConversation(in: uiMOC)

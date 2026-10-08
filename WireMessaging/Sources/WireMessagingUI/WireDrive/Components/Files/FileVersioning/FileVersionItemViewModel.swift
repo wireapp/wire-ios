@@ -29,18 +29,15 @@ final class FileVersionItemViewModel: ObservableObject {
     private let onRestore: (FileVersionItem) async -> Void
 
     let item: FileVersionItem
-    let accentColor: WireAccentColor
 
     init(
         nodeID: UUID,
         item: FileVersionItem,
-        accentColor: WireAccentColor,
         onRestore: @escaping (FileVersionItem) async -> Void
     ) {
         self.nodeID = nodeID
         self.versionID = item.id
         self.item = item
-        self.accentColor = accentColor
         self.onRestore = onRestore
     }
 

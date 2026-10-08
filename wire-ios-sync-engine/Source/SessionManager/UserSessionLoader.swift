@@ -32,6 +32,7 @@ final class UserSessionLoader {
 
     private let account: Account
     private let accountManager: AccountManager
+    private let cookieStorage: CookieStorage
     private let sharedContainerURL: URL
     private let defaultEnvironment: BackendEnvironment2
     private let legacyEnvironment: WireTransport.BackendEnvironment
@@ -45,6 +46,7 @@ final class UserSessionLoader {
     private let flowManager: FlowManagerType
     private let logFilesProvider: LogFilesProviding
     private let isDeveloperModeEnabled: Bool
+    private let backgroundTaskExecuter: any BackgroundTaskExecuter
 
     private let accountID: UUID
     private let backendStore: BackendEnvironmentStore
@@ -56,6 +58,7 @@ final class UserSessionLoader {
     init(
         account: Account,
         accountManager: AccountManager,
+        cookieStorage: CookieStorage,
         sharedContainerURL: URL,
         defaultEnvironment: BackendEnvironment2,
         legacyEnvironment: WireTransport.BackendEnvironment,
@@ -69,10 +72,12 @@ final class UserSessionLoader {
         flowManager: FlowManagerType,
         logFilesProvider: LogFilesProviding,
         isDeveloperModeEnabled: Bool,
-        faultyMLSRemovalKeysByDomain: [String: [String]]
+        faultyMLSRemovalKeysByDomain: [String: [String]],
+        backgroundTaskExecuter: any BackgroundTaskExecuter
     ) throws {
         self.account = account
         self.accountManager = accountManager
+        self.cookieStorage = cookieStorage
         self.sharedContainerURL = sharedContainerURL
         self.defaultEnvironment = defaultEnvironment
         self.legacyEnvironment = legacyEnvironment
@@ -86,6 +91,7 @@ final class UserSessionLoader {
         self.flowManager = flowManager
         self.logFilesProvider = logFilesProvider
         self.isDeveloperModeEnabled = isDeveloperModeEnabled
+        self.backgroundTaskExecuter = backgroundTaskExecuter
 
         self.accountID = account.userIdentifier
         let accountDataURL = AccountURLs(root: sharedContainerURL).accountData
@@ -103,6 +109,8 @@ final class UserSessionLoader {
         if let newEnvironment {
             try await storeNewEnvironment(newEnvironment)
             try backendStore.storeBackendMetadata(newEnvironment.metadata, for: accountID)
+            journal[.resolvedBackendMetadataAPIVersions] = Set(APIVersion.productionVersions
+                .map { String($0.rawValue) })
         }
 
         // Get the environment for this account.
@@ -185,18 +193,13 @@ final class UserSessionLoader {
         let networkServices = try await networkStack.networkServices
 
         // Store any new cookies.
-        let cookieStorage = CookieStorage(
-            userID: accountID,
-            cookieEncryptionKey: UserDefaults.cookiesKey(),
-            keychain: Keychain()
-        )
-
         if let cookies = newEnvironment?.cookies {
-            try await cookieStorage.storeCookies(cookies)
+            try cookieStorage.storeCookies(cookies, userID: accountID)
         }
 
         // Check if this backend supports MLS.
         if let isBackendMLSEnabled = try await isBackendMLSEnabled(
+            accountID: accountID,
             networkService: networkServices.rest,
             cookieStorage: cookieStorage,
             apiVersion: metadata.apiVersion
@@ -217,12 +220,6 @@ final class UserSessionLoader {
             cookieStorage: cookieStorage,
             contextStorage: contextStorage
         )
-
-        // Check if this build is blacklisted.
-        if await isBuildBlacklisted(userSession: userSession) {
-            await userSession.close(deleteCookie: false)
-            throw Failure.buildIsBlacklisted
-        }
 
         // Perform pending migrations.
         do {
@@ -303,55 +300,35 @@ final class UserSessionLoader {
     }
 
     private func resolveBackendMetadata(with networkStack: NetworkStack) async throws -> ResolvedBackendMetadata {
-        // Get the last known metadata.
-        var prevMetadata: ResolvedBackendMetadata?
-        if let storedMetadata = try backendStore.fetchBackendMetadata(accountID: accountID) {
-            prevMetadata = storedMetadata
-        } else if
-            let legacyAPIVersion = BackendInfo.apiVersion,
-            let legacyDomain = BackendInfo.domain {
-            // We're on the update path, use the legacy metadata.
-            prevMetadata = ResolvedBackendMetadata(
+        // Preserve legacy metadata as an offline fallback on the update path.
+        if try backendStore.fetchBackendMetadata(accountID: accountID) == nil,
+           let legacyAPIVersion = BackendInfo.apiVersion,
+           let legacyDomain = BackendInfo.domain {
+            let legacyMetadata = ResolvedBackendMetadata(
                 apiVersion: .init(legacyAPIVersion),
                 domain: legacyDomain,
                 isFederationEnabled: BackendInfo.isFederationEnabled
             )
+            try backendStore.storeBackendMetadata(legacyMetadata, for: accountID)
         }
 
-        // Get new metadata.
-        let newMetadata: ResolvedBackendMetadata
+        let useCase = UpdateBackendMetadataUseCase(
+            resolveBackendMetadataUseCase: NetworkStackMetadataResolver(networkStack: networkStack),
+            backendStore: backendStore,
+            journal: journal,
+            accountID: accountID
+        )
         do {
-            newMetadata = try await networkStack.resolvedBackendMetadata()
-        } catch is URLError {
-            // To allow offline browsing fallback to previous metadata if possible.
-            if let prevMetadata {
-                newMetadata = prevMetadata
-            } else {
-                throw Failure.noResolvedBackendMetadataAvailable
-            }
-        }
-
-        if let prevMetadata {
-            if !prevMetadata.isFederationEnabled, newMetadata.isFederationEnabled {
-                // Now that federation is enabled we'll start storing domains
-                // on entities in the database. We'll therefore need to add
-                // the local domain to all existing entities so they're
-                // fully qualified.
-                journal[.isFederationMigrationRequired] = true
-            }
-        }
-
-        // Store new metadata.
-        do {
-            try backendStore.storeBackendMetadata(
-                newMetadata,
-                for: accountID
-            )
+            return try await useCase.invokeIfNeeded()
+        } catch is CancellationError {
+            throw CancellationError()
+        } catch let error as URLError where error.code == .cancelled {
+            throw error
+        } catch let error as NetworkStackError {
+            throw error
         } catch {
-            throw Failure.failedToStoreMetadata(error)
+            throw Failure.noResolvedBackendMetadataAvailable
         }
-
-        return newMetadata
     }
 
     private func loadPersistenceStack(
@@ -391,14 +368,8 @@ final class UserSessionLoader {
             return
         }
 
-        let dao: UpdateEventMigratorDAOProtocol = if #available(iOS 17, *) {
-            ActorBasedUpdateEventMigratorDAO(context: eventContext)
-        } else {
-            UpdateEventMigratorDAO(context: eventContext)
-        }
-
         let migrator = UpdateEventMigrator(
-            dao: dao,
+            dao: ActorBasedUpdateEventMigratorDAO(context: eventContext),
             localDomain: metadata.domain,
             earService: earService
         )
@@ -461,7 +432,8 @@ final class UserSessionLoader {
             sharedUserDefaults: sharedUserDefaults,
             syncContext: coreDataStack.syncContext,
             coreCryptoKeyMigrationManager: coreCryptoKeyMigrationManager,
-            localDomain: backendMetadata.domain
+            localDomain: backendMetadata.domain,
+            backgroundTaskExecuter: backgroundTaskExecuter
         )
 
         let lastEventIDRepository = LastEventIDRepository(
@@ -515,6 +487,7 @@ final class UserSessionLoader {
             apiVersion: WireTransport.APIVersion(rawValue: Int32(backendMetadata.apiVersion.rawValue))
         )
         let recurringActionService = RecurringActionService(
+            userID: accountID,
             storage: sharedUserDefaults,
             dateProvider: .system
         )
@@ -538,6 +511,19 @@ final class UserSessionLoader {
             )
         )
 
+        let resolveBackendMetadataUseCase = ResolveBackendMetadataUseCase(
+            backendMetadataAPI: BackendMetadataAPIBuilder(networkService: restNetworkService).makeAPI(),
+            clientProductionVersions: APIVersion.productionVersions,
+            preferredAPIVersion: BackendInfo.preferredAPIVersion.map {
+                WireNetwork.APIVersion($0)
+            }
+        )
+        let updateBackendMetadataUseCase = UpdateBackendMetadataUseCase(
+            resolveBackendMetadataUseCase: resolveBackendMetadataUseCase,
+            backendStore: backendStore,
+            journal: journal,
+            accountID: accountID
+        )
         let userSession = ZMUserSession(
             userId: accountID,
             restNetworkService: restNetworkService,
@@ -568,7 +554,9 @@ final class UserSessionLoader {
             journal: journal,
             logFilesProvider: logFilesProvider,
             cookieStorage: cookieStorage,
-            faultyMLSRemovalKeysByDomain: faultyMLSRemovalKeysByDomain
+            faultyMLSRemovalKeysByDomain: faultyMLSRemovalKeysByDomain,
+            updateBackendMetadataUseCase: updateBackendMetadataUseCase,
+            backgroundTaskExecuter: backgroundTaskExecuter
         )
 
         userSession.setup(
@@ -586,12 +574,14 @@ final class UserSessionLoader {
     }
 
     private func isBackendMLSEnabled(
+        accountID: UUID,
         networkService: NetworkService,
         cookieStorage: CookieStorage,
         apiVersion: WireNetwork.APIVersion
     ) async throws -> Bool? {
         do {
             let authenticationManager = AuthenticationManager(
+                userID: accountID,
                 clientID: nil,
                 cookieStorage: cookieStorage,
                 networkService: networkService,
@@ -610,11 +600,6 @@ final class UserSessionLoader {
             // Don't block session loading, we'll try again later.
             return nil
         }
-    }
-
-    private func isBuildBlacklisted(userSession: ZMUserSession) async -> Bool {
-        let useCase = userSession.userSessionComponent.makeIsBuildBlacklistedUseCase()
-        return await useCase.invoke()
     }
 
     private func performPendingMigrations(
@@ -711,6 +696,16 @@ final class UserSessionLoader {
             }
         }
 
+    }
+
+}
+
+private struct NetworkStackMetadataResolver: ResolveBackendMetadataUseCaseProtocol {
+
+    let networkStack: NetworkStack
+
+    func invoke() async throws -> ResolvedBackendMetadata {
+        try await networkStack.resolvedBackendMetadata()
     }
 
 }

@@ -23,80 +23,167 @@ import WireCallingUI
 @Suite("MeetingsFormatter Tests")
 struct MeetingsFormatterTests {
 
-    let formatter = MeetingsFormatter()
-    let calendar = Calendar.current
+    var dayHeaderCalendar: Calendar {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = TimeZone(secondsFromGMT: 0) ?? calendar.timeZone
+        return calendar
+    }
+
+    var timeRangeCalendar: Calendar {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = TimeZone(secondsFromGMT: 0) ?? calendar.timeZone
+        return calendar
+    }
+
+    var formatter: MeetingsFormatter {
+        MeetingsFormatter(
+            calendar: dayHeaderCalendar,
+            locale: Locale(identifier: "en_US")
+        )
+    }
 
     // MARK: - Day Header Tests
 
     @Test("dayHeader returns 'Today' for current date")
-    func testDayHeaderForToday() {
-        let now = Date()
+    func testDayHeaderForToday() throws {
+        let now = try makeDayHeaderDate(hour: 9, minute: 0)
         let result = formatter.dayHeader(for: now, now: now)
 
-        #expect(result.contains("Today"))
+        #expect(result == "Today (Tuesday, September 8)")
     }
 
-    @Test("dayHeader returns 'Tomorrow' for next day")
-    func testDayHeaderForTomorrow() {
-        let now = Date()
-        guard let tomorrow = calendar.date(byAdding: .day, value: 1, to: now) else {
-            Issue.record("Failed to create tomorrow date")
-            return
-        }
-
+    @Test("dayHeader returns 'Tomorrow' for the next date")
+    func testDayHeaderForTomorrow() throws {
+        let now = try makeDayHeaderDate(hour: 9, minute: 0)
+        let tomorrow = try #require(dayHeaderCalendar.date(byAdding: .day, value: 1, to: now))
         let result = formatter.dayHeader(for: tomorrow, now: now)
 
-        #expect(result.contains("Tomorrow"))
+        #expect(result == "Tomorrow (Wednesday, September 9)")
     }
 
-    @Test("dayHeader returns 'Yesterday' for previous day")
-    func testDayHeaderForYesterday() {
-        let now = Date()
-        guard let yesterday = calendar.date(byAdding: .day, value: -1, to: now) else {
-            Issue.record("Failed to create yesterday date")
-            return
-        }
+    @Test("dayHeader uses weekday, month, and day for other days", arguments: [
+        (2026, 9, 13, "Sunday, September 13"),
+        (2026, 12, 31, "Thursday, December 31")
+    ])
+    func testDayHeaderForOtherDays(year: Int, month: Int, day: Int, expected: String) throws {
+        let now = try makeDayHeaderDate(hour: 9, minute: 0)
+        let date = try #require(dayHeaderCalendar.date(from: DateComponents(year: year, month: month, day: day)))
 
-        let result = formatter.dayHeader(for: yesterday, now: now)
-
-        #expect(result.contains("Yesterday"))
+        #expect(formatter.dayHeader(for: date, now: now) == expected)
     }
 
-    @Test("dayHeader returns formatted date for other days")
-    func testDayHeaderForOtherDays() {
-        let now = Date()
-        guard let futureDate = calendar.date(byAdding: .day, value: 5, to: now) else {
-            Issue.record("Failed to create future date")
-            return
-        }
+    // MARK: - Time Range Tests
 
-        let result = formatter.dayHeader(for: futureDate, now: now)
+    @Test("timeRange respects 12-hour time settings")
+    func timeRange_respectsTwelveHourTimeSettings() throws {
+        let formatter = formatter(localeIdentifier: "en_US@hours=h12")
+        let start = try makeTimeRangeDate(hour: 14, minute: 0)
+        let end = try makeTimeRangeDate(hour: 15, minute: 15)
+        let result = formatter.timeRange(from: start, to: end)
 
-        #expect(!result.contains("Today"))
-        #expect(!result.contains("Tomorrow"))
-        #expect(!result.contains("Yesterday"))
-        #expect(!result.isEmpty)
+        #expect(result.contains("2:00"))
+        #expect(result.contains("3:15"))
+        #expect(result.contains("PM"))
+        #expect(!result.contains("14:00"))
+        #expect(!result.contains("15:15"))
     }
 
-    // MARK: - Time Header Tests
+    @Test("timeRange respects 24-hour time settings")
+    func timeRange_respectsTwentyFourHourTimeSettings() throws {
+        let formatter = formatter(localeIdentifier: "en_GB")
+        let start = try makeTimeRangeDate(hour: 7, minute: 5)
+        let end = try makeTimeRangeDate(hour: 8, minute: 15)
 
-    @Test("timeHeader returns formatted time")
-    func testTimeHeaderFormat() {
-        var components = DateComponents()
-        components.year = 2025
-        components.month = 1
-        components.day = 15
-        components.hour = 14
-        components.minute = 30
+        #expect(formatter.timeRange(from: start, to: end) == "07:05 - 08:15")
+    }
 
-        guard let date = calendar.date(from: components) else {
-            Issue.record("Failed to create test date")
-            return
-        }
+    @Test("time uses localized short time settings")
+    func time_usesLocalizedShortTimeSettings() throws {
+        let formatter = formatter(localeIdentifier: "en_US@hours=h12")
+        let date = try makeTimeRangeDate(hour: 14, minute: 5)
+        let result = formatter.time(date)
 
-        let result = formatter.timeHeader(for: date)
-        #expect(!result.isEmpty)
-        #expect(result.contains(":"))
+        #expect(result.contains("2:05"))
+        #expect(result.contains("PM"))
+    }
+
+    @Test("time pads 24-hour time settings")
+    func time_padsTwentyFourHourTimeSettings() throws {
+        let formatter = formatter(localeIdentifier: "en_GB")
+        let date = try makeTimeRangeDate(hour: 7, minute: 5)
+
+        #expect(formatter.time(date) == "07:05")
+    }
+
+    @Test("date uses localized short date settings", arguments: [
+        ("en_US", "9/8/26"),
+        ("en_GB", "08/09/2026"),
+        ("de_DE", "08.09.26")
+    ])
+    func date_usesLocalizedShortDateSettings(localeIdentifier: String, expected: String) throws {
+        let formatter = formatter(localeIdentifier: localeIdentifier)
+        let date = try makeTimeRangeDate(hour: 14, minute: 5)
+
+        #expect(formatter.date(date) == expected)
+    }
+
+    @Test("refresh rebuilds time formatting with the latest locale provider value")
+    func refresh_rebuildsTimeFormattingWithLatestLocaleProviderValue() throws {
+        let calendar = timeRangeCalendar
+        var locale = Locale(identifier: "en_US@hours=h12")
+        let formatter = MeetingsFormatter(
+            calendarProvider: { calendar },
+            localeProvider: { locale }
+        )
+        let start = try makeTimeRangeDate(hour: 14, minute: 0)
+        let end = try makeTimeRangeDate(hour: 15, minute: 15)
+
+        #expect(formatter.timeRange(from: start, to: end).contains("PM"))
+
+        locale = Locale(identifier: "en_GB")
+        #expect(formatter.timeRange(from: start, to: end).contains("PM"))
+
+        formatter.refresh()
+        #expect(formatter.timeRange(from: start, to: end) == "14:00 - 15:15")
+    }
+
+    @Test("refresh rebuilds date formatting with the latest calendar provider value")
+    func refresh_rebuildsDateFormattingWithLatestCalendarProviderValue() throws {
+        var calendar = timeRangeCalendar
+        calendar.timeZone = try #require(TimeZone(secondsFromGMT: 0))
+        let locale = Locale(identifier: "en_GB")
+        let formatter = MeetingsFormatter(
+            calendarProvider: { calendar },
+            localeProvider: { locale }
+        )
+        let date = try Date.ISO8601FormatStyle().parse("2026-09-08T23:30:00Z")
+
+        #expect(formatter.date(date) == "08/09/2026")
+
+        calendar.timeZone = try #require(TimeZone(secondsFromGMT: 7200))
+        #expect(formatter.date(date) == "08/09/2026")
+
+        formatter.refresh()
+        #expect(formatter.date(date) == "09/09/2026")
+    }
+
+    private func makeDayHeaderDate(hour: Int, minute: Int) throws -> Date {
+        try #require(dayHeaderCalendar.date(
+            from: DateComponents(year: 2026, month: 9, day: 8, hour: hour, minute: minute)
+        ))
+    }
+
+    private func makeTimeRangeDate(hour: Int, minute: Int) throws -> Date {
+        try #require(timeRangeCalendar.date(
+            from: DateComponents(year: 2026, month: 9, day: 8, hour: hour, minute: minute)
+        ))
+    }
+
+    private func formatter(localeIdentifier: String) -> MeetingsFormatter {
+        MeetingsFormatter(
+            calendar: timeRangeCalendar,
+            locale: Locale(identifier: localeIdentifier)
+        )
     }
 
 }

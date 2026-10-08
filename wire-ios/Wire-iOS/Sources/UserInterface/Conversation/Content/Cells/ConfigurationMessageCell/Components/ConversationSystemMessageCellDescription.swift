@@ -20,6 +20,7 @@ import UIKit
 import WireDataModel
 import WireLogging
 import WireSyncEngine
+import WireUtilities
 
 enum ConversationSystemMessageCellDescription {
 
@@ -36,7 +37,9 @@ enum ConversationSystemMessageCellDescription {
               let sender = message.senderUser,
               let conversation = message.conversationLike
         else {
-            assertionFailure("Invalid system message")
+            WireLogger.conversation.warn(
+                "Skipping invalid system message: missing systemMessageData, sender, or conversation"
+            )
             return []
         }
 
@@ -149,7 +152,7 @@ enum ConversationSystemMessageCellDescription {
             )
             return [AnyConversationMessageCellDescription(missingMessagesCell)]
 
-        case .participantsAdded, .participantsRemoved, .teamMemberLeave:
+        case .participantsAdded, .participantsRemoved, .teamMemberLeave, .promotedToGroupAdmin:
             let participantsChangedCell = ConversationParticipantsChangedSystemMessageCellDescription(
                 message: message,
                 data: systemMessageData
@@ -173,58 +176,16 @@ enum ConversationSystemMessageCellDescription {
             return [AnyConversationMessageCellDescription(cell)]
 
         case .newConversation:
-            var cells: [AnyConversationMessageCellDescription] = []
+            // Displayed in the table header via GroupConversationHeaderView.
+            return []
 
-            let welcomeCell = ConversationWelcomeSystemMessageCellDescription(
-                variant: (
-                    wireCells: conversation.isWireDriveEnabled,
-                    isChannel: conversation.isChannel
-                )
-            )
-            cells.append(AnyConversationMessageCellDescription(welcomeCell))
-
-            let startedConversationCell = ConversationStartedSystemMessageCellDescription(message: message)
-            cells.append(AnyConversationMessageCellDescription(startedConversationCell))
-
-            // Only display invite user cell for team members
-            if selfUser.isTeamMember,
-               conversation.selfCanAddUsers(selfUser: selfUser),
-               conversation.isOpenGroup {
-                cells.append(
-                    AnyConversationMessageCellDescription(
-                        GuestsAllowedCellDescription(isChannel: conversation.isChannel)
-                    )
-                )
-            }
-
-            if conversation.isWireDriveEnabled {
-                let fileCollaborationCell = ConversationFileCollaborationSystemMessageCellDescription()
-                cells.append(AnyConversationMessageCellDescription(fileCollaborationCell))
-
-                let timerCell = ConversationMessageTimerSystemMessageCellDescription(
-                    state: .unavailable
-                )
-                cells.append(AnyConversationMessageCellDescription(timerCell))
-            }
-
-            if conversation.isChannel, let channelHistoryDepth = conversation.channelHistoryDepth {
-                let cell = ConversationChannelHistoryDepthSystemMessageCellDescription(
-                    sender: sender,
-                    historyDepth: channelHistoryDepth,
-                    isNewConversation: true
-                )
-
-                cells.append(AnyConversationMessageCellDescription(cell))
-            }
-
-            return cells
-
-        case .failedToAddParticipants:
+        case .failedToAddParticipants, .failedToAddParticipantsMLS:
             if let users = Array(systemMessageData.userTypes) as? [UserType], let buttonAction {
 
                 let cellDescription = ConversationFailedToAddParticipantsSystemMessageCellDescription(
                     failedUsers: users,
                     isCollapsed: isCollapsed,
+                    reason: systemMessageData.systemMessageType,
                     buttonAction: buttonAction
                 )
                 return [AnyConversationMessageCellDescription(cellDescription)]
@@ -269,6 +230,13 @@ enum ConversationSystemMessageCellDescription {
 
         case .userRemovedFromTeam:
             let cell = UserRemovedFromTeamSystemMessageCellDescription()
+            return [AnyConversationMessageCellDescription(cell)]
+
+        case .conversationScheduledForDeletion:
+            guard let deletionDate = systemMessageData.conversationScheduledDeletionDate else {
+                break
+            }
+            let cell = ConversationScheduledForDeletionCellDescription(deletionDate: deletionDate)
             return [AnyConversationMessageCellDescription(cell)]
         }
 

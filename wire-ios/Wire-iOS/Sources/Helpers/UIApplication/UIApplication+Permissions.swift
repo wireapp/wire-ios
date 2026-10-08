@@ -91,7 +91,7 @@ extension UIApplication: ApplicationProtocol {
         let alert = UIAlertController.cameraPermissionAlert(completion: completion)
 
         if let appDelegate = UIApplication.shared.delegate as? AppDelegate,
-           let rootViewController = appDelegate.mainWindow.rootViewController {
+           let rootViewController = appDelegate.mainWindow?.rootViewController {
             rootViewController.present(alert, animated: true)
         }
     }
@@ -100,7 +100,7 @@ extension UIApplication: ApplicationProtocol {
         let alert = UIAlertController.microphonePermissionAlert
 
         if let appDelegate = UIApplication.shared.delegate as? AppDelegate,
-           let rootViewController = appDelegate.mainWindow.rootViewController {
+           let rootViewController = appDelegate.mainWindow?.rootViewController {
             rootViewController.present(alert, animated: true)
         }
     }
@@ -117,7 +117,7 @@ extension UIApplication: ApplicationProtocol {
         ))
 
         if let appDelegate = UIApplication.shared.delegate as? AppDelegate,
-           let rootViewController = appDelegate.mainWindow.rootViewController {
+           let rootViewController = appDelegate.mainWindow?.rootViewController {
             rootViewController.present(alert, animated: true)
         }
     }
@@ -126,7 +126,7 @@ extension UIApplication: ApplicationProtocol {
         let alert = UIAlertController.photoLibraryPermissionAlert
 
         if let appDelegate = UIApplication.shared.delegate as? AppDelegate,
-           let rootViewController = appDelegate.mainWindow.rootViewController {
+           let rootViewController = appDelegate.mainWindow?.rootViewController {
             rootViewController.present(alert, animated: true)
         }
     }

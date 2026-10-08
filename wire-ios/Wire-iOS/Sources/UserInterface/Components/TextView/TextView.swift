@@ -18,9 +18,8 @@
 
 import UIKit
 import WireCommonComponents
+import WireLogging
 import WireSystem
-
-private let zmLog = ZMSLog(tag: "TextView")
 
 protocol InformalTextViewDelegate: AnyObject {
     func textView(_ textView: UITextView, hasImageToPaste image: MediaAsset)
@@ -154,7 +153,7 @@ class TextView: UITextView {
 
     override func paste(_ sender: Any?) {
         let pasteboard = UIPasteboard.general
-        zmLog.debug("types available: \(pasteboard.types)")
+        WireLogger.ui.debug("TextView: types available: \(pasteboard.types)")
 
         if pasteboard.hasImages,
            let image = UIPasteboard.general.mediaAsset() {

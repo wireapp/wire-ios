@@ -35,6 +35,7 @@ struct WireCellsLocalAssetTests {
         // given
         let context = container.viewContext
         let nodeID = UUID()
+        let date = try Date.ISO8601FormatStyle().parse("2026-03-24T12:34:56Z")
 
         let asset = WireCellsLocalAsset(context: context)
         asset.nodeID = nodeID
@@ -42,6 +43,10 @@ struct WireCellsLocalAssetTests {
         asset.path = "asset/path"
         asset.contentType = "image/png"
         asset.size = 1024
+        asset.conversationName = "Conversation 1"
+        asset.ownerName = "User 1"
+        asset.isAvailableOffline = true
+        asset.modified = date
         asset.isDownloaded = true
 
         // when
@@ -57,6 +62,10 @@ struct WireCellsLocalAssetTests {
         #expect(persisted.contentType == "image/png")
         #expect(persisted.size == 1024)
         #expect(persisted.isDownloaded == true)
+        #expect(persisted.conversationName == "Conversation 1")
+        #expect(persisted.ownerName == "User 1")
+        #expect(persisted.modified == date)
+        #expect(persisted.isAvailableOffline == true)
     }
 
 }

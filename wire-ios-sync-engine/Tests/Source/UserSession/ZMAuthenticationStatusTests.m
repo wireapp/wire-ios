@@ -88,7 +88,7 @@
 - (void)testThatItIsLoggedInWhenThereIsAuthenticationDataSelfUserSyncedAndClientIsAlreadyRegistered
 {
     // when
-    self.sut.authenticationCookieData = [NSHTTPCookie validCookieData];
+    self.sut.didReceiveAuthenticationCookies = YES;
     [self.uiMOC setPersistentStoreMetadata:@"someID" forKey:ZMPersistedClientIdKey];
     ZMUser *selfUser = [ZMUser selfUserInContext:self.uiMOC];
     selfUser.remoteIdentifier = [NSUUID new];
@@ -221,7 +221,7 @@
     NSString *email = @"gfdgfgdfg@fds.sgf";
     NSString *password = @"#$4tewt343$";
     
-    UserInfo *info = [[UserInfo alloc] initWithIdentifier:NSUUID.createUUID cookieData:NSData.data  cookies:@[]];
+    UserInfo *info = [[UserInfo alloc] initWithIdentifier:NSUUID.createUUID cookies:@[]];
     self.userInfoParser.existingAccounts = [self.userInfoParser.existingAccounts arrayByAddingObject:info];
 
     // when
@@ -247,8 +247,8 @@
 - (void)testThatItDoesNotReturnCredentialsIfItIsNotLoggedIn
 {
     // given
-    [self.sut setAuthenticationCookieData:nil];
-    
+    self.sut.didReceiveAuthenticationCookies = NO;
+
     // then
     XCTAssertNil(self.sut.emailCredentials);
 }
@@ -256,7 +256,7 @@
 - (void)testThatItReturnsCredentialsIfLoggedIn
 {
     // given
-    [self.sut setAuthenticationCookieData:[NSData data]];
+    self.sut.didReceiveAuthenticationCookies = YES;
     [self performPretendingUiMocIsSyncMoc:^{
         [self.sut prepareForLoginWithCredentials:[UserEmailCredentials credentialsWithEmail:@"foo@example.com" password:@"boo"]];
         //XCTAssert((self.sut.emailCredentials) == nil);
@@ -272,8 +272,8 @@
     [self performPretendingUiMocIsSyncMoc:^{
         [self.sut prepareForLoginWithCredentials:[UserEmailCredentials credentialsWithEmail:@"foo@example.com" password:@"boo"]];
     }];
-    [self.sut setAuthenticationCookieData:[NSData data]];
-    
+    self.sut.didReceiveAuthenticationCookies = YES;
+
     XCTAssertNotNil(self.sut.loginCredentials);
 
     // when

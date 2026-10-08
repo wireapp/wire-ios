@@ -35,13 +35,11 @@
 #import "ZMTransportSession+internal.h"
 #import "ZMTransportCodec.h"
 #import "ZMTransportRequest+Internal.h"
-#import "ZMPersistentCookieStorage.h"
 #import "ZMReachability.h"
 #import "NSError+ZMTransportSession.h"
 #import "ZMUserAgent.h"
 #import "ZMURLSession.h"
 #import "Fakes.h"
-#import "ZMPersistentCookieStorage.h"
 #import "WireTransport_ios_tests-Swift.h"
 
 /// the JSON Content-Type header
@@ -231,7 +229,7 @@ static XCTestCase *currentTestCase;
 @property (nonatomic) FakeTransportRequestScheduler *scheduler;
 @property (nonatomic) MockSessionsDirectory *sessionsDirectory;
 @property (nonatomic) NSUUID *userIdentifier;
-@property (nonatomic) ZMPersistentCookieStorage *cookieStorage;
+@property (nonatomic) LegacyCookieStorage *cookieStorage;
 @property (nonatomic) FakeReachability *reachability;
 @property (nonatomic) MockBackgroundActivityManager *activityManager;
 @property (nonatomic) MockEnvironment *environment;
@@ -298,7 +296,7 @@ static XCTestCase *currentTestCase;
     self.environment = [[MockEnvironment alloc] init];
     self.environment.backendURL = [NSURL URLWithString:@"https://base.example.com"];
     self.environment.backendWSURL = [NSURL URLWithString:@"https://websocket.example.com"];
-    self.cookieStorage = [ZMPersistentCookieStorage storageForServerName:self.environment.backendURL.host userIdentifier:self.userIdentifier useCache:YES];
+    self.cookieStorage = [[LegacyCookieStorage alloc] initWithTestingWithUserIdentifier:self.userIdentifier];
     self.reachability = [[FakeReachability alloc] init];
 
     self.activityManager = [[MockBackgroundActivityManager alloc] init];
@@ -359,7 +357,6 @@ static XCTestCase *currentTestCase;
     self.scheduler = nil;
     self.sessionsDirectory = nil;
 
-    [ZMPersistentCookieStorage deleteAllKeychainItems];
     self.cookieStorage = nil;
     [super tearDown];
     currentTestCase = nil;
@@ -378,7 +375,7 @@ static XCTestCase *currentTestCase;
                                                              HTTPVersion:@""
                                                             headerFields:headers];
     [self.sut.cookieStorage setCookieDataFromResponse:response forURL:URL];
-    XCTAssertNotNil(self.sut.cookieStorage.authenticationCookieData);
+    XCTAssertTrue(self.sut.cookieStorage.hasAuthenticationCookie);
 }
 
 - (BOOL)requestMethodShouldHavePayload:(ZMTransportRequestMethod)method {
@@ -1419,7 +1416,7 @@ static XCTestCase *currentTestCase;
     WaitForAllGroupsToBeEmpty(0.5);
     
     // then
-    XCTAssertNotNil(self.sut.cookieStorage.authenticationCookieData);
+    XCTAssertTrue(self.sut.cookieStorage.hasAuthenticationCookie);
 }
 
 
@@ -1427,7 +1424,7 @@ static XCTestCase *currentTestCase;
 {
     // given
     self.sut.accessToken = self.validAccessToken;
-    self.sut.cookieStorage.authenticationCookieData = [NSHTTPCookie validCookieData];
+    [self.sut.cookieStorage storeCookies:[NSHTTPCookie validCookies] error:nil];
     // The request will fail with a 401:
     NSDictionary *dummyPayload = @{@"b": @"B"};
     [self mockURLSessionTaskWithResponseGenerator:^TestResponse *(NSURLRequest *request, NSData *data ZM_UNUSED) {
@@ -1465,7 +1462,7 @@ static XCTestCase *currentTestCase;
 {
     // given
     NSData *cookieData = [@"valid-cookie" dataUsingEncoding:NSUTF8StringEncoding];
-    self.sut.cookieStorage.authenticationCookieData = [NSHTTPCookie validCookieData];
+    [self.sut.cookieStorage storeCookies:[NSHTTPCookie validCookies] error:nil];
 
     [self mockURLSessionTaskWithResponseGenerator:^TestResponse *(NSURLRequest *request ZM_UNUSED, NSData *data ZM_UNUSED) {
         TestResponse *testResponse = [TestResponse testResponse];
@@ -1482,8 +1479,7 @@ static XCTestCase *currentTestCase;
     WaitForAllGroupsToBeEmpty(0.5);
     
     // then
-    AssertNotEqualData(self.sut.cookieStorage.authenticationCookieData, cookieData);
-    XCTAssertNotNil(self.sut.cookieStorage.authenticationCookieData);
+    XCTAssertTrue(self.sut.cookieStorage.hasAuthenticationCookie);
 }
 
 
@@ -1491,7 +1487,7 @@ static XCTestCase *currentTestCase;
 {
     // given
     NSData *cookieData = [@"valid-cookie" dataUsingEncoding:NSUTF8StringEncoding];
-    self.sut.cookieStorage.authenticationCookieData = [NSHTTPCookie validCookieData];
+    [self.sut.cookieStorage storeCookies:[NSHTTPCookie validCookies] error:nil];
 
     [self mockURLSessionTaskWithResponseGenerator:^TestResponse *(NSURLRequest *request ZM_UNUSED, NSData *data ZM_UNUSED) {
         TestResponse *testResponse = [TestResponse testResponse];
@@ -1508,8 +1504,7 @@ static XCTestCase *currentTestCase;
     WaitForAllGroupsToBeEmpty(0.5);
     
     // then
-    AssertNotEqualData(self.sut.cookieStorage.authenticationCookieData, cookieData);
-    XCTAssertNotNil(self.sut.cookieStorage.authenticationCookieData);
+    XCTAssertTrue(self.sut.cookieStorage.hasAuthenticationCookie);
 }
 
 
@@ -1518,7 +1513,7 @@ static XCTestCase *currentTestCase;
     // TODO
     // given
     self.sut.accessToken = nil;
-    XCTAssertNil(self.sut.cookieStorage.authenticationCookieData);
+    XCTAssertFalse(self.sut.cookieStorage.hasAuthenticationCookie);
     [self mockURLSessionTaskWithResponseGenerator:^TestResponse *(NSURLRequest *request ZM_UNUSED, NSData *data ZM_UNUSED) {
         TestResponse *testResponse = [TestResponse testResponse];
         testResponse.body = [NSJSONSerialization dataWithJSONObject:@{@"a": @"A"} options:0 error:NULL];
@@ -1530,9 +1525,9 @@ static XCTestCase *currentTestCase;
     // when
     XCTestExpectation *didRun = [self customExpectationWithDescription:@"completion handler"];
     ZMTransportRequest *request =  [[ZMTransportRequest alloc] initWithPath:self.dummyPath method:ZMTransportRequestMethodGet payload:nil authentication:ZMTransportRequestAuthCreatesCookieAndAccessToken apiVersion:0];
-    ZMPersistentCookieStorage *cookieStorage = self.sut.cookieStorage;
+    LegacyCookieStorage *cookieStorage = self.sut.cookieStorage;
     [request addCompletionHandler:[ZMCompletionHandler handlerOnGroupQueue:self.fakeUIContext block:^(ZMTransportResponse * ZM_UNUSED r) {
-        XCTAssertNotNil(cookieStorage.authenticationCookieData);
+        XCTAssertTrue(cookieStorage.hasAuthenticationCookie);
         [didRun fulfill];
     }]];
     

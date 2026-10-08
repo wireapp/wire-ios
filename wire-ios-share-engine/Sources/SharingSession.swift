@@ -198,6 +198,8 @@ public final class SharingSession {
 
         let legacyAPIVersion = WireTransport.APIVersion(rawValue: Int32(apiVersion.rawValue))
 
+        let backgroundTaskExecuter = PassthroughTaskExecuter()
+
         let strategyFactory = StrategyFactory(
             syncContext: coreDataStack.syncContext,
             applicationStatus: applicationStatusDirectory,
@@ -205,7 +207,8 @@ public final class SharingSession {
             transportSession: transportSession,
             initiateResetMLSConversationUseCase: NullInitiateResetMLSConversationUseCase(),
             apiVersion: legacyAPIVersion,
-            localDomain: localDomain
+            localDomain: localDomain,
+            backgroundTaskExecuter: backgroundTaskExecuter
         )
 
         let requestGeneratorStore = RequestGeneratorStore(
@@ -236,7 +239,8 @@ public final class SharingSession {
             syncContext: coreDataStack.syncContext,
             coreCryptoKeyMigrationManager: CoreCryptoKeyMigrationManager(journal: journal),
             allowCreation: false,
-            localDomain: localDomain
+            localDomain: localDomain,
+            backgroundTaskExecuter: backgroundTaskExecuter
         )
         let featureRepository = LegacyFeatureRepository(context: coreDataStack.syncContext)
         let mlsActionExecutor = MLSActionExecutor(
@@ -292,9 +296,7 @@ public final class SharingSession {
         let networkServices = try await networkStack.networkServices
         let metadata = try await networkStack.resolvedBackendMetadata()
         let cookieStorage = CookieStorage(
-            userID: accountIdentifier,
-            cookieEncryptionKey: UserDefaults.cookiesKey(),
-            keychain: Keychain()
+            cookieEncryptionKey: UserDefaults.cookiesKey()
         )
 
         let isMLSEnabled = journal[.isBackendMLSEnabled]
@@ -317,12 +319,13 @@ public final class SharingSession {
             mlsDecryptionService: mlsService,
             proteusService: proteusService,
             coreCryptoProvider: coreCryptoProvider,
-            faultyMLSRemovalKeysByDomain: [:] // not relevant
-
+            faultyMLSRemovalKeysByDomain: [:], // not relevant
+            backgroundTaskExecuter: backgroundTaskExecuter
         )
 
         let completionHandlers = ClientSessionComponent.CompletionHandlers(
             onProcessedCallEvent: { _ in },
+            isApplicationActive: { false },
             onSelfClientInvalidated: {},
             onAuthenticationFailure: {},
             onProcessedTypingUsers: { _ in }

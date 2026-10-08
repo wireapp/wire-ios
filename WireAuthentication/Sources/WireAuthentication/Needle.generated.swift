@@ -145,6 +145,9 @@ private class DetermineAuthMethodComponentDependency527e70b5dbcfcb8f2023Provider
     var ssoCallbackURLScheme: String {
         return rootComponent.ssoCallbackURLScheme
     }
+    var overrideAllowEmailLoginOnly: Bool {
+        return rootComponent.overrideAllowEmailLoginOnly
+    }
     private let rootComponent: RootComponent
     init(rootComponent: RootComponent) {
         self.rootComponent = rootComponent
@@ -366,6 +369,7 @@ extension DetermineAuthMethodComponent: NeedleFoundation.Registration {
         keyPathToName[\DetermineAuthMethodComponentDependency.preferredAPIVersion] = "preferredAPIVersion-APIVersion?"
         keyPathToName[\DetermineAuthMethodComponentDependency.minTLSVersion] = "minTLSVersion-TLSVersion"
         keyPathToName[\DetermineAuthMethodComponentDependency.ssoCallbackURLScheme] = "ssoCallbackURLScheme-String"
+        keyPathToName[\DetermineAuthMethodComponentDependency.overrideAllowEmailLoginOnly] = "overrideAllowEmailLoginOnly-Bool"
         localTable["networkStack-NetworkStack"] = { [unowned self] in self.networkStack as Any }
         localTable["didReauthenticate-Bool"] = { [unowned self] in self.didReauthenticate as Any }
     }
@@ -397,6 +401,7 @@ extension RootComponent: NeedleFoundation.Registration {
         localTable["appStoreURL-URL"] = { [unowned self] in self.appStoreURL as Any }
         localTable["accountsPublisher-CurrentValuePublisher<[AccountUIModel]>"] = { [unowned self] in self.accountsPublisher as Any }
         localTable["registrationAnalyticsTracker-(any RegistrationAnalyticsTrackerProtocol)?"] = { [unowned self] in self.registrationAnalyticsTracker as Any }
+        localTable["overrideAllowEmailLoginOnly-Bool"] = { [unowned self] in self.overrideAllowEmailLoginOnly as Any }
         localTable["bridge-WireAuthenticationBridge"] = { [unowned self] in self.bridge as Any }
         localTable["router-any Router"] = { [unowned self] in self.router as Any }
     }

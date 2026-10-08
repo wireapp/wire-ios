@@ -24,8 +24,9 @@
         "value" : "$(SOURCE_ROOT)\/$(PROJECT_NAME) Tests\/ReferenceImages"
       },
       {
-        "key" : "CI",
-        "value" : "${CI}"
+        "enabled" : false,
+        "key" : "SNAPSHOT_TESTING_RECORD",
+        "value" : "failed"
       },
       {
         "key" : "IMAGE_DIFF_DIR",

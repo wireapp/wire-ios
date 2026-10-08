@@ -39,6 +39,7 @@ public final class VerificationCodeViewModel: ObservableObject {
     @Published private(set) var isLoading = false
     @Published private(set) var isResending = false
     @Published var alert: Alert?
+    @Published private(set) var retryAfterSeconds: Int = 0
 
     let email: String
     let password: String
@@ -46,6 +47,24 @@ public final class VerificationCodeViewModel: ObservableObject {
 
     var isConfirmButtonDisabled: Bool {
         code.contains { $0.isEmpty }
+    }
+
+    var isResendButtonDisabled: Bool {
+        isResending || retryAfterSeconds > 0
+    }
+
+    var formattedRetryTime: String {
+        let minutes = retryAfterSeconds / 60
+        let seconds = retryAfterSeconds % 60
+        return String(format: "%d:%02d", minutes, seconds)
+    }
+
+    var resendButtonTitle: String {
+        if retryAfterSeconds > 0 {
+            L10n.Localizable.VerificationCode.resendCodeAfterSeconds(formattedRetryTime)
+        } else {
+            L10n.Localizable.VerificationCode.resendCode
+        }
     }
 
     // MARK: - Dependencies
@@ -56,6 +75,8 @@ public final class VerificationCodeViewModel: ObservableObject {
     private static let numberOfDigits = 6
 
     private let proxyCredentials: ProxyCredentials?
+    private(set) var countdownTimer: Task<Void, Never>?
+    private let isSnapshotTesting: Bool
 
     // MARK: - Life cycle
 
@@ -65,7 +86,8 @@ public final class VerificationCodeViewModel: ObservableObject {
         password: String,
         proxyCredentials: ProxyCredentials?,
         router: any Router,
-        numberOfDigits: Int = VerificationCodeViewModel.numberOfDigits
+        numberOfDigits: Int = VerificationCodeViewModel.numberOfDigits,
+        isSnapshotTesting: Bool = false
     ) {
         precondition(numberOfDigits > 0)
 
@@ -76,6 +98,7 @@ public final class VerificationCodeViewModel: ObservableObject {
         self.router = router
         self.code = Array(repeating: "", count: numberOfDigits)
         self.numberOfDigits = numberOfDigits
+        self.isSnapshotTesting = isSnapshotTesting
     }
 
     // MARK: - Actions
@@ -149,6 +172,9 @@ public final class VerificationCodeViewModel: ObservableObject {
     }
 
     func requestVerificationCode() async {
+        guard !isSnapshotTesting else { return }
+
+        WireLogger.authentication.info("Requesting 2FA code...")
         isResending = true
 
         do {
@@ -164,6 +190,14 @@ public final class VerificationCodeViewModel: ObservableObject {
             switch error {
             case RequestLoginVerificationCodeUseCaseFailure.invalidEmail:
                 alert = .invalidEmail
+
+            case let RequestLoginVerificationCodeUseCaseFailure.tooManyRequests(
+                _,
+                retryAfter
+            ):
+                if let retryAfter {
+                    startCountdown(seconds: Int(retryAfter))
+                }
 
             default:
                 router.presentAlert(for: error)
@@ -212,6 +246,20 @@ public final class VerificationCodeViewModel: ObservableObject {
                 emailCredentials: emailCredentials
             )
         }.value
+    }
+
+    private func startCountdown(seconds: Int) {
+        countdownTimer?.cancel()
+        retryAfterSeconds = seconds
+
+        countdownTimer = Task { @MainActor in
+            while retryAfterSeconds > 0 {
+                try? await Task.sleep(for: .seconds(1))
+                if !Task.isCancelled {
+                    retryAfterSeconds -= 1
+                }
+            }
+        }
     }
 
 }

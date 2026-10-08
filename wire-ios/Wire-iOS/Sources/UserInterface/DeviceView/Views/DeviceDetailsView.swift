@@ -126,6 +126,12 @@ struct DeviceDetailsView: View {
                 didEnrollCertificateFail = false
             }
         }
+        .alert(
+            L10n.Localizable.Self.Settings.DeviceDetails.ResetSession.success,
+            isPresented: $viewModel.showResetSessionSuccess
+        ) {
+            Button(L10n.Localizable.General.ok) { /* dismisses automatically */ }
+        }
     }
 
     @ViewBuilder

@@ -17,13 +17,22 @@ on:
         type: string
         required: true
         default: 'failure' # values: always | failure | never
+      max_parallel:
+        type: number
+        default: 3
+        required: false
 
     secrets:
       ZENKINS_USERNAME:
         required: true
       DD_API_KEY:
         required: true
-      WIRE_IOS_CI_WEBHOOK:
+      # Wire webhook this run should post to. Callers resolve which
+      # environment-specific webhook to pass, e.g.
+      # `WIRE_WEBHOOK_URL: ${{ secrets.WIRE_IOS_CI_URL }}`.
+      WIRE_WEBHOOK_URL:
+        required: true
+      WIRE_WEBHOOK_TOKEN:
         required: true
 
 env: # https://docs.fastlane.tools/getting-started/ios/setup/
@@ -40,21 +49,22 @@ jobs:
     timeout-minutes: 10
     outputs:
       schemes: ${{ steps.list-schemes.outputs.schemes }}
+      batches: ${{ steps.list-schemes.outputs.batches }}
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ inputs.branch }}
           lfs: 'false'
 
       - name: Setup Ruby
-        uses: ruby/setup-ruby@v1
+        uses: ruby/setup-ruby@afeafc3d1ab54a631816aba4c914a0081c12ff2f # v1.310.0
         with:
           bundler-cache: true
 
       - name: Load .env file
-        uses: xom9ikk/dotenv@v2
+        uses: xom9ikk/dotenv@d0a56edc74279820eabbe34477511327e710d0de # v2.4.0
         with:
           path: fastlane/
 
@@ -64,114 +74,115 @@ jobs:
           FOLDERS: ${{ inputs.folders }}
           ALL: ${{ inputs.all }}
           TEST_DEPENDENCIES: ${{ inputs.test_dependencies }}
+          MAX_PARALLEL: ${{ inputs.max_parallel }}
         run: |
           bundle exec fastlane list_schemes_json \
             folders:"$FOLDERS" \
             all:$ALL \
-            test_dependencies:$TEST_DEPENDENCIES
+            test_dependencies:$TEST_DEPENDENCIES \
+            max_parallel:$MAX_PARALLEL
           RAW=$(cat /tmp/schemes.json)
           echo "schemes=$RAW" >> "$GITHUB_OUTPUT"
           echo "Schemes to test: $RAW"
+          BATCHES=$(cat /tmp/batches.json)
+          echo "batches=$BATCHES" >> "$GITHUB_OUTPUT"
+          echo "Batches to test: $BATCHES"
 
-  # ── 2. One job per framework, all in parallel ───────────────────────────────
+  # ── 2. One job per batch (bin-packed frameworks), up to max_parallel runners ─
   test-framework:
-    name: "Test ${{ matrix.scheme }}"
+    name: "Test batch ${{ matrix.batch_index }} (${{ matrix.schemes }})"
     needs: generate-framework-list
-    if: ${{ needs.generate-framework-list.outputs.schemes != '[]' && needs.generate-framework-list.outputs.schemes != '' }}
+    if: ${{ needs.generate-framework-list.outputs.batches != '[]' && needs.generate-framework-list.outputs.batches != '' }}
     runs-on: ghcr.io/cirruslabs/macos-runner:tahoe
-    timeout-minutes: 20
     permissions:
       contents: read
       pull-requests: write
       checks: write
     concurrency:
-      group: ${{ github.workflow }}-${{ github.ref }}-${{ matrix.scheme }}
+      group: ${{ github.workflow }}-${{ github.ref }}-batch-${{ matrix.batch_index }}
       cancel-in-progress: true
     strategy:
       matrix:
-        include: ${{ fromJson(needs.generate-framework-list.outputs.schemes) }}
+        include: ${{ fromJson(needs.generate-framework-list.outputs.batches) }}
       fail-fast: false
+      max-parallel: ${{ inputs.max_parallel }}
     env:
       GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       GITHUB_USERNAME: ${{ secrets.ZENKINS_USERNAME }}
-      SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_CI_WEBHOOK }}
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ inputs.branch }}
           lfs: ${{ matrix.needs_lfs }}
 
       - name: Setup test environment
         uses: ./.github/actions/setup-test-environment
-        with:
-          scheme: ${{ matrix.scheme }}
 
-      - name: "Test ${{ matrix.scheme }}"
-        run: bundle exec fastlane select_framework scheme:${{ matrix.scheme }}
+      - name: "Test batch ${{ matrix.batch_index }}"
+        timeout-minutes: 90
+        env:
+          SCHEMES: ${{ matrix.schemes }}
+        run: |
+          for scheme in $SCHEMES; do
+            bundle exec fastlane select_framework scheme:$scheme
+          done
+
+      - name: Delete simulator
+        if: always()
+        run: bundle exec fastlane delete_test_simulator
 
       - name: Check for duplicate symbol implementations
         if: always()
         continue-on-error: true
         run: ./scripts/check_duplicate_classes.sh .
 
-      - name: Find .xcresult path
+      - name: Annotate test failures
         if: always()
-        id: find-xcresult
-        run: |
-          XCRESULT=$(find artifacts -type d -name "*.xcresult" | head -n 1)
-          echo "path=$XCRESULT" >> "$GITHUB_OUTPUT"
-
-      - name: Analyze .xcresult
-        if: ${{ always() && steps.find-xcresult.outputs.path != '' }}
         continue-on-error: true
-        uses: wireapp/analyze-xcoderesults-action@v1.0.0
-        with:
-          results: ${{ steps.find-xcresult.outputs.path }}
-          warningAnnotations: true
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: ruby scripts/annotate_test_failures.rb
 
       - name: Upload .xcresult as artifact
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: "xcresult-${{ matrix.scheme }}-${{ env.SANITIZED_BRANCH }}-(${{ github.run_id }}-${{ github.run_attempt }})"
+          name: "xcresult-batch-${{ matrix.batch_index }}-${{ env.SANITIZED_BRANCH }}-(${{ github.run_id }}-${{ github.run_attempt }})"
           path: artifacts/**/*.xcresult
 
       - name: Upload test reports
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: "test-reports-${{ matrix.scheme }}-${{ env.SANITIZED_BRANCH }}-(${{ github.run_id }}-${{ github.run_attempt }})"
+          name: "test-reports-batch-${{ matrix.batch_index }}-${{ env.SANITIZED_BRANCH }}-(${{ github.run_id }}-${{ github.run_attempt }})"
           path: |
             build/reports/*.junit
             artifacts/**/*.junit
 
       - name: Upload failed snapshots
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: "snapshots-${{ matrix.scheme }}-${{ env.SANITIZED_BRANCH }}-(${{ github.run_id }}-${{ github.run_attempt }})"
+          name: "snapshots-batch-${{ matrix.batch_index }}-${{ env.SANITIZED_BRANCH }}-(${{ github.run_id }}-${{ github.run_attempt }})"
           path: |
             **/SnapshotResults/
             xcodebuild*.log
 
       - name: Publish test results summary
         if: always()
-        uses: EnricoMi/publish-unit-test-result-action/macos@v2
+        uses: EnricoMi/publish-unit-test-result-action/macos@c950f6fb443cb5af20a377fd0dfaa78838901040 # v2.23.0
         with:
           files: |
             build/reports/*.junit
             artifacts/**/*.junit
-          check_name: "Test Results – ${{ matrix.scheme }}"
+          check_name: "Test Results – batch ${{ matrix.batch_index }}"
           compare_to_earlier_commit: false
 
       - name: Archive DerivedData logs
         if: failure() || cancelled()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: "deriveddata-${{ matrix.scheme }}-${{ env.SANITIZED_BRANCH }}-(${{ github.run_id }}-${{ github.run_attempt }})"
+          name: "deriveddata-batch-${{ matrix.batch_index }}-${{ env.SANITIZED_BRANCH }}-(${{ github.run_id }}-${{ github.run_attempt }})"
           path: |
             /Users/runner/Library/Developer/Xcode/DerivedData/**/Logs/**
             ~/Library/Logs/DiagnosticReports/**
@@ -182,8 +193,6 @@ jobs:
     needs: test-framework
     if: always()
     runs-on: ubuntu-24.04
-    env:
-      SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_CI_WEBHOOK }}
     steps:
       - name: Sanitize branch name
         shell: bash
@@ -199,13 +208,16 @@ jobs:
           echo "SANITIZED_BRANCH=$(echo "$BRANCH" | sed 's/[^a-zA-Z0-9._-]/_/g')" >> "$GITHUB_ENV"
 
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ inputs.branch }}
           lfs: 'false'
 
       - name: Notify on Wire
         uses: ./.github/actions/notify-wire
+        env:
+          WIRE_WEBHOOK_URL: ${{ secrets.WIRE_WEBHOOK_URL }}
+          WIRE_WEBHOOK_TOKEN: ${{ secrets.WIRE_WEBHOOK_TOKEN }}
         with:
           notify: ${{ inputs.notify }}
           status: ${{ needs.test-framework.result }}
@@ -214,7 +226,7 @@ jobs:
 
       - name: Download test results
         id: download-test-results
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         continue-on-error: true
         with:
           pattern: "test-reports-*-${{ env.SANITIZED_BRANCH }}-(${{ github.run_id }}-${{ github.run_attempt }})"

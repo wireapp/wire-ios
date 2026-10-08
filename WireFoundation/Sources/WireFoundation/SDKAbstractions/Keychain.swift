@@ -32,7 +32,7 @@ public struct Keychain: KeychainProtocol {
 
     public func addItem(
         query: Set<KeychainQueryItem>
-    ) async throws {
+    ) throws {
         let status = SecItemAdd(
             query.toCFDictionary(),
             nil
@@ -50,7 +50,7 @@ public struct Keychain: KeychainProtocol {
     public func updateItem(
         query: Set<KeychainQueryItem>,
         attributesToUpdate: Set<KeychainQueryItem>
-    ) async throws {
+    ) throws {
         let status = SecItemUpdate(
             query.toCFDictionary(),
             attributesToUpdate.toCFDictionary()
@@ -67,7 +67,7 @@ public struct Keychain: KeychainProtocol {
 
     public func fetchItem<T>(
         query: Set<KeychainQueryItem>
-    ) async throws -> T? {
+    ) throws -> T? {
         var result: CFTypeRef?
 
         let status = SecItemCopyMatching(
@@ -96,13 +96,34 @@ public struct Keychain: KeychainProtocol {
 
     public func deleteItem(
         query: Set<KeychainQueryItem>
-    ) async throws {
+    ) throws {
         let status = SecItemDelete(
             query.toCFDictionary()
         )
 
         guard status == errSecSuccess else {
             throw KeychainError.errorStatus(status)
+        }
+    }
+
+    /// Delete all items from the keychain.
+
+    public func reset() throws {
+        let items: [KeychainQueryItem] = [
+            .itemClass(.genericPassword),
+            .itemClass(.internetPassword),
+            .itemClass(.certificate),
+            .itemClass(.key),
+            .itemClass(.identity)
+        ]
+
+        for item in items {
+            let query = Set<KeychainQueryItem>([item]).toCFDictionary()
+            let status = SecItemDelete(query)
+            guard status == errSecSuccess || status == errSecItemNotFound else {
+                throw KeychainError.errorStatus(status)
+            }
+
         }
     }
 

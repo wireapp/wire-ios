@@ -70,21 +70,9 @@ struct PushTokenMetadata {
 
 // MARK: - Register current push token
 
-public extension ZMUserSession {
+extension ZMUserSession {
 
-    @objc static let registerCurrentPushTokenNotificationName = Notification
-        .Name(rawValue: "ZMUserSessionResetPushTokensNotification")
-
-    func registerForRegisteringPushTokenNotification() {
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(ZMUserSession.registerCurrentPushToken),
-            name: ZMUserSession.registerCurrentPushTokenNotificationName,
-            object: nil
-        )
-    }
-
-    internal func registerCurrentPushToken() {
+    func registerCurrentPushToken() {
         managedObjectContext.performGroupedBlock {
             self.sessionManager?.configurePushToken(session: self)
         }
@@ -96,9 +84,12 @@ public extension ZMUserSession {
 
 public extension ZMUserSession {
 
-    /// Generates the local push token if needed, then syncs it with the backend.
-
-    func validatePushToken() {
+    /// Discards the cached token and asks APNs for the current one.
+    ///
+    /// The refreshed token is stored and synchronized with the backend from
+    /// `application(_:didRegisterForRemoteNotificationsWithDeviceToken:)`.
+    func refreshPushToken() {
+        PushTokenStorage.pushToken = nil
         sessionManager?.configurePushToken(session: self)
     }
 
@@ -108,6 +99,15 @@ public extension ZMUserSession {
 
 // The `SessionManager` forwards `UNUserNotificationCenterDelegate` calls to a suitable `ZMUserSession` instance.
 extension ZMUserSession {
+
+    func handleMeetingNotification(_ content: UNNotificationContent) async {
+        let isActive = await MainActor.run { [application] in
+            application.applicationState == .active
+        }
+        guard isActive else { return }
+
+        localNotificationDispatcher?.scheduleLocalNotification(content: content)
+    }
 
     // Called by the SessionManager when a notification is received while the app
     // is in the foreground.
@@ -168,7 +168,21 @@ extension ZMUserSession {
         // need to switch to that context
         managedObjectContext.perform {
             let responder = self.sessionManager?.foregroundNotificationResponder
-            let shouldPresent = responder?.shouldPresentNotification(with: userInfo) ?? true
+            let shouldPresent: Bool
+            if categoryIdentifier == WireDomain.NotificationCategory.meetingReminder.rawValue {
+                // Reminders stay visible in the foreground unless this account is already in that meeting.
+                let calls = self.callCenter?.activeCallConversations(in: self) ?? []
+                let activeConversations = calls.compactMap { conversation -> (id: UUID, domain: String)? in
+                    guard let id = conversation.qualifiedID else { return nil }
+                    return (id.uuid, id.domain)
+                }
+                shouldPresent = MeetingReminderForegroundPolicy.shouldPresent(
+                    userInfo: userInfo,
+                    activeConversations: activeConversations
+                )
+            } else {
+                shouldPresent = responder?.shouldPresentNotification(with: userInfo) ?? true
+            }
 
             var options = UNNotificationPresentationOptions()
             if shouldPresent { options = [.list, .banner, .sound] }
@@ -206,11 +220,51 @@ extension ZMUserSession {
         // TODO: [WPB-17220] new NSE - callback action is currently broken - disabling this action for now
 //        case NotificationActionIdentifier.callbackIdentifier:
 //            callback(with: userInfo, completionHandler: completionHandler)
+        case UNNotificationDefaultActionIdentifier where Self.isIncomingCallCategory(categoryIdentifier):
+            // Default tap on an incoming-call notification: switch to this session's account
+            // but do not navigate to the conversation. The post-activation flow
+            // (AppRootRouter `.authenticated` → updateActiveCallPresentationState) will
+            // present the incoming-call UI.
+            sessionManager?.activateAccount(of: self)
+            completionHandler()
+        case UNNotificationDefaultActionIdentifier
+            where categoryIdentifier == WireDomain.NotificationCategory.meetingInvitation.rawValue
+            || categoryIdentifier == WireDomain.NotificationCategory.meetingUpdate.rawValue
+            || categoryIdentifier == WireDomain.NotificationCategory.meetingReminder.rawValue:
+            sessionManager?.showMeetings(in: self)
+            completionHandler()
+        case UNNotificationDefaultActionIdentifier
+            where categoryIdentifier == WireDomain.NotificationCategory.meetingCancellation.rawValue:
+            completionHandler()
         default:
             showContent(for: userInfo)
             completionHandler()
         }
 
+    }
+
+    private static func isIncomingCallCategory(_ categoryIdentifier: String) -> Bool {
+        categoryIdentifier == WireDomain.NotificationCategory.incomingCall.rawValue
+            || categoryIdentifier == PushNotificationCategory.incomingCall.rawValue
+    }
+
+}
+
+enum MeetingReminderForegroundPolicy {
+
+    static func shouldPresent(
+        userInfo: NotificationUserInfo,
+        activeConversations: [(id: UUID, domain: String)]
+    ) -> Bool {
+        guard
+            let idString = userInfo.storage[MeetingReminderUserInfoKey.conversationID] as? String,
+            let id = UUID(uuidString: idString),
+            let domain = userInfo.storage[MeetingReminderUserInfoKey.conversationDomain] as? String
+        else {
+            return true
+        }
+
+        return !activeConversations.contains { $0.id == id && $0.domain == domain }
     }
 
 }

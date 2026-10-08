@@ -151,8 +151,10 @@ final class ProfileHeaderViewController: UIViewController {
         imageView.setContentCompressionResistancePriority(.defaultLow, for: .vertical)
 
         imageView.initialsFont = .systemFont(ofSize: 55, weight: .semibold).monospaced()
+        imageView.showsInitialsOnly = options.contains(.showInitialsOnly)
         imageView.userSession = userSession
         imageView.user = user
+        updateProfilePictureAccessibilityValue()
 
         if !ProcessInfo.processInfo.isRunningTests, let session = userSession as? ZMUserSession {
             userObserver = UserChangeInfo.add(observer: self, for: user, in: session)
@@ -267,6 +269,7 @@ final class ProfileHeaderViewController: UIViewController {
     private func applyUserStatus() {
         nameLabel.text = userStatus.displayName
         nameLabel.attributedText = combineUserNameWithIcons()
+        nameLabel.accessibilityValue = userStatus.displayName
         userStatusViewController.userStatus = userStatus
     }
 
@@ -482,6 +485,9 @@ final class ProfileHeaderViewController: UIViewController {
         /// Whether to allow the user to change their availability.
         static let allowEditingProfilePicture = Options(rawValue: 1 << 5)
 
+        /// Whether to display only the user's initials instead of their profile picture.
+        static let showInitialsOnly = Options(rawValue: 1 << 6)
+
     }
 }
 
@@ -517,6 +523,9 @@ extension ProfileHeaderViewController: UserObserving {
             userStatus.isProteusVerified = changeInfo.user.isVerified
             updateE2EICertifiedStatus()
         }
+        if changeInfo.imageMediumDataChanged || changeInfo.imageSmallProfileDataChanged {
+            updateProfilePictureAccessibilityValue()
+        }
     }
 }
 
@@ -542,6 +551,16 @@ extension ProfileHeaderViewController {
             return
         }
         updateColors()
+    }
+
+}
+
+private extension ProfileHeaderViewController {
+
+    func updateProfilePictureAccessibilityValue() {
+        let hasProfileImage = !imageView.showsInitialsOnly &&
+            (user.previewImageData != nil || user.completeImageData != nil)
+        imageView.accessibilityValue = hasProfileImage ? "image" : "initials"
     }
 
 }

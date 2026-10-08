@@ -25,7 +25,7 @@
 @class UserCredentials;
 @class UserEmailCredentials;
 @class UserPhoneCredentials;
-@class ZMPersistentCookieStorage;
+@class LegacyCookieStorage;
 @class ZMTransportResponse;
 @protocol UserInfoParser;
 @protocol NotificationContext;
@@ -79,7 +79,7 @@ typedef NS_ENUM(NSUInteger, ZMAuthenticationPhase) {
 @property (nonatomic, readonly) ZMAuthenticationPhase currentPhase;
 @property (nonatomic, readonly) NSUUID *authenticatedUserIdentifier;
 
-@property (nonatomic) NSData *authenticationCookieData;
+@property (nonatomic) BOOL didReceiveAuthenticationCookies;
 
 - (instancetype)initWithDelegate:(id<ZMAuthenticationStatusDelegate>)delegate
                       groupQueue:(id<ZMSGroupQueue>)groupQueue

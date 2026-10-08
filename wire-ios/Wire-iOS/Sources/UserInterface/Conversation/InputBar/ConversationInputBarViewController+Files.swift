@@ -25,8 +25,6 @@ import WireUtilitiesPackage
 
 extension ConversationInputBarViewController: UINavigationControllerDelegate {}
 
-private let zmLog = ZMSLog(tag: "ConversationInputBarViewController+Files")
-
 extension ConversationInputBarViewController {
 
     @discardableResult
@@ -34,7 +32,7 @@ extension ConversationInputBarViewController {
         do {
             try FileManager.default.removeItem(atPath: path)
         } catch {
-            zmLog.error("Cannot delete folder at path \(path): \(error)")
+            WireLogger.ui.error("Cannot delete folder at path \(path): \(error)")
 
             return false
         }
@@ -51,37 +49,67 @@ extension ConversationInputBarViewController {
     func uploadFiles(at urls: [URL]) {
         guard !urls.isEmpty else { return }
 
+        let files: [FileMetadata] = urls.map(FileMetadata.init)
         let charactersToReplace = uploadDraftUseCase.charactersToReplace
 
         if urls.contains(where: { $0.lastPathComponent.contains(where: { charactersToReplace.contains($0) }) }) {
-            showAlertForFileNeedsRename(urls: urls)
+            showAlertForFileNeedsRename(files)
         } else {
-            continueUploadFiles(at: urls)
+            continueUploadFiles(files)
         }
     }
 
-    private func continueUploadFiles(at urls: [URL]) {
-        if userSession.isWireDriveEnabled, conversation.isWireDriveEnabled {
-            for url in urls {
+    /// Metadata describing a selected file and its optional link to a Photos asset.
+    struct FileMetadata {
+        let url: URL
+
+        /// Optional device Photos asset identifier used for draft handling in conversation previews
+        /// (`PHAsset.localIdentifier` / `PHPickerResult.assetIdentifier`).
+        let localIdentifier: String?
+
+        init(url: URL, localIdentifier: String?) {
+            self.url = url
+            self.localIdentifier = localIdentifier
+        }
+
+        init(url: URL) {
+            self.url = url
+            self.localIdentifier = nil
+        }
+    }
+
+    func uploadVideoFile(_ file: FileMetadata) {
+        let charactersToReplace = uploadDraftUseCase.charactersToReplace
+
+        if file.url.lastPathComponent.contains(where: { charactersToReplace.contains($0) }) {
+            showAlertForFileNeedsRename([file])
+        } else {
+            continueUploadFiles([file])
+        }
+    }
+
+    private func continueUploadFiles(_ files: [FileMetadata]) {
+        if useWireDrive() {
+            for file in files {
                 Task.detached { [uploadDraftUseCase] in
                     // We don't care about the result of the operation here as we will be observing changes.
                     do {
-                        try await uploadDraftUseCase.invoke(fileURL: url)
+                        try await uploadDraftUseCase.invoke(fileURL: file.url, localIdentifier: file.localIdentifier)
                     } catch {
                         WireLogger.conversation.error("Failed to upload file: \(error)")
                     }
                 }
             }
-        } else if urls.count == 1 {
-            uploadFile(at: urls[0])
+        } else if files.count == 1 {
+            uploadFile(at: files[0].url)
         } else {
             do {
                 let temporaryDirectory = URL(fileURLWithPath: NSTemporaryDirectory())
                 let archiveURL = temporaryDirectory.appending(path: "archive.zip", directoryHint: .notDirectory)
-                try ZIPFoundationFileArchiver().zipResources(at: urls, into: archiveURL)
+                try ZIPFoundationFileArchiver().zipResources(at: files.map(\.url), into: archiveURL)
                 uploadFile(at: archiveURL)
             } catch {
-                zmLog.error("Cannot archive files at URLs: \(urls)")
+                WireLogger.ui.error("Cannot archive files at URLs: \(files.map(\.url))")
             }
         }
     }
@@ -97,7 +125,7 @@ extension ConversationInputBarViewController {
         }
 
         guard let fileSize: UInt64 = url.fileSize else {
-            zmLog.error("Cannot get file size on selected file:")
+            WireLogger.ui.error("Cannot get file size on selected file:")
             parent?.dismiss(animated: true)
             return completion()
         }
@@ -124,7 +152,7 @@ extension ConversationInputBarViewController {
                     let useCase = userSession.makeAppendFileMessageUseCase()
                     try useCase.invoke(with: metadata, in: conversation)
                 } catch {
-                    Logging.messageProcessing.warn("Failed to append file. Reason: \(error.localizedDescription)")
+                    WireLogger.messageProcessing.warn("Failed to append file. Reason: \(error.localizedDescription)")
                 }
 
                 completion()
@@ -166,7 +194,7 @@ extension ConversationInputBarViewController {
         present(alert, animated: true)
     }
 
-    private func showAlertForFileNeedsRename(urls: [URL]) {
+    private func showAlertForFileNeedsRename(_ files: [FileMetadata]) {
         let characters = uploadDraftUseCase.charactersToReplace.map(String.init)
         let formattedCharacters = characters.dropLast().joined(separator: " ")
         let lastCharacter = characters.last ?? ""
@@ -187,7 +215,7 @@ extension ConversationInputBarViewController {
                 title: L10n.Localizable.Content.UploadedFileNeedsRename.confirmButton,
                 style: .default,
                 handler: { [weak self] _ in
-                    self?.continueUploadFiles(at: urls)
+                    self?.continueUploadFiles(files)
                 }
             )
         )

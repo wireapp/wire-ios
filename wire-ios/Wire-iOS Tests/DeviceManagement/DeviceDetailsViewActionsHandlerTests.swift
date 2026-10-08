@@ -83,6 +83,29 @@ final class DeviceDetailsViewActionsHandlerTests: XCTestCase, CoreDataFixtureTes
         wait(for: [expectation], timeout: 0.5)
     }
 
+    @MainActor
+    func testResetSession_InvokesUseCaseAndTogglesProcessing() async {
+        // Given
+        let deviceActionHandler = DeviceDetailsViewActionsHandler(
+            userClient: client,
+            userSession: mockSession,
+            credentials: emailCredentials,
+            saveFileManager: saveFileManager,
+            getProteusFingerprint: mockGetProteusFingerprint,
+            contextProvider: mockContextProvider,
+            e2eiCertificateEnrollment: mockEnrollE2eICertificateUseCase
+        )
+        var processingStates: [Bool] = []
+        deviceActionHandler.isProcessing = { processingStates.append($0) }
+
+        // When
+        await deviceActionHandler.resetSession()
+
+        // Then
+        XCTAssertEqual(mockSession.mockResetProteusSession.invokeUserClient_Invocations.count, 1)
+        XCTAssertEqual(processingStates, [true, false])
+    }
+
     func testThatItReturnsFingerPrint_WhenGetFingerPrintIsInvoked() async throws {
         let deviceActionHandler = DeviceDetailsViewActionsHandler(
             userClient: client,

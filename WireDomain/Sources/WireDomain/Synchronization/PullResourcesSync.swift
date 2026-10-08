@@ -34,6 +34,7 @@ struct PullResourcesSync: PullResourcesSyncProtocol {
     private let pullConversationLabelsSync: any PullConversationLabelsSyncProtocol
     private let pullAllFeatureConfigsSync: any PullAllFeatureConfigsSyncProtocol
     private let pullMLSStatusSync: any PullMLSStatusSyncProtocol
+    private let pullMeetingsSync: any PullMeetingsSyncProtocol
 
     private let logger = WireLogger(tag: "pull-resources")
 
@@ -50,7 +51,8 @@ struct PullResourcesSync: PullResourcesSyncProtocol {
         pullKnownUsersSync: any PullKnownUsersSyncProtocol,
         pullConversationLabelsSync: any PullConversationLabelsSyncProtocol,
         pullAllFeatureConfigsSync: any PullAllFeatureConfigsSyncProtocol,
-        pullMLSStatusSync: any PullMLSStatusSyncProtocol
+        pullMLSStatusSync: any PullMLSStatusSyncProtocol,
+        pullMeetingsSync: any PullMeetingsSyncProtocol
     ) {
         self.pullSelfUserSync = pullSelfUserSync
         self.pullSelfUserClientsSync = pullSelfUserClientsSync
@@ -65,6 +67,7 @@ struct PullResourcesSync: PullResourcesSyncProtocol {
         self.pullConversationLabelsSync = pullConversationLabelsSync
         self.pullAllFeatureConfigsSync = pullAllFeatureConfigsSync
         self.pullMLSStatusSync = pullMLSStatusSync
+        self.pullMeetingsSync = pullMeetingsSync
     }
 
     func pull() async throws {
@@ -91,6 +94,10 @@ struct PullResourcesSync: PullResourcesSyncProtocol {
         try await pullConversationLabels()
         try await pullFeatureConfigs()
         try await pullMLSStatus()
+
+        // Pulling meetings must happen after we've pulled conversations
+        // and users, so meetings can be linked to their conversation and creator.
+        try await pullMeetings()
     }
 
     private func pullSelfUser() async throws -> UUID? {
@@ -282,6 +289,21 @@ struct PullResourcesSync: PullResourcesSyncProtocol {
         ) {
             do {
                 try await pullMLSStatusSync.pull()
+            } catch {
+                throw Failure(resourceName: phase, reason: error)
+            }
+        }
+    }
+
+    private func pullMeetings() async throws {
+        let phase = "pulling meetings"
+
+        try await logger.measureTime(
+            label: "sync phase",
+            attributes: .initialSyncAttributes(phase)
+        ) {
+            do {
+                try await pullMeetingsSync.pull()
             } catch {
                 throw Failure(resourceName: phase, reason: error)
             }

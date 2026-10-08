@@ -40,54 +40,32 @@ public actor WebSocket: WebSocketProtocol {
         WireLogger.webSocket.debug("open")
         connection.resume()
 
-        if #available(iOS 17, *) {
-            return Stream { continuation in
-                self.continuation = continuation
+        return Stream { continuation in
+            self.continuation = continuation
 
-                Task {
-                    var isAlive = true
+            let task = Task {
+                var isAlive = true
 
-                    while isAlive, connection.isOpen {
-                        do {
-                            let message = try await connection.receive()
-                            WireLogger.webSocket.debug("received message")
-                            continuation.yield(message)
-                            try Task.checkCancellation()
-                        } catch {
-                            continuation.finish(throwing: error)
-                            isAlive = false
-                        }
+                while isAlive, connection.isOpen {
+                    do {
+                        let message = try await connection.receive()
+                        WireLogger.webSocket.debug("received message")
+                        continuation.yield(message)
+                        try Task.checkCancellation()
+                    } catch {
+                        continuation.finish(throwing: error)
+                        isAlive = false
                     }
-
-                    continuation.finish()
                 }
+
+                continuation.finish()
             }
-        } else {
-            // This is the solution pre-iOS17, see for more details:
-            // https://www.donnywals.com/iterating-over-web-socket-messages-with-async-await-in-swift/
-            return Stream { continuation in
-                self.continuation = continuation
 
-                @Sendable
-                func yieldNextMessage() {
-                    guard connection.isOpen else {
-                        continuation.finish()
-                        return
-                    }
-
-                    connection.receive { result in
-                        switch result {
-                        case let .success(message):
-                            continuation.yield(message)
-                            yieldNextMessage()
-
-                        case let .failure(error):
-                            continuation.finish(throwing: error)
-                        }
-                    }
+            continuation.onTermination = { [weak self] termination in
+                task.cancel()
+                if case .cancelled = termination {
+                    Task { await self?.close() }
                 }
-
-                yieldNextMessage()
             }
         }
     }

@@ -21,6 +21,7 @@ import WireCommonComponents
 import WireDataModel
 import WireDesign
 import WireFoundation
+import WireLocators
 import WireLogging
 import WireMainNavigationUI
 import WireMessagingDomain
@@ -28,8 +29,6 @@ import WireMessagingUI
 import WireRequestStrategy
 import WireReusableUIComponents
 import WireSyncEngine
-
-private let zmLog = ZMSLog(tag: "ConversationContentViewController")
 
 /// The main conversation view controller
 final class ConversationContentViewController: UIViewController {
@@ -78,6 +77,7 @@ final class ConversationContentViewController: UIViewController {
 
     let tableView: UpsideDownTableView = .init(frame: .zero, style: .plain)
     let bottomContainer: UIView = .init(frame: .zero)
+    var headerUsesCompressedHeight = false
     var searchQueries: [String]? {
         didSet {
             guard let searchQueries,
@@ -118,7 +118,6 @@ final class ConversationContentViewController: UIViewController {
     let mainCoordinator: AnyMainCoordinator
     let selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     let conversationCreationRepository: any ConversationCreationRepositoryProtocol
-    var connectionViewController: UserConnectionViewController?
     var digitalSignatureToken: Any?
     var isDigitalSignatureVerificationShown: Bool = false
 
@@ -254,6 +253,7 @@ final class ConversationContentViewController: UIViewController {
         tableView.delaysContentTouches = false
         tableView.keyboardDismissMode = AutomationHelper.sharedHelper
             .disableInteractiveKeyboardDismissal ? .none : .interactive
+        tableView.accessibilityIdentifier = Locators.ActiveConversationPage.conversationBackground.rawValue
 
         setupMentionsResultsView()
 
@@ -298,9 +298,11 @@ final class ConversationContentViewController: UIViewController {
         }
         guard let color, userDefaults.bool(forKey: .conversationBackground) else {
             set(color: SemanticColors.View.backgroundConversationView)
+            tableView.accessibilityValue = "default"
             return
         }
         set(color: color.accentColor.conversationBackgroundColor)
+        tableView.accessibilityValue = color.accentColor.name
     }
 
     @objc
@@ -393,12 +395,16 @@ final class ConversationContentViewController: UIViewController {
     }
 
     override func didReceiveMemoryWarning() {
-        zmLog.warn("Received system memory warning.")
+        WireLogger.system.warn("Received system memory warning.", attributes: .safePublic)
         super.didReceiveMemoryWarning()
     }
 
-    func setConversationHeaderView(_ headerView: UIView) {
-        headerView.frame = headerViewFrame(view: headerView)
+    func setConversationHeaderView(_ headerView: UIView, compressedHeight: Bool = false) {
+        headerUsesCompressedHeight = compressedHeight
+        headerView.layoutMargins = UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 20)
+        headerView.frame = compressedHeight
+            ? compressedHeaderViewFrame(view: headerView)
+            : headerViewFrame(view: headerView)
         tableView.tableHeaderView = headerView
     }
 

@@ -18,7 +18,7 @@
 
 import Foundation
 
-struct ResolveBackendMetadataUseCase: ResolveBackendMetadataUseCaseProtocol {
+public struct ResolveBackendMetadataUseCase: ResolveBackendMetadataUseCaseProtocol {
 
     typealias Failure = ResolveBackendMetadataUseCaseFailure
 
@@ -26,7 +26,7 @@ struct ResolveBackendMetadataUseCase: ResolveBackendMetadataUseCaseProtocol {
     private let clientProductionVersions: Set<APIVersion>
     private let preferredAPIVersion: APIVersion?
 
-    init(
+    public init(
         backendMetadataAPI: any BackendMetadataAPI,
         clientProductionVersions: Set<APIVersion>,
         preferredAPIVersion: APIVersion?
@@ -36,7 +36,7 @@ struct ResolveBackendMetadataUseCase: ResolveBackendMetadataUseCaseProtocol {
         self.preferredAPIVersion = preferredAPIVersion
     }
 
-    func invoke() async throws -> ResolvedBackendMetadata {
+    public func invoke() async throws -> ResolvedBackendMetadata {
         let backendMetadata = try await backendMetadataAPI.getBackendMetadata()
         let resolvedAPIVersion = try resolveAPIVersion(from: backendMetadata)
         return ResolvedBackendMetadata(

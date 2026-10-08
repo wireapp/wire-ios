@@ -422,7 +422,7 @@ public import {{ import }}
     {% endif %}
 {% endfor %}
 
-    {% if type.accessLevel == "public" %}public init() {}{% endif %}
+    {% if type.accessLevel == "public" %}public init() {}{% elif type.accessLevel == "package" %}package init() {}{% endif %}
 
 {% for variable in type.allVariables|!definedInExtension %}
     {% if variable.isAsync or variable.throws %}{% call mockAsyncOrThrowingVariable variable %}{% elif variable.isOptional %}{% call mockOptionalVariable variable %}{% elif variable.isArray or variable.isDictionary %}{% call mockNonOptionalArrayOrDictionaryVariable variable %}{% else %}{% call mockNonOptionalVariable variable %}{% endif %}

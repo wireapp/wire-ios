@@ -25,6 +25,7 @@ import WireCallingAssembly
 import WireCommonComponents
 import WireData
 import WireDesign
+import WireDomain
 import WireFoundation
 import WireLogging
 import WireMainNavigationUI
@@ -47,6 +48,15 @@ final class ZClientViewController: UIViewController {
     let userSession: UserSession
     let trackingManager: TrackingManager?
     private let selfProfileViewsMonitor: SelfProfileViewsMonitor
+
+    /// The session's `clientSessionComponent` is created when the self user client is registered
+    /// (`ZMUserSession.setUpSyncAgent`) and is never reset afterwards. Since this view controller
+    /// is only instantiated for the `.authenticated` app state, which requires a registered client,
+    /// the component is guaranteed to exist for the lifetime of this view controller.
+    private var clientSessionComponent: ClientSessionComponent! {
+        userSession.clientSessionComponent
+    }
+
     private(set) var cachedAccountImage = SidebarAccountInfo.AccountImageSource() {
         didSet {
             sidebarViewController.accountInfo.accountImageSource = cachedAccountImage
@@ -75,7 +85,9 @@ final class ZClientViewController: UIViewController {
     weak var router: AuthenticatedRouterProtocol?
 
     private lazy var sidebarViewController = SidebarViewControllerBuilder().build(
-        isWireDriveEnabled: userSession.isWireDriveEnabled
+        isWireDriveEnabled: userSession.isWireDriveEnabled,
+        isChannelsEnabled: userSession.channelsFeature.isEnabled,
+        isMeetingsEnabled: userSession.isMeetingsEnabled
     )
 
     private lazy var sidebarViewControllerDelegate = SidebarViewControllerDelegate(
@@ -97,7 +109,7 @@ final class ZClientViewController: UIViewController {
 
     lazy var mainTabBarController = {
         let tabBarController = MainCoordinator.TabBarController(
-            showMeetings: DeveloperFlag.wireMeetings.isOn,
+            showMeetings: userSession.isMeetingsEnabled,
             showFiles: userSession.isWireDriveEnabled
         )
         tabBarController.applyMainTabBarControllerAppearance()
@@ -150,7 +162,7 @@ final class ZClientViewController: UIViewController {
         createGroupConversationUIBuilder: createGroupConversationBuilder,
         channelConversationFormFactory: channelConversationFormFactory,
         selfProfileUIBuilder: selfProfileViewControllerBuilder,
-        featureConfigRepository: userSession.clientSessionComponent!.featureConfigRepository,
+        featureConfigRepository: clientSessionComponent.featureConfigRepository,
         conversationCreationRepository: conversationCreationRepository
     )
 
@@ -203,6 +215,7 @@ final class ZClientViewController: UIViewController {
     private var userDefaultsObservation: NSKeyValueObservation?
     private var loggingRequestLoopObserverToken: SelfUnregisteringNotificationCenterToken?
     private let wireMeetingsFactory: any WireMeetingsFactoryProtocol
+    private let meetingsAccentColorState: WireMeetingsAccentColorState
     let wireMessagingFactory: any WireMessagingFactoryProtocol
 
     private(set) lazy var mainCoordinator = MainCoordinator(
@@ -231,6 +244,9 @@ final class ZClientViewController: UIViewController {
         self.colorSchemeController = .init(userSession: userSession)
 
         self.wireMeetingsFactory = wireMeetingsFactory
+        self.meetingsAccentColorState = WireMeetingsAccentColorState(
+            wireAccentColor: userSession.selfUser.wireAccentColor
+        )
         self.wireMessagingFactory = wireMessagingFactory
         self.proximityMonitorManager = ProximityMonitorManager(userSession: userSession)
 
@@ -247,8 +263,6 @@ final class ZClientViewController: UIViewController {
             _ = sharedContainerURL.appendingPathComponent("AccountData", isDirectory: true)
                 .appendingPathComponent(remoteIdentifier.uuidString, isDirectory: true)
         }
-
-        NotificationCenter.default.post(name: NSNotification.Name.ZMUserSessionDidBecomeAvailable, object: nil)
 
         let featureToken = NotificationCenter.default
             .addObserver(forName: .featureDidChangeNotification, object: nil, queue: .main) { [weak self] note in
@@ -271,10 +285,9 @@ final class ZClientViewController: UIViewController {
             .observe(\.showUnreadConversationsFilter, options: [.new]) { [weak self] _, _ in
                 // Update sidebar's showUnreadFilters when developer flag changes
                 self?.sidebarViewController.showUnreadFilters = DeveloperFlag.showUnreadConversationsFilter.isOn
-                self?.sidebarViewController.showMeetings = DeveloperFlag.wireMeetings.isOn
             }
 
-        observeCellsFeatureChange()
+        observeFeatureConfigChanges()
         createLegalHoldDisclosureController()
     }
 
@@ -287,10 +300,12 @@ final class ZClientViewController: UIViewController {
         AVSMediaManager.sharedInstance().unregisterMedia(mediaPlaybackManager)
     }
 
-    /// Allows to be notified when the cells feature config is updated locally so we can setup the Files tab.
-    /// On login, tab will show up with a slight delay, after resources have been pulled from the server (initial sync).
-    private func observeCellsFeatureChange() {
-        subscription = userSession.clientSessionComponent?.featureConfigRepository
+    /// Allows to be notified when the cells or meetings feature configs are updated locally so we can setup the
+    /// Files and Meetings tabs.
+    /// On login, tabs will show up with a slight delay, after resources have been pulled from the server (initial
+    /// sync).
+    private func observeFeatureConfigChanges() {
+        subscription = clientSessionComponent?.featureConfigRepository
             .observeFeatureStates()
             .receive(on: DispatchQueue.main)
             .sink { [weak self] featureState in
@@ -298,6 +313,8 @@ final class ZClientViewController: UIViewController {
                 switch featureState.name {
                 case .cells, .cellsInternal:
                     setupWireDriveFilesTab()
+                case .meetings:
+                    setupMeetingsTab()
                 default:
                     break
                 }
@@ -320,6 +337,50 @@ final class ZClientViewController: UIViewController {
         } else {
             guard mainTabBarController.filesUI == nil else { return }
             mainTabBarController.filesUI = filesBrowserView
+        }
+    }
+
+    private func makeMeetingsUI() -> UIViewController {
+        let memberRepository = WireMeetingsMemberRepository(
+            userSession: userSession,
+            conversationsAPI: clientSessionComponent.conversationsAPI,
+            usersAPI: clientSessionComponent.usersAPI
+        )
+        let conversationRepository = clientSessionComponent.conversationRepository
+
+        return wireMeetingsFactory.makeMeetingsView(
+            meetingRepository: clientSessionComponent.meetingRepository,
+            memberRepository: memberRepository,
+            conversationRepository: MeetingConversationRepositoryBridge(
+                conversationRepository: conversationRepository,
+                contextProvider: userSession.contextProvider,
+                participantsService: ConversationParticipantsService(
+                    context: userSession.contextProvider.syncContext,
+                    localDomain: userSession.selfUser.domain
+                ),
+                isNetworkAvailable: { [userSession] in userSession.networkState != .offline }
+            ),
+            callRepository: MeetingCallRepositoryBridge(
+                userSession: userSession,
+                alertPresenter: self
+            ),
+            accentColorState: meetingsAccentColorState
+        )
+    }
+
+    private func setupMeetingsTab() {
+        let isEnabled = userSession.isMeetingsEnabled
+
+        if UIDevice.current.userInterfaceIdiom == .pad {
+            sidebarViewController.showMeetings = isEnabled
+        }
+
+        if isEnabled {
+            guard mainTabBarController.meetingsUI == nil else { return }
+            mainTabBarController.meetingsUI = makeMeetingsUI()
+        } else {
+            guard mainTabBarController.meetingsUI != nil else { return }
+            mainTabBarController.meetingsUI = nil
         }
     }
 
@@ -413,8 +474,9 @@ final class ZClientViewController: UIViewController {
         settingsViewControllerBuilder.settingsPropertyFactoryDelegate = defaultSettingsPropertyFactoryDelegate
         mainTabBarController.archiveUI = archiveUI
 
-        let meetingsUI = wireMeetingsFactory.makeMeetingsView()
-        mainTabBarController.meetingsUI = meetingsUI
+        if userSession.isMeetingsEnabled {
+            mainTabBarController.meetingsUI = makeMeetingsUI()
+        }
         mainTabBarController.settingsUI = settingsViewControllerBuilder
             .build(mainCoordinator: mainCoordinator)
         if userSession.isWireDriveEnabled {
@@ -516,14 +578,14 @@ final class ZClientViewController: UIViewController {
 
     @available(*, deprecated, message: "Please don't access this property, it will be deleted.")
     static var shared: ZClientViewController? {
-        (UIApplication.shared.delegate as? AppDelegate)?.appRootRouter?.zClientViewController
+        UIApplication.shared.sceneDelegates.first?.appRootRouter?.zClientViewController
     }
 
     /// Select the connection inbox and optionally move focus to it.
     ///
     /// - Parameter focus: focus or not
     func selectIncomingContactRequestsAndFocus(onView focus: Bool) {
-        mainTabBarController.selectedIndex = MainTabBarControllerContent.conversations.rawValue
+        mainTabBarController.selectedContent = .conversations
         conversationListViewController.selectInboxAndFocusOnView(focus: focus)
     }
 
@@ -551,8 +613,7 @@ final class ZClientViewController: UIViewController {
     func openDetailScreen(for conversation: ZMConversation) {
         Task {
             let areLegacyBotsAvailable = await conversationCreationRepository.areBotsSetUpInTheTeam()
-            let isAppsFeatureEnabled = await userSession.clientSessionComponent?.featureConfigRepository
-                .isFeatureEnabled(.apps) ?? false
+            let isAppsFeatureEnabled = await clientSessionComponent.featureConfigRepository.isFeatureEnabled(.apps)
             let controller = GroupDetailsViewController(
                 conversation: conversation,
                 userSession: userSession,
@@ -561,7 +622,8 @@ final class ZClientViewController: UIViewController {
                 conversationCreationRepository: conversationCreationRepository,
                 isUserE2EICertifiedUseCase: userSession.isUserE2EICertifiedUseCase,
                 areLegacyBotsAvailable: areLegacyBotsAvailable,
-                isAppsFeatureEnabled: isAppsFeatureEnabled
+                isAppsFeatureEnabled: isAppsFeatureEnabled,
+                wireMessagingFactory: wireMessagingFactory
             )
             let navController = UINavigationController(rootViewController: controller)
             navController.modalPresentationStyle = .formSheet
@@ -952,6 +1014,7 @@ extension ZClientViewController: UserObserving {
 
             if changeInfo.accentColorValueChanged {
                 sidebarUpdateNeeded = true
+                meetingsAccentColorState.wireAccentColor = userSession.selfUser.wireAccentColor
                 let appDelegate = UIApplication.shared.delegate as! AppDelegate
                 appDelegate.mainWindow?.tintColor = UIColor.accent()
             }

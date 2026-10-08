@@ -44,7 +44,7 @@ final class NSEUserScope: Component<NSEUserScopeDependency> {
 
     enum Failure: Error {
 
-        case mainAppRequired(message: String)
+        case mainAppRequired(message: String, accountID: UUID)
         case failedToFetchBackendEnvironment(any Error)
         case failedToFetchProxyCredentials(any Error)
         case failedToStoreMetadata(any Error)
@@ -60,6 +60,8 @@ final class NSEUserScope: Component<NSEUserScopeDependency> {
     public var accountID: UUID {
         account.userIdentifier
     }
+
+    let backgroundTaskExecuter: any BackgroundTaskExecuter
 
     public var userAccountDataURL: URL {
         dependency.accountDataURL.appending(path: accountID.uuidString)
@@ -77,9 +79,7 @@ final class NSEUserScope: Component<NSEUserScopeDependency> {
     public var cookieStorage: CookieStorage {
         shared {
             CookieStorage(
-                userID: accountID,
-                cookieEncryptionKey: dependency.cookieEncryptionKey,
-                keychain: Keychain()
+                cookieEncryptionKey: dependency.cookieEncryptionKey
             )
         }
     }
@@ -92,9 +92,11 @@ final class NSEUserScope: Component<NSEUserScopeDependency> {
 
     init(
         parent: any Scope,
-        account: Account
+        account: Account,
+        backgroundTaskExecuter: any BackgroundTaskExecuter
     ) {
         self.account = account
+        self.backgroundTaskExecuter = backgroundTaskExecuter
         super.init(parent: parent)
     }
 
@@ -102,9 +104,14 @@ final class NSEUserScope: Component<NSEUserScopeDependency> {
         eventID: UUID,
         contentHandler: @escaping (UNNotificationContent) -> Void
     ) async throws {
+
+        if DeveloperFlag.simulateMainAppRequiredError.isOn {
+            throw NSEUserScope.Failure.mainAppRequired(message: "simulated developer flag", accountID: accountID)
+        }
+
         // Set up network stack.
         guard let environment = try fetchBackendEnvironment() else {
-            throw Failure.mainAppRequired(message: "no stored backend for account")
+            throw Failure.mainAppRequired(message: "no stored backend for account", accountID: accountID)
         }
 
         var proxyCredentials: WireNetwork.ProxyCredentials?
@@ -134,7 +141,7 @@ final class NSEUserScope: Component<NSEUserScopeDependency> {
         }
 
         guard journal[.isSyncV2Enabled] else {
-            throw Failure.mainAppRequired(message: "sync v2 should be enabled")
+            throw Failure.mainAppRequired(message: "sync v2 should be enabled", accountID: accountID)
         }
 
         guard try await isAuthenticated() else {
@@ -142,7 +149,7 @@ final class NSEUserScope: Component<NSEUserScopeDependency> {
         }
 
         guard !coreCryptoKeyMigrationManager.isAnyMigrationRequired else {
-            throw Failure.mainAppRequired(message: "core crypto key migration required")
+            throw Failure.mainAppRequired(message: "core crypto key migration required", accountID: accountID)
         }
 
         // TODO: [WPB-19778] guard no app version migration needed.
@@ -152,7 +159,7 @@ final class NSEUserScope: Component<NSEUserScopeDependency> {
             let selfUser = ZMUser.selfUser(in: context)
             return selfUser.selfClient()?.remoteIdentifier
         }) else {
-            throw Failure.mainAppRequired(message: "no self client id")
+            throw Failure.mainAppRequired(message: "no self client id", accountID: accountID)
         }
 
         let earService = await EARServiceFactory.createEARService(
@@ -164,6 +171,8 @@ final class NSEUserScope: Component<NSEUserScopeDependency> {
 
         // Continue with client.
         let clientScope = clientScope(
+            eventID: eventID,
+            contentHandler: contentHandler,
             clientID: clientID,
             restNetworkService: networkServices.rest,
             webSocketNetworkService: networkServices.webSocket,
@@ -174,10 +183,7 @@ final class NSEUserScope: Component<NSEUserScopeDependency> {
             earService: earService
         )
 
-        try await clientScope.processPayload(
-            eventID: eventID,
-            contentHandler: contentHandler
-        )
+        try await clientScope.processPayload()
     }
 
     private func fetchBackendEnvironment() throws -> BackendEnvironment2? {
@@ -216,7 +222,7 @@ final class NSEUserScope: Component<NSEUserScopeDependency> {
     private func resolveBackendMetadata(with networkStack: NetworkStack) async throws -> ResolvedBackendMetadata {
         // Get the last known metadata.
         guard let prevMetadata = try dependency.backendStore.fetchBackendMetadata(accountID: accountID)  else {
-            throw Failure.mainAppRequired(message: "no previous backend metadata")
+            throw Failure.mainAppRequired(message: "no previous backend metadata", accountID: accountID)
         }
 
         // Get new metadata.
@@ -251,7 +257,7 @@ final class NSEUserScope: Component<NSEUserScopeDependency> {
             api: api
         )
 
-        return await useCase.invoke()
+        return await useCase.invoke().isBuildBlacklisted
     }
 
     // TODO: [WPB-19777] deduplicate
@@ -271,7 +277,7 @@ final class NSEUserScope: Component<NSEUserScopeDependency> {
         }
 
         guard !coreDataStack.needsMigration  else {
-            throw Failure.mainAppRequired(message: "database migration required")
+            throw Failure.mainAppRequired(message: "database migration required", accountID: accountID)
         }
 
         do {
@@ -286,7 +292,7 @@ final class NSEUserScope: Component<NSEUserScopeDependency> {
     private func isAuthenticated() async throws -> Bool {
         let cookies: [HTTPCookie]
         do {
-            cookies = try await cookieStorage.fetchCookies()
+            cookies = try cookieStorage.fetchCookies(userID: accountID)
         } catch {
             throw Failure.failedToFetchCookies(error)
         }
@@ -306,6 +312,8 @@ final class NSEUserScope: Component<NSEUserScopeDependency> {
     // MARK: - Children
 
     private func clientScope(
+        eventID: UUID,
+        contentHandler: @escaping (UNNotificationContent) -> Void,
         clientID: String,
         restNetworkService: NetworkService,
         webSocketNetworkService: NetworkService,
@@ -316,6 +324,8 @@ final class NSEUserScope: Component<NSEUserScopeDependency> {
         earService: EARServiceInterface
     ) -> NSEClientScope {
         NSEClientScope(
+            eventID: eventID,
+            contentHandler: contentHandler,
             parent: self,
             clientID: clientID,
             restNetworkService: restNetworkService,
@@ -324,7 +334,8 @@ final class NSEUserScope: Component<NSEUserScopeDependency> {
             localDomain: localDomain,
             isFederationEnabled: isFederationEnabled,
             coreDataStack: coreDataStack,
-            earService: earService
+            earService: earService,
+            backgroundTaskExecuter: backgroundTaskExecuter
         )
     }
 

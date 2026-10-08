@@ -17,9 +17,8 @@
 //
 
 import UIKit
+import WireLogging
 import WireSystem
-
-private let zmLog = ZMSLog(tag: "UI")
 
 /// @abstract Generates the cell that displays toggle control
 
@@ -60,11 +59,7 @@ final class SettingsPropertyToggleCellDescriptor: SettingsPropertyCellDescriptor
             toggleCell.switchView.isOn = boolValue
             toggleCell.switchView.accessibilityLabel = identifier
             toggleCell.switchView.isEnabled = settingsProperty.enabled
-            if #available(iOS 17.0, *) {
-                toggleCell.accessibilityTraits = .toggleButton
-            } else {
-                toggleCell.accessibilityTraits = .button
-            }
+            toggleCell.accessibilityTraits = .toggleButton
         }
     }
 
@@ -98,7 +93,7 @@ final class SettingsPropertyToggleCellDescriptor: SettingsPropertyCellDescriptor
                 }
             }
         } catch {
-            zmLog.error("Cannot set property: \(error)")
+            WireLogger.ui.error("Cannot set property: \(error)")
         }
     }
 }

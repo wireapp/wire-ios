@@ -31,7 +31,7 @@ final class MockMLSActionExecutor: MLSActionExecutorProtocol {
 
     // MARK: - Process welcome message
 
-    typealias ProcessWelcomeMessageMock = (Data) async throws -> MLSGroupID
+    typealias ProcessWelcomeMessageMock = (Welcome) async throws -> MLSGroupID
     private var mockProcessWelcomeMessage_: ProcessWelcomeMessageMock?
     var mockProcessWelcomeMessage: ProcessWelcomeMessageMock? {
         get { serialQueue.sync { mockProcessWelcomeMessage_ } }
@@ -44,7 +44,7 @@ final class MockMLSActionExecutor: MLSActionExecutorProtocol {
         set { serialQueue.sync { processWelcomeMessageCount_ = newValue } }
     }
 
-    func processWelcomeMessage(_ message: Data, context: CoreCryptoContextProtocol?) async throws -> MLSGroupID {
+    func processWelcomeMessage(_ message: Welcome, context: CoreCryptoContextProtocol?) async throws -> MLSGroupID {
         guard let mock = mockProcessWelcomeMessage else {
             fatalError("no mock for `processWelcomeMessage`")
         }
@@ -216,23 +216,6 @@ final class MockMLSActionExecutor: MLSActionExecutorProtocol {
         }
 
         mockOnEpochChangedCount += 1
-        return mock()
-    }
-
-    // MARK: - On new CRLs distribution points
-
-    typealias OnNewCRLsDistributionPointsMock = () -> AnyPublisher<CRLsDistributionPoints, Never>
-    private var mockOnNewCRLsDistributionPoints_: OnNewCRLsDistributionPointsMock?
-    var mockOnNewCRLsDistributionPoints: OnNewCRLsDistributionPointsMock? {
-        get { serialQueue.sync { mockOnNewCRLsDistributionPoints_ } }
-        set { serialQueue.sync { mockOnNewCRLsDistributionPoints_ = newValue } }
-    }
-
-    func onNewCRLsDistributionPoints() -> AnyPublisher<CRLsDistributionPoints, Never> {
-        guard let mock = mockOnNewCRLsDistributionPoints else {
-            fatalError("no mock for `onNewCRLsDistributionPoints`")
-        }
-
         return mock()
     }
 

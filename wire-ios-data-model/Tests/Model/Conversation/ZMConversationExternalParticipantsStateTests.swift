@@ -96,12 +96,9 @@ class ZMConversationExternalParticipantsStateTests: ZMConversationTestsBase {
         // None
         assertMatrixRow(.group, selfUser: .personal, otherUsers: [.personal], expectedResult: [])
         assertMatrixRow(.group, selfUser: .personal, otherUsers: [.memberOfHostingTeam], expectedResult: [])
-        assertMatrixRow(.group, selfUser: .personal, otherUsers: [.service], expectedResult: [])
         assertMatrixRow(.group, selfUser: .memberOfHostingTeam, otherUsers: [.memberOfHostingTeam], expectedResult: [])
-        assertMatrixRow(.group, selfUser: .memberOfHostingTeam, otherUsers: [.service], expectedResult: [])
         assertMatrixRow(.group, selfUser: .external, otherUsers: [.external], expectedResult: [])
         assertMatrixRow(.group, selfUser: .external, otherUsers: [.memberOfHostingTeam], expectedResult: [])
-        assertMatrixRow(.group, selfUser: .external, otherUsers: [.service], expectedResult: [])
 
         // Only Remotes
         assertMatrixRow(
@@ -122,6 +119,9 @@ class ZMConversationExternalParticipantsStateTests: ZMConversationTestsBase {
         assertMatrixRow(.group, selfUser: .external, otherUsers: [.personal], expectedResult: [.visibleGuests])
 
         // Only Services
+        assertMatrixRow(.group, selfUser: .personal, otherUsers: [.service], expectedResult: [.visibleApps])
+        assertMatrixRow(.group, selfUser: .memberOfHostingTeam, otherUsers: [.service], expectedResult: [.visibleApps])
+        assertMatrixRow(.group, selfUser: .external, otherUsers: [.service], expectedResult: [.visibleApps])
         assertMatrixRow(
             .group,
             selfUser: .memberOfHostingTeam,

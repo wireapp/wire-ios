@@ -49,6 +49,7 @@ final class ConfirmAssetViewController: UIViewController {
 
     let context: Context
     private let userSession: UserSession
+    private let isWireDriveEnabled: Bool
 
     var previewTitle: String? {
         didSet {
@@ -82,14 +83,16 @@ final class ConfirmAssetViewController: UIViewController {
     )
     private let contentLayoutGuide: UILayoutGuide = .init()
     private let imageToolbarSeparatorView: UIView = .init()
+    private var accentColorChangeHandler: AccentColorChangeHandler?
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         wr_supportedInterfaceOrientations
     }
 
-    init(context: Context, userSession: UserSession) {
+    init(context: Context, userSession: UserSession, isWireDriveEnabled: Bool = false) {
         self.context = context
         self.userSession = userSession
+        self.isWireDriveEnabled = isWireDriveEnabled
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -114,6 +117,7 @@ final class ConfirmAssetViewController: UIViewController {
         createConstraints()
 
         setupStyle()
+        setupAccentColorChangeHandler()
 
         presentationController?.delegate = self
     }
@@ -144,6 +148,13 @@ final class ConfirmAssetViewController: UIViewController {
         topPanel.backgroundColor = SemanticColors.View.backgroundDefault
 
         titleLabel.textColor = SemanticColors.Label.textDefault
+    }
+
+    private func setupAccentColorChangeHandler() {
+        accentColorChangeHandler = AccentColorChangeHandler
+            .addObserver(userSession: userSession) { [weak self] _ in
+                self?.acceptImageButton.applyStyle(.accentColorTextButtonStyle)
+            }
     }
 
     /// Show editing options only if the image is not animated
@@ -185,7 +196,10 @@ final class ConfirmAssetViewController: UIViewController {
             return
         }
 
-        let canvasViewController = CanvasViewController(userSession: userSession)
+        let canvasViewController = CanvasViewController(
+            userSession: userSession,
+            isWireDriveEnabled: isWireDriveEnabled
+        )
         canvasViewController.sketchImage = image
         canvasViewController.delegate = self
         canvasViewController.title = previewTitle

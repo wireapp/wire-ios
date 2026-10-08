@@ -124,4 +124,15 @@ public enum SystemMessageType: Sendable {
     case userDeleted(
         sender: (id: UUID, domain: String?)
     )
+
+    case promotedToGroupAdmin(
+        user: (id: UUID, domain: String?),
+        sender: (id: UUID, domain: String?),
+        date: Date
+    )
+
+    case conversationScheduledForDeletion(
+        scheduledDeletionDate: Date,
+        date: Date
+    )
 }

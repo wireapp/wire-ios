@@ -20,6 +20,7 @@ import Foundation
 import WireCoreCrypto
 import XCTest
 
+@testable import WireDataModel
 @testable import WireDataModelSupport
 @testable import WireRequestStrategy
 
@@ -35,13 +36,15 @@ class E2EIKeyPackageRotatorTests: MessagingTestBase {
 
         mockCoreCrypto = MockCoreCryptoProtocol()
         mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
-        mockCoreCryptoProvider.coreCrypto_MockValue = mockCoreCrypto
+        mockCoreCryptoProvider.coreCrypto_MockValue = SafeCoreCrypto(
+            backgroundTaskExecuter: PassthroughTaskExecuter(),
+            coreCrypto: mockCoreCrypto
+        )
         mockLegacyFeatureRepository = .init()
 
         sut = E2EIKeyPackageRotator(
             coreCryptoProvider: mockCoreCryptoProvider,
             context: syncMOC,
-            onNewCRLsDistributionPointsSubject: .init(),
             featureRepository: mockLegacyFeatureRepository
         )
     }

@@ -17,8 +17,8 @@
 //
 
 import Foundation
-public import WireMessagingDomain
-public import Observation
+import Observation
+package import WireMessagingDomain
 
 /// Intended for tracking the UI state of Drive files in different parts of the app.
 /// Consumes state changes from `WireDriveLocalAsset.DownloadState` or
@@ -27,8 +27,11 @@ public import Observation
 /// Also notifies if and when a file should be opened automatically after download or upload.
 @MainActor
 @Observable
-public final class WireDriveFileUITracker {
-    public enum State: Sendable, Hashable {
+package final class WireDriveFileUITracker {
+
+    package static var isEnabled: Bool = true
+
+    package enum State: Sendable, Hashable {
         /// The file hasn't been downloaded or uploaded yet.
         case notLoaded
 
@@ -45,7 +48,7 @@ public final class WireDriveFileUITracker {
         case failed
     }
 
-    public private(set) var state: State = .notLoaded {
+    package private(set) var state: State = .notLoaded {
         didSet {
             switch (oldValue, state) {
             case let (.loading(_, isLargeFile), .loaded):
@@ -67,9 +70,10 @@ public final class WireDriveFileUITracker {
     }
 
     /// This closure will be called when a file should be automatically opened after the download or upload.
-    public var onSmallFileLoaded: (() -> Void)?
+    package var onSmallFileLoaded: (() -> Void)?
 
-    public func handleDownloadState(fromAsset asset: WireDriveLocalAsset) {
+    package func handleDownloadState(fromAsset asset: WireDriveLocalAsset) {
+        guard Self.isEnabled else { return }
         state = Self.stateFromAsset(asset)
     }
 
@@ -90,7 +94,8 @@ public final class WireDriveFileUITracker {
 
     // MARK: - State mapping from `AttachmentsCarouselItem` (uploading a Drive file)
 
-    public func handleDownloadState(fromCarouselItem item: AttachmentsCarouselItem) {
+    package func handleDownloadState(fromCarouselItem item: AttachmentsCarouselItem) {
+        guard Self.isEnabled else { return }
         state = Self.stateFromCarouselItem(item)
     }
 

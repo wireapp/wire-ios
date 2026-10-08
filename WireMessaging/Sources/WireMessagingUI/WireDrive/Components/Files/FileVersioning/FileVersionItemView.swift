@@ -28,7 +28,6 @@ private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
 
 struct FileVersionItemView: View {
     @StateObject private var viewModel: FileVersionItemViewModel
-    @Environment(\.wireAccentColor) private var wireAccentColor
     @State private var showRestoreVersionAlert = false
 
     init(

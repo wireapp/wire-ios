@@ -7,7 +7,7 @@ let WireTestingPackage = Target.Dependency.product(name: "WireTestingPackage", p
 let package = Package(
     name: "WireAuthentication",
     defaultLocalization: "en",
-    platforms: [.iOS("17.0"), .macOS(.v12)],
+    platforms: [.iOS(.v17), .macOS(.v12)],
     products: [
         .library(name: "WireAuthentication", targets: ["WireAuthentication"]),
         .library(name: "WireAuthenticationAPI", targets: ["WireAuthenticationAPI"]),
@@ -49,7 +49,7 @@ let package = Package(
 
         .target(
             name: "WireAuthenticationLogic",
-            dependencies: ["WireAuthenticationAPI", "WireNetwork", "WireFoundation"]
+            dependencies: ["WireAuthenticationAPI", "WireNetwork", "WireFoundation", "WireLogging"]
         ),
         .testTarget(
             name: "WireAuthenticationLogicTests",

@@ -71,6 +71,12 @@ public struct TeamsAPIBuilder {
             TeamsAPIV14(apiService: apiService)
         case .v15:
             TeamsAPIV15(apiService: apiService)
+        case .v16:
+            TeamsAPIV16(apiService: apiService)
+        case .v17:
+            TeamsAPIV17(apiService: apiService)
+        case .v18:
+            TeamsAPIV18(apiService: apiService)
         }
     }
 }

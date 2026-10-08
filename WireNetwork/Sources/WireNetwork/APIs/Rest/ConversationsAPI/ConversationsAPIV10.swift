@@ -25,8 +25,10 @@ class ConversationsAPIV10: ConversationsAPIV9 {
     override func createGroupConversation(
         parameters: CreateGroupConversationParameters
     ) async throws -> Conversation {
+        guard let input = CreateGroupConversationParametersV10(from: parameters) else {
+            throw ConversationsAPIError.invalidBody
+        }
 
-        let input = CreateGroupConversationParametersV10(from: parameters)
         let body = try JSONEncoder.defaultEncoder.encode(input)
         let path = "\(pathPrefix)\(basePath)"
 
@@ -132,19 +134,27 @@ struct CreateGroupConversationParametersV10: Encodable {
         case cells
     }
 
-    init(from parameters: CreateGroupConversationParameters) {
+    init?(from parameters: CreateGroupConversationParameters) {
+        guard let conversationGroupType = parameters.groupType.toV8() else {
+            return nil
+        }
+
         self.users = parameters.messageProtocol == .proteus ? parameters.unqualifiedUserIDs : nil
         self.qualifiedUsers = parameters.messageProtocol == .proteus ? parameters.qualifiedUserIDs
             .map { $0.toNetworkModel() } : nil
         self.access = parameters.accessMode.map { $0.toNetworkModel().rawValue }
-        self.accessRoles = parameters.accessRoles.map { $0.toNetworkModel().rawValue }
+        self.accessRoles = if parameters.accessRoles.isEmpty {
+            nil
+        } else {
+            parameters.accessRoles.map { $0.toNetworkModel().rawValue }
+        }
         self.name = parameters.name
         self.team = parameters.teamID.map { .init(teamID: $0) }
         self.messageTimer = nil
         self.readReceiptMode = parameters.isReadReceiptsEnabled ? 1 : 0
         self.conversationRole = "wire_member"
         self.messageProtocol = parameters.messageProtocol.toNetworkModel().rawValue
-        self.conversationGroupType = parameters.groupType.toNetworkModel()
+        self.conversationGroupType = conversationGroupType
         self.skipCreator = parameters.skipCreator
         self.cells = parameters.cells ?? false
     }

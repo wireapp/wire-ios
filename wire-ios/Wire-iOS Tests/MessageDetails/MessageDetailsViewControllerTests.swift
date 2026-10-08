@@ -328,6 +328,53 @@ final class MessageDetailsViewControllerTests: XCTestCase {
         verify(detailsViewController)
     }
 
+    func testThatItShowsReactionWithSkinToneModifier() throws {
+        // GIVEN
+        conversation = createGroupConversation()
+
+        let message = MockMessageFactory.textMessage(withText: "Message")
+        message.senderUser = SelfUser.provider?.providedSelfUser
+        message.conversationLike = conversation
+        message.deliveryState = .read
+        message.needsReadConfirmation = false
+        message.backingUsersReaction = ["🙌🏻": [otherUser]]
+
+        // WHEN
+        let dataSource = MessageDetailsDataSource(message: message, userSession: userSession)
+
+        // THEN
+        let reaction = try XCTUnwrap(dataSource.reactions.first)
+        XCTAssertEqual(dataSource.reactions.count, 1)
+        XCTAssertEqual(reaction.items.count, 1)
+        XCTAssertTrue(try XCTUnwrap(reaction.headerText).hasPrefix("🙌🏻 "))
+        XCTAssertTrue(try XCTUnwrap(reaction.headerText).hasSuffix("(1)"))
+    }
+
+    func testThatItShowsReactionWhenEmojiRepositoryDoesNotContainIt() throws {
+        // GIVEN
+        conversation = createGroupConversation()
+
+        let message = MockMessageFactory.textMessage(withText: "Message")
+        message.senderUser = SelfUser.provider?.providedSelfUser
+        message.conversationLike = conversation
+        message.deliveryState = .read
+        message.needsReadConfirmation = false
+        message.backingUsersReaction = ["🫡": [otherUser]]
+
+        // WHEN
+        let dataSource = MessageDetailsDataSource(
+            message: message,
+            userSession: userSession,
+            emojiRepository: EmptyEmojiRepository()
+        )
+
+        // THEN
+        let reaction = try XCTUnwrap(dataSource.reactions.first)
+        XCTAssertEqual(dataSource.reactions.count, 1)
+        XCTAssertEqual(reaction.headerText, "🫡 (1)")
+        XCTAssertEqual(reaction.items.count, 1)
+    }
+
     // MARK: - Non-Combined Scenarios
 
     func testThatItShowsReceiptsOnly_Ephemeral() {
@@ -488,6 +535,24 @@ final class MessageDetailsViewControllerTests: XCTestCase {
             testName: testName,
             line: line
         )
+    }
+
+}
+
+private final class EmptyEmojiRepository: EmojiRepositoryInterface {
+
+    func emojis(for category: EmojiCategory) -> [Emoji] {
+        []
+    }
+
+    func emoji(for id: String) -> Emoji? {
+        nil
+    }
+
+    func registerRecentlyUsedEmojis(_ emojis: [Emoji.ID]) {}
+
+    func fetchRecentlyUsedEmojis() -> [Emoji] {
+        []
     }
 
 }

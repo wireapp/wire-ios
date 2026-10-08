@@ -114,7 +114,8 @@ final class ConversationRootViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        navigationController?.navigationBar.topItem?.backButtonDisplayMode = .minimal
+        conversationViewController?
+            .configureBackButton(hasUnread: conversation.hasUnreadMessagesInOtherConversations)
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -158,17 +159,19 @@ final class ConversationRootViewController: UIViewController {
 
             navigationItem.rightBarButtonItems = conversationViewController
                 .rightNavigationItems(forConversation: conversation)
-            navigationItem.leftBarButtonItems = conversationViewController
-                .leftNavigationItems(hasUnread: conversation.hasUnreadMessagesInOtherConversations)
+            conversationViewController
+                .configureBackButton(hasUnread: conversation.hasUnreadMessagesInOtherConversations)
         }
     }
 
     func configure() {
         guard let conversationViewController else { return }
 
-        // Set left navigation items (back button, search, unread status, etc.)
-        navigationItem.leftBarButtonItems = conversationViewController
-            .leftNavigationItems(hasUnread: conversation.hasUnreadMessagesInOtherConversations)
+        // The conversation uses the system back button (a bare chevron, matching Settings).
+        // Its indicator image is configured on the navigation bar by `configureBackButton(hasUnread:)`,
+        // and its `.minimal` display mode (chevron only, no title) is set in `viewWillAppear`.
+        navigationItem.leftBarButtonItems = []
+        navigationItem.leftItemsSupplementBackButton = true
 
         // Set right navigation items (call buttons etc.) from the conversation controller
         navigationItem.rightBarButtonItems = conversationViewController.navigationItem.rightBarButtonItems

@@ -104,7 +104,7 @@ final class FilesFilterByTests: XCTestCase {
 
     @MainActor
     func testFilterByOwners() async {
-        let mockedItems = [WireDriveConversation.Participant].mocked()
+        let mockedItems = [WireDriveParticipant].mocked()
 
         let view = FilesFilterBy.OwnerView(
             availableItems: mockedItems,

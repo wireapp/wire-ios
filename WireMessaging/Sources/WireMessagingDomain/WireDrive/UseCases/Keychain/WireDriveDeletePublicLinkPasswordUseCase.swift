@@ -42,7 +42,7 @@ package struct WireDriveDeletePublicLinkPasswordUseCase {
         ]
 
         do {
-            try await keychain.deleteItem(query: query)
+            try keychain.deleteItem(query: query)
         } catch let error as KeychainError {
             switch error {
             case let .errorStatus(oSstatus) where oSstatus == errSecItemNotFound:

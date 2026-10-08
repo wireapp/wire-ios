@@ -677,7 +677,7 @@ extension ZMConversation {
     @discardableResult
     func appendSystemMessage(
         type: ZMSystemMessageType,
-        sender: ZMUser,
+        sender: ZMUser?,
         users: Set<ZMUser>?,
         addedUsers: Set<ZMUser> = Set(),
         clients: Set<UserClient>?,

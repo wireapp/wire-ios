@@ -114,10 +114,7 @@ final class ZClientControllerBuilder {
 
     @MainActor
     private func buildWireMeetingsFactory() -> any WireMeetingsFactoryProtocol {
-        WireMeetingsFactory(
-            passwordValidator: AuthenticationPasswordValidator(),
-            isContextMenuAllowed: SecurityFlags.clipboard.isEnabled
-        )
+        WireMeetingsFactory(selfUserID: account.userIdentifier)
     }
 
 }
@@ -153,16 +150,28 @@ extension ConversationLocalStore: @retroactive WireDriveConversationsLocalStoreP
         return await context.perform {
             driveEnabledConversations.reduce(into: [WireDriveConversation]()) { result, conversation in
                 if let name = conversation.name {
-                    let participants: [WireDriveConversation.Participant] = conversation.participants
-                        .compactMap { item -> WireDriveConversation.Participant? in
+                    let participants: [WireDriveParticipant] = conversation.participants
+                        .compactMap { item -> WireDriveParticipant? in
                             guard let id = item.remoteIdentifier, let domain = item.domain else { return nil }
+                            let role: WireDriveParticipant.Role = conversation
+                                .matchesTeam(with: item) ? .editor : .viewer
+
+                            let userType: WireDriveParticipant.UserType = if item.isFederated {
+                                .federated
+                            } else if item.isExternalPartner {
+                                .external
+                            } else {
+                                !item.isGuest(in: conversation) || item.isSelfUser ? .member : .guest
+                            }
 
                             return .init(
                                 handle: item.handle ?? "-",
                                 displayName: item.name ?? "-",
+                                role: role,
                                 isSelfUser: item.isSelfUser,
                                 id: id.uuidString + "@" + domain,
-                                iconData: WireDriveConversation.Participant.IconData(
+                                userType: userType,
+                                iconData: WireDriveParticipant.IconData(
                                     initials: item.initials ?? "",
                                     color: item.accentColor,
                                     image: item.previewImageData.flatMap(UIImage.init)

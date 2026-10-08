@@ -349,6 +349,8 @@ final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
         typealias ClientsList = L10n.Accessibility.ClientsList
         typealias CreateConversation = L10n.Accessibility.CreateConversation
 
+        accessibilityIdentifier = Locators.NewConversationPage.userCellInContactList.rawValue
+
         if !checkmarkIconView.isHidden {
             accessibilityHint = isSelected ? CreateConversation.SelectedUser.hint : CreateConversation.UnselectedUser
                 .hint

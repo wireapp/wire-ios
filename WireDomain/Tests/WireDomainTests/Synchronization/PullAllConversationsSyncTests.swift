@@ -70,7 +70,7 @@ final class PullAllConversationsSyncTests: XCTestCase {
             failed: [Scaffolding.conversationID3]
         )
 
-        store.storeConversationTimestampIsFederationEnabledIsMLSEnabled_MockMethod = { _, _, _, _ in }
+        store.storeConversationTimestampIsFederationEnabledIsMLSEnabledMarkAsRead_MockMethod = { _, _, _, _, _ in }
         store.storeConversationNeedsBackendUpdateConversationIDConversationDomain_MockMethod = { _, _, _ in }
         store.storeFailedConversationConversationIDConversationDomain_MockMethod = { _, _ in }
 
@@ -83,7 +83,8 @@ final class PullAllConversationsSyncTests: XCTestCase {
         try XCTAssertCount(api.getConversationsFor_Invocations, count: 1)
         XCTAssertEqual(api.getConversationsFor_Invocations[0], Scaffolding.conversationIDs)
 
-        let storeFoundInvocations = store.storeConversationTimestampIsFederationEnabledIsMLSEnabled_Invocations
+        let storeFoundInvocations = store
+            .storeConversationTimestampIsFederationEnabledIsMLSEnabledMarkAsRead_Invocations
         try XCTAssertCount(storeFoundInvocations, count: 2)
         XCTAssertEqual(storeFoundInvocations[0].conversation, Scaffolding.localConversation1)
         XCTAssertEqual(storeFoundInvocations[0].isFederationEnabled, Scaffolding.isFederationEnabled)
@@ -170,7 +171,7 @@ final class PullAllConversationsSyncTests: XCTestCase {
             failed: [Scaffolding.conversationID3]
         )
 
-        store.storeConversationTimestampIsFederationEnabledIsMLSEnabled_MockMethod = { _, _, _, _ in }
+        store.storeConversationTimestampIsFederationEnabledIsMLSEnabledMarkAsRead_MockMethod = { _, _, _, _, _ in }
         store.storeConversationNeedsBackendUpdateConversationIDConversationDomain_MockMethod = { _, _, _ in }
         store.storeFailedConversationConversationIDConversationDomain_MockMethod = { _, _ in }
 
@@ -180,7 +181,7 @@ final class PullAllConversationsSyncTests: XCTestCase {
         // Then
         XCTAssertEqual(api.getConversationsFor_Invocations.count, 1)
         XCTAssertEqual(
-            store.storeConversationTimestampIsFederationEnabledIsMLSEnabled_Invocations.count,
+            store.storeConversationTimestampIsFederationEnabledIsMLSEnabledMarkAsRead_Invocations.count,
             1
         )
 
@@ -190,7 +191,8 @@ final class PullAllConversationsSyncTests: XCTestCase {
         try XCTAssertCount(api.getConversationsFor_Invocations, count: 1)
         XCTAssertEqual(api.getConversationsFor_Invocations[0], Scaffolding.conversationIDs)
 
-        let storeFoundInvocations = store.storeConversationTimestampIsFederationEnabledIsMLSEnabled_Invocations
+        let storeFoundInvocations = store
+            .storeConversationTimestampIsFederationEnabledIsMLSEnabledMarkAsRead_Invocations
         try XCTAssertCount(storeFoundInvocations, count: 1)
         XCTAssertEqual(storeFoundInvocations[0].conversation, Scaffolding.localConversation1)
         XCTAssertEqual(storeFoundInvocations[0].isFederationEnabled, Scaffolding.isFederationEnabled)

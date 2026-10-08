@@ -39,7 +39,7 @@ final class DatabaseMigrationTests: DatabaseBaseTest {
     func testEventsLatestModelHasMigrationVersion() throws {
         // given
         let latestMigrationVersion = CoreDataEventsMigrationVersion.allCases.first
-        let dataModelVersion = CoreDataStack.loadEventsModel().version
+        let dataModelVersion = CoreDataStack.eventsModel.version
 
         // when
         // then
@@ -79,7 +79,7 @@ final class DatabaseMigrationTests: DatabaseBaseTest {
     func testMessagingLatestModelHasMigrationVersion() throws {
         // given
         let latestMigrationVersion = CoreDataMessagingMigrationVersion.allCases.first
-        let dataModelVersion = CoreDataStack.loadMessagingModel().version
+        let dataModelVersion = CoreDataStack.messagingModel.version
 
         // when
         // then
@@ -96,7 +96,7 @@ final class DatabaseMigrationTests: DatabaseBaseTest {
         // NOTICE: When a new version of data model is created, please add CoreDataMessagingMigrationVersion new case. And make sure your new data model has a new identifierVersion
         let allVersions = CoreDataMessagingMigrationVersion.allFixtureVersions
 
-        let modelVersion = CoreDataStack.loadMessagingModel().version
+        let modelVersion = CoreDataStack.messagingModel.version
         let fixtureVersion = String(
             Database.messaging.databaseFixtureFileName(for: modelVersion)
                 .dropFirst("store".count)

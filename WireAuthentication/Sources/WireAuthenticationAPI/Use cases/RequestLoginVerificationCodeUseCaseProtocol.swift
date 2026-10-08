@@ -29,6 +29,11 @@ public enum RequestLoginVerificationCodeUseCaseFailure: Error {
 
     case invalidEmail
 
+    case tooManyRequests(
+        message: String,
+        retryAfter: TimeInterval?
+    )
+
 }
 
 public protocol RequestLoginVerificationCodeUseCaseFactory {

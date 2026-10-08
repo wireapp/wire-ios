@@ -20,6 +20,7 @@ import Foundation
 import WireCommonComponents
 import WireDataModel
 import WireDesign
+import WireLocators
 
 struct ReadReceiptViewModel {
     let icon: StyleKitIcon
@@ -88,7 +89,7 @@ final class ConversationReadReceiptSettingChangedCellDescription: ConversationMe
 
     let containsHighlightableContent: Bool = false
 
-    let accessibilityIdentifier: String? = nil
+    let accessibilityIdentifier: String?
     let accessibilityLabel: String?
 
     init(
@@ -108,6 +109,14 @@ final class ConversationReadReceiptSettingChangedCellDescription: ConversationMe
             showLine: true
         )
         self.accessibilityLabel = viewModel.attributedTitle()?.string
+        self.accessibilityIdentifier = switch systemMessageType {
+        case .readReceiptsDisabled:
+            Locators.ActiveConversationPage.readReceiptsDisabledSystemMessage.rawValue
+        case .readReceiptsEnabled:
+            Locators.ActiveConversationPage.readReceiptsEnabledSystemMessage.rawValue
+        default:
+            nil
+        }
         self.actionController = nil
     }
 }

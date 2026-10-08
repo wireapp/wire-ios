@@ -83,6 +83,16 @@ extension ConversationInputBarViewController: UITextViewDelegate {
             return false
         }
 
+        if text == "\t" {
+            textView.resignFirstResponder()
+            UIAccessibility.post(
+                notification: .layoutChanged,
+                argument: ([sendButton, ephemeralIndicatorButton] + inputBar.buttonsView.buttons)
+                    .first { !$0.isHidden && $0.isEnabled && $0.isUserInteractionEnabled && $0.alpha > 0 }
+            )
+            return false
+        }
+
         // we are deleting text one by one
         if text == "", range.length == 1 {
             if let cursor = textView.selectedTextRange, let deletionStart = textView.position(

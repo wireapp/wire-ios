@@ -32,7 +32,20 @@ public enum MessageDestructionTimeoutValue: RawRepresentable, Hashable {
 
     case custom(TimeInterval)
 
+    #if DEBUG
+        private static let uiTestTenSecondsOverride: TimeInterval? = ProcessInfo.processInfo
+            .environment["UITEST_SELF_DELETING_TIMER_SECONDS"]
+            .flatMap(TimeInterval.init)
+    #endif
+
     public init(rawValue: TimeInterval) {
+        #if DEBUG
+            if let override = Self.uiTestTenSecondsOverride, rawValue == override {
+                self = .tenSeconds
+                return
+            }
+        #endif
+
         switch rawValue {
         case .zero:
             self = .none
@@ -66,7 +79,11 @@ public enum MessageDestructionTimeoutValue: RawRepresentable, Hashable {
             .zero
 
         case .tenSeconds:
-            .tenSeconds
+            #if DEBUG
+                Self.uiTestTenSecondsOverride ?? .tenSeconds
+            #else
+                .tenSeconds
+            #endif
 
         case .fiveMinutes:
             .fiveMinutes

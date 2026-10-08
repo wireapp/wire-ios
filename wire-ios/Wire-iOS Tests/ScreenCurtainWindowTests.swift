@@ -30,7 +30,8 @@ final class ScreenCurtainWindowTests: XCTestCase {
     override func setUp() {
         super.setUp()
         snapshotHelper = SnapshotHelper()
-        sut = ScreenCurtainWindow()
+        let windowScene = UIApplication.shared.connectedScenes.first as! UIWindowScene
+        sut = ScreenCurtainWindow(windowScene: windowScene)
         userSession = UserSessionMock()
         sut.userSession = userSession
     }
@@ -48,7 +49,7 @@ final class ScreenCurtainWindowTests: XCTestCase {
         userSession.requiresScreenCurtain = true
 
         // When
-        sut.applicationWillResignActive()
+        sut.showIfNeeded()
 
         // Then
         XCTAssertFalse(sut.isHidden)
@@ -59,7 +60,7 @@ final class ScreenCurtainWindowTests: XCTestCase {
         userSession.requiresScreenCurtain = false
 
         // When
-        sut.applicationWillResignActive()
+        sut.showIfNeeded()
 
         // Then
         XCTAssertTrue(sut.isHidden)
@@ -70,7 +71,7 @@ final class ScreenCurtainWindowTests: XCTestCase {
         sut.userSession = nil
 
         // When
-        sut.applicationWillResignActive()
+        sut.showIfNeeded()
 
         // Then
         XCTAssertTrue(sut.isHidden)
@@ -78,12 +79,12 @@ final class ScreenCurtainWindowTests: XCTestCase {
 
     // MARK: - Hiding
 
-    func test_ItIsHidden_WhenApplicationBecomesActive() {
+    func test_ItIsHidden_WhenSceneBecomesActive() {
         // Given
         sut.isHidden = false
 
         // When
-        sut.applicationDidBecomeActive()
+        sut.hide()
 
         // Then
         XCTAssertTrue(sut.isHidden)

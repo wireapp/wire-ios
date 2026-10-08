@@ -25,9 +25,9 @@ public import Foundation
 /// categorized as past, ongoing, or upcoming based on their start and end times
 /// relative to the current time.
 
-public struct Meeting: Equatable, Sendable {
+public struct Meeting: Hashable, Sendable {
 
-    public let id: UUID
+    public let id: QualifiedID
 
     public let title: String
 
@@ -35,20 +35,41 @@ public struct Meeting: Equatable, Sendable {
 
     public let end: Date
 
-    public let repeatOption: RepeatOption
+    public let recurrence: MeetingRecurrence?
+
+    /// The meeting's IANA time zone identifier, absent for legacy meetings.
+    public let timeZoneIdentifier: String?
+
+    /// The participants of the meeting's conversation, resolved from the
+    /// local store when the meeting is read. `nil` when the conversation has
+    /// not been fetched yet (e.g. a meeting built straight from a network
+    /// response).
+    public let conversation: MeetingConversation?
+
+    public let conversationID: QualifiedID
+
+    public let creatorID: QualifiedID
 
     public init(
-        id: UUID,
+        id: QualifiedID,
         title: String,
         start: Date,
         end: Date,
-        repeatOption: RepeatOption = .never
+        recurrence: MeetingRecurrence?,
+        timeZoneIdentifier: String? = nil,
+        conversation: MeetingConversation? = nil,
+        conversationID: QualifiedID,
+        creatorID: QualifiedID
     ) {
         self.id = id
         self.title = title
         self.start = start
         self.end = end
-        self.repeatOption = repeatOption
+        self.recurrence = recurrence
+        self.timeZoneIdentifier = timeZoneIdentifier
+        self.conversation = conversation
+        self.conversationID = conversationID
+        self.creatorID = creatorID
     }
 
 }

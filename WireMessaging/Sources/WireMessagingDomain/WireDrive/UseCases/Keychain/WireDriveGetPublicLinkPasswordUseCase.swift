@@ -43,7 +43,7 @@ package struct WireDriveGetPublicLinkPasswordUseCase {
         ]
 
         do {
-            let data: Data? = try await keychain.fetchItem(query: query)
+            let data: Data? = try keychain.fetchItem(query: query)
             guard let data else { throw Failure.itemNotFound }
             return String(decoding: data, as: UTF8.self)
         } catch {

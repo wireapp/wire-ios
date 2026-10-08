@@ -39,6 +39,10 @@ final class ZMConversationListDirectoryTests_RefetchAll: XCTestCase {
 
             oneToOneTeamConversation = createOneToOneTeamConversation(in: team)
 
+            // Persist so `effectiveConversationType` (maintained in `-willSave`) is populated before the
+            // store-backed list fetches run.
+            _ = coreDataStack.viewContext.saveOrRollback()
+
             sut = coreDataStack.viewContext.conversationListDirectory()
         }
     }

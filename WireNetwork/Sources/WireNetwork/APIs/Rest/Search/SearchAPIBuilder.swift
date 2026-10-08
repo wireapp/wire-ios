@@ -63,6 +63,12 @@ public struct SearchAPIBuilder {
             SearchAPIV14(apiService: apiService)
         case .v15:
             SearchAPIV15(apiService: apiService)
+        case .v16:
+            SearchAPIV16(apiService: apiService)
+        case .v17:
+            SearchAPIV17(apiService: apiService)
+        case .v18:
+            SearchAPIV18(apiService: apiService)
         }
     }
 

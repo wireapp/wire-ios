@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Foundation
 import WireFoundation
 
 /// A key that pairs a raw string with a specific value in
@@ -129,11 +130,29 @@ public extension JournalKey where Value == Bool {
 
 public extension JournalKey where Value == Set<String> {
 
+    /// The client production API versions used for the last successful backend metadata resolution.
+
+    static let resolvedBackendMetadataAPIVersions = Self(
+        "resolvedBackendMetadataAPIVersions",
+        defaultValue: []
+    )
+
     /// The set of MLS group IDs to be repaired.
 
     static let brokenMLSGroupIDs = Self(
         "brokenMLSGroupIDs",
         defaultValue: []
+    )
+
+}
+
+public extension JournalKey where Value == Date? {
+
+    /// Last notified date the user was notified to open the main app in NSE
+
+    static let mainAppRequiredNotificationLastNotifiedDate = Self(
+        "mainAppRequiredNotificationLastNotifiedDate",
+        defaultValue: Date?.none
     )
 
 }

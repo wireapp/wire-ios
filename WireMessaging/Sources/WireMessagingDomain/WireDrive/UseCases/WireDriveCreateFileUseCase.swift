@@ -27,9 +27,18 @@ package enum WireDriveCreateFileUseCaseError: Error {
 /// Creates a file or a folder on the server.
 package struct WireDriveCreateFileUseCase: WireDriveCreateFileUseCaseProtocol {
 
-    package enum Target: Equatable {
+    package enum Target: Equatable, Identifiable {
         case folder
         case file(WireDriveFileTemplate)
+
+        package var id: String {
+            switch self {
+            case .folder:
+                "folder"
+            case let .file(template):
+                "file:\(template.id)"
+            }
+        }
     }
 
     private let nodesRepository: any WireDriveNodesRepositoryProtocol

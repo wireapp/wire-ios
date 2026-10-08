@@ -20,6 +20,7 @@ import MapKit
 import UIKit
 import WireDataModel
 import WireDesign
+import WireLocators
 import WireSyncEngine
 
 final class ConversationLocationMessageCell: UIView, ConversationMessageCell, ContextMenuDelegate {
@@ -80,6 +81,8 @@ final class ConversationLocationMessageCell: UIView, ConversationMessageCell, Co
         containerView.layer.borderWidth = 1
         containerView.layer.borderColor = SemanticColors.View.borderCollectionCell.cgColor
         containerView.backgroundColor = SemanticColors.View.backgroundCollectionCell
+        containerView.isAccessibilityElement = true
+        containerView.accessibilityIdentifier = Locators.ActiveConversationPage.locationMap.rawValue
 
         mapView.isScrollEnabled = false
         mapView.isZoomEnabled = false
@@ -147,8 +150,10 @@ final class ConversationLocationMessageCell: UIView, ConversationMessageCell, Co
         if let address = object.location.name {
             addressContainerView.isHidden = false
             addressLabel.text = address
+            containerView.accessibilityLabel = address
         } else {
             addressContainerView.isHidden = true
+            containerView.accessibilityLabel = nil
         }
 
         updateMapLocation(withLocationData: object.location)
@@ -213,7 +218,7 @@ final class ConversationLocationMessageCellDescription: ConversationMessageCellD
     let shouldAlignMessageContentForBubbles = true
 
     var accessibilityIdentifier: String? {
-        configuration.isObfuscated ? "ObfuscatedLocationCell" : "LocationCell"
+        configuration.isObfuscated ? "ObfuscatedLocationCell" : Locators.ActiveConversationPage.locationCell.rawValue
     }
 
     let accessibilityLabel: String? = nil

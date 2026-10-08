@@ -19,6 +19,7 @@
 import UIKit
 import WireDesign
 import WireFoundation
+import WireLocators
 import WireUtilities
 
 final class SettingsAppearanceCell: SettingsTableCell, CellConfigurationConfigurable {
@@ -80,21 +81,31 @@ final class SettingsAppearanceCell: SettingsTableCell, CellConfigurationConfigur
             case let .image(image):
                 iconImageView.image = image
                 iconImageView.backgroundColor = UIColor.clear
+                // Automation-only marker so UI tests can detect the profile picture preview.
+                iconImageView.isAccessibilityElement = true
+                iconImageView.accessibilityIdentifier = Locators.AccountSettingsPage.profilePictureImagePreview.rawValue
                 subtitleLabel.text = nil
+                accessibilityValue = nil
                 titleLabelToIconInset.isActive = true
                 accessibilityTraits = [.button]
             case let .color(color):
                 iconImageView.backgroundColor = color
                 iconImageView.image = .none
+                iconImageView.isAccessibilityElement = false
+                iconImageView.accessibilityIdentifier = nil
                 subtitleLabel.text = AccentColor.current.name
+                accessibilityValue = AccentColor.current.name
                 titleLabelToIconInset.isActive = true
                 accessibilityTraits = [.button]
             default:
                 subtitleLabel.text = nil
                 iconImageView.backgroundColor = UIColor.clear
                 iconImageView.image = .none
+                iconImageView.isAccessibilityElement = false
+                iconImageView.accessibilityIdentifier = nil
+                accessibilityValue = nil
                 titleLabelToIconInset.isActive = false
-                accessibilityTraits = []
+                accessibilityTraits = [.button]
             }
             layoutIfNeeded()
         }
@@ -112,6 +123,8 @@ final class SettingsAppearanceCell: SettingsTableCell, CellConfigurationConfigur
     func configure(with configuration: CellConfiguration) {
         guard case let .appearance(title) = configuration else { preconditionFailure() }
         titleLabel.text = title
+        accessibilityLabel = title
+        accessibilityTraits = [.button]
     }
 
     // MARK: - Helpers

@@ -17,9 +17,6 @@
 //
 
 import Foundation
-import WireSystem
-
-private let zmLog = ZMSLog(tag: "FileManager")
 
 extension URL {
     static func directoryURL(_ pathComponent: String) -> URL? {

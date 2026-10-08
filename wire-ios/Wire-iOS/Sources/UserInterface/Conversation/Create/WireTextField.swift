@@ -120,8 +120,10 @@ class WireTextField: ContextMenuControllableUITextField {
         clearButton.tintColor = SemanticColors.Icon.foregroundDefaultBlack
 
         let clearAction = UIAction { [weak self] _ in
-            self?.text = ""
-            self?.sendActions(for: .editingChanged)
+            guard let self else { return }
+            text = ""
+            sendActions(for: .editingChanged)
+            textFieldValueChanged(text)
         }
         clearButton.addAction(clearAction, for: .touchUpInside)
 

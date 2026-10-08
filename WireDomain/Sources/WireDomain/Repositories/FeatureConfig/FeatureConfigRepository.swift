@@ -201,6 +201,12 @@ public final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
                 isEnabled: mLSMigrationFeatureConfig.status == .enabled
             )
 
+        case let .meetings(config):
+            return FeatureState(
+                name: .meetings,
+                isEnabled: config.status == .enabled
+            )
+
         case let .selfDeletingMessages(selfDeletingMessagesFeatureConfig):
 
             return FeatureState(
@@ -243,6 +249,12 @@ public final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
             return FeatureState(
                 name: .cellsInternal,
                 isEnabled: cellsInternalConfig.status == .enabled
+            )
+
+        case let .preventAdminlessGroups(config):
+            return FeatureState(
+                name: .preventAdminlessGroups,
+                isEnabled: config.status == .enabled
             )
 
         case let .unknown(featureName):

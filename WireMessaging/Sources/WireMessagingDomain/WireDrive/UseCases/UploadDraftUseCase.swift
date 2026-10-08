@@ -58,8 +58,8 @@ package struct UploadDraftUseCase: WireDriveUploadDraftUseCaseProtocol, WireDriv
         self.filenameGenerator = filenameGenerator
     }
 
-    package func invoke(fileURL: URL) async throws {
-        try await invoke(fileURL: fileURL, requiresCleanup: false)
+    package func invoke(fileURL: URL, localIdentifier: String?) async throws {
+        try await invoke(fileURL: fileURL, localIdentifier: localIdentifier, requiresCleanup: false)
     }
 
     /// Uploads a file using an existing draft's nodeID.
@@ -109,7 +109,7 @@ package struct UploadDraftUseCase: WireDriveUploadDraftUseCaseProtocol, WireDriv
         }
     }
 
-    package func invoke(data: Data, type: UTType) async throws {
+    package func invoke(data: Data, type: UTType, localIdentifier: String?, existingNodeID: UUID?) async throws {
         let filename = await filenameGenerator.generateFilename(type: type)
 
         let container = intermediaryFilesDirectory.appendingPathComponent(UUID().uuidString, isDirectory: true)
@@ -118,12 +118,24 @@ package struct UploadDraftUseCase: WireDriveUploadDraftUseCaseProtocol, WireDriv
         try FileManager.default.createDirectory(at: container, withIntermediateDirectories: true)
 
         try data.write(to: url)
-        try await invoke(fileURL: url, requiresCleanup: true)
+        try await invoke(
+            fileURL: url,
+            data: data,
+            localIdentifier: localIdentifier,
+            existingNodeID: existingNodeID,
+            requiresCleanup: true
+        )
     }
 
     // MARK: - Private Methods
 
-    private func invoke(fileURL: URL, requiresCleanup: Bool) async throws {
+    private func invoke(
+        fileURL: URL,
+        data: Data? = nil,
+        localIdentifier: String? = nil,
+        existingNodeID: UUID? = nil,
+        requiresCleanup: Bool
+    ) async throws {
         let resourceValues = try fileURL.resourceValues(forKeys: [.fileSizeKey, .contentTypeKey])
         guard let fileSize = resourceValues.fileSize, fileSize > 0 else {
             throw WireDriveUploadDraftUseCaseError.missingFileSize
@@ -136,7 +148,7 @@ package struct UploadDraftUseCase: WireDriveUploadDraftUseCaseProtocol, WireDriv
         }
 
         let draft = WireDriveDraft(
-            nodeID: UUID(),
+            nodeID: existingNodeID ?? UUID(),
             versionID: UUID(),
             assetURL: fileURL,
             fileType: resourceValues.contentType,
@@ -145,10 +157,18 @@ package struct UploadDraftUseCase: WireDriveUploadDraftUseCaseProtocol, WireDriv
             bytes: fileSize,
             mimeType: nil,
             requiresCleanup: requiresCleanup,
-            metadata: try? await metadata(for: fileURL, fileType: resourceValues.contentType)
+            metadata: try? await metadata(for: fileURL, fileType: resourceValues.contentType),
+            data: data,
+            localIdentifier: localIdentifier
         )
 
-        await draftRepository.addDraft(draft, for: cellName)
+        if let existingNodeID {
+            await draftRepository.updateDraft(draft, for: cellName)
+            try await nodesAPI.deleteFile(nodeID: existingNodeID)
+        } else {
+            await draftRepository.addDraft(draft, for: cellName)
+        }
+
         try await invoke(nodeID: draft.nodeID)
     }
 

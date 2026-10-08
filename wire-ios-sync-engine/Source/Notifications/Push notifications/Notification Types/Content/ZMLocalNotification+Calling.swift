@@ -66,6 +66,9 @@ extension ZMLocalNotification {
 
         func shouldCreateNotification() -> Bool {
             guard conversation.mutedMessageTypesIncludingAvailability != .all else { return false }
+            // A meeting is joined deliberately from the meetings list, so it produces
+            // neither an incoming call nor a missed call notification.
+            guard !conversation.isMeeting else { return false }
             return true
         }
 

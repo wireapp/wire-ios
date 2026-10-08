@@ -17,10 +17,10 @@
 //
 
 import AVFoundation
+import PhotosUI
 import UIKit
+import WireLogging
 import WireSyncEngine
-
-private let zmLog = ZMSLog(tag: "ConversationInputBarViewController - Image Picker")
 
 extension ConversationInputBarViewController {
 
@@ -28,6 +28,7 @@ extension ConversationInputBarViewController {
         sourceType: UIImagePickerController.SourceType,
         mediaTypes: [String],
         allowsEditing: Bool,
+        preSelectedAssetIdentifiers: [String] = [],
         pointToView: UIView
     ) {
 
@@ -57,29 +58,42 @@ extension ConversationInputBarViewController {
         }
 
         let presentController = { [self] in
+            // Allows multiple media selection on Wire drive conversations.
+            if useWireDrive(), sourceType != .camera {
+                // As per Apple's doc, we shouldn't use the empty initializer if we need the asset identifiers to be
+                // non-nil.
+                var config = PHPickerConfiguration(photoLibrary: PHPhotoLibrary.shared())
+                config.selectionLimit = 0
+                config.preselectedAssetIdentifiers = preSelectedAssetIdentifiers
+                config.filter = .any(of: [.images, .videos])
 
-            let pickerController = UIImagePickerController()
-            pickerController.sourceType = sourceType
-            pickerController.preferredContentSize = .IPadPopover.preferredContentSize
-            pickerController.delegate = self
-            pickerController.allowsEditing = allowsEditing
-            pickerController.mediaTypes = mediaTypes
-            pickerController.videoMaximumDuration = userSession.maxVideoLength
-            pickerController.videoExportPreset = AVURLAsset.defaultVideoQuality
-            if sourceType == .camera {
-                let settingsCamera: SettingsCamera? = Settings.shared[.preferredCamera]
-                pickerController.cameraDevice = settingsCamera == .back ? .rear : .front
+                let picker = PHPickerViewController(configuration: config)
+                picker.delegate = self
+                present(picker, animated: true)
+            } else {
+                let pickerController = UIImagePickerController()
+                pickerController.sourceType = sourceType
+                pickerController.preferredContentSize = .IPadPopover.preferredContentSize
+                pickerController.delegate = self
+                pickerController.allowsEditing = allowsEditing
+                pickerController.mediaTypes = mediaTypes
+                pickerController.videoMaximumDuration = userSession.maxVideoLength
+                pickerController.videoExportPreset = AVURLAsset.defaultVideoQuality
+                if sourceType == .camera {
+                    let settingsCamera: SettingsCamera? = Settings.shared[.preferredCamera]
+                    pickerController.cameraDevice = settingsCamera == .back ? .rear : .front
+                }
+
+                if sourceType != .camera,
+                   let popoverPresentationController = pickerController.popoverPresentationController {
+                    popoverPresentationController.sourceView = pointToView.superview
+                    popoverPresentationController.sourceRect = pointToView.frame
+                    popoverPresentationController.backgroundColor = .white
+                    popoverPresentationController.permittedArrowDirections = .down
+                }
+
+                present(pickerController, animated: true)
             }
-
-            if sourceType != .camera,
-               let popoverPresentationController = pickerController.popoverPresentationController {
-                popoverPresentationController.sourceView = pointToView.superview
-                popoverPresentationController.sourceRect = pointToView.frame
-                popoverPresentationController.backgroundColor = .white
-                popoverPresentationController.permittedArrowDirections = .down
-            }
-
-            present(pickerController, animated: true)
         }
 
         if sourceType == .camera {
@@ -95,7 +109,7 @@ extension ConversationInputBarViewController {
     ) {
         guard let videoURL = info[UIImagePickerController.InfoKey.mediaURL] as? URL else {
             parent?.dismiss(animated: true)
-            zmLog.error("Video not provided form \(picker): info \(info)")
+            WireLogger.ui.error("Video not provided from \(picker): info \(info)")
             return
         }
         guard let selfUser = ZMUser.selfUser() else {
@@ -112,7 +126,7 @@ extension ConversationInputBarViewController {
         do {
             try FileManager.default.removeTmpIfNeededAndCopy(fileURL: videoURL, tmpURL: videoTempURL)
         } catch {
-            zmLog.error("Cannot copy video from \(videoURL) to \(videoTempURL): \(error)")
+            WireLogger.ui.error("Cannot copy video from \(videoURL) to \(videoTempURL): \(error)")
             return
         }
 

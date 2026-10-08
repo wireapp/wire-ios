@@ -19,60 +19,143 @@
 package import Foundation
 
 package protocol MeetingsFormatterProtocol {
+    /// Refreshes calendar- and locale-dependent formatting state.
+    func refresh()
     func dayHeader(for date: Date, now: Date) -> String
-    func timeHeader(for date: Date) -> String
+    func date(_ date: Date) -> String
+    func time(_ date: Date) -> String
+    func timeRange(from start: Date, to end: Date) -> String
 }
 
-package struct MeetingsFormatter: MeetingsFormatterProtocol {
+package final class MeetingsFormatter: MeetingsFormatterProtocol {
 
     private typealias Strings = L10n.Localizable.WireMeetings.List
 
-    package init() {}
+    private let calendarProvider: () -> Calendar
+    private let localeProvider: () -> Locale
+    private var calendar: Calendar
+    private var dayHeaderDateFormatter: DateFormatter
+    private var dateFormatter: DateFormatter
+    private var timeFormatter: DateFormatter
 
-    package func dayHeader(for date: Date, now: Date) -> String {
-        let calendar = Calendar.current
-
-        if calendar.isDate(date, inSameDayAs: now) {
-            return Strings.Header.today + " (\(DateFormatter.dayHeader.string(from: date)))"
-        } else if calendar.isDate(
-            date,
-            equalTo: calendar.date(byAdding: .day, value: 1, to: now) ?? now,
-            toGranularity: .day
-        ) {
-            return Strings.Header.tomorrow + " (\(DateFormatter.dayHeader.string(from: date)))"
-        } else if calendar.isDate(
-            date,
-            equalTo: calendar.date(byAdding: .day, value: -1, to: now) ?? now,
-            toGranularity: .day
-        ) {
-            return Strings.Header.yesterday + " (\(DateFormatter.dayHeader.string(from: date)))"
-        } else {
-            return DateFormatter.dayHeader.string(from: date)
-        }
+    package convenience init() {
+        self.init(
+            calendarProvider: { .autoupdatingCurrent },
+            localeProvider: { .autoupdatingCurrent }
+        )
     }
 
-    package func timeHeader(for date: Date) -> String {
-        DateFormatter.timeHeader.string(from: date)
+    package convenience init(calendar: Calendar, locale: Locale) {
+        self.init(
+            calendarProvider: { calendar },
+            localeProvider: { locale }
+        )
+    }
+
+    package init(
+        calendarProvider: @escaping () -> Calendar,
+        localeProvider: @escaping () -> Locale
+    ) {
+        self.calendarProvider = calendarProvider
+        self.localeProvider = localeProvider
+        let calendar = calendarProvider()
+        let locale = localeProvider()
+        let formatters = Self.makeFormatters(locale: locale, calendar: calendar)
+        self.calendar = calendar
+        self.dayHeaderDateFormatter = formatters.dayHeaderDateFormatter
+        self.dateFormatter = formatters.dateFormatter
+        self.timeFormatter = formatters.timeFormatter
+    }
+
+    package func refresh() {
+        let calendar = calendarProvider()
+        let locale = localeProvider()
+        let formatters = Self.makeFormatters(locale: locale, calendar: calendar)
+        self.calendar = calendar
+        dayHeaderDateFormatter = formatters.dayHeaderDateFormatter
+        dateFormatter = formatters.dateFormatter
+        timeFormatter = formatters.timeFormatter
+    }
+
+    package func dayHeader(for date: Date, now: Date) -> String {
+        let formattedDate = dayHeaderDateFormatter.string(from: date)
+
+        if calendar.isDate(date, inSameDayAs: now) {
+            return Strings.Header.today + " (\(formattedDate))"
+        } else if let tomorrow = calendar.date(byAdding: .day, value: 1, to: now),
+                  calendar.isDate(date, inSameDayAs: tomorrow) {
+            return Strings.Header.tomorrow + " (\(formattedDate))"
+        }
+
+        return formattedDate
+    }
+
+    package func date(_ date: Date) -> String {
+        dateFormatter.string(from: date)
+    }
+
+    package func time(_ date: Date) -> String {
+        timeFormatter.string(from: date)
+    }
+
+    package func timeRange(from start: Date, to end: Date) -> String {
+        "\(time(start)) - \(time(end))"
+    }
+
+    private static func makeFormatters(
+        locale: Locale,
+        calendar: Calendar
+    ) -> (
+        dayHeaderDateFormatter: DateFormatter,
+        dateFormatter: DateFormatter,
+        timeFormatter: DateFormatter
+    ) {
+        (
+            dayHeaderDateFormatter: .meetingDayHeaderDate(locale: locale, calendar: calendar),
+            dateFormatter: .meetingDate(locale: locale, calendar: calendar),
+            timeFormatter: .meetingTime(locale: locale, calendar: calendar)
+        )
     }
 
 }
 
 // MARK: - Helpers
 
-private extension DateFormatter {
+package extension DateFormatter {
 
-    static let dayHeader: DateFormatter = {
+    fileprivate static func meetingDayHeaderDate(locale: Locale, calendar: Calendar) -> DateFormatter {
         let formatter = DateFormatter()
-        formatter.locale = .current
-        formatter.dateFormat = "EEEE, MMMM d"
+        formatter.locale = locale
+        formatter.calendar = calendar
+        formatter.timeZone = calendar.timeZone
+        formatter.setLocalizedDateFormatFromTemplate("EEEE MMMM d")
         return formatter
-    }()
+    }
 
-    static let timeHeader: DateFormatter = {
+    static func meetingDate(
+        locale: Locale = .autoupdatingCurrent,
+        calendar: Calendar = .autoupdatingCurrent
+    ) -> DateFormatter {
         let formatter = DateFormatter()
-        formatter.locale = .current
-        formatter.dateFormat = "h:mm a"
+        formatter.locale = locale
+        formatter.calendar = calendar
+        formatter.timeZone = calendar.timeZone
+        formatter.dateStyle = .short
+        formatter.timeStyle = .none
         return formatter
-    }()
+    }
+
+    static func meetingTime(
+        locale: Locale = .autoupdatingCurrent,
+        calendar: Calendar = .autoupdatingCurrent
+    ) -> DateFormatter {
+        let formatter = DateFormatter()
+        formatter.locale = locale
+        formatter.calendar = calendar
+        formatter.timeZone = calendar.timeZone
+        formatter.dateStyle = .none
+        formatter.timeStyle = .short
+        return formatter
+    }
 
 }

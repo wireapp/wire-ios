@@ -32,8 +32,6 @@ import WireRequestStrategy
 import WireTransport
 import WireUtilities
 
-public typealias LaunchOptions = [UIApplication.LaunchOptionsKey: Any]
-
 public extension Bundle {
     @objc var appGroupIdentifier: String? {
         bundleIdentifier.map { "group." + $0 }
@@ -152,6 +150,14 @@ public protocol SessionManagerType: AnyObject {
     /// Switch account and and ask UI to navigate to the conversation list
     func showConversationList(in session: ZMUserSession)
 
+    /// Switch account and ask UI to navigate to the meetings screen.
+    func showMeetings(in session: ZMUserSession)
+
+    /// Switch to the given session's account without triggering any in-app navigation.
+    /// Use when post-activation flows (e.g. presenting an incoming-call UI) should drive
+    /// what the user sees next, rather than navigating to a specific conversation.
+    func activateAccount(of session: ZMUserSession)
+
     /// ask UI to open the profile of a user
     func showUserProfile(user: WireDataModel.UserType)
 
@@ -254,8 +260,12 @@ public protocol ForegroundNotificationResponder: AnyObject {
 @objcMembers
 public final class SessionManager: NSObject, SessionManagerType {
 
-    public enum AccountError: Error {
-        case accountLimitReached
+    public enum AccountError: Error, Equatable {
+        case accountLimitReached(maxNumberAccounts: Int)
+    }
+
+    enum RetainedAccountDataError: Error {
+        case accountIsActive
     }
 
     /// Maximum number of accounts which can be logged in simultanously
@@ -336,8 +346,8 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     var notificationCenter: UserNotificationCenterAbstraction = .wrapper(.current())
 
-    private let authenticatedSessionFactory: AuthenticatedSessionFactory
-    private let unauthenticatedSessionFactory: UnauthenticatedSessionFactory
+    let unauthenticatedSessionFactory: UnauthenticatedSessionFactory
+    private let cookieStorage: CookieStorage
 
     private let sessionLoadingQueue: DispatchQueue = .init(label: "sessionLoadingQueue")
 
@@ -349,10 +359,8 @@ public final class SessionManager: NSObject, SessionManagerType {
         didSet {
             reachability.tearDown()
             reachability = environment.reachabilityWrapper()
-            authenticatedSessionFactory.environment = environment
             unauthenticatedSessionFactory.environment = environment
             unauthenticatedSessionFactory.reachability = reachability
-            authenticatedSessionFactory.reachability = reachability
         }
     }
 
@@ -375,6 +383,10 @@ public final class SessionManager: NSObject, SessionManagerType {
         }
 
         return environment.isAuthenticated(selectedAccount)
+    }
+
+    public func isAccountActive(_ account: Account) -> Bool {
+        backgroundUserSessions[account.userIdentifier] != nil || environment.isAuthenticated(account)
     }
 
     public var activeUnauthenticatedSession: UnauthenticatedSession {
@@ -402,6 +414,10 @@ public final class SessionManager: NSObject, SessionManagerType {
     /// for the same account concurrently.
     private let withSessionTaskManager = NonReentrantTaskManager<ZMUserSession, any Error>()
 
+    private let mediaManager: MediaManagerType
+    private let flowManager: FlowManager
+    private let backgroundTaskExecuter: any BackgroundTaskExecuter
+
     // MARK: - Life cycle
 
     public override init() {
@@ -413,6 +429,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         maxNumberAccounts: Int = defaultMaxNumberAccounts,
         currentAppVersion: String,
         currentBuildNumber: String,
+        cookieStorage: CookieStorage,
         mediaManager: MediaManagerType,
         delegate: SessionManagerDelegate?,
         application: ZMApplication,
@@ -421,7 +438,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         environment: WireTransport.BackendEnvironment,
         configuration: SessionManagerConfiguration = SessionManagerConfiguration(),
         detector: JailbreakDetectorProtocol = JailbreakDetector(),
-        pushTokenService: PushTokenServiceInterface = PushTokenService(),
+        pushTokenService: PushTokenServiceInterface,
         callKitManager: CallKitManagerInterface,
         isDeveloperModeEnabled: Bool = false,
         isUnauthenticatedTransportSessionReady: Bool = false,
@@ -430,9 +447,9 @@ public final class SessionManager: NSObject, SessionManagerType {
         deleteUserLogs: @escaping () -> Void,
         analyticsServiceConfiguration: AnalyticsServiceConfiguration?,
         countlyProvider: @escaping () -> CountlyProtocol,
-        logFilesProvider: LogFilesProviding
+        logFilesProvider: LogFilesProviding,
+        backgroundTaskExecuter: any BackgroundTaskExecuter
     ) throws {
-        let flowManager = FlowManager(mediaManager: mediaManager)
         let reachability = environment.reachabilityWrapper()
 
         var proxyCredentials: WireTransport.ProxyCredentials?
@@ -451,24 +468,12 @@ public final class SessionManager: NSObject, SessionManagerType {
             reachability: reachability
         )
 
-        let authenticatedSessionFactory = AuthenticatedSessionFactory(
-            currentAppVersion: currentAppVersion,
-            currentBuildNumber: currentBuildNumber,
-            application: application,
-            mediaManager: mediaManager,
-            flowManager: flowManager,
-            environment: environment,
-            proxyUsername: proxyCredentials?.username,
-            proxyPassword: proxyCredentials?.password,
-            reachability: reachability,
-            minTLSVersion: minTLSVersion
-        )
-
         try self.init(
             maxNumberAccounts: maxNumberAccounts,
             currentAppVersion: currentAppVersion,
             currentBuildNumber: currentBuildNumber,
-            authenticatedSessionFactory: authenticatedSessionFactory,
+            cookieStorage: cookieStorage,
+            mediaManager: mediaManager,
             unauthenticatedSessionFactory: unauthenticatedSessionFactory,
             reachability: reachability,
             delegate: delegate,
@@ -488,7 +493,8 @@ public final class SessionManager: NSObject, SessionManagerType {
             deleteUserLogs: deleteUserLogs,
             analyticsServiceConfiguration: analyticsServiceConfiguration,
             countlyProvider: countlyProvider,
-            logFilesProvider: logFilesProvider
+            logFilesProvider: logFilesProvider,
+            backgroundTaskExecuter: backgroundTaskExecuter
         )
 
         self.memoryWarningObserver = NotificationCenter.default.addObserver(
@@ -532,7 +538,8 @@ public final class SessionManager: NSObject, SessionManagerType {
         maxNumberAccounts: Int = defaultMaxNumberAccounts,
         currentAppVersion: String,
         currentBuildNumber: String,
-        authenticatedSessionFactory: AuthenticatedSessionFactory,
+        cookieStorage: CookieStorage,
+        mediaManager: MediaManagerType,
         unauthenticatedSessionFactory: UnauthenticatedSessionFactory,
         reachability: ReachabilityWrapper,
         delegate: SessionManagerDelegate?,
@@ -542,7 +549,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         environment: WireTransport.BackendEnvironment,
         configuration: SessionManagerConfiguration = SessionManagerConfiguration(),
         detector: JailbreakDetectorProtocol = JailbreakDetector(),
-        pushTokenService: PushTokenServiceInterface = PushTokenService(),
+        pushTokenService: PushTokenServiceInterface,
         callKitManager: CallKitManagerInterface,
         isDeveloperModeEnabled: Bool = false,
         proxyCredentials: WireTransport.ProxyCredentials?,
@@ -552,13 +559,15 @@ public final class SessionManager: NSObject, SessionManagerType {
         deleteUserLogs: (() -> Void)? = nil,
         analyticsServiceConfiguration: AnalyticsServiceConfiguration?,
         countlyProvider: @escaping () -> CountlyProtocol,
-        logFilesProvider: LogFilesProviding
+        logFilesProvider: LogFilesProviding,
+        backgroundTaskExecuter: any BackgroundTaskExecuter
     ) throws {
         SessionManager.enableLogsByEnvironmentVariable()
         self.defaultEnvironment = defaultEnvironment
         self.environment = environment
         self.currentAppVersion = currentAppVersion
         self.currentBuildNumber = currentBuildNumber
+        self.cookieStorage = cookieStorage
         self.application = application
         self.delegate = delegate
         self.dispatchGroup = dispatchGroup
@@ -570,6 +579,9 @@ public final class SessionManager: NSObject, SessionManagerType {
         self.minTLSVersion = minTLSVersion
         self.deleteUserLogs = deleteUserLogs
         self.logFilesProvider = logFilesProvider
+        self.mediaManager = mediaManager
+        self.flowManager = FlowManager(mediaManager: mediaManager)
+        self.backgroundTaskExecuter = backgroundTaskExecuter
 
         guard let sharedContainerURL = Bundle.main.appGroupIdentifier.map(FileManager.sharedContainerDirectory) else {
             preconditionFailure("Unable to get shared container URL")
@@ -599,7 +611,6 @@ public final class SessionManager: NSObject, SessionManagerType {
             WireLogger.sessionManager.debug("No known accounts.")
         }
 
-        self.authenticatedSessionFactory = authenticatedSessionFactory
         self.unauthenticatedSessionFactory = unauthenticatedSessionFactory
         self.reachability = reachability
         self.maxNumberAccounts = maxNumberAccounts
@@ -625,14 +636,17 @@ public final class SessionManager: NSObject, SessionManagerType {
         updateCallNotificationStyle()
 
         pushTokenService.onTokenChange = { [weak self] _ in
-            guard
-                let self,
-                let session = activeUserSession
-            else {
+            guard let self else { return }
+
+            if DeveloperFlag.noAPNSTokenCache.isOn {
+                // Upload push token for all loaded sessions. Correct behavior would be to upload it for all accounts
+                // but we don't yet have a means to do that without loading all sessions into memory.
+                Task { await self.uploadPushToken(sessions: Array(self.backgroundUserSessions.values)) }
                 return
             }
 
-            syncLocalTokenWithRemote(session: session)
+            guard let activeUserSession else { return }
+            syncLocalTokenWithRemote(session: activeUserSession)
         }
 
         self.deleteAccountToken = AccountDeletedNotification.addObserver(observer: self, queue: groupQueue)
@@ -642,9 +656,24 @@ public final class SessionManager: NSObject, SessionManagerType {
     }
 
     @MainActor
-    public func start(launchOptions: LaunchOptions) async {
+    public func start(connectionOptions: UIScene.ConnectionOptions) async {
+        // A logout may have been interrupted before its asynchronous reminder cancellation finished.
+        // Sweep stale reminders before loading any account session.
+        let cancellationJournal = MeetingReminderCancellationJournal(defaults: sharedUserDefaults)
+        let pendingCancellations = cancellationJournal.pending()
+        let authenticatedAccountIDs = Set(accountManager.accounts.filter { environment.isAuthenticated($0) }
+            .map(\.userIdentifier))
+        // An account can still appear authenticated while its cancellation is pending.
+        await AccountMeetingReminderCanceller().cancelAll(
+            exceptAccountIDs: authenticatedAccountIDs.subtracting(pendingCancellations.keys)
+        )
+        // Token matching leaves a newer cancellation request intact if logout ran during this sweep.
+        for (accountID, token) in pendingCancellations {
+            cancellationJournal.clear(accountID: accountID, token: token)
+        }
+
         if
-            let url = launchOptions[UIApplication.LaunchOptionsKey.url] as? URL,
+            let url = connectionOptions.urlContexts.first?.url, // Currently we only support one URL
             let urlAction = try? URLAction(url: url),
             urlAction.causesLogout {
             // If a logout is coming, then no need to start.
@@ -659,7 +688,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         if let account = accountManager.selectedAccount {
             if let session = await loadSession(for: account) {
                 updateCurrentAccount(in: session.managedObjectContext)
-                session.application(application, didFinishLaunching: launchOptions)
+                session.startEphemeralTimers()
             } else {
                 WireLogger.sessionManager.critical("Failed to load session for selected account")
             }
@@ -684,7 +713,6 @@ public final class SessionManager: NSObject, SessionManagerType {
         let proxyCredentials = ProxyCredentials(username: username, password: password, proxy: proxy)
         do {
             try proxyCredentials.persist()
-            authenticatedSessionFactory.updateProxy(username: username, password: password)
             unauthenticatedSessionFactory.updateProxy(username: username, password: password)
         } catch {
             Logging.network.error("proxy credentials could not be saved - \(error.localizedDescription)")
@@ -819,6 +847,7 @@ public final class SessionManager: NSObject, SessionManagerType {
     }
 
     fileprivate func tearDownSessionAndDelete(account: Account, eraseData: Bool) {
+        cancelMeetingReminders(for: account.userIdentifier)
         tearDownBackgroundSession(for: account.userIdentifier) {
             if eraseData {
                 self.deleteAccountData(for: account)
@@ -829,17 +858,30 @@ public final class SessionManager: NSObject, SessionManagerType {
     public func logout(account: Account, error: Error? = nil) {
         WireLogger.sessionManager.debug("Logging out account \(account.userIdentifier)...")
 
-        let (accountSession, activeSession) = state.withLockUnchecked {
-            ($0.backgroundUserSessions[account.userIdentifier], $0.activeUserSession)
+        guard let isActiveSession = backgroundSessionStatus(for: account.userIdentifier) else {
+            cancelMeetingReminders(for: account.userIdentifier)
+            return
         }
 
-        if let accountSession {
-            if accountSession == activeSession {
-                logoutCurrentSession(deleteCookie: true, deleteAccount: false, error: error)
-            } else {
-                tearDownBackgroundSession(for: account.userIdentifier)
-            }
+        if isActiveSession {
+            logoutCurrentSession(deleteCookie: true, deleteAccount: false, error: error)
+        } else {
+            cancelMeetingReminders(for: account.userIdentifier)
+            tearDownBackgroundSession(for: account.userIdentifier)
         }
+    }
+
+    /// Whether the account has a live background session, and if so, whether
+    /// that session is the currently active/foreground one. Returns `nil` if
+    /// there is no live background session at all.
+
+    private func backgroundSessionStatus(for userID: UUID) -> Bool? {
+        let (backgroundSession, activeSession) = state.withLockUnchecked {
+            ($0.backgroundUserSessions[userID], $0.activeUserSession)
+        }
+
+        guard let backgroundSession else { return nil }
+        return backgroundSession == activeSession
     }
 
     public func logoutCurrentSession() {
@@ -872,6 +914,7 @@ public final class SessionManager: NSObject, SessionManagerType {
             return
         }
 
+        cancelMeetingReminders(for: account.userIdentifier)
         state.withLockUnchecked { $0.backgroundUserSessions[account.userIdentifier] = nil }
         tearDownObservers(account: account.userIdentifier)
         notifyUserSessionDestroyed(account.userIdentifier)
@@ -931,6 +974,7 @@ public final class SessionManager: NSObject, SessionManagerType {
             delete(account: account, reason: .sessionExpired)
         } else {
             createUnauthenticatedSession(accountId: account.userIdentifier)
+            cancelMeetingReminders(for: account.userIdentifier)
 
             let error = NSError(
                 userSessionErrorCode: .accessTokenExpired,
@@ -1019,6 +1063,7 @@ public final class SessionManager: NSObject, SessionManagerType {
                 let loader = try UserSessionLoader(
                     account: account,
                     accountManager: accountManager,
+                    cookieStorage: cookieStorage,
                     sharedContainerURL: sharedContainerURL,
                     defaultEnvironment: defaultEnvironment,
                     legacyEnvironment: environment,
@@ -1028,11 +1073,12 @@ public final class SessionManager: NSObject, SessionManagerType {
                     application: application,
                     appVersion: currentAppVersion,
                     buildNumber: currentBuildNumber,
-                    mediaManager: authenticatedSessionFactory.mediaManager,
-                    flowManager: authenticatedSessionFactory.flowManager,
+                    mediaManager: mediaManager,
+                    flowManager: flowManager,
                     logFilesProvider: logFilesProvider,
                     isDeveloperModeEnabled: isDeveloperModeEnabled,
-                    faultyMLSRemovalKeysByDomain: configuration.faultyMLSRemovalKeysByDomain
+                    faultyMLSRemovalKeysByDomain: configuration.faultyMLSRemovalKeysByDomain,
+                    backgroundTaskExecuter: backgroundTaskExecuter
                 )
 
                 let userSession = try await loader.load(newEnvironment: newEnvironment)
@@ -1147,11 +1193,6 @@ public final class SessionManager: NSObject, SessionManagerType {
         }
     }
 
-    private func clearCRLExpirationDates(for account: Account) {
-        let repository = CRLExpirationDatesRepository(userID: account.userIdentifier)
-        repository.removeAllExpirationDates()
-    }
-
     private func clearCacheDirectory() {
         guard let cachesDirectoryPath = cachesDirectory else { return }
         let manager = FileManager.default
@@ -1161,10 +1202,99 @@ public final class SessionManager: NSObject, SessionManagerType {
     fileprivate func deleteAccountData(for account: Account) {
         WireLogger.sessionManager.debug("Deleting the data for \(account.userName) -- \(account.userIdentifier)")
         WireLogger.session.debug("Deleting the data for account \(account)")
-        environment.cookieStorage(for: account).deleteKeychainItems()
-        account.deleteKeychainItems()
 
-        clearCRLExpirationDates(for: account)
+        do {
+            try deleteAccountData(for: account, keepAccountOnFailure: false)
+        } catch {
+            WireLogger.sessionManager.critical("Failed to delete account data for \(account): \(error)")
+        }
+    }
+
+    public func purgeRetainedAccountData(for userID: UUID) throws {
+        guard let account = accountManager.account(with: userID) else { return }
+
+        // A "retained" account keeps its data and cookie on disk after
+        // logging out (`deleteCookie: false`), so it always has a valid
+        // cookie and would be considered `isAccountActive` even though no
+        // live session exists. Only a live in-memory session should block
+        // purging its data.
+        guard backgroundUserSessions[account.userIdentifier] == nil else {
+            throw RetainedAccountDataError.accountIsActive
+        }
+
+        try deleteAccountData(for: account, keepAccountOnFailure: true)
+        cancelMeetingReminders(for: account.userIdentifier)
+    }
+
+    /// Starts account-scoped reminder cancellation and records the intent before launching the task.
+    /// The startup sweep retries it if the app exits before cancellation finishes.
+    private func cancelMeetingReminders(for accountID: UUID) {
+        let token = MeetingReminderCancellationJournal(defaults: sharedUserDefaults).record(accountID: accountID)
+        Task { [weak self] in
+            await AccountMeetingReminderCanceller().cancelAll(accountID: accountID)
+            if let self {
+                MeetingReminderCancellationJournal(defaults: sharedUserDefaults)
+                    .clear(accountID: accountID, token: token)
+            }
+        }
+    }
+
+    /// Tears down any live background session for the account (if it isn't
+    /// the currently active/foreground session), then purges its retained
+    /// data on disk.
+    ///
+    /// - Throws: `RetainedAccountDataError.accountIsActive` if the account is
+    /// the current foreground session — safely logging that out requires the
+    /// full app-state logout flow (`sessionManagerWillLogout`), which this
+    /// method does not perform.
+
+    public func logoutBackgroundSessionAndPurgeRetainedAccountData(for userID: UUID) async throws {
+        if let isActiveSession = backgroundSessionStatus(for: userID) {
+            guard !isActiveSession else {
+                throw RetainedAccountDataError.accountIsActive
+            }
+
+            await withCheckedContinuation { continuation in
+                tearDownBackgroundSession(for: userID) {
+                    continuation.resume()
+                }
+            }
+        }
+
+        try purgeRetainedAccountData(for: userID)
+    }
+
+    private func deleteAccountData(
+        for account: Account,
+        keepAccountOnFailure: Bool
+    ) throws {
+        let accountID = account.userIdentifier
+        let accountDataFolder = CoreDataStack.accountDataFolder(
+            accountIdentifier: accountID,
+            applicationContainer: sharedContainerURL
+        )
+
+        do {
+            try FileManager.default.removeItem(at: accountDataFolder)
+        } catch let error as NSError where error.domain == NSCocoaErrorDomain && error.code == NSFileNoSuchFileError {
+            // The desired state has already been reached.
+        } catch {
+            if keepAccountOnFailure {
+                throw error
+            }
+            WireLogger.sessionManager.critical("Impossible to delete the account \(account): \(error)")
+        }
+
+        do {
+            try environment.cookieStorage(for: account).removeCookies()
+        } catch {
+            if keepAccountOnFailure {
+                throw error
+            }
+            WireLogger.sessionManager.error("Failed to remove cookies: \(error)")
+        }
+
+        account.deleteKeychainItems()
 
         deleteUserLogs?()
 
@@ -1178,17 +1308,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         PrivateUserDefaults.removeAll(forUserID: account.userIdentifier, in: sharedUserDefaults)
         PrivateUserDefaults.removeAll(forUserID: account.userIdentifier, in: .standard)
 
-        let accountID = account.userIdentifier
         accountManager.remove(account)
-
-        do {
-            try FileManager.default.removeItem(at: CoreDataStack.accountDataFolder(
-                accountIdentifier: accountID,
-                applicationContainer: sharedContainerURL
-            ))
-        } catch {
-            WireLogger.sessionManager.critical("Impossible to delete the account \(account): \(error)")
-        }
     }
 
     fileprivate func registerObservers(account: Account, session: ZMUserSession) {
@@ -1268,29 +1388,6 @@ public final class SessionManager: NSObject, SessionManagerType {
                 WireLogger.sessionManager.error("Failed to delete messages older than the retention limit")
             }
         }
-    }
-
-    @MainActor
-    private func createUserSession(
-        for account: Account,
-        with coreDataStack: CoreDataStack,
-        journal: Journal,
-        logFilesProvider: LogFilesProviding
-    ) async -> ZMUserSession? {
-        let sessionConfig = ZMUserSession.Configuration(
-            appLockConfig: configuration.legacyAppLockConfig
-        )
-
-        return await authenticatedSessionFactory.session(
-            for: account,
-            coreDataStack: coreDataStack,
-            configuration: sessionConfig,
-            sharedUserDefaults: sharedUserDefaults,
-            isDeveloperModeEnabled: isDeveloperModeEnabled,
-            journal: journal,
-            logFilesProvider: logFilesProvider,
-            faultyMLSRemovalKeysByDomain: configuration.faultyMLSRemovalKeysByDomain
-        )
     }
 
     @MainActor
@@ -1380,13 +1477,13 @@ public final class SessionManager: NSObject, SessionManagerType {
     private func updateCallNotificationStyle() {
         switch callNotificationStyle {
         case .pushNotifications:
-            authenticatedSessionFactory.mediaManager.setUiStartsAudio(false)
+            mediaManager.setUiStartsAudio(false)
             callKitManager.isEnabled = false
 
         case .callKit:
             // Should be set to true when CallKit is used. Then AVS will not start
             // the audio before the audio session is active
-            authenticatedSessionFactory.mediaManager.setUiStartsAudio(true)
+            mediaManager.setUiStartsAudio(true)
             callKitManager.isEnabled = true
         }
     }
@@ -1564,6 +1661,12 @@ extension SessionManager: UnauthenticatedSessionDelegate {
         accountManager.numberOfAccounts < maxNumberAccounts
     }
 
+    public func sessionMaxNumberAccounts(
+        _ session: UnauthenticatedSession
+    ) -> Int {
+        maxNumberAccounts
+    }
+
     public func session(
         session: UnauthenticatedSession,
         isExistingAccount account: Account
@@ -1589,7 +1692,10 @@ extension SessionManager: UnauthenticatedSessionDelegate {
         guard
             numberOfExistingAccounts < maxNumberAccounts || createdAccountIsKnown
         else {
-            let error = NSError(userSessionErrorCode: .accountLimitReached, userInfo: nil)
+            let error = NSError(
+                userSessionErrorCode: .accountLimitReached,
+                userInfo: [ZMAccountLimitReachedMaxNumberAccountsKey: maxNumberAccounts]
+            )
             loginDelegate?.authenticationDidFail(error)
             return
         }
@@ -1601,6 +1707,9 @@ extension SessionManager: UnauthenticatedSessionDelegate {
             storage: sharedUserDefaults
         )
         journal[.isInitialSyncRequired] = true
+
+        account.lastSSOIdentityProviderID = account.lastSSOIdentityProviderID ??
+            accountManager.account(with: account.userIdentifier)?.lastSSOIdentityProviderID
 
         accountManager.addAndSelect(account)
 
@@ -1685,6 +1794,10 @@ extension SessionManager {
     private func applicationDidBecomeActive(_ note: Notification) {
         guard let session = activeUserSession, session.isLoggedIn else { return }
         session.checkE2EICertificateExpiryStatus()
+
+        // In order to test the behaviour, assume here the user did open the main app
+        // and extensions are working again
+        DeveloperFlag.simulateMainAppRequiredError.enable(false)
     }
 
 }
@@ -1755,7 +1868,10 @@ extension SessionManager: WireCallCenterCallStateObserver {
 
             for (_, session) in backgroundUserSessions
                 where session.managedObjectContext == moc && activeUserSession != session {
-                showConversation(conversation, at: nil, in: session)
+                // Switch to the call's account without navigating to the conversation.
+                // The post-activation flow (AppRootRouter `.authenticated` →
+                // updateActiveCallPresentationState) presents the in-app call UI.
+                activateAccount(of: session)
             }
         default:
             return

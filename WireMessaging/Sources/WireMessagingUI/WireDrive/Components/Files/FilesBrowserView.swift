@@ -44,17 +44,20 @@ package struct FilesBrowserView: View {
             viewModel: viewModel,
             isBrowsing: isBrowsing,
             backgroundColor: ColorTheme.Backgrounds.surface.color,
-            navigationTitle: Strings.AllFiles.navigationTitle,
-            toolbarContent: { emptyToolbar() },
+            toolbarContent: { toolBarContent },
             sheetContent: { sheetContent($0) }
         )
     }
+}
 
-    @ToolbarContentBuilder
-    private func emptyToolbar() -> some ToolbarContent {
-        // prevents compilation issue, no toolbar for this view.
-        if false {
-            ToolbarItem {}
+// MARK: - Toolbar
+
+private extension FilesBrowserView {
+    @ToolbarContentBuilder private var toolBarContent: some ToolbarContent {
+        ToolbarItem(placement: .principal) {
+            Text(viewModel.navigationTitle)
+                .font(for: .h3)
+                .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
         }
     }
 }
@@ -63,8 +66,8 @@ private extension FilesBrowserView {
     @ViewBuilder
     func sheetContent(_ navigationItem: FilesViewModel.SheetNavigation) -> some View {
         switch navigationItem {
-        case let .shareLink(shareLinkView):
-            shareLinkView
+        case let .shareLink(item):
+            ShareLinkView(viewModel: viewModel.shareLinkViewModel(item: item))
         default:
             EmptyView()
         }

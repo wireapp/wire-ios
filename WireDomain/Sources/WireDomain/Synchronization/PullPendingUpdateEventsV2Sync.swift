@@ -76,7 +76,7 @@ public struct PullPendingUpdateEventsSyncV2: PullPendingUpdateEventsSyncV2Protoc
 
         let liveEventStream = try await pushChannel.open()
 
-        logger.debug("handling live event stream", attributes: logAttributes)
+        logger.info("handling live event stream", attributes: logAttributes)
         do {
             streamLoop: for try await element in liveEventStream {
                 try Task.checkCancellation()
@@ -134,7 +134,7 @@ public struct PullPendingUpdateEventsSyncV2: PullPendingUpdateEventsSyncV2Protoc
         var storedEnvelopes: [(UpdateEventEnvelope, Int64)] = []
 
         // decrypt
-        try await coreCryptoProvider.coreCrypto().extendedTransaction { coreCryptoContext in
+        try await coreCryptoProvider.coreCrypto().transaction { coreCryptoContext in
             for envelope in envelopes {
                 var envelope = envelope
                 envelope.events = await decryptEnvelope(envelope, in: coreCryptoContext)

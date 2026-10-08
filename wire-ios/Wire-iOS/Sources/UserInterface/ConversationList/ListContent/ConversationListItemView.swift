@@ -280,6 +280,7 @@ final class ConversationListItemView: UIView {
 
     func update(for conversation: ConversationListCellConversation?) {
         self.conversation = conversation
+        labelsStack.accessibilityTraits = .button
 
         guard let conversation else {
             configure(with: nil, subtitle: nil)

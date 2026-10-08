@@ -19,6 +19,7 @@
 import Foundation
 
 import WireDataModelSupport
+import WireTransportSupport
 @testable import WireSyncEngine
 
 class ApplicationStatusDirectoryTests: MessagingTest {
@@ -28,7 +29,7 @@ class ApplicationStatusDirectoryTests: MessagingTest {
     override func setUp() {
         super.setUp()
 
-        let cookieStorage = ZMPersistentCookieStorage()
+        let cookieStorage = LegacyCookieStorage(testingWithUserIdentifier: UUID())
         let mockApplication = ApplicationMock()
 
         syncMOC.performAndWait {

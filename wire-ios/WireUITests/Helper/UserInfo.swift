@@ -29,6 +29,7 @@ class UserInfo {
     var backendDomain: String
     var teamName: String
     var teamID: UUID?
+    var isSSOUser: Bool
 
     init(name: String, username: String, password: String, domain: String, teamName: String, teamID: UUID?) {
         self.name = name
@@ -40,6 +41,7 @@ class UserInfo {
         self.backendDomain = ""
         self.teamName = teamName
         self.teamID = teamID
+        self.isSSOUser = false
     }
 
     init(email: String, password: String) {
@@ -51,6 +53,8 @@ class UserInfo {
         self.id = ""
         self.backendDomain = ""
         self.teamName = ""
+        self.teamID = nil
+        self.isSSOUser = false
     }
 
     init() {
@@ -63,6 +67,7 @@ class UserInfo {
         self.backendDomain = ""
         self.teamName = ""
         self.teamID = nil
+        self.isSSOUser = false
     }
 
     func updateUserInfo(newInfo: UserInfo) {
@@ -83,6 +88,9 @@ class UserInfo {
         }
         if !newInfo.backendDomain.isEmpty {
             backendDomain = newInfo.backendDomain
+        }
+        if newInfo.isSSOUser {
+            isSSOUser = true
         }
     }
 }

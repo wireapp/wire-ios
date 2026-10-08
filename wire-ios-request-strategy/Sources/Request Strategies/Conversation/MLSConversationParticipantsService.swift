@@ -17,7 +17,9 @@
 //
 
 import Foundation
+import WireCoreCrypto
 import WireDataModel
+import WireFoundation
 import WireLogging
 
 // sourcery: AutoMockable
@@ -113,7 +115,7 @@ struct MLSConversationParticipantsService: MLSConversationParticipantsServiceInt
 
         do {
 
-            try await mlsService.addMembersToConversation(with: mlsUsers, for: groupID)
+            try await addMembersWithStaleMessageRecovery(mlsUsers, to: groupID)
 
         } catch let MLSService.MLSAddMembersError.failedToClaimKeyPackages(failedMLSUsers) {
 
@@ -138,6 +140,18 @@ struct MLSConversationParticipantsService: MLSConversationParticipantsServiceInt
                     "failed to add members to conversation (\(String(describing: qualifiedID))): \(String(describing: error))"
                 )
             throw error
+        }
+    }
+
+    private func addMembersWithStaleMessageRecovery(
+        _ users: [MLSUser],
+        to groupID: MLSGroupID
+    ) async throws {
+        do {
+            try await mlsService.addMembersToConversation(with: users, for: groupID)
+        } catch where error.isMLSStaleMessageError {
+            await mlsService.fetchAndRepairGroup(with: groupID)
+            try await mlsService.addMembersToConversation(with: users, for: groupID)
         }
     }
 
@@ -177,5 +191,33 @@ struct MLSConversationParticipantsService: MLSConversationParticipantsServiceInt
                 )
             throw error
         }
+    }
+}
+
+private extension Error {
+
+    var isMLSStaleMessageError: Bool {
+        if let backoffError = self as? BackoffRetrier.Failure,
+           case let .exceededMaxAttempts(latestError) = backoffError {
+            return latestError.isMLSStaleMessageError
+        }
+
+        if let coreCryptoError = self as? CoreCryptoError,
+           case let .Mls(.MessageRejected(reason: reason)) = coreCryptoError {
+            guard let error = try? JSONDecoder().decode(
+                MLSTransportError.self,
+                from: Data(reason.utf8)
+            ) else {
+                return false
+            }
+
+            if case .mlsStaleMessage = error {
+                return true
+            }
+
+            return false
+        }
+
+        return false
     }
 }

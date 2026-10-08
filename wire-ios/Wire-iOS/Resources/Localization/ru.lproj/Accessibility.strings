@@ -15,12 +15,12 @@
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
+
 /// Naming convention:
 ///
 /// The names of all accessibility strings should follow the format:
 ///
 ///  "<screen>.<component>.<usage>"
-
 
 "peoplepicker.upgrade_banner.close_button.label" = "Закрыть возможность создания команды";
 
@@ -54,6 +54,10 @@
 "conversation.timerForSelfDeletingMessagesDay.value" = "%@ дн.";
 "conversation.timerForSelfDeletingMessagesWeek.value" = "%@ нед.";
 "conversation.timerForSelfDeletingMessagesWeeks.value" = "%@ нед.";
+"conversation.cameraButtonDisabled.description" = "Создание или выбор фото, отключены при доступе на просмотр";
+"conversation.sketchButtonDisabled.description" = "Открытие эскиза для рисования или записи, отключено при доступе на просмотр ";
+"conversation.uploadFileButtonDisabled.description" = "Общий доступ к файлу, отключен при доступе на просмотр ";
+"conversation.videoButtonDisabled.description" = "Запись видео, отключена при доступе на просмотр ";
 
 "conversation.headerButton.description" = "Использовать заголовок";
 "conversation.boldButton.description" = "Использовать полужирный текст";
@@ -131,6 +135,7 @@
 "sketch.drawButton.hint" = "Нажмите дважды для включения или отключения";
 "sketch.selectEmojiButton.description" = "Выбрать смайлик";
 "sketch.sendButton.description" = "Отправить";
+"sketch.confirmButton.description" = "Подтвердить";
 "sketch.undoButton.description" = "Отменить последний шаг";
 "sketch.closeButton.description" = "Закрыть скетч";
 
@@ -153,6 +158,7 @@
 "settings.deviceCount.hint" = "Используемые устройства %@";
 "settings.closeButton.description" = "Закрыть настройки";
 "settings.backButton.description" = "Вернуться в раздел Настройки";
+"settings.shareDebugInfoBanner.arrow" = "Нажмите дважды, чтобы открыть дополнительные параметры";
 
 "accountSettings.backButton.description" = "Вернуться в раздел Аккаунт";
 
@@ -220,7 +226,7 @@
 "conversationsList.mentionStatus.value" = "Вас упомянули";
 "conversationsList.replyStatus.value" = "Ответить";
 "conversationsList.badgeView.value" = "Новых сообщений: %d";
-"conversationsList.itemCell.hint" = "Нажмите дважды, чтобы открыть беседу";
+"conversationsList.itemCell.hint" = "Нажмите дважды, чтобы открыть беседу. Нажмите трижды, чтобы открыть ее настройки";
 "conversationsList.itemCell.avatar.group.label" = "Группа";
 "conversationsList.itemCell.avatar.channel.label" = "Канал";
 "conversationsList.joinButton.description" = "Присоединиться";
@@ -287,7 +293,7 @@
 "calling.microphoneOff.description" = "Микрофон отключен";
 "calling.cameraOn.description" = "Камера включена";
 "calling.cameraOff.description" = "Камера отключена";
-"calling.activeSpeaker.description" = "Активный динамик";
+"calling.activeSpeaker.description" = "Активный спикер";
 "calling.sharesScreen.description" = "Демонстрация экрана";
 "calling.swipeUpParticipants.hint" = "Двойное касание для пролистывания вверх и просмотра всех данных участника";
 "calling.swipeDownParticipants.hint" = "Двойное касание для пролистывания вниз и скрытия данных участника";
@@ -342,3 +348,9 @@
 
 "webAuth.urlLabel.description" = "URL провайдера идентификации";
 "webAuth.urlLabel.hint" = "Нажмите, чтобы открыть полный URL.";
+
+// MARK: - Admin Selection
+
+"adminSelection.searchBar.clearButton.description" = "Очистить поиск";
+"adminSelection.candidateRow.hint" = "Нажмите дважды, чтобы выбрать нового администратора";
+"adminSelection.deleteGroupButton.hint" = "Удаляет группу навсегда";

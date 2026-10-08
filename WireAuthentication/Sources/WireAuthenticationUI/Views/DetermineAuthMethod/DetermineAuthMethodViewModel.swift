@@ -41,13 +41,23 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
     @Published var modalDestination: DetermineAuthMethodSheet?
     @Published var existsAnotherAccount: Bool
 
+    /// Action to run once `modalDestination`'s dismissal transition has completed.
+    /// See `confirmBackendSwitch(didConfirm:email:environment:)`.
+    private var pendingModalDismissAction: (() -> Void)?
+
     var isNextButtonEnabled: Bool {
-        !isValidEmailOrSSOCode()
+        if overrideAllowEmailLoginOnly {
+            isValidEmail
+        } else {
+            isValidEmail || isValidSSOCode
+        }
     }
 
     var isOnPremiseBackend: Bool {
         environment.environmentType != .default
     }
+
+    let overrideAllowEmailLoginOnly: Bool
 
     // MARK: - Dependencies
 
@@ -55,6 +65,14 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
     private let router: any Router
     private let bridge: WireAuthenticationBridge
     package let environment: BackendEnvironment2
+
+    /// Whether accounts from more than one backend can be added in the same app.
+    private let allowsMultipleBackends: Bool
+
+    /// The `restAPIURL` hosts of the accounts already logged in on this device.
+    private let existingBackendHosts: Set<String>
+    private let isAccountAlreadyLoggedIn: (AuthenticationResult) -> Bool
+
     private var cancellable: AnyCancellable?
 
     // MARK: - Life cycle
@@ -66,7 +84,11 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         environment: BackendEnvironment2,
         emailOrSSOCode: String = "",
         existsAnotherAccount: Bool,
+        allowsMultipleBackends: Bool,
+        existingBackendHosts: Set<String>,
         isLoading: Bool = false,
+        isAccountAlreadyLoggedIn: @escaping (AuthenticationResult) -> Bool = { _ in false },
+        overrideAllowEmailLoginOnly: Bool
     ) {
         self.factory = factory
         self.router = router
@@ -74,7 +96,11 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         self.environment = environment
         self.emailOrSSOCode = emailOrSSOCode
         self.existsAnotherAccount = existsAnotherAccount
+        self.allowsMultipleBackends = allowsMultipleBackends
+        self.existingBackendHosts = existingBackendHosts
         self.isLoading = isLoading
+        self.isAccountAlreadyLoggedIn = isAccountAlreadyLoggedIn
+        self.overrideAllowEmailLoginOnly = overrideAllowEmailLoginOnly
 
         self.cancellable = bridge.inboundEvents.sink { [weak self] event in
             switch event {
@@ -96,6 +122,19 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         isLoading = true
         defer {
             isLoading = false
+        }
+
+        // When only email login is allowed, validate the input as an email before
+        // navigating to the login flow. An SSO code or otherwise invalid input is ignored
+        // (the submit button is also disabled for it).
+        if overrideAllowEmailLoginOnly {
+            guard let validatedEmail else { return }
+            router.navigate(to: DetermineAuthMethodDestination.login(
+                email: validatedEmail,
+                didDetectDomainConflict: false,
+                environment: environment
+            ))
+            return
         }
 
         do {
@@ -138,11 +177,38 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         bridge.sendOutboundEvent(.exitFlowRequested)
     }
 
+    /// Dismisses the confirmation sheet; the switch (and the SSO sheet it triggers) runs in
+    /// `onModalDismissed()` instead, to avoid "Attempted to present SFAuthenticationViewController
+    /// from a view controller that is being dismissed".
+    func confirmBackendSwitch(didConfirm: Bool, email: String?, environment: BackendEnvironment2) {
+        pendingModalDismissAction = didConfirm ? { [weak self] in
+            Task { await self?.switchBackend(email: email, environment: environment) }
+        } : nil
+        modalDestination = nil
+    }
+
+    func onModalDismissed() {
+        pendingModalDismissAction?()
+        pendingModalDismissAction = nil
+    }
+
     // MARK: - Private
 
     private func handleAuthenticationMethod(
         _ method: AuthenticationMethod
     ) async {
+        // On-prem login resolves and checks its own target backend in `handleOnPremLogin`.
+        // Every other method authenticates against the current flow environment, so block it
+        // here when multibackend support is disabled and that backend differs from the one
+        // already in use.
+        if case .onPremLogin = method {
+            // handled below in handleOnPremLogin
+        } else if isBackendBlockedByMultibackendPolicy(environment) {
+            WireLogger.authentication.info("Blocking login: multibackend support disabled")
+            alert = .switchBackendBlocked
+            return
+        }
+
         switch method {
         case let .loginViaEmail(email, didDetectDomainConflict):
             router.navigate(to: DetermineAuthMethodDestination.login(
@@ -158,10 +224,15 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
                 environment: environment
             ))
 
-        case let .loginViaSSO(code):
+        case let .loginViaSSO(code, multiIngressIdentityProviderID):
             do {
-                let authResult = try await loginViaSSO(code: code, environment: nil)
-                router.navigate(to: DetermineAuthMethodDestination.noHistory(authResult))
+                var authResult = try await loginViaSSO(code: code, environment: nil)
+                authResult.multiIngressIdentityProviderID = multiIngressIdentityProviderID
+                if isAccountAlreadyLoggedIn(authResult) {
+                    alert = .alreadyLoggedIn
+                } else {
+                    router.navigate(to: DetermineAuthMethodDestination.noHistory(authResult))
+                }
             } catch let error as LoginViaSSOUseCaseError {
                 switch error {
                 case .invalidCode:
@@ -199,6 +270,21 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         return try await loginViaSSO.invoke(code: code)
     }
 
+    /// Whether the given backend may not be used because multibackend support is disabled and
+    /// an account already exists on a different backend.
+    ///
+    /// Returns `false` when multibackend support is enabled, when no other account exists yet
+    /// (switching the single backend is allowed), or when the backend matches one already in use.
+    private func isBackendBlockedByMultibackendPolicy(_ backend: BackendEnvironment2) -> Bool {
+        guard !allowsMultipleBackends, !existingBackendHosts.isEmpty else {
+            return false
+        }
+        guard let host = backend.config.endpoints.restAPIURL.host() else {
+            return false
+        }
+        return !existingBackendHosts.contains(host)
+    }
+
     private func handleOnPremLogin(
         email: String?,
         backendConfigURL: URL
@@ -210,6 +296,12 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
             }.value
 
             WireLogger.authentication.info("Fetching backend config succeeded")
+
+            if isBackendBlockedByMultibackendPolicy(environment) {
+                WireLogger.authentication.info("Blocking backend switch: multibackend support disabled")
+                alert = .switchBackendBlocked
+                return
+            }
 
             modalDestination = .switchBackendConfirmation(
                 email: email,
@@ -233,9 +325,11 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
                 code: nil,
                 environment: environment
             )
-            router.navigate(
-                to: DetermineAuthMethodDestination.noHistory(authResult)
-            )
+            if isAccountAlreadyLoggedIn(authResult) {
+                alert = .alreadyLoggedIn
+            } else {
+                router.navigate(to: DetermineAuthMethodDestination.noHistory(authResult))
+            }
         } catch let error as LoginViaSSOUseCaseError {
             switch error {
             case .invalidCode:
@@ -270,14 +364,33 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         }
     }
 
-    private func isValidEmailOrSSOCode() -> Bool {
+    private var isValidEmail: Bool {
+        validatedEmail != nil
+    }
+
+    /// The trimmed, validated email entered by the user, or `nil` if the input is not a valid email.
+    private var validatedEmail: String? {
+        guard case let .email(email, _) = try? validateEmailOrSSOCode() else {
+            return nil
+        }
+        return email
+    }
+
+    private var isValidSSOCode: Bool {
         do {
-            let useCase = factory.validateEmailOrSSOCodeUseCase()
-            _ = try useCase.invoke(input: emailOrSSOCode.trimmingCharacters(in: .whitespaces))
-            return true
+            if case .ssoCode = try validateEmailOrSSOCode() {
+                return true
+            } else {
+                return false
+            }
         } catch {
             return false
         }
+    }
+
+    private func validateEmailOrSSOCode() throws -> ValidatedEmailOrSSOCode {
+        let useCase = factory.validateEmailOrSSOCodeUseCase()
+        return try useCase.invoke(input: emailOrSSOCode.trimmingCharacters(in: .whitespaces))
     }
 
 }

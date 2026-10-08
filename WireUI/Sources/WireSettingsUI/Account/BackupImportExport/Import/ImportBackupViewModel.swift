@@ -89,6 +89,20 @@ final class ImportBackupViewModel: ObservableObject {
 
     func pickedBackupFile(result: Result<URL, any Error>) {
         func onFailure(_ error: any Error) {
+            switch error {
+            case ImportBackupError.invalidFileExtension:
+                alertContent = .init(
+                    title: Strings.Alert.InvalidFileError.title,
+                    message: Strings.Alert.InvalidFileError.message,
+                    action: Strings.Alert.ok
+                )
+            default:
+                alertContent = .init(
+                    title: Strings.Alert.GenericError.title,
+                    message: Strings.Alert.GenericError.message,
+                    action: Strings.Alert.ok
+                )
+            }
             logger.error("failed to pick backup file to restore: \(String(reflecting: error))")
             state = .restoreFailed
         }
@@ -128,6 +142,11 @@ final class ImportBackupViewModel: ObservableObject {
                 try await startImport(from: url, password: "")
             } catch {
                 logger.error("Failed to start import: \(error)")
+                alertContent = .init(
+                    title: Strings.Alert.GenericError.title,
+                    message: Strings.Alert.GenericError.message,
+                    action: Strings.Alert.ok
+                )
                 state = .restoreFailed
             }
         }
@@ -144,6 +163,11 @@ final class ImportBackupViewModel: ObservableObject {
                 try await startImport(from: url, password: password)
             } catch {
                 logger.error("Failed to start import: \(error)")
+                alertContent = .init(
+                    title: Strings.Alert.GenericError.title,
+                    message: Strings.Alert.GenericError.message,
+                    action: Strings.Alert.ok
+                )
                 state = .restoreFailed
             }
         }

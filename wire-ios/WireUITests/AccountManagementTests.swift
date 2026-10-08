@@ -19,16 +19,47 @@
 import WireFoundation
 import XCTest
 
+/// [core-messenger]
 final class AccountManagementTests: WireUITestCase {
 
     var teamMember: UserInfo!
+
+    @MainActor
+    func testUpdateNameAndUsernameInfo_TC_8932_8934() async throws {
+
+        let user = try await UserHelper.default.createPersonalUser()
+
+        let accountSettingPage = try app.loginUser(email: user.email, password: user.password)
+            .acceptPopup()
+            .openSettings()
+            .openAccountSettings()
+            .tapNameField()
+            .updateName()
+            .tapUsernameField()
+            .updateUsernameAndSave()
+
+        XCTAssertTrue(
+            accountSettingPage.nameField.waitForExistence(timeout: 3),
+            "Name field was not visible"
+        )
+
+        XCTAssertTrue(
+            (accountSettingPage.nameField.value as? String)?.contains("-updated") == true,
+            "Updated name was not visible"
+        )
+
+        XCTAssertTrue(
+            accountSettingPage.usernameField.label.contains("@\(user.username)-updated"),
+            "Updated username was not visible"
+        )
+    }
 
     @MainActor
     func testAccountManagementLockWithPasscode_TC_8950() async throws {
 
         let passcode = UserGenerator.generateAppPasscode()
 
-        let user = try await userHelper.createPersonalUser()
+        let user = try await UserHelper.default.createPersonalUser()
 
         let page = try await app.loginUser(email: user.email, password: user.password)
             .acceptPopup()
@@ -47,13 +78,12 @@ final class AccountManagementTests: WireUITestCase {
 
     }
 
-    /// testiny: https://app.testiny.io/IOS/testcases/tcf/1287/tc/8796
     @MainActor
-    func testAccountManagementUpdateEmailAndResetPassword_TC_8933_TC_8931() async throws {
+    func testAccountManagementUpdateEmailAndResetPassword_TC_8933_8931() async throws {
 
         let updatedUserDetails = UserGenerator.generateUniqueUserInfo()
 
-        let user = try await userHelper.createPersonalUser()
+        let user = try await UserHelper.default.createPersonalUser()
 
         let verifyEmailPage = try app.loginUser(email: user.email, password: user.password)
             .acceptPopup()
@@ -72,5 +102,63 @@ final class AccountManagementTests: WireUITestCase {
 
         XCTAssertTrue(webViewPage.webViewOpened(), "WebView didn't open")
 
+    }
+
+    @MainActor
+    func testViewLoggedInDevicesVerifyAndDeleteDevice_TC_8952_8953() async throws {
+        // GIVEN
+        let user = try await UserHelper.default.createPersonalUser()
+        let deviceName = "device123"
+
+        let conversationsPage = try app.loginUser(email: user.email, password: user.password)
+            .acceptPopup()
+
+        _ = try await testServicesClient.getInstanceId(
+            email: user.email,
+            password: user.password,
+            name: user.name,
+            verificationCode: nil,
+            deviceName: deviceName
+        )
+        // WHEN
+        let deviceDetailsPage = try conversationsPage
+            .openSettings()
+            .openDevices()
+            .verifyLoggedInDevicesListContains(deviceName)
+            .openDeviceDetails(named: deviceName)
+
+        // THEN
+        _ = try await deviceDetailsPage
+            .verifyDevice()
+            .backgroundAndResume(app: app, forDelay: 2)
+            .verifyDeviceIsStillVerified()
+            .deleteDevice(password: user.password)
+            .verifyDeviceIsDeleted(named: deviceName)
+    }
+
+    @MainActor
+    func testDeleteDeviceWhenClientLimitReached_TC_8973() async throws {
+        // GIVEN
+        let user = try await UserHelper.default.createPersonalUser()
+        // 7 instances to register 7 clients
+        let deviceNames = (1 ... 7).map { "device-\($0)" }
+
+        for deviceName in deviceNames {
+            _ = try await testServicesClient.getInstanceId(
+                email: user.email,
+                password: user.password,
+                name: user.name,
+                verificationCode: nil,
+                deviceName: deviceName,
+                useCache: false
+            )
+        }
+
+        // WHEN
+        _ = try app.loginUser(email: user.email, password: user.password)
+
+        // THEN
+        _ = try ManagedDevicesPage()
+            .removeFirstDeviceAndContinue(password: user.password)
     }
 }

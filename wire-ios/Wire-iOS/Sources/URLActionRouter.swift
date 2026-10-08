@@ -39,10 +39,6 @@ protocol URLActionRouterProtocol {
     func open(url: URL) -> Bool
 }
 
-// MARK: - Logging
-
-private let zmLog = ZMSLog(tag: "UI")
-
 // MARK: - URLActionRouter
 
 class URLActionRouter: URLActionRouterProtocol {
@@ -286,6 +282,10 @@ extension URLActionRouter: PresentationDelegate {
 
     func showConversationList() {
         navigate(to: .conversationList)
+    }
+
+    func showMeetings() {
+        navigate(to: .meetings)
     }
 
     // MARK: - Private Implementation

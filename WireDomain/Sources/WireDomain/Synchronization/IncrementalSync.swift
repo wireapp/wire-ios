@@ -23,7 +23,6 @@ import WireLogging
 import WireNetwork
 import WireSystem
 import WireUtilities
-import WireUtilitiesPackage
 
 public struct IncrementalSync: IncrementalSyncProtocol {
 
@@ -46,6 +45,8 @@ public struct IncrementalSync: IncrementalSyncProtocol {
     private let journal: Journal
     private let mlsGroupRepairAgent: MLSGroupRepairAgentProtocol
     private let earService: EARServiceInterface
+    private let backgroundTaskExecuter: any BackgroundTaskExecuter
+    private let beforeProcessingLiveEvent: (UpdateEvent) async -> Void
 
     public init(
         selfClientID: String,
@@ -60,7 +61,9 @@ public struct IncrementalSync: IncrementalSyncProtocol {
         liveBrokenGroupSubject: PassthroughSubject<Set<String>, Never>,
         journal: Journal,
         mlsGroupRepairAgent: MLSGroupRepairAgentProtocol,
-        earService: EARServiceInterface
+        earService: EARServiceInterface,
+        backgroundTaskExecuter: any BackgroundTaskExecuter,
+        beforeProcessingLiveEvent: @escaping (UpdateEvent) async -> Void = { _ in }
     ) {
         self.selfClientID = selfClientID
         self.pushChannelAPI = pushChannelAPI
@@ -75,6 +78,8 @@ public struct IncrementalSync: IncrementalSyncProtocol {
         self.journal = journal
         self.mlsGroupRepairAgent = mlsGroupRepairAgent
         self.earService = earService
+        self.backgroundTaskExecuter = backgroundTaskExecuter
+        self.beforeProcessingLiveEvent = beforeProcessingLiveEvent
     }
 
     public func perform() async throws -> Token {
@@ -110,7 +115,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
             syncStateSubject.send(.incrementalSyncing(.createPushChannel))
             let pushChannel = try await pushChannelAPI.createPushChannel(clientID: selfClientID)
 
-            logger.debug("opening push channel", attributes: .incrementalSyncV2)
+            logger.info("opening push channel", attributes: .incrementalSyncV2)
             syncStateSubject.send(.incrementalSyncing(.openPushChannel))
 
             let liveEventStream = try await pushChannel.open()
@@ -166,17 +171,29 @@ public struct IncrementalSync: IncrementalSyncProtocol {
                 logger.info("handling live event stream", attributes: .incrementalSyncV2, .safePublic)
                 syncStateSubject.send(.liveSyncing(.ongoing))
 
-                // because we might be interrupted when in background, we wrap the sync in an expiringActivity that
-                // will cancel the task - not keeping any db operation (sqlite file opened) in suspend mode
-                await withExpiringActivity(reason: "processLiveStream IncrementalSync") {
-                    await processLiveEvents(
-                        liveEventStream: liveEventStream,
-                        processedEnvelopeIDs: processedEnvelopeIDs,
-                        publicKeys: publicKeys
+                do {
+                    // because we might be interrupted when in background, we wrap the sync in an expiringActivity that
+                    // will cancel the task - not keeping any db operation (sqlite file opened) in suspend mode
+                    try await withBackgroundTask(
+                        name: "processLiveStream IncrementalSync",
+                        executer: backgroundTaskExecuter
+                    ) {
+                        await processLiveEvents(
+                            liveEventStream: liveEventStream,
+                            processedEnvelopeIDs: processedEnvelopeIDs,
+                            publicKeys: publicKeys
+                        )
+                    }
+                } catch {
+                    // if we expire, close everything
+                    WireLogger.sync.info(
+                        "Error while processing live stream, close push channel",
+                        attributes: .incrementalSyncV2
                     )
+                    await pushChannel.close()
                 }
 
-                logger.debug("live event stream did finish", attributes: .incrementalSyncV2)
+                logger.info("live event stream did finish", attributes: .incrementalSyncV2)
                 syncStateSubject.send(.liveSyncing(.finished))
             }
 
@@ -193,14 +210,6 @@ public struct IncrementalSync: IncrementalSyncProtocol {
     ) async {
         do {
             for try await var envelope in liveEventStream {
-
-                guard !Task.isCancelled else {
-                    return logger.debug(
-                        "processLiveEvents has been cancelled, returning",
-                        attributes: .incrementalSyncV2 + [.eventEnvelopeID: envelope.id]
-                    )
-                }
-
                 logger.debug(
                     "received live event envelope",
                     attributes: .incrementalSyncV2 + [.eventEnvelopeID: envelope.id]
@@ -307,6 +316,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
                     "processing live event: \(event.name)",
                     attributes: .incrementalSyncV2 + [.eventEnvelopeID: envelope.id, .eventType: event.name]
                 )
+                await beforeProcessingLiveEvent(event)
                 try await processor.processEvent(event)
             } catch {
                 logger.error(
@@ -356,7 +366,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
                 break
             }
 
-            logger.debug(
+            logger.info(
                 "fetched \(envelopes.count) stored envelopes for processing",
                 attributes: .incrementalSyncV2
             )
@@ -394,12 +404,22 @@ public struct IncrementalSync: IncrementalSyncProtocol {
 
         do {
             for item in envelopesWithObjectIDs {
+                // Important: this batch of events may be large so completing
+                // the event processing may take time. If the sync is suspended
+                // during this loop we may not reach a cancellation check before
+                // the app is suspended. Therefore, check for cancellation before
+                // EACH event is processed.
+                try Task.checkCancellation()
 
                 guard !earService.isLocked || item.envelope.isBackgroundAccessible else {
                     throw Failure.databaseLocked
                 }
 
                 for event in item.envelope.events {
+                    // In practice there's only one event per envelope, but add
+                    // a check here anyway just in case.
+                    try Task.checkCancellation()
+
                     do {
                         logger.debug(
                             "processing pending event: \(event.name)",
@@ -447,6 +467,7 @@ public struct IncrementalSync: IncrementalSyncProtocol {
 
         public func suspend() async {
             task.cancel()
+            await task.value
             await closePushChannel()
         }
     }
@@ -461,11 +482,11 @@ extension IncrementalSyncV1: SyncMigratorProtocol {
             throw Failure.databaseLocked
         }
 
-        logger.debug("pulling pending update events", attributes: .incrementalSyncV2)
+        logger.info("pulling pending update events", attributes: .incrementalSyncV2)
         syncStateSubject.send(.incrementalSyncing(.pullPendingEvents))
         try await updateEventsSync.pull(publicKeys: try earService.fetchPublicKeys())
 
-        logger.debug("processing stored update events", attributes: .incrementalSyncV2)
+        logger.info("processing stored update events", attributes: .incrementalSyncV2)
         let privateKeys = try earService.fetchPrivateKeys(includingPrimary: true)
         _ = try await processStoredEvents(
             privateKeys: privateKeys,

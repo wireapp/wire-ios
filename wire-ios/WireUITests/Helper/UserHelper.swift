@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import os
 import WireNetwork
 
 struct Member {
@@ -26,9 +27,17 @@ struct Member {
     var id: String?
 }
 
-class UserHelper {
+final class UserHelper {
+    private struct InstanceKey: Hashable {
+        let apiVersion: APIVersion
+        let backend: BackendTarget
+    }
+
+    private static var instances = OSAllocatedUnfairLock<[InstanceKey: UserHelper]>(uncheckedState: [:])
+
     private let httpClient = HttpClient()
 
+    let backend: BackendTarget
     let backendURL: URL
     var createdUsers: [UserInfo]
     var networkStack: NetworkStack
@@ -41,14 +50,50 @@ class UserHelper {
     let conversationsAPI: ConversationsAPI
     let connectionsAPI: ConnectionsAPI
     let accountsAPI: AccountsAPI
+    let featureConfigsAPI: FeatureConfigsAPI
 
     private let cookieStorage = MockCookieStorage()
     private let authenticationManager = MockAuthManager()
+    private let environment: BackendEnvironment
 
-    init(
+    static func instance(
         apiVersion: APIVersion = APIVersion.productionVersions.max()!,
-        environment: BackendEnvironment = BackendContext.backendEnvironment
+        backend: BackendTarget = .staging
+    ) -> UserHelper {
+        let key = InstanceKey(apiVersion: apiVersion, backend: backend)
+
+        if let instance = instances.withLock({ $0[key] }) {
+            return instance
+        }
+
+        let instance = UserHelper(apiVersion: apiVersion, backend: backend)
+        instances.withLock { $0[key] = instance }
+        return instance
+    }
+
+    static var `default`: UserHelper {
+        instance(
+            apiVersion: APIVersion.productionVersions.max()!,
+            backend: .staging
+        )
+    }
+
+    /// Deletes users created by all instances of UserHelper.
+    static func deleteCreatedUsers() async {
+        let instances = instances.withLock { $0 }.values
+
+        for instance in instances {
+            await instance.deleteCreatedUsers()
+        }
+    }
+
+    private init(
+        apiVersion: APIVersion,
+        backend: BackendTarget
     ) {
+        let environment = backend.environment
+
+        self.backend = backend
         self.apiVersion = apiVersion
         self.backendURL = environment.url
         self.createdUsers = []
@@ -67,12 +112,13 @@ class UserHelper {
         self.conversationsAPI = ConversationsAPIBuilder(apiService: networkStack.apiService).makeAPI(for: apiVersion)
         self.connectionsAPI = ConnectionsAPIBuilder(apiService: networkStack.apiService).makeAPI(for: apiVersion)
         self.accountsAPI = AccountsAPIBuilder(apiService: networkStack.apiService).makeAPI(for: apiVersion)
+        self.featureConfigsAPI = FeatureConfigsAPIBuilder(apiService: networkStack.apiService).makeAPI(for: apiVersion)
+        self.environment = environment
     }
 
     /// Fetch basicAuth Info from Env variable
-    /// - Parameter backend: backend
     /// - Returns: basicAuth String
-    func basicAuth(_ backend: BackendTarget = BackendContext.current) -> String {
+    func basicAuth() -> String {
         switch backend {
         case .staging:
             guard let auth = ProcessInfo.processInfo.environment["BASIC_AUTH"] else {
@@ -80,15 +126,15 @@ class UserHelper {
             }
             return auth
 
-        case .anta:
-            guard let auth = ProcessInfo.processInfo.environment["BASIC_AUTH_ANTA"] else {
-                fatalError("Missing BASIC_AUTH_ANTA environment variable")
+        case .qaFederationA:
+            guard let auth = ProcessInfo.processInfo.environment["BASIC_AUTH_QA_FEDERATION_A"] else {
+                fatalError("Missing BASIC_AUTH_QA_FEDERATION_A environment variable")
             }
             return auth
 
-        case .bella:
-            guard let auth = ProcessInfo.processInfo.environment["BASIC_AUTH_BELLA"] else {
-                fatalError("Missing BASIC_AUTH_BELLA environment variable")
+        case .qaFederationB:
+            guard let auth = ProcessInfo.processInfo.environment["BASIC_AUTH_QA_FEDERATION_B"] else {
+                fatalError("Missing BASIC_AUTH_QA_FEDERATION_B environment variable")
             }
             return auth
         }
@@ -190,17 +236,25 @@ class UserHelper {
     }
 
     func getVerificationCode(user: UserInfo) async throws -> String {
-        try await InbucketClient.getVerificationCode(email: user.email)
+        try await InbucketClient.getVerificationCode(email: user.email, backend: backend)
     }
 
-    /// Delete  created test users
-    func deleteCreatedUsers() async {
-        for user in createdUsers {
+    /// Delete created test users for this helper instance.
+    private func deleteCreatedUsers() async {
+        let users = createdUsers
+        createdUsers.removeAll()
+
+        defer {
+            cookieStorage.cookies = []
+            authenticationManager.accessToken = nil
+        }
+
+        for user in users {
             do {
                 if let teamID = try await selfUserAPI.getSelfUser().teamID {
                     // If team exists, try deleting the team
                     try await authenticationAPI.requestVerificationCode(for: user.email)
-                    let code = try await InbucketClient.getVerificationCode(email: user.email)
+                    let code = try await InbucketClient.getVerificationCode(email: user.email, backend: backend)
                     try await deleteTeam(teamID: teamID, password: user.password, code: code)
                 } else {
                     // If no team, delete user
@@ -215,8 +269,20 @@ class UserHelper {
     /// Register a team owner
     /// - Returns: qualifiedId of the owner and ownerInfo
     func registerUserAsTeamOwner() async throws -> (qualifiedID: QualifiedID, owner: UserInfo) {
+        let generated = UserGenerator.generateUniqueUserInfo()
+        return try await registerUserAsTeamOwner(teamName: generated.teamName)
+    }
 
-        let teamOwner = UserGenerator.generateUniqueUserInfo()
+    /// Register a team owner with a provided team name.
+    /// - Parameter teamName: team name to create.
+    /// - Returns: qualifiedId of the owner and ownerInfo
+    func registerUserAsTeamOwner(
+        teamName: String,
+        preferredName: String? = nil
+    ) async throws -> (qualifiedID: QualifiedID, owner: UserInfo) {
+
+        let teamOwner = UserGenerator.generateUniqueUserInfo(preferredName: preferredName)
+        teamOwner.teamName = teamName
 
         let (teamID, qualifiedId) = try await authenticationAPI.registerTeamOwner(
             email: teamOwner.email,
@@ -227,13 +293,11 @@ class UserHelper {
 
         teamOwner.teamID = teamID
 
-        // Get activation code
         let (activationCode, activationKey) = try await authenticationAPI.getActivationCode(
             forEmail: teamOwner.email,
             basicAuth: basicAuth()
         )
 
-        // Activate user
         try await authenticationAPI.activateUser(email: teamOwner.email, key: activationKey, code: activationCode)
 
         authenticationManager.accessToken = try await fetchAccessToken(
@@ -268,7 +332,7 @@ class UserHelper {
     /// - Parameter user: userInfo
     func disableConsentPopup(for user: UserInfo) async throws {
 
-        let baseURL = BackendContext.backendEnvironment.url
+        let baseURL = environment.url
         let versionedURL = baseURL
             .appendingPathComponent(String(describing: apiVersion))
             .appendingPathComponent("properties")
@@ -338,12 +402,34 @@ class UserHelper {
         return (qualifiedID, teamMember)
     }
 
+    /// Remove a member from a team, e.g. to reproduce the self user's session being
+    /// invalidated once the team owner removes them.
+    /// - Parameters:
+    ///   - ownerAccessToken: access token of the team owner performing the removal
+    ///   - ownerPassword: password of the team owner performing the removal
+    ///   - teamID: teamID
+    ///   - userID: id of the member to remove
+    func removeTeamMember(
+        ownerAccessToken: String,
+        ownerPassword: String,
+        teamID: UUID,
+        userID: UUID
+    ) async throws {
+        try await teamsAPI.removeMemberFromTeam(
+            access_token: ownerAccessToken,
+            teamID: teamID,
+            userID: userID,
+            password: ownerPassword
+        )
+    }
+
     func registerUsersAsTeamMemberWithUserHandleSet(
         ownerAccessToken: String,
-        teamID: UUID
+        teamID: UUID,
+        preferredName: String? = nil
     ) async throws -> (qualifiedID: QualifiedID, member: UserInfo) {
 
-        let teamMember = UserGenerator.generateUniqueUserInfo()
+        let teamMember = UserGenerator.generateUniqueUserInfo(preferredName: preferredName)
 
         let invitationID = try await teamsAPI.inviteMemberToTeam(
             access_token: ownerAccessToken,
@@ -420,12 +506,13 @@ class UserHelper {
     ///   - owner: group owner
     ///   - groupName: groupName
     ///   - driveEnabled: bool
+    @discardableResult
     func createGroupConversations(
         qualifiedIds: [QualifiedID],
         owner: UserInfo,
         groupName: String,
         driveEnabled: Bool = false
-    ) async throws {
+    ) async throws -> Conversation {
 
         let params = CreateGroupConversationParameters(
             groupType: .group,
@@ -450,7 +537,7 @@ class UserHelper {
         )
         authenticationManager.accessToken = accessToken
 
-        _ = try await conversationsAPI.createGroupConversation(parameters: params)
+        return try await conversationsAPI.createGroupConversation(parameters: params)
     }
 
     /// Create channel conversation
@@ -522,15 +609,24 @@ class UserHelper {
     ///   - driveEnabled: whether Drive should be unlocked and enabled for for group
     /// - Returns: teamOwner info, teamMembers info, qualifiedIds of members, conversationId if conversation created
     func registerTeam(
-        withMemberCount memberCount: Int,
+        withMemberCount memberCount: Int = 0,
         conversation: CreateConversationOption? = nil,
-        driveEnabled: Bool = false
+        driveEnabled: Bool = false,
+        names: [String] = []
     ) async throws
         -> (teamOwner: UserInfo, teamMembers: [UserInfo], qualifiedIDs: [QualifiedID], conversationId: UUID?) {
 
-        let (_, teamOwner) = try await registerUserAsTeamOwner()
+        let generated = UserGenerator.generateUniqueUserInfo()
+        let (_, teamOwner) = try await registerUserAsTeamOwner(
+            teamName: generated.teamName,
+            preferredName: names.first
+        )
         guard let teamID = teamOwner.teamID else {
             throw RuntimeError("registerTeam: teamOwner.teamID is nil")
+        }
+
+        if driveEnabled {
+            try await unlockAndEnableDriveFeature(teamID: teamID)
         }
 
         let ownerAccessToken = try await fetchAccessToken(
@@ -544,10 +640,11 @@ class UserHelper {
         var teamMembers: [UserInfo] = []
         teamMembers.reserveCapacity(memberCount)
 
-        for _ in 0 ..< memberCount {
+        for index in 0 ..< memberCount {
             let (qualifiedId, teamMember) = try await registerUsersAsTeamMemberWithUserHandleSet(
                 ownerAccessToken: ownerAccessToken.token,
-                teamID: teamID
+                teamID: teamID,
+                preferredName: names.indices.contains(index + 1) ? names[index + 1] : nil
             )
             qualifiedIDs.append(qualifiedId)
             teamMembers.append(teamMember)
@@ -558,9 +655,6 @@ class UserHelper {
         if let conversation {
             switch conversation {
             case let .group(name):
-                if driveEnabled {
-                    try await unlockAndEnableDriveFeature(teamID: teamID)
-                }
                 try await createGroupConversations(
                     qualifiedIds: qualifiedIDs,
                     owner: teamOwner,
@@ -577,9 +671,6 @@ class UserHelper {
                 let basicAuth = basicAuth()
                 try await backOffice.unlockChannelFeature(teamId: teamID.uuidString, basicAuth: basicAuth)
                 try await backOffice.enableChannelFeature(teamId: teamID.uuidString, basicAuth: basicAuth)
-                if driveEnabled {
-                    try await unlockAndEnableDriveFeature(teamID: teamID)
-                }
 
                 try await createChannelConversations(
                     qualifiedIds: qualifiedIDs,
@@ -606,6 +697,101 @@ class UserHelper {
             qualifiedIDs: qualifiedIDs,
             conversationId: conversationId
         )
+    }
+
+    func registerMeetingsTeam(
+        withMemberCount memberCount: Int = 0,
+        names: [String] = []
+    ) async throws
+        -> (teamOwner: UserInfo, teamMembers: [UserInfo], qualifiedIDs: [QualifiedID], conversationId: UUID?) {
+        let team = try await registerTeam(withMemberCount: memberCount, names: names)
+        guard let teamID = team.teamOwner.teamID else {
+            throw RuntimeError("registerMeetingsTeam: teamOwner.teamID is nil")
+        }
+
+        let ownerAccessToken = try await fetchAccessToken(
+            email: team.teamOwner.email,
+            password: team.teamOwner.password
+        )
+        authenticationManager.accessToken = ownerAccessToken
+        team.teamOwner.id = try await selfUserAPI.getSelfUser().id.uuidString
+        for (member, qualifiedID) in zip(team.teamMembers, team.qualifiedIDs) {
+            member.id = qualifiedID.id.uuidString
+        }
+
+        let backOffice = BackOffice(backendURL: backendURL)
+        try await backOffice.unlockMeetingsFeature(teamId: teamID.uuidString, basicAuth: basicAuth())
+        try await backOffice.enableMeetingsFeature(
+            teamId: teamID.uuidString,
+            apiVersion: apiVersion,
+            accessToken: ownerAccessToken.token
+        )
+
+        let featureConfigs = try await featureConfigsAPI.getFeatureConfigs()
+        let meetingsEnabled = featureConfigs.contains { featureConfig in
+            guard case let .meetings(config) = featureConfig else { return false }
+            if case .enabled = config.status { return true }
+            return false
+        }
+        guard meetingsEnabled else {
+            throw RuntimeError("registerMeetingsTeam: Meetings feature is not enabled")
+        }
+
+        return team
+    }
+
+    /// Creates a team group with configurable team-member count and total admin count.
+    /// `memberCount` excludes the owner; `groupAdminCount` includes the owner.
+    func createGroupConversationWithAdminsAndMembers(
+        groupName: String,
+        memberCount: Int,
+        groupAdminCount: Int,
+        preventAdminlessGroupsEnabled: Bool = false
+    ) async throws -> (
+        owner: UserInfo,
+        admins: [UserInfo],
+        members: [UserInfo],
+        conversation: Conversation
+    ) {
+        let (owner, teamMembers, qualifiedIDs, _) = try await registerTeam(withMemberCount: memberCount)
+
+        guard
+            groupAdminCount >= 1,
+            groupAdminCount <= memberCount + 1,
+            teamMembers.count == memberCount,
+            qualifiedIDs.count == memberCount,
+            let teamID = owner.teamID
+        else {
+            throw RuntimeError("createGroupConversationWithAdminsAndMembers: invalid team setup")
+        }
+
+        if preventAdminlessGroupsEnabled {
+            try await unlockAndEnablePreventAdminlessGroupsFeature(teamID: teamID)
+        }
+
+        let conversation = try await createGroupConversations(
+            qualifiedIds: qualifiedIDs,
+            owner: owner,
+            groupName: groupName
+        )
+
+        guard let conversationQualifiedID = conversation.qualifiedID else {
+            throw RuntimeError("createGroupConversationWithAdminsAndMembers: conversation.qualifiedID is nil")
+        }
+
+        let promotedGroupAdminCount = groupAdminCount - 1
+        for userID in qualifiedIDs.prefix(promotedGroupAdminCount) {
+            try await updateRole(
+                "wire_admin",
+                userID: userID,
+                conversationID: conversationQualifiedID
+            )
+        }
+
+        let admins = [owner] + Array(teamMembers.prefix(promotedGroupAdminCount))
+        let members = Array(teamMembers.dropFirst(promotedGroupAdminCount))
+
+        return (owner, admins, members, conversation)
     }
 
     /// Send connection request
@@ -660,12 +846,90 @@ class UserHelper {
         try await backOffice.unlockChannelFeature(teamId: teamID.uuidString, basicAuth: basicAuth)
         try await backOffice.enableChannelFeature(teamId: teamID.uuidString, basicAuth: basicAuth)
     }
+
+    /// Unlock and enable Prevent Adminless Groups feature
+    /// - Parameter teamID: teamID where this needs to be enabled
+    func unlockAndEnablePreventAdminlessGroupsFeature(teamID: UUID) async throws {
+        let backOffice = BackOffice(backendURL: backendURL)
+        let basicAuth = basicAuth()
+        try await backOffice.unlockPreventAdminlessGroupsFeature(teamId: teamID.uuidString, basicAuth: basicAuth)
+        try await backOffice.enablePreventAdminlessGroupsFeature(teamId: teamID.uuidString, basicAuth: basicAuth)
+    }
+
+    func connectDriveEnabledTeamUserWithGuestUser() async throws -> (userA: UserInfo, userB: UserInfo) {
+        let (userA, _, _, _) = try await registerTeam(withMemberCount: 1, driveEnabled: true)
+        let (userB, _, _, _) = try await registerTeam(withMemberCount: 1)
+
+        // User A
+        let (_, accessTokenUserA) = try await authenticationAPI.login(
+            email: userA.email,
+            password: userA.password,
+            verificationCode: nil,
+            label: nil
+        )
+        authenticationManager.accessToken = accessTokenUserA
+        let selfUserA = try await selfUserAPI.getSelfUser()
+        userA.id = selfUserA.id.uuidString
+
+        // User B
+        let (_, accessTokenUserB) = try await authenticationAPI.login(
+            email: userB.email,
+            password: userB.password,
+            verificationCode: nil,
+            label: nil
+        )
+        authenticationManager.accessToken = accessTokenUserB
+        let selfUserB = try await selfUserAPI.getSelfUser()
+        userB.id = selfUserB.id.uuidString
+
+        // Connects with guest user
+        let domain = BackendTarget.staging.domainInfo
+        try await sendConnectionRequestToUser(domain: domain, userId: userA.id)
+        try await acceptConnectionRequestFromUser(domain: domain, user1: userA, userId: userB.id)
+
+        return (userA, userB)
+    }
+
+    func connectTeamUserWithPersonalUser() async throws -> (teamOwner: UserInfo, personalUser: UserInfo) {
+        var (userA, _, _, _) = try await registerTeam(withMemberCount: 1, driveEnabled: true)
+        var userB = try await createPersonalUser()
+
+        try await login(user: &userA)
+        try await login(user: &userB)
+
+        // Connects with personal user
+        let domain = BackendTarget.staging.domainInfo
+        try await sendConnectionRequestToUser(domain: domain, userId: userA.id)
+        try await acceptConnectionRequestFromUser(domain: domain, user1: userA, userId: userB.id)
+
+        return (teamOwner: userA, personalUser: userB)
+    }
+
+    func login(user: inout UserInfo) async throws {
+        let (_, accessToken) = try await authenticationAPI.login(
+            email: user.email,
+            password: user.password,
+            verificationCode: nil,
+            label: nil
+        )
+        authenticationManager.accessToken = accessToken
+        let selfUser = try await selfUserAPI.getSelfUser()
+        user.id = selfUser.id.uuidString
+    }
+
+    func updateRole(_ role: String, userID: UserID, conversationID: ConversationID) async throws {
+        try await conversationsAPI.updateRole(role, userID: userID, conversationID: conversationID)
+    }
+
+    func removeParticipant(userID: UserID, conversationID: ConversationID) async throws {
+        try await conversationsAPI.removeParticipant(userID: userID, conversationID: conversationID)
+    }
 }
 
 extension BackendEnvironment {
     static let backendURL = "https://\(ProcessInfo.processInfo.environment["BACKEND_URL"]!)"
-    static let backendURLAnta = "https://\(ProcessInfo.processInfo.environment["BACKEND_URL_ANTA"]!)"
-    static let backendURLBella = "https://\(ProcessInfo.processInfo.environment["BACKEND_URL_BELLA"]!)"
+    static let backendURLQAFederationA = "https://\(ProcessInfo.processInfo.environment["BACKEND_URL_QA_FEDERATION_A"]!)"
+    static let backendURLQAFederationB = "https://\(ProcessInfo.processInfo.environment["BACKEND_URL_QA_FEDERATION_B"]!)"
 
     static let staging = BackendEnvironment(
         url: URL(string: backendURL)!,
@@ -675,21 +939,34 @@ extension BackendEnvironment {
         proxySettings: nil
     )
 
-    static let anta = BackendEnvironment(
-        url: URL(string: backendURLAnta)!,
-        webSocketURL: URL(string: backendURLAnta)!,
-        blacklistURL: URL(string: backendURLAnta)!,
+    static let qaFederationA = BackendEnvironment(
+        url: URL(string: backendURLQAFederationA)!,
+        webSocketURL: URL(string: backendURLQAFederationA)!,
+        blacklistURL: URL(string: backendURLQAFederationA)!,
         pinnedKeys: [],
         proxySettings: nil
     )
 
-    static let bella = BackendEnvironment(
-        url: URL(string: backendURLBella)!,
-        webSocketURL: URL(string: backendURLBella)!,
-        blacklistURL: URL(string: backendURLBella)!,
+    static let qaFederationB = BackendEnvironment(
+        url: URL(string: backendURLQAFederationB)!,
+        webSocketURL: URL(string: backendURLQAFederationB)!,
+        blacklistURL: URL(string: backendURLQAFederationB)!,
         pinnedKeys: [],
         proxySettings: nil
     )
+}
+
+extension BackendTarget {
+    var environment: BackendEnvironment {
+        switch self {
+        case .staging:
+            .staging
+        case .qaFederationA:
+            .qaFederationA
+        case .qaFederationB:
+            .qaFederationB
+        }
+    }
 }
 
 enum CreateConversationOption {
@@ -709,15 +986,15 @@ private final class MockCookieStorage: CookieStorageProtocol {
         self.cookies = []
     }
 
-    func storeCookies(_ cookies: [HTTPCookie]) async throws {
+    func storeCookies(_ cookies: [HTTPCookie], userID: UUID) throws {
         self.cookies = cookies
     }
 
-    func fetchCookies() async throws -> [HTTPCookie] {
+    func fetchCookies(userID: UUID) throws -> [HTTPCookie] {
         cookies
     }
 
-    func removeCookies() async throws {
+    func removeCookies(userID: UUID) throws {
         cookies = []
     }
 }
@@ -738,6 +1015,9 @@ class MockAuthManager: AuthenticationManagerProtocol {
     }
 
     func refreshAccessToken() async throws -> WireNetwork.AccessToken {
-        throw AccessTokenError.notImplemented
+        guard let accessToken else {
+            throw AccessTokenError.notImplemented
+        }
+        return accessToken
     }
 }

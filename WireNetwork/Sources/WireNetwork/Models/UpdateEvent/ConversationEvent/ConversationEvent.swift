@@ -90,6 +90,10 @@ public enum ConversationEvent: Equatable, Sendable {
 
     case mlsReset(ConversationMLSResetEvent)
 
+    /// A periodic reminder that the conversation has no eligible admins and is scheduled for automatic deletion.
+
+    case adminlessReminder(ConversationAdminlessReminderEvent)
+
 }
 
 extension ConversationEvent {
@@ -130,6 +134,8 @@ extension ConversationEvent {
             "permissionUpdate"
         case .mlsReset:
             "mlsReset"
+        case .adminlessReminder:
+            "adminlessReminder"
         }
     }
 
@@ -168,6 +174,8 @@ extension ConversationEvent {
         case let .permissionUpdate(event):
             event.conversationID
         case let .mlsReset(event):
+            event.conversationID
+        case let .adminlessReminder(event):
             event.conversationID
         }
     }

@@ -87,9 +87,11 @@ struct SettingsCellDescriptorFactory {
                 sessionManager?.addAccount()
             } else {
                 if let controller = UIApplication.shared.topmostViewController(onlyFullScreen: false) {
+                    let maxNumberAccounts = sessionManager?.maxNumberAccounts ?? SessionManager.defaultMaxNumberAccounts
+
                     let alert = UIAlertController(
-                        title: L10n.Localizable.Self.Settings.AddAccount.Error.title,
-                        message: L10n.Localizable.Self.Settings.AddAccount.Error.message,
+                        title: AccountLimitAlertLocalization.title(maxNumberAccounts: maxNumberAccounts),
+                        message: AccountLimitAlertLocalization.message(maxNumberAccounts: maxNumberAccounts),
                         preferredStyle: .alert
                     )
                     alert.addAction(UIAlertAction(
@@ -306,7 +308,8 @@ struct SettingsCellDescriptorFactory {
             presentationAction: {
                 WireURLs.shared.legal.browserControllerOrOpenExternally()
             },
-            previewGenerator: .none
+            previewGenerator: .none,
+            accessibilityTraits: .link
         )
 
         let shortVersion = Bundle.main.shortVersionString ?? "Unknown"
@@ -332,7 +335,8 @@ struct SettingsCellDescriptorFactory {
             presentationAction: {
                 WireURLs.shared.website.browserControllerOrOpenExternally()
             },
-            previewGenerator: .none
+            previewGenerator: .none,
+            accessibilityTraits: .link
         )
 
         let websiteSection = SettingsSectionDescriptor(cellDescriptors: [websiteButton])

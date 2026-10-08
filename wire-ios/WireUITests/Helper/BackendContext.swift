@@ -17,36 +17,20 @@
 //
 
 import Foundation
-import WireNetwork
-
-public enum BackendContext {
-    static var current: BackendTarget = .staging
-
-    static var backendEnvironment: BackendEnvironment {
-        switch current {
-        case .staging:
-            .staging
-        case .anta:
-            .anta
-        case .bella:
-            .bella
-        }
-    }
-}
 
 public enum BackendTarget {
     case staging
-    case anta
-    case bella
+    case qaFederationA
+    case qaFederationB
 
     var domainInfo: String {
         switch self {
         case .staging:
             "staging.zinfra.io"
-        case .anta:
-            "anta.wire.link"
-        case .bella:
-            "bella.wire.link"
+        case .qaFederationA:
+            "qa-federation-a.wire.link"
+        case .qaFederationB:
+            "qa-federation-b.wire.link"
         }
     }
 }

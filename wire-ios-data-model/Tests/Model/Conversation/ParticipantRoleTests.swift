@@ -61,6 +61,10 @@ class ParticipantRoleTests: ZMBaseManagedObjectTest {
         conversation.addParticipantAndUpdateConversationState(user: serviceUser, role: nil)
         conversation.addParticipantAndUpdateConversationState(user: selfUser, role: nil)
 
+        // The predicate filters on the persisted `effectiveConversationType`, populated in `-willSave`. Persist so
+        // the service group is promoted to one-on-one before evaluating.
+        uiMOC.saveOrRollback()
+
         // THEN
         let factory = ConversationPredicateFactory(selfUser: selfUser, selfTeam: team)
         XCTAssertTrue(factory.predicateForOneToOneConversations().evaluate(with: conversation))

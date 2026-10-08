@@ -18,6 +18,7 @@
 
 import Foundation
 import XCTest
+
 @testable import Wire
 
 final class LogFilesProviderTests: XCTestCase {
@@ -27,31 +28,6 @@ final class LogFilesProviderTests: XCTestCase {
     override func setUp() {
         super.setUp()
         provider = LogFilesProvider()
-    }
-
-    func test_generateLogFilesZip_createsZipFile() throws {
-        // GIVEN / WHEN
-        let zipURL = try provider.generateLogFilesZip()
-
-        // THEN
-        XCTAssertTrue(FileManager.default.fileExists(atPath: zipURL.path))
-    }
-
-    func test_logsDirectoryIsCleanedBeforeArchiving() throws {
-        // GIVEN
-        let testDirectory = FileManager.default.temporaryDirectory.appendingPathComponent("logs")
-        try FileManager.default.createDirectory(at: testDirectory, withIntermediateDirectories: true)
-        let dummyFile = testDirectory.appendingPathComponent("old.txt")
-        FileManager.default.createFile(atPath: dummyFile.path, contents: Data("dummy".utf8))
-
-        XCTAssertTrue(FileManager.default.fileExists(atPath: dummyFile.path))
-
-        // WHEN
-        _ = try provider.generateLogFilesZip()
-
-        // THEN
-        let contents = try FileManager.default.contentsOfDirectory(at: testDirectory, includingPropertiesForKeys: nil)
-        XCTAssertFalse(contents.contains(where: { $0.lastPathComponent == "old.txt" }))
     }
 
     func test_removeLegacyLogArchives_removesArchiveDirectories() throws {
@@ -91,31 +67,4 @@ final class LogFilesProviderTests: XCTestCase {
         XCTAssertTrue(FileManager.default.fileExists(atPath: unrelatedDir.path))
         try? FileManager.default.removeItem(at: unrelatedDir)
     }
-
-    func test_logsDirectoryExists_shouldNotThrow_whenGeneratingLogsZip() throws {
-        // GIVEN
-        let logsDirectory = FileManager.default.temporaryDirectory.appendingPathComponent("logs")
-        try FileManager.default.createDirectory(at: logsDirectory, withIntermediateDirectories: true)
-        XCTAssertTrue(FileManager.default.fileExists(atPath: logsDirectory.path))
-
-        // WHEN
-        let zipURL = try provider.generateLogFilesZip()
-
-        // THEN
-        XCTAssertTrue(FileManager.default.fileExists(atPath: zipURL.path))
-        try? FileManager.default.removeItem(at: logsDirectory)
-    }
-
-    func test_logsDirectoryIsMissing_shouldCreateIt() throws {
-        // GIVEN
-        let logsDirectory = FileManager.default.temporaryDirectory.appendingPathComponent("logs")
-        try? FileManager.default.removeItem(at: logsDirectory)
-
-        // WHEN
-        XCTAssertNoThrow(try provider.generateLogFilesZip())
-
-        // THEN
-        XCTAssertTrue(FileManager.default.fileExists(atPath: logsDirectory.path))
-    }
-
 }

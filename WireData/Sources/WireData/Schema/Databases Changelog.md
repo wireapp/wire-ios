@@ -10,6 +10,49 @@ As it is hard to spot changes from version to version of database models (.xcdat
 
 ## zmessaging
 
+### 2.142.0
+
+* added `WireDriveDirectUpload` entity, tracking in-flight Wire Drive direct uploads so background transfers can be reconciled after the app is terminated and relaunched
+
+### 2.141.0
+
+* added optional `Meeting.timeZoneIdentifier` for recurring meetings.
+
+### 2.140.0
+
+* changed relationship `Conversation`-`Meeting` to 1:n, renamed `Conversation.parentMeeting` to `Conversation.meetings`
+
+### 2.139.0
+
+* added `Conversation.scheduledDeletionDate` and `SystemMessage.conversationScheduledDeletionDate` properties.
+* added `scheduledDeletionDate` attribute on the Conversation entity
+
+### 2.138.0
+
+* change base class of `StoredMeeting` to `ZMManagedObject`  
+
+### 2.137.0
+
+* created `Meeting` entity with a relation to `Conversation`
+
+### 2.136.0
+
+* added `effectiveConversationType` attribute on the Conversation entity (Integer 16, optional, default `0`).
+
+It is a persisted mirror of the computed `conversationType` (including the team-1:1 / service promotion), maintained in `-[ZMConversation willSave]`, so the conversation-list predicates can be evaluated by the store (SQLite) instead of in memory. 
+A custom migration action (`EffectiveConversationTypeMigrationAction`) backfills the value for existing conversations.
+
+### 2.135.0
+
+* added `conversationName` attribute on the WireCellsLocalAsset entity
+* added `ownerName` attribute on the WireCellsLocalAsset entity
+* added `modified` attribute on the WireCellsLocalAsset entity
+* added `isAvailableOffline` attribute on the WireCellsLocalAsset entity
+
+### 2.134.0
+
+* added `AppInfo` entity
+
 ### 2.133.0
 
 * removed `senderID` attribute from the Message entity

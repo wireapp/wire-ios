@@ -23,7 +23,6 @@ import WireDomain
 import WireFoundation
 import WireLogging
 import WireUtilities
-import WireUtilitiesPackage
 
 // sourcery: AutoMockable
 protocol SyncAgentProtocol {
@@ -40,6 +39,10 @@ protocol SyncAgentProtocol {
 // sync, we won't need to bridge to legacy code and remove the inheritance.
 
 final class SyncAgent: NSObject, SyncAgentProtocol {
+
+    private struct PendingResume {
+        let callEventsOnly: Bool
+    }
 
     var isSyncV2Enabled: Bool {
         journal[.isSyncV2Enabled]
@@ -63,11 +66,15 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
     private let featureConfigRepository: any FeatureConfigRepositoryProtocol
     private let pushChannelCoordinator: any MainAppPushChannelCoordinatorProtocol
     private let networkStatePublisher: AnyPublisher<NetworkState, Never>
+    private let backgroundTaskExecuter: any BackgroundTaskExecuter
     private let incrementalSyncTaskManager = NonReentrantTaskManager<Void, any Error>()
     private let initialSyncTaskManager = NonReentrantTaskManager<Void, any Error>()
     private var incrementalSyncToken: IncrementalSync.Token?
     private var ongoingSyncTask: Task<Void, Never>?
     private var cancellables: Set<AnyCancellable> = .init()
+    private let suspendStateLock = NSLock()
+    private var isSuspendingSync = false
+    private var pendingResume: PendingResume?
 
     var syncRunning: Bool {
         ongoingSyncTask != nil || incrementalSyncToken != nil
@@ -87,7 +94,8 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
         featureConfigRepository: any FeatureConfigRepositoryProtocol,
         syncStateSubject: CurrentValueSubject<SyncState, Never>,
         pushChannelCoordinator: any MainAppPushChannelCoordinatorProtocol,
-        networkStatePublisher: AnyPublisher<NetworkState, Never>
+        networkStatePublisher: AnyPublisher<NetworkState, Never>,
+        backgroundTaskExecuter: any BackgroundTaskExecuter
     ) {
         self.journal = journal
         self.coreCryptoProvider = coreCryptoProvider
@@ -97,6 +105,7 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
         self.syncStateSubject = syncStateSubject
         self.pushChannelCoordinator = pushChannelCoordinator
         self.networkStatePublisher = networkStatePublisher
+        self.backgroundTaskExecuter = backgroundTaskExecuter
         super.init()
 
         setupBindings()
@@ -121,6 +130,8 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
     /// - Parameter callEventsOnly: if the sync should be resumed only for calling events
 
     func resume(callEventsOnly: Bool = false) {
+        if deferResumeIfNeeded(callEventsOnly: callEventsOnly) { return }
+
         syncStateSubject.send(.idle)
 
         ongoingSyncTask = Task {
@@ -128,7 +139,7 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
             do {
                 // because we might be interrupted when in background, we wrap the sync in an expiringActivity that will
                 // cancel the task (not keeping any file lock in suspend mode)
-                try await withExpiringActivity(reason: "resuming sync") { [weak self] in
+                try await withBackgroundTask(name: "resuming sync", executer: backgroundTaskExecuter) { [weak self] in
                     if callEventsOnly {
                         try await self?.performIncrementalSyncForCallingEvents()
                     } else {
@@ -150,9 +161,27 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
         }
     }
 
+    private func deferResumeIfNeeded(callEventsOnly: Bool) -> Bool {
+        suspendStateLock.withLock {
+            guard isSuspendingSync else { return false }
+            if let pendingResume {
+                // full resume wins over call events only resume
+                self.pendingResume = PendingResume(callEventsOnly: pendingResume.callEventsOnly && callEventsOnly)
+            } else {
+                pendingResume = PendingResume(callEventsOnly: callEventsOnly)
+            }
+            return true
+        }
+    }
+
     /// Suspend any ongoing sync tasks.
 
     func suspend() async {
+        suspendStateLock.withLock {
+            pendingResume = nil
+            isSuspendingSync = true
+        }
+
         let backgroundActivity = BackgroundActivityFactory.shared.startBackgroundActivity(
             name: "suspending sync"
         )
@@ -160,16 +189,39 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
         WireLogger.sync.debug(
             "suspending sync \(backgroundActivity != nil ? "in a background task" : "")"
         )
-        ongoingSyncTask?.cancel()
-        ongoingSyncTask = nil
-        await incrementalSyncToken?.suspend()
-        incrementalSyncToken = nil
+
+        if let ongoingSyncTask {
+            ongoingSyncTask.cancel()
+            await ongoingSyncTask.value
+            self.ongoingSyncTask = nil
+        }
+
+        if let incrementalSyncToken {
+            await incrementalSyncToken.suspend()
+            self.incrementalSyncToken = nil
+        }
+
         syncStateSubject.send(.suspended)
 
         if let backgroundActivity {
             BackgroundActivityFactory.shared.endBackgroundActivity(
                 backgroundActivity
             )
+        }
+
+        resumeAfterSuspendIfNeeded()
+    }
+
+    private func resumeAfterSuspendIfNeeded() {
+        let pending = suspendStateLock.withLock { () -> PendingResume? in
+            isSuspendingSync = false
+            let pending = pendingResume
+            pendingResume = nil
+            return pending
+        }
+
+        if let pending {
+            resume(callEventsOnly: pending.callEventsOnly)
         }
     }
 
@@ -242,12 +294,12 @@ final class SyncAgent: NSObject, SyncAgentProtocol {
                     // ignore error, don't retry
                     // this can happen if receiving a call
                 } catch IncrementalSyncV2.Failure.nsePushChannelAlreadyOpened {
-                    WireLogger.sync.debug(
+                    WireLogger.sync.info(
                         "push channel opened, waiting until closed",
                         attributes: .incrementalSyncV3
                     )
                     await pushChannelCoordinator.signalToExtensionsToYieldPushChannel()
-                    WireLogger.sync.debug(
+                    WireLogger.sync.info(
                         "retry sync after NSE push channel closed",
                         attributes: .incrementalSyncV3
                     )

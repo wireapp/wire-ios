@@ -94,20 +94,14 @@ class UnsentSendableBase {
 final class UnsentTextSendable: UnsentSendableBase, UnsentSendable {
 
     private var text: String
-    private let attachment: NSItemProvider?
 
     init(
         conversation: WireShareEngine.Conversation,
         sharingSession: SharingSession,
-        text: String,
-        attachment: NSItemProvider? = nil
+        text: String
     ) {
         self.text = text
-        self.attachment = attachment
         super.init(conversation: conversation, sharingSession: sharingSession)
-        if attachment != nil {
-            needsPreparation = true
-        }
     }
 
     func send(completion: @escaping (Sendable?) -> Void) {
@@ -122,15 +116,7 @@ final class UnsentTextSendable: UnsentSendableBase, UnsentSendable {
     func prepare(completion: @escaping () -> Void) {
         precondition(needsPreparation, "Ensure this objects needs preparation, c.f. `needsPreparation`")
         needsPreparation = false
-
-        if let attachment, attachment.hasURL {
-
-            self.attachment?.fetchURL(completion: { _ in
-                completion()
-            })
-        } else {
-            completion()
-        }
+        completion()
     }
 }
 

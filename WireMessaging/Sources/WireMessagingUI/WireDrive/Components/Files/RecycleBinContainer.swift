@@ -17,7 +17,7 @@
 //
 
 import SwiftUI
-package import WireFoundation
+import WireFoundation
 package import WireMessagingDomain
 package import WireMessagingData
 
@@ -35,7 +35,6 @@ package struct RecycleBinContainer: View {
     private let nodeCache: any WireDriveNodeCacheProtocol
     private let nodeRenameNotifier: WireDriveNodeRenameNotifier
     private let fileCache: any FileCache
-    private let accentColorProvider: () -> WireAccentColor
 
     package init(
         cellName: String,
@@ -46,8 +45,7 @@ package struct RecycleBinContainer: View {
         localAssetRepository: any WireDriveLocalAssetRepositoryProtocol,
         nodeCache: any WireDriveNodeCacheProtocol,
         nodeRenameNotifier: WireDriveNodeRenameNotifier,
-        fileCache: any FileCache,
-        accentColorProvider: @escaping () -> WireAccentColor
+        fileCache: any FileCache
     ) {
         self.cellName = cellName
         self.nodesAPI = nodesAPI
@@ -58,7 +56,6 @@ package struct RecycleBinContainer: View {
         self.nodeCache = nodeCache
         self.nodeRenameNotifier = nodeRenameNotifier
         self.fileCache = fileCache
-        self.accentColorProvider = accentColorProvider
     }
 
     var body: some View {
@@ -72,49 +69,16 @@ package struct RecycleBinContainer: View {
 
     private func makeViewModel() -> FilesViewModel {
         FilesViewModel(
-            useCases: .init(
-                fetchNodes: WireDriveFetchNodesPageUseCase(
-                    configuration: .recycleBinView(
-                        root: path.last.map { .id($0.id) } ?? .path(cellName),
-                    ),
-                    repository: nodesRepository
-                ),
-                deleteNodes: WireDriveDeleteNodesUseCase(
-                    repository: nodesRepository,
-                    fileCache: fileCache,
-                    localAssetStore: localAssetStore
-                ),
-                restoreNodes: WireDriveRestoreNodesUseCase(
-                    repository: nodesRepository,
-                    fileCache: fileCache,
-                    localAssetStore: localAssetStore
-                ),
-                renameNode: WireDriveRenameNodeUseCase(
+            useCases: FilesViewModel.makeUseCases(
+                dependencies: .init(
+                    nodesAPI: nodesAPI,
                     nodesRepository: nodesRepository,
-                    localAssetsRepository: localAssetRepository,
-                    nodeCache: nodeCache,
-                    nodeRenameNotifier: nodeRenameNotifier
-                ),
-                updateTags: WireDriveUpdateTagsUseCase(nodesAPI: nodesAPI),
-                getTagSuggestions: WireDriveGetTagSuggestionsUseCase(nodesAPI: nodesAPI),
-                createFileUseCase: WireDriveCreateFileUseCase(nodesRepository: nodesAPI),
-                fetchNodeVersions: WireDriveFetchNodeVersionsUseCase(repository: nodesRepository),
-                restoreNodeVersion: WireDriveRestoreNodeVersionUseCase(
-                    repository: nodesRepository,
-                    localAssetsRepository: localAssetRepository,
-                    nodeCache: nodeCache
-                ),
-                getEditingURL: WireDriveGetEditingURLUseCase(editingURLRepository: nodesAPI),
-                getAssetUseCase: WireDriveGetAssetUseCase(
+                    fileCache: fileCache,
+                    localAssetStore: localAssetStore,
                     localAssetRepository: localAssetRepository,
-                    fileCache: fileCache
-                ),
-                getPublicLinkData: WireDriveGetPublicLinkDataUseCase(nodesAPI: nodesAPI),
-                createPublicLink: WireDriveCreatePublicLinkUseCase(nodesAPI: nodesAPI),
-                deletePublicLink: WireDriveDeletePublicLinkUseCase(nodesAPI: nodesAPI),
-                updatePublicLinkExpiration: WireDriveUpdatePublicLinkExpirationUseCase(nodesAPI: nodesAPI),
-                updatePublicLinkPassword: WireDriveUpdatePublicLinkPasswordUseCase(nodesAPI: nodesAPI),
-                getDriveConversations: WireDriveGetConversationsUseCase(nodesAPI: nodesAPI)
+                    nodeRenameNotifier: nodeRenameNotifier,
+                    nodeCache: nodeCache
+                )
             ),
             title: path.last?.name,
             navigationPath: path,
@@ -122,13 +86,9 @@ package struct RecycleBinContainer: View {
                 path = items
             },
             isCellsStatePending: isCellsStatePending,
-            localAssetRepository: localAssetRepository,
-            nodesRepository: nodesRepository,
-            fileCache: fileCache,
             cellName: cellName,
             isBrowsing: false,
-            isRecycleBin: true,
-            accentColorProvider: accentColorProvider
+            isRecycleBin: true
         )
     }
 }

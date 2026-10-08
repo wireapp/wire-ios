@@ -16,52 +16,62 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
 package import SwiftUI
+
 import WireDesign
+import WireLocators
 
 package struct AllMeetingsView: View {
     private typealias Strings = L10n.Localizable.WireMeetings.List.Actions
 
-    @ObservedObject private var viewModel: AllMeetingsViewModel
+    @State private var viewModel: AllMeetingsViewModel
 
     package init(viewModel: AllMeetingsViewModel) {
         self.viewModel = viewModel
     }
 
     package var body: some View {
-        MeetingsView(viewModel: viewModel.meetingsViewModel)
-            .navigationTitle(L10n.Localizable.WireMeetings.List.title)
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Menu {
-                        Button {
-                            viewModel.createInstantMeetingTapped()
-                        } label: {
-                            Label(Strings.meetNow, systemImage: "chevron.forward")
-                        }
-
-                        Button {
-                            viewModel.scheduleMeetingTapped()
-                        } label: {
-                            Label(Strings.scheduleMeeting, systemImage: "chevron.forward")
-                        }
+        MeetingsView(
+            viewModel: viewModel.meetingsViewModel,
+            onEditMeeting: { viewModel.editMeetingTapped($0) },
+            onJoinMeeting: { occurrence in
+                Task { await viewModel.joinMeetingTapped(occurrence) }
+            }
+        )
+        .navigationTitle(L10n.Localizable.WireMeetings.List.title)
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Menu {
+                    Button {
+                        viewModel.createInstantMeetingTapped()
                     } label: {
-                        Image(.videoCall)
-                            .renderingMode(.template)
+                        Label(Strings.meetNow, systemImage: "chevron.forward")
                     }
-                    .accessibilityIdentifier("scheduleMeetingBarButton")
-                    .accessibilityLabel(Text(L10n.Accessibility.WireMeetings.VideoButton.description))
+
+                    Button {
+                        viewModel.scheduleMeetingTapped()
+                    } label: {
+                        Label(Strings.scheduleMeeting, systemImage: "chevron.forward")
+                    }
+                } label: {
+                    Image(.videoCall)
+                        .renderingMode(.template)
                 }
+                .accessibilityIdentifier(Locators.WireMeetings.MeetingsPage.scheduleButton)
+                .accessibilityLabel(Text(L10n.Accessibility.WireMeetings.VideoButton.description))
             }
-            .toolbarBackground(ColorTheme.Backgrounds.surface.color, for: .navigationBar)
-            .toolbarBackground(.visible, for: .navigationBar)
-            .sheet(isPresented: $viewModel.isCreateInstantMeetingPresented) {
-                CreateInstantMeetingView(viewModel: viewModel.makeCreateInstantMeetingViewModel())
-            }
-            .sheet(isPresented: $viewModel.isScheduleMeetingPresented) {
-                ScheduleMeetingView(viewModel: viewModel.makeScheduleMeetingViewModel())
-            }
+        }
+        .toolbarBackground(ColorTheme.Backgrounds.surface.color, for: .navigationBar)
+        .toolbarBackground(.visible, for: .navigationBar)
+        .sheet(item: $viewModel.presentedFormMode) { mode in
+            MeetingFormView(viewModel: viewModel.makeMeetingFormViewModel(mode: mode))
+        }
+        .alert(
+            L10n.Localizable.WireMeetings.List.Join.Error.Alert.title,
+            isPresented: $viewModel.hasJoinError
+        ) {
+            Button(L10n.Localizable.WireMeetings.List.Join.Error.Alert.ok, role: .cancel) {}
+        }
     }
 }

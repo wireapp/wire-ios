@@ -16,165 +16,456 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+package import Foundation
 package import WireCallingDomain
 package import WireFoundation
 
-package final class MeetingsViewModel: ObservableObject {
+import UIKit
+import WireLogging
+
+@Observable
+@MainActor
+package final class MeetingsViewModel {
 
     private typealias Strings = L10n.Localizable.WireMeetings.List
 
-    @Published var selectedTab: Tab = .next
-    @Published var showAll: Bool = false {
-        didSet {
-            if oldValue != showAll {
-                futureOffset = 0
-                upcomingMeetings = []
-                loadUpcomingMeetings()
-            }
+    private(set) var loadedOccurrences: [MeetingOccurrence] = []
+    private(set) var hasMore: Bool = false
+    private(set) var isLoading = false
+    private(set) var hasLoadError = false
+    private(set) var isDeleting = false
+    var hasDeleteError = false
+    private var failedMeetingToDelete: Meeting?
+    private var deleteError: DeleteMeetingUseCaseError?
+
+    var canRetryDelete: Bool { deleteError == nil }
+
+    package var loadedMeetings: [Meeting] {
+        loadedOccurrences.map(\.meeting)
+    }
+
+    private(set) var currentDate: Date
+
+    private(set) var attendingConversationIDs: Set<QualifiedID> = []
+
+    /// The meeting awaiting delete confirmation, or `nil` if no confirmation is in progress.
+    var meetingToDelete: Meeting?
+
+    var isDeleteConfirmationPresented: Bool {
+        get { meetingToDelete != nil }
+        set { if !newValue { meetingToDelete = nil } }
+    }
+
+    private var isDeletingForSelf: Bool {
+        meetingToDelete.map { !isOrganizer($0) } ?? false
+    }
+
+    var deleteConfirmationTitle: String {
+        if isDeletingForSelf {
+            Strings.DeleteForMe.Alert.title
+        } else if meetingToDelete?.recurrence != nil {
+            Strings.DeleteRecurring.Alert.title
+        } else {
+            Strings.Delete.Alert.title
         }
     }
 
-    @Published private(set) var showMoreButton: Bool = false
-    @Published private(set) var upcomingMeetings: GroupedMeetings = []
-    @Published private(set) var cachedOngoingMeetings: [Meeting] = []
-    @Published private(set) var cachedPastMeetings: GroupedMeetings = []
+    var deleteConfirmationMessage: String {
+        if isDeletingForSelf {
+            Strings.DeleteForMe.Alert.subtitle
+        } else if meetingToDelete?.recurrence != nil {
+            Strings.DeleteRecurring.Alert.subtitle
+        } else {
+            Strings.Delete.Alert.subtitle
+        }
+    }
 
-    private let repository: any MeetingsRepositoryProtocol
+    var deleteErrorTitle: String {
+        let strings = L10n.Localizable.Meetings.DeleteModal.Error.self
+        if deleteError == .notAllowed { return strings.notAllowedTitle }
+        if deleteError == .cleanupFailed { return strings.cleanupFailedTitle }
+        return failedMeetingToDelete.map { !isOrganizer($0) } == true
+            ? strings.leaveConversationFailedTitle : strings.deleteFailedTitle
+    }
+
+    var deleteErrorMessage: String {
+        let strings = L10n.Localizable.Meetings.DeleteModal.Error.self
+        if deleteError == .notAllowed { return strings.notAllowed }
+        if deleteError == .cleanupFailed { return strings.deleteSucceededButLocalCleanupFailed }
+        return failedMeetingToDelete.map { !isOrganizer($0) } == true
+            ? strings.leaveConversationFailed : strings.deleteFailed
+    }
+
     private let formatter: MeetingsFormatter
     private let currentDateProvider: any CurrentDateProviding
-    private let pastMeetingsUseCase: any FetchPastMeetingsUseCaseProtocol
     private let upcomingMeetingsUseCase: any FetchUpcomingMeetingsUseCaseProtocol
+    private let observeMeetingChangesUseCase: any ObserveMeetingChangesUseCaseProtocol
+    private let deleteMeetingUseCase: any DeleteMeetingUseCaseProtocol
+    private let selfUserID: UUID
+    private let observeAttendedMeetingsUseCase: (any ObserveAttendedMeetingsUseCaseProtocol)?
+    private let isApplicationActiveProvider: () -> Bool
 
+    /// Offset for the next page of expanded future occurrences.
     private var futureOffset: Int = 0
-    private let pageSize: Int = 50
-    private let calendar = Calendar.current
+    /// Number of occurrences loaded for the first page and full-range refresh fallback.
+    private let initialPageSize: Int = 20
+    /// Number of occurrences loaded by subsequent pagination requests.
+    private let pageSize: Int = 20
+    /// Tracks any in-flight meeting fetch, independently of `isLoading`.
+    /// Without this separate guard, silent system-date reloads would need to toggle
+    /// `isLoading` to prevent overlap, which would show the spinner for automatic refreshes.
+    private var isFetching = false
+    /// Queues one reload request that arrived while another fetch was already running.
+    /// Without this follow-up state, refresh events would be consumed by the in-flight guard and
+    /// the list could keep stale meetings or stale date/time-zone based occurrences until another refresh happens.
+    /// If any queued reload requested visible loading UI, the follow-up reload preserves that.
+    private var queuedReloadShowsLoadingIndicator: Bool?
+    /// Incremented whenever date/time formatting state is refreshed so SwiftUI re-evaluates
+    /// formatter and grouper output from private cached collaborators.
+    private var dateTimeStateRevision = 0
+    private let isSnapshotTesting: Bool
+
+    private let grouper = MeetingsGrouper()
 
     package init(
-        repository: any MeetingsRepositoryProtocol,
         currentDateProvider: any CurrentDateProviding,
         formatter: MeetingsFormatter = MeetingsFormatter(),
-        pastMeetingsUseCase: any FetchPastMeetingsUseCaseProtocol,
-        upcomingMeetingsUseCase: any FetchUpcomingMeetingsUseCaseProtocol
+        upcomingMeetingsUseCase: any FetchUpcomingMeetingsUseCaseProtocol,
+        observeMeetingChangesUseCase: any ObserveMeetingChangesUseCaseProtocol,
+        deleteMeetingUseCase: any DeleteMeetingUseCaseProtocol,
+        selfUserID: UUID,
+        observeAttendedMeetingsUseCase: (any ObserveAttendedMeetingsUseCaseProtocol)? = nil,
+        isApplicationActiveProvider: @escaping () -> Bool = { UIApplication.shared.applicationState == .active },
+        isSnapshotTesting: Bool = false
     ) {
-        self.repository = repository
         self.currentDateProvider = currentDateProvider
         self.formatter = formatter
-        self.pastMeetingsUseCase = pastMeetingsUseCase
         self.upcomingMeetingsUseCase = upcomingMeetingsUseCase
+        self.observeMeetingChangesUseCase = observeMeetingChangesUseCase
+        self.deleteMeetingUseCase = deleteMeetingUseCase
+        self.selfUserID = selfUserID
+        self.observeAttendedMeetingsUseCase = observeAttendedMeetingsUseCase
+        self.isApplicationActiveProvider = isApplicationActiveProvider
+        self.currentDate = currentDateProvider.now
+        self.isSnapshotTesting = isSnapshotTesting
     }
 
     // MARK: - Public Interface
 
-    var ongoingMeetings: [Meeting] {
-        cachedOngoingMeetings
+    var groupedUpcomingMeetings: GroupedMeetings {
+        _ = dateTimeStateRevision
+        return grouper.group(loadedOccurrences)
     }
 
-    var groupedPastMeetings: GroupedMeetings {
-        cachedPastMeetings
+    func loadInitialData() async {
+        guard !isFetching, !isSnapshotTesting else { return }
+        futureOffset = 0
+        hasMore = false
+        await load(pageSize: initialPageSize)
     }
 
-    var groupedNextMeetings: GroupedMeetings {
-        upcomingMeetings
+    func loadMoreIfNeeded() async {
+        guard hasMore, !isFetching else { return }
+        await load(pageSize: pageSize)
     }
 
-    func loadInitialData() {
-        refreshOngoingMeetings()
-        refreshPastMeetings()
-        loadUpcomingMeetings()
+    /// Reloads the loaded meetings whenever they are changed outside of this screen,
+    /// e.g. by background sync. Runs until the surrounding task is cancelled.
+    func observeMeetingChanges() async {
+        for await _ in observeMeetingChangesUseCase.invoke() {
+            await reloadLoadedMeetings()
+        }
     }
 
-    func loadMoreUpcomingMeetings() {
-        loadUpcomingMeetings()
+    func observeAttendedMeetings() async {
+        guard let observeAttendedMeetingsUseCase else { return }
+        for await ids in observeAttendedMeetingsUseCase.invoke() {
+            attendingConversationIDs = ids
+        }
     }
 
-    func refreshOngoingMeetings() {
-        cachedOngoingMeetings = repository.fetchOngoingMeetings(at: currentDateProvider.now)
+    /// Periodically refreshes the observable current date so time-based meeting state
+    /// updates while the meetings list remains on screen.
+    func observeCurrentDate() async {
+        while !Task.isCancelled {
+            refreshCurrentDate()
+
+            do {
+                try await Task.sleep(for: durationUntilNextMinute())
+            } catch {
+                return
+            }
+        }
     }
 
-    func refreshPastMeetings() {
-        cachedPastMeetings = pastMeetingsUseCase.invoke()
+    func observeSystemDateTimeChanges() async {
+        await observeSystemDateTimeChanges(Self.systemDateTimeChanges())
+    }
+
+    func observeSystemDateTimeChanges(_ changes: AsyncStream<Void>) async {
+        for await _ in changes {
+            await refreshSystemDateTimeState()
+        }
+    }
+
+    func refreshCurrentDate() {
+        currentDate = currentDateProvider.now
+    }
+
+    func refreshSystemDateTimeState() async {
+        await refreshSystemDateTimeState(shouldReloadMeetings: isApplicationActiveProvider())
+    }
+
+    func refreshSystemDateTimeStateAfterSceneBecameActive() async {
+        await refreshSystemDateTimeState(shouldReloadMeetings: true)
+    }
+
+    private func refreshSystemDateTimeState(shouldReloadMeetings: Bool) async {
+        formatter.refresh()
+        grouper.refresh()
+        refreshCurrentDate()
+        dateTimeStateRevision += 1
+
+        // System time changes can arrive while the app is backgrounded. Starting a fetch
+        // then can be suspended by iOS, so notification-driven refreshes only reload
+        // while active. Scene-phase refreshes already know the scene became active.
+        guard shouldReloadMeetings else {
+            return
+        }
+
+        await reloadLoadedMeetings(showsLoadingIndicator: false)
+    }
+
+    /// Meeting start times are always minute-aligned, so the refresh is scheduled on the
+    /// minute boundary rather than a fixed interval from when the screen appeared.
+    func durationUntilNextMinute() -> Duration {
+        let secondsIntoMinute = currentDateProvider.now.timeIntervalSince1970
+            .truncatingRemainder(dividingBy: 60)
+        return .seconds(60 - secondsIntoMinute)
+    }
+
+    /// Whether the self user is currently attending (joined the call of) the given meeting.
+    func isAttending(_ meeting: Meeting) -> Bool {
+        attendingConversationIDs.contains(meeting.conversationID)
+    }
+
+    func isAttending(_ occurrence: MeetingOccurrence) -> Bool {
+        attendingConversationIDs.contains(occurrence.conversationID) && isHappeningNow(occurrence)
+    }
+
+    func isOrganizer(_ meeting: Meeting) -> Bool {
+        meeting.creatorID.id == selfUserID
+    }
+
+    /// Whether the meeting's scheduled time range contains the current time.
+    func isHappeningNow(_ meeting: Meeting) -> Bool {
+        meeting.start <= currentDate && currentDate < meeting.end
+    }
+
+    /// Whether the occurrence's scheduled time range contains the current time.
+    func isHappeningNow(_ occurrence: MeetingOccurrence) -> Bool {
+        occurrence.start <= currentDate && currentDate < occurrence.end
     }
 
     func formatDay(_ date: Date) -> String {
-        formatter.dayHeader(for: date, now: currentDateProvider.now)
+        _ = dateTimeStateRevision
+        return formatter.dayHeader(for: date, now: currentDate)
     }
 
-    func formatTime(_ date: Date) -> String {
-        formatter.timeHeader(for: date)
+    func formatTimeRange(for meeting: Meeting) -> String {
+        _ = dateTimeStateRevision
+        return formatter.timeRange(from: meeting.start, to: meeting.end)
+    }
+
+    func formatTime(for occurrence: MeetingOccurrence) -> String {
+        _ = dateTimeStateRevision
+        return formatter.timeRange(from: occurrence.start, to: occurrence.end)
+    }
+
+    /// Deletes the meeting awaiting confirmation. Synchronous on purpose: it must capture
+    /// `meetingToDelete` before the alert dismissal clears it via `isDeleteConfirmationPresented`.
+    func confirmDelete() {
+        guard let meeting = meetingToDelete else { return }
+        meetingToDelete = nil
+        Task {
+            await deleteMeeting(meeting)
+        }
+    }
+
+    func deleteMeeting(_ meeting: Meeting) async {
+        guard !isDeleting else { return }
+        isDeleting = true
+        hasDeleteError = false
+        failedMeetingToDelete = nil
+        deleteError = nil
+        defer { isDeleting = false }
+
+        do {
+            try await deleteMeetingUseCase.invoke(meeting: meeting)
+            loadedOccurrences.removeAll { $0.meeting.id == meeting.id }
+        } catch {
+            failedMeetingToDelete = meeting
+            deleteError = error as? DeleteMeetingUseCaseError
+            if deleteError == .cleanupFailed {
+                loadedOccurrences.removeAll { $0.meeting.id == meeting.id }
+            }
+            hasDeleteError = true
+            WireLogger.meetings.error("failed to delete meeting: \(String(reflecting: error))")
+        }
+    }
+
+    func retryDelete() async {
+        guard canRetryDelete, let meeting = failedMeetingToDelete else { return }
+        await deleteMeeting(meeting)
     }
 
     // MARK: - Private Methods
 
-    private func loadUpcomingMeetings() {
-        let isLimited = !showAll
-        let result = upcomingMeetingsUseCase.invoke(
-            limitToTwoDays: isLimited,
-            pageSize: pageSize,
-            offset: futureOffset
-        )
-
-        if futureOffset == 0 {
-            upcomingMeetings = result.groups
-        } else {
-            upcomingMeetings = mergeGroups(existing: upcomingMeetings, new: result.groups)
+    /// Re-fetches everything that is currently loaded in a single page, because a
+    /// change can insert or remove meetings anywhere in the loaded range.
+    private func reloadLoadedMeetings(showsLoadingIndicator: Bool = true) async {
+        guard !isFetching else {
+            queuedReloadShowsLoadingIndicator = (queuedReloadShowsLoadingIndicator ?? false) || showsLoadingIndicator
+            return
         }
 
-        futureOffset = result.nextOffset
-
-        if isLimited {
-            showMoreButton = calendar.todayAndTomorrowRange(using: currentDateProvider)
-                .map { repository.hasUpcomingMeetings(after: $0.end) } ?? false
-        } else {
-            showMoreButton = result.hasMore
-        }
+        let reloadSize = max(loadedOccurrences.count, initialPageSize)
+        futureOffset = 0
+        await load(pageSize: reloadSize, showsLoadingIndicator: showsLoadingIndicator)
     }
 
-    private func mergeGroups(existing: GroupedMeetings, new: GroupedMeetings) -> GroupedMeetings {
-        var mergedDict: [Date: [MeetingTimeSlot]] = [:]
+    private func load(pageSize: Int, showsLoadingIndicator: Bool = true) async {
+        isFetching = true
+        if showsLoadingIndicator {
+            isLoading = true
+        }
+        hasLoadError = false
 
-        for group in existing + new {
-            var slots = mergedDict[group.day] ?? []
-            for newSlot in group.timeSlots {
-                if let index = slots.firstIndex(where: { $0.time == newSlot.time }) {
-                    let mergedMeetings = slots[index].meetings + newSlot.meetings
-                    slots[index] = (time: newSlot.time, meetings: mergedMeetings)
-                } else {
-                    slots.append(newSlot)
+        do {
+            defer {
+                isFetching = false
+                if showsLoadingIndicator {
+                    isLoading = false
                 }
             }
-            mergedDict[group.day] = slots.sorted { $0.time < $1.time }
+
+            do {
+                let requestedOffset = futureOffset
+                let result = try await upcomingMeetingsUseCase.invoke(pageSize: pageSize, offset: requestedOffset)
+                if requestedOffset == 0 {
+                    loadedOccurrences = result.occurrences
+                } else {
+                    loadedOccurrences += result.occurrences
+                }
+
+                futureOffset = result.nextOffset
+                hasMore = result.hasMore
+            } catch {
+                hasMore = false
+                hasLoadError = true
+                WireLogger.meetings.error("failed to fetch upcoming meetings: \(String(reflecting: error))")
+            }
         }
 
-        return mergedDict.sorted { $0.key < $1.key }.map { (day: $0.key, timeSlots: $0.value) }
+        if let queuedReloadShowsLoadingIndicator {
+            self.queuedReloadShowsLoadingIndicator = nil
+            await reloadLoadedMeetings(showsLoadingIndicator: queuedReloadShowsLoadingIndicator)
+        }
     }
 
 }
 
-extension MeetingsViewModel {
+package extension MeetingsViewModel {
 
-    enum Tab: Int, CaseIterable {
-        case next
-        case past
+    static var systemDateTimeChangeNotificationNames: [Notification.Name] {
+        [
+            .NSCalendarDayChanged,
+            .NSSystemClockDidChange,
+            .NSSystemTimeZoneDidChange,
+            NSLocale.currentLocaleDidChangeNotification,
+            UIApplication.significantTimeChangeNotification
+        ]
+    }
 
-        var title: String {
-            switch self {
-            case .next: Strings.Tabs.next
-            case .past: Strings.Tabs.past
+    static func systemDateTimeChanges(
+        notificationCenter: NotificationCenter = .default,
+        debounceDuration: Duration? = .milliseconds(300)
+    ) -> AsyncStream<Void> {
+        AsyncStream { continuation in
+            let observer = DateTimeChangeNotificationObserver(
+                notificationCenter: notificationCenter,
+                names: systemDateTimeChangeNotificationNames,
+                debounceDuration: debounceDuration,
+                continuation: continuation
+            )
+
+            continuation.onTermination = { _ in
+                observer.invalidate()
             }
         }
     }
 
 }
 
-private extension Sequence<MeetingTimeSlot> {
-    var meetingCount: Int {
-        reduce(0) { $0 + $1.meetings.count }
-    }
-}
+private final class DateTimeChangeNotificationObserver: @unchecked Sendable {
 
-private extension Sequence<(day: Date, timeSlots: [MeetingTimeSlot])> {
-    var meetingCount: Int {
-        reduce(0) { $0 + $1.timeSlots.meetingCount }
+    private let notificationCenter: NotificationCenter
+    private let debounceDuration: Duration?
+    private let continuation: AsyncStream<Void>.Continuation
+    private let lock = NSLock()
+    private var observers: [any NSObjectProtocol] = []
+    private var debounceTask: Task<Void, Never>?
+
+    init(
+        notificationCenter: NotificationCenter,
+        names: [Notification.Name],
+        debounceDuration: Duration?,
+        continuation: AsyncStream<Void>.Continuation
+    ) {
+        self.notificationCenter = notificationCenter
+        self.debounceDuration = debounceDuration
+        self.continuation = continuation
+        self.observers = names.map { name in
+            notificationCenter.addObserver(
+                forName: name,
+                object: nil,
+                queue: .main
+            ) { [weak self] _ in
+                self?.notificationReceived()
+            }
+        }
     }
+
+    private func notificationReceived() {
+        guard let debounceDuration else {
+            continuation.yield(())
+            return
+        }
+
+        lock.lock()
+        debounceTask?.cancel()
+        debounceTask = Task { [continuation] in
+            do {
+                try await Task.sleep(for: debounceDuration)
+            } catch {
+                return
+            }
+
+            continuation.yield(())
+        }
+        lock.unlock()
+    }
+
+    func invalidate() {
+        lock.lock()
+        let observers = observers
+        let debounceTask = debounceTask
+        self.observers.removeAll()
+        self.debounceTask = nil
+        lock.unlock()
+
+        debounceTask?.cancel()
+        observers.forEach(notificationCenter.removeObserver)
+    }
+
 }

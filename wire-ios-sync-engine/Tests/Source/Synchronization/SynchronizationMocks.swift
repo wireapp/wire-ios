@@ -19,6 +19,7 @@
 import avs
 import Foundation
 import WireDataModel
+import WireTransport
 @testable import WireSyncEngine
 
 @objcMembers
@@ -197,8 +198,6 @@ class FakeCredentialProvider: NSObject, ZMCredentialProvider {
         clearCallCount += 1
     }
 }
-
-class FakeCookieStorage: ZMPersistentCookieStorage {}
 
 @objc
 public class MockPushMessageHandler: NSObject, PushMessageHandler {

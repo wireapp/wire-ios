@@ -40,6 +40,8 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
         let splitLayoutObserver = SplitLayoutObserver(zClientViewController: zClientViewController)
         let cameraKeyboardViewController = CameraKeyboardViewController(
             splitLayoutObservable: splitLayoutObserver,
+            attachmentsCarouselViewModel: attachmentsCarouselViewModel,
+            isWireDriveEnabled: useWireDrive(),
             userSession: userSession
         )
         cameraKeyboardViewController.delegate = self
@@ -50,6 +52,7 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
     func cameraKeyboardViewController(
         _ controller: CameraKeyboardViewController,
         didSelectVideo videoURL: URL,
+        withLocalIdentifier id: String?,
         duration: TimeInterval
     ) {
         // Video can be longer than allowed to be uploaded. Then we need to add user the possibility to trim it.
@@ -83,24 +86,11 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
                 present(videoEditor, animated: true) {}
             }
         } else {
-            let context = ConfirmAssetViewController.Context(
-                asset: .video(url: videoURL),
-                onConfirm: { [unowned self] _ in
-                    dismiss(animated: true)
-                    uploadFiles(at: [videoURL])
-                },
-                onCancel: { [unowned self] in
-                    dismiss(animated: true) {
-                        self.mode = .camera
-                        self.inputBar.textView.becomeFirstResponder()
-                    }
-                }
-            )
-            let confirmVideoViewController = ConfirmAssetViewController(context: context, userSession: userSession)
-            confirmVideoViewController.previewTitle = conversation.displayNameWithFallback
-
-            view.window?.endEditing(true)
-            present(confirmVideoViewController, animated: true)
+            if useWireDrive() {
+                uploadVideoFile(.init(url: videoURL, localIdentifier: id))
+            } else {
+                showConfirmationForVideo(url: videoURL)
+            }
         }
     }
 
@@ -109,10 +99,32 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
         didSelectImage image: SendableImage,
         isFromCamera: Bool
     ) {
-        showConfirmationForImage(
-            image,
-            isFromCamera: isFromCamera
-        )
+        if useWireDrive(), !isFromCamera {
+            let dataToSend = image.data
+            let utType: UTType = image.utType ?? .image
+            uploadDraft(data: dataToSend, type: utType, localIdentifier: image.localIdentifier)
+        } else {
+            showConfirmationForImage(
+                image,
+                isFromCamera: isFromCamera
+            )
+        }
+    }
+
+    func cameraKeyboardViewController(_ controller: CameraKeyboardViewController, didDeselectImage image: PHAsset) {
+        removeDraft(localIdentifier: image.localIdentifier)
+    }
+
+    func removeDraft(localIdentifier: String) {
+        let draft = attachmentsCarouselViewModel.draft(withLocalIdentifier: localIdentifier)
+
+        guard let draft else {
+            return WireLogger.wireDrive.error("Draft with localIdentifier: \(localIdentifier) not found")
+        }
+
+        Task.detached { [deleteDraftUseCase] in
+            try? await deleteDraftUseCase.invoke(nodeID: draft.nodeID)
+        }
     }
 
     @objc
@@ -144,20 +156,49 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
     }
 
     func cameraKeyboardViewControllerWantsToOpenCameraRoll(_ controller: CameraKeyboardViewController) {
+        let preSelectedAssetIdentifiers = controller.selectedAssetIdentifiers
+
         hideCameraKeyboardViewController { [self] in
             shouldRefocusKeyboardAfterImagePickerDismiss = true
             presentImagePicker(
                 sourceType: .photoLibrary,
                 mediaTypes: [UTType.movie.identifier, UTType.image.identifier],
                 allowsEditing: false,
+                preSelectedAssetIdentifiers: preSelectedAssetIdentifiers,
                 pointToView: photoButton.imageView!
             )
         }
     }
 
+    func showConfirmationForVideo(url: URL) {
+        let context = ConfirmAssetViewController.Context(
+            asset: .video(url: url),
+            onConfirm: { [unowned self] _ in
+                dismiss(animated: true)
+                if useWireDrive() {
+                    showCamera()
+                } else {
+                    uploadFiles(at: [url])
+                }
+            },
+            onCancel: { [unowned self] in
+                dismiss(animated: true) {
+                    self.mode = .camera
+                    self.inputBar.textView.becomeFirstResponder()
+                }
+            }
+        )
+        let confirmVideoViewController = ConfirmAssetViewController(context: context, userSession: userSession)
+        confirmVideoViewController.previewTitle = conversation.displayNameWithFallback
+
+        view.window?.endEditing(true)
+        present(confirmVideoViewController, animated: true)
+    }
+
     func showConfirmationForImage(
         _ image: SendableImage,
-        isFromCamera: Bool
+        isFromCamera: Bool,
+        nodeID: UUID? = nil
     ) {
         let mediaAsset: MediaAsset = if
             image.utType == .gif,
@@ -176,45 +217,60 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
                     self.writeToSavedPhotoAlbumIfNecessary(
                         imageData: image.data,
                         isFromCamera: isFromCamera
-                    )
+                    ) { localIdentifier in
+                        let dataToSend = editedImage?.pngData() ?? image.data
+                        let utType: UTType = if editedImage != nil {
+                            .png
+                        } else {
+                            image.utType ?? .image
+                        }
 
-                    let dataToSend = editedImage?.pngData() ?? image.data
-                    let utType: UTType = if editedImage != nil {
-                        .png
-                    } else {
-                        image.utType ?? .image
-                    }
+                        if self.useWireDrive() {
+                            self.showCamera()
 
-                    if self.userSession.isWireDriveEnabled,
-                       self.conversation.isWireDriveEnabled {
-                        self.uploadDraft(data: dataToSend, type: utType)
-                    } else {
-                        let image = SendableImage(
-                            name: nil,
-                            utType: utType,
-                            data: dataToSend
-                        )
-                        self.sendController.sendMessage(
-                            image: image,
-                            userSession: self.userSession
-                        )
+                            if isFromCamera || editedImage != nil {
+                                self.uploadDraft(
+                                    data: dataToSend,
+                                    type: utType,
+                                    localIdentifier: localIdentifier,
+                                    existingNodeID: isFromCamera ? nil : image.id
+                                )
+                            }
+                        } else {
+                            let image = SendableImage(
+                                name: nil,
+                                utType: utType,
+                                data: dataToSend
+                            )
+                            self.sendController.sendMessage(
+                                image: image,
+                                userSession: self.userSession
+                            )
+                        }
                     }
                 }
             },
             onCancel: { [weak self] in
                 self?.dismiss(animated: true) {
-                    self?.mode = .camera
-                    self?.inputBar.textView
-                        .becomeFirstResponder()
+                    self?.showCamera()
                 }
             }
         )
 
-        let confirmImageViewController = ConfirmAssetViewController(context: context, userSession: userSession)
+        let confirmImageViewController = ConfirmAssetViewController(
+            context: context,
+            userSession: userSession,
+            isWireDriveEnabled: useWireDrive()
+        )
         confirmImageViewController.previewTitle = conversation.displayNameWithFallback
 
         view.window?.endEditing(true)
         present(confirmImageViewController, animated: true)
+    }
+
+    func showCamera() {
+        mode = .camera
+        inputBar.textView.becomeFirstResponder()
     }
 
     private func executeWithCameraRollPermission(_ closure: @escaping (_ success: Bool) -> Void) {
@@ -230,16 +286,33 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
         }
     }
 
-    private func writeToSavedPhotoAlbumIfNecessary(imageData: Data, isFromCamera: Bool) {
+    private func writeToSavedPhotoAlbumIfNecessary(
+        imageData: Data,
+        isFromCamera: Bool,
+        handler: @escaping (String?) -> Void
+    ) {
         guard isFromCamera,
               mediaShareRestrictionManager.hasAccessToCameraRoll,
-              SecurityFlags.cameraRoll.isEnabled,
-              let image = UIImage(data: imageData as Data)
-        else {
-            return
+              SecurityFlags.cameraRoll.isEnabled
+        else { return handler(nil) }
+
+        PHPhotoLibrary.shared().performChanges {
+            let request = PHAssetCreationRequest.forAsset()
+
+            request.addResource(
+                with: .photo,
+                data: imageData,
+                options: nil
+            )
+
+            let localIdentifier = request
+                .placeholderForCreatedAsset?
+                .localIdentifier
+
+            DispatchQueue.main.async {
+                handler(localIdentifier)
+            }
         }
-        let selector = #selector(ConversationInputBarViewController.image(_:didFinishSavingWithError:contextInfo:))
-        UIImageWriteToSavedPhotosAlbum(image, self, selector, nil)
     }
 
     func convertVideoAtPath(
@@ -311,8 +384,7 @@ extension ConversationInputBarViewController: CanvasViewControllerDelegate {
 
             dismiss(animated: true) {
                 if let imageData = image.pngData() {
-                    if self.userSession.isWireDriveEnabled,
-                       self.conversation.isWireDriveEnabled {
+                    if self.useWireDrive() {
                         self.uploadDraft(data: imageData, type: .png)
                     } else {
                         let image = SendableImage(
@@ -330,11 +402,16 @@ extension ConversationInputBarViewController: CanvasViewControllerDelegate {
         }
     }
 
-    private func uploadDraft(data: Data, type: UTType) {
+    func uploadDraft(data: Data, type: UTType, localIdentifier: String? = nil, existingNodeID: UUID? = nil) {
         Task.detached { [uploadDraftUseCase] in
             // We don't care about the result of the operation here as we will be observing changes.
             do {
-                try await uploadDraftUseCase.invoke(data: data, type: type)
+                try await uploadDraftUseCase.invoke(
+                    data: data,
+                    type: type,
+                    localIdentifier: localIdentifier,
+                    existingNodeID: existingNodeID
+                )
             } catch {
                 WireLogger.conversation.error("Failed to upload file: \(error)")
             }

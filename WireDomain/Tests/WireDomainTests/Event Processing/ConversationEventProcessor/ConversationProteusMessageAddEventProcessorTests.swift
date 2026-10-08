@@ -190,6 +190,37 @@ final class ConversationProteusMessageAddEventProcessorTests: XCTestCase {
         }
     }
 
+    func testProcessEvent_AvailabilityMessage_UpdatesUserAndSkipsConversationChecks() async throws {
+        // Availability broadcasts arrive in the self conversation from non-self senders.
+        // The processor must handle them before the canAddMessage gate.
+
+        let conversation = await context.perform { [self] in
+            modelHelper.createGroupConversation(in: context)
+        }
+
+        // Mock
+        userLocalStore.updateUserWithAvailability_MockMethod = { _, _ in }
+        conversationLocalStore.fetchConversationIdDomain_MockValue = conversation
+
+        // When
+        try await sut.processEvent(Scaffolding.availabilityMessageEvent)
+
+        // Then — availability was applied to the correct user
+        XCTAssertEqual(userLocalStore.updateUserWithAvailability_Invocations.count, 1)
+        let invocation = try XCTUnwrap(userLocalStore.updateUserWithAvailability_Invocations.first)
+        XCTAssertEqual(invocation.userID.uuid, Scaffolding.senderID)
+        XCTAssertEqual(invocation.availability, .available)
+
+        // Then — conversation checks were never reached
+        XCTAssertEqual(messageLocalStore.canAddMessageConversationSenderID_Invocations.count, 0)
+        XCTAssertEqual(
+            protobufMessageProcessor
+                .processProtobufMessageConversationConversationIDSenderIDSenderClientIDDateEventMessage_Invocations
+                .count,
+            0
+        )
+    }
+
     func testProcessEvent_Message_Has_Calling_It_Invokes_Handler_With_Call_Event_Info() async throws {
 
         let conversation = await context.perform { [self] in
@@ -210,6 +241,7 @@ final class ConversationProteusMessageAddEventProcessorTests: XCTestCase {
 
     enum Scaffolding {
         static let domain = "domain.com"
+        static let senderID = UUID.mockID1
 
         static let regularMessage = "CiQ5ZTU2NTQwOS0xODZiLTRlN2YtYTE4NC05NzE4MGE0MDAwMDQSDAoKRXZlcnl0aGluZw=="
         static let externalMessage =
@@ -235,6 +267,21 @@ final class ConversationProteusMessageAddEventProcessorTests: XCTestCase {
             messageSenderClientID: UUID.mockID1.uuidString,
             messageRecipientClientID: UUID.mockID2.uuidString
         )
+
+        static let availabilityMessageEvent = ConversationProteusMessageAddEvent(
+            conversationID: ConversationID(id: .mockID2, domain: domain),
+            senderID: UserID(id: senderID, domain: domain),
+            timestamp: .now,
+            message: .init(encryptedMessage: "", decryptedMessage: availabilityMessage),
+            messageSenderClientID: UUID.mockID1.uuidString,
+            messageRecipientClientID: UUID.mockID2.uuidString
+        )
+
+        private static let availabilityMessage: String = {
+            let proto = GenericMessageProtocol.Availability(WireDataModel.Availability.available)
+            let message = GenericMessage(content: proto)
+            return (try? message.serializedData().base64String()) ?? ""
+        }()
 
         static let callingMessageEvent = ConversationProteusMessageAddEvent(
             conversationID: ConversationID(id: .mockID1, domain: domain),
