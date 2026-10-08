@@ -518,17 +518,24 @@ extension AppRootRouter: AppStateCalculatorDelegate {
             accountID: account.userIdentifier
         )
 
-        let e2eiNotificationActionsHandler = E2EINotificationActionsHandler(
-            enrollCertificateUseCase: userSession.enrollE2EICertificate,
-            snoozeCertificateEnrollmentUseCase: userSession.snoozeCertificateEnrollmentUseCase,
-            stopCertificateEnrollmentSnoozerUseCase: userSession.stopCertificateEnrollmentSnoozerUseCase,
-            e2eiActivationDateRepository: userSession.e2eiActivationDateRepository,
-            e2eiFeature: userSession.e2eiFeature,
-            lastE2EIdentityUpdateAlertDateRepository: userSession.lastE2EIUpdateDateRepository,
-            e2eIdentityCertificateUpdateStatus: userSession.e2eIdentityUpdateCertificateUpdateStatus(),
-            selfClientCertificateProvider: userSession.selfClientCertificateProvider,
-            targetVC: { [weak self] in self!.rootViewController }
-        )
+        var featureChangeHandlers: [Feature.Name: any FeatureChangeHandler] = [
+            .selfDeletingMessages: SelfDeletingMessagesChangeHandler(userSession: userSession)
+        ]
+
+        // Without a client session component no feature change notifier is created, so the handler wouldn't be used.
+        if let featureConfigRepository = userSession.clientSessionComponent?.featureConfigRepository {
+            featureChangeHandlers[.e2ei] = E2EINotificationActionsHandler(
+                enrollCertificateUseCase: userSession.enrollE2EICertificate,
+                snoozeCertificateEnrollmentUseCase: userSession.snoozeCertificateEnrollmentUseCase,
+                stopCertificateEnrollmentSnoozerUseCase: userSession.stopCertificateEnrollmentSnoozerUseCase,
+                e2eiActivationDateRepository: userSession.e2eiActivationDateRepository,
+                featureConfigRepository: featureConfigRepository,
+                lastE2EIdentityUpdateAlertDateRepository: userSession.lastE2EIUpdateDateRepository,
+                e2eIdentityCertificateUpdateStatus: userSession.e2eIdentityUpdateCertificateUpdateStatus(),
+                selfClientCertificateProvider: userSession.selfClientCertificateProvider,
+                targetVC: { [weak self] in self!.rootViewController }
+            )
+        }
 
         return AuthenticatedRouter(
             mainWindow: mainWindow,
@@ -537,10 +544,7 @@ extension AppRootRouter: AppStateCalculatorDelegate {
             legacyEnvironment: sessionManager.environment,
             newEnvironment: newEnvironment,
             trackingManager: trackingManager,
-            featureChangeHandlers: [
-                .e2ei: e2eiNotificationActionsHandler,
-                .selfDeletingMessages: SelfDeletingMessagesChangeHandler(userSession: userSession)
-            ]
+            featureChangeHandlers: featureChangeHandlers
         )
     }
 }

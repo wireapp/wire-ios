@@ -123,6 +123,13 @@ public final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
         )
     }
 
+    public func fetchE2EIConfig() async throws -> LocalFeature<Feature.E2EI.Config> {
+        try await fetchFeatureConfig(
+            name: .e2ei,
+            type: Feature.E2EI.Config.self
+        )
+    }
+
     // MARK: - Private
 
     private func sendFeatureState(for featureConfig: FeatureConfig) async {

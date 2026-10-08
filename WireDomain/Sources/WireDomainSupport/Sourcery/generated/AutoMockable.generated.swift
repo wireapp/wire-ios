@@ -2465,6 +2465,29 @@ public class MockFeatureConfigRepositoryProtocol: FeatureConfigRepositoryProtoco
         }
     }
 
+    // MARK: - fetchE2EIConfig
+
+    public var fetchE2EIConfig_Invocations: [Void] = []
+    public var fetchE2EIConfig_MockError: Error?
+    public var fetchE2EIConfig_MockMethod: (() async throws -> LocalFeature<Feature.E2EI.Config>)?
+    public var fetchE2EIConfig_MockValue: LocalFeature<Feature.E2EI.Config>?
+
+    public func fetchE2EIConfig() async throws -> LocalFeature<Feature.E2EI.Config> {
+        fetchE2EIConfig_Invocations.append(())
+
+        if let error = fetchE2EIConfig_MockError {
+            throw error
+        }
+
+        if let mock = fetchE2EIConfig_MockMethod {
+            return try await mock()
+        } else if let mock = fetchE2EIConfig_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchE2EIConfig`")
+        }
+    }
+
     // MARK: - isFeatureEnabled
 
     public var isFeatureEnabled_Invocations: [Feature.Name] = []
