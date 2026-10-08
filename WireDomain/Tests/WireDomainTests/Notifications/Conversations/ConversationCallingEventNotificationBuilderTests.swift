@@ -455,39 +455,53 @@ final class ConversationCallingEventNotificationBuilderTests: XCTestCase {
             accountID: Scaffolding.accountID
         )
 
-        userLocalStore.fetchOrCreateUserIdDomain_MockValue = selfUser
-        var selfStart = Calling()
-        selfStart.content = setupCallingContentMock(type: "CONFSTART", responded: true)
-        _ = await sut.buildContent(
-            calling: selfStart,
-            at: .now,
-            conversationID: Scaffolding.conversationID,
-            senderID: Scaffolding.userID
-        )
+        let timestampCases: [(String?, String?)] = [
+            ("1000", "2000"),
+            (nil, "2000"),
+            ("1000", nil),
+            (nil, nil)
+        ]
 
-        userLocalStore.fetchOrCreateUserIdDomain_MockValue = otherUser
-        var newStart = Calling()
-        newStart.content = setupCallingContentMock(type: "CONFSTART", conferenceTimestamp: "2000")
-        _ = await sut.buildContent(
-            calling: newStart,
-            at: .now,
-            conversationID: Scaffolding.conversationID,
-            senderID: Scaffolding.userID
-        )
+        for (selfTimestamp, newTimestamp) in timestampCases {
+            userLocalStore.fetchOrCreateUserIdDomain_MockValue = selfUser
+            var selfStart = Calling()
+            selfStart.content = setupCallingContentMock(
+                type: "CONFSTART",
+                responded: true,
+                conferenceTimestamp: selfTimestamp
+            )
+            _ = await sut.buildContent(
+                calling: selfStart,
+                at: .now,
+                conversationID: Scaffolding.conversationID,
+                senderID: Scaffolding.userID
+            )
 
-        var end = Calling()
-        end.content = setupCallingContentMock(type: "CONFEND")
-        let endNotification = await sut.buildContent(
-            calling: end,
-            at: .now,
-            conversationID: Scaffolding.conversationID,
-            senderID: Scaffolding.userID
-        )
+            userLocalStore.fetchOrCreateUserIdDomain_MockValue = otherUser
+            var newStart = Calling()
+            newStart.content = setupCallingContentMock(type: "CONFSTART", conferenceTimestamp: newTimestamp)
+            _ = await sut.buildContent(
+                calling: newStart,
+                at: .now,
+                conversationID: Scaffolding.conversationID,
+                senderID: Scaffolding.userID
+            )
 
-        guard let endNotification, case let .text(content) = endNotification else {
-            return XCTFail("The new unanswered call should generate a missed-call notification")
+            var end = Calling()
+            end.content = setupCallingContentMock(type: "CONFEND")
+            let endNotification = await sut.buildContent(
+                calling: end,
+                at: .now,
+                conversationID: Scaffolding.conversationID,
+                senderID: Scaffolding.userID
+            )
+
+            guard let endNotification, case let .text(content) = endNotification else {
+                XCTFail("A new unanswered call should show as missed, even if a timestamp is missing")
+                continue
+            }
+            XCTAssertEqual(content.categoryIdentifier, NotificationCategory.missedCall.rawValue)
         }
-        XCTAssertEqual(content.categoryIdentifier, NotificationCategory.missedCall.rawValue)
     }
 
     func testLateStartInSameConferencePreservesAnsweredElsewhereState() async throws {
@@ -1025,14 +1039,15 @@ final class ConversationCallingEventNotificationBuilderTests: XCTestCase {
         type: String,
         isVideo: Bool = false,
         responded: Bool = false,
-        conferenceTimestamp: String = "1000"
+        conferenceTimestamp: String? = "1000"
     ) -> String {
-        """
+        let timestamp = conferenceTimestamp.map { "\"\($0)\"" } ?? "null"
+        return """
         {
             "type": "\(type)",
             "src_clientid": "clientid",
             "resp": \(responded),
-            "timestamp": "\(conferenceTimestamp)",
+            "timestamp": \(timestamp),
             "props": { "videosend": "\(isVideo)" }
         }
         """

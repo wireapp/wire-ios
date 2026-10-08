@@ -49,12 +49,12 @@ struct AnsweredElsewhereCallTracker {
                 let marker = Marker(conferenceTimestamp: callContent.conferenceTimestamp, recordedAt: .now)
                 userDefaults.set(try? JSONEncoder().encode(marker), forKey: key)
             } else if callContent.isIncomingCall,
-                      let marker = readMarker(forKey: key),
-                      let oldTimestamp = marker.conferenceTimestamp,
-                      let newTimestamp = callContent.conferenceTimestamp,
-                      oldTimestamp != newTimestamp {
-                // A late start for the same conference must not undo the answered state.
-                userDefaults.removeObject(forKey: key)
+                      let marker = readMarker(forKey: key) {
+                let oldTimestamp = marker.conferenceTimestamp
+                let newTimestamp = callContent.conferenceTimestamp
+                if oldTimestamp == nil || newTimestamp == nil || oldTimestamp != newTimestamp {
+                    userDefaults.removeObject(forKey: key)
+                }
             }
             return false
         }
