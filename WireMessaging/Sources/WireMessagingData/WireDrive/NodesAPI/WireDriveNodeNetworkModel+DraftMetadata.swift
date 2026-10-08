@@ -27,12 +27,17 @@ package extension WireDriveNodeNetworkModel {
     /// presigned upload used for background transfers (where the presigner folds it into
     /// `x-amz-meta-*` query items instead).
 
-    func createDraftNodeMetadata(versionID: UUID) -> [String: String] {
-        [
-            "Draft-Mode": "true",
+    func createDraftNodeMetadata(versionID: UUID, isDraft: Bool = true) -> [String: String] {
+        var metadata = [
             "Create-Resource-UUID": uuid.transportString(),
             "Create-Version-ID": versionID.transportString()
         ]
+        
+        if isDraft {
+            metadata.updateValue("true", forKey: "Draft-Mode")
+        }
+        
+        return metadata
     }
 
 }
