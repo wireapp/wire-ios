@@ -17,10 +17,15 @@
 //
 
 import WireFoundation
+import WireUtilities
 import XCTest
 
 /// [collaboration]
 final class WireDriveTests: WireUITestCase {
+
+    override func additionalDeveloperFlags() -> [DeveloperFlag: Bool] {
+        [.simulateDriveOffline: false]
+    }
 
     private func createDriveEnabledConversation(
         _ conversation: CreateConversationOption,
@@ -35,6 +40,12 @@ final class WireDriveTests: WireUITestCase {
     }
 
     private func createDriveEnabledConversationWithGuest(groupName: String) async throws -> UserInfo {
+        try await createDriveEnabledConversationWithOwnerAndGuest(groupName: groupName).guest
+    }
+
+    private func createDriveEnabledConversationWithOwnerAndGuest(
+        groupName: String
+    ) async throws -> (owner: UserInfo, guest: UserInfo) {
         let (owner, guest) = try await UserHelper.default.connectDriveEnabledTeamUserWithGuestUser()
 
         let domain = BackendTarget.staging.domainInfo
@@ -53,7 +64,7 @@ final class WireDriveTests: WireUITestCase {
             driveEnabled: true
         )
 
-        return guest
+        return (owner, guest)
     }
 
     private func loginAndOpenConversation(for user: UserInfo) throws -> ActiveConversationPage {
@@ -284,6 +295,154 @@ final class WireDriveTests: WireUITestCase {
 
         // THEN
         XCTAssertTrue(sharedDrivePage.verifyFolderIsCreated(folderName: folderName))
+    }
+
+    @MainActor
+    func testCreatingFile_DocumentSpreadsheetPresentation() async throws {
+
+        // GIVEN
+        let teamOwner = try await createDriveEnabledConversation(
+            .group(UserGenerator.generateRandomConversationName())
+        )
+
+        var sharedDrivePage = try loginAndOpenConversation(for: teamOwner)
+            .openSharedDrive()
+
+        for (index, template) in [CreateFilePage.Template.document, .spreadsheet, .presentation].enumerated() {
+            // WHEN
+            let fileName = "Test\(index)"
+            sharedDrivePage = try sharedDrivePage
+                .createFile(template: template)
+                .enterFileNameAndCreate(name: fileName)
+
+            // THEN
+            XCTAssertTrue(
+                sharedDrivePage.verifyFileIsCreated(fileName: fileName, fileExtension: template.fileExtension),
+                "\(template) should be created"
+            )
+        }
+    }
+
+    @MainActor
+    func testMakeFileAvailableOffline_TC_12153() async throws {
+
+        // GIVEN
+        let teamOwner = try await createDriveEnabledConversation(
+            .group(UserGenerator.generateRandomConversationName())
+        )
+
+        let sharedDrivePage = try uploadSketchAndOpenSharedDrive(message: "Attachment with Text", for: teamOwner)
+        // The row label also holds the metadata (date, author) and gains "Available offline" once downloaded
+        let sharedFileName = try XCTUnwrap(sharedDrivePage.fileNameText.components(separatedBy: ",").first)
+
+        // WHEN
+        try sharedDrivePage.makeFileAvailableOffline()
+        XCTAssertTrue(sharedDrivePage.availableOfflineIcon.waitForExistence(timeout: 15))
+
+        // Relaunch the app (keeping the session) with Drive simulating no network connection
+        app.terminate()
+        app.launchArguments = ["--useEnvStaging"]
+        app.setDeveloperFlags([.useWireAuthentication: true, .simulateDriveOffline: true])
+        app.launch()
+
+        let offlineSharedDrivePage = try ConversationsPage()
+            .openConversation()
+            .openSharedDrive()
+
+        // THEN
+        XCTAssertTrue(offlineSharedDrivePage.fileIcon.waitForExistence(timeout: 10))
+        XCTAssertTrue(offlineSharedDrivePage.fileNameText.hasPrefix(sharedFileName))
+        XCTAssertTrue(offlineSharedDrivePage.fileNameText.contains("Available offline"))
+        XCTAssertTrue(offlineSharedDrivePage.availableOfflineIcon.exists)
+    }
+
+    @MainActor
+    func testSortAndFilterFiles_TC_12154() async throws {
+
+        // GIVEN - an image and a document in the shared drive
+        let teamOwner = try await createDriveEnabledConversation(
+            .group(UserGenerator.generateRandomConversationName())
+        )
+
+        let documentName = "Zzz"
+        let template = CreateFilePage.Template.document
+        let sharedDrivePage = try uploadSketchAndOpenSharedDrive(message: "Attachment with Text", for: teamOwner)
+            .createFile(template: template)
+            .enterFileNameAndCreate(name: documentName)
+        let documentFullName = "\(documentName).\(template.fileExtension)"
+        XCTAssertTrue(sharedDrivePage.verifyFileIsCreated(
+            fileName: documentName,
+            fileExtension: template.fileExtension
+        ))
+
+        // WHEN / THEN - sorting by name
+        sharedDrivePage.sort(by: "name")
+        XCTAssertTrue(sharedDrivePage.waitForFirstFile(startingWith: "IMG_"), "A-Z: image should come first")
+
+        sharedDrivePage.sort(order: "descending")
+        XCTAssertTrue(
+            sharedDrivePage.waitForFirstFile(startingWith: documentFullName),
+            "Z-A: document should come first"
+        )
+
+        // WHEN / THEN - filtering by type
+        sharedDrivePage.filter(byType: "image")
+        XCTAssertTrue(sharedDrivePage.fileRow(named: "IMG_").waitForExistence(timeout: 5))
+        XCTAssertTrue(sharedDrivePage.fileRow(named: documentFullName).waitForNonExistence(timeout: 5))
+    }
+
+    /// [critical]
+    @MainActor
+    func testGuestWithViewerAccessHasLimitedActions_TC_12155() async throws {
+
+        // GIVEN - the team owner shares a file in a conversation with a guest
+        let groupName = "Team + Guest"
+        let (owner, guest) = try await createDriveEnabledConversationWithOwnerAndGuest(groupName: groupName)
+
+        let activeConversationPage = try app
+            .loginUser(email: owner.email, password: owner.password)
+            .acceptPopup()
+            .openConversationWithGuest(groupName: groupName)
+            .typeMessageAndAttachSketch("Attachment with Text")
+        activeConversationPage.waitToUploadToFinishAndSend()
+
+        // The app is relaunched with a fresh state (-resetData) to log in as the guest
+        app.terminate()
+        app.launch()
+
+        // WHEN
+        let guestConversationPage = try app
+            .loginUser(email: guest.email, password: guest.password)
+            .acceptPopup()
+            .openConversationWithGuest(groupName: groupName)
+
+        // THEN - the viewer access banner is shown
+        XCTAssertTrue(guestConversationPage.driveViewerAccessBanner.waitForExistence(timeout: 5))
+
+        // THEN - the photo/sketch/video/file upload actions are not offered
+        for button in guestConversationPage.driveViewerDisabledInputBarButtons {
+            XCTAssertTrue(button.exists, "\(button) should be in the input bar")
+            XCTAssertFalse(button.isEnabled, "\(button) should be disabled")
+        }
+
+        // WHEN
+        let sharedDrivePage = try guestConversationPage
+            .openSharedDrive()
+            .openNavigationBarMenu()
+
+        // THEN - the "Create" actions are not offered, only the recycle bin is
+        XCTAssertTrue(sharedDrivePage.openRecycleBinButton.waitForExistence(timeout: 3))
+        XCTAssertFalse(sharedDrivePage.createFolderButton.exists)
+        XCTAssertFalse(sharedDrivePage.createFileButton.exists)
+
+        // WHEN
+        sharedDrivePage.dismissMenu()
+        try sharedDrivePage.openMoreOptionsOnFile()
+
+        // THEN - Guest can only open a file
+        XCTAssertTrue(sharedDrivePage.fileMenuActions.firstMatch.waitForExistence(timeout: 3))
+        XCTAssertEqual(sharedDrivePage.fileMenuActions.count, 1)
+        XCTAssertTrue(sharedDrivePage.openFileMenuAction.exists)
     }
 
     @MainActor

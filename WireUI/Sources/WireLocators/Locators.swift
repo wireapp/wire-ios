@@ -571,6 +571,10 @@ public enum Locators {
             case saveButton
             case cancelButton
             case removeFilterButton
+
+            public static func typeItem(_ type: String) -> String {
+                "typeItem.\(type)"
+            }
         }
 
         public enum FilesFilteringPage: String {
@@ -606,6 +610,7 @@ public enum Locators {
             case deleteToRecycleBin
             case deletePermanently
             case restore
+            case makeAvailableOffline
 
             public var identifier: String {
                 "fileMenu.\(rawValue)"
@@ -621,6 +626,10 @@ public enum Locators {
             case deleteOnBottomSheet = "Delete"
             case moreOptions = "More"
             case recycleBinPageheader = "Recycle Bin"
+
+            public static func createFileTemplate(_ kind: String) -> String {
+                "createFileTemplate.\(kind)"
+            }
         }
 
         public enum FilesInfoPage: String {
@@ -638,7 +647,7 @@ public enum Locators {
         }
 
         public enum EditFilePage: String {
-            case close
+            case closeEditFilePage
         }
 
         /// UI elements for both file or folder creation.
