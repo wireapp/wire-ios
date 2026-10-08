@@ -214,10 +214,17 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
         _ message: Welcome,
         context: CoreCryptoContextProtocol
     ) async throws -> MLSGroupID {
-        let conversationID = try await context.processWelcomeMessage(
-            welcomeMessage: message
-        )
-
+        let conversationID: WireCoreCryptoUniffi.ConversationId
+        do {
+            conversationID = try await context.processWelcomeMessage(
+                welcomeMessage: message
+            )
+        } catch CoreCryptoError.Mls(.ConversationAlreadyExists(let existingConversationId)) {
+            try await context.wipeConversation(conversationId: MLSGroupID(existingConversationId).conversationId)
+            conversationID = try await context.processWelcomeMessage(
+                welcomeMessage: message
+            )
+        }
         return MLSGroupID(conversationID)
     }
 
