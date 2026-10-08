@@ -24,25 +24,52 @@ package struct DeleteMeetingUseCase: DeleteMeetingUseCaseProtocol {
 
     private let meetingRepository: any MeetingRepositoryProtocol
     private let conversationRepository: any MeetingConversationRepositoryProtocol
+    private let cancelReminders: @Sendable (UUID, QualifiedID) async -> Void
     private let selfUserID: UUID
 
     package init(
         meetingRepository: any MeetingRepositoryProtocol,
         conversationRepository: any MeetingConversationRepositoryProtocol,
+        cancelReminders: @escaping @Sendable (UUID, QualifiedID) async -> Void,
         selfUserID: UUID
     ) {
         self.meetingRepository = meetingRepository
         self.conversationRepository = conversationRepository
+        self.cancelReminders = cancelReminders
         self.selfUserID = selfUserID
     }
 
     package func invoke(meeting: Meeting) async throws {
         if meeting.creatorID.id == selfUserID {
-            try await meetingRepository.deleteMeeting(id: meeting.id)
+            do {
+                try await meetingRepository.deleteMeeting(id: meeting.id)
+            } catch DeleteMeetingUseCaseError.cleanupFailed {
+                // The server deletion succeeded, even though local cleanup failed.
+                await cancelReminders(selfUserID, meeting.id)
+                throw DeleteMeetingUseCaseError.cleanupFailed
+            } catch {
+                throw error
+            }
+            await cancelReminders(selfUserID, meeting.id)
+            // The deleting client may not receive the conversation deletion event.
+            do {
+                try await conversationRepository.deleteConversation(id: meeting.conversationID)
+            } catch {
+                throw DeleteMeetingUseCaseError.cleanupFailed
+            }
         } else {
             try await conversationRepository.leaveConversation(id: meeting.conversationID)
-            await meetingRepository.deleteLocalMeeting(id: meeting.id)
+            await cancelReminders(selfUserID, meeting.id)
+            try await meetingRepository.deleteLocalMeeting(id: meeting.id)
         }
     }
+
+}
+
+package enum DeleteMeetingUseCaseError: Error, Equatable {
+
+    case notAllowed
+
+    case cleanupFailed
 
 }

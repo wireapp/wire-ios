@@ -28,4 +28,12 @@ package struct SearchMembersUseCase: SearchMembersUseCaseProtocol {
         try await repository.search(query: query)
     }
 
+    package func searchGroups(query: String) async throws -> [MeetingGroup] {
+        try await repository.searchGroups(query: query)
+    }
+
+    package func members(in groupID: QualifiedID) async throws -> [MeetingMember] {
+        try await repository.members(in: groupID)
+    }
+
 }

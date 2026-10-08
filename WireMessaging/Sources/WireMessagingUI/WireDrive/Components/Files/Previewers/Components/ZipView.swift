@@ -20,28 +20,28 @@ import SwiftUI
 
 struct ZipView: View {
     let url: URL
+    let dismissAction: () -> Void
 
     @State private var rootNode: ZipNode?
     @State private var quickPreviewItem: QuickPreviewItem?
 
-    public init(url: URL) {
+    public init(url: URL, dismissAction: @escaping () -> Void) {
         self.url = url
+        self.dismissAction = dismissAction
     }
 
     public var body: some View {
-        NavigationStack {
-            Group {
-                if let rootNode {
-                    ZipBrowserView(
-                        node: rootNode,
-                        archiveURL: url,
-                        quickPreviewItem: $quickPreviewItem
-                    )
-                } else {
-                    ProgressView()
-                }
+        Group {
+            if let rootNode {
+                ZipBrowserView(
+                    node: rootNode,
+                    archiveURL: url,
+                    quickPreviewItem: $quickPreviewItem,
+                    dismissAction: dismissAction
+                )
+            } else {
+                ProgressView()
             }
-            .navigationTitle(url.lastPathComponent)
         }
         .task {
             rootNode = try? ZipTreeBuilder.build(from: url)

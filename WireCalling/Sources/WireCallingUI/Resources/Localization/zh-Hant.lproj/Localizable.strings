@@ -21,8 +21,12 @@
 "meetings.list.loadError" = "Could not load meetings. Please try again.";
 "meetings.deleteModal.error.deleteFailedTitle" = "Could not delete meeting";
 "meetings.deleteModal.error.deleteFailed" = "Something went wrong while deleting the meeting. Please try again.";
+"meetings.deleteModal.error.cleanupFailedTitle" = "Meeting deleted";
+"meetings.deleteModal.error.deleteSucceededButLocalCleanupFailed" = "The meeting was deleted, but something went wrong while cleaning up the conversation locally. Please refresh the meetings list if it still appears.";
+"meetings.deleteModal.error.notAllowedTitle" = "Cannot delete meeting";
+"meetings.deleteModal.error.notAllowed" = "This meeting can no longer be deleted. It may have already ended, or you may not have permission to delete it.";
 "meetings.deleteModal.error.leaveConversationFailedTitle" = "Could not leave meeting";
-"meetings.deleteModal.error.leaveConversationFailed" = "Something went wrong while leaving the meeting conversation. Please try again.";
+"meetings.deleteModal.error.leaveConversationFailed" = "Something went wrong while leaving the meeting. Please try again.";
 "wireMeetings.retry" = "Retry";
 "wireMeetings.list.title" = "Meetings";
 "wireMeetings.list.tabs.past" = "Past";
@@ -60,12 +64,28 @@
 
 // MARK: - Schedule a meeting
 
+"meetings.error.setupFailedTitle" = "Could not finish meeting setup";
+"meetings.error.conversationSetupFailed" = "The meeting was saved, but something went wrong while setting up the conversation. Please try again.";
+"meetings.error.addParticipantsFailed" = "The meeting was saved, but some participants could not be added. Please try again.";
 "meetings.scheduleModal.error.createFailedTitle" = "Could not schedule meeting";
 "meetings.scheduleModal.error.createFailed" = "Something went wrong while scheduling the meeting. Please try again.";
 "meetings.meetNowModal.error.createFailedTitle" = "Could not start meeting";
 "meetings.meetNowModal.error.createFailed" = "Something went wrong while starting the meeting. Please try again.";
 "meetings.scheduleModal.error.updateFailedTitle" = "Could not update meeting";
 "meetings.scheduleModal.error.updateFailed" = "Something went wrong while updating the meeting. Please try again.";
+"meetings.scheduleModal.error.editMeetingIdMissing" = "Something went wrong while updating the meeting. Please close the dialog and try again.";
+"meetings.scheduleModal.error.removeParticipantsFailed" = "The meeting was updated, but some participants could not be removed. Please try again.";
+"meetings.scheduleModal.error.addParticipantsFailed" = "The meeting was saved, but some participants could not be added. Please try again.";
+"failedToAddParticipantSingularNonFederatingBackends" = "**%@** could not be added to the group as their backend doesn't federate with the backends of all group participants.";
+"failedToAddParticipantSingularOfflineBackend" = "**%@** could not be added to the group as the backend of **%@** could not be reached.";
+"failedToAddParticipantSingularOfflineForTooLong" = "**%@** could not be added to the group.";
+"failedToAddParticipantsPlural" = "**%d participants** could not be added to the group.";
+"failedToAddParticipantsPluralDetailsNonFederatingBackends" = "**%@** and **%@** could not be added to the group as their backends do not federate with each other.";
+"failedToAddParticipantsPluralDetailsOfflineBackend" = "**%@** and **%@** could not be added to the group as the backend of **%@** could not be reached.";
+"failedToAddParticipantsPluralDetailsOfflineForTooLong" = "**%@** and **%@** could not be added to the group.";
+"failedToAddParticipantsSingularDetailsNonFederatingBackends" = "**%@** could not be added to the group as their backends do not federate with each other.";
+"failedToAddParticipantsSingularDetailsOfflineBackend" = "**%@** could not be added to the group as the backend of **%@** could not be reached.";
+"failedToAddParticipantsSingularDetailsOfflineForTooLong" = "**%@** could not be added to the group.";
 "wireMeetings.schedule.now.title" = "Meet now";
 "wireMeetings.schedule.future.title" = "New meeting";
 "wireMeetings.schedule.edit.title" = "Edit Meeting";
@@ -82,9 +102,10 @@
 "wireMeetings.schedule.error.alert.title" = "出了點問題";
 "wireMeetings.schedule.error.alert.ok" = "確認";
 "wireMeetings.schedule.participantsNotAdded.title" = "Meeting saved";
-"wireMeetings.schedule.participantsNotAdded.message" = "The meeting was saved, but these users could not be added:\n\n%@";
+"wireMeetings.schedule.participantsNotAdded.createdTitle" = "Meeting created";
+"wireMeetings.schedule.participantsNotAdded.message" = "Be aware that the following people could not be added:\n\n%@";
 "wireMeetings.schedule.error.conversationName.title" = "Update incomplete";
-"wireMeetings.schedule.error.conversationName.message" = "The meeting title could not be updated everywhere. Please try again.";
+"wireMeetings.schedule.error.conversationName.message" = "The meeting title was updated, but the call may still show the previous title. Please try again.";
 "wireMeetings.schedule.error.conversationName.retry" = "Try again";
 "wireMeetings.schedule.disableGuestAccess.alert.title" = "Disable guest access?";
 "wireMeetings.schedule.disableGuestAccess.alert.disable" = "Disable";
@@ -110,6 +131,16 @@
 "wireMeetings.schedule.members.retry.button" = "Retry";
 "wireMeetings.schedule.members.selected.title" = "Selected";
 "wireMeetings.schedule.members.contacts.title" = "連絡人";
+"wireMeetings.schedule.members.groups.importButton" = "Import from group";
+"wireMeetings.schedule.members.groups.title" = "Groups and channels";
+"wireMeetings.schedule.members.groups.searchPlaceholder" = "Search groups and channels";
+"wireMeetings.schedule.members.groups.group" = "Group";
+"wireMeetings.schedule.members.groups.channel" = "Channel";
+"wireMeetings.schedule.members.groups.emptyTitle" = "No groups or channels found";
+"wireMeetings.schedule.members.groups.emptyDescription" = "Only groups and channels you have joined are shown.";
+"wireMeetings.schedule.members.groups.loading" = "Loading groups and channels";
+"wireMeetings.schedule.members.groups.importing" = "Importing participants";
+"wireMeetings.schedule.members.groups.importError" = "Could not import participants";
 
 "wireMeetings.schedule.error.expiredStartDate.title" = "Choose a later start time";
-"wireMeetings.schedule.error.expiredStartDate.message" = "Meetings can only be updated with a start time up to 24 hours in the past. Choose a later start time and save again.";
+"wireMeetings.schedule.error.expiredStartDate.message" = "You can only edit meetings that started less than 24 hours ago. Please select a later start time and try again.";

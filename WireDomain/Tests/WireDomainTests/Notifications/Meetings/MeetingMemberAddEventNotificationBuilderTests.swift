@@ -18,6 +18,8 @@
 
 import Foundation
 import UserNotifications
+import WireCallingData
+import WireCallingDomain
 import WireDataModel
 import WireDataModelSupport
 import WireNetwork
@@ -33,6 +35,7 @@ final class MeetingMemberAddEventNotificationBuilderTests: XCTestCase {
     private var meetingsAPI: InvitationMeetingsAPI!
     private var usersAPI: InvitationUsersAPI!
     private var featureStore: MockFeatureConfigLocalStoreProtocol!
+    private var meetingStore: InvitationMeetingStore!
     private var sut: MeetingMemberAddEventNotificationBuilder!
 
     override func setUp() async throws {
@@ -42,6 +45,7 @@ final class MeetingMemberAddEventNotificationBuilderTests: XCTestCase {
         meetingsAPI = InvitationMeetingsAPI()
         usersAPI = InvitationUsersAPI()
         featureStore = MockFeatureConfigLocalStoreProtocol()
+        meetingStore = InvitationMeetingStore()
         let context = stack.syncContext
         featureStore.fetchFeatureName_MockValue = await context.perform {
             Feature.updateOrCreate(havingName: .meetings, in: context) { $0.status = .enabled }
@@ -52,6 +56,7 @@ final class MeetingMemberAddEventNotificationBuilderTests: XCTestCase {
             meetingsAPI: meetingsAPI,
             usersAPI: usersAPI,
             featureConfigLocalStore: featureStore,
+            meetingLocalStore: meetingStore,
             accountID: UUID(),
             locale: Locale(identifier: "en_GB"),
             timeZone: TimeZone(secondsFromGMT: 0)!
@@ -63,6 +68,7 @@ final class MeetingMemberAddEventNotificationBuilderTests: XCTestCase {
         meetingsAPI = nil
         usersAPI = nil
         featureStore = nil
+        meetingStore = nil
         stack = nil
         try stackHelper.cleanupDirectory()
         stackHelper = nil
@@ -82,6 +88,8 @@ final class MeetingMemberAddEventNotificationBuilderTests: XCTestCase {
         XCTAssertEqual(content.categoryIdentifier, NotificationCategory.meetingInvitation.rawValue)
         XCTAssertEqual(content.sound, .default)
         XCTAssertEqual(content.userInfo[NotificationUserInfoKey.selfUserID] as? String, sut.accountID.uuidString)
+        XCTAssertEqual(meetingStore.meetings.map(\.id.id), [Scaffolding.meetingID.id])
+        XCTAssertEqual(meetingStore.meetings.map(\.conversationID.id), [Scaffolding.meeting.conversationID.id])
     }
 
     func testInvitationUsesRecipientTimeZone() async throws {
@@ -134,6 +142,27 @@ final class MeetingMemberAddEventNotificationBuilderTests: XCTestCase {
         let result = await builder.buildContent(event: .memberAdd(Scaffolding.event))
         XCTAssertNotNil(result)
         XCTAssertEqual(meetingsAPI.requestedIDs, [Scaffolding.meetingID])
+    }
+
+    func testInvitationUsesMeetingFetchedForReminderWithoutSecondMeetingRequest() async {
+        let api = meetingsAPI!
+        let builder = MeetingEventNotificationBuilder(
+            meetingDeleteEventBuilder: UnusedMeetingDeleteBuilder(),
+            meetingMemberAddEventBuilder: sut,
+            meetingUpdateEventBuilder: UnusedMeetingUpdateBuilder(),
+            reminderReconciler: MeetingEventReminderReconciler(
+                pullMeeting: { try await api.getMeeting(id: $0).toDomainMeeting() },
+                reconcileMeeting: { _ in },
+                cancelMeeting: { _ in },
+                isMeetingsEnabled: { true },
+                cancelAccount: {}
+            )
+        )
+
+        let result = await builder.buildContent(event: .memberAdd(Scaffolding.event))
+
+        XCTAssertNotNil(result)
+        XCTAssertEqual(api.requestedIDs, [Scaffolding.meetingID])
     }
 
     func testMemberAddStillRefreshesMeetingThroughUpdateProcessor() async throws {
@@ -232,6 +261,32 @@ private final class InvitationUsersAPI: UsersAPI {
     }
 
     func getUsers(userIDs: [UserID]) async throws -> UserList { throw InvitationTestError.unavailable }
+}
+
+private final class InvitationMeetingStore: MeetingLocalStoreProtocol, @unchecked Sendable {
+
+    var meetings: [Meeting] = []
+
+    func storedMeetings() async -> [Meeting] {
+        meetings
+    }
+
+    func storedMeeting(id: WireCallingDomain.QualifiedID) async -> Meeting? {
+        meetings.first { $0.id == id }
+    }
+
+    func storeMeeting(_ meeting: Meeting) async {
+        meetings.append(meeting)
+    }
+
+    func replaceAllMeetings(with meetings: [Meeting]) async {
+        self.meetings = meetings
+    }
+
+    func deleteMeeting(id: WireCallingDomain.QualifiedID) async {
+        meetings.removeAll { $0.id == id }
+    }
+
 }
 
 private struct UnusedMeetingDeleteBuilder: MeetingDeleteEventNotificationBuilderProtocol {

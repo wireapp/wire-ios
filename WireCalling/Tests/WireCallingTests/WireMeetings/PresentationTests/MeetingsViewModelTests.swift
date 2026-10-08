@@ -43,6 +43,11 @@ struct MeetingsViewModelTests {
         mockDateProvider.now = try Date.ISO8601FormatStyle().parse("2025-10-27T13:59:59Z")
         self.formatter = MeetingsFormatter()
         self.upcomingMeetingsUseCase = FetchUpcomingMeetingsUseCaseProtocolMock()
+        upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsReturnValue = PaginatedMeetings(
+            meetings: [],
+            hasMore: false,
+            nextOffset: 0
+        )
         self.observeMeetingChangesUseCase = ObserveMeetingChangesUseCaseProtocolMock()
         self.deleteMeetingUseCase = DeleteMeetingUseCaseProtocolMock()
         self.observeAttendedMeetingsUseCase = ObserveAttendedMeetingsUseCaseProtocolMock()
@@ -53,7 +58,8 @@ struct MeetingsViewModelTests {
             observeMeetingChangesUseCase: observeMeetingChangesUseCase,
             deleteMeetingUseCase: deleteMeetingUseCase,
             selfUserID: Scaffolding.selfUserID,
-            observeAttendedMeetingsUseCase: observeAttendedMeetingsUseCase
+            observeAttendedMeetingsUseCase: observeAttendedMeetingsUseCase,
+            isApplicationActiveProvider: { true }
         )
     }
 
@@ -240,6 +246,63 @@ struct MeetingsViewModelTests {
         #expect(viewModel.loadedMeetings == meetings)
     }
 
+    @Test("a meeting change event queues a reload after an in-flight silent refresh")
+    func meetingChangeEvent_queuesReloadAfterInFlightSilentRefresh() async {
+        let initial = Meeting.fixture(title: "Initial", start: mockDateProvider.now.addingTimeInterval(3600))
+        let stale = Meeting.fixture(title: "Stale", start: mockDateProvider.now.addingTimeInterval(3600))
+        let updated = Meeting.fixture(title: "Updated", start: mockDateProvider.now.addingTimeInterval(3600))
+        upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsClosure = { _, _ in
+            PaginatedMeetings(meetings: [initial], hasMore: false, nextOffset: 1)
+        }
+        await viewModel.loadInitialData()
+
+        let (fetchStarted, fetchStartedContinuation) = AsyncStream<Int>.makeStream()
+        var fetchStartedIterator = fetchStarted.makeAsyncIterator()
+        var fetchContinuations: [CheckedContinuation<PaginatedMeetings, Never>] = []
+        var fetchCount = 0
+        upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsClosure = { _, _ in
+            fetchCount += 1
+            let currentFetchCount = fetchCount
+            return await withCheckedContinuation { continuation in
+                fetchContinuations.append(continuation)
+                fetchStartedContinuation.yield(currentFetchCount)
+            }
+        }
+
+        let (systemChanges, systemContinuation) = AsyncStream<Void>.makeStream()
+        let systemTask = Task {
+            await viewModel.observeSystemDateTimeChanges(systemChanges)
+        }
+        systemContinuation.yield(())
+        systemContinuation.finish()
+        #expect(await fetchStartedIterator.next() == 1)
+
+        let (meetingChanges, meetingContinuation) = AsyncStream<Void>.makeStream()
+        observeMeetingChangesUseCase.invokeAsyncStreamVoidReturnValue = meetingChanges
+        let meetingTask = Task {
+            await viewModel.observeMeetingChanges()
+        }
+        meetingContinuation.yield(())
+        meetingContinuation.finish()
+        await meetingTask.value
+
+        #expect(upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsCallsCount == 2)
+
+        fetchContinuations[0].resume(
+            returning: PaginatedMeetings(meetings: [stale], hasMore: false, nextOffset: 1)
+        )
+        #expect(await fetchStartedIterator.next() == 2)
+        #expect(viewModel.isLoading == true)
+
+        fetchContinuations[1].resume(
+            returning: PaginatedMeetings(meetings: [updated], hasMore: false, nextOffset: 1)
+        )
+        await systemTask.value
+
+        #expect(viewModel.loadedMeetings.map(\.title) == ["Updated"])
+        #expect(upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsCallsCount == 3)
+    }
+
     // MARK: - observeAttendedMeetings
 
     @Test("the initially emitted set populates attendingConversationIDs and isAttending")
@@ -325,7 +388,8 @@ struct MeetingsViewModelTests {
             upcomingMeetingsUseCase: upcomingMeetingsUseCase,
             observeMeetingChangesUseCase: observeMeetingChangesUseCase,
             deleteMeetingUseCase: deleteMeetingUseCase,
-            selfUserID: Scaffolding.selfUserID
+            selfUserID: Scaffolding.selfUserID,
+            isApplicationActiveProvider: { true }
         )
 
         // When
@@ -600,6 +664,184 @@ struct MeetingsViewModelTests {
         #expect(viewModel.currentDate == updatedDate)
     }
 
+    @Test("system date and time changes reload loaded meetings")
+    func systemDateTimeChanges_reloadLoadedMeetings() async {
+        let initial = Meeting.fixture(title: "Initial", start: mockDateProvider.now.addingTimeInterval(3600))
+        let updated = Meeting.fixture(title: "Updated", start: mockDateProvider.now.addingTimeInterval(3600))
+        upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsClosure = { _, _ in
+            PaginatedMeetings(meetings: [initial], hasMore: false, nextOffset: 1)
+        }
+        await viewModel.loadInitialData()
+
+        upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsClosure = { _, _ in
+            PaginatedMeetings(meetings: [updated], hasMore: false, nextOffset: 1)
+        }
+        let (changes, continuation) = AsyncStream<Void>.makeStream()
+        let task = Task {
+            await viewModel.observeSystemDateTimeChanges(changes)
+        }
+        continuation.yield(())
+        continuation.finish()
+
+        await task.value
+
+        #expect(viewModel.loadedMeetings.map(\.title) == ["Updated"])
+        let lastInvocation = upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsReceivedInvocations.last
+        #expect(lastInvocation?.pageSize == 20)
+        #expect(lastInvocation?.offset == 0)
+    }
+
+    @Test("system date and time changes reload loaded meetings without showing loading state")
+    func systemDateTimeChanges_reloadLoadedMeetingsSilently() async {
+        let initial = Meeting.fixture(title: "Initial", start: mockDateProvider.now.addingTimeInterval(3600))
+        let updated = Meeting.fixture(title: "Updated", start: mockDateProvider.now.addingTimeInterval(3600))
+        upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsClosure = { _, _ in
+            PaginatedMeetings(meetings: [initial], hasMore: false, nextOffset: 1)
+        }
+        await viewModel.loadInitialData()
+
+        let (fetchStarted, fetchStartedContinuation) = AsyncStream<Void>.makeStream()
+        var fetchStartedIterator = fetchStarted.makeAsyncIterator()
+        var fetchContinuation: CheckedContinuation<PaginatedMeetings, Never>?
+        upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsClosure = { _, _ in
+            await withCheckedContinuation { continuation in
+                fetchContinuation = continuation
+                fetchStartedContinuation.yield(())
+            }
+        }
+        let (changes, continuation) = AsyncStream<Void>.makeStream()
+        let task = Task {
+            await viewModel.observeSystemDateTimeChanges(changes)
+        }
+
+        continuation.yield(())
+        _ = await fetchStartedIterator.next()
+
+        #expect(viewModel.isLoading == false)
+
+        fetchContinuation?.resume(
+            returning: PaginatedMeetings(meetings: [updated], hasMore: false, nextOffset: 1)
+        )
+        continuation.finish()
+
+        await task.value
+
+        #expect(viewModel.loadedMeetings.map(\.title) == ["Updated"])
+    }
+
+    @Test("scene activation reloads meetings even if application state is not active yet")
+    func sceneActivation_reloadLoadedMeetingsWhenApplicationStateLags() async {
+        let viewModel = MeetingsViewModel(
+            currentDateProvider: mockDateProvider,
+            formatter: formatter,
+            upcomingMeetingsUseCase: upcomingMeetingsUseCase,
+            observeMeetingChangesUseCase: observeMeetingChangesUseCase,
+            deleteMeetingUseCase: deleteMeetingUseCase,
+            selfUserID: Scaffolding.selfUserID,
+            observeAttendedMeetingsUseCase: observeAttendedMeetingsUseCase,
+            isApplicationActiveProvider: { false }
+        )
+        let initial = Meeting.fixture(title: "Initial", start: mockDateProvider.now.addingTimeInterval(3600))
+        let updated = Meeting.fixture(title: "Updated", start: mockDateProvider.now.addingTimeInterval(3600))
+        upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsClosure = { _, _ in
+            PaginatedMeetings(meetings: [initial], hasMore: false, nextOffset: 1)
+        }
+        await viewModel.loadInitialData()
+
+        upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsClosure = { _, _ in
+            PaginatedMeetings(meetings: [updated], hasMore: false, nextOffset: 1)
+        }
+        await viewModel.refreshSystemDateTimeState()
+
+        #expect(viewModel.loadedMeetings.map(\.title) == ["Initial"])
+        #expect(upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsCallsCount == 1)
+
+        await viewModel.refreshSystemDateTimeStateAfterSceneBecameActive()
+
+        #expect(viewModel.loadedMeetings.map(\.title) == ["Updated"])
+        #expect(upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsCallsCount == 2)
+    }
+
+    @Test("system date and time changes schedule a silent reload after an in-flight fetch")
+    func systemDateTimeChanges_reloadAfterInFlightFetch() async {
+        let initial = Meeting.fixture(title: "Initial", start: mockDateProvider.now.addingTimeInterval(3600))
+        let updated = Meeting.fixture(title: "Updated", start: mockDateProvider.now.addingTimeInterval(3600))
+        let (fetchStarted, fetchStartedContinuation) = AsyncStream<Int>.makeStream()
+        var fetchStartedIterator = fetchStarted.makeAsyncIterator()
+        var fetchContinuations: [CheckedContinuation<PaginatedMeetings, Never>] = []
+        var fetchCount = 0
+        upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsClosure = { _, _ in
+            fetchCount += 1
+            let currentFetchCount = fetchCount
+            return await withCheckedContinuation { continuation in
+                fetchContinuations.append(continuation)
+                fetchStartedContinuation.yield(currentFetchCount)
+            }
+        }
+
+        let loadTask = Task {
+            await viewModel.loadInitialData()
+        }
+        #expect(await fetchStartedIterator.next() == 1)
+
+        let (changes, continuation) = AsyncStream<Void>.makeStream()
+        let observeTask = Task {
+            await viewModel.observeSystemDateTimeChanges(changes)
+        }
+        let updatedDate = mockDateProvider.now.addingTimeInterval(3600)
+        mockDateProvider.now = updatedDate
+        continuation.yield(())
+        _ = await waitUntil { viewModel.currentDate == updatedDate }
+
+        #expect(viewModel.currentDate == updatedDate)
+        #expect(upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsCallsCount == 1)
+
+        fetchContinuations[0].resume(
+            returning: PaginatedMeetings(meetings: [initial], hasMore: false, nextOffset: 1)
+        )
+        #expect(await fetchStartedIterator.next() == 2)
+
+        fetchContinuations[1].resume(
+            returning: PaginatedMeetings(meetings: [updated], hasMore: false, nextOffset: 1)
+        )
+        continuation.finish()
+
+        await loadTask.value
+        await observeTask.value
+
+        #expect(viewModel.loadedMeetings.map(\.title) == ["Updated"])
+        #expect(upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsCallsCount == 2)
+    }
+
+    @Test("system date and time changes debounce consecutive refreshes")
+    func systemDateTimeChanges_debouncesConsecutiveRefreshes() async {
+        let notificationCenter = NotificationCenter()
+        let changes = MeetingsViewModel.systemDateTimeChanges(notificationCenter: notificationCenter)
+        let initial = Meeting.fixture(title: "Initial", start: mockDateProvider.now.addingTimeInterval(3600))
+        let updated = Meeting.fixture(title: "Updated", start: mockDateProvider.now.addingTimeInterval(3600))
+        var fetchCount = 0
+        upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsClosure = { _, _ in
+            fetchCount += 1
+            let meetings = fetchCount == 1 ? [initial] : [updated]
+            return PaginatedMeetings(meetings: meetings, hasMore: false, nextOffset: 1)
+        }
+        await viewModel.loadInitialData()
+
+        let task = Task {
+            await viewModel.observeSystemDateTimeChanges(changes)
+        }
+        notificationCenter.post(name: .NSSystemClockDidChange, object: nil)
+        notificationCenter.post(name: .NSSystemClockDidChange, object: nil)
+        notificationCenter.post(name: .NSSystemClockDidChange, object: nil)
+        try? await Task.sleep(for: .milliseconds(350))
+        task.cancel()
+
+        await task.value
+
+        #expect(viewModel.loadedMeetings.map(\.title) == ["Updated"])
+        #expect(upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsCallsCount == 2)
+    }
+
     @Test("system date and time notifications are observed")
     func systemDateTimeChanges_observesNotifications() async {
         let notificationCenter = NotificationCenter()
@@ -610,7 +852,6 @@ struct MeetingsViewModelTests {
             .NSSystemClockDidChange,
             .NSSystemTimeZoneDidChange,
             NSLocale.currentLocaleDidChangeNotification,
-            UIApplication.didBecomeActiveNotification,
             UIApplication.significantTimeChangeNotification
         ]
 
@@ -620,10 +861,8 @@ struct MeetingsViewModelTests {
             notificationCenter.post(name: name, object: nil)
         }
 
-        for _ in expectedNotificationNames {
-            let change: Void? = await iterator.next()
-            #expect(change != nil)
-        }
+        let change: Void? = await iterator.next()
+        #expect(change != nil)
     }
 
     @Test("system date and time changes refresh cached formatting")
@@ -642,7 +881,8 @@ struct MeetingsViewModelTests {
             observeMeetingChangesUseCase: observeMeetingChangesUseCase,
             deleteMeetingUseCase: deleteMeetingUseCase,
             selfUserID: Scaffolding.selfUserID,
-            observeAttendedMeetingsUseCase: observeAttendedMeetingsUseCase
+            observeAttendedMeetingsUseCase: observeAttendedMeetingsUseCase,
+            isApplicationActiveProvider: { true }
         )
         let start = try Date.ISO8601FormatStyle().parse("2026-09-08T14:00:00Z")
         let meeting = Meeting.fixture(title: "Meeting", start: start)
@@ -690,6 +930,22 @@ struct MeetingsViewModelTests {
     func formatDay() {
         let day = mockDateProvider.now
         #expect(viewModel.formatDay(day) == formatter.dayHeader(for: day, now: mockDateProvider.now))
+    }
+
+    // MARK: - Async Helpers
+
+    private func waitUntil(
+        timeout: Duration = .seconds(1),
+        _ condition: () -> Bool
+    ) async -> Bool {
+        let clock = ContinuousClock()
+        let deadline = clock.now.advanced(by: timeout)
+
+        while !condition(), clock.now < deadline {
+            try? await Task.sleep(for: .milliseconds(1))
+        }
+
+        return condition()
     }
 
 }

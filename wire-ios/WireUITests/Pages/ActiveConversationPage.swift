@@ -442,6 +442,27 @@ class ActiveConversationPage: PageModel {
         return self
     }
 
+    func reactionButton(emoji: String) -> XCUIElement {
+        app.buttons[emoji].firstMatch
+    }
+
+    @discardableResult
+    func reactToMessage(_ message: XCUIElement, withEmoji emoji: String) -> ActiveConversationPage {
+        XCTAssertTrue(
+            message.waitForExistence(timeout: 5),
+            "Expected message to react to was not found, possible that not being sent via testService"
+        )
+        message.press(forDuration: 1.0)
+        XCTAssertTrue(reactionButton(emoji: emoji).waitAndTap(), "Reaction button '\(emoji)' was not found")
+        return self
+    }
+
+    func reactionOnMessage(emoji: String) -> XCUIElement {
+        app.descendants(matching: .any).matching(
+            identifier: Locators.ActiveConversationPage.reactionOnMessageIdentifier(emoji: emoji)
+        ).firstMatch
+    }
+
     func quotedContent(ofType type: String) -> XCUIElement {
         app.descendants(matching: .any)["quote.type.\(type)"].firstMatch
     }
@@ -503,10 +524,29 @@ class ActiveConversationPage: PageModel {
     }
 
     func mentionUserAndSendMessage(nameOfUser: String) throws -> ActiveConversationPage {
+        try inputMessageField.tapIfKeyboardNotFocused().typeText("Hello ")
         mentionButton.tap()
         chooseUser(nameOfUser: nameOfUser)
         sendButton.tapAndWait()
         return self
+    }
+
+    func tapMention(ofUser name: String) throws -> UserDetailsPage {
+        let mentionLabel = [
+            "@\(name)",
+            "@\(name.replacingOccurrences(of: " ", with: "\u{00A0}"))"
+        ]
+        let mentionLink = app.links
+            .matching(NSPredicate(format: "label IN %@", mentionLabel))
+            .firstMatch
+
+        XCTAssertTrue(
+            mentionLink.waitForExistence(timeout: 5),
+            "Expected mention link '\(mentionLabel[0])' should be showing"
+        )
+
+        mentionLink.tap()
+        return try UserDetailsPage()
     }
 
     @discardableResult

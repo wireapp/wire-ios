@@ -16,15 +16,19 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Foundation
 import WireCallingDomain
 import WireNetwork
 
 struct MeetingDeleteEventProcessor: MeetingDeleteEventProcessorProtocol {
 
     let repository: any MeetingRepositoryProtocol
+    let reminderCanceller: any MeetingReminderCancelling
+    let accountID: UUID
 
     func processEvent(_ event: MeetingDeleteEvent) async {
-        await repository.deleteLocalMeeting(id: event.meetingID)
+        await reminderCanceller.cancelAll(accountID: accountID, meetingID: event.meetingID)
+        try? await repository.deleteLocalMeeting(id: event.meetingID)
     }
 
 }

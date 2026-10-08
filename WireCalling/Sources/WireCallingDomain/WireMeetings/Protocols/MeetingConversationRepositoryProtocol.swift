@@ -34,6 +34,10 @@ public protocol MeetingConversationRepositoryProtocol: Sendable {
     /// A conversation already missing from the backend is treated as success.
     func leaveConversation(id conversationID: QualifiedID) async throws
 
+    /// Delete the dedicated meeting conversation locally after backend deletion succeeds.
+    /// An ordinary group conversation linked to a meeting must remain intact.
+    func deleteConversation(id conversationID: QualifiedID) async throws
+
     /// Set the name of the underlying conversation.
     func setConversationName(_ name: String, for conversationID: QualifiedID) async throws
 
@@ -46,5 +50,18 @@ public enum MeetingParticipantsError: Error, Equatable {
 
     /// The group is ready, but these participants could not be added.
     case failedToAddParticipants([MeetingMember])
+
+    /// Adding participants failed before the group was ready to join.
+    case failedToSetUpParticipants(
+        [MeetingMember],
+        reasons: [QualifiedID: MeetingParticipantFailureReason] = [:]
+    )
+
+}
+
+public enum MeetingParticipantFailureReason: Hashable, Sendable {
+
+    case nonFederatingBackends
+    case offlineBackend(domain: String)
 
 }

@@ -21,6 +21,10 @@
 "meetings.list.loadError" = "Не удалось загрузить встречи. Попробуйте еще раз.";
 "meetings.deleteModal.error.deleteFailedTitle" = "Не удалось удалить встречу";
 "meetings.deleteModal.error.deleteFailed" = "Что-то пошло не так при удалении встречи. Попробуйте еще раз.";
+"meetings.deleteModal.error.cleanupFailedTitle" = "Встреча удалена";
+"meetings.deleteModal.error.deleteSucceededButLocalCleanupFailed" = "Встреча была удалена, но при локальной очистке беседы что-то пошло не так. Обновите список встреч, если она все еще отображается.";
+"meetings.deleteModal.error.notAllowedTitle" = "Не удается удалить встречу";
+"meetings.deleteModal.error.notAllowed" = "Эту встречу больше нельзя удалить. Возможно, она уже закончилась, или у вас нет разрешения на ее удаление.";
 "meetings.deleteModal.error.leaveConversationFailedTitle" = "Не удалось покинуть встречу";
 "meetings.deleteModal.error.leaveConversationFailed" = "Что-то пошло не так при выходе со встречи. Попробуйте еще раз.";
 "wireMeetings.retry" = "Повторить";
@@ -60,12 +64,28 @@
 
 // MARK: - Schedule a meeting
 
+"meetings.error.setupFailedTitle" = "Не удалось завершить настройку встречи";
+"meetings.error.conversationSetupFailed" = "Информация о встрече была сохранена, но при настройке что-то пошло не так. Пожалуйста, попробуйте еще раз.";
+"meetings.error.addParticipantsFailed" = "Информация о встрече была сохранена, но некоторых участников добавить не удалось. Пожалуйста, попробуйте еще раз.";
 "meetings.scheduleModal.error.createFailedTitle" = "Не удалось запланировать встречу";
 "meetings.scheduleModal.error.createFailed" = "Что-то пошло не так при планировании встречи. Попробуйте еще раз.";
 "meetings.meetNowModal.error.createFailedTitle" = "Не удалось начать встречу";
 "meetings.meetNowModal.error.createFailed" = "Что-то пошло не так при начале встречи. Попробуйте еще раз.";
 "meetings.scheduleModal.error.updateFailedTitle" = "Не удалось обновить встречу";
 "meetings.scheduleModal.error.updateFailed" = "Что-то пошло не так при обновлении встречи. Попробуйте еще раз.";
+"meetings.scheduleModal.error.editMeetingIdMissing" = "Что-то пошло не так при обновлении встречи. Закройте диалог и повторите попытку.";
+"meetings.scheduleModal.error.removeParticipantsFailed" = "Информация о встрече была обновлена, но некоторых участников удалить не удалось. Пожалуйста, попробуйте еще раз.";
+"meetings.scheduleModal.error.addParticipantsFailed" = "Информация о встрече была сохранена, но некоторых участников добавить не удалось. Пожалуйста, попробуйте еще раз.";
+"failedToAddParticipantSingularNonFederatingBackends" = "**%@** не могут быть добавлены в группу, поскольку их бэкенд не взаимодействует с бэкендами остальных участников группы.";
+"failedToAddParticipantSingularOfflineBackend" = "**%@** не удалось добавить в группу, так как не удалось установить связь с бэкендом **%@**.";
+"failedToAddParticipantSingularOfflineForTooLong" = "Не удалось добавить **%@** в группу.";
+"failedToAddParticipantsPlural" = "Не удалось добавить в группу **%d участников**.";
+"failedToAddParticipantsPluralDetailsNonFederatingBackends" = "**%@** и **%@** не могут быть добавлены в группу, поскольку их бэкенды не взаимодействуют друг с другом.";
+"failedToAddParticipantsPluralDetailsOfflineBackend" = "**%@** и **%@** не удалось добавить в группу, так как не удалось установить связь с бэкендом **%@**.";
+"failedToAddParticipantsPluralDetailsOfflineForTooLong" = "Не удалось добавить **%@** и **%@** в группу.";
+"failedToAddParticipantsSingularDetailsNonFederatingBackends" = "**%@** не может быть добавлен в группу, поскольку его бэкенды не взаимодействуют друг с другом.";
+"failedToAddParticipantsSingularDetailsOfflineBackend" = "**%@** не удалось добавить в группу, так как не удалось установить связь с бэкендом **%@**.";
+"failedToAddParticipantsSingularDetailsOfflineForTooLong" = "Не удалось добавить **%@** в группу.";
 "wireMeetings.schedule.now.title" = "Встречи сейчас";
 "wireMeetings.schedule.future.title" = "Новая встреча";
 "wireMeetings.schedule.edit.title" = "Изменить встречу";
@@ -82,9 +102,10 @@
 "wireMeetings.schedule.error.alert.title" = "Что-то пошло не так";
 "wireMeetings.schedule.error.alert.ok" = "OK";
 "wireMeetings.schedule.participantsNotAdded.title" = "Встреча сохранена";
-"wireMeetings.schedule.participantsNotAdded.message" = "Встреча была сохранена, но не удалось добавить этих пользователей:\n\n%@";
-"wireMeetings.schedule.error.conversationName.title" = "Update incomplete";
-"wireMeetings.schedule.error.conversationName.message" = "The meeting title could not be updated everywhere. Please try again.";
+"wireMeetings.schedule.participantsNotAdded.createdTitle" = "Встреча создана";
+"wireMeetings.schedule.participantsNotAdded.message" = "Обратите внимание, что следующих пользователей не удалось добавить:\n\n%@";
+"wireMeetings.schedule.error.conversationName.title" = "Обновление не завершено";
+"wireMeetings.schedule.error.conversationName.message" = "Название встречи было обновлено, но в приглашении может по-прежнему отображаться прежнее название. Пожалуйста, попробуйте еще раз.";
 "wireMeetings.schedule.error.conversationName.retry" = "Повторить";
 "wireMeetings.schedule.disableGuestAccess.alert.title" = "Отключить доступ гостей?";
 "wireMeetings.schedule.disableGuestAccess.alert.disable" = "Отключить";
@@ -110,6 +131,16 @@
 "wireMeetings.schedule.members.retry.button" = "Повторить";
 "wireMeetings.schedule.members.selected.title" = "Выбрано";
 "wireMeetings.schedule.members.contacts.title" = "Контакты";
+"wireMeetings.schedule.members.groups.importButton" = "Импортировать из группы";
+"wireMeetings.schedule.members.groups.title" = "Группы и каналы";
+"wireMeetings.schedule.members.groups.searchPlaceholder" = "Поиск групп и каналов";
+"wireMeetings.schedule.members.groups.group" = "Группа";
+"wireMeetings.schedule.members.groups.channel" = "Канал";
+"wireMeetings.schedule.members.groups.emptyTitle" = "Группы или каналы не найдены";
+"wireMeetings.schedule.members.groups.emptyDescription" = "Показаны только группы и каналы, к которым вы присоединились.";
+"wireMeetings.schedule.members.groups.loading" = "Загрузка групп и каналов";
+"wireMeetings.schedule.members.groups.importing" = "Импорт участников";
+"wireMeetings.schedule.members.groups.importError" = "Не удалось импортировать участников";
 
 "wireMeetings.schedule.error.expiredStartDate.title" = "Выберите более позднее время начала";
-"wireMeetings.schedule.error.expiredStartDate.message" = "Время начала встречи можно изменить только на период не более чем за 24 часа до текущего момента. Выберите более позднее время начала и сохраните изменения заново.";
+"wireMeetings.schedule.error.expiredStartDate.message" = "Вы можете редактировать только те встречи, которые начались менее 24 часов назад. Пожалуйста, выберите более позднее время начала и попробуйте еще раз.";
