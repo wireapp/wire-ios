@@ -50,7 +50,10 @@ class MeetingFormPage: PageModel {
     var endTimeButton: XCUIElement { app.buttons[Locators.WireMeetings.MeetingForm.endTime.rawValue] }
     var repeatButton: XCUIElement { app.buttons[Locators.WireMeetings.MeetingForm.repeatOption.rawValue] }
     var selectedMembersButton: XCUIElement {
-        app.buttons[Locators.WireMeetings.MeetingForm.membersSelected.rawValue]
+        app.buttons.matching(NSPredicate(
+            format: "identifier BEGINSWITH %@",
+            Locators.WireMeetings.MeetingForm.membersSelected.rawValue + "."
+        )).firstMatch
     }
 
     var titleError: XCUIElement { app.staticTexts[Locators.WireMeetings.MeetingForm.titleError.rawValue] }
@@ -78,6 +81,32 @@ class MeetingFormPage: PageModel {
         dateFormatter.timeStyle = .short
         XCTAssertEqual(startTimeButton.label, dateFormatter.string(from: start))
         XCTAssertEqual(endTimeButton.label, dateFormatter.string(from: end))
+    }
+
+    func dateTimes(locale: String = "en_GB") throws -> (start: Date, end: Date) {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: locale)
+
+        func dateTime(dateLabel: String, timeLabel: String) throws -> Date {
+            formatter.dateStyle = .short
+            formatter.timeStyle = .none
+            let day = try XCTUnwrap(formatter.date(from: dateLabel), "Invalid meeting date: '\(dateLabel)'")
+            formatter.dateStyle = .none
+            formatter.timeStyle = .short
+            let time = try XCTUnwrap(formatter.date(from: timeLabel), "Invalid meeting time: '\(timeLabel)'")
+            let components = formatter.calendar.dateComponents([.hour, .minute], from: time)
+            return try XCTUnwrap(formatter.calendar.date(
+                bySettingHour: try XCTUnwrap(components.hour),
+                minute: try XCTUnwrap(components.minute),
+                second: 0,
+                of: day
+            ))
+        }
+
+        return try (
+            dateTime(dateLabel: startDateButton.label, timeLabel: startTimeButton.label),
+            dateTime(dateLabel: XCTUnwrap(endTimeButton.value as? String), timeLabel: endTimeButton.label)
+        )
     }
 
     func selectRepeat(_ title: String) {
@@ -156,13 +185,18 @@ class MeetingFormPage: PageModel {
         guard selectedMembersButton.waitForExistence(timeout: 5) else {
             throw RuntimeError("Selected members section did not appear")
         }
-        if selectedMembersButton.value as? String == "expanded" {
+        if selectedMembersButton.identifier == Locators.WireMeetings.MeetingForm.selectedMembersIdentifier(
+            isExpanded: true
+        ) {
             guard selectedMembersButton.waitAndTap() else {
                 throw RuntimeError("Selected members section was not tappable")
             }
         }
         let collapsed = XCTNSPredicateExpectation(
-            predicate: NSPredicate(format: "exists == true AND value == %@", "collapsed"),
+            predicate: NSPredicate(
+                format: "exists == true AND identifier == %@",
+                Locators.WireMeetings.MeetingForm.selectedMembersIdentifier(isExpanded: false)
+            ),
             object: selectedMembersButton
         )
         guard XCTWaiter().wait(for: [collapsed], timeout: 5) == .completed else {

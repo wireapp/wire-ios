@@ -51,10 +51,11 @@ struct MemberSelectionView: View {
                         title: "\(Strings.Selected.title) (\(viewModel.selectedMembers.count))",
                         isExpanded: $viewModel.isSelectedExpanded
                     )
-                    .accessibilityIdentifier(Locators.WireMeetings.MeetingForm.membersSelected)
-                    #if DEBUG
-                        .accessibilityValue(viewModel.isSelectedExpanded ? "expanded" : "collapsed")
-                    #endif
+                    .accessibilityIdentifier(
+                        Locators.WireMeetings.MeetingForm.selectedMembersIdentifier(
+                            isExpanded: viewModel.isSelectedExpanded
+                        )
+                    )
                 }
 
                 Section {
@@ -160,6 +161,7 @@ struct MemberSelectionView: View {
                     .rotationEffect(.degrees(isExpanded.wrappedValue ? 0 : -90))
                     .foregroundStyle(accentColor)
             }
+            .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
         .textCase(nil)

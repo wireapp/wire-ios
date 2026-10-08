@@ -746,6 +746,10 @@ public enum Locators {
             case timePicker = "meetingFormTimePicker"
             case selectedMembersSection = "Selected ("
 
+            public static func selectedMembersIdentifier(isExpanded: Bool) -> String {
+                "\(membersSelected.rawValue).\(isExpanded ? "expanded" : "collapsed")"
+            }
+
             public static func memberIdentifier(_ id: String) -> String {
                 "meetingMember.\(id.uppercased())"
             }
