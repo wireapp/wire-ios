@@ -204,13 +204,13 @@ final class ScheduleMeetingTests: WireUITestCase {
         )
 
         for minute in [0, 15, 30, 45] {
-            form.selectTime(start: true, hour: 15, minute: minute)
+            try form.selectTime(start: true, hour: 15, minute: minute)
             form.assertDateTimes(
                 start: date(hour: 15, minute: minute, dayOffset: 1),
                 end: date(hour: 16, minute: minute, dayOffset: 1)
             )
         }
-        form.selectTime(start: false, hour: 16, minute: 30)
+        try form.selectTime(start: false, hour: 16, minute: 30)
         form.assertDateTimes(
             start: date(hour: 15, minute: 45, dayOffset: 1),
             end: date(hour: 16, minute: 30, dayOffset: 1)
@@ -229,10 +229,10 @@ final class ScheduleMeetingTests: WireUITestCase {
         let page = try launchMeetings(for: host, now: date(minute: 7))
         let constrained = try page.schedule()
         constrained.replaceTitle(with: "TC11957 picker constraints")
-        constrained.selectTime(start: true, hour: 9, minute: 0)
+        try constrained.selectTime(start: true, hour: 9, minute: 0)
         constrained.assertDateTimes(start: date(minute: 15), end: date(hour: 11, minute: 15))
-        constrained.selectTime(start: true, hour: 15, minute: 0)
-        constrained.selectTime(start: false, hour: 15, minute: 0)
+        try constrained.selectTime(start: true, hour: 15, minute: 0)
+        try constrained.selectTime(start: false, hour: 15, minute: 0)
         constrained.assertDateTimes(start: date(hour: 15), end: date(hour: 15, minute: 15))
         _ = try constrained.cancel()
         let beforeScheduling = try await fixtures.list()
@@ -242,7 +242,7 @@ final class ScheduleMeetingTests: WireUITestCase {
             let form = try page.schedule()
             let title = "TC11957 \(hour):\(minute)"
             form.replaceTitle(with: title)
-            form.selectTime(start: true, hour: hour, minute: minute)
+            try form.selectTime(start: true, hour: hour, minute: minute)
             form.assertDateTimes(start: date(hour: hour, minute: minute), end: date(hour: endHour, minute: endMinute))
             _ = try form.save()
             let meeting = try await onlyMeeting(fixtures, title: title)
@@ -255,7 +255,7 @@ final class ScheduleMeetingTests: WireUITestCase {
 
         let invalid = try page.schedule()
         invalid.replaceTitle(with: "TC11957 no later end")
-        invalid.selectTime(start: true, hour: 23, minute: 45)
+        try invalid.selectTime(start: true, hour: 23, minute: 45)
         // Disabled submission or an explicit rejection are both valid. A zero-length record is not.
         if invalid.saveButton.isEnabled {
             invalid.saveButton.tap()
@@ -315,25 +315,25 @@ final class ScheduleMeetingTests: WireUITestCase {
         let fixtures = try await MeetingsTestHelper(user: host)
         let page = try launchMeetings(for: host, now: date())
         let form = try page.schedule()
-        form.openParticipants()
+        try form.openParticipants()
         XCTAssertTrue(form.member(users[0]).waitForExistence(timeout: 15), "Eligible team users did not appear")
         for (index, user) in users.enumerated() {
-            form.selectMember(user)
+            try form.selectMember(user)
             XCTAssertEqual(form.selectedMembersButton.label, "Selected (\(index + 1))")
-            form.clearMemberSearch()
+            try form.clearMemberSearch()
         }
         form.searchMember(host.name)
         XCTAssertTrue(app.staticTexts["No result found"].waitForExistence(timeout: 10))
         XCTAssertFalse(form.member(host).exists, "The host can be added twice")
-        form.clearMemberSearch()
+        try form.clearMemberSearch()
         form.searchMember(users[0].name)
         XCTAssertTrue(app.staticTexts["No result found"].waitForExistence(timeout: 10))
         XCTAssertFalse(form.member(users[0]).exists, "A selected user is still an add candidate")
-        form.clearMemberSearch()
+        try form.clearMemberSearch()
         try form.confirmParticipants()
         XCTAssertEqual(form.participantsButton.value as? String, "3")
 
-        form.openParticipants()
+        try form.openParticipants()
         for user in users {
             XCTAssertTrue(form.member(user).waitForExistence(timeout: 10))
             XCTAssertEqual(

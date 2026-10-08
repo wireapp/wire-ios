@@ -51,11 +51,10 @@ struct MemberSelectionView: View {
                         title: "\(Strings.Selected.title) (\(viewModel.selectedMembers.count))",
                         isExpanded: $viewModel.isSelectedExpanded
                     )
-                    .accessibilityIdentifier(
-                        viewModel.isSelectedExpanded
-                            ? Locators.WireMeetings.MeetingForm.membersSelectedExpanded
-                            : Locators.WireMeetings.MeetingForm.membersSelectedCollapsed
-                    )
+                    .accessibilityIdentifier(Locators.WireMeetings.MeetingForm.membersSelected)
+                    #if DEBUG
+                        .accessibilityValue(viewModel.isSelectedExpanded ? "expanded" : "collapsed")
+                    #endif
                 }
 
                 Section {

@@ -50,14 +50,11 @@ class MeetingFormPage: PageModel {
     var endTimeButton: XCUIElement { app.buttons[Locators.WireMeetings.MeetingForm.endTime.rawValue] }
     var repeatButton: XCUIElement { app.buttons[Locators.WireMeetings.MeetingForm.repeatOption.rawValue] }
     var selectedMembersButton: XCUIElement {
-        app.buttons.matching(NSPredicate(
-            format: "identifier BEGINSWITH %@",
-            Locators.WireMeetings.MeetingForm.membersSelected.rawValue + "."
-        )).firstMatch
+        app.buttons[Locators.WireMeetings.MeetingForm.membersSelected.rawValue]
     }
 
     var titleError: XCUIElement { app.staticTexts[Locators.WireMeetings.MeetingForm.titleError.rawValue] }
-    var loadingIndicator: XCUIElement { app.progressIndicators[Locators.WireMeetings.MeetingForm.loading.rawValue] }
+    var loadingIndicator: XCUIElement { app.activityIndicators[Locators.WireMeetings.MeetingForm.loading.rawValue] }
 
     func member(_ user: UserInfo) -> XCUIElement {
         app.buttons[Locators.WireMeetings.MeetingForm.memberIdentifier(user.id)]
@@ -93,36 +90,52 @@ class MeetingFormPage: PageModel {
     }
 
     func selectStartDate(_ date: Date) throws {
-        XCTAssertTrue(startDateButton.waitAndTap())
+        guard startDateButton.waitAndTap() else { throw RuntimeError("Start date button was not available") }
         let picker = app.descendants(matching: .any)[Locators.WireMeetings.MeetingForm.datePicker.rawValue].firstMatch
-        XCTAssertTrue(picker.waitForExistence(timeout: 5))
+        guard picker.waitForExistence(timeout: 5) else { throw RuntimeError("Calendar did not appear") }
         // Use the full calendar date. A bare day number can select an adjacent month.
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "en_GB")
-        formatter.dateFormat = "EEEE, d MMMM"
+        formatter.dateFormat = "MMMM yyyy"
+        let targetMonth = formatter.string(from: date)
+        let month = picker.buttons["Month"]
+        guard month.waitForExistence(timeout: 5), let visibleMonth = month.value as? String else {
+            throw RuntimeError("Calendar month was not available")
+        }
+        if visibleMonth != targetMonth, !picker.buttons["DatePicker.NextMonth"].waitAndTap() {
+            throw RuntimeError("The next calendar month was not available")
+        }
+        let expectedMonth = XCTNSPredicateExpectation(
+            predicate: NSPredicate(format: "value == %@", targetMonth), object: month
+        )
+        guard XCTWaiter().wait(for: [expectedMonth], timeout: 5) == .completed else {
+            throw RuntimeError("Calendar month '\(targetMonth)' did not appear")
+        }
+        formatter.dateFormat = "EEEE d MMMM"
         let day = picker.buttons.matching(NSPredicate(format: "label BEGINSWITH %@", formatter.string(from: date)))
             .firstMatch
-        if !day.exists {
-            XCTAssertTrue(picker.buttons["Next Month"].waitAndTap(), "The next calendar month was not available")
+        guard day.waitAndTap() else {
+            throw RuntimeError("Calendar date '\(formatter.string(from: date))' did not appear")
         }
-        XCTAssertTrue(day.waitAndTap(), "Calendar date '\(formatter.string(from: date))' did not appear")
-        startDateButton.tap()
+        guard startDateButton.waitAndTap() else { throw RuntimeError("Calendar did not close") }
     }
 
-    func selectTime(start: Bool, hour: Int, minute: Int) {
+    func selectTime(start: Bool, hour: Int, minute: Int) throws {
         let button = start ? startTimeButton : endTimeButton
-        XCTAssertTrue(button.waitAndTap())
+        guard button.waitAndTap() else { throw RuntimeError("Time button was not available") }
         let wheels = app.pickerWheels
-        XCTAssertTrue(wheels.firstMatch.waitForExistence(timeout: 5))
-        XCTAssertEqual(wheels.count, 2, "The time picker must have 24-hour and minute wheels")
-        wheels.element(boundBy: 0).adjust(toPickerWheelValue: String(hour))
+        guard wheels.firstMatch.waitForExistence(timeout: 5), wheels.count == 2 else {
+            throw RuntimeError("The time picker must have 24-hour and minute wheels")
+        }
+        wheels.element(boundBy: 0).adjust(toPickerWheelValue: String(format: "%02d", hour))
         wheels.element(boundBy: 1).adjust(toPickerWheelValue: String(format: "%02d", minute))
-        button.tap()
+        guard button.waitAndTap() else { throw RuntimeError("Time picker did not close") }
     }
 
-    func openParticipants() {
-        XCTAssertTrue(participantsButton.waitAndTap())
-        XCTAssertTrue(memberSearchField.waitForExistence(timeout: 5))
+    func openParticipants() throws {
+        guard participantsButton.waitAndTap(), memberSearchField.waitForExistence(timeout: 5) else {
+            throw RuntimeError("Participant picker did not appear")
+        }
     }
 
     func searchMember(_ name: String) {
@@ -132,27 +145,40 @@ class MeetingFormPage: PageModel {
         memberSearchField.typeText(name)
     }
 
-    func clearMemberSearch() {
-        XCTAssertTrue(memberSearchField.buttons["Clear text"].waitAndTap())
+    func clearMemberSearch() throws {
+        guard memberSearchField.buttons["Clear text"].waitAndTap() else {
+            throw RuntimeError("Participant search could not be cleared")
+        }
     }
 
-    func selectMember(_ user: UserInfo) {
+    func selectMember(_ user: UserInfo) throws {
         searchMember(user.name)
-        let expanded = app.buttons[Locators.WireMeetings.MeetingForm.membersSelectedExpanded.rawValue]
-        let collapsed = app.buttons[Locators.WireMeetings.MeetingForm.membersSelectedCollapsed.rawValue]
-        XCTAssertTrue(selectedMembersButton.waitForExistence(timeout: 5))
-        if expanded.exists {
-            XCTAssertTrue(expanded.waitAndTap())
+        guard selectedMembersButton.waitForExistence(timeout: 5) else {
+            throw RuntimeError("Selected members section did not appear")
         }
-        XCTAssertTrue(collapsed.waitForExistence(timeout: 5), "Selected members section did not collapse")
-        XCTAssertTrue(member(user).waitAndTap(timeout: 10), "Meeting member '\(user.name)' was not tappable")
+        if selectedMembersButton.value as? String == "expanded" {
+            guard selectedMembersButton.waitAndTap() else {
+                throw RuntimeError("Selected members section was not tappable")
+            }
+        }
+        let collapsed = XCTNSPredicateExpectation(
+            predicate: NSPredicate(format: "exists == true AND value == %@", "collapsed"),
+            object: selectedMembersButton
+        )
+        guard XCTWaiter().wait(for: [collapsed], timeout: 5) == .completed else {
+            throw RuntimeError("Selected members section did not collapse")
+        }
+        guard member(user).waitAndTap(timeout: 10) else {
+            throw RuntimeError("Meeting member '\(user.name)' was not tappable")
+        }
     }
 
     func confirmParticipants() throws {
         let cancelSearch = app.buttons.matching(identifier: "Cancel").allElementsBoundByIndex.first(where: \.isHittable)
         if let cancelSearch, !selectMembersButton.isHittable { cancelSearch.tap() }
-        XCTAssertTrue(selectMembersButton.waitAndTap())
-        XCTAssertTrue(participantsButton.waitForExistence(timeout: 5))
+        guard selectMembersButton.waitAndTap(), participantsButton.waitForExistence(timeout: 5) else {
+            throw RuntimeError("Participant selection was not confirmed")
+        }
     }
 
     @discardableResult
@@ -169,11 +195,11 @@ class MeetingFormPage: PageModel {
 
     @discardableResult
     func addParticipants(_ users: [UserInfo]) throws -> MeetingFormPage {
-        openParticipants()
+        try openParticipants()
 
         for user in users {
-            selectMember(user)
-            clearMemberSearch()
+            try selectMember(user)
+            try clearMemberSearch()
         }
 
         try confirmParticipants()
