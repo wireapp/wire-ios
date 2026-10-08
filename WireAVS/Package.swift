@@ -17,8 +17,8 @@ let package = Package(
     targets: [
         .binaryTarget(
             name: "WireAVS",
-            path: "../../wire-avs/build/dist/xc/avs.xcframework" // TODO: undo changes
-            // path: "build/avs.xcframework"
+            url: "https://github.com/wireapp/wire-avs/releases/download/10.5.24/avs.xcframework.zip",
+            checksum: "28ac28700c209f95a94e668dc2b9efeb90498371135801da1f1cbf0de221b35d"
         )
     ]
 )
