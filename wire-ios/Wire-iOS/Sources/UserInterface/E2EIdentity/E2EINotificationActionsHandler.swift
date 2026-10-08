@@ -146,8 +146,13 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
     }
 
     func snoozeReminder() async {
-        let selfClientCertificate = try? await selfClientCertificateProvider.getCertificate()
-        guard let endOfPeriod = selfClientCertificate?.expiryDate ?? gracePeriodEndDate,
+        let endOfPeriod = if let certificate = try? await selfClientCertificateProvider.getCertificate() {
+            certificate.isEnrolled ? certificate.expiryDate : gracePeriodEndDate
+        } else {
+            gracePeriodEndDate
+        }
+
+        guard let endOfPeriod,
               !endOfPeriod.isInThePast,
               let formattedDuration = durationFormatter.string(from: endOfPeriod.timeIntervalSinceNow) else {
             return
