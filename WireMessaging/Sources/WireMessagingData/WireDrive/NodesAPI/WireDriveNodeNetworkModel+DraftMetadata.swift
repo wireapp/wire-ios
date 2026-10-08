@@ -32,11 +32,11 @@ package extension WireDriveNodeNetworkModel {
             "Create-Resource-UUID": uuid.transportString(),
             "Create-Version-ID": versionID.transportString()
         ]
-        
+
         if isDraft {
             metadata.updateValue("true", forKey: "Draft-Mode")
         }
-        
+
         return metadata
     }
 
