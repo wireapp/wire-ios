@@ -172,7 +172,11 @@ class CommitPendingProposalsGeneratorTests {
         // WHEN — only an unrelated property changes
         let context = coreDataStack.syncContext
         await context.perform {
-            let conversation = ZMConversation.fetch(with: conversationID.uuid, domain: conversationID.domain, in: context)
+            let conversation = ZMConversation.fetch(
+                with: conversationID.uuid,
+                domain: conversationID.domain,
+                in: context
+            )
             conversation?.userDefinedName = "renamed"
             context.saveOrRollback()
         }
@@ -188,7 +192,10 @@ class CommitPendingProposalsGeneratorTests {
     func rescheduledTimerGeneratesItem() async throws {
         // GIVEN
         let conversationID = QualifiedID.random()
-        let groupID = await createPendingMLSConversation(id: conversationID, proposalDate: Date().addingTimeInterval(-10))
+        let groupID = await createPendingMLSConversation(
+            id: conversationID,
+            proposalDate: Date().addingTimeInterval(-10)
+        )
 
         let (stream, streamContinuation) = AsyncStream.makeStream(of: CommitPendingProposalItem.self)
         commitPendingProposalItemClosure = { streamContinuation.yield($0) }
@@ -225,7 +232,10 @@ class CommitPendingProposalsGeneratorTests {
         let firstID = QualifiedID.random()
         let secondID = QualifiedID.random()
         await createPendingMLSConversation(id: firstID, proposalDate: Date().addingTimeInterval(30))
-        let secondGroupID = await createPendingMLSConversation(id: secondID, proposalDate: Date().addingTimeInterval(60))
+        let secondGroupID = await createPendingMLSConversation(
+            id: secondID,
+            proposalDate: Date().addingTimeInterval(60)
+        )
 
         let (stream, streamContinuation) = AsyncStream.makeStream(of: CommitPendingProposalItem.self)
         commitPendingProposalItemClosure = { streamContinuation.yield($0) }
