@@ -517,7 +517,7 @@ private var macMediaPickerCoordinatorKey: UInt8 = 0
 
 extension ConversationInputBarViewController {
 
-    fileprivate var macMediaPickerCoordinator: MacMediaPickerCoordinator {
+    private var macMediaPickerCoordinator: MacMediaPickerCoordinator {
         if let existing = objc_getAssociatedObject(self, &macMediaPickerCoordinatorKey)
             as? MacMediaPickerCoordinator {
             return existing
