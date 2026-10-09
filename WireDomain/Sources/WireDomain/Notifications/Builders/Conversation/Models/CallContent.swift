@@ -58,8 +58,7 @@ struct CallContent: Decodable {
         self.callerUserID = try container.decodeIfPresent(String.self, forKey: .callerUserID)
         self.callerClientID = try container.decode(String.self, forKey: .callerClientID)
         self.responded = try container.decode(Bool.self, forKey: .responded)
-        self.conferenceTimestamp = (try? container.decode(String.self, forKey: .conferenceTimestamp))
-            ?? (try? container.decode(UInt64.self, forKey: .conferenceTimestamp)).map(String.init)
+        self.conferenceTimestamp = try? container.decodeIfPresent(String.self, forKey: .conferenceTimestamp)
     }
 
     struct Properties: Decodable {

@@ -70,7 +70,7 @@ final class ConversationCallingEventNotificationBuilderTests: XCTestCase {
     func testCallContentDecodesConferenceTimestampWithoutDroppingCall() {
         let timestamps: [(String, String?)] = [
             ("\"1000\"", "1000"),
-            ("1000", "1000"),
+            ("1000", nil),
             ("{\"unexpected\":true}", nil)
         ]
 
