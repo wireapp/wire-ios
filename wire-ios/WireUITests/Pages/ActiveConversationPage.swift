@@ -177,6 +177,13 @@ class ActiveConversationPage: PageModel {
         app.otherElements[Locators.ActiveConversationPage.classifiedBanner.rawValue]
     }
 
+    /// The banner shown in the input bar to users with viewer access to the conversation's drive.
+    var driveViewerAccessBanner: XCUIElement {
+        app.staticTexts
+            .matching(NSPredicate(format: "label BEGINSWITH 'Viewer access'"))
+            .firstMatch
+    }
+
     var guestsArePresentBanner: XCUIElement {
         app.staticTexts[Locators.ActiveConversationPage.guestsArePresent.rawValue]
     }
@@ -191,6 +198,15 @@ class ActiveConversationPage: PageModel {
 
     var photoButton: XCUIElement {
         app.buttons[Locators.ActiveConversationPage.photoButton.rawValue]
+    }
+
+    var videoButton: XCUIElement {
+        app.buttons["videoButton"]
+    }
+
+    /// The input bar buttons that are disabled for users with viewer access to the conversation's drive.
+    var driveViewerDisabledInputBarButtons: [XCUIElement] {
+        [photoButton, sketchButton, videoButton, uploadFileButton]
     }
 
     var cameraRollButton: XCUIElement {
