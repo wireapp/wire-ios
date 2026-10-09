@@ -100,8 +100,17 @@ class SharedDriveFilesPage: PageModel {
         app.buttons[Locators.WireDrive.FileMenu.makeAvailableOffline.identifier]
     }
 
+    /// The "No internet" bar shown at the top of the list when Drive is offline.
+    var offlineBar: XCUIElement {
+        app.staticTexts
+            .matching(NSPredicate(format: "label ==[c] 'No internet'"))
+            .firstMatch
+    }
+
     var availableOfflineIcon: XCUIElement {
-        app.images["Available offline"].firstMatch
+        fileTexts
+            .matching(NSPredicate(format: "label CONTAINS %@", "Available offline"))
+            .firstMatch
     }
 
     @discardableResult
