@@ -162,7 +162,7 @@ extension ZMAssetClientMessage: ZMFileMessageData {
 
         if let mime = mimeType,
            let fileExtension = UTIHelper.convertToFileExtension(mime: mime),
-           richAssetType == .audio,
+           richAssetType == .audio || richAssetType == .video,
            temporaryFileURL.pathExtension != fileExtension {
             temporaryFileURL.appendPathExtension(fileExtension)
         }

@@ -18,6 +18,7 @@
 
 import GenericMessageProtocol
 import WireDataModel
+import WireLogging
 
 // sourcery: AutoMockable
 public protocol AssetTransferStateResolverProtocol {
@@ -46,6 +47,7 @@ public struct AssetTransferStateResolver: AssetTransferStateResolverProtocol {
         context: NSManagedObjectContext
     ) {
         guard let assetData = genericMessage.assetData, let status = assetData.status else {
+            WireLogger.assets.warn("resolve transfer state: no asset data or status")
             return
         }
 
@@ -68,7 +70,7 @@ public struct AssetTransferStateResolver: AssetTransferStateResolverProtocol {
             }
 
         default:
-            break
+            WireLogger.assets.warn("resolve transfer state: unhandled upload status")
         }
     }
 

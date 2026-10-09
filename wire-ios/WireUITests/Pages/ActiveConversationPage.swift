@@ -88,6 +88,12 @@ class ActiveConversationPage: PageModel {
         app.descendants(matching: .any)[Locators.ActiveConversationPage.videoPlayButton.rawValue].firstMatch
     }
 
+    /// The fullscreen `AVPlayerViewController` presented when a video message is played.
+    /// AVKit exposes the video frame as an image with this (system provided) accessibility label.
+    var videoPlayer: XCUIElement {
+        app.images["Liftable subject available"].firstMatch
+    }
+
     var imagePreview: XCUIElement {
         app.descendants(matching: .any)[Locators.ActiveConversationPage.imagePreview.rawValue].firstMatch
     }
