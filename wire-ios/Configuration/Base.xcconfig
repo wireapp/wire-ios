@@ -19,3 +19,6 @@
 #include "./Security-Flags.xcconfig"
 
 WIRE_PRODUCT_NAME = Wire
+
+// Default; overridable by configs included after this file (e.g. build-assets)
+REQUIRES_FULL_SCREEN = NO
