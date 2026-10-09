@@ -733,7 +733,34 @@ public enum Locators {
             case clearTitle = "meetingFormClearTitle"
             case participants = "meetingFormParticipants"
             case membersSelect = "meetingMembersSelect"
+            case membersSelected = "meetingMembersSelected"
+            case membersEmptySearch = "meetingMembersEmptySearch"
+            case errorDismiss = "meetingFormErrorDismiss"
+            case cancel = "meetingFormCancel"
+            case startDate = "meetingFormStartDate"
+            case startTime = "meetingFormStartTime"
+            case endDate = "meetingFormEndDate"
+            case endTime = "meetingFormEndTime"
+            case repeatOption = "meetingFormRepeat"
+            case titleError = "meetingFormTitleError"
+            case loading = "meetingFormLoading"
+            case datePicker = "meetingFormDatePicker"
+            case timePicker = "meetingFormTimePicker"
             case selectedMembersSection = "Selected ("
+
+            public enum RepeatOption: String {
+                case never = "meetingFormRepeat.never"
+                case daily = "meetingFormRepeat.daily"
+                case weekly = "meetingFormRepeat.weekly"
+                case everyTwoWeeks = "meetingFormRepeat.everyTwoWeeks"
+                case everyFourWeeks = "meetingFormRepeat.everyFourWeeks"
+                case monthly = "meetingFormRepeat.monthly"
+                case yearly = "meetingFormRepeat.yearly"
+            }
+
+            public static func selectedMembersIdentifier(isExpanded: Bool) -> String {
+                "\(membersSelected.rawValue).\(isExpanded ? "expanded" : "collapsed")"
+            }
 
             public static func memberIdentifier(_ id: String) -> String {
                 "meetingMember.\(id.uppercased())"

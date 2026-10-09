@@ -17,6 +17,7 @@
 //
 
 import Testing
+import WireData
 import WireDataModel
 import WireDataModelSupport
 import WireDomainSupport
@@ -154,17 +155,160 @@ class CommitPendingProposalsGeneratorTests {
         #expect(items.isEmpty)
     }
 
-    private func createPendingMLSConversation(id: QualifiedID, proposalDate: Date) async {
-        _ = await coreDataStack.syncContext.perform { [context = coreDataStack.syncContext, modelHelper] in
+    @Test("It does not generate another item when an unrelated property of the conversation is saved")
+    func unrelatedConversationSaveDoesNotGenerateItem() async throws {
+        // GIVEN
+        let conversationID = QualifiedID.random()
+        await createPendingMLSConversation(id: conversationID, proposalDate: Date().addingTimeInterval(-10))
+
+        let (stream, streamContinuation) = AsyncStream.makeStream(of: CommitPendingProposalItem.self)
+        commitPendingProposalItemClosure = { streamContinuation.yield($0) }
+        var iterator = stream.makeAsyncIterator()
+
+        await sut.start()
+        let firstItem = await iterator.next()
+        #expect(firstItem?.conversationID == conversationID)
+
+        // WHEN — only an unrelated property changes
+        let context = coreDataStack.syncContext
+        await context.perform {
+            let conversation = ZMConversation.fetch(
+                with: conversationID.uuid,
+                domain: conversationID.domain,
+                in: context
+            )
+            conversation?.userDefinedName = "renamed"
+            context.saveOrRollback()
+        }
+        try await Task.sleep(for: .milliseconds(300))
+        streamContinuation.finish()
+
+        // THEN
+        let secondItem = await iterator.next()
+        #expect(secondItem == nil)
+    }
+
+    @Test("It generates another item when the timer is rescheduled")
+    func rescheduledTimerGeneratesItem() async throws {
+        // GIVEN
+        let conversationID = QualifiedID.random()
+        let groupID = await createPendingMLSConversation(
+            id: conversationID,
+            proposalDate: Date().addingTimeInterval(-10)
+        )
+
+        let (stream, streamContinuation) = AsyncStream.makeStream(of: CommitPendingProposalItem.self)
+        commitPendingProposalItemClosure = { streamContinuation.yield($0) }
+        var iterator = stream.makeAsyncIterator()
+
+        await sut.start()
+        _ = await iterator.next()
+
+        // WHEN
+        let context = coreDataStack.syncContext
+        await context.perform {
+            PendingProposalTimer.schedule(
+                mlsGroupID: groupID.data,
+                conversationID: conversationID.uuid,
+                conversationDomain: conversationID.domain,
+                fireDate: Date().addingTimeInterval(-1),
+                in: context
+            )
+            context.saveOrRollback()
+        }
+
+        // THEN
+        let secondItem = await withTaskCancellationHandler {
+            await iterator.next()
+        } onCancel: {
+            streamContinuation.finish()
+        }
+        #expect(secondItem?.conversationID == conversationID)
+    }
+
+    @Test("It still generates an item when rescheduling a timer reorders it before another timer")
+    func reorderedTimerGeneratesItem() async throws {
+        // GIVEN
+        let firstID = QualifiedID.random()
+        let secondID = QualifiedID.random()
+        await createPendingMLSConversation(id: firstID, proposalDate: Date().addingTimeInterval(30))
+        let secondGroupID = await createPendingMLSConversation(
+            id: secondID,
+            proposalDate: Date().addingTimeInterval(60)
+        )
+
+        let (stream, streamContinuation) = AsyncStream.makeStream(of: CommitPendingProposalItem.self)
+        commitPendingProposalItemClosure = { streamContinuation.yield($0) }
+        var iterator = stream.makeAsyncIterator()
+
+        await sut.start()
+
+        // WHEN — the second timer moves before the first one
+        let context = coreDataStack.syncContext
+        await context.perform {
+            PendingProposalTimer.schedule(
+                mlsGroupID: secondGroupID.data,
+                conversationID: secondID.uuid,
+                conversationDomain: secondID.domain,
+                fireDate: Date().addingTimeInterval(0.5),
+                in: context
+            )
+            context.saveOrRollback()
+        }
+
+        // THEN
+        let item = await withTaskCancellationHandler {
+            await iterator.next()
+        } onCancel: {
+            streamContinuation.finish()
+        }
+        #expect(item?.conversationID == secondID)
+    }
+
+    @Test("It keeps the existing fire date when asked to, since the first proposal sets the commit date")
+    func keepsExistingFireDate() async throws {
+        // GIVEN
+        let conversationID = QualifiedID.random()
+        let firstDate = Date().addingTimeInterval(30)
+        let groupID = await createPendingMLSConversation(id: conversationID, proposalDate: firstDate)
+
+        // WHEN
+        let context = coreDataStack.syncContext
+        let fireDate = await context.perform {
+            PendingProposalTimer.schedule(
+                mlsGroupID: groupID.data,
+                conversationID: conversationID.uuid,
+                conversationDomain: conversationID.domain,
+                fireDate: firstDate.addingTimeInterval(60),
+                keepExistingFireDate: true,
+                in: context
+            ).fireDate
+        }
+
+        // THEN
+        #expect(fireDate == firstDate)
+    }
+
+    @discardableResult
+    private func createPendingMLSConversation(id: QualifiedID, proposalDate: Date) async -> MLSGroupID {
+        await coreDataStack.syncContext.perform { [context = coreDataStack.syncContext, modelHelper] in
             let selfUser = ZMUser.selfUser(in: context)
-            let conversation = modelHelper.createMLSConversation(
+            let groupID = MLSGroupID.random()
+            _ = modelHelper.createMLSConversation(
                 id: id.uuid,
                 domain: id.domain,
-                mlsGroupID: .random(),
+                mlsGroupID: groupID,
                 with: [selfUser],
                 in: context
             )
-            conversation.commitPendingProposalDate = proposalDate
+            PendingProposalTimer.schedule(
+                mlsGroupID: groupID.data,
+                conversationID: id.uuid,
+                conversationDomain: id.domain,
+                fireDate: proposalDate,
+                in: context
+            )
+            return groupID
         }
     }
 }

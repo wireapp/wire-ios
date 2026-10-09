@@ -23,6 +23,7 @@ final class MeetingsTestHelper {
 
     private let networkStack: NetworkStack
     let api: any MeetingsAPI
+    let conversationsAPI: any ConversationsAPI
 
     init(user: UserInfo) async throws {
         let userHelper = UserHelper.default
@@ -40,6 +41,8 @@ final class MeetingsTestHelper {
         )
         self.networkStack = networkStack
         self.api = MeetingsAPIBuilder(apiService: self.networkStack.apiService)
+            .makeAPI(for: userHelper.apiVersion)
+        self.conversationsAPI = ConversationsAPIBuilder(apiService: self.networkStack.apiService)
             .makeAPI(for: userHelper.apiVersion)
     }
 
