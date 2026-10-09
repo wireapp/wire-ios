@@ -219,7 +219,7 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
             conversationID = try await context.processWelcomeMessage(
                 welcomeMessage: message
             )
-        } catch CoreCryptoError.Mls(.ConversationAlreadyExists(let existingConversationId)) {
+        } catch let CoreCryptoError.Mls(.ConversationAlreadyExists(existingConversationId)) {
             try await context.wipeConversation(conversationId: MLSGroupID(existingConversationId).conversationId)
             conversationID = try await context.processWelcomeMessage(
                 welcomeMessage: message
