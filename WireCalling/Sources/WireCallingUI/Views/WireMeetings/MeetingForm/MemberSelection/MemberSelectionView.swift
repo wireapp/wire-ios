@@ -51,6 +51,12 @@ struct MemberSelectionView: View {
                         title: "\(Strings.Selected.title) (\(viewModel.selectedMembers.count))",
                         isExpanded: $viewModel.isSelectedExpanded
                     )
+                    .accessibilityIdentifier(
+                        Locators.WireMeetings.MeetingForm.selectedMembersIdentifier(
+                            isExpanded: viewModel.isSelectedExpanded
+                        )
+                    )
+                    .accessibilityValue(String(viewModel.selectedMembers.count))
                 }
 
                 Section {
@@ -129,6 +135,7 @@ struct MemberSelectionView: View {
             ContentUnavailableView {
                 Label {
                     Text(Strings.Empty.title)
+                        .accessibilityIdentifier(Locators.WireMeetings.MeetingForm.membersEmptySearch.rawValue)
                 } icon: {
                     Image(systemName: "magnifyingglass")
                         .foregroundStyle(.primary)
@@ -156,6 +163,7 @@ struct MemberSelectionView: View {
                     .rotationEffect(.degrees(isExpanded.wrappedValue ? 0 : -90))
                     .foregroundStyle(accentColor)
             }
+            .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
         .textCase(nil)

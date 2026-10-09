@@ -64,12 +64,13 @@ struct MeetingFormView: View {
                     Button(Strings.Cancel.button) {
                         dismiss()
                     }
+                    .accessibilityIdentifier(Locators.WireMeetings.MeetingForm.cancel)
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     if viewModel.isLoading {
                         ProgressView()
                             .accessibilityLabel(actionButtonLabel)
-                            .accessibilityIdentifier("meetingFormLoading")
+                            .accessibilityIdentifier(Locators.WireMeetings.MeetingForm.loading)
                     } else {
                         Button(actionButtonLabel) {
                             Task { await viewModel.submit() }
@@ -83,14 +84,13 @@ struct MeetingFormView: View {
             .sheet(isPresented: $isPresentingMemberSelection) {
                 MemberSelectionView(viewModel: viewModel.makeMemberSelectionViewModel())
             }
-            .alert(isPresented: $viewModel.hasError) {
-                Alert(
-                    title: Text(viewModel.errorTitle),
-                    message: Text(MeetingParticipantErrorFormatter.attributed(viewModel.errorMessage)),
-                    dismissButton: .default(Text(Strings.Error.Alert.ok)) {
-                        if viewModel.dismissAfterError { dismiss() }
-                    }
-                )
+            .alert(viewModel.errorTitle, isPresented: $viewModel.hasError) {
+                Button(Strings.Error.Alert.ok) {
+                    if viewModel.dismissAfterError { dismiss() }
+                }
+                .accessibilityIdentifier(Locators.WireMeetings.MeetingForm.errorDismiss)
+            } message: {
+                Text(MeetingParticipantErrorFormatter.attributed(viewModel.errorMessage))
             }
             .alert(
                 viewModel.mode.isEdit ? Strings.ParticipantsNotAdded.title : Strings.ParticipantsNotAdded.createdTitle,
@@ -167,6 +167,7 @@ struct MeetingFormView: View {
             if viewModel.isMeetingTitleTooLong {
                 Text(Strings.SetupTitle.Error.tooLong)
                     .foregroundStyle(ColorTheme.Base.error.color)
+                    .accessibilityIdentifier(Locators.WireMeetings.MeetingForm.titleError)
             }
         }
         .textCase(nil)
@@ -195,8 +196,10 @@ struct MeetingFormView: View {
                 ForEach(viewModel.availableRepeatOptions, id: \.self) { option in
                     Text(option.title)
                         .tag(option)
+                        .accessibilityIdentifier(option.locator.rawValue)
                 }
             }
+            .accessibilityIdentifier(Locators.WireMeetings.MeetingForm.repeatOption)
         }
     }
 
@@ -228,6 +231,7 @@ struct MeetingFormView: View {
             }
             .buttonStyle(.plain)
             .accessibilityIdentifier(Locators.WireMeetings.MeetingForm.participants)
+            .accessibilityValue(String(viewModel.selectedMembers.count))
         }
         .textCase(nil)
     }
@@ -251,7 +255,8 @@ struct MeetingFormView: View {
             Spacer()
             pill(
                 text: formatter.date(date.wrappedValue),
-                isSelected: expandedField == dateField
+                isSelected: expandedField == dateField,
+                identifier: dateField.accessibilityIdentifier
             ) {
                 toggleExpansion(dateField)
             }
@@ -260,7 +265,9 @@ struct MeetingFormView: View {
             .accessibilityHidden(!isDateFieldEnabled)
             pill(
                 text: formatter.time(date.wrappedValue),
-                isSelected: expandedField == timeField
+                isSelected: expandedField == timeField,
+                identifier: timeField.accessibilityIdentifier,
+                value: formatter.date(date.wrappedValue)
             ) {
                 toggleExpansion(timeField)
             }
@@ -270,6 +277,7 @@ struct MeetingFormView: View {
             DatePicker("", selection: pickerDate ?? date, in: range, displayedComponents: .date)
                 .datePickerStyle(.graphical)
                 .labelsHidden()
+                .accessibilityIdentifier(Locators.WireMeetings.MeetingForm.datePicker)
         }
         if expandedField == timeField {
             timePicker(date: pickerDate ?? date, range: range, maximumDate: maximumDate)
@@ -284,12 +292,15 @@ struct MeetingFormView: View {
             maximumDate: maximumDate,
             minuteInterval: Self.timePickerMinuteInterval
         )
+        .accessibilityIdentifier(Locators.WireMeetings.MeetingForm.timePicker)
         .id(Calendar.current.isDate(date.wrappedValue, equalTo: range.lowerBound, toGranularity: .hour))
     }
 
     private func pill(
         text: String,
         isSelected: Bool,
+        identifier: String,
+        value: String = "",
         action: @escaping () -> Void
     ) -> some View {
         let accentColor = ColorTheme.Base.primary(wireAccentColor).color
@@ -305,6 +316,8 @@ struct MeetingFormView: View {
                 .foregroundStyle(isSelected ? accentColor : Color.primary)
         }
         .buttonStyle(.plain)
+        .accessibilityIdentifier(identifier)
+        .accessibilityValue(value)
     }
 
     private func toggleExpansion(_ field: ExpandedField) {
@@ -316,6 +329,15 @@ struct MeetingFormView: View {
         case startTime
         case endDate
         case endTime
+
+        var accessibilityIdentifier: String {
+            switch self {
+            case .startDate: Locators.WireMeetings.MeetingForm.startDate.rawValue
+            case .startTime: Locators.WireMeetings.MeetingForm.startTime.rawValue
+            case .endDate: Locators.WireMeetings.MeetingForm.endDate.rawValue
+            case .endTime: Locators.WireMeetings.MeetingForm.endTime.rawValue
+            }
+        }
     }
 }
 
@@ -375,6 +397,18 @@ private struct MinuteIntervalTimePicker: UIViewRepresentable {
 }
 
 private extension MeetingRepeatOption {
+
+    var locator: Locators.WireMeetings.MeetingForm.RepeatOption {
+        switch self {
+        case .never: .never
+        case .daily: .daily
+        case .weekly: .weekly
+        case .everyTwoWeeks: .everyTwoWeeks
+        case .everyFourWeeks: .everyFourWeeks
+        case .monthly: .monthly
+        case .yearly: .yearly
+        }
+    }
 
     typealias Strings = L10n.Localizable.WireMeetings.Schedule.Time
 
