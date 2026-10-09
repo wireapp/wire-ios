@@ -35,7 +35,7 @@ extension ConversationInputBarViewController {
         // UIImagePickerController with .camera crashes on Mac (Designed for iPad) because Portrait
         // Effects initializes Metal textures with unsupported IOSurface formats. Use the custom
         // Mac recorder instead.
-        if ProcessInfo.processInfo.isiOSAppOnMac && sourceType == .camera {
+        if ProcessInfo.processInfo.isiOSAppOnMac, sourceType == .camera {
             execute(videoPermissions: { [self] in
                 let recorder = MacVideoRecorderViewController()
                 recorder.maxDuration = userSession.maxVideoLength
@@ -183,7 +183,7 @@ extension ConversationInputBarViewController {
             ) { [weak self] resultURL, _, error in
                 guard let self else { return }
                 if error == nil, let resultURL {
-                    self.uploadFiles(at: [resultURL])
+                    uploadFiles(at: [resultURL])
                 }
             }
     }
