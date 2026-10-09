@@ -231,7 +231,10 @@ extension WireDriveDirectUploadManager {
 
         progress[uploadID] = nil
         publishToTracker()
-        await prepareAndStart(uploadIDs: [uploadID])
+
+        scheduleDeferred(uploadID) { [weak self] in
+            await self?.prepareAndStart(uploadIDs: [uploadID])
+        }
     }
 
     func retryAfterBackoff(uploadID: UUID, failure: WireDriveUploadError) async {
