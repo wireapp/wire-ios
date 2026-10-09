@@ -134,7 +134,8 @@ jobs:
       COUNTLY_PRODUCTION_KEY: ${{ secrets.COUNTLY_PRODUCTION_KEY }}
       COUNTLY_INTERNAL_KEY: ${{ secrets.COUNTLY_INTERNAL_KEY }}
       ENABLE_COUNTLY: ${{ inputs.countly_enabled }}
-      SLACK_WEBHOOK_URL: ${{ secrets[inputs.notify_secret] }}
+      WIRE_WEBHOOK_URL: ${{ secrets[format('{0}_URL', inputs.notify_secret)] }}
+      WIRE_WEBHOOK_TOKEN: ${{ secrets[format('{0}_TOKEN', inputs.notify_secret)] }}
       SKIP_SECURITY_TESTS: ${{ inputs.skip_security_tests }}
       SEND_TO_EXTERNALS: ${{ inputs.distribute_externals }}
       REPO_ROOT: ${{ github.workspace }}
@@ -244,9 +245,9 @@ jobs:
       - name: Notify on Wire if succeeded
         if: success()
         continue-on-error: true
-        uses: 8398a7/action-slack@77eaa4f1c608a7d68b38af4e3f739dcd8cba273e # v3.19.0
+        uses: ./.github/actions/notify-wire
         with:
-          status: ${{ job.status }}
+          notify: custom
           text: |
             **${{ env.APP_NAME }}** (version: ${{ env.BUILD_VERSION }} build: ${{ env.BUILD_NUMBER }}) is ready to test 🚀
             **COUNTLY_ENABLED:** ${{ env.ENABLE_COUNTLY }}
@@ -261,7 +262,10 @@ jobs:
       - name: Notify on Wire if failed
         if: failure()
         continue-on-error: true
-        uses: 8398a7/action-slack@77eaa4f1c608a7d68b38af4e3f739dcd8cba273e # v3.19.0
+        uses: ./.github/actions/notify-wire
         with:
-          status: ${{ job.status }}
-          text: "🆘 Build **${{ env.APP_NAME }}** (version: ${{ env.BUILD_VERSION }} build: ${{ env.BUILD_NUMBER }}) failed 🆘\n**Triggered by:** ${{ github.triggering_actor }}\n**Build log:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}\n"
+          notify: custom
+          text: |
+            🆘 Build **${{ env.APP_NAME }}** (version: ${{ env.BUILD_VERSION }} build: ${{ env.BUILD_NUMBER }}) failed 🆘
+            **Triggered by:** ${{ github.triggering_actor }}
+            **Build log:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}

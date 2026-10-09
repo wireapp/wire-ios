@@ -48,7 +48,7 @@ jobs:
       countly_enabled: false
       datadog_enabled: ${{ inputs.datadog_enabled }}
       skip_security_tests: ${{ inputs.skip_security_tests }}
-      notify_secret: WIRE_IOS_BUILD_WEBHOOK
+      notify_secret: WIRE_IOS_DELIVERY
       distribute_externals: ${{ inputs.distribute_externals }}
     secrets: inherit
 
@@ -62,7 +62,7 @@ jobs:
       countly_enabled: false
       datadog_enabled: ${{ inputs.datadog_enabled }}
       skip_security_tests: ${{ inputs.skip_security_tests }}
-      notify_secret: WIRE_IOS_BUILD_WEBHOOK
+      notify_secret: WIRE_IOS_DELIVERY
       distribute_externals: ${{ inputs.distribute_externals }}
     secrets: inherit
 
@@ -76,6 +76,6 @@ jobs:
       countly_enabled: false
       datadog_enabled: ${{ inputs.datadog_enabled }}
       skip_security_tests: ${{ inputs.skip_security_tests }}
-      notify_secret: WIRE_IOS_BUILD_WEBHOOK
+      notify_secret: WIRE_IOS_DELIVERY
       distribute_externals: ${{ inputs.distribute_externals }}
     secrets: inherit
