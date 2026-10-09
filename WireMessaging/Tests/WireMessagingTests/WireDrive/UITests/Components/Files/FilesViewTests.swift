@@ -424,44 +424,47 @@ final class FilesViewTests: XCTestCase {
         isBrowsing: Bool = false,
         isReadOnly: Bool = false
     ) async -> some View {
-        let filesViewModel = FilesViewModel(
-            useCases: .init(
-                fetchNodesPage: fetchNodesPageUseCase,
-                fetchNodes: fetchNodesUseCase,
-                deleteNodes: deleteNodeUseCase,
-                restoreNodes: restoreNodeUseCase,
-                renameNode: renameNodeUseCase,
-                updateTags: updateTagsUseCase,
-                getTagSuggestions: getTagSuggestionsUseCase,
-                createFile: WireDriveCreateFileUseCase(
-                    nodesRepository: nodesRepository
-                ),
-                fetchNodeVersions: WireDriveFetchNodeVersionsUseCase(repository: nodesRepository),
-                restoreNodeVersion: WireDriveRestoreNodeVersionUseCase(
-                    repository: nodesRepository,
-                    localAssetsRepository: MockWireDriveLocalAssetRepositoryProtocol(),
-                    nodeCache: MockWireDriveNodeCacheProtocol()
-                ),
-                getEditingURL: getEditingURLUseCase,
-                getAsset: WireDriveGetAssetUseCase(
-                    localAssetRepository: MockWireDriveLocalAssetRepositoryProtocol(),
-                    fileCache: MockFileCache()
-                ),
-                getPublicLinkData: getPublicLinkData,
-                createPublicLink: createPublicLink,
-                deletePublicLink: deletePublicLink,
-                updatePublicLinkExpiration: updatePublicLinkExpiration,
-                updatePublicLinkPassword: updatePublicLinkPassword,
-                getDriveConversations: driveConversationsUseCase,
-                getFileTemplates: WireDriveFetchFileTemplatesUseCase(
-                    repository: nodesRepository
-                ),
-                makeAssetAvailableOffline: makeAssetAvailableOfflineUseCase,
-                removeAssetAvailableOffline: removeAssetAvailableOfflineUseCase,
-                getOfflineAvailableAssets: fetchOfflineAvailableAssetsUseCase,
-                observeAsset: observeAssetUseCase,
-                moveNode: moveNodeUseCase
+        let useCases = FilesViewModel.UseCases(
+            fetchNodesPage: fetchNodesPageUseCase,
+            fetchNodes: fetchNodesUseCase,
+            deleteNodes: deleteNodeUseCase,
+            restoreNodes: restoreNodeUseCase,
+            renameNode: renameNodeUseCase,
+            updateTags: updateTagsUseCase,
+            getTagSuggestions: getTagSuggestionsUseCase,
+            createFile: WireDriveCreateFileUseCase(
+                nodesRepository: nodesRepository
             ),
+            fetchNodeVersions: WireDriveFetchNodeVersionsUseCase(repository: nodesRepository),
+            restoreNodeVersion: WireDriveRestoreNodeVersionUseCase(
+                repository: nodesRepository,
+                localAssetsRepository: MockWireDriveLocalAssetRepositoryProtocol(),
+                nodeCache: MockWireDriveNodeCacheProtocol()
+            ),
+            getEditingURL: getEditingURLUseCase,
+            getAsset: WireDriveGetAssetUseCase(
+                localAssetRepository: MockWireDriveLocalAssetRepositoryProtocol(),
+                fileCache: MockFileCache()
+            ),
+            getPublicLinkData: getPublicLinkData,
+            createPublicLink: createPublicLink,
+            deletePublicLink: deletePublicLink,
+            updatePublicLinkExpiration: updatePublicLinkExpiration,
+            updatePublicLinkPassword: updatePublicLinkPassword,
+            getDriveConversations: driveConversationsUseCase,
+            getFileTemplates: WireDriveFetchFileTemplatesUseCase(
+                repository: nodesRepository
+            ),
+            makeAssetAvailableOffline: makeAssetAvailableOfflineUseCase,
+            removeAssetAvailableOffline: removeAssetAvailableOfflineUseCase,
+            getOfflineAvailableAssets: fetchOfflineAvailableAssetsUseCase,
+            observeAsset: observeAssetUseCase,
+            moveNode: moveNodeUseCase,
+            enqueueUploads: MockWireDriveEnqueueDirectUploadsUseCaseProtocol()
+        )
+
+        let filesViewModel = FilesViewModel(
+            useCases: useCases,
             isCellsStatePending: false,
             isBrowsing: isBrowsing,
             networkMonitor: networkMonitor

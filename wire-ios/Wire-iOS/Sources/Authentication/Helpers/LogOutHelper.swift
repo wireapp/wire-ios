@@ -88,13 +88,24 @@ final class LogOutHelper {
                 password: password ?? ""
             )) { [weak topMostViewController, weak self] result in
                 self?.hideLoading()
-                if case let .failure(error) = result {
+                switch result {
+                case let .failure(error):
                     topMostViewController?.showAlert(for: error)
+                case .success:
+                    self?.tearDownDirectUploads()
                 }
             }
         } else {
             guard let account = SessionManager.shared?.accountManager.selectedAccount else { return }
             SessionManager.shared?.delete(account: account)
+            tearDownDirectUploads()
+        }
+    }
+
+    private func tearDownDirectUploads() {
+        Task {
+            let wireMessagingFactory = ZClientViewController.shared?.wireMessagingFactory
+            await wireMessagingFactory?.tearDownDirectUploads()
         }
     }
 
