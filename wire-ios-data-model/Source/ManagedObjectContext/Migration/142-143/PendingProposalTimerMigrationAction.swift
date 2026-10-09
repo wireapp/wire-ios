@@ -26,7 +26,7 @@ final class PendingProposalTimerMigrationAction: CoreDataMigrationAction {
     override func execute(in context: NSManagedObjectContext) throws {
         let request = NSFetchRequest<ZMConversation>(entityName: ZMConversation.entityName())
         request.predicate = ZMConversation.commitPendingProposalDatePredicate()
-        request.fetchBatchSize = 200
+        request.fetchBatchSize = 100
 
         for conversation in try context.fetch(request) {
             if let date = conversation.commitPendingProposalDate,
