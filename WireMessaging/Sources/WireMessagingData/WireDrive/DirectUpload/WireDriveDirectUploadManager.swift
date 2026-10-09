@@ -299,9 +299,10 @@ package final class WireDriveDirectUploadManager:
         }
 
         await transition(uploadID: uploadID) {
-            $0.state = .preChecked
+            $0.state = .staged
             $0.failure = nil
             $0.attemptCount = 0
+            $0.nodePath = [$0.destinationFolderPath, $0.fileName].joined(separator: "/")
             $0.presignedURL = nil
             $0.presignedURLExpiresAt = nil
         }
@@ -316,6 +317,7 @@ package final class WireDriveDirectUploadManager:
                 $0.state == .failed && ($0.failure?.isRetryable ?? true) && $0
                     .destinationFolderPath == destinationFolderPath
             }
+            .sorted(by: { $0.fileSize < $1.fileSize })
             .map(\.uploadID)
 
         for uploadID in retryable {

@@ -632,6 +632,30 @@ final class WireDriveDirectUploadManagerTests {
         #expect(summary.failedCount == 0)
     }
 
+    /// The path is only resolved by the pre-check, so an upload that failed before it must not skip it.
+    @Test
+    func retry_runsThePreCheckAgainAndTakesTheResolvedPath() async throws {
+        // Given
+        nodesAPI.preCheckNodePathFindAvailablePath_MockError = URLError(.notConnectedToInternet)
+        _ = try await sut.enqueue(sources: [makeSource(named: "a.pdf")], destinationFolderPath: "cell-1")
+        await sut.waitForPendingWork()
+
+        let failed = try #require(tracker.summary.items.first)
+        #expect(failed.status.isFailed)
+
+        nodesAPI.preCheckNodePathFindAvailablePath_MockError = nil
+        nodesAPI.preCheckNodePathFindAvailablePath_MockValue = .fileExists(nextPath: "cell-1/a (1).pdf")
+
+        // When
+        await sut.retry(uploadID: failed.id)
+        await sut.waitForPendingWork()
+
+        // Then
+        #expect(nodesAPI.preCheckNodePathFindAvailablePath_Invocations.count == 2)
+        let presign = try #require(nodesAPI.presignedUploadURLNodeVersionIDExpiration_Invocations.first)
+        #expect(presign.node.path == "cell-1/a (1).pdf")
+    }
+
     @Test
     func retry_failsAgainWhenTheStagedFileIsGone() async throws {
         // Given
