@@ -71,17 +71,10 @@ struct WireDriveDirectUploadManagerErrorClassifierTests {
 
     // MARK: - Cancellation
 
-    /// `task.cancel()` reports `NSURLErrorCancelled` whether the user asked for it or iOS did on a
-    /// force-quit. The persisted state is the only thing that distinguishes them.
-    @Test
-    func treatsCancellationAsUserInitiatedWhenTheRecordSaysSo() {
-        let outcome = classify(error: urlError(NSURLErrorCancelled), recordState: .cancelled)
-        #expect(outcome == .cancelledByUser)
-    }
-
+    /// A cancel by the user removes the record, so its callback never reaches the classifier.
     @Test
     func restartsAfterAnUnexplainedCancellation() {
-        let outcome = classify(error: urlError(NSURLErrorCancelled), recordState: .uploading)
+        let outcome = classify(error: urlError(NSURLErrorCancelled))
         #expect(outcome == .silentRestart(reason: .reattach))
     }
 
@@ -89,7 +82,6 @@ struct WireDriveDirectUploadManagerErrorClassifierTests {
     func surfacesAnUnexplainedCancellationOnceTheBudgetIsSpent() {
         let outcome = classify(
             error: urlError(NSURLErrorCancelled),
-            recordState: .uploading,
             attemptCount: WireDriveDirectUploadManager.ErrorClassifier.maximumSilentRestarts
         )
         #expect(outcome == .transientFailure(.cancelledBySystem))
@@ -128,7 +120,6 @@ struct WireDriveDirectUploadManagerErrorClassifierTests {
         let outcome = sut.classify(
             statusCode: nil,
             error: nil,
-            recordState: .uploading,
             attemptCount: 0
         )
 
@@ -146,20 +137,17 @@ struct WireDriveDirectUploadManagerErrorClassifierTests {
         sut.classify(
             statusCode: statusCode,
             error: nil,
-            recordState: .uploading,
             attemptCount: attemptCount
         )
     }
 
     private func classify(
         error: NSError,
-        recordState: WireDriveDirectUploadRecord.State = .uploading,
         attemptCount: Int = 0
     ) -> WireDriveDirectUploadManager.Outcome {
         sut.classify(
             statusCode: nil,
             error: error,
-            recordState: recordState,
             attemptCount: attemptCount
         )
     }

@@ -129,7 +129,7 @@ package extension WireDriveDirectUploadManager {
                     .awaitCompletion(uploadID: record.uploadID, taskIdentifier: snapshot.taskIdentifier)
                 ]
 
-            case .uploaded, .cancelled:
+            case .uploaded:
                 return isStagedFileAvailable ? [.deleteStagedFile(uploadID: record.uploadID)] : []
 
             case .failed:

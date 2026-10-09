@@ -152,10 +152,10 @@ struct WireDriveDirectUploadManagerReconcilerTests {
 
     // MARK: - Terminal states
 
-    @Test(arguments: [WireDriveDirectUploadRecord.State.uploaded, .cancelled])
-    func cleansUpStagedFilesLeftByTerminalUploads(_ state: WireDriveDirectUploadRecord.State) {
+    @Test
+    func cleansUpStagedFilesLeftByTerminalUploads() {
         // Given
-        let record = WireDriveDirectUploadRecord.fixture(state: state)
+        let record = WireDriveDirectUploadRecord.fixture(state: .uploaded)
 
         // When
         let actions = plan(records: [record], snapshots: [], isStagedFileAvailable: true)
@@ -164,10 +164,10 @@ struct WireDriveDirectUploadManagerReconcilerTests {
         #expect(actions == [.deleteStagedFile(uploadID: record.uploadID)])
     }
 
-    @Test(arguments: [WireDriveDirectUploadRecord.State.uploaded, .cancelled])
-    func doesNothingForTerminalUploadsWithNoStagedFile(_ state: WireDriveDirectUploadRecord.State) {
+    @Test
+    func doesNothingForTerminalUploadsWithNoStagedFile() {
         // Given
-        let record = WireDriveDirectUploadRecord.fixture(state: state)
+        let record = WireDriveDirectUploadRecord.fixture(state: .uploaded)
 
         // When
         let actions = plan(records: [record], snapshots: [], isStagedFileAvailable: false)

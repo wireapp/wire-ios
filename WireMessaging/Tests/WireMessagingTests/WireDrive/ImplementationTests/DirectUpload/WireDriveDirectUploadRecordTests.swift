@@ -115,8 +115,7 @@ struct WireDriveDirectUploadRecordTests {
 
     @Test(arguments: [
         WireDriveDirectUploadRecord.State.uploaded,
-        .failed,
-        .cancelled
+        .failed
     ])
     func recognisesTerminalStates(_ state: WireDriveDirectUploadRecord.State) {
         #expect(state.isTerminal)
@@ -141,7 +140,6 @@ struct WireDriveDirectUploadRecordTests {
         #expect(WireDriveDirectUploadRecord.State.uploading.rawValue == 3)
         #expect(WireDriveDirectUploadRecord.State.uploaded.rawValue == 5)
         #expect(WireDriveDirectUploadRecord.State.failed.rawValue == 6)
-        #expect(WireDriveDirectUploadRecord.State.cancelled.rawValue == 7)
     }
 
     // MARK: - Presentation
@@ -202,15 +200,6 @@ struct WireDriveDirectUploadRecordTests {
     }
 
     @Test
-    func cancelledReadsAsCancelled() {
-        // Given
-        let record = WireDriveDirectUploadRecord.fixture(state: .cancelled)
-
-        // Then
-        #expect(record.toItem(progress: nil, isStagedFileAvailable: false).status == .cancelled)
-    }
-
-    @Test
     func failedCarriesItsReason() {
         // Given
         let record = WireDriveDirectUploadRecord.fixture(state: .failed, failure: .unauthorized)
@@ -260,8 +249,7 @@ struct WireDriveDirectUploadRecordTests {
     @Test(arguments: [
         WireDriveDirectUploadRecord.State.staged,
         .uploading,
-        .uploaded,
-        .cancelled
+        .uploaded
     ])
     func onlyFailedUploadsAreRetryable(_ state: WireDriveDirectUploadRecord.State) {
         // Given

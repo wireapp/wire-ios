@@ -47,13 +47,12 @@ package struct WireDriveDirectUploadRecord: Identifiable, Equatable, Hashable, S
 
         case failed = 6
 
-        case cancelled = 7
 
         /// Whether no further work will happen unless the user asks for it.
 
         package var isTerminal: Bool {
             switch self {
-            case .uploaded, .failed, .cancelled: true
+            case .uploaded, .failed: true
             case .staged, .preChecked, .awaitingStart, .uploading: false
             }
         }
@@ -183,8 +182,6 @@ package extension WireDriveDirectUploadRecord {
         case .failed:
             .failed(error: failure ?? .other(message: "unknown"))
 
-        case .cancelled:
-            .cancelled
         }
     }
 

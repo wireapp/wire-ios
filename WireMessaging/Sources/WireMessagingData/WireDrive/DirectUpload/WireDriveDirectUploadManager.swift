@@ -262,7 +262,7 @@ package final class WireDriveDirectUploadManager:
     // MARK: - User actions
 
     package func cancel(uploadID: UUID) async {
-        guard let record = records[uploadID], record.state != .uploaded, record.state != .cancelled else { return }
+        guard let record = records[uploadID], record.state != .uploaded else { return }
 
         records[uploadID] = nil
         progress[uploadID] = nil
@@ -323,10 +323,10 @@ package final class WireDriveDirectUploadManager:
         }
     }
 
-    /// Forgets uploads that finished successfully or were cancelled.
+    /// Forgets uploads that finished successfully.
     package func clearAll(in destinationFolderPath: String) async {
         let finished = records.values.filter {
-            ($0.state == .uploaded || $0.state == .cancelled) && $0.destinationFolderPath == destinationFolderPath
+            $0.state == .uploaded && $0.destinationFolderPath == destinationFolderPath
         }
         guard !finished.isEmpty else { return }
 

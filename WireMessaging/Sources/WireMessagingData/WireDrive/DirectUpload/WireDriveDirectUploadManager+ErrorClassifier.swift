@@ -35,8 +35,6 @@ package extension WireDriveDirectUploadManager {
         /// Stop, and let the user decide.
         case permanentFailure(WireDriveUploadError)
 
-        case cancelledByUser
-
         package enum SilentRestartReason: Sendable, Equatable {
             /// The presigned URL was rejected or had expired.
             case rePresign
@@ -58,11 +56,10 @@ package extension WireDriveDirectUploadManager {
         package func classify(
             statusCode: Int?,
             error: NSError?,
-            recordState: WireDriveDirectUploadRecord.State,
             attemptCount: Int
         ) -> Outcome {
             if let error {
-                return classify(error: error, recordState: recordState, attemptCount: attemptCount)
+                return classify(error: error, attemptCount: attemptCount)
             }
 
             guard let statusCode else {
@@ -76,7 +73,6 @@ package extension WireDriveDirectUploadManager {
 
         private func classify(
             error: NSError,
-            recordState: WireDriveDirectUploadRecord.State,
             attemptCount: Int
         ) -> Outcome {
             guard error.domain == NSURLErrorDomain else {
@@ -85,10 +81,6 @@ package extension WireDriveDirectUploadManager {
 
             switch error.code {
             case NSURLErrorCancelled:
-                if recordState == .cancelled {
-                    return .cancelledByUser
-                }
-
                 return attemptCount < Self.maximumSilentRestarts
                     ? .silentRestart(reason: .reattach)
                     : .transientFailure(.cancelledBySystem)
@@ -180,7 +172,6 @@ extension WireDriveDirectUploadManager {
         let outcome = classifier.classify(
             statusCode: statusCode,
             error: error,
-            recordState: record.state,
             attemptCount: record.attemptCount
         )
 
@@ -207,10 +198,6 @@ extension WireDriveDirectUploadManager {
 
         case let .permanentFailure(failure):
             await handleFailure(uploadID: uploadID, error: failure)
-
-        case .cancelledByUser:
-            progress[uploadID] = nil
-            publishToTracker()
         }
     }
 
