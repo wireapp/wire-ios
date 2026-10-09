@@ -255,8 +255,12 @@ jobs:
             **CHANGELOG:** ${{ needs.changelog.outputs.changelog-url }}
             **Tap on iOS device to install:** ${{ env.BUILD_INSTALL_LINK }}
             **AWS S3 Paths:**
-            `${{ steps.base64-decoded-S3_PATHS.outputs.decoded }}`
+            ```
+            ${{ steps.base64-decoded-S3_PATHS.outputs.decoded }}
+            ```
             **Triggered by:** ${{ github.triggering_actor }}
+            **Commit:** ${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}
+            **Runner:** ${{ runner.name }} (${{ inputs.mac_runner }})
             **Build log:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
             **SHA256:**  ${{ env.BUILD_SHA256 }}
       - name: Notify on Wire if failed
@@ -268,4 +272,6 @@ jobs:
           text: |
             🆘 Build **${{ env.APP_NAME }}** (version: ${{ env.BUILD_VERSION }} build: ${{ env.BUILD_NUMBER }}) failed 🆘
             **Triggered by:** ${{ github.triggering_actor }}
+            **Commit:** ${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}
+            **Runner:** ${{ runner.name }} (${{ inputs.mac_runner }})
             **Build log:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
