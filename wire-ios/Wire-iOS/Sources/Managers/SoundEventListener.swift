@@ -162,7 +162,8 @@ extension SoundEventListener: WireCallCenterCallStateObserver {
         conversation: ZMConversation,
         caller: UserType,
         timestamp: Date?,
-        previousCallState: CallState?
+        previousCallState: CallState?,
+        callEndReason: CallClosedReason?
     ) {
 
         guard let mediaManager = AVSMediaManager.sharedInstance(),

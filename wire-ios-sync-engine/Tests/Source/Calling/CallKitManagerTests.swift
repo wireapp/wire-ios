@@ -454,7 +454,8 @@ class CallKitManagerTest: DatabaseTest {
             conversation: conversation,
             caller: otherUser,
             timestamp: Date(),
-            previousCallState: nil
+            previousCallState: nil,
+            callEndReason: nil
         )
 
         let call = CallKitDelegateTestsMocking.mockCall(
@@ -697,7 +698,8 @@ class CallKitManagerTest: DatabaseTest {
             conversation: conversation,
             caller: otherUser,
             timestamp: Date(),
-            previousCallState: nil
+            previousCallState: nil,
+            callEndReason: nil
         )
         guard let callUUID = sut.callRegister.lookupCall(by: conversation)?.id else {
             return XCTFail()
@@ -731,7 +733,8 @@ class CallKitManagerTest: DatabaseTest {
             conversation: conversation,
             caller: otherUser,
             timestamp: Date(),
-            previousCallState: nil
+            previousCallState: nil,
+            callEndReason: nil
         )
         let callUUID = sut.callRegister.lookupCall(by: conversation)?.id
 
@@ -763,7 +766,8 @@ class CallKitManagerTest: DatabaseTest {
             conversation: conversation,
             caller: otherUser,
             timestamp: Date(),
-            previousCallState: nil
+            previousCallState: nil,
+            callEndReason: nil
         )
         let callUUID = sut.callRegister.lookupCall(by: conversation)?.id
 
@@ -923,7 +927,8 @@ class CallKitManagerTest: DatabaseTest {
             conversation: conversation,
             caller: otherUser,
             timestamp: nil,
-            previousCallState: nil
+            previousCallState: nil,
+            callEndReason: nil
         )
 
         // then
@@ -945,7 +950,8 @@ class CallKitManagerTest: DatabaseTest {
             conversation: conversation,
             caller: otherUser,
             timestamp: nil,
-            previousCallState: nil
+            previousCallState: nil,
+            callEndReason: nil
         )
 
         // then
@@ -967,7 +973,8 @@ class CallKitManagerTest: DatabaseTest {
             conversation: conversation,
             caller: otherUser,
             timestamp: nil,
-            previousCallState: nil
+            previousCallState: nil,
+            callEndReason: nil
         )
 
         // then
@@ -988,7 +995,8 @@ class CallKitManagerTest: DatabaseTest {
             conversation: conversation,
             caller: otherUser,
             timestamp: nil,
-            previousCallState: nil
+            previousCallState: nil,
+            callEndReason: nil
         )
 
         // when
@@ -997,7 +1005,8 @@ class CallKitManagerTest: DatabaseTest {
             conversation: conversation,
             caller: otherUser,
             timestamp: nil,
-            previousCallState: nil
+            previousCallState: nil,
+            callEndReason: nil
         )
 
         // then
@@ -1020,7 +1029,8 @@ class CallKitManagerTest: DatabaseTest {
             conversation: conversation,
             caller: otherUser,
             timestamp: nil,
-            previousCallState: nil
+            previousCallState: nil,
+            callEndReason: nil
         )
 
         // then
@@ -1043,7 +1053,8 @@ class CallKitManagerTest: DatabaseTest {
             conversation: conversation,
             caller: otherUser,
             timestamp: Date(timeIntervalSinceNow: 10_000),
-            previousCallState: nil
+            previousCallState: nil,
+            callEndReason: nil
         )
 
         // then
@@ -1072,7 +1083,8 @@ class CallKitManagerTest: DatabaseTest {
             conversation: conversation,
             caller: otherUser,
             timestamp: Date(),
-            previousCallState: nil
+            previousCallState: nil,
+            callEndReason: nil
         )
 
         // when
@@ -1081,7 +1093,8 @@ class CallKitManagerTest: DatabaseTest {
             conversation: conversation,
             caller: otherUser,
             timestamp: nil,
-            previousCallState: nil
+            previousCallState: nil,
+            callEndReason: nil
         )
 
         // then
@@ -1105,7 +1118,8 @@ class CallKitManagerTest: DatabaseTest {
             conversation: conversation,
             caller: otherUser,
             timestamp: Date(),
-            previousCallState: nil
+            previousCallState: nil,
+            callEndReason: nil
         )
 
         // when
@@ -1114,7 +1128,8 @@ class CallKitManagerTest: DatabaseTest {
             conversation: conversation,
             caller: otherUser,
             timestamp: nil,
-            previousCallState: nil
+            previousCallState: nil,
+            callEndReason: nil
         )
 
         // then
@@ -1138,7 +1153,8 @@ class CallKitManagerTest: DatabaseTest {
             conversation: conversation,
             caller: otherUser,
             timestamp: Date(),
-            previousCallState: nil
+            previousCallState: nil,
+            callEndReason: nil
         )
 
         // when
@@ -1147,10 +1163,29 @@ class CallKitManagerTest: DatabaseTest {
             conversation: conversation,
             caller: otherUser,
             timestamp: nil,
-            previousCallState: nil
+            previousCallState: nil,
+            callEndReason: nil
         )
 
         // then
+        XCTAssertEqual(callKitProvider.lastEndedReason, .answeredElsewhere)
+    }
+
+    func testThatOngoingGroupCallAnsweredElsewhereEndsCallKitCallAsAnsweredElsewhere() {
+        let conversation = conversation()
+        let otherUser = otherUser(moc: uiMOC)
+        sut.reportIncomingCall(from: otherUser, in: conversation, hasVideo: false)
+
+        sut.callCenterDidChange(
+            callState: .incoming(isVideo: false, shouldRing: false, degraded: false),
+            conversation: conversation,
+            caller: otherUser,
+            timestamp: nil,
+            previousCallState: .incoming(isVideo: false, shouldRing: true, degraded: false),
+            callEndReason: .answeredElsewhere
+        )
+
+        XCTAssertEqual(callKitProvider.timesReportCallEndedAtCalled, 1)
         XCTAssertEqual(callKitProvider.lastEndedReason, .answeredElsewhere)
     }
 
@@ -1237,7 +1272,8 @@ class CallKitManagerTest: DatabaseTest {
             conversation: conversation,
             caller: otherUser,
             timestamp: nil,
-            previousCallState: nil
+            previousCallState: nil,
+            callEndReason: nil
         )
 
         // when
@@ -1246,7 +1282,8 @@ class CallKitManagerTest: DatabaseTest {
             conversation: conversation,
             caller: otherUser,
             timestamp: nil,
-            previousCallState: nil
+            previousCallState: nil,
+            callEndReason: nil
         )
 
         // then
