@@ -184,10 +184,11 @@ final class MacVideoRecorderViewController: UIViewController {
         }
     }
 
-    @objc private func cancelTapped() {
-        if movieOutput.isRecording { movieOutput.stopRecording() }
-        dismiss(animated: true)
-    }
+@objc private func cancelTapped() {
+    onVideoRecorded = nil
+    if movieOutput.isRecording { movieOutput.stopRecording() }
+    dismiss(animated: true)
+}
 
     private func formatTime(_ seconds: Int) -> String {
         String(format: "%d:%02d", seconds / 60, seconds % 60)
