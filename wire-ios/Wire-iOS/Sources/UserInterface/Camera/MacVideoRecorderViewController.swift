@@ -42,7 +42,7 @@ final class MacVideoRecorderViewController: UIViewController {
         config.contentInsets = NSDirectionalEdgeInsets(top: 14, leading: 28, bottom: 14, trailing: 28)
         let button = UIButton(configuration: config)
         button.setTitle(L10n.Localizable.Content.File.takeVideo, for: .normal)
-        button.setTitle("Stop", for: .selected)
+button.setTitle(L10n.Accessibility.AudioRecord.StopButton.description, for: .selected)
         button.addTarget(self, action: #selector(toggleRecording), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
