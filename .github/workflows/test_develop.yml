@@ -26,7 +26,7 @@ jobs:
       mac_runner: ${{ inputs.mac_runner || vars.DEFAULT_MAC_RUNNER || 'in-house' }}
       all: true
       branch: ${{ github.ref_name }}
-      notify_secret: WIRE_IOS_NIGHTLY_WEBHOOK
+      notify_secret: WIRE_IOS_NIGHTLY
       run_critical_flows: true
       notify: always
     secrets: inherit
