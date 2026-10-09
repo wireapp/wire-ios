@@ -33,7 +33,6 @@ public enum NotificationSound {
 
     case call
     case ping
-    case `default`
     case newMessage
 
     /// The name of the song.
@@ -44,8 +43,6 @@ public enum NotificationSound {
     /// The sound to use when displaying the notification.
     public var userNotificationSound: UNNotificationSound {
         switch self {
-        case .default:
-            .default
         case .newMessage where usesWireOldForNewMessages:
             UNNotificationSound(named: .init("new_message_legacy.caf"))
         default:
@@ -59,7 +56,6 @@ public enum NotificationSound {
         switch self {
         case .call: "ringing_from_them_long.caf"
         case .ping: "ping_from_them.caf"
-        case .default: "default"
         case .newMessage: "new_message.caf"
         }
     }

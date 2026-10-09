@@ -24,14 +24,8 @@ enum NotificationSound: String {
     case call = "ringing_from_them_long.caf"
     case ping = "ping_from_them.caf"
     case newMessage = "new_message.caf"
-    case `default`
 
     var userNotificationSound: UNNotificationSound {
-        switch self {
-        case .default:
-            .default
-        default:
-            UNNotificationSound(named: .init(rawValue))
-        }
+        UNNotificationSound(named: .init(rawValue))
     }
 }
