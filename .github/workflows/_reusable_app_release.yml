@@ -265,20 +265,30 @@ jobs:
         with:
           notify: custom
           text: |
-            **${{ env.APP_NAME }}** (version: ${{ env.BUILD_VERSION }} build: ${{ env.BUILD_NUMBER }}) is ready to test 🚀
-            **COUNTLY_ENABLED:** ${{ env.ENABLE_COUNTLY }}
-            **DATADOG_ENABLED:** ${{ env.ENABLE_DATADOG }}
-            **CHANGELOG:** ${{ needs.changelog.outputs.changelog-url }}
-            **Tap on iOS device to install:** ${{ env.BUILD_INSTALL_LINK }}
-            **AWS S3 Paths:**
+            🚀 **${{ env.APP_NAME }}** (version: ${{ env.BUILD_VERSION }} build: ${{ env.BUILD_NUMBER }}) is ready to test 🚀
+            
+            ✅ **COUNTLY_ENABLED:** ${{ env.ENABLE_COUNTLY }}
+            ✅ **DATADOG_ENABLED:** ${{ env.ENABLE_DATADOG }}
+            
+            📝 **CHANGELOG:** ${{ needs.changelog.outputs.changelog-url }}
+            
+            📲 **Tap on iOS device to install:** [TestFlight Link](${{ env.BUILD_INSTALL_LINK }})
+            
+            📦 **AWS S3 Paths:**
             ```
             ${{ steps.base64-decoded-S3_PATHS.outputs.decoded }}
             ```
-            **Triggered by:** ${{ github.triggering_actor }}
-            **Commit:** ${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}
-            **Runner:** ${{ runner.name }} (${{ inputs.mac_runner }})
-            **Build log:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-            **SHA256:**  ${{ env.BUILD_SHA256 }}
+            
+            🧑‍💻 **Triggered by:** ${{ github.triggering_actor }}
+            
+            📝 **Commit:** [${{ github.sha }}](${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }})
+            
+            🖥️ **Runner:** ${{ runner.name }} (${{ inputs.mac_runner }})
+            
+            📋 **Build log:** [View Build Log](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+            
+            🔐 **SHA256:** ${{ env.BUILD_SHA256 }}
+            
             ${{ env.TESTFLIGHT_ERROR != '' && format('⚠️ **TestFlight:** {0}', env.TESTFLIGHT_ERROR) || '' }}
       - name: Notify on Wire if failed
         if: failure()
