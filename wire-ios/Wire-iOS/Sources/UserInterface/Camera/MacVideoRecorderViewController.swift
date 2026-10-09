@@ -61,7 +61,10 @@ button.setTitle(L10n.Accessibility.AudioRecord.StopButton.description, for: .sel
     private lazy var timerLabel: UILabel = {
         let label = UILabel()
         label.textColor = .white
-        label.font = .monospacedDigitSystemFont(ofSize: 17, weight: .semibold)
+label.font = UIFontMetrics(forTextStyle: .body).scaledFont(
+    for: .monospacedDigitSystemFont(ofSize: 17, weight: .semibold)
+)
+label.adjustsFontForContentSizeCategory = true
         label.text = formatTime(0)
         label.translatesAutoresizingMaskIntoConstraints = false
         label.isHidden = true
