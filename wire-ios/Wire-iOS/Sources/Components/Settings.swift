@@ -48,9 +48,6 @@ enum SettingKey: String, CaseIterable {
     case avsMediaManagerPersistentIntensity = "AVSMediaManagerPersistentIntensity"
     case lastUserLocation = "LastUserLocation"
     case blackListDownloadInterval = "ZMBlacklistDownloadInterval"
-    case messageSoundName = "ZMMessageSoundName"
-    case callSoundName = "ZMCallSoundName"
-    case pingSoundName = "ZMPingSoundName"
     case sendButtonDisabled = "SendButtonDisabled"
 
     // MARK: Features disable keys
@@ -84,10 +81,6 @@ class Settings {
             switch index {
             case .sendButtonDisabled:
                 notifyDisableSendButtonChanged()
-            case .messageSoundName,
-                 .callSoundName,
-                 .pingSoundName:
-                AVSMediaManager.sharedInstance().configureSounds()
             case .disableCallKit:
                 SessionManager.shared?.updateCallNotificationStyleFromSettings()
             case .muteIncomingCallsWhileInACall:

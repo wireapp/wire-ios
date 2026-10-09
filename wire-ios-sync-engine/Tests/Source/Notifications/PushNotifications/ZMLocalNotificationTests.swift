@@ -17,6 +17,7 @@
 //
 
 import GenericMessageProtocol
+import UserNotifications
 import XCTest
 
 @testable import WireSyncEngine
@@ -98,6 +99,28 @@ class ZMLocalNotificationTests: MessagingTest {
         selfUser.remoteIdentifier = nil
         _ = waitForAllGroupsToBeEmpty(withTimeout: 0.5)
         super.tearDown()
+    }
+
+    func testMessageNotificationSoundFileName() {
+        XCTAssertEqual(NotificationSound.newMessage.name, "new_message.caf")
+    }
+
+    func testMessageNotificationUsesWireOldWhenSelected() {
+        let previousStorage = NotificationSound.storage
+        let suiteName = UUID().uuidString
+        let storage = UserDefaults(suiteName: suiteName)!
+        NotificationSound.storage = storage
+        defer {
+            NotificationSound.storage = previousStorage
+            storage.removePersistentDomain(forName: suiteName)
+        }
+
+        storage.set("wireOld", forKey: "messageNotificationSound")
+
+        XCTAssertEqual(
+            NotificationSound.newMessage.userNotificationSound,
+            UNNotificationSound(named: .init("new_message_legacy.caf"))
+        )
     }
 
     // MARK: - Helpers

@@ -38,12 +38,14 @@
 		01B71B9F2D6D2DAB002C5A38 /* audio-notifications in Resources */ = {isa = PBXBuildFile; fileRef = 01B71B882D6D2DAB002C5A38 /* audio-notifications */; };
 		01B71BA02D6D2DAB002C5A38 /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 01B71B932D6D2DAB002C5A38 /* Settings.bundle */; };
 		01B71BA12D6D2DAB002C5A38 /* ping_from_them.caf in Resources */ = {isa = PBXBuildFile; fileRef = 01B71B8D2D6D2DAB002C5A38 /* ping_from_them.caf */; };
-		01B71BA22D6D2DAB002C5A38 /* first_message.caf in Resources */ = {isa = PBXBuildFile; fileRef = 01B71B892D6D2DAB002C5A38 /* first_message.caf */; };
 		01B71BA32D6D2DAB002C5A38 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 01B71B532D6D2DAB002C5A38 /* Localizable.strings */; };
 		01B71BA42D6D2DAB002C5A38 /* new_message.caf in Resources */ = {isa = PBXBuildFile; fileRef = 01B71B8C2D6D2DAB002C5A38 /* new_message.caf */; };
 		01B71BA52D6D2DAB002C5A38 /* silence.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 01B71B8F2D6D2DAB002C5A38 /* silence.m4a */; };
 		01B71BA62D6D2DAB002C5A38 /* ringing_from_them_long.caf in Resources */ = {isa = PBXBuildFile; fileRef = 01B71B8E2D6D2DAB002C5A38 /* ringing_from_them_long.caf */; };
 		01B71BA72D6D2DAB002C5A38 /* emoticons.min.json in Resources */ = {isa = PBXBuildFile; fileRef = 01B71B922D6D2DAB002C5A38 /* emoticons.min.json */; };
+		01B71BA82D6D2DAB002C5A38 /* new_message.caf in Resources */ = {isa = PBXBuildFile; fileRef = 01B71B8C2D6D2DAB002C5A38 /* new_message.caf */; };
+		76D1A0022FABC00100BADA55 /* new_message_legacy.caf in Resources */ = {isa = PBXBuildFile; fileRef = 76D1A0012FABC00100BADA55 /* new_message_legacy.caf */; };
+		76D1A0032FABC00100BADA55 /* new_message_legacy.caf in Resources */ = {isa = PBXBuildFile; fileRef = 76D1A0012FABC00100BADA55 /* new_message_legacy.caf */; };
 		01C1A7C72A54C45A0058D578 /* SnapshotTesting in Frameworks */ = {isa = PBXBuildFile; productRef = 01C1A7C62A54C45A0058D578 /* SnapshotTesting */; };
 		01C774272D9EECE100A2FF07 /* WireAVS in Frameworks */ = {isa = PBXBuildFile; productRef = 01C774262D9EECE100A2FF07 /* WireAVS */; };
 		01D2B7A52D64A9190030D28D /* WireCoreCrypto in Frameworks */ = {isa = PBXBuildFile; productRef = 01D2B7A42D64A9190030D28D /* WireCoreCrypto */; };
@@ -384,10 +386,10 @@
 		01B71B842D6D2DAB002C5A38 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.stringsdict"; sourceTree = "<group>"; };
 		01B71B852D6D2DAB002C5A38 /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = "zh-Hant"; path = "zh-Hant.lproj/Localizable.stringsdict"; sourceTree = "<group>"; };
 		01B71B882D6D2DAB002C5A38 /* audio-notifications */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "audio-notifications"; sourceTree = "<group>"; };
-		01B71B892D6D2DAB002C5A38 /* first_message.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = first_message.caf; sourceTree = "<group>"; };
 		01B71B8A2D6D2DAB002C5A38 /* hotping_from_them.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = hotping_from_them.caf; sourceTree = "<group>"; };
 		01B71B8B2D6D2DAB002C5A38 /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		01B71B8C2D6D2DAB002C5A38 /* new_message.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = new_message.caf; sourceTree = "<group>"; };
+		76D1A0012FABC00100BADA55 /* new_message_legacy.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = new_message_legacy.caf; sourceTree = "<group>"; };
 		01B71B8D2D6D2DAB002C5A38 /* ping_from_them.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = ping_from_them.caf; sourceTree = "<group>"; };
 		01B71B8E2D6D2DAB002C5A38 /* ringing_from_them_long.caf */ = {isa = PBXFileReference; lastKnownFileType = file; path = ringing_from_them_long.caf; sourceTree = "<group>"; };
 		01B71B8F2D6D2DAB002C5A38 /* silence.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = silence.m4a; sourceTree = "<group>"; };
@@ -1158,10 +1160,10 @@
 			isa = PBXGroup;
 			children = (
 				01B71B882D6D2DAB002C5A38 /* audio-notifications */,
-				01B71B892D6D2DAB002C5A38 /* first_message.caf */,
 				01B71B8A2D6D2DAB002C5A38 /* hotping_from_them.caf */,
 				01B71B8B2D6D2DAB002C5A38 /* LICENSE */,
 				01B71B8C2D6D2DAB002C5A38 /* new_message.caf */,
+				76D1A0012FABC00100BADA55 /* new_message_legacy.caf */,
 				01B71B8D2D6D2DAB002C5A38 /* ping_from_them.caf */,
 				01B71B8E2D6D2DAB002C5A38 /* ringing_from_them_long.caf */,
 				01B71B8F2D6D2DAB002C5A38 /* silence.m4a */,
@@ -1660,6 +1662,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				01B71BA82D6D2DAB002C5A38 /* new_message.caf in Resources */,
+				76D1A0022FABC00100BADA55 /* new_message_legacy.caf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1687,9 +1691,9 @@
 				01B71B9F2D6D2DAB002C5A38 /* audio-notifications in Resources */,
 				01B71BA02D6D2DAB002C5A38 /* Settings.bundle in Resources */,
 				01B71BA12D6D2DAB002C5A38 /* ping_from_them.caf in Resources */,
-				01B71BA22D6D2DAB002C5A38 /* first_message.caf in Resources */,
 				01B71BA32D6D2DAB002C5A38 /* Localizable.strings in Resources */,
 				01B71BA42D6D2DAB002C5A38 /* new_message.caf in Resources */,
+				76D1A0032FABC00100BADA55 /* new_message_legacy.caf in Resources */,
 				01B71BA52D6D2DAB002C5A38 /* silence.m4a in Resources */,
 				01B71BA62D6D2DAB002C5A38 /* ringing_from_them_long.caf in Resources */,
 				0143895E2BC81DC200EC6920 /* PrivacyInfo.xcprivacy in Resources */,

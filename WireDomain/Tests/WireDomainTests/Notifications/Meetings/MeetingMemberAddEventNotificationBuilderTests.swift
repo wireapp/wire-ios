@@ -86,7 +86,7 @@ final class MeetingMemberAddEventNotificationBuilderTests: XCTestCase {
         XCTAssertEqual(content.title, "Planning")
         XCTAssertEqual(content.body, "Federico invited you to a meeting on 10 Oct 2026 · 14:00 to 15:00")
         XCTAssertEqual(content.categoryIdentifier, NotificationCategory.meetingInvitation.rawValue)
-        XCTAssertEqual(content.sound, .default)
+        XCTAssertEqual(content.sound, UNNotificationSound(named: .init("new_message.caf")))
         XCTAssertEqual(content.userInfo[NotificationUserInfoKey.selfUserID] as? String, sut.accountID.uuidString)
         XCTAssertEqual(meetingStore.meetings.map(\.id.id), [Scaffolding.meetingID.id])
         XCTAssertEqual(meetingStore.meetings.map(\.conversationID.id), [Scaffolding.meeting.conversationID.id])

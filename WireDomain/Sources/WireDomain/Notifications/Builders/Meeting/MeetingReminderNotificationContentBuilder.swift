@@ -48,7 +48,7 @@ struct MeetingReminderNotificationContentBuilder {
             timeFormatter.string(from: occurrenceStart)
         )
         content.categoryIdentifier = NotificationCategory.meetingReminder.rawValue
-        content.sound = .default
+        content.sound = NotificationSound.newMessage.userNotificationSound
         content.userInfo = [
             NotificationUserInfoKey.selfUserID: accountID.uuidString,
             MeetingReminderUserInfoKey.conversationID: meeting.conversationID.id.uuidString,

@@ -17,13 +17,19 @@
 //
 
 import Foundation
+import UserNotifications
+import WireUtilities
 
 /// Represents the sound for types of notifications.
 public enum NotificationSound {
 
+    // These values are persisted by ExtensionSettings in the shared app-group defaults.
+    private static let messageNotificationSoundPreferenceKey = "messageNotificationSound"
+    private static let wireOldPreferenceValue = "wireOld"
+
     /// Storage of the user's preferred notification sounds.
 
-    public static var storage: UserDefaults = .standard
+    public static var storage: UserDefaults = .shared()
 
     case call
     case ping
@@ -34,22 +40,27 @@ public enum NotificationSound {
         defaultFileName
     }
 
+    /// The sound to use when displaying the notification.
+    public var userNotificationSound: UNNotificationSound {
+        switch self {
+        case .newMessage where usesWireOldForNewMessages:
+            UNNotificationSound(named: .init("new_message_legacy.caf"))
+        default:
+            UNNotificationSound(named: .init(defaultFileName))
+        }
+    }
+
     // MARK: - Utilities
 
     private var defaultFileName: String {
         switch self {
         case .call: "ringing_from_them_long.caf"
         case .ping: "ping_from_them.caf"
-        case .newMessage: "default"
+        case .newMessage: "new_message.caf"
         }
     }
 
-    // Unused - leaving this here in case we need to support custom sounds again in the future.
-    private var preferenceKey: String {
-        switch self {
-        case .call: "ZMCallSoundName"
-        case .ping: "ZMPingSoundName"
-        case .newMessage: "ZMMessageSoundName"
-        }
+    private var usesWireOldForNewMessages: Bool {
+        Self.storage.string(forKey: Self.messageNotificationSoundPreferenceKey) == Self.wireOldPreferenceValue
     }
 }

@@ -203,7 +203,7 @@ final class ConversationEphemeralMessageNotificationBuilderTests: XCTestCase {
             NotificationCategory.unmutedConversation.rawValue
         )
 
-        XCTAssertEqual(notificationContent.sound, UNNotificationSound(named: .init("default")))
+        XCTAssertEqual(notificationContent.sound, UNNotificationSound(named: .init("new_message.caf")))
 
         // User info
         XCTAssertEqual(notificationContent.userInfo["selfUserIDString"] as! String, UUID.mockID1.uuidString)

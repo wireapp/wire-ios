@@ -1368,13 +1368,6 @@
 "self.settings.notifications.chat_alerts.toggle" = "Sporočilne pasice";
 "self.settings.notifications.chat_alerts.footer" = "Novih sporočil v drugih pogovorih.";
 
-"self.settings.sound_menu.sounds.title" = "Zvoki";
-"self.settings.sound_menu.ringtone.title" = "Melodija zvonjenja";
-"self.settings.sound_menu.message.title" = "Melodija sporočila";
-"self.settings.sound_menu.ping.title" = "Ping";
-"self.settings.sound_menu.ringtones.title" = "Melodije zvonjenja";
-"self.settings.sound_menu.sounds.wire_sound" = "Wire";
-"self.settings.sound_menu.sounds.none" = "Nič";
 
 "self.settings.callkit.title" = "Klici";
 "self.settings.callkit.caption" = "Deli z iOS";
@@ -1386,9 +1379,6 @@
 "self.settings.vbr.title" = "Spremenljiva bitna hitrost kodiranja";
 "self.settings.vbr.description" = "This makes audio calls use less data and work better on slower networks. Turn off to use constant bitrate encoding (CBR). This setting only affects 1:1 calls; conference calls always use CBR encoding.";
 
-"self.settings.sound_menu.sounds.wire_call" = "Wire Klic";
-"self.settings.sound_menu.sounds.wire_message" = "Wire Sporočilo";
-"self.settings.sound_menu.sounds.wire_ping" = "Wire Ping";
 
 // By popular demand
 "self.settings.popular_demand.title" = "Po priljubljenih zahtevah";

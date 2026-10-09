@@ -1368,13 +1368,6 @@
 "self.settings.notifications.chat_alerts.toggle" = "メッセージ バナー";
 "self.settings.notifications.chat_alerts.footer" = "他の会話での新しいメッセージ";
 
-"self.settings.sound_menu.sounds.title" = "サウンド";
-"self.settings.sound_menu.ringtone.title" = "着信音";
-"self.settings.sound_menu.message.title" = "テキスト 着信音";
-"self.settings.sound_menu.ping.title" = "Ping";
-"self.settings.sound_menu.ringtones.title" = "着信音";
-"self.settings.sound_menu.sounds.wire_sound" = "Wire";
-"self.settings.sound_menu.sounds.none" = "なし";
 
 "self.settings.callkit.title" = "通話";
 "self.settings.callkit.caption" = "iOSと共有する";
@@ -1386,9 +1379,6 @@
 "self.settings.vbr.title" = "可変ビットレートエンコーディング";
 "self.settings.vbr.description" = "これによって、音声通話のデータ使用量が少なくなり、低速なネットワークでより良く動作します。オフにすると、コンスタントビットレートエンコーディング(CBR)が使用できます。この設定は1対1の通話にのみ影響し、会議通話では常にCBRエンコーディングが使われます。";
 
-"self.settings.sound_menu.sounds.wire_call" = "Wireコール";
-"self.settings.sound_menu.sounds.wire_message" = "Wireメッセージ";
-"self.settings.sound_menu.sounds.wire_ping" = "Wire Ping";
 
 // By popular demand
 "self.settings.popular_demand.title" = "人気の高い順";

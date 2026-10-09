@@ -184,7 +184,7 @@ final class ConversationLocationMessageNotificationBuilderTests: XCTestCase {
             NotificationCategory.unmutedConversation.rawValue
         )
 
-        XCTAssertEqual(notificationContent.sound, UNNotificationSound(named: .init("default")))
+        XCTAssertEqual(notificationContent.sound, UNNotificationSound(named: .init("new_message.caf")))
 
         // Thread ID
         XCTAssertEqual(

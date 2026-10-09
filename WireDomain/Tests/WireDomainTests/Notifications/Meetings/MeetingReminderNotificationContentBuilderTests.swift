@@ -18,6 +18,7 @@
 
 import Foundation
 import Testing
+import UserNotifications
 import WireCallingDomain
 
 @testable import WireDomain
@@ -63,7 +64,7 @@ struct MeetingReminderNotificationContentBuilderTests {
             == meeting.conversationID.id.uuidString)
         #expect(content.userInfo[MeetingReminderUserInfoKey.conversationDomain] as? String
             == meeting.conversationID.domain)
-        #expect(content.sound != nil)
+        #expect(content.sound == UNNotificationSound(named: .init("new_message.caf")))
     }
 
     @Test("hides the meeting title when details are not allowed")
