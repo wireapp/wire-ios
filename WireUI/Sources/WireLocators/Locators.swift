@@ -734,6 +734,9 @@ public enum Locators {
             case participants = "meetingFormParticipants"
             case membersSelect = "meetingMembersSelect"
             case membersSelected = "meetingMembersSelected"
+            case membersEmptySearch = "meetingMembersEmptySearch"
+            // Native search control. UI tests launch the app in English.
+            case membersCancelSearch = "Cancel"
             case cancel = "meetingFormCancel"
             case startDate = "meetingFormStartDate"
             case startTime = "meetingFormStartTime"

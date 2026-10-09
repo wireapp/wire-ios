@@ -37,18 +37,41 @@ class MeetingFormPage: PageModel {
     }
 
     var memberSearchField: XCUIElement {
-        app.searchFields["Enter a name"]
+        app.searchFields[Self.localized("wireMeetings.schedule.members.search.field.placeholder")]
+    }
+
+    var noMemberSearchResults: XCUIElement {
+        app.staticTexts[Locators.WireMeetings.MeetingForm.membersEmptySearch.rawValue]
+    }
+
+    var schedulingErrorAlert: XCUIElement {
+        app.alerts[Self.localized("meetings.scheduleModal.error.createFailedTitle")]
     }
 
     var selectMembersButton: XCUIElement {
         app.buttons[Locators.WireMeetings.MeetingForm.membersSelect.rawValue]
     }
 
-    var cancelButton: XCUIElement { app.buttons[Locators.WireMeetings.MeetingForm.cancel.rawValue] }
-    var startDateButton: XCUIElement { app.buttons[Locators.WireMeetings.MeetingForm.startDate.rawValue] }
-    var startTimeButton: XCUIElement { app.buttons[Locators.WireMeetings.MeetingForm.startTime.rawValue] }
-    var endTimeButton: XCUIElement { app.buttons[Locators.WireMeetings.MeetingForm.endTime.rawValue] }
-    var repeatButton: XCUIElement { app.buttons[Locators.WireMeetings.MeetingForm.repeatOption.rawValue] }
+    var cancelButton: XCUIElement {
+        app.buttons[Locators.WireMeetings.MeetingForm.cancel.rawValue]
+    }
+
+    var startDateButton: XCUIElement {
+        app.buttons[Locators.WireMeetings.MeetingForm.startDate.rawValue]
+    }
+
+    var startTimeButton: XCUIElement {
+        app.buttons[Locators.WireMeetings.MeetingForm.startTime.rawValue]
+    }
+
+    var endTimeButton: XCUIElement {
+        app.buttons[Locators.WireMeetings.MeetingForm.endTime.rawValue]
+    }
+
+    var repeatButton: XCUIElement {
+        app.buttons[Locators.WireMeetings.MeetingForm.repeatOption.rawValue]
+    }
+
     var selectedMembersButton: XCUIElement {
         app.buttons.matching(NSPredicate(
             format: "identifier BEGINSWITH %@",
@@ -56,8 +79,18 @@ class MeetingFormPage: PageModel {
         )).firstMatch
     }
 
-    var titleError: XCUIElement { app.staticTexts[Locators.WireMeetings.MeetingForm.titleError.rawValue] }
-    var loadingIndicator: XCUIElement { app.activityIndicators[Locators.WireMeetings.MeetingForm.loading.rawValue] }
+    var titleError: XCUIElement {
+        app.staticTexts[Locators.WireMeetings.MeetingForm.titleError.rawValue]
+    }
+
+    var loadingIndicator: XCUIElement {
+        app.activityIndicators[Locators.WireMeetings.MeetingForm.loading.rawValue]
+    }
+
+    static func localized(_ key: String) -> String {
+        // Use the app's English strings resource. UI tests launch with -AppleLanguages (en).
+        Bundle(for: MeetingFormPage.self).localizedString(forKey: key, value: nil, table: nil)
+    }
 
     func member(_ user: UserInfo) -> XCUIElement {
         app.buttons[Locators.WireMeetings.MeetingForm.memberIdentifier(user.id)]
@@ -119,9 +152,13 @@ class MeetingFormPage: PageModel {
     }
 
     func selectStartDate(_ date: Date) throws {
-        guard startDateButton.waitAndTap() else { throw RuntimeError("Start date button was not available") }
+        guard startDateButton.waitAndTap() else {
+            throw RuntimeError("Start date button was not available")
+        }
         let picker = app.descendants(matching: .any)[Locators.WireMeetings.MeetingForm.datePicker.rawValue].firstMatch
-        guard picker.waitForExistence(timeout: 5) else { throw RuntimeError("Calendar did not appear") }
+        guard picker.waitForExistence(timeout: 5) else {
+            throw RuntimeError("Calendar did not appear")
+        }
         // Use the full calendar date. A bare day number can select an adjacent month.
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "en_GB")
@@ -131,8 +168,10 @@ class MeetingFormPage: PageModel {
         guard month.waitForExistence(timeout: 5), let visibleMonth = month.value as? String else {
             throw RuntimeError("Calendar month was not available")
         }
-        if visibleMonth != targetMonth, !picker.buttons["DatePicker.NextMonth"].waitAndTap() {
-            throw RuntimeError("The next calendar month was not available")
+        if visibleMonth != targetMonth {
+            guard picker.buttons["DatePicker.NextMonth"].waitAndTap() else {
+                throw RuntimeError("The next calendar month was not available")
+            }
         }
         let expectedMonth = XCTNSPredicateExpectation(
             predicate: NSPredicate(format: "value == %@", targetMonth), object: month
@@ -146,7 +185,9 @@ class MeetingFormPage: PageModel {
         guard day.waitAndTap() else {
             throw RuntimeError("Calendar date '\(formatter.string(from: date))' did not appear")
         }
-        guard startDateButton.waitAndTap() else { throw RuntimeError("Calendar did not close") }
+        guard startDateButton.waitAndTap() else {
+            throw RuntimeError("Calendar did not close")
+        }
     }
 
     func selectTime(start: Bool, hour: Int, minute: Int) throws {
@@ -208,8 +249,12 @@ class MeetingFormPage: PageModel {
     }
 
     func confirmParticipants() throws {
-        let cancelSearch = app.buttons.matching(identifier: "Cancel").allElementsBoundByIndex.first(where: \.isHittable)
-        if let cancelSearch, !selectMembersButton.isHittable { cancelSearch.tap() }
+        let cancelSearch = app.buttons
+            .matching(identifier: Locators.WireMeetings.MeetingForm.membersCancelSearch.rawValue)
+            .allElementsBoundByIndex.first(where: \.isHittable)
+        if let cancelSearch, !selectMembersButton.isHittable {
+            cancelSearch.tap()
+        }
         guard selectMembersButton.waitAndTap(), participantsButton.waitForExistence(timeout: 5) else {
             throw RuntimeError("Participant selection was not confirmed")
         }

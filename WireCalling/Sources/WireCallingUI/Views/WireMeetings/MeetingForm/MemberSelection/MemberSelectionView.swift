@@ -134,6 +134,7 @@ struct MemberSelectionView: View {
             ContentUnavailableView {
                 Label {
                     Text(Strings.Empty.title)
+                        .accessibilityIdentifier(Locators.WireMeetings.MeetingForm.membersEmptySearch.rawValue)
                 } icon: {
                     Image(systemName: "magnifyingglass")
                         .foregroundStyle(.primary)
