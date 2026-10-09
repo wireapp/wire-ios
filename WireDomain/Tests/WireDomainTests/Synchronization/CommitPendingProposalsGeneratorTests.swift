@@ -265,6 +265,30 @@ class CommitPendingProposalsGeneratorTests {
         #expect(item?.conversationID == secondID)
     }
 
+    @Test("It keeps the existing fire date when asked to, since the first proposal sets the commit date")
+    func keepsExistingFireDate() async throws {
+        // GIVEN
+        let conversationID = QualifiedID.random()
+        let firstDate = Date().addingTimeInterval(30)
+        let groupID = await createPendingMLSConversation(id: conversationID, proposalDate: firstDate)
+
+        // WHEN
+        let context = coreDataStack.syncContext
+        let fireDate = await context.perform {
+            PendingProposalTimer.schedule(
+                mlsGroupID: groupID.data,
+                conversationID: conversationID.uuid,
+                conversationDomain: conversationID.domain,
+                fireDate: firstDate.addingTimeInterval(60),
+                keepExistingFireDate: true,
+                in: context
+            ).fireDate
+        }
+
+        // THEN
+        #expect(fireDate == firstDate)
+    }
+
     @discardableResult
     private func createPendingMLSConversation(id: QualifiedID, proposalDate: Date) async -> MLSGroupID {
         await coreDataStack.syncContext.perform { [context = coreDataStack.syncContext, modelHelper] in

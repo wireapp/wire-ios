@@ -72,6 +72,10 @@ public final class PendingProposalTimer: NSManagedObject {
 
     /// Creates the timer of a group, or reschedules it. The date is only written when it changed, so
     /// that observers are not notified needlessly.
+    ///
+    /// - Parameter keepExistingFireDate: When `true` and a timer already exists, its date is kept. Every
+    ///   proposal comes with its own random commit delay, and a single commit covers all pending proposals,
+    ///   so only the first one must set the date (same as Android).
 
     @discardableResult
     public static func schedule(
@@ -79,6 +83,7 @@ public final class PendingProposalTimer: NSManagedObject {
         conversationID: UUID,
         conversationDomain: String?,
         fireDate: Date,
+        keepExistingFireDate: Bool = false,
         in context: NSManagedObjectContext
     ) -> PendingProposalTimer {
         guard let timer = fetch(mlsGroupID: mlsGroupID, in: context) else {
@@ -99,7 +104,7 @@ public final class PendingProposalTimer: NSManagedObject {
         if timer.conversationDomain != conversationDomain {
             timer.conversationDomain = conversationDomain
         }
-        if timer.fireDate != fireDate {
+        if !keepExistingFireDate, timer.fireDate != fireDate {
             timer.fireDate = fireDate
         }
         return timer

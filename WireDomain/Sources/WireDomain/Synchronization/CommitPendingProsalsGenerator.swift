@@ -27,6 +27,8 @@ public final class CommitPendingProposalsGenerator: NSObject, LiveGeneratorProto
         let task: Task<Void, Never>
     }
 
+    private static let logDateStyle = Date.ISO8601FormatStyle(includingFractionalSeconds: true)
+
     private let context: NSManagedObjectContext
     private var fetchedResultsController: NSFetchedResultsController<PendingProposalTimer>?
     private let repository: ConversationRepositoryProtocol
@@ -123,7 +125,7 @@ public final class CommitPendingProposalsGenerator: NSObject, LiveGeneratorProto
 
         if let existing = scheduledCommits[groupData] {
             WireLogger.workAgent.info(
-                "pending proposal timer rescheduled (old: \(existing.fireDate), new: \(fireDate))",
+                "pending proposal timer rescheduled (old: \(existing.fireDate.formatted(Self.logDateStyle)), new: \(fireDate.formatted(Self.logDateStyle)))",
                 attributes: logAttributes
             )
         }

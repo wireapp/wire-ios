@@ -667,6 +667,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
                 conversationID: conversationID,
                 conversationDomain: conversation.domain,
                 fireDate: scheduledDate,
+                keepExistingFireDate: true,
                 in: context
             )
         }
