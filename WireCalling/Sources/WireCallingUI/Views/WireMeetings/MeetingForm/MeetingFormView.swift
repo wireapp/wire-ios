@@ -84,14 +84,13 @@ struct MeetingFormView: View {
             .sheet(isPresented: $isPresentingMemberSelection) {
                 MemberSelectionView(viewModel: viewModel.makeMemberSelectionViewModel())
             }
-            .alert(isPresented: $viewModel.hasError) {
-                Alert(
-                    title: Text(viewModel.errorTitle),
-                    message: Text(MeetingParticipantErrorFormatter.attributed(viewModel.errorMessage)),
-                    dismissButton: .default(Text(Strings.Error.Alert.ok)) {
-                        if viewModel.dismissAfterError { dismiss() }
-                    }
-                )
+            .alert(viewModel.errorTitle, isPresented: $viewModel.hasError) {
+                Button(Strings.Error.Alert.ok) {
+                    if viewModel.dismissAfterError { dismiss() }
+                }
+                .accessibilityIdentifier(Locators.WireMeetings.MeetingForm.errorDismiss)
+            } message: {
+                Text(MeetingParticipantErrorFormatter.attributed(viewModel.errorMessage))
             }
             .alert(
                 viewModel.mode.isEdit ? Strings.ParticipantsNotAdded.title : Strings.ParticipantsNotAdded.createdTitle,
@@ -197,6 +196,7 @@ struct MeetingFormView: View {
                 ForEach(viewModel.availableRepeatOptions, id: \.self) { option in
                     Text(option.title)
                         .tag(option)
+                        .accessibilityIdentifier(option.locator.rawValue)
                 }
             }
             .accessibilityIdentifier(Locators.WireMeetings.MeetingForm.repeatOption)
@@ -397,6 +397,18 @@ private struct MinuteIntervalTimePicker: UIViewRepresentable {
 }
 
 private extension MeetingRepeatOption {
+
+    var locator: Locators.WireMeetings.MeetingForm.RepeatOption {
+        switch self {
+        case .never: .never
+        case .daily: .daily
+        case .weekly: .weekly
+        case .everyTwoWeeks: .everyTwoWeeks
+        case .everyFourWeeks: .everyFourWeeks
+        case .monthly: .monthly
+        case .yearly: .yearly
+        }
+    }
 
     typealias Strings = L10n.Localizable.WireMeetings.Schedule.Time
 

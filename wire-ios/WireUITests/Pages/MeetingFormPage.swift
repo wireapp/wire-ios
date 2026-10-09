@@ -20,6 +20,8 @@ import WireLocators
 import XCTest
 
 class MeetingFormPage: PageModel {
+    typealias RepeatOption = Locators.WireMeetings.MeetingForm.RepeatOption
+
     override var pageMainElement: XCUIElement {
         titleField
     }
@@ -37,7 +39,8 @@ class MeetingFormPage: PageModel {
     }
 
     var memberSearchField: XCUIElement {
-        app.searchFields[Self.localized("wireMeetings.schedule.members.search.field.placeholder")]
+        // SwiftUI creates the native search field. Use the visible field in the presented sheet.
+        app.searchFields.matching(NSPredicate(format: "isHittable == true")).firstMatch
     }
 
     var noMemberSearchResults: XCUIElement {
@@ -45,7 +48,7 @@ class MeetingFormPage: PageModel {
     }
 
     var schedulingErrorAlert: XCUIElement {
-        app.alerts[Self.localized("meetings.scheduleModal.error.createFailedTitle")]
+        app.alerts.containing(.button, identifier: Locators.WireMeetings.MeetingForm.errorDismiss.rawValue).firstMatch
     }
 
     var selectMembersButton: XCUIElement {
@@ -85,11 +88,6 @@ class MeetingFormPage: PageModel {
 
     var loadingIndicator: XCUIElement {
         app.activityIndicators[Locators.WireMeetings.MeetingForm.loading.rawValue]
-    }
-
-    static func localized(_ key: String) -> String {
-        // Use the app's English strings resource. UI tests launch with -AppleLanguages (en).
-        Bundle(for: MeetingFormPage.self).localizedString(forKey: key, value: nil, table: nil)
     }
 
     func member(_ user: UserInfo) -> XCUIElement {
@@ -142,13 +140,23 @@ class MeetingFormPage: PageModel {
         )
     }
 
-    func selectRepeat(_ title: String) {
-        XCTAssertTrue(repeatButton.waitAndTap())
-        XCTAssertTrue(app.buttons[title].waitAndTap(), "Repeat option '\(title)' did not appear")
+    func repeatChoice(_ option: RepeatOption) -> XCUIElement {
+        app.buttons[option.rawValue]
     }
 
-    func assertRepeat(_ title: String) {
-        XCTAssertTrue(repeatButton.label.contains(title) || repeatButton.value as? String == title)
+    func selectRepeat(_ option: RepeatOption) throws {
+        guard repeatButton.waitAndTap(), repeatChoice(option).waitAndTap() else {
+            throw RuntimeError("Repeat option '\(option)' did not appear")
+        }
+    }
+
+    func assertRepeat(_ option: RepeatOption) throws {
+        guard repeatButton.waitAndTap() else { throw RuntimeError("Repeat picker did not appear") }
+        let choice = repeatChoice(option)
+        guard choice.waitForExistence(timeout: 5), choice.isSelected else {
+            throw RuntimeError("Repeat option '\(option)' was not selected")
+        }
+        guard choice.waitAndTap() else { throw RuntimeError("Repeat picker did not close") }
     }
 
     func selectStartDate(_ date: Date) throws {
@@ -203,20 +211,21 @@ class MeetingFormPage: PageModel {
     }
 
     func openParticipants() throws {
-        guard participantsButton.waitAndTap(), memberSearchField.waitForExistence(timeout: 5) else {
+        guard participantsButton.waitAndTap(), memberSearchField.waitForExistence(timeout: 5),
+              app.searchFields.allElementsBoundByIndex.filter(\.isHittable).count == 1 else {
             throw RuntimeError("Participant picker did not appear")
         }
     }
 
     func searchMember(_ name: String) {
         memberSearchField.tap()
-        let clearButton = memberSearchField.buttons["Clear text"]
+        let clearButton = memberSearchField.buttons.firstMatch
         if clearButton.exists { clearButton.tap() }
         memberSearchField.typeText(name)
     }
 
     func clearMemberSearch() throws {
-        guard memberSearchField.buttons["Clear text"].waitAndTap() else {
+        guard memberSearchField.buttons.firstMatch.waitAndTap() else {
             throw RuntimeError("Participant search could not be cleared")
         }
     }
@@ -249,11 +258,14 @@ class MeetingFormPage: PageModel {
     }
 
     func confirmParticipants() throws {
-        let cancelSearch = app.buttons
-            .matching(identifier: Locators.WireMeetings.MeetingForm.membersCancelSearch.rawValue)
-            .allElementsBoundByIndex.first(where: \.isHittable)
-        if let cancelSearch, !selectMembersButton.isHittable {
-            cancelSearch.tap()
+        if !selectMembersButton.isHittable {
+            // During native search, the navigation bar has one direct action: close search.
+            let searchActions = app.navigationBars.children(matching: .button)
+                .allElementsBoundByIndex.filter(\.isHittable)
+            guard searchActions.count == 1 else {
+                throw RuntimeError("Search close action was not available or was ambiguous")
+            }
+            searchActions[0].tap()
         }
         guard selectMembersButton.waitAndTap(), participantsButton.waitForExistence(timeout: 5) else {
             throw RuntimeError("Participant selection was not confirmed")

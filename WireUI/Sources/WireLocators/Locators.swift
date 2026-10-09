@@ -735,8 +735,7 @@ public enum Locators {
             case membersSelect = "meetingMembersSelect"
             case membersSelected = "meetingMembersSelected"
             case membersEmptySearch = "meetingMembersEmptySearch"
-            // Native search control. UI tests launch the app in English.
-            case membersCancelSearch = "Cancel"
+            case errorDismiss = "meetingFormErrorDismiss"
             case cancel = "meetingFormCancel"
             case startDate = "meetingFormStartDate"
             case startTime = "meetingFormStartTime"
@@ -748,6 +747,16 @@ public enum Locators {
             case datePicker = "meetingFormDatePicker"
             case timePicker = "meetingFormTimePicker"
             case selectedMembersSection = "Selected ("
+
+            public enum RepeatOption: String {
+                case never = "meetingFormRepeat.never"
+                case daily = "meetingFormRepeat.daily"
+                case weekly = "meetingFormRepeat.weekly"
+                case everyTwoWeeks = "meetingFormRepeat.everyTwoWeeks"
+                case everyFourWeeks = "meetingFormRepeat.everyFourWeeks"
+                case monthly = "meetingFormRepeat.monthly"
+                case yearly = "meetingFormRepeat.yearly"
+            }
 
             public static func selectedMembersIdentifier(isExpanded: Bool) -> String {
                 "\(membersSelected.rawValue).\(isExpanded ? "expanded" : "collapsed")"

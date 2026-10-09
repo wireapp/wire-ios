@@ -56,6 +56,7 @@ struct MemberSelectionView: View {
                             isExpanded: viewModel.isSelectedExpanded
                         )
                     )
+                    .accessibilityValue(String(viewModel.selectedMembers.count))
                 }
 
                 Section {

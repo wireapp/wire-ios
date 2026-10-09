@@ -99,7 +99,7 @@ final class ScheduleMeetingTests: WireUITestCase {
 
             let changedForm = try page.schedule()
             changedForm.replaceTitle(with: "TC11948 discarded")
-            changedForm.selectRepeat(MeetingFormPage.localized("wireMeetings.schedule.time.daily"))
+            try changedForm.selectRepeat(.daily)
             XCTAssertTrue(changedForm.saveButton.isEnabled)
             _ = try changedForm.cancel()
             XCTAssertTrue(page.noUpcomingMeetingsText.waitForExistence(timeout: 10))
@@ -174,7 +174,7 @@ final class ScheduleMeetingTests: WireUITestCase {
         let title = "TC11954 host only"
         form.replaceTitle(with: title)
         XCTAssertEqual(form.participantsButton.value as? String, "0")
-        form.assertRepeat(MeetingFormPage.localized("wireMeetings.schedule.time.never"))
+        try form.assertRepeat(.never)
         form.assertDateTimes(start: date(minute: 15), end: date(hour: 11, minute: 15))
         _ = try form.save()
 
@@ -282,25 +282,34 @@ final class ScheduleMeetingTests: WireUITestCase {
         let (host, _, _, _) = try await UserHelper.default.registerMeetingsTeam()
         let fixtures = try await MeetingsTestHelper(user: host)
         let page = try launchMeetings(for: host, now: date())
-        let options: [(title: String, frequency: MeetingFrequency, interval: Int, days: Int)] = [
-            (MeetingFormPage.localized("wireMeetings.schedule.time.daily"), .daily, 1, 1),
-            (MeetingFormPage.localized("wireMeetings.schedule.time.weekly"), .weekly, 1, 7),
-            (MeetingFormPage.localized("wireMeetings.schedule.time.everyTwoWeeks"), .weekly, 2, 14),
-            (MeetingFormPage.localized("wireMeetings.schedule.time.everyFourWeeks"), .weekly, 4, 28)
+        // TC-11962 specifies these English labels. Option selection uses IDs.
+        let options: [(
+            choice: MeetingFormPage.RepeatOption, title: String, frequency: MeetingFrequency, interval: Int, days: Int
+        )] = [
+            (.daily, "Daily", .daily, 1, 1),
+            (.weekly, "Weekly", .weekly, 1, 7),
+            (.everyTwoWeeks, "Every 2 weeks", .weekly, 2, 14),
+            (.everyFourWeeks, "Every 4 weeks", .weekly, 4, 28)
         ]
+        let availableChoices: [(MeetingFormPage.RepeatOption, String)] = [(.never, "Never")] + options.map {
+            ($0.choice, $0.title)
+        }
         // Check each supported choice, its saved rule, and the next occurrence in the list.
         for option in options {
             let form = try page.schedule()
-            form.replaceTitle(with: "TC11962 \(option.title)")
+            let title = "TC11962 \(option.title)"
+            form.replaceTitle(with: title)
             form.repeatButton.tap()
-            for title in [MeetingFormPage.localized("wireMeetings.schedule.time.never")] + options.map(\.title) {
-                XCTAssertTrue(app.buttons[title].waitForExistence(timeout: 5))
+            for (option, label) in availableChoices {
+                let choice = form.repeatChoice(option)
+                XCTAssertTrue(choice.waitForExistence(timeout: 5))
+                XCTAssertEqual(choice.label, label)
             }
-            XCTAssertFalse(app.buttons[MeetingFormPage.localized("wireMeetings.schedule.time.monthly")].exists)
-            XCTAssertFalse(app.buttons[MeetingFormPage.localized("wireMeetings.schedule.time.yearly")].exists)
-            app.buttons[option.title].tap()
+            XCTAssertFalse(form.repeatChoice(.monthly).exists)
+            XCTAssertFalse(form.repeatChoice(.yearly).exists)
+            form.repeatChoice(option.choice).tap()
             _ = try form.save()
-            let meeting = try await onlyMeeting(fixtures, title: "TC11962 \(option.title)")
+            let meeting = try await onlyMeeting(fixtures, title: title)
             XCTAssertEqual(meeting.recurrence?.frequency, option.frequency)
             XCTAssertEqual(meeting.recurrence?.interval, option.interval)
             XCTAssertTrue(page.row(meeting).waitForExistence(timeout: 15))
@@ -328,10 +337,9 @@ final class ScheduleMeetingTests: WireUITestCase {
         let form = try page.schedule()
         try form.openParticipants()
         XCTAssertTrue(form.member(users[0]).waitForExistence(timeout: 15), "Eligible team users did not appear")
-        let selectedTitle = MeetingFormPage.localized("wireMeetings.schedule.members.selected.title")
         for (index, user) in users.enumerated() {
             try form.selectMember(user)
-            XCTAssertEqual(form.selectedMembersButton.label, "\(selectedTitle) (\(index + 1))")
+            XCTAssertEqual(form.selectedMembersButton.value as? String, String(index + 1))
             try form.clearMemberSearch()
         }
         form.searchMember(host.name)
@@ -354,7 +362,7 @@ final class ScheduleMeetingTests: WireUITestCase {
             )
         }
         XCTAssertTrue(form.member(users[1]).waitAndTap())
-        XCTAssertEqual(form.selectedMembersButton.label, "\(selectedTitle) (2)")
+        XCTAssertEqual(form.selectedMembersButton.value as? String, "2")
         try form.confirmParticipants()
         XCTAssertEqual(form.participantsButton.value as? String, "2")
         XCTAssertTrue(form.participantsButton.label.contains(users[0].name))
@@ -409,8 +417,7 @@ final class ScheduleMeetingTests: WireUITestCase {
         let form = try page.schedule()
         let title = "TC11969 retained details"
         form.replaceTitle(with: title)
-        let weekly = MeetingFormPage.localized("wireMeetings.schedule.time.weekly")
-        form.selectRepeat(weekly)
+        try form.selectRepeat(.weekly)
         guard form.saveButton.waitAndTap() else { throw RuntimeError("Schedule button was not available") }
         guard form.loadingIndicator.waitForExistence(timeout: 10), !form.saveButton.exists else {
             throw RuntimeError("Scheduling did not show a loading indicator without a second submit action")
@@ -422,18 +429,22 @@ final class ScheduleMeetingTests: WireUITestCase {
             throw RuntimeError("Meeting create control could not fail the request")
         }
         let alert = form.schedulingErrorAlert
+        // TC-11969 specifies this English title and message. They are assertions, not locators.
         guard alert.waitForExistence(timeout: 10),
-              alert.staticTexts[MeetingFormPage.localized("meetings.scheduleModal.error.createFailed")].exists else {
+              alert.label == "Could not schedule meeting",
+              alert.staticTexts.allElementsBoundByIndex.contains(where: {
+                  $0.label == "Something went wrong while scheduling the meeting. Please try again."
+              }) else {
             throw RuntimeError("The expected scheduling error did not appear")
         }
         let afterFailure = try await fixtures.list()
         guard afterFailure.isEmpty else { throw RuntimeError("The failed request created a meeting") }
-        guard alert.buttons[MeetingFormPage.localized("wireMeetings.schedule.error.alert.ok")].waitAndTap() else {
+        guard alert.buttons[Locators.WireMeetings.MeetingForm.errorDismiss.rawValue].firstMatch.waitAndTap() else {
             throw RuntimeError("The scheduling error could not be dismissed")
         }
         XCTAssertEqual(form.titleField.value as? String, title)
         form.assertDateTimes(start: date(minute: 15), end: date(hour: 11, minute: 15))
-        form.assertRepeat(weekly)
+        try form.assertRepeat(.weekly)
 
         guard notify_set_state(token, 2) == UInt32(NOTIFY_STATUS_OK) else {
             throw RuntimeError("Meeting create control could not restore the request")
