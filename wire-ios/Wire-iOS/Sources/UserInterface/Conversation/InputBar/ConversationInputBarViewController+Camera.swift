@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import AVFoundation
 import FLAnimatedImage
 import MobileCoreServices
 import PhotosUI
@@ -430,7 +431,7 @@ extension ConversationInputBarViewController {
         // Photos Library entirely.
         if ProcessInfo.processInfo.isiOSAppOnMac {
             let types: [UTType] = [.image, .jpeg, .png, .heic, .gif, .movie, .video, .mpeg4Movie]
-            let picker = UIDocumentPickerViewController(forOpeningContentTypes: types)
+            let picker = UIDocumentPickerViewController(forOpeningContentTypes: types, asCopy: true)
             picker.allowsMultipleSelection = false
             picker.delegate = macMediaPickerCoordinator
             present(picker, animated: true)
@@ -486,7 +487,21 @@ private final class MacMediaPickerCoordinator: NSObject, UIDocumentPickerDelegat
 
         let type = UTType(filenameExtension: url.pathExtension)
         if type?.conforms(to: .audiovisualContent) == true || type?.conforms(to: .movie) == true {
-            vc.processRecordedVideoAt(url)
+            Task { @MainActor in
+                let asset = AVURLAsset(url: url)
+                let duration = (try? await asset.load(.duration).seconds) ?? 0
+                if duration > vc.userSession.maxVideoLength {
+                    // Too long to upload as is: let the user trim it, like the camera flow does.
+                    let videoEditor = StatusBarVideoEditorController()
+                    videoEditor.delegate = vc
+                    videoEditor.videoMaximumDuration = vc.userSession.maxVideoLength
+                    videoEditor.videoPath = url.path
+                    videoEditor.videoQuality = .typeMedium
+                    vc.present(videoEditor, animated: true)
+                } else {
+                    vc.processRecordedVideoAt(url)
+                }
+            }
         } else if type?.conforms(to: .image) == true {
             guard let data = try? Data(contentsOf: url),
                   let image = UIImage(data: data),

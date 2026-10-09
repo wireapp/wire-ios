@@ -18,6 +18,7 @@
 
 import AVFoundation
 import UIKit
+import WireDesign
 
 /// A minimal video recorder for Mac (Designed for iPad).
 /// UIImagePickerController with .camera source crashes on Mac because Portrait Effects
@@ -37,12 +38,12 @@ final class MacVideoRecorderViewController: UIViewController {
     private lazy var recordButton: UIButton = {
         var config = UIButton.Configuration.filled()
         config.cornerStyle = .capsule
-        config.baseForegroundColor = .white
-        config.baseBackgroundColor = .systemRed
+        config.baseForegroundColor = BaseColorPalette.Neutrals.white
+        config.baseBackgroundColor = ColorTheme.Base.error
         config.contentInsets = NSDirectionalEdgeInsets(top: 14, leading: 28, bottom: 14, trailing: 28)
         let button = UIButton(configuration: config)
         button.setTitle(L10n.Localizable.Content.File.takeVideo, for: .normal)
-button.setTitle(L10n.Accessibility.AudioRecord.StopButton.description, for: .selected)
+        button.setTitle(L10n.Accessibility.AudioRecord.StopButton.description, for: .selected)
         button.addTarget(self, action: #selector(toggleRecording), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
@@ -50,7 +51,7 @@ button.setTitle(L10n.Accessibility.AudioRecord.StopButton.description, for: .sel
 
     private lazy var cancelButton: UIButton = {
         var config = UIButton.Configuration.plain()
-        config.baseForegroundColor = .white
+        config.baseForegroundColor = BaseColorPalette.Neutrals.white
         let button = UIButton(configuration: config)
         button.setTitle(L10n.Localizable.General.cancel, for: .normal)
         button.addTarget(self, action: #selector(cancelTapped), for: .touchUpInside)
@@ -60,11 +61,11 @@ button.setTitle(L10n.Accessibility.AudioRecord.StopButton.description, for: .sel
 
     private lazy var timerLabel: UILabel = {
         let label = UILabel()
-        label.textColor = .white
-label.font = UIFontMetrics(forTextStyle: .body).scaledFont(
-    for: .monospacedDigitSystemFont(ofSize: 17, weight: .semibold)
-)
-label.adjustsFontForContentSizeCategory = true
+        label.textColor = BaseColorPalette.Neutrals.white
+        label.font = UIFontMetrics(forTextStyle: .body).scaledFont(
+            for: .monospacedDigitSystemFont(ofSize: 17, weight: .semibold)
+        )
+        label.adjustsFontForContentSizeCategory = true
         label.text = formatTime(0)
         label.translatesAutoresizingMaskIntoConstraints = false
         label.isHidden = true
@@ -73,7 +74,7 @@ label.adjustsFontForContentSizeCategory = true
 
     private lazy var recordingIndicator: UIView = {
         let view = UIView()
-        view.backgroundColor = .systemRed
+        view.backgroundColor = ColorTheme.Base.error
         view.layer.cornerRadius = 5
         view.translatesAutoresizingMaskIntoConstraints = false
         view.isHidden = true
@@ -86,7 +87,7 @@ label.adjustsFontForContentSizeCategory = true
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .black
+        view.backgroundColor = BaseColorPalette.Neutrals.black
         setupSession()
         setupUI()
     }
@@ -125,7 +126,7 @@ label.adjustsFontForContentSizeCategory = true
            session.canAddInput(input) {
             session.addInput(input)
         }
-        
+
         if session.canAddOutput(movieOutput) {
             session.addOutput(movieOutput)
         }
@@ -163,7 +164,8 @@ label.adjustsFontForContentSizeCategory = true
         ])
     }
 
-    @objc private func toggleRecording() {
+    @objc
+    private func toggleRecording() {
         if movieOutput.isRecording {
             movieOutput.stopRecording()
             recordButton.isSelected = false
@@ -181,17 +183,18 @@ label.adjustsFontForContentSizeCategory = true
             timerLabel.text = formatTime(0)
             recordingTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { [weak self] _ in
                 guard let self else { return }
-                self.elapsedSeconds += 1
-                self.timerLabel.text = self.formatTime(self.elapsedSeconds)
+                elapsedSeconds += 1
+                timerLabel.text = formatTime(elapsedSeconds)
             }
         }
     }
 
-@objc private func cancelTapped() {
-    onVideoRecorded = nil
-    if movieOutput.isRecording { movieOutput.stopRecording() }
-    dismiss(animated: true)
-}
+    @objc
+    private func cancelTapped() {
+        onVideoRecorded = nil
+        if movieOutput.isRecording { movieOutput.stopRecording() }
+        dismiss(animated: true)
+    }
 
     private func formatTime(_ seconds: Int) -> String {
         String(format: "%d:%02d", seconds / 60, seconds % 60)
