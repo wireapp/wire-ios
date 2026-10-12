@@ -25,6 +25,7 @@ struct ZipBrowserView: View {
     let archiveURL: URL
 
     @Binding var quickPreviewItem: QuickPreviewItem?
+    let dismissAction: () -> Void
 
     var body: some View {
         List {
@@ -44,8 +45,10 @@ struct ZipBrowserView: View {
             ZipBrowserView(
                 node: child,
                 archiveURL: archiveURL,
-                quickPreviewItem: $quickPreviewItem
+                quickPreviewItem: $quickPreviewItem,
+                dismissAction: dismissAction
             )
+            .filePreviewNavigationBar(title: child.name, dismissAction: dismissAction)
         } label: {
             Label(
                 child.name,

@@ -20,6 +20,7 @@ import SwiftUI
 import WireCallingDomain
 import WireDesign
 import WireFoundation
+import WireLocators
 import WireReusableUIComponents
 
 struct MeetingsView: View {
@@ -106,7 +107,7 @@ struct MeetingsView: View {
                 ProgressView()
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .accessibilityLabel(Strings.title)
-                    .accessibilityIdentifier("meetingsLoadProgress")
+                    .accessibilityIdentifier(Locators.WireMeetings.MeetingsPage.loadProgress)
             } else if viewModel.hasLoadError {
                 loadError
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -131,7 +132,7 @@ struct MeetingsView: View {
                 Task { await viewModel.loadInitialData() }
             }
             .wireButtonStyle(.tertiary)
-            .accessibilityIdentifier("meetingsLoadRetryButton")
+            .accessibilityIdentifier(Locators.WireMeetings.MeetingsPage.loadRetryButton)
         }
         .padding()
     }
@@ -149,7 +150,7 @@ struct MeetingsView: View {
                     .listRowSeparator(.hidden)
                     .listRowBackground(Color.clear)
                     .accessibilityLabel(Strings.title)
-                    .accessibilityIdentifier("meetingsLoadProgress")
+                    .accessibilityIdentifier(Locators.WireMeetings.MeetingsPage.loadProgress)
             }
 
             GroupedSections(
@@ -168,6 +169,7 @@ struct MeetingsView: View {
                 HStack {
                     Spacer()
                     ProgressView()
+                        .accessibilityIdentifier(Locators.WireMeetings.MeetingsPage.paginationProgress)
                     Spacer()
                 }
                 .listRowBackground(Color.clear)
@@ -175,6 +177,7 @@ struct MeetingsView: View {
             }
         }
         .listStyle(.grouped)
+        .accessibilityIdentifier(Locators.WireMeetings.MeetingsPage.list)
         .scrollContentBackground(.hidden)
         .background(ColorTheme.Backgrounds.surface.color)
         .refreshable {
@@ -242,6 +245,7 @@ private struct GroupedSections: View {
                 }
             } header: {
                 SectionTitle(formatDay(dayGroup.day))
+                    .accessibilityIdentifier(Locators.WireMeetings.MeetingsPage.dayHeader)
             }
         }
     }

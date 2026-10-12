@@ -52,6 +52,7 @@ public final class ZMUserSession: NSObject {
 
     private(set) var isNetworkOnline = true
     private var syncStateCancellable: AnyCancellable?
+    private var meetingReminderContentRefreshTask: Task<Void, Never>?
 
     public private(set) var coreDataStack: CoreDataStack!
 
@@ -288,6 +289,14 @@ public final class ZMUserSession: NSObject {
                 NSNumber(value: newValue),
                 key: LocalNotificationDispatcher.ZMShouldHideNotificationContentKey
             )
+            if let clientSessionComponent {
+                // Finish the previous refresh first so rapid privacy changes cannot restore an older title policy.
+                let previousRefresh = meetingReminderContentRefreshTask
+                meetingReminderContentRefreshTask = Task {
+                    await previousRefresh?.value
+                    await clientSessionComponent.refreshMeetingReminderContent(showMeetingTitle: !newValue)
+                }
+            }
         }
     }
 

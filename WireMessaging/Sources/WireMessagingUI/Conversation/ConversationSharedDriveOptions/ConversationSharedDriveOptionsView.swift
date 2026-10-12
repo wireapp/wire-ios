@@ -154,7 +154,7 @@ package struct ConversationSharedDriveOptionsView: View {
 
                 Spacer()
 
-                Text(participant.role.rawValue)
+                Text(viewModel.role(for: participant))
                     .font(for: .subline1)
                     .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
                     .accessibilityIdentifier(Locator.participantRole)

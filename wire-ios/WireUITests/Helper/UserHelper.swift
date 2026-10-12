@@ -51,6 +51,7 @@ final class UserHelper {
     let connectionsAPI: ConnectionsAPI
     let accountsAPI: AccountsAPI
     let userClientsAPI: UserClientsAPI
+    let featureConfigsAPI: FeatureConfigsAPI
 
     private let cookieStorage = MockCookieStorage()
     private let authenticationManager = MockAuthManager()
@@ -113,6 +114,7 @@ final class UserHelper {
         self.connectionsAPI = ConnectionsAPIBuilder(apiService: networkStack.apiService).makeAPI(for: apiVersion)
         self.accountsAPI = AccountsAPIBuilder(apiService: networkStack.apiService).makeAPI(for: apiVersion)
         self.userClientsAPI = UserClientsAPIBuilder(apiService: networkStack.apiService).makeAPI(for: apiVersion)
+        self.featureConfigsAPI = FeatureConfigsAPIBuilder(apiService: networkStack.apiService).makeAPI(for: apiVersion)
         self.environment = environment
     }
 
@@ -718,6 +720,47 @@ final class UserHelper {
             qualifiedIDs: qualifiedIDs,
             conversationId: conversationId
         )
+    }
+
+    func registerMeetingsTeam(
+        withMemberCount memberCount: Int = 0,
+        names: [String] = []
+    ) async throws
+        -> (teamOwner: UserInfo, teamMembers: [UserInfo], qualifiedIDs: [QualifiedID], conversationId: UUID?) {
+        let team = try await registerTeam(withMemberCount: memberCount, names: names)
+        guard let teamID = team.teamOwner.teamID else {
+            throw RuntimeError("registerMeetingsTeam: teamOwner.teamID is nil")
+        }
+
+        let ownerAccessToken = try await fetchAccessToken(
+            email: team.teamOwner.email,
+            password: team.teamOwner.password
+        )
+        authenticationManager.accessToken = ownerAccessToken
+        team.teamOwner.id = try await selfUserAPI.getSelfUser().id.uuidString
+        for (member, qualifiedID) in zip(team.teamMembers, team.qualifiedIDs) {
+            member.id = qualifiedID.id.uuidString
+        }
+
+        let backOffice = BackOffice(backendURL: backendURL)
+        try await backOffice.unlockMeetingsFeature(teamId: teamID.uuidString, basicAuth: basicAuth())
+        try await backOffice.enableMeetingsFeature(
+            teamId: teamID.uuidString,
+            apiVersion: apiVersion,
+            accessToken: ownerAccessToken.token
+        )
+
+        let featureConfigs = try await featureConfigsAPI.getFeatureConfigs()
+        let meetingsEnabled = featureConfigs.contains { featureConfig in
+            guard case let .meetings(config) = featureConfig else { return false }
+            if case .enabled = config.status { return true }
+            return false
+        }
+        guard meetingsEnabled else {
+            throw RuntimeError("registerMeetingsTeam: Meetings feature is not enabled")
+        }
+
+        return team
     }
 
     /// Creates a team group with configurable team-member count and total admin count.

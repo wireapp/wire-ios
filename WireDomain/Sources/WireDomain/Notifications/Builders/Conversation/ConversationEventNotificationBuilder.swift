@@ -40,11 +40,14 @@ struct ConversationEventNotificationBuilder: ConversationEventNotificationBuilde
     func buildContent(
         event: ConversationEvent
     ) async throws -> [UserNotification]? {
-        if case let .memberLeave(memberLeaveEvent) = event,
-           let notification = await conversationMemberLeaveEventNotificationBuilder.buildMeetingCancellationContent(
-               event: memberLeaveEvent
-           ) {
-            return [notification]
+        if case let .memberLeave(memberLeaveEvent) = event {
+            // Cancellation must run even when display rules suppress the member-leave notification.
+            await conversationMemberLeaveEventNotificationBuilder.cancelMeetingReminders(event: memberLeaveEvent)
+            if let notification = await conversationMemberLeaveEventNotificationBuilder.buildMeetingCancellationContent(
+                event: memberLeaveEvent
+            ) {
+                return [notification]
+            }
         }
 
         let canDisplayNotification = await validator.validate(
