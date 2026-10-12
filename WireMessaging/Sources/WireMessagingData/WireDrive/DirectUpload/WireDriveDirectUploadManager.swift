@@ -139,7 +139,7 @@ package final class WireDriveDirectUploadManager:
             persisted = try await store.fetchAll()
             didStart = true
         } catch {
-            WireLogger.wireDrive.error("failed to load persisted drive uploads, deferring start: \(error)")
+            WireLogger.wireDrive.error("failed to load persisted drive uploads \(error)")
         }
 
         for record in persisted where records[record.uploadID] == nil {
