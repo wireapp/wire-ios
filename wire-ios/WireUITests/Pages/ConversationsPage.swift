@@ -184,6 +184,12 @@ class ConversationsPage: PageModel {
         return try ArchivedConversationsPage()
     }
 
+    func openMeetings() throws -> MeetingsPage {
+        XCTAssertTrue(app.tabBars.buttons[Locators.ConversationsPage.bottomBarMeetingsButton.rawValue]
+            .waitAndTap(timeout: 15))
+        return try MeetingsPage()
+    }
+
     func openUserProfilePage() throws -> UserProfilePage {
         try letTheSyncFinish()
         accountProfileImageView.waitAndTap()

@@ -68,6 +68,24 @@ class RequestLogTests: XCTestCase {
         )
     }
 
+    func testParsingEndpointWithAssetKeyPairIdRedacted() throws {
+        let request =
+            NSURLRequest(
+                url: URL(
+                    string: "https://staging-assets.zinfra.io/v3/eternal/d26947ea-3e8f-493e-b743-0f1c005beb20?Expires=1790583928&Signature=abc-DEF~_123&Key-Pair-Id=APKAJ6VBEVQEGDVLLJJA"
+                )!
+            )
+        guard let sut: RequestLog = .init(request) else {
+            XCTFail("could not create RequestLog")
+            return
+        }
+
+        XCTAssertEqual(
+            sut.endpoint,
+            "https://staging-assets.zinfra.io/v3/eternal/d26947ea-3e8f-493e-b743-0f1c005beb20?Expires=1790583928&Signature=abc-DEF~_123&Key-Pair-Id=***"
+        )
+    }
+
     func testAuthorizationHeaderValueIsRedacted() throws {
         let request = NSMutableURLRequest(url: URL(string: "https://prod-nginz-https.wire.com/push/tokens")!)
         request.addValue("Bearer wertrtetetr42343242432456789p", forHTTPHeaderField: "Authorization")

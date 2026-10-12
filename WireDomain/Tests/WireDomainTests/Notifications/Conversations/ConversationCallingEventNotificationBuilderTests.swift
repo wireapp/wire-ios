@@ -67,6 +67,30 @@ final class ConversationCallingEventNotificationBuilderTests: XCTestCase {
 
     // MARK: - CallKit Tests
 
+    func testCallContentDecodesConferenceTimestampWithoutDroppingCall() {
+        let timestamps: [(String, String?)] = [
+            ("\"1000\"", "1000"),
+            ("1000", nil),
+            ("{\"unexpected\":true}", nil)
+        ]
+
+        for (timestamp, expected) in timestamps {
+            var calling = Calling()
+            calling.content = """
+            {
+                "type": "CONFSTART",
+                "src_clientid": "clientid",
+                "resp": false,
+                "timestamp": \(timestamp)
+            }
+            """
+
+            let content = CallContent.decode(from: calling)
+            XCTAssertEqual(content?.type, CallContent.CallType.confStart)
+            XCTAssertEqual(content?.conferenceTimestamp, expected)
+        }
+    }
+
     func testGenerateCallKitNotification_Is_Group_Conversation_And_Is_Team_User() async throws {
 
         // Mock
@@ -316,6 +340,260 @@ final class ConversationCallingEventNotificationBuilderTests: XCTestCase {
     }
 
     // MARK: - "Regular" notification call tests
+
+    func testGroupCallEndedAfterSelfStartedOrAnsweredElsewhereDoesNotShowMissedCall() async throws {
+        await setupMock(isGroup: true, isTeam: false)
+        defaults.set(false, forKey: "isCallKitAvailable")
+
+        let otherUser = try XCTUnwrap(userLocalStore.fetchOrCreateUserIdDomain_MockValue)
+        let selfUser = try XCTUnwrap(userLocalStore.fetchSelfUser_MockValue)
+        sut = ConversationCallingEventNotificationBuilder(
+            context: .init(conversationLocalStore: conversationLocalStore, userLocalStore: userLocalStore),
+            validator: .init(
+                userLocalStore: userLocalStore,
+                conversationLocalStore: conversationLocalStore,
+                conversationsAPI: conversationsAPI,
+                userDefaults: defaults
+            ),
+            accountID: Scaffolding.accountID
+        )
+
+        for responded in [false, true] {
+            userLocalStore.fetchOrCreateUserIdDomain_MockValue = selfUser
+
+            var selfStart = Calling()
+            selfStart.content = setupCallingContentMock(type: "CONFSTART", responded: responded)
+            let selfNotification = await sut.buildContent(
+                calling: selfStart,
+                at: .now,
+                conversationID: Scaffolding.conversationID,
+                senderID: Scaffolding.userID
+            )
+            XCTAssertNil(selfNotification)
+
+            userLocalStore.fetchOrCreateUserIdDomain_MockValue = otherUser
+
+            var end = Calling()
+            end.content = setupCallingContentMock(type: "CONFEND")
+            let endNotification = await sut.buildContent(
+                calling: end,
+                at: .now,
+                conversationID: Scaffolding.conversationID,
+                senderID: Scaffolding.userID
+            )
+            XCTAssertNil(endNotification, "A call started or answered elsewhere must not appear missed")
+        }
+    }
+
+    func testSelfAnswerBeforeGroupConversationMetadataLoadsDoesNotShowMissedCall() async throws {
+        await setupMock(isGroup: false, isTeam: false)
+        defaults.set(false, forKey: "isCallKitAvailable")
+        conversationsAPI.getConversationsFor_MockValue = .init(
+            found: [.init(groupType: .group)], notFound: [], failed: []
+        )
+
+        let otherUser = try XCTUnwrap(userLocalStore.fetchOrCreateUserIdDomain_MockValue)
+        let selfUser = try XCTUnwrap(userLocalStore.fetchSelfUser_MockValue)
+        sut = ConversationCallingEventNotificationBuilder(
+            context: .init(conversationLocalStore: conversationLocalStore, userLocalStore: userLocalStore),
+            validator: .init(
+                userLocalStore: userLocalStore,
+                conversationLocalStore: conversationLocalStore,
+                conversationsAPI: conversationsAPI,
+                userDefaults: defaults
+            ),
+            accountID: Scaffolding.accountID
+        )
+
+        for metadataResolvesBeforeEnd in [false, true] {
+            conversationLocalStore.conversationNeedsBackendUpdate_MockValue = true
+            conversationLocalStore.isGroupConversation_MockValue = false
+            userLocalStore.fetchOrCreateUserIdDomain_MockValue = selfUser
+
+            var selfAnswer = Calling()
+            selfAnswer.content = setupCallingContentMock(type: "CONFSTART", responded: true)
+            let selfNotification = await sut.buildContent(
+                calling: selfAnswer,
+                at: .now,
+                conversationID: Scaffolding.conversationID,
+                senderID: Scaffolding.userID
+            )
+            XCTAssertNil(selfNotification)
+
+            if metadataResolvesBeforeEnd {
+                conversationLocalStore.conversationNeedsBackendUpdate_MockValue = false
+                conversationLocalStore.isGroupConversation_MockValue = true
+            }
+            userLocalStore.fetchOrCreateUserIdDomain_MockValue = otherUser
+
+            var end = Calling()
+            end.content = setupCallingContentMock(type: "CONFEND")
+            let endNotification = await sut.buildContent(
+                calling: end,
+                at: .now,
+                conversationID: Scaffolding.conversationID,
+                senderID: Scaffolding.userID
+            )
+            XCTAssertNil(endNotification, "A call answered elsewhere must not appear missed while metadata loads")
+        }
+    }
+
+    func testNewGroupCallDoesNotInheritAnsweredElsewhereState() async throws {
+        await setupMock(isGroup: true, isTeam: false)
+        defaults.set(false, forKey: "isCallKitAvailable")
+
+        let otherUser = try XCTUnwrap(userLocalStore.fetchOrCreateUserIdDomain_MockValue)
+        let selfUser = try XCTUnwrap(userLocalStore.fetchSelfUser_MockValue)
+        sut = ConversationCallingEventNotificationBuilder(
+            context: .init(conversationLocalStore: conversationLocalStore, userLocalStore: userLocalStore),
+            validator: .init(
+                userLocalStore: userLocalStore,
+                conversationLocalStore: conversationLocalStore,
+                conversationsAPI: conversationsAPI,
+                userDefaults: defaults
+            ),
+            accountID: Scaffolding.accountID
+        )
+
+        let timestampCases: [(String?, String?)] = [
+            ("1000", "2000"),
+            (nil, "2000"),
+            ("1000", nil),
+            (nil, nil)
+        ]
+
+        for (selfTimestamp, newTimestamp) in timestampCases {
+            userLocalStore.fetchOrCreateUserIdDomain_MockValue = selfUser
+            var selfStart = Calling()
+            selfStart.content = setupCallingContentMock(
+                type: "CONFSTART",
+                responded: true,
+                conferenceTimestamp: selfTimestamp
+            )
+            _ = await sut.buildContent(
+                calling: selfStart,
+                at: .now,
+                conversationID: Scaffolding.conversationID,
+                senderID: Scaffolding.userID
+            )
+
+            userLocalStore.fetchOrCreateUserIdDomain_MockValue = otherUser
+            var newStart = Calling()
+            newStart.content = setupCallingContentMock(type: "CONFSTART", conferenceTimestamp: newTimestamp)
+            _ = await sut.buildContent(
+                calling: newStart,
+                at: .now,
+                conversationID: Scaffolding.conversationID,
+                senderID: Scaffolding.userID
+            )
+
+            var end = Calling()
+            end.content = setupCallingContentMock(type: "CONFEND")
+            let endNotification = await sut.buildContent(
+                calling: end,
+                at: .now,
+                conversationID: Scaffolding.conversationID,
+                senderID: Scaffolding.userID
+            )
+
+            guard let endNotification, case let .text(content) = endNotification else {
+                XCTFail("A new unanswered call should show as missed, even if a timestamp is missing")
+                continue
+            }
+            XCTAssertEqual(content.categoryIdentifier, NotificationCategory.missedCall.rawValue)
+        }
+    }
+
+    func testLateStartInSameConferencePreservesAnsweredElsewhereState() async throws {
+        await setupMock(isGroup: true, isTeam: false)
+        defaults.set(false, forKey: "isCallKitAvailable")
+
+        let otherUser = try XCTUnwrap(userLocalStore.fetchOrCreateUserIdDomain_MockValue)
+        let selfUser = try XCTUnwrap(userLocalStore.fetchSelfUser_MockValue)
+        sut = ConversationCallingEventNotificationBuilder(
+            context: .init(conversationLocalStore: conversationLocalStore, userLocalStore: userLocalStore),
+            validator: .init(
+                userLocalStore: userLocalStore,
+                conversationLocalStore: conversationLocalStore,
+                conversationsAPI: conversationsAPI,
+                userDefaults: defaults
+            ),
+            accountID: Scaffolding.accountID
+        )
+
+        userLocalStore.fetchOrCreateUserIdDomain_MockValue = selfUser
+        var selfStart = Calling()
+        selfStart.content = setupCallingContentMock(type: "CONFSTART", responded: true)
+        _ = await sut.buildContent(
+            calling: selfStart,
+            at: .now,
+            conversationID: Scaffolding.conversationID,
+            senderID: Scaffolding.userID
+        )
+
+        userLocalStore.fetchOrCreateUserIdDomain_MockValue = otherUser
+        var lateStart = Calling()
+        lateStart.content = setupCallingContentMock(type: "CONFSTART")
+        _ = await sut.buildContent(
+            calling: lateStart,
+            at: .now,
+            conversationID: Scaffolding.conversationID,
+            senderID: Scaffolding.userID
+        )
+
+        var end = Calling()
+        end.content = setupCallingContentMock(type: "CONFEND")
+        let endNotification = await sut.buildContent(
+            calling: end,
+            at: .now,
+            conversationID: Scaffolding.conversationID,
+            senderID: Scaffolding.userID
+        )
+        XCTAssertNil(endNotification)
+    }
+
+    func testOneOnOneStartDoesNotSetConferenceAnsweredElsewhereState() async throws {
+        await setupMock(isGroup: false, isTeam: false)
+        defaults.set(false, forKey: "isCallKitAvailable")
+
+        let otherUser = try XCTUnwrap(userLocalStore.fetchOrCreateUserIdDomain_MockValue)
+        let selfUser = try XCTUnwrap(userLocalStore.fetchSelfUser_MockValue)
+        sut = ConversationCallingEventNotificationBuilder(
+            context: .init(conversationLocalStore: conversationLocalStore, userLocalStore: userLocalStore),
+            validator: .init(
+                userLocalStore: userLocalStore,
+                conversationLocalStore: conversationLocalStore,
+                conversationsAPI: conversationsAPI,
+                userDefaults: defaults
+            ),
+            accountID: Scaffolding.accountID
+        )
+
+        userLocalStore.fetchOrCreateUserIdDomain_MockValue = selfUser
+        var selfStart = Calling()
+        selfStart.content = setupCallingContentMock(type: "SETUP", responded: true)
+        _ = await sut.buildContent(
+            calling: selfStart,
+            at: .now,
+            conversationID: Scaffolding.conversationID,
+            senderID: Scaffolding.userID
+        )
+
+        userLocalStore.fetchOrCreateUserIdDomain_MockValue = otherUser
+        var end = Calling()
+        end.content = setupCallingContentMock(type: "CANCEL")
+        let endNotification = await sut.buildContent(
+            calling: end,
+            at: .now,
+            conversationID: Scaffolding.conversationID,
+            senderID: Scaffolding.userID
+        )
+
+        guard let endNotification, case let .text(content) = endNotification else {
+            return XCTFail("A 1:1 call must not inherit conference state")
+        }
+        XCTAssertEqual(content.categoryIdentifier, NotificationCategory.missedCall.rawValue)
+    }
 
     func testGenerateCallNotification_Is_Group_Conversation_And_Is_Team_User() async throws {
 
@@ -759,13 +1037,17 @@ final class ConversationCallingEventNotificationBuilderTests: XCTestCase {
 
     private func setupCallingContentMock(
         type: String,
-        isVideo: Bool = false
+        isVideo: Bool = false,
+        responded: Bool = false,
+        conferenceTimestamp: String? = "1000"
     ) -> String {
-        """
+        let timestamp = conferenceTimestamp.map { "\"\($0)\"" } ?? "null"
+        return """
         {
             "type": "\(type)",
             "src_clientid": "clientid",
-            "resp": false,
+            "resp": \(responded),
+            "timestamp": \(timestamp),
             "props": { "videosend": "\(isVideo)" }
         }
         """

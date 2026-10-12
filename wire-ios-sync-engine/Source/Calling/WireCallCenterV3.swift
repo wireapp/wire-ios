@@ -19,6 +19,7 @@
 import avs
 import Combine
 import Foundation
+import enum WireFoundation.AnsweredElsewhereCallKey
 import WireLogging
 
 /// WireCallCenter is used for making Wire calls and observing their state. There can only be one instance of the
@@ -74,6 +75,9 @@ public class WireCallCenterV3: NSObject {
 
     /// The snaphot of the call state for each non-idle conversation.
     var callSnapshots: [AVSIdentifier: CallSnapshot] = [:]
+
+    /// Group calls that the self user answered or started on another device.
+    var callsAnsweredElsewhere = Set<AVSIdentifier>()
 
     private var conversationDeletionObservers: [AVSIdentifier: ManagedObjectContextChangeObserver] = [:]
 
@@ -209,6 +213,10 @@ extension WireCallCenterV3 {
         let token = ConversationChangeInfo.add(observer: self, for: conversation)
         let group = conversation.conversationType == .group
 
+        callsAnsweredElsewhere.remove(conversationId)
+        if callStarter != selfUserId {
+            clearAnsweredElsewhereNotificationState(conversationId: conversationId)
+        }
         callSnapshots[conversationId] = CallSnapshot(
             messageProtocol: conversation.messageProtocol,
             callParticipants: callParticipants,
@@ -240,6 +248,14 @@ extension WireCallCenterV3 {
             Self.logger.info("closing call because conversation was deleted")
             closeCall(conversationId: conversationId)
         }
+    }
+
+    func clearAnsweredElsewhereNotificationState(conversationId: AVSIdentifier) {
+        let key = AnsweredElsewhereCallKey.make(
+            accountID: selfUserId.identifier,
+            conversationID: conversationId.identifier
+        )
+        VoIPPushHelper.storage.removeObject(forKey: key)
     }
 
 }
@@ -582,7 +598,8 @@ public extension WireCallCenterV3 {
                 conversationId: conversationId,
                 callerId: callerId,
                 messageTime: nil,
-                previousCallState: previousSnapshot?.callState
+                previousCallState: previousSnapshot?.callState,
+                callEndReason: nil
             ).post(in: context.notificationContext)
         }
 
@@ -676,7 +693,8 @@ public extension WireCallCenterV3 {
                 conversationId: conversationId,
                 callerId: selfUserId,
                 messageTime: nil,
-                previousCallState: previousCallState
+                previousCallState: previousCallState,
+                callEndReason: nil
             ).post(in: context.notificationContext)
         }
 
@@ -1183,6 +1201,7 @@ extension WireCallCenterV3 {
         callState.logState()
 
         var callState = callState
+        var callEndReason: CallClosedReason?
 
         if case .terminating(reason: .stillOngoing) = callState {
 
@@ -1190,6 +1209,9 @@ extension WireCallCenterV3 {
                 callState = .terminating(reason: .securityDegraded)
             } else if canJoinCall(conversationId: conversationId) {
                 callState = .incoming(isVideo: false, shouldRing: false, degraded: false)
+                if callsAnsweredElsewhere.contains(conversationId) {
+                    callEndReason = .answeredElsewhere
+                }
             }
         }
 
@@ -1221,7 +1243,8 @@ extension WireCallCenterV3 {
                 conversationId: conversationId,
                 callerId: callerId,
                 messageTime: messageTime,
-                previousCallState: previousCallState
+                previousCallState: previousCallState,
+                callEndReason: callEndReason
             )
             notification.post(in: context.notificationContext)
         }
