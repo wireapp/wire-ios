@@ -26,6 +26,47 @@ public enum WRDateFormatter {
     public static let DayMonthYearUnits: Set<Calendar.Component> = Set([.day, .month, .year])
     public static let WeekMonthYearUnits: Set<Calendar.Component> = Set([.weekOfMonth, .month, .year])
 
+    /// The locale used by all formatters. Defaults to the current locale; only override it in tests.
+    public nonisolated(unsafe) private(set) static var locale = Locale.current
+    /// The calendar used by all formatters. Defaults to the current calendar; only override it in tests.
+    public nonisolated(unsafe) private(set) static var calendar = Calendar.current
+    /// The time zone used by all formatters. Defaults to the current time zone; only override it in tests.
+    public nonisolated(unsafe) private(set) static var timeZone = TimeZone.current
+
+    /// Makes every formatter use the given locale, calendar and time zone, e.g. to get reproducible output in tests.
+    /// Call ``resetOverrides()`` to restore the defaults.
+    public static func override(locale: Locale, calendar: Calendar, timeZone: TimeZone) {
+        var calendar = calendar
+        calendar.timeZone = timeZone
+        self.locale = locale
+        self.calendar = calendar
+        self.timeZone = timeZone
+        applyConfiguration()
+    }
+
+    /// Restores the current locale, calendar and time zone.
+    public static func resetOverrides() {
+        override(locale: .current, calendar: .current, timeZone: .current)
+    }
+
+    private static func applyConfiguration() {
+        for formatter in [
+            clockTimeFormatter,
+            todayYesterdayFormatter,
+            thisWeekFormatter,
+            thisYearFormatter,
+            otherYearFormatter
+        ] {
+            formatter.locale = locale
+            formatter.calendar = calendar
+            formatter.timeZone = timeZone
+        }
+        timeIntervalFormatter.locale = locale
+        timeIntervalFormatter.calendar = calendar
+        thisWeekFormatter.dateFormat = DateFormatter.dateFormat(fromTemplate: "EEEE", options: 0, locale: locale) ?? ""
+        thisYearFormatter.dateFormat = DateFormatter.dateFormat(fromTemplate: "EEEEdMMMM", options: 0, locale: locale)
+    }
+
     /// use this to format clock times, so they are correctly formatted to 12/24 hours according to locale
     public nonisolated(unsafe) static var clockTimeFormatter: DateFormatter = {
         let timeFormatter = DateFormatter()
@@ -86,7 +127,7 @@ public extension Date {
     }
 
     private func olderThanOneWeekdateFormatter(now: Date) -> DateFormatter {
-        let isThisYear = Calendar.current.isDate(self, equalTo: now, toGranularity: .year)
+        let isThisYear = WRDateFormatter.calendar.isDate(self, equalTo: now, toGranularity: .year)
 
         if isThisYear {
             return WRDateFormatter.thisYearFormatter
@@ -100,7 +141,8 @@ public extension Date {
     ///   - justNowText: The localized text to use for dates less than a minute old.
     ///   - now: The reference date the receiver is compared against.
     func formattedDate(justNowText: String, now: Date = Date()) -> String {
-        let gregorian = Calendar(identifier: .gregorian)
+        var gregorian = Calendar(identifier: .gregorian)
+        gregorian.timeZone = WRDateFormatter.timeZone
         // Today's date
         let today = now
         let todayDateComponents: DateComponents? = gregorian.dateComponents(

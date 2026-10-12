@@ -129,6 +129,11 @@ final class FilesViewTests: XCTestCase {
 
         networkMonitor = NetworkMonitor(monitor: MockNWPathMonitoring(), initialStatus: .connected)
         networkMonitor.currentStatus = .connected
+        WRDateFormatter.override(
+            locale: Locale(identifier: "en_US_POSIX"),
+            calendar: Calendar(identifier: .gregorian),
+            timeZone: .gmt
+        )
     }
 
     @MainActor
@@ -150,6 +155,7 @@ final class FilesViewTests: XCTestCase {
         observeAssetUseCase = nil
         moveNodeUseCase = nil
         networkMonitor = nil
+        WRDateFormatter.resetOverrides()
     }
 
     @MainActor
