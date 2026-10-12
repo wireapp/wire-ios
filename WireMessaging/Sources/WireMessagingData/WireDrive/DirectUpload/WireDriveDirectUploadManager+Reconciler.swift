@@ -171,6 +171,8 @@ extension WireDriveDirectUploadManager {
     func execute(_ action: Reconciler.Action) async {
         switch action {
         case let .adoptTask(uploadID, bytesSent, totalBytes):
+            guard isUnfinished(uploadID) else { return }
+
             // The transfer survived: rebind to it rather than starting a second one.
             await transition(uploadID: uploadID) {
                 $0.state = .uploading
@@ -194,6 +196,7 @@ extension WireDriveDirectUploadManager {
             await verifyRemoteState(uploadID: uploadID)
 
         case let .fail(uploadID, error):
+            guard isUnfinished(uploadID) else { return }
             await handleFailure(uploadID: uploadID, error: error)
 
         case let .cancelOrphanTask(taskIdentifier):
@@ -204,6 +207,12 @@ extension WireDriveDirectUploadManager {
             guard let record = records[uploadID] else { return }
             try? fileCache.delete(stagedFileName: record.stagedFileName)
         }
+    }
+
+    /// Whether the upload still exists and has not reached a final state since the plan was made.
+    private func isUnfinished(_ uploadID: UUID) -> Bool {
+        guard let record = records[uploadID] else { return false }
+        return !record.state.isTerminal
     }
 
     func resolveIfStillUploading(uploadID: UUID) async {

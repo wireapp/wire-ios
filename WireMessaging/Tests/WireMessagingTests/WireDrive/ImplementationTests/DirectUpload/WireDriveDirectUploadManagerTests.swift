@@ -883,6 +883,47 @@ final class WireDriveDirectUploadManagerTests {
         #expect(summary.items.first?.status == .uploading(progress: 0.5))
     }
 
+    /// Reconciliation executes a plan made up front, across suspending store writes, while the session's
+    /// events are already being handled. An upload that finishes in between must stay finished.
+    @Test
+    func start_doesNotReviveAnUploadThatFinishesWhileAnotherIsBeingAdopted() async throws {
+        // Given
+        let first = WireDriveDirectUploadRecord.fixture(uploadID: UUID(), state: .uploading)
+        let second = WireDriveDirectUploadRecord.fixture(uploadID: UUID(), state: .uploading)
+        store.fetchAll_MockValue = [first, second]
+        session.currentTasks_MockValue = [first, second].map {
+            .fixture(uploadID: $0.uploadID, taskIdentifier: 1, state: .running, bytesSent: 1024, totalBytes: 2048)
+        }
+
+        let writeReached = AsyncGate()
+        let writeRelease = AsyncGate()
+        let adoptedFirst = AdoptedUploadBox()
+
+        store.upsert_MockMethod = { record in
+            // Hold the first adoption write, whichever upload it turns out to be for.
+            guard await adoptedFirst.claim(record.uploadID) else { return }
+            await writeReached.open()
+            await writeRelease.wait()
+        }
+
+        // When
+        let start = Task { await sut.start() }
+        await writeReached.wait()
+
+        let adopted = try #require(await adoptedFirst.uploadID)
+        let finishing = adopted == first.uploadID ? second.uploadID : first.uploadID
+
+        await sut.handle([.completed(uploadID: finishing, statusCode: 200, responseBody: nil, error: nil)])
+        await writeRelease.open()
+        await start.value
+        await sut.waitForPendingWork()
+
+        // Then
+        let statuses = Dictionary(uniqueKeysWithValues: tracker.summary.items.map { ($0.id, $0.status) })
+        #expect(statuses[finishing] == .uploaded)
+        #expect(statuses[adopted]?.isUploading == true)
+    }
+
     @Test
     func start_cancelsATaskThatNoRecordClaims() async {
         // Given
@@ -1018,6 +1059,17 @@ final class WireDriveDirectUploadManagerTests {
             fileName: fileName,
             fileType: .pdf
         )
+    }
+}
+
+/// Remembers which upload a mocked call saw first.
+private actor AdoptedUploadBox {
+    private(set) var uploadID: UUID?
+
+    func claim(_ id: UUID) -> Bool {
+        guard uploadID == nil else { return false }
+        uploadID = id
+        return true
     }
 }
 
