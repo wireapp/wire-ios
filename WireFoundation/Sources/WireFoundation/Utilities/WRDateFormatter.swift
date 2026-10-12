@@ -27,11 +27,11 @@ public enum WRDateFormatter {
     public static let WeekMonthYearUnits: Set<Calendar.Component> = Set([.weekOfMonth, .month, .year])
 
     /// The locale used by all formatters. Defaults to the current locale; only override it in tests.
-    public nonisolated(unsafe) private(set) static var locale = Locale.current
+    public private(set) nonisolated(unsafe) static var locale = Locale.current
     /// The calendar used by all formatters. Defaults to the current calendar; only override it in tests.
-    public nonisolated(unsafe) private(set) static var calendar = Calendar.current
+    public private(set) nonisolated(unsafe) static var calendar = Calendar.current
     /// The time zone used by all formatters. Defaults to the current time zone; only override it in tests.
-    public nonisolated(unsafe) private(set) static var timeZone = TimeZone.current
+    public private(set) nonisolated(unsafe) static var timeZone = TimeZone.current
 
     /// Makes every formatter use the given locale, calendar and time zone, e.g. to get reproducible output in tests.
     /// Call ``resetOverrides()`` to restore the defaults.
