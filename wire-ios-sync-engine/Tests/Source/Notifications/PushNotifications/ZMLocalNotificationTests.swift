@@ -18,6 +18,7 @@
 
 import GenericMessageProtocol
 import UserNotifications
+import WireUtilities
 import XCTest
 
 @testable import WireSyncEngine
@@ -105,7 +106,7 @@ class ZMLocalNotificationTests: MessagingTest {
         XCTAssertEqual(NotificationSound.newMessage.name, "new_message.caf")
     }
 
-    func testMessageNotificationUsesWireOldWhenSelected() {
+    func testMessageNotificationUsesSelectedSound() {
         let previousStorage = NotificationSound.storage
         let suiteName = UUID().uuidString
         let storage = UserDefaults(suiteName: suiteName)!
@@ -115,11 +116,47 @@ class ZMLocalNotificationTests: MessagingTest {
             storage.removePersistentDomain(forName: suiteName)
         }
 
-        storage.set("wireOld", forKey: "messageNotificationSound")
+        for (sound, fileName) in [
+            (MessageNotificationSound.wire, "new_message.caf"),
+            (MessageNotificationSound.wireLegacy, "new_message_legacy.caf")
+        ] {
+            sound.save(in: storage)
+
+            XCTAssertEqual(
+                NotificationSound.newMessage.userNotificationSound,
+                UNNotificationSound(named: .init(fileName))
+            )
+            XCTAssertEqual(
+                NotificationSound.call.userNotificationSound,
+                UNNotificationSound(named: .init("ringing_from_them_long.caf"))
+            )
+            XCTAssertEqual(
+                NotificationSound.ping.userNotificationSound,
+                UNNotificationSound(named: .init("ping_from_them.caf"))
+            )
+        }
+    }
+
+    func testMessageNotificationUsesWireForMissingOrInvalidPreference() {
+        let previousStorage = NotificationSound.storage
+        let suiteName = UUID().uuidString
+        let storage = UserDefaults(suiteName: suiteName)!
+        NotificationSound.storage = storage
+        defer {
+            NotificationSound.storage = previousStorage
+            storage.removePersistentDomain(forName: suiteName)
+        }
 
         XCTAssertEqual(
             NotificationSound.newMessage.userNotificationSound,
-            UNNotificationSound(named: .init("new_message_legacy.caf"))
+            UNNotificationSound(named: .init("new_message.caf"))
+        )
+
+        storage.set("unknown", forKey: MessageNotificationSound.preferenceKey)
+
+        XCTAssertEqual(
+            NotificationSound.newMessage.userNotificationSound,
+            UNNotificationSound(named: .init("new_message.caf"))
         )
     }
 

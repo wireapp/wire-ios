@@ -19,6 +19,7 @@
 import avs
 import WireCommonComponents
 import WireLocators
+import WireUtilities
 
 extension SettingsCellDescriptorFactory {
 
@@ -69,7 +70,7 @@ private extension MessageNotificationSound {
         switch self {
         case .wire:
             L10n.Localizable.Self.Settings.Notifications.Sound.wire
-        case .wireOld:
+        case .wireLegacy:
             L10n.Localizable.Self.Settings.Notifications.Sound.wireOld
         }
     }
@@ -78,7 +79,7 @@ private extension MessageNotificationSound {
         switch self {
         case .wire:
             Locators.NotificationSoundSettingsPage.wireOption.rawValue
-        case .wireOld:
+        case .wireLegacy:
             Locators.NotificationSoundSettingsPage.wireOldOption.rawValue
         }
     }

@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireUtilities
 import XCTest
 
 @testable import WireCommonComponents
@@ -57,10 +58,31 @@ final class ExtensionSettingsTests: XCTestCase {
     }
 
     func testThatItPersistsMessageNotificationSound() {
-        settings.messageNotificationSound = .wireOld
+        for sound in MessageNotificationSound.allCases {
+            settings.messageNotificationSound = sound
 
-        let restoredSettings = ExtensionSettings(defaults: defaults)
+            let restoredSettings = ExtensionSettings(defaults: defaults)
 
-        XCTAssertEqual(restoredSettings.messageNotificationSound, .wireOld)
+            XCTAssertEqual(restoredSettings.messageNotificationSound, sound)
+            XCTAssertEqual(MessageNotificationSound.selected(in: defaults), sound)
+        }
+    }
+
+    func testThatItReadsMessageNotificationSoundFromSharedPreference() {
+        defaults.set("wireLegacy", forKey: "messageNotificationSound")
+
+        XCTAssertEqual(settings.messageNotificationSound, .wireLegacy)
+    }
+
+    func testThatItPersistsWireLegacyRawValue() {
+        settings.messageNotificationSound = .wireLegacy
+
+        XCTAssertEqual(defaults.string(forKey: "messageNotificationSound"), "wireLegacy")
+    }
+
+    func testThatItUsesWireForInvalidMessageNotificationSound() {
+        defaults.set("unknown", forKey: "messageNotificationSound")
+
+        XCTAssertEqual(settings.messageNotificationSound, .wire)
     }
 }

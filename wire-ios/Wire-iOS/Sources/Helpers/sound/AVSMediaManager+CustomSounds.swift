@@ -101,14 +101,8 @@ extension AVSMediaManager {
     }
 
     private func configureMessageNotificationSound() {
-        let resourceName = switch ExtensionSettings.shared.messageNotificationSound {
-        case .wire:
-            "new_message"
-        case .wireOld:
-            "new_message_legacy"
-        }
-
-        let soundURL = Bundle.main.url(forResource: resourceName, withExtension: "caf")
+        let fileName = ExtensionSettings.shared.messageNotificationSound.fileName
+        let soundURL = Bundle.main.url(forResource: fileName, withExtension: nil)
         register(soundURL, forMedia: MediaManagerSound.messageReceivedSound.rawValue)
     }
 

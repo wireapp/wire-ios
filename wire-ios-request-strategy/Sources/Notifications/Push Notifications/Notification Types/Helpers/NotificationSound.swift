@@ -23,10 +23,6 @@ import WireUtilities
 /// Represents the sound for types of notifications.
 public enum NotificationSound {
 
-    // These values are persisted by ExtensionSettings in the shared app-group defaults.
-    private static let messageNotificationSoundPreferenceKey = "messageNotificationSound"
-    private static let wireOldPreferenceValue = "wireOld"
-
     /// Storage of the user's preferred notification sounds.
 
     public static var storage: UserDefaults = .shared()
@@ -43,8 +39,8 @@ public enum NotificationSound {
     /// The sound to use when displaying the notification.
     public var userNotificationSound: UNNotificationSound {
         switch self {
-        case .newMessage where usesWireOldForNewMessages:
-            UNNotificationSound(named: .init("new_message_legacy.caf"))
+        case .newMessage:
+            UNNotificationSound(named: .init(MessageNotificationSound.selected(in: Self.storage).fileName))
         default:
             UNNotificationSound(named: .init(defaultFileName))
         }
@@ -56,11 +52,7 @@ public enum NotificationSound {
         switch self {
         case .call: "ringing_from_them_long.caf"
         case .ping: "ping_from_them.caf"
-        case .newMessage: "new_message.caf"
+        case .newMessage: MessageNotificationSound.wire.fileName
         }
-    }
-
-    private var usesWireOldForNewMessages: Bool {
-        Self.storage.string(forKey: Self.messageNotificationSoundPreferenceKey) == Self.wireOldPreferenceValue
     }
 }
