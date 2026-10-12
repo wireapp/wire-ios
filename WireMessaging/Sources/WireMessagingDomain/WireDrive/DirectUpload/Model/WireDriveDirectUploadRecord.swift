@@ -47,7 +47,6 @@ package struct WireDriveDirectUploadRecord: Identifiable, Equatable, Hashable, S
 
         case failed = 6
 
-
         /// Whether no further work will happen unless the user asks for it.
 
         package var isTerminal: Bool {
@@ -181,7 +180,6 @@ package extension WireDriveDirectUploadRecord {
 
         case .failed:
             .failed(error: failure ?? .other(message: "unknown"))
-
         }
     }
 
