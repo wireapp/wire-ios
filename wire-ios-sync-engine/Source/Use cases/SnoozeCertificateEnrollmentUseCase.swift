@@ -59,7 +59,11 @@ final class SnoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCa
     func invoke(endOfPeriod: Date, isUpdateMode: Bool = false, onReminderDue: @escaping () async -> Void) async {
         let timeProvider = SnoozeTimeProvider()
         let interval = timeProvider.getSnoozeTime(endOfPeriod: endOfPeriod)
-        await registerRecurringActionIfNeeded(isUpdateMode: isUpdateMode, interval: interval, onReminderDue: onReminderDue)
+        await registerRecurringActionIfNeeded(
+            isUpdateMode: isUpdateMode,
+            interval: interval,
+            onReminderDue: onReminderDue
+        )
     }
 
     // MARK: - Helpers

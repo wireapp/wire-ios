@@ -23,7 +23,6 @@ import WireDomain
 /// Decides how to react to a given feature's state, e.g. whether to present
 /// an alert (and which one) or silently acknowledge it. Features with no
 /// custom handling fall back to `DefaultFeatureChangeHandler`.
-
 // sourcery: AutoMockable
 protocol FeatureChangeHandler {
     @MainActor
@@ -51,17 +50,17 @@ struct DefaultFeatureChangeHandler: FeatureChangeHandler {
     private func message(for featureState: FeatureState) -> String? {
         switch featureState.name {
         case .fileSharing:
-            return featureState.isEnabled
+            featureState.isEnabled
                 ? Strings.Update.FileSharing.Alert.Message.enabled
                 : Strings.Update.FileSharing.Alert.Message.disabled
 
         case .conversationGuestLinks:
-            return featureState.isEnabled
+            featureState.isEnabled
                 ? Strings.Alert.ConversationGuestLinks.Message.enabled
                 : Strings.Alert.ConversationGuestLinks.Message.disabled
 
         default:
-            return nil
+            nil
         }
     }
 }
