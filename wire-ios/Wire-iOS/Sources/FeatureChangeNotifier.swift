@@ -39,7 +39,6 @@ final class FeatureChangeNotifier {
     private let userSession: UserSession
     private let featureRepositoryProvider: any LegacyFeatureRepositoryProvider
     private let featureChangeActionsHandler: E2EINotificationActions
-    private let e2eiActivationDateRepository: any E2EIActivationDateRepositoryProtocol
 
     private var featureChangeObserverToken: Any?
     private var featureStateCancellable: AnyCancellable?
@@ -52,14 +51,12 @@ final class FeatureChangeNotifier {
         notificationCenter: NotificationCenter,
         userSession: UserSession,
         featureRepositoryProvider: any LegacyFeatureRepositoryProvider,
-        featureChangeActionsHandler: E2EINotificationActions,
-        e2eiActivationDateRepository: any E2EIActivationDateRepositoryProtocol
+        featureChangeActionsHandler: E2EINotificationActions
     ) {
         self.notificationCenter = notificationCenter
         self.userSession = userSession
         self.featureRepositoryProvider = featureRepositoryProvider
         self.featureChangeActionsHandler = featureChangeActionsHandler
-        self.e2eiActivationDateRepository = e2eiActivationDateRepository
 
         self.featureChangeObserverToken = notificationCenter.addObserver(
             forName: .featureDidChangeNotification,
@@ -129,10 +126,6 @@ final class FeatureChangeNotifier {
             )
             : UIAlertController.fromFeatureChange(change, acknowledger: acknowledger)
         else { return }
-
-        if change == .e2eIEnabled, e2eiActivationDateRepository.e2eiActivatedAt == nil {
-            e2eiActivationDateRepository.storeE2EIActivationDate(Date.now)
-        }
 
         presenter?.present(alert)
     }
