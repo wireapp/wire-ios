@@ -21,6 +21,7 @@ import UIKit
 import WireDataModel
 import WireDomain
 
+// sourcery: AutoMockable
 protocol FeatureChangeAlertPresenting: AnyObject {
     func present(_ alert: UIAlertController)
 }
