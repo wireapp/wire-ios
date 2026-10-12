@@ -44,7 +44,7 @@ public struct WireMeetingsFactory {
     ) -> UIViewController {
         let currentDateProvider = makeCurrentDateProvider()
 
-        let createMeetingUseCase = CreateMeetingUseCase(
+        let createMeetingUseCase = makeCreateMeetingUseCase(
             meetingRepository: meetingRepository,
             conversationRepository: conversationRepository
         )
@@ -104,6 +104,22 @@ public struct WireMeetingsFactory {
             }
         #endif
         return .system
+    }
+
+    private func makeCreateMeetingUseCase(
+        meetingRepository: any MeetingRepositoryProtocol,
+        conversationRepository: any MeetingConversationRepositoryProtocol
+    ) -> any CreateMeetingUseCaseProtocol {
+        let createUseCase = CreateMeetingUseCase(
+            meetingRepository: meetingRepository,
+            conversationRepository: conversationRepository
+        )
+        #if DEBUG
+            if let failureID = UITestConfig.environment?.meetingsCreateFailureID {
+                return MeetingsUITestCreateUseCase(wrapping: createUseCase, failureID: failureID)
+            }
+        #endif
+        return createUseCase
     }
 
     private func makeFetchUpcomingMeetingsUseCase(

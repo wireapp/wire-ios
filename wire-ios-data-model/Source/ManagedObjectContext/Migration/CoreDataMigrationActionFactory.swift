@@ -69,6 +69,9 @@ enum CoreDataMigrationActionFactory {
         -> CoreDataMigrationAction? {
         switch destinationVersion {
 
+        case .v143:
+            PendingProposalTimerMigrationAction()
+
         case .v136:
             EffectiveConversationTypeMigrationAction()
 

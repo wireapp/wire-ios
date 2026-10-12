@@ -104,7 +104,8 @@ final class AudioMessageViewTests: XCTestCase {
             conversation: ZMConversation(context: coreDataStack.viewContext),
             caller: ZMUser(context: coreDataStack.viewContext),
             timestamp: nil,
-            previousCallState: nil
+            previousCallState: nil,
+            callEndReason: nil
         )
 
         XCTAssertFalse((sut.audioTrackPlayer?.isPlaying)!)
@@ -114,7 +115,8 @@ final class AudioMessageViewTests: XCTestCase {
             conversation: ZMConversation(context: coreDataStack.viewContext),
             caller: ZMUser(context: coreDataStack.viewContext),
             timestamp: nil,
-            previousCallState: incomingState
+            previousCallState: incomingState,
+            callEndReason: nil
         )
 
         XCTAssert((sut.audioTrackPlayer?.isPlaying)!)
@@ -138,7 +140,8 @@ final class AudioMessageViewTests: XCTestCase {
             conversation: ZMConversation(context: coreDataStack.viewContext),
             caller: ZMUser(context: coreDataStack.viewContext),
             timestamp: nil,
-            previousCallState: nil
+            previousCallState: nil,
+            callEndReason: nil
         )
 
         XCTAssertFalse((sut.audioTrackPlayer?.isPlaying)!)
@@ -148,7 +151,8 @@ final class AudioMessageViewTests: XCTestCase {
             conversation: ZMConversation(context: coreDataStack.viewContext),
             caller: ZMUser(context: coreDataStack.viewContext),
             timestamp: nil,
-            previousCallState: incomingState
+            previousCallState: incomingState,
+            callEndReason: nil
         )
 
         XCTAssertFalse((sut.audioTrackPlayer?.isPlaying)!)

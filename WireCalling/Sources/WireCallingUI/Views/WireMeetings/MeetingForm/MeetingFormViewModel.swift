@@ -398,7 +398,12 @@ package final class MeetingFormViewModel {
 
     private static func nextSelectableStartDate(after date: Date) -> Date {
         let rounded = date.roundedUpToNextMinuteInterval(timePickerMinuteInterval)
-        return rounded > date ? rounded : rounded.addingTimeInterval(minimumDuration)
+        let start = rounded > date ? rounded : rounded.addingTimeInterval(minimumDuration)
+        // A 23:45 start has no later end on the same day. Use the next midnight instead.
+        if start.addingTimeInterval(minimumDuration) > latestEndDate(for: start) {
+            return Calendar.current.startOfDay(for: start.addingTimeInterval(minimumDuration))
+        }
+        return start
     }
 
     private static func adjustedEndDate(
