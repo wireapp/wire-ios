@@ -381,6 +381,34 @@ final class MarkdownTextViewTests: XCTestCase {
         checkAttributes(for: [.h3, .italic], inRange: NSRange(location: 0, length: text.length))
     }
 
+    func testThatSelectingListClearsHeader() {
+        // GIVEN
+        let text = "Oh Hai!"
+        select(.h1)
+        insertText(text)
+        checkAttributes(for: .h1, inRange: NSRange(location: 0, length: text.length))
+        // WHEN
+        select(.uList)
+        // THEN
+        XCTAssertEqual(sut.text, "- \(text)")
+        checkAttributes(for: .uList, inRange: NSRange(location: 0, length: text.length + 2))
+        XCTAssertEqual(sut.activeMarkdown, .uList)
+    }
+
+    func testThatSelectingHeaderClearsList() {
+        // GIVEN
+        let text = "Oh Hai!"
+        insertText(text)
+        select(.oList)
+        XCTAssertEqual(sut.text, "1. \(text)")
+        // WHEN
+        select(.h1)
+        // THEN
+        XCTAssertEqual(sut.text, text)
+        checkAttributes(for: .h1, inRange: NSRange(location: 0, length: text.length))
+        XCTAssertEqual(sut.activeMarkdown, .h1)
+    }
+
     func testThatInsertingNewLineAfterHeaderResetsActiveMarkdown() {
         // GIVEN
         let line1 = "Oh Hai!"
@@ -582,6 +610,29 @@ final class MarkdownTextViewTests: XCTestCase {
         deselect(.italic)
         // THEN
         checkAttributes(for: .none, inRange: wholeRange)
+    }
+
+    // MARK: - Bar Button Taps
+
+    func testThatButtonTapDeselectsBasedOnActiveMarkdownRatherThanIconColor() {
+        // GIVEN: bold is the active markdown and the bar icons reflect it
+        bar.delegate = sut
+        let text = "Oh Hai!"
+        select(.bold)
+        insertText(text)
+        checkAttributes(for: .bold, inRange: NSRange(location: 0, length: text.length))
+        bar.updateIcons(for: sut.activeMarkdown)
+
+        // Simulate the icon coloring falling out of sync with the real
+        // active markdown state.
+        bar.resetIcons()
+
+        // WHEN: tapping bold, as a user attempting to turn it off
+        bar.boldButton.sendActions(for: .touchUpInside)
+        insertText(text)
+
+        // THEN: bold is deselected, not re-applied
+        checkAttributes(for: .none, inRange: NSRange(location: text.length, length: text.length))
     }
 
     // MARK: - Lists

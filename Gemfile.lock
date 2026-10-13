@@ -187,7 +187,7 @@ GEM
     highline (2.0.3)
     http-cookie (1.1.6)
       domain_name (~> 0.5)
-    httparty (0.24.2)
+    httparty (0.24.3)
       csv
       mini_mime (>= 1.0.0)
       multi_xml (>= 0.5.2)

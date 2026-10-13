@@ -20,6 +20,7 @@ import SwiftUI
 import WireCallingDomain
 import WireDesign
 import WireFoundation
+import WireLocators
 
 struct MemberSelectionView: View {
     private typealias Strings = L10n.Localizable.WireMeetings.Schedule.Members
@@ -50,6 +51,12 @@ struct MemberSelectionView: View {
                         title: "\(Strings.Selected.title) (\(viewModel.selectedMembers.count))",
                         isExpanded: $viewModel.isSelectedExpanded
                     )
+                    .accessibilityIdentifier(
+                        Locators.WireMeetings.MeetingForm.selectedMembersIdentifier(
+                            isExpanded: viewModel.isSelectedExpanded
+                        )
+                    )
+                    .accessibilityValue(String(viewModel.selectedMembers.count))
                 }
 
                 Section {
@@ -84,6 +91,7 @@ struct MemberSelectionView: View {
                         viewModel.confirmSelection()
                         dismiss()
                     }
+                    .accessibilityIdentifier(Locators.WireMeetings.MeetingForm.membersSelect)
                 }
             }
         }
@@ -127,6 +135,7 @@ struct MemberSelectionView: View {
             ContentUnavailableView {
                 Label {
                     Text(Strings.Empty.title)
+                        .accessibilityIdentifier(Locators.WireMeetings.MeetingForm.membersEmptySearch.rawValue)
                 } icon: {
                     Image(systemName: "magnifyingglass")
                         .foregroundStyle(.primary)
@@ -154,6 +163,7 @@ struct MemberSelectionView: View {
                     .rotationEffect(.degrees(isExpanded.wrappedValue ? 0 : -90))
                     .foregroundStyle(accentColor)
             }
+            .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
         .textCase(nil)
@@ -196,6 +206,7 @@ struct MemberSelectionView: View {
             }
         }
         .buttonStyle(.plain)
+        .accessibilityIdentifier(Locators.WireMeetings.MeetingForm.memberIdentifier(member.qualifiedID.id.uuidString))
     }
 }
 

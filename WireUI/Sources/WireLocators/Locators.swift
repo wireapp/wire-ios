@@ -61,6 +61,7 @@ public enum Locators {
         case bottomBarRecentListButton
         case bottomBarSettingsButton
         case bottomBarDriveButton
+        case bottomBarMeetingsButton
         case createGroupOrSearchButton
         case conversationSearchBar
         case conversationSearchClearButton = "Clear text"
@@ -570,6 +571,10 @@ public enum Locators {
             case saveButton
             case cancelButton
             case removeFilterButton
+
+            public static func typeItem(_ type: String) -> String {
+                "typeItem.\(type)"
+            }
         }
 
         public enum FilesFilteringPage: String {
@@ -605,6 +610,7 @@ public enum Locators {
             case deleteToRecycleBin
             case deletePermanently
             case restore
+            case makeAvailableOffline
 
             public var identifier: String {
                 "fileMenu.\(rawValue)"
@@ -620,6 +626,10 @@ public enum Locators {
             case deleteOnBottomSheet = "Delete"
             case moreOptions = "More"
             case recycleBinPageheader = "Recycle Bin"
+
+            public static func createFileTemplate(_ kind: String) -> String {
+                "createFileTemplate.\(kind)"
+            }
         }
 
         public enum FilesInfoPage: String {
@@ -637,7 +647,7 @@ public enum Locators {
         }
 
         public enum EditFilePage: String {
-            case close
+            case closeEditFilePage
         }
 
         /// UI elements for both file or folder creation.
@@ -726,13 +736,79 @@ public enum Locators {
 
     public enum WireMeetings {
 
+        public enum MeetingForm: String {
+            case save = "meetingFormSave"
+            case title = "meetingFormTitle"
+            case clearTitle = "meetingFormClearTitle"
+            case participants = "meetingFormParticipants"
+            case membersSelect = "meetingMembersSelect"
+            case membersSelected = "meetingMembersSelected"
+            case membersEmptySearch = "meetingMembersEmptySearch"
+            case errorDismiss = "meetingFormErrorDismiss"
+            case cancel = "meetingFormCancel"
+            case startDate = "meetingFormStartDate"
+            case startTime = "meetingFormStartTime"
+            case endDate = "meetingFormEndDate"
+            case endTime = "meetingFormEndTime"
+            case repeatOption = "meetingFormRepeat"
+            case titleError = "meetingFormTitleError"
+            case loading = "meetingFormLoading"
+            case datePicker = "meetingFormDatePicker"
+            case timePicker = "meetingFormTimePicker"
+            case selectedMembersSection = "Selected ("
+
+            public enum RepeatOption: String {
+                case never = "meetingFormRepeat.never"
+                case daily = "meetingFormRepeat.daily"
+                case weekly = "meetingFormRepeat.weekly"
+                case everyTwoWeeks = "meetingFormRepeat.everyTwoWeeks"
+                case everyFourWeeks = "meetingFormRepeat.everyFourWeeks"
+                case monthly = "meetingFormRepeat.monthly"
+                case yearly = "meetingFormRepeat.yearly"
+            }
+
+            public static func selectedMembersIdentifier(isExpanded: Bool) -> String {
+                "\(membersSelected.rawValue).\(isExpanded ? "expanded" : "collapsed")"
+            }
+
+            public static func memberIdentifier(_ id: String) -> String {
+                "meetingMember.\(id.uppercased())"
+            }
+        }
+
+        public enum MeetingsPage: String {
+            case loadProgress = "meetingsLoadProgress"
+            case loadRetryButton = "meetingsLoadRetryButton"
+            case paginationProgress = "meetingsPaginationProgress"
+            case list = "meetingsList"
+            case dayHeader = "meetingsDayHeader"
+            case scheduleButton = "scheduleMeetingBarButton"
+            case meetNow = "Meet Now"
+            case scheduleMeeting = "Schedule a Meeting"
+            case noUpcomingMeetings = "No upcoming meetings yet"
+        }
+
         public enum MeetingDetails: String {
             case attendingLabel = "Attending Label"
         }
 
         public enum MeetingRow: String {
+            case title = "meetingTitle"
+            case menu = "meetingMenu"
+            case time = "meetingTime"
+            case recurrence = "meetingRecurrence"
+            case participantOverflow = "meetingParticipantOverflow"
+            case rowPrefix = "meetingRow."
             case deleteForMeButton = "Delete Meeting for Me Button"
             case joinButton = "Join Button"
+
+            public static func rowIdentifier(domain: String, id: UUID, start: Date) -> String {
+                "meetingRow.\(domain).\(id.uuidString).\(Int(start.timeIntervalSince1970))"
+            }
+
+            public static func avatarIdentifier(_ id: String) -> String {
+                "meetingAvatar.\(id.uppercased())"
+            }
         }
     }
 

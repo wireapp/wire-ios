@@ -19,6 +19,7 @@
 package import SwiftUI
 
 import WireDesign
+import WireLocators
 
 package struct AllMeetingsView: View {
     private typealias Strings = L10n.Localizable.WireMeetings.List.Actions
@@ -57,7 +58,7 @@ package struct AllMeetingsView: View {
                     Image(.videoCall)
                         .renderingMode(.template)
                 }
-                .accessibilityIdentifier("scheduleMeetingBarButton")
+                .accessibilityIdentifier(Locators.WireMeetings.MeetingsPage.scheduleButton)
                 .accessibilityLabel(Text(L10n.Accessibility.WireMeetings.VideoButton.description))
             }
         }
