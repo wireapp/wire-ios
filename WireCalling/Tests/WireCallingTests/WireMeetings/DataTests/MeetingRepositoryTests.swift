@@ -332,7 +332,9 @@ struct MeetingRepositoryTests {
             title: Scaffolding.meetingResponse.title,
             startTime: Scaffolding.meetingResponse.startTime,
             endTime: Scaffolding.meetingResponse.endTime,
-            recurrence: nil
+            recurrence: nil,
+            type: .scheduled,
+            password: nil
         )
 
         // Then
@@ -495,11 +497,13 @@ struct MeetingRepositoryTests {
 
         // When
 
-        let meeting = try await sut.createMeeting(
+        let result = try await sut.createMeeting(
             title: Scaffolding.meetingResponse.title,
             startTime: Scaffolding.meetingResponse.startTime,
             endTime: Scaffolding.meetingResponse.endTime,
-            recurrence: nil
+            recurrence: nil,
+            type: .immediate,
+            password: " exact password "
         )
 
         // Then
@@ -508,7 +512,10 @@ struct MeetingRepositoryTests {
         #expect(
             meetingsAPI.createMeetingParameters_Invocations.first?.timeZoneIdentifier == TimeZone.current.identifier
         )
-        #expect(meeting.id == Scaffolding.meetingID)
+        #expect(meetingsAPI.createMeetingParameters_Invocations.first?.type == .immediate)
+        #expect(meetingsAPI.createMeetingParameters_Invocations.first?.password == " exact password ")
+        #expect(result.link == Scaffolding.meetingResponse.link)
+        #expect(result.meeting.id == Scaffolding.meetingID)
         #expect(localStore.storeMeetingMeetingMeetingVoidReceivedInvocations.count == 1)
         #expect(localStore.storeMeetingMeetingMeetingVoidReceivedInvocations.first?.id == Scaffolding.meetingID)
     }
@@ -522,18 +529,21 @@ struct MeetingRepositoryTests {
 
         // When
 
-        let meeting = try await sut.createMeeting(
+        let result = try await sut.createMeeting(
             title: Scaffolding.meetingResponse.title,
             startTime: Scaffolding.meetingResponse.startTime,
             endTime: Scaffolding.meetingResponse.endTime,
-            recurrence: nil
+            recurrence: nil,
+            type: .scheduled,
+            password: nil
         )
 
         // Then
 
         #expect(localStore.storedMeetingIdQualifiedIDMeetingReceivedId == Scaffolding.meetingID)
-        #expect(meeting == Scaffolding.storedMeeting)
-        #expect(meeting.conversation?.participants == [Scaffolding.member])
+        #expect(result.meeting == Scaffolding.storedMeeting)
+        #expect(result.link == Scaffolding.meetingResponse.link)
+        #expect(result.meeting.conversation?.participants == [Scaffolding.member])
     }
 
     @Test("createMeeting falls back to the mapped meeting when the store can't provide it")
@@ -545,17 +555,19 @@ struct MeetingRepositoryTests {
 
         // When
 
-        let meeting = try await sut.createMeeting(
+        let result = try await sut.createMeeting(
             title: Scaffolding.meetingResponse.title,
             startTime: Scaffolding.meetingResponse.startTime,
             endTime: Scaffolding.meetingResponse.endTime,
-            recurrence: nil
+            recurrence: nil,
+            type: .scheduled,
+            password: nil
         )
 
         // Then
 
-        #expect(meeting.id == Scaffolding.meetingID)
-        #expect(meeting.conversation == nil)
+        #expect(result.meeting.id == Scaffolding.meetingID)
+        #expect(result.meeting.conversation == nil)
     }
 
     @Test("createMeeting reconciles reminders after storing the meeting", arguments: [false, true])
@@ -587,7 +599,9 @@ struct MeetingRepositoryTests {
             title: Scaffolding.meetingResponse.title,
             startTime: Scaffolding.meetingResponse.startTime,
             endTime: Scaffolding.meetingResponse.endTime,
-            recurrence: recurring ? WireCallingDomain.MeetingRecurrence(frequency: .daily, interval: 1) : nil
+            recurrence: recurring ? WireCallingDomain.MeetingRecurrence(frequency: .daily, interval: 1) : nil,
+            type: .scheduled,
+            password: nil
         )
 
         let recordedIDs = await createdMeetings.ids
@@ -604,14 +618,16 @@ struct MeetingRepositoryTests {
             onMeetingCreated: { _ in throw ReminderError.schedulingFailed }
         )
 
-        let meeting = try await sut.createMeeting(
+        let result = try await sut.createMeeting(
             title: Scaffolding.meetingResponse.title,
             startTime: Scaffolding.meetingResponse.startTime,
             endTime: Scaffolding.meetingResponse.endTime,
-            recurrence: nil
+            recurrence: nil,
+            type: .scheduled,
+            password: nil
         )
 
-        #expect(meeting.id == Scaffolding.meetingID)
+        #expect(result.meeting.id == Scaffolding.meetingID)
     }
 
     // MARK: - updateMeeting
@@ -753,7 +769,8 @@ struct MeetingRepositoryTests {
             isTrial: false,
             createdAt: Date(timeIntervalSince1970: 900_000),
             updatedAt: Date(timeIntervalSince1970: 900_000),
-            timeZoneIdentifier: "Asia/Tokyo"
+            timeZoneIdentifier: "Asia/Tokyo",
+            link: URL(string: "https://wire.example/meeting-join/?key=server&code=link")
         )
 
         static let member = MeetingMember(
