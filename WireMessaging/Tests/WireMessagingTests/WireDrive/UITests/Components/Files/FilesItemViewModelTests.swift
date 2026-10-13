@@ -89,8 +89,8 @@ final class FilesItemViewModelTests {
         (age: 10.0, expected: 50.0), // "Just now" turns into a relative text after a minute
         (age: 60.0, expected: 60.0),
         (age: 90.0, expected: 30.0), // relative text changes on each full minute
-        (age: 3_590.0, expected: 10.0), // switches to a clock time after an hour
-        (age: 7_200.0, expected: 43_200.0) // changes when the day ends (12:00 → 00:00)
+        (age: 3590.0, expected: 10.0), // switches to a clock time after an hour
+        (age: 7200.0, expected: 43_200.0) // changes when the day ends (12:00 → 00:00)
     ])
     func delayUntilFormattedDateChanges(age: TimeInterval, expected: TimeInterval) {
         let delay = FilesItemViewModel.delayUntilFormattedDateChanges(
