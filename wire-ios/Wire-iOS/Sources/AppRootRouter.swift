@@ -40,6 +40,8 @@ final class AppRootRouter {
     private let sessionManagerLifeCycleObserver: SessionManagerLifeCycleObserver
     private let foregroundNotificationFilter: ForegroundNotificationFilter
     private var authenticatedRouter: AuthenticatedRouter?
+    private var hasCheckedAccountLimit = false
+    private let logOutHelper = LogOutHelper(showLoading: {}, hideLoading: {})
 
     private var observerTokens: [NSObjectProtocol] = []
     private var authenticatedBlocks: [() -> Void] = []
@@ -448,7 +450,47 @@ extension AppRootRouter: AppStateCalculatorDelegate {
 
         self.authenticatedRouter = authenticatedRouter
 
-        replaceRootViewController(by: authenticatedRouter.zClientViewController, completion: completion)
+        replaceRootViewController(by: authenticatedRouter.zClientViewController) { [weak self] in
+            completion()
+            self?.presentAccountLimitAlertIfNeeded()
+        }
+    }
+
+    /// Shown once per cold start, when more accounts are logged in than the device allows.
+    @MainActor
+    private func presentAccountLimitAlertIfNeeded() {
+        guard !hasCheckedAccountLimit else { return }
+        hasCheckedAccountLimit = true
+
+        let maxAccounts = sessionManager.maxNumberAccounts
+        let excessAccounts = sessionManager.accountManager.numberOfAccounts - maxAccounts
+        guard excessAccounts > 0 else { return }
+
+        let removesTwo = excessAccounts >= 2
+        let title = removesTwo
+            ? L10n.Localizable.AccountLimitAlert.Title.removeTwo
+            : L10n.Localizable.AccountLimitAlert.Title.removeOne
+        let message = switch (maxAccounts, removesTwo) {
+        case (1, true): L10n.Localizable.AccountLimitAlert.Message.MaxOne.removeTwo
+        case (1, false): L10n.Localizable.AccountLimitAlert.Message.MaxOne.removeOne
+        default: L10n.Localizable.AccountLimitAlert.Message.MaxTwo.removeOne
+        }
+
+        let alert = UIAlertController(
+            title: title,
+            message: message,
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(title: L10n.Localizable.AccountLimitAlert.later, style: .cancel))
+        alert
+            .addAction(UIAlertAction(
+                title: L10n.Localizable.AccountLimitAlert.logout,
+                style: .destructive
+            ) { [weak self] _ in
+                guard let logOutViewController = self?.logOutHelper.makeLogOutViewControllerToPresent() else { return }
+                self?.rootViewController.present(logOutViewController, animated: true)
+            })
+        rootViewController.present(alert, animated: true)
     }
 
     private func showAppLock(userSession: UserSession, completion: @escaping () -> Void) {
