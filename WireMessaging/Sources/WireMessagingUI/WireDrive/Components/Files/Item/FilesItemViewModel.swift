@@ -67,11 +67,10 @@ final class FilesItemViewModel: ObservableObject {
     @Published var isPresentingRestoreFileConfirmation = false
     @Published var isPresentingRestoreFolderConfirmation = false
     @Published var isPresentingRestoreParentConfirmation = false
-
+    @Published private(set) var subtitle: String?
     @Published private var networkMonitor = NetworkMonitor.shared
 
     let fileName: String
-    let subtitle: String?
     let icon: WireDriveFileType
     let isBrowsing: Bool
     let isInRecycleBin: Bool
@@ -84,6 +83,10 @@ final class FilesItemViewModel: ObservableObject {
         let firstTag: String?
         let additionalTagsIndicator: String?
     }
+
+    private let selectedSortingKey: FilesSortingViewModel.SortingKey?
+    private let conversationName: String?
+    private let currentDateProvider: any CurrentDateProviding
 
     private let additionalTagNumberFormatter = {
         let formatter = NumberFormatter()
@@ -98,7 +101,7 @@ final class FilesItemViewModel: ObservableObject {
         observeAssetUseCase: WireDriveObserveAssetUseCase,
         getAssetUseCase: WireDriveGetAssetUseCase,
         onItemAction: @escaping (ItemAction, FilesViewItem) async -> Void,
-        now: Date = Date(),
+        currentDateProvider: any CurrentDateProviding = .system,
         isBrowsing: Bool,
         isInRecycleBin: Bool
     ) {
@@ -106,6 +109,9 @@ final class FilesItemViewModel: ObservableObject {
         self.item = item
         self.onItemAction = onItemAction
         self.fileName = item.name
+        self.selectedSortingKey = selectedSortingKey
+        self.conversationName = conversationName
+        self.currentDateProvider = currentDateProvider
         self.subtitle = Self.subtitle(
             selectedSortingKey: selectedSortingKey,
             isBrowsing: isBrowsing,
@@ -113,7 +119,7 @@ final class FilesItemViewModel: ObservableObject {
             modifiedAt: item.modifiedAt,
             size: item.size,
             ownedBy: item.ownedBy,
-            now: now
+            now: currentDateProvider.now
         )
         self.icon = item.icon
         self.observeAssetUseCase = observeAssetUseCase
@@ -379,6 +385,70 @@ final class FilesItemViewModel: ObservableObject {
         let isFolder = item.kind == .folder
 
         return isAvailableOffline && isDownloaded && !isFolder
+    }
+}
+
+// MARK: - Subtitle refresh
+
+extension FilesItemViewModel {
+
+    /// Suspends until the next moment the formatted date can change and then recomputes the subtitle. Returns when
+    /// the calling task is cancelled, or immediately if the item has no modification date
+    func keepSubtitleUpToDate() async {
+        while !Task.isCancelled {
+            updateSubtitle()
+
+            guard let delay = Self.delayUntilFormattedDateChanges(
+                modifiedAt: item.modifiedAt,
+                now: currentDateProvider.now,
+                calendar: WRDateFormatter.calendar
+            ) else { return }
+
+            do {
+                try await Task.sleep(for: .seconds(delay))
+            } catch {
+                return
+            }
+        }
+    }
+
+    private func updateSubtitle() {
+        subtitle = Self.subtitle(
+            selectedSortingKey: selectedSortingKey,
+            isBrowsing: isBrowsing,
+            conversationName: conversationName,
+            modifiedAt: item.modifiedAt,
+            size: item.size,
+            ownedBy: item.ownedBy,
+            now: currentDateProvider.now
+        )
+    }
+
+    /// The time left until `Date.formattedDate` produces a different string for `modifiedAt`.
+    static func delayUntilFormattedDateChanges(
+        modifiedAt: Date?,
+        now: Date,
+        calendar: Calendar
+    ) -> TimeInterval? {
+        guard let modifiedAt else { return nil }
+
+        let minimumDelay: TimeInterval = 1
+        let age = now.timeIntervalSince(modifiedAt)
+
+        let delay: TimeInterval
+        if age < WRDateFormatter.NSTimeIntervalOneMinute {
+            delay = WRDateFormatter.NSTimeIntervalOneMinute - age
+        } else if age < WRDateFormatter.NSTimeIntervalOneHour {
+            let untilNextMinute = WRDateFormatter.NSTimeIntervalOneMinute
+                - age.truncatingRemainder(dividingBy: WRDateFormatter.NSTimeIntervalOneMinute)
+            delay = min(untilNextMinute, WRDateFormatter.NSTimeIntervalOneHour - age)
+        } else {
+            let startOfToday = calendar.startOfDay(for: now)
+            guard let startOfTomorrow = calendar.date(byAdding: .day, value: 1, to: startOfToday) else { return nil }
+            delay = startOfTomorrow.timeIntervalSince(now)
+        }
+
+        return max(delay, minimumDelay)
     }
 }
 

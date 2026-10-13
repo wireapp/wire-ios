@@ -268,7 +268,7 @@ final class FilesViewTests: XCTestCase {
                 FilesItemView(
                     viewModel: .make(
                         item: self.filesViewItem(name: entry.name, modifiedAt: entry.date),
-                        now: now
+                        currentDateProvider: FixedDateProvider(now: now)
                     )
                 )
             }
@@ -531,7 +531,7 @@ private extension FilesItemViewModel {
     static func make(
         item: FilesViewItem,
         asset: WireDriveLocalAsset? = nil,
-        now: Date = Date(),
+        currentDateProvider: any CurrentDateProviding = .system,
         isBrowsing: Bool = false
     ) -> FilesItemViewModel {
         let localAssetRepository = MockWireDriveLocalAssetRepositoryProtocol()
@@ -549,7 +549,7 @@ private extension FilesItemViewModel {
                 fileCache: MockFileCache()
             ),
             onItemAction: { _, _ in },
-            now: now,
+            currentDateProvider: currentDateProvider,
             isBrowsing: isBrowsing,
             isInRecycleBin: false
         )
@@ -561,4 +561,8 @@ private final class MockNWPathMonitoring: NWPathMonitoring {
     var pathUpdateHandler: (@Sendable (NWPath) -> Void)?
 
     func start(queue: DispatchQueue) {}
+}
+
+private struct FixedDateProvider: CurrentDateProviding {
+    let now: Date
 }
