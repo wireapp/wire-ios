@@ -59,7 +59,11 @@ jobs:
     uses: ./.github/workflows/_reusable_run_tests.yml
     with:
       all: false
+<<<<<<< HEAD
       mac_runner: ${{ vars.DEFAULT_MAC_RUNNER }}
+=======
+      notify_secret: WIRE_IOS_CRITICAL_FLOWS
+>>>>>>> f5fd2f6ae9 (fix: backport 4.16.4 fixes to 4.16.5 - WPB-29180 (#5378))
       test_dependencies: false
       run_critical_flows: true
       ui_test_tags: critical

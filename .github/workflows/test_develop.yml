@@ -24,9 +24,16 @@ jobs:
     if: ${{ github.ref == 'refs/heads/develop' }}
     uses: ./.github/workflows/_reusable_run_tests.yml
     with:
+<<<<<<< HEAD
       all: false
       branch: develop
       mac_runner: ${{ github.event_name == 'workflow_dispatch' && inputs.mac_runner || vars.DEFAULT_MAC_RUNNER }}
+=======
+      mac_runner: ${{ inputs.mac_runner || vars.DEFAULT_MAC_RUNNER || 'in-house' }}
+      all: true
+      branch: ${{ github.ref_name }}
+      notify_secret: WIRE_IOS_NIGHTLY
+>>>>>>> f5fd2f6ae9 (fix: backport 4.16.4 fixes to 4.16.5 - WPB-29180 (#5378))
       run_critical_flows: true
       ui_test_tags: "!critical"
       notify: always

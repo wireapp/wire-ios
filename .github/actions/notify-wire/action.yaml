@@ -54,7 +54,11 @@ runs:
           **${{ inputs.label }} for ${{ inputs.branch }}**
 
           **Title:** ${{ env.WIRE_NOTIFY_MSG }}
+<<<<<<< HEAD
           **Commit:** [${{ env.WIRE_NOTIFY_SHA }}](https://github.com/wireapp/wire-ios-mono/commit/${{ env.WIRE_NOTIFY_SHA }})
+=======
+          **Commit:** [${{ env.WIRE_NOTIFY_SHA }}](https://github.com/wireapp/wire-ios/commit/${{ env.WIRE_NOTIFY_SHA }})
+>>>>>>> f5fd2f6ae9 (fix: backport 4.16.4 fixes to 4.16.5 - WPB-29180 (#5378))
           **Triggered by:** ${{ github.triggering_actor }}
           **Build log:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
 

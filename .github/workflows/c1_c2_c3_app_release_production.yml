@@ -44,6 +44,7 @@ jobs:
       mac_runner: ${{ inputs.mac_runner || vars.DEFAULT_MAC_RUNNER }}
       countly_enabled: false
       skip_security_tests: false
+<<<<<<< HEAD
       produce_debug_builds: ${{ inputs.produce_debug_builds }}
     secrets:
       KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
@@ -74,6 +75,10 @@ jobs:
       JIRA_TOKEN: ${{ secrets.JIRA_TOKEN }}
       WIRE_WEBHOOK_URL: ${{ secrets.WIRE_IOS_DELIVERY_URL }}
       WIRE_WEBHOOK_TOKEN: ${{ secrets.WIRE_IOS_DELIVERY_TOKEN }}
+=======
+      notify_secret: WIRE_IOS_DELIVERY
+    secrets: inherit
+>>>>>>> f5fd2f6ae9 (fix: backport 4.16.4 fixes to 4.16.5 - WPB-29180 (#5378))
 
 
   column_2_production:
@@ -85,6 +90,7 @@ jobs:
       mac_runner: ${{ inputs.mac_runner || vars.DEFAULT_MAC_RUNNER }}
       countly_enabled: false
       skip_security_tests: false
+<<<<<<< HEAD
       produce_debug_builds: ${{ inputs.produce_debug_builds }}
     secrets:
       KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
@@ -115,6 +121,10 @@ jobs:
       JIRA_TOKEN: ${{ secrets.JIRA_TOKEN }}
       WIRE_WEBHOOK_URL: ${{ secrets.WIRE_IOS_DELIVERY_URL }}
       WIRE_WEBHOOK_TOKEN: ${{ secrets.WIRE_IOS_DELIVERY_TOKEN }}
+=======
+      notify_secret: WIRE_IOS_DELIVERY
+    secrets: inherit
+>>>>>>> f5fd2f6ae9 (fix: backport 4.16.4 fixes to 4.16.5 - WPB-29180 (#5378))
   
   column_3_production:
     if: ${{ inputs.column == 'C3' || inputs.column == 'all' }}
@@ -125,6 +135,7 @@ jobs:
       mac_runner: ${{ inputs.mac_runner || vars.DEFAULT_MAC_RUNNER }}
       countly_enabled: false
       skip_security_tests: false
+<<<<<<< HEAD
       produce_debug_builds: ${{ inputs.produce_debug_builds }}
     secrets:
       KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
@@ -155,3 +166,7 @@ jobs:
       JIRA_TOKEN: ${{ secrets.JIRA_TOKEN }}
       WIRE_WEBHOOK_URL: ${{ secrets.WIRE_IOS_DELIVERY_URL }}
       WIRE_WEBHOOK_TOKEN: ${{ secrets.WIRE_IOS_DELIVERY_TOKEN }}
+=======
+      notify_secret: WIRE_IOS_DELIVERY
+    secrets: inherit
+>>>>>>> f5fd2f6ae9 (fix: backport 4.16.4 fixes to 4.16.5 - WPB-29180 (#5378))

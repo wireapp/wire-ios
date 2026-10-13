@@ -35,6 +35,7 @@ jobs:
       fastlane_action: testflight_beta
       mac_runner: ${{ inputs.mac_runner || vars.DEFAULT_MAC_RUNNER }}
       distribute_externals: ${{ inputs.distribute_externals || false }}
+<<<<<<< HEAD
     secrets:
       KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
       APPSTORE_API_KEY_BASE64: ${{ secrets.APPSTORE_API_KEY_BASE64 }}
@@ -65,3 +66,7 @@ jobs:
       JIRA_COMMENT_TOKEN: ${{ secrets.JIRA_COMMENT_TOKEN }}
       WIRE_WEBHOOK_URL: ${{ secrets.WIRE_IOS_DELIVERY_URL }}
       WIRE_WEBHOOK_TOKEN: ${{ secrets.WIRE_IOS_DELIVERY_TOKEN }}
+=======
+      notify_secret: WIRE_IOS_DELIVERY
+    secrets: inherit
+>>>>>>> f5fd2f6ae9 (fix: backport 4.16.4 fixes to 4.16.5 - WPB-29180 (#5378))

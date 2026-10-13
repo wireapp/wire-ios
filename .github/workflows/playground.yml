@@ -35,6 +35,7 @@ jobs:
       datadog_enabled: true
       distribute_externals: ${{ inputs.distribute_externals }}
       fastlane_action: playground
+<<<<<<< HEAD
       mac_runner: ${{ inputs.mac_runner || vars.DEFAULT_MAC_RUNNER }}
       jira_keys: ${{ inputs.jira_keys }}
     secrets:
@@ -81,3 +82,7 @@ jobs:
           GH_REPO: ${{ github.repository }}
           PR_NUMBER: ${{ inputs.pr_number }}
         run: gh pr edit "$PR_NUMBER" --add-label "Ready for QA"
+=======
+      notify_secret: WIRE_IOS_DELIVERY
+    secrets: inherit
+>>>>>>> f5fd2f6ae9 (fix: backport 4.16.4 fixes to 4.16.5 - WPB-29180 (#5378))

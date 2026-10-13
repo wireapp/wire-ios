@@ -143,10 +143,16 @@ jobs:
     uses: ./.github/workflows/_reusable_run_tests.yml
     with:
       folders: ${{ join(fromJson(needs.detect-changes.outputs.folders), ',') }}
+<<<<<<< HEAD
       mac_runner: ${{ vars.DEFAULT_MAC_RUNNER }}
       timeout_minutes: 120
       test_dependencies: ${{ github.event_name != 'pull_request' || startsWith(github.base_ref, 'release/cycle') }}
       run_critical_flows: false # separate workflow
+=======
+      notify_secret: WIRE_IOS_CI
+      test_dependencies: ${{ github.event_name != 'pull_request' || startsWith(github.base_ref, 'release/cycle') }} # run on merge_queue or release branch PRs
+      run_critical_flows: false # separare workflow
+>>>>>>> f5fd2f6ae9 (fix: backport 4.16.4 fixes to 4.16.5 - WPB-29180 (#5378))
       notify: failure
     secrets:
       ZENKINS_USERNAME: ${{ secrets.ZENKINS_USERNAME }}

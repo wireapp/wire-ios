@@ -124,6 +124,31 @@ jobs:
       }}
     env:
       S3_BUCKET: "z-lohika"
+<<<<<<< HEAD
+=======
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }} 
+      DATADOG_API_KEY: ${{ secrets.DD_API_KEY }}
+      DATADOG_APP_ID: ${{ secrets.DATADOG_APP_ID }}
+      DATADOG_CLIENT_TOKEN: ${{ secrets.DATADOG_CLIENT_TOKEN }}
+      ENABLE_DATADOG: ${{ inputs.datadog_enabled }}
+      C1_S3_SUBFOLDER_RESTRICTED: ${{ secrets.C1_S3_SUBFOLDER_RESTRICTED }}
+      C1_S3_SUBFOLDER_PRODUCTION: ${{ secrets.C1_S3_SUBFOLDER_PRODUCTION }}
+      C2_S3_SUBFOLDER_RESTRICTED: ${{ secrets.C2_S3_SUBFOLDER_RESTRICTED }}
+      C2_S3_SUBFOLDER_PRODUCTION: ${{ secrets.C2_S3_SUBFOLDER_PRODUCTION }}
+      C3_S3_SUBFOLDER_RESTRICTED: ${{ secrets.C3_S3_SUBFOLDER_RESTRICTED }}
+      C3_S3_SUBFOLDER_PRODUCTION: ${{ secrets.C3_S3_SUBFOLDER_PRODUCTION }}
+      BETA_TESTFLIGHT_LINK: ${{ secrets.BETA_TESTFLIGHT_LINK }}
+      EDGE_TESTFLIGHT_LINK: ${{ secrets.EDGE_TESTFLIGHT_LINK }}
+      PLAYGROUND_TESTFLIGHT_LINK: ${{ secrets.PLAYGROUND_TESTFLIGHT_LINK }}
+      COUNTLY_PRODUCTION_KEY: ${{ secrets.COUNTLY_PRODUCTION_KEY }}
+      COUNTLY_INTERNAL_KEY: ${{ secrets.COUNTLY_INTERNAL_KEY }}
+      ENABLE_COUNTLY: ${{ inputs.countly_enabled }}
+      WIRE_WEBHOOK_URL: ${{ secrets[format('{0}_URL', inputs.notify_secret)] }}
+      WIRE_WEBHOOK_TOKEN: ${{ secrets[format('{0}_TOKEN', inputs.notify_secret)] }}
+      SKIP_SECURITY_TESTS: ${{ inputs.skip_security_tests }}
+      SEND_TO_EXTERNALS: ${{ inputs.distribute_externals }}
+>>>>>>> f5fd2f6ae9 (fix: backport 4.16.4 fixes to 4.16.5 - WPB-29180 (#5378))
       REPO_ROOT: ${{ github.workspace }}
       PACKAGES_DIR: ${{ github.workspace }}/DerivedData/CachedSwiftPackages
       ENABLE_COUNTLY: ${{ inputs.countly_enabled }}
@@ -258,9 +283,12 @@ jobs:
       - name: Notify on Wire if succeeded
         if: success()
         continue-on-error: true
+<<<<<<< HEAD
         env:
           WIRE_WEBHOOK_URL: ${{ secrets.WIRE_WEBHOOK_URL }}
           WIRE_WEBHOOK_TOKEN: ${{ secrets.WIRE_WEBHOOK_TOKEN }}
+=======
+>>>>>>> f5fd2f6ae9 (fix: backport 4.16.4 fixes to 4.16.5 - WPB-29180 (#5378))
         uses: ./.github/actions/notify-wire
         with:
           notify: custom
@@ -283,9 +311,12 @@ jobs:
       - name: Notify on Wire if failed
         if: failure()
         continue-on-error: true
+<<<<<<< HEAD
         env:
           WIRE_WEBHOOK_URL: ${{ secrets.WIRE_WEBHOOK_URL }}
           WIRE_WEBHOOK_TOKEN: ${{ secrets.WIRE_WEBHOOK_TOKEN }}
+=======
+>>>>>>> f5fd2f6ae9 (fix: backport 4.16.4 fixes to 4.16.5 - WPB-29180 (#5378))
         uses: ./.github/actions/notify-wire
         with:
           notify: custom
@@ -295,6 +326,7 @@ jobs:
             **Commit:** ${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}
             **Runner:** ${{ runner.name }} (${{ inputs.mac_runner }})
             **Build log:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+<<<<<<< HEAD
             ${{ env.TESTFLIGHT_ERROR != '' && format('⚠️ **TestFlight:** {0}', env.TESTFLIGHT_ERROR) || '' }}
 
   jira_comment:
@@ -334,3 +366,5 @@ jobs:
               && echo "Commented on $key" \
               || echo "::warning::Could not comment on $key"
           done
+=======
+>>>>>>> f5fd2f6ae9 (fix: backport 4.16.4 fixes to 4.16.5 - WPB-29180 (#5378))
