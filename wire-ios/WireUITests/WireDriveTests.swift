@@ -355,6 +355,12 @@ final class WireDriveTests: WireUITestCase {
         XCTAssertTrue(offlineSharedDrivePage.fileNameText.hasPrefix(sharedFileName))
         XCTAssertTrue(offlineSharedDrivePage.fileNameText.contains("Available offline"))
         XCTAssertTrue(offlineSharedDrivePage.availableOfflineIcon.exists)
+
+        // The file opens from its offline copy
+        offlineSharedDrivePage.openFile()
+        offlineSharedDrivePage.tapFilePreview()
+        offlineSharedDrivePage.closeFilePreview()
+        XCTAssertTrue(offlineSharedDrivePage.fileIcon.waitForExistence(timeout: 5))
     }
 
     @MainActor

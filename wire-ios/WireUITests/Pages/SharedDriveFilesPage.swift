@@ -100,6 +100,25 @@ class SharedDriveFilesPage: PageModel {
         app.buttons[Locators.WireDrive.FileMenu.makeAvailableOffline.identifier]
     }
 
+    var filePreviewDoneButton: XCUIElement {
+        app.navigationBars.buttons["Done"].firstMatch
+    }
+
+    /// Taps the first file of the list, which opens it in the QuickLook previewer.
+    func openFile() {
+        fileMetadataText.waitAndTap(timeout: 5)
+    }
+
+    /// The QuickLook controls, like the "Done" button, are hidden until the previewer is tapped.
+    func tapFilePreview() {
+        app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
+    }
+
+    /// Closes the QuickLook previewer, going back to the list.
+    func closeFilePreview() {
+        filePreviewDoneButton.waitAndTap(timeout: 3)
+    }
+
     /// The "No internet" bar shown at the top of the list when Drive is offline.
     var offlineBar: XCUIElement {
         app.staticTexts
