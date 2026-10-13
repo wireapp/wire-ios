@@ -54,7 +54,7 @@ runs:
           **${{ inputs.label }} for ${{ inputs.branch }}**
 
           **Title:** ${{ env.WIRE_NOTIFY_MSG }}
-          **Commit:** [${{ env.WIRE_NOTIFY_SHA }}](https://github.com/wireapp/wire-ios-mono/commit/${{ env.WIRE_NOTIFY_SHA }})
+          **Commit:** [${{ env.WIRE_NOTIFY_SHA }}](https://github.com/wireapp/wire-ios/commit/${{ env.WIRE_NOTIFY_SHA }})
           **Triggered by:** ${{ github.triggering_actor }}
           **Build log:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
 
