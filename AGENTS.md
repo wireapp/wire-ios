@@ -40,7 +40,7 @@ xcodebuild test \
   -workspace wire-ios-mono.xcworkspace \
   -scheme Wire-iOS \
   -testPlan SecurityTests \
-  -destination 'platform=iOS Simulator,name=iPhone 14,OS=26.0.1'
+  -destination 'platform=iOS Simulator,name=iPhone 17,OS=26.5'
 ```
 
 Available test plans in `wire-ios/Tests/TestPlans/`:
