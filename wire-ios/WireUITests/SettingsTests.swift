@@ -26,6 +26,10 @@ final class SettingsTests: WireUITestCase {
             // The simulator only has Safari, so pretending Chrome is installed to get the "Open links in" setting.
             uiTestConfig.mockInstalledBrowsers = ["chrome"]
         }
+        if name.contains("testSetDefaultMapsAppToOpenCoordinates_TC_8949") {
+            // The simulator only has Apple Maps, so pretending Google Maps is installed to get the "Maps" setting.
+            uiTestConfig.mockGoogleMapsInstalled = true
+        }
         try super.setUpWithError()
     }
 
@@ -180,6 +184,38 @@ final class SettingsTests: WireUITestCase {
         // There is no real Chrome on the simulator, so the app shows this alert in place of launching it.
         let chromeURL = link.replacingOccurrences(of: "https://", with: "googlechromes://")
         reopenedConversationPage.verifyLinkOpensInChromeAlert(urlPrefix: chromeURL)
+    }
+
+    @MainActor
+    func testSetDefaultMapsAppToOpenCoordinates_TC_8949() async throws {
+        // GIVEN
+        let (owner, members, _, conversationID) = try await UserHelper.default.registerTeam(
+            withMemberCount: 1,
+            conversation: .group("Test")
+        )
+
+        // WHEN - Google Maps is selected as default maps app and a received location is opened
+        let conversationPage = try app.loginUser(email: owner.email, password: owner.password)
+            .acceptPopup()
+            .openSettings()
+            .openOptionsMenu()
+            .selectGoogleMapsAsDefaultMaps()
+            .backToSettings()
+            .switchToConversationsTab()
+            .openConversation()
+        try await testServicesClient.sendLocation(
+            user: members[0],
+            conversationId: try XCTUnwrap(conversationID, "conversationId is nil"),
+            domain: UserHelper.default.backend.domainInfo,
+            latitude: 52.52419,
+            longitude: 13.40221,
+            locationName: "Berlin"
+        )
+
+        conversationPage.tapLocation(named: "Berlin")
+
+        // THEN
+        conversationPage.verifyLocationOpensInGoogleMapsAlert(urlPrefix: "comgooglemaps://?q=52.52419,13.40221")
     }
 
     @MainActor

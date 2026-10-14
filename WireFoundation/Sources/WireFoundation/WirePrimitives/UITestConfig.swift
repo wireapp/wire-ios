@@ -39,6 +39,9 @@ public struct UITestConfig: Codable {
     /// Opening a link with a mocked Chrome shows an alert with the Chrome URL instead of launching it.
     public var mockInstalledBrowsers: [String] = []
 
+    /// When `true`, Google Maps is pretended to be installed and opening a location shows an alert instead.
+    public var mockGoogleMapsInstalled = false
+
     /// Developer flags to apply at launch, keyed by `DeveloperFlag.rawValue`.
     /// Overrides any flags already stored in `UserDefaults`.
     public var developerFlags: [String: Bool] = [:]
