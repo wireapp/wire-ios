@@ -73,6 +73,14 @@ public final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
         featureStateSubject.eraseToAnyPublisher()
     }
 
+    /// Acknowledges that the user has been notified about a feature's current state,
+    /// so the same state won't be flagged as needing notification again.
+    /// - parameter name: The name of the feature.
+
+    public func acknowledgeFeatureChange(for name: Feature.Name) async {
+        await featureConfigLocalStore.setNeedsToNotifyUser(false, for: name)
+    }
+
     public func updateFeatureConfig(
         _ featureConfig: FeatureConfig
     ) async {
@@ -115,6 +123,13 @@ public final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
         )
     }
 
+    public func fetchE2EIConfig() async throws -> LocalFeature<Feature.E2EI.Config> {
+        try await fetchFeatureConfig(
+            name: .e2ei,
+            type: Feature.E2EI.Config.self
+        )
+    }
+
     // MARK: - Private
 
     private func sendFeatureState(for featureConfig: FeatureConfig) async {
@@ -122,7 +137,15 @@ public final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
             forFeatureConfig: featureConfig
         ) else { return }
 
-        featureStateSubject.send(featureState)
+        let needsToNotifyUser = await featureConfigLocalStore.needsToNotifyUser(for: featureState.name)
+
+        featureStateSubject.send(
+            FeatureState(
+                name: featureState.name,
+                isEnabled: featureState.isEnabled,
+                needsToNotifyUser: needsToNotifyUser
+            )
+        )
     }
 
     private func getFeatureState(forFeatureConfig config: FeatureConfig) async throws -> FeatureState? {

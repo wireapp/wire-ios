@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireDomain
 import WireLogging
 import WireSyncEngine
 import WireSystem
@@ -41,7 +42,7 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
     private var snoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCaseProtocol
     private var stopCertificateEnrollmentSnoozerUseCase: StopCertificateEnrollmentSnoozerUseCaseProtocol
     private let e2eiActivationDateRepository: any E2EIActivationDateRepositoryProtocol
-    private let e2eiFeature: Feature.E2EI
+    private let featureConfigRepository: any FeatureConfigRepositoryProtocol
     private var lastE2EIdentityUpdateAlertDateRepository: LastE2EIdentityUpdateDateRepositoryInterface?
     private var e2eIdentityCertificateUpdateStatus: E2EIdentityCertificateUpdateStatusUseCaseProtocol?
     private let selfClientCertificateProvider: SelfClientCertificateProviderProtocol
@@ -67,7 +68,7 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
         snoozeCertificateEnrollmentUseCase: SnoozeCertificateEnrollmentUseCaseProtocol,
         stopCertificateEnrollmentSnoozerUseCase: StopCertificateEnrollmentSnoozerUseCaseProtocol,
         e2eiActivationDateRepository: any E2EIActivationDateRepositoryProtocol,
-        e2eiFeature: Feature.E2EI,
+        featureConfigRepository: any FeatureConfigRepositoryProtocol,
         lastE2EIdentityUpdateAlertDateRepository: LastE2EIdentityUpdateDateRepositoryInterface?,
         e2eIdentityCertificateUpdateStatus: E2EIdentityCertificateUpdateStatusUseCaseProtocol?,
         selfClientCertificateProvider: SelfClientCertificateProviderProtocol,
@@ -77,7 +78,7 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
         self.snoozeCertificateEnrollmentUseCase = snoozeCertificateEnrollmentUseCase
         self.stopCertificateEnrollmentSnoozerUseCase = stopCertificateEnrollmentSnoozerUseCase
         self.e2eiActivationDateRepository = e2eiActivationDateRepository
-        self.e2eiFeature = e2eiFeature
+        self.featureConfigRepository = featureConfigRepository
         self.lastE2EIdentityUpdateAlertDateRepository = lastE2EIdentityUpdateAlertDateRepository
         self.e2eIdentityCertificateUpdateStatus = e2eIdentityCertificateUpdateStatus
         self.selfClientCertificateProvider = selfClientCertificateProvider
@@ -115,6 +116,7 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
         } catch {
             enrollmentFlow.dismissActivityIndicator()
             self.enrollmentFlow = nil
+            let gracePeriodEndDate = await fetchGracePeriodEndDate()
             let canCancel = gracePeriodEndDate == nil || gracePeriodEndDate?.isInThePast == false
             await showGetCertificateErrorAlert(canCancel: canCancel, retry: getCertificate)
         }
@@ -144,9 +146,16 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
         }
     }
 
+    @MainActor
     func snoozeReminder() async {
-        let selfClientCertificate = try? await selfClientCertificateProvider.getCertificate()
-        guard let endOfPeriod = selfClientCertificate?.expiryDate ?? gracePeriodEndDate,
+        let gracePeriodEndDate = await fetchGracePeriodEndDate()
+        let endOfPeriod = if let certificate = try? await selfClientCertificateProvider.getCertificate() {
+            certificate.isEnrolled ? certificate.expiryDate : gracePeriodEndDate
+        } else {
+            gracePeriodEndDate
+        }
+
+        guard let endOfPeriod,
               !endOfPeriod.isInThePast,
               let formattedDuration = durationFormatter.string(from: endOfPeriod.timeIntervalSinceNow) else {
             return
@@ -157,7 +166,12 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
 
                 guard let self else { return }
 
-                await snoozeCertificateEnrollmentUseCase.invoke(endOfPeriod: endOfPeriod, isUpdateMode: isUpdateMode)
+                await snoozeCertificateEnrollmentUseCase.invoke(
+                    endOfPeriod: endOfPeriod,
+                    isUpdateMode: isUpdateMode
+                ) { [weak self] in
+                    await self?.remindToEnrollIfNeeded()
+                }
                 isUpdateMode = false
             }
         }
@@ -236,15 +250,64 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
         presentScreen(viewController: alert)
     }
 
-    private var gracePeriodEndDate: Date? {
-        guard let e2eiActivatedAt = e2eiActivationDateRepository.e2eiActivatedAt else {
+    /// Presents the "Get Certificate" alert if the user hasn't enrolled yet. Used both when e2ei is freshly
+    /// enabled (via `FeatureChangeHandler.alert(for:acknowledger:)`) and when a previously snoozed reminder
+    /// becomes due.
+    @MainActor
+    private func remindToEnrollIfNeeded() async {
+        guard await !selfClientCertificateProvider.hasCertificate else { return }
+        presentScreen(viewController: buildGetCertificateAlert())
+    }
+
+    @MainActor
+    private func buildGetCertificateAlert(onAction: ((E2EIChangeAction) -> Void)? = nil) -> UIAlertController {
+        UIAlertController.alertForE2EIChangeWithActions { [weak self] action in
+            onAction?(action)
+            switch action {
+            case .getCertificate:
+                Task { await self?.getCertificate() }
+            case .remindLater:
+                Task { await self?.snoozeReminder() }
+            case .learnMore:
+                break
+            }
+        }
+    }
+
+    private func fetchGracePeriodEndDate() async -> Date? {
+        guard
+            let e2eiActivatedAt = e2eiActivationDateRepository.e2eiActivatedAt,
+            let config = try? await featureConfigRepository.fetchE2EIConfig().config
+        else {
             return nil
         }
 
-        let gracePeriod = TimeInterval(e2eiFeature.config.verificationExpiration)
+        let gracePeriod = TimeInterval(config.verificationExpiration)
         return e2eiActivatedAt.addingTimeInterval(gracePeriod)
     }
 
+}
+
+// MARK: - FeatureChangeHandler
+
+extension E2EINotificationActionsHandler: FeatureChangeHandler {
+
+    @MainActor
+    func alert(
+        for featureState: FeatureState,
+        acknowledger: FeatureChangeAcknowledger
+    ) async -> UIAlertController? {
+        guard featureState.name == .e2ei, featureState.isEnabled else { return nil }
+
+        // The user already has a valid certificate (e.g. e2ei was disabled then
+        // re-enabled) - nothing to prompt for.
+        guard await !selfClientCertificateProvider.hasCertificate else {
+            acknowledger.acknowledgeChange(for: .e2ei)
+            return nil
+        }
+
+        return buildGetCertificateAlert { _ in acknowledger.acknowledgeChange(for: .e2ei) }
+    }
 }
 
 extension UIAlertController {

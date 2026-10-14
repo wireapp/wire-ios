@@ -83,6 +83,28 @@ class SelfClientCertificateProviderTests: MessagingTest {
         XCTAssertFalse(hasCertificate)
     }
 
+    func testResultSelfClientDoesNotHaveCertificate_WhenNeverEnrolled() async throws {
+        // Given
+        mockGetE2eIdentityCertificatesUseCase.invokeMlsGroupIdClientIds_MockMethod = { _, _ in
+            let placeholderCertificate = E2eIdentityCertificate(
+                clientId: "sdfsdfsdfs",
+                certificateDetails: "",
+                mlsThumbprint: "ABCDEFGHIJKLMNOPQRSTUVWX",
+                notValidBefore: .now,
+                expiryDate: .now,
+                certificateStatus: .notActivated,
+                serialNumber: ""
+            )
+            return [placeholderCertificate]
+        }
+
+        // When
+        let hasCertificate = await sut.hasCertificate
+
+        // Then
+        XCTAssertFalse(hasCertificate)
+    }
+
     func testResultIfFetchesSelfClientCertificate() async throws {
         // Given
         mockGetE2eIdentityCertificatesUseCase.invokeMlsGroupIdClientIds_MockMethod = { _, _ in

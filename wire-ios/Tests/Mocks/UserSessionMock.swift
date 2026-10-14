@@ -409,6 +409,8 @@ final class UserSessionMock: UserSession {
 
     var e2eiFeature: Feature.E2EI = .init(status: .enabled)
 
+    var selfDeletingMessagesFeature: Feature.SelfDeletingMessages = .init(status: .disabled)
+
     var channelsFeature: Feature.Channels = .init(status: .disabled)
 
     var mlsFeature: Feature.MLS = .init(

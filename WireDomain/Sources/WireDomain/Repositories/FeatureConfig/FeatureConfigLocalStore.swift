@@ -109,4 +109,23 @@ public final class FeatureConfigLocalStore: FeatureConfigLocalStoreProtocol {
         }
     }
 
+    public func needsToNotifyUser(
+        for name: Feature.Name
+    ) async -> Bool {
+        await context.perform { [context] in
+            Feature.fetch(name: name, context: context)?.needsToNotifyUser ?? false
+        }
+    }
+
+    public func setNeedsToNotifyUser(
+        _ needsToNotify: Bool,
+        for name: Feature.Name
+    ) async {
+        await context.perform { [context] in
+            guard let feature = Feature.fetch(name: name, context: context) else { return }
+            feature.needsToNotifyUser = needsToNotify
+            context.saveOrRollback()
+        }
+    }
+
 }
