@@ -19,6 +19,7 @@
 package import Combine
 package import Foundation
 import SwiftUI
+import UIKit
 package import WireMessagingDomain
 
 private typealias Strings = L10n.Localizable.Conversation.WireCells.Files.Upload
@@ -104,10 +105,20 @@ package final class WireDriveDirectUploadsViewModel: ObservableObject {
     private func apply(_ summary: WireDriveDirectUploadsSummary) {
         let hadItems = !self.summary.items.isEmpty
         let previousUploadedCount = self.summary.uploadedCount
+        let hadActiveUploads = self.summary.activeCount > 0
         self.summary = summary
 
         if hasBaseline, summary.uploadedCount > previousUploadedCount {
             uploadCompleted.send()
+        }
+
+        // The last of the uploads in progress has just finished, and none of them failed or was cancelled.
+        if hasBaseline,
+           hadActiveUploads,
+           summary.isFinished,
+           !summary.hasFailures,
+           summary.uploadedCount > previousUploadedCount {
+            UIImpactFeedbackGenerator(style: .medium).impactOccurred()
         }
         hasBaseline = true
 
