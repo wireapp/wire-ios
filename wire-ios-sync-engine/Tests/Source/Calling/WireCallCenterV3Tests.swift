@@ -22,6 +22,7 @@ import Foundation
 import WireDataModelSupport
 import XCTest
 
+@testable import WireDomain
 @testable import WireSyncEngine
 
 final class WireCallCenterTransportMock: WireCallCenterTransport {
@@ -1540,6 +1541,73 @@ final class WireCallCenterV3Tests: MessagingTest {
 
         // then
         XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
+    }
+
+    func testThatAppParticipationIsAvailableToTheNotificationExtension() throws {
+        let suiteName = UUID().uuidString
+        let previousStorage = VoIPPushHelper.storage
+        VoIPPushHelper.storage = try XCTUnwrap(UserDefaults(suiteName: suiteName))
+        defer {
+            VoIPPushHelper.storage.removePersistentDomain(forName: suiteName)
+            VoIPPushHelper.storage = previousStorage
+        }
+        let extensionTracker = AnsweredElsewhereCallTracker(
+            userDefaults: try XCTUnwrap(UserDefaults(suiteName: suiteName))
+        )
+        let end = try JSONDecoder().decode(
+            CallContent.self,
+            from: Data(#"{"type":"CONFEND","src_clientid":"other","resp":false}"#.utf8)
+        )
+
+        func processStart(sender: AVSIdentifier, responded: Bool, timestamp: String) {
+            let data = Data("""
+            {"type":"CONFSTART","src_clientid":"other","resp":\(responded),"timestamp":"\(timestamp)"}
+            """.utf8)
+            sut.processCallEvent(CallEvent(
+                data: data,
+                currentTimestamp: .now,
+                serverTimestamp: .now,
+                conversationId: groupConversationID,
+                userId: sender,
+                clientId: otherUserClientID
+            ))
+        }
+
+        for isReady in [false, true] {
+            if isReady {
+                sut.setCallReady(version: 3)
+                XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+            }
+            for responded in [false, true] {
+                processStart(sender: selfUserID, responded: responded, timestamp: "1000")
+                sut.handleIncomingCall(
+                    conversationId: groupConversationID.serialized,
+                    messageTime: .now,
+                    userId: otherUserID.serialized,
+                    clientId: otherUserClientID,
+                    isVideoCall: false,
+                    shouldRing: true,
+                    conversationType: .group
+                )
+                XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+                XCTAssertTrue(extensionTracker.track(
+                    callContent: end,
+                    conversationID: groupConversationID.identifier,
+                    accountID: selfUserID.identifier,
+                    isCallerSelf: false
+                ))
+
+                processStart(sender: selfUserID, responded: responded, timestamp: "1000")
+                processStart(sender: otherUserID, responded: false, timestamp: "2000")
+                XCTAssertFalse(extensionTracker.track(
+                    callContent: end,
+                    conversationID: groupConversationID.identifier,
+                    accountID: selfUserID.identifier,
+                    isCallerSelf: false
+                ), "A later unanswered conference must still be reported as missed")
+            }
+        }
     }
 
     func testThatItBuffersEventsUntilAVSIsReady() {
