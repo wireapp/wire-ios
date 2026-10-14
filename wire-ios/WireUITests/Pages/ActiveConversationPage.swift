@@ -891,6 +891,33 @@ class ActiveConversationPage: PageModel {
         return self
     }
 
+    func tapLink(inMessage message: String) {
+        let textLink = app.textViews
+            .matching(NSPredicate(format: "label CONTAINS %@", message))
+            .firstMatch.links.firstMatch
+        let link = textLink.waitForExistence(timeout: 2) ? textLink : linkPreviewCell
+        XCTAssertTrue(link.waitAndTap(), "Link in message \"\(message)\" could not be tapped")
+    }
+
+    func verifyLinkOpenedInSafari() {
+        let safariApp = XCUIApplication(bundleIdentifier: "com.apple.mobilesafari")
+        XCTAssertTrue(safariApp.wait(for: .runningForeground, timeout: 10), "Expected link to open in Safari")
+        app.activate()
+    }
+
+    func verifyLinkOpensInChromeAlert(urlPrefix: String) {
+        let alertView = app.descendants(matching: .any)[Locators.OptionsOnSettingsPage.mockedChromeAlert.rawValue]
+        XCTAssertTrue(alertView.waitForExistence(timeout: 5), "Alert about opening the link in Chrome did not appear")
+
+        let alert = app.alerts.firstMatch
+        XCTAssertTrue(alert.staticTexts["Opening in Chrome"].exists, "Alert title should say it opens in Chrome")
+        XCTAssertTrue(
+            alert.staticTexts.matching(NSPredicate(format: "label BEGINSWITH %@", urlPrefix)).firstMatch.exists,
+            "Expected alert to show a link starting with \(urlPrefix)"
+        )
+        alert.buttons.firstMatch.tap()
+    }
+
     @discardableResult
     func verifyMessageTimerSystemMessage(_ duration: String) -> ActiveConversationPage {
         let parts = duration.split(separator: " ").map(String.init)

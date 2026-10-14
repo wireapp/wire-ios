@@ -35,6 +35,10 @@ public struct UITestConfig: Codable {
     /// When `true`, audio recording UI uses a deterministic mock recorder.
     public var useMockAudioRecorder = false
 
+    /// Browsers to pretend are installed, named like `BrowserOpeningOption` cases. Only `"chrome"` is supported.
+    /// Opening a link with a mocked Chrome shows an alert with the Chrome URL instead of launching it.
+    public var mockInstalledBrowsers: [String] = []
+
     /// Developer flags to apply at launch, keyed by `DeveloperFlag.rawValue`.
     /// Overrides any flags already stored in `UserDefaults`.
     public var developerFlags: [String: Bool] = [:]

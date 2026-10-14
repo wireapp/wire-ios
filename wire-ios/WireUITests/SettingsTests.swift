@@ -21,6 +21,14 @@ import XCTest
 /// [core-messenger]
 final class SettingsTests: WireUITestCase {
 
+    override func setUpWithError() throws {
+        if name.contains("testSetDefaultBrowserToOpenWeblinks_TC_8948") {
+            // The simulator only has Safari, so mocking Chrome is installed to get the "Open links in" setting.
+            uiTestConfig.mockInstalledBrowsers = ["chrome"]
+        }
+        try super.setUpWithError()
+    }
+
     @MainActor
     func testChangeAppThemeToSystemDarkOrLight_TC_8945() async throws {
         // GIVEN
@@ -134,6 +142,44 @@ final class SettingsTests: WireUITestCase {
         _ = conversationPageWithPreview
             .verifyMessageSent("Second link:")
             .verifyLinkPreviewCell()
+    }
+
+    @MainActor
+    func testSetDefaultBrowserToOpenWeblinks_TC_8948() async throws {
+        // GIVEN
+        let (stagingTeam, _, _, _) = try await UserHelper.default.registerTeam(
+            withMemberCount: 1,
+            conversation: .group("Test")
+        )
+        let link = "https://github.com/wireapp/wire-ios"
+        let linkMessage = "Link: \(link)"
+
+        // WHEN - a link is opened with the default browser Safari
+        let conversationPage = try app.loginUser(email: stagingTeam.email, password: stagingTeam.password)
+            .acceptPopup()
+            .openConversation()
+            .sendMessage(linkMessage)
+            .verifyMessageSent(linkMessage)
+        conversationPage.tapLink(inMessage: linkMessage)
+
+        // THEN
+        conversationPage.verifyLinkOpenedInSafari()
+
+        // WHEN - Chrome is selected as default browser and the link is opened again
+        let reopenedConversationPage = try conversationPage
+            .goBackToConversationPage()
+            .openSettings()
+            .openOptionsMenu()
+            .selectChromeAsDefaultBrowser()
+            .backToSettings()
+            .switchToConversationsTab()
+            .openConversation()
+        reopenedConversationPage.tapLink(inMessage: linkMessage)
+
+        // THEN - an alert says the link opens in Chrome (googlechromes://).
+        // There is no real Chrome on the simulator, so the app shows this alert in place of launching it.
+        let chromeURL = link.replacingOccurrences(of: "https://", with: "googlechromes://")
+        reopenedConversationPage.verifyLinkOpensInChromeAlert(urlPrefix: chromeURL)
     }
 
     @MainActor
