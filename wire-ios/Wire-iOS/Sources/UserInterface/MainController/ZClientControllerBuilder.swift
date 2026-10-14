@@ -117,6 +117,7 @@ final class ZClientControllerBuilder {
         // The database exists by this point, so persisted uploads can be reconciled against the
         // background session. Until this runs, the session buffers its events rather than losing
         // them, which is what makes a background relaunch safe.
+        factory.startDirectUploadsLiveActivity()
         Task { await factory.startDirectUploads() }
 
         return factory
