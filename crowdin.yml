@@ -39,6 +39,11 @@ files: [
     "translation" : "/wire-ios/Wire-iOS Share Extension/Resources/Localization/%osx_code%/%original_file_name%",
   },
   {
+    "source" : "/wire-ios/Wire Live Activity/Resources/Localization/Base.lproj/Localizable.strings",
+    "dest" : "/App/Wire Live Activity/Localizable.strings",
+    "translation" : "/wire-ios/Wire Live Activity/Resources/Localization/%osx_code%/%original_file_name%",
+  },
+  {
     "source" : "/WireUI/Sources/WireSidebarUI/Resources/Localization/en.lproj/Localizable.strings",
     "dest" : "/App/WireSidebarUI/Resources/Localizable.strings",
     "translation" : "/WireUI/Sources/WireSidebarUI/Resources/Localization/%osx_code%/%original_file_name%",
