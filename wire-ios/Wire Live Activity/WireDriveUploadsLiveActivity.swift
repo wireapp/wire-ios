@@ -20,7 +20,7 @@ import ActivityKit
 import SwiftUI
 import WidgetKit
 import WireDesign
-import WireDriveUploadsActivity
+import WireDriveUploadsLiveActivity
 import WireFoundation
 
 /// Shows the ongoing Wire Drive uploads on the lock screen and in the Dynamic Island.

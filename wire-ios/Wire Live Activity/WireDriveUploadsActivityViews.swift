@@ -18,7 +18,7 @@
 
 import SwiftUI
 import WireDesign
-import WireDriveUploadsActivity
+import WireDriveUploadsLiveActivity
 import WireFoundation
 
 // MARK: - Lock screen and banner
