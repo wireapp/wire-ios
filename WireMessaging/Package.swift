@@ -11,7 +11,8 @@ let package = Package(
     products: [
         .library(name: "WireMessagingDomain", targets: ["WireMessagingDomain"]),
         .library(name: "WireMessagingAssembly", targets: ["WireMessagingAssembly"]),
-        .library(name: "WireMessagingUI", targets: ["WireMessagingUI"])
+        .library(name: "WireMessagingUI", targets: ["WireMessagingUI"]),
+        .library(name: "WireDriveUploadsLiveActivity", targets: ["WireDriveUploadsLiveActivity"])
     ],
     dependencies: [
         .package(url: "https://github.com/pydio/cells-sdk-swift.git", from: "0.1.1-alpha17"),
@@ -45,9 +46,11 @@ let package = Package(
                 .product(name: "Collections", package: "swift-collections")
             ]
         ),
+        .target(name: "WireDriveUploadsLiveActivity"),
         .target(
             name: "WireMessagingAssembly",
             dependencies: [
+                "WireDriveUploadsLiveActivity",
                 "WireMessagingDomain",
                 "WireMessagingUI",
                 "WireMessagingData"
