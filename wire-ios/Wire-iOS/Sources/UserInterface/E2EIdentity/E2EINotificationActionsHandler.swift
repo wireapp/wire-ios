@@ -101,7 +101,7 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
     }
 
     @MainActor
-    func getCertificate() async { 
+    func getCertificate() async {
         isUpdateFlowActive = true
         let oauthUseCase = OAuthUseCase(targetViewController: targetVC)
         let enrollmentFlow = E2EIEnrollmentFlow(oauthUseCase: oauthUseCase, targetVC: targetVC)
