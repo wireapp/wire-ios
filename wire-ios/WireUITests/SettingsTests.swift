@@ -23,7 +23,7 @@ final class SettingsTests: WireUITestCase {
 
     override func setUpWithError() throws {
         if name.contains("testSetDefaultBrowserToOpenWeblinks_TC_8948") {
-            // The simulator only has Safari, so mocking Chrome is installed to get the "Open links in" setting.
+            // The simulator only has Safari, so pretending Chrome is installed to get the "Open links in" setting.
             uiTestConfig.mockInstalledBrowsers = ["chrome"]
         }
         try super.setUpWithError()
@@ -160,7 +160,7 @@ final class SettingsTests: WireUITestCase {
             .openConversation()
             .sendMessage(linkMessage)
             .verifyMessageSent(linkMessage)
-        conversationPage.tapLink(inMessage: linkMessage)
+        conversationPage.tapLinkPreview()
 
         // THEN
         conversationPage.verifyLinkOpenedInSafari()
@@ -174,7 +174,7 @@ final class SettingsTests: WireUITestCase {
             .backToSettings()
             .switchToConversationsTab()
             .openConversation()
-        reopenedConversationPage.tapLink(inMessage: linkMessage)
+        reopenedConversationPage.tapLinkPreview()
 
         // THEN - an alert says the link opens in Chrome (googlechromes://).
         // There is no real Chrome on the simulator, so the app shows this alert in place of launching it.

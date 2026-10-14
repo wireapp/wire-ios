@@ -434,6 +434,7 @@ public enum Locators {
         case browserCell
         case chromeBrowserOption
         case mockedChromeAlert
+        case mockedChromeAlertTitle = "Opening in Chrome"
     }
 
     public enum SaveBackupFileBottomSheetPage: String {

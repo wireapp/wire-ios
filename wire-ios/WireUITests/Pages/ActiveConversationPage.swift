@@ -293,6 +293,18 @@ class ActiveConversationPage: PageModel {
         app.cells[Locators.ActiveConversationPage.linkPreviewCell.rawValue].firstMatch
     }
 
+    var mockedChromeAlert: XCUIElement {
+        app.descendants(matching: .any)[Locators.OptionsOnSettingsPage.mockedChromeAlert.rawValue].firstMatch
+    }
+
+    var mockedChromeAlertTitle: XCUIElement {
+        app.alerts.firstMatch.staticTexts[Locators.OptionsOnSettingsPage.mockedChromeAlertTitle.rawValue]
+    }
+
+    func mockedChromeAlertLink(urlPrefix: String) -> XCUIElement {
+        app.alerts.firstMatch.staticTexts.matching(NSPredicate(format: "label BEGINSWITH %@", urlPrefix)).firstMatch
+    }
+
     var latestMessageCell: XCUIElement {
         conversationBackground.cells.element(boundBy: 0)
     }
@@ -891,12 +903,9 @@ class ActiveConversationPage: PageModel {
         return self
     }
 
-    func tapLink(inMessage message: String) {
-        let textLink = app.textViews
-            .matching(NSPredicate(format: "label CONTAINS %@", message))
-            .firstMatch.links.firstMatch
-        let link = textLink.waitForExistence(timeout: 2) ? textLink : linkPreviewCell
-        XCTAssertTrue(link.waitAndTap(), "Link in message \"\(message)\" could not be tapped")
+    func tapLinkPreview() {
+        XCTAssertTrue(linkPreviewCell.waitForExistence(timeout: 10), "Link preview cell did not appear")
+        XCTAssertTrue(linkPreviewCell.waitAndTap(), "Link preview cell could not be tapped")
     }
 
     func verifyLinkOpenedInSafari() {
@@ -906,16 +915,15 @@ class ActiveConversationPage: PageModel {
     }
 
     func verifyLinkOpensInChromeAlert(urlPrefix: String) {
-        let alertView = app.descendants(matching: .any)[Locators.OptionsOnSettingsPage.mockedChromeAlert.rawValue]
-        XCTAssertTrue(alertView.waitForExistence(timeout: 5), "Alert about opening the link in Chrome did not appear")
-
-        let alert = app.alerts.firstMatch
-        XCTAssertTrue(alert.staticTexts["Opening in Chrome"].exists, "Alert title should say it opens in Chrome")
         XCTAssertTrue(
-            alert.staticTexts.matching(NSPredicate(format: "label BEGINSWITH %@", urlPrefix)).firstMatch.exists,
+            mockedChromeAlert.waitForExistence(timeout: 5),
+            "Alert about opening the link in Chrome did not appear"
+        )
+        XCTAssertTrue(mockedChromeAlertTitle.exists, "Alert title should say it opens in Chrome")
+        XCTAssertTrue(
+            mockedChromeAlertLink(urlPrefix: urlPrefix).exists,
             "Expected alert to show a link starting with \(urlPrefix)"
         )
-        alert.buttons.firstMatch.tap()
     }
 
     @discardableResult

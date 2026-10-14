@@ -82,7 +82,7 @@ extension URL {
             // No Chrome on the simulator to receive the link, so show where it would have been opened instead.
             if saved == .chrome, saved.isMockedAsInstalled, let mockedURL = chromeURL {
                 let alert = UIAlertController(
-                    title: "Opening in Chrome",
+                    title: Locators.OptionsOnSettingsPage.mockedChromeAlertTitle.rawValue,
                     message: mockedURL.absoluteString,
                     preferredStyle: .alert
                 )
