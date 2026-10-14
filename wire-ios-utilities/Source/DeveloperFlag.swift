@@ -42,10 +42,9 @@ public enum DeveloperFlag: String, CaseIterable {
     case enabledCCDebugLogs
     case shakeToReport
     case showNSEErrors
+    case simulateDriveOffline
     case simulateMainAppRequiredError
     case simulateUnestablishedMLSGroup
-    // TODO: [WPB-25941] Remove drive permissions flag when feature is complete
-    case enableDrivePermissions
     case unSafeLogsForPublic
     case useBackgroundActivityFactoryInAppBackgroundTaskExecuter
 
@@ -111,14 +110,14 @@ public enum DeveloperFlag: String, CaseIterable {
         case .showNSEErrors:
             "Turn on to show Notification Service Extension errors as notifications"
 
+        case .simulateDriveOffline:
+            "Turn on to make Wire Drive behave as if the device had no network connection"
+
         case .simulateMainAppRequiredError:
             "Turn on to force a 'main app required' error in the Notification Service and Share Extensions"
 
         case .simulateUnestablishedMLSGroup:
             "Turn on to leave the next locally created MLS group unestablished at epoch 0"
-
-        case .enableDrivePermissions:
-            "Turn on to enable drive permissions"
 
         case .unSafeLogsForPublic:
             "Turn on to write all logs (including debug and non-public) to disk in release builds"

@@ -193,6 +193,29 @@ struct MeetingFormViewModelTests {
         #expect(viewModel.startDate == expectedStartDate)
     }
 
+    @Test("a late scheduled default moves to tomorrow when no valid end remains", arguments: [30, 44, 45, 50])
+    func scheduledMode_LateDefaultStartsTomorrow(minute: Int) throws {
+        dateProviderMock.now = try makeDate(year: 2026, month: 7, day: 6, hour: 23, minute: minute)
+        let viewModel = makeViewModel(mode: .scheduled)
+        let expectedStart = try makeDate(year: 2026, month: 7, day: 7, hour: 0, minute: 0)
+        let expectedEnd = try makeDate(year: 2026, month: 7, day: 7, hour: 1, minute: 0)
+
+        #expect(viewModel.startDate == expectedStart)
+        #expect(viewModel.startDateRange.lowerBound == expectedStart)
+        #expect(viewModel.endDate == expectedEnd)
+    }
+
+    @Test("a scheduled default can use the last valid 15-minute range")
+    func scheduledMode_LastValidDefaultStaysToday() throws {
+        dateProviderMock.now = try makeDate(year: 2026, month: 7, day: 6, hour: 23, minute: 29)
+        let viewModel = makeViewModel(mode: .scheduled)
+        let expectedStart = try makeDate(year: 2026, month: 7, day: 6, hour: 23, minute: 30)
+        let expectedEnd = try makeDate(year: 2026, month: 7, day: 6, hour: 23, minute: 45)
+
+        #expect(viewModel.startDate == expectedStart)
+        #expect(viewModel.endDate == expectedEnd)
+    }
+
     @Test("endDateRange starts after the start date")
     func endDateRange_StartsAfterStartDate() {
         #expect(viewModel.endDateRange.lowerBound > viewModel.startDate)

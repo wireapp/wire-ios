@@ -16,7 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Foundation
+import WireCallingData
 import WireDataModel
+import WireLogging
 import WireNetwork
 
 struct ConversationMemberLeaveEventProcessor: ConversationMemberLeaveEventProcessorProtocol {
@@ -26,8 +29,25 @@ struct ConversationMemberLeaveEventProcessor: ConversationMemberLeaveEventProces
     }
 
     let repository: any ConversationRepositoryProtocol
+    let meetingLocalStore: any MeetingLocalStoreProtocol
+    let reminderCanceller: any MeetingReminderCancelling
+    let accountID: UUID
 
     func processEvent(_ event: ConversationMemberLeaveEvent) async throws {
+        // Cancel before the conversation update, which may fail or remove the meeting mapping.
+        if event.removedUserIDs.contains(where: { $0.id == accountID }) {
+            let meetings = await meetingLocalStore.storedMeetings()
+            for meeting in meetings where meeting.conversationID.id == event.conversationID.id
+                && meeting.conversationID.domain == event.conversationID.domain {
+                await reminderCanceller.cancelAll(accountID: accountID, meetingID: meeting.id)
+                do {
+                    try await meetingLocalStore.deleteMeeting(id: meeting.id)
+                } catch {
+                    WireLogger.meetings.error("Failed to remove meeting after self-removal: \(error)")
+                }
+            }
+        }
+
         do {
             try await repository.removeMembers(
                 event.removedUserIDs,

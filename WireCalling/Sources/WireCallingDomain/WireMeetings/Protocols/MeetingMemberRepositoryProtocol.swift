@@ -17,8 +17,7 @@
 //
 
 // sourcery: AutoMockable
-/// Searches the user's team for members so they can be added as participants
-/// to a meeting.
+/// Finds people and source groups for meeting participant selection.
 ///
 /// Backing implementations may serve results from local storage, the remote
 /// backend, or both.
@@ -32,5 +31,11 @@ public protocol MeetingMemberRepositoryProtocol: Sendable {
     /// - Throws: An error if the underlying source (local store or remote
     ///   backend) fails to produce results.
     func search(query: String) async throws -> [MeetingMember]
+
+    /// Returns groups and channels the current user has joined.
+    func searchGroups(query: String) async throws -> [MeetingGroup]
+
+    /// Returns current source-group members in the current user's team, including the current user.
+    func members(in groupID: QualifiedID) async throws -> [MeetingMember]
 
 }

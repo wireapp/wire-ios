@@ -216,18 +216,37 @@ public struct ConversationChannelCreationForm: View {
             Toggle(Strings.CreationForm.WireCells.toggle, isOn: $viewModel.sharedDriveEnabled)
                 .accessibilityIdentifier(Locators.CreateChannelPage.sharedDriveSwitch.rawValue)
         }, footer: {
-            Text(footerText)
+            footer
         })
     }
 
     private var footerText: AttributedString {
-        var text = AttributedString(Strings.CreationForm.WireCells.description + " ")
+        var text = AttributedString(
+            Strings.CreationForm.WireCells.description + " "
+        )
 
-        var link = AttributedString(Strings.CreationForm.WireCells.learnMore)
+        var link = AttributedString(
+            Strings.CreationForm.WireCells.learnMore
+        )
         link.link = URL.useWireDriveInConversations
 
         text.append(link)
+
         return text
+    }
+
+    private var footer: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            Text(footerText)
+
+            HStack(alignment: .firstTextBaseline, spacing: 6) {
+                Image(systemName: "lock.document")
+
+                Text(
+                    Strings.CreationForm.WireCells.sharedDriveAccess
+                )
+            }
+        }
     }
 }
 

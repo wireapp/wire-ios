@@ -75,12 +75,8 @@ final class FilesItemViewModel: ObservableObject {
     let isBrowsing: Bool
     let isInRecycleBin: Bool
 
-    // TODO: [WPB-25941] Remove drive permissions flag when feature is complete
-    // TODO: [WPB-19065] Use DeveloperFlag from WireFoundation package when migrated
-    var isDrivePermissionsFlagEnabled: Bool = UserDefaults.standard.bool(forKey: "enableDrivePermissions")
-
     var showReadOnlyIcon: Bool {
-        isDrivePermissionsFlagEnabled && item.isReadOnly && isBrowsing
+        item.isReadOnly && isBrowsing
     }
 
     struct TagsInfo {
@@ -205,7 +201,7 @@ final class FilesItemViewModel: ObservableObject {
     func isActionDisabled(_ action: ItemAction) -> Bool {
         switch action {
         case .shareLink, .makeAvailableOffline, .removeAvailableOffline:
-            isDrivePermissionsFlagEnabled && item.isReadOnly && isBrowsing
+            item.isReadOnly && isBrowsing
         default:
             false
         }
@@ -299,7 +295,7 @@ final class FilesItemViewModel: ObservableObject {
     }
 
     var menuActions: Set<ItemAction> {
-        let isViewerMode = item.isReadOnly && isDrivePermissionsFlagEnabled
+        let isViewerMode = item.isReadOnly
 
         if isViewerMode {
             return viewerMenuActions

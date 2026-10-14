@@ -168,7 +168,21 @@ extension ZMUserSession {
         // need to switch to that context
         managedObjectContext.perform {
             let responder = self.sessionManager?.foregroundNotificationResponder
-            let shouldPresent = responder?.shouldPresentNotification(with: userInfo) ?? true
+            let shouldPresent: Bool
+            if categoryIdentifier == WireDomain.NotificationCategory.meetingReminder.rawValue {
+                // Reminders stay visible in the foreground unless this account is already in that meeting.
+                let calls = self.callCenter?.activeCallConversations(in: self) ?? []
+                let activeConversations = calls.compactMap { conversation -> (id: UUID, domain: String)? in
+                    guard let id = conversation.qualifiedID else { return nil }
+                    return (id.uuid, id.domain)
+                }
+                shouldPresent = MeetingReminderForegroundPolicy.shouldPresent(
+                    userInfo: userInfo,
+                    activeConversations: activeConversations
+                )
+            } else {
+                shouldPresent = responder?.shouldPresentNotification(with: userInfo) ?? true
+            }
 
             var options = UNNotificationPresentationOptions()
             if shouldPresent { options = [.list, .banner, .sound] }
@@ -215,7 +229,8 @@ extension ZMUserSession {
             completionHandler()
         case UNNotificationDefaultActionIdentifier
             where categoryIdentifier == WireDomain.NotificationCategory.meetingInvitation.rawValue
-            || categoryIdentifier == WireDomain.NotificationCategory.meetingUpdate.rawValue:
+            || categoryIdentifier == WireDomain.NotificationCategory.meetingUpdate.rawValue
+            || categoryIdentifier == WireDomain.NotificationCategory.meetingReminder.rawValue:
             sessionManager?.showMeetings(in: self)
             completionHandler()
         case UNNotificationDefaultActionIdentifier
@@ -231,6 +246,25 @@ extension ZMUserSession {
     private static func isIncomingCallCategory(_ categoryIdentifier: String) -> Bool {
         categoryIdentifier == WireDomain.NotificationCategory.incomingCall.rawValue
             || categoryIdentifier == PushNotificationCategory.incomingCall.rawValue
+    }
+
+}
+
+enum MeetingReminderForegroundPolicy {
+
+    static func shouldPresent(
+        userInfo: NotificationUserInfo,
+        activeConversations: [(id: UUID, domain: String)]
+    ) -> Bool {
+        guard
+            let idString = userInfo.storage[MeetingReminderUserInfoKey.conversationID] as? String,
+            let id = UUID(uuidString: idString),
+            let domain = userInfo.storage[MeetingReminderUserInfoKey.conversationDomain] as? String
+        else {
+            return true
+        }
+
+        return !activeConversations.contains { $0.id == id && $0.domain == domain }
     }
 
 }

@@ -143,6 +143,66 @@ struct MemberSelectionViewModelTests {
 
     // MARK: - initialSelection
 
+    @Test("Group import replaces the draft with unique source members, excluding the host")
+    func importGroup_replacesDraftSelection() async {
+        let host = MeetingMember(
+            qualifiedID: QualifiedID(id: UUID(), domain: "wire.com"),
+            name: "Host", handle: "", isSelfUser: true, initials: "", accentColor: .default, avatarImageData: nil
+        )
+        searchMembersUseCase.membersInGroupIDQualifiedIDMeetingMemberReturnValue = [.bob, .bob, host]
+        viewModel.toggleSelection(.alice)
+        viewModel.toggleSelection(.bob)
+
+        let groupID = QualifiedID(id: UUID(), domain: "wire.com")
+        #expect(await viewModel.importGroup(groupID))
+        #expect(await viewModel.importGroup(groupID))
+        #expect(viewModel.selectedMembers == [.bob])
+        #expect(onSelectRecorder.calls.isEmpty)
+
+        viewModel.confirmSelection()
+        #expect(onSelectRecorder.calls == [[.bob]])
+
+        searchMembersUseCase.membersInGroupIDQualifiedIDMeetingMemberReturnValue = [host]
+        #expect(await viewModel.importGroup(groupID))
+        #expect(viewModel.selectedMembers.isEmpty)
+    }
+
+    @Test("A failed import preserves the draft and can be retried")
+    func importGroup_failurePreservesSelection() async {
+        viewModel.toggleSelection(.alice)
+        searchMembersUseCase.membersInGroupIDQualifiedIDMeetingMemberThrowableError = TestError.failure
+        let groupID = QualifiedID(id: UUID(), domain: "wire.com")
+
+        #expect(await viewModel.importGroup(groupID) == false)
+        #expect(viewModel.selectedMembers == [.alice])
+        #expect(viewModel.hasGroupImportError)
+        #expect(viewModel.isImportingGroup == false)
+
+        searchMembersUseCase.membersInGroupIDQualifiedIDMeetingMemberThrowableError = nil
+        searchMembersUseCase.membersInGroupIDQualifiedIDMeetingMemberReturnValue = [.bob]
+        #expect(await viewModel.importGroup(groupID))
+        #expect(viewModel.selectedMembers == [.bob])
+        #expect(viewModel.hasGroupImportError == false)
+    }
+
+    @Test("A cancelled import cannot change the draft when its response arrives")
+    func importGroup_cancellationPreservesSelection() async {
+        viewModel.toggleSelection(.alice)
+        searchMembersUseCase.membersInGroupIDQualifiedIDMeetingMemberClosure = { _ in
+            try? await Task.sleep(for: .seconds(60))
+            return [.bob]
+        }
+        let task = Task { await viewModel.importGroup(QualifiedID(id: UUID(), domain: "wire.com")) }
+        while !viewModel.isImportingGroup {
+            await Task.yield()
+        }
+        task.cancel()
+
+        #expect(await task.value == false)
+        #expect(viewModel.selectedMembers == [.alice])
+        #expect(viewModel.hasGroupImportError == false)
+    }
+
     @Test("initialSelection seeds selectedMembers")
     func initialSelection_seedsSelectedMembers() {
         // Given

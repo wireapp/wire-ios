@@ -341,7 +341,11 @@ final class ZClientViewController: UIViewController {
     }
 
     private func makeMeetingsUI() -> UIViewController {
-        let memberRepository = WireMeetingsMemberRepository(userSession: userSession)
+        let memberRepository = WireMeetingsMemberRepository(
+            userSession: userSession,
+            conversationsAPI: clientSessionComponent.conversationsAPI,
+            usersAPI: clientSessionComponent.usersAPI
+        )
         let conversationRepository = clientSessionComponent.conversationRepository
 
         return wireMeetingsFactory.makeMeetingsView(
@@ -353,7 +357,8 @@ final class ZClientViewController: UIViewController {
                 participantsService: ConversationParticipantsService(
                     context: userSession.contextProvider.syncContext,
                     localDomain: userSession.selfUser.domain
-                )
+                ),
+                isNetworkAvailable: { [userSession] in userSession.networkState != .offline }
             ),
             callRepository: MeetingCallRepositoryBridge(
                 userSession: userSession,

@@ -61,6 +61,7 @@ struct MeetingRow: View {
             VStack(alignment: .leading, spacing: 2) {
                 HStack(alignment: .top) {
                     Text(meeting.title)
+                        .accessibilityIdentifier(Locators.WireMeetings.MeetingRow.title)
                         .font(for: .body2)
                         .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
                         .lineLimit(2)
@@ -93,12 +94,14 @@ struct MeetingRow: View {
                             } label: {
                                 Label(Strings.Actions.delete, systemImage: "trash")
                             }
+                            .tint(ColorTheme.Base.error.color)
                         } else {
                             Button(role: .destructive) {
                                 onDelete()
                             } label: {
                                 Label(Strings.Actions.deleteForMe, systemImage: "trash")
                             }
+                            .tint(ColorTheme.Base.error.color)
                             .disabled(meeting.conversation == nil)
                             .accessibilityIdentifier(Locators.WireMeetings.MeetingRow.deleteForMeButton)
                         }
@@ -111,16 +114,19 @@ struct MeetingRow: View {
                             .contentShape(Rectangle())
                     }
                     .menuOrder(.fixed)
+                    .accessibilityIdentifier(Locators.WireMeetings.MeetingRow.menu)
                     .padding(.vertical, -12)
                 }
 
                 HStack(spacing: 8) {
                     Text(formatTime(occurrence))
+                        .accessibilityIdentifier(Locators.WireMeetings.MeetingRow.time)
                         .font(for: .subline1)
                         .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
 
                     if let recurrence = meeting.recurrence {
                         recurrenceBadge(recurrence.title)
+                            .accessibilityIdentifier(Locators.WireMeetings.MeetingRow.recurrence)
                     }
                 }
 
@@ -137,6 +143,14 @@ struct MeetingRow: View {
                 }
             }
         }
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier(
+            Locators.WireMeetings.MeetingRow.rowIdentifier(
+                domain: meeting.id.domain,
+                id: meeting.id.id,
+                start: occurrence.start
+            )
+        )
     }
 
     private var joinButton: some View {

@@ -271,6 +271,20 @@ final class MeetingsAPITests: XCTestCase {
         }
     }
 
+    func testDeleteMeeting_ThrowsInvalidOperation_403_V16() async throws {
+        // Given
+        let apiService = MockAPIServiceProtocol.withError(
+            statusCode: .forbidden,
+            label: "invalid-op"
+        )
+        let sut = APIVersion.v16.buildAPI(apiService: apiService)
+
+        // When / Then
+        await XCTAssertThrowsErrorAsync(MeetingsAPIError.invalidOperation) {
+            try await sut.deleteMeeting(id: Scaffolding.meetingID)
+        }
+    }
+
     func testDeleteMeeting_ThrowsAccessDenied_403_V16() async throws {
         // Given
         let apiService = MockAPIServiceProtocol.withError(

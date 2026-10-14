@@ -43,7 +43,7 @@ on:
       timeout_minutes:
         type: number
         required: false
-        default: 90
+        default: 120
 
     secrets:
       ZENKINS_USERNAME:
@@ -52,7 +52,9 @@ on:
         required: true
       OP_SERVICE_ACCOUNT_TOKEN:
         required: true
-      SLACK_WEBHOOK_URL:
+      WIRE_WEBHOOK_URL:
+        required: true
+      WIRE_WEBHOOK_TOKEN:
         required: true
 
 env: # https://docs.fastlane.tools/getting-started/ios/setup/
@@ -74,7 +76,8 @@ jobs:
         inputs.mac_runner == 'github' && 'macos-26' ||
         'ghcr.io/cirruslabs/macos-runner:tahoe'
       }}
-    timeout-minutes: ${{ inputs.timeout_minutes }}
+    # GitHub-hosted jobs use the default six-hour limit; other runners keep the configured timeout.
+    timeout-minutes: ${{ inputs.mac_runner == 'github' && 360 || inputs.timeout_minutes }}
     permissions:
       contents: read
       actions: read
@@ -85,6 +88,7 @@ jobs:
     env:
       GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       GITHUB_USERNAME: ${{ secrets.ZENKINS_USERNAME }}
+      KALIUM_TEST_SERVICE_ENABLED: ${{ inputs.run_critical_flows && inputs.mac_runner != 'in-house' }}
 
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -187,8 +191,26 @@ jobs:
         run: |
           bundle exec fastlane generate_env
 
-      - name: Setup Kalium Testservice
+      - name: Configure test services
         if: ${{ inputs.run_critical_flows }}
+        shell: bash
+        env:
+          IN_HOUSE_RUNNER: ${{ inputs.mac_runner == 'in-house' }}
+        run: |
+          set -euo pipefail
+
+          ENV_FILE="wire-ios/WireUITests/env.xcconfig"
+          [[ -f "$ENV_FILE" ]] || { echo "::error::env.xcconfig missing: $ENV_FILE" >&2; exit 1; }
+
+          if [[ "$IN_HOUSE_RUNNER" == "true" ]]; then
+            echo "USE_IN_HOUSE_SERVICES=true" >> "$ENV_FILE"
+          fi
+
+          echo "Runner name: ${RUNNER_NAME:-unknown}"
+          echo "Use in-house services: $IN_HOUSE_RUNNER"
+
+      - name: Setup Kalium Testservice
+        if: ${{ env.KALIUM_TEST_SERVICE_ENABLED == 'true' }}
         uses: ./.github/actions/kalium-testservice/setup
 
       - name: "Test new critical flows"
@@ -209,7 +231,7 @@ jobs:
           fi
 
       - name: Stop Kalium Testservice
-        if: ${{ always() && inputs.run_critical_flows }}
+        if: ${{ always() && env.KALIUM_TEST_SERVICE_ENABLED == 'true' }}
         uses: ./.github/actions/kalium-testservice/stop
         with:
           print_logs_on_failure: ${{ job.status != 'success' }}
@@ -414,7 +436,8 @@ jobs:
         continue-on-error: true
         if: ${{ inputs.notify == 'always' && always() }}
         env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          WIRE_WEBHOOK_URL: ${{ secrets.WIRE_WEBHOOK_URL }}
+          WIRE_WEBHOOK_TOKEN: ${{ secrets.WIRE_WEBHOOK_TOKEN }}
         with:
           notify: custom
           text: |
@@ -434,7 +457,8 @@ jobs:
         continue-on-error: true
         if: ${{ inputs.notify == 'failure' && failure() }}
         env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          WIRE_WEBHOOK_URL: ${{ secrets.WIRE_WEBHOOK_URL }}
+          WIRE_WEBHOOK_TOKEN: ${{ secrets.WIRE_WEBHOOK_TOKEN }}
         with:
           notify: custom
           text: |

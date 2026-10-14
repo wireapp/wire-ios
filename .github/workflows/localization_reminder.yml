@@ -1,0 +1,57 @@
+name: Localization Reminder
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - '**/en.lproj/*.strings'
+      - '**/Base.lproj/*.strings'
+      - '**/*.xcstrings'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check-localizations:
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          fetch-depth: 0
+
+      - name: Collect new string keys and English values
+        id: check
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_AUTHOR: ${{ github.event.pull_request.user.login }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+        run: ./scripts/collect-new-localization-strings.sh
+
+      - name: Post localization reminder
+        id: comment
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          NEW_KEYS: ${{ steps.check.outputs.new_keys }}
+          HAS_NEW_STRINGS: ${{ steps.check.outputs.has_new_strings }}
+        run: ruby ./scripts/post_localization_reminder_comment.rb
+
+      - name: Send Wire notification
+        # Only the first time new strings are introduced on this PR - not on
+        # every subsequent push that merely edits/adds to them - to avoid
+        # spamming Wire on each commit.
+        if: steps.comment.outputs.comment_created == 'true'
+        env:
+          WIRE_WEBHOOK_URL: ${{ secrets.WIRE_IOS_LOCALIZATIONS_URL }}
+          WIRE_WEBHOOK_TOKEN: ${{ secrets.WIRE_IOS_LOCALIZATIONS_TOKEN }}
+        uses: ./.github/actions/notify-wire
+        with:
+          notify: custom
+          text: ${{ steps.check.outputs.message }}
