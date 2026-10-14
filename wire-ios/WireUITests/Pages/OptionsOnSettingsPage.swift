@@ -79,7 +79,10 @@ class OptionsOnSettingsPage: PageModel {
         mapsCell.tap()
         app.descendants(matching: .any)[Locators.OptionsOnSettingsPage.googleMapsOption.rawValue].firstMatch.tap()
         backToPreviousPage.tap()
-        XCTAssertTrue(mapsCell.staticTexts["Google Maps"].waitForExistence(timeout: 3), "Google Maps should be selected")
+        XCTAssertTrue(
+            mapsCell.staticTexts["Google Maps"].waitForExistence(timeout: 3),
+            "Google Maps should be selected"
+        )
         return self
     }
 
