@@ -50,6 +50,7 @@ public struct WireMessagingFactory {
     private let directUploadFileCache: WireDriveDirectUploadFileCache
     private let directUploadTracker: WireDriveObserveDirectUploadsUseCase
     private let directUploadManager: WireDriveDirectUploadManager
+    private let directUploadsLiveActivity: WireDriveUploadsLiveActivityController
 
     @MainActor var lastOpenRequestNodeID: UUID?
 
@@ -99,6 +100,10 @@ public struct WireMessagingFactory {
             accessTokenProvider: accessToken,
             tracker: directUploadTracker
         )
+        self.directUploadsLiveActivity = WireDriveUploadsLiveActivityController(
+            observeUploads: directUploadTracker,
+            client: ActivityKitUploadsActivityClient()
+        )
     }
 
     // MARK: - Direct uploads
@@ -107,11 +112,21 @@ public struct WireMessagingFactory {
 
     public func startDirectUploads() async {
         await directUploadManager.start()
+        await directUploadsLiveActivity.endActivityIfNoUploads()
+    }
+
+    /// Starts showing the ongoing uploads in a Live Activity. Call it as early as possible, so that the
+    /// activity can also be brought up to date when the app is relaunched in the background.
+
+    @MainActor
+    public func startDirectUploadsLiveActivity() {
+        directUploadsLiveActivity.start()
     }
 
     /// Cancels every transfer and removes all upload state. For logout or account deletion.
 
     public func tearDownDirectUploads() async {
+        await directUploadsLiveActivity.stop()
         await directUploadManager.tearDown()
         await directUploadSessions.tearDown(userID: selfUserID)
     }
