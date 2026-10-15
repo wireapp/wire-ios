@@ -88,7 +88,7 @@ package struct FilesView: View {
         }
         .onReceive(viewModel.triggerReload) { _ in
             Task {
-                await viewModel.reload()
+                await viewModel.reload(refreshing: true)
             }
         }
         .fullScreenCover(
