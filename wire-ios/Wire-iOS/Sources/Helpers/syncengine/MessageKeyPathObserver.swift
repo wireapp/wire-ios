@@ -19,10 +19,14 @@
 import Foundation
 import WireSyncEngine
 
+/// A handle to an in-flight observation of a message's file download. Retain it for as long as
+/// you want to keep observing; releasing it (or letting it be deallocated) stops the observation.
+protocol FileDownloadObserving: AnyObject {}
+
 /// Observes a single key path in `MessageChangeInfo` and calls a change handler when the key path changes.
 ///
 /// The observer is active as long as the `MessageKeyPathObserver` instance is retained.
-final class MessageKeyPathObserver: NSObject, ZMMessageObserver {
+final class MessageKeyPathObserver: NSObject, ZMMessageObserver, FileDownloadObserving {
 
     typealias ChangedBlock = (_ message: ZMConversationMessage) -> Void
 
