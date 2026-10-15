@@ -37,7 +37,7 @@ final class LogOutHelper {
     }
 
     func makeLogOutViewControllerToPresent(userSession: UserSession) -> UIViewController? {
-        let selfUser = userSession.providedSelfUser
+        let selfUser = ZMUser.selfUser(in: userSession.contextProvider.viewContext)
 
         var viewController: UIViewController?
 
@@ -73,7 +73,7 @@ final class LogOutHelper {
     }
 
     func logout(userSession: UserSession, password: String? = nil) {
-        let selfUser = userSession.providedSelfUser
+        let selfUser = ZMUser.selfUser(in: userSession.contextProvider.viewContext)
 
         if selfUser.usesCompanyLogin || password != nil {
             showLoading()
