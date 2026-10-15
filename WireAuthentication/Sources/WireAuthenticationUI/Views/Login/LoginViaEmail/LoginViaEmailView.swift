@@ -45,9 +45,7 @@ package protocol LoginViaEmailFactory {
 package struct LoginViaEmailView: View {
 
     @StateObject private var viewModel: LoginViaEmailViewModel
-    #if DEBUG
-        @State private var didSubmitDeveloperCredentials = false
-    #endif
+    @State private var didSubmitDeveloperCredentials = false
 
     private typealias Strings = L10n.Localizable
 
@@ -102,20 +100,18 @@ package struct LoginViaEmailView: View {
         .presentationDetents(viewModel.areProxyCredentialsRequired ? [.large] : [.medium, .large])
         .interactiveDismissDisabled()
         .presentationDragIndicator(.hidden)
-        #if DEBUG
-            .task {
-                guard
-                    viewModel.shouldSubmitCredentialsOnAppear,
-                    !didSubmitDeveloperCredentials,
-                    !viewModel.areProxyCredentialsRequired
-                else {
-                    return
-                }
-
-                didSubmitDeveloperCredentials = true
-                await viewModel.submitCredentials()
+        .task {
+            guard
+                viewModel.shouldSubmitCredentialsOnAppear,
+                !didSubmitDeveloperCredentials,
+                !viewModel.areProxyCredentialsRequired
+            else {
+                return
             }
-        #endif
+
+            didSubmitDeveloperCredentials = true
+            await viewModel.submitCredentials()
+        }
     }
 
     @ViewBuilder

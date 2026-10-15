@@ -250,7 +250,6 @@ final class DetermineAuthMethodViewModelTests: XCTestCase, DetermineAuthMethodVi
             let credentials = DeveloperCredentialQRCode(scannedCode: payload)
 
             XCTAssertEqual(credentials?.email, "owner@example.com")
-            XCTAssertEqual(credentials?.username, "owner123")
             XCTAssertEqual(credentials?.password, "Apple@12345")
         }
 
@@ -264,7 +263,6 @@ final class DetermineAuthMethodViewModelTests: XCTestCase, DetermineAuthMethodVi
             let credentials = DeveloperCredentialQRCode(scannedCode: payload)
 
             XCTAssertEqual(credentials?.email, "member@example.com")
-            XCTAssertEqual(credentials?.username, "member123")
             XCTAssertEqual(credentials?.password, "Apple@12345")
         }
 

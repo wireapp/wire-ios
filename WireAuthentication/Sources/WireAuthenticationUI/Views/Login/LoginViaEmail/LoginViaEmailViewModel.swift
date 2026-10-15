@@ -49,9 +49,7 @@ package final class LoginViaEmailViewModel: ObservableObject {
     let environment: BackendEnvironment2
     let isEmailPrefilled: Bool
     let canCreateAccount: Bool
-    #if DEBUG
-        let shouldSubmitCredentialsOnAppear: Bool
-    #endif
+    let shouldSubmitCredentialsOnAppear: Bool
 
     var areProxyCredentialsRequired: Bool {
         environment.config.proxyConfig?.needsAuthentication == true
@@ -117,21 +115,18 @@ package final class LoginViaEmailViewModel: ObservableObject {
         self.canCreateAccount = canCreateAccount
         self.didDetectDomainConflict = didDetectDomainConflict
 
-        #if DEBUG
-            if let email, let credentials = PendingDeveloperCredentialsStore.consume(email: email) {
-                self.email = credentials.email
-                self.password = credentials.password
-                self.isEmailPrefilled = true
-                self.shouldSubmitCredentialsOnAppear = true
-            } else {
-                self.email = email ?? ""
-                self.isEmailPrefilled = email != nil
-                self.shouldSubmitCredentialsOnAppear = false
-            }
-        #else
+        if PendingDeveloperCredentialsStore.isEnabled,
+           let email,
+           let credentials = PendingDeveloperCredentialsStore.consume(email: email) {
+            self.email = credentials.email
+            self.password = credentials.password
+            self.isEmailPrefilled = true
+            self.shouldSubmitCredentialsOnAppear = true
+        } else {
             self.email = email ?? ""
             self.isEmailPrefilled = email != nil
-        #endif
+            self.shouldSubmitCredentialsOnAppear = false
+        }
     }
 
     // MARK: - Actions
