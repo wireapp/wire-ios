@@ -214,7 +214,8 @@ final class SettingsTests: WireUITestCase {
         conversationPage.tapLocation(named: "Berlin")
 
         // THEN
-        conversationPage.verifyLocationOpensInGoogleMapsAlert(urlPrefix: "comgooglemaps://?q=52.52419,13.40221")
+        let mapsURL = "comgooglemaps://?q=\(Double(Float(52.52419))),\(Double(Float(13.40221)))"
+        conversationPage.verifyLocationOpensInGoogleMapsAlert(urlPrefix: mapsURL)
     }
 
     @MainActor
