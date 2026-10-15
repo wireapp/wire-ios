@@ -41,12 +41,9 @@ final class AppRootRouter {
     private let sessionManagerLifeCycleObserver: SessionManagerLifeCycleObserver
     private let foregroundNotificationFilter: ForegroundNotificationFilter
     private var authenticatedRouter: AuthenticatedRouter?
-<<<<<<< HEAD
     private let sceneConnectionOptions: UIScene.ConnectionOptions
-=======
     private var hasCheckedAccountLimit = false
     private let logOutHelper = LogOutHelper(showLoading: {}, hideLoading: {})
->>>>>>> dad7521339 (fix: account-limit alert - WPB-29180 (#5359))
 
     private var observerTokens: [NSObjectProtocol] = []
     private var authenticatedBlocks: [() -> Void] = []
