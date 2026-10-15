@@ -52,6 +52,7 @@ package struct DetermineAuthMethodView: View {
 
     @StateObject var viewModel: DetermineAuthMethodViewModel
     @State private var isQRCodeScannerPresented = false
+    @State private var pendingScannedCode: String?
 
     private typealias Strings = L10n.Localizable.Authentication
 
@@ -92,15 +93,24 @@ package struct DetermineAuthMethodView: View {
             sheetView(for: $0)
                 .presentationBackground(Color.black.opacity(0.7))
         }
-        .sheet(isPresented: $isQRCodeScannerPresented) {
-            DeveloperCredentialQRCodeScannerView { scannedCode in
-                isQRCodeScannerPresented = false
-                viewModel.submitDeveloperCredentialQRCode(scannedCode)
-            }
+        .sheet(isPresented: $isQRCodeScannerPresented, onDismiss: handleQRCodeScannerDismissal) {
+            DeveloperCredentialQRCodeScannerView(
+                onQRCodeScanned: { scannedCode in
+                    pendingScannedCode = scannedCode
+                    isQRCodeScannerPresented = false
+                },
+                onClose: { isQRCodeScannerPresented = false }
+            )
         }
         .interactiveDismissDisabled()
         .background(ColorTheme.Backgrounds.surface.color)
         .presentationDragIndicator(.hidden)
+    }
+
+    private func handleQRCodeScannerDismissal() {
+        guard let scannedCode = pendingScannedCode else { return }
+        pendingScannedCode = nil
+        viewModel.submitDeveloperCredentialQRCode(scannedCode)
     }
 
     // MARK: - Views
@@ -131,6 +141,7 @@ package struct DetermineAuthMethodView: View {
         VStack(alignment: .leading, spacing: 8) {
             ZStack(alignment: .bottomTrailing) {
                 inputTextField
+                    .padding(.trailing, viewModel.isDeveloperCredentialLoginEnabled ? 48 : 0)
 
                 if viewModel.isDeveloperCredentialLoginEnabled {
                     Button {
@@ -256,10 +267,12 @@ package struct DetermineAuthMethodView: View {
 
 private struct DeveloperCredentialQRCodeScannerView: UIViewControllerRepresentable {
     let onQRCodeScanned: (String) -> Void
+    let onClose: () -> Void
 
     func makeUIViewController(context: Context) -> DeveloperCredentialQRCodeScannerViewController {
         let viewController = DeveloperCredentialQRCodeScannerViewController()
         viewController.onQRCodeScanned = onQRCodeScanned
+        viewController.onClose = onClose
         return viewController
     }
 
@@ -277,6 +290,7 @@ private final class DeveloperCredentialQRCodeScannerViewController: UIViewContro
     private var didScanQRCode = false
     private var didRequestCameraAccess = false
     var onQRCodeScanned: ((String) -> Void)?
+    var onClose: (() -> Void)?
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
@@ -388,7 +402,7 @@ private final class DeveloperCredentialQRCodeScannerViewController: UIViewContro
     private func showScannerError(title: String, message: String) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "OK", style: .default) { [weak self] _ in
-            self?.dismiss(animated: true)
+            self?.onClose?()
         })
         present(alert, animated: true)
     }
