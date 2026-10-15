@@ -43,7 +43,7 @@ final class AppRootRouter {
     private var authenticatedRouter: AuthenticatedRouter?
     private let sceneConnectionOptions: UIScene.ConnectionOptions
     private var hasCheckedAccountLimit = false
-    private let logOutHelper = LogOutHelper(showLoading: {}, hideLoading: {})
+    private var logOutHelper: LogOutHelper?
 
     private var observerTokens: [NSObjectProtocol] = []
     private var authenticatedBlocks: [() -> Void] = []
@@ -513,8 +513,11 @@ extension AppRootRouter: AppStateCalculatorDelegate {
                 title: L10n.Localizable.AccountLimitAlert.logout,
                 style: .destructive
             ) { [weak self] _ in
-                guard let logOutViewController = self?.logOutHelper.makeLogOutViewControllerToPresent() else { return }
-                self?.rootViewController.present(logOutViewController, animated: true)
+                guard let self, let userSession = sessionManager.activeUserSession else { return }
+                let logOutHelper = LogOutHelper(userSession: userSession, showLoading: {}, hideLoading: {})
+                self.logOutHelper = logOutHelper
+                guard let logOutViewController = logOutHelper.makeLogOutViewControllerToPresent() else { return }
+                rootViewController.present(logOutViewController, animated: true)
             })
         rootViewController.present(alert, animated: true)
     }
