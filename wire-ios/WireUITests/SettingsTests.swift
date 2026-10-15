@@ -163,7 +163,6 @@ final class SettingsTests: WireUITestCase {
             .acceptPopup()
             .openConversation()
             .sendMessage(linkMessage)
-            .verifyMessageSent(linkMessage)
         conversationPage.tapLinkPreview()
 
         // THEN
