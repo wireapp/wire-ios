@@ -426,6 +426,7 @@ final class ConversationInputBarViewController: UIViewController,
                     ColorTheme.Buttons.Secondary.disabled,
                     for: .disabled
                 )
+                $0.accessibilityTraits.insert(.notEnabled)
             }
         }
 

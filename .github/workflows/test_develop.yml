@@ -40,7 +40,7 @@ jobs:
       ui_test_tags: "!critical"
       uitest_parallel_workers: ${{ github.event_name == 'workflow_dispatch' && inputs.uitest_parallel_workers || vars.UITEST_PARALLEL_WORKERS || '2' }}
       notify: always
-      timeout_minutes: 120
+      timeout_minutes: 180
     secrets:
       ZENKINS_USERNAME: ${{ secrets.ZENKINS_USERNAME }}
       DD_API_KEY: ${{ secrets.DD_API_KEY }}

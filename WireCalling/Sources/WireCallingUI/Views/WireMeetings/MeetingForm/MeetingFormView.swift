@@ -86,7 +86,7 @@ struct MeetingFormView: View {
             }
             .alert(viewModel.errorTitle, isPresented: $viewModel.hasError) {
                 Button(Strings.Error.Alert.ok) {
-                    if viewModel.dismissAfterError { dismiss() }
+                    viewModel.acknowledgeError { dismiss() }
                 }
                 .accessibilityIdentifier(Locators.WireMeetings.MeetingForm.errorDismiss)
             } message: {
