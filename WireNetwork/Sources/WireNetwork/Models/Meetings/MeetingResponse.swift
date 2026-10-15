@@ -91,6 +91,7 @@ public struct MeetingResponse: Sendable {
     public let updatedAt: Date
     public let recurrence: MeetingRecurrence?
     public let timeZoneIdentifier: String?
+    public let link: URL?
 
     public init(
         id: QualifiedID,
@@ -104,7 +105,8 @@ public struct MeetingResponse: Sendable {
         createdAt: Date,
         updatedAt: Date,
         recurrence: MeetingRecurrence? = nil,
-        timeZoneIdentifier: String? = nil
+        timeZoneIdentifier: String? = nil,
+        link: URL? = nil
     ) {
         self.id = id
         self.title = title
@@ -118,6 +120,7 @@ public struct MeetingResponse: Sendable {
         self.updatedAt = updatedAt
         self.recurrence = recurrence
         self.timeZoneIdentifier = timeZoneIdentifier
+        self.link = link
     }
 }
 
@@ -153,6 +156,7 @@ struct MeetingResponseV16: Decodable, ToAPIModelConvertible {
     let updatedAt: UTCTime
     let recurrence: MeetingRecurrenceV16?
     let timeZoneIdentifier: String?
+    let link: URL?
 
     enum CodingKeys: String, CodingKey {
         case qualifiedID = "qualified_id"
@@ -167,6 +171,7 @@ struct MeetingResponseV16: Decodable, ToAPIModelConvertible {
         case updatedAt = "updated_at"
         case recurrence
         case timeZoneIdentifier = "tzid"
+        case link
     }
 
     func toAPIModel() -> MeetingResponse {
@@ -182,7 +187,8 @@ struct MeetingResponseV16: Decodable, ToAPIModelConvertible {
             createdAt: createdAt.date,
             updatedAt: updatedAt.date,
             recurrence: recurrence?.toMeetingRecurrence(),
-            timeZoneIdentifier: timeZoneIdentifier
+            timeZoneIdentifier: timeZoneIdentifier,
+            link: link
         )
     }
 }

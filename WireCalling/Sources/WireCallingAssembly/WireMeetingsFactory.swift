@@ -28,10 +28,12 @@ import WireFoundation
 public struct WireMeetingsFactory {
 
     private let selfUserID: UUID
+    private let supportsMeetingLinks: Bool
 
     @MainActor
-    public init(selfUserID: UUID) {
+    public init(selfUserID: UUID, supportsMeetingLinks: Bool = false) {
         self.selfUserID = selfUserID
+        self.supportsMeetingLinks = supportsMeetingLinks
     }
 
     @MainActor
@@ -83,6 +85,7 @@ public struct WireMeetingsFactory {
                     createMeetingUseCase: createMeetingUseCase,
                     updateMeetingUseCase: updateMeetingUseCase,
                     currentDateProvider: currentDateProvider,
+                    supportsMeetingLinks: supportsMeetingLinks,
                     onSuccess: onSuccess
                 )
             }
