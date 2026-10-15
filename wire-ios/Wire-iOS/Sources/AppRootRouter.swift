@@ -43,7 +43,7 @@ final class AppRootRouter {
     private var authenticatedRouter: AuthenticatedRouter?
     private let sceneConnectionOptions: UIScene.ConnectionOptions
     private var hasCheckedAccountLimit = false
-    private var logOutHelper: LogOutHelper?
+    private let logOutHelper = LogOutHelper(showLoading: {}, hideLoading: {})
 
     private var observerTokens: [NSObjectProtocol] = []
     private var authenticatedBlocks: [() -> Void] = []
@@ -514,9 +514,8 @@ extension AppRootRouter: AppStateCalculatorDelegate {
                 style: .destructive
             ) { [weak self] _ in
                 guard let self, let userSession = sessionManager.activeUserSession else { return }
-                let logOutHelper = LogOutHelper(userSession: userSession, showLoading: {}, hideLoading: {})
-                self.logOutHelper = logOutHelper
-                guard let logOutViewController = logOutHelper.makeLogOutViewControllerToPresent() else { return }
+                guard let logOutViewController = logOutHelper
+                    .makeLogOutViewControllerToPresent(userSession: userSession) else { return }
                 rootViewController.present(logOutViewController, animated: true)
             })
         rootViewController.present(alert, animated: true)

@@ -234,7 +234,7 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
 
     func logout() {
         guard let userSession else { return }
-        LogOutHelper(userSession: userSession, showLoading: {}, hideLoading: {}).logout()
+        LogOutHelper(showLoading: {}, hideLoading: {}).logout(userSession: userSession)
     }
 
     private func simulateAccessTokenFailure() {

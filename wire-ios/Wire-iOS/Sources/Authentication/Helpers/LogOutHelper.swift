@@ -25,22 +25,19 @@ final class LogOutHelper {
 
     private var requestPasswordController: RequestPasswordController?
 
-    private let userSession: UserSession
     private let showLoading: () -> Void
     private let hideLoading: () -> Void
 
     init(
-        userSession: UserSession,
         showLoading: @escaping () -> Void,
         hideLoading: @escaping () -> Void
     ) {
-        self.userSession = userSession
         self.showLoading = showLoading
         self.hideLoading = hideLoading
     }
 
-    func makeLogOutViewControllerToPresent() -> UIViewController? {
-        guard let selfUser = ZMUser.selfUser() else { return nil }
+    func makeLogOutViewControllerToPresent(userSession: UserSession) -> UIViewController? {
+        let selfUser = userSession.providedSelfUser
 
         var viewController: UIViewController?
 
@@ -55,7 +52,7 @@ final class LogOutHelper {
                 title: L10n.Localizable.General.ok,
                 style: .destructive,
                 handler: { [weak self] _ in
-                    self?.logout()
+                    self?.logout(userSession: userSession)
                 }
             )
             alert.addAction(actionCancel)
@@ -66,7 +63,7 @@ final class LogOutHelper {
             requestPasswordController = RequestPasswordController(context: .logout, callback: { [weak self] password in
                 guard let password else { return }
 
-                self?.logout(password: password)
+                self?.logout(userSession: userSession, password: password)
             })
 
             viewController = requestPasswordController?.alertController
@@ -75,8 +72,8 @@ final class LogOutHelper {
         return viewController
     }
 
-    func logout(password: String? = nil) {
-        guard let selfUser = ZMUser.selfUser() else { return }
+    func logout(userSession: UserSession, password: String? = nil) {
+        let selfUser = userSession.providedSelfUser
 
         if selfUser.usesCompanyLogin || password != nil {
             showLoading()
@@ -93,8 +90,7 @@ final class LogOutHelper {
                 }
             }
         } else {
-            guard let account = SessionManager.shared?.accountManager.selectedAccount else { return }
-            SessionManager.shared?.delete(account: account)
+            SessionManager.shared?.delete(account: userSession.contextProvider.account)
         }
     }
 
