@@ -64,7 +64,6 @@
 
 // MARK: - Schedule a meeting
 
-"meetings.error.missingLink" = "Встреча была создана, но ссылка на нее недоступна.";
 "meetings.error.setupFailedTitle" = "Не удалось завершить настройку встречи";
 "meetings.error.conversationSetupFailed" = "Информация о встрече была сохранена, но при настройке что-то пошло не так. Пожалуйста, попробуйте еще раз.";
 "meetings.error.addParticipantsFailed" = "Информация о встрече была сохранена, но некоторых участников добавить не удалось. Пожалуйста, попробуйте еще раз.";

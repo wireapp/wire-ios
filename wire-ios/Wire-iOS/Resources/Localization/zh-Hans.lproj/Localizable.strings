@@ -2111,13 +2111,6 @@
 
 "account_deleted_missing_passcode_alert.title" = "无设备密码";
 "account_deleted_missing_passcode_alert.message" = "若要使用 Wire，请在您的设备设置中设置密码。";
-"account_limit_alert.title.remove_one" = "Remove an account";
-"account_limit_alert.title.remove_two" = "Remove 2 accounts";
-"account_limit_alert.message.max_one.remove_one" = "You can only use one account at once on this device. Log out of this account or select Later to log out of the other account.\nCreate a backup to preserve your conversation history.";
-"account_limit_alert.message.max_one.remove_two" = "You can only use one account at once on this device. Log out of this account or select Later to log out of the other accounts.\nCreate a backup to preserve your conversation history.";
-"account_limit_alert.message.max_two.remove_one" = "You can only use two accounts at once on this device. Log out of this account or select Later to log out of the other account.\nCreate a backup to preserve your conversation history.";
-"account_limit_alert.logout" = "Log out of this account";
-"account_limit_alert.later" = "稍后";
 
 // Button cell state
 "button_message_cell.state.unselected" = "未选择";
