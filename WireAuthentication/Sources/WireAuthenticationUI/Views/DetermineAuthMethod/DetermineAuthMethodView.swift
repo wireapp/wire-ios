@@ -137,37 +137,30 @@ package struct DetermineAuthMethodView: View {
             .padding(.trailing)
     }
 
-    @ViewBuilder private var inputField: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            ZStack(alignment: .bottomTrailing) {
-                inputTextField
-                    .padding(.trailing, viewModel.isDeveloperCredentialLoginEnabled ? 48 : 0)
-
-                if viewModel.isDeveloperCredentialLoginEnabled {
-                    Button {
-                        isQRCodeScannerPresented = true
-                    } label: {
-                        Image(systemName: "qrcode.viewfinder")
-                            .font(.system(size: 22, weight: .medium))
-                            .frame(width: 44, height: 44)
-                            .padding(.trailing, 4)
-                    }
-                    .buttonStyle(.plain)
-                    .contentShape(Rectangle())
-                    .accessibilityLabel("Scan credentials QR code")
-                }
-            }
+    private var qrCodeButton: some View {
+        Button {
+            isQRCodeScannerPresented = true
+        } label: {
+            Image(systemName: "qrcode.viewfinder")
+                .font(.system(size: 22, weight: .medium))
+                .frame(width: 44, height: 44)
+                .padding(.trailing, 4)
         }
+        .buttonStyle(.plain)
+        .contentShape(Rectangle())
+        .accessibilityLabel("Scan credentials QR code")
+        .accessibilityIdentifier("developerCredentialQRCodeButton")
     }
 
-    private var inputTextField: some View {
+    private var inputField: some View {
         LabeledTextField(
             isMandatory: false,
             placeholder: inputFieldPlaceholder,
             title: inputFieldTitle,
             string: $viewModel.emailOrSSOCode,
             keyboardType: .emailAddress,
-            textContentType: .username
+            textContentType: .username,
+            trailingAccessory: viewModel.isDeveloperCredentialLoginEnabled ? AnyView(qrCodeButton) : nil
         )
         .autocorrectionDisabled()
         .lineLimit(nil)

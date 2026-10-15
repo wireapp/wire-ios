@@ -58,7 +58,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
     }
 
     var isDeveloperCredentialLoginEnabled: Bool {
-        PendingDeveloperCredentialsStore.isEnabled
+        PendingDeveloperCredentialsStore.isEnabled && isOnPremiseBackend && !environment.isCloudEnvironment
     }
 
     let overrideAllowEmailLoginOnly: Bool
