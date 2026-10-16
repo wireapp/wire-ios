@@ -67,8 +67,8 @@ final class ProfileViewController: UIViewController {
     // MARK: - init
 
     convenience init(
-        user: UserType,
-        viewer: UserType,
+        user: WireDataModel.UserType,
+        viewer: WireDataModel.UserType,
         conversation: ZMConversation? = nil,
         context: ProfileViewControllerContext? = nil,
         userSession: UserSession,
