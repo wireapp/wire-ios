@@ -26,8 +26,6 @@ import WireMessagingDomain
 import WireNetwork
 import WireSyncEngine
 
-import protocol WireDataModel.UserType
-
 enum ProfileViewControllerTabBarIndex: Int {
     case details = 0
     case devices
