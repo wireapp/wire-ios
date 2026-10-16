@@ -161,7 +161,7 @@ Why this covers the cases:
 | Activation before post-sync preparation finishes | Loop sees `.active` and runs (unchanged). |
 | Post-sync preparation finishes while `.inactive` | Loop defers and sets the flag; `didBecomeActive` resumes it. |
 | Backgrounded between batches | Next check defers and sets the flag; next activation resumes the remaining batches. |
-| Repeated activation / overlapping triggers | Flag is cleared on resume, so repeated activations are no-ops; `MLSService` already rejects overlapping recovery runs via `isRecoveringPendingConversations`. |
+| Repeated activation / overlapping triggers | Flag is cleared on resume, so repeated activations are no-ops. `MLSService` runs one batch at a time; a request made while a batch runs makes the running loop continue with another batch. |
 | MLS disabled (feature or backend) | Loop condition fails before the state check; nothing is deferred. |
 
 Because the state read and the flag write happen together on the main actor and
@@ -199,27 +199,32 @@ doesn't resume batches interrupted by backgrounding.
 - **Background launches** (push wake-up, background fetch) defer and resume on the
   first activation.
 
-### Known limitations (accepted)
+### Concurrent recovery requests
 
-- If the deferral happened while backgrounded and the app is later foregrounded,
-  the resumed recovery can run concurrently with the new incremental sync.
-  Join-on-send (`MessageSender`) already joins independently of sync, so this is
-  not a new class of concurrency.
-- Residual delay in that same situation: if the new sync marks *another*
-  conversation `.pendingJoin` after the resumed loop has already fetched its
-  pending list, that conversation is missed by the resumed loop, and the sync's
-  own loop is rejected by `MLSService`'s `isRecoveringPendingConversations` lock.
-  It is then joined on the next foreground sync, not stuck until a restart.
-  Requires membership changes on both sides of a background period plus
-  overlapping timing. A fix would make the resumed loop wait for a running sync and
-  let its completion handle recovery; not done given the codebase's retirement
-  horizon.
+If the deferral happened while backgrounded and the app is later foregrounded, the
+resumed recovery can run concurrently with the new incremental sync. Join-on-send
+(`MessageSender`) already joins independently of sync, so this is not a new class
+of concurrency.
+
+That sync may mark *another* conversation `.pendingJoin` after the resumed loop has
+fetched its pending list, and its own recovery request is rejected because a batch
+is already running. To not lose that request, `MLSService` records it
+(`isPendingConversationRecoveryRequested`) and makes the running
+`recoverPendingConversationBatchIfNeeded()` return `true`, so the running loop
+fetches the pending list again and joins the new conversation as well. Releasing the
+running batch and reading the request happen under the same lock, so a request is
+either seen by the running batch or starts a new one. If a join in that batch
+failed, the follow-up batch retries it once more; this is bounded by the number of
+overlapping requests.
 
 Changed code:
 
 - `wire-ios-sync-engine/Source/UserSession/ZMUserSession/ZMUserSession.swift`
 - `wire-ios-sync-engine/Source/UserSession/ZMUserSession/ZMUserSession+LifeCycle.swift`
 - `wire-ios-sync-engine/Tests/Source/UserSession/ZMUserSessionTests.swift`
+- `wire-ios-data-model/Source/MLS/MLSService.swift`
+- `wire-ios-data-model/Source/MLS/MLSServiceInterface.swift`
+- `wire-ios-data-model/Tests/MLS/MLSServiceTests.swift`
 
 ## Reproduce on a device
 
@@ -247,6 +252,12 @@ Unit tests in `ZMUserSessionTests`:
 - `test_itResumesPendingConversationRecoveryWhenBecomingActiveAfterBackgroundingBetweenBatches`:
   backgrounding after the first batch defers; activation resumes the remaining batches.
 - `test_itDoesNotDeferPendingConversationRecoveryWhenBackendMLSIsDisabled`.
+
+Unit test in `MLSServiceTests`:
+
+- `test_RecoverPendingConversationBatchIfNeeded_ContinuesWhenRecoveryIsRequestedWhileRunning`:
+  while A is being joined, B becomes pending and recovery is requested; that request
+  returns `false`, the running batch returns `true`, and the next batch joins B.
 
 On a device: repeat the steps above. The iPhone must join on the first foreground
 and receive messages sent after that join, without sending locally or restarting.
@@ -291,11 +302,11 @@ Keep the `.active` guard, but remember when recovery was deferred and resume it 
 - `recoverPendingConversations()` replaces the inline loop. Before each batch it reads the application state and records the deferral in one main-actor step, so an activation cannot be missed.
 - A new `didBecomeActive` observer resumes deferred recovery in a `WaitingGroupTask` on the sync context.
 
-This covers sync-before-activation, activation-before-sync (unchanged) and backgrounding between batches. Repeated activations don't start extra loops, and `MLSService` already prevents overlapping recovery runs. Recovery still never runs in the background or before MLS client initialization and the key-package check. Deferral and resume are logged with the application state.
+This covers sync-before-activation, activation-before-sync (unchanged) and backgrounding between batches. Repeated activations don't start extra loops. Recovery still never runs in the background or before MLS client initialization and the key-package check. Deferral and resume are logged with the application state.
 
 The notification service extension is unaffected: it does not run this recovery. If a sync finishes during the extra background time requested after resigning active, recovery is deferred and runs on the next activation.
 
-Known limitation: if recovery was deferred while backgrounded and the following foreground sync marks another conversation as pending join while the resumed recovery is already running, that conversation is joined on the next foreground sync instead of immediately. This needs membership changes on both sides of a background period plus overlapping timing.
+`MLSService` runs one recovery batch at a time and used to drop requests made while a batch was running. A resumed recovery can overlap with the foreground sync, which may mark another conversation as pending join after the running batch fetched its list. Such a request is now recorded and makes the running batch return `true`, so the running loop fetches again and joins that conversation too.
 
 ### Steps to reproduce
 
@@ -314,4 +325,5 @@ The bug is timing-dependent; it usually shows within a few foregrounds. Keep the
   - backgrounded between batches → remaining batches run on activation
   - backend MLS disabled → nothing is deferred
   - existing active-path test kept
+- Unit test in `MLSServiceTests`: a recovery request made while a batch is running makes that batch continue, and the next batch joins the newly pending conversation
 - Manual, with the steps above on the fixed build: the device joins on the first foreground and receives new messages without sending or relaunching. If the race was hit, the logs show `deferring pending conversation recovery, application state: 1` followed by `resuming deferred pending conversation recovery`, then the group-info request, the external commit and `pending conversation recovery batch: recovered 1 of 1`.
