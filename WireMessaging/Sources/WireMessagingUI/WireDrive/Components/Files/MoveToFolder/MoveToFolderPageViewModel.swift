@@ -19,6 +19,7 @@
 import Combine
 import Foundation
 import SwiftUI
+import WireFoundation
 import WireMessagingDomain
 
 private typealias Strings = L10n.Localizable.Conversation.WireCells
@@ -146,10 +147,7 @@ final class MoveToFolderPageViewModel: MoveToFolderPageViewModelProtocol {
                 name: node.name,
                 subtitle: Self.subtitle(
                     modifiedAt: node.modified,
-                    ownedBy: node.ownerUserName,
-                    locale: .autoupdatingCurrent,
-                    calendar: .autoupdatingCurrent,
-                    timeZone: .autoupdatingCurrent
+                    ownedBy: node.ownerUserName
                 )
             )
         }
@@ -274,22 +272,9 @@ final class MoveToFolderPageViewModel: MoveToFolderPageViewModelProtocol {
 
     private static func subtitle(
         modifiedAt: Date?,
-        ownedBy: String?,
-        locale: Locale,
-        calendar: Calendar,
-        timeZone: TimeZone
+        ownedBy: String?
     ) -> String? {
-        let modifiedAt = modifiedAt.map { date in
-            let style = Date.FormatStyle(
-                date: .abbreviated,
-                time: .shortened,
-                locale: locale,
-                calendar: calendar,
-                timeZone: timeZone,
-                capitalizationContext: .beginningOfSentence
-            )
-            return date.formatted(style)
-        }
+        let modifiedAt = modifiedAt?.formattedDate(justNowText: Strings.Files.Time.justNow)
         return if let modifiedAt, let ownedBy {
             L10n.Localizable.Conversation.WireCells.Files.Item.subtitle(modifiedAt, ownedBy)
         } else {

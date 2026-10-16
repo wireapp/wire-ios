@@ -64,6 +64,7 @@
 
 // MARK: - Schedule a meeting
 
+"meetings.error.missingLink" = "Das Meeting wurde erstellt, aber der dazugehörige Link ist nicht verfügbar.";
 "meetings.error.setupFailedTitle" = "Could not finish meeting setup";
 "meetings.error.conversationSetupFailed" = "The meeting was saved, but something went wrong while setting up the conversation. Please try again.";
 "meetings.error.addParticipantsFailed" = "Das Meeting wurde gespeichert, aber einige Teilnehmer konnten nicht hinzugefügt werden. Bitte versuchen Sie es erneut.";
@@ -133,12 +134,12 @@
 "wireMeetings.schedule.members.contacts.title" = "Kontakte";
 "wireMeetings.schedule.members.groups.importButton" = "Import from group";
 "wireMeetings.schedule.members.groups.title" = "Gruppen und Channels";
-"wireMeetings.schedule.members.groups.searchPlaceholder" = "Search groups and channels";
+"wireMeetings.schedule.members.groups.searchPlaceholder" = "Gruppen und Channels suchen";
 "wireMeetings.schedule.members.groups.group" = "Gruppe";
 "wireMeetings.schedule.members.groups.channel" = "Channel";
-"wireMeetings.schedule.members.groups.emptyTitle" = "No groups or channels found";
+"wireMeetings.schedule.members.groups.emptyTitle" = "Keine Gruppen oder Channels gefunden";
 "wireMeetings.schedule.members.groups.emptyDescription" = "Only groups and channels you have joined are shown.";
-"wireMeetings.schedule.members.groups.loading" = "Loading groups and channels";
+"wireMeetings.schedule.members.groups.loading" = "Gruppen oder Channels werden geladen";
 "wireMeetings.schedule.members.groups.importing" = "Importing participants";
 "wireMeetings.schedule.members.groups.importError" = "Could not import participants";
 
