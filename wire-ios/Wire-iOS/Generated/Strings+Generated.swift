@@ -1267,13 +1267,16 @@ internal enum L10n {
       internal enum Message {
         internal enum MaxOne {
           /// You can only use one account at once on this device. Log out of this account or select Later to log out of the other account.
-          internal static let removeOne = L10n.tr("Localizable", "account_limit_alert.message.max_one.remove_one", fallback: "You can only use one account at once on this device. Log out of this account or select Later to log out of the other account.")
+          /// Create a backup to preserve your conversation history.
+          internal static let removeOne = L10n.tr("Localizable", "account_limit_alert.message.max_one.remove_one", fallback: "You can only use one account at once on this device. Log out of this account or select Later to log out of the other account.\nCreate a backup to preserve your conversation history.")
           /// You can only use one account at once on this device. Log out of this account or select Later to log out of the other accounts.
-          internal static let removeTwo = L10n.tr("Localizable", "account_limit_alert.message.max_one.remove_two", fallback: "You can only use one account at once on this device. Log out of this account or select Later to log out of the other accounts.")
+          /// Create a backup to preserve your conversation history.
+          internal static let removeTwo = L10n.tr("Localizable", "account_limit_alert.message.max_one.remove_two", fallback: "You can only use one account at once on this device. Log out of this account or select Later to log out of the other accounts.\nCreate a backup to preserve your conversation history.")
         }
         internal enum MaxTwo {
           /// You can only use two accounts at once on this device. Log out of this account or select Later to log out of the other account.
-          internal static let removeOne = L10n.tr("Localizable", "account_limit_alert.message.max_two.remove_one", fallback: "You can only use two accounts at once on this device. Log out of this account or select Later to log out of the other account.")
+          /// Create a backup to preserve your conversation history.
+          internal static let removeOne = L10n.tr("Localizable", "account_limit_alert.message.max_two.remove_one", fallback: "You can only use two accounts at once on this device. Log out of this account or select Later to log out of the other account.\nCreate a backup to preserve your conversation history.")
         }
       }
       internal enum Title {
@@ -5199,6 +5202,10 @@ internal enum L10n {
         /// Wire’s Support team will never reach out to you in the app.
         internal static func identityWarning(_ p1: Any) -> String {
           return L10n.tr("Localizable", "profile.details.identity_warning", String(describing: p1), fallback: "Get certainty about %@’s identity before connecting.\nWire’s Support team will never reach out to you in the app.")
+        }
+        /// You can communicate with %@ once they are set up.
+        internal static func nonContactable(_ p1: Any) -> String {
+          return L10n.tr("Localizable", "profile.details.non_contactable", String(describing: p1), fallback: "You can communicate with %@ once they are set up.")
         }
         /// external
         internal static let partner = L10n.tr("Localizable", "profile.details.partner", fallback: "external")
