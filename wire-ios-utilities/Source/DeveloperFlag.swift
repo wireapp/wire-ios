@@ -46,6 +46,7 @@ public enum DeveloperFlag: String, CaseIterable {
     case simulateDriveOffline
     case simulateMainAppRequiredError
     case simulateUnestablishedMLSGroup
+    case twoFactorAuthentication
     case unSafeLogsForPublic
     case useBackgroundActivityFactoryInAppBackgroundTaskExecuter
     case enableDriveBulkActions
@@ -124,6 +125,9 @@ public enum DeveloperFlag: String, CaseIterable {
 
         case .simulateUnestablishedMLSGroup:
             "Turn on to leave the next locally created MLS group unestablished at epoch 0"
+
+        case .twoFactorAuthentication:
+            "Turn on to enable two-factor authentication (2FA) using TOTP"
 
         case .unSafeLogsForPublic:
             "Turn on to write all logs (including debug and non-public) to disk in release builds"
