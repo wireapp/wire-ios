@@ -86,6 +86,8 @@ on:
         required: false
       JIRA_COMMENT_TOKEN:
         required: false
+      JIRA_COMMENT_BASE_URL:
+        required: false
       WIRE_WEBHOOK_URL:
         required: true
       WIRE_WEBHOOK_TOKEN:
@@ -305,7 +307,7 @@ jobs:
       - name: Comment build on Jira tickets
         continue-on-error: true
         env:
-          JIRA_BASE_URL: https://wearezeta.atlassian.net
+          JIRA_BASE_URL: ${{ secrets.JIRA_COMMENT_BASE_URL || 'https://wearezeta.atlassian.net' }}
           JIRA_TOKEN: ${{ secrets.JIRA_COMMENT_TOKEN }}
           INPUT_KEYS: ${{ inputs.jira_keys }}
           COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
