@@ -26,12 +26,19 @@ permissions:
   issues: write
   pull-requests: read
 
+# Serialize runs (including manual backfills) so concurrent syncs don't race on label creation or stale labels.
+concurrency:
+  group: label-prs
+  cancel-in-progress: false
+
 jobs:
   label-prs:
     runs-on: ubuntu-24.04
+    # Fork PRs are not labeled: they can't access JIRA_TOKEN.
     if: >
       github.event_name == 'workflow_dispatch' ||
-      github.event.pull_request.draft != true
+      (github.event.pull_request.draft != true &&
+       github.event.pull_request.head.repo.full_name == github.repository)
     steps:
       - name: Sync component labels
         uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7.1.0
@@ -74,12 +81,24 @@ jobs:
               const names = new Set(existing.map(l => l.name));
               for (const name of MANAGED_LABELS) {
                 if (names.has(name)) continue;
-                await github.rest.issues.createLabel({ owner, repo, name, color: LABEL_COLOR, description: 'Jira component' });
-                core.info(`Created label "${name}"`);
+                try {
+                  await github.rest.issues.createLabel({ owner, repo, name, color: LABEL_COLOR, description: 'Jira component' });
+                  core.info(`Created label "${name}"`);
+                } catch (e) {
+                  // 422 means another run created it first.
+                  if (e.status !== 422) throw e;
+                }
               }
             };
 
             const syncPr = async (pr) => {
+              // Re-read the PR: the webhook payload is an event-time snapshot of title and labels.
+              const { data: current } = await github.rest.pulls.get({ owner, repo, pull_number: pr.number });
+              pr = current;
+              if (pr.head.repo?.full_name !== pr.base.repo.full_name) {
+                core.notice(`PR #${pr.number}: fork PR, skipped`);
+                return;
+              }
               const ticket = pr.title.match(/\bWPB-\d+\b/)?.[0] ?? pr.head.ref.match(/WPB-\d+/i)?.[0]?.toUpperCase();
               if (!ticket) {
                 core.notice(`PR #${pr.number}: no WPB ticket in title or branch, skipped`);
@@ -92,9 +111,9 @@ jobs:
                 core.warning(`PR #${pr.number} (${ticket}): no mapped component on the ticket`);
               }
 
-              const current = pr.labels.map(l => l.name).filter(n => MANAGED_LABELS.includes(n));
-              const toAdd = desired.filter(n => !current.includes(n));
-              const toRemove = current.filter(n => !desired.includes(n));
+              const currentManaged = pr.labels.map(l => l.name).filter(n => MANAGED_LABELS.includes(n));
+              const toAdd = desired.filter(n => !currentManaged.includes(n));
+              const toRemove = currentManaged.filter(n => !desired.includes(n));
 
               if (toAdd.length) {
                 await github.rest.issues.addLabels({ owner, repo, issue_number: pr.number, labels: toAdd });
