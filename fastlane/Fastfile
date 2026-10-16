@@ -709,6 +709,9 @@ platform :ios do
         # Disable verbose diagnostics as these are generally not useful and collecting them can cause 600 second delays per test scheme.
         xcargs = ["-collect-test-diagnostics never"]
         if scheme == "WireUITests"
+            # Keep Debug builds, but use release assertion behavior for UI tests.
+            xcargs << "OTHER_SWIFT_FLAGS='$(inherited) -assert-config Release'"
+
             parallel_workers = ui_test_parallel_workers(options[:parallel_workers])
             if parallel_workers > 1
                 UI.message("Running UITests with #{parallel_workers} parallel simulator workers")
