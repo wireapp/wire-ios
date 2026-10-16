@@ -24,7 +24,7 @@ on:
 permissions:
   contents: read
   issues: write
-  pull-requests: read
+  pull-requests: write
 
 # Serialize runs (including manual backfills) so concurrent syncs don't race on label creation or stale labels.
 concurrency:
