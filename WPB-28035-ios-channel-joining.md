@@ -74,20 +74,52 @@ the key-package response, and failed when that order was reversed.
 4. Run E fits exactly: the key-package response arrived at 56.214 (the guard is
    evaluated right after it) and `sceneDidBecomeActive` at 56.374, ~160 ms later.
 
-### When it was introduced
+### Version history: same symptom, two causes
 
-[#5074](https://github.com/wireapp/wire-ios/pull/5074) "fix: recover MLS
-conversations after key-package exhaustion - WPB-27395" (commit `82accebc73`,
-merged 2026-07-29, first released in **4.25.0**) removed
-`mlsService.performPendingJoins()` from `MLSClientManager` (it ran once per
-session during MLS client setup, independent of app state) and replaced it with the
-`.active`-guarded batch loop above. That is why the older 4.24.0 customer logs
-must not be attributed to this guard: that version had a different trigger
-(once per session or on send).
+The symptom predates the current code; the ticket mixes both causes.
+
+- **4.24.0 and earlier: join only once per launch.**
+  `MLSClientManager.performsMLSClientUpdates()` called
+  `mlsService.performPendingJoins()` behind `didPerformMLSClientUpdate`, i.e. once
+  per session during MLS client setup. Otherwise a pending conversation was only
+  joined when sending to it. Being added while the app stayed alive (backgrounded,
+  not killed) left the channel unjoined until a relaunch or a send. This matches the
+  older 4.24.0 customer logs (membership event in an already-running session, no
+  join). It is not caused by the activation guard.
+- **4.25.0 and later: activation race.**
+  [#5074](https://github.com/wireapp/wire-ios/pull/5074) "fix: recover MLS
+  conversations after key-package exhaustion - WPB-27395" (commit `82accebc73`,
+  merged 2026-07-29) removed the once-per-session `performPendingJoins()` call and
+  added the batch recovery after every incremental sync shown above. That fixed the
+  once-per-launch gap for most foregrounds, but guarded the recovery on `.active`,
+  which can lose the race against activation. The in-house 4.26.1 runs in the
+  ticket reproduce this variant; this fix addresses it.
 
 [#5081](https://github.com/wireapp/wire-ios/pull/5081) (commit `e6cfe6e3bf`,
 WPB-20278) later wrapped the state check in `MainActor.run`; it did not change
 the behavior and is not the cause.
+
+Open point on 4.24.0: the customer reported that restarting did not help. On
+4.24.0 a real relaunch runs `performPendingJoins()` at session start, so it should
+have joined, unless "restart" meant backgrounding, or the join itself failed
+(e.g. key-package exhaustion, the problem #5074 addressed). The 4.24.0 logs would
+show `joining N group(s)` and possibly `Failed to join pending group` after the
+relaunch.
+
+### LTS branch `release/cycle-4.16`
+
+[#5216](https://github.com/wireapp/wire-ios/pull/5216) cherry-picked #5074 onto
+`release/cycle-4.16` (merge commit `51fd001f38`, 2026-09-15). It was reverted on
+2026-09-24 by `44be38b491` (Revert "fix: recover MLS conversations after
+key-package exhaustion - WPB-27395 (#5216)"). The branch head (checked at
+`7bb6a45a1f`) has no recovery loop and calls `performPendingJoins()` once per
+session again; `bk_build/4.16.5` contains both the pick and the revert, and no
+`appstore/4.16.*` tag contains the pick.
+
+So 4.16 does **not** have the activation race and needs no port of this fix. It
+does have the older once-per-launch behavior described for 4.24.0. Fixing that on
+LTS would mean re-applying #5074 together with this fix, which is a separate
+decision.
 
 ### Evidence gap
 
@@ -105,7 +137,7 @@ the deferral and the resume so new logs can confirm or disprove this.
 Additional evidence is in `WPB-28035_02_iOS-4.26.1_runD_selfadd.zip`. Only the
 11:48 run A in `WPB-28035_03_iOS-4.26.1_runA_owner-adds-other-user.zip` is valid;
 the later run used another account. The customer's claim that restarting did not
-help remains unverified; in-house restarts succeeded. The original log archives
+help remains unverified (see the open point above); in-house restarts succeeded. The original log archives
 have not been independently inspected as part of this investigation.
 
 ## Fix (implemented)
@@ -239,61 +271,47 @@ outside this fix's acceptance criteria.
 
 ### Issue
 
-After being added to an existing channel (e.g. through Team Management) while the
-app is in the background, the iPhone shows the channel on foreground but never
-joins its MLS group, so it receives no new messages. Only a force-quit/relaunch
-(or sending a message) made it join.
+After being added to an existing channel (e.g. through Team Management) while the app is in the background, the iPhone shows the channel on foreground but never joins its MLS group, so it receives no new messages. Only a force-quit/relaunch (or sending a message) made it join.
 
 ### Cause
 
-Regression from #5074 (WPB-27395, commit `82accebc73`, first released in 4.25.0).
-That PR replaced the once-per-session `performPendingJoins()` call in
-`MLSClientManager`, which ran regardless of app state, with a batch loop at the end
-of `ZMUserSession.didFinishIncrementalSync` that only runs while
-`applicationState == .active`. On foreground, `applicationWillEnterForeground`
-resumes the sync while the app is still inactive, so a quick sync (plus MLS client
-init and key-package check) can finish before `didBecomeActive`. In that case the
-recovery loop is skipped and nothing retries it until the next sync — which on the
-next foreground can lose the same race. A cold start sets up the session late enough
-that the app is already active, which is why relaunching helped.
+The symptom has two causes depending on the version:
 
-The ticket's run E shows this order: incremental sync completed at 12:58:55.807,
-key-packages response at 56.214, `sceneDidBecomeActive` at 56.374, and no
-group-info request / external commit. After relaunch, activation came first and the
-external join succeeded within a second.
+- **Up to 4.24:** pending MLS conversations were only joined once per launch (`performPendingJoins()` during MLS client setup) or when sending. Being added while the app stayed alive left the channel unjoined until a relaunch.
+- **Since 4.25 (#5074, WPB-27395):** recovery runs after every incremental sync, but only while `applicationState == .active`. On foreground, `applicationWillEnterForeground` resumes the sync while the app is still inactive, so a quick sync (plus MLS client initialization and key-package check) can finish before `didBecomeActive`. The recovery is then skipped and nothing retries it until the next sync, which on the next foreground can lose the same race. A cold start sets up the session late enough that the app is already active, which is why relaunching helped.
+
+This PR fixes the current (4.25+) cause. The ticket's 4.26.1 logs show the race: incremental sync completed at 12:58:55.807, key-packages response at 56.214, `sceneDidBecomeActive` at 56.374, and no group-info request or external commit. After relaunch, activation came first and the external join succeeded within a second.
+
+The LTS branch `release/cycle-4.16` is not affected by the race: the cherry-pick of #5074 (#5216) was reverted there, so it still has the once-per-launch behavior.
 
 ### Solution
 
-Keep the `.active` guard, but remember when recovery was deferred and resume it on
-`didBecomeActive`:
+Keep the `.active` guard, but remember when recovery was deferred and resume it on `didBecomeActive`:
 
-- `recoverPendingConversations()` replaces the inline loop; before each batch it
-  reads the application state and records the deferral in one main-actor step.
-- A new `didBecomeActive` observer resumes deferred recovery in a
-  `WaitingGroupTask` on the sync context.
+- `recoverPendingConversations()` replaces the inline loop. Before each batch it reads the application state and records the deferral in one main-actor step, so an activation cannot be missed.
+- A new `didBecomeActive` observer resumes deferred recovery in a `WaitingGroupTask` on the sync context.
 
-This covers sync-before-activation, activation-before-sync (unchanged), and
-backgrounding between batches. Repeated activations don't start extra loops, and
-`MLSService` already prevents overlapping recovery runs. Recovery still never runs
-in the background or before MLS client initialization and the key-package check.
-Deferral and resume are logged with the application state so future logs show
-which path was taken.
+This covers sync-before-activation, activation-before-sync (unchanged) and backgrounding between batches. Repeated activations don't start extra loops, and `MLSService` already prevents overlapping recovery runs. Recovery still never runs in the background or before MLS client initialization and the key-package check. Deferral and resume are logged with the application state.
 
-The notification service extension is unaffected: it does not run this recovery.
-If a sync finishes during the extra background time requested after resigning
-active, recovery is deferred and runs on the next activation.
+The notification service extension is unaffected: it does not run this recovery. If a sync finishes during the extra background time requested after resigning active, recovery is deferred and runs on the next activation.
 
-Known limitation: if recovery was deferred while backgrounded and the following
-foreground sync marks another conversation as pending join while the resumed
-recovery is already running, that conversation is joined on the next foreground
-sync instead of immediately. This needs membership changes on both sides of a
-background period plus overlapping timing.
+Known limitation: if recovery was deferred while backgrounded and the following foreground sync marks another conversation as pending join while the resumed recovery is already running, that conversation is joined on the next foreground sync instead of immediately. This needs membership changes on both sides of a background period plus overlapping timing.
+
+### Steps to reproduce
+
+The bug is timing-dependent; it usually shows within a few foregrounds. Keep the owner's other devices offline, otherwise they may add the iPhone via an MLS Welcome and the external-join path isn't exercised.
+
+1. Sign in on an iPhone as a team owner. Have a second user who is a team member.
+2. In Team Management, create a channel with the second user only, excluding the owner. Let the second user send a message.
+3. Background Wire on the iPhone, then add the owner to the channel in Team Management. Don't send anything from the owner's devices.
+4. Foreground Wire and open the channel. Have the second user send a message.
+5. **Before the fix:** the message doesn't arrive. Logs show the membership update but no group-info request or external commit for the channel. If it joined anyway, repeat with a fresh channel. Force-quit and relaunch: the device joins and receives new messages.
 
 ### Testing
 
-- Unit tests in `ZMUserSessionTests`: recovery after activation following an
-  inactive sync, resuming after backgrounding between batches, no deferral with
-  MLS disabled on the backend; the existing active-path test is kept.
-- Manual: background the app, add the user to an existing channel via Team
-  Management, foreground once → the device fetches group info, joins via external
-  commit and receives new messages, without sending or relaunching.
+- Unit tests in `ZMUserSessionTests`:
+  - sync finishes while inactive → recovery runs on `didBecomeActive` without another sync; a second activation does nothing
+  - backgrounded between batches → remaining batches run on activation
+  - backend MLS disabled → nothing is deferred
+  - existing active-path test kept
+- Manual, with the steps above on the fixed build: the device joins on the first foreground and receives new messages without sending or relaunching. If the race was hit, the logs show `deferring pending conversation recovery, application state: 1` followed by `resuming deferred pending conversation recovery`, then the group-info request, the external commit and `pending conversation recovery batch: recovered 1 of 1`.
