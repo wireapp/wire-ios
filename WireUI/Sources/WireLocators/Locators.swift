@@ -206,6 +206,7 @@ public enum Locators {
         case classifiedBanner = "ClassificationBannerClassified"
         case photoButton
         case cameraRollButton
+        case takePictureButton
         case uploadFileButton
         case locationButton
         case add = "Add"
@@ -408,6 +409,7 @@ public enum Locators {
     public enum OnMyiPhonePage: String {
 
         case onMyiPhoneLabel = "On My iPhone"
+        case onMyiPhoneActionsMenu = "On My iPhone, Actions Menu"
         case save = "Save"
         case search = "Search"
 
