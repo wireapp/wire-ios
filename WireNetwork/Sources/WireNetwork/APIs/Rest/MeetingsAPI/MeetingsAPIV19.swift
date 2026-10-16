@@ -45,6 +45,40 @@ final class MeetingsAPIV19: MeetingsAPIV18 {
             .parse(code: response.statusCode, data: data)
     }
 
+    override func addMeetingInvitations(id: QualifiedID, emails: [String]) async throws {
+        let path = "\(pathPrefix)/meetings/\(id.domain)/\(id.id.uuidString.lowercased())/invitations"
+        try await sendInvitationRequest(path: path, emails: emails)
+    }
+
+    override func removeMeetingInvitations(id: QualifiedID, emails: [String]) async throws {
+        let path = "\(pathPrefix)/meetings/\(id.domain)/\(id.id.uuidString.lowercased())/invitations/delete"
+        try await sendInvitationRequest(path: path, emails: emails)
+    }
+
+    private func sendInvitationRequest(path: String, emails: [String]) async throws {
+        let body = try JSONEncoder.defaultEncoder.encode(MeetingInvitationsParameters(emails: emails))
+        let request = try URLRequestBuilder(path: path)
+            .withMethod(.post)
+            .withBody(body, contentType: .json)
+            .build()
+
+        let (data, response) = try await apiService.executeRequest(
+            request,
+            requiringAccessToken: true
+        )
+
+        try ResponseParser()
+            .success(code: .ok)
+            .failure(code: .forbidden, label: "invalid-op", error: MeetingsAPIError.invalidOperation)
+            .failure(code: .forbidden, label: "access-denied", error: MeetingsAPIError.accessDenied)
+            .failure(code: .notFound, label: "meeting-not-found", error: MeetingsAPIError.meetingNotFound)
+            .parse(code: response.statusCode, data: data)
+    }
+
+}
+
+private struct MeetingInvitationsParameters: Encodable {
+    let emails: [String]
 }
 
 private struct CreateMeetingParametersV19: Encodable {

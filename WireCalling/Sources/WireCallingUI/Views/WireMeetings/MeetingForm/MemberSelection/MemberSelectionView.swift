@@ -26,6 +26,7 @@ struct MemberSelectionView: View {
     private typealias Strings = L10n.Localizable.WireMeetings.Schedule.Members
 
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.isClipboardEnabled) private var isClipboardEnabled
     @Environment(\.wireAccentColor) private var wireAccentColor
     @State private(set) var viewModel: MemberSelectionViewModel
 
@@ -40,6 +41,10 @@ struct MemberSelectionView: View {
                     }
                     .accessibilityLabel(Strings.Groups.importButton)
                     .accessibilityIdentifier("meetingImportFromGroup")
+                }
+
+                if viewModel.allowsEmailInvitations {
+                    emailSection
                 }
 
                 Section {
@@ -98,6 +103,57 @@ struct MemberSelectionView: View {
     }
 
     // MARK: - Subviews
+
+    private var emailSection: some View {
+        Section {
+            HStack {
+                ContextMenuControllableTextField(
+                    text: $viewModel.emailAddress,
+                    placeholder: Strings.Email.placeholder,
+                    isContextMenuAllowed: isClipboardEnabled,
+                    keyboardType: .emailAddress,
+                    textContentType: .emailAddress
+                )
+                .accessibilityLabel(Strings.Email.placeholder)
+                .accessibilityIdentifier("meetingEmailAddress")
+
+                Button(Strings.Email.add, action: viewModel.addEmail)
+                    .buttonStyle(.borderless)
+                    .accessibilityIdentifier("meetingEmailAdd")
+            }
+            .frame(minHeight: 44)
+
+            if let error = viewModel.emailValidationError {
+                Text(error == .invalidAddress ? Strings.Email.invalidAddress : Strings.Email.duplicateAddress)
+                    .font(.footnote)
+                    .foregroundStyle(
+                        error == .invalidAddress ? ColorTheme.Base.error.color : ColorTheme.Base.warning.color
+                    )
+                    .accessibilityIdentifier("meetingEmailValidation")
+            }
+
+            ForEach(viewModel.selectedEmails, id: \.self) { email in
+                HStack {
+                    Text(email)
+                        .font(.body)
+                    Spacer()
+                    Button {
+                        viewModel.removeEmail(email)
+                    } label: {
+                        Image(systemName: "minus.circle")
+                            .foregroundStyle(ColorTheme.Base.error.color)
+                            .frame(minWidth: 44, minHeight: 44)
+                    }
+                    .buttonStyle(.borderless)
+                    .accessibilityLabel(Strings.Email.remove(email))
+                    .accessibilityIdentifier("meetingEmailRemove_\(email)")
+                }
+            }
+        } header: {
+            Text(Strings.Email.title)
+                .textCase(nil)
+        }
+    }
 
     @ViewBuilder private var contactsContent: some View {
         if !viewModel.filteredUnselected.isEmpty {

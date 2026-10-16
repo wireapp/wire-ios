@@ -56,7 +56,7 @@ struct CreateMeetingUseCaseTests {
             conversationRepository: conversationRepository
         )
         meetingRepository
-            .createMeetingTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceTypeMeetingTypePasswordStringMeetingCreationResultReturnValue =
+            .createMeetingTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceTypeMeetingTypePasswordStringInvitedEmailsStringMeetingCreationResultReturnValue =
             MeetingCreationResult(meeting: meeting, link: nil)
     }
 
@@ -64,7 +64,7 @@ struct CreateMeetingUseCaseTests {
     func invokeCreatesMeeting() async throws {
         // Given
         meetingRepository
-            .createMeetingTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceTypeMeetingTypePasswordStringMeetingCreationResultReturnValue =
+            .createMeetingTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceTypeMeetingTypePasswordStringInvitedEmailsStringMeetingCreationResultReturnValue =
             MeetingCreationResult(
                 meeting: meeting,
                 link: URL(string: "https://wire.example/meeting-join/?key=server&code=link")
@@ -79,18 +79,20 @@ struct CreateMeetingUseCaseTests {
             recurrence: recurrence,
             type: .scheduled,
             password: " exact password ",
-            participants: [participant]
+            participants: [participant],
+            invitedEmails: ["Guest@example.com", "member@wire.com"]
         )
 
         // Then
         let arguments = meetingRepository
-            .createMeetingTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceTypeMeetingTypePasswordStringMeetingCreationResultReceivedArguments
+            .createMeetingTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceTypeMeetingTypePasswordStringInvitedEmailsStringMeetingCreationResultReceivedArguments
         #expect(arguments?.title == "Team Standup")
         #expect(arguments?.startTime == meeting.start)
         #expect(arguments?.endTime == meeting.end)
         #expect(arguments?.recurrence == recurrence)
         #expect(arguments?.type == .scheduled)
         #expect(arguments?.password == " exact password ")
+        #expect(arguments?.invitedEmails == ["Guest@example.com", "member@wire.com"])
         #expect(result.meeting == meeting)
         #expect(result.link?.absoluteString == "https://wire.example/meeting-join/?key=server&code=link")
     }
@@ -184,7 +186,7 @@ struct CreateMeetingUseCaseTests {
     func invokeFailsWhenCreatingMeetingFails() async {
         // Given
         meetingRepository
-            .createMeetingTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceTypeMeetingTypePasswordStringMeetingCreationResultThrowableError =
+            .createMeetingTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceTypeMeetingTypePasswordStringInvitedEmailsStringMeetingCreationResultThrowableError =
             URLError(.badServerResponse)
 
         // When / Then
