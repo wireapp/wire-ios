@@ -1134,7 +1134,8 @@ final class SearchTaskTests: DatabaseTest {
             app: .init(category: "cat0", description: "desc0"),
             service: nil,
             supportedProtocols: [.mls],
-            legalholdStatus: .noConsent
+            legalholdStatus: .noConsent,
+            contactStatus: nil
         )
         let qualifiedID1 = QualifiedID(uuid: UUID(), domain: "")
         let otherTeamID = UUID()
@@ -1154,7 +1155,8 @@ final class SearchTaskTests: DatabaseTest {
             app: .init(category: "cat1", description: "desc1"),
             service: nil,
             supportedProtocols: [.mls],
-            legalholdStatus: .noConsent
+            legalholdStatus: .noConsent,
+            contactStatus: nil
         )
         // A collaborator whose resolved profile is NOT app-typed (a human with team permissions). It must never
         // surface via the apps result - only via the (separate) collaborators result, see
@@ -1174,7 +1176,8 @@ final class SearchTaskTests: DatabaseTest {
             app: nil,
             service: nil,
             supportedProtocols: [.mls],
-            legalholdStatus: .noConsent
+            legalholdStatus: .noConsent,
+            contactStatus: nil
         )
 
         let expectation = XCTestExpectation()
@@ -1267,7 +1270,8 @@ final class SearchTaskTests: DatabaseTest {
             app: nil,
             service: nil,
             supportedProtocols: [.proteus],
-            legalholdStatus: .noConsent
+            legalholdStatus: .noConsent,
+            contactStatus: nil
         )
 
         teamsAPIMock.getAppsFor_MockMethod = { _ in [] }
@@ -1325,7 +1329,8 @@ final class SearchTaskTests: DatabaseTest {
             app: nil,
             service: nil,
             supportedProtocols: [.mls],
-            legalholdStatus: .noConsent
+            legalholdStatus: .noConsent,
+            contactStatus: nil
         )
 
         teamsAPIMock.getAppsFor_MockMethod = { _ in [] }
@@ -1381,7 +1386,8 @@ final class SearchTaskTests: DatabaseTest {
             app: nil,
             service: nil,
             supportedProtocols: [.mls],
-            legalholdStatus: .noConsent
+            legalholdStatus: .noConsent,
+            contactStatus: nil
         )
 
         teamsAPIMock.getAppsFor_MockMethod = { _ in [] }
@@ -1560,7 +1566,8 @@ final class SearchTaskTests: DatabaseTest {
                 app: nil,
                 service: nil,
                 supportedProtocols: nil,
-                legalholdStatus: .disabled
+                legalholdStatus: .disabled,
+                contactStatus: nil
             )
         }
 
@@ -1595,7 +1602,8 @@ final class SearchTaskTests: DatabaseTest {
                 app: nil,
                 service: nil,
                 supportedProtocols: nil,
-                legalholdStatus: .disabled
+                legalholdStatus: .disabled,
+                contactStatus: nil
             )
         }
 
@@ -1623,7 +1631,8 @@ final class SearchTaskTests: DatabaseTest {
             app: nil,
             service: nil,
             supportedProtocols: nil,
-            legalholdStatus: .disabled
+            legalholdStatus: .disabled,
+            contactStatus: nil
         )
         let task = makeSearchTask(lookupUserID: userID.id, domain: userID.domain)
 
@@ -1744,7 +1753,8 @@ final class SearchTaskTests: DatabaseTest {
                         app: nil,
                         service: nil,
                         supportedProtocols: nil,
-                        legalholdStatus: .disabled
+                        legalholdStatus: .disabled,
+                        contactStatus: nil
                     )
                 ],
                 failed: []
@@ -1806,7 +1816,8 @@ final class SearchTaskTests: DatabaseTest {
             app: nil,
             service: nil,
             supportedProtocols: nil,
-            legalholdStatus: .disabled
+            legalholdStatus: .disabled,
+            contactStatus: nil
         )
         let task = makeSearchTask(lookupUserID: userID.id, domain: userID.domain)
 

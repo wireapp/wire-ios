@@ -244,7 +244,7 @@ final class WireMeetingsMemberRepositoryTests: XCTestCase {
         .init(
             id: id, name: name, handle: handle, teamID: teamID, type: .regular, accentID: 0,
             assets: [], deleted: false, email: nil, expiresAt: nil, app: nil, service: nil,
-            supportedProtocols: [.mls], legalholdStatus: .disabled
+            supportedProtocols: [.mls], legalholdStatus: .disabled, contactStatus: nil
         )
     }
 }

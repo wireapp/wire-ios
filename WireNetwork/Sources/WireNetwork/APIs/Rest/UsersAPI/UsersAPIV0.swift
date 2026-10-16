@@ -117,7 +117,8 @@ struct UserResponseV0: Decodable, ToAPIModelConvertible {
             app: nil,
             service: service?.toAPIModel(),
             supportedProtocols: [.proteus],
-            legalholdStatus: legalholdStatus.toAPIModel()
+            legalholdStatus: legalholdStatus.toAPIModel(),
+            contactStatus: nil
         )
     }
 }

@@ -307,7 +307,8 @@ final class UsersAPITests: XCTestCase {
                 provider: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!
             ),
             supportedProtocols: [.proteus],
-            legalholdStatus: .enabled
+            legalholdStatus: .enabled,
+            contactStatus: nil
         )
         static let userV12 = User(
             id: userID,
@@ -330,7 +331,8 @@ final class UsersAPITests: XCTestCase {
                 provider: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!
             ),
             supportedProtocols: [.proteus],
-            legalholdStatus: .enabled
+            legalholdStatus: .enabled,
+            contactStatus: nil
         )
         static let userV15 = User(
             id: userID,
@@ -356,7 +358,8 @@ final class UsersAPITests: XCTestCase {
                 provider: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!
             ),
             supportedProtocols: [.proteus],
-            legalholdStatus: .enabled
+            legalholdStatus: .enabled,
+            contactStatus: nil
         )
     }
 

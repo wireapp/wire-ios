@@ -104,7 +104,7 @@ public struct User: Equatable, Sendable {
         service: Service?,
         supportedProtocols: Set<MessageProtocol>?,
         legalholdStatus: LegalholdStatus,
-        contactStatus: ContactStatus? = nil
+        contactStatus: ContactStatus?
     ) {
         self.id = id
         self.name = name

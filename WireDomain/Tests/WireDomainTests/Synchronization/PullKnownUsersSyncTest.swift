@@ -87,7 +87,8 @@ private enum Scaffolding {
         app: nil,
         service: nil,
         supportedProtocols: [.mls],
-        legalholdStatus: .disabled
+        legalholdStatus: .disabled,
+        contactStatus: nil
     )
 
     static let user2 = User(
@@ -104,7 +105,8 @@ private enum Scaffolding {
         app: nil,
         service: nil,
         supportedProtocols: [.mls],
-        legalholdStatus: .disabled
+        legalholdStatus: .disabled,
+        contactStatus: nil
     )
 
     static var localUser1: NewUserInfo {

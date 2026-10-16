@@ -234,7 +234,8 @@ private final class UpdateUsersAPI: UsersAPI {
             app: nil,
             service: nil,
             supportedProtocols: nil,
-            legalholdStatus: .disabled
+            legalholdStatus: .disabled,
+            contactStatus: nil
         )
     }
 

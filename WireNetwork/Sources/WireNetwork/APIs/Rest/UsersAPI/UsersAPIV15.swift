@@ -133,7 +133,8 @@ struct UserResponseV15: Decodable, ToAPIModelConvertible {
             app: app?.toAPIModel(),
             service: service?.toAPIModel(),
             supportedProtocols: supportedProtocols.flatMap { Set($0) },
-            legalholdStatus: legalholdStatus.toAPIModel()
+            legalholdStatus: legalholdStatus.toAPIModel(),
+            contactStatus: nil
         )
     }
 
