@@ -19,6 +19,7 @@
 import Combine
 import Foundation
 import WireCoreCrypto
+import WireData
 import WireFoundation
 import WireLogging
 import WireNetwork
@@ -1715,6 +1716,7 @@ public final class MLSService: MLSServiceInterface {
         await context.perform {
             let conversation = ZMConversation.fetch(with: groupID, in: context)
             conversation?.commitPendingProposalDate = nil
+            PendingProposalTimer.remove(mlsGroupID: groupID.data, in: context)
         }
     }
 

@@ -56,6 +56,7 @@ package final class MeetingFormViewModel {
     }
 
     let mode: Mode
+    private let supportsMeetingLinks: Bool
     let searchMembersUseCase: any SearchMembersUseCaseProtocol
     private let createMeetingUseCase: any CreateMeetingUseCaseProtocol
     private let updateMeetingUseCase: any UpdateMeetingUseCaseProtocol
@@ -137,7 +138,8 @@ package final class MeetingFormViewModel {
 
     var dismissAfterError: Bool {
         switch submitError {
-        case CreateMeetingUseCaseError.conversationSetupFailed?,
+        case CreateMeetingUseCaseError.missingLink?,
+             CreateMeetingUseCaseError.conversationSetupFailed?,
              CreateMeetingUseCaseError.addParticipantsFailed?,
              UpdateMeetingUseCaseError.addParticipantsFailed?,
              UpdateMeetingUseCaseError.removeParticipantsFailed?:
@@ -150,6 +152,8 @@ package final class MeetingFormViewModel {
     var errorTitle: String {
         typealias Errors = L10n.Localizable.Meetings
         switch submitError {
+        case CreateMeetingUseCaseError.missingLink?:
+            return L10n.Localizable.WireMeetings.Schedule.ParticipantsNotAdded.createdTitle
         case CreateMeetingUseCaseError.conversationSetupFailed?, CreateMeetingUseCaseError.addParticipantsFailed?:
             return Errors.Error.setupFailedTitle
         default:
@@ -165,10 +169,15 @@ package final class MeetingFormViewModel {
     var errorMessage: String {
         typealias Errors = L10n.Localizable.Meetings
         switch submitError {
-        case CreateMeetingUseCaseError.conversationSetupFailed?:
-            return Errors.Error.conversationSetupFailed
-        case let CreateMeetingUseCaseError.addParticipantsFailed(participants, reasons)?,
-             let UpdateMeetingUseCaseError.addParticipantsFailed(participants, reasons)?:
+        case CreateMeetingUseCaseError.missingLink?:
+            return Errors.Error.missingLink
+        case let CreateMeetingUseCaseError.conversationSetupFailed(hasLink)?:
+            return Errors.Error.conversationSetupFailed + missingLinkMessage(hasLink: hasLink)
+        case let CreateMeetingUseCaseError.addParticipantsFailed(participants, reasons, hasLink)?:
+            let details = MeetingParticipantErrorFormatter.message(participants: participants, reasons: reasons)
+            return Errors.Error.addParticipantsFailed + (details.isEmpty ? "" : "\n\n" + details)
+                + missingLinkMessage(hasLink: hasLink)
+        case let UpdateMeetingUseCaseError.addParticipantsFailed(participants, reasons)?:
             let details = MeetingParticipantErrorFormatter.message(participants: participants, reasons: reasons)
             return Errors.Error.addParticipantsFailed + (details.isEmpty ? "" : "\n\n" + details)
         case let UpdateMeetingUseCaseError.removeParticipantsFailed(participants)?:
@@ -193,7 +202,8 @@ package final class MeetingFormViewModel {
     var hasParticipantsNotAddedAlert = false
     private(set) var participantsNotAdded: [MeetingMember] = []
     private var meetingWithParticipantsNotAdded: Meeting?
-    private var didAcknowledgeParticipantsNotAdded = false
+    private var participantMeetingHasLink = true
+    private var didCompleteSavedMeeting = false
 
     var conversationNameErrorMessage: String {
         L10n.Localizable.WireMeetings.Schedule.Error.ConversationName.message
@@ -202,6 +212,11 @@ package final class MeetingFormViewModel {
 
     var participantsNotAddedMessage: String {
         MeetingParticipantErrorFormatter.message(participants: participantsNotAdded, reasons: [:])
+            + missingLinkMessage(hasLink: participantMeetingHasLink)
+    }
+
+    private func missingLinkMessage(hasLink: Bool) -> String {
+        supportsMeetingLinks && !hasLink ? "\n\n" + L10n.Localizable.Meetings.Error.missingLink : ""
     }
 
     private func participantFailureDetails(for participants: [MeetingMember]) -> String {
@@ -233,9 +248,11 @@ package final class MeetingFormViewModel {
         createMeetingUseCase: any CreateMeetingUseCaseProtocol,
         updateMeetingUseCase: any UpdateMeetingUseCaseProtocol,
         currentDateProvider: any CurrentDateProviding,
+        supportsMeetingLinks: Bool = false,
         onSuccess: @escaping (Meeting) -> Void = { _ in }
     ) {
         self.mode = mode
+        self.supportsMeetingLinks = supportsMeetingLinks
         self.searchMembersUseCase = searchMembersUseCase
         self.createMeetingUseCase = createMeetingUseCase
         self.updateMeetingUseCase = updateMeetingUseCase
@@ -299,8 +316,12 @@ package final class MeetingFormViewModel {
         do {
             let meeting = try await saveMeeting()
             onSuccess(meeting)
-        } catch let CreateMeetingUseCaseError.participantsNotAdded(meeting, participants),
-                    let UpdateMeetingUseCaseError.participantsNotAdded(meeting, participants) {
+        } catch let CreateMeetingUseCaseError.participantsNotAdded(result, participants) {
+            participantMeetingHasLink = result.link != nil
+            meetingWithParticipantsNotAdded = result.meeting
+            participantsNotAdded = participants
+            hasParticipantsNotAddedAlert = true
+        } catch let UpdateMeetingUseCaseError.participantsNotAdded(meeting, participants) {
             meetingWithParticipantsNotAdded = meeting
             participantsNotAdded = participants
             hasParticipantsNotAddedAlert = true
@@ -316,9 +337,20 @@ package final class MeetingFormViewModel {
         }
     }
 
+    func acknowledgeError(dismiss: () -> Void) {
+        if case let CreateMeetingUseCaseError.missingLink(meeting)? = submitError {
+            guard !didCompleteSavedMeeting else { return }
+            didCompleteSavedMeeting = true
+            hasError = false
+            onSuccess(meeting)
+        } else if dismissAfterError {
+            dismiss()
+        }
+    }
+
     func acknowledgeParticipantsNotAdded() {
-        guard !didAcknowledgeParticipantsNotAdded, let meeting = meetingWithParticipantsNotAdded else { return }
-        didAcknowledgeParticipantsNotAdded = true
+        guard !didCompleteSavedMeeting, let meeting = meetingWithParticipantsNotAdded else { return }
+        didCompleteSavedMeeting = true
         hasParticipantsNotAddedAlert = false
         onSuccess(meeting)
     }
@@ -347,28 +379,33 @@ package final class MeetingFormViewModel {
 
     // MARK: - Private
 
-    /// The create modes create the meeting the same way; an instant meeting
-    /// simply starts now and lasts one hour instead of using the schedule
-    /// fields. Editing updates the existing meeting with the form values.
+    /// Creation sends an explicit type. Immediate meetings start now and last one hour.
+    /// Editing updates the existing meeting with the form values.
     private func saveMeeting() async throws -> Meeting {
         switch mode {
         case .instant:
             let startTime = currentDateProvider.now
-            return try await createMeetingUseCase.invoke(
+            let result = try await createMeetingUseCase.invoke(
                 title: meetingTitle,
                 startTime: startTime,
                 endTime: startTime.addingTimeInterval(TimeInterval.oneHour),
                 recurrence: nil,
+                type: .immediate,
+                password: nil,
                 participants: selectedMembers
             )
+            return try completeCreation(result)
         case .scheduled:
-            return try await createMeetingUseCase.invoke(
+            let result = try await createMeetingUseCase.invoke(
                 title: meetingTitle,
                 startTime: startDate,
                 endTime: endDate,
                 recurrence: repeatOption.toRecurrence(),
+                type: .scheduled,
+                password: nil,
                 participants: selectedMembers
             )
+            return try completeCreation(result)
         case let .edit(meeting):
             return try await updateMeetingUseCase.invoke(
                 meeting: meeting,
@@ -379,6 +416,13 @@ package final class MeetingFormViewModel {
                 participants: selectedMembers
             )
         }
+    }
+
+    private func completeCreation(_ result: MeetingCreationResult) throws -> Meeting {
+        guard !supportsMeetingLinks || result.link != nil else {
+            throw CreateMeetingUseCaseError.missingLink(meeting: result.meeting)
+        }
+        return result.meeting
     }
 
     private static func editableTimeRange(for meeting: Meeting, now: Date) -> (start: Date, end: Date) {
@@ -398,7 +442,12 @@ package final class MeetingFormViewModel {
 
     private static func nextSelectableStartDate(after date: Date) -> Date {
         let rounded = date.roundedUpToNextMinuteInterval(timePickerMinuteInterval)
-        return rounded > date ? rounded : rounded.addingTimeInterval(minimumDuration)
+        let start = rounded > date ? rounded : rounded.addingTimeInterval(minimumDuration)
+        // A 23:45 start has no later end on the same day. Use the next midnight instead.
+        if start.addingTimeInterval(minimumDuration) > latestEndDate(for: start) {
+            return Calendar.current.startOfDay(for: start.addingTimeInterval(minimumDuration))
+        }
+        return start
     }
 
     private static func adjustedEndDate(

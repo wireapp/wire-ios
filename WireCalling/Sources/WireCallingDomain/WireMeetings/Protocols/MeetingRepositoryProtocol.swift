@@ -38,8 +38,10 @@ public protocol MeetingRepositoryProtocol: Sendable {
         title: String,
         startTime: Date,
         endTime: Date,
-        recurrence: MeetingRecurrence?
-    ) async throws -> Meeting
+        recurrence: MeetingRecurrence?,
+        type: MeetingType,
+        password: String?
+    ) async throws -> MeetingCreationResult
 
     /// Updates a meeting on the server and refreshes the locally stored copy.
     ///

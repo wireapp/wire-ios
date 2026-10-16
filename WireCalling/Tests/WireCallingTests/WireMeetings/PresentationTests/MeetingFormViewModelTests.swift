@@ -66,6 +66,7 @@ struct MeetingFormViewModelTests {
 
     private func makeViewModel(
         mode: MeetingFormViewModel.Mode,
+        supportsMeetingLinks: Bool = false,
         onSuccess: @escaping (Meeting) -> Void = { _ in }
     ) -> MeetingFormViewModel {
         MeetingFormViewModel(
@@ -74,6 +75,7 @@ struct MeetingFormViewModelTests {
             createMeetingUseCase: createMeetingUseCaseMock,
             updateMeetingUseCase: updateMeetingUseCaseMock,
             currentDateProvider: dateProviderMock,
+            supportsMeetingLinks: supportsMeetingLinks,
             onSuccess: onSuccess
         )
     }
@@ -193,6 +195,29 @@ struct MeetingFormViewModelTests {
         #expect(viewModel.startDate == expectedStartDate)
     }
 
+    @Test("a late scheduled default moves to tomorrow when no valid end remains", arguments: [30, 44, 45, 50])
+    func scheduledMode_LateDefaultStartsTomorrow(minute: Int) throws {
+        dateProviderMock.now = try makeDate(year: 2026, month: 7, day: 6, hour: 23, minute: minute)
+        let viewModel = makeViewModel(mode: .scheduled)
+        let expectedStart = try makeDate(year: 2026, month: 7, day: 7, hour: 0, minute: 0)
+        let expectedEnd = try makeDate(year: 2026, month: 7, day: 7, hour: 1, minute: 0)
+
+        #expect(viewModel.startDate == expectedStart)
+        #expect(viewModel.startDateRange.lowerBound == expectedStart)
+        #expect(viewModel.endDate == expectedEnd)
+    }
+
+    @Test("a scheduled default can use the last valid 15-minute range")
+    func scheduledMode_LastValidDefaultStaysToday() throws {
+        dateProviderMock.now = try makeDate(year: 2026, month: 7, day: 6, hour: 23, minute: 29)
+        let viewModel = makeViewModel(mode: .scheduled)
+        let expectedStart = try makeDate(year: 2026, month: 7, day: 6, hour: 23, minute: 30)
+        let expectedEnd = try makeDate(year: 2026, month: 7, day: 6, hour: 23, minute: 45)
+
+        #expect(viewModel.startDate == expectedStart)
+        #expect(viewModel.endDate == expectedEnd)
+    }
+
     @Test("endDateRange starts after the start date")
     func endDateRange_StartsAfterStartDate() {
         #expect(viewModel.endDateRange.lowerBound > viewModel.startDate)
@@ -290,8 +315,8 @@ struct MeetingFormViewModelTests {
         viewModel.meetingTitle = "Team Standup"
         viewModel.selectedMembers = [member]
         createMeetingUseCaseMock
-            .invokeTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceParticipantsMeetingMemberMeetingReturnValue =
-            meeting
+            .invokeTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceTypeMeetingTypePasswordStringParticipantsMeetingMemberMeetingCreationResultReturnValue =
+            MeetingCreationResult(meeting: meeting, link: nil)
 
         // When
         await viewModel.submit()
@@ -299,11 +324,13 @@ struct MeetingFormViewModelTests {
         // Then
         #expect(
             createMeetingUseCaseMock
-                .invokeTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceParticipantsMeetingMemberMeetingCallsCount ==
+                .invokeTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceTypeMeetingTypePasswordStringParticipantsMeetingMemberMeetingCreationResultCallsCount ==
                 1
         )
         let arguments = createMeetingUseCaseMock
-            .invokeTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceParticipantsMeetingMemberMeetingReceivedArguments
+            .invokeTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceTypeMeetingTypePasswordStringParticipantsMeetingMemberMeetingCreationResultReceivedArguments
+        #expect(arguments?.type == .immediate)
+        #expect(arguments?.password == nil)
         #expect(arguments?.title == "Team Standup")
         #expect(arguments?.startTime == dateProviderMock.now)
         #expect(arguments?.endTime == dateProviderMock.now.addingTimeInterval(TimeInterval.oneHour))
@@ -328,13 +355,16 @@ struct MeetingFormViewModelTests {
     ) async {
         // Given
         var receivedMeeting: Meeting?
-        let viewModel = makeViewModel(mode: .scheduled) { receivedMeeting = $0 }
+        let viewModel = makeViewModel(mode: .scheduled, supportsMeetingLinks: true) { receivedMeeting = $0 }
         viewModel.meetingTitle = "Planning"
         viewModel.repeatOption = repeatOption
         viewModel.selectedMembers = [member]
         createMeetingUseCaseMock
-            .invokeTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceParticipantsMeetingMemberMeetingReturnValue =
-            meeting
+            .invokeTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceTypeMeetingTypePasswordStringParticipantsMeetingMemberMeetingCreationResultReturnValue =
+            MeetingCreationResult(
+                meeting: meeting,
+                link: URL(string: "https://wire.example/meeting-join/?key=server&code=link")
+            )
 
         // When
         await viewModel.submit()
@@ -342,11 +372,13 @@ struct MeetingFormViewModelTests {
         // Then
         #expect(
             createMeetingUseCaseMock
-                .invokeTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceParticipantsMeetingMemberMeetingCallsCount ==
+                .invokeTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceTypeMeetingTypePasswordStringParticipantsMeetingMemberMeetingCreationResultCallsCount ==
                 1
         )
         let arguments = createMeetingUseCaseMock
-            .invokeTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceParticipantsMeetingMemberMeetingReceivedArguments
+            .invokeTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceTypeMeetingTypePasswordStringParticipantsMeetingMemberMeetingCreationResultReceivedArguments
+        #expect(arguments?.type == .scheduled)
+        #expect(arguments?.password == nil)
         #expect(arguments?.title == "Planning")
         #expect(arguments?.startTime == viewModel.startDate)
         #expect(arguments?.endTime == viewModel.endDate)
@@ -361,15 +393,19 @@ struct MeetingFormViewModelTests {
     ])
     func submit_ParticipantsNotAdded_ContinuesWithCreatedMeeting(mode: MeetingFormViewModel.Mode) async {
         var completedMeetings: [Meeting] = []
-        let viewModel = makeViewModel(mode: mode) { completedMeetings.append($0) }
+        let viewModel = makeViewModel(mode: mode, supportsMeetingLinks: true) { completedMeetings.append($0) }
         createMeetingUseCaseMock
-            .invokeTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceParticipantsMeetingMemberMeetingThrowableError =
-            CreateMeetingUseCaseError.participantsNotAdded(meeting: meeting, participants: [member])
+            .invokeTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceTypeMeetingTypePasswordStringParticipantsMeetingMemberMeetingCreationResultThrowableError =
+            CreateMeetingUseCaseError.participantsNotAdded(
+                result: MeetingCreationResult(meeting: meeting, link: nil),
+                participants: [member]
+            )
 
         await viewModel.submit()
 
         #expect(viewModel.hasParticipantsNotAddedAlert)
         #expect(viewModel.participantsNotAdded == [member])
+        #expect(viewModel.participantsNotAddedMessage.contains(L10n.Localizable.Meetings.Error.missingLink))
         #expect(!viewModel.hasError)
         #expect(!viewModel.isLoading)
         #expect(completedMeetings.isEmpty)
@@ -382,7 +418,7 @@ struct MeetingFormViewModelTests {
         #expect(!viewModel.hasParticipantsNotAddedAlert)
         #expect(completedMeetings == [meeting])
         #expect(createMeetingUseCaseMock
-            .invokeTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceParticipantsMeetingMemberMeetingCallsCount ==
+            .invokeTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceTypeMeetingTypePasswordStringParticipantsMeetingMemberMeetingCreationResultCallsCount ==
             1)
     }
 
@@ -393,7 +429,7 @@ struct MeetingFormViewModelTests {
         let viewModel = makeViewModel(mode: .instant) { _ in onSuccessCalled = true }
         viewModel.meetingTitle = "Team Standup"
         createMeetingUseCaseMock
-            .invokeTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceParticipantsMeetingMemberMeetingThrowableError =
+            .invokeTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceTypeMeetingTypePasswordStringParticipantsMeetingMemberMeetingCreationResultThrowableError =
             URLError(.badServerResponse)
 
         // When
@@ -403,6 +439,88 @@ struct MeetingFormViewModelTests {
         #expect(viewModel.hasError == true)
         #expect(viewModel.isLoading == false)
         #expect(onSuccessCalled == false)
+    }
+
+    @Test("missing-link warnings complete the saved meeting once")
+    func submit_MissingLink() async {
+        var completedMeetings: [Meeting] = []
+        let viewModel = makeViewModel(mode: .instant, supportsMeetingLinks: true) { completedMeetings.append($0) }
+        viewModel.meetingTitle = "Meeting"
+        createMeetingUseCaseMock
+            .invokeTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceTypeMeetingTypePasswordStringParticipantsMeetingMemberMeetingCreationResultReturnValue =
+            MeetingCreationResult(meeting: meeting, link: nil)
+
+        await viewModel.submit()
+        #expect(completedMeetings.isEmpty)
+        #expect(viewModel.hasError)
+        #expect(viewModel.errorMessage.contains(L10n.Localizable.Meetings.Error.missingLink))
+
+        await viewModel.submit()
+        var didDismiss = false
+        for _ in 0 ..< 2 {
+            viewModel.acknowledgeError { didDismiss = true }
+            await viewModel.submit()
+        }
+        #expect(!didDismiss)
+        #expect(!viewModel.hasError)
+        #expect(completedMeetings == [meeting])
+        #expect(createMeetingUseCaseMock
+            .invokeTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceTypeMeetingTypePasswordStringParticipantsMeetingMemberMeetingCreationResultCallsCount ==
+            1)
+    }
+
+    enum SetupFailure: CaseIterable {
+        case conversation
+        case participants
+        case unknownParticipants
+    }
+
+    @Test("post-create setup failures retain missing-link feedback", arguments: SetupFailure.allCases)
+    func submit_SetupFailureWithMissingLink(failure: SetupFailure) async {
+        let meetingRepository = MeetingRepositoryProtocolMock()
+        meetingRepository
+            .createMeetingTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceTypeMeetingTypePasswordStringMeetingCreationResultReturnValue =
+            MeetingCreationResult(meeting: meeting, link: nil)
+        let conversationRepository = MeetingConversationRepositoryProtocolMock()
+        switch failure {
+        case .conversation:
+            conversationRepository.pullConversationIdUUIDDomainStringVoidThrowableError = URLError(.badServerResponse)
+        case .participants:
+            conversationRepository
+                .addParticipantsParticipantsMeetingMemberToConversationIDQualifiedIDVoidThrowableError =
+                MeetingParticipantsError.failedToSetUpParticipants([member], reasons: [:])
+        case .unknownParticipants:
+            conversationRepository
+                .addParticipantsParticipantsMeetingMemberToConversationIDQualifiedIDVoidThrowableError =
+                URLError(.badServerResponse)
+        }
+        var didComplete = false
+        let viewModel = MeetingFormViewModel(
+            mode: .instant,
+            searchMembersUseCase: SearchMembersUseCaseProtocolMock(),
+            createMeetingUseCase: CreateMeetingUseCase(
+                meetingRepository: meetingRepository,
+                conversationRepository: conversationRepository
+            ),
+            updateMeetingUseCase: updateMeetingUseCaseMock,
+            currentDateProvider: dateProviderMock,
+            supportsMeetingLinks: true,
+            onSuccess: { _ in didComplete = true }
+        )
+        viewModel.meetingTitle = meeting.title
+        viewModel.selectedMembers = [member]
+
+        await viewModel.submit()
+        #expect(viewModel.hasError)
+        #expect(viewModel.errorMessage.contains(L10n.Localizable.Meetings.Error.missingLink))
+        var didDismiss = false
+        viewModel.acknowledgeError { didDismiss = true }
+        await viewModel.submit()
+        #expect(didDismiss)
+        #expect(!didComplete)
+        #expect(meetingRepository
+            .createMeetingTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceTypeMeetingTypePasswordStringMeetingCreationResultCallsCount ==
+            1)
     }
 
     // MARK: - Edit Mode Tests
@@ -706,7 +824,7 @@ struct MeetingFormViewModelTests {
         #expect(arguments?.participants.isEmpty == true)
         #expect(
             createMeetingUseCaseMock
-                .invokeTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceParticipantsMeetingMemberMeetingCallsCount ==
+                .invokeTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceTypeMeetingTypePasswordStringParticipantsMeetingMemberMeetingCreationResultCallsCount ==
                 0
         )
         #expect(receivedMeeting == meeting)
@@ -739,11 +857,11 @@ struct MeetingFormViewModelTests {
         viewModel.meetingTitle = "Team Standup"
         let meeting = meeting
         createMeetingUseCaseMock
-            .invokeTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceParticipantsMeetingMemberMeetingClosure =
-            { _, _, _, _, _ in
+            .invokeTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceTypeMeetingTypePasswordStringParticipantsMeetingMemberMeetingCreationResultClosure =
+            { _, _, _, _, _, _, _ in
                 // Suspend so the second submission starts while the first is in flight.
                 try await Task.sleep(for: .milliseconds(10))
-                return meeting
+                return MeetingCreationResult(meeting: meeting, link: nil)
             }
 
         // When
@@ -755,7 +873,7 @@ struct MeetingFormViewModelTests {
         // Then
         #expect(
             createMeetingUseCaseMock
-                .invokeTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceParticipantsMeetingMemberMeetingCallsCount ==
+                .invokeTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceTypeMeetingTypePasswordStringParticipantsMeetingMemberMeetingCreationResultCallsCount ==
                 1
         )
         #expect(viewModel.isLoading == false)
