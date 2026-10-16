@@ -342,47 +342,77 @@ final class ConversationCallingEventNotificationBuilderTests: XCTestCase {
     // MARK: - "Regular" notification call tests
 
     func testGroupCallEndedAfterSelfStartedOrAnsweredElsewhereDoesNotShowMissedCall() async throws {
-        await setupMock(isGroup: true, isTeam: false)
-        defaults.set(false, forKey: "isCallKitAvailable")
+        let eventBuilder = try await makeConversationEventBuilder()
 
-        let otherUser = try XCTUnwrap(userLocalStore.fetchOrCreateUserIdDomain_MockValue)
-        let selfUser = try XCTUnwrap(userLocalStore.fetchSelfUser_MockValue)
-        sut = ConversationCallingEventNotificationBuilder(
-            context: .init(conversationLocalStore: conversationLocalStore, userLocalStore: userLocalStore),
-            validator: .init(
-                userLocalStore: userLocalStore,
-                conversationLocalStore: conversationLocalStore,
-                conversationsAPI: conversationsAPI,
-                userDefaults: defaults
-            ),
-            accountID: Scaffolding.accountID
-        )
+        for isMLS in [false, true] {
+            for responded in [false, true] {
+                let unreadCount = conversationLocalStore.increaseUnreadCountFor_Invocations.count
+                var selfStart = Calling()
+                selfStart.content = setupCallingContentMock(type: "CONFSTART", responded: responded)
+                if isMLS {
+                    selfStart.qualifiedConversationID.id = UUID().uuidString
+                    selfStart.qualifiedConversationID.domain = Scaffolding.conversationID.domain
+                }
+                let selfNotification = try await eventBuilder.buildContent(event: makeMessageEvent(
+                    GenericMessage(content: selfStart),
+                    senderID: Scaffolding.selfUserID,
+                    isMLS: isMLS
+                ))
+                XCTAssertNil(selfNotification)
 
-        for responded in [false, true] {
-            userLocalStore.fetchOrCreateUserIdDomain_MockValue = selfUser
+                var end = selfStart
+                end.content = setupCallingContentMock(type: "CONFEND")
+                let endNotification = try await eventBuilder.buildContent(event: makeMessageEvent(
+                    GenericMessage(content: end),
+                    senderID: Scaffolding.userID,
+                    isMLS: isMLS
+                ))
+                XCTAssertNil(endNotification, "A call started or answered elsewhere must not appear missed")
+                XCTAssertEqual(conversationLocalStore.increaseUnreadCountFor_Invocations.count, unreadCount)
 
-            var selfStart = Calling()
-            selfStart.content = setupCallingContentMock(type: "CONFSTART", responded: responded)
-            let selfNotification = await sut.buildContent(
-                calling: selfStart,
-                at: .now,
-                conversationID: Scaffolding.conversationID,
-                senderID: Scaffolding.userID
-            )
-            XCTAssertNil(selfNotification)
-
-            userLocalStore.fetchOrCreateUserIdDomain_MockValue = otherUser
-
-            var end = Calling()
-            end.content = setupCallingContentMock(type: "CONFEND")
-            let endNotification = await sut.buildContent(
-                calling: end,
-                at: .now,
-                conversationID: Scaffolding.conversationID,
-                senderID: Scaffolding.userID
-            )
-            XCTAssertNil(endNotification, "A call started or answered elsewhere must not appear missed")
+                end.content = setupCallingContentMock(type: "CONFEND", conferenceTimestamp: "2000")
+                let nextEndNotification = try await eventBuilder.buildContent(event: makeMessageEvent(
+                    GenericMessage(content: end),
+                    senderID: Scaffolding.userID,
+                    isMLS: isMLS
+                ))
+                guard let notification = nextEndNotification?.first, case let .text(content) = notification else {
+                    XCTFail("A later unanswered call must still appear missed")
+                    continue
+                }
+                XCTAssertEqual(content.categoryIdentifier, NotificationCategory.missedCall.rawValue)
+            }
         }
+    }
+
+    func testSuppressedMessageEventsDoNotBuildNotificationsOrIncreaseUnreadCount() async throws {
+        let textBuilder = MockConversationTextMessageNotificationBuilderProtocol()
+        let eventBuilder = try await makeConversationEventBuilder(textBuilder: textBuilder)
+        var end = Calling()
+        end.content = setupCallingContentMock(type: "CONFEND")
+
+        let cases: [(senderID: UserID, muted: Bool, lastRead: Date?)] = [
+            (Scaffolding.selfUserID, false, nil),
+            (Scaffolding.userID, true, nil),
+            (Scaffolding.userID, false, .distantFuture)
+        ]
+        for testCase in cases {
+            conversationLocalStore.conversationMutedMessageTypesIncludingAvailability_MockValue =
+                .some(testCase.muted ? .all : .none)
+            conversationLocalStore.lastReadServerTimestamp_MockMethod = { _ in testCase.lastRead }
+
+            for message in [GenericMessage(content: Text(content: "Hello")), GenericMessage(content: end)] {
+                let notifications = try await eventBuilder.buildContent(event: makeMessageEvent(
+                    message,
+                    senderID: testCase.senderID,
+                    isMLS: false
+                ))
+                XCTAssertNil(notifications)
+            }
+        }
+
+        XCTAssertTrue(textBuilder.buildContentTextConversationIDSenderID_Invocations.isEmpty)
+        XCTAssertTrue(conversationLocalStore.increaseUnreadCountFor_Invocations.isEmpty)
     }
 
     func testSelfAnswerBeforeGroupConversationMetadataLoadsDoesNotShowMissedCall() async throws {
@@ -1087,6 +1117,113 @@ final class ConversationCallingEventNotificationBuilderTests: XCTestCase {
 
     // MARK: - Mocks
 
+    private func makeConversationEventBuilder(
+        textBuilder: MockConversationTextMessageNotificationBuilderProtocol = .init()
+    ) async throws -> ConversationEventNotificationBuilder {
+        await setupMock(isGroup: true, isTeam: false)
+        defaults.set(false, forKey: "isCallKitAvailable")
+        let selfUser = try XCTUnwrap(userLocalStore.fetchSelfUser_MockValue)
+        let otherUser = try XCTUnwrap(userLocalStore.fetchOrCreateUserIdDomain_MockValue)
+        userLocalStore.fetchOrCreateUserIdDomain_MockMethod = { id, _ in
+            id == Scaffolding.accountID ? selfUser : otherUser
+        }
+        userLocalStore.isSelfUserIdDomain_MockMethod = { id, _ in
+            (selfUser, id == Scaffolding.accountID)
+        }
+        conversationLocalStore.isSelfConversation_MockValue = false
+        conversationLocalStore.lastReadServerTimestamp_MockMethod = { _ in nil }
+        textBuilder.buildContentTextConversationIDSenderID_MockValue = .text(UNMutableNotificationContent())
+        sut = ConversationCallingEventNotificationBuilder(
+            context: .init(conversationLocalStore: conversationLocalStore, userLocalStore: userLocalStore),
+            validator: .init(
+                userLocalStore: userLocalStore,
+                conversationLocalStore: conversationLocalStore,
+                conversationsAPI: conversationsAPI,
+                userDefaults: defaults
+            ),
+            accountID: Scaffolding.accountID
+        )
+        let messageBuilder = ConversationMessageAddEventNotificationBuilder(
+            context: .init(conversationLocalStore: conversationLocalStore),
+            validator: .init(conversationLocalStore: conversationLocalStore),
+            conversationCallingEventNotificationBuilder: sut,
+            conversationAudioMessageNotificationBuilder: MockConversationAudioMessageNotificationBuilderProtocol(),
+            conversationEphemeralMessageNotificationBuilder: MockConversationEphemeralMessageNotificationBuilderProtocol(
+            ),
+            conversationFileUploadMessageNotificationBuilder: MockConversationFileUploadMessageNotificationBuilderProtocol(
+            ),
+            conversationHiddenMessageNotificationBuilder: MockConversationHiddenMessageNotificationBuilderProtocol(),
+            conversationImageMessageNotificationBuilder: MockConversationImageMessageNotificationBuilderProtocol(),
+            conversationLocationMessageNotificationBuilder: MockConversationLocationMessageNotificationBuilderProtocol(
+            ),
+            conversationPingMessageNotificationBuilder: MockConversationPingMessageNotificationBuilderProtocol(),
+            conversationVideoMessageNotificationBuilder: MockConversationVideoMessageNotificationBuilderProtocol(),
+            conversationTextMessageNotificationBuilder: textBuilder,
+            protobufMessageDecoder: ProtobufMessageDecoder()
+        )
+        return ConversationEventNotificationBuilder(
+            validator: .init(
+                userLocalStore: userLocalStore,
+                conversationLocalStore: conversationLocalStore,
+                messageLocalStore: MockMessageLocalStoreProtocol()
+            ),
+            answeredElsewhereCallTracker: .init(userDefaults: defaults),
+            accountID: Scaffolding.accountID,
+            conversationMessageAddEventNotificationBuilder: messageBuilder,
+            conversationMemberLeaveEventNotificationBuilder: .init(
+                context: .init(conversationLocalStore: conversationLocalStore, userLocalStore: userLocalStore),
+                validator: .init(userLocalStore: userLocalStore)
+            ),
+            conversationMemberJoinEventNotificationBuilder: .init(
+                context: .init(conversationLocalStore: conversationLocalStore, userLocalStore: userLocalStore),
+                validator: .init(
+                    userLocalStore: userLocalStore,
+                    conversationLocalStore: conversationLocalStore,
+                    conversationsAPI: conversationsAPI
+                )
+            ),
+            conversationCreateEventNotificationBuilder: .init(
+                context: .init(conversationLocalStore: conversationLocalStore, userLocalStore: userLocalStore),
+                validator: .init(userLocalStore: userLocalStore)
+            ),
+            conversationDeleteEventNotificationBuilder: .init(
+                context: .init(conversationLocalStore: conversationLocalStore, userLocalStore: userLocalStore),
+                validator: .init(conversationLocalStore: conversationLocalStore)
+            ),
+            conversationMessageTimerUpdateEventNotificationBuilder: .init(
+                context: .init(conversationLocalStore: conversationLocalStore, userLocalStore: userLocalStore),
+                validator: .init()
+            )
+        )
+    }
+
+    private func makeMessageEvent(
+        _ message: GenericMessage,
+        senderID: UserID,
+        isMLS: Bool
+    ) throws -> ConversationEvent {
+        let encodedMessage = try message.serializedData().base64EncodedString()
+        if isMLS {
+            return .mlsMessageAdd(.init(
+                conversationID: Scaffolding.conversationID,
+                senderID: senderID,
+                subconversation: "",
+                message: "",
+                timestamp: .now,
+                decryptedMessages: [.init(message: encodedMessage, senderClientID: "other-client")]
+            ))
+        }
+        return .proteusMessageAdd(.init(
+            conversationID: Scaffolding.conversationID,
+            senderID: senderID,
+            timestamp: .now,
+            message: .init(encryptedMessage: "", decryptedMessage: encodedMessage),
+            externalData: nil,
+            messageSenderClientID: "other-client",
+            messageRecipientClientID: "this-client"
+        ))
+    }
+
     private func setupMock(
         isGroup: Bool,
         isTeam: Bool,
@@ -1134,6 +1271,7 @@ final class ConversationCallingEventNotificationBuilderTests: XCTestCase {
         static let conversationID = WireNetwork.QualifiedID(id: .mockID2, domain: "domain.com")
         static let userID = UserID(id: .mockID3, domain: "domain.com")
         static let accountID = UUID.mockID10
+        static let selfUserID = UserID(id: accountID, domain: "domain.com")
     }
 
 }
