@@ -318,7 +318,8 @@ extension SettingsCellDescriptorFactory {
             return SettingsPropertySelectValueCellDescriptor(
                 settingsProperty: property,
                 value: SettingsPropertyValue(option.rawValue),
-                title: option.displayString
+                title: option.displayString,
+                identifier: option == .google ? Locators.OptionsOnSettingsPage.googleMapsOption.rawValue : nil
             )
         }
 
@@ -337,7 +338,7 @@ extension SettingsCellDescriptorFactory {
         return SettingsGroupCellDescriptor(
             items: [section],
             title: property.propertyName.settingsPropertyLabelText,
-            identifier: nil,
+            identifier: Locators.OptionsOnSettingsPage.mapsCell.rawValue,
             previewGenerator: preview,
             accessibilityBackButtonText: L10n.Accessibility.OptionsSettings.BackButton.description,
             settingsTopLevelMenuItem: nil,
@@ -352,7 +353,8 @@ extension SettingsCellDescriptorFactory {
             return SettingsPropertySelectValueCellDescriptor(
                 settingsProperty: property,
                 value: SettingsPropertyValue(option.rawValue),
-                title: option.displayString
+                title: option.displayString,
+                identifier: option == .chrome ? Locators.OptionsOnSettingsPage.chromeBrowserOption.rawValue : nil
             )
         }
 
@@ -366,7 +368,7 @@ extension SettingsCellDescriptorFactory {
         return SettingsGroupCellDescriptor(
             items: [section],
             title: property.propertyName.settingsPropertyLabelText,
-            identifier: nil,
+            identifier: Locators.OptionsOnSettingsPage.browserCell.rawValue,
             previewGenerator: preview,
             accessibilityBackButtonText: L10n.Accessibility.OptionsSettings.BackButton.description,
             settingsTopLevelMenuItem: nil,
