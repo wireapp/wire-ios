@@ -17,10 +17,15 @@
 //
 
 import WireFoundation
+import WireUtilities
 import XCTest
 
 /// [collaboration]
 final class WireDriveTests: WireUITestCase {
+
+    override func additionalDeveloperFlags() -> [DeveloperFlag: Bool] {
+        [.enableDriveDirectUploads: true]
+    }
 
     private func createDriveEnabledConversation(
         _ conversation: CreateConversationOption,
@@ -340,6 +345,37 @@ final class WireDriveTests: WireUITestCase {
         // THEN
         XCTAssertEqual(positiveSearchResults, 1)
         XCTAssertEqual(negativeSearchResults, 0)
+    }
+
+    @MainActor
+    func testDirectUploadsInRootAndSubfolder_TC_12156() async throws {
+
+        // GIVEN
+        let folderName = "Direct Uploads"
+        let teamOwner = try await createDriveEnabledConversation(
+            .group(UserGenerator.generateRandomConversationName())
+        )
+
+        let rootPage = try loginAndOpenConversation(for: teamOwner)
+            .openSharedDrive()
+            .createFolder()
+            .enterFolderNameAndValidate(name: folderName)
+        XCTAssertTrue(rootPage.verifyFolderIsCreated(folderName: folderName))
+
+        // WHEN - upload a random image in the root folder
+        var itemCount = rootPage.numberOfListedItems
+        try rootPage.uploadRandomMedia()
+
+        // THEN
+        XCTAssertTrue(rootPage.verifyMediaIsUploaded(previousItemCount: itemCount))
+
+        // WHEN - upload a random image in a subfolder
+        let folderPage = try rootPage.openFolder(named: folderName)
+        itemCount = folderPage.numberOfListedItems
+        try folderPage.uploadRandomMedia(folderName: folderName)
+
+        // THEN
+        XCTAssertTrue(folderPage.verifyMediaIsUploaded(previousItemCount: itemCount))
     }
 
     @MainActor

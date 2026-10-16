@@ -174,6 +174,7 @@ private extension FilesView {
             Image(systemName: "ellipsis.circle")
         }
         .tint(ColorTheme.Base.primary(accentColor).color)
+        .accessibilityIdentifier(Locators.WireDrive.FilesPage.moreOptions.rawValue)
     }
 
     private var viewerActions: some View {
