@@ -11,6 +11,15 @@ on:
           - cirrus
           - github
         default: in-house
+      uitest_parallel_workers:
+        description: 'UITest parallel simulator workers'
+        type: choice
+        options:
+          - '1'
+          - '2'
+          - '3'
+          - '4'
+        default: '2'
       testiny_run_name:
         description: "Testiny test run name: paste the exact run name from Testiny"
         required: false
@@ -63,6 +72,7 @@ jobs:
       test_dependencies: false
       run_critical_flows: true
       ui_test_tags: critical
+      uitest_parallel_workers: ${{ vars.UITEST_PARALLEL_WORKERS || '2' }}
       notify: always
       timeout_minutes: 90
     secrets:
@@ -88,6 +98,7 @@ jobs:
       # - neither          => all tests (empty tag filter)
       ui_test_tags: ${{ inputs.run_uitests && inputs.ui_test_scope != '' && format('critical,{0}', inputs.ui_test_scope) || inputs.run_uitests && 'critical' || inputs.ui_test_scope }}
       ui_test_cases: ${{ inputs.ui_test_cases }}
+      uitest_parallel_workers: ${{ inputs.uitest_parallel_workers }}
       rerun_failed_from_previous: ${{ inputs.rerun_failed_from_previous }}
       testiny_run_name: ${{ inputs.testiny_run_name }}
       notify: always
