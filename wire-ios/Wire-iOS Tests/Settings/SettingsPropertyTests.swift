@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireFoundation
 import XCTest
 
 @testable import Wire
@@ -139,6 +140,30 @@ final class SettingsPropertyTests: XCTestCase {
         let property = factory.property(SettingsPropertyName.soundAlerts)
         // when & then
         try! saveAndCheck(property, value: 1)
+    }
+
+    func testThatNotificationSoundPropertySetsValueInSharedDefaults() throws {
+        let suiteName = UUID().uuidString
+        let sharedUserDefaults = try XCTUnwrap(UserDefaults(suiteName: suiteName))
+        defer { sharedUserDefaults.removePersistentDomain(forName: suiteName) }
+        let factory = SettingsPropertyFactory(
+            userDefaults: userDefaults,
+            sharedUserDefaults: sharedUserDefaults,
+            mediaManager: ZMMockAVSMediaManager(),
+            userSession: userSession,
+            selfUser: MockZMEditableUser(),
+            trackingManager: MockTrackingInterface()
+        )
+        let property = factory.property(.notificationSound)
+
+        XCTAssertEqual(property.rawValue() as? String, NotificationSoundPreference.wire.rawValue)
+
+        try property.set(
+            newValue: .string(value: NotificationSoundPreference.systemDefault.rawValue),
+            resultHandler: { _ in }
+        )
+
+        XCTAssertEqual(NotificationSoundPreference.stored(in: sharedUserDefaults), .systemDefault)
     }
 
     func testThatIntegerBlockSettingSave() {

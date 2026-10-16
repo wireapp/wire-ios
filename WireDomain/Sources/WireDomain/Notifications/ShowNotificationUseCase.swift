@@ -20,6 +20,7 @@ import CallKit
 import Foundation
 import UserNotifications
 import WireDataModel
+import WireFoundation
 import WireLogging
 
 protocol ShowNotificationUseCaseProtocol {
@@ -35,19 +36,22 @@ struct ShowNotificationUseCase: ShowNotificationUseCaseProtocol {
     private let selectedAccount: Account
     private let accountManager: AccountManager
     private let databaseSaver: any DatabaseSaverProtocol
+    private let notificationSoundPreference: NotificationSoundPreference
 
     init(
         contentHandler: @escaping (UNNotificationContent) -> Void,
         conversationLocalStore: any ConversationLocalStoreProtocol,
         selectedAccount: Account,
         accountManager: AccountManager,
-        databaseSaver: any DatabaseSaverProtocol
+        databaseSaver: any DatabaseSaverProtocol,
+        notificationSoundPreference: NotificationSoundPreference = .defaultValue
     ) {
         self.contentHandler = contentHandler
         self.conversationLocalStore = conversationLocalStore
         self.selectedAccount = selectedAccount
         self.accountManager = accountManager
         self.databaseSaver = databaseSaver
+        self.notificationSoundPreference = notificationSoundPreference
     }
 
     func invoke(
@@ -100,6 +104,12 @@ struct ShowNotificationUseCase: ShowNotificationUseCaseProtocol {
         notification.interruptionLevel = .timeSensitive
         notification.badge = try await getNotificationBadge()
 
+        if !notifications.isEmpty, shouldApplyNotificationSoundPreference(to: notification) {
+            notification.sound = UNNotificationSound(
+                named: UNNotificationSoundName(notificationSoundPreference.notificationSoundName)
+            )
+        }
+
         WireLogger.notifications.info(
             "Showing notification to the user",
             attributes: .newNSE, .safePublic
@@ -107,6 +117,19 @@ struct ShowNotificationUseCase: ShowNotificationUseCaseProtocol {
 
         // Displays the notification to the user
         contentHandler(notification)
+    }
+
+    private func shouldApplyNotificationSoundPreference(to notification: UNNotificationContent) -> Bool {
+        guard let sound = notification.sound else { return true }
+
+        let soundsWithDedicatedSettings = [
+            NotificationSound.call,
+            NotificationSound.ping
+        ].map {
+            UNNotificationSound(named: UNNotificationSoundName($0.rawValue))
+        }
+
+        return !soundsWithDedicatedSettings.contains(sound)
     }
 
     private func getNotificationBadge() async throws -> NSNumber {
