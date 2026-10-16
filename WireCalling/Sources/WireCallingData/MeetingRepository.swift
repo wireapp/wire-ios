@@ -69,14 +69,18 @@ public final class MeetingRepository: MeetingRepositoryProtocol {
         title: String,
         startTime: Date,
         endTime: Date,
-        recurrence: WireCallingDomain.MeetingRecurrence?
-    ) async throws -> Meeting {
+        recurrence: WireCallingDomain.MeetingRecurrence?,
+        type: WireCallingDomain.MeetingType,
+        password: String?
+    ) async throws -> MeetingCreationResult {
         let response = try await meetingsAPI.createMeeting(
             parameters: CreateMeetingParameters(
                 title: title,
                 startTime: startTime,
                 endTime: endTime,
                 timeZoneIdentifier: TimeZone.current.identifier,
+                type: type == .immediate ? .immediate : .scheduled,
+                password: password,
                 recurrence: recurrence?.toNetworkRecurrence()
             )
         )
@@ -90,7 +94,7 @@ public final class MeetingRepository: MeetingRepositoryProtocol {
         } catch {
             WireLogger.meetings.error("Failed to schedule created meeting reminder: \(error)")
         }
-        return storedMeeting
+        return MeetingCreationResult(meeting: storedMeeting, link: response.link)
     }
 
     public func updateMeeting(

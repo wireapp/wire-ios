@@ -74,6 +74,6 @@ struct EditFileView<ViewModel>: View where ViewModel: EditFileViewModelProtocol 
                     .frame(width: 44, height: 44, alignment: .trailing)
             }
         )
-        .accessibilityIdentifier(Locators.WireDrive.EditFilePage.close)
+        .accessibilityIdentifier(Locators.WireDrive.EditFilePage.closeEditFilePage)
     }
 }
