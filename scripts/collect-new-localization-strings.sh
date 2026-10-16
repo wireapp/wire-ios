@@ -22,9 +22,10 @@ set -Eeuo pipefail
 # Finds localization keys added between BASE_SHA and HEAD_SHA and writes
 # `has_new_strings` / `new_keys` / `message` to GITHUB_OUTPUT.
 #
-# Required env: BASE_SHA, HEAD_SHA, PR_TITLE, PR_AUTHOR, PR_URL, GITHUB_OUTPUT.
+# Required env: BASE_SHA, BASE_REF, HEAD_SHA, PR_TITLE, PR_AUTHOR, PR_URL, GITHUB_OUTPUT.
 
 : "${BASE_SHA:?BASE_SHA is required}"
+: "${BASE_REF:?BASE_REF is required}"
 : "${HEAD_SHA:?HEAD_SHA is required}"
 : "${PR_TITLE:?PR_TITLE is required}"
 : "${PR_AUTHOR:?PR_AUTHOR is required}"
@@ -34,6 +35,15 @@ set -Eeuo pipefail
 # contain a line matching a fixed heredoc delimiter (e.g. "EOF") could
 # truncate or corrupt the output. Use a random delimiter instead.
 DELIM="EOF_$(uuidgen)"
+
+# After a rebase / force push the event's base SHA can be older than the
+# develop commit the PR was rebased onto, which would make keys added on
+# develop look like they were added by this PR. Compare against the merge-base
+# with the current tip of the base branch instead.
+git fetch --no-tags origin "$BASE_REF" >/dev/null 2>&1 || true
+if git rev-parse --verify -q "origin/$BASE_REF" >/dev/null; then
+  BASE_SHA=$(git merge-base "origin/$BASE_REF" "$HEAD_SHA" || echo "$BASE_SHA")
+fi
 
 NEW_KEYS=""
 
