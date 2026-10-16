@@ -16,10 +16,150 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Foundation
+
 class UsersAPIV17: UsersAPIV16 {
 
-    override var apiVersion: APIVersion {
-        .v17
+    override var apiVersion: APIVersion { .v17 }
+
+    override func getUser(for userID: UserID) async throws -> User {
+        let path = "\(pathPrefix)/users/\(userID.domain)/\(userID.id.transportString())"
+
+        let request = try URLRequestBuilder(path: path)
+            .withMethod(.get)
+            .build()
+
+        let (data, response) = try await apiService.executeRequest(
+            request,
+            requiringAccessToken: true
+        )
+
+        return try ResponseParser()
+            .success(code: .ok, type: UserResponseV17.self)
+            .failure(code: .notFound, label: "not-found", error: UsersAPIError.userNotFound)
+            .parse(code: response.statusCode, data: data)
+    }
+
+    override func getUsers(userIDs: [UserID]) async throws -> UserList {
+        let body = try JSONEncoder.defaultEncoder
+            .encode(ListUsersRequestV0(qualifiedIDs: userIDs.map { $0.toNetworkModel() }))
+        let path = "\(pathPrefix)/list-users"
+
+        let request = try URLRequestBuilder(path: path)
+            .withMethod(.post)
+            .withBody(body, contentType: .json)
+            .build()
+
+        let (data, response) = try await apiService.executeRequest(
+            request,
+            requiringAccessToken: true
+        )
+
+        return try ResponseParser()
+            .success(code: .ok, type: UserListResponseV17.self)
+            .parse(code: response.statusCode, data: data)
+    }
+
+}
+
+private struct UserListResponseV17: Decodable, ToAPIModelConvertible {
+
+    /// List of users which were found and successfully retrieved.
+
+    let found: [UserResponseV17]
+
+    /// List of user IDs for which a user couldn't be retrieved.
+
+    let failed: [QualifiedIDV0]?
+
+    func toAPIModel() -> UserList {
+        UserList(
+            found: found.map { $0.toAPIModel() },
+            failed: failed?.map { $0.toAPIModel() } ?? []
+        )
+    }
+
+}
+
+struct UserResponseV17: Decodable, ToAPIModelConvertible {
+
+    let id: QualifiedIDV0
+    let name: String
+    let handle: String?
+    let teamID: UUID?
+    let type: UserTypeV12?
+    let accentID: Int
+    let assets: [UserAssetV0]
+    let deleted: Bool?
+    let email: String?
+    let expiresAt: UTCTime?
+    let service: ServiceResponseV0?
+    let supportedProtocols: Set<MessageProtocolV0>?
+    let legalholdStatus: LegalholdStatusV0
+    let app: UserAppV15?
+    private let contactStatus: ContactStatusV17? // introduced in v17
+
+    enum CodingKeys: String, CodingKey {
+
+        case id = "qualified_id"
+        case name
+        case handle
+        case teamID = "team"
+        case type
+        case accentID = "accent_id"
+        case assets
+        case deleted
+        case email
+        case expiresAt = "expires_at"
+        case service
+        case supportedProtocols = "supported_protocols"
+        case legalholdStatus = "legalhold_status"
+        case app
+        case contactStatus = "contact_status"
+
+    }
+
+    func toAPIModel() -> User {
+        let supportedProtocols = supportedProtocols?.map { $0.toAPIModel() }
+        return User(
+            id: id.toAPIModel(),
+            name: name,
+            handle: handle,
+            teamID: teamID,
+            type: type?.toAPIModel(),
+            accentID: accentID,
+            assets: assets.map { $0.toAPIModel() },
+            deleted: deleted,
+            email: email,
+            expiresAt: expiresAt?.date,
+            app: app?.toAPIModel(),
+            service: service?.toAPIModel(),
+            supportedProtocols: supportedProtocols.flatMap { Set($0) },
+            legalholdStatus: legalholdStatus.toAPIModel(),
+            contactStatus: contactStatus?.toAPIModel()
+        )
+    }
+
+}
+
+private struct ContactStatusV17: Decodable, ToAPIModelConvertible {
+
+    let state: State
+
+    enum State: String, Decodable {
+
+        case contactable
+        case nonContactable = "non-contactable"
+
+    }
+
+    func toAPIModel() -> ContactStatus {
+        switch state {
+        case .contactable:
+            .contactable
+        case .nonContactable:
+            .nonContactable
+        }
     }
 
 }
