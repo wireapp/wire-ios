@@ -392,20 +392,13 @@ final class FilesItemViewModel: ObservableObject {
 
 extension FilesItemViewModel {
 
-    /// Suspends until the next moment the formatted date can change and then recomputes the subtitle. Returns when
-    /// the calling task is cancelled, or immediately if the item has no modification date
+    /// Refreshes the subtitle every minute until the calling task is cancelled.
     func keepSubtitleUpToDate() async {
         while !Task.isCancelled {
             updateSubtitle()
 
-            guard let delay = Self.delayUntilFormattedDateChanges(
-                modifiedAt: item.modifiedAt,
-                now: currentDateProvider.now,
-                calendar: WRDateFormatter.calendar
-            ) else { return }
-
             do {
-                try await Task.sleep(for: .seconds(delay))
+                try await Task.sleep(for: .seconds(60))
             } catch {
                 return
             }
@@ -424,32 +417,6 @@ extension FilesItemViewModel {
         )
     }
 
-    /// The time left until `Date.formattedDate` produces a different string for `modifiedAt`.
-    static func delayUntilFormattedDateChanges(
-        modifiedAt: Date?,
-        now: Date,
-        calendar: Calendar
-    ) -> TimeInterval? {
-        guard let modifiedAt else { return nil }
-
-        let minimumDelay: TimeInterval = 1
-        let age = now.timeIntervalSince(modifiedAt)
-
-        let delay: TimeInterval
-        if age < WRDateFormatter.NSTimeIntervalOneMinute {
-            delay = WRDateFormatter.NSTimeIntervalOneMinute - age
-        } else if age < WRDateFormatter.NSTimeIntervalOneHour {
-            let untilNextMinute = WRDateFormatter.NSTimeIntervalOneMinute
-                - age.truncatingRemainder(dividingBy: WRDateFormatter.NSTimeIntervalOneMinute)
-            delay = min(untilNextMinute, WRDateFormatter.NSTimeIntervalOneHour - age)
-        } else {
-            let startOfToday = calendar.startOfDay(for: now)
-            guard let startOfTomorrow = calendar.date(byAdding: .day, value: 1, to: startOfToday) else { return nil }
-            delay = startOfTomorrow.timeIntervalSince(now)
-        }
-
-        return max(delay, minimumDelay)
-    }
 }
 
 // MARK: - Formatting
