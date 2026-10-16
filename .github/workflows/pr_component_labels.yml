@@ -1,0 +1,130 @@
+name: Label PRs with Jira Components
+
+# **What it does**: Reads the Jira components of the ticket referenced in the PR title (e.g. WPB-1234)
+#                   and syncs the matching component labels on the PR. Unmapped components (such as "iOS") are ignored.
+# **Why we have it**: Lets reviewers and release tooling filter PRs by product area without reading the ticket.
+# **Who does it impact**: Engineers, reviewers, and QA filtering PRs by component.
+#
+# Manual backfill: run the workflow with `pr_number` empty to sync every open PR, or set it to one PR number.
+# Jira component changes are not picked up automatically; re-run the backfill (or edit the PR title) to resync.
+#
+# Required secrets:
+#   JIRA_TOKEN — Same secret used by jira_lint_and_link.yml.
+
+on:
+  pull_request:
+    types: [opened, reopened, edited, ready_for_review]
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: 'PR number to sync. Leave empty to sync all open PRs.'
+        required: false
+        type: string
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: read
+
+jobs:
+  label-prs:
+    runs-on: ubuntu-24.04
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      github.event.pull_request.draft != true
+    steps:
+      - name: Sync component labels
+        uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7.1.0
+        env:
+          JIRA_TOKEN: ${{ secrets.JIRA_TOKEN }}
+          PR_NUMBER_INPUT: ${{ inputs.pr_number }}
+        with:
+          script: |
+            const JIRA_BASE_URL = 'https://wearezeta.atlassian.net';
+            // Jira component name → GitHub label name. Components not listed here (e.g. "iOS") are ignored.
+            const LABEL_BY_COMPONENT = {
+              'Discipline': 'Discipline',
+              'Calling': 'Calling',
+              'Messenger': 'Messenger',
+              'Core': 'Core',
+              'Files': 'Files',
+              'Administration & Identity': 'Administration & Identity',
+            };
+            const MANAGED_LABELS = [...new Set(Object.values(LABEL_BY_COMPONENT))];
+            const LABEL_COLOR = 'C5DEF5';
+            const { owner, repo } = context.repo;
+
+            if (!process.env.JIRA_TOKEN) {
+              throw new Error('JIRA_TOKEN secret is required');
+            }
+            const authHeader = `Basic ${Buffer.from(process.env.JIRA_TOKEN).toString('base64')}`;
+
+            const getJiraComponents = async (key) => {
+              const res = await fetch(`${JIRA_BASE_URL}/rest/api/3/issue/${key}?fields=components`, {
+                headers: { Authorization: authHeader, Accept: 'application/json' },
+              });
+              if (!res.ok) throw new Error(`Jira ${key}: ${res.status} ${await res.text()}`);
+              const issue = await res.json();
+              return (issue.fields.components || []).map(c => c.name);
+            };
+
+            // Create any missing component label once per run.
+            const ensureLabels = async () => {
+              const existing = await github.paginate(github.rest.issues.listLabelsForRepo, { owner, repo, per_page: 100 });
+              const names = new Set(existing.map(l => l.name));
+              for (const name of MANAGED_LABELS) {
+                if (names.has(name)) continue;
+                await github.rest.issues.createLabel({ owner, repo, name, color: LABEL_COLOR, description: 'Jira component' });
+                core.info(`Created label "${name}"`);
+              }
+            };
+
+            const syncPr = async (pr) => {
+              const ticket = pr.title.match(/\bWPB-\d+\b/)?.[0] ?? pr.head.ref.match(/WPB-\d+/i)?.[0]?.toUpperCase();
+              if (!ticket) {
+                core.notice(`PR #${pr.number}: no WPB ticket in title or branch, skipped`);
+                return;
+              }
+
+              const components = await getJiraComponents(ticket);
+              const desired = [...new Set(components.filter(c => LABEL_BY_COMPONENT[c]).map(c => LABEL_BY_COMPONENT[c]))];
+              if (desired.length === 0) {
+                core.warning(`PR #${pr.number} (${ticket}): no mapped component on the ticket`);
+              }
+
+              const current = pr.labels.map(l => l.name).filter(n => MANAGED_LABELS.includes(n));
+              const toAdd = desired.filter(n => !current.includes(n));
+              const toRemove = current.filter(n => !desired.includes(n));
+
+              if (toAdd.length) {
+                await github.rest.issues.addLabels({ owner, repo, issue_number: pr.number, labels: toAdd });
+              }
+              for (const name of toRemove) {
+                await github.rest.issues.removeLabel({ owner, repo, issue_number: pr.number, name });
+              }
+              core.info(`PR #${pr.number} (${ticket}): added [${toAdd.join(', ')}] removed [${toRemove.join(', ')}]`);
+            };
+
+            await ensureLabels();
+
+            const requested = (process.env.PR_NUMBER_INPUT || '').trim();
+            if (context.eventName === 'pull_request') {
+              await syncPr(context.payload.pull_request);
+            } else if (requested) {
+              const { data: pr } = await github.rest.pulls.get({ owner, repo, pull_number: Number(requested) });
+              await syncPr(pr);
+            } else {
+              const prs = await github.paginate(github.rest.pulls.list, { owner, repo, state: 'open', per_page: 100 });
+              const failures = [];
+              for (const pr of prs) {
+                try {
+                  await syncPr(pr);
+                } catch (e) {
+                  core.error(`PR #${pr.number}: ${e.message}`);
+                  failures.push(pr.number);
+                }
+              }
+              if (failures.length) {
+                throw new Error(`Failed to sync PRs: ${failures.join(', ')}`);
+              }
+            }
