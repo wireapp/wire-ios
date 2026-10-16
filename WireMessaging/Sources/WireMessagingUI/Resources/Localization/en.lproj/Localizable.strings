@@ -347,3 +347,5 @@
 "conversation.details.sharedDriveAccessSection.you" = "You";
 "conversation.details.sharedDriveAccessSection.editor" = "Editor";
 "conversation.details.sharedDriveAccessSection.viewer" = "Viewer";
+
+"test.loc_reminder.repro_bug" = "Dummy repro key (bug)";
