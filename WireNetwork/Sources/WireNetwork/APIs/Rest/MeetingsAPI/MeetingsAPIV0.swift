@@ -52,6 +52,16 @@ class MeetingsAPIV0: MeetingsAPI, VersionedAPI {
         throw MeetingsAPIError.unsupportedEndpointForAPIVersion
     }
 
+    // MARK: - Meeting invitations
+
+    func addMeetingInvitations(id: QualifiedID, emails: [String]) async throws {
+        throw MeetingsAPIError.unsupportedEndpointForAPIVersion
+    }
+
+    func removeMeetingInvitations(id: QualifiedID, emails: [String]) async throws {
+        throw MeetingsAPIError.unsupportedEndpointForAPIVersion
+    }
+
     // MARK: - Delete meeting
 
     func deleteMeeting(id: QualifiedID) async throws {
