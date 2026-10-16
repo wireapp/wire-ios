@@ -24,64 +24,50 @@ Goal: disable the start-conversation action for explicitly non-contactable users
 - [ ] Confirm with the backend whether changing contactability emits an event, including its type, payload, recipients, and federation behavior.
 - [ ] Record the agreed refresh behavior. Do not assume a live update event exists: the current client `user.update` decoder has no contact-status field, and the supplied schema does not establish an event contract.
 
-## 3. Data model and persistence
+## 3. Pass status through without persistence or shared caching
 
-- [ ] Add a data-model representation of unknown, contactable, and non-contactable status without depending on WireNetwork from the UI.
-- [ ] Add an optional persisted contact-status attribute to `ZMUser`, with a typed accessor.
-- [ ] Add a Core Data model version and wire it into the repository's migration setup.
-- [ ] Verify migration from the previous model; existing users must start with unknown status. Check that lightweight migration is sufficient.
-- [ ] Expose contact status through the Objective-C-compatible `UserType` interface.
-- [ ] Implement status storage/access for `ZMSearchUser`, including search-only users and users backed by `ZMUser`.
-- [ ] Define which value is authoritative when a search user has both a fetched profile and an attached local user.
-- [ ] Update user mocks and test fixtures; regenerate mocks where required.
+Decision: keep contact status in screen/view-model state for this iteration. Do not add a Core Data attribute or migration, or store status on shared/cached `ZMUser` / `ZMSearchUser` objects.
 
-## 4. Carry status through profile processing
+- [ ] Add a small domain-facing result representing unknown, contactable, and non-contactable status.
+- [ ] Add an injectable fetch use case that reads a user profile through the existing users API and returns its contact status directly, without persisting the profile or caching the result.
+- [ ] Expose the use case through the session/component used to construct the profile UI.
+- [ ] Pass the result to the profile view model, including profiles opened from search. Keep the status only for that screen's lifetime.
+- [ ] Where an existing full-profile lookup supplies the initial status, pass it explicitly as screen input rather than storing it on the cached search user.
+- [ ] Update affected protocols, mocks, and constructor call sites.
 
-- [ ] Extend `NewUserInfo` and the `WireNetwork.User` mapping in `UserModelMappings.swift`.
-- [ ] Persist the mapped value in `UserLocalStore.persistUser`.
-- [ ] Extend the legacy `Payload.UserProfile` decoder and `UserProfilePayloadProcessor`, which are still used by profile refreshes.
-- [ ] On authoritative full-profile responses, update or clear the cached status according to the response.
-- [ ] Preserve cached status during unrelated partial updates that omit the field.
-- [ ] Extend the `WireNetwork.User → ZMSearchUser` mapping in `SearchTask.swift`.
-- [ ] Apply refreshed values to cached search users as well as newly created ones.
-- [ ] Ensure team-app profiles carry the status through the same mappings.
+## 4. Fetching and freshness
 
-## 5. Fetching and freshness
+- [ ] Fetch status when opening a profile, including profiles of search-only users and users already present locally.
+- [ ] Do not rely on `ZMSearchUser.refreshData()` for this fetch: it currently only forwards to an attached `ZMUser`.
+- [ ] If search rows need the restriction before profile opening, fetch profiles for the relevant results through `/list-users` and keep results in the search screen's state. `/search/contacts` does not return contact status.
+- [ ] Keep status fetching independent of missing image assets and existing search-user caches.
+- [ ] Refresh on profile reappearance and when returning to the foreground with that profile visible.
+- [ ] Distinguish loading, fetch failure, and a successful response with unknown status; agree on initial button behavior during loading.
+- [ ] Preserve a known restriction within the current screen if a refresh fails. Discard screen state when the screen is closed.
+- [ ] Cancel obsolete fetches or ignore their results when the screen closes, the displayed user changes, or a newer request has completed.
+- [ ] Document that, without a confirmed backend event, changes are discovered on refresh. Polling is not part of this iteration.
 
-- [ ] Fetch a full profile when opening a user profile, including a profile opened from search.
-- [ ] Add an explicit refresh path for search-only users: `ZMSearchUser.refreshData()` currently only forwards to an attached `ZMUser`.
-- [ ] If search rows need the restriction before profile opening, enrich the relevant results through `/list-users`; `/search/contacts` does not contain contact status.
-- [ ] Do not tie contact-status fetching to missing image assets; the existing asset-enrichment condition is insufficient.
-- [ ] Refresh cached values when revisiting the profile and when returning to the foreground with that profile visible.
-- [ ] Handle loading and fetch failures explicitly; retain a previously known restriction if a refresh fails.
-- [ ] If the backend confirms a change event, implement its decoding, processing, persistence, and UI notification path.
-- [ ] Otherwise, document that a change is discovered on refresh. Decide whether live re-enabling while the screen remains open requires polling; avoid adding polling without an agreed requirement.
+## 5. UI
 
-## 6. Observation and UI
-
-- [ ] Add contact-status change observation for `ZMUser` and `ZMSearchUser`.
-- [ ] Extend `UserChangeInfo` or the relevant observation mechanism so consumers can detect the change.
-- [ ] Update `ProfileViewControllerViewModel` to recompute action state after a status change.
+- [ ] Update `ProfileViewControllerViewModel` to recompute action state when the fetch completes, rather than relying on Core Data or `UserChangeInfo` notifications for this property.
 - [ ] Add enabled state to the profile action/footer configuration; `ProfileFooterView` currently configures actions without this state.
 - [ ] Disable the visible “Start conversation” action when status is explicitly non-contactable.
 - [ ] Apply the agreed behavior to any equivalent “Connect” entry points without hiding the intended disabled action.
-- [ ] Guard action handlers against starting the operation while the user is known to be non-contactable.
+- [ ] Guard action handlers against starting the operation while the current screen knows the user is non-contactable.
 - [ ] Re-enable the action after a successful refresh reports contactable status, while retaining existing permission checks.
 - [ ] Reset enabled state when configuring/reusing the footer or a search cell.
 - [ ] Verify disabled styling and VoiceOver's disabled-state announcement; preserve accessibility identifiers.
 
-## 7. Validation and completion
+## 6. Validation and completion
 
-- [ ] Test persistence and migration, including unknown values for existing users.
-- [ ] Test modern and legacy profile processing, including full versus partial updates.
-- [ ] Test fresh and cached search users, with and without an attached local user.
-- [ ] Test that profile fetching is independent of whether profile images are already available.
-- [ ] Test action state for contactable, non-contactable, and unknown status.
-- [ ] Test the non-contactable → contactable transition and the reverse transition after refresh.
-- [ ] Test refresh failures and preservation of a previously known restriction.
+- [ ] Test direct API-to-domain status mapping without writes to local user storage.
+- [ ] Test profile and search flows for users with and without an attached local user.
+- [ ] Test that status fetching is independent of profile images and cached search users.
+- [ ] Test action state for contactable, non-contactable, unknown, loading, and fetch failure.
+- [ ] Test both status transitions after refresh and retention of a known restriction on refresh failure within the same screen.
+- [ ] Test cancellation/stale responses and fresh fetching after closing and reopening a screen.
 - [ ] Test handler guards, existing-conversation access, and the agreed behavior of connection-request actions.
-- [ ] Test the backend event path if one is supported and implemented.
-- [ ] Run relevant networking, data-model, request-strategy, domain, sync-engine, and UI tests for the changed paths.
+- [ ] Run relevant networking, domain, and UI tests for the changed paths. Test execution remains with the user in this session.
 - [ ] Manually verify profile and search flows, foreground refresh, disabled appearance, and accessibility.
 - [ ] Run formatting, lint, and diff checks for the final changes.
 - [ ] Remove this temporary checklist before the final PR, or move remaining work into tracked follow-up issues.
@@ -90,7 +76,12 @@ Goal: disable the start-conversation action for explicitly non-contactable users
 
 - [ ] Agree on localized hint text and placement in the profile and search UI.
 - [ ] Add the hint using dynamic-type-compatible UI and accessible text.
-- [ ] Keep the hint synchronized with the same observed contact-status state.
+- [ ] Drive the hint from the same screen/view-model status as the button.
+
+## Follow-up: live updates and broader reuse
+
+- [ ] If the backend confirms a status-change event, route it to visible screens and refresh or update their state without requiring persistence.
+- [ ] Revisit shared caching or persistence only if later requirements need offline status or reuse across screens; localized hints alone do not require it.
 
 ## Networking test command
 
