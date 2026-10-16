@@ -40,7 +40,7 @@ class MeetingFormPage: PageModel {
 
     var memberSearchField: XCUIElement {
         // SwiftUI creates the native search field. Use the visible field in the presented sheet.
-        app.searchFields.matching(NSPredicate(format: "isHittable == true")).firstMatch
+        app.searchFields.allElementsBoundByIndex.first(where: \.isHittable) ?? app.searchFields.firstMatch
     }
 
     var noMemberSearchResults: XCUIElement {
@@ -198,16 +198,27 @@ class MeetingFormPage: PageModel {
         }
     }
 
-    func selectTime(start: Bool, hour: Int, minute: Int) throws {
+    func selectTime(start: Bool, hour: Int, minute: Int, allowClamping: Bool = false) throws {
         let button = start ? startTimeButton : endTimeButton
         guard button.waitAndTap() else { throw RuntimeError("Time button was not available") }
-        let wheels = app.pickerWheels
-        guard wheels.firstMatch.waitForExistence(timeout: 5), wheels.count == 2 else {
-            throw RuntimeError("The time picker must have 24-hour and minute wheels")
+        let expectedTime = String(format: "%02d:%02d", hour, minute)
+        for _ in 0 ..< (allowClamping ? 1 : 3) {
+            let wheels = app.pickerWheels
+            guard wheels.firstMatch.waitForExistence(timeout: 5), wheels.count == 2 else {
+                throw RuntimeError("The time picker must have 24-hour and minute wheels")
+            }
+            // The minimum-hour boundary can replace the native picker during adjustment.
+            wheels.element(boundBy: 0).adjust(toPickerWheelValue: String(format: "%02d", hour))
+            app.pickerWheels.element(boundBy: 1).adjust(toPickerWheelValue: String(format: "%02d", minute))
+            let selectedTime = XCTNSPredicateExpectation(
+                predicate: NSPredicate(format: "label == %@", expectedTime), object: button
+            )
+            if allowClamping || XCTWaiter().wait(for: [selectedTime], timeout: 2) == .completed {
+                guard button.waitAndTap() else { throw RuntimeError("Time picker did not close") }
+                return
+            }
         }
-        wheels.element(boundBy: 0).adjust(toPickerWheelValue: String(format: "%02d", hour))
-        wheels.element(boundBy: 1).adjust(toPickerWheelValue: String(format: "%02d", minute))
-        guard button.waitAndTap() else { throw RuntimeError("Time picker did not close") }
+        throw RuntimeError("Time picker selected '\(button.label)' instead of '\(expectedTime)'")
     }
 
     func openParticipants() throws {
