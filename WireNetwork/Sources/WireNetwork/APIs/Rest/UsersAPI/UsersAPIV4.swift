@@ -42,7 +42,7 @@ class UsersAPIV4: UsersAPIV3 {
             .parse(code: response.statusCode, data: data)
     }
 
-    override func getUsers(userIDs: [UserID]) async throws -> UserList {
+    override func getUsers(userIDs: [UserID], includeContactStatus: Bool) async throws -> UserList {
         let body = try JSONEncoder.defaultEncoder
             .encode(ListUsersRequestV0(qualifiedIDs: userIDs.map { $0.toNetworkModel() }))
         let path = "\(pathPrefix)/list-users"

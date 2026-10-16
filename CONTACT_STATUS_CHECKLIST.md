@@ -13,6 +13,8 @@ Goal: disable the start-conversation action for explicitly non-contactable users
 - [x] Remove the initializer default and update existing call sites with explicit status arguments.
 - [x] Add networking tests for both states, missing/null status, required state, older-version compatibility, and 404 handling.
 - [x] Commit parsing and initializer cleanup separately (`636a3e8bd9`, `b3490abac8`).
+- [x] Add an explicit `includeContactStatus` argument to bulk user lookup; append `include-contact-status=true` only when requested on v17 and later.
+- [x] Add request tests covering opt-in, opt-out, and older API versions; update callers and mock usages.
 - [ ] Run the networking tests; tests were left for manual execution.
 
 ## 2. Confirm behavior and the backend update contract
@@ -29,17 +31,17 @@ Goal: disable the start-conversation action for explicitly non-contactable users
 Decision: keep contact status in screen/view-model state for this iteration. Do not add a Core Data attribute or migration, or store status on shared/cached `ZMUser` / `ZMSearchUser` objects.
 
 - [ ] Add a small domain-facing result representing unknown, contactable, and non-contactable status.
-- [ ] Add an injectable fetch use case that reads a user profile through the existing users API and returns its contact status directly, without persisting the profile or caching the result.
+- [ ] Add an injectable fetch use case that calls `/list-users` with `includeContactStatus: true` (also for a single user) and returns its contact status directly, without persisting the profile or caching the result.
 - [ ] Expose the use case through the session/component used to construct the profile UI.
 - [ ] Pass the result to the profile view model, including profiles opened from search. Keep the status only for that screen's lifetime.
-- [ ] Where an existing full-profile lookup supplies the initial status, pass it explicitly as screen input rather than storing it on the cached search user.
+- [ ] Where an existing full-profile lookup supplies the initial status after explicitly opting in, pass it explicitly as screen input rather than storing it on the cached search user.
 - [ ] Update affected protocols, mocks, and constructor call sites.
 
 ## 4. Fetching and freshness
 
 - [ ] Fetch status when opening a profile, including profiles of search-only users and users already present locally.
 - [ ] Do not rely on `ZMSearchUser.refreshData()` for this fetch: it currently only forwards to an attached `ZMUser`.
-- [ ] If search rows need the restriction before profile opening, fetch profiles for the relevant results through `/list-users` and keep results in the search screen's state. `/search/contacts` does not return contact status.
+- [ ] If search rows need the restriction before profile opening, fetch profiles for the relevant results through `/list-users` and keep results in the search screen's state. `/search/contacts` does not return contact status. The opt-in is documented on `/list-users`, not on single-user lookup; use the bulk endpoint with `includeContactStatus: true`.
 - [ ] Keep status fetching independent of missing image assets and existing search-user caches.
 - [ ] Refresh on profile reappearance and when returning to the foreground with that profile visible.
 - [ ] Distinguish loading, fetch failure, and a successful response with unknown status; agree on initial button behavior during loading.

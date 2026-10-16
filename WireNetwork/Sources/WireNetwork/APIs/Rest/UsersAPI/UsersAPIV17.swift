@@ -40,15 +40,20 @@ class UsersAPIV17: UsersAPIV16 {
             .parse(code: response.statusCode, data: data)
     }
 
-    override func getUsers(userIDs: [UserID]) async throws -> UserList {
+    override func getUsers(userIDs: [UserID], includeContactStatus: Bool) async throws -> UserList {
         let body = try JSONEncoder.defaultEncoder
             .encode(ListUsersRequestV0(qualifiedIDs: userIDs.map { $0.toNetworkModel() }))
         let path = "\(pathPrefix)/list-users"
 
-        let request = try URLRequestBuilder(path: path)
+        var requestBuilder = try URLRequestBuilder(path: path)
             .withMethod(.post)
             .withBody(body, contentType: .json)
-            .build()
+
+        if includeContactStatus {
+            requestBuilder = requestBuilder.withQueryItem(name: "include-contact-status", value: "true")
+        }
+
+        let request = requestBuilder.build()
 
         let (data, response) = try await apiService.executeRequest(
             request,

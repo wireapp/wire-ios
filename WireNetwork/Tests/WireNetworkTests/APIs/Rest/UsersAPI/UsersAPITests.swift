@@ -66,7 +66,7 @@ final class UsersAPITests: XCTestCase {
 
         let apiService = MockAPIServiceProtocol.withResponses(responses)
         try await apiSnapshotHelper.verifyRequestForAllAPIVersions(apiService: apiService) { sut in
-            _ = try await sut.getUsers(userIDs: [.mockID1, .mockID2, .mockID3])
+            _ = try await sut.getUsers(userIDs: [.mockID1, .mockID2, .mockID3], includeContactStatus: false)
         }
     }
 
@@ -100,7 +100,7 @@ final class UsersAPITests: XCTestCase {
 
         try await apiSnapshotHelper.verifyRequest(for: [.v0], apiService: apiService) { sut in
             // When
-            let result = try await sut.getUsers(userIDs: [Scaffolding.userID])
+            let result = try await sut.getUsers(userIDs: [Scaffolding.userID], includeContactStatus: false)
 
             // Then
             XCTAssertEqual(
@@ -172,7 +172,7 @@ final class UsersAPITests: XCTestCase {
 
         try await apiSnapshotHelper.verifyRequest(for: [.v4], apiService: apiService) { sut in
             // When
-            let result = try await sut.getUsers(userIDs: [Scaffolding.userID])
+            let result = try await sut.getUsers(userIDs: [Scaffolding.userID], includeContactStatus: false)
 
             // Then
             XCTAssertEqual(
@@ -228,7 +228,7 @@ final class UsersAPITests: XCTestCase {
 
         try await apiSnapshotHelper.verifyRequest(for: [.v12], apiService: apiService) { sut in
             // When
-            let result = try await sut.getUsers(userIDs: [Scaffolding.userID])
+            let result = try await sut.getUsers(userIDs: [Scaffolding.userID], includeContactStatus: false)
 
             // Then
             XCTAssertEqual(
@@ -268,7 +268,7 @@ final class UsersAPITests: XCTestCase {
 
         try await apiSnapshotHelper.verifyRequest(for: [.v15], apiService: apiService) { sut in
             // When
-            let result = try await sut.getUsers(userIDs: [Scaffolding.userID])
+            let result = try await sut.getUsers(userIDs: [Scaffolding.userID], includeContactStatus: false)
 
             // Then
             XCTAssertEqual(

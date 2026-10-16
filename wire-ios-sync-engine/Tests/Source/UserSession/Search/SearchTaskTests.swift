@@ -44,7 +44,7 @@ final class SearchTaskTests: DatabaseTest {
         teamsAPIMock = .init()
         usersAPIMock = .init()
         // Safe default for the asset-keys enrichment path; tests that exercise it override this.
-        usersAPIMock.getUsersUserIDs_MockValue = UserList(found: [], failed: [])
+        usersAPIMock.getUsersUserIDsIncludeContactStatus_MockValue = UserList(found: [], failed: [])
 
         performPretendingUIMocIsSyncMoc { [unowned self] in
             let selfUser = ZMUser.selfUser(in: uiMOC)
@@ -1205,7 +1205,7 @@ final class SearchTaskTests: DatabaseTest {
                 )
             ]
         }
-        usersAPIMock.getUsersUserIDs_MockMethod = { userIDs in
+        usersAPIMock.getUsersUserIDsIncludeContactStatus_MockMethod = { userIDs, _ in
             XCTAssertEqual(userIDs, [UserID(qualifiedID1), UserID(qualifiedID2)])
             expectation.fulfill()
             return UserList(found: [collaboratorAppResult, humanCollaboratorResult], failed: [])
@@ -1285,7 +1285,7 @@ final class SearchTaskTests: DatabaseTest {
                 )
             ]
         }
-        usersAPIMock.getUsersUserIDs_MockMethod = { userIDs in
+        usersAPIMock.getUsersUserIDsIncludeContactStatus_MockMethod = { userIDs, _ in
             XCTAssertEqual(userIDs, [UserID(qualifiedID)])
             return UserList(found: [collaboratorBotResult], failed: [])
         }
@@ -1344,7 +1344,7 @@ final class SearchTaskTests: DatabaseTest {
                 )
             ]
         }
-        usersAPIMock.getUsersUserIDs_MockMethod = { userIDs in
+        usersAPIMock.getUsersUserIDsIncludeContactStatus_MockMethod = { userIDs, _ in
             XCTAssertEqual(userIDs, [UserID(qualifiedID)])
             return UserList(found: [humanCollaboratorResult], failed: [])
         }
@@ -1400,7 +1400,7 @@ final class SearchTaskTests: DatabaseTest {
                 )
             ]
         }
-        usersAPIMock.getUsersUserIDs_MockMethod = { _ in
+        usersAPIMock.getUsersUserIDsIncludeContactStatus_MockMethod = { _, _ in
             UserList(found: [humanCollaboratorResult], failed: [])
         }
 
@@ -1731,7 +1731,7 @@ final class SearchTaskTests: DatabaseTest {
             )
         ])
         let getUsersExpectation = XCTestExpectation(description: "getUsers is called for enrichment")
-        usersAPIMock.getUsersUserIDs_MockMethod = { userIDs in
+        usersAPIMock.getUsersUserIDsIncludeContactStatus_MockMethod = { userIDs, _ in
             XCTAssertEqual(userIDs.map(\.id), [userID])
             getUsersExpectation.fulfill()
             return UserList(
@@ -1779,7 +1779,7 @@ final class SearchTaskTests: DatabaseTest {
     func testThatRemoteSearch_DoesNotCallGetUsers_WhenNoDirectoryHitsRequireEnrichment() async throws {
         // given
         searchAPIMock.searchContactsQueryDomainType_MockValue = .init(documents: [])
-        usersAPIMock.getUsersUserIDs_MockMethod = { _ in
+        usersAPIMock.getUsersUserIDsIncludeContactStatus_MockMethod = { _, _ in
             XCTFail("getUsers should not be called when there are no hits to enrich")
             return UserList(found: [], failed: [])
         }

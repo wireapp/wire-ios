@@ -239,7 +239,10 @@ private final class UpdateUsersAPI: UsersAPI {
         )
     }
 
-    func getUsers(userIDs: [UserID]) async throws -> UserList { throw UpdateTestError.unavailable }
+    func getUsers(
+        userIDs: [UserID],
+        includeContactStatus: Bool
+    ) async throws -> UserList { throw UpdateTestError.unavailable }
 }
 
 private struct UnusedDeleteBuilder: MeetingDeleteEventNotificationBuilderProtocol {

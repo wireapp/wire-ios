@@ -23,6 +23,30 @@ import XCTest
 
 final class ContactStatusAPITests: XCTestCase {
 
+    func testGetUsers_ContactStatusQueryIsOptInFromV17() async throws {
+        for version in APIVersion.allCases {
+            for includeContactStatus in [false, true] {
+                let resource = version < .v4 ? "GetUsersSuccessResponseV0" : "GetUsersSuccessResponseV4"
+                let apiService = MockAPIServiceProtocol.withResponses([(.ok, resource)])
+                let sut = UsersAPIBuilder(apiService: apiService).makeAPI(for: version)
+
+                _ = try await sut.getUsers(userIDs: [.mockID1], includeContactStatus: includeContactStatus)
+
+                let invocation = try XCTUnwrap(apiService.executeRequestRequiringAccessToken_Invocations.first)
+                let url = try XCTUnwrap(invocation.request.url)
+                let components = try XCTUnwrap(URLComponents(url: url, resolvingAgainstBaseURL: false))
+                let expectedQueryItems: [URLQueryItem]? = version >= .v17 && includeContactStatus
+                    ? [URLQueryItem(name: "include-contact-status", value: "true")]
+                    : nil
+                XCTAssertEqual(
+                    components.queryItems,
+                    expectedQueryItems,
+                    "API \(version), opt-in \(includeContactStatus)"
+                )
+            }
+        }
+    }
+
     func testGetUser_V17AndAbove_DecodesContactStatus() async throws {
         for version in APIVersion.v17.andNextVersions {
             for (json, expectedStatus) in Scaffolding.contactStatuses {
@@ -48,7 +72,7 @@ final class ContactStatusAPITests: XCTestCase {
             let apiService = try makeAPIService(response: ["found": users, "failed": failed])
             let sut = UsersAPIBuilder(apiService: apiService).makeAPI(for: version)
 
-            let result = try await sut.getUsers(userIDs: [.mockID1])
+            let result = try await sut.getUsers(userIDs: [.mockID1], includeContactStatus: true)
 
             XCTAssertEqual(result.found.map(\.contactStatus), Scaffolding.contactStatuses.map(\.status))
             XCTAssertEqual(result.failed, [.mockID1])

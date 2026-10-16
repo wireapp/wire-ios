@@ -261,7 +261,10 @@ private final class InvitationUsersAPI: UsersAPI {
         )
     }
 
-    func getUsers(userIDs: [UserID]) async throws -> UserList { throw InvitationTestError.unavailable }
+    func getUsers(
+        userIDs: [UserID],
+        includeContactStatus: Bool
+    ) async throws -> UserList { throw InvitationTestError.unavailable }
 }
 
 private final class InvitationMeetingStore: MeetingLocalStoreProtocol, @unchecked Sendable {
