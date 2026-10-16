@@ -24,7 +24,7 @@ Goal: disable the start-conversation action for explicitly non-contactable users
 - [x] Preserve existing behavior for unknown status (older APIs or an omitted field); loading also preserves current behavior.
 - [x] Preserve access to existing conversations; restrict the “Start conversation” action in this step.
 - [ ] Confirm with the backend whether changing contactability emits an event, including its type, payload, recipients, and federation behavior.
-- [ ] Record the agreed refresh behavior. Do not assume a live update event exists: the current client `user.update` decoder has no contact-status field, and the supplied schema does not establish an event contract.
+- [ ] Confirm whether status-change events should trigger refreshes in addition to the current profile-appearance and foreground refreshes.
 
 ## 3. Pass status through without persistence or shared caching
 
@@ -41,7 +41,7 @@ Decision: keep contact status in screen/view-model state for this iteration. Do 
 
 - [x] Fetch status when opening a profile, including profiles of search-only users and users already present locally.
 - [x] Use a separate fetch instead of `ZMSearchUser.refreshData()`, which only forwards to an attached `ZMUser`.
-- [ ] If search rows need the restriction before profile opening, fetch profiles for the relevant results through `/list-users` and keep results in the search screen's state. `/search/contacts` does not return contact status. The opt-in is documented on `/list-users`, not on single-user lookup; use the bulk endpoint with `includeContactStatus: true`.
+- [ ] If search rows need the restriction before profile opening, fetch profiles for the relevant results through `/list-users` with `includeContactStatus: true` and keep results in the search screen's state. `/search/contacts` does not return contact status.
 - [x] Keep status fetching independent of missing image assets and existing search-user caches.
 - [x] Refresh on profile reappearance and when returning to the foreground with that profile visible.
 - [ ] Distinguish loading, fetch failure, and a successful response with unknown status; agree on initial button behavior during loading.
