@@ -56,6 +56,7 @@ struct FilesItemView: View {
                         .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
 
                     infoRow()
+                        .task { await viewModel.keepSubtitleUpToDate() }
                 }
                 .accessibilityElement(children: .combine)
                 .accessibilitySortPriority(2)
