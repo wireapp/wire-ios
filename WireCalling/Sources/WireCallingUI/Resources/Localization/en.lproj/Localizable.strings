@@ -98,6 +98,11 @@
 "wireMeetings.schedule.setupTitle.header" = "Title";
 "wireMeetings.schedule.setupTitle.placeholder" = "Enter meeting title";
 "wireMeetings.schedule.setupTitle.error.tooLong" = "Too many characters";
+"wireMeetings.schedule.password.title" = "Optional: set a password on the meeting link";
+"wireMeetings.schedule.password.placeholder" = "Enter a password";
+"wireMeetings.schedule.password.requirements" = "Use at least %d characters, with one lowercase letter, one capital letter, a number, and a special character.";
+"wireMeetings.schedule.password.copy" = "Copy password";
+"wireMeetings.schedule.password.generate" = "Generate password";
 "wireMeetings.schedule.setupParticipants.header" = "Participants";
 "wireMeetings.schedule.setupParticipants.placeholder" = "Add participants";
 "wireMeetings.schedule.error.alert.title" = "Something went wrong";

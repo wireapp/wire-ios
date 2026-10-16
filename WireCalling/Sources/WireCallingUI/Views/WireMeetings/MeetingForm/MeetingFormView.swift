@@ -30,6 +30,7 @@ struct MeetingFormView: View {
 
     @Environment(\.dismiss) private var dismiss
     @Environment(\.wireAccentColor) private var wireAccentColor
+    @Environment(\.isClipboardEnabled) private var isClipboardEnabled
     @State private(set) var viewModel: MeetingFormViewModel
     @State private var expandedField: ExpandedField?
     @State private var isPresentingMemberSelection = false
@@ -43,6 +44,9 @@ struct MeetingFormView: View {
                     scheduleSection
                 }
                 participantsSection
+                if viewModel.canSetPassword {
+                    passwordSection
+                }
             }
             .listSectionSpacing(.compact)
             .onAppear {
@@ -201,6 +205,36 @@ struct MeetingFormView: View {
             }
             .accessibilityIdentifier(Locators.WireMeetings.MeetingForm.repeatOption)
         }
+    }
+
+    private var passwordSection: some View {
+        Section {
+            SecureField(Strings.Password.placeholder, text: $viewModel.password)
+                .textContentType(.newPassword)
+                .textInputAutocapitalization(.never)
+                .autocorrectionDisabled()
+                .foregroundStyle(viewModel.isPasswordValid ? ColorTheme.Backgrounds.onSurface.color : ColorTheme.Base
+                    .error.color)
+                .accessibilityLabel(Strings.Password.title)
+                .accessibilityHint(Strings.Password.requirements(MeetingFormViewModel.minimumPasswordLength))
+                .accessibilityIdentifier(Locators.WireMeetings.MeetingForm.password)
+            Button(Strings.Password.copy) {
+                viewModel.copyPassword()
+            }
+            .disabled(!isClipboardEnabled || viewModel.password.isEmpty || !viewModel.isPasswordValid)
+            .accessibilityIdentifier(Locators.WireMeetings.MeetingForm.copyPassword)
+            Button(Strings.Password.generate, action: viewModel.generatePassword)
+                .accessibilityIdentifier(Locators.WireMeetings.MeetingForm.generatePassword)
+        } header: {
+            Text(Strings.Password.title)
+        } footer: {
+            Text(Strings.Password.requirements(MeetingFormViewModel.minimumPasswordLength))
+                .foregroundStyle(viewModel.isPasswordValid ? ColorTheme.Base.secondaryText.color : ColorTheme.Base.error
+                    .color)
+                .accessibilityIdentifier(Locators.WireMeetings.MeetingForm.passwordRequirements)
+        }
+        .disabled(viewModel.isLoading)
+        .textCase(nil)
     }
 
     private var participantsSection: some View {

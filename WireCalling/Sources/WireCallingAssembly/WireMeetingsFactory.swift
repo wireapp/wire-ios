@@ -23,17 +23,20 @@ public import WireCallingDomain
 import SwiftUI
 import WireCallingData
 import WireCallingUI
+import WireDesign
 import WireFoundation
 
 public struct WireMeetingsFactory {
 
     private let selfUserID: UUID
     private let supportsMeetingLinks: Bool
+    private let isClipboardEnabled: Bool
 
     @MainActor
-    public init(selfUserID: UUID, supportsMeetingLinks: Bool = false) {
+    public init(selfUserID: UUID, supportsMeetingLinks: Bool = false, isClipboardEnabled: Bool = true) {
         self.selfUserID = selfUserID
         self.supportsMeetingLinks = supportsMeetingLinks
+        self.isClipboardEnabled = isClipboardEnabled
     }
 
     @MainActor
@@ -96,6 +99,7 @@ public struct WireMeetingsFactory {
                     viewModel: meetingsViewModel,
                     accentColorState: accentColorState
                 )
+                .environment(\.isClipboardEnabled, isClipboardEnabled)
             )
         )
     }
