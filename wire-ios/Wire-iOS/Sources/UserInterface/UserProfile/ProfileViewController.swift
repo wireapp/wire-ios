@@ -23,6 +23,7 @@ import WireLocators
 import WireLogging
 import WireMainNavigationUI
 import WireMessagingDomain
+import WireNetwork
 import WireSyncEngine
 
 enum ProfileViewControllerTabBarIndex: Int {
@@ -57,6 +58,8 @@ final class ProfileViewController: UIViewController {
     private var incomingRequestFooterBottomConstraint: NSLayoutConstraint?
     private let activityIndicator = UIActivityIndicatorView(style: .large)
     private var tabsController: TabBarController?
+    private var profileDetailsViewController: ProfileDetailsViewController?
+    private var contactStatusTask: Task<Void, Never>?
     private let mainCoordinator: AnyMainCoordinator
     private let selfProfileUIBuilder: any SelfProfileViewControllerBuilderProtocol
     private let conversationCreationRepository: any ConversationCreationRepositoryProtocol
@@ -94,7 +97,20 @@ final class ProfileViewController: UIViewController {
             context: profileViewControllerContext,
             classificationProvider: userSession as? SecurityClassificationProviding,
             userSession: userSession,
-            profileActionsFactory: profileActionsFactory
+            profileActionsFactory: profileActionsFactory,
+            fetchContactability: {
+                guard !user.isSelfUser,
+                      let usersAPI = userSession.clientSessionComponent?.usersAPI,
+                      let userID = user.qualifiedID(localDomain: userSession.resolvedBackendMetadata.domain)
+                else { return nil }
+
+                let id = WireNetwork.UserID(id: userID.uuid, domain: userID.domain)
+                let result = try await usersAPI.getUsers(userIDs: [id], includeContactStatus: true)
+                guard let profile = result.found.first(where: { $0.id == id }) else {
+                    throw UsersAPIError.userNotFound
+                }
+                return profile.contactStatus.map { $0 == .contactable }
+            }
         )
 
         self.init(
@@ -203,16 +219,42 @@ final class ProfileViewController: UIViewController {
         setupConstraints()
         updateIncomingRequestFooter()
         viewModel.updateActionsList()
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(refreshContactStatusAfterForeground),
+            name: UIApplication.willEnterForegroundNotification,
+            object: nil
+        )
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setupNavigationBarTitle(L10n.Localizable.Profile.Details.title)
         setupNavigationItems()
+        refreshContactStatus()
         UIAccessibility.post(
             notification: UIAccessibility.Notification.screenChanged,
             argument: navigationItem.titleView
         )
+    }
+
+    private func refreshContactStatus() {
+        contactStatusTask?.cancel()
+        contactStatusTask = Task { [viewModel] in
+            await viewModel.refreshContactStatus()
+        }
+    }
+
+    @objc
+    private func refreshContactStatusAfterForeground() {
+        guard isViewLoaded, view.window != nil else { return }
+        refreshContactStatus()
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        contactStatusTask?.cancel()
+        contactStatusTask = nil
     }
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
@@ -229,6 +271,7 @@ final class ProfileViewController: UIViewController {
             context: viewModel.context,
             userSession: viewModel.userSession
         )
+        self.profileDetailsViewController = profileDetailsViewController
         profileDetailsViewController.title = L10n.Localizable.Profile.Details.title
 
         return profileDetailsViewController
@@ -620,6 +663,11 @@ extension ProfileViewController: ProfileViewControllerViewModelDelegate {
             navigationItem.rightBarButtonItem = legalHoldItem
         }
         navigationItem.backBarButtonItem?.accessibilityLabel = L10n.Accessibility.DeviceDetails.BackButton.description
+    }
+
+    func updateContactStatus(isNonContactable: Bool) {
+        profileFooterView.isUserNonContactable = isNonContactable
+        profileDetailsViewController?.contentController.isUserNonContactable = isNonContactable
     }
 
     func updateFooterActionsViews(_ actions: [ProfileAction]) {
