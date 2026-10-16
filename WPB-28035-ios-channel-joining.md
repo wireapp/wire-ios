@@ -146,10 +146,42 @@ Smaller, but it depends on UIKit reporting `.inactive` (not `.background`) at th
 moment the sync finishes during foregrounding, which isn't guaranteed, and it
 doesn't resume batches interrupted by backgrounding.
 
-Known limitation (acceptable): if the deferral happens while backgrounded and the
-app is later foregrounded, recovery may run concurrently with the new incremental
-sync. Join-on-send (`MessageSender`) already joins independently of sync, so this
-is not a new class of concurrency.
+### Background execution and the notification service extension
+
+- **Notification service extension:** it does not create a `ZMUserSession` and
+  never runs pending conversation recovery; it only decrypts via WireDomain. The
+  deferral flag lives only in the app process. App/extension coordination of
+  CoreCrypto access is unchanged.
+- **Extra background time after resigning:** the sync runs inside
+  `withBackgroundTask` (`SyncAgent`, `IncrementalSync*`), so it can finish while
+  the app is `.background`. Recovery is then deferred and resumed on the next
+  `didBecomeActive`, so no external commits are made in the background.
+- **Backgrounded during a batch:** the running batch completes and the next state
+  check defers the rest. Each CoreCrypto transaction is wrapped in a background task
+  (`SafeCoreCrypto.transaction` with the app's `AppBackgroundTaskExecuter`), so the
+  app is not suspended while holding the keystore. If iOS suspends the app between
+  transactions (group-info fetch, commit upload), that join fails and the
+  conversation stays `.pendingJoin` until the next foreground sync (unchanged).
+- **Other short inactive phases** (app lock / Face ID, Control Center, call
+  banners) end with `didBecomeActive`, which resumes deferred recovery.
+- **Background launches** (push wake-up, background fetch) defer and resume on the
+  first activation.
+
+### Known limitations (accepted)
+
+- If the deferral happened while backgrounded and the app is later foregrounded,
+  the resumed recovery can run concurrently with the new incremental sync.
+  Join-on-send (`MessageSender`) already joins independently of sync, so this is
+  not a new class of concurrency.
+- Residual delay in that same situation: if the new sync marks *another*
+  conversation `.pendingJoin` after the resumed loop has already fetched its
+  pending list, that conversation is missed by the resumed loop, and the sync's
+  own loop is rejected by `MLSService`'s `isRecoveringPendingConversations` lock.
+  It is then joined on the next foreground sync, not stuck until a restart.
+  Requires membership changes on both sides of a background period plus
+  overlapping timing. A fix would make the resumed loop wait for a running sync and
+  let its completion handle recovery; not done given the codebase's retirement
+  horizon.
 
 Changed code:
 
@@ -246,6 +278,16 @@ backgrounding between batches. Repeated activations don't start extra loops, and
 in the background or before MLS client initialization and the key-package check.
 Deferral and resume are logged with the application state so future logs show
 which path was taken.
+
+The notification service extension is unaffected: it does not run this recovery.
+If a sync finishes during the extra background time requested after resigning
+active, recovery is deferred and runs on the next activation.
+
+Known limitation: if recovery was deferred while backgrounded and the following
+foreground sync marks another conversation as pending join while the resumed
+recovery is already running, that conversation is joined on the next foreground
+sync instead of immediately. This needs membership changes on both sides of a
+background period plus overlapping timing.
 
 ### Testing
 

@@ -1422,6 +1422,10 @@ extension ZMUserSession: SyncAgentDelegate {
     ///
     /// Only runs after `recoverPendingConversations()` deferred it, which happens after the
     /// MLS client initialization and key-package check of `didFinishIncrementalSync`.
+    ///
+    /// - Note: This can run concurrently with an incremental sync started on foreground. A conversation
+    ///   that sync marks as pending after this recovery fetched its batch is only joined after the next
+    ///   sync, because `MLSService` rejects the overlapping recovery of that sync.
     @MainActor
     func resumeDeferredPendingConversationRecovery() {
         guard isPendingConversationRecoveryDeferred else { return }
