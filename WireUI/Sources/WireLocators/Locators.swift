@@ -739,6 +739,10 @@ public enum Locators {
         public enum MeetingForm: String {
             case save = "meetingFormSave"
             case title = "meetingFormTitle"
+            case password = "meetingFormPassword"
+            case copyPassword = "meetingFormCopyPassword"
+            case generatePassword = "meetingFormGeneratePassword"
+            case passwordRequirements = "meetingFormPasswordRequirements"
             case clearTitle = "meetingFormClearTitle"
             case participants = "meetingFormParticipants"
             case membersSelect = "meetingMembersSelect"

@@ -18,6 +18,7 @@
 
 import SwiftUI
 import Testing
+import UIKit
 import WireCallingDomain
 import WireCallingDomainSupport
 import WireFoundation
@@ -313,6 +314,8 @@ struct MeetingFormViewModelTests {
         var receivedMeeting: Meeting?
         let viewModel = makeViewModel(mode: .instant) { receivedMeeting = $0 }
         viewModel.meetingTitle = "Team Standup"
+        #expect(!viewModel.canSetPassword)
+        viewModel.password = "ignored"
         viewModel.selectedMembers = [member]
         createMeetingUseCaseMock
             .invokeTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceTypeMeetingTypePasswordStringParticipantsMeetingMemberMeetingCreationResultReturnValue =
@@ -331,6 +334,7 @@ struct MeetingFormViewModelTests {
             .invokeTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceTypeMeetingTypePasswordStringParticipantsMeetingMemberMeetingCreationResultReceivedArguments
         #expect(arguments?.type == .immediate)
         #expect(arguments?.password == nil)
+        #expect(viewModel.password.isEmpty)
         #expect(arguments?.title == "Team Standup")
         #expect(arguments?.startTime == dateProviderMock.now)
         #expect(arguments?.endTime == dateProviderMock.now.addingTimeInterval(TimeInterval.oneHour))
@@ -357,6 +361,7 @@ struct MeetingFormViewModelTests {
         var receivedMeeting: Meeting?
         let viewModel = makeViewModel(mode: .scheduled, supportsMeetingLinks: true) { receivedMeeting = $0 }
         viewModel.meetingTitle = "Planning"
+        viewModel.password = " exact Password1! "
         viewModel.repeatOption = repeatOption
         viewModel.selectedMembers = [member]
         createMeetingUseCaseMock
@@ -378,7 +383,8 @@ struct MeetingFormViewModelTests {
         let arguments = createMeetingUseCaseMock
             .invokeTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceTypeMeetingTypePasswordStringParticipantsMeetingMemberMeetingCreationResultReceivedArguments
         #expect(arguments?.type == .scheduled)
-        #expect(arguments?.password == nil)
+        #expect(arguments?.password == " exact Password1! ")
+        #expect(viewModel.password.isEmpty)
         #expect(arguments?.title == "Planning")
         #expect(arguments?.startTime == viewModel.startDate)
         #expect(arguments?.endTime == viewModel.endDate)
@@ -394,6 +400,7 @@ struct MeetingFormViewModelTests {
     func submit_ParticipantsNotAdded_ContinuesWithCreatedMeeting(mode: MeetingFormViewModel.Mode) async {
         var completedMeetings: [Meeting] = []
         let viewModel = makeViewModel(mode: mode, supportsMeetingLinks: true) { completedMeetings.append($0) }
+        viewModel.password = "Abcdef1!"
         createMeetingUseCaseMock
             .invokeTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceTypeMeetingTypePasswordStringParticipantsMeetingMemberMeetingCreationResultThrowableError =
             CreateMeetingUseCaseError.participantsNotAdded(
@@ -405,6 +412,7 @@ struct MeetingFormViewModelTests {
 
         #expect(viewModel.hasParticipantsNotAddedAlert)
         #expect(viewModel.participantsNotAdded == [member])
+        #expect(viewModel.password.isEmpty)
         #expect(viewModel.participantsNotAddedMessage.contains(L10n.Localizable.Meetings.Error.missingLink))
         #expect(!viewModel.hasError)
         #expect(!viewModel.isLoading)
@@ -441,17 +449,71 @@ struct MeetingFormViewModelTests {
         #expect(onSuccessCalled == false)
     }
 
+    @Test("scheduled passwords require 8–1024 Unicode scalars and all four character classes")
+    func passwordValidation() async {
+        let viewModel = makeViewModel(mode: .scheduled, supportsMeetingLinks: true)
+        viewModel.meetingTitle = "Meeting"
+        for unavailableModel in [
+            makeViewModel(mode: .instant, supportsMeetingLinks: true),
+            makeViewModel(mode: .edit(makeEditableMeeting()), supportsMeetingLinks: true),
+            makeViewModel(mode: .scheduled)
+        ] {
+            unavailableModel.password = "ignored"
+            #expect(!unavailableModel.canSetPassword)
+            #expect(unavailableModel.isPasswordValid)
+        }
+        #expect(viewModel.canSetPassword)
+        for (password, expected) in [
+            ("", true), ("Abcde1!", false), ("Abcdef1!", true),
+            ("ABCDEF1!", false), ("abcdef1!", false), ("Abcdefg!", false), ("Abcdef12", false),
+            ("Abcdef١!", true), ("Äbcdef1!", true), ("äBCDEF1!", true), ("Abcdef1é", false),
+            ("Abcdef1e\u{301}", false),
+            ("Abcde1😀", false), ("Abcdef1\n", true), ("Abcd1!e\u{301}", true),
+            ("Aa1!" + String(repeating: "e\u{301}", count: 510), true),
+            ("Aa1!" + String(repeating: "e\u{301}", count: 510) + "a", false)
+        ] {
+            viewModel.password = password
+            #expect(viewModel.isNextButtonEnabled == expected)
+            if !expected { await viewModel.submit() }
+        }
+        #expect(createMeetingUseCaseMock
+            .invokeTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceTypeMeetingTypePasswordStringParticipantsMeetingMemberMeetingCreationResultCallsCount ==
+            0)
+    }
+
+    @Test("generate produces valid eight-character passwords and copy uses the current value")
+    func generateAndCopyPassword() {
+        let viewModel = makeViewModel(mode: .scheduled, supportsMeetingLinks: true)
+        let pasteboard = UIPasteboard.withUniqueName()
+        defer { UIPasteboard.remove(withName: pasteboard.name) }
+        for _ in 0 ..< 64 {
+            viewModel.generatePassword()
+            #expect(viewModel.password.count == 8)
+            #expect(viewModel.isPasswordValid)
+        }
+        viewModel.copyPassword(to: pasteboard)
+        #expect(pasteboard.string == viewModel.password)
+        viewModel.password = ""
+        viewModel.copyPassword(to: pasteboard)
+        #expect(pasteboard.string?.count == 8)
+    }
+
     @Test("missing-link warnings complete the saved meeting once")
     func submit_MissingLink() async {
         var completedMeetings: [Meeting] = []
         let viewModel = makeViewModel(mode: .instant, supportsMeetingLinks: true) { completedMeetings.append($0) }
         viewModel.meetingTitle = "Meeting"
+        viewModel.password = "password"
         createMeetingUseCaseMock
             .invokeTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceTypeMeetingTypePasswordStringParticipantsMeetingMemberMeetingCreationResultReturnValue =
             MeetingCreationResult(meeting: meeting, link: nil)
 
         await viewModel.submit()
         #expect(completedMeetings.isEmpty)
+        #expect(viewModel.password.isEmpty)
+        #expect(createMeetingUseCaseMock
+            .invokeTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceTypeMeetingTypePasswordStringParticipantsMeetingMemberMeetingCreationResultReceivedArguments?
+            .password == nil)
         #expect(viewModel.hasError)
         #expect(viewModel.errorMessage.contains(L10n.Localizable.Meetings.Error.missingLink))
 
