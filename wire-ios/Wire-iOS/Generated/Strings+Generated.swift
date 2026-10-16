@@ -5992,6 +5992,10 @@ internal enum L10n {
             internal static let title = L10n.tr("Localizable", "self.settings.account_section.team.title", fallback: "Team")
           }
         }
+        internal enum AccountSecurity {
+          /// Account Security
+          internal static let title = L10n.tr("Localizable", "self.settings.account_security.title", fallback: "Account Security")
+        }
         internal enum AddAccount {
           /// Add an account
           internal static let title = L10n.tr("Localizable", "self.settings.add_account.title", fallback: "Add an account")
@@ -6402,6 +6406,10 @@ internal enum L10n {
         internal enum TechnicalReportSection {
           /// Debug Report
           internal static let title = L10n.tr("Localizable", "self.settings.technical_report_section.title", fallback: "Debug Report")
+        }
+        internal enum TwoFactorAuthentication {
+          /// Two-factor authentication
+          internal static let title = L10n.tr("Localizable", "self.settings.two_factor_authentication.title", fallback: "Two-factor authentication")
         }
         internal enum Vbr {
           /// This makes audio calls use less data and work better on slower networks. Turn off to use constant bitrate encoding (CBR). This setting only affects 1:1 calls; conference calls always use CBR encoding.

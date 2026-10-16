@@ -1314,6 +1314,9 @@
 
 "self.settings.account_details.actions.title" = "Actions";
 
+"self.settings.account_security.title" = "Account Security";
+"self.settings.two_factor_authentication.title" = "Two-factor authentication";
+
 "self.settings.account_details.delete_account.title" = "Delete Account";
 
 "self.settings.account_details.delete_account.alert.title" = "Delete Account";

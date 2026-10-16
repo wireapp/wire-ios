@@ -69,6 +69,10 @@ extension SettingsCellDescriptorFactory {
 
         sections.append(conversationsSection())
 
+        if DeveloperFlag.twoFactorAuthentication.isOn {
+            sections.append(accountSecuritySection())
+        }
+
         if let user = ZMUser.selfUser(), !user.usesCompanyLogin {
             sections.append(actionsSection())
         }
@@ -176,6 +180,14 @@ extension SettingsCellDescriptorFactory {
         SettingsSectionDescriptor(
             cellDescriptors: [backUpElement()],
             header: L10n.Localizable.Self.Settings.Conversations.title
+        )
+    }
+
+    @MainActor
+    private func accountSecuritySection() -> SettingsSectionDescriptorType {
+        SettingsSectionDescriptor(
+            cellDescriptors: [twoFactorAuthenticationElement()],
+            header: String(localized: "self.settings.account_security.title")
         )
     }
 
@@ -476,6 +488,21 @@ extension SettingsCellDescriptorFactory {
 
     func dateUsagePermissionsElement(isAnalyticsTrackingAvailable: Bool) -> any SettingsCellDescriptorType {
         dataUsagePermissionsGroup(isAnalyticsTrackingAvailable: isAnalyticsTrackingAvailable)
+    }
+
+    @MainActor
+    private func twoFactorAuthenticationElement() -> any SettingsCellDescriptorType {
+        SettingsExternalScreenCellDescriptor(
+            title: String(localized: "self.settings.two_factor_authentication.title"),
+            isDestructive: false,
+            presentationStyle: .navigation,
+            identifier: "twoFactorAuthenticationCell",
+            presentationAction: {
+                UIHostingController(rootView: TwoFactorAuthenticationView())
+            },
+            copiableText: nil,
+            settingsTopLevelMenuItem: nil
+        )
     }
 
     func resetPasswordElement() -> any SettingsCellDescriptorType {
