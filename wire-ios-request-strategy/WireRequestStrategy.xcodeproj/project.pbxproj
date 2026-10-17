@@ -29,7 +29,6 @@
 		0649D14924F63C51001DDC78 /* NotificationSound.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0649D14824F63C51001DDC78 /* NotificationSound.swift */; };
 		0649D14B24F63C8F001DDC78 /* NotificationAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0649D14A24F63C8F001DDC78 /* NotificationAction.swift */; };
 		0649D14D24F63D3E001DDC78 /* LocalNotificationType+Localization.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0649D14C24F63D3E001DDC78 /* LocalNotificationType+Localization.swift */; };
-		0649D14F24F63DCC001DDC78 /* ZMSound.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0649D14E24F63DCC001DDC78 /* ZMSound.swift */; };
 		0649D15424F64335001DDC78 /* Push.stringsdict in Resources */ = {isa = PBXBuildFile; fileRef = 0649D15024F64335001DDC78 /* Push.stringsdict */; };
 		0649D15524F64335001DDC78 /* Push.strings in Resources */ = {isa = PBXBuildFile; fileRef = 0649D15224F64335001DDC78 /* Push.strings */; };
 		0649D19F24F6717C001DDC78 /* ZMLocalNotificationSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0649D19E24F6717C001DDC78 /* ZMLocalNotificationSet.swift */; };
@@ -457,7 +456,6 @@
 		0649D14824F63C51001DDC78 /* NotificationSound.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationSound.swift; sourceTree = "<group>"; };
 		0649D14A24F63C8F001DDC78 /* NotificationAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationAction.swift; sourceTree = "<group>"; };
 		0649D14C24F63D3E001DDC78 /* LocalNotificationType+Localization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LocalNotificationType+Localization.swift"; sourceTree = "<group>"; };
-		0649D14E24F63DCC001DDC78 /* ZMSound.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZMSound.swift; sourceTree = "<group>"; };
 		0649D15124F64335001DDC78 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.stringsdict; name = Base; path = Base.lproj/Push.stringsdict; sourceTree = "<group>"; };
 		0649D15324F64335001DDC78 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/Push.strings; sourceTree = "<group>"; };
 		0649D15824F644A9001DDC78 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Push.strings; sourceTree = "<group>"; };
@@ -1973,7 +1971,6 @@
 				F18401942073BE0800E9F4CC /* MessageExpirationTimer.swift */,
 				F18401972073BE0800E9F4CC /* MessageExpirationTimerTests.swift */,
 				F18401932073BE0800E9F4CC /* ZMMessage+Dependency.swift */,
-				0649D14E24F63DCC001DDC78 /* ZMSound.swift */,
 				0649D1A524F673E7001DDC78 /* Logging.swift */,
 				F18401982073BE0800E9F4CC /* ZMConversation+Notifications.swift */,
 				BF1F52C51ECC74E5002FB553 /* Array+RequestGenerator.swift */,
@@ -2447,7 +2444,6 @@
 				06A9FDD428B3701000B3C730 /* UpdateAccessRolesActionHandler.swift in Sources */,
 				EE90C2AC282EA1D200474379 /* GetPushTokensAction.swift in Sources */,
 				F18401B02073BE0800E9F4CC /* AbstractRequestStrategy.swift in Sources */,
-				0649D14F24F63DCC001DDC78 /* ZMSound.swift in Sources */,
 				E629E3B72B47041700D526AD /* Payload+ConversationUpdateRole.swift in Sources */,
 				F18401C22073BE0800E9F4CC /* AssetV2DownloadRequestStrategy.swift in Sources */,
 				EEAC16D4281AE5F700B7A34D /* CallEventContent.swift in Sources */,

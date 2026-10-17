@@ -139,7 +139,7 @@ struct ConversationDeleteEventNotificationBuilder: ConversationDeleteEventNotifi
             .make()
     }
 
-    private func makeSound(type: NotificationSound = .default) -> UNNotificationSound {
+    private func makeSound(type: NotificationSound = .newMessage) -> UNNotificationSound {
         let notificationSoundName = UNNotificationSoundName(type.rawValue)
         return UNNotificationSound(named: notificationSoundName)
     }

@@ -57,6 +57,7 @@ protocol SettingsPropertyFactoryDelegate: AnyObject {
 
 final class SettingsPropertyFactory {
     let userDefaults: UserDefaults
+    let extensionSettings: ExtensionSettings
     var trackingManager: TrackingInterface?
     var mediaManager: AVSMediaManagerInterface?
     weak var userSession: UserSession?
@@ -67,9 +68,6 @@ final class SettingsPropertyFactory {
     static let userDefaultsPropertiesToKeys: [SettingsPropertyName: SettingKey] = [
         SettingsPropertyName.disableMarkdown: .disableMarkdown,
         SettingsPropertyName.chatHeadsDisabled: .chatHeadsDisabled,
-        SettingsPropertyName.messageSoundName: .messageSoundName,
-        SettingsPropertyName.callSoundName: .callSoundName,
-        SettingsPropertyName.pingSoundName: .pingSoundName,
         SettingsPropertyName.disableSendButton: .sendButtonDisabled,
         SettingsPropertyName.mapsOpeningOption: .mapsOpeningRawValue,
         SettingsPropertyName.browserOpeningOption: .browserOpeningRawValue,
@@ -85,6 +83,7 @@ final class SettingsPropertyFactory {
     ) {
         self.init(
             userDefaults: UserDefaults.standard,
+            extensionSettings: .shared,
             mediaManager: AVSMediaManager.sharedInstance(),
             userSession: userSession,
             selfUser: selfUser,
@@ -94,12 +93,14 @@ final class SettingsPropertyFactory {
 
     init(
         userDefaults: UserDefaults,
+        extensionSettings: ExtensionSettings = .shared,
         mediaManager: AVSMediaManagerInterface?,
         userSession: UserSession?,
         selfUser: SettingsSelfUser?,
         trackingManager: TrackingInterface?
     ) {
         self.userDefaults = userDefaults
+        self.extensionSettings = extensionSettings
         self.trackingManager = trackingManager
         self.mediaManager = mediaManager
         self.userSession = userSession
@@ -237,6 +238,25 @@ final class SettingsPropertyFactory {
                 }
             }
             return SettingsBlockProperty(propertyName: propertyName, getAction: getAction, setAction: setAction)
+
+        case .notificationSound:
+            return SettingsBlockProperty(
+                propertyName: propertyName,
+                getAction: { [unowned self] _ in
+                    .string(value: extensionSettings.messageNotificationSound.rawValue)
+                },
+                setAction: { [unowned self] _, value, resultHandler in
+                    guard
+                        case let .string(rawValue) = value,
+                        let sound = MessageNotificationSound(rawValue: rawValue)
+                    else {
+                        throw SettingsPropertyError.WrongValue("Incorrect type \(value) for key \(propertyName)")
+                    }
+
+                    extensionSettings.messageNotificationSound = sound
+                    resultHandler(.success(()))
+                }
+            )
 
         case .disableAnalyticsSharing:
             let getAction: GetAction = { [unowned self] _ in

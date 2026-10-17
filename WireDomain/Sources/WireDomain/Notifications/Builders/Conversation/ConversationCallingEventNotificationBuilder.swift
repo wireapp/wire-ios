@@ -351,7 +351,7 @@ struct ConversationCallingEventNotificationBuilder: ConversationCallingEventNoti
         let notificationSound = if isIncomingCall {
             NotificationSound.call
         } else {
-            NotificationSound.default
+            NotificationSound.newMessage
         }
 
         let notificationSoundName = UNNotificationSoundName(notificationSound.rawValue)

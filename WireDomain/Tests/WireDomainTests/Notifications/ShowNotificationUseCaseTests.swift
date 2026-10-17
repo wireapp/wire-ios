@@ -28,6 +28,7 @@ final class ShowNotificationUseCaseTests: XCTestCase {
     private var conversationLocalStore: MockConversationLocalStoreProtocol!
     private var databaseSaver: MockDatabaseSaverProtocol!
     private var didDisplayNotification = false
+    private var displayedNotification: UNNotificationContent?
 
     override func setUp() async throws {
         conversationLocalStore = MockConversationLocalStoreProtocol()
@@ -39,7 +40,10 @@ final class ShowNotificationUseCaseTests: XCTestCase {
         )
 
         sut = ShowNotificationUseCase(
-            contentHandler: { _ in self.didDisplayNotification = true },
+            contentHandler: {
+                self.didDisplayNotification = true
+                self.displayedNotification = $0
+            },
             conversationLocalStore: conversationLocalStore,
             selectedAccount: Account(userName: .init(), userIdentifier: .mockID1),
             accountManager: try AccountManager(
@@ -55,6 +59,7 @@ final class ShowNotificationUseCaseTests: XCTestCase {
         sut = nil
         conversationLocalStore = nil
         didDisplayNotification = false
+        displayedNotification = nil
         databaseSaver = nil
     }
 
@@ -78,6 +83,25 @@ final class ShowNotificationUseCaseTests: XCTestCase {
         XCTAssertEqual(didDisplayNotification, true)
         XCTAssertEqual(databaseSaver.save_Invocations.count, 1)
         XCTAssertEqual(conversationLocalStore.unreadConversationCount_Invocations.count, 1)
+    }
+
+    func testProcess_It_Preserves_Message_Sound_When_Bundling_Notifications() async throws {
+        let firstNotification = UNMutableNotificationContent()
+        firstNotification.sound = NotificationSound.newMessage.userNotificationSound
+        let secondNotification = UNMutableNotificationContent()
+        secondNotification.sound = NotificationSound.newMessage.userNotificationSound
+
+        conversationLocalStore.unreadConversationCount_MockValue = 1
+        databaseSaver.save_MockMethod = {}
+
+        try await sut.invoke(
+            userNotifications: [
+                .text(firstNotification),
+                .text(secondNotification)
+            ]
+        )
+
+        XCTAssertEqual(displayedNotification?.sound, NotificationSound.newMessage.userNotificationSound)
     }
 
 }

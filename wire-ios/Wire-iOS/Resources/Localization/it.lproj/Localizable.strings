@@ -1368,13 +1368,6 @@
 "self.settings.notifications.chat_alerts.toggle" = "Banners di messaggio";
 "self.settings.notifications.chat_alerts.footer" = "Nuovi messaggi in altre conversazioni.";
 
-"self.settings.sound_menu.sounds.title" = "Suoni";
-"self.settings.sound_menu.ringtone.title" = "Suoneria";
-"self.settings.sound_menu.message.title" = "Suono messaggi";
-"self.settings.sound_menu.ping.title" = "Fai un trillo";
-"self.settings.sound_menu.ringtones.title" = "Suoneria";
-"self.settings.sound_menu.sounds.wire_sound" = "Wire";
-"self.settings.sound_menu.sounds.none" = "Nessuno";
 
 "self.settings.callkit.title" = "Chiamate";
 "self.settings.callkit.caption" = "Condividi con iOS";
@@ -1386,9 +1379,6 @@
 "self.settings.vbr.title" = "Codifica con Bit Rate variabile";
 "self.settings.vbr.description" = "This makes audio calls use less data and work better on slower networks. Turn off to use constant bitrate encoding (CBR). This setting only affects 1:1 calls; conference calls always use CBR encoding.";
 
-"self.settings.sound_menu.sounds.wire_call" = "Chiamata Wire";
-"self.settings.sound_menu.sounds.wire_message" = "Messaggio Wire";
-"self.settings.sound_menu.sounds.wire_ping" = "Trillo Wire";
 
 // By popular demand
 "self.settings.popular_demand.title" = "A grande richiesta";

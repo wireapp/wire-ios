@@ -1368,13 +1368,6 @@
 "self.settings.notifications.chat_alerts.toggle" = "Баннеры сообщений";
 "self.settings.notifications.chat_alerts.footer" = "Новые сообщения в других беседах.";
 
-"self.settings.sound_menu.sounds.title" = "Звуки";
-"self.settings.sound_menu.ringtone.title" = "Мелодия";
-"self.settings.sound_menu.message.title" = "Звук текстового сообщения";
-"self.settings.sound_menu.ping.title" = "Пинг";
-"self.settings.sound_menu.ringtones.title" = "Мелодии";
-"self.settings.sound_menu.sounds.wire_sound" = "Wire";
-"self.settings.sound_menu.sounds.none" = "Отключены";
 
 "self.settings.callkit.title" = "Звонки";
 "self.settings.callkit.caption" = "Поделиться с iOS";
@@ -1386,9 +1379,6 @@
 "self.settings.vbr.title" = "Кодирование с переменным битрейтом";
 "self.settings.vbr.description" = "Благодаря этой опции аудиозвонки расходуют меньше данных и лучше работают при использовании низкоскоростных сетей. Выключите, чтобы использовать кодирование с постоянным битрейтом (CBR). Эта настройка влияет только на звонки 1:1; групповые звонки всегда используют кодирование CBR.";
 
-"self.settings.sound_menu.sounds.wire_call" = "Звонок Wire";
-"self.settings.sound_menu.sounds.wire_message" = "Сообщение Wire";
-"self.settings.sound_menu.sounds.wire_ping" = "Пинг Wire";
 
 // By popular demand
 "self.settings.popular_demand.title" = "По многочисленным просьбам";

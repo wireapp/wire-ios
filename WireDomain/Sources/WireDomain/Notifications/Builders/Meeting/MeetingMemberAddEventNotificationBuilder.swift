@@ -109,7 +109,7 @@ struct MeetingMemberAddEventNotificationBuilder: MeetingMemberAddEventNotificati
             timeFormatter.string(from: meeting.end)
         )
         content.categoryIdentifier = NotificationCategory.meetingInvitation.rawValue
-        content.sound = .default
+        content.sound = NotificationSound.newMessage.userNotificationSound
         content.userInfo = [NotificationUserInfoKey.selfUserID: accountID.uuidString]
         return .text(content)
     }

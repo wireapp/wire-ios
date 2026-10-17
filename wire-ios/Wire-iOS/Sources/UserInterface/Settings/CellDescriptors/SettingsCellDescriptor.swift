@@ -294,12 +294,8 @@ extension SettingsPropertyName {
         // AVS
         case .soundAlerts:
             return SoundMenu.title
-        case .messageSoundName:
-            return SoundMenu.Message.title
-        case .callSoundName:
-            return SoundMenu.Ringtone.title
-        case .pingSoundName:
-            return SoundMenu.Ping.title
+        case .notificationSound:
+            return Notifications.Sound.title
         case .accentColor:
             return Settings.AccountPictureGroup.color
         case .conversationBackground:

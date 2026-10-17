@@ -166,7 +166,7 @@ struct ConversationMemberLeaveEventNotificationBuilder: ConversationMemberLeaveE
         content.title = title
         content.body = String.formated(key: "push.notification.body.senderCanceledMeeting", bundle: .module, senderName)
         content.categoryIdentifier = NotificationCategory.meetingCancellation.rawValue
-        content.sound = .default
+        content.sound = NotificationSound.newMessage.userNotificationSound
         content.userInfo = [
             NotificationUserInfoKey.selfUserID: selfUserID.uuidString
         ]
@@ -206,7 +206,7 @@ struct ConversationMemberLeaveEventNotificationBuilder: ConversationMemberLeaveE
             .make()
     }
 
-    private func makeSound(type: NotificationSound = .default) -> UNNotificationSound {
+    private func makeSound(type: NotificationSound = .newMessage) -> UNNotificationSound {
         let notificationSoundName = UNNotificationSoundName(type.rawValue)
         return UNNotificationSound(named: notificationSoundName)
     }
