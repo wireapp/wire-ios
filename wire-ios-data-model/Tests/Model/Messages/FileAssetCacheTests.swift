@@ -76,6 +76,53 @@ class FileAssetCacheTests: XCTestCase {
         Data.secureRandomData(ofLength: 2000)
     }
 
+    // MARK: - Cache keys
+
+    func testThatItKeepsFilesInsideTheCacheFolder_WhenTheCacheKeyClimbsOut() async throws {
+        // given
+        // Parts of a cache key come from the backend, so they can contain path traversal.
+        let escapingKeys = [
+            "\(UUID().uuidString)-../../../../escaped.bin",
+            "../../../../escaped.bin",
+            "sub/../../escaped.bin",
+            "/escaped.bin",
+        ]
+        let cacheFolder = location.standardized.path + "/"
+
+        for key in escapingKeys {
+            let source = location.appendingPathComponent(UUID().uuidString)
+            try FileManager.default.createDirectory(
+                at: location,
+                withIntermediateDirectories: true
+            )
+            try testData().write(to: source)
+
+            // when
+            try await sut.saveFile(at: source, key: key)
+
+            // then
+            let storedURL = try XCTUnwrap(sut.fileURL(forKey: key), key)
+            XCTAssertTrue(storedURL.standardized.path.hasPrefix(cacheFolder), key)
+        }
+    }
+
+    func testThatItStillNestsLegitimateCacheKeysIntoSubdirectories() async throws {
+        // given
+        let key = "\(UUID().uuidString)-etag/report.pdf"
+        let data = testData()
+        let source = location.appendingPathComponent(UUID().uuidString)
+        try FileManager.default.createDirectory(at: location, withIntermediateDirectories: true)
+        try data.write(to: source)
+
+        // when
+        try await sut.saveFile(at: source, key: key)
+
+        // then
+        let storedURL = try XCTUnwrap(sut.fileURL(forKey: key))
+        XCTAssertEqual(storedURL.standardized, location.appendingPathComponent(key).standardized)
+        XCTAssertEqual(try Data(contentsOf: storedURL), data)
+    }
+
     // MARK: - Storing and retrieving image assets
 
     func testThatStoringAndRetrievingAssetsWithDifferentOptionsRetrievesTheRightData() throws {
