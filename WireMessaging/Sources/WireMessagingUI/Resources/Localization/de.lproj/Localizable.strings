@@ -194,6 +194,7 @@
 "conversation.wireCells.files.time.just_now" = "Gerade eben";
 
 
+
 // MARK: - Recycle Bin
 "conversation.wireCells.recycleBin.navigationTitle" = "Papierkorb";
 "conversation.wireCells.recycleBin.noData.learnMore" = "Erfahren Sie mehr über den Papierkorb";
