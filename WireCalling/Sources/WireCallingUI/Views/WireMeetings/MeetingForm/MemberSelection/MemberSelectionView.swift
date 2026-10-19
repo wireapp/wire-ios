@@ -29,6 +29,7 @@ struct MemberSelectionView: View {
     @Environment(\.isClipboardEnabled) private var isClipboardEnabled
     @Environment(\.wireAccentColor) private var wireAccentColor
     @State private(set) var viewModel: MemberSelectionViewModel
+    @State private var isEmailExpanded = true
 
     var body: some View {
         NavigationStack {
@@ -106,52 +107,70 @@ struct MemberSelectionView: View {
 
     private var emailSection: some View {
         Section {
-            HStack {
-                ContextMenuControllableTextField(
-                    text: $viewModel.emailAddress,
-                    placeholder: Strings.Email.placeholder,
-                    isContextMenuAllowed: isClipboardEnabled,
-                    keyboardType: .emailAddress,
-                    textContentType: .emailAddress
-                )
-                .accessibilityLabel(Strings.Email.placeholder)
-                .accessibilityIdentifier("meetingEmailAddress")
-
-                Button(Strings.Email.add, action: viewModel.addEmail)
-                    .buttonStyle(.borderless)
-                    .accessibilityIdentifier("meetingEmailAdd")
-            }
-            .frame(minHeight: 44)
-
-            if let error = viewModel.emailValidationError {
-                Text(error == .invalidAddress ? Strings.Email.invalidAddress : Strings.Email.duplicateAddress)
-                    .font(.footnote)
-                    .foregroundStyle(
-                        error == .invalidAddress ? ColorTheme.Base.error.color : ColorTheme.Base.warning.color
-                    )
-                    .accessibilityIdentifier("meetingEmailValidation")
-            }
-
-            ForEach(viewModel.selectedEmails, id: \.self) { email in
+            if isEmailExpanded {
                 HStack {
-                    Text(email)
-                        .font(.body)
-                    Spacer()
-                    Button {
-                        viewModel.removeEmail(email)
-                    } label: {
-                        Image(systemName: "minus.circle")
-                            .foregroundStyle(ColorTheme.Base.error.color)
-                            .frame(minWidth: 44, minHeight: 44)
+                    ContextMenuControllableTextField(
+                        text: $viewModel.emailAddress,
+                        placeholder: Strings.Email.placeholder,
+                        isContextMenuAllowed: isClipboardEnabled,
+                        keyboardType: .emailAddress,
+                        textContentType: .emailAddress
+                    )
+                    .accessibilityLabel(Strings.Email.placeholder)
+                    .accessibilityIdentifier("meetingEmailAddress")
+
+                    if !viewModel.emailAddress.isEmpty {
+                        Button {
+                            viewModel.emailAddress = ""
+                        } label: {
+                            Image(systemName: "xmark.circle.fill")
+                                .foregroundStyle(ColorTheme.Buttons.Secondary.onEnabled.color)
+                                .frame(minWidth: 44, minHeight: 44)
+                        }
+                        .buttonStyle(.borderless)
+                        .accessibilityLabel(L10n.Accessibility.WireMeetings.Email.ClearButton.description)
+                        .accessibilityIdentifier("meetingEmailClear")
                     }
-                    .buttonStyle(.borderless)
-                    .accessibilityLabel(Strings.Email.remove(email))
-                    .accessibilityIdentifier("meetingEmailRemove_\(email)")
+
+                    Button(Strings.Email.add, action: viewModel.addEmail)
+                        .buttonStyle(.borderless)
+                        .accessibilityIdentifier("meetingEmailAdd")
+                }
+                .frame(minHeight: 44)
+
+                if let error = viewModel.emailValidationError {
+                    Text(error == .invalidAddress ? Strings.Email.invalidAddress : Strings.Email.duplicateAddress)
+                        .font(.footnote)
+                        .foregroundStyle(
+                            error == .invalidAddress ? ColorTheme.Base.error.color : ColorTheme.Base.warning.color
+                        )
+                        .accessibilityIdentifier("meetingEmailValidation")
+                }
+
+                ForEach(viewModel.selectedEmails, id: \.self) { email in
+                    HStack {
+                        Text(email)
+                            .font(.body)
+                        Spacer()
+                        Button {
+                            viewModel.removeEmail(email)
+                        } label: {
+                            Image(systemName: "minus.circle")
+                                .foregroundStyle(ColorTheme.Base.error.color)
+                                .frame(minWidth: 44, minHeight: 44)
+                        }
+                        .buttonStyle(.borderless)
+                        .accessibilityLabel(Strings.Email.remove(email))
+                        .accessibilityIdentifier("meetingEmailRemove_\(email)")
+                    }
                 }
             }
         } header: {
-            Text(Strings.Email.title)
-                .textCase(nil)
+            sectionHeader(
+                title: "\(Strings.Email.title) (\(viewModel.selectedEmails.count))",
+                isExpanded: $isEmailExpanded
+            )
+            .accessibilityIdentifier("meetingEmailSection")
         }
     }
 
