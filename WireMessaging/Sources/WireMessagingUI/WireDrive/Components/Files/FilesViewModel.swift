@@ -122,7 +122,6 @@ package final class FilesViewModel: ObservableObject {
     @Published var selectedItems: Set<FilesViewItem> = []
     @Published var multipleSelection: EditMode = .inactive
 
-
     // MARK: init
 
     package init(
