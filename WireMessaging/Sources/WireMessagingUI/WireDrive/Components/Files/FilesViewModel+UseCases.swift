@@ -44,6 +44,7 @@ package extension FilesViewModel {
         let getOfflineAvailableAssets: WireDriveFetchOfflineAvailableAssetsUseCase
         let observeAsset: WireDriveObserveAssetUseCase
         let moveNode: WireDriveMoveNodeUseCase
+        let enqueueUploads: any WireDriveEnqueueDirectUploadsUseCaseProtocol
 
         package init(
             fetchNodesPage: WireDriveFetchNodesPageUseCase,
@@ -69,7 +70,8 @@ package extension FilesViewModel {
             removeAssetAvailableOffline: WireDriveRemoveAssetAvailableOfflineUseCase,
             getOfflineAvailableAssets: WireDriveFetchOfflineAvailableAssetsUseCase,
             observeAsset: WireDriveObserveAssetUseCase,
-            moveNode: WireDriveMoveNodeUseCase
+            moveNode: WireDriveMoveNodeUseCase,
+            enqueueUploads: any WireDriveEnqueueDirectUploadsUseCaseProtocol
         ) {
             self.fetchNodesPage = fetchNodesPage
             self.fetchNodes = fetchNodes
@@ -95,6 +97,7 @@ package extension FilesViewModel {
             self.getOfflineAvailableAssets = getOfflineAvailableAssets
             self.observeAsset = observeAsset
             self.moveNode = moveNode
+            self.enqueueUploads = enqueueUploads
         }
     }
 }

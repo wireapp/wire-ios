@@ -21,12 +21,14 @@ import XCTest
 
 class SharedDriveFilesPage: PageModel {
 
+    private let headerName: String
+
     override var pageMainElement: XCUIElement {
         sharedDrivePageHeader
     }
 
     var sharedDrivePageHeader: XCUIElement {
-        app.staticTexts[Locators.WireDrive.FilesPage.sharedDrivePageHeader.rawValue]
+        app.staticTexts[headerName]
     }
 
     private var fileTexts: XCUIElementQuery {
@@ -141,6 +143,10 @@ class SharedDriveFilesPage: PageModel {
 
     var numberOfFilesInList: Int {
         fileTexts.count
+    }
+
+    init(headerName: String? = nil) throws {
+        self.headerName = headerName ?? Locators.WireDrive.FilesPage.sharedDrivePageHeader.rawValue
     }
 
     @discardableResult
@@ -265,6 +271,133 @@ class SharedDriveFilesPage: PageModel {
         app.staticTexts
             .matching(NSPredicate(format: "label BEGINSWITH %@", name))
             .firstMatch
+    }
+
+    // MARK: - Direct uploads
+
+    private var uploadMenuButton: XCUIElement {
+        app.buttons["Upload"].firstMatch
+    }
+
+    private var uploadMediaButton: XCUIElement {
+        app.buttons[Locators.WireDrive.UploadsPage.uploadMedia.rawValue].firstMatch
+    }
+
+    private var listedItems: XCUIElementQuery {
+        app.staticTexts.matching(NSPredicate(format: "identifier BEGINSWITH %@", "fileItem"))
+    }
+
+    var numberOfListedItems: Int {
+        listedItems.count
+    }
+
+    /// Uploads a randomly chosen image from the native photo picker into the folder currently displayed.
+    @discardableResult
+    func uploadRandomMedia(folderName: String? = nil) throws -> SharedDriveFilesPage {
+        app.buttons[Locators.WireDrive.FilesPage.moreOptions.rawValue]
+            .firstMatch
+            .waitAndTap(timeout: 10)
+
+        XCTAssertTrue(
+            uploadMenuButton.waitAndTap(timeout: 3),
+            "Upload menu didn't show up"
+        )
+
+        XCTAssertTrue(
+            uploadMediaButton.waitAndTap(timeout: 3),
+            "Upload media button didn't show up"
+        )
+
+        // Handle the Photos permission prompt.
+        let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
+
+        for label in ["Allow Full Access", "Allow"] {
+            let button = springboard.buttons[label].firstMatch
+
+            if button.waitForExistence(timeout: 2) {
+                button.tap()
+                break
+            }
+        }
+
+        // PHPickerViewController exposes the actual photo/video cells
+        // with the PXGGridLayout-Info accessibility identifier.
+        let mediaItems = app.images.matching(
+            NSPredicate(format: "identifier == %@", Locators.PhotosAppPage.imageTile.rawValue)
+        )
+
+        XCTAssertTrue(
+            mediaItems.firstMatch.waitForExistence(timeout: 10),
+            "No media found in the photo picker"
+        )
+
+        let mediaCount = mediaItems.count
+
+        XCTAssertGreaterThan(
+            mediaCount,
+            0,
+            "Photo picker contains no media items"
+        )
+
+        let randomIndex = Int.random(in: 0 ..< mediaCount)
+        let mediaItem = mediaItems.element(boundBy: randomIndex)
+
+        // iOS 26 workaround:
+        // PXGGridLayout-Info exists but is not reported as hittable,
+        // so tap its screen coordinate instead of calling mediaItem.tap().
+        let frame = mediaItem.frame
+
+        XCTAssertFalse(
+            frame.isEmpty,
+            "Selected media item has an invalid frame"
+        )
+
+        let center = CGVector(
+            dx: frame.midX / app.frame.width,
+            dy: frame.midY / app.frame.height
+        )
+
+        app.coordinate(withNormalizedOffset: center).tap()
+
+        // Selecting media should enable the trailing checkmark button.
+        let navigationBar = app.navigationBars.matching(identifier: "Photos").element
+
+        XCTAssertTrue(
+            navigationBar.waitForExistence(timeout: 5),
+            "Photo picker navigation bar didn't appear"
+        )
+
+        let addButton = navigationBar.buttons.matching(identifier: "Add").element
+
+        XCTAssertTrue(
+            addButton.waitAndTap(timeout: 5),
+            "Trailing checkmark button wasn't tappable"
+        )
+
+        // Verify that the picker was dismissed.
+        XCTAssertTrue(
+            app.buttons[Locators.WireDrive.FilesPage.moreOptions.rawValue]
+                .firstMatch
+                .waitForExistence(timeout: 10),
+            "Photos picker didn't return to the app"
+        )
+
+        return try SharedDriveFilesPage(headerName: folderName)
+    }
+
+    /// The list grows once the upload has finished and the folder has reloaded.
+    func verifyMediaIsUploaded(previousItemCount: Int, timeout: TimeInterval = 60) -> Bool {
+        let predicate = NSPredicate { [weak self] _, _ in
+            (self?.numberOfListedItems ?? 0) > previousItemCount
+        }
+        let expectation = XCTNSPredicateExpectation(predicate: predicate, object: nil)
+        return XCTWaiter().wait(for: [expectation], timeout: timeout) == .completed
+    }
+
+    func openFolder(named folderName: String) throws -> SharedDriveFilesPage {
+        let folder = app.staticTexts[folderName].firstMatch
+        XCTAssertTrue(folder.waitAndTap(timeout: 5), "Folder '\(folderName)' didn't show up")
+        return try SharedDriveFilesPage(headerName: folderName)
     }
 
     var searchTextField: XCUIElement {

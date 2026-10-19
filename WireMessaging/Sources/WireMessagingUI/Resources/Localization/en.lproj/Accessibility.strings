@@ -80,3 +80,12 @@
 // MARK: - Conversation details shared drive options
 "conversation.details.sharedDrive.closeButton" = "Close conversation details";
 
+// MARK: - Shared Drive uploads
+
+"conversation.wireCells.files.upload.expand" = "Show upload details";
+"conversation.wireCells.files.upload.collapse" = "Hide upload details";
+"conversation.wireCells.files.upload.cancelFile" = "Cancel upload of {0}";
+"conversation.wireCells.files.upload.retryFile" = "Retry upload of {0}";
+"conversation.wireCells.files.upload.cancelAll" = "Cancel all uploads";
+"conversation.wireCells.files.upload.retryAll" = "Retry all failed uploads";
+
