@@ -229,14 +229,14 @@ final class ScheduleMeetingTests: WireUITestCase {
         let constrained = try page.schedule()
         constrained.replaceTitle(with: "TC11957 picker constraints")
         // A past start must stay within the allowed range.
-        try constrained.selectTime(start: true, hour: 9, minute: 0)
+        try constrained.selectTime(start: true, hour: 9, minute: 0, allowClamping: true)
         let afterPastStart = try constrained.dateTimes()
         XCTAssertGreaterThanOrEqual(afterPastStart.start, date(minute: 15))
         XCTAssertGreaterThanOrEqual(afterPastStart.end, afterPastStart.start.addingTimeInterval(15 * 60))
         XCTAssertLessThanOrEqual(afterPastStart.end, date(hour: 23, minute: 45))
         // An equal end must move to a later time on the same day.
         try constrained.selectTime(start: true, hour: 15, minute: 0)
-        try constrained.selectTime(start: false, hour: 15, minute: 0)
+        try constrained.selectTime(start: false, hour: 15, minute: 0, allowClamping: true)
         let afterEqualEnd = try constrained.dateTimes()
         XCTAssertEqual(afterEqualEnd.start, date(hour: 15))
         XCTAssertGreaterThanOrEqual(afterEqualEnd.end, afterEqualEnd.start.addingTimeInterval(15 * 60))

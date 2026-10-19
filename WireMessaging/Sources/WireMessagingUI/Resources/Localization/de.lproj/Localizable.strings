@@ -191,6 +191,8 @@
 "conversation.wireCells.files.downloadFailed" = "Laden unmöglich, wiederholen";
 "conversation.wireCells.files.downloadingFile" = "Datei wird heruntergeladen...";
 "conversation.wireCells.files.offlineModeHint" = "Sie können weiterhin auf Ihre Offline-Dateien zugreifen.";
+"conversation.wireCells.files.time.just_now" = "Gerade eben";
+
 
 // MARK: - Recycle Bin
 "conversation.wireCells.recycleBin.navigationTitle" = "Papierkorb";
