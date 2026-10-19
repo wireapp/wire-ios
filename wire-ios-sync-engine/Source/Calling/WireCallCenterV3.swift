@@ -19,6 +19,7 @@
 import avs
 import Combine
 import Foundation
+import struct WireDomain.AnsweredElsewhereCallTracker
 import enum WireFoundation.AnsweredElsewhereCallKey
 import WireLogging
 
@@ -214,9 +215,6 @@ extension WireCallCenterV3 {
         let group = conversation.conversationType == .group
 
         callsAnsweredElsewhere.remove(conversationId)
-        if callStarter != selfUserId {
-            clearAnsweredElsewhereNotificationState(conversationId: conversationId)
-        }
         callSnapshots[conversationId] = CallSnapshot(
             messageProtocol: conversation.messageProtocol,
             callParticipants: callParticipants,
@@ -1114,6 +1112,12 @@ extension WireCallCenterV3 {
     /// - parameter callEvent: calling event to process.
     func processCallEvent(_ callEvent: CallEvent) {
         Self.logger.info("process call event")
+        AnsweredElsewhereCallTracker(userDefaults: VoIPPushHelper.storage).trackStart(
+            data: callEvent.data,
+            conversationID: callEvent.conversationId.identifier,
+            accountID: selfUserId.identifier,
+            isCallerSelf: callEvent.userId == selfUserId
+        )
         if isReady {
             Self.logger
                 .info(
