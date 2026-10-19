@@ -192,6 +192,7 @@
 "conversation.wireCells.files.downloadingFile" = "Datei wird heruntergeladen...";
 "conversation.wireCells.files.offlineModeHint" = "Sie können weiterhin auf Ihre Offline-Dateien zugreifen.";
 
+
 // MARK: - Recycle Bin
 "conversation.wireCells.recycleBin.navigationTitle" = "Papierkorb";
 "conversation.wireCells.recycleBin.noData.learnMore" = "Erfahren Sie mehr über den Papierkorb";
