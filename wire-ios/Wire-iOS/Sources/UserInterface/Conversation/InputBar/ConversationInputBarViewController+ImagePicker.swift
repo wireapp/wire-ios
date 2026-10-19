@@ -172,7 +172,7 @@ extension ConversationInputBarViewController {
         do {
             try FileManager.default.removeTmpIfNeededAndCopy(fileURL: videoURL, tmpURL: videoTempURL)
         } catch {
-            zmLog.error("Cannot copy video from \(videoURL) to \(videoTempURL): \(error)")
+            WireLogger.conversation.error("Cannot copy video from \(videoURL) to \(videoTempURL): \(error)")
             return
         }
 
