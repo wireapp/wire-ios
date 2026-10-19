@@ -122,7 +122,8 @@ Then run all six:
 bundle exec fastlane ios run_uitests testiny_cases:"12185,12186,12187,12188,12189,12190"
 ```
 
-The tests have been added but have not yet been run against staging.
+TC-12185 passed locally against staging on 2026-10-19 (1 test, 0 failures; about 38 seconds).
+The app and UI test target built successfully. TC-12186–TC-12190 have not yet been run.
 Resolve setup/network failures before diagnosing the UI assertions. Setup's contact-status
 check distinguishes an incorrectly provisioned fixture from a search/profile failure.
 
