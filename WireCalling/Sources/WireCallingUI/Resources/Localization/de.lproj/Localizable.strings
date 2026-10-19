@@ -134,7 +134,7 @@
 "wireMeetings.schedule.members.contacts.title" = "Kontakte";
 "wireMeetings.schedule.members.groups.importButton" = "Aus Gruppe importieren";
 "wireMeetings.schedule.members.groups.title" = "Gruppen und Channels";
-"wireMeetings.schedule.members.groups.searchPlaceholder" = "Search groups and channels";
+"wireMeetings.schedule.members.groups.searchPlaceholder" = "Gruppen und Channels suchen";
 "wireMeetings.schedule.members.groups.group" = "Gruppe";
 "wireMeetings.schedule.members.groups.channel" = "Channel";
 "wireMeetings.schedule.members.groups.emptyTitle" = "Keine Gruppen oder Channels gefunden";
