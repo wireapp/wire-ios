@@ -272,7 +272,7 @@ class SharedDriveFilesPage: PageModel {
             .matching(NSPredicate(format: "label BEGINSWITH %@", name))
             .firstMatch
     }
-    
+
     // MARK: - Direct uploads
 
     private var uploadMenuButton: XCUIElement {
@@ -323,7 +323,7 @@ class SharedDriveFilesPage: PageModel {
         // PHPickerViewController exposes the actual photo/video cells
         // with the PXGGridLayout-Info accessibility identifier.
         let mediaItems = app.images.matching(
-            NSPredicate(format: "identifier == %@", Locators.PhotosAppPage.raw)
+            NSPredicate(format: "identifier == %@", Locators.PhotosAppPage.imageTile.rawValue)
         )
 
         XCTAssertTrue(
@@ -398,6 +398,7 @@ class SharedDriveFilesPage: PageModel {
         let folder = app.staticTexts[folderName].firstMatch
         XCTAssertTrue(folder.waitAndTap(timeout: 5), "Folder '\(folderName)' didn't show up")
         return try SharedDriveFilesPage(headerName: folderName)
+    }
 
     var searchTextField: XCUIElement {
         app.searchFields.firstMatch
