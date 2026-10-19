@@ -87,3 +87,46 @@ runs tests that are tagged `critical` and also tagged with at least one of `call
 `tags:"!critical"` runs all UI tests except tests tagged `critical`.
 
 Quote selectors that contain `|` or `!` so the shell does not treat them as special characters.
+
+
+### Pending teammate onboarding UI tests (TC-12185–TC-12190)
+
+`PendingOnboardingTests` creates a fresh team and a SCIM-managed teammate per test.
+The pending teammate is never signed in. The fully onboarded cases sign the teammate
+in through Keycloak SSO, then add the team owner's account and run the search flow
+as the owner. Setup verifies the teammate's backend contact status before proceeding.
+
+| Case | Coverage |
+| --- | --- |
+| TC-12185 | Pending teammate is searchable without an onboarding badge. |
+| TC-12186 | Pending teammate's profile opens. |
+| TC-12187 | Profile displays the setup hint. |
+| TC-12188 | Start conversation is disabled; tapping it creates no conversation. |
+| TC-12189 | Fully onboarded teammate has a normal profile without the hint. |
+| TC-12190 | Start conversation is enabled and creates a conversation. |
+
+Load `env.xcconfig` using the 1Password command above. These tests use the staging
+backend and Keycloak configuration already used by `SSOTests`, including
+`KEYCLOAK_URL` and `KEYCLOAK_ADMIN_PASSWORD`. They do not provision Kalium Testservice
+clients; the shared `WireUITestCase` still requires its usual environment settings.
+
+Start with the pending search case, from the repository root:
+
+```bash
+bundle exec fastlane ios run_uitests testiny_cases:12185
+```
+
+Then run all six:
+
+```bash
+bundle exec fastlane ios run_uitests testiny_cases:"12185,12186,12187,12188,12189,12190"
+```
+
+The tests have been added but have not yet been run against staging.
+Resolve setup/network failures before diagnosing the UI assertions. Setup's contact-status
+check distinguishes an incorrectly provisioned fixture from a search/profile failure.
+
+Copy review is deferred for TC-12187: it currently checks the implemented text,
+"You can communicate with [name] once they are set up." Testiny currently asks for
+an "Onboarding pending" heading and different body text. The test does not yet
+claim coverage of that heading; align the expectation and product copy after review.
