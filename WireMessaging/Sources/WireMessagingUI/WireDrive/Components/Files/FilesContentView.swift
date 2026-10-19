@@ -129,10 +129,14 @@ package struct FilesContentView<Toolbar: ToolbarContent, Sheet: View>: View {
             )
         }
         .onChange(of: viewModel.networkStatus) { _, newValue in
-            if newValue != nil {
-                Task {
-                    await viewModel.reload(refreshing: true)
-                }
+            guard let newValue else { return }
+
+            if newValue == .disconnected {
+                viewModel.enableMultipleSelection(false)
+            }
+
+            Task {
+                await viewModel.reload(refreshing: true)
             }
         }
         .task {
@@ -167,7 +171,7 @@ private extension FilesContentView {
         .listStyle(.plain)
         .refreshable { reloadTask(refreshing: true) }
         .overlay(listBackgroundView)
-        .overlay(alignment: .bottomLeading) {
+        .safeAreaInset(edge: .bottom, alignment: .leading, spacing: 0) {
             if viewModel.multipleSelection == .active {
                 FilesFloatingActionBar {
                     Button {
