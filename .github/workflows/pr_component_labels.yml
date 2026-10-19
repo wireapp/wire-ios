@@ -26,9 +26,10 @@ permissions:
   issues: write
   pull-requests: write
 
-# Serialize runs (including manual backfills) so concurrent syncs don't race on label creation or stale labels.
+# Serialize runs per PR so a queued sync for one PR never replaces another PR's pending sync.
+# Label creation races across PRs are handled in the script (422 = already created).
 concurrency:
-  group: label-prs
+  group: label-prs-${{ github.event.pull_request.number || inputs.pr_number || 'all' }}
   cancel-in-progress: false
 
 jobs:
