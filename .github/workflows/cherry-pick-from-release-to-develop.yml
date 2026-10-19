@@ -69,9 +69,10 @@ jobs:
       - name: Cherry pick to target branch
         id: cherry-pick
         uses: wireapp/action-auto-cherry-pick@a4a732fe8b79e3fae70362e6271b8982be5b1bc1 # v1.0.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.SUBMODULE_PAT }}
         with:
           target-branch: ${{ steps.target-branch.outputs.target }}
-          pr-creator-token: ${{ secrets.SUBMODULE_PAT }}
           pr-labels: 'cherry-pick'
           pr-title-suffix: '🍒'
 
