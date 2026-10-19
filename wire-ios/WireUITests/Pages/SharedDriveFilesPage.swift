@@ -54,6 +54,7 @@ class SharedDriveFilesPage: PageModel {
 
     var moreOptionOnSharedDrive: XCUIElement {
         app.buttons[Locators.WireDrive.FilesPage.moreOptions.rawValue]
+            .firstMatch
     }
 
     var openRecycleBinButton: XCUIElement {
@@ -68,6 +69,76 @@ class SharedDriveFilesPage: PageModel {
         app.buttons
             .matching(identifier: Locators.WireDrive.FilesContentPage.fileItem(0))
             .firstMatch
+    }
+
+    @discardableResult
+    func openNavigationBarMenu() throws -> SharedDriveFilesPage {
+        moreOptionOnSharedDrive.waitAndTap(timeout: 3)
+        return try SharedDriveFilesPage()
+    }
+
+    /// Closes an open context menu by tapping outside of it.
+    func dismissMenu() {
+        app.coordinate(withNormalizedOffset: CGVector(dx: 0.02, dy: 0.5)).tap()
+    }
+
+    /// All the actions listed in the file's "more" menu.
+    var fileMenuActions: XCUIElementQuery {
+        app.buttons.matching(NSPredicate(format: "identifier BEGINSWITH 'fileMenu.'"))
+    }
+
+    var openFileMenuAction: XCUIElement {
+        app.buttons["fileMenu.primaryAction"]
+    }
+
+    @discardableResult
+    func openMoreOptionsOnFile() throws -> SharedDriveFilesPage {
+        XCTAssertTrue(fileIcon.waitForExistence(timeout: 10))
+        moreButton.waitAndTap(timeout: 5)
+        return try SharedDriveFilesPage()
+    }
+
+    var makeAvailableOfflineButton: XCUIElement {
+        app.buttons[Locators.WireDrive.FileMenu.makeAvailableOffline.identifier]
+    }
+
+    var filePreviewDoneButton: XCUIElement {
+        app.navigationBars.buttons["Done"].firstMatch
+    }
+
+    /// Taps the first file of the list, which opens it in the QuickLook previewer.
+    func openFile() {
+        fileMetadataText.waitAndTap(timeout: 5)
+    }
+
+    /// The QuickLook controls, like the "Done" button, are hidden until the previewer is tapped.
+    func tapFilePreview() {
+        app.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
+    }
+
+    /// Closes the QuickLook previewer, going back to the list.
+    func closeFilePreview() {
+        filePreviewDoneButton.waitAndTap(timeout: 3)
+    }
+
+    /// The "No internet" bar shown at the top of the list when Drive is offline.
+    var offlineBar: XCUIElement {
+        app.staticTexts
+            .matching(NSPredicate(format: "label ==[c] 'No internet'"))
+            .firstMatch
+    }
+
+    var availableOfflineIcon: XCUIElement {
+        fileTexts
+            .matching(NSPredicate(format: "label CONTAINS %@", "Available offline"))
+            .firstMatch
+    }
+
+    @discardableResult
+    func makeFileAvailableOffline() throws -> SharedDriveFilesPage {
+        moreButton.waitAndTap(timeout: 5)
+        makeAvailableOfflineButton.waitAndTap(timeout: 3)
+        return try SharedDriveFilesPage()
     }
 
     var numberOfFilesInList: Int {
@@ -133,6 +204,24 @@ class SharedDriveFilesPage: PageModel {
         return try FolderPage()
     }
 
+    var createFileButton: XCUIElement {
+        app.buttons[Locators.WireDrive.FilesPage.createFile.rawValue]
+    }
+
+    func createFile(template: CreateFilePage.Template) throws -> CreateFilePage {
+        moreOptionOnSharedDrive.waitAndTap(timeout: 3)
+        createFileButton.waitAndTap(timeout: 3)
+        app.buttons[Locators.WireDrive.FilesPage.createFileTemplate(template.rawValue)].waitAndTap(timeout: 3)
+        return try CreateFilePage()
+    }
+
+    func verifyFileIsCreated(fileName: String, fileExtension: String) -> Bool {
+        app.staticTexts
+            .matching(NSPredicate(format: "label CONTAINS %@", "\(fileName).\(fileExtension)"))
+            .firstMatch
+            .waitForExistence(timeout: 5)
+    }
+
     func verifyFolderIsCreated(folderName: String) -> Bool {
         app.staticTexts
             .matching(identifier: folderName)
@@ -140,6 +229,50 @@ class SharedDriveFilesPage: PageModel {
             .waitForExistence(timeout: 2)
     }
 
+    // MARK: - Sort and filter
+
+    var sortMenuButton: XCUIElement {
+        app.buttons[Locators.WireDrive.FilesSortingPage.menuButton.rawValue]
+    }
+
+    var typeFilterButton: XCUIElement {
+        app.buttons[Locators.WireDrive.FilesFilteringPage.filter("type")]
+    }
+
+    var saveFilterButton: XCUIElement {
+        app.buttons[Locators.WireDrive.FilesFilterPage.saveButton.rawValue]
+    }
+
+    func sort(by key: String) {
+        sortMenuButton.waitAndTap(timeout: 3)
+        app.buttons[Locators.WireDrive.FilesSortingPage.sortKey(key)].waitAndTap(timeout: 3)
+    }
+
+    func sort(order: String) {
+        sortMenuButton.waitAndTap(timeout: 3)
+        app.buttons[Locators.WireDrive.FilesSortingPage.sortOrder(order)].waitAndTap(timeout: 3)
+    }
+
+    /// Focuses the search field, which reveals the filters bar, then filters by the given file type.
+    func filter(byType type: String) {
+        searchTextField.waitAndTap(timeout: 3)
+        typeFilterButton.waitAndTap(timeout: 3)
+        app.buttons[Locators.WireDrive.FilesFilterPage.typeItem(type)].waitAndTap(timeout: 3)
+        saveFilterButton.waitAndTap(timeout: 3)
+    }
+
+    func waitForFirstFile(startingWith name: String, timeout: TimeInterval = 5) -> Bool {
+        let predicate = NSPredicate(format: "label BEGINSWITH %@", name)
+        let expectation = XCTNSPredicateExpectation(predicate: predicate, object: fileTexts.firstMatch)
+        return XCTWaiter().wait(for: [expectation], timeout: timeout) == .completed
+    }
+
+    func fileRow(named name: String) -> XCUIElement {
+        app.staticTexts
+            .matching(NSPredicate(format: "label BEGINSWITH %@", name))
+            .firstMatch
+    }
+    
     // MARK: - Direct uploads
 
     private var uploadMenuButton: XCUIElement {
@@ -265,7 +398,6 @@ class SharedDriveFilesPage: PageModel {
         let folder = app.staticTexts[folderName].firstMatch
         XCTAssertTrue(folder.waitAndTap(timeout: 5), "Folder '\(folderName)' didn't show up")
         return try SharedDriveFilesPage(headerName: folderName)
-    }
 
     var searchTextField: XCUIElement {
         app.searchFields.firstMatch

@@ -99,40 +99,52 @@ private final class MeetingRepositoryProtocolMock: MeetingRepositoryProtocol, @u
         title: String,
         startTime: Date,
         endTime: Date,
-        recurrence: MeetingRecurrence?
+        recurrence: MeetingRecurrence?,
+        type: MeetingType,
+        password: String?
     )?
     public var createMeetingTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceMeetingReceivedInvocations: [(
         title: String,
         startTime: Date,
         endTime: Date,
-        recurrence: MeetingRecurrence?
+        recurrence: MeetingRecurrence?,
+        type: MeetingType,
+        password: String?
     )] = []
-    public var createMeetingTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceMeetingReturnValue: Meeting!
+    public var createMeetingTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceMeetingReturnValue: MeetingCreationResult!
     public var createMeetingTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceMeetingClosure: ((
         String,
         Date,
         Date,
-        MeetingRecurrence?
-    ) async throws -> Meeting)?
+        MeetingRecurrence?,
+        MeetingType,
+        String?
+    ) async throws -> MeetingCreationResult)?
 
     public func createMeeting(
         title: String,
         startTime: Date,
         endTime: Date,
-        recurrence: MeetingRecurrence?
-    ) async throws -> Meeting {
+        recurrence: MeetingRecurrence?,
+        type: MeetingType,
+        password: String?
+    ) async throws -> MeetingCreationResult {
         createMeetingTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceMeetingCallsCount += 1
         createMeetingTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceMeetingReceivedArguments = (
             title: title,
             startTime: startTime,
             endTime: endTime,
-            recurrence: recurrence
+            recurrence: recurrence,
+            type: type,
+            password: password
         )
         createMeetingTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceMeetingReceivedInvocations.append((
             title: title,
             startTime: startTime,
             endTime: endTime,
-            recurrence: recurrence
+            recurrence: recurrence,
+            type: type,
+            password: password
         ))
         if let error =
             createMeetingTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceMeetingThrowableError {
@@ -143,7 +155,9 @@ private final class MeetingRepositoryProtocolMock: MeetingRepositoryProtocol, @u
                 title,
                 startTime,
                 endTime,
-                recurrence
+                recurrence,
+                type,
+                password
             )
         } else {
             return createMeetingTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceMeetingReturnValue

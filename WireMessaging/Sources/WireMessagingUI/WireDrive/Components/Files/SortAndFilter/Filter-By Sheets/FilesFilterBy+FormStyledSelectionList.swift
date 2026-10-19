@@ -23,6 +23,7 @@ extension FilesFilterBy {
         let items: [Item]
         let onSelected: (Item) -> Void
         let itemView: (Item) -> ItemView
+        var itemIdentifier: (Item) -> String = { _ in "" }
 
         var body: some View {
             Form {
@@ -32,6 +33,7 @@ extension FilesFilterBy {
                     } label: {
                         itemView(item)
                     }
+                    .accessibilityIdentifier(itemIdentifier(item))
                 }
             }
             .scrollContentBackground(.hidden)

@@ -1,0 +1,2 @@
+curl \
+	"/custom-backend/by-domain/example%20com"

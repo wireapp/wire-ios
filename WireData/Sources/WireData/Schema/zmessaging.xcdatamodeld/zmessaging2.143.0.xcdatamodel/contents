@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="24902" systemVersion="25G241" minimumToolsVersion="Xcode 15.0" sourceLanguage="Swift" userDefinedModelVersionIdentifier="2.143.0">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="24902" systemVersion="25F84" minimumToolsVersion="Xcode 15.0" sourceLanguage="Swift" userDefinedModelVersionIdentifier="2.143.0">
     <entity name="Action" representedClassName="WireDataModel.Action" syncable="YES">
         <attribute name="name" optional="YES" attributeType="String"/>
         <relationship name="role" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Role" inverseName="actions" inverseEntity="Role"/>
@@ -475,6 +475,20 @@
             </uniquenessConstraint>
         </uniquenessConstraints>
     </entity>
+    <entity name="PendingProposalTimer" representedClassName="WireData.PendingProposalTimer" syncable="YES">
+        <attribute name="conversationDomain" optional="YES" attributeType="String"/>
+        <attribute name="conversationID" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="fireDate" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="mlsGroupID" attributeType="Binary"/>
+        <fetchIndex name="byFireDateIndex">
+            <fetchIndexElement property="fireDate" type="Binary" order="ascending"/>
+        </fetchIndex>
+        <uniquenessConstraints>
+            <uniquenessConstraint>
+                <constraint value="mlsGroupID"/>
+            </uniquenessConstraint>
+        </uniquenessConstraints>
+    </entity>
     <entity name="WireDriveDirectUpload" representedClassName="WireData.WireDriveDirectUpload" syncable="YES">
         <attribute name="attemptCount" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="batchID" attributeType="UUID" usesScalarValueType="NO"/>
@@ -487,10 +501,13 @@
         <attribute name="mimeType" optional="YES" attributeType="String"/>
         <attribute name="nodeID" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="nodePath" attributeType="String"/>
+        <attribute name="presignedRequestHeaders" optional="YES" attributeType="String"/>
         <attribute name="presignedURL" optional="YES" attributeType="String"/>
         <attribute name="presignedURLExpiresAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="sessionIdentifier" optional="YES" attributeType="String"/>
         <attribute name="stagedFileName" attributeType="String"/>
         <attribute name="state" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="taskIdentifier" attributeType="Integer 64" defaultValueString="-1" usesScalarValueType="YES"/>
         <attribute name="updatedAt" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="uploadID" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="versionID" attributeType="UUID" usesScalarValueType="NO"/>

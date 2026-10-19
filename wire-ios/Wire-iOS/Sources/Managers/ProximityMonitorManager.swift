@@ -128,7 +128,8 @@ extension ProximityMonitorManager: WireCallCenterCallStateObserver {
         conversation: ZMConversation,
         caller: UserType,
         timestamp: Date?,
-        previousCallState: CallState?
+        previousCallState: CallState?,
+        callEndReason: CallClosedReason?
     ) {
         updateProximityMonitorState()
     }

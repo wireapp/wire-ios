@@ -28,10 +28,12 @@ import WireFoundation
 public struct WireMeetingsFactory {
 
     private let selfUserID: UUID
+    private let supportsMeetingLinks: Bool
 
     @MainActor
-    public init(selfUserID: UUID) {
+    public init(selfUserID: UUID, supportsMeetingLinks: Bool = false) {
         self.selfUserID = selfUserID
+        self.supportsMeetingLinks = supportsMeetingLinks
     }
 
     @MainActor
@@ -44,7 +46,7 @@ public struct WireMeetingsFactory {
     ) -> UIViewController {
         let currentDateProvider = makeCurrentDateProvider()
 
-        let createMeetingUseCase = CreateMeetingUseCase(
+        let createMeetingUseCase = makeCreateMeetingUseCase(
             meetingRepository: meetingRepository,
             conversationRepository: conversationRepository
         )
@@ -83,6 +85,7 @@ public struct WireMeetingsFactory {
                     createMeetingUseCase: createMeetingUseCase,
                     updateMeetingUseCase: updateMeetingUseCase,
                     currentDateProvider: currentDateProvider,
+                    supportsMeetingLinks: supportsMeetingLinks,
                     onSuccess: onSuccess
                 )
             }
@@ -104,6 +107,22 @@ public struct WireMeetingsFactory {
             }
         #endif
         return .system
+    }
+
+    private func makeCreateMeetingUseCase(
+        meetingRepository: any MeetingRepositoryProtocol,
+        conversationRepository: any MeetingConversationRepositoryProtocol
+    ) -> any CreateMeetingUseCaseProtocol {
+        let createUseCase = CreateMeetingUseCase(
+            meetingRepository: meetingRepository,
+            conversationRepository: conversationRepository
+        )
+        #if DEBUG
+            if let failureID = UITestConfig.environment?.meetingsCreateFailureID {
+                return MeetingsUITestCreateUseCase(wrapping: createUseCase, failureID: failureID)
+            }
+        #endif
+        return createUseCase
     }
 
     private func makeFetchUpcomingMeetingsUseCase(

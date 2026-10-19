@@ -217,6 +217,7 @@ private extension FilesView {
                                 .tint(ColorTheme.Backgrounds.onBackground.color)
                         }
                     }
+                    .accessibilityIdentifier(Locators.WireDrive.FilesPage.createFileTemplate(template.kind.identifier))
                 }
 
             } label: {
@@ -374,6 +375,17 @@ private extension WireDriveFileTemplate.Kind {
             Strings.Files.List.CreateFile.spreadsheet
         case .presentation:
             Strings.Files.List.CreateFile.presentation
+        }
+    }
+
+    var identifier: String {
+        switch self {
+        case .document:
+            "document"
+        case .spreadsheet:
+            "spreadsheet"
+        case .presentation:
+            "presentation"
         }
     }
 
