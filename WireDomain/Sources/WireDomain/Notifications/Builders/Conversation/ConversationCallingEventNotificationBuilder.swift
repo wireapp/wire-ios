@@ -59,7 +59,7 @@ struct ConversationCallingEventNotificationBuilder: ConversationCallingEventNoti
         )
         let wasAnsweredElsewhere = AnsweredElsewhereCallTracker(userDefaults: validator.userDefaults).track(
             callContent: callContent,
-            conversationID: resolvedConversationID,
+            conversationID: resolvedConversationID.id,
             accountID: accountID,
             isCallerSelf: selfUser == sender
         )

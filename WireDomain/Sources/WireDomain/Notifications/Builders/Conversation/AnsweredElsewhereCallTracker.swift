@@ -17,11 +17,12 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 import WireFoundation
 import WireNetwork
 
 /// Tracks conference participation across notification events using app-group preferences.
-struct AnsweredElsewhereCallTracker {
+public struct AnsweredElsewhereCallTracker {
     private struct Marker: Codable {
         let conferenceTimestamp: String?
         let recordedAt: Date
@@ -32,18 +33,66 @@ struct AnsweredElsewhereCallTracker {
 
     let userDefaults: UserDefaults
 
+    public init(userDefaults: UserDefaults) {
+        self.userDefaults = userDefaults
+    }
+
+    public func trackStart(data: Data, conversationID: UUID, accountID: UUID, isCallerSelf: Bool) {
+        guard let callContent = try? JSONDecoder().decode(CallContent.self, from: data),
+              callContent.type == CallContent.CallType.confStart else { return }
+
+        _ = track(
+            callContent: callContent,
+            conversationID: conversationID,
+            accountID: accountID,
+            isCallerSelf: isCallerSelf
+        )
+    }
+
+    func track(event: ConversationEvent, accountID: UUID, isCallerSelf: Bool) {
+        let decoder = ProtobufMessageDecoder()
+        let messages: [GenericMessage]
+        switch event {
+        case let .mlsMessageAdd(event):
+            messages = event.decryptedMessages.compactMap {
+                try? decoder.extractMLSMessageContent(from: $0.message)
+            }
+        case let .proteusMessageAdd(event):
+            guard let decryptedMessage = event.message.decryptedMessage,
+                  let message = try? decoder.extractProteusMessageContent(
+                      from: decryptedMessage,
+                      externalData: event.externalData
+                  ) else { return }
+            messages = [message]
+        default:
+            return
+        }
+
+        for message in messages where message.hasCalling {
+            let calling = message.calling
+            guard let callContent: CallContent = .decode(from: calling) else { continue }
+            let conversationID = UUID(uuidString: calling.qualifiedConversationID.id) ?? event.conversationID.id
+            _ = track(
+                callContent: callContent,
+                conversationID: conversationID,
+                accountID: accountID,
+                isCallerSelf: isCallerSelf
+            )
+        }
+    }
+
     /// Records a self `CONFSTART`, clears markers on an unmatched incoming start, and consumes one on `CONFEND`.
     /// - Returns: `true` when the end event consumes a recent participation marker.
     func track(
         callContent: CallContent,
-        conversationID: ConversationID,
+        conversationID: UUID,
         accountID: UUID,
         isCallerSelf: Bool
     ) -> Bool {
         guard callContent.type == CallContent.CallType.confStart ||
             callContent.type == CallContent.CallType.confEnd else { return false }
 
-        let key = AnsweredElsewhereCallKey.make(accountID: accountID, conversationID: conversationID.id)
+        let key = AnsweredElsewhereCallKey.make(accountID: accountID, conversationID: conversationID)
         Self.lock.lock()
         defer { Self.lock.unlock() }
 
