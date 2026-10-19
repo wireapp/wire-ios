@@ -136,7 +136,7 @@ final class MemberSelectionViewModel {
             return false
         }
         let pattern = #"^[A-Z0-9.!#$%&'*+/=?^_`{|}~-]+@"#
-            + #"[A-Z0-9](?:[A-Z0-9-]*[A-Z0-9])?(?:\.[A-Z0-9](?:[A-Z0-9-]*[A-Z0-9])?)+$"#
+            + #"[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?(?:\.[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?)+$"#
         return email.range(of: pattern, options: [.regularExpression, .caseInsensitive]) != nil
     }
 

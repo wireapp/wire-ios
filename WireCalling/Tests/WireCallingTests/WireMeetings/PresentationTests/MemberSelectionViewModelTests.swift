@@ -146,7 +146,8 @@ struct MemberSelectionViewModelTests {
     // MARK: - Email invitations
 
     @Test("Valid email addresses are trimmed and keep their case", arguments: [
-        "Alice@example.com", "alice+meeting@sub.example.com", "o'connor@example.com"
+        "Alice@example.com", "alice+meeting@sub.example.com", "o'connor@example.com",
+        "guest@" + String(repeating: "a", count: 63) + "." + String(repeating: "a", count: 63)
     ])
     func addEmail_acceptsValidAddress(_ email: String) {
         viewModel.emailAddress = " \(email)\n"
@@ -162,7 +163,9 @@ struct MemberSelectionViewModelTests {
         "", "alice", "alice@", "@example.com", "alice@example", "alice example@wire.com",
         "alice@@example.com", ".alice@example.com", "alice.@example.com", "alice..bob@example.com",
         "alice@-example.com", "alice@example-.com", "Alice <alice@example.com>",
-        String(repeating: "a", count: 65) + "@example.com"
+        String(repeating: "a", count: 65) + "@example.com",
+        "guest@" + String(repeating: "a", count: 64) + ".com",
+        "guest@example." + String(repeating: "a", count: 64)
     ])
     func addEmail_rejectsInvalidAddress(_ email: String) {
         viewModel.emailAddress = email
