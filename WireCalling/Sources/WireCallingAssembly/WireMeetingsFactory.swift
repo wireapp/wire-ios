@@ -23,17 +23,20 @@ public import WireCallingDomain
 import SwiftUI
 import WireCallingData
 import WireCallingUI
+import WireDesign
 import WireFoundation
 
 public struct WireMeetingsFactory {
 
     private let selfUserID: UUID
     private let supportsMeetingLinks: Bool
+    private let isClipboardEnabled: Bool
 
     @MainActor
-    public init(selfUserID: UUID, supportsMeetingLinks: Bool = false) {
+    public init(selfUserID: UUID, supportsMeetingLinks: Bool = false, isClipboardEnabled: Bool = true) {
         self.selfUserID = selfUserID
         self.supportsMeetingLinks = supportsMeetingLinks
+        self.isClipboardEnabled = isClipboardEnabled
     }
 
     @MainActor
@@ -70,6 +73,9 @@ public struct WireMeetingsFactory {
         let observeAttendedMeetingsUseCase = ObserveAttendedMeetingsUseCase(repository: callRepository)
         let joinMeetingCallUseCase = JoinMeetingCallUseCase(repository: callRepository)
         let searchMembersUseCase = SearchMembersUseCase(repository: memberRepository)
+        let fetchMeetingLink: @Sendable (QualifiedID) async throws -> MeetingLink? = {
+            try await meetingRepository.fetchMeetingLink(id: $0)
+        }
         let meetingsViewModel = AllMeetingsViewModel(
             currentDateProvider: currentDateProvider,
             upcomingMeetingsUseCase: fetchUpcomingMeetingsUseCase,
@@ -78,6 +84,7 @@ public struct WireMeetingsFactory {
             selfUserID: selfUserID,
             observeAttendedMeetingsUseCase: observeAttendedMeetingsUseCase,
             joinMeetingCallUseCase: joinMeetingCallUseCase,
+            fetchMeetingLink: supportsMeetingLinks ? fetchMeetingLink : nil,
             makeFormViewModel: { mode, onSuccess in
                 MeetingFormViewModel(
                     mode: mode,
@@ -96,6 +103,7 @@ public struct WireMeetingsFactory {
                     viewModel: meetingsViewModel,
                     accentColorState: accentColorState
                 )
+                .environment(\.isClipboardEnabled, isClipboardEnabled)
             )
         )
     }

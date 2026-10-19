@@ -33,6 +33,7 @@ struct MeetingRow: View {
     let onEdit: () -> Void
     let onDelete: () -> Void
     var onJoin: () -> Void = {}
+    var onMeetingLink: (() -> Void)?
 
     @Environment(\.wireAccentColor) private var wireAccentColor
 
@@ -88,6 +89,13 @@ struct MeetingRow: View {
                                 Label(Strings.Actions.edit, systemImage: "pencil")
                             }
                             .disabled(meeting.conversation == nil)
+
+                            if let onMeetingLink {
+                                Button(action: onMeetingLink) {
+                                    Label(L10n.Localizable.WireMeetings.Link.title, systemImage: "link")
+                                }
+                                .accessibilityIdentifier(Locators.WireMeetings.MeetingRow.meetingLink)
+                            }
 
                             Button(role: .destructive) {
                                 onDelete()

@@ -792,6 +792,17 @@ public enum Locators {
             case attendingLabel = "Attending Label"
         }
 
+        public enum MeetingLink: String {
+            case url = "meetingLinkURL"
+            case passwordState = "meetingLinkPasswordState"
+            case copy = "meetingLinkCopy"
+            case copied = "meetingLinkCopied"
+            case cancel = "meetingLinkCancel"
+            case loading = "meetingLinkLoading"
+            case error = "meetingLinkError"
+            case retry = "meetingLinkRetry"
+        }
+
         public enum MeetingRow: String {
             case title = "meetingTitle"
             case menu = "meetingMenu"
@@ -801,6 +812,7 @@ public enum Locators {
             case rowPrefix = "meetingRow."
             case deleteForMeButton = "Delete Meeting for Me Button"
             case joinButton = "Join Button"
+            case meetingLink = "meetingRowLink"
 
             public static func rowIdentifier(domain: String, id: UUID, start: Date) -> String {
                 "meetingRow.\(domain).\(id.uuidString).\(Int(start.timeIntervalSince1970))"
