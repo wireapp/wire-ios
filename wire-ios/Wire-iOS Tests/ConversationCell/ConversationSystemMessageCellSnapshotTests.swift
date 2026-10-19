@@ -79,8 +79,6 @@ final class ConversationSystemMessageCellSnapshotTests: ConversationMessageSnaps
     }
 
     func test_conversationScheduledForDeletion() {
-        DeveloperFlag.preventAdminlessGroups.enable(true)
-        defer { DeveloperFlag.preventAdminlessGroups.enable(false) }
         let message = makeMessage(messageType: .conversationScheduledForDeletion)
         message.systemMessageData?.conversationScheduledDeletionDate = .distantFuture
         verify(message: message)

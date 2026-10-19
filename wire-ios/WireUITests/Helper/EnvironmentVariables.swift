@@ -27,6 +27,9 @@ struct EnvironmentVariables {
         case missingCallingServiceURL
         case missingCallingServiceUsername
         case missingCallingServicePassword
+        case missingInternalCallingServiceURL
+        case missingInternalCallingServiceUsername
+        case missingInternalCallingServicePassword
         case missingCallingBackend
         case missingCallingInstanceTypeName
         case missingCallingInstanceTypeVersion
@@ -35,6 +38,9 @@ struct EnvironmentVariables {
         case missingSSOClaimedUserEmail
         case missingSSOClaimedUserPassword
         case missingSSOClaimedDomainCode
+        case missingCustomDomainRedirectEmail
+        case missingCustomDomainRedirectBackendURL
+        case missingCustomDomainRedirectIdpDomain
 
         var errorDescription: String? {
             switch self {
@@ -46,6 +52,9 @@ struct EnvironmentVariables {
             case .missingCallingServiceURL: "Missing env var: CALLINGSERVICE_URL"
             case .missingCallingServiceUsername: "Missing env var: CALLINGSERVICE_USERNAME"
             case .missingCallingServicePassword: "Missing env var: CALLINGSERVICE_PASSWORD"
+            case .missingInternalCallingServiceURL: "Missing env var: CALLINGSERVICE_INTERNAL_URL"
+            case .missingInternalCallingServiceUsername: "Missing env var: CALLINGSERVICE_INTERNAL_USERNAME"
+            case .missingInternalCallingServicePassword: "Missing env var: CALLINGSERVICE_INTERNAL_PASSWORD"
             case .missingCallingBackend: "Missing env var: PREDEFINED_BACKEND"
             case .missingCallingInstanceTypeName: "Missing env var: CALLING_INSTANCE_TYPE_NAME"
             case .missingCallingInstanceTypeVersion: "Missing env var: CALLING_INSTANCE_TYPE_VERSION"
@@ -54,6 +63,9 @@ struct EnvironmentVariables {
             case .missingSSOClaimedUserEmail: "Missing env var: SSO_CLAIMED_USER_EMAIL"
             case .missingSSOClaimedUserPassword: "Missing env var: SSO_CLAIMED_USER_PASSWORD"
             case .missingSSOClaimedDomainCode: "Missing env var: SSO_CLAIMED_DOMAIN_CODE"
+            case .missingCustomDomainRedirectEmail: "Missing env var: CUSTOM_DOMAIN_REDIRECT_EMAIL"
+            case .missingCustomDomainRedirectBackendURL: "Missing env var: CUSTOM_DOMAIN_REDIRECT_BACKEND_URL"
+            case .missingCustomDomainRedirectIdpDomain: "Missing env var: CUSTOM_DOMAIN_REDIRECT_IDP_DOMAIN"
             }
         }
     }
@@ -82,6 +94,9 @@ struct EnvironmentVariables {
     let ssoClaimedUserEmail: String
     let ssoClaimedUserPassword: String
     let ssoClaimedDomainCode: String
+    let customDomainRedirectEmail: String
+    let customDomainRedirectBackendURL: String
+    let customDomainRedirectIdpDomain: String
 
     init() throws {
         guard let backendURLString = ProcessInfo.processInfo.environment["BACKEND_URL"],
@@ -189,11 +204,28 @@ struct EnvironmentVariables {
             throw Failure.missingSSOClaimedDomainCode
         }
 
+        guard let customDomainRedirectEmail = ProcessInfo.processInfo.environment["CUSTOM_DOMAIN_REDIRECT_EMAIL"],
+              !customDomainRedirectEmail.isEmpty else {
+            throw Failure.missingCustomDomainRedirectEmail
+        }
+
+        guard let customDomainRedirectBackendURL = ProcessInfo.processInfo
+            .environment["CUSTOM_DOMAIN_REDIRECT_BACKEND_URL"],
+            !customDomainRedirectBackendURL.isEmpty else {
+            throw Failure.missingCustomDomainRedirectBackendURL
+        }
+
+        guard let customDomainRedirectIdpDomain = ProcessInfo.processInfo
+            .environment["CUSTOM_DOMAIN_REDIRECT_IDP_DOMAIN"],
+            !customDomainRedirectIdpDomain.isEmpty else {
+            throw Failure.missingCustomDomainRedirectIdpDomain
+        }
+
         self.stagingBackendURL = URL(string: "https://\(backendURLString)")!
         self.stagingInbucketURL = URL(string: "https://\(inbucketHostname)")!
         self.inbucketUsername = inbucketUsername
         self.inbucketPassword = inbucketPassword
-        let callingServiceEnvironment = Self.callingServiceEnvironment(
+        let callingServiceEnvironment = try Self.callingServiceEnvironment(
             defaultURLString: callingServiceURLString,
             defaultUsername: callingServiceUsername,
             defaultPassword: callingServicePassword
@@ -216,23 +248,36 @@ struct EnvironmentVariables {
         self.ssoClaimedUserEmail = ssoClaimedUserEmail
         self.ssoClaimedUserPassword = ssoClaimedUserPassword
         self.ssoClaimedDomainCode = ssoClaimedDomainCode
+        self.customDomainRedirectEmail = customDomainRedirectEmail
+        self.customDomainRedirectBackendURL = customDomainRedirectBackendURL
+        self.customDomainRedirectIdpDomain = customDomainRedirectIdpDomain
     }
 
     private static func callingServiceEnvironment(
         defaultURLString: String,
         defaultUsername: String,
         defaultPassword: String
-    ) -> (url: URL, username: String, password: String) {
+    ) throws -> (url: URL, username: String, password: String) {
         let environment = ProcessInfo.processInfo.environment
-        let isCI = environment["CI"]?.lowercased() == "true"
+        let flag = environment["USE_IN_HOUSE_SERVICES"]?.lowercased()
+        let flagUnset = flag?.isEmpty ?? true
+        // Local runs use in-house services by default
+        let useInHouseServices = flag == "true" || (flagUnset && environment["CI"]?.lowercased() != "true")
 
-        if !isCI,
-           let internalURLString = environment["CALLINGSERVICE_INTERNAL_URL"],
-           let internalUsername = environment["CALLINGSERVICE_INTERNAL_USERNAME"],
-           let internalPassword = environment["CALLINGSERVICE_INTERNAL_PASSWORD"],
-           !internalURLString.isEmpty,
-           !internalUsername.isEmpty,
-           !internalPassword.isEmpty {
+        if useInHouseServices {
+            guard let internalURLString = environment["CALLINGSERVICE_INTERNAL_URL"],
+                  !internalURLString.isEmpty else {
+                throw Failure.missingInternalCallingServiceURL
+            }
+            guard let internalUsername = environment["CALLINGSERVICE_INTERNAL_USERNAME"],
+                  !internalUsername.isEmpty else {
+                throw Failure.missingInternalCallingServiceUsername
+            }
+            guard let internalPassword = environment["CALLINGSERVICE_INTERNAL_PASSWORD"],
+                  !internalPassword.isEmpty else {
+                throw Failure.missingInternalCallingServicePassword
+            }
+
             return (
                 url: callingServiceURL(from: internalURLString, defaultScheme: "http"),
                 username: internalUsername,

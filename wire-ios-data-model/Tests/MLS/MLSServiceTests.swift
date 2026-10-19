@@ -19,6 +19,7 @@
 import Combine
 import Foundation
 import WireCoreCrypto
+import WireData
 import WireFoundation
 import WireTesting
 import XCTest
@@ -475,6 +476,10 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     func test_EstablishGroupWithMultipleUsers_IsSuccessful() async throws {
         // Given
+        // Serialize key package claims: MockMLSActionsProviderProtocol's generated
+        // invocation-recording arrays aren't thread-safe, so concurrent claims would race.
+        createSut(maxConcurrentKeyPackageClaims: 1)
+
         let groupID = MLSGroupID(Data([1, 2, 3]))
         let removalKey = ed25519RemovalKey
         let users = [
@@ -528,6 +533,10 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
     func test_EstablishGroupWithSelfUser_IsAlwaysAddingSelfLast() async throws {
         // Given
+        // Serialize key package claims: MockMLSActionsProviderProtocol's generated
+        // invocation-recording arrays aren't thread-safe, so concurrent claims would race.
+        createSut(maxConcurrentKeyPackageClaims: 1)
+
         let mlsSelfUser = await uiMOC.perform {
             let selfUser = ZMUser.selfUser(in: self.uiMOC)
             return MLSUser(from: selfUser, localDomain: self.localDomain)
@@ -793,7 +802,13 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             // A group with pending proposal in the future
             conversation = createConversation(in: uiMOC)
             conversation.mlsGroupID = groupID
-            conversation.commitPendingProposalDate = futureCommitDate
+            PendingProposalTimer.schedule(
+                mlsGroupID: groupID.data,
+                conversationID: UUID(),
+                conversationDomain: nil,
+                fireDate: futureCommitDate,
+                in: uiMOC
+            )
         }
 
         // Mock commiting a pending proposal
@@ -828,8 +843,8 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         // Then we committed pending proposals.
         XCTAssertEqual(mockCommitPendingProposalsArgument, [groupID])
 
-        await uiMOC.perform {
-            XCTAssertNil(conversation.commitPendingProposalDate)
+        await uiMOC.perform { [uiMOC] in
+            XCTAssertNil(PendingProposalTimer.fetch(mlsGroupID: groupID.data, in: uiMOC))
         }
 
         // Then we added the members.
@@ -1286,7 +1301,13 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             // A group with pending proposal in the future
             conversation = createConversation(in: uiMOC)
             conversation.mlsGroupID = groupID
-            conversation.commitPendingProposalDate = futureCommitDate
+            PendingProposalTimer.schedule(
+                mlsGroupID: groupID.data,
+                conversationID: UUID(),
+                conversationDomain: nil,
+                fireDate: futureCommitDate,
+                in: uiMOC
+            )
         }
 
         // Mock commiting a pending proposal.
@@ -1311,8 +1332,8 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         // Then we committed pending proposals.
         XCTAssertEqual(mockCommitPendingProposalsArgument, [groupID])
 
-        await uiMOC.perform {
-            XCTAssertNil(conversation.commitPendingProposalDate)
+        await uiMOC.perform { [uiMOC] in
+            XCTAssertNil(PendingProposalTimer.fetch(mlsGroupID: groupID.data, in: uiMOC))
         }
 
         // Then we removed the clients.

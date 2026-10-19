@@ -20,6 +20,7 @@ import UIKit
 import WireCommonComponents
 import WireDataModel
 import WireDesign
+import WireLocators
 
 final class GroupDetailsGuestOptionsCell: GroupDetailsDisclosureOptionsCell {
 
@@ -33,7 +34,7 @@ final class GroupDetailsGuestOptionsCell: GroupDetailsDisclosureOptionsCell {
 
     override func setUp() {
         super.setUp()
-        accessibilityIdentifier = "cell.groupdetails.guestoptions"
+        accessibilityIdentifier = Locators.ConversationDetailsPage.guestOptionsCell.rawValue
         title = L10n.Localizable.GroupDetails.GuestOptionsCell.title
         accessibilityHint = L10n.Accessibility.ConversationDetails.OptionButton.hint
 

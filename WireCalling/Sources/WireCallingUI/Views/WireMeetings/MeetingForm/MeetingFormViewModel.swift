@@ -56,6 +56,7 @@ package final class MeetingFormViewModel {
     }
 
     let mode: Mode
+    private let supportsMeetingLinks: Bool
     let searchMembersUseCase: any SearchMembersUseCaseProtocol
     private let createMeetingUseCase: any CreateMeetingUseCaseProtocol
     private let updateMeetingUseCase: any UpdateMeetingUseCaseProtocol
@@ -63,6 +64,9 @@ package final class MeetingFormViewModel {
     private let onSuccess: (Meeting) -> Void
 
     private static let timePickerMinuteInterval = 15
+    // Match the limits enforced by SimpleTextFieldValidator for conversation names.
+    private static let maximumConversationNameLength = 64
+    private static let maximumConversationNameByteLength = 256
 
     /// The smallest selectable interval between start and end time.
     private static let minimumDuration = TimeInterval(timePickerMinuteInterval) * TimeInterval.oneMinute
@@ -89,18 +93,26 @@ package final class MeetingFormViewModel {
     }
 
     /// Scheduled meetings start at the next available picker interval.
-    /// When editing a meeting whose start lies in the past, its original day
-    /// stays selectable unless it is recurring; recurring meetings are moved
-    /// to their next editable occurrence so the backend receives a non-past start date.
+    /// Edited meetings may start up to 24 hours in the past, as allowed by the backend.
     var startDateRange: PartialRangeFrom<Date> {
-        var earliest = currentDateProvider.now
+        let earliest = currentDateProvider.now
         if case .scheduled = mode {
             return Self.nextSelectableStartDate(after: earliest)...
         }
-        if case let .edit(meeting) = mode, meeting.recurrence == nil {
-            earliest = min(earliest, meeting.start)
+        if case .edit = mode {
+            return earliest.addingTimeInterval(-TimeInterval.oneDay)...
         }
         return Calendar.current.startOfDay(for: earliest)...
+    }
+
+    /// Present a valid picker selection without changing the meeting merely by opening the picker.
+    /// The form displays `startDate`; only a valid picker change updates it.
+    var startDatePickerSelection: Date {
+        get { max(startDate, startDateRange.lowerBound) }
+        set {
+            guard startDateRange.contains(newValue) else { return }
+            startDate = newValue
+        }
     }
 
     /// Acceptance: the end picker must stay on the start date, with 23:45 as the latest available time.
@@ -121,9 +133,97 @@ package final class MeetingFormViewModel {
     var selectedMembers: [MeetingMember] = []
     private(set) var isLoading = false
 
-    /// Set when creating a meeting fails. The caught error itself is only
-    /// logged; the view shows a generic alert.
     var hasError = false
+    private var submitError: (any Error)?
+
+    var dismissAfterError: Bool {
+        switch submitError {
+        case CreateMeetingUseCaseError.missingLink?,
+             CreateMeetingUseCaseError.conversationSetupFailed?,
+             CreateMeetingUseCaseError.addParticipantsFailed?,
+             UpdateMeetingUseCaseError.addParticipantsFailed?,
+             UpdateMeetingUseCaseError.removeParticipantsFailed?:
+            true
+        default:
+            false
+        }
+    }
+
+    var errorTitle: String {
+        typealias Errors = L10n.Localizable.Meetings
+        switch submitError {
+        case CreateMeetingUseCaseError.missingLink?:
+            return L10n.Localizable.WireMeetings.Schedule.ParticipantsNotAdded.createdTitle
+        case CreateMeetingUseCaseError.conversationSetupFailed?, CreateMeetingUseCaseError.addParticipantsFailed?:
+            return Errors.Error.setupFailedTitle
+        default:
+            break
+        }
+        switch mode {
+        case .instant: return Errors.MeetNowModal.Error.createFailedTitle
+        case .scheduled: return Errors.ScheduleModal.Error.createFailedTitle
+        case .edit: return Errors.ScheduleModal.Error.updateFailedTitle
+        }
+    }
+
+    var errorMessage: String {
+        typealias Errors = L10n.Localizable.Meetings
+        switch submitError {
+        case CreateMeetingUseCaseError.missingLink?:
+            return Errors.Error.missingLink
+        case let CreateMeetingUseCaseError.conversationSetupFailed(hasLink)?:
+            return Errors.Error.conversationSetupFailed + missingLinkMessage(hasLink: hasLink)
+        case let CreateMeetingUseCaseError.addParticipantsFailed(participants, reasons, hasLink)?:
+            let details = MeetingParticipantErrorFormatter.message(participants: participants, reasons: reasons)
+            return Errors.Error.addParticipantsFailed + (details.isEmpty ? "" : "\n\n" + details)
+                + missingLinkMessage(hasLink: hasLink)
+        case let UpdateMeetingUseCaseError.addParticipantsFailed(participants, reasons)?:
+            let details = MeetingParticipantErrorFormatter.message(participants: participants, reasons: reasons)
+            return Errors.Error.addParticipantsFailed + (details.isEmpty ? "" : "\n\n" + details)
+        case let UpdateMeetingUseCaseError.removeParticipantsFailed(participants)?:
+            return Errors.ScheduleModal.Error.removeParticipantsFailed + participantFailureDetails(for: participants)
+        case UpdateMeetingUseCaseError.conversationNotResolved?:
+            return Errors.ScheduleModal.Error.editMeetingIdMissing
+        default:
+            switch mode {
+            case .instant: return Errors.MeetNowModal.Error.createFailed
+            case .scheduled: return Errors.ScheduleModal.Error.createFailed
+            case .edit: return Errors.ScheduleModal.Error.updateFailed
+            }
+        }
+    }
+
+    var hasExpiredStartDateError = false
+
+    /// Set when the meeting was saved but its dedicated conversation could not be renamed.
+    var hasConversationNameUpdateError = false
+    private var meetingPendingConversationNameUpdate: Meeting?
+
+    var hasParticipantsNotAddedAlert = false
+    private(set) var participantsNotAdded: [MeetingMember] = []
+    private var meetingWithParticipantsNotAdded: Meeting?
+    private var participantMeetingHasLink = true
+    private var didCompleteSavedMeeting = false
+
+    var conversationNameErrorMessage: String {
+        L10n.Localizable.WireMeetings.Schedule.Error.ConversationName.message
+            + participantFailureDetails(for: participantsNotAdded)
+    }
+
+    var participantsNotAddedMessage: String {
+        MeetingParticipantErrorFormatter.message(participants: participantsNotAdded, reasons: [:])
+            + missingLinkMessage(hasLink: participantMeetingHasLink)
+    }
+
+    private func missingLinkMessage(hasLink: Bool) -> String {
+        supportsMeetingLinks && !hasLink ? "\n\n" + L10n.Localizable.Meetings.Error.missingLink : ""
+    }
+
+    private func participantFailureDetails(for participants: [MeetingMember]) -> String {
+        guard !participants.isEmpty else { return "" }
+        return "\n\n" + L10n.Localizable.Meetings.ScheduleModal.Error.addParticipantsFailed + "\n\n"
+            + MeetingParticipantErrorFormatter.message(participants: participants, reasons: [:])
+    }
 
     var selectedMembersSummary: String {
         selectedMembers
@@ -132,7 +232,12 @@ package final class MeetingFormViewModel {
     }
 
     var isNextButtonEnabled: Bool {
-        !meetingTitle.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        !meetingTitle.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && !isMeetingTitleTooLong
+    }
+
+    var isMeetingTitleTooLong: Bool {
+        meetingTitle.count > Self.maximumConversationNameLength ||
+            meetingTitle.utf8.count > Self.maximumConversationNameByteLength
     }
 
     // MARK: - Public Interface
@@ -143,9 +248,11 @@ package final class MeetingFormViewModel {
         createMeetingUseCase: any CreateMeetingUseCaseProtocol,
         updateMeetingUseCase: any UpdateMeetingUseCaseProtocol,
         currentDateProvider: any CurrentDateProviding,
+        supportsMeetingLinks: Bool = false,
         onSuccess: @escaping (Meeting) -> Void = { _ in }
     ) {
         self.mode = mode
+        self.supportsMeetingLinks = supportsMeetingLinks
         self.searchMembersUseCase = searchMembersUseCase
         self.createMeetingUseCase = createMeetingUseCase
         self.updateMeetingUseCase = updateMeetingUseCase
@@ -193,44 +300,112 @@ package final class MeetingFormViewModel {
         // corrupt subsequent pagination (e.g. the next “load more” would re-fetch from offset 0 and replace data
         // unexpectedly). Consider making load(pageSize:) return/throw on failure so reloadLoadedMeetings() can restore
         // futureOffset (and possibly coalesce missed reloads while isLoading is true).
-        guard !isLoading else { return }
-        isLoading = true
+        guard !isLoading, meetingWithParticipantsNotAdded == nil, !dismissAfterError else { return }
         hasError = false
+        submitError = nil
+        hasConversationNameUpdateError = false
+        meetingPendingConversationNameUpdate = nil
+        participantsNotAdded = []
+        hasExpiredStartDateError = false
+        if mode.isEdit, startDate < currentDateProvider.now.addingTimeInterval(-TimeInterval.oneDay) {
+            hasExpiredStartDateError = true
+            return
+        }
+        isLoading = true
         defer { isLoading = false }
         do {
             let meeting = try await saveMeeting()
             onSuccess(meeting)
+        } catch let CreateMeetingUseCaseError.participantsNotAdded(result, participants) {
+            participantMeetingHasLink = result.link != nil
+            meetingWithParticipantsNotAdded = result.meeting
+            participantsNotAdded = participants
+            hasParticipantsNotAddedAlert = true
+        } catch let UpdateMeetingUseCaseError.participantsNotAdded(meeting, participants) {
+            meetingWithParticipantsNotAdded = meeting
+            participantsNotAdded = participants
+            hasParticipantsNotAddedAlert = true
+        } catch let UpdateMeetingUseCaseError.conversationNameUpdateFailed(updatedMeeting, participants) {
+            meetingPendingConversationNameUpdate = updatedMeeting
+            participantsNotAdded = participants
+            hasConversationNameUpdateError = true
         } catch {
             let errorType = Swift.type(of: error)
             WireLogger.search.error("failed to save meeting: \(String(describing: errorType))")
+            submitError = error
             hasError = true
+        }
+    }
+
+    func acknowledgeError(dismiss: () -> Void) {
+        if case let CreateMeetingUseCaseError.missingLink(meeting)? = submitError {
+            guard !didCompleteSavedMeeting else { return }
+            didCompleteSavedMeeting = true
+            hasError = false
+            onSuccess(meeting)
+        } else if dismissAfterError {
+            dismiss()
+        }
+    }
+
+    func acknowledgeParticipantsNotAdded() {
+        guard !didCompleteSavedMeeting, let meeting = meetingWithParticipantsNotAdded else { return }
+        didCompleteSavedMeeting = true
+        hasParticipantsNotAddedAlert = false
+        onSuccess(meeting)
+    }
+
+    func retryConversationNameUpdate() async {
+        guard !isLoading, let meeting = meetingPendingConversationNameUpdate else { return }
+        isLoading = true
+        hasConversationNameUpdateError = false
+        defer { isLoading = false }
+
+        do {
+            try await updateMeetingUseCase.updateConversationName(for: meeting)
+            meetingPendingConversationNameUpdate = nil
+            if participantsNotAdded.isEmpty {
+                onSuccess(meeting)
+            } else {
+                meetingWithParticipantsNotAdded = meeting
+                hasParticipantsNotAddedAlert = true
+            }
+        } catch {
+            let errorType = Swift.type(of: error)
+            WireLogger.search.error("failed to update conversation name: \(String(describing: errorType))")
+            hasConversationNameUpdateError = true
         }
     }
 
     // MARK: - Private
 
-    /// The create modes create the meeting the same way; an instant meeting
-    /// simply starts now and lasts one hour instead of using the schedule
-    /// fields. Editing updates the existing meeting with the form values.
+    /// Creation sends an explicit type. Immediate meetings start now and last one hour.
+    /// Editing updates the existing meeting with the form values.
     private func saveMeeting() async throws -> Meeting {
         switch mode {
         case .instant:
             let startTime = currentDateProvider.now
-            return try await createMeetingUseCase.invoke(
+            let result = try await createMeetingUseCase.invoke(
                 title: meetingTitle,
                 startTime: startTime,
                 endTime: startTime.addingTimeInterval(TimeInterval.oneHour),
                 recurrence: nil,
+                type: .immediate,
+                password: nil,
                 participants: selectedMembers
             )
+            return try completeCreation(result)
         case .scheduled:
-            return try await createMeetingUseCase.invoke(
+            let result = try await createMeetingUseCase.invoke(
                 title: meetingTitle,
                 startTime: startDate,
                 endTime: endDate,
                 recurrence: repeatOption.toRecurrence(),
+                type: .scheduled,
+                password: nil,
                 participants: selectedMembers
             )
+            return try completeCreation(result)
         case let .edit(meeting):
             return try await updateMeetingUseCase.invoke(
                 meeting: meeting,
@@ -243,13 +418,21 @@ package final class MeetingFormViewModel {
         }
     }
 
+    private func completeCreation(_ result: MeetingCreationResult) throws -> Meeting {
+        guard !supportsMeetingLinks || result.link != nil else {
+            throw CreateMeetingUseCaseError.missingLink(meeting: result.meeting)
+        }
+        return result.meeting
+    }
+
     private static func editableTimeRange(for meeting: Meeting, now: Date) -> (start: Date, end: Date) {
-        guard meeting.recurrence != nil, meeting.start < now else {
+        let earliestStart = now.addingTimeInterval(-TimeInterval.oneDay)
+        guard meeting.recurrence != nil, meeting.start < earliestStart else {
             return (meeting.start, meeting.end)
         }
 
         guard let nextOccurrence = MeetingOccurrencePaginator()
-            .occurrences(for: [meeting], startingAt: now, offset: 0, limit: 1)
+            .occurrences(for: [meeting], startingAt: earliestStart, offset: 0, limit: 1)
             .first else {
             return (meeting.start, meeting.end)
         }
@@ -259,7 +442,12 @@ package final class MeetingFormViewModel {
 
     private static func nextSelectableStartDate(after date: Date) -> Date {
         let rounded = date.roundedUpToNextMinuteInterval(timePickerMinuteInterval)
-        return rounded > date ? rounded : rounded.addingTimeInterval(minimumDuration)
+        let start = rounded > date ? rounded : rounded.addingTimeInterval(minimumDuration)
+        // A 23:45 start has no later end on the same day. Use the next midnight instead.
+        if start.addingTimeInterval(minimumDuration) > latestEndDate(for: start) {
+            return Calendar.current.startOfDay(for: start.addingTimeInterval(minimumDuration))
+        }
+        return start
     }
 
     private static func adjustedEndDate(

@@ -63,36 +63,48 @@ struct FilePreviewView: View {
                 case .audio:
                     AudioPlayerView(url: url)
                 case .archive:
-                    ZipView(url: url)
+                    ZipView(url: url) { dismiss() }
                 case .document, .presentation, .spreadsheet:
                     WebView(url: url)
                 default:
                     WebView(url: url)
                 }
             }
-            .navigationTitle(name)
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbarBackground(.visible, for: .navigationBar)
-            .toolbar {
-                ToolbarItem(placement: .principal) {
-                    VStack(spacing: 0) {
-                        Text(name)
-                            .font(for: .h3)
-                            .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
+            .filePreviewNavigationBar(title: name) { dismiss() }
+        }
+    }
+}
 
-                        Text(L10n.Localizable.Conversation.WireCells.Files.ViewerAccess.navigationSubtitle)
-                            .font(for: .subline1)
-                            .foregroundStyle(ColorTheme.Base.secondaryText.color)
-                    }
-                }
+extension View {
+    /// Applies the title, subtitle and confirm button shared by every screen of the
+    /// file preview flow, including nested navigation levels such as ZIP subfolders.
+    func filePreviewNavigationBar(title: String, dismissAction: @escaping () -> Void) -> some View {
+        toolbar {
+            ToolbarItem(placement: .principal) {
+                VStack(spacing: 0) {
+                    Text(title)
+                        .font(for: .h3)
+                        .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
+                        .lineLimit(1)
+                        .truncationMode(.middle)
 
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(L10n.Localizable.General.confirm) {
-                        dismiss()
-                    }
-                    .fontWeight(.semibold)
+                    Text(L10n.Localizable.Conversation.WireCells.Files.ViewerAccess.navigationSubtitle)
+                        .font(for: .subline1)
+                        .foregroundStyle(
+                            ColorTheme.Base.secondaryText.color
+                        )
+                        .lineLimit(1)
                 }
+                .frame(maxWidth: 200)
+            }
+
+            ToolbarItem(placement: .topBarTrailing) {
+                Button(L10n.Localizable.General.confirm) {
+                    dismissAction()
+                }.fontWeight(.semibold)
             }
         }
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbarBackground(.visible, for: .navigationBar)
     }
 }

@@ -147,6 +147,9 @@ public extension ZMConversation {
     /// Point in time when the pending proposals in the conversation
     /// should be committed. If nil there's no pending proposals
     /// to commit.
+    ///
+    /// Superseded by ``PendingProposalTimer``. Only kept to migrate existing values, can be removed in model v144.
+    @available(*, deprecated, message: "Use PendingProposalTimer instead. Can be removed in model v144.")
     @NSManaged var commitPendingProposalDate: Date?
 
     /// The mls verification status.

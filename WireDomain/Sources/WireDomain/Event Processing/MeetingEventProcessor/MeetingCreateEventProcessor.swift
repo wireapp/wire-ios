@@ -17,34 +17,42 @@
 //
 
 import WireCallingDomain
+import WireLogging
 import WireNetwork
 
 struct MeetingCreateEventProcessor: MeetingCreateEventProcessorProtocol {
 
     let repository: any MeetingRepositoryProtocol
     let conversationRepository: any ConversationRepositoryProtocol
+    let reconcileReminder: @Sendable (Meeting) async throws -> Void
+    let cancelReminder: @Sendable (WireNetwork.QualifiedID) async -> Void
 
     func processEvent(_ event: MeetingCreateEvent) async throws {
         // A nil meeting no longer exists on the backend; its local copy
         // was already deleted, so there is nothing left to link.
-        guard let meeting = try await repository.pullMeeting(id: event.meetingID) else { return }
+        guard let meeting = try await repository.pullMeeting(id: event.meetingID) else {
+            await cancelReminder(event.meetingID)
+            return
+        }
+
+        do {
+            try await reconcileReminder(meeting)
+        } catch {
+            WireLogger.eventProcessing.error("Failed to schedule meeting reminder: \(error)")
+        }
 
         // The meeting's conversation arrives via its own conversation.create-meeting
         // event, but that event isn't guaranteed to have been processed before this
-        // one. If the conversation isn't stored locally yet, pull it and store the
-        // meeting again so the two are linked; meetings without a locally stored
-        // conversation are not listed.
-        let conversationID = meeting.conversationID
-        guard await conversationRepository.fetchConversation(
-            id: conversationID.id,
-            domain: conversationID.domain
-        ) == nil else { return }
+        // one. A stored reference without metadata also needs to be pulled.
+        if meeting.conversation == nil {
+            let conversationID = meeting.conversationID
 
-        try await conversationRepository.pullConversation(
-            id: conversationID.id,
-            domain: conversationID.domain
-        )
-        await repository.storeMeeting(meeting)
+            try await conversationRepository.pullConversation(
+                id: conversationID.id,
+                domain: conversationID.domain
+            )
+            await repository.storeMeeting(meeting)
+        }
     }
 
 }

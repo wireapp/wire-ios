@@ -27,10 +27,12 @@ on:
         required: true
       DD_API_KEY:
         required: true
-      # Slack webhook this run should post to. Callers resolve which
+      # Wire webhook this run should post to. Callers resolve which
       # environment-specific webhook to pass, e.g.
-      # `SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_CI_WEBHOOK }}`.
-      SLACK_WEBHOOK_URL:
+      # `WIRE_WEBHOOK_URL: ${{ secrets.WIRE_IOS_CI_URL }}`.
+      WIRE_WEBHOOK_URL:
+        required: true
+      WIRE_WEBHOOK_TOKEN:
         required: true
 
 env: # https://docs.fastlane.tools/getting-started/ios/setup/
@@ -127,6 +129,10 @@ jobs:
             bundle exec fastlane select_framework scheme:$scheme
           done
 
+      - name: Delete simulator
+        if: always()
+        run: bundle exec fastlane delete_test_simulator
+
       - name: Check for duplicate symbol implementations
         if: always()
         continue-on-error: true
@@ -210,7 +216,8 @@ jobs:
       - name: Notify on Wire
         uses: ./.github/actions/notify-wire
         env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          WIRE_WEBHOOK_URL: ${{ secrets.WIRE_WEBHOOK_URL }}
+          WIRE_WEBHOOK_TOKEN: ${{ secrets.WIRE_WEBHOOK_TOKEN }}
         with:
           notify: ${{ inputs.notify }}
           status: ${{ needs.test-framework.result }}

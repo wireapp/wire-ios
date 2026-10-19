@@ -42,7 +42,6 @@ final class ConversationViewControllerSnapshotTests: ZMSnapshotTestCase, CoreDat
     @MainActor
     override func setUp() async throws {
         try await super.setUp()
-        DeveloperFlag.enableDrivePermissions.enable(false)
         mockMainCoordinator = .init(mainCoordinator: MockMainCoordinator())
     }
 
@@ -193,7 +192,6 @@ extension ConversationViewControllerSnapshotTests {
         // given
         let mockConversation = createTeamGroupConversation()
         UIColor.setAccentOverride(.green)
-        DeveloperFlag.enableDrivePermissions.enable(true)
 
         // when, conversation is a Wire Drive conversation and self user is a guest
         mockConversation.cellsState = .ready

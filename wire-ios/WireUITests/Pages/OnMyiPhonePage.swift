@@ -54,11 +54,19 @@ class OnMyiPhonePage: PageModel {
     }
 
     func selectBackupFileWithPassword(withName name: String) throws -> SetPasswordPage {
+        XCTAssertTrue(
+            backupFile(name).waitForExistence(timeout: 15),
+            "Backup file \(name) not listed in the Files picker"
+        )
         backupFile(name).tap()
         return try SetPasswordPage()
     }
 
     func selectBackupFileWithoutPassword(withName name: String) throws -> BackupOrRestorePage {
+        XCTAssertTrue(
+            backupFile(name).waitForExistence(timeout: 15),
+            "Backup file \(name) not listed in the Files picker"
+        )
         backupFile(name).tap()
         return try BackupOrRestorePage()
     }

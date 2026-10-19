@@ -22,7 +22,6 @@ import Foundation
 
 package actor FetchUpcomingMeetingsUseCase: FetchUpcomingMeetingsUseCaseProtocol {
 
-    private static let maximumPageSize = 20
     private static let sourceMeetingFetchLimit = Int.max / 2
 
     private let repository: any MeetingRepositoryProtocol
@@ -39,7 +38,7 @@ package actor FetchUpcomingMeetingsUseCase: FetchUpcomingMeetingsUseCaseProtocol
     }
 
     package func invoke(pageSize: Int, offset: Int) async throws -> PaginatedMeetings {
-        let pageSize = min(max(pageSize, 0), Self.maximumPageSize)
+        let pageSize = max(pageSize, 0)
         let offset = max(offset, 0)
         guard pageSize > 0 else {
             return PaginatedMeetings(occurrences: [], hasMore: false, nextOffset: offset)

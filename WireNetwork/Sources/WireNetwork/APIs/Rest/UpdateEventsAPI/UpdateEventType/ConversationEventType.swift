@@ -25,6 +25,7 @@ enum ConversationEventType: String {
     case create = "conversation.create"
     case createMeeting = "conversation.create-meeting"
     case delete = "conversation.delete"
+    case deleteMeeting = "conversation.delete-meeting"
     case memberJoin = "conversation.member-join"
     case memberLeave = "conversation.member-leave"
     case memberUpdate = "conversation.member-update"

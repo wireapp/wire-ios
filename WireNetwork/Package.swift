@@ -54,6 +54,7 @@ let package = Package(
                 .process("APIs/Rest/MLSAPI/Resources"),
                 .process("APIs/Rest/Search/Resources"),
                 .process("APIs/Rest/SelfUserAPI/Resources"),
+                .process("APIs/Rest/SystemSettingsAPI/Resources"),
                 .process("APIs/Rest/TeamsAPI/Resources"),
                 .process("APIs/Rest/UpdateEventsAPI/Resources"),
                 .process("APIs/Rest/UserClientsAPI/Resources"),

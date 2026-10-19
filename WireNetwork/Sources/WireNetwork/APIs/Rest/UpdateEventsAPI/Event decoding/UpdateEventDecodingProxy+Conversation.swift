@@ -42,7 +42,7 @@ extension UpdateEventDecodingProxy {
             let event = try ConversationCreateEventDecoder().decode(from: container)
             updateEvent = .conversation(.create(event))
 
-        case .delete:
+        case .delete, .deleteMeeting:
             let event = try ConversationDeleteEventDecoder().decode(from: container)
             updateEvent = .conversation(.delete(event))
 

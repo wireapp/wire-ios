@@ -171,3 +171,15 @@ final class ZMUserSessionTests_Syncing: ZMUserSessionTestsBase {
     }
 
 }
+
+final class ZMUserSessionSyncErrorAlertTests: XCTestCase {
+
+    func testSyncErrorAlertOmitsOfflineErrors() {
+        let offlineError = NSError(domain: NSURLErrorDomain, code: URLError.notConnectedToInternet.rawValue)
+        let unexpectedError = NSError(domain: "UnexpectedError", code: offlineError.code)
+
+        XCTAssertFalse(ZMUserSession.shouldShowSyncErrorAlert(for: offlineError))
+        XCTAssertTrue(ZMUserSession.shouldShowSyncErrorAlert(for: unexpectedError))
+    }
+
+}

@@ -61,6 +61,7 @@ struct MeetingRow: View {
             VStack(alignment: .leading, spacing: 2) {
                 HStack(alignment: .top) {
                     Text(meeting.title)
+                        .accessibilityIdentifier(Locators.WireMeetings.MeetingRow.title)
                         .font(for: .body2)
                         .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
                         .lineLimit(2)
@@ -78,6 +79,7 @@ struct MeetingRow: View {
                                     .renderingMode(.template)
                             }
                         }
+                        .disabled(meeting.conversation == nil)
 
                         if isOrganizer {
                             Button {
@@ -85,18 +87,22 @@ struct MeetingRow: View {
                             } label: {
                                 Label(Strings.Actions.edit, systemImage: "pencil")
                             }
+                            .disabled(meeting.conversation == nil)
 
                             Button(role: .destructive) {
                                 onDelete()
                             } label: {
                                 Label(Strings.Actions.delete, systemImage: "trash")
                             }
+                            .tint(ColorTheme.Base.error.color)
                         } else {
                             Button(role: .destructive) {
                                 onDelete()
                             } label: {
                                 Label(Strings.Actions.deleteForMe, systemImage: "trash")
                             }
+                            .tint(ColorTheme.Base.error.color)
+                            .disabled(meeting.conversation == nil)
                             .accessibilityIdentifier(Locators.WireMeetings.MeetingRow.deleteForMeButton)
                         }
                     } label: {
@@ -108,16 +114,19 @@ struct MeetingRow: View {
                             .contentShape(Rectangle())
                     }
                     .menuOrder(.fixed)
+                    .accessibilityIdentifier(Locators.WireMeetings.MeetingRow.menu)
                     .padding(.vertical, -12)
                 }
 
                 HStack(spacing: 8) {
                     Text(formatTime(occurrence))
+                        .accessibilityIdentifier(Locators.WireMeetings.MeetingRow.time)
                         .font(for: .subline1)
                         .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
 
                     if let recurrence = meeting.recurrence {
                         recurrenceBadge(recurrence.title)
+                            .accessibilityIdentifier(Locators.WireMeetings.MeetingRow.recurrence)
                     }
                 }
 
@@ -134,6 +143,14 @@ struct MeetingRow: View {
                 }
             }
         }
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier(
+            Locators.WireMeetings.MeetingRow.rowIdentifier(
+                domain: meeting.id.domain,
+                id: meeting.id.id,
+                start: occurrence.start
+            )
+        )
     }
 
     private var joinButton: some View {
@@ -152,6 +169,7 @@ struct MeetingRow: View {
             .background(ColorTheme.Base.primary(wireAccentColor).color, in: Capsule())
         }
         .buttonStyle(.plain)
+        .disabled(meeting.conversation == nil)
         .accessibilityIdentifier(Locators.WireMeetings.MeetingRow.joinButton)
         .accessibilityLabel(Text(L10n.Accessibility.WireMeetings.JoinButton.description))
     }
@@ -241,7 +259,7 @@ private extension MeetingRecurrence {
     VStack(alignment: .leading, spacing: 24) {
         MeetingRow(
             occurrence: MeetingOccurrence(meeting: meeting),
-            formatTime: { formatter.startedAt($0.start) },
+            formatTime: { formatter.timeRange(from: $0.start, to: $0.end) },
             isOrganizer: true,
             isLive: true,
             onEdit: {},
@@ -251,7 +269,7 @@ private extension MeetingRecurrence {
 
         MeetingRow(
             occurrence: MeetingOccurrence(meeting: meeting),
-            formatTime: { formatter.startedAt($0.start) },
+            formatTime: { formatter.timeRange(from: $0.start, to: $0.end) },
             isOrganizer: true,
             isAttending: true,
             isLive: true,

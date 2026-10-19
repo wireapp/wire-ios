@@ -184,6 +184,12 @@ class ConversationsPage: PageModel {
         return try ArchivedConversationsPage()
     }
 
+    func openMeetings() throws -> MeetingsPage {
+        XCTAssertTrue(app.tabBars.buttons[Locators.ConversationsPage.bottomBarMeetingsButton.rawValue]
+            .waitAndTap(timeout: 15))
+        return try MeetingsPage()
+    }
+
     func openUserProfilePage() throws -> UserProfilePage {
         try letTheSyncFinish()
         accountProfileImageView.waitAndTap()
@@ -245,6 +251,29 @@ class ConversationsPage: PageModel {
             RunLoop.current.run(until: Date().addingTimeInterval(1.0))
         }
         return try ActiveConversationPage()
+    }
+
+    /// Opens the conversation whose name matches `name`.
+    @discardableResult
+    func openConversation(named name: String) throws -> ActiveConversationPage {
+        try letTheSyncFinish()
+        let cell = conversationCell(named: name)
+        XCTAssertTrue(
+            cell.waitForExistence(timeout: 10),
+            "Conversation '\(name)' did not appear in the list"
+        )
+        cell.waitAndTap()
+        return try ActiveConversationPage()
+    }
+
+    /// Names of the conversation cells, ordered top-to-bottom as displayed in the list.
+    func conversationNamesInOrder() throws -> [String] {
+        try letTheSyncFinish()
+        XCTAssertTrue(conversationCell.waitForExistence(timeout: 10), "No conversation cells appeared in the list")
+        return conversationCells
+            .allElementsBoundByIndex
+            .sorted { $0.frame.minY < $1.frame.minY }
+            .map(\.label)
     }
 
     @discardableResult

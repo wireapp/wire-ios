@@ -4728,24 +4728,24 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
 
     // MARK: - generatePrekey
 
-    public var generatePrekeyId_Invocations: [UInt16] = []
-    public var generatePrekeyId_MockError: Error?
-    public var generatePrekeyId_MockMethod: ((UInt16) async throws -> String)?
-    public var generatePrekeyId_MockValue: String?
+    public var generatePrekey_Invocations: [Void] = []
+    public var generatePrekey_MockError: Error?
+    public var generatePrekey_MockMethod: (() async throws -> IdPrekeyTuple)?
+    public var generatePrekey_MockValue: IdPrekeyTuple?
 
-    public func generatePrekey(id: UInt16) async throws -> String {
-        generatePrekeyId_Invocations.append(id)
+    public func generatePrekey() async throws -> IdPrekeyTuple {
+        generatePrekey_Invocations.append(())
 
-        if let error = generatePrekeyId_MockError {
+        if let error = generatePrekey_MockError {
             throw error
         }
 
-        if let mock = generatePrekeyId_MockMethod {
-            return try await mock(id)
-        } else if let mock = generatePrekeyId_MockValue {
+        if let mock = generatePrekey_MockMethod {
+            return try await mock()
+        } else if let mock = generatePrekey_MockValue {
             return mock
         } else {
-            fatalError("no mock for `generatePrekeyId`")
+            fatalError("no mock for `generatePrekey`")
         }
     }
 

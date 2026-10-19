@@ -31,13 +31,10 @@ struct MeetingDeleteEventNotificationBuilder: MeetingDeleteEventNotificationBuil
 
     let meetingLocalStore: any MeetingLocalStoreProtocol
     let userLocalStore: any UserLocalStoreProtocol
-    // TODO: [WPB-25517] Remove developer flag before release
-    let developerFlagStorage: UserDefaults
     let featureConfigLocalStore: any FeatureConfigLocalStoreProtocol
     let accountID: UUID
 
     func buildContent(event: MeetingDeleteEvent) async -> UserNotification? {
-        guard developerFlagStorage.bool(forKey: DeveloperFlag.wireMeetings.rawValue) else { return nil }
         guard let feature = try? await featureConfigLocalStore.fetchFeature(name: .meetings) else { return nil }
         guard await featureConfigLocalStore.isFeatureEnabled(feature: feature) else { return nil }
         guard let meeting = await meetingLocalStore.storedMeeting(id: event.meetingID) else { return nil }

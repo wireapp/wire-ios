@@ -58,7 +58,8 @@ extension WireCallCenterV3: ZMConversationObserver {
                     conversationId: conversationId,
                     callerId: callerId,
                     messageTime: Date(),
-                    previousCallState: previousSnapshot.callState
+                    previousCallState: previousSnapshot.callState,
+                    callEndReason: nil
                 )
                 notification.post(in: context.notificationContext)
             }
@@ -107,13 +108,12 @@ extension WireCallCenterV3: ZMConversationObserver {
     }
 
     private func endCallIfNeeded(_ changeInfo: ConversationChangeInfo) {
-        guard let conversationId = changeInfo.conversation.avsIdentifier else { return }
+        guard
+            let conversationId = changeInfo.conversation.avsIdentifier,
+            !changeInfo.conversation.isDeletedRemotely
+        else { return }
 
-        if changeInfo.isDeletedChanged, changeInfo.conversation.isDeletedRemotely {
-            Self.logger.info("closing call because conversation was deleted")
-            closeCall(conversationId: conversationId)
-
-        } else if !changeInfo.conversation.isSelfAnActiveMember {
+        if !changeInfo.conversation.isSelfAnActiveMember {
             Self.logger.info("closing call because self user is not an active member")
             closeCall(conversationId: conversationId)
         }
@@ -229,6 +229,7 @@ extension WireCallCenterV3 {
         )
 
         handleEvent("answered-call") {
+            self.callsAnsweredElsewhere.remove(conversationId)
             let callState = CallState.answered(degraded: self.isDegraded(conversationId: conversationId))
             self.handle(callState: callState, conversationId: conversationId)
         }
@@ -257,6 +258,7 @@ extension WireCallCenterV3 {
         )
 
         handleEvent("established-call") {
+            self.callsAnsweredElsewhere.remove(conversationId)
             // WORKAROUND: the call established handler is called once for every participant in a
             // group call. Until that's no longer the case we must take care to only set establishedDate once.
             if self.callState(conversationId: conversationId) != .established {
@@ -299,6 +301,19 @@ extension WireCallCenterV3 {
         )
 
         handleEvent("closed-call") {
+            var reason = reason
+
+            if reason == .answeredElsewhere, self.callSnapshots[conversationId]?.isGroup == true {
+                self.callsAnsweredElsewhere.insert(conversationId)
+                reason = .stillOngoing
+            } else if reason != .stillOngoing {
+                let wasAnsweredElsewhere = self.callsAnsweredElsewhere.remove(conversationId) != nil
+                if reason == .normal, wasAnsweredElsewhere {
+                    reason = .answeredElsewhere
+                }
+                self.clearAnsweredElsewhereNotificationState(conversationId: conversationId)
+            }
+
             self.handle(
                 callState: .terminating(reason: reason),
                 conversationId: conversationId,

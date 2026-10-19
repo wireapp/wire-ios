@@ -387,6 +387,7 @@ public struct SharingSessionLoader {
         )
         let completionHandlers = ClientSessionComponent.CompletionHandlers(
             onProcessedCallEvent: { _ in },
+            isApplicationActive: { false },
             onSelfClientInvalidated: {},
             onAuthenticationFailure: {},
             onProcessedTypingUsers: { _ in }

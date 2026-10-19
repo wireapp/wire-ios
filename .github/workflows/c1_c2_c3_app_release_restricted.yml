@@ -3,6 +3,14 @@ name: C1 C2 C3 Restricted
 on: 
   workflow_dispatch:
     inputs:
+      mac_runner:
+        description: 'macOS runner'
+        type: choice
+        options:
+          - in-house
+          - cirrus
+          - github
+        default: in-house
       column:
         description: 'Column (C1, C2, C3, all)'
         type: choice
@@ -40,6 +48,7 @@ jobs:
     with:
       fastlane_action: appstore_col_1_restricted
       is_cloud_build: false
+      mac_runner: ${{ inputs.mac_runner || vars.DEFAULT_MAC_RUNNER }}
       countly_enabled: false
       datadog_enabled: ${{ inputs.datadog_enabled }}
       skip_security_tests: ${{ inputs.skip_security_tests }}
@@ -71,7 +80,8 @@ jobs:
       CLIENT_NAME_C1_C2_C3: ${{ secrets.CLIENT_NAME_C1_C2_C3 }}
       CLIENT_ID_C1_C2_C3: ${{ secrets.CLIENT_ID_C1_C2_C3 }}
       JIRA_TOKEN: ${{ secrets.JIRA_TOKEN }}
-      SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_BUILD_WEBHOOK }}
+      WIRE_WEBHOOK_URL: ${{ secrets.WIRE_IOS_DELIVERY_URL }}
+      WIRE_WEBHOOK_TOKEN: ${{ secrets.WIRE_IOS_DELIVERY_TOKEN }}
 
   column_2_restricted:
     if: ${{ inputs.column == 'C2' || inputs.column == 'all' }}
@@ -79,6 +89,7 @@ jobs:
     with:
       fastlane_action: appstore_col_2_restricted
       is_cloud_build: false
+      mac_runner: ${{ inputs.mac_runner || vars.DEFAULT_MAC_RUNNER }}
       countly_enabled: false
       datadog_enabled: ${{ inputs.datadog_enabled }}
       skip_security_tests: ${{ inputs.skip_security_tests }}
@@ -110,7 +121,8 @@ jobs:
       CLIENT_NAME_C1_C2_C3: ${{ secrets.CLIENT_NAME_C1_C2_C3 }}
       CLIENT_ID_C1_C2_C3: ${{ secrets.CLIENT_ID_C1_C2_C3 }}
       JIRA_TOKEN: ${{ secrets.JIRA_TOKEN }}
-      SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_BUILD_WEBHOOK }}
+      WIRE_WEBHOOK_URL: ${{ secrets.WIRE_IOS_DELIVERY_URL }}
+      WIRE_WEBHOOK_TOKEN: ${{ secrets.WIRE_IOS_DELIVERY_TOKEN }}
 
   column_3_restricted:
     if: ${{ inputs.column == 'C3' || inputs.column == 'all' }}
@@ -118,6 +130,7 @@ jobs:
     with:
       fastlane_action: appstore_col_3_restricted
       is_cloud_build: false
+      mac_runner: ${{ inputs.mac_runner || vars.DEFAULT_MAC_RUNNER }}
       countly_enabled: false
       datadog_enabled: ${{ inputs.datadog_enabled }}
       skip_security_tests: ${{ inputs.skip_security_tests }}
@@ -149,4 +162,5 @@ jobs:
       CLIENT_NAME_C1_C2_C3: ${{ secrets.CLIENT_NAME_C1_C2_C3 }}
       CLIENT_ID_C1_C2_C3: ${{ secrets.CLIENT_ID_C1_C2_C3 }}
       JIRA_TOKEN: ${{ secrets.JIRA_TOKEN }}
-      SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_BUILD_WEBHOOK }}
+      WIRE_WEBHOOK_URL: ${{ secrets.WIRE_IOS_DELIVERY_URL }}
+      WIRE_WEBHOOK_TOKEN: ${{ secrets.WIRE_IOS_DELIVERY_TOKEN }}

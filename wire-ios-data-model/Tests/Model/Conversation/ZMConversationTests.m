@@ -894,6 +894,10 @@
     
     // then
     XCTAssertEqual(conversation.conversationType, ZMConversationTypeOneOnOne);
+
+    // Meetings must remain groups even before their name arrives.
+    conversation.groupType = ConversationGroupTypeMeeting;
+    XCTAssertEqual(conversation.conversationType, ZMConversationTypeGroup);
 }
 
 - (void)testThatGroupConversationInTeamWithOnlyBotIsConsideredGroup

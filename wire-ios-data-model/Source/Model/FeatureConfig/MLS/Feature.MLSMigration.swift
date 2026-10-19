@@ -54,12 +54,18 @@ public extension Feature {
 
             public let finaliseRegardlessAfter: Date?
 
+            /// Whether the user can manually trigger the migration.
+
+            public let allowManualMigration: Bool?
+
             public init(
                 startTime: Date? = nil,
-                finaliseRegardlessAfter: Date? = nil
+                finaliseRegardlessAfter: Date? = nil,
+                allowManualMigration: Bool? = nil
             ) {
                 self.startTime = startTime
                 self.finaliseRegardlessAfter = finaliseRegardlessAfter
+                self.allowManualMigration = allowManualMigration
             }
         }
     }

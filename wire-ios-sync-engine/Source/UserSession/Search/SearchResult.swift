@@ -42,6 +42,10 @@ public struct SearchResult {
 
     public var apps: [any UserType]
 
+    /// Team collaborators who are not apps.
+
+    public var collaborators: [ZMSearchUser] = []
+
     public var bots: [any UserType]
 
     /// Cache for search users.
@@ -59,6 +63,7 @@ extension SearchResult {
         self.directory = []
         self.conversations = []
         self.apps = []
+        self.collaborators = []
         self.bots = []
         self.searchUsersCache = nil
     }
@@ -92,6 +97,7 @@ extension SearchResult {
         self.directory = searchUsers.filter { !$0.isConnected && !$0.isTeamMember }
         self.conversations = []
         self.apps = []
+        self.collaborators = []
         self.bots = []
         self.searchUsersCache = searchUsersCache
 
@@ -143,6 +149,7 @@ extension SearchResult {
             directory: directory,
             conversations: copiedConversations,
             apps: apps,
+            collaborators: collaborators,
             bots: bots,
             searchUsersCache: searchUsersCache
         )
@@ -156,6 +163,7 @@ extension SearchResult {
             directory: directory,
             conversations: result.conversations,
             apps: result.apps,
+            collaborators: collaborators,
             bots: bots,
             searchUsersCache: searchUsersCache
         )
@@ -173,6 +181,26 @@ extension SearchResult {
                     newApp.remoteIdentifier == existingApp.remoteIdentifier
                 }
             },
+            collaborators: collaborators,
+            bots: bots,
+            searchUsersCache: searchUsersCache
+        )
+    }
+
+    func union(withCollaboratorsResult result: SearchResult) -> SearchResult {
+        let existingUsers = contacts + teamMembers + collaborators
+        return SearchResult(
+            context: context,
+            contacts: contacts,
+            teamMembers: teamMembers,
+            directory: directory,
+            conversations: conversations,
+            apps: apps,
+            collaborators: collaborators + result.collaborators.filter { newCollaborator in
+                !existingUsers.contains { existingUser in
+                    newCollaborator.remoteIdentifier == existingUser.remoteIdentifier
+                }
+            },
             bots: bots,
             searchUsersCache: searchUsersCache
         )
@@ -186,6 +214,7 @@ extension SearchResult {
             directory: directory,
             conversations: conversations,
             apps: apps,
+            collaborators: collaborators,
             bots: bots + result.bots,
             searchUsersCache: searchUsersCache
         )
@@ -199,6 +228,7 @@ extension SearchResult {
             directory: result.directory,
             conversations: conversations,
             apps: apps,
+            collaborators: collaborators,
             bots: bots,
             searchUsersCache: searchUsersCache
         )
@@ -212,6 +242,7 @@ extension SearchResult {
             directory: result.directory + directory,
             conversations: conversations,
             apps: apps,
+            collaborators: collaborators,
             bots: bots,
             searchUsersCache: searchUsersCache
         )

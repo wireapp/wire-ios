@@ -42,6 +42,8 @@ final class AppRootRouter {
     private let foregroundNotificationFilter: ForegroundNotificationFilter
     private var authenticatedRouter: AuthenticatedRouter?
     private let sceneConnectionOptions: UIScene.ConnectionOptions
+    private var hasCheckedAccountLimit = false
+    private let logOutHelper = LogOutHelper(showLoading: {}, hideLoading: {})
 
     private var observerTokens: [NSObjectProtocol] = []
     private var authenticatedBlocks: [() -> Void] = []
@@ -474,7 +476,49 @@ extension AppRootRouter: AppStateCalculatorDelegate {
 
         self.authenticatedRouter = authenticatedRouter
 
-        replaceRootViewController(by: authenticatedRouter.zClientViewController, completion: completion)
+        replaceRootViewController(by: authenticatedRouter.zClientViewController) { [weak self] in
+            completion()
+            self?.presentAccountLimitAlertIfNeeded()
+        }
+    }
+
+    /// Shown once per cold start, when more accounts are logged in than the device allows.
+    @MainActor
+    private func presentAccountLimitAlertIfNeeded() {
+        guard !hasCheckedAccountLimit else { return }
+        hasCheckedAccountLimit = true
+
+        let maxAccounts = sessionManager.maxNumberAccounts
+        let excessAccounts = sessionManager.accountManager.numberOfAccounts - maxAccounts
+        guard excessAccounts > 0 else { return }
+
+        let removesTwo = excessAccounts >= 2
+        let title = removesTwo
+            ? L10n.Localizable.AccountLimitAlert.Title.removeTwo
+            : L10n.Localizable.AccountLimitAlert.Title.removeOne
+        let message = switch (maxAccounts, removesTwo) {
+        case (1, true): L10n.Localizable.AccountLimitAlert.Message.MaxOne.removeTwo
+        case (1, false): L10n.Localizable.AccountLimitAlert.Message.MaxOne.removeOne
+        default: L10n.Localizable.AccountLimitAlert.Message.MaxTwo.removeOne
+        }
+
+        let alert = UIAlertController(
+            title: title,
+            message: message,
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(title: L10n.Localizable.AccountLimitAlert.later, style: .cancel))
+        alert
+            .addAction(UIAlertAction(
+                title: L10n.Localizable.AccountLimitAlert.logout,
+                style: .destructive
+            ) { [weak self] _ in
+                guard let self, let userSession = sessionManager.activeUserSession else { return }
+                guard let logOutViewController = logOutHelper
+                    .makeLogOutViewControllerToPresent(userSession: userSession) else { return }
+                rootViewController.present(logOutViewController, animated: true)
+            })
+        rootViewController.present(alert, animated: true)
     }
 
     @MainActor
@@ -624,46 +668,62 @@ extension AppRootRouter {
     }
 
     private func presentAlertForDeletedAccountIfNeeded(_ error: NSError?) {
-        guard
-            error?.userSessionErrorCode == .accountDeleted,
-            let reason = error?.userInfo[ZMAccountDeletedReasonKey] as? ZMAccountDeletedReason
-        else {
-            return
-        }
+        switch error?.userSessionErrorCode {
+        case .accountDeleted:
+            guard let reason = error?.userInfo[ZMAccountDeletedReasonKey] as? ZMAccountDeletedReason else {
+                return
+            }
 
-        switch reason {
-        case .sessionExpired:
-            let alert = UIAlertController(
-                title: L10n.Localizable.AccountDeletedSessionExpiredAlert.title,
-                message: L10n.Localizable.AccountDeletedSessionExpiredAlert.message,
-                preferredStyle: .alert
-            )
-            alert.addAction(UIAlertAction(
-                title: L10n.Localizable.General.ok,
-                style: .cancel
-            ))
-            rootViewController.present(alert, animated: true)
+            switch reason {
+            case .sessionExpired:
+                presentSessionExpiredAlert()
 
-        case .biometricPasscodeNotAvailable:
-            let alert = UIAlertController(
-                title: L10n.Localizable.AccountDeletedMissingPasscodeAlert.title,
-                message: L10n.Localizable.AccountDeletedMissingPasscodeAlert.message,
-                preferredStyle: .alert
-            )
-            alert.addAction(UIAlertAction(
-                title: L10n.Localizable.General.ok,
-                style: .cancel
-            ))
-            rootViewController.present(alert, animated: true)
+            case .biometricPasscodeNotAvailable:
+                let alert = UIAlertController(
+                    title: L10n.Localizable.AccountDeletedMissingPasscodeAlert.title,
+                    message: L10n.Localizable.AccountDeletedMissingPasscodeAlert.message,
+                    preferredStyle: .alert
+                )
+                alert.addAction(UIAlertAction(
+                    title: L10n.Localizable.General.ok,
+                    style: .cancel
+                ))
+                UIApplication.shared.topmostViewController(onlyFullScreen: false)?.present(alert, animated: true)
 
-        case .databaseWiped:
-            let wipeCompletionViewController = WipeCompletionViewController()
-            wipeCompletionViewController.modalPresentationStyle = .fullScreen
-            rootViewController.present(wipeCompletionViewController, animated: true)
+            case .databaseWiped:
+                let wipeCompletionViewController = WipeCompletionViewController()
+                wipeCompletionViewController.modalPresentationStyle = .fullScreen
+                UIApplication.shared.topmostViewController(onlyFullScreen: false)?.present(
+                    wipeCompletionViewController,
+                    animated: true
+                )
+
+            default:
+                break
+            }
+
+        case .accessTokenExpired:
+            // Reached e.g. when the self user is removed from the team: the backend
+            // revokes the access token before (or instead of) the account-deleted
+            // event ever gets processed, so this case needs its own alert too.
+            presentSessionExpiredAlert()
 
         default:
             break
         }
+    }
+
+    private func presentSessionExpiredAlert() {
+        let alert = UIAlertController(
+            title: L10n.Localizable.AccountDeletedSessionExpiredAlert.title,
+            message: L10n.Localizable.AccountDeletedSessionExpiredAlert.message,
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(
+            title: L10n.Localizable.General.ok,
+            style: .cancel
+        ))
+        UIApplication.shared.topmostViewController(onlyFullScreen: false)?.present(alert, animated: true)
     }
 }
 

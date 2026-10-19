@@ -3,6 +3,14 @@ name: Gov
 on:
   workflow_dispatch:
     inputs:
+      mac_runner:
+        description: 'macOS runner'
+        type: choice
+        options:
+          - in-house
+          - cirrus
+          - github
+        default: in-house
       datadog_enabled:
         description: 'Enable DataDog'
         type: boolean
@@ -22,6 +30,7 @@ jobs:
       is_cloud_build: false
       countly_enabled: false
       datadog_enabled: ${{ inputs.datadog_enabled }}
+      mac_runner: ${{ inputs.mac_runner || vars.DEFAULT_MAC_RUNNER }}
       skip_security_tests: ${{ inputs.skip_security_tests }}
     secrets:
       KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
@@ -50,4 +59,5 @@ jobs:
       CLIENT_NAME_C1_C2_C3: ${{ secrets.CLIENT_NAME_C1_C2_C3 }}
       CLIENT_ID_C1_C2_C3: ${{ secrets.CLIENT_ID_C1_C2_C3 }}
       JIRA_TOKEN: ${{ secrets.JIRA_TOKEN }}
-      SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_BUILD_WEBHOOK }}
+      WIRE_WEBHOOK_URL: ${{ secrets.WIRE_IOS_DELIVERY_URL }}
+      WIRE_WEBHOOK_TOKEN: ${{ secrets.WIRE_IOS_DELIVERY_TOKEN }}

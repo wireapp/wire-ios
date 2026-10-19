@@ -129,6 +129,11 @@ final class FilesViewTests: XCTestCase {
 
         networkMonitor = NetworkMonitor(monitor: MockNWPathMonitoring(), initialStatus: .connected)
         networkMonitor.currentStatus = .connected
+        WRDateFormatter.override(
+            locale: Locale(identifier: "en_US_POSIX"),
+            calendar: Calendar(identifier: .gregorian),
+            timeZone: .gmt
+        )
     }
 
     @MainActor
@@ -150,6 +155,7 @@ final class FilesViewTests: XCTestCase {
         observeAssetUseCase = nil
         moveNodeUseCase = nil
         networkMonitor = nil
+        WRDateFormatter.resetOverrides()
     }
 
     @MainActor
@@ -242,6 +248,42 @@ final class FilesViewTests: XCTestCase {
     }
 
     @MainActor
+    func testFilesViewItemView_modifiedDateFormats() {
+        // Wednesday, 11 October 2023, 12:00 UTC
+        let now = try! Date("2023-10-11T12:00:00Z", strategy: .iso8601)
+
+        // One entry per branch of `Date.formattedDate(justNowText:now:)`.
+        let modifiedDates: [(name: String, date: Date)] = [
+            ("just now", now.addingTimeInterval(-10)),
+            ("within the last hour", now.addingTimeInterval(-30 * 60)),
+            ("today", now.addingTimeInterval(-3 * 60 * 60)),
+            ("yesterday", now.addingTimeInterval(-24 * 60 * 60)),
+            ("this week", now.addingTimeInterval(-2 * 24 * 60 * 60)),
+            ("older, this year", try! Date("2023-03-15T12:00:00Z", strategy: .iso8601)),
+            ("older, other year", try! Date("2022-03-15T12:00:00Z", strategy: .iso8601))
+        ]
+
+        let view = VStack(spacing: 0) {
+            ForEach(modifiedDates, id: \.name) { entry in
+                FilesItemView(
+                    viewModel: .make(
+                        item: self.filesViewItem(name: entry.name, modifiedAt: entry.date),
+                        currentDateProvider: FixedDateProvider(now: now)
+                    )
+                )
+            }
+        }
+        .frame(width: 390)
+
+        snapshotHelper
+            .withUserInterfaceStyle(.light)
+            .verify(matching: view, named: "light", record: record)
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: view, named: "dark", record: record)
+    }
+
+    @MainActor
     func testFilesViewItemView_whenDownloading() {
         let item = filesViewItem()
 
@@ -314,8 +356,6 @@ final class FilesViewTests: XCTestCase {
             downloadState: .downloaded(cacheKey: "")
         )
         let viewModel = FilesItemViewModel.make(item: item, asset: asset, isBrowsing: true)
-        // TODO: [WPB-25941] Remove when feature is complete
-        viewModel.isDrivePermissionsFlagEnabled = true
         let view = FilesItemView(viewModel: viewModel)
             .frame(width: 390)
 
@@ -399,7 +439,8 @@ final class FilesViewTests: XCTestCase {
         ownedBy: String = "Natsuko Shiroi",
         icon: WireDriveFileType = .image,
         tags: [String] = [],
-        readOnly: Bool = false
+        readOnly: Bool = false,
+        modifiedAt: Date? = nil
     ) -> FilesViewItem {
         FilesViewItem(
             id: UUID(),
@@ -408,7 +449,7 @@ final class FilesViewTests: XCTestCase {
             name: name,
             filePath: "",
             ownedBy: ownedBy,
-            modifiedAt: modifiedAt,
+            modifiedAt: modifiedAt ?? self.modifiedAt,
             icon: icon,
             tags: tags,
             isEditable: false,
@@ -490,6 +531,7 @@ private extension FilesItemViewModel {
     static func make(
         item: FilesViewItem,
         asset: WireDriveLocalAsset? = nil,
+        currentDateProvider: any CurrentDateProviding = .system,
         isBrowsing: Bool = false
     ) -> FilesItemViewModel {
         let localAssetRepository = MockWireDriveLocalAssetRepositoryProtocol()
@@ -507,9 +549,7 @@ private extension FilesItemViewModel {
                 fileCache: MockFileCache()
             ),
             onItemAction: { _, _ in },
-            locale: Locale(identifier: "en_US_POSIX"),
-            calendar: Calendar(identifier: .gregorian),
-            timeZone: .gmt,
+            currentDateProvider: currentDateProvider,
             isBrowsing: isBrowsing,
             isInRecycleBin: false
         )
@@ -521,4 +561,8 @@ private final class MockNWPathMonitoring: NWPathMonitoring {
     var pathUpdateHandler: (@Sendable (NWPath) -> Void)?
 
     func start(queue: DispatchQueue) {}
+}
+
+private struct FixedDateProvider: CurrentDateProviding {
+    let now: Date
 }

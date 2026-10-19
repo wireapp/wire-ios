@@ -69,8 +69,7 @@ final class ConversationSharedDriveSystemMessageCellDescription: ConversationMes
         let driveAccessTitle = selfUserRole == .editor ? FileCollaboration.Enabled
             .editorAccess : FileCollaboration.Enabled.viewerAccess
         let spacer = " "
-        // TODO: [WPB-25941] Remove developer flag when feature is complete
-        let driveAccessText = DeveloperFlag.enableDrivePermissions.isOn ? ".\(spacer + driveAccessTitle)" : ""
+        let driveAccessText = ".\(spacer + driveAccessTitle)"
         let enabledText = FileCollaboration.SharedDriveState.enabled
         let fullText = L10n.Localizable.Content.System.FileCollaboration.sharedDriveState(enabledText) + driveAccessText
         var attributedText: NSMutableAttributedString
@@ -89,21 +88,18 @@ final class ConversationSharedDriveSystemMessageCellDescription: ConversationMes
             attributedText.addAttribute(.font, value: UIFont.mediumSemiboldFont, range: nsRange)
         }
 
-        // TODO: [WPB-25941] Remove developer flag when feature is complete
-        if DeveloperFlag.enableDrivePermissions.isOn {
-            let learnMoreLabel = FileCollaboration.Enabled.learnMore
-            let linkUrl = WireURLs.shared.learnMoreAboutDrivePermissions
-            let linkAttributes: [NSAttributedString.Key: AnyObject] = [
-                .font: UIFont.mediumSemiboldFont,
-                .foregroundColor: ColorTheme.Backgrounds.onSurface,
-                .link: linkUrl as AnyObject,
-                .underlineStyle: NSUnderlineStyle.single.rawValue as AnyObject,
-                .underlineColor: ColorTheme.Backgrounds.onSurface
-            ]
+        let learnMoreLabel = FileCollaboration.Enabled.learnMore
+        let linkUrl = WireURLs.shared.learnMoreAboutDrivePermissions
+        let linkAttributes: [NSAttributedString.Key: AnyObject] = [
+            .font: UIFont.mediumSemiboldFont,
+            .foregroundColor: ColorTheme.Backgrounds.onSurface,
+            .link: linkUrl as AnyObject,
+            .underlineStyle: NSUnderlineStyle.single.rawValue as AnyObject,
+            .underlineColor: ColorTheme.Backgrounds.onSurface
+        ]
 
-            let spaceBetweenParagraphs = "\n\n"
-            attributedText.append(.init(string: spaceBetweenParagraphs + learnMoreLabel, attributes: linkAttributes))
-        }
+        let spaceBetweenParagraphs = "\n\n"
+        attributedText.append(.init(string: spaceBetweenParagraphs + learnMoreLabel, attributes: linkAttributes))
 
         return attributedText
     }

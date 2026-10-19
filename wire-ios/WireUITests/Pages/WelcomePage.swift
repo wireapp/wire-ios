@@ -60,4 +60,10 @@ class WelcomePage: PageModel {
         nextButton.waitAndTap()
         return try SSOWebLoginPage()
     }
+
+    func enterDomainForBackendSwitch(_ email: String) throws -> SetCustomBackendPage {
+        try typeEmailOrSSO(email)
+        nextButton.waitAndTap()
+        return try SetCustomBackendPage()
+    }
 }

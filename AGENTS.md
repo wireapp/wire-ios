@@ -6,6 +6,10 @@ This file provides guidance to AI agents when working with code in this reposito
 
 Wire iOS is a secure messaging app built as a monorepo (`wire-ios-mono.xcworkspace`). The codebase combines modern Swift Package Manager modules with legacy Carthage/Xcode framework projects. The primary workspace file is `wire-ios-mono.xcworkspace`.
 
+## Agent Workflow
+
+- Implement small, clear, low-risk changes directly when requested. Before making broad, high-risk, multi-file, or still-debatable changes, discuss the proposed approach and ask for confirmation.
+
 ## Prerequisites & Setup
 
 - **Xcode**: version specified in `.xcode-version`
@@ -36,7 +40,7 @@ xcodebuild test \
   -workspace wire-ios-mono.xcworkspace \
   -scheme Wire-iOS \
   -testPlan SecurityTests \
-  -destination 'platform=iOS Simulator,name=iPhone 14,OS=26.0.1'
+  -destination 'platform=iOS Simulator,name=iPhone 17,OS=26.5'
 ```
 
 Available test plans in `wire-ios/Tests/TestPlans/`:

@@ -166,6 +166,7 @@ extension ConversationMemberJoinEventNotificationBuilder {
     struct Validator {
         let userLocalStore: any UserLocalStoreProtocol
         let conversationLocalStore: any ConversationLocalStoreProtocol
+        let conversationsAPI: any ConversationsAPI
 
         func validate(
             addedUserIDs: Set<UUID>,
@@ -208,6 +209,14 @@ extension ConversationMemberJoinEventNotificationBuilder {
                     reason: "self user is already a participant",
                     attributes: logAttributes
                 )
+                return false
+            }
+
+            // New conversations can reach the NSE before their meeting metadata is stored.
+            if await conversationLocalStore.conversationNeedsBackendUpdate(conversation),
+               let response = try? await conversationsAPI.getConversations(for: [conversationID]),
+               response.found.first?.groupType == .meeting {
+                logSkippingNotification(reason: "conversation is a meeting", attributes: logAttributes)
                 return false
             }
 

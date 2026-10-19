@@ -49,7 +49,7 @@ let package = Package(
 
         .target(
             name: "WireAuthenticationLogic",
-            dependencies: ["WireAuthenticationAPI", "WireNetwork", "WireFoundation"]
+            dependencies: ["WireAuthenticationAPI", "WireNetwork", "WireFoundation", "WireLogging"]
         ),
         .testTarget(
             name: "WireAuthenticationLogicTests",

@@ -31,6 +31,7 @@ final class GetMeetingAPITests: XCTestCase {
         let response = try await sut.getMeeting(id: meetingID)
 
         XCTAssertEqual(response.id, meetingID)
+        XCTAssertNil(response.timeZoneIdentifier)
         XCTAssertEqual(apiService.executeRequestRequiringAccessToken_Invocations.count, 1)
 
         let invocation = try XCTUnwrap(
@@ -50,6 +51,7 @@ final class GetMeetingAPITests: XCTestCase {
             JSONSerialization.jsonObject(with: resource.jsonData) as? [String: Any]
         )
         json.removeValue(forKey: "trial")
+        json["tzid"] = "America/New_York"
         let responseData = try JSONSerialization.data(withJSONObject: json)
 
         let apiService = MockAPIServiceProtocol()
@@ -63,6 +65,7 @@ final class GetMeetingAPITests: XCTestCase {
 
         XCTAssertEqual(response.id, meetingID)
         XCTAssertFalse(response.isTrial)
+        XCTAssertEqual(response.timeZoneIdentifier, "America/New_York")
     }
 
     func testGetMeeting_ThrowsUnsupportedEndpoint_V0_To_V15() async {

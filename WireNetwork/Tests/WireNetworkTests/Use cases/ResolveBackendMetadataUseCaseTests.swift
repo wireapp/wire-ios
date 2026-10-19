@@ -27,46 +27,56 @@ struct ResolveBackendMetadataUseCaseTests {
 
     // MARK: - Resolve for preferred version
 
-    @Test("Resolves to preferred version")
-    func resolvesToPreferredVersion() async throws {
+    @Test("Resolves to preferred version only when advertised", arguments: [true, false])
+    func resolvesToPreferredVersion(isAdvertised: Bool) async throws {
         // Given
         let sut = ResolveBackendMetadataUseCase(
             backendMetadataAPI: api,
-            clientProductionVersions: [.v6, .v7],
-            preferredAPIVersion: .v8
+            clientProductionVersions: APIVersion.productionVersions,
+            preferredAPIVersion: .v19
         )
 
         // Mock
-        api.getBackendMetadata_MockValue = Scaffolding.backendMetadata
+        api.getBackendMetadata_MockValue = BackendMetadata(
+            domain: "wire.com",
+            isFederationEnabled: true,
+            supportedVersions: [.v18],
+            developmentVersions: isAdvertised ? [.v19] : []
+        )
 
         // When
         let backendMetadata = try await sut.invoke()
 
         // Then
-        #expect(backendMetadata.apiVersion == .v8)
+        #expect(backendMetadata.apiVersion == (isAdvertised ? .v19 : .v18))
         #expect(backendMetadata.domain == "wire.com")
         #expect(backendMetadata.isFederationEnabled == true)
     }
 
     // MARK: - Resolve for production
 
-    @Test("Resolves to max production version")
-    func resolvesToMaxProductionVersion() async throws {
+    @Test("Resolves to max production version", arguments: [APIVersion.v15, .v16, .v17, .v18])
+    func resolvesToMaxProductionVersion(maxBackendVersion: APIVersion) async throws {
         // Given
         let sut = ResolveBackendMetadataUseCase(
             backendMetadataAPI: api,
-            clientProductionVersions: [.v6, .v7],
+            clientProductionVersions: APIVersion.productionVersions,
             preferredAPIVersion: nil
         )
 
         // Mock
-        api.getBackendMetadata_MockValue = Scaffolding.backendMetadata
+        api.getBackendMetadata_MockValue = BackendMetadata(
+            domain: "wire.com",
+            isFederationEnabled: true,
+            supportedVersions: Set(APIVersion.allCases.filter { $0 <= maxBackendVersion }),
+            developmentVersions: Set(APIVersion.allCases.filter { $0 > maxBackendVersion })
+        )
 
         // When
         let backendMetadata = try await sut.invoke()
 
         // Then
-        #expect(backendMetadata.apiVersion == .v7)
+        #expect(backendMetadata.apiVersion == maxBackendVersion)
         #expect(backendMetadata.domain == "wire.com")
         #expect(backendMetadata.isFederationEnabled == true)
     }

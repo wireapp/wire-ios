@@ -61,6 +61,7 @@ public class ConversationTitleView: UIView {
     private func configureViews() {
         nameLabel.font = .preferredFont(forTextStyle: .headline)
         nameLabel.textColor = SemanticColors.Label.textDefault
+        nameLabel.accessibilityIdentifier = Locators.ActiveConversationPage.conversationTitleLabel.rawValue
 
         subtitleLabel.font = .boldSystemFont(ofSize: 9)
         subtitleLabel.textColor = .white

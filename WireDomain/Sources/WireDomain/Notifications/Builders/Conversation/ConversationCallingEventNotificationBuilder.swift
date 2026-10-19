@@ -18,6 +18,7 @@
 
 import GenericMessageProtocol
 import WireDataModel
+import WireFoundation
 import WireLogging
 import WireNetwork
 
@@ -51,6 +52,17 @@ struct ConversationCallingEventNotificationBuilder: ConversationCallingEventNoti
             }
             return QualifiedID(id: conversationUUID, domain: callingConversationID.domain)
         }()
+        let selfUser = await context.userLocalStore.fetchSelfUser()
+        let sender = await context.userLocalStore.fetchOrCreateUser(
+            id: senderID.id,
+            domain: senderID.domain
+        )
+        let wasAnsweredElsewhere = AnsweredElsewhereCallTracker(userDefaults: validator.userDefaults).track(
+            callContent: callContent,
+            conversationID: resolvedConversationID.id,
+            accountID: accountID,
+            isCallerSelf: selfUser == sender
+        )
         let displayCallKitNotification = await validator.validateCallKitNotification(
             conversationID: resolvedConversationID,
             senderID: senderID,
@@ -61,9 +73,10 @@ struct ConversationCallingEventNotificationBuilder: ConversationCallingEventNoti
 
         let displayCallNotification = await validator.validateCallNotification(
             conversationID: resolvedConversationID,
-            senderID: senderID,
             eventTimestamp: time,
-            callContent: callContent
+            callContent: callContent,
+            isCallerSelf: selfUser == sender,
+            wasAnsweredElsewhere: wasAnsweredElsewhere
         )
 
         if displayCallKitNotification {
@@ -380,6 +393,7 @@ extension ConversationCallingEventNotificationBuilder {
 
         let userLocalStore: any UserLocalStoreProtocol
         let conversationLocalStore: any ConversationLocalStoreProtocol
+        let conversationsAPI: any ConversationsAPI
         let userDefaults: UserDefaults
 
         /// In priority, we'll try to validate a CallKit notification to show to the user
@@ -440,20 +454,14 @@ extension ConversationCallingEventNotificationBuilder {
         /// When a CallKit notification cannot be displayed, we'll try to validate a regular call notification.
         func validateCallNotification(
             conversationID: ConversationID,
-            senderID: UserID,
             eventTimestamp: Date?,
-            callContent: CallContent
+            callContent: CallContent,
+            isCallerSelf: Bool,
+            wasAnsweredElsewhere: Bool
         ) async -> Bool {
             let conversation = await conversationLocalStore.fetchOrCreateConversation(
                 id: conversationID.id,
                 domain: conversationID.domain
-            )
-
-            let selfUser = await userLocalStore.fetchSelfUser()
-
-            let caller = await userLocalStore.fetchOrCreateUser(
-                id: senderID.id,
-                domain: senderID.domain
             )
 
             let serverTimeDelta = await conversationLocalStore.fetchServerTimeDelta()
@@ -464,7 +472,7 @@ extension ConversationCallingEventNotificationBuilder {
             let isConversationMuted = mutedMessagesTypes == .all
             let isCallTimeOut = eventTimestamp != nil ? Int(currentTimestamp.timeIntervalSince(eventTimestamp!)) > 30 :
                 true
-            let isCallerSelf = selfUser == caller
+            let needsBackendUpdate = await conversationLocalStore.conversationNeedsBackendUpdate(conversation)
 
             // A meeting is joined deliberately from the meetings list, so neither its
             // incoming call nor the "called" notification after it ends are shown.
@@ -474,11 +482,30 @@ extension ConversationCallingEventNotificationBuilder {
             let isEndCall = callContent.isEndCall
             let isValidState = isIncomingCall || isEndCall
 
-            return isValidState
-                && !isCallerSelf
-                && !isConversationMuted
-                && !isMeetingConversation
-                && !isCallTimeOut
+            guard isValidState, !isCallerSelf, !wasAnsweredElsewhere, !isConversationMuted, !isMeetingConversation,
+                  !isCallTimeOut
+            else {
+                return false
+            }
+
+            guard needsBackendUpdate else { return true }
+
+            // Calls can decrypt before the NSE has the conversation's meeting metadata.
+            guard let qualifiedID = await conversationLocalStore.qualifiedID(for: conversation) else { return false }
+
+            do {
+                let response = try await conversationsAPI.getConversations(for: [WireNetwork.QualifiedID(qualifiedID)])
+                guard let conversation = response.found.first, let eventTimestamp else { return false }
+                let currentTimestamp = Date.now.addingTimeInterval(serverTimeDelta)
+                let isCallTimeOut = Int(currentTimestamp.timeIntervalSince(eventTimestamp)) > 30
+                return conversation.groupType != .meeting && !isCallTimeOut
+            } catch {
+                WireLogger.notifications.warn(
+                    "Unable to resolve conversation type for call notification: \(error)",
+                    attributes: .newNSE
+                )
+                return false
+            }
         }
 
     }

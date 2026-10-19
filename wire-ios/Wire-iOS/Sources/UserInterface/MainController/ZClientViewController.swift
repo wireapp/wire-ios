@@ -285,7 +285,6 @@ final class ZClientViewController: UIViewController {
             .observe(\.showUnreadConversationsFilter, options: [.new]) { [weak self] _, _ in
                 // Update sidebar's showUnreadFilters when developer flag changes
                 self?.sidebarViewController.showUnreadFilters = DeveloperFlag.showUnreadConversationsFilter.isOn
-                self?.sidebarViewController.showMeetings = self?.userSession.isMeetingsEnabled ?? false
             }
 
         observeFeatureConfigChanges()
@@ -342,7 +341,11 @@ final class ZClientViewController: UIViewController {
     }
 
     private func makeMeetingsUI() -> UIViewController {
-        let memberRepository = WireMeetingsMemberRepository(userSession: userSession)
+        let memberRepository = WireMeetingsMemberRepository(
+            userSession: userSession,
+            conversationsAPI: clientSessionComponent.conversationsAPI,
+            usersAPI: clientSessionComponent.usersAPI
+        )
         let conversationRepository = clientSessionComponent.conversationRepository
 
         return wireMeetingsFactory.makeMeetingsView(
@@ -354,7 +357,8 @@ final class ZClientViewController: UIViewController {
                 participantsService: ConversationParticipantsService(
                     context: userSession.contextProvider.syncContext,
                     localDomain: userSession.selfUser.domain
-                )
+                ),
+                isNetworkAvailable: { [userSession] in userSession.networkState != .offline }
             ),
             callRepository: MeetingCallRepositoryBridge(
                 userSession: userSession,
@@ -581,7 +585,7 @@ final class ZClientViewController: UIViewController {
     ///
     /// - Parameter focus: focus or not
     func selectIncomingContactRequestsAndFocus(onView focus: Bool) {
-        mainTabBarController.selectedIndex = MainTabBarControllerContent.conversations.rawValue
+        mainTabBarController.selectedContent = .conversations
         conversationListViewController.selectInboxAndFocusOnView(focus: focus)
     }
 
