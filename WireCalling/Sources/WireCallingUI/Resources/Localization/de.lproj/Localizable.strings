@@ -22,7 +22,7 @@
 "meetings.deleteModal.error.deleteFailedTitle" = "Meeting konnte nicht gelöscht werden";
 "meetings.deleteModal.error.deleteFailed" = "Beim Löschen des Meetings ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.";
 "meetings.deleteModal.error.cleanupFailedTitle" = "Meeting gelöscht";
-"meetings.deleteModal.error.deleteSucceededButLocalCleanupFailed" = "The meeting was deleted, but something went wrong while cleaning up the conversation locally. Please refresh the meetings list if it still appears.";
+"meetings.deleteModal.error.deleteSucceededButLocalCleanupFailed" = "Das Meeting wurde gelöscht, aber beim lokalen Bereinigen der Unterhaltung ist ein Fehler aufgetreten. Bitte aktualisieren Sie die Meeting-Liste, falls das Meeting weiterhin angezeigt wird.";
 "meetings.deleteModal.error.notAllowedTitle" = "Meeting konnte nicht gelöscht werden";
 "meetings.deleteModal.error.notAllowed" = "Dieses Meeting kann nicht mehr gelöscht werden. Es ist möglicherweise bereits beendet oder Sie haben nicht die Berechtigung, es zu löschen.";
 "meetings.deleteModal.error.leaveConversationFailedTitle" = "Meeting konnte nicht verlassen werden";
@@ -64,8 +64,9 @@
 
 // MARK: - Schedule a meeting
 
-"meetings.error.setupFailedTitle" = "Could not finish meeting setup";
-"meetings.error.conversationSetupFailed" = "The meeting was saved, but something went wrong while setting up the conversation. Please try again.";
+"meetings.error.missingLink" = "Das Meeting wurde erstellt, aber der dazugehörige Link ist nicht verfügbar.";
+"meetings.error.setupFailedTitle" = "Meeting-Einrichtung nicht abgeschlossen";
+"meetings.error.conversationSetupFailed" = "Das Meeting wurde gespeichert, aber beim Einrichten der Unterhaltung ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.";
 "meetings.error.addParticipantsFailed" = "Das Meeting wurde gespeichert, aber einige Teilnehmer konnten nicht hinzugefügt werden. Bitte versuchen Sie es erneut.";
 "meetings.scheduleModal.error.createFailedTitle" = "Meeting konnte nicht geplant werden";
 "meetings.scheduleModal.error.createFailed" = "Beim Planen des Meetings ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.";
@@ -105,7 +106,7 @@
 "wireMeetings.schedule.participantsNotAdded.createdTitle" = "Meeting erstellt";
 "wireMeetings.schedule.participantsNotAdded.message" = "Beachten Sie, dass die folgenden Personen nicht hinzugefügt werden konnten:\n\n%@";
 "wireMeetings.schedule.error.conversationName.title" = "Aktualisierung unvollständig";
-"wireMeetings.schedule.error.conversationName.message" = "Der Titel der Meetings wurde aktualisiert, aber der Anruf kann noch den vorherigen Titel anzeigen. Bitte versuchen Sie es erneut.";
+"wireMeetings.schedule.error.conversationName.message" = "Der Titel des Meetings wurde aktualisiert, aber der Anruf kann noch den vorherigen Titel anzeigen. Bitte versuchen Sie es erneut.";
 "wireMeetings.schedule.error.conversationName.retry" = "Erneut versuchen";
 "wireMeetings.schedule.disableGuestAccess.alert.title" = "Gastzugang deaktivieren?";
 "wireMeetings.schedule.disableGuestAccess.alert.disable" = "Deaktivieren";
@@ -131,16 +132,16 @@
 "wireMeetings.schedule.members.retry.button" = "Wiederholen";
 "wireMeetings.schedule.members.selected.title" = "Ausgewählt";
 "wireMeetings.schedule.members.contacts.title" = "Kontakte";
-"wireMeetings.schedule.members.groups.importButton" = "Import from group";
+"wireMeetings.schedule.members.groups.importButton" = "Aus Gruppe importieren";
 "wireMeetings.schedule.members.groups.title" = "Gruppen und Channels";
 "wireMeetings.schedule.members.groups.searchPlaceholder" = "Search groups and channels";
 "wireMeetings.schedule.members.groups.group" = "Gruppe";
 "wireMeetings.schedule.members.groups.channel" = "Channel";
-"wireMeetings.schedule.members.groups.emptyTitle" = "No groups or channels found";
-"wireMeetings.schedule.members.groups.emptyDescription" = "Only groups and channels you have joined are shown.";
-"wireMeetings.schedule.members.groups.loading" = "Loading groups and channels";
-"wireMeetings.schedule.members.groups.importing" = "Importing participants";
-"wireMeetings.schedule.members.groups.importError" = "Could not import participants";
+"wireMeetings.schedule.members.groups.emptyTitle" = "Keine Gruppen oder Channels gefunden";
+"wireMeetings.schedule.members.groups.emptyDescription" = "Es werden nur Gruppen und Channels angezeigt, denen Sie beigetreten sind.";
+"wireMeetings.schedule.members.groups.loading" = "Gruppen oder Channels werden geladen";
+"wireMeetings.schedule.members.groups.importing" = "Teilnehmer werden importiert";
+"wireMeetings.schedule.members.groups.importError" = "Teilnehmer konnten nicht importiert werden";
 
 "wireMeetings.schedule.error.expiredStartDate.title" = "Wählen Sie eine spätere Startzeit";
 "wireMeetings.schedule.error.expiredStartDate.message" = "Sie können nur Meetings bearbeiten, die vor weniger als 24 Stunden begonnen haben. Wählen Sie einen späteren Beginn aus und versuchen Sie es erneut.";

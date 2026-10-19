@@ -191,6 +191,8 @@
 "conversation.wireCells.files.downloadFailed" = "Unable to load, retry";
 "conversation.wireCells.files.downloadingFile" = "Downloading file...";
 "conversation.wireCells.files.offlineModeHint" = "You can still access your offline files.";
+"conversation.wireCells.files.time.just_now" = "刚刚";
+
 
 // MARK: - Recycle Bin
 "conversation.wireCells.recycleBin.navigationTitle" = "Recycle Bin";
