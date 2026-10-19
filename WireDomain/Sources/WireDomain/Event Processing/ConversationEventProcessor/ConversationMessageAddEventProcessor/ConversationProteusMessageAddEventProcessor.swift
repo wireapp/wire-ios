@@ -57,6 +57,7 @@ struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAd
         let logAttributes: LogAttributes = [
             .messageType: "conversation.otr-message-add",
             .conversationId: conversationID.id.safeForLoggingDescription,
+            .senderUserId: senderID.id.safeForLoggingDescription,
             .public: true
         ]
 

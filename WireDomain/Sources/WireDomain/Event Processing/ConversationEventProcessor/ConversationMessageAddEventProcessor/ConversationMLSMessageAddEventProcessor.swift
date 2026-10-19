@@ -76,6 +76,7 @@ struct ConversationMLSMessageAddEventProcessor: ConversationMLSMessageAddEventPr
         let logAttributes: LogAttributes = [
             .messageType: "conversation.mls-message-add",
             .conversationId: conversationID.id.safeForLoggingDescription,
+            .senderUserId: senderID.id.safeForLoggingDescription,
             .public: true
         ]
 
