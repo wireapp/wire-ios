@@ -362,6 +362,7 @@ struct MeetingFormViewModelTests {
         let viewModel = makeViewModel(mode: .scheduled, supportsMeetingLinks: true) { receivedMeeting = $0 }
         viewModel.meetingTitle = "Planning"
         viewModel.password = " exact Password1! "
+        viewModel.confirmPassword = viewModel.password
         viewModel.repeatOption = repeatOption
         viewModel.selectedMembers = [member]
         createMeetingUseCaseMock
@@ -385,6 +386,7 @@ struct MeetingFormViewModelTests {
         #expect(arguments?.type == .scheduled)
         #expect(arguments?.password == " exact Password1! ")
         #expect(viewModel.password.isEmpty)
+        #expect(viewModel.confirmPassword.isEmpty)
         #expect(arguments?.title == "Planning")
         #expect(arguments?.startTime == viewModel.startDate)
         #expect(arguments?.endTime == viewModel.endDate)
@@ -401,6 +403,7 @@ struct MeetingFormViewModelTests {
         var completedMeetings: [Meeting] = []
         let viewModel = makeViewModel(mode: mode, supportsMeetingLinks: true) { completedMeetings.append($0) }
         viewModel.password = "Abcdef1!"
+        viewModel.confirmPassword = viewModel.password
         createMeetingUseCaseMock
             .invokeTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceTypeMeetingTypePasswordStringParticipantsMeetingMemberMeetingCreationResultThrowableError =
             CreateMeetingUseCaseError.participantsNotAdded(
@@ -413,6 +416,7 @@ struct MeetingFormViewModelTests {
         #expect(viewModel.hasParticipantsNotAddedAlert)
         #expect(viewModel.participantsNotAdded == [member])
         #expect(viewModel.password.isEmpty)
+        #expect(viewModel.confirmPassword.isEmpty)
         #expect(viewModel.participantsNotAddedMessage.contains(L10n.Localizable.Meetings.Error.missingLink))
         #expect(!viewModel.hasError)
         #expect(!viewModel.isLoading)
@@ -461,6 +465,7 @@ struct MeetingFormViewModelTests {
             unavailableModel.password = "ignored"
             #expect(!unavailableModel.canSetPassword)
             #expect(unavailableModel.isPasswordValid)
+            #expect(unavailableModel.passwordsMatch)
         }
         #expect(viewModel.canSetPassword)
         for (password, expected) in [
@@ -473,9 +478,23 @@ struct MeetingFormViewModelTests {
             ("Aa1!" + String(repeating: "e\u{301}", count: 510) + "a", false)
         ] {
             viewModel.password = password
+            viewModel.confirmPassword = password
             #expect(viewModel.isNextButtonEnabled == expected)
             if !expected { await viewModel.submit() }
         }
+        viewModel.password = "Abcdef1!"
+        for confirmation in ["", "Abcdef2!"] {
+            viewModel.confirmPassword = confirmation
+            #expect(!viewModel.isNextButtonEnabled)
+            await viewModel.submit()
+        }
+        viewModel.confirmPassword = viewModel.password
+        #expect(viewModel.isNextButtonEnabled)
+        viewModel.password = "Abcd1!e\u{301}"
+        viewModel.confirmPassword = "Abcd1!é"
+        #expect(!viewModel.passwordsMatch)
+        #expect(!viewModel.isNextButtonEnabled)
+        await viewModel.submit()
         #expect(createMeetingUseCaseMock
             .invokeTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceTypeMeetingTypePasswordStringParticipantsMeetingMemberMeetingCreationResultCallsCount ==
             0)
@@ -490,9 +509,14 @@ struct MeetingFormViewModelTests {
             viewModel.generatePassword()
             #expect(viewModel.password.count == 8)
             #expect(viewModel.isPasswordValid)
+            #expect(viewModel.confirmPassword == viewModel.password)
         }
         viewModel.copyPassword(to: pasteboard)
         #expect(pasteboard.string == viewModel.password)
+        viewModel.password = "Manual2!"
+        #expect(!viewModel.passwordsMatch)
+        viewModel.copyPassword(to: pasteboard)
+        #expect(pasteboard.string == "Manual2!")
         viewModel.password = ""
         viewModel.copyPassword(to: pasteboard)
         #expect(pasteboard.string?.count == 8)

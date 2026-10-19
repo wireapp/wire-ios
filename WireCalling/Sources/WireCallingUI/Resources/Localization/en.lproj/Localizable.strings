@@ -103,6 +103,10 @@
 "wireMeetings.schedule.password.requirements" = "Use at least %d characters, with one lowercase letter, one capital letter, a number, and a special character.";
 "wireMeetings.schedule.password.copy" = "Copy password";
 "wireMeetings.schedule.password.generate" = "Generate password";
+"wireMeetings.schedule.password.confirm" = "Confirm password";
+"wireMeetings.schedule.password.mismatch" = "Passwords do not match";
+"wireMeetings.schedule.password.show" = "Show password";
+"wireMeetings.schedule.password.hide" = "Hide password";
 "wireMeetings.schedule.setupParticipants.header" = "Participants";
 "wireMeetings.schedule.setupParticipants.placeholder" = "Add participants";
 "wireMeetings.schedule.error.alert.title" = "Something went wrong";

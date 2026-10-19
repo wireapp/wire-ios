@@ -74,6 +74,7 @@ package final class MeetingFormViewModel {
 
     var meetingTitle: String = ""
     var password: String = ""
+    var confirmPassword: String = ""
 
     static let minimumPasswordLength = 8
     private static let passwordCharacterGroups = [
@@ -84,6 +85,10 @@ package final class MeetingFormViewModel {
     ]
 
     var canSetPassword: Bool { supportsMeetingLinks && mode == .scheduled }
+
+    var passwordsMatch: Bool {
+        !canSetPassword || password.unicodeScalars.elementsEqual(confirmPassword.unicodeScalars)
+    }
 
     var isPasswordValid: Bool {
         guard canSetPassword, !password.isEmpty else { return true }
@@ -105,6 +110,7 @@ package final class MeetingFormViewModel {
             characters.append(allCharacters.randomElement()!)
         }
         password = String(characters.shuffled())
+        confirmPassword = password
     }
 
     func copyPassword(to pasteboard: UIPasteboard = .general) {
@@ -272,7 +278,7 @@ package final class MeetingFormViewModel {
 
     var isNextButtonEnabled: Bool {
         !meetingTitle.trimmingCharacters(in: .whitespacesAndNewlines)
-            .isEmpty && !isMeetingTitleTooLong && isPasswordValid
+            .isEmpty && !isMeetingTitleTooLong && isPasswordValid && passwordsMatch
     }
 
     var isMeetingTitleTooLong: Bool {
@@ -340,7 +346,8 @@ package final class MeetingFormViewModel {
         // corrupt subsequent pagination (e.g. the next “load more” would re-fetch from offset 0 and replace data
         // unexpectedly). Consider making load(pageSize:) return/throw on failure so reloadLoadedMeetings() can restore
         // futureOffset (and possibly coalesce missed reloads while isLoading is true).
-        guard !isLoading, meetingWithParticipantsNotAdded == nil, !dismissAfterError, isPasswordValid else { return }
+        guard !isLoading, meetingWithParticipantsNotAdded == nil, !dismissAfterError,
+              isPasswordValid, passwordsMatch else { return }
         hasError = false
         submitError = nil
         hasConversationNameUpdateError = false
@@ -358,6 +365,7 @@ package final class MeetingFormViewModel {
             onSuccess(meeting)
         } catch let CreateMeetingUseCaseError.participantsNotAdded(result, participants) {
             password = ""
+            confirmPassword = ""
             participantMeetingHasLink = result.link != nil
             meetingWithParticipantsNotAdded = result.meeting
             participantsNotAdded = participants
@@ -371,7 +379,10 @@ package final class MeetingFormViewModel {
             participantsNotAdded = participants
             hasConversationNameUpdateError = true
         } catch {
-            if error is CreateMeetingUseCaseError { password = "" }
+            if error is CreateMeetingUseCaseError {
+                password = ""
+                confirmPassword = ""
+            }
             let errorType = Swift.type(of: error)
             WireLogger.search.error("failed to save meeting: \(String(describing: errorType))")
             submitError = error
@@ -462,6 +473,7 @@ package final class MeetingFormViewModel {
 
     private func completeCreation(_ result: MeetingCreationResult) throws -> Meeting {
         password = ""
+        confirmPassword = ""
         guard !supportsMeetingLinks || result.link != nil else {
             throw CreateMeetingUseCaseError.missingLink(meeting: result.meeting)
         }

@@ -17,6 +17,7 @@
 //
 
 import SwiftUI
+import UIKit
 import WireCallingDomain
 import WireCallingDomainSupport
 import WireDesign
@@ -34,6 +35,8 @@ struct MeetingFormView: View {
     @State private(set) var viewModel: MeetingFormViewModel
     @State private var expandedField: ExpandedField?
     @State private var isPresentingMemberSelection = false
+    @State private var isPasswordVisible = false
+    @ScaledMetric private var passwordFieldHeight: CGFloat = 44
     @FocusState private var isTitleFieldFocused: Bool
 
     var body: some View {
@@ -209,32 +212,79 @@ struct MeetingFormView: View {
 
     private var passwordSection: some View {
         Section {
-            SecureField(Strings.Password.placeholder, text: $viewModel.password)
-                .textContentType(.newPassword)
-                .textInputAutocapitalization(.never)
-                .autocorrectionDisabled()
-                .foregroundStyle(viewModel.isPasswordValid ? ColorTheme.Backgrounds.onSurface.color : ColorTheme.Base
-                    .error.color)
+            HStack {
+                passwordField(
+                    $viewModel.password,
+                    placeholder: Strings.Password.placeholder,
+                    isValid: viewModel.isPasswordValid,
+                    locator: .password
+                )
                 .accessibilityLabel(Strings.Password.title)
                 .accessibilityHint(Strings.Password.requirements(MeetingFormViewModel.minimumPasswordLength))
-                .accessibilityIdentifier(Locators.WireMeetings.MeetingForm.password)
-            Button(Strings.Password.copy) {
-                viewModel.copyPassword()
+                Button {
+                    isPasswordVisible.toggle()
+                } label: {
+                    Label(
+                        isPasswordVisible ? Strings.Password.hide : Strings.Password.show,
+                        systemImage: isPasswordVisible ? "eye.slash" : "eye"
+                    )
+                    .labelStyle(.iconOnly)
+                }
+                .buttonStyle(.borderless)
+                .accessibilityIdentifier(Locators.WireMeetings.MeetingForm.passwordVisibility)
             }
-            .disabled(!isClipboardEnabled || viewModel.password.isEmpty || !viewModel.isPasswordValid)
-            .accessibilityIdentifier(Locators.WireMeetings.MeetingForm.copyPassword)
-            Button(Strings.Password.generate, action: viewModel.generatePassword)
-                .accessibilityIdentifier(Locators.WireMeetings.MeetingForm.generatePassword)
+            passwordField(
+                $viewModel.confirmPassword,
+                placeholder: Strings.Password.confirm,
+                isValid: viewModel.confirmPassword.isEmpty || viewModel.passwordsMatch,
+                locator: .confirmPassword
+            )
+            Button(viewModel.password.isEmpty ? Strings.Password.generate : Strings.Password.copy) {
+                if viewModel.password.isEmpty {
+                    viewModel.generatePassword()
+                } else {
+                    viewModel.copyPassword()
+                }
+            }
+            .disabled(!viewModel.password.isEmpty && (!isClipboardEnabled || !viewModel.isPasswordValid))
+            .accessibilityIdentifier(viewModel.password.isEmpty ? Locators.WireMeetings.MeetingForm.generatePassword :
+                Locators.WireMeetings.MeetingForm.copyPassword)
         } header: {
             Text(Strings.Password.title)
         } footer: {
-            Text(Strings.Password.requirements(MeetingFormViewModel.minimumPasswordLength))
-                .foregroundStyle(viewModel.isPasswordValid ? ColorTheme.Base.secondaryText.color : ColorTheme.Base.error
-                    .color)
-                .accessibilityIdentifier(Locators.WireMeetings.MeetingForm.passwordRequirements)
+            VStack(alignment: .leading) {
+                if !viewModel.confirmPassword.isEmpty, !viewModel.passwordsMatch {
+                    Text(Strings.Password.mismatch)
+                        .foregroundStyle(ColorTheme.Base.error.color)
+                }
+                Text(Strings.Password.requirements(MeetingFormViewModel.minimumPasswordLength))
+                    .foregroundStyle(viewModel.isPasswordValid ? ColorTheme.Base.secondaryText.color : ColorTheme.Base
+                        .error.color)
+                    .accessibilityIdentifier(Locators.WireMeetings.MeetingForm.passwordRequirements)
+            }
         }
         .disabled(viewModel.isLoading)
         .textCase(nil)
+    }
+
+    private func passwordField(
+        _ text: Binding<String>,
+        placeholder: String,
+        isValid: Bool,
+        locator: Locators.WireMeetings.MeetingForm
+    ) -> some View {
+        ContextMenuControllableTextField(
+            text: text,
+            placeholder: placeholder,
+            isSecureTextEntry: !isPasswordVisible,
+            isContextMenuAllowed: isClipboardEnabled,
+            textContentType: .newPassword,
+            textColor: UIColor(isValid ? ColorTheme.Backgrounds.onSurface.color : ColorTheme.Base.error.color)
+        )
+        .id(isPasswordVisible)
+        .frame(height: passwordFieldHeight)
+        .accessibilityLabel(placeholder)
+        .accessibilityIdentifier(locator)
     }
 
     private var participantsSection: some View {
