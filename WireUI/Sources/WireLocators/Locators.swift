@@ -433,6 +433,14 @@ public enum Locators {
         case themeCell
         case lockWithPasscode = "Lock With Passcode"
         case createLinkPreviews = "Create Link Previews"
+        case browserCell
+        case chromeBrowserOption
+        case mockedChromeAlert
+        case mockedChromeAlertTitle = "Opening in Chrome"
+        case mapsCell
+        case googleMapsOption
+        case mockedGoogleMapsAlert
+        case mockedGoogleMapsAlertTitle = "Opening in Google Maps"
     }
 
     public enum SaveBackupFileBottomSheetPage: String {
