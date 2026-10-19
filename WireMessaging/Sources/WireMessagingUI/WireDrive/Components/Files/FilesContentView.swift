@@ -108,6 +108,9 @@ package struct FilesContentView<Toolbar: ToolbarContent, Sheet: View>: View {
             .toolbarBackground(backgroundColor, for: .navigationBar)
             .toolbar { toolbarContent() }
             .if(viewModel.showSearchBar, transform: searchView(content:))
+            .onAppear {
+                viewModel.enableMultipleSelection(false)
+            }
             .onDisappear {
                 isSearchFocused = false
                 viewModel.resetFilters()
@@ -148,7 +151,7 @@ package struct FilesContentView<Toolbar: ToolbarContent, Sheet: View>: View {
 private extension FilesContentView {
 
     @ViewBuilder var filesList: some View {
-        List {
+        List(selection: $viewModel.selectedItems) {
             Group {
                 itemsSection
 
@@ -160,9 +163,26 @@ private extension FilesContentView {
             .listRowSeparator(.hidden)
             .listRowBackground(ColorTheme.Backgrounds.surface.color)
         }
+        .environment(\.editMode, $viewModel.multipleSelection)
         .listStyle(.plain)
         .refreshable { reloadTask(refreshing: true) }
         .overlay(listBackgroundView)
+        .overlay(alignment: .bottomLeading) {
+            if viewModel.multipleSelection == .active {
+                FilesFloatingActionBar {
+                    Button {
+                        // TODO: [WPB-29414] Present moveToFolder sheet with selected items (`sheetNavigation = .moveToFolder(selectedItems)`)
+                    } label: {
+                        Image(systemName: "folder")
+                            .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
+                    }
+                    .accessibilityLabel(Strings.Files.Item.Menu.moveToFolder)
+                    .accessibilityIdentifier(Locators.WireDrive.FilesPage.moveToFolder)
+                }
+                .padding(.horizontal, 16)
+                .padding(.bottom, 12)
+            }
+        }
         .animation(.default, value: viewModel.state)
     }
 
@@ -170,7 +190,11 @@ private extension FilesContentView {
         ForEach(Array(viewModel.state.items.enumerated()), id: \.element) { index, item in
             itemRow(index: index)
                 .onAppear { loadMoreIfNeededTask(index: index) }
-                .onTapGesture { Task { await viewModel.performPrimaryAction(item: item) } }
+                // otherwise interferes with the tappable area
+                .if(viewModel.multipleSelection != .active) { view in
+                    view.onTapGesture { Task { await viewModel.performPrimaryAction(item: item) } }
+
+                }
                 .accessibilityIdentifier(Locators.WireDrive.FilesContentPage.fileItem(index))
         }
     }

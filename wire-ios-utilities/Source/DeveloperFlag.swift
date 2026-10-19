@@ -47,6 +47,7 @@ public enum DeveloperFlag: String, CaseIterable {
     case simulateUnestablishedMLSGroup
     case unSafeLogsForPublic
     case useBackgroundActivityFactoryInAppBackgroundTaskExecuter
+    case enableDriveBulkActions
 
     public var description: String {
         switch self {
@@ -124,6 +125,9 @@ public enum DeveloperFlag: String, CaseIterable {
 
         case .useBackgroundActivityFactoryInAppBackgroundTaskExecuter:
             "Turn on to use BackgroundActivityFactory in AppBackgroundTaskExecuter"
+
+        case .enableDriveBulkActions:
+            "Turn on to enable bulk actions in Drive"
         }
     }
 
