@@ -24,8 +24,10 @@ import XCTest
 final class WireDriveTests: WireUITestCase {
 
     override func additionalDeveloperFlags() -> [DeveloperFlag: Bool] {
-        [.simulateDriveOffline: false,
-         .enableDriveDirectUploads: true]
+        [
+            .simulateDriveOffline: false,
+            .enableDriveDirectUploads: true
+        ]
     }
 
     private func createDriveEnabledConversation(

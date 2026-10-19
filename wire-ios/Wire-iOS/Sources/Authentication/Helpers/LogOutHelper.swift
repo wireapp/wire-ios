@@ -97,7 +97,7 @@ final class LogOutHelper {
             tearDownDirectUploads()
         }
     }
-    
+
     private func tearDownDirectUploads() {
         Task {
             let wireMessagingFactory = ZClientViewController.shared?.wireMessagingFactory
