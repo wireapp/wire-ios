@@ -310,4 +310,46 @@ final class MeetNowTests: WireUITestCase {
         XCTAssertTrue(call.minimizeCallButton.waitAndTap())
         try assertMeetingRow(meeting, on: MeetingsPage())
     }
+
+    @MainActor
+    func testRetryMeetNowAfterConnectionFailure_TC_11984() async throws {
+        let token = try holdCreation()
+        defer { notify_cancel(token) }
+        let (host, users, ids, _) = try await UserHelper.default.registerMeetingsTeam(withMemberCount: 1)
+        try await registerClients(for: users)
+        let fixtures = try await MeetingsTestHelper(user: host)
+        let page = try launchMeetings(for: host)
+        let form = try openMeetNow(from: page)
+        let title = "TC11984 retry retained details"
+        form.replaceTitle(with: title)
+        try form.addParticipants(users)
+        XCTAssertTrue(form.saveButton.waitAndTap())
+        guard form.loadingIndicator.waitForExistence(timeout: 10), !form.saveButton.exists else {
+            throw RuntimeError("Start did not change to a loading indicator")
+        }
+        let whilePending = try await fixtures.list()
+        XCTAssertTrue(whilePending.isEmpty)
+        guard notify_set_state(token, 1) == UInt32(NOTIFY_STATUS_OK) else {
+            throw RuntimeError("Meeting create control could not fail the request")
+        }
+        let alert = form.schedulingErrorAlert
+        guard alert.waitForExistence(timeout: 10) else { throw RuntimeError("The start error did not appear") }
+        XCTAssertEqual(alert.label, "Could not start meeting")
+        XCTAssertTrue(alert.staticTexts.allElementsBoundByIndex.contains {
+            $0.label == "Something went wrong while starting the meeting. Please try again."
+        })
+        let afterFailure = try await fixtures.list()
+        XCTAssertTrue(afterFailure.isEmpty)
+        XCTAssertTrue(alert.buttons[Locators.WireMeetings.MeetingForm.errorDismiss.rawValue].firstMatch.waitAndTap())
+        XCTAssertEqual(form.titleField.value as? String, title)
+        XCTAssertEqual(form.participantsButton.value as? String, "1")
+        XCTAssertTrue(form.participantsButton.label.contains(users[0].name))
+        guard notify_set_state(token, 2) == UInt32(NOTIFY_STATUS_OK) else {
+            throw RuntimeError("Meeting create control could not restore the request")
+        }
+        XCTAssertTrue(form.saveButton.waitAndTap())
+        _ = try waitForCall(title: title)
+        let meeting = try await onlyMeeting(fixtures, title: title)
+        try await assertMembers(fixtures, meeting: meeting, host: host, invitees: ids)
+    }
 }
