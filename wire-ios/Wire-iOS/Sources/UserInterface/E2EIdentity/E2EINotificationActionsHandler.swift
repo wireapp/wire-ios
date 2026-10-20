@@ -257,7 +257,11 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
     /// becomes due.
     @MainActor
     private func remindToEnrollIfNeeded() async {
-        guard await !selfClientCertificateProvider.hasCertificate else { return }
+        guard
+            await featureConfigRepository.isFeatureEnabled(.e2ei),
+            await !selfClientCertificateProvider.hasCertificate
+        else { return }
+
         presentScreen(viewController: buildGetCertificateAlert())
     }
 
