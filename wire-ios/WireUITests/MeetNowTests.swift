@@ -352,4 +352,33 @@ final class MeetNowTests: WireUITestCase {
         let meeting = try await onlyMeeting(fixtures, title: title)
         try await assertMembers(fixtures, meeting: meeting, host: host, invitees: ids)
     }
+
+    @MainActor
+    func testMeetNowReportsParticipantWithoutClient_TC_11985() async throws {
+        let (host, users, ids, _) = try await UserHelper.default.registerMeetingsTeam(
+            withMemberCount: 2, names: ["Meet Now Host", "User A", "User C"]
+        )
+        try await registerClients(for: [users[0]])
+        let fixtures = try await MeetingsTestHelper(user: host)
+        let page = try launchMeetings(for: host)
+        let form = try openMeetNow(from: page)
+        let title = "TC11985 partial participants"
+        form.replaceTitle(with: title)
+        try form.addParticipants(users)
+        XCTAssertEqual(form.participantsButton.value as? String, "2")
+        XCTAssertTrue(form.saveButton.waitAndTap())
+        let alert = app.alerts["Meeting created"]
+        guard alert.waitForExistence(timeout: 30) else { throw RuntimeError("The participant warning did not appear") }
+        XCTAssertEqual(alert.label, "Meeting created")
+        XCTAssertTrue(alert.staticTexts.allElementsBoundByIndex.contains {
+            $0.label == "User C could not be added to the group."
+        })
+        let meeting = try await onlyMeeting(fixtures, title: title)
+        try await assertMembers(fixtures, meeting: meeting, host: host, invitees: [ids[0]])
+        XCTAssertTrue(alert.buttons["OK"].waitAndTap())
+        _ = try waitForCall(title: title)
+        let afterAcknowledgement = try await onlyMeeting(fixtures, title: title)
+        XCTAssertEqual(afterAcknowledgement.id, meeting.id)
+        try await assertMembers(fixtures, meeting: meeting, host: host, invitees: [ids[0]])
+    }
 }
