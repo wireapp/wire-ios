@@ -130,7 +130,7 @@ public enum DeveloperFlag: String, CaseIterable {
 
         case .enableDriveBulkActions:
             "Turn on to enable bulk actions in Drive"
-            
+
         case .enableDriveDirectUploads:
             "Turn on to enable drive direct uploads"
 
