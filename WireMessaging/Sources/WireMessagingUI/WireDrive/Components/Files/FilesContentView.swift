@@ -182,6 +182,7 @@ private extension FilesContentView {
                             .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
                             .opacity(viewModel.selectedItems.isEmpty ? 0.3 : 1)
                     }
+                    .accessibilityLabel(Strings.Files.Item.Menu.moveToFolder)
                     .accessibilityIdentifier(Locators.WireDrive.FilesPage.moveToFolderFloatingButton)
                     .disabled(viewModel.selectedItems.isEmpty)
                 }
