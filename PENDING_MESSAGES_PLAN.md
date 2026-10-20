@@ -33,6 +33,7 @@ edited marker. Edits to previously sent messages retain normal edit semantics.
       branches/PRs as needed, and remove it before merging into `develop`.
 - [ ] Approve the design, implementation sequence, and local flag approach.
 - [x] Record the Jira issue key before creating commits or PRs: `WPB-26307`.
+- [ ] Run and record the manual baseline scenarios below before finalizing the design.
 - [ ] Implement the feature incrementally.
 - [ ] Complete validation and rollout review.
 
@@ -91,6 +92,95 @@ Proposed scope:
 - [UI edit eligibility](wire-ios/Wire-iOS/Sources/Helpers/syncengine/ZMMessage+Actions.swift)
 - [Message status and edited label](wire-ios/Wire-iOS/Sources/UserInterface/Conversation/Content/Cells/Utility/MessageToolboxDataSource.swift)
 - [Local developer flags](wire-ios-utilities/Source/DeveloperFlag.swift)
+
+## Manual baseline: current behavior before implementation
+
+Purpose: observe existing behavior and use the findings to refine the design.
+These scenarios are investigative, not assertions that the proposed feature
+already works. All results are currently unverified.
+
+### Setup and observations
+
+- [ ] Record the tested build/commit, device and OS, conversation type, message
+      protocol (MLS/Proteus), and synchronization implementation if known.
+- [ ] Use an existing conversation that can successfully send online, with a
+      second client/account remaining online to observe actual receipt.
+- [ ] Start with self-deleting messages off and no outstanding verification or
+      legal-hold prompts, to isolate connection behavior.
+- [ ] Prepare a local image and a small local file while online so fetching the
+      attachment from cloud storage is not part of the test.
+- [ ] Disable the sender's actual connectivity. On a physical device, use Airplane
+      Mode and ensure Wi-Fi is also off. Keep the receiving client online.
+- [ ] Do not use `simulateDriveOffline` as a messaging network switch: its scope
+      is Wire Drive. On a simulator, document how connectivity was disabled and
+      keep the receiver on an independent connection.
+- [ ] Record status immediately, around 15 seconds, and around 90 seconds after
+      submission. A failure can happen earlier; 60 seconds is not a guaranteed
+      countdown from pressing Send.
+- [ ] Record whether automatic recovery occurs before trying manual Retry.
+
+For each run, record the exact steps, status text/icon, available message actions,
+whether the message survives relaunch, receiver content/count/order, and timestamps
+of offline submission, reconnection, receipt, or failure. When using Xcode, retain
+the relevant messaging/asset logs alongside the observations.
+
+### Scenarios
+
+Use fresh, distinguishable message content for each scenario. Start with B1-B3.
+Reset connectivity and let the app finish synchronizing between independent runs.
+
+- [ ] **B1: Online control and normal edit.** Send text online, verify receipt,
+      edit it, and verify the receiver sees the new text and the edited marker.
+- [ ] **B2: Send text after going offline.** First finish synchronization online.
+      Disable connectivity, submit text, inspect its status and long-press actions,
+      and check whether Edit is offered. Observe for about 90 seconds. Reconnect
+      without tapping Retry and record whether it sends automatically. If it does
+      not, record whether manual Retry succeeds. Repeat with a fresh message and
+      a brief offline interval to compare short and prolonged disconnections.
+- [ ] **B3: Edit already-sent text while offline.** Send and confirm receipt online,
+      disconnect, edit that message, then reconnect. Observe local changes, the
+      edited marker, status transitions, and the receiver's final content.
+- [ ] **B4: Relaunch with unsent text.** Disconnect after an online sync, submit
+      fresh text, then terminate and relaunch while still offline. Record its
+      state before and after reconnecting, without manually retrying first.
+- [ ] **B5: Submit after launching offline.** Start with an existing synced account
+      and conversation. Terminate the app, disable connectivity, launch offline,
+      and submit fresh text. Compare with B2, including reconnect behavior.
+- [ ] **B6: Location and knock.** Repeat offline submission and reconnection with
+      each type. If the location flow cannot produce content offline, record that
+      separately from failure to send an already-created message.
+- [ ] **B7: Image and file.** Separately submit the prepared local image and file
+      while offline. Observe preview/progress, status, available actions, and
+      reconnect behavior. Repeat each with a relaunch before reconnecting. Add
+      audio/video afterward if available; do not assume every asset behaves alike.
+- [ ] **B8: Ordering and interruption.** Submit distinguishable text, an asset,
+      and another text while offline, then reconnect and record receipt order.
+      Separately interrupt a larger asset upload and observe recovery. Use logs
+      to distinguish upload completion from delivery of the asset-reference
+      message; the progress indicator alone cannot prove both stages succeeded.
+
+Source-based expectations to check: pending text currently has no Edit action;
+normal sent-message edits create an edited marker; unsent messages recovered by
+the strategies after restart are expired as stale. Runtime timing and recovery
+must be observed rather than inferred from these expectations.
+
+### Results and design follow-up
+
+| Scenario | Test configuration/date | Observed result | Evidence/follow-up |
+| --- | --- | --- | --- |
+| B1 | Not run | Not recorded | |
+| B2 | Not run | Not recorded | |
+| B3 | Not run | Not recorded | |
+| B4 | Not run | Not recorded | |
+| B5 | Not run | Not recorded | |
+| B6 | Not run | Not recorded | |
+| B7 | Not run | Not recorded | |
+| B8 | Not run | Not recorded | |
+
+- [ ] Compare observations with the source-based findings and investigate gaps.
+- [ ] Repeat relevant cases for MLS and Proteus, and each synchronization
+      implementation available in the test environment.
+- [ ] Refine the design and automated regression cases using the observed results.
 
 ## Proposed design
 
