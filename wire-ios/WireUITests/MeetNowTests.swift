@@ -184,7 +184,12 @@ final class MeetNowTests: WireUITestCase {
 
     @MainActor
     func testMeetNowTitleValidation_TC_11973() async throws {
-        let (host, _, _, _) = try await UserHelper.default.registerMeetingsTeam()
+        let (host, _, _, _) = try await UserHelper.default.registerMeetingsTeam(withMemberCount: 1)
+        let featureConfigs = try await UserHelper.default.featureConfigsAPI.getFeatureConfigs()
+        guard featureConfigs.contains(where: {
+            guard case let .conferenceCalling(config) = $0 else { return false }
+            return config.status == .enabled
+        }) else { throw RuntimeError("The title test requires conference calling to be enabled") }
         let fixtures = try await MeetingsTestHelper(user: host)
         let page = try launchMeetings(for: host)
         let form = try openMeetNow(from: page)
@@ -219,6 +224,7 @@ final class MeetNowTests: WireUITestCase {
         XCTAssertTrue(form.saveButton.waitAndTap())
         let call = try waitForCall(title: title)
         let meeting = try await onlyMeeting(fixtures, title: title)
+        try await assertMembers(fixtures, meeting: meeting, host: host)
         XCTAssertTrue(call.minimizeCallButton.waitAndTap())
         try assertMeetingRow(meeting, on: MeetingsPage())
     }
