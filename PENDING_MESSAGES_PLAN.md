@@ -37,8 +37,9 @@ edited marker. Edits to previously sent messages retain normal edit semantics.
 - [ ] Implement the feature incrementally.
 - [ ] Complete validation and rollout review.
 
-The completed investigation above is based on source inspection. No runtime
-verification or implementation tests have been run for this feature yet.
+The investigation above is based on source inspection, supplemented by the
+user-reported manual baseline results below. No automated tests have been run
+for this feature yet.
 
 ## Reference and scope
 
@@ -97,7 +98,8 @@ Proposed scope:
 
 Purpose: observe existing behavior and use the findings to refine the design.
 These scenarios are investigative, not assertions that the proposed feature
-already works. All results are currently unverified.
+already works. Completed runs and remaining observations are recorded below;
+reported results have not been independently reproduced by the agent.
 
 ### Setup and observations
 
@@ -117,7 +119,8 @@ already works. All results are currently unverified.
 - [ ] Record status immediately, around 15 seconds, and around 90 seconds after
       submission. A failure can happen earlier; 60 seconds is not a guaranteed
       countdown from pressing Send.
-- [ ] Record whether automatic recovery occurs before trying manual Retry.
+- [x] Record whether automatic recovery occurs before trying manual Retry for
+      the reported text scenarios; see B2-B4 below.
 
 For each run, record the exact steps, status text/icon, available message actions,
 whether the message survives relaunch, receiver content/count/order, and timestamps
@@ -129,18 +132,19 @@ the relevant messaging/asset logs alongside the observations.
 Use fresh, distinguishable message content for each scenario. Start with B1-B3.
 Reset connectivity and let the app finish synchronizing between independent runs.
 
-- [ ] **B1: Online control and normal edit.** Send text online, verify receipt,
+- [x] **B1: Online control and normal edit.** Send text online, verify receipt,
       edit it, and verify the receiver sees the new text and the edited marker.
-- [ ] **B2: Send text after going offline.** First finish synchronization online.
+- [x] **B2: Send text after going offline.** First finish synchronization online.
       Disable connectivity, submit text, inspect its status and long-press actions,
       and check whether Edit is offered. Observe for about 90 seconds. Reconnect
       without tapping Retry and record whether it sends automatically. If it does
-      not, record whether manual Retry succeeds. Repeat with a fresh message and
-      a brief offline interval to compare short and prolonged disconnections.
-- [ ] **B3: Edit already-sent text while offline.** Send and confirm receipt online,
+      not, record whether manual Retry succeeds.
+- [ ] **B2 follow-up: Timing.** Repeat with fresh messages and brief versus
+      prolonged disconnections; record actual timings and available Edit actions.
+- [x] **B3: Edit already-sent text while offline.** Send and confirm receipt online,
       disconnect, edit that message, then reconnect. Observe local changes, the
       edited marker, status transitions, and the receiver's final content.
-- [ ] **B4: Relaunch with unsent text.** Disconnect after an online sync, submit
+- [x] **B4: Relaunch with unsent text.** Disconnect after an online sync, submit
       fresh text, then terminate and relaunch while still offline. Record its
       state before and after reconnecting, without manually retrying first.
 - [ ] **B5: Submit after launching offline.** Start with an existing synced account
@@ -168,19 +172,26 @@ must be observed rather than inferred from these expectations.
 
 | Scenario | Test configuration/date | Observed result | Evidence/follow-up |
 | --- | --- | --- | --- |
-| B1 | Not run | Not recorded | |
-| B2 | Not run | Not recorded | |
-| B3 | Not run | Not recorded | |
-| B4 | Not run | Not recorded | |
+| B1 | User report, 2026-10-20; build/device/protocol not recorded | Online sending and normal editing worked. | User confirmed scenario 1 worked. |
+| B2 | User report, 2026-10-20; build/device/protocol not recorded | Offline submission was not sent; Retry was visible. Manual Retry sent the message successfully. | Exact timing, short-offline variant, and Edit availability were not reported. |
+| B3 | User report, 2026-10-20; build/device/protocol not recorded | Offline edit was not sent; Retry was visible. Manual Retry successfully changed the message. | Edited-marker appearance during/after the failed edit was not separately reported. |
+| B4 | User report, 2026-10-20; build/device/protocol not recorded | After relaunch, the message was not sent automatically. Retry was visible and worked once connected. | Confirms the restart case requires manual recovery in this run. |
 | B5 | Not run | Not recorded | |
 | B6 | Not run | Not recorded | |
-| B7 | Not run | Not recorded | |
+| B7 | Pending user test | Not recorded | User's scenario 5 refers to assets (B7 here), not the cold-offline launch scenario B5. |
 | B8 | Not run | Not recorded | |
 
 - [ ] Compare observations with the source-based findings and investigate gaps.
 - [ ] Repeat relevant cases for MLS and Proteus, and each synchronization
       implementation available in the test environment.
 - [ ] Refine the design and automated regression cases using the observed results.
+
+The first four user-reported scenarios cover online control, offline text
+submission, an offline edit of already-sent text, and relaunch with unsent text.
+Manual Retry recovers the reported text failures; the desired automatic recovery
+is the missing behavior. Keep retrying an edit separate from retrying a new
+message when designing recovery. Asset behavior remains untested, and these
+observations do not establish timeout causes or uncertain-delivery semantics.
 
 ## Proposed design
 
