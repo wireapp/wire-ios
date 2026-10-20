@@ -31,6 +31,7 @@ struct FakeVerificationCodeFactory: VerificationCodeFactory,
     var email: String
     var password: String
     var code: [String] = []
+    var isSnapshotTesting: Bool = false
 
     var viewModel: VerificationCodeViewModel {
         // TODO: [WPB-16840] - use code for previews
@@ -39,7 +40,8 @@ struct FakeVerificationCodeFactory: VerificationCodeFactory,
             email: email,
             password: password,
             proxyCredentials: nil,
-            router: FakeRootFactory().viewModel
+            router: FakeRootFactory().viewModel,
+            isSnapshotTesting: isSnapshotTesting
         )
     }
 

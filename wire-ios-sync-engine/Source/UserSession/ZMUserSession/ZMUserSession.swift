@@ -52,6 +52,7 @@ public final class ZMUserSession: NSObject {
 
     private(set) var isNetworkOnline = true
     private var syncStateCancellable: AnyCancellable?
+    private var meetingReminderContentRefreshTask: Task<Void, Never>?
 
     public private(set) var coreDataStack: CoreDataStack!
 
@@ -288,6 +289,14 @@ public final class ZMUserSession: NSObject {
                 NSNumber(value: newValue),
                 key: LocalNotificationDispatcher.ZMShouldHideNotificationContentKey
             )
+            if let clientSessionComponent {
+                // Finish the previous refresh first so rapid privacy changes cannot restore an older title policy.
+                let previousRefresh = meetingReminderContentRefreshTask
+                meetingReminderContentRefreshTask = Task {
+                    await previousRefresh?.value
+                    await clientSessionComponent.refreshMeetingReminderContent(showMeetingTitle: !newValue)
+                }
+            }
         }
     }
 
@@ -816,9 +825,16 @@ public final class ZMUserSession: NSObject {
         syncAgent = nil
         syncStrategy?.tearDown()
         syncStrategy = nil
+        // The transport session must be torn down before the operation loop: `ZMOperationLoop.tearDown()`
+        // spins until the sync context's dispatch group is empty, but it runs on the sync context's own queue
+        // (see `close(deleteCookie:completion:)`), so it can block forever behind pending grouped blocks
+        // (e.g. request completion handlers). Tearing the transport session down afterwards would then never
+        // happen, leaving the account's background `NSURLSession` alive. After logging in again, a new
+        // session with the same identifier is created, and iOS delivers the completion of its background
+        // downloads to the leaked one, which doesn't know the request, so the response is silently dropped.
+        transportSession.tearDown()
         operationLoop?.tearDown()
         operationLoop = nil
-        transportSession.tearDown()
         notificationDispatcher.tearDown()
         callCenter?.tearDown()
         coreDataStack.close()

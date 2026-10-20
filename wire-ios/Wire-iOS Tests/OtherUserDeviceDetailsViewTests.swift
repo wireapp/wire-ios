@@ -17,6 +17,7 @@
 //
 
 import SwiftUI
+import WireFoundation
 import WireRequestStrategySupport
 import WireTestingPackage
 import XCTest

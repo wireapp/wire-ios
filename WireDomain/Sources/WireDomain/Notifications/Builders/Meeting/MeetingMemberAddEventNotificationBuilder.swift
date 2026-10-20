@@ -25,6 +25,15 @@ import WireNetwork
 protocol MeetingMemberAddEventNotificationBuilderProtocol {
 
     func buildContent(event: MeetingMemberAddEvent) async -> UserNotification?
+    func buildContent(event: MeetingMemberAddEvent, meeting: Meeting?) async -> UserNotification?
+
+}
+
+extension MeetingMemberAddEventNotificationBuilderProtocol {
+
+    func buildContent(event: MeetingMemberAddEvent, meeting: Meeting?) async -> UserNotification? {
+        await buildContent(event: event)
+    }
 
 }
 
@@ -57,14 +66,24 @@ struct MeetingMemberAddEventNotificationBuilder: MeetingMemberAddEventNotificati
     }
 
     func buildContent(event: MeetingMemberAddEvent) async -> UserNotification? {
+        await buildContent(event: event, meeting: nil)
+    }
+
+    func buildContent(event: MeetingMemberAddEvent, meeting resolvedMeeting: Meeting?) async -> UserNotification? {
         guard let feature = try? await featureConfigLocalStore.fetchFeature(name: .meetings) else { return nil }
         guard await featureConfigLocalStore.isFeatureEnabled(feature: feature) else { return nil }
         guard event.senderID.id != accountID else { return nil }
 
         // The NSE stores events without running the application's meeting refresh,
         // so an invitation's meeting and inviter may not exist in the local store yet.
-        guard let meeting = try? await meetingsAPI.getMeeting(id: event.meetingID) else { return nil }
-        await meetingLocalStore?.storeMeeting(meeting.toDomainMeeting())
+        let meeting: Meeting
+        if let resolvedMeeting {
+            meeting = resolvedMeeting
+        } else {
+            guard let response = try? await meetingsAPI.getMeeting(id: event.meetingID) else { return nil }
+            meeting = response.toDomainMeeting()
+            await meetingLocalStore?.storeMeeting(meeting)
+        }
         guard let inviter = try? await usersAPI.getUser(for: event.senderID), !inviter.name.isEmpty else { return nil }
 
         let dateFormatter = DateFormatter()
@@ -85,9 +104,9 @@ struct MeetingMemberAddEventNotificationBuilder: MeetingMemberAddEventNotificati
             key: "push.notification.body.senderInvitedToMeeting",
             bundle: .module,
             inviter.name,
-            dateFormatter.string(from: meeting.startTime),
-            timeFormatter.string(from: meeting.startTime),
-            timeFormatter.string(from: meeting.endTime)
+            dateFormatter.string(from: meeting.start),
+            timeFormatter.string(from: meeting.start),
+            timeFormatter.string(from: meeting.end)
         )
         content.categoryIdentifier = NotificationCategory.meetingInvitation.rawValue
         content.sound = .default
@@ -97,7 +116,7 @@ struct MeetingMemberAddEventNotificationBuilder: MeetingMemberAddEventNotificati
 
 }
 
-private extension MeetingResponse {
+extension MeetingResponse {
 
     func toDomainMeeting() -> Meeting {
         Meeting(

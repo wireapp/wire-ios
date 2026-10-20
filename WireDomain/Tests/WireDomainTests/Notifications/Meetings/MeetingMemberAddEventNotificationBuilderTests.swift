@@ -144,6 +144,27 @@ final class MeetingMemberAddEventNotificationBuilderTests: XCTestCase {
         XCTAssertEqual(meetingsAPI.requestedIDs, [Scaffolding.meetingID])
     }
 
+    func testInvitationUsesMeetingFetchedForReminderWithoutSecondMeetingRequest() async {
+        let api = meetingsAPI!
+        let builder = MeetingEventNotificationBuilder(
+            meetingDeleteEventBuilder: UnusedMeetingDeleteBuilder(),
+            meetingMemberAddEventBuilder: sut,
+            meetingUpdateEventBuilder: UnusedMeetingUpdateBuilder(),
+            reminderReconciler: MeetingEventReminderReconciler(
+                pullMeeting: { try await api.getMeeting(id: $0).toDomainMeeting() },
+                reconcileMeeting: { _ in },
+                cancelMeeting: { _ in },
+                isMeetingsEnabled: { true },
+                cancelAccount: {}
+            )
+        )
+
+        let result = await builder.buildContent(event: .memberAdd(Scaffolding.event))
+
+        XCTAssertNotNil(result)
+        XCTAssertEqual(api.requestedIDs, [Scaffolding.meetingID])
+    }
+
     func testMemberAddStillRefreshesMeetingThroughUpdateProcessor() async throws {
         let processors = InvitationEventProcessors()
         let processor = MeetingEventProcessor(

@@ -19,6 +19,7 @@
 import Combine
 import Foundation
 import WireCoreCrypto
+import WireData
 import WireFoundation
 import WireTesting
 import XCTest
@@ -801,7 +802,13 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             // A group with pending proposal in the future
             conversation = createConversation(in: uiMOC)
             conversation.mlsGroupID = groupID
-            conversation.commitPendingProposalDate = futureCommitDate
+            PendingProposalTimer.schedule(
+                mlsGroupID: groupID.data,
+                conversationID: UUID(),
+                conversationDomain: nil,
+                fireDate: futureCommitDate,
+                in: uiMOC
+            )
         }
 
         // Mock commiting a pending proposal
@@ -836,8 +843,8 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         // Then we committed pending proposals.
         XCTAssertEqual(mockCommitPendingProposalsArgument, [groupID])
 
-        await uiMOC.perform {
-            XCTAssertNil(conversation.commitPendingProposalDate)
+        await uiMOC.perform { [uiMOC] in
+            XCTAssertNil(PendingProposalTimer.fetch(mlsGroupID: groupID.data, in: uiMOC))
         }
 
         // Then we added the members.
@@ -1294,7 +1301,13 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             // A group with pending proposal in the future
             conversation = createConversation(in: uiMOC)
             conversation.mlsGroupID = groupID
-            conversation.commitPendingProposalDate = futureCommitDate
+            PendingProposalTimer.schedule(
+                mlsGroupID: groupID.data,
+                conversationID: UUID(),
+                conversationDomain: nil,
+                fireDate: futureCommitDate,
+                in: uiMOC
+            )
         }
 
         // Mock commiting a pending proposal.
@@ -1319,8 +1332,8 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         // Then we committed pending proposals.
         XCTAssertEqual(mockCommitPendingProposalsArgument, [groupID])
 
-        await uiMOC.perform {
-            XCTAssertNil(conversation.commitPendingProposalDate)
+        await uiMOC.perform { [uiMOC] in
+            XCTAssertNil(PendingProposalTimer.fetch(mlsGroupID: groupID.data, in: uiMOC))
         }
 
         // Then we removed the clients.

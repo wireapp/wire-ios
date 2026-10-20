@@ -15,6 +15,14 @@ on:
         type: boolean
         description: 'Distribute externally: Wire Employees and Externals - Non Wire Employees'
         default: true
+      pr_number:
+        description: 'PR number to mark Ready for QA and link to Jira (set by the /playground comment)'
+        type: string
+        default: ''
+      jira_keys:
+        description: 'Space separated Jira keys to comment on (set by the /playground comment)'
+        type: string
+        default: ''
 
 permissions: 
   checks: write
@@ -28,6 +36,7 @@ jobs:
       distribute_externals: ${{ inputs.distribute_externals }}
       fastlane_action: playground
       mac_runner: ${{ inputs.mac_runner || vars.DEFAULT_MAC_RUNNER }}
+      jira_keys: ${{ inputs.jira_keys }}
     secrets:
       KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
       APPSTORE_API_KEY_BASE64: ${{ secrets.APPSTORE_API_KEY_BASE64 }}
@@ -55,4 +64,20 @@ jobs:
       CLIENT_NAME_C1_C2_C3: ${{ secrets.CLIENT_NAME_C1_C2_C3 }}
       CLIENT_ID_C1_C2_C3: ${{ secrets.CLIENT_ID_C1_C2_C3 }}
       JIRA_TOKEN: ${{ secrets.JIRA_TOKEN }}
-      SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_BUILD_WEBHOOK }}
+      JIRA_COMMENT_TOKEN: ${{ secrets.JIRA_COMMENT_TOKEN }}
+      WIRE_WEBHOOK_URL: ${{ secrets.WIRE_IOS_DELIVERY_URL }}
+      WIRE_WEBHOOK_TOKEN: ${{ secrets.WIRE_IOS_DELIVERY_TOKEN }}
+
+  ready_for_qa:
+    needs: playground
+    if: ${{ needs.playground.result == 'success' && inputs.pr_number != '' }}
+    runs-on: ubuntu-24.04
+    permissions:
+      pull-requests: write
+    steps:
+      - name: Label PR Ready for QA
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ inputs.pr_number }}
+        run: gh pr edit "$PR_NUMBER" --add-label "Ready for QA"

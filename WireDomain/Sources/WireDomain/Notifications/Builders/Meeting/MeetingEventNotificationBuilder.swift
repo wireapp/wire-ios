@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireCallingDomain
+import WireLogging
 import WireNetwork
 
 protocol MeetingEventNotificationBuilderProtocol {
@@ -32,17 +34,86 @@ struct MeetingEventNotificationBuilder: MeetingEventNotificationBuilderProtocol 
 
     let meetingUpdateEventBuilder: any MeetingUpdateEventNotificationBuilderProtocol
 
+    let reminderReconciler: MeetingEventReminderReconciler?
+
+    init(
+        meetingDeleteEventBuilder: any MeetingDeleteEventNotificationBuilderProtocol,
+        meetingMemberAddEventBuilder: any MeetingMemberAddEventNotificationBuilderProtocol,
+        meetingUpdateEventBuilder: any MeetingUpdateEventNotificationBuilderProtocol,
+        reminderReconciler: MeetingEventReminderReconciler? = nil
+    ) {
+        self.meetingDeleteEventBuilder = meetingDeleteEventBuilder
+        self.meetingMemberAddEventBuilder = meetingMemberAddEventBuilder
+        self.meetingUpdateEventBuilder = meetingUpdateEventBuilder
+        self.reminderReconciler = reminderReconciler
+    }
+
     func buildContent(event: MeetingEvent) async -> UserNotification? {
-        switch event {
+        // Reconcile even when the event has no visible notification, and reuse the fetched meeting below.
+        let meeting = await reminderReconciler?.reconcile(event: event)
+
+        return switch event {
         case let .delete(event):
             await meetingDeleteEventBuilder.buildContent(event: event)
         case let .memberAdd(event):
-            await meetingMemberAddEventBuilder.buildContent(event: event)
+            await meetingMemberAddEventBuilder.buildContent(event: event, meeting: meeting)
         case let .update(event):
-            await meetingUpdateEventBuilder.buildContent(event: event)
+            await meetingUpdateEventBuilder.buildContent(event: event, meeting: meeting)
         default:
             nil
         }
+    }
+
+}
+
+/// Updates reminders from meeting push events independently of whether they produce visible notification content.
+struct MeetingEventReminderReconciler {
+
+    let pullMeeting: (WireNetwork.QualifiedID) async throws -> Meeting?
+    let reconcileMeeting: (Meeting) async throws -> Void
+    let cancelMeeting: (WireNetwork.QualifiedID) async -> Void
+    /// Returns `nil` when the feature state is unknown, which leaves pending reminders untouched.
+    let isMeetingsEnabled: () async -> Bool?
+    let cancelAccount: () async -> Void
+
+    @discardableResult
+    func reconcile(event: MeetingEvent) async -> Meeting? {
+        guard let isMeetingsEnabled = await isMeetingsEnabled() else { return nil }
+        guard isMeetingsEnabled else {
+            await cancelAccount()
+            return nil
+        }
+        let meetingID: WireNetwork.QualifiedID
+
+        switch event {
+        case let .delete(event):
+            await cancelMeeting(event.meetingID)
+            return nil
+        case let .create(event):
+            meetingID = event.meetingID
+        case let .memberAdd(event):
+            meetingID = event.meetingID
+        case let .update(event):
+            meetingID = event.meetingID
+        }
+
+        do {
+            if let meeting = try await pullMeeting(meetingID) {
+                do {
+                    try await reconcileMeeting(meeting)
+                } catch {
+                    WireLogger.meetings.error("Failed to schedule NSE meeting reminder: \(error)")
+                }
+                return meeting
+            } else {
+                // The meeting API confirmed that this meeting no longer exists.
+                await cancelMeeting(meetingID)
+            }
+        } catch {
+            // Preserve pending requests if the current meeting could not be fetched.
+            WireLogger.meetings.error("Failed to reconcile NSE meeting reminder: \(error)")
+        }
+        return nil
     }
 
 }

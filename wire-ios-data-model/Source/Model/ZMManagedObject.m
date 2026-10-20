@@ -346,7 +346,14 @@ static NSString * const KeysForCachedValuesKey = @"ZMKeysForCachedValues";
     fetchRequest.predicate = [NSPredicate predicateWithFormat:@"%K == %@", [self remoteIdentifierDataKey], uuid.data];
     fetchRequest.fetchLimit = 2; // We only want 1, but want to check if there are too many.
     NSArray *fetchResult = [moc executeFetchRequestOrAssert:fetchRequest];
-    RequireString([fetchResult count] <= 1, "More than one object with the same UUID: %s", uuid.transportString.UTF8String);
+    if (fetchResult.count > 1) {
+        // Duplicates should never coexist. Log each one (persisted with the logs) before crashing,
+        // so the cause can be confirmed from the logs and the assertion dump.
+        NSString *details = [WireLoggerObjC logDuplicateManagedObjectsWithEntityName:self.entityName
+                                                                    remoteIdentifier:uuid.transportString
+                                                                             objects:fetchResult];
+        RequireString(NO, "More than one object with the same UUID: %s. %s", uuid.transportString.UTF8String, details.UTF8String);
+    }
     return fetchResult.firstObject;
 }
 
@@ -393,7 +400,14 @@ static NSString * const KeysForCachedValuesKey = @"ZMKeysForCachedValues";
 
     fetchRequest.fetchLimit = 2; // We only want 1, but want to check if there are too many.
     NSArray *fetchResult = [moc executeFetchRequestOrAssert:fetchRequest];
-    RequireString([fetchResult count] <= 1, "More than one object with the same UUID: %s and domain: %s", uuid.transportString.UTF8String, domain.UTF8String);
+    if (fetchResult.count > 1) {
+        // Duplicates should never coexist. Log each one (persisted with the logs) before crashing,
+        // so the cause can be confirmed from the logs and the assertion dump.
+        NSString *details = [WireLoggerObjC logDuplicateManagedObjectsWithEntityName:self.entityName
+                                                                    remoteIdentifier:uuid.transportString
+                                                                             objects:fetchResult];
+        RequireString(NO, "More than one object with the same UUID: %s. %s", uuid.transportString.UTF8String, details.UTF8String);
+    }
     return fetchResult.firstObject;
 }
 

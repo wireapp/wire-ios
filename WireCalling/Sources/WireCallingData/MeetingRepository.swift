@@ -33,6 +33,9 @@ public final class MeetingRepository: MeetingRepositoryProtocol {
 
     private let meetingsAPI: any MeetingsAPI
     private let localStore: any MeetingLocalStoreProtocol
+    private let onMeetingCreated: (@Sendable (Meeting) async throws -> Void)?
+    private let onMeetingUpdated: (@Sendable (Meeting) async throws -> Void)?
+    private let onMeetingsRefreshed: (@Sendable ([Meeting]) async -> Void)?
     private let pullConversation: (@Sendable (QualifiedID) async throws -> Void)?
     private let changeBroadcaster = AsyncMulticaster<Void>()
 
@@ -41,10 +44,16 @@ public final class MeetingRepository: MeetingRepositoryProtocol {
     public init(
         meetingsAPI: any MeetingsAPI,
         localStore: any MeetingLocalStoreProtocol,
+        onMeetingCreated: (@Sendable (Meeting) async throws -> Void)? = nil,
+        onMeetingUpdated: (@Sendable (Meeting) async throws -> Void)? = nil,
+        onMeetingsRefreshed: (@Sendable ([Meeting]) async -> Void)? = nil,
         pullConversation: (@Sendable (QualifiedID) async throws -> Void)? = nil
     ) {
         self.meetingsAPI = meetingsAPI
         self.localStore = localStore
+        self.onMeetingCreated = onMeetingCreated
+        self.onMeetingUpdated = onMeetingUpdated
+        self.onMeetingsRefreshed = onMeetingsRefreshed
         self.pullConversation = pullConversation
     }
 
@@ -60,14 +69,18 @@ public final class MeetingRepository: MeetingRepositoryProtocol {
         title: String,
         startTime: Date,
         endTime: Date,
-        recurrence: WireCallingDomain.MeetingRecurrence?
-    ) async throws -> Meeting {
+        recurrence: WireCallingDomain.MeetingRecurrence?,
+        type: WireCallingDomain.MeetingType,
+        password: String?
+    ) async throws -> MeetingCreationResult {
         let response = try await meetingsAPI.createMeeting(
             parameters: CreateMeetingParameters(
                 title: title,
                 startTime: startTime,
                 endTime: endTime,
                 timeZoneIdentifier: TimeZone.current.identifier,
+                type: type == .immediate ? .immediate : .scheduled,
+                password: password,
                 recurrence: recurrence?.toNetworkRecurrence()
             )
         )
@@ -75,7 +88,13 @@ public final class MeetingRepository: MeetingRepositoryProtocol {
         await storeMeeting(meeting)
         // The stored copy has its members populated from the conversation.
         // Until the conversation is pulled, its metadata remains unavailable.
-        return await localStore.storedMeeting(id: meeting.id) ?? meeting
+        let storedMeeting = await localStore.storedMeeting(id: meeting.id) ?? meeting
+        do {
+            try await onMeetingCreated?(storedMeeting)
+        } catch {
+            WireLogger.meetings.error("Failed to schedule created meeting reminder: \(error)")
+        }
+        return MeetingCreationResult(meeting: storedMeeting, link: response.link)
     }
 
     public func updateMeeting(
@@ -98,7 +117,14 @@ public final class MeetingRepository: MeetingRepositoryProtocol {
         let meeting = response.toDomainMeeting()
         await storeMeeting(meeting)
         // The stored copy has its members populated from the conversation.
-        return await localStore.storedMeeting(id: meeting.id) ?? meeting
+        let storedMeeting = await localStore.storedMeeting(id: meeting.id) ?? meeting
+        do {
+            // This replaces pending occurrences when the meeting's recurrence changes.
+            try await onMeetingUpdated?(storedMeeting)
+        } catch {
+            WireLogger.meetings.error("Failed to reconcile updated meeting reminder: \(error)")
+        }
+        return storedMeeting
     }
 
     public func storeMeeting(_ meeting: Meeting) async {
@@ -130,6 +156,8 @@ public final class MeetingRepository: MeetingRepositoryProtocol {
         let meetings = responses.map { $0.toDomainMeeting() }
         await localStore.replaceAllMeetings(with: meetings)
         await resolveConversations(for: meetings)
+        // Only a successful full list can invalidate reminders for meetings missing from the response.
+        await onMeetingsRefreshed?(meetings)
         changeBroadcaster.broadcast()
     }
 
@@ -190,6 +218,7 @@ public final class MeetingRepository: MeetingRepositoryProtocol {
             let meetings = try await meetingsAPI.listMeetings().map { $0.toDomainMeeting() }
             await localStore.replaceAllMeetings(with: meetings)
             await resolveConversations(for: meetings)
+            await onMeetingsRefreshed?(meetings)
         } catch {
             guard await !localStore.storedMeetings().isEmpty else { throw error }
         }

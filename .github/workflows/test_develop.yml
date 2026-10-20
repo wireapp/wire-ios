@@ -30,9 +30,10 @@ jobs:
       run_critical_flows: true
       ui_test_tags: "!critical"
       notify: always
-      timeout_minutes: 120
+      timeout_minutes: 180
     secrets:
       ZENKINS_USERNAME: ${{ secrets.ZENKINS_USERNAME }}
       DD_API_KEY: ${{ secrets.DD_API_KEY }}
       OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
-      SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_NIGHTLY_WEBHOOK }}
+      WIRE_WEBHOOK_URL: ${{ secrets.WIRE_IOS_NIGHTLY_URL }}
+      WIRE_WEBHOOK_TOKEN: ${{ secrets.WIRE_IOS_NIGHTLY_TOKEN }}
