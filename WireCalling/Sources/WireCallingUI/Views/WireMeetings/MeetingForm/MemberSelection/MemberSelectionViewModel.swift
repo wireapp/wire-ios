@@ -27,6 +27,20 @@ final class MemberSelectionViewModel {
 
     private let source: any SearchMembersUseCaseProtocol
     private let onSelect: ([MeetingMember]) -> Void
+    private let onSelectEmails: ([String]) -> Void
+
+    let allowsEmailInvitations: Bool
+    private(set) var selectedEmails: [String]
+    var emailAddress = "" {
+        didSet { emailValidationError = nil }
+    }
+
+    private(set) var emailValidationError: EmailValidationError?
+
+    enum EmailValidationError {
+        case invalidAddress
+        case duplicateAddress
+    }
 
     var searchText: String = "" {
         didSet { scheduleSearch() }
@@ -55,11 +69,17 @@ final class MemberSelectionViewModel {
     init(
         source: any SearchMembersUseCaseProtocol,
         initialSelection: [MeetingMember] = [],
-        onSelect: @escaping ([MeetingMember]) -> Void = { _ in }
+        onSelect: @escaping ([MeetingMember]) -> Void = { _ in },
+        allowsEmailInvitations: Bool = false,
+        initialEmailSelection: [String] = [],
+        onSelectEmails: @escaping ([String]) -> Void = { _ in }
     ) {
         self.source = source
         self.selectedMembers = initialSelection
         self.onSelect = onSelect
+        self.allowsEmailInvitations = allowsEmailInvitations
+        self.selectedEmails = initialEmailSelection
+        self.onSelectEmails = onSelectEmails
         scheduleSearch(debounce: .zero) // initial load is immediate
     }
 
@@ -86,6 +106,38 @@ final class MemberSelectionViewModel {
 
     func confirmSelection() {
         onSelect(selectedMembers)
+        onSelectEmails(selectedEmails)
+    }
+
+    func addEmail() {
+        guard allowsEmailInvitations else { return }
+        let email = emailAddress.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard Self.isValidEmail(email) else {
+            emailValidationError = .invalidAddress
+            return
+        }
+        guard !selectedEmails.contains(where: { $0.caseInsensitiveCompare(email) == .orderedSame }) else {
+            emailValidationError = .duplicateAddress
+            return
+        }
+        selectedEmails.append(email)
+        emailAddress = ""
+    }
+
+    func removeEmail(_ email: String) {
+        selectedEmails.removeAll { $0 == email }
+        emailValidationError = nil
+    }
+
+    private static func isValidEmail(_ email: String) -> Bool {
+        let localPart = email.prefix(while: { $0 != "@" })
+        guard email.utf8.count <= 254, localPart.utf8.count <= 64,
+              !localPart.hasPrefix("."), !localPart.hasSuffix("."), !email.contains("..") else {
+            return false
+        }
+        let pattern = #"^[A-Z0-9.!#$%&'*+/=?^_`{|}~-]+@"#
+            + #"[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?(?:\.[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?)+$"#
+        return email.range(of: pattern, options: [.regularExpression, .caseInsensitive]) != nil
     }
 
     func retrySearch() {
