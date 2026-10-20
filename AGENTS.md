@@ -102,6 +102,7 @@ Code generation: Sourcery generates mocks (`AutoMockable`), SwiftGen generates s
 ## Conventions
 
 - **Commits and PR titles** must reference a JIRA issue: `fix: description - WPB-XXXXX` - see [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/)
+- Write scripts (CI, tooling, automation) in Ruby when possible, under `scripts/`, using only the standard library; avoid inline JS/Python in workflows
 - Code review uses [conventional comments](https://conventionalcomments.org/)
 - Cherry-picked commits are marked with 🍒
 - All colors in UI code must come from `WireDesign.ColorTheme` or `WireDesign.BaseColorPalette`
