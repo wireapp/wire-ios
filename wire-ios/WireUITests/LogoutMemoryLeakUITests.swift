@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireLocators
 import XCTest
 
 /// Verifies that the `ZMUserSession` is deallocated after logout. (WPB-18909)
@@ -28,9 +29,9 @@ final class LogoutMemoryLeakUITests: WireUITestCase {
     @MainActor
     func testUserSessionDeallocatedAfterLogout() async throws {
         // Given
-        let user = try await userHelper.createPersonalUser()
+        let user = try await UserHelper.default.createPersonalUser()
         _ = try app.loginUser(email: user.email, password: user.password)
-            .acceptPopup(with: self)
+            .acceptPopup()
         try showDeveloperTools().checkUserSessionDeallocated(false).hide()
 
         // When
@@ -45,7 +46,16 @@ final class LogoutMemoryLeakUITests: WireUITestCase {
         try showDeveloperTools().checkUserSessionDeallocated(true).hide()
     }
 
+    private func dismissSessionExpiredAlertIfPresent() {
+        let okButton = app.alerts[Locators.SessionExpiredPage.alertTitle.rawValue]
+            .buttons[Locators.SessionExpiredPage.okButton.rawValue]
+        if okButton.waitForExistence(timeout: 5) {
+            okButton.tap()
+        }
+    }
+
     private func showDeveloperTools() throws -> DeveloperToolsPage {
+        dismissSessionExpiredAlertIfPresent()
         simulateShakeGesture()
         return try DeveloperToolsPage()
     }
