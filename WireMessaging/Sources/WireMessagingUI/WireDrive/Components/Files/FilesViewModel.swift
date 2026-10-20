@@ -33,7 +33,7 @@ package final class FilesViewModel: ObservableObject {
         case create(target: WireDriveCreateFileUseCase.Target)
         case editTags(fileItem: FilesViewItem)
         case shareLink(fileItem: FilesViewItem)
-        case moveToFolder(fileItem: FilesViewItem)
+        case moveToFolder(fileItems: [FilesViewItem])
         case renameFile(fileItem: FilesViewItem)
         case versionHistory(fileItem: FilesViewItem)
 
@@ -45,8 +45,8 @@ package final class FilesViewModel: ObservableObject {
                 "editTags(\(item.id))"
             case let .shareLink(item):
                 "shareLink(\(item.id))"
-            case let .moveToFolder(item):
-                "moveToFolder(\(item.id))"
+            case let .moveToFolder(items):
+                "moveToFolder(\(items.compactMap(\.id)))"
             case let .renameFile(item):
                 "renameFile(\(item.id))"
             case let .versionHistory(item):
@@ -519,6 +519,10 @@ package final class FilesViewModel: ObservableObject {
 
     func enableMultipleSelection(_ enabled: Bool) {
         multipleSelection = enabled ? .active : .inactive
+    }
+
+    func moveToFolder() {
+        sheetNavigation = .moveToFolder(fileItems: Array(selectedItems))
     }
 }
 

@@ -273,6 +273,28 @@ class SharedDriveFilesPage: PageModel {
             .firstMatch
     }
 
+    // MARK: - Multiple selection
+
+    func selectItems(named names: [String]) {
+        XCTAssertTrue(moreOptionOnSharedDrive.waitAndTap(timeout: 3))
+        XCTAssertTrue(app.buttons[Locators.WireDrive.FilesPage.selectItems.rawValue].waitAndTap(timeout: 3))
+
+        for name in names {
+            XCTAssertTrue(fileRow(named: name).waitAndTap(timeout: 5), "Item '\(name)' couldn't be selected")
+        }
+    }
+
+    func moveSelectedItems(toFolder folderName: String) {
+        let moveToFolderButton = app.buttons[Locators.WireDrive.FilesPage.moveToFolderFloatingButton.rawValue]
+        XCTAssertTrue(moveToFolderButton.waitAndTap(timeout: 3), "Move to folder button wasn't tappable")
+        XCTAssertTrue(app.staticTexts.matching(NSPredicate(format: "label == %@", folderName)).element(boundBy: 1)
+            .waitAndTap(timeout: 5))
+
+        let moveHereButton = app.buttons[Locators.WireDrive.MoveToFolderPage.moveHere.rawValue]
+        XCTAssertTrue(moveHereButton.waitAndTap(timeout: 5), "Move confirmation button wasn't tappable")
+        XCTAssertTrue(moveHereButton.waitForNonExistence(timeout: 10), "Move sheet wasn't dismissed")
+    }
+
     // MARK: - Direct uploads
 
     private var uploadMenuButton: XCUIElement {
