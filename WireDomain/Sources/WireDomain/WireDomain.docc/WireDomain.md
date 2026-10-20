@@ -50,6 +50,10 @@ The clean architecture, implemented in WireDomain, emphasizes the separation of 
 
 - <doc:federation>
 
+### Notifications
+
+- <doc:nse-calling-events>
+
 ### Repositories
 
 - ``UserRepository``

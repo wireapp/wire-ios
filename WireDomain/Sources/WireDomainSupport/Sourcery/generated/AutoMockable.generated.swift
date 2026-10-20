@@ -3326,6 +3326,34 @@ public class MockOneOnOneResolverProtocol: OneOnOneResolverProtocol {
 
 }
 
+class MockProcessCallingEventsUseCaseProtocol: ProcessCallingEventsUseCaseProtocol {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - invoke
+
+    var invokeEventBatchesCallKitReportingCoordinator_Invocations: [(eventBatches: [[UpdateEvent]], callKitReportingCoordinator: CallKitReportingCoordinator)] = []
+    var invokeEventBatchesCallKitReportingCoordinator_MockError: Error?
+    var invokeEventBatchesCallKitReportingCoordinator_MockMethod: (([[UpdateEvent]], CallKitReportingCoordinator) async throws -> Void)?
+
+    func invoke(eventBatches: [[UpdateEvent]], callKitReportingCoordinator: CallKitReportingCoordinator) async throws {
+        invokeEventBatchesCallKitReportingCoordinator_Invocations.append((eventBatches: eventBatches, callKitReportingCoordinator: callKitReportingCoordinator))
+
+        if let error = invokeEventBatchesCallKitReportingCoordinator_MockError {
+            throw error
+        }
+
+        guard let mock = invokeEventBatchesCallKitReportingCoordinator_MockMethod else {
+            fatalError("no mock for `invokeEventBatchesCallKitReportingCoordinator`")
+        }
+
+        try await mock(eventBatches, callKitReportingCoordinator)
+    }
+
+}
+
 public class MockProcessNotificationUseCaseProtocol: ProcessNotificationUseCaseProtocol {
 
     // MARK: - Life cycle
