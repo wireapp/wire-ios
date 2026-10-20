@@ -49,6 +49,7 @@ public final class ZMUserSession: NSObject {
     public private(set) var isBuildBlacklisted = false
     private var tokens: [Any] = []
     public private(set) var isTornDown = false
+    private var isTearingDown = false
 
     private(set) var isNetworkOnline = true
     private var syncStateCancellable: AnyCancellable?
@@ -804,9 +805,19 @@ public final class ZMUserSession: NSObject {
     }
 
     public func tearDown() {
-        guard !isTornDown else { return }
+        tearDown(completion: {})
+    }
 
-        Task {
+    /// Tears down the session. `completion` is called once the session is completely torn down, i.e. after
+    /// pending work has been drained and the core data stack is closed, so it's safe to delete the account data.
+    public func tearDown(completion: @escaping () -> Void) {
+        guard !isTornDown, !isTearingDown else {
+            if isTornDown { completion() }
+            return
+        }
+        isTearingDown = true
+
+        let workAgentStopTask = Task { [clientSessionComponent] in
             await clientSessionComponent?.workAgent.clearSchedulerQueue()
             await clientSessionComponent?.workAgent.stop()
         }
@@ -825,16 +836,38 @@ public final class ZMUserSession: NSObject {
         syncAgent = nil
         syncStrategy?.tearDown()
         syncStrategy = nil
-        // The transport session must be torn down before the operation loop: `ZMOperationLoop.tearDown()`
-        // spins until the sync context's dispatch group is empty, but it runs on the sync context's own queue
-        // (see `close(deleteCookie:completion:)`), so it can block forever behind pending grouped blocks
-        // (e.g. request completion handlers). Tearing the transport session down afterwards would then never
-        // happen, leaving the account's background `NSURLSession` alive. After logging in again, a new
-        // session with the same identifier is created, and iOS delivers the completion of its background
-        // downloads to the leaked one, which doesn't know the request, so the response is silently dropped.
+        // The transport session must be torn down before the operation loop: pending request completion
+        // handlers are grouped blocks on the sync context, and the operation loop waits for the sync context's
+        // dispatch group to be empty. Tearing the transport session down also makes sure the account's background
+        // `NSURLSession` doesn't stay alive. After logging in again, a new session with the same identifier is
+        // created, and iOS delivers the completion of its background downloads to the leaked one, which doesn't
+        // know the request, so the response is silently dropped.
         transportSession.tearDown()
-        operationLoop?.tearDown()
+
+        let loop = operationLoop
         operationLoop = nil
+        // Resolved here, on the caller's queue as before, since it accesses a managed object context's user info.
+        let callCenterToTearDown = callCenter
+
+        let finishTearDown: @Sendable () -> Void = { [self] in
+            // Don't close the stores before the work that was in flight has finished using them.
+            Task {
+                await workAgentStopTask.value
+                syncManagedObjectContext.performGroupedBlock { [self] in
+                    completeTearDown(callCenter: callCenterToTearDown)
+                    completion()
+                }
+            }
+        }
+
+        if let loop {
+            loop.tearDown(completion: finishTearDown)
+        } else {
+            finishTearDown()
+        }
+    }
+
+    private func completeTearDown(callCenter: WireCallCenterV3?) {
         notificationDispatcher.tearDown()
         callCenter?.tearDown()
         coreDataStack.close()
@@ -850,6 +883,7 @@ public final class ZMUserSession: NSObject {
         WireLogger.authentication.clearClientID()
 
         isTornDown = true
+        isTearingDown = false
     }
 
     // MARK: - Methods

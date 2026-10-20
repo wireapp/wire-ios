@@ -142,7 +142,11 @@ class ZMUserSessionTestsBase: MessagingTest {
         mockEARService = nil
         mockFetchBackendMLSPublicKeysActionHandler = nil
         mockCoreCryptoProvider = nil
-        sut?.tearDown()
+        if let sut {
+            let tearDownExpectation = expectation(description: "user session torn down")
+            sut.tearDown { tearDownExpectation.fulfill() }
+            wait(for: [tearDownExpectation], timeout: 5)
+        }
         super.tearDown()
     }
 

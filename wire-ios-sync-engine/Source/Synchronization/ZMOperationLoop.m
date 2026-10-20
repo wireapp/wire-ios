@@ -31,6 +31,9 @@
 
 static char* const ZMLogTag ZM_UNUSED = "OperationLoop";
 
+/// Max time to wait for pending blocks on the sync context when tearing down.
+static const NSTimeInterval ZMOperationLoopTearDownTimeout = 5.0;
+
 
 @interface ZMOperationLoop ()
 {
@@ -84,6 +87,11 @@ static char* const ZMLogTag ZM_UNUSED = "OperationLoop";
 
 - (void)tearDown;
 {
+    [self tearDownWithCompletion:nil];
+}
+
+- (void)tearDownWithCompletion:(void (^)(void))completion;
+{
     self.tornDown = YES;
     self.shouldStopEnqueueing = YES;
     
@@ -91,18 +99,32 @@ static char* const ZMLogTag ZM_UNUSED = "OperationLoop";
     [ZMRequestAvailableNotification removeObserver:self];
     
     self.transportSession = nil;
-    // TODO: 
-//    RequireString([NSOperationQueue mainQueue] == [NSOperationQueue currentQueue],
-//                  "Must call be called on the main queue.");
-    __block BOOL didStop = NO;
-    [self.syncMOC.dispatchGroup notifyOnQueue:dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0) block:^{
-        didStop = YES;
-    }];
-    while (!didStop) {
-        if (! [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode beforeDate:[NSDate dateWithTimeIntervalSinceNow:0.002]]) {
-            [NSThread sleepForTimeInterval:0.002];
+
+    // Wait (without blocking) for pending grouped blocks, e.g. request completion handlers, to finish.
+    // A timeout makes sure a block that never finishes can't prevent the teardown from completing.
+    NSLock *lock = [[NSLock alloc] init];
+    __block BOOL didComplete = NO;
+    void (^finish)(void) = ^{
+        [lock lock];
+        BOOL alreadyCompleted = didComplete;
+        didComplete = YES;
+        [lock unlock];
+        if (!alreadyCompleted && completion != nil) {
+            completion();
         }
-    }
+    };
+
+    dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0);
+    [self.syncMOC.dispatchGroup notifyOnQueue:queue block:finish];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(ZMOperationLoopTearDownTimeout * NSEC_PER_SEC)), queue, ^{
+        [lock lock];
+        BOOL alreadyCompleted = didComplete;
+        [lock unlock];
+        if (!alreadyCompleted) {
+            ZMLogError(@"ZMOperationLoop teardown timed out waiting for pending blocks");
+        }
+        finish();
+    });
 }
 
 #if DEBUG

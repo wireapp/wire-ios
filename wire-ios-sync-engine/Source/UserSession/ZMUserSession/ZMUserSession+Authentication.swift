@@ -80,15 +80,16 @@ extension ZMUserSession {
             self.localNotificationDispatcher?.cancelAllNotifications()
         }
 
-        if deleteCookie {
-            deleteUserKeychainItems()
-        }
-
+        // The completion must only be called once the session is torn down, as it's typically used to
+        // delete the account data, which must not happen while the session is still using it.
         syncManagedObjectContext.perform {
-            self.tearDown()
+            self.tearDown {
+                if deleteCookie {
+                    self.deleteUserKeychainItems()
+                }
+                completion()
+            }
         }
-
-        completion()
     }
 
     func close(deleteCookie: Bool) async {
@@ -108,6 +109,7 @@ extension ZMUserSession {
             let selfClientIdentifier = ZMUser.selfUser(in: viewContext).selfClient()?.remoteIdentifier,
             let apiVersion = resolvedBackendMetadata.apiVersion
         else {
+            completion(.failure(NSError(userSessionErrorCode: .unknownError, userInfo: nil)))
             return
         }
 
@@ -127,9 +129,13 @@ extension ZMUserSession {
         request.add(ZMCompletionHandler(on: managedObjectContext, block: { [weak self] response in
             guard let self else { return }
 
-            if response.httpStatus == 200 {
-                delegate?.userDidLogout(accountId: accountID)
+            // If the client is already gone on the backend, the user is effectively logged out.
+            let isClientAlreadyDeleted = response.payload?.asDictionary()?["label"] as? String == "client-not-found"
+
+            if response.httpStatus == 200 || isClientAlreadyDeleted {
+                // Notify the caller first, so it can clean up before the session is torn down.
                 completion(.success(()))
+                delegate?.userDidLogout(accountId: accountID)
             } else {
                 completion(.failure(errorFromFailedDeleteResponse(response)))
             }
