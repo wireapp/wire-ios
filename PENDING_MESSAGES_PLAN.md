@@ -33,6 +33,9 @@ edited marker. Edits to previously sent messages retain normal edit semantics.
       branches/PRs as needed, and remove it before merging into `develop`.
 - [ ] Approve the design, implementation sequence, and local flag approach.
 - [x] Record the Jira issue key before creating commits or PRs: `WPB-26307`.
+- [x] Audit the reported baseline behaviors against the code, including asset
+      reconnect handling and the cancel-to-Retry transition. See the verification
+      section for supported behaviors, corrections, and remaining uncertainty.
 - [ ] Run and record the manual baseline scenarios below before finalizing the design.
 - [ ] Implement the feature incrementally.
 - [ ] Complete validation and rollout review.
@@ -71,7 +74,7 @@ Proposed scope:
 | UI | Pending messages currently display a sending state. Ordinary text editing is offered only for sent, delivered, or read messages. |
 | Synchronization | `MessageSender` waits for synchronization and message dependencies. The synchronization observer is not a reliable connectivity gate. |
 | Expiration | Network-attempt expiration is assigned in the sender. Its default interval is 60 seconds; this is not necessarily measured from pressing Send. Send errors can expire messages. |
-| Restart | Both regular and asset message strategies explicitly expire messages recovered from a previous app run (`isFresh == false`). |
+| Restart | Eligible unsent regular messages recovered at bootstrap are expired (`isFresh == false`). The asset-message strategy does this only for assets already `.uploaded` and eligible at bootstrap; assets still preprocessing/uploading follow a different recovery path. |
 | Normal edits | `editText` creates a `MessageEdit`, replaces the nonce, sets `updatedTimestamp`, and sets `delivered = false`. The timestamp drives the edited marker. |
 | Asset storage | Original and encrypted bytes live in a file cache. A persisted message row alone does not guarantee long-term attachment availability. |
 
@@ -87,7 +90,16 @@ Proposed scope:
 - [Asset preprocessing](wire-ios-request-strategy/Sources/Request%20Strategies/Assets/Helpers/AssetsPreprocessor.swift)
 - [Asset upload](wire-ios-request-strategy/Sources/Request%20Strategies/Assets/AssetV3UploadRequestStrategy.swift)
 - [Asset message sending](wire-ios-request-strategy/Sources/Request%20Strategies/Assets/AssetClientMessageRequestStrategy.swift)
+- [Upload retry bookkeeping](wire-ios-request-strategy/Sources/Object%20Syncs/Upstream/ZMUpstreamModifiedObjectSync.m)
+- [Transport scheduler](wire-ios-transport/Source/TransportSession/ZMTransportRequestScheduler.m)
+- [Transport session](wire-ios-transport/Source/TransportSession/ZMTransportSession.m)
+- [Application status](wire-ios-sync-engine/Source/Synchronization/ApplicationStatusDirectory.swift)
 - [Asset storage](wire-ios-data-model/Source/Model/Message/FileAssetCache.swift)
+- [Asset cancellation](wire-ios-data-model/Source/Model/Message/ZMAssetClientMessage+FileMessageData.swift)
+- [Asset resend](wire-ios-data-model/Source/Model/Message/ZMAssetClientMessage.swift)
+- [File action state](wire-ios/Wire-iOS/Sources/UserInterface/Conversation/Content/Cells/FileTransfer/FileTransferView.swift)
+- [Video/file upload routing](wire-ios/Wire-iOS/Sources/UserInterface/Conversation/InputBar/ConversationInputBarViewController+Files.swift)
+- [Wire Drive draft upload](WireMessaging/Sources/WireMessagingDomain/WireDrive/UseCases/UploadDraftUseCase.swift)
 - [Text editing](wire-ios-data-model/Source/Model/Message/ZMClientMessage+TextMessageData.swift)
 - [Model edit eligibility](wire-ios-data-model/Source/Model/Message/ConversationMessage+Deletion.swift)
 - [UI edit eligibility](wire-ios/Wire-iOS/Sources/Helpers/syncengine/ZMMessage+Actions.swift)
@@ -165,6 +177,11 @@ Reset connectivity and let the app finish synchronizing between independent runs
       enabled again. Treat this as a tentative automatic-recovery observation;
       receiver playback and whether Retry was used have not been explicitly
       confirmed. No restart result was reported for this video.
+- [x] **B7 partial observation: File restart.** The user reports that after
+      restarting, they needed to cancel the file upload to expose Retry; Retry
+      then worked. The upload's failure to progress has not been reproduced or
+      explained by runtime evidence. This is the user's scenario 4 repeated with
+      a file, separate from the text result recorded as B4.
 - [ ] **B8: Ordering and interruption.** Submit distinguishable text, an asset,
       and another text while offline, then reconnect and record receipt order.
       Separately interrupt a larger asset upload and observe recovery. Use logs
@@ -186,10 +203,13 @@ must be observed rather than inferred from these expectations.
 | B4 | User report, 2026-10-20; build/device/protocol not recorded | After relaunch, the message was not sent automatically. Retry was visible and worked once connected. | Confirms the restart case requires manual recovery in this run. |
 | B5 | Not run | Not recorded | |
 | B6 | Not run | Not recorded | |
-| B7 | Partial user reports, 2026-10-20; build/device/protocol not recorded | Assets appear not editable. A video appeared to send when Wi-Fi was enabled again. | Confirm receiver playback and whether any manual Retry was used. Image/file comparisons, offline duration, upload stage, and restart outcomes remain pending. User's scenario 5 refers to assets (B7 here), not B5. |
+| B7 | Partial user reports, 2026-10-20; build/device/protocol not recorded | Assets appear not editable. A video appeared to send when Wi-Fi was enabled again. After restarting with a file, cancelling its upload exposed Retry, which worked. | Confirm video receipt/playback and whether Retry was used. Investigate the stalled file upload; record exact connectivity sequence, upload stage, and classic-asset versus Wire Drive path. Image/audio comparisons remain pending. |
 | B8 | Not run | Not recorded | |
 
-- [ ] Compare observations with the source-based findings and investigate gaps.
+- [x] Compare reported observations with source paths; record supported behaviors
+      and corrections in the verification section below.
+- [ ] Reproduce unexplained outcomes with logs, particularly the file upload
+      remaining in an uploading state after restart.
 - [ ] Confirm the video reconnect result on the receiver and compare with text;
       identify which asset stage waited offline before changing its recovery path.
 - [ ] Repeat relevant cases for MLS and Proteus, and each synchronization
@@ -198,23 +218,142 @@ must be observed rather than inferred from these expectations.
 
 The first four user-reported scenarios cover online control, offline text
 submission, an offline edit of already-sent text, and relaunch with unsent text.
-Manual Retry recovers the reported text failures; the desired automatic recovery
-is the missing behavior. Keep retrying an edit separate from retrying a new
+Manual Retry recovers the reported text failures; automatic recovery was missing
+in those runs. This does not establish that every offline text send always fails.
+Keep retrying an edit separate from retrying a new
 message when designing recovery. Asset editing appears unavailable, consistent
 with source inspection. A video tentatively recovered on Wi-Fi reconnection,
-unlike the reported text cases; asset restart recovery remains unverified. These
-observations do not establish timeout causes or uncertain-delivery semantics.
-
-A source-based explanation to verify is that asset upload uses
-`.allowsRequestsWhileOnline`, with the asset-reference message eligible for
-sending only after upload. File creation also sets `shouldExpire = false`, unlike
-text and image creation. These differences can explain why a video can wait for
-reconnection without following the text failure path. They do not prove which
-stage this particular video reached or that every asset automatically recovers.
+unlike the reported text cases. A file required cancellation and Retry after
+restart. These observations do not establish the exact failure causes or prove
+that all assets behave alike.
 
 Asset tests concern queuing, upload, cancellation, and delivery recovery. They do
 not require introducing editing for standalone assets. Editing text in a multipart
 message is a separate case from replacing or editing its asset content.
+
+## Code verification of the reported baseline
+
+Audit date: 2026-10-20. Method: source tracing and inspection of existing tests.
+No tests were executed in this audit. Source-supported behavior means the code
+contains the described path; it does not prove which path ran on the user's device.
+Manual-run checkmarks above track reports, not independent verification of every
+substep. The tested build, protocol, upload mode, and exact timings remain unknown.
+
+### Regular text, edits, and Retry
+
+- [x] **Normal editing is implemented.** `ZMClientMessage.editText` constructs a
+      `MessageEdit`, changes the nonce, sets `updatedTimestamp`, and makes the
+      message eligible for sending again. Received edits apply the changed text
+      and set the update timestamp. This supports B1.
+- [x] **Offline text can become failed-to-send.** The regular strategy invokes
+      `MessageSender` directly when an object matches its unsent predicate. Its
+      sync observer waits for decryption, not for connectivity. The HTTP adapter
+      submits a one-time request to the transport scheduler, whose offline path
+      completes requests with `tryAgainLater`. Proteus has bounded immediate
+      retries; errors escaping either protocol's sender cause the regular
+      strategy to expire the message. The expiration timer is another failure
+      path. This supports B2 without proving its specific error or timing.
+- [x] **Expired text is excluded from automatic insertion.** The regular
+      strategy's predicate requires `isExpired == false`. Connectivity recovery
+      does not itself clear that property in the traced send path. The user Retry
+      action calls `resend()`, which clears expiration and makes the message
+      eligible again. This explains why a failed message needs manual Retry.
+- [x] **A failed edit can be retried.** Edits set `delivered = false` and use the
+      same regular-message strategy. On expiration, `ZMClientMessage` restores
+      the original nonce; on Retry it reapplies the edit with a new edit nonce
+      before clearing expiration. This supports B3.
+- [x] **Regular-message restart expiration is explicit.** Bootstrap passes
+      eligible stored objects to `InsertedObjectSync.addTrackedObjects`, which
+      uses `isFresh: false`. The regular strategy expires them. Already-expired
+      messages remain excluded by its predicate. This supports B4.
+- [x] **Standalone assets are not editable through the existing action.** UI
+      `canBeEdited` requires text content and a sent/delivered/read state. Model
+      edit eligibility is limited to text, multipart, and edited payloads.
+
+These paths do not imply that every text submitted offline must fail: a send can
+still be waiting for sync/dependencies when connectivity returns. Verify timing
+and logs before treating an observed result as universal.
+
+### Asset upload and reconnect
+
+- [x] **The classic upload stage supports retry after temporary errors.**
+      `AssetV3UploadRequestStrategy` uses `ZMUpstreamModifiedObjectSync`. Its
+      `TemporaryError`/`TryAgainLater` branch returns the synchronization token
+      to pending work instead of expiring the message. The scheduler limits sync
+      request generation to zero while offline; restored reachability restores
+      capacity and notifies the operation loop to poll again. Upload can resume
+      automatically through this path, consistent with the video observation.
+- [x] **Upload and message delivery have different failure policies.** Successful
+      upload stores asset identifiers and transitions to `.uploaded` after all
+      associated assets are ready. Only then does the asset-message strategy
+      invoke `MessageSender`. Errors escaping that stage expire the message.
+      Therefore upload auto-retry does not guarantee automatic recovery of final
+      message delivery. Permanent upload failures and cancellation/expiration
+      also have distinct failure paths.
+- [x] **Correct the earlier online-gate explanation.**
+      `.allowsRequestsWhileOnline` in the abstract request strategy uses
+      `ApplicationStatusDirectory.synchronizationState`, whose `.online` value
+      means the client is registered/ready for requests. It does not measure
+      Wi-Fi or backend reachability. Actual offline capacity/rejection handling
+      is in the transport scheduler. Do not infer connectivity gating from this
+      configuration name alone.
+- [x] **Creation-time expiration policies differ.** Classic `appendFile` uses
+      `expires: false`; classic images and text use `expires: true`. These set
+      `shouldExpire`, which controls assignment of a network-attempt expiration
+      date. `shouldExpire == false` does not prevent explicit expiration after
+      an error or on stale-message handling. It is not a durable-outbox guarantee.
+- [x] **The UI has more than one upload path.** Video/file selection uses
+      `useWireDrive()` to choose classic `appendFile` versus Wire Drive draft
+      uploading. The latter uses `UploadDraftUseCase` and a different upload
+      manager. Identify the tested path before attributing a runtime observation
+      to classic asset retry logic; a draft upload is not message delivery.
+
+### Asset restart and cancel-to-Retry
+
+- [x] **Correct the blanket asset-restart statement.** The asset-message
+      strategy's initial fetch predicate includes `transferState == .uploaded`.
+      Its stale expiration branch applies to objects eligible at that bootstrap.
+      An older asset still preprocessing/uploading is handled by those trackers;
+      if upload finishes later, `objectsDidChange` invokes insertion with
+      `isFresh: true`. This flag describes how the tracker encountered the object,
+      not a reliable creation time. Restart behavior depends on the asset stage.
+- [x] **Cancel exposes Retry by design.** `FileTransferView` routes its action
+      button to Cancel while the transfer state is `.uploading`, and to Resend
+      for `.uploadingFailed`/`.uploadingCancelled`. `cancelTransfer()` explicitly
+      expires the message as cancelled, sets `.uploadingCancelled`, and clears
+      progress. The footer's Retry is also associated with failed-to-send state.
+      This supports the reported change in available actions after cancellation.
+- [x] **Retry can restart the upload.** `ZMAssetClientMessage.resend()` restores
+      `.uploading` unless bytes are already uploaded, resets progress, marks
+      `transferState` locally modified, and clears expiration through its base
+      implementation. This supports the successful manual recovery report.
+- [ ] **Explain the stalled file upload after restart.** The UI derives its
+      uploading state from persisted transfer state and local file availability;
+      it does not prove that an upload task is running. Recovery also depends on
+      processing state, required cached bytes, locally modified transfer keys,
+      background task handling, and runtime request/dependency state. Logs or a
+      deterministic regression are needed to identify the failed condition.
+- [ ] Verify video receipt/playback without Retry and identify its actual path.
+
+### Existing test evidence inspected, not executed
+
+- `ZMUpstreamModifiedObjectSyncTests`:
+  `testThatItCallsDidNotFinishToSynchronizeTokenWhenTheRequestFailsWithATemporaryError`.
+- `AssetV3UploadRequestStrategyTests`: successful upload state/identifier updates
+  and `testThatItExpiresTheMessage_OnPermanentFailureResponse`.
+- `ClientMessageRequestStrategyTests` and `AssetClientMessageRequestStrategyTests`:
+  `testThatItExpiresStaleMessage`. The asset test calls `insert` directly; it does
+  not demonstrate which upload states the bootstrap fetch actually selects.
+- `ZMClientMessageTests_Editing`:
+  `testThatWhenResendingAFailedEditItReappliesTheEdit`.
+- `ZMAssetClientMessageTests`: cancellation and resend tests, including
+  `testThatItCanCancelsUploadMultipleTimes` and
+  `testThatTransferStateIsNotUpdated_WhenResending_IfAlreadyUploaded`.
+
+Add targeted runtime/integration evidence before closing the remaining checks.
+Use logs for upload start/success, final message send start/success/failure, stale
+expiration, and cancel/resend, correlated by the same message identifier. Record
+the build, MLS/Proteus, sync version, classic/Drive path, and connectivity sequence.
 
 ## Proposed design
 
@@ -316,6 +455,10 @@ prefix. A long-lived feature branch is not currently proposed.
 
 ### PR 4: Asset queuing and recovery
 
+- [ ] Verify stage-specific restart behavior, including the reported file upload
+      that requires Cancel before Retry; add a deterministic regression for the
+      identified cause before treating it as fixed.
+- [ ] Identify and explicitly scope classic asset versus Wire Drive draft paths.
 - [ ] Preserve any confirmed automatic reconnect behavior already provided by the
       asset pipeline; target observed gaps rather than replacing it wholesale.
 - [ ] Enroll supported asset messages behind the flag.
