@@ -370,12 +370,13 @@ final class MeetNowTests: WireUITestCase {
         let alert = app.alerts["Meeting created"]
         guard alert.waitForExistence(timeout: 30) else { throw RuntimeError("The participant warning did not appear") }
         XCTAssertEqual(alert.label, "Meeting created")
-        XCTAssertTrue(alert.staticTexts.allElementsBoundByIndex.contains {
-            $0.label == "User C could not be added to the group."
-        })
+        let warningLabels = alert.staticTexts.allElementsBoundByIndex.map(\.label)
+        guard warningLabels.contains("\(users[1].name) could not be added to the group.") else {
+            throw RuntimeError("Unexpected participant warning: \(warningLabels)")
+        }
         let meeting = try await onlyMeeting(fixtures, title: title)
         try await assertMembers(fixtures, meeting: meeting, host: host, invitees: [ids[0]])
-        XCTAssertTrue(alert.buttons["OK"].waitAndTap())
+        guard alert.buttons["OK"].waitAndTap() else { throw RuntimeError("The participant warning could not close") }
         _ = try waitForCall(title: title)
         let afterAcknowledgement = try await onlyMeeting(fixtures, title: title)
         XCTAssertEqual(afterAcknowledgement.id, meeting.id)
