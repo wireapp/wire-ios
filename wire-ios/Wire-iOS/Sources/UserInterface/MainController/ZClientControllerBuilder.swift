@@ -150,7 +150,8 @@ final class ZClientControllerBuilder {
     private func buildWireMeetingsFactory() -> any WireMeetingsFactoryProtocol {
         WireMeetingsFactory(
             selfUserID: account.userIdentifier,
-            supportsMeetingLinks: userSession.resolvedBackendMetadata.apiVersion.map { $0 >= .v19 } ?? false
+            supportsMeetingLinks: userSession.resolvedBackendMetadata.apiVersion.map { $0 >= .v19 } ?? false,
+            isClipboardEnabled: Settings.isClipboardEnabled
         )
     }
 

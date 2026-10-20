@@ -71,7 +71,8 @@ public final class MeetingRepository: MeetingRepositoryProtocol {
         endTime: Date,
         recurrence: WireCallingDomain.MeetingRecurrence?,
         type: WireCallingDomain.MeetingType,
-        password: String?
+        password: String?,
+        invitedEmails: [String] = []
     ) async throws -> MeetingCreationResult {
         let response = try await meetingsAPI.createMeeting(
             parameters: CreateMeetingParameters(
@@ -81,6 +82,7 @@ public final class MeetingRepository: MeetingRepositoryProtocol {
                 timeZoneIdentifier: TimeZone.current.identifier,
                 type: type == .immediate ? .immediate : .scheduled,
                 password: password,
+                invitedEmails: invitedEmails.isEmpty ? nil : invitedEmails,
                 recurrence: recurrence?.toNetworkRecurrence()
             )
         )
@@ -95,6 +97,25 @@ public final class MeetingRepository: MeetingRepositoryProtocol {
             WireLogger.meetings.error("Failed to schedule created meeting reminder: \(error)")
         }
         return MeetingCreationResult(meeting: storedMeeting, link: response.link)
+    }
+
+    public func fetchInvitedEmails(id: QualifiedID) async throws -> [String] {
+        try await meetingsAPI.getMeeting(id: id).invitedEmails
+    }
+
+    public func updateInvitedEmails(id: QualifiedID, adding: [String], removing: [String]) async throws {
+        guard !adding.isEmpty || !removing.isEmpty else { return }
+        let current = try await fetchInvitedEmails(id: id)
+        let currentKeys = Set(current.map { $0.lowercased() })
+        let removedKeys = Set(removing.map { $0.lowercased() })
+        let additions = adding.filter { !currentKeys.contains($0.lowercased()) }
+        let removals = current.filter { removedKeys.contains($0.lowercased()) }
+        if !additions.isEmpty {
+            try await meetingsAPI.addMeetingInvitations(id: id, emails: additions)
+        }
+        if !removals.isEmpty {
+            try await meetingsAPI.removeMeetingInvitations(id: id, emails: removals)
+        }
     }
 
     public func updateMeeting(
