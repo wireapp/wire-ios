@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import notify
 import WireFoundation
 import WireLocators
 import WireNetwork
@@ -120,6 +121,21 @@ final class MeetNowTests: WireUITestCase {
             expectedTime.replacingOccurrences(of: "\u{202F}", with: " ")
         )
         try page.assertRows([meeting], now: Date(), locale: locale)
+    }
+
+    private func holdCreation() throws -> Int32 {
+        let failureID = UUID().uuidString
+        let name = "\(UITestConfig.meetingsCreateFailureNotificationPrefix).\(failureID)"
+        var token: Int32 = NOTIFY_TOKEN_INVALID
+        guard notify_register_check(name, &token) == UInt32(NOTIFY_STATUS_OK) else {
+            throw RuntimeError("Meeting create control could not be registered")
+        }
+        guard notify_set_state(token, 0) == UInt32(NOTIFY_STATUS_OK) else {
+            notify_cancel(token)
+            throw RuntimeError("Meeting create control could not hold the request")
+        }
+        uiTestConfig.meetingsCreateFailureID = failureID
+        return token
     }
 
     @MainActor
@@ -257,5 +273,41 @@ final class MeetNowTests: WireUITestCase {
         // One simulator checks the accounts in sequence. It does not verify two simultaneous iOS devices.
         let inviteePage = try launchMeetings(for: users[0], locale: "en_US")
         try assertMeetingRow(meeting, on: inviteePage, locale: "en_US")
+    }
+
+    @MainActor
+    func testRepeatedMeetNowStart_TC_11983() async throws {
+        let token = try holdCreation()
+        defer { notify_cancel(token) }
+        let (host, users, ids, _) = try await UserHelper.default.registerMeetingsTeam(withMemberCount: 1)
+        try await registerClients(for: users)
+        let fixtures = try await MeetingsTestHelper(user: host)
+        let page = try launchMeetings(for: host)
+        let form = try openMeetNow(from: page)
+        let title = "TC11983 repeated Start"
+        form.replaceTitle(with: title)
+        try form.addParticipants(users)
+        guard form.saveButton.waitForExistence(timeout: 5), form.saveButton.isHittable else {
+            throw RuntimeError("Start was not available")
+        }
+        let startFrame = form.saveButton.frame
+        let startPosition = app.coordinate(withNormalizedOffset: CGVector(dx: 0, dy: 0))
+            .withOffset(CGVector(dx: startFrame.midX, dy: startFrame.midY))
+        // Use the same screen position after Start becomes a loading indicator.
+        startPosition.doubleTap()
+        startPosition.tap()
+        guard form.loadingIndicator.waitForExistence(timeout: 10), !form.saveButton.exists else {
+            throw RuntimeError("Start did not change to a loading indicator")
+        }
+        let whilePending = try await fixtures.list()
+        XCTAssertTrue(whilePending.isEmpty)
+        guard notify_set_state(token, 2) == UInt32(NOTIFY_STATUS_OK) else {
+            throw RuntimeError("Meeting create control could not release the request")
+        }
+        let call = try waitForCall(title: title)
+        let meeting = try await onlyMeeting(fixtures, title: title)
+        try await assertMembers(fixtures, meeting: meeting, host: host, invitees: ids)
+        XCTAssertTrue(call.minimizeCallButton.waitAndTap())
+        try assertMeetingRow(meeting, on: MeetingsPage())
     }
 }

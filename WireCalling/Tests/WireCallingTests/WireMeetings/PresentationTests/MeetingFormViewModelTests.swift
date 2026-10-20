@@ -962,9 +962,10 @@ struct MeetingFormViewModelTests {
     }
 
     @Test("submit while a submission is in flight is ignored")
-    func submit_WhileLoading_IsIgnored() async {
+    func submit_WhileLoading_IsIgnored_TC_11983() async {
         // Given
-        let viewModel = makeViewModel(mode: .instant)
+        var successCount = 0
+        let viewModel = makeViewModel(mode: .instant) { _ in successCount += 1 }
         viewModel.meetingTitle = "Team Standup"
         let meeting = meeting
         createMeetingUseCaseMock
@@ -988,6 +989,7 @@ struct MeetingFormViewModelTests {
                 1
         )
         #expect(viewModel.isLoading == false)
+        #expect(successCount == 1)
     }
 
 }
