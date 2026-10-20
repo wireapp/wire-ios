@@ -36,6 +36,7 @@ struct MeetingFormView: View {
     @State private var expandedField: ExpandedField?
     @State private var isPresentingMemberSelection = false
     @State private var isPasswordVisible = false
+    @State private var isPasswordCopied = false
     @ScaledMetric private var passwordFieldHeight: CGFloat = 44
     @FocusState private var isTitleFieldFocused: Bool
 
@@ -219,8 +220,6 @@ struct MeetingFormView: View {
                     isValid: viewModel.isPasswordValid,
                     locator: .password
                 )
-                .accessibilityLabel(Strings.Password.title)
-                .accessibilityHint(Strings.Password.requirements(MeetingFormViewModel.minimumPasswordLength))
                 Button {
                     isPasswordVisible.toggle()
                 } label: {
@@ -239,16 +238,24 @@ struct MeetingFormView: View {
                 isValid: viewModel.confirmPassword.isEmpty || viewModel.passwordsMatch,
                 locator: .confirmPassword
             )
-            Button(viewModel.password.isEmpty ? Strings.Password.generate : Strings.Password.copy) {
-                if viewModel.password.isEmpty {
-                    viewModel.generatePassword()
-                } else {
-                    viewModel.copyPassword()
-                }
+            Button(Strings.Password.generate, action: viewModel.generatePassword)
+                .accessibilityIdentifier(Locators.WireMeetings.MeetingForm.generatePassword)
+            Button(isPasswordCopied ? Strings.Password.copied : Strings.Password.copy) {
+                viewModel.copyPassword()
+                isPasswordCopied = true
             }
-            .disabled(!viewModel.password.isEmpty && (!isClipboardEnabled || !viewModel.isPasswordValid))
-            .accessibilityIdentifier(viewModel.password.isEmpty ? Locators.WireMeetings.MeetingForm.generatePassword :
-                Locators.WireMeetings.MeetingForm.copyPassword)
+            .disabled(viewModel.password.isEmpty || !isClipboardEnabled || !viewModel.isPasswordValid)
+            .accessibilityIdentifier(Locators.WireMeetings.MeetingForm.copyPassword)
+            .task(id: isPasswordCopied) {
+                guard isPasswordCopied else { return }
+                do {
+                    try await Task.sleep(for: .seconds(3))
+                    isPasswordCopied = false
+                } catch {}
+            }
+            .onChange(of: Array(viewModel.password.unicodeScalars)) {
+                isPasswordCopied = false
+            }
         } header: {
             Text(Strings.Password.title)
         } footer: {
@@ -273,18 +280,36 @@ struct MeetingFormView: View {
         isValid: Bool,
         locator: Locators.WireMeetings.MeetingForm
     ) -> some View {
-        ContextMenuControllableTextField(
-            text: text,
-            placeholder: placeholder,
-            isSecureTextEntry: !isPasswordVisible,
-            isContextMenuAllowed: isClipboardEnabled,
-            textContentType: .newPassword,
-            textColor: UIColor(isValid ? ColorTheme.Backgrounds.onSurface.color : ColorTheme.Base.error.color)
-        )
-        .id(isPasswordVisible)
-        .frame(height: passwordFieldHeight)
-        .accessibilityLabel(placeholder)
-        .accessibilityIdentifier(locator)
+        HStack {
+            ContextMenuControllableTextField(
+                text: text,
+                placeholder: placeholder,
+                isSecureTextEntry: !isPasswordVisible,
+                isContextMenuAllowed: isClipboardEnabled,
+                textContentType: .newPassword,
+                textColor: UIColor(isValid ? ColorTheme.Backgrounds.onSurface.color : ColorTheme.Base.error.color)
+            )
+            .id(isPasswordVisible)
+            .frame(height: passwordFieldHeight)
+            .accessibilityLabel(locator == .password ? Strings.Password.title : placeholder)
+            .accessibilityHint(locator == .password ?
+                Strings.Password.requirements(MeetingFormViewModel.minimumPasswordLength) : "")
+            .accessibilityIdentifier(locator)
+            if !text.wrappedValue.isEmpty {
+                Button {
+                    text.wrappedValue = ""
+                } label: {
+                    Image(systemName: "xmark.circle.fill")
+                        .foregroundStyle(ColorTheme.Buttons.Secondary.onEnabled.color)
+                        .frame(width: 44, height: 44)
+                        .contentShape(.rect)
+                }
+                .buttonStyle(.borderless)
+                .accessibilityLabel(locator == .password ? Strings.Password.clear : Strings.Password.clearConfirmation)
+                .accessibilityIdentifier(locator == .password ? Locators.WireMeetings.MeetingForm.clearPassword :
+                    Locators.WireMeetings.MeetingForm.clearConfirmPassword)
+            }
+        }
     }
 
     private var participantsSection: some View {
