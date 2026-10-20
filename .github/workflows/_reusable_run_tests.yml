@@ -233,6 +233,7 @@ jobs:
         uses: ./.github/actions/kalium-testservice/setup
 
       - name: "Test new critical flows"
+        id: ui-tests
         if: ${{ inputs.run_critical_flows }}
         env:
           UI_TEST_TAGS: ${{ inputs.ui_test_tags }}
@@ -240,6 +241,23 @@ jobs:
           PREVIOUS_FAILED_UI_TEST_CASES: ${{ steps.previous-failed-ui-tests.outputs.ui_test_cases }}
           UITEST_PARALLEL_WORKERS: ${{ inputs.uitest_parallel_workers }}
         run: |
+          if mkdir -p build/ui-test-diagnostics; then
+            ruby scripts/collect-ui-test-diagnostics.rb monitor > build/ui-test-diagnostics/monitor.log 2>&1 &
+            diagnostics_pid=$!
+            stop_diagnostics() {
+              test_status=$?
+              trap - EXIT
+              printf '{"exit_code": %s, "finished_at": "%s"}\n' "$test_status" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+                > build/ui-test-diagnostics/test-step.json || true
+              touch build/ui-test-diagnostics/stop || kill "$diagnostics_pid" || true
+              wait "$diagnostics_pid" || true
+              exit "$test_status"
+            }
+            trap stop_diagnostics EXIT
+          else
+            echo "::warning::Could not create UI test diagnostics directory."
+          fi
+
           if [ -n "$UI_TEST_CASES" ]; then
             bundle exec fastlane run_uitests testiny_cases:"$UI_TEST_CASES" parallel_workers:"$UITEST_PARALLEL_WORKERS"
           elif [ -n "$PREVIOUS_FAILED_UI_TEST_CASES" ]; then
@@ -249,6 +267,25 @@ jobs:
           else
             bundle exec fastlane run_uitests parallel_workers:"$UITEST_PARALLEL_WORKERS"
           fi
+
+      - name: Collect UI test diagnostics before cleanup
+        if: ${{ always() && inputs.run_critical_flows && steps.ui-tests.outcome != 'skipped' }}
+        continue-on-error: true
+        timeout-minutes: 5
+        env:
+          TEST_OUTCOME: ${{ steps.ui-tests.outcome }}
+          UITEST_PARALLEL_WORKERS: ${{ inputs.uitest_parallel_workers }}
+        run: ruby scripts/collect-ui-test-diagnostics.rb collect "$TEST_OUTCOME"
+
+      - name: Upload UI test diagnostics
+        if: ${{ always() && inputs.run_critical_flows && steps.ui-tests.outcome != 'skipped' }}
+        continue-on-error: true
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: UI test diagnostics (${{ github.run_id }} - ${{ github.run_attempt }})
+          path: build/ui-test-diagnostics/
+          retention-days: 7
+          if-no-files-found: warn
 
       - name: Stop Kalium Testservice
         if: ${{ always() && env.KALIUM_TEST_SERVICE_ENABLED == 'true' }}
