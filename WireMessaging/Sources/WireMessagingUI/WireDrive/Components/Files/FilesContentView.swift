@@ -179,9 +179,11 @@ private extension FilesContentView {
                     } label: {
                         Image(systemName: "folder")
                             .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
+                            .opacity(viewModel.selectedItems.isEmpty ? 0.3 : 1)
                     }
                     .accessibilityLabel(Strings.Files.Item.Menu.moveToFolder)
                     .accessibilityIdentifier(Locators.WireDrive.FilesPage.moveToFolder)
+                    .disabled(viewModel.selectedItems.isEmpty)
                 }
                 .padding(.horizontal, 16)
                 .padding(.bottom, 12)

@@ -37,7 +37,6 @@ struct FilesItemView: View {
     @Environment(\.wireAccentColor) private var wireAccentColor
     @Environment(\.editMode) var editMode
 
-
     init(viewModel: @autoclosure @escaping () -> FilesItemViewModel) {
         self._viewModel = StateObject(wrappedValue: viewModel())
     }
