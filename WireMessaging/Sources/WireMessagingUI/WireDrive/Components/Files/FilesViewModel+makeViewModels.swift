@@ -89,7 +89,7 @@ extension FilesViewModel {
             nodeIDs: items.map(\.id),
             onFinish: { [weak self] in
                 self?.sheetNavigation = nil
-                self?.multipleSelection = .inactive
+                self?.enableMultipleSelection(false)
                 Task { await self?.reload(refreshing: true) }
             },
             moveNodesUseCase: useCases.moveNodes,
