@@ -309,11 +309,16 @@ struct MeetingFormViewModelTests {
 
     // MARK: - submit Tests
 
-    @Test("submit in instant mode creates a meeting starting now and calls onSuccess")
-    func submit_InstantMode_Success() async {
+    @Test("Meet Now starts at submission time and lasts one hour", arguments: [
+        (12, 7, 23), (23, 20, 23), (23, 45, 0), (23, 59, 59)
+    ])
+    func submit_InstantMode_Success_TC_11981(hour: Int, minute: Int, second: Int) async throws {
         // Given
         var receivedMeeting: Meeting?
         let viewModel = makeViewModel(mode: .instant, supportsMeetingLinks: true) { receivedMeeting = $0 }
+        // Advance the clock after opening the form to check the actual submission time.
+        dateProviderMock.now = try makeDate(year: 2026, month: 7, day: 7, hour: hour, minute: minute)
+            .addingTimeInterval(TimeInterval(second))
         viewModel.meetingTitle = "Team Standup"
         viewModel.invitedEmails = ["ignored@example.com"]
         viewModel.selectedMembers = [member]
