@@ -17,6 +17,8 @@
 //
 
 import Foundation
+import WireDataModel
+import WireDomain
 import WireFoundation
 import WireLogging
 
@@ -39,30 +41,54 @@ public protocol E2EIdentityCertificateUpdateStatusUseCaseProtocol {
 
 public struct E2EIdentityCertificateUpdateStatusUseCase: E2EIdentityCertificateUpdateStatusUseCaseProtocol {
 
+    public enum Failure: Error {
+
+        /// E2EI is not enabled, so there's no certificate to update.
+        case featureDisabled
+
+        /// The self client is missing or doesn't have the information required to identify it in MLS.
+        case missingSelfMLSClientID
+    }
+
     private let getE2eIdentityCertificates: GetE2eIdentityCertificatesUseCaseProtocol
-    private let gracePeriod: TimeInterval
+    private let featureConfigRepository: any FeatureConfigRepositoryProtocol
+    private let localDomain: String?
     private let comparedDate: CurrentDateProviding
-    private let mlsClientID: MLSClientID
     private let context: NSManagedObjectContext
     private let lastE2EIUpdateDateRepository: LastE2EIdentityUpdateDateRepositoryInterface?
 
     public init(
         getE2eIdentityCertificates: GetE2eIdentityCertificatesUseCaseProtocol,
-        gracePeriod: TimeInterval,
-        mlsClientID: MLSClientID,
+        featureConfigRepository: any FeatureConfigRepositoryProtocol,
+        localDomain: String?,
         context: NSManagedObjectContext,
         lastE2EIUpdateDateRepository: LastE2EIdentityUpdateDateRepositoryInterface?,
         comparedDate: CurrentDateProviding = .system
     ) {
         self.getE2eIdentityCertificates = getE2eIdentityCertificates
-        self.gracePeriod = gracePeriod
+        self.featureConfigRepository = featureConfigRepository
+        self.localDomain = localDomain
         self.lastE2EIUpdateDateRepository = lastE2EIUpdateDateRepository
-        self.mlsClientID = mlsClientID
         self.context = context
         self.comparedDate = comparedDate
     }
 
+    /// - Throws: `Failure.featureDisabled` if E2EI is not enabled. The feature state and the self client are
+    ///   read on every invocation, so the use case can be created before E2EI gets enabled.
     public func invoke() async throws -> E2EIdentityCertificateUpdateStatus {
+
+        let e2eiFeature = try await featureConfigRepository.fetchE2EIConfig()
+        guard e2eiFeature.status == .enabled else { throw Failure.featureDisabled }
+
+        let mlsClientID = await context.perform {
+            ZMUser.selfUser(in: context).selfClient().flatMap {
+                MLSClientID(userClient: $0, localDomain: localDomain)
+            }
+        }
+        guard let mlsClientID else { throw Failure.missingSelfMLSClientID }
+
+        let verificationExpiration = e2eiFeature.config?.verificationExpiration ?? Feature.E2EI.Config().verificationExpiration
+        let gracePeriod = TimeInterval(verificationExpiration)
 
         let selfMLSConversationGroupID = await context.perform {
             ZMConversation.fetchSelfMLSConversation(in: context)?.mlsGroupID

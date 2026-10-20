@@ -531,7 +531,13 @@ extension AppRootRouter: AppStateCalculatorDelegate {
                 e2eiActivationDateRepository: userSession.e2eiActivationDateRepository,
                 featureConfigRepository: featureConfigRepository,
                 lastE2EIdentityUpdateAlertDateRepository: userSession.lastE2EIUpdateDateRepository,
-                e2eIdentityCertificateUpdateStatus: userSession.e2eIdentityUpdateCertificateUpdateStatus(),
+                e2eIdentityCertificateUpdateStatus: E2EIdentityCertificateUpdateStatusUseCase(
+                    getE2eIdentityCertificates: userSession.getE2eIdentityCertificates,
+                    featureConfigRepository: featureConfigRepository,
+                    localDomain: userSession.resolvedBackendMetadata.domain,
+                    context: userSession.contextProvider.syncContext,
+                    lastE2EIUpdateDateRepository: userSession.lastE2EIUpdateDateRepository
+                ),
                 selfClientCertificateProvider: userSession.selfClientCertificateProvider,
                 targetVC: { [weak self] in self!.rootViewController }
             )

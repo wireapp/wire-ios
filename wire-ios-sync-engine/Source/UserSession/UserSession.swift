@@ -307,8 +307,6 @@ public protocol UserSession: AnyObject {
     func resolveOneOnOneConversation(with userID: WireDataModel
         .QualifiedID) async throws -> OneOnOneConversationResolution
 
-    func e2eIdentityUpdateCertificateUpdateStatus() -> E2EIdentityCertificateUpdateStatusUseCaseProtocol?
-
     // MARK: - Dependency Injection
 
     /// Cache for search users.

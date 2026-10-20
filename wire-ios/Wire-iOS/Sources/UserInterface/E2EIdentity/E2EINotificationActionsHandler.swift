@@ -44,7 +44,7 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
     private let e2eiActivationDateRepository: any E2EIActivationDateRepositoryProtocol
     private let featureConfigRepository: any FeatureConfigRepositoryProtocol
     private var lastE2EIdentityUpdateAlertDateRepository: LastE2EIdentityUpdateDateRepositoryInterface?
-    private var e2eIdentityCertificateUpdateStatus: E2EIdentityCertificateUpdateStatusUseCaseProtocol?
+    private let e2eIdentityCertificateUpdateStatus: E2EIdentityCertificateUpdateStatusUseCaseProtocol
     private let selfClientCertificateProvider: SelfClientCertificateProviderProtocol
     private var isUpdateMode: Bool = false
     private var isUpdateFlowActive: Bool = false
@@ -70,7 +70,7 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
         e2eiActivationDateRepository: any E2EIActivationDateRepositoryProtocol,
         featureConfigRepository: any FeatureConfigRepositoryProtocol,
         lastE2EIdentityUpdateAlertDateRepository: LastE2EIdentityUpdateDateRepositoryInterface?,
-        e2eIdentityCertificateUpdateStatus: E2EIdentityCertificateUpdateStatusUseCaseProtocol?,
+        e2eIdentityCertificateUpdateStatus: E2EIdentityCertificateUpdateStatusUseCaseProtocol,
         selfClientCertificateProvider: SelfClientCertificateProviderProtocol,
         targetVC: @escaping () -> UIViewController
     ) {
@@ -125,7 +125,7 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
     @MainActor
     func updateCertificate() async {
         do {
-            guard let result = try await e2eIdentityCertificateUpdateStatus?.invoke() else { return }
+            let result = try await e2eIdentityCertificateUpdateStatus.invoke()
 
             switch result {
             case .noAction:
@@ -141,6 +141,8 @@ final class E2EINotificationActionsHandler: E2EINotificationActions {
                 showUpdateE2EIdentityCertificateAlert(canRemindLater: false)
             }
 
+        } catch E2EIdentityCertificateUpdateStatusUseCase.Failure.featureDisabled {
+            // Nothing to update while e2ei is disabled.
         } catch {
             WireLogger.e2ei.error(error.localizedDescription)
         }
@@ -299,10 +301,12 @@ extension E2EINotificationActionsHandler: FeatureChangeHandler {
     ) async -> UIAlertController? {
         guard featureState.name == .e2ei, featureState.isEnabled else { return nil }
 
-        // The user already has a valid certificate (e.g. e2ei was disabled then
-        // re-enabled) - nothing to prompt for.
+        // The client is already enrolled (e.g. e2ei was disabled then re-enabled), so there's nothing to
+        // enroll. Enrolled doesn't mean valid though: the certificate may have expired in the meantime, so
+        // check whether it needs to be updated instead.
         guard await !selfClientCertificateProvider.hasCertificate else {
             acknowledger.acknowledgeChange(for: .e2ei)
+            await updateCertificate()
             return nil
         }
 

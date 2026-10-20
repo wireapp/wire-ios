@@ -63,10 +63,6 @@ final class UserSessionMock: UserSession {
         MLSGroupID(Data())
     }
 
-    func e2eIdentityUpdateCertificateUpdateStatus() -> E2EIdentityCertificateUpdateStatusUseCaseProtocol? {
-        MockE2EIdentityCertificateUpdateStatusUseCaseProtocol()
-    }
-
     var isE2eIdentityEnabled = false
     var certificate = E2eIdentityCertificate.mockNotActivated
     typealias Preference = AppLockPasscodePreference

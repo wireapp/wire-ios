@@ -1347,24 +1347,6 @@ public class MockUserSession: UserSession {
         }
     }
 
-    // MARK: - e2eIdentityUpdateCertificateUpdateStatus
-
-    public var e2eIdentityUpdateCertificateUpdateStatus_Invocations: [Void] = []
-    public var e2eIdentityUpdateCertificateUpdateStatus_MockMethod: (() -> E2EIdentityCertificateUpdateStatusUseCaseProtocol?)?
-    public var e2eIdentityUpdateCertificateUpdateStatus_MockValue: E2EIdentityCertificateUpdateStatusUseCaseProtocol??
-
-    public func e2eIdentityUpdateCertificateUpdateStatus() -> E2EIdentityCertificateUpdateStatusUseCaseProtocol? {
-        e2eIdentityUpdateCertificateUpdateStatus_Invocations.append(())
-
-        if let mock = e2eIdentityUpdateCertificateUpdateStatus_MockMethod {
-            return mock()
-        } else if let mock = e2eIdentityUpdateCertificateUpdateStatus_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `e2eIdentityUpdateCertificateUpdateStatus`")
-        }
-    }
-
     // MARK: - ClientSessionComponent
 
     public var clientSessionComponent: ClientSessionComponent?
