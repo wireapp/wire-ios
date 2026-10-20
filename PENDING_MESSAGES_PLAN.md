@@ -11,6 +11,33 @@ Check an item only when its result has been verified. Record relevant PRs and te
 results here as work progresses. Implementation details below are proposals until
 the design decisions are approved.
 
+## Resume here
+
+Session handoff: 2026-10-20. Investigation and planning only; no feature code or
+new automated tests have been implemented. Read `AGENTS.md`, the reported manual
+results, and the code verification section before continuing.
+
+Next steps, in order:
+
+1. Identify the tested build, MLS/Proteus, sync implementation, and classic asset
+   versus Wire Drive upload path. Do not turn tentative observations into
+   confirmed behavior without supporting evidence.
+2. Verify the video reconnect result on the receiver and investigate the file
+   that stays in an uploading state after restart until Cancel exposes Retry.
+   The state transitions are supported by code; the stalled-upload cause is open.
+3. Use those findings to settle the remaining design decisions and obtain
+   approval for the proposed PR sequence and default-off local flag.
+4. Start PR 1 only after that approval. Use `feat/`, `chore/`, or `fix/` branch
+   prefixes and include `WPB-26307` in commits and PR titles.
+
+All feature findings and reported observations are recorded in this file. The
+temporary RFC is not part of the plan commits. Keep this plan on working branches
+as needed and remove it from the final changes before merging into `develop`.
+
+Unrelated local modifications at handoff: `.ruby-version` and
+`wire-ios/Wire-iOS/Generated/Strings+Generated.swift`. They were left untouched and
+excluded from the handoff commit.
+
 ## Goal
 
 Users can press Send while offline. The message is saved locally in a pending state
@@ -521,8 +548,8 @@ prefix. A long-lived feature branch is not currently proposed.
 ## Execution notes
 
 - No feature code has been changed yet.
-- The existing `.ruby-version` modification and temporary RFC belong to the user
-  and must remain untouched by this work.
+- The existing `.ruby-version` and `Strings+Generated.swift` modifications and
+  the temporary RFC belong to the user and must remain untouched by this work.
 - Update this checklist in each implementation PR with completed items, actual
   design decisions, test evidence, and any justified changes to the sequence.
 
