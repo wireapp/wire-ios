@@ -381,4 +381,29 @@ final class MeetNowTests: WireUITestCase {
         XCTAssertEqual(afterAcknowledgement.id, meeting.id)
         try await assertMembers(fixtures, meeting: meeting, host: host, invitees: [ids[0]])
     }
+
+    @MainActor
+    func testMeetNowAfterBackgroundResume_TC_11986() async throws {
+        let (host, users, ids, _) = try await UserHelper.default.registerMeetingsTeam(withMemberCount: 1)
+        try await registerClients(for: users)
+        let fixtures = try await MeetingsTestHelper(user: host)
+        let page = try launchMeetings(for: host)
+        let form = try openMeetNow(from: page)
+        let title = "TC11986 resume retained details"
+        form.replaceTitle(with: title)
+        try form.addParticipants(users)
+        XCUIDevice.shared.press(.home)
+        XCTAssertTrue(app.wait(for: .runningBackground, timeout: 10))
+        app.activate()
+        XCTAssertTrue(app.wait(for: .runningForeground, timeout: 10))
+        XCTAssertTrue(form.titleField.waitForExistence(timeout: 10))
+        XCTAssertEqual(form.titleField.value as? String, title)
+        XCTAssertEqual(form.participantsButton.value as? String, "1")
+        XCTAssertTrue(form.participantsButton.label.contains(users[0].name))
+        XCTAssertTrue(form.saveButton.isEnabled)
+        XCTAssertTrue(form.saveButton.waitAndTap())
+        _ = try waitForCall(title: title)
+        let meeting = try await onlyMeeting(fixtures, title: title)
+        try await assertMembers(fixtures, meeting: meeting, host: host, invitees: ids)
+    }
 }
