@@ -554,7 +554,13 @@ struct ConversationEventPayloadProcessor {
         }
 
         var isInitialFetch = false
-        let conversation = await context.perform {
+        let conversation: ZMConversation? = await context.perform {
+            // The account may have been deleted (logout) while this payload was being processed,
+            // in which case the store file is gone and any fetch would assert.
+            guard context.isPersistentStoreAvailable else {
+                WireLogger.eventProcessing.warn("Persistent store is unavailable, skipping group conversation update")
+                return nil
+            }
 
             let conversation = ZMConversation.fetchOrCreate(
                 with: conversationID,
@@ -610,6 +616,10 @@ struct ConversationEventPayloadProcessor {
                 )
 
             return conversation
+        }
+
+        guard let conversation else {
+            return nil
         }
 
         await updateMLSStatus(from: payload, for: conversation, context: context, source: source)
@@ -1207,6 +1217,20 @@ private extension PrivateChannelPermission {
             self = .admins
         case .everyone:
             self = .everyone
+        }
+    }
+}
+
+private extension NSManagedObjectContext {
+
+    /// Whether the persistent store is attached and its file still exists on disk.
+    var isPersistentStoreAvailable: Bool {
+        guard let stores = persistentStoreCoordinator?.persistentStores, !stores.isEmpty else {
+            return false
+        }
+        return stores.allSatisfy { store in
+            guard let url = store.url, url.isFileURL else { return true }
+            return FileManager.default.fileExists(atPath: url.path)
         }
     }
 }
