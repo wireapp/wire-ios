@@ -157,6 +157,9 @@ Reset connectivity and let the app finish synchronizing between independent runs
       while offline. Observe preview/progress, status, available actions, and
       reconnect behavior. Repeat each with a relaunch before reconnecting. Add
       audio/video afterward if available; do not assume every asset behaves alike.
+- [x] **B7 partial observation: Editing.** The user reports that asset messages
+      do not appear editable. This matches the existing standalone-asset edit
+      restriction; specific asset types and delivery states were not recorded.
 - [ ] **B8: Ordering and interruption.** Submit distinguishable text, an asset,
       and another text while offline, then reconnect and record receipt order.
       Separately interrupt a larger asset upload and observe recovery. Use logs
@@ -178,7 +181,7 @@ must be observed rather than inferred from these expectations.
 | B4 | User report, 2026-10-20; build/device/protocol not recorded | After relaunch, the message was not sent automatically. Retry was visible and worked once connected. | Confirms the restart case requires manual recovery in this run. |
 | B5 | Not run | Not recorded | |
 | B6 | Not run | Not recorded | |
-| B7 | Pending user test | Not recorded | User's scenario 5 refers to assets (B7 here), not the cold-offline launch scenario B5. |
+| B7 | Partial user report, 2026-10-20; asset types/states not recorded | Asset messages appear not to offer editing. | Reconnect, Retry, upload, and restart outcomes remain pending. User's scenario 5 refers to assets (B7 here), not B5. |
 | B8 | Not run | Not recorded | |
 
 - [ ] Compare observations with the source-based findings and investigate gaps.
@@ -190,8 +193,13 @@ The first four user-reported scenarios cover online control, offline text
 submission, an offline edit of already-sent text, and relaunch with unsent text.
 Manual Retry recovers the reported text failures; the desired automatic recovery
 is the missing behavior. Keep retrying an edit separate from retrying a new
-message when designing recovery. Asset behavior remains untested, and these
+message when designing recovery. Asset editing appears unavailable, consistent
+with source inspection. Asset sending and recovery remain unverified, and these
 observations do not establish timeout causes or uncertain-delivery semantics.
+
+Asset tests concern queuing, upload, cancellation, and delivery recovery. They do
+not require introducing editing for standalone assets. Editing text in a multipart
+message is a separate case from replacing or editing its asset content.
 
 ## Proposed design
 
