@@ -2111,6 +2111,13 @@
 
 "account_deleted_missing_passcode_alert.title" = "Aucun code d'accès de l'appareil";
 "account_deleted_missing_passcode_alert.message" = "Afin d'utiliser Wire, veuillez définir un code d'accès dans les paramètres de votre appareil.";
+"account_limit_alert.title.remove_one" = "Remove an account";
+"account_limit_alert.title.remove_two" = "Remove 2 accounts";
+"account_limit_alert.message.max_one.remove_one" = "You can only use one account at once on this device. Log out of this account or select Later to log out of the other account.\nCreate a backup to preserve your conversation history.";
+"account_limit_alert.message.max_one.remove_two" = "You can only use one account at once on this device. Log out of this account or select Later to log out of the other accounts.\nCreate a backup to preserve your conversation history.";
+"account_limit_alert.message.max_two.remove_one" = "You can only use two accounts at once on this device. Log out of this account or select Later to log out of the other account.\nCreate a backup to preserve your conversation history.";
+"account_limit_alert.logout" = "Log out of this account";
+"account_limit_alert.later" = "Plus tard";
 
 // Button cell state
 "button_message_cell.state.unselected" = "Non sélectionné";
