@@ -89,6 +89,15 @@ final class ColorKnobView: UIView {
 
     // MARK: - Helpers
 
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else { return }
+
+        let borderColor = knobBorderColor?.cgColor
+        innerCircleLayer.borderColor = borderColor
+        borderCircleLayer.borderColor = borderColor
+    }
+
     var knobBorderColor: UIColor? {
         typealias Color = SemanticColors.DrawingColors
 
