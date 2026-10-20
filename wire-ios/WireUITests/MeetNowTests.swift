@@ -43,12 +43,37 @@ final class MeetNowTests: WireUITestCase {
         return try MeetingFormPage()
     }
 
+    private func registerClients(for users: [UserInfo]) async throws {
+        for user in users {
+            _ = try await testServicesClient.getInstanceId(
+                email: user.email, password: user.password, name: user.name, verificationCode: nil
+            )
+        }
+    }
+
     private func onlyMeeting(_ fixtures: MeetingsTestHelper, title: String) async throws -> MeetingResponse {
         let meetings = try await fixtures.list()
         XCTAssertEqual(meetings.count, 1, "Meet Now must create exactly one meeting")
         let meeting = try XCTUnwrap(meetings.first)
         XCTAssertEqual(meeting.title, title)
         return meeting
+    }
+
+    private func assertMembers(
+        _ fixtures: MeetingsTestHelper,
+        meeting: MeetingResponse,
+        host: UserInfo,
+        invitees: [QualifiedID] = []
+    ) async throws {
+        let result = try await fixtures.conversationsAPI.getConversations(for: [meeting.conversationID])
+        XCTAssertTrue(result.notFound.isEmpty)
+        XCTAssertTrue(result.failed.isEmpty)
+        let conversation = try XCTUnwrap(result.found.first)
+        let members = try XCTUnwrap(conversation.members)
+        XCTAssertEqual(meeting.creatorID.id, UUID(uuidString: host.id))
+        XCTAssertEqual(members.selfMember?.qualifiedID?.id, UUID(uuidString: host.id))
+        XCTAssertEqual(Set(members.others.compactMap(\.qualifiedID)), Set(invitees))
+        XCTAssertEqual(members.others.count, invitees.count, "The conversation has missing or duplicate invitees")
     }
 
     @MainActor
@@ -180,5 +205,57 @@ final class MeetNowTests: WireUITestCase {
         let meeting = try await onlyMeeting(fixtures, title: title)
         XCTAssertTrue(call.minimizeCallButton.waitAndTap())
         try assertMeetingRow(meeting, on: MeetingsPage())
+    }
+
+    @MainActor
+    func testMeetNowParticipants_TC_11974() async throws {
+        let (host, users, ids, _) = try await UserHelper.default.registerMeetingsTeam(
+            withMemberCount: 3, names: ["Meet Now Host", "Meet Now Alice", "Meet Now Bob", "Meet Now Carol"]
+        )
+        try await registerClients(for: users)
+        let fixtures = try await MeetingsTestHelper(user: host)
+        let page = try launchMeetings(for: host)
+        let form = try openMeetNow(from: page)
+        let title = "TC11974 selected participants"
+        form.replaceTitle(with: title)
+        try form.openParticipants()
+        for (index, user) in users.enumerated() {
+            try form.selectMember(user)
+            XCTAssertEqual(form.selectedMembersButton.value as? String, String(index + 1))
+            try form.clearMemberSearch()
+        }
+        for excludedUser in [host, users[0]] {
+            form.searchMember(excludedUser.name)
+            XCTAssertTrue(form.noMemberSearchResults.waitForExistence(timeout: 10))
+            XCTAssertFalse(form.member(excludedUser).exists)
+            try form.clearMemberSearch()
+        }
+        try form.confirmParticipants()
+        try form.openParticipants()
+        XCTAssertTrue(form.member(users[1]).waitAndTap())
+        XCTAssertEqual(form.selectedMembersButton.value as? String, "2")
+        try form.confirmParticipants()
+        XCTAssertEqual(form.titleField.value as? String, title)
+        XCTAssertEqual(form.participantsButton.value as? String, "2")
+        XCTAssertTrue(form.participantsButton.label.contains(users[0].name))
+        XCTAssertTrue(form.participantsButton.label.contains(users[2].name))
+        XCTAssertFalse(form.participantsButton.label.contains(users[1].name))
+        XCTAssertTrue(form.saveButton.waitAndTap())
+        let call = try waitForCall(title: title)
+        let meeting = try await onlyMeeting(fixtures, title: title)
+        try await assertMembers(fixtures, meeting: meeting, host: host, invitees: [ids[0], ids[2]])
+        let inviteeFixtures = try await MeetingsTestHelper(user: users[0])
+        let inviteeMeetings = try await inviteeFixtures.list()
+        XCTAssertEqual(inviteeMeetings.map(\.id), [meeting.id])
+        XCTAssertTrue(call.minimizeCallButton.waitAndTap())
+        let hostPage = try MeetingsPage()
+        try assertMeetingRow(meeting, on: hostPage)
+        XCTAssertTrue(hostPage.row(meeting).descendants(matching: .any)[
+            Locators.WireMeetings.MeetingDetails.attendingLabel.rawValue
+        ].waitForExistence(timeout: 10))
+
+        // One simulator checks the accounts in sequence. It does not verify two simultaneous iOS devices.
+        let inviteePage = try launchMeetings(for: users[0], locale: "en_US")
+        try assertMeetingRow(meeting, on: inviteePage, locale: "en_US")
     }
 }
