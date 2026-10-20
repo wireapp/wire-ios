@@ -160,6 +160,11 @@ Reset connectivity and let the app finish synchronizing between independent runs
 - [x] **B7 partial observation: Editing.** The user reports that asset messages
       do not appear editable. This matches the existing standalone-asset edit
       restriction; specific asset types and delivery states were not recorded.
+- [x] **B7 partial observation: Video reconnect.** Repeating offline submission
+      with a video, the user reports that it appeared to send after Wi-Fi was
+      enabled again. Treat this as a tentative automatic-recovery observation;
+      receiver playback and whether Retry was used have not been explicitly
+      confirmed. No restart result was reported for this video.
 - [ ] **B8: Ordering and interruption.** Submit distinguishable text, an asset,
       and another text while offline, then reconnect and record receipt order.
       Separately interrupt a larger asset upload and observe recovery. Use logs
@@ -181,10 +186,12 @@ must be observed rather than inferred from these expectations.
 | B4 | User report, 2026-10-20; build/device/protocol not recorded | After relaunch, the message was not sent automatically. Retry was visible and worked once connected. | Confirms the restart case requires manual recovery in this run. |
 | B5 | Not run | Not recorded | |
 | B6 | Not run | Not recorded | |
-| B7 | Partial user report, 2026-10-20; asset types/states not recorded | Asset messages appear not to offer editing. | Reconnect, Retry, upload, and restart outcomes remain pending. User's scenario 5 refers to assets (B7 here), not B5. |
+| B7 | Partial user reports, 2026-10-20; build/device/protocol not recorded | Assets appear not editable. A video appeared to send when Wi-Fi was enabled again. | Confirm receiver playback and whether any manual Retry was used. Image/file comparisons, offline duration, upload stage, and restart outcomes remain pending. User's scenario 5 refers to assets (B7 here), not B5. |
 | B8 | Not run | Not recorded | |
 
 - [ ] Compare observations with the source-based findings and investigate gaps.
+- [ ] Confirm the video reconnect result on the receiver and compare with text;
+      identify which asset stage waited offline before changing its recovery path.
 - [ ] Repeat relevant cases for MLS and Proteus, and each synchronization
       implementation available in the test environment.
 - [ ] Refine the design and automated regression cases using the observed results.
@@ -194,8 +201,16 @@ submission, an offline edit of already-sent text, and relaunch with unsent text.
 Manual Retry recovers the reported text failures; the desired automatic recovery
 is the missing behavior. Keep retrying an edit separate from retrying a new
 message when designing recovery. Asset editing appears unavailable, consistent
-with source inspection. Asset sending and recovery remain unverified, and these
+with source inspection. A video tentatively recovered on Wi-Fi reconnection,
+unlike the reported text cases; asset restart recovery remains unverified. These
 observations do not establish timeout causes or uncertain-delivery semantics.
+
+A source-based explanation to verify is that asset upload uses
+`.allowsRequestsWhileOnline`, with the asset-reference message eligible for
+sending only after upload. File creation also sets `shouldExpire = false`, unlike
+text and image creation. These differences can explain why a video can wait for
+reconnection without following the text failure path. They do not prove which
+stage this particular video reached or that every asset automatically recovers.
 
 Asset tests concern queuing, upload, cancellation, and delivery recovery. They do
 not require introducing editing for standalone assets. Editing text in a multipart
@@ -301,6 +316,8 @@ prefix. A long-lived feature branch is not currently proposed.
 
 ### PR 4: Asset queuing and recovery
 
+- [ ] Preserve any confirmed automatic reconnect behavior already provided by the
+      asset pipeline; target observed gaps rather than replacing it wholesale.
 - [ ] Enroll supported asset messages behind the flag.
 - [ ] Implement required byte retention and cleanup.
 - [ ] Recover preprocessing and interrupted uploads.
