@@ -48,6 +48,8 @@ public enum DeveloperFlag: String, CaseIterable {
     case unSafeLogsForPublic
     case useBackgroundActivityFactoryInAppBackgroundTaskExecuter
     case enableDriveBulkActions
+    case enableDriveDirectUploads
+    case simulateAppTerminationInBackground
 
     public var description: String {
         switch self {
@@ -128,6 +130,12 @@ public enum DeveloperFlag: String, CaseIterable {
 
         case .enableDriveBulkActions:
             "Turn on to enable bulk actions in Drive"
+            
+        case .enableDriveDirectUploads:
+            "Turn on to enable drive direct uploads"
+
+        case .simulateAppTerminationInBackground:
+            "Turn on to simulate app termination in background"
         }
     }
 

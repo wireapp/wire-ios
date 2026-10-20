@@ -100,6 +100,14 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             "sceneDidEnterBackground: (activationState = \(scene.activationState))",
             attributes: .safePublic
         )
+
+        if DeveloperFlag.simulateAppTerminationInBackground.isOn {
+            /// Exit to make our app suspend directly.
+            /// This will terminate your app, but the system does not interpret this as a force quit.
+            /// Therefore, your app will relaunch your app in the background when your background session needs
+            /// attention.
+            exit(0)
+        }
     }
 
     func scene(_ scene: UIScene, openURLContexts urlContexts: Set<UIOpenURLContext>) {

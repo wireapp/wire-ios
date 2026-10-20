@@ -35,6 +35,7 @@ package struct FilesContentView<Toolbar: ToolbarContent, Sheet: View>: View {
     @ObservedObject package var viewModel: FilesViewModel
     package let isBrowsing: Bool
     package let backgroundColor: Color
+    package let trackerHeight: CGFloat
 
     @ToolbarContentBuilder package let toolbarContent: () -> Toolbar
     @ViewBuilder let sheetContent: (FilesViewModel.SheetNavigation) -> Sheet
@@ -190,6 +191,11 @@ private extension FilesContentView {
             }
         }
         .animation(.default, value: viewModel.state)
+        .safeAreaInset(edge: .bottom, spacing: 0) {
+            Color.clear
+                .frame(height: trackerHeight)
+        }
+
     }
 
     @ViewBuilder var itemsSection: some View {
