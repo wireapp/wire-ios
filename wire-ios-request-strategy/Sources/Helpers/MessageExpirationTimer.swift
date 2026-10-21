@@ -52,6 +52,7 @@ public class MessageExpirationTimer: ZMMessageTimer, ZMContextChangeTracker {
     }
 
     private func timerFired(for message: ZMMessage) {
+        guard message.outboxState == .notEnrolled else { return }
         if let proteusMessage = message as? (any ProteusMessage) {
             WireLogger.messaging.debug("expiration timer fired for message \(proteusMessage.debugInfo)")
         }
@@ -82,6 +83,7 @@ public class MessageExpirationTimer: ZMMessageTimer, ZMContextChangeTracker {
         let messages = objects.compactMap { $0 as? ZMMessage }
         messages.forEach {
             guard self.entityNames.contains(type(of: $0).entityName()) else { return }
+            guard $0.outboxState == .notEnrolled else { return }
 
             if let filter = self.filter, !filter.evaluate(with: $0) { return }
 

@@ -65,6 +65,23 @@ extension LinkPreviewUpdateRequestStrategy: ModifiedKeyObjectSyncTranscoder {
 
     func synchronize(key: String, for object: ZMClientMessage, completion: @escaping () -> Void) {
 
+        if object.outboxState != .notEnrolled {
+            do {
+                if object.outboxState == .sent {
+                    try object.enqueueInOutbox(operation: .contentUpdate)
+                    object.delivered = false
+                    object.linkPreviewState = .done
+                    try managedObjectContext.save()
+                }
+                // Queued content includes the preview when claimed. For an active attempt,
+                // the sender compares its snapshot and queues a follow-up after acceptance.
+            } catch {
+                WireLogger.messaging.error("could not queue outbox link preview update")
+            }
+            completion()
+            return
+        }
+
         let hasRegisteredMLSClient = managedObjectContext.performAndWait {
             let selfClient = ZMUser.selfUser(in: managedObjectContext).selfClient()
             return selfClient?.hasRegisteredMLSClient ?? false

@@ -18,6 +18,8 @@
 
 import Foundation
 import WireLogging
+import WireSystem
+import WireTransport
 
 public class ClientMessageRequestStrategy: NSObject, ZMContextChangeTrackerSource {
 
@@ -36,13 +38,21 @@ public class ClientMessageRequestStrategy: NSObject, ZMContextChangeTrackerSourc
     let messageExpirationTimer: MessageExpirationTimer
     let linkAttachmentsPreprocessor: LinkAttachmentsPreprocessor
     let localNotificationDispatcher: PushMessageHandler
+    private let reachability: ReachabilityProvider?
+    private var reachabilityToken: Any?
+    private var queuedOutboxMessages: [NSManagedObjectID: (message: ZMClientMessage, completion: () -> Void)] = [:]
+    private var outboxTasks: [NSManagedObjectID: Task<Void, Never>] = [:]
+    private var activeOutboxConversations = Set<NSManagedObjectID>()
+    private var outboxRetryWakeup: DispatchWorkItem?
+    private var isTornDown = false
 
     // MARK: - Life cycle
 
     public init(
         context: NSManagedObjectContext,
         localNotificationDispatcher: PushMessageHandler,
-        messageSender: MessageSenderInterface
+        messageSender: MessageSenderInterface,
+        reachability: ReachabilityProvider? = nil
     ) {
         self.insertedObjectSync = InsertedObjectSync(
             insertPredicate: Self.shouldBeSentPredicate(context: context)
@@ -51,6 +61,7 @@ public class ClientMessageRequestStrategy: NSObject, ZMContextChangeTrackerSourc
         self.context = context
         self.messageSender = messageSender
         self.localNotificationDispatcher = localNotificationDispatcher
+        self.reachability = reachability
 
         self.messageExpirationTimer = MessageExpirationTimer(
             moc: context,
@@ -66,6 +77,11 @@ public class ClientMessageRequestStrategy: NSObject, ZMContextChangeTrackerSourc
         super.init()
 
         insertedObjectSync.transcoder = self
+        reachabilityToken = reachability?.addReachabilityObserver(on: nil) { [weak self] _ in
+            self?.context.performGroupedBlock { [weak self] in
+                self?.drainOutbox()
+            }
+        }
     }
 
     deinit {
@@ -78,7 +94,8 @@ public class ClientMessageRequestStrategy: NSObject, ZMContextChangeTrackerSourc
         [
             insertedObjectSync,
             messageExpirationTimer,
-            linkAttachmentsPreprocessor
+            linkAttachmentsPreprocessor,
+            self
         ]
     }
 }
@@ -94,6 +111,10 @@ extension ClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
         isFresh: Bool,
         completion: @escaping () -> Void
     ) {
+        if object.outboxState != .notEnrolled {
+            enqueueOutboxMessage(object, isFresh: isFresh, completion: completion)
+            return
+        }
         // Temp fix for avoiding to send a large amount of last read
         // messages, see: [WPB-17439]
         if
@@ -192,4 +213,150 @@ extension ClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
         }
     }
 
+}
+
+extension ClientMessageRequestStrategy: ZMContextChangeTracker, TearDownCapable {
+
+    public func fetchRequestForTrackedObjects() -> NSFetchRequest<NSFetchRequestResult>? { nil }
+
+    public func addTrackedObjects(_ objects: Set<NSManagedObject>) {
+        drainOutbox()
+    }
+
+    public func objectsDidChange(_ objects: Set<NSManagedObject>) {
+        drainOutbox()
+    }
+
+    public func tearDown() {
+        context.performAndWait {
+            isTornDown = true
+            reachabilityToken = nil
+            outboxRetryWakeup?.cancel()
+            outboxRetryWakeup = nil
+            outboxTasks.values.forEach { $0.cancel() }
+            outboxTasks.removeAll()
+            let pending = queuedOutboxMessages.values.map { $0.completion }
+            queuedOutboxMessages.removeAll()
+            activeOutboxConversations.removeAll()
+            pending.forEach { $0() }
+            messageExpirationTimer.tearDown()
+        }
+    }
+}
+
+private extension ClientMessageRequestStrategy {
+
+    func enqueueOutboxMessage(_ message: ZMClientMessage, isFresh: Bool, completion: @escaping () -> Void) {
+        guard !isTornDown, !message.isDeleted, !message.hasBeenDeleted else {
+            completion()
+            return
+        }
+        if !isFresh {
+            message.recoverOutboxAfterRestart()
+        }
+        if message.outboxState == .uncertain {
+            // Surface existing Retry until automatic reconciliation of unknown delivery is agreed.
+            message.expire(withReason: .other)
+        }
+        do {
+            try context.save()
+        } catch {
+            WireLogger.messaging.error("could not persist recovered outbox message")
+            completion()
+            return
+        }
+        guard message.outboxState == .queued, !message.isExpired else {
+            completion()
+            return
+        }
+        queuedOutboxMessages[message.objectID] = (message, completion)
+        drainOutbox()
+    }
+
+    func drainOutbox() {
+        guard !isTornDown, reachability?.mayBeReachable != false else { return }
+        outboxRetryWakeup?.cancel()
+        outboxRetryWakeup = nil
+        var blockedConversations = activeOutboxConversations
+        var nextWakeup: Date?
+        let waiting = queuedOutboxMessages.values.sorted {
+            ($0.message.outboxEnqueuedAt ?? .distantPast) < ($1.message.outboxEnqueuedAt ?? .distantPast)
+        }
+        for entry in waiting {
+            let message = entry.message
+            guard outboxTasks[message.objectID] == nil else { continue }
+            guard !message.isDeleted, !message.hasBeenDeleted, !message.isExpired,
+                  message.outboxState == .queued, let conversation = message.conversation
+            else {
+                queuedOutboxMessages.removeValue(forKey: message.objectID)?.completion()
+                continue
+            }
+            let conversationID = conversation.objectID
+            guard !blockedConversations.contains(conversationID) else { continue }
+            blockedConversations.insert(conversationID)
+            if conversation.messageProtocol == .mls,
+               ZMUser.selfUser(in: context).selfClient()?.hasRegisteredMLSClient != true {
+                continue
+            }
+            if let date = message.outboxNextAttemptAt, date > Date() {
+                nextWakeup = min(nextWakeup ?? date, date)
+                continue
+            }
+            activeOutboxConversations.insert(conversationID)
+            let objectID = message.objectID
+            outboxTasks[objectID] = Task { [self] in
+                let waitsForConnection: Bool
+                do {
+                    try await messageSender.sendMessage(message: message)
+                    waitsForConnection = false
+                } catch MessageSendError.outboxWaitingForConnection {
+                    waitsForConnection = true
+                } catch MessageOutboxError.staleAttempt {
+                    // An obsolete operation must not expire its replacement or a cancelled message.
+                    waitsForConnection = false
+                } catch {
+                    await context.perform {
+                        guard !self.isTornDown, !message.isDeleted, !message.hasBeenDeleted,
+                              message.outboxState != .cancelled, message.outboxState != .sent
+                        else { return }
+                        if message.outboxState == .queued {
+                            try? message.failQueuedOutboxOperation()
+                        }
+                        message.expire(withReason: .other)
+                        self.localNotificationDispatcher.didFailToSend(message)
+                        if case let NetworkError.invalidRequestError(failure, _) = error,
+                           failure.label == .missingLegalholdConsent {
+                            self.context.zm_userInterface.performGroupedBlock {
+                                NotificationInContext(
+                                    name: ZMConversation.failedToSendMessageNotificationName,
+                                    context: self.context.notificationContext
+                                ).post()
+                            }
+                        }
+                    }
+                    waitsForConnection = false
+                }
+                await context.perform {
+                    guard !self.isTornDown else { return }
+                    self.outboxTasks.removeValue(forKey: objectID)
+                    self.activeOutboxConversations.remove(conversationID)
+                    if !waitsForConnection, message.outboxState != .queued {
+                        self.queuedOutboxMessages.removeValue(forKey: objectID)?.completion()
+                    }
+                    self.context.enqueueDelayedSave()
+                    self.drainOutbox()
+                }
+            }
+        }
+        if let nextWakeup {
+            let work = DispatchWorkItem { [weak self] in
+                self?.context.performGroupedBlock { [weak self] in self?.drainOutbox() }
+            }
+            outboxRetryWakeup = work
+            DispatchQueue.global(qos: .utility).asyncAfter(
+                deadline: .now() + max(0, nextWakeup.timeIntervalSinceNow),
+                execute: work
+            )
+        }
+    }
 }

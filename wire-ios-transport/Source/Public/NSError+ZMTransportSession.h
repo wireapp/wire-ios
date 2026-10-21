@@ -20,6 +20,9 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/// Present only when the scheduler rejected a request before creating a network task.
+FOUNDATION_EXPORT NSString * const ZMTransportSessionRequestNotSubmittedKey;
+
 @interface NSError (ZMTransportSession)
 
 - (BOOL)isCancelledURLTaskError;

@@ -631,7 +631,10 @@ static NSInteger const DefaultMaximumRequests = 6;
 {
     ZMTransportRequest *request = item.transportRequest;
     if (request != nil) {
-        NSDictionary *userInfo = @{NSLocalizedDescriptionKey: @"Temporarily rejecting item to sync."};
+        NSDictionary *userInfo = @{
+            NSLocalizedDescriptionKey: @"Temporarily rejecting item to sync.",
+            ZMTransportSessionRequestNotSubmittedKey: @YES
+        };
         NSError *error = [NSError tryAgainLaterErrorWithUserInfo:userInfo];
         ZMTransportResponse *tryAgainRespose = [ZMTransportResponse responseWithTransportSessionError:error apiVersion:request.apiVersion];
         [request completeWithResponse:tryAgainRespose];

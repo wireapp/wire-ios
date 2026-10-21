@@ -23,12 +23,61 @@ import XCTest
 
 final class MessageOutboxTests: BaseZMClientMessageTests {
 
+    func testEnabledSubmissionIsPersistedButHiddenProtocolTrafficIsNotEnrolled() throws {
+        let previous = uiMOC.offlinePendingMessagesEnabled
+        uiMOC.offlinePendingMessagesEnabled = true
+        defer { uiMOC.offlinePendingMessagesEnabled = previous }
+
+        let message = try makeMessage()
+        XCTAssertEqual(message.outboxState, .queued)
+        XCTAssertFalse(message.isInserted)
+        XCTAssertNil(message.expirationDate)
+
+        let hidden = try conversation.appendClientMessage(
+            with: GenericMessage(content: Text(content: "hidden protocol content")),
+            hidden: true
+        )
+        XCTAssertEqual(hidden.outboxState, .notEnrolled)
+    }
+
+    func testTurningOffEnrollmentDoesNotDiscardPreviouslyQueuedContent() throws {
+        let previous = uiMOC.offlinePendingMessagesEnabled
+        defer { uiMOC.offlinePendingMessagesEnabled = previous }
+        uiMOC.offlinePendingMessagesEnabled = true
+        let queued = try makeMessage()
+        uiMOC.offlinePendingMessagesEnabled = false
+
+        let legacy = try makeMessage()
+        queued.recoverOutboxAfterRestart()
+
+        XCTAssertEqual(queued.outboxState, .queued)
+        XCTAssertEqual(legacy.outboxState, .notEnrolled)
+    }
+
+    func testNormalSentEditUsesAnEditOperationAndRetainsItsMarker() throws {
+        let previous = uiMOC.offlinePendingMessagesEnabled
+        uiMOC.offlinePendingMessagesEnabled = true
+        defer { uiMOC.offlinePendingMessagesEnabled = previous }
+        let message = try makeMessage()
+        let attempt = try message.prepareOutboxAttempt(payload: payload(of: message))
+        try message.markOutboxAttemptSending(attempt)
+        try message.completeOutboxAttempt(attempt.identifier)
+        message.markAsSent()
+
+        message.editText("normal edit", mentions: [], fetchLinkPreview: false)
+
+        XCTAssertEqual(message.outboxState, .queued)
+        XCTAssertEqual(message.outboxOperation, .edit)
+        XCTAssertTrue(try XCTUnwrap(message.underlyingMessage).hasEdited)
+        XCTAssertNotNil(message.updatedTimestamp)
+    }
+
     func testSubmissionRemainsUnenrolledAndKeepsLegacyExpiration() throws {
         let message = try makeMessage()
         XCTAssertEqual(message.outboxState, .notEnrolled)
         XCTAssertEqual(message.outboxOperation, MessageOutboxOperation.none)
         XCTAssertNil(message.outboxEnqueuedAt)
-        XCTAssertNil(message.outboxPayload)
+        XCTAssertNil(try message.loadOutboxPayload())
         XCTAssertFalse(message.hasUnclaimedOutboxContent)
 
         message.expire(withReason: .timeout)
@@ -73,7 +122,7 @@ final class MessageOutboxTests: BaseZMClientMessageTests {
         try message.rescheduleOutboxAttempt(attempt.identifier)
 
         XCTAssertTrue(message.hasUnclaimedOutboxContent)
-        XCTAssertNil(message.outboxPayload)
+        XCTAssertNil(try message.loadOutboxPayload())
         XCTAssertThrowsError(try message.markOutboxAttemptSending(attempt))
     }
 
@@ -120,7 +169,7 @@ final class MessageOutboxTests: BaseZMClientMessageTests {
         message.recoverOutboxAfterRestart()
 
         XCTAssertEqual(message.outboxState, .uncertain)
-        XCTAssertEqual(message.outboxPayload, attempt.payload)
+        XCTAssertEqual(try message.loadOutboxPayload(), attempt.payload)
         XCTAssertFalse(message.hasUnclaimedOutboxContent)
         XCTAssertThrowsError(try message.prepareOutboxAttempt(payload: attempt.payload))
     }
@@ -135,7 +184,7 @@ final class MessageOutboxTests: BaseZMClientMessageTests {
         try message.completeOutboxAttempt(attempt.identifier)
 
         XCTAssertEqual(message.outboxState, .sent)
-        XCTAssertNil(message.outboxPayload)
+        XCTAssertNil(try message.loadOutboxPayload())
         XCTAssertNil(message.outboxAttemptIdentifier)
         XCTAssertEqual(message.outboxAttemptCount, 0)
     }
@@ -172,7 +221,7 @@ final class MessageOutboxTests: BaseZMClientMessageTests {
                 uiMOC.delete(message)
             } else {
                 try message.cancelOutboxOperation()
-                XCTAssertNil(message.outboxPayload)
+                XCTAssertNil(try message.loadOutboxPayload())
             }
 
             XCTAssertThrowsError(try message.completeOutboxAttempt(attempt.identifier))
@@ -207,7 +256,7 @@ final class MessageOutboxTests: BaseZMClientMessageTests {
             let restored = try! self.syncMOC.existingObject(with: message.objectID) as! ZMClientMessage
             XCTAssertEqual(restored.outboxState, .sending)
             XCTAssertEqual(restored.outboxOperation, .initialMessage)
-            XCTAssertEqual(restored.outboxPayload, attempt.payload)
+            XCTAssertEqual(try! restored.loadOutboxPayload(), attempt.payload)
             XCTAssertEqual(restored.outboxAttemptIdentifier, attempt.identifier)
             XCTAssertEqual(restored.nonce, nonce)
             XCTAssertNotNil(restored.outboxEnqueuedAt)

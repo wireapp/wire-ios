@@ -620,6 +620,7 @@ NSString * const ZMSystemMessageConversationScheduledDeletionDateKey = @"convers
                              @"outboxEnqueuedAt",
                              @"outboxAttemptIdentifier",
                              @"outboxPayload",
+                             @"outboxSnapshot",
                              @"outboxAttemptCount",
                              @"outboxNextAttemptAt",
                              ZMMessageDecryptionErrorCodeKey,

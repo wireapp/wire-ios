@@ -87,6 +87,86 @@ class ClientMessageRequestStrategyTests: MessagingTestBase {
 
 extension ClientMessageRequestStrategyTests {
 
+    func testRestoredOutboxWaitsOfflineWithoutExpiring() throws {
+        try syncMOC.performAndWait {
+            let reachability = PendingMessageReachability()
+            sut.tearDown()
+            sut = ClientMessageRequestStrategy(
+                context: syncMOC,
+                localNotificationDispatcher: localNotificationDispatcher,
+                messageSender: mockMessageSender,
+                reachability: reachability
+            )
+            let message = try XCTUnwrap(groupConversation.appendText(content: "offline") as? ZMClientMessage)
+            try message.enqueueInOutbox(operation: .initialMessage)
+            try syncMOC.save()
+
+            sut.contextChangeTrackers.forEach { $0.addTrackedObjects([message]) }
+
+            XCTAssertEqual(mockMessageSender.sendMessageMessage_Invocations.count, 0)
+            XCTAssertEqual(message.outboxState, .queued)
+            XCTAssertFalse(message.isExpired)
+            XCTAssertNil(message.expirationDate)
+            sut.tearDown()
+        }
+    }
+
+    func testReconnectWakesQueuedMessageWithoutManualRetry() async throws {
+        let sent = expectation(description: "queued message sent after reachability returns")
+        let reachability = PendingMessageReachability()
+        try syncMOC.performAndWait {
+            sut.tearDown()
+            sut = ClientMessageRequestStrategy(
+                context: syncMOC,
+                localNotificationDispatcher: localNotificationDispatcher,
+                messageSender: mockMessageSender,
+                reachability: reachability
+            )
+            mockMessageSender.sendMessageMessage_MockMethod = { message in
+                try await message.context.perform {
+                    let row = try XCTUnwrap(message as? ZMClientMessage)
+                    let payload = try XCTUnwrap(row.underlyingMessage).serializedData()
+                    let attempt = try row.prepareOutboxAttempt(payload: payload)
+                    try row.markOutboxAttemptSending(attempt)
+                    row.markAsSent()
+                    try row.completeOutboxAttempt(attempt.identifier)
+                    sent.fulfill()
+                }
+            }
+            let message = try XCTUnwrap(groupConversation.appendText(content: "offline") as? ZMClientMessage)
+            try message.enqueueInOutbox(operation: .initialMessage)
+            try syncMOC.save()
+            sut.contextChangeTrackers.forEach { $0.objectsDidChange([message]) }
+            XCTAssertEqual(mockMessageSender.sendMessageMessage_Invocations.count, 0)
+        }
+
+        reachability.reconnect()
+        await fulfillment(of: [sent], timeout: 5)
+        syncMOC.performAndWait { sut.tearDown() }
+    }
+}
+
+private final class PendingMessageReachability: NSObject, ReachabilityProvider {
+    var mayBeReachable = false
+    var oldMayBeReachable = false
+    private var callback: ReachabilityObserverBlock?
+
+    func add(_ observer: ZMReachabilityObserver, queue: OperationQueue?) -> Any { NSObject() }
+
+    func addReachabilityObserver(on queue: OperationQueue?, block: @escaping ReachabilityObserverBlock) -> Any {
+        callback = block
+        return NSObject()
+    }
+
+    func reconnect() {
+        oldMayBeReachable = mayBeReachable
+        mayBeReachable = true
+        callback?(self)
+    }
+}
+
+extension ClientMessageRequestStrategyTests {
+
     func testThatItDoesSendProteusMessageInVisibleConversation() {
 
         syncMOC.performGroupedAndWait {

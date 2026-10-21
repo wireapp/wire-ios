@@ -79,7 +79,7 @@ public class ZMGenericMessageData: ZMManagedObject {
 
     // MARK: - Methods
 
-    private func getProtobufData() throws -> Data {
+    func getProtobufData() throws -> Data {
         guard let moc = managedObjectContext else {
             throw ProcessingError.missingManagedObjectContext
         }

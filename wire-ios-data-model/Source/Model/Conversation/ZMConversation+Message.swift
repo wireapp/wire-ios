@@ -441,6 +441,16 @@ public extension ZMConversation {
 
         do {
             try append(message, expires: expires, hidden: hidden)
+            if moc.offlinePendingMessagesEnabled, !hidden, !message.isEphemeral,
+               !(isSelfConversation && messageProtocol == .mls) {
+                switch genericMessage.content {
+                case .text, .location, .knock, .multipart:
+                    try message.enqueueInOutbox(operation: .initialMessage)
+                    try moc.save()
+                default:
+                    break
+                }
+            }
         } catch {
             moc.delete(message)
             throw error

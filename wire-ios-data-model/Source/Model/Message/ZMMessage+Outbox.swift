@@ -46,7 +46,7 @@ public enum MessageOutboxError: Error, Equatable {
 }
 
 /// Immutable content claimed by one attempt. This is plaintext content, not transport ciphertext.
-public struct MessageOutboxAttempt {
+public struct MessageOutboxAttempt: Sendable {
     public let identifier: UUID
     public let payload: Data
 
@@ -61,7 +61,9 @@ public extension ZMMessage {
     @NSManaged internal var outboxOperationRaw: Int16
     @NSManaged private(set) var outboxEnqueuedAt: Date?
     @NSManaged private(set) var outboxAttemptIdentifier: UUID?
-    @NSManaged private(set) var outboxPayload: Data?
+    // Retained for stores created by the foundation commit; new writes use EAR-aware GenericMessageData.
+    @NSManaged private var outboxPayload: Data?
+    @NSManaged internal private(set) var outboxSnapshot: ZMGenericMessageData?
     @NSManaged private(set) var outboxAttemptCount: Int32
     @NSManaged private(set) var outboxNextAttemptAt: Date?
 }
@@ -82,7 +84,14 @@ public extension ZMMessage {
 
     /// Additional outbox condition for future queued editing; ordinary type/security restrictions still apply.
     var hasUnclaimedOutboxContent: Bool {
-        outboxState == .queued && outboxOperation == .initialMessage && outboxPayload == nil
+        outboxState == .queued && outboxOperation == .initialMessage
+            && outboxSnapshot == nil && outboxPayload == nil
+    }
+
+    /// Throws when encrypted content is unavailable; a locked snapshot must never look like unclaimed content.
+    func loadOutboxPayload() throws -> Data? {
+        if let outboxSnapshot { return try outboxSnapshot.getProtobufData() }
+        return outboxPayload
     }
 
     func enqueueInOutbox(operation: MessageOutboxOperation, at date: Date = Date()) throws {
@@ -103,7 +112,7 @@ public extension ZMMessage {
         outboxOperationRaw = operation.rawValue
         outboxEnqueuedAt = date
         outboxAttemptIdentifier = nil
-        outboxPayload = nil
+        clearOutboxSnapshot()
         outboxAttemptCount = 0
         outboxNextAttemptAt = nil
     }
@@ -119,7 +128,7 @@ public extension ZMMessage {
             throw MessageOutboxError.retryNotDue
         }
 
-        let snapshot = outboxPayload ?? payload
+        let snapshot = try loadOutboxPayload() ?? payload
         try validateOutboxPayload(snapshot)
         let attempt = MessageOutboxAttempt(identifier: UUID(), payload: snapshot)
         outboxStateRaw = MessageOutboxState.preparing.rawValue
@@ -133,10 +142,13 @@ public extension ZMMessage {
     func markOutboxAttemptSending(_ attempt: MessageOutboxAttempt) throws {
         try requireOutboxAttempt(attempt.identifier, in: [.preparing])
         try validateOutboxPayload(attempt.payload)
-        guard outboxPayload == nil || outboxPayload == attempt.payload else {
+        let previousPayload = try loadOutboxPayload()
+        guard previousPayload == nil || previousPayload == attempt.payload else {
             throw MessageOutboxError.invalidPayload
         }
-        outboxPayload = attempt.payload
+        if outboxSnapshot == nil {
+            try storeOutboxSnapshot(attempt.payload)
+        }
         outboxStateRaw = MessageOutboxState.sending.rawValue
     }
 
@@ -177,6 +189,35 @@ public extension ZMMessage {
         clearOutboxAttempt()
     }
 
+    /// Explicit user Retry may retry a frozen operation whose earlier delivery is unknown.
+    func retryOutboxOperation() throws {
+        guard !isDeleted, !hasBeenDeleted,
+              outboxState == .failed || outboxState == .uncertain
+        else {
+            throw MessageOutboxError.invalidTransition
+        }
+        outboxStateRaw = MessageOutboxState.queued.rawValue
+        outboxAttemptIdentifier = nil
+        outboxNextAttemptAt = nil
+        expirationDate = nil
+    }
+
+    func failQueuedOutboxOperation() throws {
+        guard outboxState == .queued else { throw MessageOutboxError.invalidTransition }
+        outboxStateRaw = MessageOutboxState.failed.rawValue
+        outboxAttemptIdentifier = nil
+        outboxNextAttemptAt = nil
+    }
+
+    /// A later operation can use legacy sending when enrollment has been disabled.
+    func leaveCompletedOutbox() throws {
+        guard outboxState == .sent else { throw MessageOutboxError.invalidTransition }
+        outboxStateRaw = MessageOutboxState.notEnrolled.rawValue
+        outboxOperationRaw = MessageOutboxOperation.none.rawValue
+        outboxEnqueuedAt = nil
+        clearOutboxAttempt()
+    }
+
     /// Pure local crash recovery. It neither sends work nor decides how to retry an uncertain outcome.
     func recoverOutboxAfterRestart() {
         guard !isDeleted, !hasBeenDeleted else { return }
@@ -211,8 +252,42 @@ public extension ZMMessage {
 
     private func clearOutboxAttempt() {
         outboxAttemptIdentifier = nil
-        outboxPayload = nil
+        clearOutboxSnapshot()
         outboxAttemptCount = 0
         outboxNextAttemptAt = nil
+    }
+
+    private func clearOutboxSnapshot() {
+        if let outboxSnapshot {
+            managedObjectContext?.delete(outboxSnapshot)
+            self.outboxSnapshot = nil
+        }
+        outboxPayload = nil
+    }
+
+    private func storeOutboxSnapshot(_ payload: Data) throws {
+        guard let context = managedObjectContext else { throw MessageOutboxError.invalidTransition }
+        let snapshot = ZMGenericMessageData.insertNewObject(in: context)
+        do {
+            try snapshot.setGenericMessage(GenericMessage(serializedData: payload))
+            outboxSnapshot = snapshot
+            outboxPayload = nil
+        } catch {
+            context.delete(snapshot)
+            throw error
+        }
+    }
+
+    internal func migrateLegacyOutboxSnapshotIfNeeded() throws {
+        if outboxSnapshot == nil, let outboxPayload {
+            try storeOutboxSnapshot(outboxPayload)
+        }
+    }
+
+    internal func discardOutboxContent() {
+        if outboxState != .notEnrolled, outboxState != .sent {
+            outboxStateRaw = MessageOutboxState.cancelled.rawValue
+        }
+        clearOutboxAttempt()
     }
 }

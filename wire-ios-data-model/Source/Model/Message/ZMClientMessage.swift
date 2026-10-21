@@ -131,6 +131,18 @@ public class ZMClientMessage: ZMOTRMessage {
     }
 
     public override func resend() {
+        if outboxState == .failed || outboxState == .uncertain {
+            do {
+                if let messageID = underlyingMessage?.messageID {
+                    nonce = UUID(uuidString: messageID)
+                }
+                try retryOutboxOperation()
+                super.resend()
+            } catch {
+                WireLogger.messaging.error("could not retry outbox operation")
+            }
+            return
+        }
         if let genericMessage = underlyingMessage,
            case .edited? = genericMessage.content {
             // Re-apply the edit since we've restored the orignal nonce when the message expired

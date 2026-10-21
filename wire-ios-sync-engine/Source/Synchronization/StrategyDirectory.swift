@@ -332,7 +332,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 initiateResetMLSConversationUseCase: initiateResetMLSConversationUseCase,
                 featureRepository: LegacyFeatureRepository(context: syncContext),
                 apiVersion: metadata.apiVersion,
-                backgroundTaskExecuter: backgroundTaskExecuter
+                backgroundTaskExecuter: backgroundTaskExecuter,
+                reachability: transportSession.reachability
             )
 
             let strategies: [Any] = [
@@ -343,7 +344,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 ClientMessageRequestStrategy(
                     context: syncContext,
                     localNotificationDispatcher: pushMessageHandler,
-                    messageSender: messageSender
+                    messageSender: messageSender,
+                    reachability: transportSession.reachability
                 ),
                 AvailabilityRequestStrategy(
                     context: syncContext,

@@ -30,12 +30,16 @@ See the provisional-base update below. The user clarified the workflow: implemen
 on this one feature branch and tick off the checklist. The two older branches
 are parked investigation history; do not create further stage branches. The
 foundation contract is authorized and implemented; validation belongs to the user.
-Uncertain-delivery automatic retry policy remains unresolved before activation.
+Regular-message queuing/reconnect/restart integration is now implemented behind
+the default-off flag, with source coverage added and no build/test execution.
+Uncertain-delivery automatic retry policy remains unresolved before broad activation;
+the development implementation exposes manual Retry while retaining frozen content.
 
 Current state: 2026-10-21. The prerequisite bootstrap tracker fix is implemented
 on `fix/preserve-bootstrap-trackers-WPB-26307`, with two regression tests and all
-13 bootstrap tests passing. The offline outbox foundation is now being implemented;
-production enrollment/sending behavior has not yet been enabled.
+13 bootstrap tests passing. Foundation and regular-message integration are written.
+New enrollment requires the local flag at stack/session startup. It remains off
+by default; queued text editing and classic asset enrollment are not implemented.
 Read `AGENTS.md`, the reported manual results, and the code verification section
 before continuing. The user reports that the fix resolves the device upload
 problem. The user is handling a separate bug ticket, PR/branch, merge, and
@@ -55,8 +59,9 @@ Next steps, in order:
    sync implementation and video receiver confirmation remain unrecorded; do not
    treat those as established. The bootstrap upload bug is separate from this feature
    and should not be reimplemented or backported again by the new session.
-3. Foundation code and regression coverage are implemented. User owns further
-   validation. See the foundation execution record and continue with queuing.
+3. Foundation and regular-message integration are implemented. User owns
+   validation; no checks were executed for the regular-message integration.
+   See execution records below. Next is queued text editing/race handling.
 4. Continue through regular queuing, queued editing, and asset recovery on the
    same branch. Treat the numbered PR checklists below as implementation stages;
    defer PR packaging until there is working code to review. Do not repeat the
@@ -89,7 +94,7 @@ are not a planned chain of PRs. Do not merge either branch wholesale into
 | `chore/pending-messages-plan-WPB-26307` | Original plan snapshot, currently at `852665c942`; superseded by the plan on the staging branch. | No merge planned. Retain until the latest plan is safely carried forward; cleanup can happen later. |
 | `fix/preserve-bootstrap-trackers-WPB-26307` | Investigation staging branch containing the isolated code fix plus subsequent plan-only commits. The old feature key does not make this the final bug PR branch. | No wholesale merge planned. Only code/test commit `b75130623b` is intended for the user's separate bug branch/PR. |
 | Separate bootstrap bug PR #5427 (`WPB-29555`) | User-owned bug fix and release backports. | Fix reached `develop` at `53a362f1b3`. Do not duplicate the user's PR or backport work. |
-| Future `feat/…-WPB-26307` branches | Actual offline pending-message implementation, after design approval. | Start from updated `develop` containing the bootstrap fix; feature PRs target `develop`. Carry forward only this plan file and remove it from the final PR diff. |
+| `feat/pending-message-foundation-WPB-26307` | The one active branch for all offline pending-message implementation stages. | Based on `develop` containing the fix; eventual PR targets `develop`. Keep the checklist committed here and remove it from final merge changes. No further stage branches are planned. |
 
 When starting the feature branch, verify the bootstrap implementation on the base
 because cherry-picks and squash merges may change its hash. Recover only
@@ -234,7 +239,8 @@ they do not become upstream synchronization work. Keep existing delivery fields.
 | `outboxOperationRaw` | Integer 16, `0` | `none = 0`, `initialMessage = 1`, `edit = 2`, `contentUpdate = 3`. Keep original sends, normal edits, and protocol-supported follow-up content such as link previews distinct. |
 | `outboxEnqueuedAt` | Optional Date, nil | Stable accepted-operation time, separate from server and attempt timestamps. It does not itself decide cross-type ordering. |
 | `outboxAttemptIdentifier` | Optional UUID, nil | Fresh token when claiming each attempt; callbacks must match the current token, allowed state, and live object. |
-| `outboxPayload` | Optional Binary, nil | Serialized GenericMessage content snapshot, captured at claim before encryption and persisted atomically with the first `sending` transition before HTTP handoff. Preserve nonce, mentions, quotes, attachments, and authored content across retries. |
+| `outboxPayload` | Optional Binary, nil | Foundation `2.145.0` compatibility storage only. Stage 2 replaces new snapshot writes with the EAR-aware `outboxSnapshot` relationship in `2.146.0`; see the execution record. |
+| `outboxSnapshot` | Optional to-one relationship to GenericMessageData, nil | Current snapshot storage, with inverse `outboxMessage` and cascade cleanup. Uses existing encryption-at-rest storage/migration. |
 | `outboxAttemptCount` | Integer 32, `0` | Persisted bounded backoff bookkeeping; increment on a claimed attempt, never while merely waiting offline. |
 | `outboxNextAttemptAt` | Optional Date, nil | Earliest eligible retry time for event-driven/backoff scheduling. It is not a queue expiration deadline. |
 
@@ -356,7 +362,8 @@ edited marker. Edits to previously sent messages retain normal edit semantics.
 
 The investigation above is based on source inspection, supplemented by the
 user-reported manual baseline results below. Bootstrap regression tests have now
-been run for the prerequisite fix; full offline outbox tests are not implemented.
+been run for the prerequisite fix and an initial foundation run was recorded;
+new regular-message/EAR coverage is written but has not been executed.
 
 ## Reference and scope
 
@@ -960,14 +967,83 @@ The new utilities flag test has not been executed. No PR has been created.
 
 ### PR 2: Regular-message queuing and recovery
 
-- [ ] Enroll supported regular messages behind the flag.
-- [ ] Add connectivity gating alongside existing synchronization checks.
-- [ ] Wake the queue after reconnect and synchronization.
-- [ ] Recover enrolled messages after restart without expiring them as stale.
-- [ ] Separate waiting, attempt expiration, retry, and terminal failure.
+- [x] Implement enrollment for text, location, knock, and multipart behind the flag.
+- [x] Implement connectivity gating alongside existing synchronization checks.
+- [x] Implement queue wake-up after reconnect and context/readiness changes.
+- [x] Implement recovery of enrolled messages after restart without stale expiration.
+- [x] Implement separate waiting, attempt expiration, retry, and terminal failure.
 - [ ] Verify message ordering and avoid duplicate send ownership.
 - [ ] Add focused tests for text, location, knock, and multipart messages.
 - [ ] Record PR URL and validation results.
+
+### Regular-message execution record (2026-10-21)
+
+The checkmarks above mean code is implemented and source reviewed, not that runtime
+acceptance has been verified. **No formatting, lint, build, or test commands were
+run for this stage**, following the user's validation preference. No PR is needed
+yet; keep implementing on the existing branch. The user's unrelated `.ruby-version`
+change remains untouched.
+
+Implemented paths:
+
+- Sample the flag when `CoreDataStack` is created and configure its view/sync
+  contexts. Other background contexts do not enroll by default. New supported
+  visible regular submissions are enrolled and saved before returning local
+  acceptance; hidden protocol traffic, assets, self-deleting content, and MLS
+  self-conversation submissions retain existing behavior at this stage.
+- Track eligible queued messages without starting tasks/background activities
+  while reachability is unavailable. Wake on reachability/context changes and
+  serialize regular sends within each conversation using accepted-operation time.
+  Existing cross-type dependency/asset ordering still needs review.
+- Preserve existing synchronization/dependency checks. Claim on the sync context,
+  encrypt an immutable content copy, persist its snapshot and sending state before
+  HTTP handoff, and verify current membership/security/legal-hold rules again.
+- Add an explicit transport error marker only where the scheduler rejects a
+  request before creating a network task. Those provably unsubmitted requests
+  return to queued state with persisted bounded backoff and one scheduled wake-up.
+  Do not infer non-delivery from arbitrary `tryAgainLater` errors.
+- Retry known missing-client/stale-epoch/group rejections through existing repair
+  services with a bounded attempt loop. Keep the MLS invalid-leaf reset trigger.
+  Recognize HTTP success even when recipient-status decoding fails; never blindly
+  retransmit a known accepted request because its body could not be decoded.
+- Resume restart-time preparation safely; treat interrupted in-flight work as
+  uncertain. Development behavior shows existing Retry for uncertain delivery
+  and preserves the operation's payload/nonce on explicit manual Retry. The final
+  automatic reconciliation/product policy is still an activation gate.
+- Enrolled-message waiting is excluded from the legacy expiration timer; an
+  attempt deadline is assigned at handoff. Existing legacy messages retain their
+  old strategy and expiration paths. Recovery does not require the enrollment flag.
+- Keep normal sent-message edits as `MessageEdit` operations with the edited
+  marker; keep link-preview follow-ups separate from the claimed original payload.
+  Full editor/send race handling, including a confirmation overlapping an active
+  metadata update, remains part of stage 3 before enabling for general use.
+- Reject obsolete/cancelled callbacks and clear snapshots when message content
+  is deleted or obfuscated. Account/session teardown cancels queue tasks/wake-ups.
+
+Encryption-at-rest correction:
+
+The foundation's raw binary snapshot is unsuitable for new live enrollment when
+EAR is enabled. Model `2.146.0` adds `Message.outboxSnapshot` pointing to its own
+`GenericMessageData` record, so existing per-record encryption and EAR enable/
+disable migrations cover snapshots too. `2.145.0` is retained unchanged for safe
+migration from local builds. Its optional legacy payload bytes are preserved and
+converted through EAR-aware storage before new handoff; EAR enable migration
+also converts any legacy snapshot records before encrypting the message data.
+Locked/unreadable snapshots throw; they never become editable/unclaimed content.
+
+Coverage added/updated, **not executed**:
+
+- Flagged submission durability, hidden-traffic exclusion, disabling enrollment
+  with existing queued work, and normal sent edits retaining their marker.
+- Offline bootstrap retaining queued text and reconnect waking it without Retry.
+- EAR-encrypted snapshots and missing-key failures preserving the content lock.
+- Additive SQLite migration from both `2.144.0` and local-foundation `2.145.0`
+  to `2.146.0`. Existing lifecycle tests now read snapshots through a throwing API.
+
+Remaining stage-2 validation/coverage: location/knock/multipart send integration,
+both protocols and sync implementations, scheduler rejection/backoff, positive
+response with malformed body, security transitions, and ordering/callback races.
+Do not call this feature validated or complete before those user-owned checks.
 
 ### PR 3: Queued text editing and presentation
 
@@ -1051,8 +1127,9 @@ The new utilities flag test has not been executed. No PR has been created.
 
 ## Execution notes
 
-- Only the prerequisite bootstrap fix and regression tests are implemented;
-  the new offline outbox feature has not started.
+- The prerequisite bootstrap fix is on `develop`; foundation and regular-message
+  integration are implemented on the one feature branch. Queued text editing,
+  asset enrollment/retention, and full integration validation remain outstanding.
 - The existing `.ruby-version` and `Strings+Generated.swift` modifications and
   the temporary RFC belong to the user and must remain untouched by this work.
 - Update this checklist in each implementation PR with completed items, actual

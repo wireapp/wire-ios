@@ -103,6 +103,12 @@ public class EARMigrator: EARMigratorProtocol {
 
             let contextData = try context.earContextData()
 
+            // Include snapshots from a locally built foundation version in the normal EAR migration.
+            let legacySnapshots = NSFetchRequest<ZMMessage>(entityName: ZMMessage.entityName())
+            legacySnapshots.predicate = NSPredicate(format: "outboxPayload != nil")
+            for message in try context.fetch(legacySnapshots) {
+                try message.migrateLegacyOutboxSnapshotIfNeeded()
+            }
             context.saveOrRollback()
             try migrateInstancesTowardEncryptionAtRest(
                 type: ZMGenericMessageData.self,

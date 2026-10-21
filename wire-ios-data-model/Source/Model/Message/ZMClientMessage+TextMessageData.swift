@@ -111,6 +111,20 @@ extension ZMClientMessage: TextMessageData {
         linkPreviewState = fetchLinkPreview ? .waitingToBeProcessed : .done
         linkAttachments = nil
         delivered = false
+
+        if let context = managedObjectContext {
+            do {
+                if context.offlinePendingMessagesEnabled, !isEphemeral,
+                   outboxState == .notEnrolled || outboxState == .sent {
+                    try enqueueInOutbox(operation: .edit)
+                    try context.save()
+                } else if outboxState == .sent {
+                    try leaveCompletedOutbox()
+                }
+            } catch {
+                Logging.messageProcessing.warn("Failed to persist queued edit: \(error.localizedDescription)")
+            }
+        }
     }
 
     var multipartAttachments: [GenericMessageProtocol.Attachment]? {
