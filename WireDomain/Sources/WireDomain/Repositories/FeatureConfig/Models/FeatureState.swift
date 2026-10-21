@@ -30,7 +30,7 @@ public struct FeatureState {
     public init(
         name: Feature.Name,
         isEnabled: Bool,
-        needsToNotifyUser: Bool = false
+        needsToNotifyUser: Bool
     ) {
         self.name = name
         self.isEnabled = isEnabled
