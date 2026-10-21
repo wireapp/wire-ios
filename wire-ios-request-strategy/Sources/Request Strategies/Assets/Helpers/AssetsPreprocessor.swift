@@ -80,6 +80,7 @@ public final class AssetsPreprocessor: NSObject, ZMContextChangeTracker {
 
         // We only want to start processing originals.
         for asset in message.assets where asset.hasOriginal {
+            if message.outboxState != .notEnrolled, asset.isUploaded || asset.hasEncrypted { continue }
             if asset.needsPreprocessing,
                let imageOperations = imageAssetPreprocessor?
                .operations(forPreprocessingImageOwner: AssetImageOwnerAdapter(asset: asset)) {
@@ -98,10 +99,27 @@ public final class AssetsPreprocessor: NSObject, ZMContextChangeTracker {
         processingGroup.notify(on: .global()) { [weak self] in
             self?.managedObjectContext.performGroupedBlock {
                 self?.objectsBeingProcessed.remove(message)
-                let assetClientMessageSet: Set<AnyHashable> = [#keyPath(ZMAssetClientMessage.transferState)]
-                // swiftlint:disable:next todo_requires_jira_link
-                message.setLocallyModifiedKeys(assetClientMessageSet) // TODO: jacob hacky
-                message.managedObjectContext?.saveOrRollback()
+                let legacy = message.outboxState == .notEnrolled
+                if legacy || (!message.isDeleted && !message.hasBeenDeleted && !message.isExpired
+                    && message.outboxState == .queued && message.transferState == .uploading) {
+                    if !legacy, message.assets.contains(where: { !$0.isUploaded && !$0.hasEncrypted }) {
+                        try? message.failQueuedOutboxOperation()
+                        message.expire(withReason: .other)
+                    } else {
+                        let assetClientMessageSet: Set<AnyHashable> = [#keyPath(ZMAssetClientMessage.transferState)]
+                        message.setLocallyModifiedKeys(assetClientMessageSet)
+                    }
+                    if legacy {
+                        message.managedObjectContext?.saveOrRollback()
+                    } else if let context = message.managedObjectContext {
+                        do {
+                            try context.save()
+                            _ = message.recoverOutboxAssetPreparation()
+                        } catch {
+                            context.rollback()
+                        }
+                    }
+                }
                 self?.managedObjectContext.leaveAllGroups(self!.managedObjectContext.allGroups)
             }
         }
@@ -110,6 +128,11 @@ public final class AssetsPreprocessor: NSObject, ZMContextChangeTracker {
     /// Returns the object as a ZMAssetClientMessage if it is asset that needs preprocessing
     private func needsPreprocessing(_ object: NSManagedObject) -> ZMAssetClientMessage? {
         guard let message = object as? ZMAssetClientMessage else { return nil }
+        if message.outboxState != .notEnrolled {
+            guard managedObjectContext.canProcessOfflinePendingMessages,
+                  !message.isDeleted, !message.hasBeenDeleted, !message.isExpired,
+                  message.outboxState == .queued, message.transferState == .uploading else { return nil }
+        }
 
         return message.processingState == .preprocessing ? message : nil
     }

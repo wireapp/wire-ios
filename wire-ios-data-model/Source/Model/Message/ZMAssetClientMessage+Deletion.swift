@@ -27,8 +27,11 @@ public extension Notification.Name {
 
 extension ZMAssetClientMessage {
 
-    func deleteContent() {
-        managedObjectContext?.zm_fileAssetCache.deleteAssetData(self)
+    func deleteContent(deleteUploadedAssetsAfterSave: Bool = false) {
+        discardOutboxContent()
+        managedObjectContext?.zm_fileAssetCache.deleteAssetData(
+            self, deleteUploadedAssetsAfterSave: deleteUploadedAssetsAfterSave
+        )
 
         if let url = temporaryDirectoryURL,
            FileManager.default.fileExists(atPath: url.path) {
@@ -46,10 +49,12 @@ extension ZMAssetClientMessage {
     }
 
     public override func removeClearingSender(_ clearingSender: Bool) {
+        let removeUnsubmittedAssets = clearingSender && (canDiscardOutboxLocally
+            || (outboxState == .cancelled && outboxOperation == .initialMessage))
         if !clearingSender {
             markRemoteAssetToBeDeleted()
         }
-        deleteContent()
+        deleteContent(deleteUploadedAssetsAfterSave: removeUnsubmittedAssets)
         super.removeClearingSender(clearingSender)
     }
 

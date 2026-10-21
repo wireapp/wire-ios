@@ -46,6 +46,7 @@ final class StrategyFactory {
         localDomain: String?,
         backgroundTaskExecuter: any BackgroundTaskExecuter
     ) {
+        syncContext.performAndWait { syncContext.disableOfflinePendingMessageProcessing() }
         let httpClient = HttpClientImpl(transportSession: transportSession, queue: syncContext)
         let apiProvider = APIProvider(httpClient: httpClient)
         let sessionEstablisher = SessionEstablisher(context: syncContext, apiProvider: apiProvider)

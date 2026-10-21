@@ -28,7 +28,7 @@ extension ZMImagePreprocessingTrackerTests {
         imagePreprocessingQueue.isSuspended = true
         defer { imagePreprocessingQueue.isSuspended = false }
         sut.addTrackedObjects([message])
-        let completion = sut.preprocessingCompleteOperation(forImageOwner: message)
+        let completion = sut.preprocessingCompleteOperation(for: message)
 
         try message.setUnderlyingMessage(GenericMessage(content: Text(content: "new text"), nonce: message.nonce!))
         completion?.start()

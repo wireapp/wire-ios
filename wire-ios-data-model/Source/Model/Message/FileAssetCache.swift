@@ -47,18 +47,132 @@ public final class FileAssetCache: NSObject {
 
     private let fileCache: FileCache
     private let tempCache: FileCache
+    private let outboxCache: FileCache
+    private let outboxPins: FileCache
+    private var saveObserver: NSObjectProtocol?
+    private let deletionLock = NSLock()
+    private struct PendingDeletion {
+        let context: ObjectIdentifier
+        let keys: Set<String>
+        let uploadedAssetIDs: [String]
+    }
+    private var pendingOutboxDeletions: [NSManagedObjectID: PendingDeletion] = [:]
 
     var cache: Cache {
-        fileCache
+        RetainedAssetCache(ordinary: fileCache, retained: outboxCache, pins: outboxPins)
     }
 
     /// Creates an asset cache.
 
-    public init(location: URL) {
+    public convenience init(location: URL) {
+        self.init(location: location, outboxLocation: nil)
+    }
+
+    public init(location: URL, outboxLocation: URL?) {
         let tempLocation = location.appendingPathComponent("temp")
+        let retainedLocation = outboxLocation ?? location.appendingPathComponent("outbox")
         self.fileCache = FileCache(location: location)
         self.tempCache = FileCache(location: tempLocation)
+        self.outboxCache = FileCache(location: retainedLocation.appendingPathComponent("data"))
+        self.outboxPins = FileCache(location: retainedLocation.appendingPathComponent("pins"))
         super.init()
+        saveObserver = NotificationCenter.default.addObserver(
+            forName: .NSManagedObjectContextDidSave, object: nil, queue: nil
+        ) { [weak self] in self?.contextDidSave($0) }
+    }
+
+    deinit {
+        if let saveObserver { NotificationCenter.default.removeObserver(saveObserver) }
+    }
+
+    /// Pin every stage's cache key before accepting an asset. Production supplies an account-data
+    /// directory outside Caches, so restart/OS eviction and ordinary cache cleanup cannot discard it.
+    public func retainOutboxAssets(for message: ZMAssetClientMessage) throws {
+        for key in outboxAssetKeys(for: message) {
+            outboxPins.storeAssetData(Data([1]), key: key)
+            guard outboxPins.hasDataForKey(key) else { throw MessageOutboxError.assetDataUnavailable }
+            if let data = fileCache.assetData(key) {
+                outboxCache.storeAssetData(data, key: key)
+                guard outboxCache.assetData(key) == data else { throw MessageOutboxError.assetDataUnavailable }
+                fileCache.deleteAssetData(key)
+            }
+        }
+    }
+
+    /// Release only after a successful final-message save, or when content is explicitly deleted.
+    public func releaseOutboxAssets(for message: ZMAssetClientMessage, discard: Bool = false) {
+        releaseOutboxAssetKeys(outboxAssetKeys(for: message), discard: discard)
+    }
+
+    internal func outboxAssetKeys(for message: ZMConversationMessage) -> Set<String> {
+        var keys = Set<String>()
+        for encrypted in [false, true] {
+            if let key = Self.cacheKeyForAsset(message, encrypted: encrypted) { keys.insert(key) }
+            for format: ZMImageFormat in [.original, .medium, .preview] {
+                if let key = Self.cacheKeyForAsset(message, format: format, encrypted: encrypted) {
+                    keys.insert(key)
+                }
+            }
+        }
+        if let key = Self.cacheKeyForAsset(message, identifier: "transport") { keys.insert(key) }
+        return keys
+    }
+
+    internal func releaseOutboxAssetKeys(_ keys: Set<String>, discard: Bool) {
+        for key in keys where outboxPins.hasDataForKey(key) {
+            if !discard, let data = outboxCache.assetData(key) {
+                fileCache.storeAssetData(data, key: key)
+                // Keep the durable copy if ordinary storage is unavailable; retry cleanup on restart.
+                guard fileCache.assetData(key) == data else { continue }
+            }
+            outboxCache.deleteAssetData(key)
+            outboxPins.deleteAssetData(key)
+        }
+    }
+
+    /// Reconcile filesystem pins with the database after linking the account's caches.
+    public func reconcileOutboxAssets(in context: NSManagedObjectContext) throws {
+        let request = ZMAssetClientMessage.sortedFetchRequest(with: NSPredicate(format: "outboxStateRaw != 0"))
+        let messages = try context.fetch(request) as! [ZMAssetClientMessage]
+        let retainedStates: [MessageOutboxState] = [.queued, .preparing, .sending, .uncertain, .failed]
+        var liveKeys = Set<String>()
+        for message in messages {
+            if !message.hasBeenDeleted,
+               message.outboxState == nil || retainedStates.contains(where: { $0 == message.outboxState }) {
+                liveKeys.formUnion(outboxAssetKeys(for: message))
+            } else if message.outboxState == .sent {
+                releaseOutboxAssets(for: message)
+                // Failed release must not be discarded by the orphan sweep.
+                liveKeys.formUnion(outboxAssetKeys(for: message))
+            }
+        }
+        // A second process can be accepting a message whose row is not committed yet.
+        // Only sweep old orphan pins; explicit saved deletion still releases immediately.
+        let pinnedKeys = Set(try outboxPins.assetsOlderThan(Date(timeIntervalSinceNow: -86_400))
+            .map(\.lastPathComponent))
+        releaseOutboxAssetKeys(pinnedKeys.subtracting(liveKeys), discard: true)
+    }
+
+    private func contextDidSave(_ notification: Notification) {
+        guard let context = notification.object as? NSManagedObjectContext else { return }
+        let identifier = ObjectIdentifier(context)
+        deletionLock.lock()
+        let pending = pendingOutboxDeletions.filter { $0.value.context == identifier }
+        for objectID in pending.keys { pendingOutboxDeletions.removeValue(forKey: objectID) }
+        deletionLock.unlock()
+        guard !pending.isEmpty else { return }
+        let deleted = notification.userInfo?[NSDeletedObjectsKey] as? Set<NSManagedObject> ?? []
+        let updated = notification.userInfo?[NSUpdatedObjectsKey] as? Set<NSManagedObject> ?? []
+        let removedIDs = Set(deleted.map(\.objectID)).union(updated.compactMap {
+            guard let message = $0 as? ZMMessage, message.hasBeenDeleted else { return nil }
+            return message.objectID
+        })
+        for (objectID, deletion) in pending where removedIDs.contains(objectID) {
+            releaseOutboxAssetKeys(deletion.keys, discard: true)
+            for identifier in deletion.uploadedAssetIDs {
+                NotificationCenter.default.post(name: .deleteAssetNotification, object: identifier)
+            }
+        }
     }
 
     // MARK: - Team logo
@@ -579,6 +693,7 @@ public final class FileAssetCache: NSObject {
             key: key,
             createdAt: message.serverTimestamp ?? Date()
         )
+        if outboxPins.hasDataForKey(key), cache.assetData(key) != data { return nil }
 
         return cache.assetURL(key)
     }
@@ -623,7 +738,9 @@ public final class FileAssetCache: NSObject {
             encryptedEntryKey: encryptedCacheKey
         )
 
-        cache.deleteAssetData(plaintextCacheKey)
+        if !outboxPins.hasDataForKey(plaintextCacheKey) {
+            cache.deleteAssetData(plaintextCacheKey)
+        }
 
         return keys
     }
@@ -652,7 +769,9 @@ public final class FileAssetCache: NSObject {
             encryptedEntryKey: encryptedCacheKey
         )
 
-        cache.deleteAssetData(plaintextCacheKey)
+        if !outboxPins.hasDataForKey(plaintextCacheKey) {
+            cache.deleteAssetData(plaintextCacheKey)
+        }
 
         return keys
     }
@@ -679,6 +798,10 @@ public final class FileAssetCache: NSObject {
                 key: encryptedEntryKey,
                 createdAt: Date()
             )
+            if outboxPins.hasDataForKey(encryptedEntryKey),
+               outboxCache.assetData(encryptedEntryKey)?.zmSHA256Digest() != hash {
+                return nil
+            }
 
             return ZMImageAssetEncryptionKeys(
                 otrKey: encryptionKey,
@@ -765,6 +888,31 @@ public final class FileAssetCache: NSObject {
     /// This will cause I/O.
 
     public func deleteAssetData(_ message: ZMConversationMessage) {
+        deleteAssetData(message, deleteUploadedAssetsAfterSave: false)
+    }
+
+    internal func deleteAssetData(_ message: ZMConversationMessage, deleteUploadedAssetsAfterSave: Bool) {
+        var deletionCache = cache
+        if let asset = message as? ZMAssetClientMessage, let context = asset.managedObjectContext,
+           !asset.objectID.isTemporaryID {
+            let retainedKeys = outboxAssetKeys(for: asset).filter { outboxPins.hasDataForKey($0) }
+            if !retainedKeys.isEmpty {
+                var uploadedAssetIDs: [String] = []
+                if deleteUploadedAssetsAfterSave, asset.outboxState == .cancelled,
+                   asset.outboxOperation == .initialMessage,
+                   !asset.delivered, asset.sender?.isSelfUser == true,
+                   let content = asset.underlyingMessage?.assetData {
+                    if content.uploaded.hasAssetID { uploadedAssetIDs.append(content.uploaded.assetID) }
+                    if content.preview.remote.hasAssetID { uploadedAssetIDs.append(content.preview.remote.assetID) }
+                }
+                deletionLock.lock()
+                pendingOutboxDeletions[asset.objectID] = PendingDeletion(
+                    context: ObjectIdentifier(context), keys: retainedKeys, uploadedAssetIDs: uploadedAssetIDs
+                )
+                deletionLock.unlock()
+                deletionCache = fileCache
+            }
+        }
         if message.imageMessageData != nil {
             let imageFormats: [ZMImageFormat] = [.medium, .original, .preview]
 
@@ -774,7 +922,7 @@ public final class FileAssetCache: NSObject {
                     format: format,
                     encrypted: false
                 ) {
-                    cache.deleteAssetData(key)
+                    deletionCache.deleteAssetData(key)
                 }
 
                 if let key = Self.cacheKeyForAsset(
@@ -782,7 +930,7 @@ public final class FileAssetCache: NSObject {
                     format: format,
                     encrypted: true
                 ) {
-                    cache.deleteAssetData(key)
+                    deletionCache.deleteAssetData(key)
                 }
             }
         }
@@ -792,14 +940,14 @@ public final class FileAssetCache: NSObject {
                 message,
                 encrypted: false
             ) {
-                cache.deleteAssetData(key)
+                deletionCache.deleteAssetData(key)
             }
 
             if let key = Self.cacheKeyForAsset(
                 message,
                 encrypted: true
             ) {
-                cache.deleteAssetData(key)
+                deletionCache.deleteAssetData(key)
             }
         }
     }
@@ -871,6 +1019,8 @@ public extension FileAssetCache {
     func wipeCaches() throws {
         try fileCache.wipeCaches()
         try tempCache.wipeCaches()
+        try outboxCache.wipeCaches()
+        try outboxPins.wipeCaches()
     }
 
 }
@@ -1064,10 +1214,38 @@ private struct FileCache: Cache {
 
         return try files.filter { file -> Bool in
             let attributes = try fileManager.attributesOfItem(atPath: file.path)
+            guard attributes[.type] as? FileAttributeType == .typeRegular else { return false }
 
             guard let creationDate = attributes[.creationDate] as? Date else { return true }
 
             return creationDate < date
         }
     }
+
+}
+
+/// Pins live on disk so contexts and newly launched sessions share the same routing decision.
+private struct RetainedAssetCache: Cache {
+    let ordinary: FileCache
+    let retained: FileCache
+    let pins: FileCache
+
+    private func storage(for key: String) -> FileCache {
+        pins.hasDataForKey(key) ? retained : ordinary
+    }
+
+    func assetData(_ key: String) -> Data? { storage(for: key).assetData(key) }
+    func assetURL(_ key: String) -> URL? { storage(for: key).assetURL(key) }
+    func hasDataForKey(_ key: String) -> Bool { storage(for: key).hasDataForKey(key) }
+    func storeAssetData(_ data: Data, key: String, createdAt: Date) {
+        storage(for: key).storeAssetData(data, key: key, createdAt: createdAt)
+    }
+    func storeAssetFromURL(_ url: URL, key: String, movingOriginal: Bool, createdAt: Date) {
+        storage(for: key).storeAssetFromURL(url, key: key, movingOriginal: movingOriginal, createdAt: createdAt)
+    }
+    func deleteAssetData(_ key: String) {
+        retained.deleteAssetData(key)
+        ordinary.deleteAssetData(key)
+    }
+    func deleteAssetsOlderThan(_ date: Date) throws { try ordinary.deleteAssetsOlderThan(date) }
 }

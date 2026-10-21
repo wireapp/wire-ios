@@ -336,17 +336,19 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 reachability: transportSession.reachability
             )
 
+            let outboxStrategy = ClientMessageRequestStrategy(
+                context: syncContext,
+                localNotificationDispatcher: pushMessageHandler,
+                messageSender: messageSender,
+                reachability: transportSession.reachability
+            )
             let strategies: [Any] = [
                 AssetClientMessageRequestStrategy(
                     managedObjectContext: syncContext,
-                    messageSender: messageSender
-                ),
-                ClientMessageRequestStrategy(
-                    context: syncContext,
-                    localNotificationDispatcher: pushMessageHandler,
                     messageSender: messageSender,
-                    reachability: transportSession.reachability
+                    outboxStrategy: outboxStrategy
                 ),
+                outboxStrategy,
                 AvailabilityRequestStrategy(
                     context: syncContext,
                     messageSender: messageSender

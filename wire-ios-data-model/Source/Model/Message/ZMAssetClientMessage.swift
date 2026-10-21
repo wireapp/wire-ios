@@ -215,6 +215,15 @@ public class ZMAssetClientMessage: ZMOTRMessage {
     }
 
     public override func resend() {
+        if outboxState != .notEnrolled {
+            guard !isDeleted, !hasBeenDeleted else { return }
+            do {
+                if outboxState == .failed || outboxState == .uncertain { try retryOutboxOperation() }
+                guard outboxState == .queued else { return }
+            } catch {
+                return
+            }
+        }
         if transferState != .uploaded {
             transferState = .uploading
         }
@@ -338,6 +347,11 @@ struct CacheAsset: AssetType {
     var type: AssetType
     var cache: FileAssetCache
 
+    private var acceptsProcessingCallbacks: Bool {
+        owner.outboxState == .notEnrolled || (!owner.isDeleted && !owner.hasBeenDeleted && !owner.isExpired
+            && owner.outboxState == .queued && owner.transferState == .uploading)
+    }
+
     init(owner: ZMAssetClientMessage, type: AssetType, cache: FileAssetCache) {
         self.owner = owner
         self.type = type
@@ -416,6 +430,7 @@ struct CacheAsset: AssetType {
         token: String?,
         domain: String?
     ) {
+        guard acceptsProcessingCallbacks else { return }
         guard var genericMessage = owner.underlyingMessage else {
             return
         }
@@ -450,6 +465,7 @@ struct CacheAsset: AssetType {
         _ preprocessedImageData: Data,
         imageProperties: ZMIImageProperties
     ) {
+        guard acceptsProcessingCallbacks else { return }
         guard
             needsPreprocessing,
             var genericMessage = owner.underlyingMessage
@@ -457,9 +473,11 @@ struct CacheAsset: AssetType {
             return
         }
 
-        // Now we have the preprocessed data, delete the original.
+        // Enrolled originals are released only after the encryption metadata is saved.
         cache.storeMediumImage(data: preprocessedImageData, for: owner)
-        cache.deleteOriginalImageData(for: owner)
+        if owner.outboxState != .notEnrolled,
+           cache.mediumImageData(for: owner) != preprocessedImageData { return }
+        if owner.outboxState == .notEnrolled { cache.deleteOriginalImageData(for: owner) }
 
         switch type {
         case .file:
@@ -479,6 +497,8 @@ struct CacheAsset: AssetType {
     }
 
     func encrypt() {
+        guard acceptsProcessingCallbacks else { return }
+        if owner.outboxState != .notEnrolled, isUploaded { return }
         guard var genericMessage = owner.underlyingMessage else {
             return
         }
@@ -542,6 +562,35 @@ struct CacheAsset: AssetType {
 }
 
 extension ZMAssetClientMessage: AssetMessage {
+
+    /// Call after a successful context save (or on freshly restored rows). Ciphertext and keys
+    /// span filesystem/database transactions; retain originals until their persisted pair agrees.
+    /// Returns true when stale ciphertext was removed and preprocessing needs to run again.
+    public func recoverOutboxAssetPreparation() -> Bool {
+        guard outboxState == .queued, outboxOperation == .initialMessage,
+              let cache = managedObjectContext?.zm_fileAssetCache,
+              let content = underlyingMessage?.assetData else { return false }
+        var needsPreparation = false
+        for image in isFile ? [false, true] : [true] {
+            let remote = image && isFile ? content.preview.remote : content.uploaded
+            if remote.hasAssetID { continue }
+            let encrypted = image ? cache.encryptedMediumImageData(for: self) : cache.encryptedFileData(for: self)
+            guard let encrypted else { continue }
+            if remote.otrKey.isEmpty || remote.sha256 != encrypted.zmSHA256Digest() {
+                if image { cache.deleteMediumEncryptedImageData(for: self) }
+                else if let key = FileAssetCache.cacheKeyForAsset(self, encrypted: true) {
+                    cache.cache.deleteAssetData(key)
+                }
+                needsPreparation = true
+            } else if image {
+                cache.deleteOriginalImageData(for: self)
+                cache.deleteMediumImageData(for: self)
+            } else {
+                cache.deleteOriginalFileData(for: self)
+            }
+        }
+        return needsPreparation
+    }
 
     public var assets: [AssetType] {
         guard let cache = managedObjectContext?.zm_fileAssetCache else {

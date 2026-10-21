@@ -43,6 +43,7 @@ public enum MessageOutboxError: Error, Equatable {
     case invalidPayload
     case staleAttempt
     case retryNotDue
+    case assetDataUnavailable
 }
 
 /// Immutable content claimed by one attempt. This is plaintext content, not transport ciphertext.

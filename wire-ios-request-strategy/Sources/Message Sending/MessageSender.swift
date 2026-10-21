@@ -626,6 +626,7 @@ private extension MessageSender {
 
     func sendOutboxMessage(_ message: any SendableMessage) async throws {
         guard let row = message as? ZMMessage else { throw MessageOutboxError.invalidTransition }
+        guard context.canProcessOfflinePendingMessages else { throw MessageSendError.outboxWaitingForConnection }
         guard reachability?.mayBeReachable != false else { throw MessageSendError.outboxWaitingForConnection }
 
         await incrementalSyncObserver.waitUntilCanSendMessage()
@@ -718,6 +719,7 @@ private extension MessageSender {
     func prepareOutboxHandoff(_ attempt: MessageOutboxAttempt, message: any SendableMessage) throws -> Date? {
         guard reachability?.mayBeReachable != false else { throw MessageSendError.outboxWaitingForConnection }
         guard let row = message as? ZMMessage else { throw MessageOutboxError.invalidTransition }
+        guard !row.isExpired else { throw MessageSendError.messageExpired }
         guard let conversation = message.conversation, conversation.isSelfAnActiveMember else {
             throw MessageSendError.outboxConversationUnavailable
         }
@@ -762,6 +764,9 @@ private extension MessageSender {
                 row.delivered = false
             }
             try self.context.save()
+            if let assetMessage = row as? ZMAssetClientMessage {
+                self.context.zm_fileAssetCache.releaseOutboxAssets(for: assetMessage)
+            }
         }
     }
 

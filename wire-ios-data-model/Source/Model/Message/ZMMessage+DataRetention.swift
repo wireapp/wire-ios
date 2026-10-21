@@ -25,8 +25,18 @@ extension ZMMessage {
     }
 
     public class func deleteMessagesOlderThan(_ date: Date, context: NSManagedObjectContext) throws {
+        let expiredOutboxAssets = ZMAssetClientMessage.sortedFetchRequest(with: NSCompoundPredicate(
+            andPredicateWithSubpredicates: [
+                predicateForMessagesOlderThan(date), NSPredicate(format: "outboxStateRaw != 0")
+            ]
+        ))
+        let assets = try context.fetch(expiredOutboxAssets) as! [ZMAssetClientMessage]
+        let retainedKeys = assets.reduce(into: Set<String>()) {
+            $0.formUnion(context.zm_fileAssetCache.outboxAssetKeys(for: $1))
+        }
         context.zm_fileAssetCache.deleteAssetsOlderThan(date)
         try context.batchDeleteEntities(named: ZMMessage.entityName(), matching: predicateForMessagesOlderThan(date))
+        context.zm_fileAssetCache.releaseOutboxAssetKeys(retainedKeys, discard: true)
     }
 
 }

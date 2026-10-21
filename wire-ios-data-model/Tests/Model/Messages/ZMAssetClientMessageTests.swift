@@ -113,6 +113,57 @@ class BaseZMAssetClientMessageTests: BaseZMClientMessageTests {
 
 final class ZMAssetClientMessageTests: BaseZMAssetClientMessageTests {
 
+    func testEnabledFileSubmissionPersistsItsOutboxAndRetainedOriginalBeforeReturning() throws {
+        let previous = uiMOC.offlinePendingMessagesEnabled
+        uiMOC.offlinePendingMessagesEnabled = true
+        defer { uiMOC.offlinePendingMessagesEnabled = previous }
+        let message = try XCTUnwrap(appendFileMessage(to: conversation))
+        let cache = uiMOC.zm_fileAssetCache!
+        let bytes = try XCTUnwrap(cache.originalFileData(for: message))
+
+        XCTAssertFalse(message.isInserted)
+        XCTAssertEqual(message.outboxState, .queued)
+        XCTAssertEqual(message.outboxOperation, .initialMessage)
+        XCTAssertNil(message.expirationDate)
+        cache.deleteAssetsOlderThan(Date(timeIntervalSinceNow: 1))
+        XCTAssertEqual(cache.originalFileData(for: message), bytes)
+    }
+
+    func testOutboxRecoversCiphertextWrittenBeforeItsKeysWerePersisted() throws {
+        let previous = uiMOC.offlinePendingMessagesEnabled
+        uiMOC.offlinePendingMessagesEnabled = true
+        defer { uiMOC.offlinePendingMessagesEnabled = previous }
+        let message = try XCTUnwrap(appendFileMessage(to: conversation))
+        let cache = uiMOC.zm_fileAssetCache!
+        let original = try XCTUnwrap(cache.originalFileData(for: message))
+        _ = try XCTUnwrap(cache.encryptFileAndComputeSHA256Digest(message))
+        try uiMOC.save()
+
+        XCTAssertTrue(message.recoverOutboxAssetPreparation())
+        XCTAssertFalse(cache.hasEncryptedFileData(for: message))
+        XCTAssertEqual(cache.originalFileData(for: message), original)
+
+        try XCTUnwrap(message.assets.first).encrypt()
+        try uiMOC.save()
+        XCTAssertFalse(message.recoverOutboxAssetPreparation())
+        XCTAssertTrue(cache.hasEncryptedFileData(for: message))
+        XCTAssertFalse(cache.hasOriginalFileData(for: message))
+    }
+
+    func testEnabledImageSubmissionPersistsItsOriginalAndLeavesEphemeralImagesUnenrolled() throws {
+        let previous = uiMOC.offlinePendingMessagesEnabled
+        uiMOC.offlinePendingMessagesEnabled = true
+        defer { uiMOC.offlinePendingMessagesEnabled = previous }
+        let message = appendImageMessage(to: conversation)
+        XCTAssertFalse(message.isInserted)
+        XCTAssertEqual(message.outboxState, .queued)
+        XCTAssertTrue(uiMOC.zm_fileAssetCache.hasOriginalImageData(for: message))
+
+        conversation.setMessageDestructionTimeoutValue(.tenSeconds, for: .selfUser)
+        let ephemeral = appendImageMessage(to: conversation)
+        XCTAssertEqual(ephemeral.outboxState, .notEnrolled)
+    }
+
     func testThatItDeletesCopiesOfDownloadedFilesIntoTemporaryFolder() {
         // given
         let sut = appendFileMessage(to: conversation)!

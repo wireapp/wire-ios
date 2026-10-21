@@ -505,7 +505,12 @@ final class UserSessionLoader {
 
         let dependencies = UserSessionDependencies(
             caches: .init(
-                fileAssets: FileAssetCache(location: cacheLocation),
+                fileAssets: FileAssetCache(
+                    location: cacheLocation,
+                    outboxLocation: CoreDataStack.accountDataFolder(
+                        accountIdentifier: accountID, applicationContainer: sharedContainerURL
+                    ).appendingPathComponent("PendingMessageAssets")
+                ),
                 userImages: UserImageLocalCache(location: cacheLocation),
                 searchUsers: NSCache()
             )

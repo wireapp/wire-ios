@@ -371,11 +371,16 @@ public final class SharingSession {
 
     private func setupCaches(at cachesDirectory: URL) {
 
+        userInterfaceContext.disableOfflinePendingMessageProcessing()
+
         let userImageCache = UserImageLocalCache(location: cachesDirectory)
         userInterfaceContext.zm_userImageCache = userImageCache
         syncContext.zm_userImageCache = userImageCache
 
-        let fileAssetcache = FileAssetCache(location: cachesDirectory)
+        let fileAssetcache = FileAssetCache(
+            location: cachesDirectory,
+            outboxLocation: coreDataStack.accountContainer.appendingPathComponent("PendingMessageAssets")
+        )
         userInterfaceContext.zm_fileAssetCache = fileAssetcache
         syncContext.zm_fileAssetCache = fileAssetcache
     }

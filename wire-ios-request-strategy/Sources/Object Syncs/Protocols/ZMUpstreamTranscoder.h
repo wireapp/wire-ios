@@ -53,6 +53,14 @@
 /// that might time out but not implementing this will trigger an assertion.
 - (void)requestExpiredForObject:(ZMManagedObject * _Nonnull)managedObject forKeys:(NSSet<NSString *> * _Nonnull)keys;
 
+/// Optional failure policy with immutable request metadata, including cancellation/expiration.
+/// Temporary transport responses continue to use the standard retry path.
+- (BOOL)shouldRetryFailedRequestForObject:(ZMManagedObject * _Nonnull)managedObject
+                         requestUserInfo:(NSDictionary * _Nonnull)requestUserInfo
+                                response:(ZMTransportResponse * _Nonnull)response
+                             keysToParse:(NSSet<NSString *> * _Nonnull)keys
+    NS_SWIFT_NAME(shouldRetryFailedRequest(for:requestUserInfo:response:keysToParse:));
+
 /// If implemented, the transcoder can refuse requests until a conditions is fullfilled
 /// Object will be not removed from objects to be synced
 - (BOOL)shouldCreateRequestToSyncObject:(ZMManagedObject * _Nonnull)managedObject

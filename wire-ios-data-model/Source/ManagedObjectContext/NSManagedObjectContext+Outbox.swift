@@ -24,4 +24,14 @@ extension NSManagedObjectContext {
         get { userInfo["offlinePendingMessagesEnabled"] as? Bool ?? false }
         set { userInfo["offlinePendingMessagesEnabled"] = newValue }
     }
+
+    /// The share extension leaves main-app outbox ownership with the main app.
+    public var canProcessOfflinePendingMessages: Bool {
+        userInfo["canProcessOfflinePendingMessages"] as? Bool ?? true
+    }
+
+    public func disableOfflinePendingMessageProcessing() {
+        offlinePendingMessagesEnabled = false
+        userInfo["canProcessOfflinePendingMessages"] = false
+    }
 }

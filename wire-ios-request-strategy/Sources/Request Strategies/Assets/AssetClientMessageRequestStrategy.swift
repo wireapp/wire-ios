@@ -29,8 +29,13 @@ public final class AssetClientMessageRequestStrategy: NSObject, ZMContextChangeT
     let managedObjectContext: NSManagedObjectContext
     let insertedObjectSync: InsertedObjectSync<AssetClientMessageRequestStrategy>
     let messageSender: MessageSenderInterface
+    private let outboxStrategy: ClientMessageRequestStrategy?
 
-    public init(managedObjectContext: NSManagedObjectContext, messageSender: MessageSenderInterface) {
+    public init(
+        managedObjectContext: NSManagedObjectContext,
+        messageSender: MessageSenderInterface,
+        outboxStrategy: ClientMessageRequestStrategy? = nil
+    ) {
 
         self.managedObjectContext = managedObjectContext
         self
@@ -39,6 +44,7 @@ public final class AssetClientMessageRequestStrategy: NSObject, ZMContextChangeT
                     .shouldBeSentPredicate(context: managedObjectContext)
             )
         self.messageSender = messageSender
+        self.outboxStrategy = outboxStrategy
 
         super.init()
 
@@ -55,12 +61,15 @@ public final class AssetClientMessageRequestStrategy: NSObject, ZMContextChangeT
         let isUploaded = NSPredicate(format: "%K == \(AssetTransferState.uploaded.rawValue)", "transferState")
         let isAssetV3 = NSPredicate(format: "version >= 3")
         let fromSelf = NSPredicate(format: "%K == %@", ZMMessageSenderKey, ZMUser.selfUser(in: context))
+        let outboxScope = context.canProcessOfflinePendingMessages
+            ? NSPredicate(value: true) : NSPredicate(format: "outboxStateRaw == 0")
         return NSCompoundPredicate(andPredicateWithSubpredicates: [
             notDelivered,
             notExpired,
             isAssetV3,
             isUploaded,
-            fromSelf
+            fromSelf,
+            outboxScope
         ])
     }
 
@@ -75,6 +84,15 @@ extension AssetClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
         isFresh: Bool,
         completion: @escaping () -> Void
     ) {
+        if object.outboxState != .notEnrolled {
+            guard let outboxStrategy else {
+                // Enrolled work must never fall through to legacy bootstrap expiry.
+                completion()
+                return
+            }
+            outboxStrategy.enqueueOutboxMessage(object, isFresh: isFresh, completion: completion)
+            return
+        }
         let hasRegisteredMLSClient = managedObjectContext.performAndWait {
             let selfClient = ZMUser.selfUser(in: managedObjectContext).selfClient()
             return selfClient?.hasRegisteredMLSClient ?? false

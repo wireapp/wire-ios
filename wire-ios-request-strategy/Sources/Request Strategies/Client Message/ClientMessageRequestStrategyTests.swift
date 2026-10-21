@@ -87,6 +87,71 @@ class ClientMessageRequestStrategyTests: MessagingTestBase {
 
 extension ClientMessageRequestStrategyTests {
 
+    func testShareScopeDoesNotClaimOrExpireMainAppOutboxMessages() throws {
+        try syncMOC.performAndWait {
+            let queued = try XCTUnwrap(groupConversation.appendText(content: "main app outbox") as? ZMClientMessage)
+            try queued.enqueueInOutbox(operation: .initialMessage)
+            try syncMOC.save()
+            syncMOC.disableOfflinePendingMessageProcessing()
+            let legacy = try XCTUnwrap(groupConversation.appendText(content: "share extension") as? ZMClientMessage)
+            let predicate = ClientMessageRequestStrategy.shouldBeSentPredicate(context: syncMOC)
+            XCTAssertFalse(predicate.evaluate(with: queued))
+            XCTAssertTrue(predicate.evaluate(with: legacy))
+            XCTAssertEqual(legacy.outboxState, .notEnrolled)
+
+            sut.insert(object: queued, isFresh: false, completion: {})
+
+            XCTAssertEqual(queued.outboxState, .queued)
+            XCTAssertFalse(queued.isExpired)
+            XCTAssertTrue(mockMessageSender.sendMessageMessage_Invocations.isEmpty)
+        }
+    }
+
+    func testRestoredUploadedAssetWaitsOfflineThenSendsItsExistingReference() async throws {
+        let sent = expectation(description: "uploaded asset reference sent after reconnect")
+        let reachability = PendingMessageReachability()
+        try syncMOC.performAndWait {
+            sut.tearDown()
+            sut = ClientMessageRequestStrategy(
+                context: syncMOC, localNotificationDispatcher: localNotificationDispatcher,
+                messageSender: mockMessageSender, reachability: reachability
+            )
+            let message = try XCTUnwrap(groupConversation.appendImage(
+                SendableImage(name: "pending.jpg", utType: .jpeg, data: verySmallJPEGData()), nonce: UUID()
+            ) as? ZMAssetClientMessage)
+            var content = try XCTUnwrap(message.underlyingMessage)
+            content.updateAsset(withUploadedOTRKey: Data.randomEncryptionKey(), sha256: Data.zmRandomSHA256Key())
+            content.updateUploaded(assetId: "already-uploaded", token: nil, domain: "wire.com")
+            try message.setUnderlyingMessage(content)
+            try message.enqueueInOutbox(operation: .initialMessage)
+            message.updateTransferState(.uploaded, synchronize: false)
+            try syncMOC.save()
+            mockMessageSender.sendMessageMessage_MockMethod = { entity in
+                try await entity.context.perform {
+                    let row = try XCTUnwrap(entity as? ZMAssetClientMessage)
+                    XCTAssertEqual(row.underlyingMessage?.assetData?.uploaded.assetID, "already-uploaded")
+                    let payload = try XCTUnwrap(row.underlyingMessage).serializedData()
+                    let attempt = try row.prepareOutboxAttempt(payload: payload)
+                    try row.markOutboxAttemptSending(attempt)
+                    row.markAsSent()
+                    try row.completeOutboxAttempt(attempt.identifier)
+                    sent.fulfill()
+                }
+            }
+            let strategy = AssetClientMessageRequestStrategy(
+                managedObjectContext: syncMOC, messageSender: mockMessageSender, outboxStrategy: sut
+            )
+            strategy.insert(object: message, isFresh: false, completion: {})
+            XCTAssertFalse(message.isExpired)
+            XCTAssertEqual(message.outboxState, .queued)
+            XCTAssertTrue(mockMessageSender.sendMessageMessage_Invocations.isEmpty)
+        }
+
+        reachability.reconnect()
+        await fulfillment(of: [sent], timeout: 5)
+        syncMOC.performAndWait { sut.tearDown() }
+    }
+
     func testRestoredOutboxWaitsOfflineWithoutExpiring() throws {
         try syncMOC.performAndWait {
             let reachability = PendingMessageReachability()

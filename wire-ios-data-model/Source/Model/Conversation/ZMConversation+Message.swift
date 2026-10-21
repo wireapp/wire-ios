@@ -302,6 +302,10 @@ public extension ZMConversation {
                     data: imageData,
                     for: message
                 )
+                if message.outboxState != .notEnrolled,
+                   moc.zm_fileAssetCache.originalImageData(for: message) != imageData {
+                    throw MessageOutboxError.assetDataUnavailable
+                }
             }
         )
     }
@@ -343,12 +347,20 @@ public extension ZMConversation {
                 data: data,
                 for: message
             )
+            if message.outboxState != .notEnrolled,
+               moc.zm_fileAssetCache.originalFileData(for: message) != data {
+                throw MessageOutboxError.assetDataUnavailable
+            }
 
             if let thumbnailData = fileMetadata.thumbnail {
                 moc.zm_fileAssetCache.storeOriginalImage(
                     data: thumbnailData,
                     for: message
                 )
+                if message.outboxState != .notEnrolled,
+                   moc.zm_fileAssetCache.originalImageData(for: message) != thumbnailData {
+                    throw MessageOutboxError.assetDataUnavailable
+                }
             }
         }
     }
@@ -357,7 +369,7 @@ public extension ZMConversation {
         asset: GenericMessageProtocol.Asset,
         nonce: UUID,
         expires: Bool,
-        prepareMessage: (ZMAssetClientMessage) -> Void
+        prepareMessage: (ZMAssetClientMessage) throws -> Void
     ) throws -> ZMAssetClientMessage {
 
         let logAttributes: LogAttributes = [
@@ -396,7 +408,27 @@ public extension ZMConversation {
 
         append(message)
         unarchiveIfNeeded()
-        prepareMessage(message)
+        if moc.offlinePendingMessagesEnabled, !message.isEphemeral,
+           !(isSelfConversation && messageProtocol == .mls) {
+            do {
+                try message.enqueueInOutbox(operation: .initialMessage)
+                try moc.zm_fileAssetCache.retainOutboxAssets(for: message)
+                try prepareMessage(message)
+                message.updateCategoryCache()
+                let hasBytes = message.isFile
+                    ? moc.zm_fileAssetCache.hasOriginalFileData(for: message)
+                    : moc.zm_fileAssetCache.hasOriginalImageData(for: message)
+                guard hasBytes else { throw MessageOutboxError.assetDataUnavailable }
+                message.prepareToSend()
+                try moc.save()
+                return message
+            } catch {
+                moc.zm_fileAssetCache.releaseOutboxAssets(for: message, discard: true)
+                moc.delete(message)
+                throw error
+            }
+        }
+        try prepareMessage(message)
         message.updateCategoryCache()
         message.prepareToSend()
 

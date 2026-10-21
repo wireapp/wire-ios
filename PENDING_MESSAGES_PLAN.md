@@ -34,6 +34,8 @@ Regular-message queuing/reconnect/restart integration is now implemented behind
 the default-off flag, with source coverage added and no build/test execution.
 Queued-text editing, draft retention when a send claim wins, and a local Queued
 status are now written as well; all validation for these stages belongs to the user.
+Classic asset enrollment/retention/recovery is now written with regression source.
+The share extension explicitly leaves main-app outbox ownership with the main app.
 Uncertain-delivery automatic retry policy remains unresolved before broad activation;
 the development implementation exposes manual Retry while retaining frozen content.
 
@@ -41,7 +43,8 @@ Current state: 2026-10-21. The prerequisite bootstrap tracker fix is implemented
 on `fix/preserve-bootstrap-trackers-WPB-26307`, with two regression tests and all
 13 bootstrap tests passing. Foundation and regular-message integration are written.
 New enrollment requires the local flag at stack/session startup. It remains off
-by default. Classic asset enrollment and byte-retention recovery remain unimplemented.
+by default. Implementation stages 1-4 are written; compilation, execution of new
+regressions, device verification, and rollout decisions remain outstanding.
 Read `AGENTS.md`, the reported manual results, and the code verification section
 before continuing. The user reports that the fix resolves the device upload
 problem. The user is handling a separate bug ticket, PR/branch, merge, and
@@ -64,8 +67,9 @@ Next steps, in order:
 3. Foundation and regular-message integration are implemented. User owns
    validation; no checks were executed for the regular-message integration.
    Queued editing/presentation are also written with regression source, without
-   executing checks. See the PR 3 execution record below. Next is classic asset
-   enrollment, byte retention, and recovery; preserve the existing upload pipeline.
+   executing checks. Classic asset enrollment/retention/recovery is also written.
+   See the PR 3/4 execution records below. Next is user-owned validation and any
+   resulting integration fixes; do not run checks without a new user instruction.
 4. Continue through regular queuing, queued editing, and asset recovery on the
    same branch. Treat the numbered PR checklists below as implementation stages;
    defer PR packaging until there is working code to review. Do not repeat the
@@ -837,21 +841,25 @@ xcodebuild test -quiet \
 
 ### Persisted outbox lifecycle
 
-- [ ] Define explicit, persisted outbox metadata alongside the existing delivery
-      state. Choose the exact model fields and migration during PR 1.
-- [ ] Distinguish waiting locally, an active send attempt, an uncertain delivery
+These checks record code written for the supported default-off paths, not runtime
+acceptance; validation and activation gates remain separate below.
+
+- [x] Define explicit, persisted outbox metadata alongside the existing delivery
+      state, including the additive schema and migration sequence.
+- [x] Distinguish waiting locally, an active send attempt, an uncertain delivery
       outcome, successful sending, and terminal failure.
-- [ ] Distinguish never-sent content from an edit of previously sent content;
+- [x] Distinguish never-sent content from an edit of previously sent content;
       `delivered == false` alone cannot establish that distinction.
-- [ ] Persist queued intent before reporting successful local submission.
-- [ ] Keep waiting time separate from network-attempt expiration.
-- [ ] Resume eligible messages on reconnect and after app restart.
-- [ ] Recheck synchronization, membership, protocol readiness, verification, and
+- [x] Persist queued intent before reporting successful local submission.
+- [x] Keep waiting time separate from network-attempt expiration.
+- [x] Implement recovery of eligible messages on reconnect and after app restart.
+- [x] Recheck synchronization, membership, protocol readiness, verification, and
       legal-hold requirements before sending.
-- [ ] Coordinate send ownership and payload snapshots on the managed object
+- [x] Coordinate send ownership and payload snapshots on the managed object
       context so editing cannot race with transport handoff.
-- [ ] Classify temporary connectivity failures separately from permanent errors.
-- [ ] Retry without a busy loop or duplicate concurrent send attempts.
+- [x] Classify known non-submission separately from permanent and ambiguous errors.
+- [x] Implement bounded repairs, delayed non-submission retry, and one send owner
+      per conversation; leave main-app ownership out of the share extension.
 - [ ] Verify how to reconcile uncertain delivery after a lost acknowledgement;
       do not assume that retrying an arbitrary changed payload is safe.
 
@@ -875,13 +883,17 @@ These checks record code written, not runtime validation.
 
 ### Assets
 
-- [ ] Resume separately from preprocessing, asset upload, and message sending.
-- [ ] Reuse recorded asset references after successful upload.
-- [ ] Retain required bytes for the lifetime of a queued asset, accounting for
+- [x] Implement recovery separately for preprocessing, asset upload, and final
+      message sending (source only).
+- [x] Reuse recorded asset references after successful upload.
+- [x] Retain required bytes for the lifetime of a queued asset, accounting for
       cache eviction, cleanup, app restart, and account lifecycle.
-- [ ] Reconcile outstanding background uploads after restart.
-- [ ] Handle cancellation and missing local bytes explicitly.
-- [ ] Prevent cancellation or deletion from being undone by late callbacks.
+- [x] Cancel recorded previous-session background uploads before restoring work
+      from retained encrypted bytes/references; do not assume callbacks reattach.
+- [x] Handle cancellation and missing local bytes explicitly.
+- [x] Guard obsolete upload/preprocessing callbacks against reviving removed work.
+- [ ] Validate these paths on device, including interrupted background uploads,
+      image/file/audio/video processing, disk-full and failed-save behavior.
 
 ### Rollout
 
@@ -1107,8 +1119,8 @@ Execution record (2026-10-21, source only; no formatting/lint/build/test command
   normal-edit locking, draft retention/newer drafts, stale preview detection/image
   completion/upload callbacks, eligibility, status, and observer notifications.
 - No PR has been opened or pushed. The unrelated `.ruby-version` change is excluded.
-  Next: implement classic asset enrollment/retention/recovery using the existing
-  pipeline with Wire Drive disabled as the user's manual test configuration.
+  Classic asset implementation is recorded in PR 4 below. Wire Drive remains
+  disabled in the user's manual test configuration.
 
 ### PR 4: Asset queuing and recovery
 
@@ -1116,16 +1128,91 @@ Execution record (2026-10-21, source only; no formatting/lint/build/test command
       the bootstrap regressions and user-confirmed device fix recorded above;
       add new regressions only for remaining asset recovery gaps. Do not duplicate
       the user's separate bootstrap bug PR or backports.
-- [ ] Identify and explicitly scope classic asset versus Wire Drive draft paths.
-- [ ] Preserve any confirmed automatic reconnect behavior already provided by the
+- [x] Identify and explicitly scope classic asset versus Wire Drive draft paths.
+- [x] Preserve any confirmed automatic reconnect behavior already provided by the
       asset pipeline; target observed gaps rather than replacing it wholesale.
-- [ ] Enroll supported asset messages behind the flag.
-- [ ] Implement required byte retention and cleanup.
-- [ ] Recover preprocessing and interrupted uploads.
-- [ ] Resume asset-reference sending after an upload already succeeded.
-- [ ] Handle background upload recovery, cancellation, and missing bytes.
-- [ ] Cover image, file, audio, and video cases.
+- [x] Enroll classic assets behind the flag, saving intent and original bytes
+      before accepting submission. Self-deleting assets keep legacy behavior.
+- [x] Implement account-scoped byte retention and cleanup in source.
+- [x] Implement preprocessing/interrupted-upload recovery in source.
+- [x] Resume final asset-reference sending after an upload already succeeded.
+- [x] Implement background task reconciliation, cancellation, and missing-byte
+      handling with regression source; no new cases have been executed.
+- [x] Reuse the classic appendFile path for files/audio/video and appendImage for
+      images; do not replace native media preprocessing or Wire Drive uploads.
+- [ ] Validate image, file, audio, and video cases, including receiver playback.
+- [ ] Complete user-owned compilation/tests/device confirmation.
 - [ ] Record PR URL and validation results.
+
+Execution record (2026-10-21, source only; no formatting/lint/build/test commands):
+
+- Classic appendImage/appendFile enroll non-ephemeral outgoing assets, pin their
+  cache keys, write and verify original bytes, and save the row before returning.
+  Original/preprocessed/encrypted/transport entries route by on-disk pin markers
+  to `AccountData/<account UUID>/PendingMessageAssets`, outside OS-purgeable Caches.
+  Both main-session construction paths and the share session use this location.
+  The one-argument cache initializer remains compatible with existing callers.
+- Encryption verifies retained ciphertext before releasing its original, and
+  image processing verifies its replacement before dropping original bytes.
+  Originals survive preprocessing until a successful database save records the
+  corresponding encryption keys/digest. Recovery and upload preflight compare
+  stored ciphertext with that metadata, regenerate an unfinished pair from the
+  retained original, and release plaintext only after the persisted pair agrees.
+  This closes filesystem/database crash windows without retaining plaintext
+  throughout an already-prepared upload's offline wait. Digest reads add I/O for
+  pending assets; include larger audio/video attachments in validation.
+  Existing preprocessing and temporary-error upload retry mechanisms are reused.
+  Uploaded asset data is not re-encrypted when another associated asset still
+  needs processing. Native audio/video metadata and encoding remain unchanged.
+- The upload tracker restores tracking for queued asset work, cancels any recorded
+  previous-process task, reuses encrypted data/remote references, and promotes
+  complete recorded uploads to final-message sending. The transport layer has no
+  established reattachment of old task callbacks; this implementation restarts
+  uploads from retained bytes rather than claiming to resume those callbacks.
+- The regular-message outbox scheduler now also owns final asset-reference sends.
+  Uploaded assets wait offline/restart without legacy stale-message expiration.
+  No new upload is needed when a valid remote reference is already recorded.
+  Waiting uploads continue to allow later text through as in the existing
+  pipeline; once ready, final asset sends share the per-conversation send owner.
+  Cross-type ordering remains a product/activation review item.
+- Upload requests carry a generation and encrypted-content digest. Task creation,
+  progress, success, and terminal failure cannot revive cancelled/deleted work or
+  apply an earlier asset response to a later thumbnail/upload. An optional upstream
+  failure hook forwards immutable request metadata for cancellation/expiration as
+  well as permanent failures. Existing temporary-error retry behavior is unchanged.
+  Upload timeout/cancellation can retry identical encrypted bytes; final-message
+  uncertainty remains governed by the conservative manual-Retry behavior.
+- Missing original/encrypted bytes, failed preprocessing, and known membership
+  removal produce the existing actionable failure state. Retry cannot resurrect
+  deleted content; missing bytes fail again instead of waiting indefinitely.
+  Final HTTP handoff also checks expiration after preparation.
+- Bytes remain retained for queued/in-flight/uncertain/failed operations, including
+  explicit user Retry. Final successful message save releases them to ordinary
+  cache storage. Local deletion defers durable removal until its context saves;
+  rollback preserves retry bytes. Already-uploaded blobs of a locally cancelled,
+  never-submitted message are requested for deletion only after that save.
+  Normal message-retention deletion releases associated pins after its batch
+  deletion succeeds. Account deletion removes the account-data directory.
+- Startup reconciles retained pins with persisted rows, releases completed work,
+  and sweeps orphan pins older than 24 hours. That grace avoids deleting a second
+  process's in-progress acceptance before its row commits. Unknown lifecycle values
+  retain their bytes and remain ineligible to send. Retention duration/quotas and
+  full conversation-clear/account-removal behavior still need rollout review.
+- The share extension disables both enrollment and processing for main-app outbox
+  rows, including sending, preprocessing, upload, and preview updates. Its existing
+  sharing behavior remains available. This prevents competing process-local sync
+  contexts from claiming main-app outbox work without a cross-process lease.
+  Enabling offline share submissions requires a separate ownership design.
+- Regression source covers enabled image/file acceptance, retained ciphertext
+  across cache eviction/recreation, age cleanup, rollback/saved deletion, missing
+  bytes, ciphertext/key persistence crash recovery, recorded upload reuse,
+  stale success/failure after cancellation/replacement,
+  uploaded-asset reconnect sending, and share-scope exclusion. Audio/video and actual
+  background tasks still require user device validation. A source-only correction
+  also fixes the PR 3 image-preprocessor test's imported argument label.
+- This session has not opened a PR or pushed. The branch acquired a remote tracking
+  ref during work; do not assume no one else has published it. Preserve unrelated
+  `.ruby-version` modifications. Keep this plan committed until final PR cleanup.
 
 ### PR 5, if needed: Integration and rollout preparation
 
@@ -1150,7 +1237,9 @@ Execution record (2026-10-21, source only; no formatting/lint/build/test command
 - [ ] Retention policy for queued messages and attachment bytes.
 - [ ] Treatment of self-deleting messages while queued, preserving existing
       editing restrictions and the agreed start of their destruction timer.
-- [ ] Scope for share-extension submissions and recovery when the main app resumes.
+- [x] Development scope: main-app enrollment/recovery only. The share extension
+      leaves main-app outbox work untouched and uses legacy sharing behavior.
+- [ ] Agree any broader offline share-extension support and cross-process ownership.
 
 ## Acceptance and validation checklist
 
@@ -1182,8 +1271,9 @@ Execution record (2026-10-21, source only; no formatting/lint/build/test command
 ## Execution notes
 
 - The prerequisite bootstrap fix is on `develop`; foundation, regular-message
-  integration, and queued editing/presentation are written on the one feature
-  branch. Asset enrollment/retention and integration validation remain outstanding.
+  integration, queued editing/presentation, and classic asset enrollment/retention/
+  recovery are written on the one feature branch. Validation and rollout review
+  remain outstanding; the local developer flag stays off by default.
 - The existing `.ruby-version` and `Strings+Generated.swift` modifications and
   the temporary RFC belong to the user and must remain untouched by this work.
 - Update this checklist in each implementation PR with completed items, actual

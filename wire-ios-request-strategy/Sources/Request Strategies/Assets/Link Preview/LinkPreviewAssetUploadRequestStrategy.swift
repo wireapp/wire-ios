@@ -50,6 +50,9 @@ extension ZMImagePreprocessingTracker {
         )
         let needsProccessing = NSPredicate { object, _ in
             guard let message = object as? ZMClientMessage else { return false }
+            if message.outboxState != .notEnrolled, !managedObjectContext.canProcessOfflinePendingMessages {
+                return false
+            }
             if message.outboxState != .notEnrolled,
                message.isDeleted || message.hasBeenDeleted || message.outboxState == .cancelled
                 || message.linkPreviewState != .downloaded {
@@ -155,6 +158,16 @@ public final class LinkPreviewAssetUploadRequestStrategy: AbstractRequestStrateg
 }
 
 extension LinkPreviewAssetUploadRequestStrategy: ZMUpstreamTranscoder {
+
+    public func shouldCreateRequest(
+        toSyncObject managedObject: ZMManagedObject,
+        forKeys keys: Set<String>,
+        withSync sync: Any,
+        apiVersion: APIVersion
+    ) -> Bool {
+        guard let message = managedObject as? ZMClientMessage else { return false }
+        return message.outboxState == .notEnrolled || managedObjectContext.canProcessOfflinePendingMessages
+    }
 
     public func request(
         forUpdating managedObject: ZMManagedObject,

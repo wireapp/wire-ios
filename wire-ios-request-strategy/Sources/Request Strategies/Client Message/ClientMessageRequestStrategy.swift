@@ -21,13 +21,17 @@ import WireLogging
 import WireSystem
 import WireTransport
 
+typealias PendingOutboxMessage = ZMMessage & SendableMessage
+
 public class ClientMessageRequestStrategy: NSObject, ZMContextChangeTrackerSource {
 
     static func shouldBeSentPredicate(context: NSManagedObjectContext) -> NSPredicate {
         let notDelivered = NSPredicate(format: "%K == FALSE", DeliveredKey)
         let notExpired = NSPredicate(format: "%K == 0", ZMMessageIsExpiredKey)
         let fromSelf = NSPredicate(format: "%K == %@", ZMMessageSenderKey, ZMUser.selfUser(in: context))
-        return NSCompoundPredicate(andPredicateWithSubpredicates: [notDelivered, notExpired, fromSelf])
+        let outboxScope = context.canProcessOfflinePendingMessages
+            ? NSPredicate(value: true) : NSPredicate(format: "outboxStateRaw == 0")
+        return NSCompoundPredicate(andPredicateWithSubpredicates: [notDelivered, notExpired, fromSelf, outboxScope])
     }
 
     // MARK: - Properties
@@ -40,7 +44,7 @@ public class ClientMessageRequestStrategy: NSObject, ZMContextChangeTrackerSourc
     let localNotificationDispatcher: PushMessageHandler
     private let reachability: ReachabilityProvider?
     private var reachabilityToken: Any?
-    private var queuedOutboxMessages: [NSManagedObjectID: (message: ZMClientMessage, completion: () -> Void)] = [:]
+    private var queuedOutboxMessages: [NSManagedObjectID: (message: PendingOutboxMessage, completion: () -> Void)] = [:]
     private var outboxTasks: [NSManagedObjectID: Task<Void, Never>] = [:]
     private var activeOutboxConversations = Set<NSManagedObjectID>()
     private var outboxRetryWakeup: DispatchWorkItem?
@@ -244,10 +248,10 @@ extension ClientMessageRequestStrategy: ZMContextChangeTracker, TearDownCapable 
     }
 }
 
-private extension ClientMessageRequestStrategy {
+extension ClientMessageRequestStrategy {
 
-    func enqueueOutboxMessage(_ message: ZMClientMessage, isFresh: Bool, completion: @escaping () -> Void) {
-        guard !isTornDown, !message.isDeleted, !message.hasBeenDeleted else {
+    func enqueueOutboxMessage(_ message: PendingOutboxMessage, isFresh: Bool, completion: @escaping () -> Void) {
+        guard context.canProcessOfflinePendingMessages, !isTornDown, !message.isDeleted, !message.hasBeenDeleted else {
             completion()
             return
         }
@@ -273,7 +277,7 @@ private extension ClientMessageRequestStrategy {
         drainOutbox()
     }
 
-    func drainOutbox() {
+    private func drainOutbox() {
         guard !isTornDown, reachability?.mayBeReachable != false else { return }
         outboxRetryWakeup?.cancel()
         outboxRetryWakeup = nil

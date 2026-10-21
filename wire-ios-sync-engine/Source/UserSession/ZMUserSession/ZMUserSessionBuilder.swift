@@ -320,7 +320,13 @@ struct ZMUserSessionBuilder {
         )
 
         return UserSessionDependencies.Caches(
-            fileAssets: FileAssetCache(location: cacheLocation),
+            fileAssets: FileAssetCache(
+                location: cacheLocation,
+                outboxLocation: CoreDataStack.accountDataFolder(
+                    accountIdentifier: coreDataStack.account.userIdentifier,
+                    applicationContainer: coreDataStack.applicationContainer
+                ).appendingPathComponent("PendingMessageAssets")
+            ),
             userImages: UserImageLocalCache(location: cacheLocation),
             searchUsers: NSCache()
         )
