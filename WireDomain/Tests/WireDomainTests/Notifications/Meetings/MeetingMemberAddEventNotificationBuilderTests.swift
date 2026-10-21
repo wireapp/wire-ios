@@ -232,6 +232,14 @@ private final class InvitationMeetingsAPI: MeetingsAPI, @unchecked Sendable {
         throw InvitationTestError.unavailable
     }
 
+    func addMeetingInvitations(id: WireNetwork.QualifiedID, emails: [String]) async throws {
+        throw InvitationTestError.unavailable
+    }
+
+    func removeMeetingInvitations(id: WireNetwork.QualifiedID, emails: [String]) async throws {
+        throw InvitationTestError.unavailable
+    }
+
     func deleteMeeting(id: WireNetwork.QualifiedID) async throws { throw InvitationTestError.unavailable }
 }
 

@@ -41,7 +41,8 @@ package struct CreateMeetingUseCase: CreateMeetingUseCaseProtocol {
         recurrence: MeetingRecurrence?,
         type: MeetingType,
         password: String?,
-        participants: [MeetingMember]
+        participants: [MeetingMember],
+        invitedEmails: [String] = []
     ) async throws -> MeetingCreationResult {
         let result = try await meetingRepository.createMeeting(
             title: title,
@@ -49,7 +50,8 @@ package struct CreateMeetingUseCase: CreateMeetingUseCaseProtocol {
             endTime: endTime,
             recurrence: recurrence,
             type: type,
-            password: password
+            password: password,
+            invitedEmails: invitedEmails
         )
         let meeting = result.meeting
         var isAddingParticipants = false
