@@ -102,6 +102,41 @@ struct MeetingRepositoryTests {
         #expect(localStore.deleteMeetingIdQualifiedIDVoidReceivedInvocations.isEmpty)
     }
 
+    // MARK: - fetchMeetingLink
+
+    @Test
+    func fetchMeetingLinkRequiresURLAndPasswordStateWithoutChangingStore() async throws {
+        let response = Scaffolding.meetingResponse
+        let url = try #require(response.link)
+        let cases: [(URL?, Bool?, MeetingLink?)] = [
+            (url, true, MeetingLink(url: url, hasPassword: true)),
+            (url, false, MeetingLink(url: url, hasPassword: false)),
+            (url, nil, nil),
+            (nil, true, nil)
+        ]
+        for (link, hasPassword, expected) in cases {
+            meetingsAPI.getMeetingId_MockValue = MeetingResponse(
+                id: response.id,
+                title: response.title,
+                creatorID: response.creatorID,
+                startTime: response.startTime,
+                endTime: response.endTime,
+                conversationID: response.conversationID,
+                invitedEmails: response.invitedEmails,
+                isTrial: response.isTrial,
+                createdAt: response.createdAt,
+                updatedAt: response.updatedAt,
+                link: link,
+                hasPassword: hasPassword
+            )
+
+            #expect(try await sut.fetchMeetingLink(id: Scaffolding.meetingID) == expected)
+        }
+        #expect(meetingsAPI.getMeetingId_Invocations == Array(repeating: Scaffolding.meetingID, count: cases.count))
+        #expect(localStore.storeMeetingMeetingMeetingVoidReceivedInvocations.isEmpty)
+        #expect(localStore.deleteMeetingIdQualifiedIDVoidReceivedInvocations.isEmpty)
+    }
+
     // MARK: - pullMeetings
 
     @Test

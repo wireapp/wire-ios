@@ -62,6 +62,17 @@
 "wireMeetings.list.delete.error.alert.title" = "Something went wrong";
 "wireMeetings.list.delete.error.alert.ok" = "OK";
 
+// MARK: - Meeting link
+
+"wireMeetings.link.title" = "Meeting link";
+"wireMeetings.link.description" = "Anyone with the link can access the meeting.";
+"wireMeetings.link.passwordProtected" = "The link is password protected. To set a new password, generate a new link.";
+"wireMeetings.link.notPasswordProtected" = "This link is not password protected. Make sure to share it only with the right people. To add a password, generate a new link.";
+"wireMeetings.link.copy" = "Copy link";
+"wireMeetings.link.copied" = "Link copied to clipboard";
+"wireMeetings.link.unavailable" = "The meeting link is unavailable.";
+"wireMeetings.link.loadError" = "Could not load the meeting link. Please try again.";
+
 // MARK: - Schedule a meeting
 
 "meetings.error.missingLink" = "The meeting was created, but its link is unavailable.";

@@ -34,15 +34,18 @@ struct MeetingsView: View {
     /// Presenting the edit UI is up to the owner of this view.
     private let onEditMeeting: (Meeting) -> Void
     private let onJoinMeeting: (MeetingOccurrence) -> Void
+    private let onMeetingLink: ((Meeting) -> Void)?
 
     init(
         viewModel: MeetingsViewModel,
         onEditMeeting: @escaping (Meeting) -> Void = { _ in },
-        onJoinMeeting: @escaping (MeetingOccurrence) -> Void = { _ in }
+        onJoinMeeting: @escaping (MeetingOccurrence) -> Void = { _ in },
+        onMeetingLink: ((Meeting) -> Void)? = nil
     ) {
         self.viewModel = viewModel
         self.onEditMeeting = onEditMeeting
         self.onJoinMeeting = onJoinMeeting
+        self.onMeetingLink = onMeetingLink
     }
 
     var body: some View {
@@ -162,7 +165,8 @@ struct MeetingsView: View {
                 isOrganizer: viewModel.isOrganizer(_:),
                 onEdit: { onEditMeeting($0) },
                 onDelete: { viewModel.meetingToDelete = $0 },
-                onJoin: { onJoinMeeting($0) }
+                onJoin: { onJoinMeeting($0) },
+                onMeetingLink: onMeetingLink
             )
 
             if viewModel.hasMore {
@@ -220,6 +224,7 @@ private struct GroupedSections: View {
     let onEdit: (Meeting) -> Void
     let onDelete: (Meeting) -> Void
     let onJoin: (MeetingOccurrence) -> Void
+    let onMeetingLink: ((Meeting) -> Void)?
 
     @Environment(\.wireAccentColor) private var wireAccentColor
 
@@ -237,7 +242,8 @@ private struct GroupedSections: View {
                         isLive: isLive,
                         onEdit: { onEdit(occurrence.meeting) },
                         onDelete: { onDelete(occurrence.meeting) },
-                        onJoin: { onJoin(occurrence) }
+                        onJoin: { onJoin(occurrence) },
+                        onMeetingLink: onMeetingLink.map { action in { action(occurrence.meeting) } }
                     )
                     .listRowBackground(
                         isLive ? Color(wireAccentColor.secondaryUIColor) : Color.clear

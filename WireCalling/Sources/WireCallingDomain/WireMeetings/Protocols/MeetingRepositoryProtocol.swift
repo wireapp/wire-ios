@@ -76,6 +76,8 @@ public protocol MeetingRepositoryProtocol: Sendable {
     @discardableResult
     func pullMeeting(id: QualifiedID) async throws -> Meeting?
 
+    func fetchMeetingLink(id: QualifiedID) async throws -> MeetingLink?
+
     /// Pulls all meetings from the server, replacing the locally stored
     /// meetings, e.g. as part of a sync.
     ///

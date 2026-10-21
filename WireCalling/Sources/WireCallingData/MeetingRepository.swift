@@ -165,6 +165,12 @@ public final class MeetingRepository: MeetingRepositoryProtocol {
         }
     }
 
+    public func fetchMeetingLink(id: QualifiedID) async throws -> MeetingLink? {
+        let response = try await meetingsAPI.getMeeting(id: id)
+        guard let url = response.link, let hasPassword = response.hasPassword else { return nil }
+        return MeetingLink(url: url, hasPassword: hasPassword)
+    }
+
     public func pullMeetings() async throws {
         let responses: [MeetingResponse]
         do {
