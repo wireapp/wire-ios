@@ -161,6 +161,7 @@ final class MeetNowTests: WireUITestCase {
         XCTAssertTrue(afterEmptyCancel.isEmpty)
         XCTAssertFalse(app.buttons[Locators.OngoingCallPage.endOngoingCallButton.rawValue].exists)
 
+        // Enter meeting details, then cancel without creating a meeting.
         let populatedForm = try openMeetNow(from: page)
         XCTAssertEqual(populatedForm.titleField.value as? String, emptyTitleValue)
         populatedForm.replaceTitle(with: "TC11971 discarded")
@@ -174,6 +175,7 @@ final class MeetNowTests: WireUITestCase {
         XCTAssertTrue(afterPopulatedCancel.isEmpty)
         XCTAssertFalse(app.buttons[Locators.OngoingCallPage.endOngoingCallButton.rawValue].exists)
 
+        // Reopen Meet Now and check that the discarded details are cleared.
         let reopenedForm = try openMeetNow(from: page)
         // Empty UIKit text fields can expose the placeholder as their value.
         XCTAssertFalse(reopenedForm.saveButton.isEnabled)
@@ -199,6 +201,7 @@ final class MeetNowTests: WireUITestCase {
         let beforeValidTitle = try await fixtures.list()
         XCTAssertTrue(beforeValidTitle.isEmpty)
 
+        // Check valid titles and both title limits.
         for title in ["TC11973 Standard title", String(repeating: "A", count: 64), String(repeating: "😀", count: 64)] {
             form.replaceTitle(with: title)
             XCTAssertEqual(form.titleField.value as? String, title)
@@ -217,6 +220,7 @@ final class MeetNowTests: WireUITestCase {
         let beforeStart = try await fixtures.list()
         XCTAssertTrue(beforeStart.isEmpty)
 
+        // Start a meeting with a valid title.
         let title = "TC11973 Meet Now & + / 😀"
         form.replaceTitle(with: title)
         XCTAssertEqual(form.titleField.value as? String, title)
@@ -240,6 +244,8 @@ final class MeetNowTests: WireUITestCase {
         let form = try openMeetNow(from: page)
         let title = "TC11974 selected participants"
         form.replaceTitle(with: title)
+
+        // Select all three participants, then remove Bob.
         try form.openParticipants()
         for (index, user) in users.enumerated() {
             try form.selectMember(user)
@@ -262,6 +268,8 @@ final class MeetNowTests: WireUITestCase {
         XCTAssertTrue(form.participantsButton.label.contains(users[0].name))
         XCTAssertTrue(form.participantsButton.label.contains(users[2].name))
         XCTAssertFalse(form.participantsButton.label.contains(users[1].name))
+
+        // Start the meeting and check that only Alice and Carol are invited.
         XCTAssertTrue(form.saveButton.waitAndTap())
         let call = try waitForCall(title: title)
         let meeting = try await onlyMeeting(fixtures, title: title)
@@ -307,6 +315,8 @@ final class MeetNowTests: WireUITestCase {
         }
         let whilePending = try await fixtures.list()
         XCTAssertTrue(whilePending.isEmpty)
+
+        // Release the request and check that only one meeting is created.
         guard notify_set_state(token, 2) == UInt32(NOTIFY_STATUS_OK) else {
             throw RuntimeError("Meeting create control could not release the request")
         }
@@ -335,6 +345,8 @@ final class MeetNowTests: WireUITestCase {
         }
         let whilePending = try await fixtures.list()
         XCTAssertTrue(whilePending.isEmpty)
+
+        // Fail creation and check that the form keeps the meeting details.
         guard notify_set_state(token, 1) == UInt32(NOTIFY_STATUS_OK) else {
             throw RuntimeError("Meeting create control could not fail the request")
         }
@@ -350,6 +362,8 @@ final class MeetNowTests: WireUITestCase {
         XCTAssertEqual(form.titleField.value as? String, title)
         XCTAssertEqual(form.participantsButton.value as? String, "1")
         XCTAssertTrue(form.participantsButton.label.contains(users[0].name))
+
+        // Restore creation and retry Start with the same details.
         guard notify_set_state(token, 2) == UInt32(NOTIFY_STATUS_OK) else {
             throw RuntimeError("Meeting create control could not restore the request")
         }
@@ -372,6 +386,8 @@ final class MeetNowTests: WireUITestCase {
         form.replaceTitle(with: title)
         try form.addParticipants(users)
         XCTAssertEqual(form.participantsButton.value as? String, "2")
+
+        // Start with both participants and check the warning for User C.
         XCTAssertTrue(form.saveButton.waitAndTap())
         let alert = app.alerts["Meeting created"]
         guard alert.waitForExistence(timeout: 30) else { throw RuntimeError("The participant warning did not appear") }
@@ -382,6 +398,8 @@ final class MeetNowTests: WireUITestCase {
         }
         let meeting = try await onlyMeeting(fixtures, title: title)
         try await assertMembers(fixtures, meeting: meeting, host: host, invitees: [ids[0]])
+
+        // Dismiss the warning and enter the call.
         guard alert.buttons["OK"].waitAndTap() else { throw RuntimeError("The participant warning could not close") }
         _ = try waitForCall(title: title)
         let afterAcknowledgement = try await onlyMeeting(fixtures, title: title)
@@ -399,6 +417,8 @@ final class MeetNowTests: WireUITestCase {
         let title = "TC11986 resume retained details"
         form.replaceTitle(with: title)
         try form.addParticipants(users)
+
+        // Send the app to the background, then return to the form.
         XCUIDevice.shared.press(.home)
         XCTAssertTrue(app.wait(for: .runningBackground, timeout: 10))
         app.activate()
@@ -408,6 +428,8 @@ final class MeetNowTests: WireUITestCase {
         XCTAssertEqual(form.participantsButton.value as? String, "1")
         XCTAssertTrue(form.participantsButton.label.contains(users[0].name))
         XCTAssertTrue(form.saveButton.isEnabled)
+
+        // Start the meeting with the retained details.
         XCTAssertTrue(form.saveButton.waitAndTap())
         _ = try waitForCall(title: title)
         let meeting = try await onlyMeeting(fixtures, title: title)
