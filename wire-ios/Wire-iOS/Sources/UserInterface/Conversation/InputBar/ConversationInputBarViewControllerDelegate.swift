@@ -28,11 +28,11 @@ protocol ConversationInputBarViewControllerDelegate: AnyObject {
     )
     func conversationInputBarViewControllerShouldBeginEditing(_ controller: ConversationInputBarViewController) -> Bool
     func conversationInputBarViewControllerShouldEndEditing(_ controller: ConversationInputBarViewController) -> Bool
-    func conversationInputBarViewControllerDidFinishEditing(
+    @MainActor func conversationInputBarViewControllerDidFinishEditing(
         _ message: ZMConversationMessage,
         withText newText: String?,
         mentions: [Mention]
-    )
+    ) async -> Bool
     func conversationInputBarViewControllerDidCancelEditing(_ message: ZMConversationMessage)
     func conversationInputBarViewControllerWants(toShow message: ZMConversationMessage)
     func conversationInputBarViewControllerEditLastMessage()

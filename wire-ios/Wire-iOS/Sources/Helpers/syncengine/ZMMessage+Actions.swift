@@ -55,6 +55,9 @@ extension ZMConversationMessage {
               let sender = senderUser else {
             return false
         }
+        if let message = self as? ZMClientMessage, message.outboxState != .notEnrolled {
+            return message.canEditOutboxText
+        }
         return !isEphemeral &&
             isText &&
             conversation.isSelfAnActiveMember &&

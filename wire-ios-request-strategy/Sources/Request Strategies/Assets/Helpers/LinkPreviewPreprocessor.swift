@@ -48,11 +48,28 @@ public final class LinkPreviewPreprocessor: LinkPreprocessor<LinkMetadata> {
     }
 
     override func processLinks(in message: ZMClientMessage, text: String, excluding excludedRanges: [NSRange]) {
+        let originalText = message.underlyingMessage?.textData
         linkPreviewDetector.downloadLinkPreviews(inText: text, excluding: excludedRanges) { [weak self] linkPreviews in
             self?.managedObjectContext.performGroupedBlock {
-                self?.zmLog
+                guard let self else { return }
+                if message.outboxState != .notEnrolled {
+                    guard !message.isDeleted, !message.hasBeenDeleted,
+                          message.outboxState != .cancelled else {
+                        self.finishProcessing(message)
+                        return
+                    }
+                    guard message.linkPreviewState == .waitingToBeProcessed,
+                          message.underlyingMessage?.textData == originalText else {
+                        self.finishProcessing(message)
+                        if message.linkPreviewState == .waitingToBeProcessed {
+                            self.processMessage(message)
+                        }
+                        return
+                    }
+                }
+                self.zmLog
                     .debug("\(linkPreviews.count) previews for: \(message.nonce?.uuidString ?? "nil")\n\(linkPreviews)")
-                self?.didProcessMessage(message, result: linkPreviews)
+                self.didProcessMessage(message, result: linkPreviews)
             }
         }
     }
@@ -97,7 +114,11 @@ public final class LinkPreviewPreprocessor: LinkPreprocessor<LinkMetadata> {
         )
 
         do {
-            try message.setUnderlyingMessage(updatedMessage)
+            if message.outboxState != .notEnrolled {
+                try message.setOutboxLinkPreviews(updatedText.linkPreview)
+            } else {
+                try message.setUnderlyingMessage(updatedMessage)
+            }
         } catch {
             zmLog
                 .warn(

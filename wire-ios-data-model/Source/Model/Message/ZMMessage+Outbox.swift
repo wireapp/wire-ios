@@ -82,10 +82,16 @@ public extension ZMMessage {
         MessageOutboxOperation(rawValue: outboxOperationRaw)
     }
 
-    /// Additional outbox condition for future queued editing; ordinary type/security restrictions still apply.
+    /// Additional outbox condition for queued editing; ordinary type/security restrictions still apply.
     var hasUnclaimedOutboxContent: Bool {
         outboxState == .queued && outboxOperation == .initialMessage
             && outboxSnapshot == nil && outboxPayload == nil
+    }
+
+    /// Preparation owns the content but has not submitted it. Deletion can still invalidate that claim.
+    internal var canDiscardOutboxLocally: Bool {
+        outboxOperation == .initialMessage && outboxSnapshot == nil && outboxPayload == nil
+            && (outboxState == .queued || outboxState == .preparing || outboxState == .failed)
     }
 
     /// Throws when encrypted content is unavailable; a locked snapshot must never look like unclaimed content.

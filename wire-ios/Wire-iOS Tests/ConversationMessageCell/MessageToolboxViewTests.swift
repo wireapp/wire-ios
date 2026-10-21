@@ -17,6 +17,7 @@
 //
 
 import WireDesign
+import WireDataModel
 import WireTestingPackage
 import XCTest
 
@@ -57,6 +58,37 @@ final class MessageToolboxViewTests: CoreDataSnapshotTestCase {
     }
 
     // MARK: - Snapshot Tests
+
+    func testQueuedTextHasAnAccessiblePendingStatusAndIsEditableUntilClaimed() throws {
+        let queued = try XCTUnwrap(otherUserConversation.appendText(content: "queued") as? ZMClientMessage)
+        try queued.enqueueInOutbox(operation: .initialMessage)
+
+        sut.configureForMessage(queued, animated: false)
+
+        XCTAssertTrue(queued.canBeEdited)
+        XCTAssertNil(sut.dataSource?.editedString)
+        let queuedContent = try XCTUnwrap(sut.dataSource?.content)
+        guard case let .details(_, status, _) = queuedContent else {
+            return XCTFail("Expected queued message details")
+        }
+        XCTAssertEqual(status, .queued)
+        XCTAssertEqual(sut.statusImageView.superview?.accessibilityIdentifier, "QueuedMessageStatus")
+        XCTAssertEqual(
+            sut.statusImageView.superview?.accessibilityLabel,
+            String(localized: "content.message.queued", defaultValue: "Queued", bundle: .main)
+        )
+
+        let claim = try queued.prepareOutboxAttempt(payload: XCTUnwrap(queued.underlyingMessage).serializedData())
+        sut.configureForMessage(queued, animated: false)
+        XCTAssertFalse(queued.canBeEdited)
+        XCTAssertEqual(queued.outboxAttemptIdentifier, claim.identifier)
+        let claimedContent = try XCTUnwrap(sut.dataSource?.content)
+        guard case let .details(_, claimedStatus, _) = claimedContent else {
+            return XCTFail("Expected sending message details")
+        }
+        XCTAssertEqual(claimedStatus, .sending)
+        XCTAssertNil(sut.statusImageView.superview?.accessibilityIdentifier)
+    }
 
     func testThatItConfiguresWithFailedToSend() {
         // GIVEN

@@ -28,6 +28,8 @@ final class MockLinkDetector: LinkPreviewDetectorType {
     var nextResult = [LinkMetadata]()
     var downloadLinkPreviewsCallCount: Int = 0
     var excludedRanges: [NSRange] = []
+    var deferCompletions = false
+    var pendingCompletions: [([LinkMetadata]) -> Void] = []
 
     func downloadLinkPreviews(
         inText text: String,
@@ -36,7 +38,11 @@ final class MockLinkDetector: LinkPreviewDetectorType {
     ) {
         downloadLinkPreviewsCallCount += 1
         excludedRanges = excluding
-        completion(nextResult)
+        if deferCompletions {
+            pendingCompletions.append(completion)
+        } else {
+            completion(nextResult)
+        }
     }
 
 }
@@ -103,6 +109,37 @@ class LinkPreviewPreprocessorTests: MessagingTestBase {
 }
 
 extension LinkPreviewPreprocessorTests {
+
+    func testQueuedEditDiscardsAnEarlierPreviewAndProcessesTheCurrentText() throws {
+        var message: ZMClientMessage!
+        syncMOC.performGroupedAndWait {
+            message = self.createMessage(text: "https://old.example.com")
+            try! message.enqueueInOutbox(operation: .initialMessage)
+            self.mockDetector.deferCompletions = true
+            self.sut.objectsDidChange([message])
+            try! message.setUnderlyingMessage(GenericMessage(
+                content: Text(content: "https://new.example.com"), nonce: message.nonce!
+            ))
+            let oldPreview = LinkMetadata(
+                originalURLString: "https://old.example.com",
+                permanentURLString: "https://old.example.com",
+                resolvedURLString: "https://old.example.com",
+                offset: 0
+            )
+            self.mockDetector.pendingCompletions.removeFirst()([oldPreview])
+        }
+        syncMOC.performGroupedAndWait {
+            XCTAssertEqual(self.mockDetector.downloadLinkPreviewsCallCount, 2)
+            XCTAssertTrue(message.underlyingMessage!.linkPreviews.isEmpty)
+            XCTAssertEqual(message.messageText, "https://new.example.com")
+            XCTAssertEqual(message.linkPreviewState, .waitingToBeProcessed)
+            self.mockDetector.pendingCompletions.removeFirst()([])
+        }
+        syncMOC.performGroupedAndWait {
+            XCTAssertEqual(message.linkPreviewState, .done)
+            XCTAssertTrue(message.underlyingMessage!.linkPreviews.isEmpty)
+        }
+    }
 
     func testThatItOnlyProcessesMessagesWithLinkPreviewState_WaitingToBeProcessed() {
         [ZMLinkPreviewState.done, .downloaded, .processed, .uploaded, .waitingToBeProcessed].forEach {

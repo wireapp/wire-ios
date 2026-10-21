@@ -52,6 +52,7 @@ extension MessageToolboxContent: Comparable {
 }
 
 enum MessageToolboxState: Equatable {
+    case queued
     case sending
     case sent
     case delivered
@@ -174,6 +175,10 @@ final class MessageToolboxDataSource {
     private func selfMessageState(for message: ZMConversationMessage) -> MessageToolboxState? {
         guard let sender = message.senderUser, sender.isSelfUser else {
             return nil
+        }
+
+        if let row = message as? ZMMessage, row.outboxState == .queued, !row.isExpired {
+            return .queued
         }
 
         switch message.deliveryState {

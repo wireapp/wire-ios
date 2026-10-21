@@ -70,6 +70,30 @@ final class DeletionDialogPresenter: NSObject {
             // Tracking needs to be called before performing the action, since the content of the message is cleared
             if case let .delete(type) = action {
 
+                if let outboxMessage = message as? ZMMessage, outboxMessage.outboxState != .notEnrolled {
+                    let messageID = outboxMessage.objectID
+                    let syncContext = userSession.contextProvider.syncContext
+                    Task { @MainActor in
+                        let succeeded = await syncContext.perform {
+                            guard let row = try? syncContext.existingObject(with: messageID) as? ZMMessage,
+                                  !row.isDeleted else { return false }
+                            switch type {
+                            case .local: ZMMessage.hideMessage(row)
+                            case .everywhere: ZMMessage.deleteForEveryone(row)
+                            }
+                            do {
+                                try syncContext.save()
+                                return true
+                            } catch {
+                                syncContext.rollback()
+                                return false
+                            }
+                        }
+                        completion(succeeded, succeeded ? type : nil)
+                    }
+                    return
+                }
+
                 userSession.enqueue {
                     switch type {
                     case .local:

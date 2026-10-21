@@ -32,6 +32,8 @@ are parked investigation history; do not create further stage branches. The
 foundation contract is authorized and implemented; validation belongs to the user.
 Regular-message queuing/reconnect/restart integration is now implemented behind
 the default-off flag, with source coverage added and no build/test execution.
+Queued-text editing, draft retention when a send claim wins, and a local Queued
+status are now written as well; all validation for these stages belongs to the user.
 Uncertain-delivery automatic retry policy remains unresolved before broad activation;
 the development implementation exposes manual Retry while retaining frozen content.
 
@@ -39,7 +41,7 @@ Current state: 2026-10-21. The prerequisite bootstrap tracker fix is implemented
 on `fix/preserve-bootstrap-trackers-WPB-26307`, with two regression tests and all
 13 bootstrap tests passing. Foundation and regular-message integration are written.
 New enrollment requires the local flag at stack/session startup. It remains off
-by default; queued text editing and classic asset enrollment are not implemented.
+by default. Classic asset enrollment and byte-retention recovery remain unimplemented.
 Read `AGENTS.md`, the reported manual results, and the code verification section
 before continuing. The user reports that the fix resolves the device upload
 problem. The user is handling a separate bug ticket, PR/branch, merge, and
@@ -61,7 +63,9 @@ Next steps, in order:
    and should not be reimplemented or backported again by the new session.
 3. Foundation and regular-message integration are implemented. User owns
    validation; no checks were executed for the regular-message integration.
-   See execution records below. Next is queued text editing/race handling.
+   Queued editing/presentation are also written with regression source, without
+   executing checks. See the PR 3 execution record below. Next is classic asset
+   enrollment, byte retention, and recovery; preserve the existing upload pipeline.
 4. Continue through regular queuing, queued editing, and asset recovery on the
    same branch. Treat the numbered PR checklists below as implementation stages;
    defer PR packaging until there is working code to review. Do not repeat the
@@ -294,9 +298,10 @@ self-deleting messages remains gated on agreeing their timer policy before PR 2.
    fallback is a proposal, not an approved product behavior. This gate belongs
    before PR 2 activation and does not require choosing a retry policy in PR 1.
 9. An open editor must retain its draft if send ownership wins the race. Before
-   PR 3, choose whether editor entry temporarily reserves an unclaimed message
-   or confirmation converts to a normal edit after confirmed delivery. Never
-   change an uncertain operation's snapshot to implement that edit.
+   confirmation, recheck on the sending context without reserving the row while
+   the editor is open. Unclaimed content updates in place; confirmed sent content
+   uses a normal edit. An active/frozen/uncertain operation rejects confirmation
+   and retains the draft. Never change its snapshot to implement an edit.
 
 ### Migration, flag, and validation scope
 
@@ -852,17 +857,21 @@ xcodebuild test -quiet \
 
 ### Editing
 
-- [ ] Update never-sent queued text in place while preserving the original nonce.
-- [ ] Keep the outgoing payload as original text or multipart content, without a
+These checks record code written, not runtime validation.
+
+- [x] Update never-sent queued text in place while preserving the original nonce.
+- [x] Keep the outgoing payload as original text or multipart content, without a
       `MessageEdit` wrapper or an edited timestamp.
-- [ ] Preserve mentions, quotes, multipart attachments, and applicable metadata.
-- [ ] Reset or invalidate obsolete link previews and attachment detection results.
-- [ ] Preserve normal edit semantics for messages that were previously sent.
-- [ ] Define behavior when connectivity returns while the editor is open.
-- [ ] Define behavior when an edit is confirmed after a send attempt has claimed
+- [x] Preserve mentions, quotes, multipart attachments, and applicable metadata.
+- [x] Reset or invalidate obsolete link previews and attachment detection results.
+- [x] Preserve normal edit semantics for messages that were previously sent.
+- [x] Define behavior when connectivity returns while the editor is open.
+- [x] Define behavior when an edit is confirmed after a send attempt has claimed
       or transmitted an earlier payload.
-- [ ] Ensure queued deletion and empty-edit behavior cannot later send removed
+- [x] Ensure queued deletion and empty-edit behavior cannot later send removed
       content or create unnecessary remote delete operations.
+- [ ] Validate these paths, including separate-context ordering and asynchronous
+      preview/image/upload completion races, using the user-owned checks.
 
 ### Assets
 
@@ -1047,15 +1056,59 @@ Do not call this feature validated or complete before those user-owned checks.
 
 ### PR 3: Queued text editing and presentation
 
-- [ ] Allow eligible queued text messages to enter the existing editor.
-- [ ] Implement in-place updates without the edited marker.
-- [ ] Cover repeated edits, mentions, quotes, multipart text, and link previews.
-- [ ] Resolve editor/reconnection and editor/send-claim races.
-- [ ] Preserve normal sent-message editing and its marker.
-- [ ] Implement the agreed pending status presentation with accessibility support.
-- [ ] Cover queued deletion and empty-edit behavior.
-- [ ] Add model, UI eligibility, and relevant presentation tests.
+- [x] Allow eligible queued text messages to enter the existing editor.
+- [x] Implement in-place updates without the edited marker.
+- [x] Cover repeated edits, mentions, quotes, multipart text, and link previews.
+- [x] Resolve editor/reconnection and editor/send-claim races in source.
+- [x] Preserve normal sent-message editing and its marker.
+- [x] Implement local Queued presentation with accessibility support. Wording and
+      treatment remain a default-off development choice pending product review.
+- [x] Cover queued deletion and empty-edit behavior in source.
+- [x] Add model, UI eligibility, draft-retention, observer, preview-race, and
+      presentation regression source. None of these new cases has been run.
+- [ ] Complete user-owned compilation, tests, and device confirmation.
 - [ ] Record PR URL and validation results.
+
+Execution record (2026-10-21, source only; no formatting/lint/build/test commands):
+
+- Confirmation for enrolled messages is applied and saved on the sync context,
+  serialized with send claims. Mentions cross contexts as object IDs and ranges.
+  UI eligibility includes only never-submitted queued original text/multipart
+  content and confirmed sent content, retaining ownership/membership/ephemeral
+  restrictions. Pending normal edits and metadata updates cannot be overwritten.
+- Opening an editor does not reserve or pause sending. Confirmation updates an
+  unclaimed original in place with the same nonce and enqueue time, preserving
+  original metadata/quote bytes and multipart attachments. It creates no edit
+  envelope or timestamp. If sending has completed, normal edit semantics apply.
+- When preparation, transport, uncertainty, or another operation owns the row,
+  confirmation returns false and leaves the editor/draft intact. A second tap
+  cannot submit concurrently. Text or mentions changed while awaiting completion
+  are retained even if the earlier confirmation succeeded. No deferred edit is
+  automatically sent; the user confirms again after known delivery. Additional
+  feedback for the retained-draft state remains a UX review item before activation.
+- Empty queued text follows local deletion; empty multipart text retains its
+  attachments. Delete/hide actions for enrolled messages use the sending context.
+  A never-submitted initial message, including preparation before handoff, is
+  cancelled/deleted locally without emitting remote hide/delete traffic. After
+  possible handoff, existing remote deletion semantics apply; cancellation cannot
+  retract a request that has already been submitted.
+- Preview detection checks its original text before applying asynchronous results,
+  then restarts for current content when needed. Image preprocessing supports an
+  optional content identity, ignores obsolete results, and requeues current work.
+  Upload requests carry a text/preview digest so a previous preview's asset key
+  cannot attach to edited content. Outbox preview writes preserve text, edit, and
+  multipart envelopes/quotes/attachments rather than flattening them to plain text.
+- Queued rows show a clock and localized Queued label using Dynamic Type and a
+  VoiceOver label/identifier. Preparing/sending retain the existing sending state.
+  Outbox-state observation triggers status refresh even when legacy deliveryState
+  remains pending. Base English localization is added; generated strings are untouched.
+- Regression source covers repeated queued edits/claims, mentions, unavailable
+  quote targets, multipart attachments, empty text, remote-traffic-free deletion,
+  normal-edit locking, draft retention/newer drafts, stale preview detection/image
+  completion/upload callbacks, eligibility, status, and observer notifications.
+- No PR has been opened or pushed. The unrelated `.ruby-version` change is excluded.
+  Next: implement classic asset enrollment/retention/recovery using the existing
+  pipeline with Wire Drive disabled as the user's manual test configuration.
 
 ### PR 4: Asset queuing and recovery
 
@@ -1090,9 +1143,10 @@ Do not call this feature validated or complete before those user-owned checks.
 - [x] Agree flag name, enrollment direction, and restart-based toggle policy;
       detailed call-site coverage will be verified before PR 2 enrollment.
 - [ ] Exact persisted lifecycle and reconciliation strategy for uncertain delivery.
-- [ ] Editor behavior when reconnection or transmission occurs during editing.
+- [x] Development behavior: no editor reservation; recheck at confirmation and
+      retain the draft while ownership/delivery is unresolved (see PR 3).
 - [ ] Ordering policy: whether a large pending asset blocks later text messages.
-- [ ] Pending status wording and visual treatment.
+- [ ] Review the implemented local Queued wording/clock treatment before activation.
 - [ ] Retention policy for queued messages and attachment bytes.
 - [ ] Treatment of self-deleting messages while queued, preserving existing
       editing restrictions and the agreed start of their destruction timer.
@@ -1127,9 +1181,9 @@ Do not call this feature validated or complete before those user-owned checks.
 
 ## Execution notes
 
-- The prerequisite bootstrap fix is on `develop`; foundation and regular-message
-  integration are implemented on the one feature branch. Queued text editing,
-  asset enrollment/retention, and full integration validation remain outstanding.
+- The prerequisite bootstrap fix is on `develop`; foundation, regular-message
+  integration, and queued editing/presentation are written on the one feature
+  branch. Asset enrollment/retention and integration validation remain outstanding.
 - The existing `.ruby-version` and `Strings+Generated.swift` modifications and
   the temporary RFC belong to the user and must remain untouched by this work.
 - Update this checklist in each implementation PR with completed items, actual

@@ -23,6 +23,154 @@ import XCTest
 
 final class MessageOutboxTests: BaseZMClientMessageTests {
 
+    func testRepeatedQueuedEditsKeepIdentityQuoteAndMentionsWithoutAnEditedMarker() throws {
+        let message = try makeMessage()
+        try message.enqueueInOutbox(operation: .initialMessage)
+        let nonce = message.nonce
+        let enqueuedAt = message.outboxEnqueuedAt
+        var original = try XCTUnwrap(message.underlyingMessage)
+        let quote = Quote.with {
+            $0.quotedMessageID = UUID().transportString()
+            $0.quotedMessageSha256 = Data(repeating: 1, count: 32)
+        }
+        original.text.quote = quote
+        original.text.expectsReadConfirmation = true
+        try message.setUnderlyingMessage(original)
+        let mention = Mention(range: NSRange(location: 0, length: 4), user: user1)
+
+        try message.editOutboxText("@Joe first draft", mentions: [mention], fetchLinkPreview: true)
+        try message.editOutboxText("@Joe final draft", mentions: [mention], fetchLinkPreview: false)
+        try uiMOC.save()
+
+        let content = try XCTUnwrap(message.underlyingMessage)
+        XCTAssertEqual(message.nonce, nonce)
+        XCTAssertEqual(content.messageID, original.messageID)
+        XCTAssertEqual(message.outboxEnqueuedAt, enqueuedAt)
+        XCTAssertEqual(content.text.quote, quote)
+        XCTAssertTrue(content.text.expectsReadConfirmation)
+        XCTAssertEqual(message.mentions, [mention])
+        XCTAssertEqual(message.messageText, "@Joe final draft")
+        XCTAssertEqual(message.normalizedText, "@joe final draft")
+        XCTAssertEqual(message.linkPreviewState, .done)
+        XCTAssertFalse(content.hasEdited)
+        XCTAssertNil(message.updatedTimestamp)
+        XCTAssertTrue(message.hasUnclaimedOutboxContent)
+        let claim = try message.prepareOutboxAttempt(payload: payload(of: message))
+        XCTAssertEqual(try GenericMessage(serializedData: claim.payload).text.content, "@Joe final draft")
+    }
+
+    func testQueuedMultipartEditsAndPreviewsPreserveAttachmentsAndQuote() throws {
+        let attachment = MultipartAttachment(
+            uuid: UUID(), contentType: "application/pdf", initialName: "document.pdf",
+            initialSize: 42, initialMetadata: nil
+        ).toProto()
+        var text = Text(content: "draft")
+        text.quote = Quote.with {
+            $0.quotedMessageID = UUID().transportString()
+            $0.quotedMessageSha256 = Data(repeating: 2, count: 32)
+        }
+        let message = try conversation.appendClientMessage(
+            with: GenericMessage(content: Multipart(text: text, attachments: [attachment]))
+        )
+        try message.enqueueInOutbox(operation: .initialMessage)
+        let nonce = message.nonce
+        let preview = GenericMessageProtocol.LinkPreview.with {
+            $0.url = "https://wire.com"
+            $0.urlOffset = 0
+        }
+
+        try message.editOutboxText("https://wire.com", mentions: [], fetchLinkPreview: true)
+        try message.setOutboxLinkPreviews([preview])
+
+        let content = try XCTUnwrap(message.underlyingMessage)
+        XCTAssertEqual(content.multipart.attachments, [attachment])
+        XCTAssertEqual(content.multipart.text.quote, text.quote)
+        XCTAssertEqual(content.multipart.text.linkPreview, [preview])
+        XCTAssertEqual(message.nonce, nonce)
+        XCTAssertNil(message.updatedTimestamp)
+
+        try message.editOutboxText("", mentions: [], fetchLinkPreview: false)
+        XCTAssertEqual(message.underlyingMessage?.multipart.attachments, [attachment])
+        XCTAssertEqual(message.underlyingMessage?.multipart.text.content, "")
+        XCTAssertTrue(message.underlyingMessage!.multipart.text.linkPreview.isEmpty)
+    }
+
+    func testSendClaimRejectsQueuedEditWithoutChangingClaimedContent() throws {
+        let message = try makeMessage()
+        try message.enqueueInOutbox(operation: .initialMessage)
+        let nonce = message.nonce
+        let claim = try message.prepareOutboxAttempt(payload: payload(of: message))
+
+        XCTAssertFalse(message.canEditOutboxText)
+        XCTAssertThrowsError(try message.editOutboxText("draft to retain in editor", mentions: [], fetchLinkPreview: false))
+        XCTAssertEqual(try payload(of: message), claim.payload)
+        XCTAssertEqual(message.nonce, nonce)
+        XCTAssertNil(message.updatedTimestamp)
+
+        try message.markOutboxAttemptSending(claim)
+        try message.rescheduleOutboxAttempt(claim.identifier)
+        XCTAssertFalse(message.canEditOutboxText)
+        XCTAssertThrowsError(try message.editOutboxText("still frozen", mentions: [], fetchLinkPreview: false))
+        XCTAssertEqual(try message.loadOutboxPayload(), claim.payload)
+    }
+
+    func testNormalEditRemainsUnavailableUntilPreviousOutboxOperationFinishes() throws {
+        let message = try makeMessage()
+        try message.enqueueInOutbox(operation: .initialMessage)
+        let claim = try message.prepareOutboxAttempt(payload: payload(of: message))
+        try message.markOutboxAttemptSending(claim)
+        try message.completeOutboxAttempt(claim.identifier)
+        message.markAsSent()
+        let originalNonce = message.nonce
+        uiMOC.offlinePendingMessagesEnabled = true
+        defer { uiMOC.offlinePendingMessagesEnabled = false }
+
+        try message.editOutboxText("normal sent edit", mentions: [], fetchLinkPreview: true)
+
+        XCTAssertEqual(message.outboxOperation, .edit)
+        XCTAssertNotNil(message.updatedTimestamp)
+        XCTAssertEqual(message.underlyingMessage?.edited.replacingMessageID, originalNonce?.transportString())
+        XCTAssertFalse(message.canEditOutboxText)
+        let editContent = try payload(of: message)
+        message.editText("must not overwrite pending edit", mentions: [], fetchLinkPreview: false)
+        XCTAssertEqual(try payload(of: message), editContent)
+
+        let preview = GenericMessageProtocol.LinkPreview.with {
+            $0.url = "https://wire.com"
+            $0.urlOffset = 0
+        }
+        try message.setOutboxLinkPreviews([preview])
+        XCTAssertTrue(message.underlyingMessage!.hasEdited)
+        XCTAssertEqual(message.underlyingMessage?.edited.replacingMessageID, originalNonce?.transportString())
+    }
+
+    func testDeletingBeforeHandoffCreatesNoRemoteDeleteAndInvalidatesPreparation() throws {
+        for preparing in [false, true] {
+            let message = try makeMessage()
+            try message.enqueueInOutbox(operation: .initialMessage)
+            let claim = preparing ? try message.prepareOutboxAttempt(payload: payload(of: message)) : nil
+            let hiddenCount = conversation.hiddenMessages.count
+
+            XCTAssertNil(ZMMessage.deleteForEveryone(message))
+
+            XCTAssertTrue(message.isDeleted)
+            XCTAssertEqual(conversation.hiddenMessages.count, hiddenCount)
+            if let claim { XCTAssertThrowsError(try message.markOutboxAttemptSending(claim)) }
+        }
+    }
+
+    func testHidingAnUnsubmittedMessageDoesNotCreateRemoteHideTraffic() throws {
+        let message = try makeMessage()
+        try message.enqueueInOutbox(operation: .initialMessage)
+        let selfConversation = ZMConversation.selfConversation(in: uiMOC)
+        let hiddenCount = selfConversation.hiddenMessages.count
+
+        message.hideForSelfUser()
+
+        XCTAssertTrue(message.isDeleted)
+        XCTAssertEqual(selfConversation.hiddenMessages.count, hiddenCount)
+    }
+
     func testEnabledSubmissionIsPersistedButHiddenProtocolTrafficIsNotEnrolled() throws {
         let previous = uiMOC.offlinePendingMessagesEnabled
         uiMOC.offlinePendingMessagesEnabled = true

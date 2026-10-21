@@ -357,8 +357,20 @@ final class MessageToolboxView: UIView {
 
     private func updateState(_ state: MessageToolboxState?) {
         statusLabel.isHidden = true
+        statusLabel.font = font
+        statusLabel.adjustsFontForContentSizeCategory = false
         statusContainerView.isHidden = false
+        statusContainerView.accessibilityIdentifier = nil
         switch state {
+        case .queued:
+            let queued = String(localized: "content.message.queued", defaultValue: "Queued", bundle: .main)
+            statusImageView.image = UIImage(systemName: "clock")
+            statusLabel.isHidden = false
+            statusLabel.text = queued
+            statusLabel.font = .preferredFont(forTextStyle: .caption1)
+            statusLabel.adjustsFontForContentSizeCategory = true
+            statusContainerView.accessibilityLabel = queued
+            statusContainerView.accessibilityIdentifier = "QueuedMessageStatus"
         case .sending:
             statusImageView.image = UIImage(resource: .sending)
             statusContainerView.accessibilityLabel = "sending"

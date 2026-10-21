@@ -32,7 +32,7 @@ enum MessageKey: String {
 extension ZMMessage: ObjectInSnapshot {
 
     @objc public class var observableKeys: Set<String> {
-        [#keyPath(ZMMessage.deliveryState), #keyPath(ZMMessage.isObfuscated)]
+        [#keyPath(ZMMessage.deliveryState), #keyPath(ZMMessage.isObfuscated), #keyPath(ZMMessage.outboxStateRaw)]
     }
 
     public var notificationName: Notification.Name {
@@ -141,7 +141,7 @@ public final class MessageChangeInfo: ObjectChangeInfo {
     }
 
     public var deliveryStateChanged: Bool {
-        changedKeysContain(keys: #keyPath(ZMMessage.deliveryState))
+        changedKeysContain(keys: #keyPath(ZMMessage.deliveryState), #keyPath(ZMMessage.outboxStateRaw))
     }
 
     public var reactionsChanged: Bool {

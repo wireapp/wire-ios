@@ -77,7 +77,89 @@ extension ZMClientMessage: TextMessageData {
     }
 
     public func editText(_ text: String, mentions: [Mention], fetchLinkPreview: Bool) {
-        guard let nonce, isEditableMessage else { return }
+        // Pending edits require the result-aware API on the sender's context.
+        guard outboxState == .notEnrolled || outboxState == .sent else { return }
+        let wasEnrolled = outboxState != .notEnrolled
+        do {
+            try replaceText(text, mentions: mentions, fetchLinkPreview: fetchLinkPreview)
+            if wasEnrolled || outboxState != .notEnrolled {
+                try managedObjectContext?.save()
+            }
+        } catch {
+            Logging.messageProcessing.warn("Failed to edit text message. Reason: \(error.localizedDescription)")
+        }
+    }
+
+    /// UI eligibility is advisory. Recheck on the sender's context when confirming an edit.
+    public var canEditOutboxText: Bool {
+        outboxState != .notEnrolled && !isDeleted && !hasBeenDeleted && !isEphemeral
+            && conversation?.isSelfAnActiveMember == true && isEditableMessage
+    }
+
+    /// Run on the sender's context, then save before dismissing the editor. A claim that wins
+    /// this race rejects the edit so the caller can retain the user's draft until delivery is known.
+    public func editOutboxText(_ text: String, mentions: [Mention], fetchLinkPreview: Bool) throws {
+        guard canEditOutboxText else { throw MessageOutboxError.invalidTransition }
+        try replaceText(text, mentions: mentions, fetchLinkPreview: fetchLinkPreview)
+    }
+
+    /// Preview preparation changes metadata on the live message, never its frozen send snapshot.
+    public func setOutboxLinkPreviews(_ previews: [GenericMessageProtocol.LinkPreview]) throws {
+        guard outboxState != .notEnrolled, outboxState != .cancelled,
+              !isDeleted, !hasBeenDeleted, !isObfuscated,
+              var original = underlyingMessage, var text = original.textData else {
+            throw MessageOutboxError.invalidTransition
+        }
+        text.linkPreview = previews
+        switch original.content {
+        case .text:
+            original.text = text
+        case .multipart(var multipart):
+            multipart.text = text
+            original.multipart = multipart
+        case .edited(var edit):
+            switch edit.content {
+            case .text:
+                edit.text = text
+            case .multipart(var multipart):
+                multipart.text = text
+                edit.multipart = multipart
+            default:
+                throw MessageOutboxError.invalidOperation
+            }
+            original.edited = edit
+        default:
+            throw MessageOutboxError.invalidOperation
+        }
+        try setUnderlyingMessage(original)
+    }
+
+    private func replaceText(_ text: String, mentions: [Mention], fetchLinkPreview: Bool) throws {
+        guard let nonce, isEditableMessage else { throw MessageOutboxError.invalidTransition }
+
+        if hasUnclaimedOutboxContent {
+            guard var original = underlyingMessage, let originalText = original.textData else {
+                throw MessageOutboxError.invalidPayload
+            }
+            var replacement = originalText
+            replacement.content = text
+            replacement.mentions = Text(content: text, mentions: mentions).mentions
+            replacement.linkPreview = []
+            switch original.content {
+            case .text:
+                original.text = replacement
+            case .multipart(var multipart):
+                multipart.text = replacement
+                original.multipart = multipart
+            default:
+                throw MessageOutboxError.invalidOperation
+            }
+            try setUnderlyingMessage(original)
+            updateNormalizedText()
+            linkPreviewState = fetchLinkPreview ? .waitingToBeProcessed : .done
+            linkAttachments = nil
+            return
+        }
 
         // Quotes are ignored in edits but keep it to mark that the message has quote for us locally
         let editedText = Text(content: text, mentions: mentions, linkPreviews: [], replyingTo: quote as? ZMOTRMessage)
@@ -96,12 +178,7 @@ extension ZMClientMessage: TextMessageData {
 
         let updatedMessage = GenericMessage(content: content, nonce: editNonce)
 
-        do {
-            try setUnderlyingMessage(updatedMessage)
-        } catch {
-            Logging.messageProcessing.warn("Failed to edit text message. Reason: \(error.localizedDescription)")
-            return
-        }
+        try setUnderlyingMessage(updatedMessage)
 
         updateNormalizedText()
 
@@ -113,16 +190,11 @@ extension ZMClientMessage: TextMessageData {
         delivered = false
 
         if let context = managedObjectContext {
-            do {
-                if context.offlinePendingMessagesEnabled, !isEphemeral,
-                   outboxState == .notEnrolled || outboxState == .sent {
-                    try enqueueInOutbox(operation: .edit)
-                    try context.save()
-                } else if outboxState == .sent {
-                    try leaveCompletedOutbox()
-                }
-            } catch {
-                Logging.messageProcessing.warn("Failed to persist queued edit: \(error.localizedDescription)")
+            if context.offlinePendingMessagesEnabled, !isEphemeral,
+               outboxState == .notEnrolled || outboxState == .sent {
+                try enqueueInOutbox(operation: .edit)
+            } else if outboxState == .sent {
+                try leaveCompletedOutbox()
             }
         }
     }

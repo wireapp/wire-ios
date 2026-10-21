@@ -75,11 +75,60 @@ final class ConversationInputBarViewControllerDelegateTests: XCTestCase {
         XCTAssertEqual(mockDelegate.composedDrafts[0], DraftMessage(text: "Goo", mentions: [], quote: nil))
     }
 
+    @MainActor
+    func testRejectedEditRetainsTheEditorAndItsDraft() async throws {
+        makeEditingInputBar()
+        let message = try coreDataFixture.otherUserConversation.appendText(content: "original")
+        sut.editMessage(message)
+        sut.inputBar.setInputBarText("draft to retain", mentions: [])
+        mockDelegate.acceptsEdits = false
+
+        await sut._sendText()
+
+        XCTAssertTrue(sut.editingMessage === message)
+        XCTAssertEqual(sut.inputBar.textView.preparedText.0, "draft to retain")
+        XCTAssertFalse(sut.isSubmittingMessageEdit)
+    }
+
+    @MainActor
+    func testAcceptedEditDoesNotClearTextChangedWhileConfirmationWasPending() async throws {
+        makeEditingInputBar()
+        let message = try coreDataFixture.otherUserConversation.appendText(content: "original")
+        sut.editMessage(message)
+        sut.inputBar.setInputBarText("submitted draft", mentions: [])
+        mockDelegate.beforeFinishingEdit = { [weak self] in
+            self?.sut.inputBar.setInputBarText("newer draft", mentions: [])
+        }
+
+        await sut._sendText()
+
+        XCTAssertTrue(sut.editingMessage === message)
+        XCTAssertEqual(sut.inputBar.textView.preparedText.0, "newer draft")
+    }
+
+    @MainActor
+    private func makeEditingInputBar() {
+        let provider = MockSecurityClassificationProviding()
+        provider.classificationUsersConversationDomain_MockValue = .notClassified
+        sut = ConversationInputBarViewController(
+            conversation: coreDataFixture.otherUserConversation,
+            userSession: userSession,
+            classificationProvider: provider,
+            networkStatusObservable: MockNetworkStatusObservable(),
+            wireMessagingFactory: MockWireMessagingFactoryProtocol.makeDefault()
+        )
+        mockDelegate = MockDelegate()
+        sut.delegate = mockDelegate
+        sut.loadViewIfNeeded()
+    }
+
 }
 
 private final class MockDelegate: NSObject, ConversationInputBarViewControllerDelegate {
 
     var composedDrafts = [DraftMessage]()
+    var acceptsEdits = true
+    var beforeFinishingEdit: (@MainActor () -> Void)?
 
     func conversationInputBarViewControllerDidComposeText(
         text: String,
@@ -97,11 +146,14 @@ private final class MockDelegate: NSObject, ConversationInputBarViewControllerDe
         true
     }
 
-    func conversationInputBarViewControllerDidFinishEditing(
+    @MainActor func conversationInputBarViewControllerDidFinishEditing(
         _ message: ZMConversationMessage,
         withText newText: String?,
         mentions: [Mention]
-    ) {}
+    ) async -> Bool {
+        beforeFinishingEdit?()
+        return acceptsEdits
+    }
 
     func conversationInputBarViewControllerDidCancelEditing(_ message: ZMConversationMessage) {}
 

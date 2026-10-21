@@ -229,6 +229,7 @@ final class ConversationInputBarViewController: UIViewController,
     lazy var sendController: ConversationInputBarSendController = .init(conversation: conversation)
 
     var editingMessage: ZMConversationMessage?
+    var isSubmittingMessageEdit = false
     var quotedMessage: ZMConversationMessage?
     var replyComposingView: ReplyComposingView?
     private var accentColorChangeHandler: AccentColorChangeHandler?

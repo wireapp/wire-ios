@@ -198,6 +198,9 @@
 // Conversation list voiceover accessibility
 "conversation_list.voiceover.open_conversation.hint" = "Open conversation";
 "conversation_list.voiceover.status.pending_connection" = "pending";
+
+/* Status of a locally queued outgoing message, before a send attempt. */
+"content.message.queued" = "Queued";
 "conversation_list.voiceover.status.active_call" = "active call";
 "conversation_list.voiceover.status.missed_call" = "missed call";
 "conversation_list.voiceover.status.pause_media" = "pause media";

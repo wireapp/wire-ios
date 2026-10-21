@@ -30,4 +30,7 @@ public protocol ZMImageOwner: NSObjectProtocol {
     @objc
     func originalImageData() -> Data?
 
+    /// Owners whose content can change during processing may reject obsolete callbacks.
+    @objc optional var imagePreprocessingIdentifier: Data? { get }
+
 }

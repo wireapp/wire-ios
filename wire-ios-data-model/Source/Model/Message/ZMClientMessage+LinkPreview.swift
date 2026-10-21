@@ -160,6 +160,14 @@ public extension ZMClientMessage {
 
 extension ZMClientMessage: ZMImageOwner {
 
+    /// Stable across image processing itself, but changes when the queued text is edited or removed.
+    @objc public var imagePreprocessingIdentifier: Data? {
+        guard outboxState != .notEnrolled, outboxState != .cancelled,
+              !isDeleted, !hasBeenDeleted, var text = underlyingMessage?.textData else { return nil }
+        text.linkPreview = []
+        return (try? text.serializedData())?.zmSHA256Digest()
+    }
+
     // The image formats that this @c ZMImageOwner wants preprocessed. Order of formats determines order in which data
     // is preprocessed
     @objc
@@ -183,6 +191,10 @@ extension ZMClientMessage: ZMImageOwner {
 
     @objc
     public func processingDidFinish() {
+        if outboxState != .notEnrolled,
+           isDeleted || hasBeenDeleted || outboxState == .cancelled || linkPreviewState != .downloaded {
+            return
+        }
         linkPreviewState = .processed
         guard let moc = managedObjectContext else { return }
         moc.zm_fileAssetCache.deleteOriginalImageData(for: self)
@@ -212,6 +224,10 @@ extension ZMClientMessage: ZMImageOwner {
         for format: ZMImageFormat,
         properties: ZMIImageProperties?
     ) {
+        if outboxState != .notEnrolled,
+           isDeleted || hasBeenDeleted || outboxState == .cancelled || linkPreviewState != .downloaded {
+            return
+        }
         guard
             let moc = managedObjectContext,
             var linkPreview = firstZMLinkPreview,
@@ -246,6 +262,16 @@ extension ZMClientMessage: ZMImageOwner {
             sha256: keys.sha256!,
             original: original
         )
+
+        if outboxState != .notEnrolled {
+            do {
+                try setOutboxLinkPreviews([linkPreview])
+                moc.enqueueDelayedSave()
+            } catch {
+                Logging.messageProcessing.warn("Failed to prepare an outbox preview image")
+            }
+            return
+        }
 
         if let genericMessage = underlyingMessage, let textMessageData {
             let text = Text.with {

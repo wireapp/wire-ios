@@ -50,6 +50,7 @@ public extension ZMMessage {
     @objc
     func hideForSelfUser() {
         guard !isZombieObject else { return }
+        if discardUnsubmittedOutboxMessage() { return }
 
         do {
             try ZMConversation.appendHideMessageToSelfConversation(self)
@@ -72,6 +73,7 @@ public extension ZMMessage {
     @discardableResult @objc
     internal func deleteForEveryone() -> ZMClientMessage? {
         guard !isZombieObject, let sender, sender.isSelfUser || isEphemeral else { return nil }
+        if discardUnsubmittedOutboxMessage() { return nil }
         guard let conversation, let messageNonce = nonce else { return nil }
 
         do {
@@ -89,6 +91,20 @@ public extension ZMMessage {
     @objc internal var isEditableMessage: Bool {
         false
     }
+
+    /// Serialize with send claims on the sync context. No remote hide/delete is needed before handoff.
+    private func discardUnsubmittedOutboxMessage() -> Bool {
+        guard canDiscardOutboxLocally else { return false }
+        do {
+            try cancelOutboxOperation()
+        } catch {
+            return false
+        }
+        let context = managedObjectContext
+        removeClearingSender(true)
+        context?.delete(self)
+        return true
+    }
 }
 
 extension ZMClientMessage {
@@ -98,6 +114,13 @@ extension ZMClientMessage {
             let sender, sender.isSelfUser,
             let content = genericMessage.content else {
             return false
+        }
+        if outboxState != .notEnrolled, outboxState != .sent {
+            guard hasUnclaimedOutboxContent, !isEphemeral else { return false }
+            switch content {
+            case .text, .multipart: return true
+            default: return false
+            }
         }
         switch content {
         case .edited:
