@@ -19,10 +19,12 @@ the design decisions are approved.
 
 ## Resume here
 
-Current working branch: `feat/pending-message-foundation-WPB-26307`, provisionally
-based on merge-queue candidate `53a362f1b3fe0e0a9ae907b0e532840bd30a8532` with the
-user's approval to proceed before CI finishes. See the provisional-base update
-below. Feature design, sequence, and flag approval remain pending.
+Current working branch: `feat/pending-message-foundation-WPB-26307`, based on
+`develop` at `53a362f1b3fe0e0a9ae907b0e532840bd30a8532`. This began as a provisional
+merge-queue base with the user's approval; the latest fetch confirms it landed.
+See the provisional-base update below. The user agreed to the lifecycle/schema review, proposed PR sequence, and
+default-off flag direction. The concrete PR 1 contract below is ready for review;
+schema implementation and uncertain-delivery retry policy are not yet approved.
 
 Current state: 2026-10-21. The prerequisite bootstrap tracker fix is implemented
 on `fix/preserve-bootstrap-trackers-WPB-26307`, with two regression tests and all
@@ -31,7 +33,7 @@ Read `AGENTS.md`, the reported manual results, and the code verification section
 before continuing. The user reports that the fix resolves the device upload
 problem. The user is handling a separate bug ticket, PR/branch, merge, and
 cherry-picks through release branches to `develop`; do not create duplicates.
-The new bug key and PR URL have not been supplied in this chat.
+The separate bug is `WPB-29555`, PR #5427; see the candidate verification below.
 
 Next steps, in order:
 
@@ -46,9 +48,10 @@ Next steps, in order:
    sync implementation and video receiver confirmation remain unrecorded; do not
    treat those as established. The bootstrap upload bug is separate from this feature
    and should not be reimplemented or backported again by the new session.
-3. Use the saved findings to settle the remaining design decisions and obtain
-   approval for the proposed PR sequence and default-off local flag.
-4. Start PR 1 only after that approval. Use `feat/`, `chore/`, or `fix/` branch
+3. Review the concrete PR 1 contract below. Resolve the exact schema and test
+   scope before implementing it. The user has agreed to the PR sequence and
+   default-off flag direction; do not ask for those approvals again.
+4. Start PR 1 implementation after agreeing its concrete contract. Use `feat/`, `chore/`, or `fix/` branch
    prefixes and include `WPB-26307` in commits and PR titles.
 
 All feature findings and reported observations are recorded in this file. The
@@ -77,7 +80,7 @@ are not a planned chain of PRs. Do not merge either branch wholesale into
 | --- | --- | --- |
 | `chore/pending-messages-plan-WPB-26307` | Original plan snapshot, currently at `852665c942`; superseded by the plan on the staging branch. | No merge planned. Retain until the latest plan is safely carried forward; cleanup can happen later. |
 | `fix/preserve-bootstrap-trackers-WPB-26307` | Investigation staging branch containing the isolated code fix plus subsequent plan-only commits. The old feature key does not make this the final bug PR branch. | No wholesale merge planned. Only code/test commit `b75130623b` is intended for the user's separate bug branch/PR. |
-| Separate bootstrap bug branch/PR (new Jira key and branch name not supplied) | User-owned bug fix and release backports. | User will merge/cherry-pick through the relevant release branches until the fix reaches `develop`. Do not duplicate this work. |
+| Separate bootstrap bug PR #5427 (`WPB-29555`) | User-owned bug fix and release backports. | Fix reached `develop` at `53a362f1b3`. Do not duplicate the user's PR or backport work. |
 | Future `feat/…-WPB-26307` branches | Actual offline pending-message implementation, after design approval. | Start from updated `develop` containing the bootstrap fix; feature PRs target `develop`. Carry forward only this plan file and remove it from the final PR diff. |
 
 When starting the feature branch, verify the bootstrap implementation on the base
@@ -102,12 +105,15 @@ its containing branch pushed before it can resume from that document.
       than relying on commit ancestry. The fetched base is `2654de1e4c`.
       `addChangeTrackers:` still copies `changeTrackers.mutableCopy`, and neither
       new regression test is present. The prerequisite has not reached this base.
-- [ ] Recheck updated `develop` for the prerequisite before creating a feature
-      branch. The user continues to own the separate bug PR and backports.
-- [ ] Obtain approval of the feature sequence and flag policy below. No feature
-      code, schema changes, or feature branches were created during this review.
+- [x] Recheck the prerequisite on the authorized provisional feature base and
+      confirm it subsequently reached `develop`. The user continues to own the
+      separate bug PR and backports.
+- [x] Obtain agreement on the feature sequence and default-off flag direction
+      during the subsequent lifecycle/schema discussion. Exact schema approval
+      remains separate. No feature code or schema changes have been made.
 
-Recommendations for discussion, **not approved decisions**:
+Recommendations recorded at the initial review. The subsequent user agreement
+covers the sequence and flag direction; the concrete schema remains a proposal:
 
 1. Retain PRs 1-4 below: foundation; regular-message queuing/recovery; queued
    editing/presentation; classic assets. Use PR 5 only for remaining integration
@@ -150,9 +156,9 @@ targets `develop`. It does not approve unresolved feature design decisions.
 - [x] Create `feat/pending-message-foundation-WPB-26307` at the exact candidate
       and carry forward only this plan from `090bef5898`; do not merge the
       investigation branches. Preserve the user's `.ruby-version` modification.
-- [ ] Confirm the accepted `develop` base before feature integration. If the
-      queue replaces/rejects the candidate, compare its replacement and rebase
-      only the feature branch, rechecking the prerequisite implementation.
+- [x] Fetch and confirm `github/develop` is exactly `53a362f1b3` in the subsequent
+      lifecycle review. The provisional candidate is now the accepted feature
+      base; no rebase is necessary. Recheck current `develop` before integration.
 
 Initial lifecycle/schema review: the current messaging model is `2.144.0`.
 Schema sources live in `WireData`, while version sequencing/migration support
@@ -164,6 +170,148 @@ does not prove safe end-to-end retry or lost-acknowledgement reconciliation for
 both protocols. Those details still require verification before schema approval.
 
 No production or test implementation has started. No new tests have been run.
+
+## PR 1 concrete contract for review (2026-10-21)
+
+The user agreed to proceed with this review before implementation. PR 1 remains
+foundation-only: schema, model lifecycle primitives, flag, and meaningful tests;
+no creation/edit/send call site enrolls a message yet, even with the flag on.
+
+### Findings that constrain the design
+
+- Proteus retries selected temporary errors and missing-client errors through
+  `MessageSender.sendMessage` again. This rebuilds/encrypts from the live managed
+  message; there is no persisted attempt ownership or frozen payload today.
+- MLS similarly re-enters sending after selected stale-epoch/client/group errors,
+  repairing group state where required. Generic transport failures do not provide
+  durable reconciliation. Reusing ciphertext is not a universal retry strategy:
+  an explicit stale-epoch rejection requires fresh encryption after repair.
+- `HttpClientImpl.send` exposes only a final response. The scheduler can reject
+  work before transmission when offline, but the current API does not carry a
+  durable per-attempt record proving that no bytes were handed off.
+- `MessageAPI.mapSuccessResponse` throws `errorDecodingResponse` even after an
+  HTTP success. Treating every thrown error as proof of non-delivery is unsafe.
+  Recognized positive server acceptance must be distinguished from unreadable
+  recipient/status metadata; incomplete metadata may still need reconciliation.
+- Incoming messages correlate by conversation/nonce and validate the sender
+  client. Existing `ZMClientMessage` content is not overwritten with arbitrary
+  new text: its update path applies link-preview updates instead. Reusing an
+  original nonce with changed user text cannot implement a delivered-message edit.
+- The official [GenericMessage protocol](https://github.com/wireapp/generic-message-proto#message-id)
+  defines message IDs as update correlation IDs, with multiple events per ID,
+  and permits different handling of invalid collisions. This is not an
+  end-to-end exactly-once guarantee. No backend idempotency contract or guaranteed
+  self-echo recovery was established by this review.
+- Current message dependency ordering stops looking back after three minutes.
+  A durable outbox cannot inherit that as its long-term ordering policy. Decide
+  asset-versus-text ordering before PR 2; do not change it in PR 1.
+
+Primary local sources inspected: `MessageSender.swift`, `MessageAPI.swift`,
+`HttpClientImpl.swift`, `ZMTransportRequestScheduler.m`,
+`ZMClientMessage+Encryption.swift`, `ZMOTRMessage+UpdateEvent.swift`,
+`ZMClientMessage+UpdateEvent.swift`, `ZMMessage+Dependency.swift`, and existing
+message sender/model tests. This is source inspection, not executed validation.
+
+### Proposed persisted representation
+
+Add these **local-only** attributes to abstract Core Data entity `Message`, shared
+by `ClientMessage` and `AssetClientMessage`. Expose typed accessors/lifecycle
+operations in the data model; add the attributes to ignored modification keys so
+they do not become upstream synchronization work. Keep existing delivery fields.
+
+| Attribute | Core Data type/default | Purpose |
+| --- | --- | --- |
+| `outboxStateRaw` | Integer 16, `0` | `notEnrolled = 0`, `queued = 1`, `preparing = 2`, `sending = 3`, `uncertain = 4`, `sent = 5`, `failed = 6`, `cancelled = 7`. Unknown values must fail closed, without sending or enabling editing. |
+| `outboxOperationRaw` | Integer 16, `0` | `none = 0`, `initialMessage = 1`, `edit = 2`, `contentUpdate = 3`. Keep original sends, normal edits, and protocol-supported follow-up content such as link previews distinct. |
+| `outboxEnqueuedAt` | Optional Date, nil | Stable accepted-operation time, separate from server and attempt timestamps. It does not itself decide cross-type ordering. |
+| `outboxAttemptIdentifier` | Optional UUID, nil | Fresh token when claiming each attempt; callbacks must match the current token, allowed state, and live object. |
+| `outboxPayload` | Optional Binary, nil | Serialized GenericMessage content snapshot, captured at claim before encryption and persisted atomically with the first `sending` transition before HTTP handoff. Preserve nonce, mentions, quotes, attachments, and authored content across retries. |
+| `outboxAttemptCount` | Integer 32, `0` | Persisted bounded backoff bookkeeping; increment on a claimed attempt, never while merely waiting offline. |
+| `outboxNextAttemptAt` | Optional Date, nil | Earliest eligible retry time for event-driven/backoff scheduling. It is not a queue expiration deadline. |
+
+The snapshot is the content source, not cached ciphertext. Recheck current
+membership, protocol, verification, and legal-hold rules for every attempt. Apply
+required current transport/compliance metadata to a derived copy; do not use a
+snapshot to bypass current checks. Once sent, release the snapshot and retry
+bookkeeping atomically with finalization. Starting a later edit/content update
+creates a new operation and invalidates the previous attempt token.
+Cancellation, deletion, obfuscation, and account removal must clear the snapshot
+alongside existing sensitive content and invalidate callbacks. Enrolling
+self-deleting messages remains gated on agreeing their timer policy before PR 2.
+
+### Proposed transition and recovery rules
+
+1. `notEnrolled` retains the entire legacy path. PR 1 never leaves this state
+   from production submission, editing, bootstrap, or sending code.
+2. Future enrollment persists `queued` and its operation intent before reporting
+   successful local acceptance. Network unavailability leaves it queued without
+   assigning a network-attempt deadline.
+3. Claim on the managed object context: persist `preparing` and a new attempt
+   token; capture an immutable content value before encryption. Concurrent claims
+   and in-place edits fail atomically. Use the existing persisted snapshot for
+   retries, if present. Only initial queued text with no snapshot is eligible
+   for the future in-place queued-edit action.
+4. Persist `sending` and the content snapshot atomically **before** giving any
+   message request to the HTTP client. If saving fails, do not hand off the
+   request. Snapshot presence means at least one handoff was possible; keep it
+   as a conservative content lock across retries. Start the attempt
+   timeout at handoff, keeping the existing message-destruction timer separate.
+   This requires later integration inside the sender, not only its outer strategy.
+5. Definitive pre-handoff failure or explicitly retryable non-acceptance can
+   return to `queued`, preserving any existing snapshot. A first preparation
+   failure leaves the snapshot nil and the original text editable again.
+   Connectivity recovery alone does not justify unlocking content whose handoff
+   was possible. Refining this after a proven negative response requires tracking
+   all prior acceptance outcomes, not only the last response.
+6. Lost connection/response, ambiguous timeout, or restart from `sending` becomes
+   `uncertain`, preserving the snapshot and nonce. Restart from `preparing` can
+   return to queued only under the enforced invariant that transport was never
+   called in that attempt's preparation state. An existing snapshot remains
+   locked; nil means the operation never reached possible handoff. PR 1 tests
+   the pure recovery decision; PR 2 integrates it.
+7. Accepted send finalizes as `sent`; terminal rejection becomes `failed` with
+   the existing actionable failure semantics at integration time. Deletion or
+   cancellation invalidates attempt ownership; late callbacks cannot resurrect
+   removed content. Queued never-transmitted deletion requires no remote delete.
+8. `uncertain` is never silently treated as a never-sent editable message. Do not
+   enable automatic resend from it until the protocol/recipient deduplication and
+   reconciliation policy is verified and agreed. A conservative manual-retry
+   fallback is a proposal, not an approved product behavior. This gate belongs
+   before PR 2 activation and does not require choosing a retry policy in PR 1.
+9. An open editor must retain its draft if send ownership wins the race. Before
+   PR 3, choose whether editor entry temporarily reserves an unclaimed message
+   or confirmation converts to a normal edit after confirmed delivery. Never
+   change an uncertain operation's snapshot to implement that edit.
+
+### Migration, flag, and validation scope
+
+- Create messaging model `2.145.0` from `2.144.0`, update its model identifier and
+  `.xccurrentversion`, and add `v145` / `v144 -> v145` to migration sequencing.
+  Use an inferred mapping for additive defaulted/optional fields; verify inference
+  and an actual SQLite migration rather than assuming compatibility. No migration
+  action should enroll or revive existing messages.
+- Keep schema defaults safe with `DeveloperFlag.offlinePendingMessages` off.
+  Add the flag with a nil bundle override/default false, and tests proving default
+  and explicit values. From PR 2, sample enrollment policy at session startup;
+  restart applies toggles. Existing enrolled work continues recovery when off.
+- Test real SQLite migration for regular, asset, delivered, expired, and edited
+  rows: preserve content, nonce, delivery/expiration fields, relationships, and
+  local modification keys; all new outbox metadata remains unenrolled/defaulted.
+- Test persistence across save/refetch and separate contexts; exclusive claims;
+  stale/previous-operation callback rejection; unknown raw state handling;
+  snapshot/nonce stability; preparation versus in-flight crash recovery; and
+  preservation of legacy behavior. Keep every test tied to a lifecycle invariant.
+- Run focused `WireDataModel` migration/lifecycle tests and relevant legacy model
+  tests directly with `xcodebuild`. Run flag tests in the utilities target, plus
+  formatting/lint appropriate to changed Swift code. Record exact commands and
+  results during implementation. No tests were executed for this design review.
+- Keep this plan committed on the feature branch and remove it from the final PR
+  changes before merging into `develop`.
+
+- [x] User agreement to the staged review, sequence, and default-off flag direction.
+- [x] Source review and concrete lifecycle/schema/test proposal prepared.
+- [ ] Agree the concrete PR 1 contract before schema/code implementation.
+- [ ] Before PR 2: verify/agree uncertain-delivery recovery and ordering policy.
 
 ## Goal
 
@@ -185,7 +333,9 @@ edited marker. Edits to previously sent messages retain normal edit semantics.
       `fix/`. Use `feat/` for feature work.
 - [x] Agree to keep this plan committed during feature work, carry it to later
       branches/PRs as needed, and remove it before merging into `develop`.
-- [ ] Approve the design, implementation sequence, and local flag approach.
+- [x] Agree the staged PR sequence and default-off local flag direction.
+- [ ] Agree the concrete PR 1 contract; resolve later product decisions before
+      activating the corresponding feature paths.
 - [x] Record the Jira issue key before creating commits or PRs: `WPB-26307`.
 - [x] Audit the reported baseline behaviors against the code, including asset
       reconnect handling and the cancel-to-Retry transition. See the verification
@@ -713,7 +863,7 @@ Recommendation: use small PRs targeting `develop`, with a single default-off loc
 developer flag. Each PR uses a short-lived branch with the appropriate repository
 prefix. A long-lived feature branch is not currently proposed.
 
-- [ ] Approve the default-off flag approach and choose its name.
+- [x] Agree default-off `DeveloperFlag.offlinePendingMessages` direction.
 - [ ] Preserve legacy behavior while the feature is disabled.
 - [ ] Use explicit enrollment so existing failed or legacy messages are not
       silently adopted into the outbox.
@@ -741,7 +891,8 @@ no new flag or migration should be required for this correction.
 - [x] Run the focused bootstrap tests, recording failure before and success after
       the fix, and the relevant existing suite.
 - [x] Device retest: user reports the observed issue appears fixed.
-- [ ] Record PR URL, results, and any scope implications for later feature PRs.
+- [x] Record separate fix PR #5427 (`WPB-29555`) and verify it reached `develop`
+      at `53a362f1b3`; retain the prior test evidence and user-owned backports.
 
 The user is creating the separate bug ticket and PR/branch and handling merges
 and release cherry-picks through to `develop`. Code/test commit to cherry-pick:
@@ -810,8 +961,10 @@ feature's issue; do not assume it is the new bug ticket.
 ## Decisions to settle before the relevant implementation
 
 - [x] Jira issue key: `WPB-26307`.
-- [ ] Design approval and PR sequence.
-- [ ] Flag name, enrollment rules, and toggle/restart behavior.
+- [x] Agree staged PR sequence and default-off flag direction; concrete PR 1
+      schema and tests are proposed above for review.
+- [x] Agree flag name, enrollment direction, and restart-based toggle policy;
+      detailed call-site coverage will be verified before PR 2 enrollment.
 - [ ] Exact persisted lifecycle and reconciliation strategy for uncertain delivery.
 - [ ] Editor behavior when reconnection or transmission occurs during editing.
 - [ ] Ordering policy: whether a large pending asset blocks later text messages.
