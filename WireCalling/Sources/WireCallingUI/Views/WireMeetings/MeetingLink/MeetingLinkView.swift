@@ -82,10 +82,9 @@ struct MeetingLinkView: View {
         .task { await viewModel.load() }
         .task(id: viewModel.copyConfirmation) {
             guard viewModel.copyConfirmation != nil else { return }
-            do {
-                try await Task.sleep(for: .seconds(3))
-                viewModel.copyConfirmation = nil
-            } catch {}
+            try? await Task.sleep(for: .seconds(3))
+            guard !Task.isCancelled else { return }
+            viewModel.copyConfirmation = nil
         }
     }
 
