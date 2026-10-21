@@ -60,6 +60,7 @@ struct MeetingFormView: View {
                     isTitleFieldFocused = true
                 }
             }
+            .task { await viewModel.loadInvitedEmails() }
             .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in
                 formatter = MeetingsFormatter()
             }
@@ -312,12 +313,12 @@ struct MeetingFormView: View {
     }
 
     private var participantsSection: some View {
-        Section(Strings.SetupParticipants.header) {
+        Section {
             Button {
                 isPresentingMemberSelection = true
             } label: {
                 HStack {
-                    if viewModel.selectedMembers.isEmpty {
+                    if viewModel.selectedParticipantCount == 0 {
                         Text(Strings.SetupParticipants.placeholder)
                             .foregroundStyle(Color(.placeholderText))
                         Spacer()
@@ -326,7 +327,7 @@ struct MeetingFormView: View {
                             .foregroundStyle(.primary)
                             .lineLimit(1)
                         Spacer()
-                        Text("\(viewModel.selectedMembers.count)")
+                        Text("\(viewModel.selectedParticipantCount)")
                             .foregroundStyle(.secondary)
                             .lineLimit(1)
                             .truncationMode(.tail)
@@ -339,7 +340,24 @@ struct MeetingFormView: View {
             }
             .buttonStyle(.plain)
             .accessibilityIdentifier(Locators.WireMeetings.MeetingForm.participants)
-            .accessibilityValue(String(viewModel.selectedMembers.count))
+            .accessibilityValue(String(viewModel.selectedParticipantCount))
+            .disabled(viewModel.isLoading || viewModel.needsInvitedEmails)
+        } header: {
+            Text(Strings.SetupParticipants.header)
+        } footer: {
+            if viewModel.isLoadingInvitedEmails {
+                ProgressView()
+                    .accessibilityLabel(Strings.SetupParticipants.header)
+            } else if viewModel.hasEmailLoadError {
+                VStack(alignment: .leading) {
+                    Text(Strings.Email.loadFailed)
+                        .foregroundStyle(ColorTheme.Base.error.color)
+                    Button(Strings.Members.Retry.button) {
+                        Task { await viewModel.loadInvitedEmails() }
+                    }
+                    .accessibilityIdentifier("meetingEmailsRetry")
+                }
+            }
         }
         .textCase(nil)
     }

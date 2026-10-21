@@ -176,6 +176,14 @@ package final class MeetingFormViewModel {
     }
 
     var selectedMembers: [MeetingMember] = []
+    var invitedEmails: [String] = []
+    private var originalInvitedEmails: [String]?
+    private(set) var isLoadingInvitedEmails = false
+    private(set) var hasEmailLoadError = false
+
+    var allowsEmailInvitations: Bool { supportsMeetingLinks && mode != .instant }
+    var needsInvitedEmails: Bool { allowsEmailInvitations && mode.isEdit && originalInvitedEmails == nil }
+    var selectedParticipantCount: Int { selectedMembers.count + invitedEmails.count }
     private(set) var isLoading = false
 
     var hasError = false
@@ -187,7 +195,8 @@ package final class MeetingFormViewModel {
              CreateMeetingUseCaseError.conversationSetupFailed?,
              CreateMeetingUseCaseError.addParticipantsFailed?,
              UpdateMeetingUseCaseError.addParticipantsFailed?,
-             UpdateMeetingUseCaseError.removeParticipantsFailed?:
+             UpdateMeetingUseCaseError.removeParticipantsFailed?,
+             UpdateMeetingUseCaseError.emailInvitationsFailed?:
             true
         default:
             false
@@ -227,6 +236,8 @@ package final class MeetingFormViewModel {
             return Errors.Error.addParticipantsFailed + (details.isEmpty ? "" : "\n\n" + details)
         case let UpdateMeetingUseCaseError.removeParticipantsFailed(participants)?:
             return Errors.ScheduleModal.Error.removeParticipantsFailed + participantFailureDetails(for: participants)
+        case UpdateMeetingUseCaseError.emailInvitationsFailed?:
+            return L10n.Localizable.WireMeetings.Schedule.Email.saveFailed
         case UpdateMeetingUseCaseError.conversationNotResolved?:
             return Errors.ScheduleModal.Error.editMeetingIdMissing
         default:
@@ -253,6 +264,7 @@ package final class MeetingFormViewModel {
     var conversationNameErrorMessage: String {
         L10n.Localizable.WireMeetings.Schedule.Error.ConversationName.message
             + participantFailureDetails(for: participantsNotAdded)
+            + (dismissAfterError ? "\n\n" + errorMessage : "")
     }
 
     var participantsNotAddedMessage: String {
@@ -271,14 +283,12 @@ package final class MeetingFormViewModel {
     }
 
     var selectedMembersSummary: String {
-        selectedMembers
-            .map(\.name)
-            .joined(separator: ", ")
+        (selectedMembers.map(\.name) + invitedEmails).joined(separator: ", ")
     }
 
     var isNextButtonEnabled: Bool {
         !meetingTitle.trimmingCharacters(in: .whitespacesAndNewlines)
-            .isEmpty && !isMeetingTitleTooLong && isPasswordValid && passwordsMatch
+            .isEmpty && !isMeetingTitleTooLong && !needsInvitedEmails && isPasswordValid && passwordsMatch
     }
 
     var isMeetingTitleTooLong: Bool {
@@ -335,8 +345,27 @@ package final class MeetingFormViewModel {
         MemberSelectionViewModel(
             source: searchMembersUseCase,
             initialSelection: selectedMembers,
-            onSelect: { [weak self] in self?.selectedMembers = $0 }
+            onSelect: { [weak self] in self?.selectedMembers = $0 },
+            allowsEmailInvitations: allowsEmailInvitations,
+            initialEmailSelection: invitedEmails,
+            onSelectEmails: { [weak self] in self?.invitedEmails = $0 }
         )
+    }
+
+    func loadInvitedEmails() async {
+        guard needsInvitedEmails, !isLoadingInvitedEmails, case let .edit(meeting) = mode else { return }
+        isLoadingInvitedEmails = true
+        hasEmailLoadError = false
+        defer { isLoadingInvitedEmails = false }
+        do {
+            let emails = try await updateMeetingUseCase.fetchInvitedEmails(for: meeting)
+            try Task.checkCancellation()
+            originalInvitedEmails = emails
+            invitedEmails = emails
+        } catch {
+            guard !Task.isCancelled else { return }
+            hasEmailLoadError = true
+        }
     }
 
     func submit() async {
@@ -346,8 +375,8 @@ package final class MeetingFormViewModel {
         // corrupt subsequent pagination (e.g. the next “load more” would re-fetch from offset 0 and replace data
         // unexpectedly). Consider making load(pageSize:) return/throw on failure so reloadLoadedMeetings() can restore
         // futureOffset (and possibly coalesce missed reloads while isLoading is true).
-        guard !isLoading, meetingWithParticipantsNotAdded == nil, !dismissAfterError,
-              isPasswordValid, passwordsMatch else { return }
+        guard !isLoading, !needsInvitedEmails, meetingWithParticipantsNotAdded == nil,
+              !dismissAfterError, isPasswordValid, passwordsMatch else { return }
         hasError = false
         submitError = nil
         hasConversationNameUpdateError = false
@@ -386,6 +415,19 @@ package final class MeetingFormViewModel {
             let errorType = Swift.type(of: error)
             WireLogger.search.error("failed to save meeting: \(String(describing: errorType))")
             submitError = error
+            if case let .emailInvitationsFailed(updatedMeeting)? = error as? UpdateMeetingUseCaseError {
+                originalInvitedEmails = nil
+                await loadInvitedEmails()
+                if case let .edit(original) = mode, updatedMeeting.title != original.title {
+                    do {
+                        try await updateMeetingUseCase.updateConversationName(for: updatedMeeting)
+                    } catch {
+                        meetingPendingConversationNameUpdate = updatedMeeting
+                        hasConversationNameUpdateError = true
+                        return
+                    }
+                }
+            }
             hasError = true
         }
     }
@@ -417,7 +459,9 @@ package final class MeetingFormViewModel {
         do {
             try await updateMeetingUseCase.updateConversationName(for: meeting)
             meetingPendingConversationNameUpdate = nil
-            if participantsNotAdded.isEmpty {
+            if dismissAfterError {
+                hasError = true
+            } else if participantsNotAdded.isEmpty {
                 onSuccess(meeting)
             } else {
                 meetingWithParticipantsNotAdded = meeting
@@ -445,7 +489,8 @@ package final class MeetingFormViewModel {
                 recurrence: nil,
                 type: .immediate,
                 password: nil,
-                participants: selectedMembers
+                participants: selectedMembers,
+                invitedEmails: []
             )
             return try completeCreation(result)
         case .scheduled:
@@ -456,17 +501,24 @@ package final class MeetingFormViewModel {
                 recurrence: repeatOption.toRecurrence(),
                 type: .scheduled,
                 password: canSetPassword && !password.isEmpty ? password : nil,
-                participants: selectedMembers
+                participants: selectedMembers,
+                invitedEmails: allowsEmailInvitations ? invitedEmails : []
             )
             return try completeCreation(result)
         case let .edit(meeting):
+            let original = allowsEmailInvitations ? originalInvitedEmails ?? [] : []
+            let selected = allowsEmailInvitations ? invitedEmails : []
+            let originalKeys = Set(original.map { $0.lowercased() })
+            let selectedKeys = Set(selected.map { $0.lowercased() })
             return try await updateMeetingUseCase.invoke(
                 meeting: meeting,
                 title: meetingTitle,
                 startTime: startDate,
                 endTime: endDate,
                 recurrence: repeatOption.toRecurrence(),
-                participants: selectedMembers
+                participants: selectedMembers,
+                emailsToAdd: selected.filter { !originalKeys.contains($0.lowercased()) },
+                emailsToRemove: original.filter { !selectedKeys.contains($0.lowercased()) }
             )
         }
     }
