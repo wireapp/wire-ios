@@ -25,16 +25,24 @@ import WireLocators
 struct MeetingRow: View {
     private typealias Strings = L10n.Localizable.WireMeetings.List
 
-    let meeting: Meeting
-    let formatTimeRange: (Meeting) -> String
+    let occurrence: MeetingOccurrence
+    let formatTime: (MeetingOccurrence) -> String
+    let isOrganizer: Bool
     var isAttending: Bool = false
+    var isLive: Bool = false
     let onEdit: () -> Void
     let onDelete: () -> Void
+    var onJoin: () -> Void = {}
+    var onMeetingLink: (() -> Void)?
 
     @Environment(\.wireAccentColor) private var wireAccentColor
 
     @ScaledMetric private var iconBoxSize: CGFloat = 31
     @ScaledMetric private var iconFontSize: CGFloat = 15
+
+    private var meeting: Meeting {
+        occurrence.meeting
+    }
 
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
@@ -54,6 +62,7 @@ struct MeetingRow: View {
             VStack(alignment: .leading, spacing: 2) {
                 HStack(alignment: .top) {
                     Text(meeting.title)
+                        .accessibilityIdentifier(Locators.WireMeetings.MeetingRow.title)
                         .font(for: .body2)
                         .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
                         .lineLimit(2)
@@ -62,51 +71,115 @@ struct MeetingRow: View {
 
                     Menu {
                         Button {
-                            onEdit()
+                            onJoin()
                         } label: {
-                            Label(Strings.Actions.edit, systemImage: "pencil")
+                            Label {
+                                Text(Strings.Actions.joinNow)
+                            } icon: {
+                                Image(.videoCall)
+                                    .renderingMode(.template)
+                            }
                         }
+                        .disabled(meeting.conversation == nil)
 
-                        Button(role: .destructive) {
-                            onDelete()
-                        } label: {
-                            Label(Strings.Actions.delete, systemImage: "trash")
+                        if isOrganizer {
+                            Button {
+                                onEdit()
+                            } label: {
+                                Label(Strings.Actions.edit, systemImage: "pencil")
+                            }
+                            .disabled(meeting.conversation == nil)
+
+                            if let onMeetingLink {
+                                Button(action: onMeetingLink) {
+                                    Label(L10n.Localizable.WireMeetings.Link.title, systemImage: "link")
+                                }
+                                .accessibilityIdentifier(Locators.WireMeetings.MeetingRow.meetingLink)
+                            }
+
+                            Button(role: .destructive) {
+                                onDelete()
+                            } label: {
+                                Label(Strings.Actions.delete, systemImage: "trash")
+                            }
+                            .tint(ColorTheme.Base.error.color)
+                        } else {
+                            Button(role: .destructive) {
+                                onDelete()
+                            } label: {
+                                Label(Strings.Actions.deleteForMe, systemImage: "trash")
+                            }
+                            .tint(ColorTheme.Base.error.color)
+                            .disabled(meeting.conversation == nil)
+                            .accessibilityIdentifier(Locators.WireMeetings.MeetingRow.deleteForMeButton)
                         }
                     } label: {
                         Image(systemName: "ellipsis")
                             .rotationEffect(.degrees(90))
                             .foregroundStyle(ColorTheme.Buttons.Secondary.onEnabled.color)
-                            // The design's padding is 12/8; the extra 12pt of vertical
-                            // padding grows the tap target to ~44pt and is cancelled
-                            // out by the negative padding below, so the layout keeps
-                            // the design's spacing.
                             .padding(.horizontal, 12)
                             .padding(.vertical, 20)
                             .contentShape(Rectangle())
                     }
+                    .menuOrder(.fixed)
+                    .accessibilityIdentifier(Locators.WireMeetings.MeetingRow.menu)
                     .padding(.vertical, -12)
                 }
 
                 HStack(spacing: 8) {
-                    Text(formatTimeRange(meeting))
+                    Text(formatTime(occurrence))
+                        .accessibilityIdentifier(Locators.WireMeetings.MeetingRow.time)
                         .font(for: .subline1)
                         .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
 
                     if let recurrence = meeting.recurrence {
                         recurrenceBadge(recurrence.title)
+                            .accessibilityIdentifier(Locators.WireMeetings.MeetingRow.recurrence)
                     }
                 }
 
                 if let conversation = meeting.conversation, !conversation.participants.isEmpty {
-                    MemberAvatarsView(members: conversation.participants.sorted { $0.name < $1.name })
+                    MemberAvatarsView(members: Array(conversation.participants))
                         .padding(.top, 2)
                 }
                 if isAttending {
                     attendingLabel
                         .padding(.top, 10)
+                } else if isLive {
+                    joinButton
+                        .padding(.top, 10)
                 }
             }
         }
+        .accessibilityElement(children: .contain)
+        .accessibilityIdentifier(
+            Locators.WireMeetings.MeetingRow.rowIdentifier(
+                domain: meeting.id.domain,
+                id: meeting.id.id,
+                start: occurrence.start
+            )
+        )
+    }
+
+    private var joinButton: some View {
+        Button(action: onJoin) {
+            HStack(spacing: 8) {
+                Image(.videoCall)
+                    .renderingMode(.template)
+                    .accessibilityHidden(true)
+
+                Text(Strings.Actions.join)
+            }
+            .font(for: .buttonSmall)
+            .foregroundStyle(ColorTheme.Base.onPrimary.color)
+            .padding(.horizontal, 24)
+            .padding(.vertical, 10)
+            .background(ColorTheme.Base.primary(wireAccentColor).color, in: Capsule())
+        }
+        .buttonStyle(.plain)
+        .disabled(meeting.conversation == nil)
+        .accessibilityIdentifier(Locators.WireMeetings.MeetingRow.joinButton)
+        .accessibilityLabel(Text(L10n.Accessibility.WireMeetings.JoinButton.description))
     }
 
     private var attendingLabel: some View {
@@ -157,35 +230,68 @@ private extension MeetingRecurrence {
 }
 
 #Preview {
-    MeetingRow(
-        meeting: Meeting(
-            id: QualifiedID(id: UUID(), domain: ""),
-            title: "Meeting1",
-            start: Date(),
-            end: Date(),
-            recurrence: MeetingRecurrence(frequency: .daily, interval: 1),
-            conversation: MeetingConversation(
-                participants: [
-                    MeetingMember(
-                        qualifiedID: QualifiedID(id: UUID(), domain: ""),
-                        name: "Alice Smith",
-                        handle: "alice",
-                        initials: "AS"
-                    ),
-                    MeetingMember(
-                        qualifiedID: QualifiedID(id: UUID(), domain: ""),
-                        name: "Bob Jones",
-                        handle: "bob",
-                        initials: "BJ"
-                    )
-                ]
-            ),
-            conversationID: QualifiedID(id: UUID(), domain: ""),
-            creatorID: QualifiedID(id: UUID(), domain: "")
+    let meeting = Meeting(
+        id: QualifiedID(id: UUID(), domain: ""),
+        title: "Meeting1",
+        start: Date(),
+        end: Date(),
+        recurrence: MeetingRecurrence(frequency: .daily, interval: 1),
+        conversation: MeetingConversation(
+            participants: [
+                MeetingMember(
+                    qualifiedID: QualifiedID(id: UUID(), domain: ""),
+                    name: "Alice Smith",
+                    handle: "alice",
+                    isSelfUser: true,
+                    initials: "AS",
+                    accentColor: .default,
+                    avatarImageData: nil
+                ),
+                MeetingMember(
+                    qualifiedID: QualifiedID(id: UUID(), domain: ""),
+                    name: "Bob Jones",
+                    handle: "bob",
+                    isSelfUser: false,
+                    initials: "BJ",
+                    accentColor: .default,
+                    avatarImageData: nil
+                )
+            ]
         ),
-        formatTimeRange: { _ in "Today" },
-        isAttending: true,
-        onEdit: {},
-        onDelete: {}
+        conversationID: QualifiedID(id: UUID(), domain: ""),
+        creatorID: QualifiedID(id: UUID(), domain: "")
     )
+
+    let formatter = MeetingsFormatter()
+
+    VStack(alignment: .leading, spacing: 24) {
+        MeetingRow(
+            occurrence: MeetingOccurrence(meeting: meeting),
+            formatTime: { formatter.timeRange(from: $0.start, to: $0.end) },
+            isOrganizer: true,
+            isLive: true,
+            onEdit: {},
+            onDelete: {},
+            onJoin: {}
+        )
+
+        MeetingRow(
+            occurrence: MeetingOccurrence(meeting: meeting),
+            formatTime: { formatter.timeRange(from: $0.start, to: $0.end) },
+            isOrganizer: true,
+            isAttending: true,
+            isLive: true,
+            onEdit: {},
+            onDelete: {}
+        )
+
+        MeetingRow(
+            occurrence: MeetingOccurrence(meeting: meeting),
+            formatTime: { formatter.timeRange(from: $0.start, to: $0.end) },
+            isOrganizer: true,
+            onEdit: {},
+            onDelete: {}
+        )
+    }
+    .padding()
 }

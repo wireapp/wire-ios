@@ -95,7 +95,7 @@ public struct PullPendingUpdateEventsSync: PullPendingUpdateEventsSyncProtocol {
 
             // We are decrypting the batch within one core crypto transaction
             try await coreCryptoProvider.coreCrypto().transaction { context in
-                WireLogger.sync.debug(
+                WireLogger.sync.info(
                     "decrypting batch of \(envelopes.count) envelopes",
                     attributes: .safePublic
                 )

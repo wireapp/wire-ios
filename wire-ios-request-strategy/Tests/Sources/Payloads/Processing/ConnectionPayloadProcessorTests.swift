@@ -111,6 +111,61 @@ final class ConnectionPayloadProcessorTests: MessagingTestBase {
         }
     }
 
+    func testThatAnEstablishedMLSConversationIsNotOverwrittenByTheProteusConnectionConversation() {
+        syncMOC.performGroupedAndWait {
+            // given an established MLS one-on-one that was *not* flagged as migrated
+            // (e.g. created directly as MLS rather than via the proteus→MLS migration)
+            let mlsConversation = ZMConversation.insertNewObject(in: self.syncMOC)
+            mlsConversation.domain = self.owningDomain
+            mlsConversation.remoteIdentifier = UUID.create()
+            mlsConversation.conversationType = .oneOnOne
+            mlsConversation.messageProtocol = .mls
+            mlsConversation.mlsStatus = .ready
+            mlsConversation.migratedToMLS = false
+            self.otherUser.oneOnOneConversation = mlsConversation
+
+            // when the backend reports the proteus connection conversation
+            let payload = self.createConnectionPayload(
+                to: self.otherUser.qualifiedID!,
+                conversation: self.oneToOneConversation.qualifiedID!
+            )
+            self.sut.updateOrCreateConnection(
+                from: payload,
+                in: self.syncMOC
+            )
+
+            // then the MLS link is preserved (the proteus conversation does not shadow it)
+            XCTAssertEqual(self.otherUser.oneOnOneConversation, mlsConversation)
+        }
+    }
+
+    func testThatANonEstablishedMLSConversationIsOverwrittenByTheProteusConnectionConversation() {
+        syncMOC.performGroupedAndWait {
+            // given an MLS one-on-one whose group is not yet established and was not migrated
+            let mlsConversation = ZMConversation.insertNewObject(in: self.syncMOC)
+            mlsConversation.domain = self.owningDomain
+            mlsConversation.remoteIdentifier = UUID.create()
+            mlsConversation.conversationType = .oneOnOne
+            mlsConversation.messageProtocol = .mls
+            mlsConversation.mlsStatus = .pendingJoin
+            mlsConversation.migratedToMLS = false
+            self.otherUser.oneOnOneConversation = mlsConversation
+
+            // when the backend reports the proteus connection conversation
+            let payload = self.createConnectionPayload(
+                to: self.otherUser.qualifiedID!,
+                conversation: self.oneToOneConversation.qualifiedID!
+            )
+            self.sut.updateOrCreateConnection(
+                from: payload,
+                in: self.syncMOC
+            )
+
+            // then the link is (re)set to the proteus connection conversation
+            XCTAssertEqual(self.otherUser.oneOnOneConversation, self.oneToOneConversation)
+        }
+    }
+
     func testThatOtherUserIsAddedToConversation() {
         syncMOC.performGroupedAndWait {
             // given

@@ -201,6 +201,12 @@ public final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
                 isEnabled: mLSMigrationFeatureConfig.status == .enabled
             )
 
+        case let .meetings(config):
+            return FeatureState(
+                name: .meetings,
+                isEnabled: config.status == .enabled
+            )
+
         case let .selfDeletingMessages(selfDeletingMessagesFeatureConfig):
 
             return FeatureState(

@@ -41,9 +41,9 @@ final class FilesSortingViewModel: ObservableObject {
         var iconName: String {
             switch self {
             case .ascending:
-                "arrow.down"
-            case .descending:
                 "arrow.up"
+            case .descending:
+                "arrow.down"
             }
         }
     }
@@ -81,7 +81,7 @@ final class FilesSortingViewModel: ObservableObject {
         var sortingOrder: SortingOrder?
     }
 
-    @Published var sortingSelection: SortingSelection = .default
+    @Published var sortingSelection: SortingSelection
 
     let isBrowsing: Bool
     private let onUpdate: (SortingSelection) -> Void
@@ -97,12 +97,11 @@ final class FilesSortingViewModel: ObservableObject {
     }
 
     init(
-        sortingSelection: SortingSelection = .default,
         isBrowsing: Bool,
         subfolderName: String? = nil,
         onUpdate: @escaping (SortingSelection) -> Void
     ) {
-        self.sortingSelection = sortingSelection
+        self.sortingSelection = isBrowsing ? .defaultDrive : .defaultSharedDrive
         self.isBrowsing = isBrowsing
         self.subfolderName = subfolderName
         self.onUpdate = onUpdate
@@ -147,6 +146,9 @@ final class FilesSortingViewModel: ObservableObject {
 }
 
 extension FilesSortingViewModel.SortingSelection {
-    /// no sorting criterion applied
-    static let `default` = Self(sortingKey: nil, sortingOrder: nil)
+    /// newest first
+    static let defaultDrive = Self(sortingKey: .date, sortingOrder: .descending)
+
+    /// none
+    static let defaultSharedDrive = Self(sortingKey: nil, sortingOrder: nil)
 }

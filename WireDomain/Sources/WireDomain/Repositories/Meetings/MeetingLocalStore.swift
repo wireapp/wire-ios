@@ -24,6 +24,10 @@ import WireFoundation
 
 final class MeetingLocalStore: MeetingLocalStoreProtocol, @unchecked Sendable {
 
+    enum Error: Swift.Error, Equatable {
+        case failedToSave
+    }
+
     private let context: NSManagedObjectContext
 
     init(context: NSManagedObjectContext) {
@@ -76,15 +80,15 @@ final class MeetingLocalStore: MeetingLocalStoreProtocol, @unchecked Sendable {
         }
     }
 
-    func deleteMeeting(id: WireCallingDomain.QualifiedID) async {
-        await context.perform { [context] in
+    func deleteMeeting(id: WireCallingDomain.QualifiedID) async throws {
+        try await context.perform { [context] in
             let request = StoredMeeting.fetchRequest()
             request.predicate = Self.predicate(id: .init(uuid: id.id, domain: id.domain))
             request.fetchLimit = 1
-            guard let storedMeeting = try? context.fetch(request).first else { return }
+            guard let storedMeeting = try context.fetch(request).first else { return }
 
             context.delete(storedMeeting)
-            _ = context.saveOrRollback()
+            guard context.saveOrRollback() else { throw Error.failedToSave }
         }
     }
 
@@ -98,15 +102,22 @@ final class MeetingLocalStore: MeetingLocalStoreProtocol, @unchecked Sendable {
         storedMeeting.title = meeting.title
         storedMeeting.start = meeting.start
         storedMeeting.end = meeting.end
+        storedMeeting.timeZoneIdentifier = meeting.timeZoneIdentifier
         storedMeeting.recurrenceFrequency = meeting.recurrence?.frequency.toStoredFrequency()
         storedMeeting.recurrenceInterval = Int64(meeting.recurrence?.interval ?? 0)
         storedMeeting.recurrenceUntil = meeting.recurrence?.until
-        storedMeeting.conversation = ZMConversation.fetch(
+        let conversation = ZMConversation.fetchOrCreate(
             with: meeting.conversationID.id,
             domain: meeting.conversationID.domain,
             in: context
         )
-        storedMeeting.creator = ZMUser.fetch(
+        if conversation.isPendingInitialFetch {
+            // The meeting response identifies the group, but its metadata still needs to be pulled.
+            conversation.conversationType = .group
+            conversation.groupType = .meeting
+        }
+        storedMeeting.conversation = conversation
+        storedMeeting.creator = ZMUser.fetchOrCreate(
             with: meeting.creatorID.id,
             domain: meeting.creatorID.domain,
             in: context
@@ -169,9 +180,10 @@ private extension StoredMeeting {
             start: start,
             end: end,
             recurrence: toDomainRecurrence(),
-            conversation: MeetingConversation(
-                participants: conversation.toMeetingMembers()
-            ),
+            timeZoneIdentifier: timeZoneIdentifier,
+            conversation: conversation.isPendingInitialFetch || !conversation.isMeeting
+                ? nil
+                : MeetingConversation(participants: conversation.toMeetingMembers()),
             conversationID: domainConversationID,
             creatorID: QualifiedID(id: creatorID.uuid, domain: creatorID.domain)
         )
@@ -206,6 +218,7 @@ private extension ZMConversation {
                 qualifiedID: QualifiedID(id: qualifiedID.uuid, domain: qualifiedID.domain),
                 name: user.name ?? "",
                 handle: user.handle ?? "",
+                isSelfUser: user.isSelfUser,
                 initials: user.initials ?? "",
                 accentColor: user.accentColor ?? .default,
                 avatarImageData: user.previewImageData

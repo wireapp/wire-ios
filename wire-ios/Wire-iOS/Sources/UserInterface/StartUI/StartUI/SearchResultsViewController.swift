@@ -359,6 +359,8 @@ final class SearchResultsViewController: UIViewController {
         var filteredContacts = searchResult.contacts
         var filteredTeamContacts = searchResult.teamMembers
         var filteredApps = searchResult.apps
+        // Human collaborators are rendered like regular team members (apps and bots are filtered out).
+        var filteredCollaborators = searchResult.collaborators
 
         if let filteredParticipants = filterConversation?.localParticipants {
             filteredContacts = filteredContacts.filter {
@@ -373,29 +375,29 @@ final class SearchResultsViewController: UIViewController {
                 }
                 return !filteredParticipants.contains(user)
             }
-            filteredApps = filteredApps
-                .compactMap { $0 as? ZMUser }
-                .filter { !filteredParticipants.contains($0) }
+            filteredApps = filteredApps.filter { app in
+                guard let user = (app as? ZMUser) ?? (app as? ZMSearchUser)?.user else {
+                    return true
+                }
+                return !filteredParticipants.contains(user)
+            }
+            filteredCollaborators = filteredCollaborators.filter {
+                guard let user = $0.user else {
+                    return true
+                }
+                return !filteredParticipants.contains(user)
+            }
         }
 
         contactsSection.contacts = filteredContacts
 
-        // Access mode is not set, or the guests are allowed.
-        if shouldIncludeGuests {
-            teamMemberAndContactsSection.contacts = Set(filteredTeamContacts + filteredContacts).sorted {
-                let name0 = $0.name ?? ""
-                let name1 = $1.name ?? ""
+        let teamMembersAndCollaborators = filteredTeamContacts + filteredCollaborators
 
-                if name0 == name1 {
-                    let pseudo0 = $0.handle ?? ""
-                    let pseudo1 = $1.handle ?? ""
-                    return pseudo0.compare(pseudo1) == .orderedAscending
-                }
-                return name0.compare(name1) == .orderedAscending
-            }
-        } else {
-            teamMemberAndContactsSection.contacts = filteredTeamContacts
-        }
+        // Access mode is not set, or the guests are allowed.
+        let combinedContacts = shouldIncludeGuests ?
+            teamMembersAndCollaborators + filteredContacts :
+            teamMembersAndCollaborators
+        teamMemberAndContactsSection.contacts = sorted(byNameThenHandle: Set(combinedContacts))
 
         directorySection.suggestions = searchResult.directory.filter { !$0.isFederated }
         conversationsSection.groupConversations = searchResult.conversations
@@ -404,6 +406,20 @@ final class SearchResultsViewController: UIViewController {
         federationSection.users = searchResult.directory.filter(\.isFederated)
 
         sectionController.collectionView?.reloadData()
+    }
+
+    private func sorted(byNameThenHandle users: some Sequence<ZMSearchUser>) -> [ZMSearchUser] {
+        users.sorted {
+            let name0 = $0.name ?? ""
+            let name1 = $1.name ?? ""
+
+            if name0 == name1 {
+                let pseudo0 = $0.handle ?? ""
+                let pseudo1 = $1.handle ?? ""
+                return pseudo0.compare(pseudo1) == .orderedAscending
+            }
+            return name0.compare(name1) == .orderedAscending
+        }
     }
 
     func sectionFor(controller: CollectionViewSectionController) -> SearchResultsViewControllerSection {
@@ -437,17 +453,17 @@ extension SearchResultsViewController: SearchSectionControllerDelegate {
         didSelectUser user: UserType,
         at indexPath: IndexPath
     ) {
-        if let user = user as? ZMUser, user.type == .regular {
+        if user.isApp {
+            delegate?.searchResultsViewController(self, didTapOnApp: user)
+        } else if user.isBot {
+            delegate?.searchResultsViewController(self, didTapOnBot: user)
+        } else if let user = user as? ZMUser {
             delegate?.searchResultsViewController(
                 self,
                 didTapOnUser: user,
                 indexPath: indexPath,
                 section: sectionFor(controller: searchSectionController)
             )
-        } else if let user = user as? ZMUser, user.type == .app {
-            delegate?.searchResultsViewController(self, didTapOnApp: user)
-        } else if user.isAppOrBot {
-            delegate?.searchResultsViewController(self, didTapOnBot: user)
         } else if let searchUser = user as? ZMSearchUser {
             delegate?.searchResultsViewController(
                 self,

@@ -33,19 +33,31 @@ struct UpdateMeetingUseCaseTests {
     private static let keptMember = MeetingMember(
         qualifiedID: QualifiedID(id: UUID(), domain: "example.com"),
         name: "Katie Armstrong",
-        handle: "katie"
+        handle: "katie",
+        isSelfUser: false,
+        initials: "",
+        accentColor: .default,
+        avatarImageData: nil
     )
 
     private static let removedMember = MeetingMember(
         qualifiedID: QualifiedID(id: UUID(), domain: "example.com"),
         name: "Marco Weissnat",
-        handle: "marco"
+        handle: "marco",
+        isSelfUser: false,
+        initials: "",
+        accentColor: .default,
+        avatarImageData: nil
     )
 
     private static let addedMember = MeetingMember(
         qualifiedID: QualifiedID(id: UUID(), domain: "example.com"),
         name: "Olga Heaney",
-        handle: "olga"
+        handle: "olga",
+        isSelfUser: false,
+        initials: "",
+        accentColor: .default,
+        avatarImageData: nil
     )
 
     private let meeting = Meeting(
@@ -68,6 +80,19 @@ struct UpdateMeetingUseCaseTests {
         )
     }
 
+    private func makeMeeting(title: String, participants: Set<MeetingMember>? = nil) -> Meeting {
+        Meeting(
+            id: meeting.id,
+            title: title,
+            start: meeting.start,
+            end: meeting.end,
+            recurrence: meeting.recurrence,
+            conversation: participants.map { MeetingConversation(participants: $0) } ?? meeting.conversation,
+            conversationID: meeting.conversationID,
+            creatorID: meeting.creatorID
+        )
+    }
+
     @Test("invoke updates the meeting via the repository and returns it")
     func invokeUpdatesMeeting() async throws {
         // Given
@@ -83,7 +108,9 @@ struct UpdateMeetingUseCaseTests {
             startTime: meeting.start,
             endTime: meeting.end,
             recurrence: recurrence,
-            participants: [Self.keptMember, Self.removedMember]
+            participants: [Self.keptMember, Self.removedMember],
+            emailsToAdd: ["new@example.com"],
+            emailsToRemove: ["removed@example.com"]
         )
 
         // Then
@@ -94,15 +121,21 @@ struct UpdateMeetingUseCaseTests {
         #expect(arguments?.startTime == meeting.start)
         #expect(arguments?.endTime == meeting.end)
         #expect(arguments?.recurrence == recurrence)
+        let emailArguments = meetingRepository
+            .updateInvitedEmailsIdQualifiedIDAddingStringRemovingStringVoidReceivedArguments
+        #expect(emailArguments?.id == meeting.id)
+        #expect(emailArguments?.adding == ["new@example.com"])
+        #expect(emailArguments?.removing == ["removed@example.com"])
         #expect(result == meeting)
     }
 
     @Test("invoke renames the underlying conversation when the title changed")
     func invokeRenamesConversation() async throws {
         // Given
+        let updatedMeeting = makeMeeting(title: "Saved Standup")
         meetingRepository
             .updateMeetingIdQualifiedIDTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceMeetingReturnValue =
-            meeting
+            updatedMeeting
 
         // When
         _ = try await useCase.invoke(
@@ -116,8 +149,8 @@ struct UpdateMeetingUseCaseTests {
 
         // Then
         let nameArguments = conversationRepository
-            .setConversationNameNameStringForConversationIDQualifiedIDVoidReceivedArguments
-        #expect(nameArguments?.name == "Renamed Standup")
+            .updateConversationNameNameStringForConversationIDQualifiedIDVoidReceivedArguments
+        #expect(nameArguments?.name == updatedMeeting.title)
         #expect(nameArguments?.conversationID == meeting.conversationID)
     }
 
@@ -140,7 +173,7 @@ struct UpdateMeetingUseCaseTests {
 
         // Then
         #expect(conversationRepository
-            .setConversationNameNameStringForConversationIDQualifiedIDVoidCallsCount == 0)
+            .updateConversationNameNameStringForConversationIDQualifiedIDVoidCallsCount == 0)
     }
 
     @Test("invoke adds newly selected members and removes deselected ones")
@@ -149,6 +182,12 @@ struct UpdateMeetingUseCaseTests {
         meetingRepository
             .updateMeetingIdQualifiedIDTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceMeetingReturnValue =
             meeting
+        meetingRepository.storeMeetingMeetingMeetingVoidClosure = { _ in
+            #expect(conversationRepository
+                .addParticipantsParticipantsMeetingMemberToConversationIDQualifiedIDVoidCallsCount == 1)
+            #expect(conversationRepository
+                .removeParticipantsParticipantsMeetingMemberFromConversationIDQualifiedIDVoidCallsCount == 1)
+        }
 
         // When
         _ = try await useCase.invoke(
@@ -169,6 +208,36 @@ struct UpdateMeetingUseCaseTests {
             .removeParticipantsParticipantsMeetingMemberFromConversationIDQualifiedIDVoidReceivedArguments
         #expect(removeArguments?.participants == [Self.removedMember])
         #expect(removeArguments?.conversationID == meeting.conversationID)
+        #expect(meetingRepository.storeMeetingMeetingMeetingVoidReceivedInvocations == [meeting])
+    }
+
+    @Test("invoke skips completed participant changes without undoing changes from another device", arguments: [
+        [keptMember, addedMember],
+        [keptMember, removedMember]
+    ])
+    func invokePreservesParticipantChanges(selectedMembers: [MeetingMember]) async throws {
+        // Given a newer membership snapshot than the one the form was opened with.
+        meetingRepository
+            .updateMeetingIdQualifiedIDTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceMeetingReturnValue =
+            makeMeeting(title: meeting.title, participants: [Self.keptMember, Self.addedMember])
+
+        // When
+        _ = try await useCase.invoke(
+            meeting: meeting,
+            title: meeting.title,
+            startTime: meeting.start,
+            endTime: meeting.end,
+            recurrence: nil,
+            participants: selectedMembers
+        )
+
+        // Then
+        #expect(conversationRepository
+            .addParticipantsParticipantsMeetingMemberToConversationIDQualifiedIDVoidReceivedArguments?.participants
+            .isEmpty == true)
+        #expect(conversationRepository
+            .removeParticipantsParticipantsMeetingMemberFromConversationIDQualifiedIDVoidReceivedArguments?.participants
+            .isEmpty == true)
     }
 
     @Test("invoke leaves the participants unchanged when the selection matches the members")
@@ -195,6 +264,7 @@ struct UpdateMeetingUseCaseTests {
         let removeArguments = conversationRepository
             .removeParticipantsParticipantsMeetingMemberFromConversationIDQualifiedIDVoidReceivedArguments
         #expect(removeArguments?.participants.isEmpty == true)
+        #expect(meetingRepository.updateInvitedEmailsIdQualifiedIDAddingStringRemovingStringVoidCallsCount == 0)
     }
 
     @Test("invoke does not touch the participants when updating the meeting fails")
@@ -212,11 +282,43 @@ struct UpdateMeetingUseCaseTests {
                 startTime: meeting.start,
                 endTime: meeting.end,
                 recurrence: nil,
-                participants: [Self.addedMember]
+                participants: [Self.addedMember],
+                emailsToAdd: ["new@example.com"]
             )
         }
         #expect(conversationRepository
-            .setConversationNameNameStringForConversationIDQualifiedIDVoidCallsCount == 0)
+            .updateConversationNameNameStringForConversationIDQualifiedIDVoidCallsCount == 0)
+        #expect(conversationRepository
+            .addParticipantsParticipantsMeetingMemberToConversationIDQualifiedIDVoidCallsCount == 0)
+        #expect(conversationRepository
+            .removeParticipantsParticipantsMeetingMemberFromConversationIDQualifiedIDVoidCallsCount == 0)
+        #expect(meetingRepository.updateInvitedEmailsIdQualifiedIDAddingStringRemovingStringVoidCallsCount == 0)
+    }
+
+    @Test("invoke reports an email failure before changing conversation members")
+    func invokeStopsWhenEmailInvitationsFail() async {
+        meetingRepository
+            .updateMeetingIdQualifiedIDTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceMeetingReturnValue =
+            meeting
+        meetingRepository.updateInvitedEmailsIdQualifiedIDAddingStringRemovingStringVoidThrowableError =
+            URLError(.networkConnectionLost)
+
+        await #expect(throws: UpdateMeetingUseCaseError.emailInvitationsFailed(updatedMeeting: meeting)) {
+            _ = try await useCase.invoke(
+                meeting: meeting,
+                title: meeting.title,
+                startTime: meeting.start,
+                endTime: meeting.end,
+                recurrence: nil,
+                participants: [Self.keptMember, Self.addedMember],
+                emailsToAdd: ["new@example.com"],
+                emailsToRemove: ["removed@example.com"]
+            )
+        }
+
+        #expect(meetingRepository
+            .updateMeetingIdQualifiedIDTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceMeetingCallsCount ==
+            1)
         #expect(conversationRepository
             .addParticipantsParticipantsMeetingMemberToConversationIDQualifiedIDVoidCallsCount == 0)
         #expect(conversationRepository
@@ -258,7 +360,11 @@ struct UpdateMeetingUseCaseTests {
         let creatorMember = MeetingMember(
             qualifiedID: QualifiedID(id: UUID(), domain: "example.com"),
             name: "Erika Muster",
-            handle: "erika"
+            handle: "erika",
+            isSelfUser: false,
+            initials: "",
+            accentColor: .default,
+            avatarImageData: nil
         )
         let meeting = Meeting(
             id: QualifiedID(id: UUID(), domain: "example.com"),
@@ -293,6 +399,45 @@ struct UpdateMeetingUseCaseTests {
         let removeArguments = conversationRepository
             .removeParticipantsParticipantsMeetingMemberFromConversationIDQualifiedIDVoidReceivedArguments
         #expect(removeArguments?.participants.isEmpty == true)
+    }
+
+    @Test("a failed conversation rename can be retried without updating the meeting again")
+    func invokeWithFailedConversationRenameRetriesOnlyRename() async throws {
+        // Given
+        let updatedMeeting = makeMeeting(title: "Saved Standup")
+        meetingRepository
+            .updateMeetingIdQualifiedIDTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceMeetingReturnValue =
+            updatedMeeting
+        conversationRepository
+            .updateConversationNameNameStringForConversationIDQualifiedIDVoidThrowableError =
+            URLError(.badServerResponse)
+
+        // When
+        await #expect(throws: UpdateMeetingUseCaseError.conversationNameUpdateFailed(updatedMeeting: updatedMeeting)) {
+            _ = try await useCase.invoke(
+                meeting: meeting,
+                title: "Submitted Standup",
+                startTime: meeting.start,
+                endTime: meeting.end,
+                recurrence: nil,
+                participants: [Self.keptMember, Self.addedMember]
+            )
+        }
+        conversationRepository.updateConversationNameNameStringForConversationIDQualifiedIDVoidThrowableError = nil
+        try await useCase.updateConversationName(for: updatedMeeting)
+
+        // Then
+        #expect(meetingRepository
+            .updateMeetingIdQualifiedIDTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceMeetingCallsCount ==
+            1)
+        let renameInvocations = conversationRepository
+            .updateConversationNameNameStringForConversationIDQualifiedIDVoidReceivedInvocations
+        #expect(renameInvocations.map(\.name) == [updatedMeeting.title, updatedMeeting.title])
+        #expect(renameInvocations.map(\.conversationID) == [meeting.conversationID, meeting.conversationID])
+        #expect(conversationRepository
+            .addParticipantsParticipantsMeetingMemberToConversationIDQualifiedIDVoidCallsCount == 1)
+        #expect(conversationRepository
+            .removeParticipantsParticipantsMeetingMemberFromConversationIDQualifiedIDVoidCallsCount == 1)
     }
 
 }

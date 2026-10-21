@@ -19,6 +19,8 @@
 import avs
 import Combine
 import Foundation
+import struct WireDomain.AnsweredElsewhereCallTracker
+import enum WireFoundation.AnsweredElsewhereCallKey
 import WireLogging
 
 /// WireCallCenter is used for making Wire calls and observing their state. There can only be one instance of the
@@ -74,6 +76,11 @@ public class WireCallCenterV3: NSObject {
 
     /// The snaphot of the call state for each non-idle conversation.
     var callSnapshots: [AVSIdentifier: CallSnapshot] = [:]
+
+    /// Group calls that the self user answered or started on another device.
+    var callsAnsweredElsewhere = Set<AVSIdentifier>()
+
+    private var conversationDeletionObservers: [AVSIdentifier: ManagedObjectContextChangeObserver] = [:]
 
     /// Used to collect incoming events (e.g. from fetching the notification stream) until AVS is ready to process them.
     var bufferedEvents: [CallEvent] = []
@@ -157,6 +164,7 @@ public class WireCallCenterV3: NSObject {
 
     func tearDown() {
         isEnabled = false
+        conversationDeletionObservers.removeAll()
     }
 
 }
@@ -167,6 +175,7 @@ extension WireCallCenterV3 {
 
     /// Removes the participantSnapshot and remove the conversation from the list of ignored conversations.
     func clearSnapshot(conversationId: AVSIdentifier) {
+        conversationDeletionObservers.removeValue(forKey: conversationId)
         callSnapshots.removeValue(forKey: conversationId)
         clientsRequestCompletionsByConversationId.removeValue(forKey: conversationId)
     }
@@ -205,6 +214,7 @@ extension WireCallCenterV3 {
         let token = ConversationChangeInfo.add(observer: self, for: conversation)
         let group = conversation.conversationType == .group
 
+        callsAnsweredElsewhere.remove(conversationId)
         callSnapshots[conversationId] = CallSnapshot(
             messageProtocol: conversation.messageProtocol,
             callParticipants: callParticipants,
@@ -221,6 +231,29 @@ extension WireCallCenterV3 {
             videoGridPresentationMode: .allVideoStreams,
             conversationObserverToken: token
         )
+
+        // Conversation change notifications are disabled in the background, but calls can remain active.
+        conversationDeletionObservers[conversationId] = ManagedObjectContextChangeObserver(
+            context: moc
+        ) { [weak self, weak conversation] in
+            guard
+                let self,
+                isEnabled,
+                conversation?.isDeletedRemotely == true,
+                conversationDeletionObservers.removeValue(forKey: conversationId) != nil
+            else { return }
+
+            Self.logger.info("closing call because conversation was deleted")
+            closeCall(conversationId: conversationId)
+        }
+    }
+
+    func clearAnsweredElsewhereNotificationState(conversationId: AVSIdentifier) {
+        let key = AnsweredElsewhereCallKey.make(
+            accountID: selfUserId.identifier,
+            conversationID: conversationId.identifier
+        )
+        VoIPPushHelper.storage.removeObject(forKey: key)
     }
 
 }
@@ -563,7 +596,8 @@ public extension WireCallCenterV3 {
                 conversationId: conversationId,
                 callerId: callerId,
                 messageTime: nil,
-                previousCallState: previousSnapshot?.callState
+                previousCallState: previousSnapshot?.callState,
+                callEndReason: nil
             ).post(in: context.notificationContext)
         }
 
@@ -628,6 +662,8 @@ public extension WireCallCenterV3 {
             isConferenceCall: conversationType.isConference
         )
 
+        let isMeeting = conversation.isMeeting
+
         if conversationType.isConference, !canStartConferenceCalls {
             if let context = uiMOC {
                 WireCallCenterConferenceCallingUnavailableNotification().post(in: context.notificationContext)
@@ -655,7 +691,8 @@ public extension WireCallCenterV3 {
                 conversationId: conversationId,
                 callerId: selfUserId,
                 messageTime: nil,
-                previousCallState: previousCallState
+                previousCallState: previousCallState,
+                callEndReason: nil
             ).post(in: context.notificationContext)
         }
 
@@ -666,7 +703,8 @@ public extension WireCallCenterV3 {
                 conversationId: conversationId,
                 callType: callType,
                 conversationType: conversationType,
-                useCBR: useConstantBitRateAudio
+                useCBR: useConstantBitRateAudio,
+                isMeeting: isMeeting
             )
 
             guard started else {
@@ -1074,6 +1112,12 @@ extension WireCallCenterV3 {
     /// - parameter callEvent: calling event to process.
     func processCallEvent(_ callEvent: CallEvent) {
         Self.logger.info("process call event")
+        AnsweredElsewhereCallTracker(userDefaults: VoIPPushHelper.storage).trackStart(
+            data: callEvent.data,
+            conversationID: callEvent.conversationId.identifier,
+            accountID: selfUserId.identifier,
+            isCallerSelf: callEvent.userId == selfUserId
+        )
         if isReady {
             Self.logger
                 .info(
@@ -1094,7 +1138,7 @@ extension WireCallCenterV3 {
 
         guard
             let context = uiMOC,
-            let conversationType = conversationType(from: callEvent)
+            let conversation = conversationInfo(from: callEvent.conversationId)
         else {
             Self.logger.warn("can't handle call event: unable to determine conversation type")
             return
@@ -1102,7 +1146,8 @@ extension WireCallCenterV3 {
 
         let result = avsWrapper.received(
             callEvent: callEvent,
-            conversationType: conversationType
+            conversationType: conversation.type,
+            isMeeting: conversation.isMeeting
         )
 
         if let error = result {
@@ -1114,26 +1159,34 @@ extension WireCallCenterV3 {
         }
     }
 
-    private func conversationType(from callEvent: CallEvent) -> AVSConversationType? {
-        conversationType(from: callEvent.conversationId)
+    func conversationType(from conversationId: AVSIdentifier) -> AVSConversationType? {
+        conversationInfo(from: conversationId)?.type
     }
 
-    func conversationType(from conversationId: AVSIdentifier) -> AVSConversationType? {
+    /// The AVS-relevant properties of the conversation.
+    private func conversationInfo(
+        from conversationId: AVSIdentifier
+    ) -> (type: AVSConversationType, isMeeting: Bool)? {
         guard let context = uiMOC else { return nil }
 
-        var conversationType: AVSConversationType?
+        var info: (type: AVSConversationType, isMeeting: Bool)?
 
         context.performAndWait {
-            if let conversation = ZMConversation.fetch(
-                with: conversationId.identifier,
-                domain: conversationId.domain,
-                in: context
-            ) {
-                conversationType = getAVSConversationType(for: conversation)
+            guard
+                let conversation = ZMConversation.fetch(
+                    with: conversationId.identifier,
+                    domain: conversationId.domain,
+                    in: context
+                ),
+                let conversationType = getAVSConversationType(for: conversation)
+            else {
+                return
             }
+
+            info = (conversationType, conversation.isMeeting)
         }
 
-        return conversationType
+        return info
     }
 
     /// Handles a change in calling state.
@@ -1152,6 +1205,7 @@ extension WireCallCenterV3 {
         callState.logState()
 
         var callState = callState
+        var callEndReason: CallClosedReason?
 
         if case .terminating(reason: .stillOngoing) = callState {
 
@@ -1159,6 +1213,9 @@ extension WireCallCenterV3 {
                 callState = .terminating(reason: .securityDegraded)
             } else if canJoinCall(conversationId: conversationId) {
                 callState = .incoming(isVideo: false, shouldRing: false, degraded: false)
+                if callsAnsweredElsewhere.contains(conversationId) {
+                    callEndReason = .answeredElsewhere
+                }
             }
         }
 
@@ -1190,7 +1247,8 @@ extension WireCallCenterV3 {
                 conversationId: conversationId,
                 callerId: callerId,
                 messageTime: messageTime,
-                previousCallState: previousCallState
+                previousCallState: previousCallState,
+                callEndReason: callEndReason
             )
             notification.post(in: context.notificationContext)
         }

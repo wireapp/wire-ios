@@ -418,6 +418,8 @@ final class UserSessionMock: UserSession {
 
     var isWireDriveEnabled: Bool = false
 
+    var isMeetingsEnabled: Bool = false
+
     var wireDriveBackendURL: URL?
 
     var isEnterpriseUser: Bool = false

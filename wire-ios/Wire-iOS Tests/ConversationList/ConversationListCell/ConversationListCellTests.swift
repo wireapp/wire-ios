@@ -209,6 +209,7 @@ final class ConversationListCellTests: XCTestCase {
     }
 
     func testThatItRendersScheduledForDeletionConversation() {
+
         // WHEN
         let status = ConversationStatus(
             isGroup: true,

@@ -33,22 +33,22 @@ public enum DeveloperFlag: String, CaseIterable {
     case forceDatabaseLoadingFailure
     case ignoreIncomingEvents
     case newRegistration
-    case preventAdminlessGroups
+    case noAPNSTokenCache
     case showCreateMLSGroupToggle
     case showUnreadConversationsFilter
     case skipMLSMessagesDecryption
     case useWireAuthentication
-    case wireMeetings
     case lowKeyPackageCount
     case enabledCCDebugLogs
     case shakeToReport
     case showNSEErrors
+    case simulateDriveOffline
     case simulateMainAppRequiredError
     case simulateUnestablishedMLSGroup
-    // TODO: [WPB-25941] Remove drive permissions flag when feature is complete
-    case enableDrivePermissions
     case unSafeLogsForPublic
     case useBackgroundActivityFactoryInAppBackgroundTaskExecuter
+    case enableDriveDirectUploads
+    case simulateAppTerminationInBackground
 
     public var description: String {
         switch self {
@@ -85,8 +85,8 @@ public enum DeveloperFlag: String, CaseIterable {
         case .newRegistration:
             "Turn on to use the new registration flow"
 
-        case .preventAdminlessGroups:
-            "Turn on to prevent last admins from leaving groups without promoting someone else"
+        case .noAPNSTokenCache:
+            "Turn on to always request the APNS token from the system instead of reading a cached one"
 
         case .showUnreadConversationsFilter:
             "Turn on to show the new conversation filter options"
@@ -100,9 +100,6 @@ public enum DeveloperFlag: String, CaseIterable {
         case .consumableNotifications:
             "Turn on to enable consumable notifications"
 
-        case .wireMeetings:
-            "Turn on to enable Wire meetings"
-
         case .lowKeyPackageCount:
             "Turn on to set the minimum number of packages to 1"
 
@@ -115,20 +112,26 @@ public enum DeveloperFlag: String, CaseIterable {
         case .showNSEErrors:
             "Turn on to show Notification Service Extension errors as notifications"
 
+        case .simulateDriveOffline:
+            "Turn on to make Wire Drive behave as if the device had no network connection"
+
         case .simulateMainAppRequiredError:
             "Turn on to force a 'main app required' error in the Notification Service and Share Extensions"
 
         case .simulateUnestablishedMLSGroup:
             "Turn on to leave the next locally created MLS group unestablished at epoch 0"
 
-        case .enableDrivePermissions:
-            "Turn on to enable drive permissions"
-
         case .unSafeLogsForPublic:
             "Turn on to write all logs (including debug and non-public) to disk in release builds"
 
         case .useBackgroundActivityFactoryInAppBackgroundTaskExecuter:
             "Turn on to use BackgroundActivityFactory in AppBackgroundTaskExecuter"
+
+        case .enableDriveDirectUploads:
+            "Turn on to enable drive direct uploads"
+
+        case .simulateAppTerminationInBackground:
+            "Turn on to simulate app termination in background"
         }
     }
 
@@ -163,6 +166,8 @@ public enum DeveloperFlag: String, CaseIterable {
             "ForceDatabaseLoadingFailure"
         case .ignoreIncomingEvents:
             "IgnoreIncomingEventsEnabled"
+        case .noAPNSTokenCache:
+            "NoAPNSTokenCacheEnabled"
         case .useWireAuthentication:
             "WireAuthenticationEnabled"
         default:

@@ -390,6 +390,8 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
         update.supportsGrouping = false
         update.supportsUngrouping = false
 
+        // Re-set configuration as potential iOS bug fix. See [WPB-28164]
+        provider.configuration = CallKitManager.providerConfiguration
         // Don't use the async version, it's broken
         // It doesn't get executed when waking up the app from the background and ends up crashing
         // See latest comments https://stackoverflow.com/questions/56788314/ios-13-killing-app-because-it-never-posted-an-incoming-call-to-the-system-after
@@ -474,6 +476,8 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
 
         logger.info("provider.reportNewIncomingCall", attributes: .safePublic)
 
+        // Re-set configuration as potential iOS bug fix. See [WPB-28164]
+        provider.configuration = CallKitManager.providerConfiguration
         provider.reportNewIncomingCall(
             with: call.id,
             update: update
@@ -800,7 +804,8 @@ extension CallKitManager: WireCallCenterCallStateObserver, WireCallCenterMissedC
         conversation: ZMConversation,
         caller: UserType,
         timestamp: Date?,
-        previousCallState: CallState?
+        previousCallState: CallState?,
+        callEndReason: CallClosedReason?
     ) {
         logger.info("received new call state: \(callState)")
 
@@ -825,12 +830,13 @@ extension CallKitManager: WireCallCenterCallStateObserver, WireCallCenterMissedC
                 )
 
             } else {
-                logger.info("will report call ended, reason unanswered")
+                let reason = callEndReason?.CXCallEndedReason ?? .unanswered
+                logger.info("will report call ended, reason \(reason)")
 
                 reportCallEnded(
                     in: conversation,
                     atTime: timestamp,
-                    reason: .unanswered
+                    reason: reason
                 )
             }
 

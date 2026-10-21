@@ -72,8 +72,10 @@
 "conversation.wireCells.files.availableOffline" = "Offline verfügbar";
 
 // MARK: - Viewer access
-"conversation.wireCells.files.readOnly" = "Viewer access";
+"conversation.wireCells.files.readOnly" = "Betrachter-Zugriff";
 "conversation.wireCells.files.viewerAccess.banner.close" = "Zugriffsinfo schließen";
+"conversation.wireCells.files.viewerAccess.shareLink" = "Per Link teilen, deaktiviert für Betrachter";
+"conversation.wireCells.files.viewerAccess.makeAvailableOffline" = "Offline verfügbar machen, deaktiviert für Betrachter";
 
 // MARK: - Conversation details shared drive options
 "conversation.details.sharedDrive.closeButton" = "Unterhaltungsdetails schließen";

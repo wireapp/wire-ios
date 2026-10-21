@@ -20,6 +20,8 @@ import SwiftUI
 import UIKit
 import WireCallingDomain
 import WireDesign
+import WireFoundation
+import WireLocators
 
 struct MemberAvatarsView: View {
     let members: [MeetingMember]
@@ -29,7 +31,9 @@ struct MemberAvatarsView: View {
     private let overlap: CGFloat = 8
 
     var body: some View {
-        if let member = members.first, members.count == 1 {
+        let orderedMembers = members.sorted(by: areInDisplayOrder)
+
+        if let member = orderedMembers.first, orderedMembers.count == 1 {
             // A single participant shows their avatar next to their name.
             HStack(spacing: 6) {
                 avatar(for: member)
@@ -44,23 +48,38 @@ struct MemberAvatarsView: View {
         } else {
             // Show up to `maxVisible` overlapping avatars; any remaining participants
             // are represented by a trailing "+N" count.
-            let overflow = members.count - maxVisible
+            let visibleMembers = Array(orderedMembers.prefix(maxVisible))
+            let overflow = orderedMembers.count - maxVisible
 
             HStack(spacing: 6) {
                 HStack(spacing: -overlap) {
-                    ForEach(Array(members.prefix(maxVisible).enumerated()), id: \.offset) { index, member in
+                    ForEach(Array(visibleMembers.enumerated()), id: \.offset) { index, member in
                         avatar(for: member)
-                            .zIndex(Double(maxVisible - index))
+                            .zIndex(Double(index))
                     }
                 }
 
                 if overflow > 0 {
                     Text("+\(overflow)")
+                        .accessibilityIdentifier(Locators.WireMeetings.MeetingRow.participantOverflow)
                         .font(for: .subline1)
                         .foregroundStyle(ColorTheme.Base.secondaryText.color)
                 }
             }
         }
+    }
+
+    private func areInDisplayOrder(_ lhs: MeetingMember, _ rhs: MeetingMember) -> Bool {
+        if lhs.isSelfUser != rhs.isSelfUser {
+            return lhs.isSelfUser
+        }
+
+        let nameComparison = lhs.name.localizedCaseInsensitiveCompare(rhs.name)
+        if nameComparison != .orderedSame {
+            return nameComparison == .orderedAscending
+        }
+
+        return lhs.handle.localizedCaseInsensitiveCompare(rhs.handle) == .orderedAscending
     }
 
     private func avatar(for member: MeetingMember) -> some View {
@@ -78,6 +97,7 @@ struct MemberAvatarsView: View {
             }
         }
         .frame(width: circleSize, height: circleSize)
+        .accessibilityIdentifier(Locators.WireMeetings.MeetingRow.avatarIdentifier(member.qualifiedID.id.uuidString))
         .clipShape(Circle())
         .overlay(
             Circle().strokeBorder(ColorTheme.Backgrounds.surface.color, lineWidth: 2)

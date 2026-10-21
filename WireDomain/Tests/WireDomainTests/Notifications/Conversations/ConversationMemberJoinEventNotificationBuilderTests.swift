@@ -65,6 +65,7 @@ final class ConversationMemberJoinEventNotificationBuilderTests: XCTestCase {
 
         await setupMock(isGroup: isGroup, isTeam: isTeam, participants: [])
 
+        let conversationsAPI = MockConversationsAPI()
         sut = ConversationMemberJoinEventNotificationBuilder(
             context: .init(
                 conversationLocalStore: conversationLocalStore,
@@ -72,7 +73,8 @@ final class ConversationMemberJoinEventNotificationBuilderTests: XCTestCase {
             ),
             validator: .init(
                 userLocalStore: userLocalStore,
-                conversationLocalStore: conversationLocalStore
+                conversationLocalStore: conversationLocalStore,
+                conversationsAPI: conversationsAPI
             )
         )
 
@@ -85,6 +87,13 @@ final class ConversationMemberJoinEventNotificationBuilderTests: XCTestCase {
             isGroup: isGroup,
             isTeam: isTeam
         )
+
+        conversationLocalStore.conversationNeedsBackendUpdate_MockValue = true
+        conversationsAPI.getConversationsFor_MockValue = .init(
+            found: [.init(groupType: .meeting)], notFound: [], failed: []
+        )
+        let meetingNotification = await sut.buildContent(event: Scaffolding.selfUserAddedEvent)
+        XCTAssertNil(meetingNotification)
     }
 
     func testGenerateConversationMemberJoinEventNotification_Is_Group_Conversation_And_Is_Personal_User() async throws {
@@ -103,7 +112,8 @@ final class ConversationMemberJoinEventNotificationBuilderTests: XCTestCase {
             ),
             validator: .init(
                 userLocalStore: userLocalStore,
-                conversationLocalStore: conversationLocalStore
+                conversationLocalStore: conversationLocalStore,
+                conversationsAPI: MockConversationsAPI()
             )
         )
 
@@ -134,7 +144,8 @@ final class ConversationMemberJoinEventNotificationBuilderTests: XCTestCase {
             ),
             validator: .init(
                 userLocalStore: userLocalStore,
-                conversationLocalStore: conversationLocalStore
+                conversationLocalStore: conversationLocalStore,
+                conversationsAPI: MockConversationsAPI()
             )
         )
 
@@ -165,7 +176,8 @@ final class ConversationMemberJoinEventNotificationBuilderTests: XCTestCase {
             ),
             validator: .init(
                 userLocalStore: userLocalStore,
-                conversationLocalStore: conversationLocalStore
+                conversationLocalStore: conversationLocalStore,
+                conversationsAPI: MockConversationsAPI()
             )
         )
 
@@ -192,7 +204,8 @@ final class ConversationMemberJoinEventNotificationBuilderTests: XCTestCase {
             ),
             validator: .init(
                 userLocalStore: userLocalStore,
-                conversationLocalStore: conversationLocalStore
+                conversationLocalStore: conversationLocalStore,
+                conversationsAPI: MockConversationsAPI()
             )
         )
 
@@ -272,6 +285,7 @@ final class ConversationMemberJoinEventNotificationBuilderTests: XCTestCase {
         userLocalStore.nameFor_MockValue = Scaffolding.senderName
         conversationLocalStore.nameFor_MockValue = Scaffolding.conversationName
         conversationLocalStore.isGroupConversation_MockValue = isGroup
+        conversationLocalStore.conversationNeedsBackendUpdate_MockValue = false
         userLocalStore.fetchSelfUser_MockValue = await context.perform { [modelHelper, context] in
             modelHelper.createSelfUser(id: Scaffolding.selfUserID, in: context)
         }

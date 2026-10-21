@@ -20,6 +20,11 @@ import UIKit
 
 extension UIApplication {
 
+    /// All connected scene delegates
+    var sceneDelegates: Set<SceneDelegate> {
+        Set(connectedScenes.compactMap { $0.delegate as? SceneDelegate })
+    }
+
     /// Get the top most view controller
     ///
     /// - Parameter onlyFullScreen: if false, also search for all kinds of presented view controller

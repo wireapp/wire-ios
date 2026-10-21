@@ -2135,6 +2135,79 @@ final class ConversationsAPITests: XCTestCase {
         }
     }
 
+    func testUpdateRole_givenV0_AndSuccessResponse200_thenVerifyResponse() async throws {
+        // given
+        let supportedVersions = APIVersion.v0.andNextVersions
+        let mocks: [MockAPIServiceProtocol.Response] = Array(
+            repeating: (.ok, nil),
+            count: supportedVersions.count
+        )
+
+        let apiService = MockAPIServiceProtocol.withResponses(mocks)
+
+        let suts = supportedVersions.map { $0.buildAPI(apiService: apiService) }
+
+        // when
+        // then
+
+        XCTAssertEqual(suts.count, supportedVersions.count)
+
+        for sut in suts {
+            try await sut.updateRole(
+                "wire_admin",
+                userID: .mockID1,
+                conversationID: .mockID2
+            )
+        }
+    }
+
+    func testRemoveParticipant_givenV0_AndSuccessResponse200_thenVerifyResponse() async throws {
+        // given
+        let supportedVersions = APIVersion.v0.andNextVersions
+        let mocks: [MockAPIServiceProtocol.Response] = Array(
+            repeating: (.ok, "testRemoveParticipant_givenV0AndSuccessResponse200"),
+            count: supportedVersions.count
+        )
+
+        let apiService = MockAPIServiceProtocol.withResponses(mocks)
+
+        let suts = supportedVersions.map { $0.buildAPI(apiService: apiService) }
+
+        // when
+        // then
+
+        XCTAssertEqual(suts.count, supportedVersions.count)
+
+        for sut in suts {
+            try await sut.removeParticipant(
+                userID: .mockID1,
+                conversationID: .mockID2
+            )
+        }
+    }
+
+    func testCreateGroup_DoesNotEncodeEmptyAccessRolesInBody_GivenV0_V2_V3_V8_V10() async throws {
+        // given
+        let apiVersions = [APIVersion.v0, .v2, .v3, .v8, .v10]
+        let apiService = MockAPIServiceProtocol.withResponses([])
+
+        let suts = apiVersions.map { $0.buildAPI(apiService: apiService) }
+
+        // when
+        XCTAssertEqual(suts.count, apiVersions.count)
+
+        // then
+        try await apiSnapshotHelper.verifyRequest(
+            for: apiVersions,
+            apiService: apiService
+        ) { sut in
+            // when
+            _ = try? await sut.createGroupConversation(
+                parameters: Scaffolding.createGroupConversationWithEmptyAccessRolesParameters
+            )
+        }
+    }
+
     private enum Scaffolding {
         static let userID = "99db9768-04e3-4b5d-9268-831b6a25c4ab"
         static let domain = "domain.com"
@@ -2153,6 +2226,21 @@ final class ConversationsAPITests: XCTestCase {
             accessMode: [.code, .invite],
             accessRoles: [.teamMember],
             legacyAccessRole: .teamMember,
+            teamID: .mockID1,
+            isReadReceiptsEnabled: true,
+            skipCreator: false
+        )
+
+        static let createGroupConversationWithEmptyAccessRolesParameters = CreateGroupConversationParameters(
+            groupType: .group,
+            messageProtocol: .mls,
+            creatorClientID: UUID.mockID1.uuidString,
+            qualifiedUserIDs: [.mockID1],
+            unqualifiedUserIDs: [.mockID2],
+            name: "test",
+            accessMode: [.invite],
+            accessRoles: [],
+            legacyAccessRole: nil,
             teamID: .mockID1,
             isReadReceiptsEnabled: true,
             skipCreator: false

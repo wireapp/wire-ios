@@ -104,9 +104,60 @@ final class ChannelMessagingTests: WireUITestCase {
     }
 
     @MainActor
-    func testReceiveImageAudioAndPingInChannelConversation_TC_8855_8856_8859() async throws {
+    func testSendAndReceiveVideoInChannelConversation_TC_8850_8857() async throws {
 
         // GIVEN
+        let teamWithChannelConversation = try await registerTeamWithChannelConversation()
+
+        _ = try login(user: teamWithChannelConversation.teamOwner)
+            .openUserProfilePage()
+            .tapAddAccountOrTeamButton()
+
+        _ = try app.loginUser(
+            email: teamWithChannelConversation.teamMember.email,
+            password: teamWithChannelConversation.teamMember.password
+        )
+        .acceptPopup()
+        .openUserProfilePage()
+        .switchUserAccountForUser(withName: teamWithChannelConversation.teamOwner.name)
+
+        let activeConversationPage = try addTeamMemberToChannel(teamWithChannelConversation)
+
+        // WHEN
+        let sentConversationPage = try activeConversationPage
+            .openPhotosAndGrantPermission()
+            .selectVideoAndSend(at: 2)
+
+        // THEN - video is sent
+        XCTAssertTrue(
+            sentConversationPage.videoCell.waitForExistence(timeout: 2), "No Video cell found"
+        )
+        XCTAssertTrue(
+            sentConversationPage.videoPlayButton.waitForExistence(timeout: 2), "No Video play button found"
+        )
+
+        let receivedConversationPage = try sentConversationPage
+            .goBackToConversationPage()
+            .openUserProfilePage()
+            .switchUserAccountForUser(withName: teamWithChannelConversation.teamMember.name)
+            .openConversation()
+
+        // THEN - video is received
+        XCTAssertTrue(
+            receivedConversationPage.videoCell.waitForExistence(timeout: 5),
+            "No Video cell found after receiving"
+        )
+        XCTAssertTrue(
+            receivedConversationPage.videoPlayButton.waitForExistence(timeout: 2),
+            "No Video play button found after receiving"
+        )
+    }
+
+    @MainActor
+    func testReceiveTextImageAudioAndPingInChannelConversation_TC_8854_8855_8856_8859() async throws {
+
+        // GIVEN
+        let message = UserGenerator.generateRandomMessage()
         let teamWithChannelConversation = try await registerTeamWithChannelConversation()
         let mediaURLs = TestServiceMediaFixtures.mediaURLs(relativeTo: #filePath)
 
@@ -124,7 +175,14 @@ final class ChannelMessagingTests: WireUITestCase {
 
         let activeConversationPage = try addTeamMemberToChannel(teamWithChannelConversation)
 
-        // WHEN
+        // WHEN member sends text, image, audio and ping
+        try await testServicesClient.sendText(
+            user: teamWithChannelConversation.teamMember,
+            text: message,
+            conversationId: teamWithChannelConversation.conversationId,
+            domain: teamWithChannelConversation.conversationDomain
+        )
+
         try await testServicesClient.sendImage(
             user: teamWithChannelConversation.teamMember,
             fileURL: mediaURLs.imageURL,
@@ -151,8 +209,22 @@ final class ChannelMessagingTests: WireUITestCase {
 
         // THEN
         XCTAssertTrue(
+            activeConversationPage.messageLabels.firstMatch.waitForExistence(timeout: 5),
+            "Expected at least one message to appear, but no message labels were found"
+        )
+        let receivedMessages = activeConversationPage.fetchMessages()
+        XCTAssertTrue(
+            receivedMessages.contains(message),
+            "Expected message '\(message)' not found in received messages: \(receivedMessages)"
+        )
+
+        XCTAssertTrue(
+            activeConversationPage.fileTypeIcons.firstMatch.waitForExistence(timeout: 5),
+            "Expected image attachment not found"
+        )
+        XCTAssertTrue(
             activeConversationPage.fileTypeIcons.element(boundBy: 1).waitForExistence(timeout: 5),
-            "Expected image and audio attachments not found"
+            "Expected audio attachment not found"
         )
 
         let senderName = activeConversationPage.getSenderName()
@@ -204,5 +276,45 @@ final class ChannelMessagingTests: WireUITestCase {
 
         // THEN - file is received
         receivedConversationPage.verifySharedFile(name: "TESTFILE", type: "PDF")
+    }
+
+    @MainActor
+    func testReceiveGIFInChannelConversation_TC_8860() async throws {
+
+        // GIVEN
+        let teamWithChannelConversation = try await registerTeamWithChannelConversation()
+        let mediaURLs = TestServiceMediaFixtures.mediaURLs(relativeTo: #filePath)
+
+        _ = try login(user: teamWithChannelConversation.teamOwner)
+            .openUserProfilePage()
+            .tapAddAccountOrTeamButton()
+
+        _ = try app.loginUser(
+            email: teamWithChannelConversation.teamMember.email,
+            password: teamWithChannelConversation.teamMember.password
+        )
+        .acceptPopup()
+        .openUserProfilePage()
+        .switchUserAccountForUser(withName: teamWithChannelConversation.teamOwner.name)
+
+        let activeConversationPage = try addTeamMemberToChannel(teamWithChannelConversation)
+
+        // WHEN
+        try await testServicesClient.sendImage(
+            user: teamWithChannelConversation.teamMember,
+            fileURL: mediaURLs.gifURL,
+            type: mediaURLs.gifType,
+            conversationId: teamWithChannelConversation.conversationId,
+            domain: teamWithChannelConversation.conversationDomain
+        )
+
+        // THEN
+        activeConversationPage.verifyGIFReceived()
+        let senderName = activeConversationPage.getSenderName()
+        XCTAssertEqual(
+            senderName,
+            teamWithChannelConversation.teamMember.name,
+            "Sender info didn't match expected value \(teamWithChannelConversation.teamMember.name)"
+        )
     }
 }

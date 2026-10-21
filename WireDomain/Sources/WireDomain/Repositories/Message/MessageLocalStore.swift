@@ -998,6 +998,28 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
             )
 
             return [systemMessage]
+
+        case let .conversationScheduledForDeletion(scheduledDeletionDate, date):
+
+            // @Alex - passing the self user is a workaround.
+            //
+            // `ConversationSystemMessageCellDescription.cells(for:...)` has a top-level
+            // guard requiring `message.senderUser `to be non-nil for any system message
+            // cell to render
+            //
+            // However, the conversation scheduled for deletion event should be sender agnostic.
+            // We should rework the UI layer to accept system messages with no sender, if it makes sense...
+
+            let selfUser = await fetchSelfUser()
+
+            let systemMessage = await createSystemMessage(
+                messageType: .conversationScheduledForDeletion,
+                sender: selfUser, // we should pass nil here
+                timestamp: date,
+                conversationScheduledDeletionDate: scheduledDeletionDate
+            )
+
+            return [systemMessage]
         }
     }
 
@@ -1013,7 +1035,8 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
         messageTimer: Double? = nil,
         relevantForStatus: Bool = true,
         removedReason: ZMParticipantsRemovedReason = .none,
-        domains: [String]? = nil
+        domains: [String]? = nil,
+        conversationScheduledDeletionDate: Date? = nil
     ) async -> ZMSystemMessage {
         await context.perform { [context] in
             let systemMessage = ZMSystemMessage(nonce: UUID(), managedObjectContext: context)
@@ -1024,6 +1047,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
             systemMessage.clients = clients ?? Set()
             systemMessage.serverTimestamp = timestamp
             systemMessage.text = text
+            systemMessage.conversationScheduledDeletionDate = conversationScheduledDeletionDate
 
             if let duration {
                 systemMessage.duration = duration

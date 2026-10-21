@@ -33,7 +33,11 @@ struct CreateMeetingUseCaseTests {
     private let participant = MeetingMember(
         qualifiedID: QualifiedID(id: UUID(), domain: "example.com"),
         name: "Katie Armstrong",
-        handle: "katie"
+        handle: "katie",
+        isSelfUser: false,
+        initials: "",
+        accentColor: .default,
+        avatarImageData: nil
     )
 
     private let meeting = Meeting(
@@ -51,13 +55,20 @@ struct CreateMeetingUseCaseTests {
             meetingRepository: meetingRepository,
             conversationRepository: conversationRepository
         )
+        meetingRepository
+            .createMeetingTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceTypeMeetingTypePasswordStringInvitedEmailsStringMeetingCreationResultReturnValue =
+            MeetingCreationResult(meeting: meeting, link: nil)
     }
 
     @Test("invoke creates the meeting via the repository and returns it")
     func invokeCreatesMeeting() async throws {
         // Given
         meetingRepository
-            .createMeetingTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceMeetingReturnValue = meeting
+            .createMeetingTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceTypeMeetingTypePasswordStringInvitedEmailsStringMeetingCreationResultReturnValue =
+            MeetingCreationResult(
+                meeting: meeting,
+                link: URL(string: "https://wire.example/meeting-join/?key=server&code=link")
+            )
         let recurrence = MeetingRecurrence(frequency: .weekly, interval: 1)
 
         // When
@@ -66,31 +77,36 @@ struct CreateMeetingUseCaseTests {
             startTime: meeting.start,
             endTime: meeting.end,
             recurrence: recurrence,
-            participants: [participant]
+            type: .scheduled,
+            password: " exact password ",
+            participants: [participant],
+            invitedEmails: ["Guest@example.com", "member@wire.com"]
         )
 
         // Then
         let arguments = meetingRepository
-            .createMeetingTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceMeetingReceivedArguments
+            .createMeetingTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceTypeMeetingTypePasswordStringInvitedEmailsStringMeetingCreationResultReceivedArguments
         #expect(arguments?.title == "Team Standup")
         #expect(arguments?.startTime == meeting.start)
         #expect(arguments?.endTime == meeting.end)
         #expect(arguments?.recurrence == recurrence)
-        #expect(result == meeting)
+        #expect(arguments?.type == .scheduled)
+        #expect(arguments?.password == " exact password ")
+        #expect(arguments?.invitedEmails == ["Guest@example.com", "member@wire.com"])
+        #expect(result.meeting == meeting)
+        #expect(result.link?.absoluteString == "https://wire.example/meeting-join/?key=server&code=link")
     }
 
     @Test("invoke pulls the meeting's conversation and adds the participants to it")
     func invokePullsConversationAndAddsParticipants() async throws {
-        // Given
-        meetingRepository
-            .createMeetingTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceMeetingReturnValue = meeting
-
         // When
         _ = try await useCase.invoke(
             title: "Team Standup",
             startTime: meeting.start,
             endTime: meeting.end,
             recurrence: nil,
+            type: .scheduled,
+            password: nil,
             participants: [participant]
         )
 
@@ -106,16 +122,14 @@ struct CreateMeetingUseCaseTests {
 
     @Test("invoke names the meeting's conversation after the meeting title")
     func invokeSetsConversationName() async throws {
-        // Given
-        meetingRepository
-            .createMeetingTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceMeetingReturnValue = meeting
-
         // When
         _ = try await useCase.invoke(
             title: "Team Standup",
             startTime: meeting.start,
             endTime: meeting.end,
             recurrence: nil,
+            type: .scheduled,
+            password: nil,
             participants: [participant]
         )
 
@@ -128,16 +142,14 @@ struct CreateMeetingUseCaseTests {
 
     @Test("invoke stores the meeting again after its conversation was pulled")
     func invokeStoresMeetingAfterPullingConversation() async throws {
-        // Given
-        meetingRepository
-            .createMeetingTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceMeetingReturnValue = meeting
-
         // When
         _ = try await useCase.invoke(
             title: "Team Standup",
             startTime: meeting.start,
             endTime: meeting.end,
             recurrence: nil,
+            type: .scheduled,
+            password: nil,
             participants: []
         )
 
@@ -146,11 +158,35 @@ struct CreateMeetingUseCaseTests {
         #expect(conversationRepository.pullConversationIdUUIDDomainStringVoidCallsCount == 1)
     }
 
+    @Test("invoke stores the created meeting before reporting participants who could not be added")
+    func invokeStoresMeetingWhenParticipantsCouldNotBeAdded() async {
+        conversationRepository
+            .addParticipantsParticipantsMeetingMemberToConversationIDQualifiedIDVoidThrowableError =
+            MeetingParticipantsError.failedToAddParticipants([participant])
+
+        await #expect(throws: CreateMeetingUseCaseError.participantsNotAdded(
+            result: MeetingCreationResult(meeting: meeting, link: nil),
+            participants: [participant]
+        )) {
+            _ = try await useCase.invoke(
+                title: meeting.title,
+                startTime: meeting.start,
+                endTime: meeting.end,
+                recurrence: nil,
+                type: .scheduled,
+                password: nil,
+                participants: [participant]
+            )
+        }
+
+        #expect(meetingRepository.storeMeetingMeetingMeetingVoidReceivedInvocations == [meeting])
+    }
+
     @Test("invoke does not touch the conversation when creating the meeting fails")
     func invokeFailsWhenCreatingMeetingFails() async {
         // Given
         meetingRepository
-            .createMeetingTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceMeetingThrowableError =
+            .createMeetingTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceTypeMeetingTypePasswordStringInvitedEmailsStringMeetingCreationResultThrowableError =
             URLError(.badServerResponse)
 
         // When / Then
@@ -160,6 +196,8 @@ struct CreateMeetingUseCaseTests {
                 startTime: meeting.start,
                 endTime: meeting.end,
                 recurrence: nil,
+                type: .scheduled,
+                password: nil,
                 participants: [participant]
             )
         }

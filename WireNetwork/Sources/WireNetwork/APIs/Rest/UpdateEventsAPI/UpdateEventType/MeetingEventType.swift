@@ -20,6 +20,7 @@ enum MeetingEventType: String {
 
     case create = "meeting.create"
     case delete = "meeting.delete"
+    case memberAdd = "meeting.member-add"
     case update = "meeting.update"
 
 }

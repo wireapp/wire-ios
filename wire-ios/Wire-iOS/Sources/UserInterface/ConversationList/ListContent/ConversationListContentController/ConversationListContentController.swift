@@ -266,7 +266,7 @@ final class ConversationListContentController: UICollectionViewController {
 
         let actionProvider: UIContextMenuActionProvider = { _ in
             let actions = conversation.listActions.map { action in
-                UIAction(title: action.title, image: nil) { _ in
+                let uiAction = UIAction(title: action.title, image: nil) { _ in
                     let actionController = ConversationActionController(
                         conversation: conversation,
                         target: self,
@@ -276,6 +276,10 @@ final class ConversationListContentController: UICollectionViewController {
                     self.contextMenuActionController = actionController
                     actionController.handleAction(action)
                 }
+                if let identifier = action.accessibilityIdentifier {
+                    uiAction.accessibilityIdentifier = identifier
+                }
+                return uiAction
             }
 
             return UIMenu(title: title, children: actions)

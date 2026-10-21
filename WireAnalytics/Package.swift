@@ -19,7 +19,7 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/Countly/countly-sdk-ios.git", exact: "25.4.3"),
-        .package(url: "https://github.com/DataDog/dd-sdk-ios.git", exact: "2.27.0"),
+        .package(url: "https://github.com/DataDog/dd-sdk-ios.git", exact: "3.18.0"),
         .package(path: "../WireFoundation"),
         .package(path: "../WireLogging"),
         .package(path: "../WirePlugins")

@@ -51,8 +51,11 @@ final class FilesViewModelTests {
 
         self.sut = FilesViewModel(
             useCases: .init(
-                fetchNodes: WireDriveFetchNodesPageUseCase(
-                    configuration: .conversationFileView(root: .path("some-cell")),
+                fetchNodesPage: WireDriveFetchNodesPageUseCase(
+                    repository: nodesRepository
+                ),
+                fetchNodes: WireDriveFetchNodesUseCase(
+                    state: WireDriveNodesCollection(),
                     repository: nodesRepository
                 ),
                 deleteNodes: WireDriveDeleteNodesUseCase(
@@ -100,11 +103,15 @@ final class FilesViewModelTests {
                 ),
                 getOfflineAvailableAssets: WireDriveFetchOfflineAvailableAssetsUseCase(
                     localAssetRepository: localAssetRepository
-                )
+                ),
+                observeAsset: WireDriveObserveAssetUseCase(localAssetRepository: localAssetRepository),
+                moveNode: WireDriveMoveNodeUseCase(
+                    nodesRepository: nodesRepository,
+                    localAssetRepository: localAssetRepository
+                ),
+                enqueueUploads: MockWireDriveEnqueueDirectUploadsUseCaseProtocol()
             ),
             isCellsStatePending: false,
-            localAssetRepository: localAssetRepository,
-            nodesRepository: nodesRepository,
             isBrowsing: false,
             networkMonitor: networkMonitor
         )
@@ -212,7 +219,8 @@ final class FilesViewModelTests {
                 publicLinkID: nil,
                 conversationName: conversation.name,
                 isReadOnly: false,
-                size: nil
+                size: nil,
+                thumbnailURL: nil
             )],
             [], // Clears items
             [FilesViewItem(
@@ -229,7 +237,8 @@ final class FilesViewModelTests {
                 publicLinkID: nil,
                 conversationName: conversation.name,
                 isReadOnly: false,
-                size: nil
+                size: nil,
+                thumbnailURL: nil
             )]
         ])
     }
@@ -290,7 +299,8 @@ final class FilesViewModelTests {
                 publicLinkID: nil,
                 conversationName: conversation.name,
                 isReadOnly: false,
-                size: nil
+                size: nil,
+                thumbnailURL: nil
             ),
             FilesViewItem(
                 id: node2.id,
@@ -306,7 +316,8 @@ final class FilesViewModelTests {
                 publicLinkID: nil,
                 conversationName: conversation.name,
                 isReadOnly: false,
-                size: nil
+                size: nil,
+                thumbnailURL: nil
             )
         ])
     }
@@ -366,7 +377,8 @@ final class FilesViewModelTests {
                 publicLinkID: nil,
                 conversationName: conversation.name,
                 isReadOnly: false,
-                size: nil
+                size: nil,
+                thumbnailURL: nil
             ),
             FilesViewItem(
                 id: node2.id,
@@ -382,7 +394,8 @@ final class FilesViewModelTests {
                 publicLinkID: nil,
                 conversationName: conversation.name,
                 isReadOnly: false,
-                size: nil
+                size: nil,
+                thumbnailURL: nil
             ),
             FilesViewItem(
                 id: node3.id,
@@ -398,7 +411,8 @@ final class FilesViewModelTests {
                 publicLinkID: nil,
                 conversationName: conversation.name,
                 isReadOnly: false,
-                size: nil
+                size: nil,
+                thumbnailURL: nil
             )
         ])
     }
@@ -540,7 +554,8 @@ final class FilesViewModelTests {
                     publicLinkID: nil,
                     conversationName: conversation.name,
                     isReadOnly: false,
-                    size: nil
+                    size: nil,
+                    thumbnailURL: nil
                 ),
                 FilesViewItem(
                     id: nodeC.id,
@@ -556,7 +571,8 @@ final class FilesViewModelTests {
                     publicLinkID: nil,
                     conversationName: conversation.name,
                     isReadOnly: false,
-                    size: nil
+                    size: nil,
+                    thumbnailURL: nil
                 ),
                 FilesViewItem(
                     id: nodeD.id,
@@ -572,7 +588,8 @@ final class FilesViewModelTests {
                     publicLinkID: nil,
                     conversationName: conversation.name,
                     isReadOnly: false,
-                    size: nil
+                    size: nil,
+                    thumbnailURL: nil
                 ),
                 FilesViewItem(
                     id: nodeA.id,
@@ -588,7 +605,8 @@ final class FilesViewModelTests {
                     publicLinkID: nil,
                     conversationName: conversation.name,
                     isReadOnly: false,
-                    size: nil
+                    size: nil,
+                    thumbnailURL: nil
                 )
             ]
         )
@@ -681,7 +699,8 @@ final class FilesViewModelTests {
                 publicLinkID: nil,
                 conversationName: nil,
                 isReadOnly: false,
-                size: nil
+                size: nil,
+                thumbnailURL: nil
             )
         ])
 

@@ -34,7 +34,6 @@ final class ConversationCreationControllerSnapshotTests: XCTestCase {
     // MARK: - setUp
 
     override func setUp() {
-        DeveloperFlag.enableDrivePermissions.enable(false)
         snapshotHelper = SnapshotHelper()
         accentColor = .purple
     }
@@ -56,7 +55,6 @@ final class ConversationCreationControllerSnapshotTests: XCTestCase {
     }
 
     func testTeamGroupOptions() async {
-        DeveloperFlag.enableDrivePermissions.enable(true)
         await createSut(isTeamMember: true)
 
         snapshotHelper

@@ -24,7 +24,7 @@ import WireSyncEngine
 
 extension SessionManager {
     static var shared: SessionManager? {
-        (UIApplication.shared.delegate as? AppDelegate)?.appRootRouter?.sessionManager
+        UIApplication.shared.sceneDelegates.first?.appRootRouter?.sessionManager
     }
 
     static var numberOfAccounts: Int {

@@ -39,6 +39,24 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         cancellables = nil
     }
 
+    func testThatMeetingsAvailabilityFollowsBackendFeatureStatus() {
+        let testCases: [(status: Feature.Status, isEnabled: Bool)] = [
+            (.enabled, true),
+            (.disabled, false)
+        ]
+
+        for testCase in testCases {
+            syncMOC.performAndWait {
+                Feature.updateOrCreate(havingName: .meetings, in: syncMOC) {
+                    $0.status = testCase.status
+                }
+            }
+            uiMOC.refreshAllObjects()
+
+            XCTAssertEqual(sut.isMeetingsEnabled, testCase.isEnabled)
+        }
+    }
+
     func testThatSyncContextReturnsSelfForLinkedSyncContext() {
         // GIVEN
         XCTAssertNotNil(sut.syncManagedObjectContext)

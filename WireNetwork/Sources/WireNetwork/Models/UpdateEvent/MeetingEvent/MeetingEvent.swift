@@ -28,6 +28,10 @@ public enum MeetingEvent: Equatable, Sendable {
 
     case delete(MeetingDeleteEvent)
 
+    /// The receiving user was invited to a meeting.
+
+    case memberAdd(MeetingMemberAddEvent)
+
     /// A meeting was updated.
 
     case update(MeetingUpdateEvent)

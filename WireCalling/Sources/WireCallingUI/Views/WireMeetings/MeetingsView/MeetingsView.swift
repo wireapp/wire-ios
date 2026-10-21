@@ -20,24 +20,32 @@ import SwiftUI
 import WireCallingDomain
 import WireDesign
 import WireFoundation
+import WireLocators
 import WireReusableUIComponents
 
 struct MeetingsView: View {
 
     private typealias Strings = L10n.Localizable.WireMeetings.List
 
+    @Environment(\.scenePhase) private var scenePhase
     @State private var viewModel: MeetingsViewModel
 
     /// Called when the user chooses "Edit meeting" in a meeting's menu.
     /// Presenting the edit UI is up to the owner of this view.
     private let onEditMeeting: (Meeting) -> Void
+    private let onJoinMeeting: (MeetingOccurrence) -> Void
+    private let onMeetingLink: ((Meeting) -> Void)?
 
     init(
         viewModel: MeetingsViewModel,
-        onEditMeeting: @escaping (Meeting) -> Void = { _ in }
+        onEditMeeting: @escaping (Meeting) -> Void = { _ in },
+        onJoinMeeting: @escaping (MeetingOccurrence) -> Void = { _ in },
+        onMeetingLink: ((Meeting) -> Void)? = nil
     ) {
         self.viewModel = viewModel
         self.onEditMeeting = onEditMeeting
+        self.onJoinMeeting = onJoinMeeting
+        self.onMeetingLink = onMeetingLink
     }
 
     var body: some View {
@@ -46,11 +54,31 @@ struct MeetingsView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .background(ColorTheme.Backgrounds.surface.color)
+        .overlay {
+            if viewModel.isDeleting {
+                ProgressView()
+                    .controlSize(.large)
+                    .accessibilityLabel(Strings.Delete.Alert.Delete.button)
+                    .accessibilityIdentifier("meetingDeleteProgress")
+            }
+        }
         .alert(
-            Strings.Delete.Error.Alert.title,
+            viewModel.deleteErrorTitle,
             isPresented: $viewModel.hasDeleteError
         ) {
-            Button(Strings.Delete.Error.Alert.ok, role: .cancel) {}
+            if viewModel.canRetryDelete {
+                Button(L10n.Localizable.WireMeetings.retry) {
+                    Task { await viewModel.retryDelete() }
+                }
+                .accessibilityIdentifier("meetingDeleteRetryButton")
+            }
+            Button(
+                viewModel.canRetryDelete
+                    ? Strings.Delete.Alert.Cancel.button : L10n.Localizable.WireMeetings.Schedule.Error.Alert.ok,
+                role: .cancel
+            ) {}
+        } message: {
+            Text(viewModel.deleteErrorMessage)
         }
         .task {
             await viewModel.loadInitialData()
@@ -65,36 +93,87 @@ struct MeetingsView: View {
         .task {
             await viewModel.observeCurrentDate()
         }
+        .task {
+            await viewModel.observeSystemDateTimeChanges()
+        }
+        .onChange(of: scenePhase) { _, newPhase in
+            guard newPhase == .active else { return }
+
+            Task { await viewModel.refreshSystemDateTimeStateAfterSceneBecameActive() }
+        }
     }
 
     @ViewBuilder private var content: some View {
 
         if viewModel.groupedUpcomingMeetings.isEmpty {
-            MeetingsEmptyStateView(
-                title: Strings.EmptyState.Next.title,
-                subtitle: Strings.EmptyState.Next.subtitle
-            )
+            if viewModel.isLoading {
+                ProgressView()
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .accessibilityLabel(Strings.title)
+                    .accessibilityIdentifier(Locators.WireMeetings.MeetingsPage.loadProgress)
+            } else if viewModel.hasLoadError {
+                loadError
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+            } else {
+                MeetingsEmptyStateView(
+                    title: Strings.EmptyState.Next.title,
+                    subtitle: Strings.EmptyState.Next.subtitle
+                )
+            }
         } else {
             meetingsList
         }
     }
 
+    private var loadError: some View {
+        VStack(spacing: 12) {
+            Text(L10n.Localizable.Meetings.List.loadError)
+                .font(for: .body1)
+                .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
+                .multilineTextAlignment(.center)
+            Button(L10n.Localizable.WireMeetings.retry) {
+                Task { await viewModel.loadInitialData() }
+            }
+            .wireButtonStyle(.tertiary)
+            .accessibilityIdentifier(Locators.WireMeetings.MeetingsPage.loadRetryButton)
+        }
+        .padding()
+    }
+
     @ViewBuilder private var meetingsList: some View {
         List {
+            if viewModel.hasLoadError {
+                loadError
+                    .frame(maxWidth: .infinity)
+                    .listRowSeparator(.hidden)
+                    .listRowBackground(Color.clear)
+            } else if viewModel.isLoading, !viewModel.hasMore {
+                ProgressView()
+                    .frame(maxWidth: .infinity)
+                    .listRowSeparator(.hidden)
+                    .listRowBackground(Color.clear)
+                    .accessibilityLabel(Strings.title)
+                    .accessibilityIdentifier(Locators.WireMeetings.MeetingsPage.loadProgress)
+            }
+
             GroupedSections(
                 groups: viewModel.groupedUpcomingMeetings,
                 formatDay: viewModel.formatDay(_:),
-                formatTimeRange: viewModel.formatTimeRange(for:),
+                formatTime: viewModel.formatTime(for:),
                 isAttending: viewModel.isAttending(_:),
                 isHappeningNow: viewModel.isHappeningNow(_:),
+                isOrganizer: viewModel.isOrganizer(_:),
                 onEdit: { onEditMeeting($0) },
-                onDelete: { viewModel.meetingToDelete = $0 }
+                onDelete: { viewModel.meetingToDelete = $0 },
+                onJoin: { onJoinMeeting($0) },
+                onMeetingLink: onMeetingLink
             )
 
             if viewModel.hasMore {
                 HStack {
                     Spacer()
                     ProgressView()
+                        .accessibilityIdentifier(Locators.WireMeetings.MeetingsPage.paginationProgress)
                     Spacer()
                 }
                 .listRowBackground(Color.clear)
@@ -102,21 +181,25 @@ struct MeetingsView: View {
             }
         }
         .listStyle(.grouped)
+        .accessibilityIdentifier(Locators.WireMeetings.MeetingsPage.list)
         .scrollContentBackground(.hidden)
         .background(ColorTheme.Backgrounds.surface.color)
         .refreshable {
+            // Let SwiftUI present the refresh control before a fast reload completes.
+            await Task.yield()
             await viewModel.loadInitialData()
         }
         .alert(
-            Strings.Delete.Alert.title,
+            viewModel.deleteConfirmationTitle,
             isPresented: $viewModel.isDeleteConfirmationPresented
         ) {
             Button(Strings.Delete.Alert.Delete.button, role: .destructive) {
                 viewModel.confirmDelete()
             }
+            .disabled(viewModel.isDeleting)
             Button(Strings.Delete.Alert.Cancel.button, role: .cancel) {}
         } message: {
-            Text(Strings.Delete.Alert.subtitle)
+            Text(viewModel.deleteConfirmationMessage)
         }
     }
 
@@ -132,34 +215,43 @@ private func SectionTitle(_ text: String) -> some View {
 }
 
 private struct GroupedSections: View {
-
-    let groups: [(day: Date, meetings: [Meeting])]
+    let groups: [(day: Date, meetings: [MeetingOccurrence])]
     let formatDay: (Date) -> String
-    let formatTimeRange: (Meeting) -> String
-    let isAttending: (Meeting) -> Bool
-    let isHappeningNow: (Meeting) -> Bool
+    let formatTime: (MeetingOccurrence) -> String
+    let isAttending: (MeetingOccurrence) -> Bool
+    let isHappeningNow: (MeetingOccurrence) -> Bool
+    let isOrganizer: (Meeting) -> Bool
     let onEdit: (Meeting) -> Void
     let onDelete: (Meeting) -> Void
+    let onJoin: (MeetingOccurrence) -> Void
+    let onMeetingLink: ((Meeting) -> Void)?
 
     @Environment(\.wireAccentColor) private var wireAccentColor
 
     var body: some View {
         ForEach(groups, id: \.day) { dayGroup in
             Section {
-                ForEach(dayGroup.meetings, id: \.id) { meeting in
+                ForEach(dayGroup.meetings, id: \.id) { occurrence in
+                    let isLive = isHappeningNow(occurrence)
+
                     MeetingRow(
-                        meeting: meeting,
-                        formatTimeRange: formatTimeRange,
-                        isAttending: isAttending(meeting),
-                        onEdit: { onEdit(meeting) },
-                        onDelete: { onDelete(meeting) }
+                        occurrence: occurrence,
+                        formatTime: formatTime,
+                        isOrganizer: isOrganizer(occurrence.meeting),
+                        isAttending: isAttending(occurrence),
+                        isLive: isLive,
+                        onEdit: { onEdit(occurrence.meeting) },
+                        onDelete: { onDelete(occurrence.meeting) },
+                        onJoin: { onJoin(occurrence) },
+                        onMeetingLink: onMeetingLink.map { action in { action(occurrence.meeting) } }
                     )
                     .listRowBackground(
-                        isHappeningNow(meeting) ? Color(wireAccentColor.secondaryUIColor) : Color.clear
+                        isLive ? Color(wireAccentColor.secondaryUIColor) : Color.clear
                     )
                 }
             } header: {
                 SectionTitle(formatDay(dayGroup.day))
+                    .accessibilityIdentifier(Locators.WireMeetings.MeetingsPage.dayHeader)
             }
         }
     }
@@ -172,7 +264,8 @@ private struct GroupedSections: View {
             formatter: MeetingsFormatter(),
             upcomingMeetingsUseCase: PreviewFetchUpcomingMeetingsUseCase(),
             observeMeetingChangesUseCase: PreviewObserveMeetingChangesUseCase(),
-            deleteMeetingUseCase: PreviewDeleteMeetingUseCase()
+            deleteMeetingUseCase: PreviewDeleteMeetingUseCase(),
+            selfUserID: previewSelfUserID
         )
     )
 }
@@ -184,7 +277,8 @@ private struct GroupedSections: View {
             formatter: MeetingsFormatter(),
             upcomingMeetingsUseCase: PreviewFetchUpcomingMeetingsUseCase(meetings: previewMeetings()),
             observeMeetingChangesUseCase: PreviewObserveMeetingChangesUseCase(),
-            deleteMeetingUseCase: PreviewDeleteMeetingUseCase()
+            deleteMeetingUseCase: PreviewDeleteMeetingUseCase(),
+            selfUserID: previewSelfUserID
         )
     )
 }
@@ -209,9 +303,11 @@ private struct PreviewObserveMeetingChangesUseCase: ObserveMeetingChangesUseCase
 
 private struct PreviewDeleteMeetingUseCase: DeleteMeetingUseCaseProtocol {
 
-    func invoke(meetingID: QualifiedID) async throws {}
+    func invoke(meeting: Meeting) async throws {}
 
 }
+
+private let previewSelfUserID = UUID()
 
 private func previewMeetings() -> [Meeting] {
     let calendar = Calendar.current
@@ -239,8 +335,10 @@ private func previewMeetings() -> [Meeting] {
             qualifiedID: QualifiedID(id: UUID(), domain: ""),
             name: name,
             handle: name.lowercased().replacingOccurrences(of: " ", with: ""),
+            isSelfUser: false,
             initials: initials.uppercased(),
-            accentColor: accentColor
+            accentColor: accentColor,
+            avatarImageData: nil
         )
     }
 
@@ -253,7 +351,7 @@ private func previewMeetings() -> [Meeting] {
             recurrence: nil,
             conversation: MeetingConversation(participants: Set(members)),
             conversationID: QualifiedID(id: UUID(), domain: ""),
-            creatorID: QualifiedID(id: UUID(), domain: "")
+            creatorID: QualifiedID(id: previewSelfUserID, domain: "")
         )
     }
 

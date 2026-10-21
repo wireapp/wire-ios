@@ -19,6 +19,7 @@
 import Combine
 import Foundation
 import SwiftUI
+import WireFoundation
 import WireMessagingDomain
 
 private typealias Strings = L10n.Localizable.Conversation.WireCells
@@ -96,7 +97,6 @@ final class MoveToFolderPageViewModel: MoveToFolderPageViewModelProtocol {
     private let nodeName: String
     private let onNavigate: (String) -> Void
     private let onFinish: () -> Void
-    private let nodesCollection: WireDriveNodesCollection
     private let fetchNodesUseCase: WireDriveFetchNodesUseCase
     private let moveNodeUseCase: WireDriveMoveNodeUseCase
     private let createFileUseCase: any WireDriveCreateFileUseCaseProtocol
@@ -119,7 +119,6 @@ final class MoveToFolderPageViewModel: MoveToFolderPageViewModelProtocol {
         nodeName: String,
         onNavigate: @escaping (String) -> Void,
         onFinish: @escaping () -> Void,
-        nodesCollection: WireDriveNodesCollection,
         fetchNodesUseCase: WireDriveFetchNodesUseCase,
         moveNodeUseCase: WireDriveMoveNodeUseCase,
         createFileUseCase: any WireDriveCreateFileUseCaseProtocol
@@ -131,12 +130,12 @@ final class MoveToFolderPageViewModel: MoveToFolderPageViewModelProtocol {
         self.originalContainerPath = originalContainerPath
         self.onNavigate = onNavigate
         self.onFinish = onFinish
-        self.nodesCollection = nodesCollection
         self.fetchNodesUseCase = fetchNodesUseCase
         self.moveNodeUseCase = moveNodeUseCase
         self.createFileUseCase = createFileUseCase
 
-        nodesCollection.observeNodes().sink { [weak self] nodes in
+        fetchNodesUseCase.clearNodes()
+        fetchNodesUseCase.nodes.sink { [weak self] nodes in
             self?.nodes = nodes.filter { $0.id != nodeID }
         }.store(in: &subscriptions)
     }
@@ -148,10 +147,7 @@ final class MoveToFolderPageViewModel: MoveToFolderPageViewModelProtocol {
                 name: node.name,
                 subtitle: Self.subtitle(
                     modifiedAt: node.modified,
-                    ownedBy: node.ownerUserName,
-                    locale: .autoupdatingCurrent,
-                    calendar: .autoupdatingCurrent,
-                    timeZone: .autoupdatingCurrent
+                    ownedBy: node.ownerUserName
                 )
             )
         }
@@ -276,22 +272,9 @@ final class MoveToFolderPageViewModel: MoveToFolderPageViewModelProtocol {
 
     private static func subtitle(
         modifiedAt: Date?,
-        ownedBy: String?,
-        locale: Locale,
-        calendar: Calendar,
-        timeZone: TimeZone
+        ownedBy: String?
     ) -> String? {
-        let modifiedAt = modifiedAt.map { date in
-            let style = Date.FormatStyle(
-                date: .abbreviated,
-                time: .shortened,
-                locale: locale,
-                calendar: calendar,
-                timeZone: timeZone,
-                capitalizationContext: .beginningOfSentence
-            )
-            return date.formatted(style)
-        }
+        let modifiedAt = modifiedAt?.formattedDate(justNowText: Strings.Files.Time.justNow)
         return if let modifiedAt, let ownedBy {
             L10n.Localizable.Conversation.WireCells.Files.Item.subtitle(modifiedAt, ownedBy)
         } else {
@@ -307,7 +290,10 @@ final class MoveToFolderPageViewModel: MoveToFolderPageViewModelProtocol {
         loadingContentError = nil
         isLoadingContent = true
         do {
-            hasMoreContent = try await fetchNodesUseCase.invoke(request: .reload(searchTerm: nil)).hasMore
+            hasMoreContent = try await fetchNodesUseCase.invoke(
+                request: .reload(searchTerm: nil),
+                configuration: .moveToFolder(root: containerPath)
+            ).hasMore
         } catch where error.isURLErrorCancelled {
             // no op
         } catch {

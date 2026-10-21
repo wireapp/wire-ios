@@ -18,6 +18,7 @@
 
 import Foundation
 import Testing
+import UIKit
 import WireFoundation
 import WireFoundationSupport
 
@@ -42,6 +43,11 @@ struct MeetingsViewModelTests {
         mockDateProvider.now = try Date.ISO8601FormatStyle().parse("2025-10-27T13:59:59Z")
         self.formatter = MeetingsFormatter()
         self.upcomingMeetingsUseCase = FetchUpcomingMeetingsUseCaseProtocolMock()
+        upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsReturnValue = PaginatedMeetings(
+            meetings: [],
+            hasMore: false,
+            nextOffset: 0
+        )
         self.observeMeetingChangesUseCase = ObserveMeetingChangesUseCaseProtocolMock()
         self.deleteMeetingUseCase = DeleteMeetingUseCaseProtocolMock()
         self.observeAttendedMeetingsUseCase = ObserveAttendedMeetingsUseCaseProtocolMock()
@@ -51,7 +57,9 @@ struct MeetingsViewModelTests {
             upcomingMeetingsUseCase: upcomingMeetingsUseCase,
             observeMeetingChangesUseCase: observeMeetingChangesUseCase,
             deleteMeetingUseCase: deleteMeetingUseCase,
-            observeAttendedMeetingsUseCase: observeAttendedMeetingsUseCase
+            selfUserID: Scaffolding.selfUserID,
+            observeAttendedMeetingsUseCase: observeAttendedMeetingsUseCase,
+            isApplicationActiveProvider: { true }
         )
     }
 
@@ -59,6 +67,7 @@ struct MeetingsViewModelTests {
 
     @Test("initial state is empty")
     func initialState() {
+        #expect(viewModel.loadedOccurrences.isEmpty)
         #expect(viewModel.loadedMeetings.isEmpty)
         #expect(viewModel.hasMore == false)
         #expect(viewModel.groupedUpcomingMeetings.isEmpty)
@@ -84,7 +93,7 @@ struct MeetingsViewModelTests {
         #expect(viewModel.hasMore == true)
         #expect(upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsCallsCount == 1)
         #expect(upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsReceivedInvocations.first?
-            .pageSize == 10)
+            .pageSize == 20)
         #expect(upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsReceivedInvocations.first?
             .offset == 0)
     }
@@ -99,6 +108,13 @@ struct MeetingsViewModelTests {
         }
         await viewModel.loadInitialData()
 
+        upcomingMeetingsUseCase
+            .invokePageSizeIntOffsetIntPaginatedMeetingsThrowableError = URLError(.notConnectedToInternet)
+        await viewModel.loadInitialData()
+        #expect(viewModel.hasLoadError)
+        #expect(viewModel.loadedMeetings == [first])
+        upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsThrowableError = nil
+
         // When — a second initial load returns a different page
         upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsClosure = { _, _ in
             PaginatedMeetings(meetings: [second], hasMore: false, nextOffset: 10)
@@ -109,6 +125,7 @@ struct MeetingsViewModelTests {
         #expect(viewModel.loadedMeetings.count == 1)
         #expect(viewModel.loadedMeetings.first?.title == "Second load")
         #expect(viewModel.hasMore == false)
+        #expect(!viewModel.hasLoadError)
         #expect(upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsReceivedInvocations.last?
             .offset == 0)
     }
@@ -139,7 +156,7 @@ struct MeetingsViewModelTests {
         #expect(viewModel.hasMore == false)
         #expect(upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsCallsCount == 2)
         #expect(upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsReceivedInvocations.last?
-            .pageSize == 5)
+            .pageSize == 20)
         #expect(upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsReceivedInvocations.last?
             .offset == 10)
     }
@@ -191,41 +208,99 @@ struct MeetingsViewModelTests {
 
     @Test("a meeting change event re-fetches the entire loaded range in one page")
     func meetingChangeEvent_refetchesLoadedRange() async {
-        // Given — 12 loaded meetings (initial page of 10 plus a page of 2)
-        let meetings = (0 ..< 12).map { index in
+        // Given — 25 loaded meetings (initial page of 20 plus a page of 5)
+        var meetings = (0 ..< 25).map { index in
             Meeting.fixture(
                 title: "Meeting \(index)",
                 start: mockDateProvider.now.addingTimeInterval(Double(index + 1) * 3600)
             )
         }
-        upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsClosure = { _, offset in
-            if offset == 0 {
-                PaginatedMeetings(meetings: Array(meetings.prefix(10)), hasMore: true, nextOffset: 10)
-            } else {
-                PaginatedMeetings(meetings: Array(meetings.suffix(2)), hasMore: false, nextOffset: 12)
-            }
+        let repository = MeetingRepositoryProtocolMock()
+        repository.fetchMeetingsInRangeRangeDateOffsetIntLimitIntMeetingReturnValue = meetings
+        let fetchMeetings = FetchUpcomingMeetingsUseCase(
+            repository: repository,
+            currentDateProvider: mockDateProvider
+        )
+        upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsClosure = { pageSize, offset in
+            try await fetchMeetings.invoke(pageSize: pageSize, offset: offset)
         }
         await viewModel.loadInitialData()
         await viewModel.loadMoreIfNeeded()
-        #expect(viewModel.loadedMeetings.count == 12)
+        #expect(viewModel.loadedMeetings.count == 25)
 
         let (changes, changeContinuation) = AsyncStream<Void>.makeStream()
         observeMeetingChangesUseCase.invokeAsyncStreamVoidReturnValue = changes
 
         // When
-        upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsClosure = { _, _ in
-            PaginatedMeetings(meetings: meetings, hasMore: false, nextOffset: 12)
-        }
+        meetings[0] = Meeting.fixture(id: meetings[0].id, title: "Edited", start: meetings[0].start)
+        repository.fetchMeetingsInRangeRangeDateOffsetIntLimitIntMeetingReturnValue = meetings
         changeContinuation.yield(())
         changeContinuation.finish()
         await viewModel.observeMeetingChanges()
 
-        // Then — a single fetch covering all 12 loaded meetings
+        // Then — a single fetch covering all 25 loaded meetings
         let lastInvocation = upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsReceivedInvocations
             .last
-        #expect(lastInvocation?.pageSize == 12)
+        #expect(lastInvocation?.pageSize == 25)
         #expect(lastInvocation?.offset == 0)
-        #expect(viewModel.loadedMeetings.count == 12)
+        #expect(viewModel.loadedMeetings == meetings)
+    }
+
+    @Test("a meeting change event queues a reload after an in-flight silent refresh")
+    func meetingChangeEvent_queuesReloadAfterInFlightSilentRefresh() async {
+        let initial = Meeting.fixture(title: "Initial", start: mockDateProvider.now.addingTimeInterval(3600))
+        let stale = Meeting.fixture(title: "Stale", start: mockDateProvider.now.addingTimeInterval(3600))
+        let updated = Meeting.fixture(title: "Updated", start: mockDateProvider.now.addingTimeInterval(3600))
+        upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsClosure = { _, _ in
+            PaginatedMeetings(meetings: [initial], hasMore: false, nextOffset: 1)
+        }
+        await viewModel.loadInitialData()
+
+        let (fetchStarted, fetchStartedContinuation) = AsyncStream<Int>.makeStream()
+        var fetchStartedIterator = fetchStarted.makeAsyncIterator()
+        var fetchContinuations: [CheckedContinuation<PaginatedMeetings, Never>] = []
+        var fetchCount = 0
+        upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsClosure = { _, _ in
+            fetchCount += 1
+            let currentFetchCount = fetchCount
+            return await withCheckedContinuation { continuation in
+                fetchContinuations.append(continuation)
+                fetchStartedContinuation.yield(currentFetchCount)
+            }
+        }
+
+        let (systemChanges, systemContinuation) = AsyncStream<Void>.makeStream()
+        let systemTask = Task {
+            await viewModel.observeSystemDateTimeChanges(systemChanges)
+        }
+        systemContinuation.yield(())
+        systemContinuation.finish()
+        #expect(await fetchStartedIterator.next() == 1)
+
+        let (meetingChanges, meetingContinuation) = AsyncStream<Void>.makeStream()
+        observeMeetingChangesUseCase.invokeAsyncStreamVoidReturnValue = meetingChanges
+        let meetingTask = Task {
+            await viewModel.observeMeetingChanges()
+        }
+        meetingContinuation.yield(())
+        meetingContinuation.finish()
+        await meetingTask.value
+
+        #expect(upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsCallsCount == 2)
+
+        fetchContinuations[0].resume(
+            returning: PaginatedMeetings(meetings: [stale], hasMore: false, nextOffset: 1)
+        )
+        #expect(await fetchStartedIterator.next() == 2)
+        #expect(viewModel.isLoading == true)
+
+        fetchContinuations[1].resume(
+            returning: PaginatedMeetings(meetings: [updated], hasMore: false, nextOffset: 1)
+        )
+        await systemTask.value
+
+        #expect(viewModel.loadedMeetings.map(\.title) == ["Updated"])
+        #expect(upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsCallsCount == 3)
     }
 
     // MARK: - observeAttendedMeetings
@@ -248,6 +323,41 @@ struct MeetingsViewModelTests {
         #expect(viewModel.attendingConversationIDs == [attended.conversationID])
         #expect(viewModel.isAttending(attended) == true)
         #expect(viewModel.isAttending(other) == false)
+    }
+
+    @Test("isAttending is true only for the currently happening occurrence")
+    func isAttendingOccurrence_requiresCurrentOccurrence() async {
+        // Given
+        let meeting = Meeting.fixture(
+            title: "Daily",
+            start: mockDateProvider.now.addingTimeInterval(-60),
+            duration: 120,
+            recurrence: MeetingRecurrence(frequency: .daily, interval: 1)
+        )
+        let currentOccurrence = MeetingOccurrence(meeting: meeting)
+        let pastOccurrence = MeetingOccurrence(
+            meeting: meeting,
+            start: mockDateProvider.now.addingTimeInterval(-86_400),
+            end: mockDateProvider.now.addingTimeInterval(-86_400 + 120)
+        )
+        let futureOccurrence = MeetingOccurrence(
+            meeting: meeting,
+            start: mockDateProvider.now.addingTimeInterval(86_400),
+            end: mockDateProvider.now.addingTimeInterval(86_400 + 120)
+        )
+
+        let (stream, continuation) = AsyncStream<Set<QualifiedID>>.makeStream()
+        observeAttendedMeetingsUseCase.invokeAsyncStreamSetWireFoundationQualifiedIDReturnValue = stream
+
+        // When
+        continuation.yield([meeting.conversationID])
+        continuation.finish()
+        await viewModel.observeAttendedMeetings()
+
+        // Then
+        #expect(viewModel.isAttending(currentOccurrence) == true)
+        #expect(viewModel.isAttending(pastOccurrence) == false)
+        #expect(viewModel.isAttending(futureOccurrence) == false)
     }
 
     @Test("a subsequent emission replaces the attending set")
@@ -277,7 +387,9 @@ struct MeetingsViewModelTests {
             formatter: formatter,
             upcomingMeetingsUseCase: upcomingMeetingsUseCase,
             observeMeetingChangesUseCase: observeMeetingChangesUseCase,
-            deleteMeetingUseCase: deleteMeetingUseCase
+            deleteMeetingUseCase: deleteMeetingUseCase,
+            selfUserID: Scaffolding.selfUserID,
+            isApplicationActiveProvider: { true }
         )
 
         // When
@@ -320,6 +432,27 @@ struct MeetingsViewModelTests {
         #expect(groups[1].meetings.map(\.title) == ["Next day"])
     }
 
+    @Test("day grouping refresh uses the latest calendar provider value")
+    func dayGroupingRefresh_usesLatestCalendarProviderValue() throws {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = try #require(TimeZone(secondsFromGMT: 0))
+        let grouper = MeetingsGrouper(calendarProvider: { calendar })
+        let beforeMidnight = try Date.ISO8601FormatStyle().parse("2026-03-29T23:30:00Z")
+        let afterMidnight = try Date.ISO8601FormatStyle().parse("2026-03-30T00:30:00Z")
+        let occurrences = [
+            MeetingOccurrence(meeting: Meeting.fixture(title: "Before midnight", start: beforeMidnight)),
+            MeetingOccurrence(meeting: Meeting.fixture(title: "After midnight", start: afterMidnight))
+        ]
+
+        #expect(grouper.group(occurrences).count == 2)
+
+        calendar.timeZone = try #require(TimeZone(secondsFromGMT: 7200))
+        #expect(grouper.group(occurrences).count == 2)
+
+        grouper.refresh()
+        #expect(grouper.group(occurrences).count == 1)
+    }
+
     // MARK: - deleteMeeting
 
     @Test("deleteMeeting calls the use case with the correct ID and removes the meeting")
@@ -336,9 +469,43 @@ struct MeetingsViewModelTests {
         await viewModel.deleteMeeting(meeting)
 
         // Then
-        #expect(deleteMeetingUseCase.invokeMeetingIDQualifiedIDVoidCallsCount == 1)
-        #expect(deleteMeetingUseCase.invokeMeetingIDQualifiedIDVoidReceivedMeetingID == meeting.id)
+        #expect(deleteMeetingUseCase.invokeMeetingMeetingVoidCallsCount == 1)
+        #expect(deleteMeetingUseCase.invokeMeetingMeetingVoidReceivedMeeting == meeting)
         #expect(viewModel.loadedMeetings.isEmpty)
+    }
+
+    @Test("deleteMeeting removes every loaded occurrence for the meeting series")
+    func deleteMeeting_removesEveryOccurrenceForSeries() async {
+        // Given
+        let meeting = Meeting.fixture(
+            title: "Daily",
+            start: mockDateProvider.now,
+            recurrence: MeetingRecurrence(frequency: .daily, interval: 1)
+        )
+        let tomorrow = mockDateProvider.now.addingTimeInterval(86_400)
+        upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsClosure = { _, _ in
+            PaginatedMeetings(
+                occurrences: [
+                    MeetingOccurrence(meeting: meeting),
+                    MeetingOccurrence(
+                        meeting: meeting,
+                        start: tomorrow,
+                        end: tomorrow.addingTimeInterval(3600)
+                    )
+                ],
+                hasMore: false,
+                nextOffset: 2
+            )
+        }
+        await viewModel.loadInitialData()
+        #expect(viewModel.loadedOccurrences.count == 2)
+
+        // When
+        await viewModel.deleteMeeting(meeting)
+
+        // Then
+        #expect(deleteMeetingUseCase.invokeMeetingMeetingVoidReceivedMeeting == meeting)
+        #expect(viewModel.loadedOccurrences.isEmpty)
     }
 
     @Test("deleteMeeting flags an error and keeps the meeting when the use case fails")
@@ -351,7 +518,7 @@ struct MeetingsViewModelTests {
         await viewModel.loadInitialData()
 
         struct DeleteError: Error {}
-        deleteMeetingUseCase.invokeMeetingIDQualifiedIDVoidThrowableError = DeleteError()
+        deleteMeetingUseCase.invokeMeetingMeetingVoidThrowableError = DeleteError()
 
         // When
         await viewModel.deleteMeeting(meeting)
@@ -359,6 +526,14 @@ struct MeetingsViewModelTests {
         // Then — the error is surfaced and the meeting is not removed
         #expect(viewModel.hasDeleteError == true)
         #expect(viewModel.loadedMeetings.count == 1)
+
+        viewModel.hasDeleteError = false
+        deleteMeetingUseCase.invokeMeetingMeetingVoidThrowableError = nil
+        await viewModel.retryDelete()
+
+        #expect(deleteMeetingUseCase.invokeMeetingMeetingVoidCallsCount == 2)
+        #expect(deleteMeetingUseCase.invokeMeetingMeetingVoidReceivedMeeting == meeting)
+        #expect(viewModel.loadedMeetings.isEmpty)
     }
 
     // MARK: - Delete Confirmation
@@ -373,7 +548,27 @@ struct MeetingsViewModelTests {
 
         // Then
         #expect(viewModel.isDeleteConfirmationPresented == true)
-        #expect(deleteMeetingUseCase.invokeMeetingIDQualifiedIDVoidCallsCount == 0)
+        #expect(deleteMeetingUseCase.invokeMeetingMeetingVoidCallsCount == 0)
+    }
+
+    @Test("a participant confirmation uses the exact self-only copy")
+    func meetingToDelete_participantUsesSelfOnlyCopy() {
+        // Given
+        let meeting = Meeting.fixture(
+            title: "To delete",
+            start: mockDateProvider.now,
+            isOrganizer: false
+        )
+
+        // When
+        viewModel.meetingToDelete = meeting
+
+        // Then
+        #expect(viewModel.deleteConfirmationTitle == "Delete meeting for me")
+        #expect(
+            viewModel.deleteConfirmationMessage
+                == "The meeting will be deleted from your calendar. This will not affect other participants."
+        )
     }
 
     @Test("confirmDelete deletes the pending meeting and dismisses the confirmation")
@@ -384,13 +579,13 @@ struct MeetingsViewModelTests {
 
         // When — confirmDelete deletes in a fire-and-forget task, so wait for the use case call
         await withCheckedContinuation { continuation in
-            deleteMeetingUseCase.invokeMeetingIDQualifiedIDVoidClosure = { _ in continuation.resume() }
+            deleteMeetingUseCase.invokeMeetingMeetingVoidClosure = { _ in continuation.resume() }
             viewModel.confirmDelete()
         }
 
         // Then
-        #expect(deleteMeetingUseCase.invokeMeetingIDQualifiedIDVoidCallsCount == 1)
-        #expect(deleteMeetingUseCase.invokeMeetingIDQualifiedIDVoidReceivedMeetingID == meeting.id)
+        #expect(deleteMeetingUseCase.invokeMeetingMeetingVoidCallsCount == 1)
+        #expect(deleteMeetingUseCase.invokeMeetingMeetingVoidReceivedMeeting == meeting)
         #expect(viewModel.meetingToDelete == nil)
         #expect(viewModel.isDeleteConfirmationPresented == false)
     }
@@ -401,7 +596,7 @@ struct MeetingsViewModelTests {
         viewModel.confirmDelete()
 
         // Then
-        #expect(deleteMeetingUseCase.invokeMeetingIDQualifiedIDVoidCallsCount == 0)
+        #expect(deleteMeetingUseCase.invokeMeetingMeetingVoidCallsCount == 0)
     }
 
     @Test("dismissing the confirmation clears the pending meeting without deleting it")
@@ -415,7 +610,7 @@ struct MeetingsViewModelTests {
 
         // Then
         #expect(viewModel.meetingToDelete == nil)
-        #expect(deleteMeetingUseCase.invokeMeetingIDQualifiedIDVoidCallsCount == 0)
+        #expect(deleteMeetingUseCase.invokeMeetingMeetingVoidCallsCount == 0)
     }
 
     // MARK: - Meeting State
@@ -453,6 +648,261 @@ struct MeetingsViewModelTests {
         #expect(viewModel.isHappeningNow(meeting) == false)
     }
 
+    @Test("system date and time changes refresh currentDate")
+    func systemDateTimeChanges_refreshCurrentDate() async {
+        let (changes, continuation) = AsyncStream<Void>.makeStream()
+        let task = Task {
+            await viewModel.observeSystemDateTimeChanges(changes)
+        }
+        let updatedDate = mockDateProvider.now.addingTimeInterval(3600)
+
+        mockDateProvider.now = updatedDate
+        continuation.yield(())
+        continuation.finish()
+
+        await task.value
+        #expect(viewModel.currentDate == updatedDate)
+    }
+
+    @Test("system date and time changes reload loaded meetings")
+    func systemDateTimeChanges_reloadLoadedMeetings() async {
+        let initial = Meeting.fixture(title: "Initial", start: mockDateProvider.now.addingTimeInterval(3600))
+        let updated = Meeting.fixture(title: "Updated", start: mockDateProvider.now.addingTimeInterval(3600))
+        upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsClosure = { _, _ in
+            PaginatedMeetings(meetings: [initial], hasMore: false, nextOffset: 1)
+        }
+        await viewModel.loadInitialData()
+
+        upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsClosure = { _, _ in
+            PaginatedMeetings(meetings: [updated], hasMore: false, nextOffset: 1)
+        }
+        let (changes, continuation) = AsyncStream<Void>.makeStream()
+        let task = Task {
+            await viewModel.observeSystemDateTimeChanges(changes)
+        }
+        continuation.yield(())
+        continuation.finish()
+
+        await task.value
+
+        #expect(viewModel.loadedMeetings.map(\.title) == ["Updated"])
+        let lastInvocation = upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsReceivedInvocations.last
+        #expect(lastInvocation?.pageSize == 20)
+        #expect(lastInvocation?.offset == 0)
+    }
+
+    @Test("system date and time changes reload loaded meetings without showing loading state")
+    func systemDateTimeChanges_reloadLoadedMeetingsSilently() async {
+        let initial = Meeting.fixture(title: "Initial", start: mockDateProvider.now.addingTimeInterval(3600))
+        let updated = Meeting.fixture(title: "Updated", start: mockDateProvider.now.addingTimeInterval(3600))
+        upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsClosure = { _, _ in
+            PaginatedMeetings(meetings: [initial], hasMore: false, nextOffset: 1)
+        }
+        await viewModel.loadInitialData()
+
+        let (fetchStarted, fetchStartedContinuation) = AsyncStream<Void>.makeStream()
+        var fetchStartedIterator = fetchStarted.makeAsyncIterator()
+        var fetchContinuation: CheckedContinuation<PaginatedMeetings, Never>?
+        upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsClosure = { _, _ in
+            await withCheckedContinuation { continuation in
+                fetchContinuation = continuation
+                fetchStartedContinuation.yield(())
+            }
+        }
+        let (changes, continuation) = AsyncStream<Void>.makeStream()
+        let task = Task {
+            await viewModel.observeSystemDateTimeChanges(changes)
+        }
+
+        continuation.yield(())
+        _ = await fetchStartedIterator.next()
+
+        #expect(viewModel.isLoading == false)
+
+        fetchContinuation?.resume(
+            returning: PaginatedMeetings(meetings: [updated], hasMore: false, nextOffset: 1)
+        )
+        continuation.finish()
+
+        await task.value
+
+        #expect(viewModel.loadedMeetings.map(\.title) == ["Updated"])
+    }
+
+    @Test("scene activation reloads meetings even if application state is not active yet")
+    func sceneActivation_reloadLoadedMeetingsWhenApplicationStateLags() async {
+        let viewModel = MeetingsViewModel(
+            currentDateProvider: mockDateProvider,
+            formatter: formatter,
+            upcomingMeetingsUseCase: upcomingMeetingsUseCase,
+            observeMeetingChangesUseCase: observeMeetingChangesUseCase,
+            deleteMeetingUseCase: deleteMeetingUseCase,
+            selfUserID: Scaffolding.selfUserID,
+            observeAttendedMeetingsUseCase: observeAttendedMeetingsUseCase,
+            isApplicationActiveProvider: { false }
+        )
+        let initial = Meeting.fixture(title: "Initial", start: mockDateProvider.now.addingTimeInterval(3600))
+        let updated = Meeting.fixture(title: "Updated", start: mockDateProvider.now.addingTimeInterval(3600))
+        upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsClosure = { _, _ in
+            PaginatedMeetings(meetings: [initial], hasMore: false, nextOffset: 1)
+        }
+        await viewModel.loadInitialData()
+
+        upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsClosure = { _, _ in
+            PaginatedMeetings(meetings: [updated], hasMore: false, nextOffset: 1)
+        }
+        await viewModel.refreshSystemDateTimeState()
+
+        #expect(viewModel.loadedMeetings.map(\.title) == ["Initial"])
+        #expect(upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsCallsCount == 1)
+
+        await viewModel.refreshSystemDateTimeStateAfterSceneBecameActive()
+
+        #expect(viewModel.loadedMeetings.map(\.title) == ["Updated"])
+        #expect(upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsCallsCount == 2)
+    }
+
+    @Test("system date and time changes schedule a silent reload after an in-flight fetch")
+    func systemDateTimeChanges_reloadAfterInFlightFetch() async {
+        let initial = Meeting.fixture(title: "Initial", start: mockDateProvider.now.addingTimeInterval(3600))
+        let updated = Meeting.fixture(title: "Updated", start: mockDateProvider.now.addingTimeInterval(3600))
+        let (fetchStarted, fetchStartedContinuation) = AsyncStream<Int>.makeStream()
+        var fetchStartedIterator = fetchStarted.makeAsyncIterator()
+        var fetchContinuations: [CheckedContinuation<PaginatedMeetings, Never>] = []
+        var fetchCount = 0
+        upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsClosure = { _, _ in
+            fetchCount += 1
+            let currentFetchCount = fetchCount
+            return await withCheckedContinuation { continuation in
+                fetchContinuations.append(continuation)
+                fetchStartedContinuation.yield(currentFetchCount)
+            }
+        }
+
+        let loadTask = Task {
+            await viewModel.loadInitialData()
+        }
+        #expect(await fetchStartedIterator.next() == 1)
+
+        let (changes, continuation) = AsyncStream<Void>.makeStream()
+        let observeTask = Task {
+            await viewModel.observeSystemDateTimeChanges(changes)
+        }
+        let updatedDate = mockDateProvider.now.addingTimeInterval(3600)
+        mockDateProvider.now = updatedDate
+        continuation.yield(())
+        _ = await waitUntil { viewModel.currentDate == updatedDate }
+
+        #expect(viewModel.currentDate == updatedDate)
+        #expect(upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsCallsCount == 1)
+
+        fetchContinuations[0].resume(
+            returning: PaginatedMeetings(meetings: [initial], hasMore: false, nextOffset: 1)
+        )
+        #expect(await fetchStartedIterator.next() == 2)
+
+        fetchContinuations[1].resume(
+            returning: PaginatedMeetings(meetings: [updated], hasMore: false, nextOffset: 1)
+        )
+        continuation.finish()
+
+        await loadTask.value
+        await observeTask.value
+
+        #expect(viewModel.loadedMeetings.map(\.title) == ["Updated"])
+        #expect(upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsCallsCount == 2)
+    }
+
+    @Test("system date and time changes debounce consecutive refreshes")
+    func systemDateTimeChanges_debouncesConsecutiveRefreshes() async {
+        let notificationCenter = NotificationCenter()
+        let changes = MeetingsViewModel.systemDateTimeChanges(notificationCenter: notificationCenter)
+        let initial = Meeting.fixture(title: "Initial", start: mockDateProvider.now.addingTimeInterval(3600))
+        let updated = Meeting.fixture(title: "Updated", start: mockDateProvider.now.addingTimeInterval(3600))
+        var fetchCount = 0
+        upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsClosure = { _, _ in
+            fetchCount += 1
+            let meetings = fetchCount == 1 ? [initial] : [updated]
+            return PaginatedMeetings(meetings: meetings, hasMore: false, nextOffset: 1)
+        }
+        await viewModel.loadInitialData()
+
+        let task = Task {
+            await viewModel.observeSystemDateTimeChanges(changes)
+        }
+        notificationCenter.post(name: .NSSystemClockDidChange, object: nil)
+        notificationCenter.post(name: .NSSystemClockDidChange, object: nil)
+        notificationCenter.post(name: .NSSystemClockDidChange, object: nil)
+        try? await Task.sleep(for: .milliseconds(350))
+        task.cancel()
+
+        await task.value
+
+        #expect(viewModel.loadedMeetings.map(\.title) == ["Updated"])
+        #expect(upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsCallsCount == 2)
+    }
+
+    @Test("system date and time notifications are observed")
+    func systemDateTimeChanges_observesNotifications() async {
+        let notificationCenter = NotificationCenter()
+        let changes = MeetingsViewModel.systemDateTimeChanges(notificationCenter: notificationCenter)
+        var iterator = changes.makeAsyncIterator()
+        let expectedNotificationNames: Set<Notification.Name> = [
+            .NSCalendarDayChanged,
+            .NSSystemClockDidChange,
+            .NSSystemTimeZoneDidChange,
+            NSLocale.currentLocaleDidChangeNotification,
+            UIApplication.significantTimeChangeNotification
+        ]
+
+        #expect(Set(MeetingsViewModel.systemDateTimeChangeNotificationNames) == expectedNotificationNames)
+
+        for name in expectedNotificationNames {
+            notificationCenter.post(name: name, object: nil)
+        }
+
+        let change: Void? = await iterator.next()
+        #expect(change != nil)
+    }
+
+    @Test("system date and time changes refresh cached formatting")
+    func systemDateTimeChanges_refreshCachedFormatting() async throws {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = try #require(TimeZone(secondsFromGMT: 0))
+        var locale = Locale(identifier: "en_US@hours=h12")
+        let formatter = MeetingsFormatter(
+            calendarProvider: { calendar },
+            localeProvider: { locale }
+        )
+        let viewModel = MeetingsViewModel(
+            currentDateProvider: mockDateProvider,
+            formatter: formatter,
+            upcomingMeetingsUseCase: upcomingMeetingsUseCase,
+            observeMeetingChangesUseCase: observeMeetingChangesUseCase,
+            deleteMeetingUseCase: deleteMeetingUseCase,
+            selfUserID: Scaffolding.selfUserID,
+            observeAttendedMeetingsUseCase: observeAttendedMeetingsUseCase,
+            isApplicationActiveProvider: { true }
+        )
+        let start = try Date.ISO8601FormatStyle().parse("2026-09-08T14:00:00Z")
+        let meeting = Meeting.fixture(title: "Meeting", start: start)
+
+        #expect(viewModel.formatTimeRange(for: meeting).contains("PM"))
+
+        locale = Locale(identifier: "en_GB")
+        #expect(viewModel.formatTimeRange(for: meeting).contains("PM"))
+
+        let (changes, continuation) = AsyncStream<Void>.makeStream()
+        let task = Task {
+            await viewModel.observeSystemDateTimeChanges(changes)
+        }
+        continuation.yield(())
+        continuation.finish()
+
+        await task.value
+        #expect(viewModel.formatTimeRange(for: meeting) == "14:00 - 15:00")
+    }
+
     // MARK: - Formatting
 
     @Test("formatTimeRange delegates to the formatter")
@@ -461,10 +911,41 @@ struct MeetingsViewModelTests {
         #expect(viewModel.formatTimeRange(for: meeting) == formatter.timeRange(from: meeting.start, to: meeting.end))
     }
 
+    @Test("formatTime returns the full range for an ongoing occurrence")
+    func formatTime_ongoingOccurrence() {
+        let meeting = Meeting.fixture(
+            title: "Ongoing",
+            start: mockDateProvider.now.addingTimeInterval(-60),
+            duration: 3600
+        )
+        let occurrence = MeetingOccurrence(meeting: meeting)
+
+        #expect(viewModel.isHappeningNow(occurrence))
+        #expect(
+            viewModel.formatTime(for: occurrence) == formatter.timeRange(from: occurrence.start, to: occurrence.end)
+        )
+    }
+
     @Test("formatDay delegates to the formatter")
     func formatDay() {
         let day = mockDateProvider.now
         #expect(viewModel.formatDay(day) == formatter.dayHeader(for: day, now: mockDateProvider.now))
+    }
+
+    // MARK: - Async Helpers
+
+    private func waitUntil(
+        timeout: Duration = .seconds(1),
+        _ condition: () -> Bool
+    ) async -> Bool {
+        let clock = ContinuousClock()
+        let deadline = clock.now.advanced(by: timeout)
+
+        while !condition(), clock.now < deadline {
+            try? await Task.sleep(for: .milliseconds(1))
+        }
+
+        return condition()
     }
 
 }
@@ -475,17 +956,26 @@ private extension Meeting {
         id: QualifiedID = QualifiedID(id: UUID(), domain: ""),
         title: String,
         start: Date,
-        duration: TimeInterval = 3600
+        duration: TimeInterval = 3600,
+        recurrence: MeetingRecurrence? = nil,
+        isOrganizer: Bool = true
     ) -> Meeting {
         Meeting(
             id: id,
             title: title,
             start: start,
             end: start.addingTimeInterval(duration),
-            recurrence: nil,
+            recurrence: recurrence,
             conversationID: QualifiedID(id: UUID(), domain: ""),
-            creatorID: QualifiedID(id: UUID(), domain: "")
+            creatorID: QualifiedID(
+                id: isOrganizer ? Scaffolding.selfUserID : UUID(),
+                domain: ""
+            )
         )
     }
 
+}
+
+private enum Scaffolding {
+    static let selfUserID = UUID()
 }

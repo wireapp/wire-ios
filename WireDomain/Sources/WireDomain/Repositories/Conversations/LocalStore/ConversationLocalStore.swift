@@ -18,6 +18,7 @@
 
 import CoreData
 import GenericMessageProtocol
+import WireData
 import WireDataModel
 import WireLogging
 
@@ -112,11 +113,12 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         epoch: UInt64,
         conversation: ZMConversation
     ) async {
-        await context.perform {
+        await context.perform { [context] in
             conversation.mlsStatus = .ready
             conversation.epoch = epoch
             conversation.mlsGroupID = mlsGroupID
             conversation.commitPendingProposalDate = nil
+            PendingProposalTimer.remove(mlsGroupID: mlsGroupID.data, in: context)
         }
     }
 
@@ -124,10 +126,15 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         newMLSGroupID: MLSGroupID,
         conversation: ZMConversation
     ) async {
-        await context.perform {
+        await context.perform { [context] in
+            if let previousGroupID = conversation.mlsGroupID {
+                PendingProposalTimer.remove(mlsGroupID: previousGroupID.data, in: context)
+            }
+
             conversation.mlsStatus = .pendingJoinAfterReset
             conversation.mlsGroupID = newMLSGroupID
             conversation.commitPendingProposalDate = nil
+            PendingProposalTimer.remove(mlsGroupID: newMLSGroupID.data, in: context)
             conversation.epoch = 0
         }
     }
@@ -650,8 +657,19 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     ) async {
         let scheduledDate = date + TimeInterval(commitDelay)
 
-        await context.perform {
-            conversation.commitPendingProposalDate = scheduledDate
+        await context.perform { [context] in
+            guard let mlsGroupID = conversation.mlsGroupID, let conversationID = conversation.remoteIdentifier else {
+                return
+            }
+
+            PendingProposalTimer.schedule(
+                mlsGroupID: mlsGroupID.data,
+                conversationID: conversationID,
+                conversationDomain: conversation.domain,
+                fireDate: scheduledDate,
+                keepExistingFireDate: true,
+                in: context
+            )
         }
     }
 
@@ -761,6 +779,14 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     ) async -> Bool {
         await context.perform {
             conversation.conversationType == .group
+        }
+    }
+
+    public func isMeetingConversation(
+        _ conversation: ZMConversation
+    ) async -> Bool {
+        await context.perform {
+            conversation.isMeeting
         }
     }
 
@@ -894,6 +920,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             ) else {
                 return
             }
+            PendingProposalTimer.remove(mlsGroupID: mlsGroupID.data, in: context)
             conversation.mlsGroupID = nil
             context.saveOrRollback()
         }
@@ -943,6 +970,15 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     ) async {
         await context.perform {
             conversation.userDefinedName = newName
+        }
+    }
+
+    public func storeConversation(
+        scheduledDeletionDate: Date,
+        conversation: ZMConversation
+    ) async {
+        await context.perform {
+            conversation.scheduledDeletionDate = scheduledDeletionDate
         }
     }
 
@@ -1251,11 +1287,16 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
                 for: localConversation
             )
 
+            // `/conversations/list` is known to return incomplete data for 1:1s (see comment above on
+            // `setNeedsToBeUpdatedFromBackend: false`) — e.g. it omits the other member when that user has
+            // blocked self. Don't let a stale/partial payload remove the other participant from a 1:1;
+            // membership there is fixed by the connection, not by this list response.
             commonUpdate(
                 from: conversation,
                 for: localConversation,
                 serverTimestamp: serverTimestamp,
-                isFederationEnabled: isFederationEnabled
+                isFederationEnabled: isFederationEnabled,
+                shouldRemoveParticipants: false
             )
 
             linkOneOnOneUserIfNeeded(for: localConversation)

@@ -190,6 +190,10 @@ extension ZMConversation.Action {
         case .archive: Locators.ConversationDetailsActions.archive.rawValue
         case .clearContent: Locators.ConversationDetailsActions.clearContent.rawValue
         case .leave: Locators.ConversationDetailsActions.leaveConversation.rawValue
+        case let .block(isBlocked):
+            isBlocked
+                ? Locators.ConversationsPage.unblockOptionOnContextMenu.rawValue
+                : Locators.ConversationsPage.blockOptionOnContextMenu.rawValue
         default: nil
         }
     }

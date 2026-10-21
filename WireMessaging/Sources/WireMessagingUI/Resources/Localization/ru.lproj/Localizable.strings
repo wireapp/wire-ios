@@ -89,7 +89,7 @@
 "conversation.creationForm.wireCells.toggle" = "Общий диск";
 "conversation.creationForm.wireCells.description" = "Разрешить участникам управлять своими документами и медиа файлами в общем диске. Это действие не может быть отменено.";
 "conversation.creationForm.wireCells.learnMore" = "Подробнее";
-
+"conversation.creationForm.wireCells.sharedDriveAccess" = "Пользователи, не входящие в вашу команду, могут просматривать файлы, но не могут их загружать или редактировать.";
 
 // MARK: - Channel history
 "conversation.channelHistory.upgradeBanner.title" = "Показывать старые сообщения?";
@@ -105,7 +105,7 @@
 "conversation.channelHistory.picker.custom" = "Пользовательская";
 "conversation.channelHistory.customPicker.days" = "Дн.";
 "conversation.channelHistory.customPicker.weeks" = "Нед.";
-"conversation.channelHistory.share.sectionFootnote" = "Вы можете поделиться историей переписки с новыми участниками канала. Таким образом, они также смогут просматривать старые сообщения и файлы.\\Если вы отключите эту функцию, участники канала не будут видеть историю переписки.";
+"conversation.channelHistory.share.sectionFootnote" = "Вы можете поделиться историей беседы с новыми участниками канала. Таким образом, они также смогут просматривать старые сообщения и файлы.\\Если вы отключите эту функцию, участники канала не будут видеть историю.";
 "conversation.channelHistory.navigationTitle" = "История беседы";
 "conversation.creationForm.channelHistory.sectionFootnote" = "Выберите период. Когда участники присоединяются к этому каналу, они могут просматривать историю за этот период времени.";
 "conversation.channelHistory.fetchChannelHistoryDepthOptions.error" = "Произошла ошибка при получении параметров глубины истории канала.";
@@ -119,7 +119,7 @@
 "conversation.wireCells.files.navigationTitle" = "Общий диск";
 "conversation.wireCells.files.viewerAccess.navigationSubtitle" = "Доступ для просмотра";
 "conversation.wireCells.allFiles.navigationTitle" = "Диск";
-"conversation.wireCells.files.viewerAccess.banner" = "Viewer access: you can’t upload or edit files.";
+"conversation.wireCells.files.viewerAccess.banner" = "Доступ для просмотра: вы не можете загружать или редактировать файлы.";
 "conversation.wireCells.files.item.subtitle" = "%@ от %@";
 "conversation.wireCells.allFiles.item.subtitle" = "%@ в %@";
 "conversation.wireCells.files.loadMore.title" = "Загрузить еще";
@@ -191,6 +191,8 @@
 "conversation.wireCells.files.downloadFailed" = "Не удалось загрузить, повторите попытку";
 "conversation.wireCells.files.downloadingFile" = "Загрузка файла...";
 "conversation.wireCells.files.offlineModeHint" = "Вы по-прежнему можете получить доступ к своим файлам в режиме оффлайн.";
+"conversation.wireCells.files.time.just_now" = "Только что";
+
 
 // MARK: - Recycle Bin
 "conversation.wireCells.recycleBin.navigationTitle" = "Корзина";
@@ -342,3 +344,5 @@
 "conversation.details.sharedDriveAccessSection.footer.title" = "Редакторы имеют доступ ко всем файлам и могут управлять ими. Пользователи с правами на просмотр могут только просматривать файлы; они не могут загружать, редактировать или управлять файлами и папками.";
 "conversation.details.sharedDriveAccessSection.footer.subtitle" = "Пользователи, не входящие в команду, создавшую обсуждение, по умолчанию обладают только правами на просмотр.";
 "conversation.details.sharedDriveAccessSection.you" = "Вы";
+"conversation.details.sharedDriveAccessSection.editor" = "Редактор";
+"conversation.details.sharedDriveAccessSection.viewer" = "Просмотрщик";

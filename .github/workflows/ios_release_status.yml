@@ -17,6 +17,11 @@ on:
     # still lands as the first status of the morning, around 8am Berlin.
     - cron: '0 5 * * MON-FRI'   # 05:00 UTC weekdays
   workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Dry run: build the report (job summary only) without posting to Wire"
+        type: boolean
+        default: false
 
 concurrency:
   group: ${{ github.workflow }}
@@ -30,14 +35,13 @@ jobs:
     env:
       JIRA_BASE_URL: https://wearezeta.atlassian.net
       JIRA_PROJECT: WPB
-      JIRA_TOKEN: ${{ secrets.JIRA_TOKEN }}
-      SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_RELEASE_WEBHOOK }}
       # Optional: full branch name of the current LTS C-build release (e.g. release/cycle-4.18).
       # When set, an extra LTS section is appended to the report.
       LTS_RELEASE: ${{ vars.LTS_RELEASE }}
       # Optional: full branch name of an additionally tracked release (e.g. release/cycle-4.20).
       # When set, and the Jira version isn't yet released, an extra GOV section is appended to the report.
       GOV_RELEASE: ${{ vars.GOV_RELEASE }}
+      HAS_WIRE_WEBHOOK: ${{ !inputs.dry_run && secrets.WIRE_IOS_RELEASE_URL != '' && secrets.WIRE_IOS_RELEASE_TOKEN != '' }}
     steps:
       # Needed so the local ./.github/actions/notify-wire composite action is available.
       # Only .github is required, and no LFS objects.
@@ -50,6 +54,8 @@ jobs:
       - name: Build release report
         id: build
         uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7.1.0
+        env:
+          JIRA_TOKEN: ${{ secrets.JIRA_TOKEN }}
         with:
           script: |
             const VERSION_FILE = 'wire-ios/Wire-iOS/Resources/Configuration/Version.xcconfig';
@@ -124,6 +130,10 @@ jobs:
             // ── Jira lookups ──────────────────────────────────────────────────
             const projectVersions = await jira(`/rest/api/3/project/${project}/versions`);
 
+            // Sprint is a custom field whose id varies per Jira site — resolve it by name.
+            const jiraFields   = await jira('/rest/api/3/field');
+            const sprintFieldId = jiraFields.find(f => f.name === 'Sprint')?.id ?? null;
+
             const findJiraVersion = async (semver) => {
               const v = projectVersions.find(x => x.name === `iOS v${semver}`);
               if (!v) return null;
@@ -135,7 +145,7 @@ jobs:
             // "Browse users and groups". Link to the Jira profile instead.
             const driverLabel = (accountId) =>
               accountId
-                ? `<${base}/jira/people/${accountId}|👤 Release captain>`
+                ? `[👤 Release captain](${base}/jira/people/${accountId})`
                 : `⚠️ Release captain: Unassigned`;
 
             // Migrated from the removed /rest/api/3/search endpoint:
@@ -158,17 +168,37 @@ jobs:
               return Math.ceil(ms / 86_400_000);
             };
 
+            // Wire and the GitHub step summary render standard Markdown (not Slack mrkdwn): bold is **x**,
+            // links are [label](url), and free text (Jira summaries, names) must be escaped so a stray
+            // `*` or `_` can not open an unclosed italic span that swallows the rest of the message.
+            const mdEscape = (s) => String(s).replace(/([\\`*_\[\]<>~])/g, "\\$1");
+
             const issueLink = (i) =>
-              `<${base}/browse/${i.key}|${i.key}>`;
+              `[${i.key}](${base}/browse/${i.key})`;
 
             // Slack-formatted link to a Jira version's release page; falls back to plain text
             // when the version isn't in Jira yet (e.g. edge before someone creates it).
             const releaseLink = (v, label) =>
-              v ? `<${base}/projects/${project}/versions/${v.id}|${label}>` : label;
+              v ? `[${label}](${base}/projects/${project}/versions/${v.id})` : label;
 
             const renderIssues = (issues, limit = 10) =>
               issues.slice(0, limit).map(i =>
-                `    • ${issueLink(i)} — ${i.fields.status.name} — ${i.fields.summary}`);
+                `  - ${issueLink(i)} — ${mdEscape(i.fields.status.name)} — ${mdEscape(i.fields.summary)}`);
+
+            // Sprint field returns an array of sprint objects (past + current); pick the
+            // active one, falling back to the most recent when the ticket isn't in one yet.
+            const sprintOf = (issue) => {
+              const sprints = sprintFieldId ? issue.fields[sprintFieldId] : null;
+              if (!Array.isArray(sprints) || sprints.length === 0) return null;
+              return (sprints.find(s => s.state === 'active') ?? sprints[sprints.length - 1])?.name ?? null;
+            };
+
+            const partitionBySprint = (issues) => {
+              const scheduled = [];
+              const unscheduled = [];
+              for (const i of issues) (sprintOf(i) ? scheduled : unscheduled).push(i);
+              return { scheduled, unscheduled };
+            };
 
             // Edge/LTS: bullets headered by status name, with assignee inline.
             const assigneeOf = (issue) => issue.fields.assignee?.displayName ?? 'Unassigned';
@@ -181,9 +211,9 @@ jobs:
               }
               const out = [];
               for (const [status, items] of [...groups.entries()].sort(([a], [b]) => a.localeCompare(b))) {
-                out.push(`  • *${status}* (${items.length})`);
+                out.push(`- **${mdEscape(status)}** (${items.length})`);
                 for (const i of items.slice(0, perGroupLimit)) {
-                  out.push(`    • ${issueLink(i)} — ${assigneeOf(i)} — ${i.fields.summary}`);
+                  out.push(`  - ${issueLink(i)} — ${mdEscape(assigneeOf(i))} — ${mdEscape(i.fields.summary)}`);
                 }
               }
               return out;
@@ -200,9 +230,17 @@ jobs:
                 (scopeOf(a) ?? '').localeCompare(scopeOf(b) ?? ''));
               return sorted.map(i => {
                 const scope = scopeOf(i);
-                return `    • ${issueLink(i)}${scope ? ` — ${scope}` : ''} — ${i.fields.summary}`;
+                return `  - ${issueLink(i)}${scope ? ` — ${mdEscape(scope)}` : ''} — ${mdEscape(i.fields.summary)}`;
               });
             };
+
+            // Scheduled (sprinted) tickets: same shape as the triage lines, with the
+            // sprint name prefixed to the summary.
+            const renderScheduled = (issues, scopeFn = null) =>
+              issues.map(i => {
+                const scope = scopeFn ? scopeFn(i) : null;
+                return `  - ${issueLink(i)}${scope ? ` — ${mdEscape(scope)}` : ''} — ${mdEscape(sprintOf(i))} - ${mdEscape(i.fields.summary)}`;
+              });
 
             // ── Edge: fixVersion ──────────────────────────────────────────────
             const edgeName       = `iOS v${edgeVersion}`;
@@ -220,9 +258,10 @@ jobs:
             const betaName          = `iOS v${betaVersion}`;
             const betaQ             = jqlEscape(betaName);
             const betaJira          = await findJiraVersion(betaVersion);
-            const betaAffectedJql   = `project = ${project} AND affectedVersion = "${betaQ}"`;
+            const betaAffectedJql   = `project = ${project} AND affectedVersion = "${betaQ}" AND status != "Done"`;
             const betaAffectedCount = await countIssues(betaAffectedJql);
-            const betaAffectedItems = betaAffectedCount > 0 ? (await listIssues(betaAffectedJql)).issues : [];
+            const betaFields        = ['summary', 'status', ...(sprintFieldId ? [sprintFieldId] : [])];
+            const betaAffectedItems = betaAffectedCount > 0 ? (await listIssues(betaAffectedJql, betaFields)).issues : [];
             const daysToBeta        = betaJira ? daysBetween(betaJira.releaseDate) : null;
 
             // ── Prod: affectedVersion + releaseDate ───────────────────────────
@@ -231,7 +270,8 @@ jobs:
             const prodJira          = await findJiraVersion(prodVersion);
             const prodAffectedJql   = `project = ${project} AND affectedVersion = "${prodQ}" AND status not in ("Done", "Rejected")`;
             const prodAffectedCount = await countIssues(prodAffectedJql);
-            const prodAffectedItems = prodAffectedCount > 0 ? (await listIssues(prodAffectedJql, ['summary', 'components'])).issues : [];
+            const prodFields        = ['summary', 'components', ...(sprintFieldId ? [sprintFieldId] : [])];
+            const prodAffectedItems = prodAffectedCount > 0 ? (await listIssues(prodAffectedJql, prodFields)).issues : [];
             const daysSinceProd     = prodJira ? -daysBetween(prodJira.releaseDate) : null;
 
             // ── LTS C Builds (optional, only if vars.LTS_RELEASE is set
@@ -281,71 +321,85 @@ jobs:
             // ── Render Slack-flavoured Markdown ───────────────────────────────
             // Each live release is rendered as its own self-contained message so
             // they can be posted to Wire separately (one message per release).
-            const dateTitle = `*🚀 iOS Release Status — ${new Date().toDateString()}*`;
+            const dateTitle = `**🚀 iOS Release Status — ${new Date().toDateString()}**`;
 
             // Edge
-            const edgeLines = [dateTitle, ''];
-            edgeLines.push(`*🟢 Edge — ${releaseLink(edgeJira, edgeName)}*  _(develop)_`);
-            edgeLines.push(`  • ${driverLabel(edgeJira?.driver)}`);
+            const edgeLines = [];
+            edgeLines.push(`**🟢 Edge — ${releaseLink(edgeJira, edgeName)}**  _(develop)_`);
+            edgeLines.push(`- ${driverLabel(edgeJira?.driver)}`);
             if (daysToEdge != null) {
               const label = daysToEdge >= 0 ? 'until start' : 'past start';
-              edgeLines.push(`  • ${Math.abs(daysToEdge)} day(s) ${label} (${edgeJira.startDate})`);
+              edgeLines.push(`- ${Math.abs(daysToEdge)} day(s) ${label} (${edgeJira.startDate})`);
             }
-            edgeLines.push(`  • ${edgeOpenCount} of ${edgeTotalCount} tickets not done`);
+            edgeLines.push(`- ${edgeOpenCount} of ${edgeTotalCount} tickets not done`);
             if (edgeQACount > 0) {
-              edgeLines.push(`  • 🎮 *${edgeQACount} ticket(s) in QA — Playtest recommended*`);
+              edgeLines.push(`- 🎮 **${edgeQACount} ticket(s) in QA — Playtest recommended**`);
             }
             if (edgeVersion === betaVersion) {
-              edgeLines.push(`  • ⚠️ *develop is still on ${edgeVersion} — bump \`WIRE_SHORT_VERSION\` now that \`${betaBranch}\` is cut*`);
+              edgeLines.push(`- ⚠️ **develop is still on ${edgeVersion} — bump \`WIRE_SHORT_VERSION\` now that \`${betaBranch}\` is cut**`);
             }
             if (edgeOpenCount > 0) {
               edgeLines.push(...renderGroupedByStatus(edgeOpenItems));
             }
 
             // Beta
-            const betaLines = [dateTitle, ''];
-            betaLines.push(`*🔵 Beta — ${releaseLink(betaJira, betaName)}*  _(\`${betaBranch}\`)_`);
-            betaLines.push(`  • ${driverLabel(betaJira?.driver)}`);
+            const betaLines = [];
+            betaLines.push(`**🔵 Beta — ${releaseLink(betaJira, betaName)}**  _(\`${betaBranch}\`)_`);
+            betaLines.push(`- ${driverLabel(betaJira?.driver)}`);
             if (daysToBeta != null) {
               const label = daysToBeta >= 0 ? 'until release' : 'past release';
-              betaLines.push(`  • ${Math.abs(daysToBeta)} day(s) ${label} (${betaJira.releaseDate})`);
+              betaLines.push(`- ${Math.abs(daysToBeta)} day(s) ${label} (${betaJira.releaseDate})`);
             } else {
-              betaLines.push(`  • ⚠️ no release date on Jira version`);
+              betaLines.push(`- ⚠️ no release date on Jira version`);
             }
-            betaLines.push(`  • ${betaAffectedCount} ticket(s) with affectedVersion`);
+            betaLines.push(`- ${betaAffectedCount} ticket(s) with affectedVersion`);
             if (betaAffectedCount > 0) {
-              betaLines.push(`  • 🔍 *Triage needed*`);
-              betaLines.push(...renderIssues(betaAffectedItems));
+              const { scheduled: betaScheduled, unscheduled: betaUnscheduled } = partitionBySprint(betaAffectedItems);
+              if (betaUnscheduled.length > 0) {
+                betaLines.push(`- 🔍 **Triage needed**`);
+                betaLines.push(...renderIssues(betaUnscheduled));
+              }
+              if (betaScheduled.length > 0) {
+                betaLines.push(`- 🗓️ **Scheduled tickets:**`);
+                betaLines.push(...renderScheduled(betaScheduled));
+              }
             }
 
             // Prod
-            const prodLines = [dateTitle, ''];
-            prodLines.push(`*⚪ Prod — ${releaseLink(prodJira, prodName)}*  _(\`${prodTag}\`)_`);
-            prodLines.push(`  • ${driverLabel(prodJira?.driver)}`);
+            const prodLines = [];
+            prodLines.push(`**⚪ Prod — ${releaseLink(prodJira, prodName)}**  _(\`${prodTag}\`)_`);
+            prodLines.push(`- ${driverLabel(prodJira?.driver)}`);
             if (daysSinceProd != null) {
-              prodLines.push(`  • ${daysSinceProd} day(s) since release (${prodJira.releaseDate})`);
+              prodLines.push(`- ${daysSinceProd} day(s) since release (${prodJira.releaseDate})`);
             } else {
-              prodLines.push(`  • ⚠️ no release date on Jira version`);
+              prodLines.push(`- ⚠️ no release date on Jira version`);
             }
-            prodLines.push(`  • ${prodAffectedCount} ticket(s) with affectedVersion`);
+            prodLines.push(`- ${prodAffectedCount} ticket(s) with affectedVersion`);
             if (prodAffectedCount > 0) {
-              prodLines.push(`  • 🔍 *Triage needed*`);
-              prodLines.push(...renderWithScope(prodAffectedItems));
+              const { scheduled: prodScheduled, unscheduled: prodUnscheduled } = partitionBySprint(prodAffectedItems);
+              if (prodUnscheduled.length > 0) {
+                prodLines.push(`- 🔍 **Triage needed**`);
+                prodLines.push(...renderWithScope(prodUnscheduled));
+              }
+              if (prodScheduled.length > 0) {
+                prodLines.push(`- 🗓️ **Scheduled tickets:**`);
+                prodLines.push(...renderScheduled(prodScheduled, scopeOf));
+              }
             }
 
             // LTS C Builds (optional)
             let ltsLines = null;
             if (lts) {
-              ltsLines = [dateTitle, ''];
-              ltsLines.push(`*⬜ LTS C Builds - ${releaseLink(lts.ltsJira, lts.ltsName)} (\`${lts.ltsBranch}\`)*`);
-              ltsLines.push(`  • ${driverLabel(lts.ltsJira?.driver)}`);
+              ltsLines = [];
+              ltsLines.push(`**⬜ LTS C Builds - ${releaseLink(lts.ltsJira, lts.ltsName)} (\`${lts.ltsBranch}\`)**`);
+              ltsLines.push(`- ${driverLabel(lts.ltsJira?.driver)}`);
               if (lts.daysToLts != null) {
                 const label = lts.daysToLts >= 0 ? 'until release' : 'past release';
-                ltsLines.push(`  • ${Math.abs(lts.daysToLts)} day(s) ${label} (${lts.ltsJira.releaseDate})`);
+                ltsLines.push(`- ${Math.abs(lts.daysToLts)} day(s) ${label} (${lts.ltsJira.releaseDate})`);
               } else {
-                ltsLines.push(`  • ⚠️ no release date on Jira version`);
+                ltsLines.push(`- ⚠️ no release date on Jira version`);
               }
-              ltsLines.push(`  • ${lts.ltsOpen} of ${lts.ltsTotal} tickets not done`);
+              ltsLines.push(`- ${lts.ltsOpen} of ${lts.ltsTotal} tickets not done`);
               if (lts.ltsOpen > 0) {
                 ltsLines.push(...renderGroupedByStatus(lts.ltsOpenItems));
               }
@@ -354,16 +408,16 @@ jobs:
             // GOV Builds (optional)
             let govLines = null;
             if (gov) {
-              govLines = [dateTitle, ''];
-              govLines.push(`*⬛ GOV Builds - ${releaseLink(gov.govJira, gov.govName)} (\`${gov.govBranch}\`)*`);
-              govLines.push(`  • ${driverLabel(gov.govJira?.driver)}`);
+              govLines = [];
+              govLines.push(`**⬛ GOV Builds - ${releaseLink(gov.govJira, gov.govName)} (\`${gov.govBranch}\`)**`);
+              govLines.push(`- ${driverLabel(gov.govJira?.driver)}`);
               if (gov.daysToGov != null) {
                 const label = gov.daysToGov >= 0 ? 'until release' : 'past release';
-                govLines.push(`  • ${Math.abs(gov.daysToGov)} day(s) ${label} (${gov.govJira.releaseDate})`);
+                govLines.push(`- ${Math.abs(gov.daysToGov)} day(s) ${label} (${gov.govJira.releaseDate})`);
               } else {
-                govLines.push(`  • ⚠️ no release date on Jira version`);
+                govLines.push(`- ⚠️ no release date on Jira version`);
               }
-              govLines.push(`  • ${gov.govOpen} of ${gov.govTotal} tickets not done`);
+              govLines.push(`- ${gov.govOpen} of ${gov.govTotal} tickets not done`);
               if (gov.govOpen > 0) {
                 govLines.push(...renderGroupedByStatus(gov.govOpenItems));
               }
@@ -376,6 +430,7 @@ jobs:
             const govMsg  = govLines ? govLines.join('\n') : '';
 
             // LTS/GOV are '' when their vars aren't configured — their post steps are skipped.
+            core.setOutput('date', dateTitle);
             core.setOutput('edge', edgeMsg);
             core.setOutput('beta', betaMsg);
             core.setOutput('prod', prodMsg);
@@ -383,40 +438,65 @@ jobs:
             core.setOutput('gov', govMsg);
 
             await core.summary
-              .addRaw([edgeMsg, betaMsg, prodMsg, ltsMsg, govMsg].filter(Boolean).join('\n\n'))
+              .addRaw([dateTitle, edgeMsg, betaMsg, prodMsg, ltsMsg, govMsg].filter(Boolean).join('\n\n'))
               .write();
 
-      - name: Post Edge to Wire
-        if: env.SLACK_WEBHOOK_URL != ''
+      - name: Post Date to Wire
+        if: ${{ env.HAS_WIRE_WEBHOOK == 'true' }}
         uses: ./.github/actions/notify-wire
+        env:
+          WIRE_WEBHOOK_URL: ${{ secrets.WIRE_IOS_RELEASE_URL }}
+          WIRE_WEBHOOK_TOKEN: ${{ secrets.WIRE_IOS_RELEASE_TOKEN }}
+        with:
+          notify: custom
+          text: ${{ steps.build.outputs.date }}
+
+      - name: Post Edge to Wire
+        if: ${{ env.HAS_WIRE_WEBHOOK == 'true' }}
+        uses: ./.github/actions/notify-wire
+        env:
+          WIRE_WEBHOOK_URL: ${{ secrets.WIRE_IOS_RELEASE_URL }}
+          WIRE_WEBHOOK_TOKEN: ${{ secrets.WIRE_IOS_RELEASE_TOKEN }}
         with:
           notify: custom
           text: ${{ steps.build.outputs.edge }}
 
       - name: Post Beta to Wire
-        if: env.SLACK_WEBHOOK_URL != ''
+        if: ${{ env.HAS_WIRE_WEBHOOK == 'true' }}
         uses: ./.github/actions/notify-wire
+        env:
+          WIRE_WEBHOOK_URL: ${{ secrets.WIRE_IOS_RELEASE_URL }}
+          WIRE_WEBHOOK_TOKEN: ${{ secrets.WIRE_IOS_RELEASE_TOKEN }}
         with:
           notify: custom
           text: ${{ steps.build.outputs.beta }}
 
       - name: Post Prod to Wire
-        if: env.SLACK_WEBHOOK_URL != ''
+        if: ${{ env.HAS_WIRE_WEBHOOK == 'true' }}
         uses: ./.github/actions/notify-wire
+        env:
+          WIRE_WEBHOOK_URL: ${{ secrets.WIRE_IOS_RELEASE_URL }}
+          WIRE_WEBHOOK_TOKEN: ${{ secrets.WIRE_IOS_RELEASE_TOKEN }}
         with:
           notify: custom
           text: ${{ steps.build.outputs.prod }}
 
       - name: Post LTS to Wire
-        if: env.SLACK_WEBHOOK_URL != '' && steps.build.outputs.lts != ''
+        if: ${{ env.HAS_WIRE_WEBHOOK == 'true' && steps.build.outputs.lts != '' }}
         uses: ./.github/actions/notify-wire
+        env:
+          WIRE_WEBHOOK_URL: ${{ secrets.WIRE_IOS_RELEASE_URL }}
+          WIRE_WEBHOOK_TOKEN: ${{ secrets.WIRE_IOS_RELEASE_TOKEN }}
         with:
           notify: custom
           text: ${{ steps.build.outputs.lts }}
 
       - name: Post GOV to Wire
-        if: env.SLACK_WEBHOOK_URL != '' && steps.build.outputs.gov != ''
+        if: ${{ env.HAS_WIRE_WEBHOOK == 'true' && steps.build.outputs.gov != '' }}
         uses: ./.github/actions/notify-wire
+        env:
+          WIRE_WEBHOOK_URL: ${{ secrets.WIRE_IOS_RELEASE_URL }}
+          WIRE_WEBHOOK_TOKEN: ${{ secrets.WIRE_IOS_RELEASE_TOKEN }}
         with:
           notify: custom
           text: ${{ steps.build.outputs.gov }}

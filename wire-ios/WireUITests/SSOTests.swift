@@ -44,7 +44,7 @@ final class SSOTests: WireUITestCase {
 
     /// [critical]
     @MainActor
-    func testSSOLoginWithSSOCodeAndNoResetPassword_TC_8966_TC_10850() async throws {
+    func testSSOLoginWithSSOCodeAndNoResetPassword_TC_8966_10850() async throws {
         // GIVEN
         let ssoUser = try await createSSOUser()
         let ssoCode = try ssoHelper.getSSOCode()

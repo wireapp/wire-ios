@@ -29,6 +29,7 @@ final class ConversationViewControllerSnapshotTests: ZMSnapshotTestCase, CoreDat
     private var sut: ConversationViewController!
     private var serviceUser: ZMUser!
     private var userSession: UserSessionMock!
+    var getParticipantImageSourceUseCase: MockGetParticipantImageSourceUseCaseProtocol!
     var coreDataFixture: CoreDataFixture!
     var snapshotHelper: SnapshotHelper!
 
@@ -41,7 +42,6 @@ final class ConversationViewControllerSnapshotTests: ZMSnapshotTestCase, CoreDat
     @MainActor
     override func setUp() async throws {
         try await super.setUp()
-        DeveloperFlag.enableDrivePermissions.enable(false)
         mockMainCoordinator = .init(mainCoordinator: MockMainCoordinator())
     }
 
@@ -57,6 +57,7 @@ final class ConversationViewControllerSnapshotTests: ZMSnapshotTestCase, CoreDat
         sut = nil
         serviceUser = nil
         coreDataFixture = nil
+        getParticipantImageSourceUseCase = nil
 
         super.tearDown()
     }
@@ -191,7 +192,6 @@ extension ConversationViewControllerSnapshotTests {
         // given
         let mockConversation = createTeamGroupConversation()
         UIColor.setAccentOverride(.green)
-        DeveloperFlag.enableDrivePermissions.enable(true)
 
         // when, conversation is a Wire Drive conversation and self user is a guest
         mockConversation.cellsState = .ready
@@ -218,6 +218,13 @@ extension ConversationViewControllerSnapshotTests {
             uiMOC!
         }
 
+        getParticipantImageSourceUseCase = MockGetParticipantImageSourceUseCaseProtocol()
+        getParticipantImageSourceUseCase.invokeUser_MockMethod = { [uiMOC] user in
+            await uiMOC.perform {
+                .text(user.initials ?? "")
+            }
+        }
+
         sut = ConversationViewController(
             conversation: conversation,
             visibleMessage: nil,
@@ -228,7 +235,7 @@ extension ConversationViewControllerSnapshotTests {
             mediaPlaybackManager: .init(name: nil, userSession: userSession),
             classificationProvider: nil,
             networkStatusObservable: MockNetworkStatusObservable(),
-            getParticipantImageSourceUseCase: MockGetParticipantImageSourceUseCaseProtocol(),
+            getParticipantImageSourceUseCase: getParticipantImageSourceUseCase,
             wireMessagingFactory: MockWireMessagingFactoryProtocol.makeDefault()
         )
     }
@@ -251,6 +258,24 @@ extension ConversationViewControllerSnapshotTests {
         connection.status = connectionStatus
 
         return mockConversation
+    }
+
+}
+
+// MARK: - Blocked user
+
+extension ConversationViewControllerSnapshotTests {
+
+    func testThatBlockedUserBarReplacesInputBar_WhenSelfBlockedTheOtherUser() {
+        // given
+        let mockConversation = createOneOnOneConversation(.blocked)
+
+        // when
+        createSut(conversation: mockConversation)
+
+        // then
+        XCTAssertTrue(sut.didBlockConnectedUser)
+        snapshotHelper.verify(matching: sut)
     }
 
 }

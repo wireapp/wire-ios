@@ -27,6 +27,7 @@ final class ShareExtensionTests: WireUITestCase {
     private let filesAppBundleId = XCUIApplication(bundleIdentifier: "com.apple.DocumentsApp")
     private let testFileName = "testFile.pdf"
     private let testVideoName = "testVideo.mp4"
+    private let shareExtensionMessage = "shared via share-ext"
     private let appLaunchTimeout: TimeInterval = 5
     private let timeout: TimeInterval = 2
 
@@ -51,7 +52,7 @@ final class ShareExtensionTests: WireUITestCase {
         try photosApp
             .selectImageFromPhotos()
             .shareImageToWire()
-            .chooseConversationAndSend(name: conversationName)
+            .chooseConversationAndSend(name: conversationName, message: shareExtensionMessage)
 
         try await switchBackToWireApp()
     }
@@ -63,7 +64,7 @@ final class ShareExtensionTests: WireUITestCase {
         let filesApp = try FilesAppPage(filesApp: filesAppBundleId)
         try filesApp
             .selectAndShareFileToWire(named: fileName)
-            .chooseConversationAndSend(name: conversationName)
+            .chooseConversationAndSend(name: conversationName, message: shareExtensionMessage)
 
         try await switchBackToWireApp()
     }
@@ -77,7 +78,6 @@ final class ShareExtensionTests: WireUITestCase {
         }
     }
 
-    /// [critical]
     @MainActor
     private func createTeamAndLoginAsOwner(
         conversation: CreateConversationOption? = nil
@@ -233,6 +233,7 @@ final class ShareExtensionTests: WireUITestCase {
             on: try ConversationsPage()
         )
         assertImageShared(on: activeConversationPage)
+        activeConversationPage.verifyMessageSent(shareExtensionMessage)
     }
 
     @MainActor
@@ -257,6 +258,7 @@ final class ShareExtensionTests: WireUITestCase {
             on: try ConversationsPage()
         )
         assertVideoShared(on: activeConversationPage)
+        activeConversationPage.verifyMessageSent(shareExtensionMessage)
     }
 
     @MainActor
@@ -290,6 +292,7 @@ final class ShareExtensionTests: WireUITestCase {
         )
         // THEN - file is sent
         .verifySharedFile(name: "TESTFILE", type: "PDF")
+        .verifyMessageSent(shareExtensionMessage)
         .goBackToConversationPage()
         .openUserProfilePage()
         .switchUserAccountForUser(withName: member.name)
@@ -300,6 +303,7 @@ final class ShareExtensionTests: WireUITestCase {
         )
         // THEN - file is received
         .verifySharedFile(name: "TESTFILE", type: "PDF")
+        .verifyMessageSent(shareExtensionMessage)
     }
 
     /// [critical]
@@ -319,6 +323,7 @@ final class ShareExtensionTests: WireUITestCase {
             on: try ConversationsPage()
         )
         assertImageShared(on: activeConversationPage)
+        activeConversationPage.verifyMessageSent(shareExtensionMessage)
     }
 
     @MainActor
@@ -340,6 +345,7 @@ final class ShareExtensionTests: WireUITestCase {
             on: try ConversationsPage()
         )
         assertVideoShared(on: activeConversationPage)
+        activeConversationPage.verifyMessageSent(shareExtensionMessage)
     }
 
     @MainActor
@@ -369,6 +375,7 @@ final class ShareExtensionTests: WireUITestCase {
         )
         // THEN - file is sent
         .verifySharedFile(name: "TESTFILE", type: "PDF")
+        .verifyMessageSent(shareExtensionMessage)
         .goBackToConversationPage()
         .openUserProfilePage()
         .switchUserAccountForUser(withName: member.name)
@@ -379,6 +386,7 @@ final class ShareExtensionTests: WireUITestCase {
         )
         // THEN - file is received
         .verifySharedFile(name: "TESTFILE", type: "PDF")
+        .verifyMessageSent(shareExtensionMessage)
     }
 
     @MainActor
@@ -397,6 +405,7 @@ final class ShareExtensionTests: WireUITestCase {
             on: try ConversationsPage()
         )
         assertImageShared(on: activeConversationPage)
+        activeConversationPage.verifyMessageSent(shareExtensionMessage)
     }
 
     @MainActor
@@ -418,6 +427,7 @@ final class ShareExtensionTests: WireUITestCase {
             on: try ConversationsPage()
         )
         assertVideoShared(on: activeConversationPage)
+        activeConversationPage.verifyMessageSent(shareExtensionMessage)
     }
 
     @MainActor
@@ -452,6 +462,7 @@ final class ShareExtensionTests: WireUITestCase {
         )
         // THEN - file is sent
         .verifySharedFile(name: "TESTFILE", type: "PDF")
+        .verifyMessageSent(shareExtensionMessage)
         .goBackToConversationPage()
         .openUserProfilePage()
         .switchUserAccountForUser(withName: member.name)
@@ -462,5 +473,6 @@ final class ShareExtensionTests: WireUITestCase {
         )
         // THEN - file is received
         .verifySharedFile(name: "TESTFILE", type: "PDF")
+        .verifyMessageSent(shareExtensionMessage)
     }
 }

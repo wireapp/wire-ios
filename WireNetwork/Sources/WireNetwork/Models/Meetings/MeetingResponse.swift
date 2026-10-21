@@ -90,6 +90,9 @@ public struct MeetingResponse: Sendable {
     public let createdAt: Date
     public let updatedAt: Date
     public let recurrence: MeetingRecurrence?
+    public let timeZoneIdentifier: String?
+    public let link: URL?
+    public let hasPassword: Bool?
 
     public init(
         id: QualifiedID,
@@ -102,7 +105,10 @@ public struct MeetingResponse: Sendable {
         isTrial: Bool,
         createdAt: Date,
         updatedAt: Date,
-        recurrence: MeetingRecurrence? = nil
+        recurrence: MeetingRecurrence? = nil,
+        timeZoneIdentifier: String? = nil,
+        link: URL? = nil,
+        hasPassword: Bool? = nil
     ) {
         self.id = id
         self.title = title
@@ -115,6 +121,9 @@ public struct MeetingResponse: Sendable {
         self.createdAt = createdAt
         self.updatedAt = updatedAt
         self.recurrence = recurrence
+        self.timeZoneIdentifier = timeZoneIdentifier
+        self.link = link
+        self.hasPassword = hasPassword
     }
 }
 
@@ -145,10 +154,13 @@ struct MeetingResponseV16: Decodable, ToAPIModelConvertible {
     let endTime: UTCTime
     let qualifiedConversation: QualifiedIDV0
     let invitedEmails: [String]
-    let trial: Bool
+    let trial: Bool?
     let createdAt: UTCTime
     let updatedAt: UTCTime
     let recurrence: MeetingRecurrenceV16?
+    let timeZoneIdentifier: String?
+    let link: URL?
+    let hasPassword: Bool?
 
     enum CodingKeys: String, CodingKey {
         case qualifiedID = "qualified_id"
@@ -162,6 +174,9 @@ struct MeetingResponseV16: Decodable, ToAPIModelConvertible {
         case createdAt = "created_at"
         case updatedAt = "updated_at"
         case recurrence
+        case timeZoneIdentifier = "tzid"
+        case link
+        case hasPassword = "has_password"
     }
 
     func toAPIModel() -> MeetingResponse {
@@ -173,10 +188,13 @@ struct MeetingResponseV16: Decodable, ToAPIModelConvertible {
             endTime: endTime.date,
             conversationID: qualifiedConversation.toAPIModel(),
             invitedEmails: invitedEmails,
-            isTrial: trial,
+            isTrial: trial ?? false,
             createdAt: createdAt.date,
             updatedAt: updatedAt.date,
-            recurrence: recurrence?.toMeetingRecurrence()
+            recurrence: recurrence?.toMeetingRecurrence(),
+            timeZoneIdentifier: timeZoneIdentifier,
+            link: link,
+            hasPassword: hasPassword
         )
     }
 }

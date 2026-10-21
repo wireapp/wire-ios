@@ -18,6 +18,7 @@
 
 import Combine
 import Foundation
+import WireFoundation
 import WireLocators
 import WireMessagingDomain
 
@@ -34,7 +35,8 @@ final class FilesItemViewModel: ObservableObject {
 
     private let nodeID: UUID
     let item: FilesViewItem
-    private let localAssetRepository: any WireDriveLocalAssetRepositoryProtocol
+    private let observeAssetUseCase: WireDriveObserveAssetUseCase
+    private let getAssetUseCase: WireDriveGetAssetUseCase
     private var cancellables = Set<AnyCancellable>()
 
     enum ItemAction {
@@ -51,24 +53,12 @@ final class FilesItemViewModel: ObservableObject {
         case deletePermanently
         case makeAvailableOffline
         case removeAvailableOffline
-
-        var accessibilityLabel: String {
-            switch self {
-            case .makeAvailableOffline:
-                Accessibility.Files.ViewerAccess.makeAvailableOffline
-            case .shareLink:
-                Accessibility.Files.ViewerAccess.shareLink
-            case .deletePermanently:
-                Locators.WireDrive.RecycleBinPage.deletePermanently.rawValue
-            default:
-                "\(self)"
-            }
-        }
     }
 
     let onItemAction: (ItemAction, FilesViewItem) async -> Void
 
     @Published private var asset: WireDriveLocalAsset?
+    @Published var thumbnailURL: URL?
     @Published var fileTracker: WireDriveFileUITracker
     @Published var isPresentingDeleteFilePermanentlyConfirmation = false
     @Published var isPresentingDeleteFolderPermanentlyConfirmation = false
@@ -77,28 +67,26 @@ final class FilesItemViewModel: ObservableObject {
     @Published var isPresentingRestoreFileConfirmation = false
     @Published var isPresentingRestoreFolderConfirmation = false
     @Published var isPresentingRestoreParentConfirmation = false
-
+    @Published private(set) var subtitle: String?
     @Published private var networkMonitor = NetworkMonitor.shared
 
     let fileName: String
-    let subtitle: String?
     let icon: WireDriveFileType
-
     let isBrowsing: Bool
     let isInRecycleBin: Bool
 
-    // TODO: [WPB-25941] Remove drive permissions flag when feature is complete
-    // TODO: [WPB-19065] Use DeveloperFlag from WireFoundation package when migrated
-    var isDrivePermissionsFlagEnabled: Bool = UserDefaults.standard.bool(forKey: "enableDrivePermissions")
-
     var showReadOnlyIcon: Bool {
-        isDrivePermissionsFlagEnabled && item.isReadOnly && isBrowsing
+        item.isReadOnly && isBrowsing
     }
 
     struct TagsInfo {
         let firstTag: String?
         let additionalTagsIndicator: String?
     }
+
+    private let selectedSortingKey: FilesSortingViewModel.SortingKey?
+    private let conversationName: String?
+    private let currentDateProvider: any CurrentDateProviding
 
     private let additionalTagNumberFormatter = {
         let formatter = NumberFormatter()
@@ -110,11 +98,10 @@ final class FilesItemViewModel: ObservableObject {
         item: FilesViewItem,
         selectedSortingKey: FilesSortingViewModel.SortingKey?,
         conversationName: String?,
-        localAssetRepository: any WireDriveLocalAssetRepositoryProtocol,
+        observeAssetUseCase: WireDriveObserveAssetUseCase,
+        getAssetUseCase: WireDriveGetAssetUseCase,
         onItemAction: @escaping (ItemAction, FilesViewItem) async -> Void,
-        locale: Locale = .autoupdatingCurrent,
-        calendar: Calendar = .autoupdatingCurrent,
-        timeZone: TimeZone = .autoupdatingCurrent,
+        currentDateProvider: any CurrentDateProviding = .system,
         isBrowsing: Bool,
         isInRecycleBin: Bool
     ) {
@@ -122,6 +109,9 @@ final class FilesItemViewModel: ObservableObject {
         self.item = item
         self.onItemAction = onItemAction
         self.fileName = item.name
+        self.selectedSortingKey = selectedSortingKey
+        self.conversationName = conversationName
+        self.currentDateProvider = currentDateProvider
         self.subtitle = Self.subtitle(
             selectedSortingKey: selectedSortingKey,
             isBrowsing: isBrowsing,
@@ -129,12 +119,11 @@ final class FilesItemViewModel: ObservableObject {
             modifiedAt: item.modifiedAt,
             size: item.size,
             ownedBy: item.ownedBy,
-            locale: locale,
-            calendar: calendar,
-            timeZone: timeZone
+            now: currentDateProvider.now
         )
         self.icon = item.icon
-        self.localAssetRepository = localAssetRepository
+        self.observeAssetUseCase = observeAssetUseCase
+        self.getAssetUseCase = getAssetUseCase
 
         self.isBrowsing = isBrowsing
         self.isInRecycleBin = isInRecycleBin
@@ -145,13 +134,15 @@ final class FilesItemViewModel: ObservableObject {
             self?.performAction(.primaryAction)
         }
 
-        localAssetRepository.observeAsset(nodeID: nodeID).sink { [weak self] asset in
+        observeAssetUseCase.invoke(nodeID: nodeID).sink { [weak self] asset in
             guard let self else { return }
             self.asset = asset
             if let asset {
                 fileTracker.handleDownloadState(fromAsset: asset)
             }
         }.store(in: &cancellables)
+
+        setThumbnailURL()
     }
 
     var nameOfTopmostFolderInRecycleBin: String {
@@ -191,12 +182,44 @@ final class FilesItemViewModel: ObservableObject {
         item.isEditable
     }
 
+    private func setThumbnailURL() {
+        Task {
+            thumbnailURL = switch item.icon {
+            case .video, .image:
+                if isOffline {
+                    // use full asset
+                    try? await getAssetUseCase.invoke(
+                        nodeID: nodeID,
+                        eTag: item.eTag
+                    )
+                } else {
+                    item.thumbnailURL
+                }
+            default:
+                nil
+            }
+        }
+    }
+
     func isActionDisabled(_ action: ItemAction) -> Bool {
         switch action {
         case .shareLink, .makeAvailableOffline, .removeAvailableOffline:
-            isDrivePermissionsFlagEnabled && item.isReadOnly && isBrowsing
+            item.isReadOnly && isBrowsing
         default:
             false
+        }
+    }
+
+    func accessibilitylabel(for action: ItemAction) -> String {
+        switch action {
+        case .makeAvailableOffline where showReadOnlyIcon:
+            Accessibility.Files.ViewerAccess.makeAvailableOffline
+        case .shareLink where showReadOnlyIcon:
+            Accessibility.Files.ViewerAccess.shareLink
+        case .deletePermanently:
+            Locators.WireDrive.RecycleBinPage.deletePermanently.rawValue
+        default:
+            "\(action)"
         }
     }
 
@@ -257,16 +280,6 @@ final class FilesItemViewModel: ObservableObject {
         await onItemAction(.restore, item)
     }
 
-    #if DEBUG
-        func deleteAsset() {
-            Task {
-                do {
-                    try await localAssetRepository.deleteAsset(nodeID: nodeID)
-                } catch {}
-            }
-        }
-    #endif
-
     var isOffline: Bool {
         networkMonitor.currentStatus == .disconnected
     }
@@ -285,7 +298,7 @@ final class FilesItemViewModel: ObservableObject {
     }
 
     var menuActions: Set<ItemAction> {
-        let isViewerMode = item.isReadOnly && isDrivePermissionsFlagEnabled
+        let isViewerMode = item.isReadOnly
 
         if isViewerMode {
             return viewerMenuActions
@@ -361,7 +374,7 @@ final class FilesItemViewModel: ObservableObject {
     }
 
     var isAvailableOffline: Bool {
-        let isAvailableOffline = (try? localAssetRepository.asset(nodeID: nodeID)?.isAvailableOffline) ?? false
+        let isAvailableOffline = (try? getAssetUseCase.asset(nodeID: nodeID)?.isAvailableOffline) ?? false
         let isDownloaded = switch fileTracker.state {
         case .loaded:
             true
@@ -375,6 +388,37 @@ final class FilesItemViewModel: ObservableObject {
     }
 }
 
+// MARK: - Subtitle refresh
+
+extension FilesItemViewModel {
+
+    /// Refreshes the subtitle every minute until the calling task is cancelled.
+    func keepSubtitleUpToDate() async {
+        while !Task.isCancelled {
+            updateSubtitle()
+
+            do {
+                try await Task.sleep(for: .seconds(60))
+            } catch {
+                return
+            }
+        }
+    }
+
+    private func updateSubtitle() {
+        subtitle = Self.subtitle(
+            selectedSortingKey: selectedSortingKey,
+            isBrowsing: isBrowsing,
+            conversationName: conversationName,
+            modifiedAt: item.modifiedAt,
+            size: item.size,
+            ownedBy: item.ownedBy,
+            now: currentDateProvider.now
+        )
+    }
+
+}
+
 // MARK: - Formatting
 
 private extension FilesItemViewModel {
@@ -385,9 +429,7 @@ private extension FilesItemViewModel {
         modifiedAt: Date?,
         size: UInt64?,
         ownedBy: String?,
-        locale: Locale,
-        calendar: Calendar,
-        timeZone: TimeZone
+        now: Date
     ) -> String? {
         var primary: String?
 
@@ -395,12 +437,7 @@ private extension FilesItemViewModel {
             switch selectedSortingKey {
             case .date:
                 if let conversationName,
-                   let date = formattedDate(
-                       modifiedAt: modifiedAt,
-                       locale: locale,
-                       calendar: calendar,
-                       timeZone: timeZone
-                   ) {
+                   let date = formattedDate(modifiedAt: modifiedAt, now: now) {
                     primary = Strings.AllFiles.Item.subtitle(date, conversationName)
                 }
             case .name:
@@ -408,8 +445,8 @@ private extension FilesItemViewModel {
                     primary = Strings.AllFiles.Item.subtitle(ownedBy, conversationName)
                 }
             case .size:
-                if let conversationName,
-                   let size = formattedFileSize(size: size) {
+                if let conversationName {
+                    let size = formattedFileSize(size: size)
                     primary = Strings.AllFiles.Item.subtitle(size, conversationName)
                 }
             default:
@@ -420,19 +457,18 @@ private extension FilesItemViewModel {
                 conversationName: conversationName,
                 modifiedAt: modifiedAt,
                 ownedBy: ownedBy,
-                locale: locale,
-                calendar: calendar,
-                timeZone: timeZone
+                now: now
             )
 
         } else {
             switch selectedSortingKey {
             case .date:
-                if let ownedBy {
-                    primary = Strings.Files.Item.subtitle(Strings.Sorting.Key.date, ownedBy)
+                if let ownedBy, let date = formattedDate(modifiedAt: modifiedAt, now: now) {
+                    primary = Strings.Files.Item.subtitle(date, ownedBy)
                 }
             case .size:
-                if let size = formattedFileSize(size: size), let ownedBy {
+                if let ownedBy {
+                    let size = formattedFileSize(size: size)
                     primary = Strings.Files.Item.subtitle(size, ownedBy)
                 }
             default:
@@ -442,49 +478,30 @@ private extension FilesItemViewModel {
             return primary ?? defaultSubtitle(
                 modifiedAt: modifiedAt,
                 ownedBy: ownedBy,
-                locale: locale,
-                calendar: calendar,
-                timeZone: timeZone
+                now: now
             )
         }
     }
 
-    private static func formattedFileSize(size: UInt64?) -> String? {
-        guard let size else { return nil }
+    private static func formattedFileSize(size: UInt64?) -> String {
         let formatter = ByteCountFormatter()
         formatter.allowedUnits = [.useBytes, .useKB, .useMB, .useGB]
         formatter.countStyle = .file
-        return formatter.string(fromByteCount: Int64(size))
+        formatter.allowsNonnumericFormatting = false
+        return formatter.string(fromByteCount: Int64(size ?? 0))
     }
 
-    private static func formattedDate(
-        modifiedAt: Date?,
-        locale: Locale,
-        calendar: Calendar,
-        timeZone: TimeZone
-    ) -> String? {
-        modifiedAt.map { date in
-            let style = Date.FormatStyle(
-                date: .abbreviated,
-                time: .shortened,
-                locale: locale,
-                calendar: calendar,
-                timeZone: timeZone,
-                capitalizationContext: .beginningOfSentence
-            )
-            return date.formatted(style)
-        }
+    private static func formattedDate(modifiedAt: Date?, now: Date) -> String? {
+        modifiedAt?.formattedDate(justNowText: Strings.Files.Time.justNow, now: now)
     }
 
     private static func defaultSubtitle(
         conversationName: String? = nil,
         modifiedAt: Date?,
         ownedBy: String?,
-        locale: Locale,
-        calendar: Calendar,
-        timeZone: TimeZone
+        now: Date
     ) -> String? {
-        let modifiedAt = formattedDate(modifiedAt: modifiedAt, locale: locale, calendar: calendar, timeZone: timeZone)
+        let modifiedAt = formattedDate(modifiedAt: modifiedAt, now: now)
 
         if let conversationName, let ownedBy {
             return L10n.Localizable.Conversation.WireCells.AllFiles.Item.subtitle(ownedBy, conversationName)

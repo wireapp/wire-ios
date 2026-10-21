@@ -328,6 +328,9 @@ final class FeatureConfigRepositoryTests: XCTestCase {
                     deletionTimeout: 30,
                     reminderTimeouts: [7, 1]
                 )
+            ),
+            .meetings(
+                .init(status: .enabled)
             )
         ]
 

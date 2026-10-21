@@ -49,6 +49,94 @@ final class UpdateBackendMetadataUseCaseTests {
 
     // MARK: - Tests
 
+    @Test(arguments: [APIVersion.v15, .v18])
+    func `startup refreshes changed capabilities once and reuses negotiated metadata`(
+        backendVersion: APIVersion
+    ) async throws {
+        let previousMetadata = ResolvedBackendMetadata(
+            apiVersion: .v15,
+            domain: "example.com",
+            isFederationEnabled: false
+        )
+        try backendStore.storeBackendMetadata(previousMetadata, for: accountID)
+        journal[.resolvedBackendMetadataAPIVersions] = ["15"]
+        let metadata = ResolvedBackendMetadata(
+            apiVersion: backendVersion,
+            domain: "example.com",
+            isFederationEnabled: false
+        )
+        resolveBackendMetadataUseCase.invoke_MockValue = metadata
+
+        let refreshedMetadata = try await sut.invokeIfNeeded()
+        let cachedMetadata = try await sut.invokeIfNeeded()
+
+        #expect(refreshedMetadata == metadata)
+        #expect(cachedMetadata == metadata)
+        #expect(resolveBackendMetadataUseCase.invoke_Invocations.count == 1)
+    }
+
+    @Test(arguments: [false, true])
+    func `startup preserves cached metadata when unavailable and retries on the next session`(
+        malformedResponse: Bool
+    ) async throws {
+        let cachedMetadata = ResolvedBackendMetadata(
+            apiVersion: .v15,
+            domain: "example.com",
+            isFederationEnabled: false
+        )
+        try backendStore.storeBackendMetadata(cachedMetadata, for: accountID)
+        resolveBackendMetadataUseCase.invoke_MockError = if malformedResponse {
+            DecodingError.dataCorrupted(.init(codingPath: [], debugDescription: "Invalid backend metadata"))
+        } else {
+            URLError(.notConnectedToInternet)
+        }
+
+        let offlineResult = try await sut.invokeIfNeeded()
+
+        #expect(offlineResult == cachedMetadata)
+        #expect(journal[.resolvedBackendMetadataAPIVersions].isEmpty)
+
+        let metadata = ResolvedBackendMetadata(apiVersion: .v18, domain: "example.com", isFederationEnabled: false)
+        resolveBackendMetadataUseCase.invoke_MockError = nil
+        resolveBackendMetadataUseCase.invoke_MockValue = metadata
+
+        let onlineResult = try await sut.invokeIfNeeded()
+
+        #expect(onlineResult == metadata)
+        #expect(resolveBackendMetadataUseCase.invoke_Invocations.count == 2)
+    }
+
+    @Test
+    func `startup propagates failure when there is no cached metadata`() async {
+        resolveBackendMetadataUseCase.invoke_MockError = URLError(.notConnectedToInternet)
+
+        await #expect(throws: URLError.self) {
+            try await sut.invokeIfNeeded()
+        }
+    }
+
+    @Test
+    func `startup propagates incompatible API versions despite cached metadata`() async throws {
+        let metadata = ResolvedBackendMetadata(apiVersion: .v15, domain: "example.com", isFederationEnabled: false)
+        try backendStore.storeBackendMetadata(metadata, for: accountID)
+        resolveBackendMetadataUseCase.invoke_MockError = NetworkStackError.backendAPIVersionObsolete
+
+        await #expect(throws: NetworkStackError.self) {
+            try await sut.invokeIfNeeded()
+        }
+    }
+
+    @Test
+    func `startup propagates cancellation instead of using cached metadata`() async throws {
+        let metadata = ResolvedBackendMetadata(apiVersion: .v15, domain: "example.com", isFederationEnabled: false)
+        try backendStore.storeBackendMetadata(metadata, for: accountID)
+        resolveBackendMetadataUseCase.invoke_MockError = URLError(.cancelled)
+
+        await #expect(throws: URLError.self) {
+            try await sut.invokeIfNeeded()
+        }
+    }
+
     @Test
     func `invoke returns new metadata`() async throws {
         // Given

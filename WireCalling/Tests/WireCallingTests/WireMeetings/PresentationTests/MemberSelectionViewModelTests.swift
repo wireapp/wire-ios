@@ -41,7 +41,9 @@ struct MemberSelectionViewModelTests {
         self.onSelectRecorder = recorder
         self.viewModel = MemberSelectionViewModel(
             source: useCase,
-            onSelect: { recorder.calls.append($0) }
+            onSelect: { recorder.calls.append($0) },
+            allowsEmailInvitations: true,
+            onSelectEmails: { recorder.emailCalls.append($0) }
         )
     }
 
@@ -141,7 +143,118 @@ struct MemberSelectionViewModelTests {
         #expect(onSelectRecorder.calls.isEmpty)
     }
 
+    // MARK: - Email invitations
+
+    @Test("Valid email addresses are trimmed and keep their case", arguments: [
+        "Alice@example.com", "alice+meeting@sub.example.com", "o'connor@example.com",
+        "guest@" + String(repeating: "a", count: 63) + "." + String(repeating: "a", count: 63)
+    ])
+    func addEmail_acceptsValidAddress(_ email: String) {
+        viewModel.emailAddress = " \(email)\n"
+        viewModel.addEmail()
+
+        #expect(viewModel.selectedEmails == [email])
+        #expect(viewModel.emailAddress.isEmpty)
+        #expect(viewModel.emailValidationError == nil)
+        #expect(onSelectRecorder.emailCalls.isEmpty)
+    }
+
+    @Test("Invalid email addresses stay outside the selection", arguments: [
+        "", "alice", "alice@", "@example.com", "alice@example", "alice example@wire.com",
+        "alice@@example.com", ".alice@example.com", "alice.@example.com", "alice..bob@example.com",
+        "alice@-example.com", "alice@example-.com", "Alice <alice@example.com>",
+        String(repeating: "a", count: 65) + "@example.com",
+        "guest@" + String(repeating: "a", count: 64) + ".com",
+        "guest@example." + String(repeating: "a", count: 64)
+    ])
+    func addEmail_rejectsInvalidAddress(_ email: String) {
+        viewModel.emailAddress = email
+        viewModel.addEmail()
+
+        #expect(viewModel.selectedEmails.isEmpty)
+        #expect(viewModel.emailValidationError == .invalidAddress)
+    }
+
+    @Test("Duplicates ignore case and whitespace, and input changes clear the warning")
+    func addEmail_rejectsDuplicateAddress() {
+        viewModel.emailAddress = "Alice@example.com"
+        viewModel.addEmail()
+        viewModel.emailAddress = " ALICE@EXAMPLE.COM "
+        viewModel.addEmail()
+
+        #expect(viewModel.selectedEmails == ["Alice@example.com"])
+        #expect(viewModel.emailValidationError == .duplicateAddress)
+
+        viewModel.emailAddress = "bob@example.com"
+        #expect(viewModel.emailValidationError == nil)
+    }
+
     // MARK: - initialSelection
+
+    @Test("Group import replaces the draft with unique source members, excluding the host")
+    func importGroup_replacesDraftSelection() async {
+        let host = MeetingMember(
+            qualifiedID: QualifiedID(id: UUID(), domain: "wire.com"),
+            name: "Host", handle: "", isSelfUser: true, initials: "", accentColor: .default, avatarImageData: nil
+        )
+        searchMembersUseCase.membersInGroupIDQualifiedIDMeetingMemberReturnValue = [.bob, .bob, host]
+        viewModel.toggleSelection(.alice)
+        viewModel.toggleSelection(.bob)
+        viewModel.emailAddress = "guest@example.com"
+        viewModel.addEmail()
+
+        let groupID = QualifiedID(id: UUID(), domain: "wire.com")
+        #expect(await viewModel.importGroup(groupID))
+        #expect(await viewModel.importGroup(groupID))
+        #expect(viewModel.selectedMembers == [.bob])
+        #expect(viewModel.selectedEmails == ["guest@example.com"])
+        #expect(onSelectRecorder.calls.isEmpty)
+        #expect(onSelectRecorder.emailCalls.isEmpty)
+
+        viewModel.confirmSelection()
+        #expect(onSelectRecorder.calls == [[.bob]])
+        #expect(onSelectRecorder.emailCalls == [["guest@example.com"]])
+
+        searchMembersUseCase.membersInGroupIDQualifiedIDMeetingMemberReturnValue = [host]
+        #expect(await viewModel.importGroup(groupID))
+        #expect(viewModel.selectedMembers.isEmpty)
+    }
+
+    @Test("A failed import preserves the draft and can be retried")
+    func importGroup_failurePreservesSelection() async {
+        viewModel.toggleSelection(.alice)
+        searchMembersUseCase.membersInGroupIDQualifiedIDMeetingMemberThrowableError = TestError.failure
+        let groupID = QualifiedID(id: UUID(), domain: "wire.com")
+
+        #expect(await viewModel.importGroup(groupID) == false)
+        #expect(viewModel.selectedMembers == [.alice])
+        #expect(viewModel.hasGroupImportError)
+        #expect(viewModel.isImportingGroup == false)
+
+        searchMembersUseCase.membersInGroupIDQualifiedIDMeetingMemberThrowableError = nil
+        searchMembersUseCase.membersInGroupIDQualifiedIDMeetingMemberReturnValue = [.bob]
+        #expect(await viewModel.importGroup(groupID))
+        #expect(viewModel.selectedMembers == [.bob])
+        #expect(viewModel.hasGroupImportError == false)
+    }
+
+    @Test("A cancelled import cannot change the draft when its response arrives")
+    func importGroup_cancellationPreservesSelection() async {
+        viewModel.toggleSelection(.alice)
+        searchMembersUseCase.membersInGroupIDQualifiedIDMeetingMemberClosure = { _ in
+            try? await Task.sleep(for: .seconds(60))
+            return [.bob]
+        }
+        let task = Task { await viewModel.importGroup(QualifiedID(id: UUID(), domain: "wire.com")) }
+        while !viewModel.isImportingGroup {
+            await Task.yield()
+        }
+        task.cancel()
+
+        #expect(await task.value == false)
+        #expect(viewModel.selectedMembers == [.alice])
+        #expect(viewModel.hasGroupImportError == false)
+    }
 
     @Test("initialSelection seeds selectedMembers")
     func initialSelection_seedsSelectedMembers() {
@@ -212,6 +325,7 @@ private enum TestError: Error {
 
 private final class OnSelectRecorder {
     var calls: [[MeetingMember]] = []
+    var emailCalls: [[String]] = []
 }
 
 private extension MeetingMember {
@@ -219,13 +333,21 @@ private extension MeetingMember {
     static let alice = MeetingMember(
         qualifiedID: QualifiedID(id: UUID(), domain: ""),
         name: "Alice",
-        handle: "alice"
+        handle: "alice",
+        isSelfUser: false,
+        initials: "",
+        accentColor: .default,
+        avatarImageData: nil
     )
 
     static let bob = MeetingMember(
         qualifiedID: QualifiedID(id: UUID(), domain: ""),
         name: "Bob",
-        handle: "bob"
+        handle: "bob",
+        isSelfUser: false,
+        initials: "",
+        accentColor: .default,
+        avatarImageData: nil
     )
 
 }

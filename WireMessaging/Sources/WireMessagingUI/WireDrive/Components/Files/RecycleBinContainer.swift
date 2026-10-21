@@ -35,6 +35,7 @@ package struct RecycleBinContainer: View {
     private let nodeCache: any WireDriveNodeCacheProtocol
     private let nodeRenameNotifier: WireDriveNodeRenameNotifier
     private let fileCache: any FileCache
+    private let uploadManager: any WireDriveDirectUploadManagerProtocol
 
     package init(
         cellName: String,
@@ -45,7 +46,8 @@ package struct RecycleBinContainer: View {
         localAssetRepository: any WireDriveLocalAssetRepositoryProtocol,
         nodeCache: any WireDriveNodeCacheProtocol,
         nodeRenameNotifier: WireDriveNodeRenameNotifier,
-        fileCache: any FileCache
+        fileCache: any FileCache,
+        uploadManager: any WireDriveDirectUploadManagerProtocol
     ) {
         self.cellName = cellName
         self.nodesAPI = nodesAPI
@@ -56,6 +58,7 @@ package struct RecycleBinContainer: View {
         self.nodeCache = nodeCache
         self.nodeRenameNotifier = nodeRenameNotifier
         self.fileCache = fileCache
+        self.uploadManager = uploadManager
     }
 
     var body: some View {
@@ -69,58 +72,18 @@ package struct RecycleBinContainer: View {
 
     private func makeViewModel() -> FilesViewModel {
         FilesViewModel(
-            useCases: .init(
-                fetchNodes: WireDriveFetchNodesPageUseCase(
-                    configuration: .recycleBinView(
-                        root: path.last.map { .id($0.id) } ?? .path(cellName),
-                    ),
-                    repository: nodesRepository
-                ),
-                deleteNodes: WireDriveDeleteNodesUseCase(
-                    repository: nodesRepository,
-                    fileCache: fileCache,
-                    localAssetStore: localAssetStore
-                ),
-                restoreNodes: WireDriveRestoreNodesUseCase(
-                    repository: nodesRepository,
-                    fileCache: fileCache,
-                    localAssetStore: localAssetStore
-                ),
-                renameNode: WireDriveRenameNodeUseCase(
+            useCases: FilesViewModel.makeUseCases(
+                dependencies: .init(
+                    nodesAPI: nodesAPI,
                     nodesRepository: nodesRepository,
-                    localAssetsRepository: localAssetRepository,
-                    nodeCache: nodeCache,
-                    nodeRenameNotifier: nodeRenameNotifier
-                ),
-                updateTags: WireDriveUpdateTagsUseCase(nodesAPI: nodesAPI),
-                getTagSuggestions: WireDriveGetTagSuggestionsUseCase(nodesAPI: nodesAPI),
-                createFile: WireDriveCreateFileUseCase(nodesRepository: nodesAPI),
-                fetchNodeVersions: WireDriveFetchNodeVersionsUseCase(repository: nodesRepository),
-                restoreNodeVersion: WireDriveRestoreNodeVersionUseCase(
-                    repository: nodesRepository,
-                    localAssetsRepository: localAssetRepository,
-                    nodeCache: nodeCache
-                ),
-                getEditingURL: WireDriveGetEditingURLUseCase(editingURLRepository: nodesAPI),
-                getAsset: WireDriveGetAssetUseCase(
+                    fileCache: fileCache,
+                    localAssetStore: localAssetStore,
                     localAssetRepository: localAssetRepository,
-                    fileCache: fileCache
-                ),
-                getPublicLinkData: WireDriveGetPublicLinkDataUseCase(nodesAPI: nodesAPI),
-                createPublicLink: WireDriveCreatePublicLinkUseCase(nodesAPI: nodesAPI),
-                deletePublicLink: WireDriveDeletePublicLinkUseCase(nodesAPI: nodesAPI),
-                updatePublicLinkExpiration: WireDriveUpdatePublicLinkExpirationUseCase(nodesAPI: nodesAPI),
-                updatePublicLinkPassword: WireDriveUpdatePublicLinkPasswordUseCase(nodesAPI: nodesAPI),
-                getDriveConversations: WireDriveGetConversationsUseCase(nodesAPI: nodesAPI),
-                getFileTemplates: WireDriveFetchFileTemplatesUseCase(repository: nodesRepository),
-                makeAssetAvailableOffline: WireDriveMakeAssetAvailableOfflineUseCase(
-                    localAssetRepository: localAssetRepository
-                ),
-                removeAssetAvailableOffline: WireDriveRemoveAssetAvailableOfflineUseCase(
-                    localAssetRepository: localAssetRepository
-                ),
-                getOfflineAvailableAssets: WireDriveFetchOfflineAvailableAssetsUseCase(
-                    localAssetRepository: localAssetRepository
+                    nodeRenameNotifier: nodeRenameNotifier,
+                    nodeCache: nodeCache,
+                    // The recycle bin is not an upload destination (`canUpload` is false there),
+                    // but the use case set is shared with the file list.
+                    uploadManager: uploadManager
                 )
             ),
             title: path.last?.name,
@@ -129,8 +92,6 @@ package struct RecycleBinContainer: View {
                 path = items
             },
             isCellsStatePending: isCellsStatePending,
-            localAssetRepository: localAssetRepository,
-            nodesRepository: nodesRepository,
             cellName: cellName,
             isBrowsing: false,
             isRecycleBin: true

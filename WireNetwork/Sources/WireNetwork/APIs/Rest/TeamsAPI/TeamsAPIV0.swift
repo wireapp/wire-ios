@@ -183,6 +183,17 @@ class TeamsAPIV0: TeamsAPI, VersionedAPI {
         throw TeamsAPIError.unsupportedEndpointForAPIVersion
     }
 
+    // MARK: - Remove member from Team
+
+    func removeMemberFromTeam(
+        access_token: String,
+        teamID: UUID,
+        userID: UUID,
+        password: String
+    ) async throws {
+        throw TeamsAPIError.unsupportedEndpointForAPIVersion
+    }
+
     // MARK: - Get whitelisted bots
 
     func getWhitelistedBots(

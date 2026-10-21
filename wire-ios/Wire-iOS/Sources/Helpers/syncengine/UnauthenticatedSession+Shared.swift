@@ -22,7 +22,7 @@ import WireSyncEngine
 extension UnauthenticatedSession {
 
     static var sharedSession: UnauthenticatedSession? {
-        (UIApplication.shared.delegate as? AppDelegate)?.unauthenticatedSession
+        SessionManager.shared?.unauthenticatedSession
     }
 
 }

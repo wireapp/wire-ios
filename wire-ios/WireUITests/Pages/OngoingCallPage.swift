@@ -68,6 +68,66 @@ class OngoingCallPage: PageModel {
         app.buttons[Locators.OngoingCallPage.participantIdentifier(name)]
     }
 
+    func callTile(named name: String) -> XCUIElement {
+        app.buttons.matching(
+            NSPredicate(
+                format: """
+                (identifier BEGINSWITH %@ OR identifier BEGINSWITH %@) AND
+                identifier CONTAINS %@
+                """,
+                "audioView.",
+                "videoView.",
+                ".\(name)."
+            )
+        ).firstMatch
+    }
+
+    @discardableResult
+    func verifyParticipantsShownInOrder(
+        _ expectedNames: [String]
+    ) -> OngoingCallPage {
+        for name in expectedNames {
+            _ = callTile(named: name).waitForExistence(timeout: 15)
+        }
+
+        XCTAssertEqual(
+            visibleParticipantNames(from: expectedNames),
+            expectedNames,
+            "Call participant tiles are not shown in expected order"
+        )
+        return self
+    }
+
+    private func visibleParticipantNames(from expectedNames: [String]) -> [String] {
+        let tiles = app.buttons.matching(
+            NSPredicate(
+                format: "identifier BEGINSWITH %@ OR identifier BEGINSWITH %@",
+                "audioView.",
+                "videoView."
+            )
+        ).allElementsBoundByIndex
+
+        var seenNames = Set<String>()
+        return tiles.compactMap { tile in
+            guard let name = expectedNames.first(where: { tile.identifier.contains(".\($0).") }),
+                  seenNames.insert(name).inserted else {
+                return nil
+            }
+            return name
+        }
+    }
+
+    func verifyGroupNameAndTimerShowingOnceCallJoined(groupName: String) {
+        XCTAssertTrue(
+            timeLabel.waitForExistence(timeout: 10),
+            "Call timer is not showing"
+        )
+        XCTAssertTrue(
+            app.staticTexts[groupName].waitForExistence(timeout: 5),
+            "Group name mismatch"
+        )
+    }
+
     func videoView(for participantName: String) -> XCUIElement {
         app.descendants(matching: .any).matching(
             NSPredicate(

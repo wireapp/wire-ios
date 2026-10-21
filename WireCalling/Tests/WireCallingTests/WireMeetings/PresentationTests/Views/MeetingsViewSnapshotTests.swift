@@ -97,7 +97,9 @@ final class MeetingsViewSnapshotTests: XCTestCase {
             formatter: MeetingsFormatter(),
             upcomingMeetingsUseCase: upcomingMeetingsUseCase,
             observeMeetingChangesUseCase: observeMeetingChangesUseCase,
-            deleteMeetingUseCase: DeleteMeetingUseCaseProtocolMock()
+            deleteMeetingUseCase: DeleteMeetingUseCaseProtocolMock(),
+            selfUserID: UUID(),
+            isSnapshotTesting: true
         )
     }
 

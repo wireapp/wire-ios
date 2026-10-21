@@ -20,6 +20,7 @@ import UIKit
 import WireDataModel
 import WireLogging
 import WireSyncEngine
+import WireUtilities
 
 enum ConversationSystemMessageCellDescription {
 
@@ -178,12 +179,13 @@ enum ConversationSystemMessageCellDescription {
             // Displayed in the table header via GroupConversationHeaderView.
             return []
 
-        case .failedToAddParticipants:
+        case .failedToAddParticipants, .failedToAddParticipantsMLS:
             if let users = Array(systemMessageData.userTypes) as? [UserType], let buttonAction {
 
                 let cellDescription = ConversationFailedToAddParticipantsSystemMessageCellDescription(
                     failedUsers: users,
                     isCollapsed: isCollapsed,
+                    reason: systemMessageData.systemMessageType,
                     buttonAction: buttonAction
                 )
                 return [AnyConversationMessageCellDescription(cellDescription)]

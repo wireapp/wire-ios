@@ -33,6 +33,14 @@ extension UpdateEventDecodingProxy {
             let event = try MeetingDeleteEventDecoder().decode(from: container)
             updateEvent = .meeting(.delete(event))
 
+        case .memberAdd:
+            let meetingID = try container.decode(QualifiedIDV0.self, forKey: .qualifiedID)
+            let senderID = try container.decode(QualifiedIDV0.self, forKey: .qualifiedFrom)
+            updateEvent = .meeting(.memberAdd(MeetingMemberAddEvent(
+                meetingID: meetingID.toAPIModel(),
+                senderID: senderID.toAPIModel()
+            )))
+
         case .update:
             let event = try MeetingUpdateEventDecoder().decode(from: container)
             updateEvent = .meeting(.update(event))

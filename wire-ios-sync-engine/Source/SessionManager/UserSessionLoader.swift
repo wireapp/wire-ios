@@ -109,6 +109,8 @@ final class UserSessionLoader {
         if let newEnvironment {
             try await storeNewEnvironment(newEnvironment)
             try backendStore.storeBackendMetadata(newEnvironment.metadata, for: accountID)
+            journal[.resolvedBackendMetadataAPIVersions] = Set(APIVersion.productionVersions
+                .map { String($0.rawValue) })
         }
 
         // Get the environment for this account.
@@ -298,39 +300,35 @@ final class UserSessionLoader {
     }
 
     private func resolveBackendMetadata(with networkStack: NetworkStack) async throws -> ResolvedBackendMetadata {
-        // Return the last stored metadata if available.
-        if let storedMetadata = try backendStore.fetchBackendMetadata(accountID: accountID) {
-            return storedMetadata
-        }
-
-        // Otherwise store and return legacy metadata if available.
-        if let legacyAPIVersion = BackendInfo.apiVersion, let legacyDomain = BackendInfo.domain {
-            // We're on the update path, use the legacy metadata
+        // Preserve legacy metadata as an offline fallback on the update path.
+        if try backendStore.fetchBackendMetadata(accountID: accountID) == nil,
+           let legacyAPIVersion = BackendInfo.apiVersion,
+           let legacyDomain = BackendInfo.domain {
             let legacyMetadata = ResolvedBackendMetadata(
                 apiVersion: .init(legacyAPIVersion),
                 domain: legacyDomain,
                 isFederationEnabled: BackendInfo.isFederationEnabled
             )
             try backendStore.storeBackendMetadata(legacyMetadata, for: accountID)
-            return legacyMetadata
         }
 
-        // Otherwise fetch and store new metadata.
-        let newMetadata: ResolvedBackendMetadata
+        let useCase = UpdateBackendMetadataUseCase(
+            resolveBackendMetadataUseCase: NetworkStackMetadataResolver(networkStack: networkStack),
+            backendStore: backendStore,
+            journal: journal,
+            accountID: accountID
+        )
         do {
-            newMetadata = try await networkStack.resolvedBackendMetadata()
+            return try await useCase.invokeIfNeeded()
+        } catch is CancellationError {
+            throw CancellationError()
+        } catch let error as URLError where error.code == .cancelled {
+            throw error
+        } catch let error as NetworkStackError {
+            throw error
         } catch {
             throw Failure.noResolvedBackendMetadataAvailable
         }
-        do {
-            try backendStore.storeBackendMetadata(
-                newMetadata,
-                for: accountID
-            )
-        } catch {
-            throw Failure.failedToStoreMetadata(error)
-        }
-        return newMetadata
     }
 
     private func loadPersistenceStack(
@@ -489,6 +487,7 @@ final class UserSessionLoader {
             apiVersion: WireTransport.APIVersion(rawValue: Int32(backendMetadata.apiVersion.rawValue))
         )
         let recurringActionService = RecurringActionService(
+            userID: accountID,
             storage: sharedUserDefaults,
             dateProvider: .system
         )
@@ -697,6 +696,16 @@ final class UserSessionLoader {
             }
         }
 
+    }
+
+}
+
+private struct NetworkStackMetadataResolver: ResolveBackendMetadataUseCaseProtocol {
+
+    let networkStack: NetworkStack
+
+    func invoke() async throws -> ResolvedBackendMetadata {
+        try await networkStack.resolvedBackendMetadata()
     }
 
 }

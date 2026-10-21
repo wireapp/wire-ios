@@ -29,7 +29,8 @@ struct SidebarViewControllerBuilder {
     @MainActor
     func build(
         isWireDriveEnabled: Bool = false,
-        isChannelsEnabled: Bool = false
+        isChannelsEnabled: Bool = false,
+        isMeetingsEnabled: Bool = false
     ) -> SidebarViewController {
 
         let accountImageViewDesign = AccountImageViewDesign()
@@ -69,7 +70,7 @@ struct SidebarViewControllerBuilder {
         // Configure unread filters visibility based on feature flag
         sidebarViewController.showUnreadFilters = DeveloperFlag.showUnreadConversationsFilter.isOn
         sidebarViewController.showChannels = isChannelsEnabled
-        sidebarViewController.showMeetings = DeveloperFlag.wireMeetings.isOn
+        sidebarViewController.showMeetings = isMeetingsEnabled
         sidebarViewController.showFiles = isWireDriveEnabled
 
         return sidebarViewController

@@ -18,6 +18,8 @@
 
 import Foundation
 import NeedleFoundation
+import WireCallingData
+import WireCallingDomain
 import WireDataModel
 import WireLogging
 import WireNetwork
@@ -134,10 +136,10 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
                 if Task.isCancelled {
                     return
                 }
-                WireLogger.sync.debug("requested to cancel sync", attributes: .incrementalSync, .newNSE)
+                WireLogger.sync.info("requested to cancel sync", attributes: .incrementalSync, .newNSE)
                 currentTask.cancel()
                 request.acknowledge()
-                WireLogger.sync.debug("notified main App to resume sync", attributes: .incrementalSync, .newNSE)
+                WireLogger.sync.info("notified main App to resume sync", attributes: .incrementalSync, .newNSE)
             }
 
             try await withTaskCancellationHandler {
@@ -381,9 +383,98 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
     private func generateNotificationsUseCase(eventID: UUID) -> GenerateNotificationUseCase {
         GenerateNotificationUseCase(
             conversationEventBuilder: conversationEventBuilder,
+            meetingEventBuilder: meetingEventNotificationBuilder,
             userEventBuilder: userEventNotificationBuilder,
             eventID: eventID
         )
+    }
+
+    private var meetingEventNotificationBuilder: MeetingEventNotificationBuilder {
+        shared {
+            MeetingEventNotificationBuilder(
+                meetingDeleteEventBuilder: meetingDeleteEventNotificationBuilder,
+                meetingMemberAddEventBuilder: meetingMemberAddEventNotificationBuilder,
+                meetingUpdateEventBuilder: meetingUpdateEventNotificationBuilder,
+                reminderReconciler: meetingEventReminderReconciler
+            )
+        }
+    }
+
+    private var meetingEventReminderReconciler: MeetingEventReminderReconciler {
+        let accountID = dependency.accountID
+        let repository = MeetingRepository(
+            meetingsAPI: MeetingsAPIBuilder(apiService: apiService).makeAPI(for: apiVersion),
+            localStore: MeetingLocalStore(context: coreDataStack.syncContext)
+        )
+        let scheduler = MeetingReminderScheduler()
+        let notificationPrivacyStore = conversationLocalStore
+        let featureStore = FeatureConfigLocalStore(context: coreDataStack.syncContext)
+
+        return MeetingEventReminderReconciler(
+            pullMeeting: { try await repository.pullMeeting(id: $0) },
+            reconcileMeeting: { meeting in
+                let now = Date.now
+                let shouldHideNotification = await notificationPrivacyStore.shouldHideNotification()
+                let occurrenceStarts = MeetingReminderOccurrenceCalculator().starts(for: meeting, after: now, limit: 5)
+                try await scheduler.reconcile(
+                    accountID: accountID,
+                    meetingID: meeting.id,
+                    occurrenceStarts: occurrenceStarts,
+                    now: now
+                ) { occurrenceStart in
+                    MeetingReminderNotificationContentBuilder().build(
+                        meeting: meeting,
+                        occurrenceStart: occurrenceStart,
+                        accountID: accountID,
+                        showMeetingTitle: !shouldHideNotification
+                    )
+                }
+            },
+            cancelMeeting: { meetingID in
+                await scheduler.cancelAll(accountID: accountID, meetingID: meetingID)
+            },
+            isMeetingsEnabled: {
+                guard let feature = try? await featureStore.fetchFeature(name: .meetings) else { return nil }
+                return await featureStore.isFeatureEnabled(feature: feature)
+            },
+            cancelAccount: {
+                await scheduler.cancelAll(accountID: accountID)
+            }
+        )
+    }
+
+    private var meetingDeleteEventNotificationBuilder: MeetingDeleteEventNotificationBuilder {
+        shared {
+            MeetingDeleteEventNotificationBuilder(
+                meetingLocalStore: MeetingLocalStore(context: coreDataStack.syncContext),
+                userLocalStore: userLocalStore,
+                featureConfigLocalStore: FeatureConfigLocalStore(context: coreDataStack.syncContext),
+                accountID: dependency.accountID
+            )
+        }
+    }
+
+    private var meetingMemberAddEventNotificationBuilder: MeetingMemberAddEventNotificationBuilder {
+        shared {
+            MeetingMemberAddEventNotificationBuilder(
+                meetingsAPI: MeetingsAPIBuilder(apiService: apiService).makeAPI(for: apiVersion),
+                usersAPI: UsersAPIBuilder(apiService: apiService).makeAPI(for: apiVersion),
+                featureConfigLocalStore: FeatureConfigLocalStore(context: coreDataStack.syncContext),
+                meetingLocalStore: MeetingLocalStore(context: coreDataStack.syncContext),
+                accountID: dependency.accountID
+            )
+        }
+    }
+
+    private var meetingUpdateEventNotificationBuilder: MeetingUpdateEventNotificationBuilder {
+        shared {
+            MeetingUpdateEventNotificationBuilder(
+                meetingsAPI: MeetingsAPIBuilder(apiService: apiService).makeAPI(for: apiVersion),
+                usersAPI: UsersAPIBuilder(apiService: apiService).makeAPI(for: apiVersion),
+                featureConfigLocalStore: FeatureConfigLocalStore(context: coreDataStack.syncContext),
+                accountID: dependency.accountID
+            )
+        }
     }
 
     private var conversationEventBuilder: ConversationEventNotificationBuilder {
@@ -396,6 +487,8 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
 
             return ConversationEventNotificationBuilder(
                 validator: validator,
+                answeredElsewhereCallTracker: .init(userDefaults: dependency.sharedUserDefaults),
+                accountID: dependency.accountID,
                 conversationMessageAddEventNotificationBuilder: conversationMessageAddEventNotificationBuilder,
                 conversationMemberLeaveEventNotificationBuilder: conversationMemberLeaveEventNotificationBuilder,
                 conversationMemberJoinEventNotificationBuilder: conversationMemberJoinEventNotificationBuilder,
@@ -436,6 +529,7 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
         let validator = ConversationCallingEventNotificationBuilder.Validator(
             userLocalStore: userLocalStore,
             conversationLocalStore: conversationLocalStore,
+            conversationsAPI: ConversationsAPIBuilder(apiService: apiService).makeAPI(for: apiVersion),
             userDefaults: dependency.sharedUserDefaults
         )
 
@@ -535,18 +629,40 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
     }
 
     private var conversationMemberLeaveEventNotificationBuilder: ConversationMemberLeaveEventNotificationBuilder {
+        let accountID = dependency.accountID
+        let meetingStore = MeetingLocalStore(context: coreDataStack.syncContext)
+        let reminderScheduler = MeetingReminderScheduler()
+        let pendingRequestCanceller = MeetingReminderPendingRequestCanceller()
         let context = ConversationMemberLeaveEventNotificationBuilder.Context(
             conversationLocalStore: conversationLocalStore,
-            userLocalStore: userLocalStore
+            userLocalStore: userLocalStore,
+            conversationsAPI: ConversationsAPIBuilder(apiService: apiService).makeAPI(for: apiVersion),
+            meetingLocalStore: meetingStore
         )
 
         let validator = ConversationMemberLeaveEventNotificationBuilder.Validator(
-            userLocalStore: userLocalStore
+            userLocalStore: userLocalStore,
+            featureConfigLocalStore: FeatureConfigLocalStore(context: coreDataStack.syncContext)
         )
 
         return ConversationMemberLeaveEventNotificationBuilder(
             context: context,
-            validator: validator
+            validator: validator,
+            selfRemovalHandler: MeetingReminderSelfRemovalHandler(
+                accountID: accountID,
+                storedMeetings: { await meetingStore.storedMeetings() },
+                cancelMeeting: { await reminderScheduler.cancelAll(accountID: accountID, meetingID: $0) },
+                deleteMeeting: { meetingID in
+                    do {
+                        try await meetingStore.deleteMeeting(id: meetingID)
+                    } catch {
+                        WireLogger.meetings.error("Failed to remove NSE meeting after self-removal: \(error)")
+                    }
+                },
+                cancelPendingRequests: {
+                    await pendingRequestCanceller.cancel(accountID: accountID, conversationID: $0)
+                }
+            )
         )
     }
 
@@ -558,7 +674,8 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
 
         let validator = ConversationMemberJoinEventNotificationBuilder.Validator(
             userLocalStore: userLocalStore,
-            conversationLocalStore: conversationLocalStore
+            conversationLocalStore: conversationLocalStore,
+            conversationsAPI: ConversationsAPIBuilder(apiService: apiService).makeAPI(for: apiVersion)
         )
 
         return ConversationMemberJoinEventNotificationBuilder(

@@ -26,6 +26,13 @@ public protocol MeetingsAPI: Sendable {
 
     func listMeetings() async throws -> [MeetingResponse]
 
+    /// Fetch a meeting by ID.
+    ///
+    /// - Parameter id: The meeting ID.
+    /// - Returns: The meeting.
+
+    func getMeeting(id: QualifiedID) async throws -> MeetingResponse
+
     /// Create a new meeting.
     ///
     /// - Parameter parameters: The meeting creation parameters.
@@ -41,6 +48,22 @@ public protocol MeetingsAPI: Sendable {
     /// - Returns: The updated meeting.
 
     func updateMeeting(id: QualifiedID, parameters: UpdateMeetingParameters) async throws -> MeetingResponse
+
+    /// Add email invitees to a meeting.
+    ///
+    /// - Parameters:
+    ///   - id: The meeting ID.
+    ///   - emails: The email addresses to add.
+
+    func addMeetingInvitations(id: QualifiedID, emails: [String]) async throws
+
+    /// Remove email invitees from a meeting.
+    ///
+    /// - Parameters:
+    ///   - id: The meeting ID.
+    ///   - emails: The email addresses to remove.
+
+    func removeMeetingInvitations(id: QualifiedID, emails: [String]) async throws
 
     /// Delete a meeting.
     ///

@@ -41,6 +41,10 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
     @Published var modalDestination: DetermineAuthMethodSheet?
     @Published var existsAnotherAccount: Bool
 
+    /// Action to run once `modalDestination`'s dismissal transition has completed.
+    /// See `confirmBackendSwitch(didConfirm:email:environment:)`.
+    private var pendingModalDismissAction: (() -> Void)?
+
     var isNextButtonEnabled: Bool {
         if overrideAllowEmailLoginOnly {
             isValidEmail
@@ -67,7 +71,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
 
     /// The `restAPIURL` hosts of the accounts already logged in on this device.
     private let existingBackendHosts: Set<String>
-    private let isAccountAlreadyLoggedIn: (UUID) -> Bool
+    private let isAccountAlreadyLoggedIn: (AuthenticationResult) -> Bool
 
     private var cancellable: AnyCancellable?
 
@@ -83,7 +87,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         allowsMultipleBackends: Bool,
         existingBackendHosts: Set<String>,
         isLoading: Bool = false,
-        isAccountAlreadyLoggedIn: @escaping (UUID) -> Bool = { _ in false },
+        isAccountAlreadyLoggedIn: @escaping (AuthenticationResult) -> Bool = { _ in false },
         overrideAllowEmailLoginOnly: Bool
     ) {
         self.factory = factory
@@ -173,6 +177,21 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         bridge.sendOutboundEvent(.exitFlowRequested)
     }
 
+    /// Dismisses the confirmation sheet; the switch (and the SSO sheet it triggers) runs in
+    /// `onModalDismissed()` instead, to avoid "Attempted to present SFAuthenticationViewController
+    /// from a view controller that is being dismissed".
+    func confirmBackendSwitch(didConfirm: Bool, email: String?, environment: BackendEnvironment2) {
+        pendingModalDismissAction = didConfirm ? { [weak self] in
+            Task { await self?.switchBackend(email: email, environment: environment) }
+        } : nil
+        modalDestination = nil
+    }
+
+    func onModalDismissed() {
+        pendingModalDismissAction?()
+        pendingModalDismissAction = nil
+    }
+
     // MARK: - Private
 
     private func handleAuthenticationMethod(
@@ -205,10 +224,11 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
                 environment: environment
             ))
 
-        case let .loginViaSSO(code):
+        case let .loginViaSSO(code, multiIngressIdentityProviderID):
             do {
-                let authResult = try await loginViaSSO(code: code, environment: nil)
-                if isAccountAlreadyLoggedIn(authResult.userID) {
+                var authResult = try await loginViaSSO(code: code, environment: nil)
+                authResult.multiIngressIdentityProviderID = multiIngressIdentityProviderID
+                if isAccountAlreadyLoggedIn(authResult) {
                     alert = .alreadyLoggedIn
                 } else {
                     router.navigate(to: DetermineAuthMethodDestination.noHistory(authResult))
@@ -305,7 +325,7 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
                 code: nil,
                 environment: environment
             )
-            if isAccountAlreadyLoggedIn(authResult.userID) {
+            if isAccountAlreadyLoggedIn(authResult) {
                 alert = .alreadyLoggedIn
             } else {
                 router.navigate(to: DetermineAuthMethodDestination.noHistory(authResult))

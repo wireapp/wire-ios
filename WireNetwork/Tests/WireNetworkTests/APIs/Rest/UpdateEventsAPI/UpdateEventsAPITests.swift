@@ -62,13 +62,15 @@ final class UpdateEventsAPITests: XCTestCase {
     }
 
     func testGetServerTime() async throws {
+        let apiVersions = APIVersion.v9.andNextVersions
+
         let responses: [MockAPIServiceProtocol.Response] = Array(
             repeating: (.ok, "GetServerTimeSuccessResponseV8"),
-            count: APIVersion.allCasesUpTo(.v8).count
+            count: apiVersions.count
         )
 
         let apiService = MockAPIServiceProtocol.withResponses(responses)
-        try await createSnapshotter().verifyRequest(for: APIVersion.v9.andNextVersions, apiService: apiService) { sut in
+        try await createSnapshotter().verifyRequest(for: apiVersions, apiService: apiService) { sut in
             _ = try await sut.getServerTime()
         }
     }

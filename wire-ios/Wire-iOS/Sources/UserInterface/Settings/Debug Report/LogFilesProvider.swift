@@ -70,7 +70,7 @@ struct LogFilesProvider: LogFilesProviding {
             body.append("\nDatadog ID: \(datadogUserIdentifier)")
         }
 
-        let metadata = CoreCrypto.buildMetadata()
+        let metadata = WireCoreCrypto.buildMetadata()
         body += """
         \n
         CoreCrypto:

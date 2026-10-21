@@ -19,6 +19,7 @@
 import UIKit
 import WireCommonComponents
 import WireDesign
+import WireLocators
 
 final class SecureLinkHeaderCell: UITableViewCell, CellConfigurationConfigurable {
 
@@ -33,6 +34,7 @@ final class SecureLinkHeaderCell: UITableViewCell, CellConfigurationConfigurable
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
+        accessibilityIdentifier = Locators.GuestOptionsPage.secureLinkHeader.rawValue
         setupViews()
         createConstraints()
     }

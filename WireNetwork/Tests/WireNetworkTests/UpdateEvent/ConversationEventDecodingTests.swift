@@ -116,6 +116,14 @@ final class ConversationEventDecodingTests: XCTestCase {
             decodedEvent,
             .conversation(.delete(Scaffolding.deleteEvent))
         )
+
+        let meetingEventJSON = String(decoding: mockEventData.jsonData, as: UTF8.self)
+            .replacingOccurrences(of: "conversation.delete", with: "conversation.delete-meeting")
+        let meetingEvent = try decoder.decode(
+            UpdateEventDecodingProxy.self,
+            from: Data(meetingEventJSON.utf8)
+        ).updateEvent
+        XCTAssertEqual(meetingEvent, decodedEvent)
     }
 
     func testDecodingConversationMemberJoinEvent() throws {

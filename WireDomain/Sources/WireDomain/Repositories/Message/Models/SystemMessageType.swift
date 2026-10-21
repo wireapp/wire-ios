@@ -130,4 +130,9 @@ public enum SystemMessageType: Sendable {
         sender: (id: UUID, domain: String?),
         date: Date
     )
+
+    case conversationScheduledForDeletion(
+        scheduledDeletionDate: Date,
+        date: Date
+    )
 }

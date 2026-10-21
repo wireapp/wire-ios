@@ -148,33 +148,12 @@ public actor AuthenticationManager: AuthenticationManagerProtocol {
         Task {
             let cookies = try cookieStorage.fetchCookies(userID: userID)
 
-            var requestBuilder = try URLRequestBuilder(path: "/access")
-                .withMethod(.post)
-                .withAcceptType(.json)
-                .withCookies(cookies)
-
-            if let clientID {
-                requestBuilder = requestBuilder.withQueryItem(
-                    name: "client_id",
-                    value: clientID
+            return try await AccessTokenExchange(networkService: networkService)
+                .exchange(
+                    cookies: cookies,
+                    clientID: clientID,
+                    lastKnownAccessToken: lastKnownToken
                 )
-            }
-
-            var request = requestBuilder.build()
-
-            if let lastKnownToken {
-                request.setAccessToken(lastKnownToken)
-            }
-
-            let (data, response) = try await networkService.executeRequest(request)
-
-            let decoder = JSONDecoder()
-            decoder.keyDecodingStrategy = .convertFromSnakeCase
-
-            return try ResponseParser(decoder: decoder)
-                .success(code: .ok, type: AccessTokenPayload.self)
-                .failure(code: .forbidden, label: "invalid-credentials", error: Failure.invalidCredentials)
-                .parse(code: response.statusCode, data: data)
         }
     }
 
@@ -185,24 +164,6 @@ extension AccessToken {
     var isExpiring: Bool {
         let secondsRemaining = expirationDate.timeIntervalSinceNow
         return secondsRemaining < 40
-    }
-
-}
-
-private struct AccessTokenPayload: Decodable, ToAPIModelConvertible {
-
-    let user: UUID
-    let accessToken: String
-    let tokenType: String
-    let expiresIn: Int
-
-    func toAPIModel() -> AccessToken {
-        AccessToken(
-            userID: user,
-            token: accessToken,
-            type: tokenType,
-            expirationDate: Date(timeIntervalSinceNow: TimeInterval(expiresIn))
-        )
     }
 
 }

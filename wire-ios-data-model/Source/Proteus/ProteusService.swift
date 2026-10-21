@@ -288,10 +288,11 @@ public final class ProteusService: ProteusServiceInterface {
         case failedToGetLastPrekey
     }
 
-    public func generatePrekey(id: UInt16) async throws -> String {
+    public func generatePrekey() async throws -> IdPrekeyTuple {
         do {
             return try await coreCrypto.transaction {
-                try await $0.proteusNewPrekey(prekeyId: id).base64EncodedString()
+                let newPrekey = try await $0.proteusNewPrekeyAuto()
+                return (newPrekey.id, newPrekey.pkb.base64EncodedString())
             }
         } catch {
             throw PrekeyError.failedToGeneratePrekey
@@ -312,10 +313,7 @@ public final class ProteusService: ProteusServiceInterface {
 
     public var lastPrekeyID: UInt16 {
         get async {
-            let lastPrekeyID = try? await coreCrypto.transaction {
-                try $0.proteusLastResortPrekeyId()
-            }
-            return lastPrekeyID ?? UInt16.max
+            (try? CoreCrypto.proteusLastResortPrekeyId()) ?? UInt16.max
         }
     }
 
@@ -337,9 +335,8 @@ public final class ProteusService: ProteusServiceInterface {
 
     private func generatePrekeys(_ range: CountableRange<UInt16>) async throws -> [IdPrekeyTuple] {
         var prekeys = [IdPrekeyTuple]()
-        for id in range {
-            let prekey = try await generatePrekey(id: id)
-            prekeys.append((id: id, prekey: prekey))
+        for _ in range {
+            prekeys.append(try await generatePrekey())
         }
         return prekeys
     }
@@ -395,9 +392,7 @@ public final class ProteusService: ProteusServiceInterface {
         }
 
         do {
-            return try await coreCrypto.transaction {
-                try $0.proteusFingerprintPrekeybundle(prekey: prekeyData)
-            }
+            return try CoreCrypto.proteusFingerprintPrekeybundle(prekey: prekeyData)
         } catch {
             logger.error("failed to get fingerprint from prekey: \(String(describing: error))")
             throw FingerprintError.failedToGetFingerprintFromPrekey

@@ -25,8 +25,6 @@ final class MockPushTokenService: NSObject, PushTokenServiceInterface {
 
     var localToken: PushToken?
     var onTokenChange: ((PushToken?) -> Void)?
-    var onRegistrationComplete: (() -> Void)?
-    var onUnregistrationComplete: (() -> Void)?
 
     var registeredTokensByClientID = [String: [PushToken]]()
 
@@ -45,7 +43,6 @@ final class MockPushTokenService: NSObject, PushTokenServiceInterface {
         var existingTokens = registeredTokensByClientID[clientID] ?? []
         existingTokens.append(token)
         registeredTokensByClientID[clientID] = existingTokens
-        onRegistrationComplete?()
     }
 
     func unregisterRemoteTokens(
@@ -55,8 +52,6 @@ final class MockPushTokenService: NSObject, PushTokenServiceInterface {
     ) async throws {
         let existingTokens = registeredTokensByClientID[clientID] ?? []
         registeredTokensByClientID[clientID] = existingTokens.filter { $0 == token }
-        onUnregistrationComplete?()
-
     }
 
 }

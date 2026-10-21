@@ -22,17 +22,26 @@ import XCTest
 final class UserProfileTests: WireUITestCase {
 
     @MainActor
-    private func openTeamUserProfilePage() async throws -> UserProfilePage {
+    private func loginTeamOwner() async throws -> (ConversationsPage, UserInfo) {
         let (teamOwner, _, _, _) = try await UserHelper.default.registerTeam(withMemberCount: 0)
 
-        return try app.loginUser(email: teamOwner.email, password: teamOwner.password)
+        let conversationsPage = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
             .acceptPopup()
-            .openUserProfilePage()
+
+        return (conversationsPage, teamOwner)
+    }
+
+    @MainActor
+    private func openTeamUserProfilePage() async throws -> (UserProfilePage, UserInfo) {
+        let (conversationsPage, teamOwner) = try await loginTeamOwner()
+        let userProfilePage = try conversationsPage.openUserProfilePage()
+
+        return (userProfilePage, teamOwner)
     }
 
     @MainActor
     func testSetAvailabilityStatuses_TC_8935_8936_8937_8938() async throws {
-        let userProfilePage = try await openTeamUserProfilePage()
+        let (userProfilePage, _) = try await openTeamUserProfilePage()
 
         // Set status as available and verify.
         _ = userProfilePage
@@ -55,4 +64,14 @@ final class UserProfileTests: WireUITestCase {
             .verifyUserStatus(.away)
     }
 
+    @MainActor
+    func testUserProfileAttributes_TC_8811_8812_8815_8816() async throws {
+        let (userProfilePage, teamOwner) = try await openTeamUserProfilePage()
+
+        _ = userProfilePage
+            .verifyName(teamOwner.name)
+            .verifyUsername(teamOwner.username)
+            .verifyUserStatus(.none) // default
+            .verifyProfileQRCode(username: teamOwner.username)
+    }
 }

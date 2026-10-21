@@ -21,6 +21,18 @@ import XCTest
 /// [core-messenger]
 final class SettingsTests: WireUITestCase {
 
+    override func setUpWithError() throws {
+        if name.contains("testSetDefaultBrowserToOpenWeblinks_TC_8948") {
+            // The simulator only has Safari, so pretending Chrome is installed to get the "Open links in" setting.
+            uiTestConfig.mockInstalledBrowsers = ["chrome"]
+        }
+        if name.contains("testSetDefaultMapsAppToOpenCoordinates_TC_8949") {
+            // The simulator only has Apple Maps, so pretending Google Maps is installed to get the "Maps" setting.
+            uiTestConfig.mockGoogleMapsInstalled = true
+        }
+        try super.setUpWithError()
+    }
+
     @MainActor
     func testChangeAppThemeToSystemDarkOrLight_TC_8945() async throws {
         // GIVEN
@@ -105,7 +117,6 @@ final class SettingsTests: WireUITestCase {
             conversation: .group("Test")
         )
 
-        // Login & Disable link previews
         let conversationPage = try app.loginUser(email: stagingTeam.email, password: stagingTeam.password)
             .acceptPopup()
             .openSettings()
@@ -113,28 +124,98 @@ final class SettingsTests: WireUITestCase {
             .disableCreateLinkPreviews()
             .backToSettings()
             .switchToConversationsTab()
-            // Open conversation and send first link
             .openConversation()
             .sendMessage("First link: https://github.com/wireapp/wire-ios")
+
+        // Verify first message is sent without link preview
+        let conversationsPage = try conversationPage
+            .verifyMessageSent("First link: https://github.com/wireapp/wire-ios")
+            .verifyLinkPreviewCell(shouldExist: false)
             .goBackToConversationPage()
-            // Enable link previews
+
+        let conversationPageWithPreview = try conversationsPage
             .openSettings()
             .openOptionsMenu()
             .enableCreateLinkPreviews()
             .backToSettings()
             .switchToConversationsTab()
-            // Open conversation and send first link
             .openConversation()
             .sendMessage("Second link: https://github.com/wireapp/wire-android")
 
-        // Verify first message is the original message without preview
-        _ = conversationPage
-            .verifyMessageSent("First link: https://github.com/wireapp/wire-ios")
-
         // Verify second message has link preview
-        _ = conversationPage
+        _ = conversationPageWithPreview
             .verifyMessageSent("Second link:")
             .verifyLinkPreviewCell()
+    }
+
+    @MainActor
+    func testSetDefaultBrowserToOpenWeblinks_TC_8948() async throws {
+        // GIVEN
+        let (stagingTeam, _, _, _) = try await UserHelper.default.registerTeam(
+            withMemberCount: 1,
+            conversation: .group("Test")
+        )
+        let link = "https://github.com/wireapp/wire-ios"
+        let linkMessage = "Link: \(link)"
+
+        // WHEN - a link is opened with the default browser Safari
+        let conversationPage = try app.loginUser(email: stagingTeam.email, password: stagingTeam.password)
+            .acceptPopup()
+            .openConversation()
+            .sendMessage(linkMessage)
+        conversationPage.tapLinkPreview()
+
+        // THEN
+        conversationPage.verifyLinkOpenedInSafari()
+
+        // WHEN - Chrome is selected as default browser and the link is opened again
+        let reopenedConversationPage = try conversationPage
+            .goBackToConversationPage()
+            .openSettings()
+            .openOptionsMenu()
+            .selectChromeAsDefaultBrowser()
+            .backToSettings()
+            .switchToConversationsTab()
+            .openConversation()
+        reopenedConversationPage.tapLinkPreview()
+
+        // THEN - an alert says the link opens in Chrome (googlechromes://).
+        // There is no real Chrome on the simulator, so the app shows this alert in place of launching it.
+        let chromeURL = link.replacingOccurrences(of: "https://", with: "googlechromes://")
+        reopenedConversationPage.verifyLinkOpensInChromeAlert(urlPrefix: chromeURL)
+    }
+
+    @MainActor
+    func testSetDefaultMapsAppToOpenCoordinates_TC_8949() async throws {
+        // GIVEN
+        let (owner, members, _, conversationID) = try await UserHelper.default.registerTeam(
+            withMemberCount: 1,
+            conversation: .group("Test")
+        )
+
+        // WHEN - Google Maps is selected as default maps app and a received location is opened
+        let conversationPage = try app.loginUser(email: owner.email, password: owner.password)
+            .acceptPopup()
+            .openSettings()
+            .openOptionsMenu()
+            .selectGoogleMapsAsDefaultMaps()
+            .backToSettings()
+            .switchToConversationsTab()
+            .openConversation()
+        try await testServicesClient.sendLocation(
+            user: members[0],
+            conversationId: try XCTUnwrap(conversationID, "conversationId is nil"),
+            domain: UserHelper.default.backend.domainInfo,
+            latitude: 52.52419,
+            longitude: 13.40221,
+            locationName: "Berlin"
+        )
+
+        conversationPage.tapLocation(named: "Berlin")
+
+        // THEN
+        let mapsURL = "comgooglemaps://?q=\(Double(Float(52.52419))),\(Double(Float(13.40221)))"
+        conversationPage.verifyLocationOpensInGoogleMapsAlert(urlPrefix: mapsURL)
     }
 
     @MainActor

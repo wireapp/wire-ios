@@ -22,6 +22,7 @@ import Foundation
 final class CompanyLoginURLActionProcessorTests: ZMTBaseTest, UnauthenticatedSessionStatusDelegate {
 
     var isAllowedToCreateNewAccount: Bool = true
+    var maxNumberAccounts: Int = SessionManager.defaultMaxNumberAccounts
     var sut: CompanyLoginURLActionProcessor!
     var authenticationStatus: ZMAuthenticationStatus!
     var delegate: MockAuthenticationStatusDelegate!
@@ -76,7 +77,27 @@ final class CompanyLoginURLActionProcessorTests: ZMTBaseTest, UnauthenticatedSes
         XCTAssertEqual(presentationDelegate.failedToPerformActionCalls.first?.0, action)
         XCTAssertEqual(
             presentationDelegate.failedToPerformActionCalls.first?.1 as? SessionManager.AccountError,
-            .accountLimitReached
+            .accountLimitReached(maxNumberAccounts: maxNumberAccounts)
+        )
+    }
+
+    func testThatStartCompanyLoginActionFails_WithConfiguredMaxNumberAccounts_WhenAccountLimitIsReached() {
+        // given
+        isAllowedToCreateNewAccount = false
+        maxNumberAccounts = 2
+        let ssoCode = UUID()
+        let action: URLAction = .startCompanyLogin(code: ssoCode)
+        let presentationDelegate = MockPresentationDelegate()
+
+        // when
+        sut.process(urlAction: action, delegate: presentationDelegate)
+
+        // then
+        XCTAssertEqual(presentationDelegate.failedToPerformActionCalls.count, 1)
+        XCTAssertEqual(presentationDelegate.failedToPerformActionCalls.first?.0, action)
+        XCTAssertEqual(
+            presentationDelegate.failedToPerformActionCalls.first?.1 as? SessionManager.AccountError,
+            .accountLimitReached(maxNumberAccounts: 2)
         )
     }
 

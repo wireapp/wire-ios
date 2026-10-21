@@ -23,6 +23,7 @@ class FilesAppPage: PageModel {
 
     private let filesApp: XCUIApplication
     private let timeout: TimeInterval = 5
+    private let conversationTimeout: TimeInterval = 10
 
     override var pageMainElement: XCUIElement {
         filesApp.windows.firstMatch
@@ -59,6 +60,15 @@ class FilesAppPage: PageModel {
 
     var sendButton: XCUIElement {
         filesApp.buttons[Locators.ShareExtensionPage.sendButtonOnShareExtension.rawValue].firstMatch
+    }
+
+    var messageField: XCUIElement {
+        let textView = filesApp.textViews[Locators.ShareExtensionPage.messageField.rawValue].firstMatch
+        if textView.exists {
+            return textView
+        }
+
+        return filesApp.textViews.firstMatch
     }
 
     private func displayedFileName(from fileName: String) -> String {
@@ -104,9 +114,12 @@ class FilesAppPage: PageModel {
     }
 
     func selectConversation(name: String) -> XCUIElement {
-        let conversationCell = filesApp.staticTexts[name]
-        XCTAssertTrue(conversationCell.waitForExistence(timeout: timeout))
-        return conversationCell.firstMatch
+        let conversationCell = conversationCell(named: name)
+        XCTAssertTrue(
+            conversationCell.waitForExistence(timeout: conversationTimeout),
+            "Conversation '\(name)' didn't show up"
+        )
+        return conversationCell
     }
 
     @discardableResult
@@ -127,32 +140,56 @@ class FilesAppPage: PageModel {
         file.tap()
 
         XCTAssertTrue(
-            shareButton.waitForExistence(timeout: timeout),
-            "Share button didn't show up"
+            shareButton.waitAndTap(timeout: timeout),
+            "Share button didn't show up or wasn't tappable"
         )
-        shareButton.tap()
-
-        if shareToWireApp.waitForExistence(timeout: timeout) {
-            shareToWireApp.tap()
-        }
+        XCTAssertTrue(
+            shareToWireApp.waitAndTap(timeout: timeout),
+            "Wire share extension didn't show up or wasn't tappable"
+        )
 
         return self
     }
 
-    func chooseConversationAndSend(name: String) throws {
+    @discardableResult
+    func addMessage(_ message: String) -> Self {
+        let field = messageField
         XCTAssertTrue(
-            chooseConversation.waitForExistence(timeout: timeout),
-            "chooseConversation, didn't show up"
+            field.waitForExistence(timeout: timeout),
+            "Share extension message field didn't show up"
         )
-        chooseConversation.tap()
+        XCTAssertTrue(
+            field.waitAndTap(timeout: timeout),
+            "Share extension message field wasn't tappable"
+        )
+        field.typeText(message)
+
+        let typedMessage = (field.value as? String) ?? field.label
+        XCTAssertTrue(
+            typedMessage.contains(message),
+            "Share extension message wasn't typed"
+        )
+        return self
+    }
+
+    private func scrollIfNeeded() {
+        _ = chooseConversation.waitForExistence(timeout: 1.0)
+        guard !chooseConversation.isHittable else { return }
+        guard messageField.exists else { return }
+        messageField.swipeUp()
+    }
+
+    func chooseConversationAndSend(name: String, message: String) throws {
+        scrollIfNeeded()
+        XCTAssertTrue(
+            chooseConversation.waitAndTap(),
+            "Choose conversation didn't show up or wasn't tappable"
+        )
 
         let conversationToSend = selectConversation(name: name)
-        XCTAssertTrue(
-            conversationToSend.waitForExistence(timeout: timeout),
-            "Tap to chooseConversation, didn't pass"
-        )
-        conversationToSend.waitAndTap()
+        XCTAssertTrue(conversationToSend.waitAndTap(timeout: timeout), "Conversation '\(name)' wasn't tappable")
 
+        addMessage(message)
         XCTAssertTrue(sendButton.waitForExistence(timeout: timeout), "Send button didn't show up")
         sendButton.waitAndTap()
         XCTAssertFalse(

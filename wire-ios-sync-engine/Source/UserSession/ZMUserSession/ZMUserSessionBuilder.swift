@@ -256,6 +256,7 @@ struct ZMUserSessionBuilder {
             apiVersion: BackendInfo.apiVersion
         )
         let recurringActionService = recurringActionService ?? RecurringActionService(
+            userID: userId,
             storage: sharedUserDefaults,
             dateProvider: .system
         )

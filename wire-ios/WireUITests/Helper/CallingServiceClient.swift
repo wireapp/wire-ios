@@ -373,6 +373,10 @@ final class CallingServiceClient {
         return call
     }
 
+    func stopCall(instanceId: String, callId: String) async throws {
+        try await performCallPut(instanceId: instanceId, pathComponents: ["call", callId, "stop"])
+    }
+
     func switchVideoOn(instanceId: String, callId: String) async throws {
         try await performCallPut(instanceId: instanceId, pathComponents: ["call", callId, "switchVideoOn"])
     }

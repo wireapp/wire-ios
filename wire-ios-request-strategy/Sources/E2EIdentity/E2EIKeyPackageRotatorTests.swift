@@ -45,7 +45,6 @@ class E2EIKeyPackageRotatorTests: MessagingTestBase {
         sut = E2EIKeyPackageRotator(
             coreCryptoProvider: mockCoreCryptoProvider,
             context: syncMOC,
-            onNewCRLsDistributionPointsSubject: .init(),
             featureRepository: mockLegacyFeatureRepository
         )
     }

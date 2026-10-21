@@ -83,6 +83,7 @@ final class ConfirmAssetViewController: UIViewController {
     )
     private let contentLayoutGuide: UILayoutGuide = .init()
     private let imageToolbarSeparatorView: UIView = .init()
+    private var accentColorChangeHandler: AccentColorChangeHandler?
 
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         wr_supportedInterfaceOrientations
@@ -116,6 +117,7 @@ final class ConfirmAssetViewController: UIViewController {
         createConstraints()
 
         setupStyle()
+        setupAccentColorChangeHandler()
 
         presentationController?.delegate = self
     }
@@ -146,6 +148,13 @@ final class ConfirmAssetViewController: UIViewController {
         topPanel.backgroundColor = SemanticColors.View.backgroundDefault
 
         titleLabel.textColor = SemanticColors.Label.textDefault
+    }
+
+    private func setupAccentColorChangeHandler() {
+        accentColorChangeHandler = AccentColorChangeHandler
+            .addObserver(userSession: userSession) { [weak self] _ in
+                self?.acceptImageButton.applyStyle(.accentColorTextButtonStyle)
+            }
     }
 
     /// Show editing options only if the image is not animated

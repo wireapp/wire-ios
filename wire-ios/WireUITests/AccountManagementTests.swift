@@ -25,7 +25,7 @@ final class AccountManagementTests: WireUITestCase {
     var teamMember: UserInfo!
 
     @MainActor
-    func testUpdateNameAndUsernameInfo_TC_8932_TC_8934() async throws {
+    func testUpdateNameAndUsernameInfo_TC_8932_8934() async throws {
 
         let user = try await UserHelper.default.createPersonalUser()
 
@@ -37,6 +37,11 @@ final class AccountManagementTests: WireUITestCase {
             .updateName()
             .tapUsernameField()
             .updateUsernameAndSave()
+
+        XCTAssertTrue(
+            accountSettingPage.nameField.waitForExistence(timeout: 3),
+            "Name field was not visible"
+        )
 
         XCTAssertTrue(
             (accountSettingPage.nameField.value as? String)?.contains("-updated") == true,
@@ -74,7 +79,7 @@ final class AccountManagementTests: WireUITestCase {
     }
 
     @MainActor
-    func testAccountManagementUpdateEmailAndResetPassword_TC_8933_TC_8931() async throws {
+    func testAccountManagementUpdateEmailAndResetPassword_TC_8933_8931() async throws {
 
         let updatedUserDetails = UserGenerator.generateUniqueUserInfo()
 
@@ -155,5 +160,41 @@ final class AccountManagementTests: WireUITestCase {
         // THEN
         _ = try ManagedDevicesPage()
             .removeFirstDeviceAndContinue(password: user.password)
+    }
+
+    /// Ref Bug: [WPB-20932]
+    @MainActor
+    func testLoginAfterDeviceRemovedFromBackend_TC_11584() async throws {
+        // GIVEN
+        let groupName = UserGenerator.generateRandomConversationName()
+        let (teamOwner, _, _, _) = try await UserHelper.default.registerTeam(
+            withMemberCount: 1,
+            conversation: .group(groupName)
+        )
+
+        _ = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
+            .acceptPopup()
+            .openConversation(named: groupName)
+            .sendMessage(UserGenerator.generateRandomMessage())
+
+        let clientID = try await UserHelper.default.clientID(of: teamOwner)
+        _ = try await testServicesClient.getInstanceId(
+            email: teamOwner.email,
+            password: teamOwner.password,
+            name: teamOwner.name,
+            verificationCode: nil,
+            deviceName: "client-2",
+            useCache: false
+        )
+
+        // WHEN - the device is removed from another platform while the app is running
+        try await UserHelper.default.removeClient(id: clientID, of: teamOwner)
+
+        // AND - the app throws the user out right away, without restarting
+        _ = try SessionExpiredPage().confirm()
+
+        // THEN - the user logs in again successfully
+        _ = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
+            .acceptPopup()
     }
 }

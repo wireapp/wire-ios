@@ -27,6 +27,20 @@ final class MemberSelectionViewModel {
 
     private let source: any SearchMembersUseCaseProtocol
     private let onSelect: ([MeetingMember]) -> Void
+    private let onSelectEmails: ([String]) -> Void
+
+    let allowsEmailInvitations: Bool
+    private(set) var selectedEmails: [String]
+    var emailAddress = "" {
+        didSet { emailValidationError = nil }
+    }
+
+    private(set) var emailValidationError: EmailValidationError?
+
+    enum EmailValidationError {
+        case invalidAddress
+        case duplicateAddress
+    }
 
     var searchText: String = "" {
         didSet { scheduleSearch() }
@@ -39,16 +53,33 @@ final class MemberSelectionViewModel {
     var isSelectedExpanded = true
     var isContactsExpanded = true
 
+    var groupSearchText = "" {
+        didSet { scheduleGroupSearch() }
+    }
+
+    var groupSearchResults: [MeetingGroup] = []
+    var isSearchingGroups = false
+    var hasGroupSearchError = false
+    var isImportingGroup = false
+    var hasGroupImportError = false
+
     private var searchTask: Task<Void, Never>?
+    private var groupSearchTask: Task<Void, Never>?
 
     init(
         source: any SearchMembersUseCaseProtocol,
         initialSelection: [MeetingMember] = [],
-        onSelect: @escaping ([MeetingMember]) -> Void = { _ in }
+        onSelect: @escaping ([MeetingMember]) -> Void = { _ in },
+        allowsEmailInvitations: Bool = false,
+        initialEmailSelection: [String] = [],
+        onSelectEmails: @escaping ([String]) -> Void = { _ in }
     ) {
         self.source = source
         self.selectedMembers = initialSelection
         self.onSelect = onSelect
+        self.allowsEmailInvitations = allowsEmailInvitations
+        self.selectedEmails = initialEmailSelection
+        self.onSelectEmails = onSelectEmails
         scheduleSearch(debounce: .zero) // initial load is immediate
     }
 
@@ -75,13 +106,108 @@ final class MemberSelectionViewModel {
 
     func confirmSelection() {
         onSelect(selectedMembers)
+        onSelectEmails(selectedEmails)
+    }
+
+    func addEmail() {
+        guard allowsEmailInvitations else { return }
+        let email = emailAddress.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard Self.isValidEmail(email) else {
+            emailValidationError = .invalidAddress
+            return
+        }
+        guard !selectedEmails.contains(where: { $0.caseInsensitiveCompare(email) == .orderedSame }) else {
+            emailValidationError = .duplicateAddress
+            return
+        }
+        selectedEmails.append(email)
+        emailAddress = ""
+    }
+
+    func removeEmail(_ email: String) {
+        selectedEmails.removeAll { $0 == email }
+        emailValidationError = nil
+    }
+
+    private static func isValidEmail(_ email: String) -> Bool {
+        let localPart = email.prefix(while: { $0 != "@" })
+        guard email.utf8.count <= 254, localPart.utf8.count <= 64,
+              !localPart.hasPrefix("."), !localPart.hasSuffix("."), !email.contains("..") else {
+            return false
+        }
+        let pattern = #"^[A-Z0-9.!#$%&'*+/=?^_`{|}~-]+@"#
+            + #"[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?(?:\.[A-Z0-9](?:[A-Z0-9-]{0,61}[A-Z0-9])?)+$"#
+        return email.range(of: pattern, options: [.regularExpression, .caseInsensitive]) != nil
     }
 
     func retrySearch() {
         scheduleSearch(debounce: .zero)
     }
 
+    func retryGroupSearch() {
+        scheduleGroupSearch(debounce: .zero)
+    }
+
+    func cancelGroupSearch() {
+        groupSearchTask?.cancel()
+    }
+
+    func importGroup(_ groupID: QualifiedID) async -> Bool {
+        guard !isImportingGroup else { return false }
+        isImportingGroup = true
+        hasGroupImportError = false
+        defer { isImportingGroup = false }
+
+        do {
+            try Task.checkCancellation()
+            let members = try await source.members(in: groupID)
+            try Task.checkCancellation()
+            var selectedIDs = Set<QualifiedID>()
+            selectedMembers = members.filter {
+                !$0.isSelfUser && selectedIDs.insert($0.qualifiedID).inserted
+            }
+            isSelectedExpanded = true
+            return true
+        } catch {
+            guard !Task.isCancelled else { return false }
+            let error = error as NSError
+            WireLogger.ui.warn(
+                "failed to import meeting members <domain: \(error.domain), code: \(error.code)>",
+                attributes: .safePublic
+            )
+            hasGroupImportError = true
+            return false
+        }
+    }
+
     // MARK: - Search
+
+    private func scheduleGroupSearch(debounce: Duration = .milliseconds(300)) {
+        groupSearchTask?.cancel()
+        let query = groupSearchText
+        isSearchingGroups = true
+
+        groupSearchTask = Task { [weak self] in
+            guard let self else { return }
+            do {
+                if debounce > .zero {
+                    try await Task.sleep(for: debounce)
+                }
+                try Task.checkCancellation()
+                let groups = try await source.searchGroups(query: query)
+                try Task.checkCancellation()
+                groupSearchResults = groups
+                hasGroupSearchError = false
+                isSearchingGroups = false
+            } catch {
+                guard !Task.isCancelled else { return }
+                WireLogger.ui.warn("failed to search for meeting source groups", attributes: .safePublic)
+                groupSearchResults = []
+                hasGroupSearchError = true
+                isSearchingGroups = false
+            }
+        }
+    }
 
     private func scheduleSearch(debounce: Duration = .milliseconds(300)) {
         searchTask?.cancel()

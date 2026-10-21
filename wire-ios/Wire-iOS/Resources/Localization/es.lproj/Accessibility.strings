@@ -38,12 +38,12 @@
 "conversation.hideFormattingButton.description" = "Ocultar opciones de formato";
 "conversation.timerButton.description" = "Establecer un temporizador para los mensajes autoborrados";
 "conversation.mentionButton.description" = "Mencionar a alguien";
-"conversation.cameraButton.description" = "Tomar o seleccionar una foto";
-"conversation.sketchButton.description" = "Abrir croquis para dibujar o escribir";
+"conversation.cameraButton.description" = "Take or select a photo";
+"conversation.sketchButton.description" = "Open sketch to draw or write";
 "conversation.gifButton.description" = "Seleccione un GIF";
 "conversation.audioButton.description" = "Grabar un mensaje de audio";
 "conversation.pingButton.description" = "Enviar un ping";
-"conversation.uploadFileButton.description" = "Compartir un archivo";
+"conversation.uploadFileButton.description" = "Share a file";
 "conversation.locationButton.description" = "Comparte tu ubicación";
 "conversation.videoButton.description" = "Graba un vídeo";
 "conversation.moreButton.description" = "Abrir más opciones de mensajería";
@@ -54,6 +54,10 @@
 "conversation.timerForSelfDeletingMessagesDay.value" = "%@ día";
 "conversation.timerForSelfDeletingMessagesWeek.value" = "%@ semana";
 "conversation.timerForSelfDeletingMessagesWeeks.value" = "%@ semanas";
+"conversation.cameraButtonDisabled.description" = "Take or select a photo, disabled in viewer access";
+"conversation.sketchButtonDisabled.description" = "Open sketch to draw or write, disabled in viewer access";
+"conversation.uploadFileButtonDisabled.description" = "Share a file, disabled in viewer access";
+"conversation.videoButtonDisabled.description" = "Record a video, disabled in viewer access";
 
 "conversation.headerButton.description" = "Usar un encabezado";
 "conversation.boldButton.description" = "Usar texto en negrita";

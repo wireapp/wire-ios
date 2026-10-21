@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-final class SelfUserAPIV16: SelfUserAPIV15 {
+class SelfUserAPIV16: SelfUserAPIV15 {
 
     override var apiVersion: APIVersion {
         .v16

@@ -17,29 +17,32 @@
 //
 
 import WireCallingDomain
+import WireLogging
 import WireNetwork
 
 struct MeetingUpdateEventProcessor: MeetingUpdateEventProcessorProtocol {
 
     let repository: any MeetingRepositoryProtocol
     let conversationRepository: any ConversationRepositoryProtocol
+    let reconcileReminder: @Sendable (Meeting) async throws -> Void
+    let cancelReminder: @Sendable (WireNetwork.QualifiedID) async -> Void
 
     func processEvent(_ event: MeetingUpdateEvent) async throws {
         // A nil meeting no longer exists on the backend; its local copy
         // was already deleted, so there is nothing left to link.
-        guard let meeting = try await repository.pullMeeting(id: event.meetingID) else { return }
+        guard let meeting = try await repository.pullMeeting(id: event.meetingID) else {
+            await cancelReminder(event.meetingID)
+            return
+        }
 
-        // The meeting's conversation arrives via its own conversation.create-meeting
-        // event, but that event isn't guaranteed to have been processed before this
-        // one. If the conversation isn't stored locally yet, pull it and store the
-        // meeting again so the two are linked; meetings without a locally stored
-        // conversation are not listed.
+        // Reconcile before the conversation pull, whose failure can stop processing this event.
+        do {
+            try await reconcileReminder(meeting)
+        } catch {
+            WireLogger.eventProcessing.error("Failed to reconcile meeting reminder: \(error)")
+        }
+
         let conversationID = meeting.conversationID
-        guard await conversationRepository.fetchConversation(
-            id: conversationID.id,
-            domain: conversationID.domain
-        ) == nil else { return }
-
         try await conversationRepository.pullConversation(
             id: conversationID.id,
             domain: conversationID.domain

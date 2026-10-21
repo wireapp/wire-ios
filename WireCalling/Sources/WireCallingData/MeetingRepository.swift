@@ -21,6 +21,8 @@ public import WireCallingDomain
 public import WireFoundation
 public import WireNetwork
 
+import WireLogging
+
 /// The single implementation of `WireCallingDomain.MeetingRepositoryProtocol`.
 ///
 /// The repository bridges between the backend API (`MeetingResponse`) and the
@@ -31,16 +33,28 @@ public final class MeetingRepository: MeetingRepositoryProtocol {
 
     private let meetingsAPI: any MeetingsAPI
     private let localStore: any MeetingLocalStoreProtocol
+    private let onMeetingCreated: (@Sendable (Meeting) async throws -> Void)?
+    private let onMeetingUpdated: (@Sendable (Meeting) async throws -> Void)?
+    private let onMeetingsRefreshed: (@Sendable ([Meeting]) async -> Void)?
+    private let pullConversation: (@Sendable (QualifiedID) async throws -> Void)?
     private let changeBroadcaster = AsyncMulticaster<Void>()
 
     // MARK: - Object lifecycle
 
     public init(
         meetingsAPI: any MeetingsAPI,
-        localStore: any MeetingLocalStoreProtocol
+        localStore: any MeetingLocalStoreProtocol,
+        onMeetingCreated: (@Sendable (Meeting) async throws -> Void)? = nil,
+        onMeetingUpdated: (@Sendable (Meeting) async throws -> Void)? = nil,
+        onMeetingsRefreshed: (@Sendable ([Meeting]) async -> Void)? = nil,
+        pullConversation: (@Sendable (QualifiedID) async throws -> Void)? = nil
     ) {
         self.meetingsAPI = meetingsAPI
         self.localStore = localStore
+        self.onMeetingCreated = onMeetingCreated
+        self.onMeetingUpdated = onMeetingUpdated
+        self.onMeetingsRefreshed = onMeetingsRefreshed
+        self.pullConversation = pullConversation
     }
 
     // MARK: - Public
@@ -55,23 +69,53 @@ public final class MeetingRepository: MeetingRepositoryProtocol {
         title: String,
         startTime: Date,
         endTime: Date,
-        recurrence: WireCallingDomain.MeetingRecurrence?
-    ) async throws -> Meeting {
+        recurrence: WireCallingDomain.MeetingRecurrence?,
+        type: WireCallingDomain.MeetingType,
+        password: String?,
+        invitedEmails: [String] = []
+    ) async throws -> MeetingCreationResult {
         let response = try await meetingsAPI.createMeeting(
             parameters: CreateMeetingParameters(
                 title: title,
                 startTime: startTime,
                 endTime: endTime,
+                timeZoneIdentifier: TimeZone.current.identifier,
+                type: type == .immediate ? .immediate : .scheduled,
+                password: password,
+                invitedEmails: invitedEmails.isEmpty ? nil : invitedEmails,
                 recurrence: recurrence?.toNetworkRecurrence()
             )
         )
         let meeting = response.toDomainMeeting()
         await storeMeeting(meeting)
         // The stored copy has its members populated from the conversation.
-        // Right after creation the conversation is not pulled yet, so the
-        // store can't provide the meeting and the mapped one is returned;
-        // its empty member list is accurate at this point.
-        return await localStore.storedMeeting(id: meeting.id) ?? meeting
+        // Until the conversation is pulled, its metadata remains unavailable.
+        let storedMeeting = await localStore.storedMeeting(id: meeting.id) ?? meeting
+        do {
+            try await onMeetingCreated?(storedMeeting)
+        } catch {
+            WireLogger.meetings.error("Failed to schedule created meeting reminder: \(error)")
+        }
+        return MeetingCreationResult(meeting: storedMeeting, link: response.link)
+    }
+
+    public func fetchInvitedEmails(id: QualifiedID) async throws -> [String] {
+        try await meetingsAPI.getMeeting(id: id).invitedEmails
+    }
+
+    public func updateInvitedEmails(id: QualifiedID, adding: [String], removing: [String]) async throws {
+        guard !adding.isEmpty || !removing.isEmpty else { return }
+        let current = try await fetchInvitedEmails(id: id)
+        let currentKeys = Set(current.map { $0.lowercased() })
+        let removedKeys = Set(removing.map { $0.lowercased() })
+        let additions = adding.filter { !currentKeys.contains($0.lowercased()) }
+        let removals = current.filter { removedKeys.contains($0.lowercased()) }
+        if !additions.isEmpty {
+            try await meetingsAPI.addMeetingInvitations(id: id, emails: additions)
+        }
+        if !removals.isEmpty {
+            try await meetingsAPI.removeMeetingInvitations(id: id, emails: removals)
+        }
     }
 
     public func updateMeeting(
@@ -87,13 +131,21 @@ public final class MeetingRepository: MeetingRepositoryProtocol {
                 title: title,
                 startTime: startTime,
                 endTime: endTime,
-                recurrence: recurrence?.toNetworkRecurrence()
+                recurrence: recurrence?.toNetworkRecurrence(),
+                timeZoneIdentifier: TimeZone.current.identifier
             )
         )
         let meeting = response.toDomainMeeting()
         await storeMeeting(meeting)
         // The stored copy has its members populated from the conversation.
-        return await localStore.storedMeeting(id: meeting.id) ?? meeting
+        let storedMeeting = await localStore.storedMeeting(id: meeting.id) ?? meeting
+        do {
+            // This replaces pending occurrences when the meeting's recurrence changes.
+            try await onMeetingUpdated?(storedMeeting)
+        } catch {
+            WireLogger.meetings.error("Failed to reconcile updated meeting reminder: \(error)")
+        }
+        return storedMeeting
     }
 
     public func storeMeeting(_ meeting: Meeting) async {
@@ -103,21 +155,20 @@ public final class MeetingRepository: MeetingRepositoryProtocol {
 
     @discardableResult
     public func pullMeeting(id: QualifiedID) async throws -> Meeting? {
-        // There is no endpoint to fetch a single meeting,
-        // so refetch the list to get the details.
-        let meetings = try await meetingsAPI.listMeetings()
-
-        let meeting = meetings.first(where: { $0.id == id })?.toDomainMeeting()
-        if let meeting {
-            await localStore.storeMeeting(meeting)
-        } else {
-            // The meeting no longer exists on the backend.
-            await localStore.deleteMeeting(id: id)
+        do {
+            let meeting = try await meetingsAPI.getMeeting(id: id).toDomainMeeting()
+            await storeMeeting(meeting)
+            return await localStore.storedMeeting(id: meeting.id) ?? meeting
+        } catch MeetingsAPIError.meetingNotFound {
+            try await deleteLocalMeeting(id: id)
+            return nil
         }
-        changeBroadcaster.broadcast()
-        guard let meeting else { return nil }
-        // The stored copy has its members populated from the conversation.
-        return await localStore.storedMeeting(id: meeting.id) ?? meeting
+    }
+
+    public func fetchMeetingLink(id: QualifiedID) async throws -> MeetingLink? {
+        let response = try await meetingsAPI.getMeeting(id: id)
+        guard let url = response.link, let hasPassword = response.hasPassword else { return nil }
+        return MeetingLink(url: url, hasPassword: hasPassword)
     }
 
     public func pullMeetings() async throws {
@@ -129,24 +180,35 @@ public final class MeetingRepository: MeetingRepositoryProtocol {
             // so there is nothing to pull from older backends.
             return
         }
-        await localStore.replaceAllMeetings(with: responses.map { $0.toDomainMeeting() })
+        let meetings = responses.map { $0.toDomainMeeting() }
+        await localStore.replaceAllMeetings(with: meetings)
+        await resolveConversations(for: meetings)
+        // Only a successful full list can invalidate reminders for meetings missing from the response.
+        await onMeetingsRefreshed?(meetings)
         changeBroadcaster.broadcast()
     }
 
-    public func deleteLocalMeeting(id: QualifiedID) async {
-        await localStore.deleteMeeting(id: id)
-        changeBroadcaster.broadcast()
+    public func deleteLocalMeeting(id: QualifiedID) async throws {
+        defer { changeBroadcaster.broadcast() }
+        do {
+            try await localStore.deleteMeeting(id: id)
+        } catch {
+            WireLogger.meetings.error(
+                "failed to clean up meeting: \(String(describing: type(of: error)))",
+                attributes: .safePublic
+            )
+            throw DeleteMeetingUseCaseError.cleanupFailed
+        }
     }
 
     public func deleteMeeting(id: QualifiedID) async throws {
         do {
             try await meetingsAPI.deleteMeeting(id: id)
-        } catch MeetingsAPIError.meetingNotFound {
-            // The meeting is already gone from the backend,
-            // so only the local copy is left to delete.
+        } catch MeetingsAPIError.meetingNotFound, MeetingsAPIError.accessDenied, MeetingsAPIError.invalidOperation {
+            // A 404 can also mean the meeting expired or the caller is not its creator.
+            throw DeleteMeetingUseCaseError.notAllowed
         }
-        await localStore.deleteMeeting(id: id)
-        changeBroadcaster.broadcast()
+        try await deleteLocalMeeting(id: id)
     }
 
     public func fetchMeetings(in range: Range<Date>, offset: Int, limit: Int) async throws -> [Meeting] {
@@ -182,8 +244,28 @@ public final class MeetingRepository: MeetingRepositoryProtocol {
         do {
             let meetings = try await meetingsAPI.listMeetings().map { $0.toDomainMeeting() }
             await localStore.replaceAllMeetings(with: meetings)
+            await resolveConversations(for: meetings)
+            await onMeetingsRefreshed?(meetings)
         } catch {
             guard await !localStore.storedMeetings().isEmpty else { throw error }
+        }
+    }
+
+    private func resolveConversations(for meetings: [Meeting]) async {
+        guard let pullConversation else { return }
+        var conversationIDs = Set<QualifiedID>()
+        for meeting in meetings {
+            guard !Task.isCancelled else { return }
+            guard conversationIDs.insert(meeting.conversationID).inserted,
+                  await localStore.storedMeeting(id: meeting.id)?.conversation == nil else { continue }
+            do {
+                try await pullConversation(meeting.conversationID)
+            } catch {
+                guard !Task.isCancelled else { return }
+                // Keep the meeting snapshot and retry its missing metadata on the next refresh.
+                WireLogger.meetings
+                    .warn("failed to resolve meeting conversation: \(String(describing: type(of: error)))")
+            }
         }
     }
 
@@ -203,6 +285,7 @@ private extension MeetingResponse {
             start: startTime,
             end: endTime,
             recurrence: recurrence?.toDomainRecurrence(),
+            timeZoneIdentifier: timeZoneIdentifier,
             conversationID: conversationID,
             creatorID: creatorID
         )

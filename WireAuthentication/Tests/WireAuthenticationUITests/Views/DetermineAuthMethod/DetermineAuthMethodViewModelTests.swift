@@ -160,12 +160,15 @@ final class DetermineAuthMethodViewModelTests: XCTestCase, DetermineAuthMethodVi
     @MainActor
     func test_ssoLogin_whenAlreadyLoggedIn_showsAlreadyLoggedInAlert() async {
         // given the SSO flow returns a user ID that is already logged in
-        stubbedAuthMethod = .loginViaSSO(code: UUID())
+        let identityProviderID = UUID()
+        stubbedAuthMethod = .loginViaSSO(code: identityProviderID, multiIngressIdentityProviderID: identityProviderID)
         let userID = stubbedSSOUserID
         makeSUT(
             allowsMultipleBackends: true,
             existingBackendHosts: [],
-            isAccountAlreadyLoggedIn: { id in id == userID }
+            isAccountAlreadyLoggedIn: { result in
+                result.userID == userID && result.multiIngressIdentityProviderID == identityProviderID
+            }
         )
 
         // when
@@ -177,9 +180,10 @@ final class DetermineAuthMethodViewModelTests: XCTestCase, DetermineAuthMethodVi
     }
 
     @MainActor
-    func test_ssoLogin_whenNotAlreadyLoggedIn_navigates() async {
+    func test_ssoLogin_whenNotAlreadyLoggedIn_propagatesIdentityProviderIDAndNavigates() async {
         // given the SSO flow returns a user ID that is not yet logged in
-        stubbedAuthMethod = .loginViaSSO(code: UUID())
+        let identityProviderID = UUID()
+        stubbedAuthMethod = .loginViaSSO(code: UUID(), multiIngressIdentityProviderID: identityProviderID)
         makeSUT(
             allowsMultipleBackends: true,
             existingBackendHosts: [],
@@ -191,7 +195,13 @@ final class DetermineAuthMethodViewModelTests: XCTestCase, DetermineAuthMethodVi
 
         // then navigation proceeds normally
         XCTAssertNil(sut.alert)
-        XCTAssertFalse(router.navigate_Invocations.isEmpty)
+        guard
+            let destination = router.navigate_Invocations.first as? DetermineAuthMethodDestination,
+            case let .noHistory(authenticationResult) = destination
+        else {
+            return XCTFail("Expected navigation to no-history")
+        }
+        XCTAssertEqual(authenticationResult.multiIngressIdentityProviderID, identityProviderID)
     }
 
     @MainActor
@@ -201,7 +211,7 @@ final class DetermineAuthMethodViewModelTests: XCTestCase, DetermineAuthMethodVi
         makeSUT(
             allowsMultipleBackends: true,
             existingBackendHosts: [],
-            isAccountAlreadyLoggedIn: { id in id == userID }
+            isAccountAlreadyLoggedIn: { result in result.userID == userID }
         )
 
         // when
@@ -237,7 +247,7 @@ final class DetermineAuthMethodViewModelTests: XCTestCase, DetermineAuthMethodVi
         existingBackendHosts: Set<String>,
         emailOrSSOCode: String = "",
         overrideAllowEmailLoginOnly: Bool = false,
-        isAccountAlreadyLoggedIn: @escaping (UUID) -> Bool = { _ in false }
+        isAccountAlreadyLoggedIn: @escaping (AuthenticationResult) -> Bool = { _ in false }
     ) {
         sut = DetermineAuthMethodViewModel(
             factory: self,

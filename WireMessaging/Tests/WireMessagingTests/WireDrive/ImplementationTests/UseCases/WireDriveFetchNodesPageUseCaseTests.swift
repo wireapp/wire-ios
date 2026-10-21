@@ -27,10 +27,11 @@ struct WireDriveFetchNodesPageUseCaseTests {
     private let repository = MockWireDriveNodesRepositoryProtocol()
     private let localAssetRepository = MockWireDriveLocalAssetRepositoryProtocol()
     private let sut: WireDriveFetchNodesPageUseCase
+    private let configuration: WireDriveGetNodesRequest
+        .Configuration = .conversationFileView(root: WireDriveNodeLocator.path("some/path"))
 
     init() {
         self.sut = WireDriveFetchNodesPageUseCase(
-            configuration: .conversationFileView(root: WireDriveNodeLocator.path("some/path")),
             repository: repository
         )
         repository.getNodes_MockValue = (nodes: [WireDriveNode.fixture()], nextOffset: 30)
@@ -41,7 +42,6 @@ struct WireDriveFetchNodesPageUseCaseTests {
     func testInvoke_withConversationFileViewConfiguration() async throws {
         // Given
         let sut = WireDriveFetchNodesPageUseCase(
-            configuration: .conversationFileView(root: WireDriveNodeLocator.path("some/path")),
             repository: repository
         )
 
@@ -49,7 +49,11 @@ struct WireDriveFetchNodesPageUseCaseTests {
         repository.getNodes_MockValue = (nodes: [someNode], nextOffset: 30)
 
         // When
-        let (nodes, isLastPage) = try await sut.invoke(searchTerm: nil, offset: 0)
+        let (nodes, isLastPage) = try await sut.invoke(
+            configuration: configuration,
+            searchTerm: nil,
+            offset: 0
+        )
 
         // Then
         #expect(nodes == [someNode])
@@ -72,14 +76,14 @@ struct WireDriveFetchNodesPageUseCaseTests {
         repository.getNodes_MockValue = (nodes: [WireDriveNode.fixture()], nextOffset: 30)
 
         // When
-        let (_, isLastPage) = try await sut.invoke(searchTerm: nil, offset: 0)
+        let (_, isLastPage) = try await sut.invoke(configuration: configuration, searchTerm: nil, offset: 0)
 
         // Then
         #expect(isLastPage == false)
         #expect(repository.getNodes_Invocations.last?.offset == 0)
 
         // When
-        let (_, _) = try await sut.invoke(searchTerm: nil, offset: 30)
+        let (_, _) = try await sut.invoke(configuration: configuration, searchTerm: nil, offset: 30)
 
         // Then
         #expect(repository.getNodes_Invocations.last?.offset == 30)
@@ -88,8 +92,8 @@ struct WireDriveFetchNodesPageUseCaseTests {
     @Test
     func testInvoke_searchTerm() async throws {
         // When
-        let (_, _) = try await sut.invoke(searchTerm: nil, offset: 0)
-        let (_, _) = try await sut.invoke(searchTerm: "foo", offset: 0)
+        let (_, _) = try await sut.invoke(configuration: configuration, searchTerm: nil, offset: 0)
+        let (_, _) = try await sut.invoke(configuration: configuration, searchTerm: "foo", offset: 0)
 
         // Then
         try #require(repository.getNodes_Invocations.count == 2)

@@ -81,14 +81,16 @@ final class ScheduledMeetingFormViewSnapshotTests: XCTestCase {
     @MainActor
     private func makeViewModel() -> MeetingFormViewModel {
         let dateProviderMock = CurrentDateProvidingMock()
-        dateProviderMock.now = try! Date.ISO8601FormatStyle().parse("2026-06-11T18:15:00+02:00")
-        return MeetingFormViewModel(
+        dateProviderMock.now = try! Date.ISO8601FormatStyle().parse("2026-06-11T18:14:00+02:00")
+        let viewModel = MeetingFormViewModel(
             mode: .scheduled,
             searchMembersUseCase: SearchMembersUseCaseProtocolMock(),
             createMeetingUseCase: CreateMeetingUseCaseProtocolMock(),
             updateMeetingUseCase: UpdateMeetingUseCaseProtocolMock(),
             currentDateProvider: dateProviderMock
         )
+        dateProviderMock.now = try! Date.ISO8601FormatStyle().parse("2026-06-11T18:15:00+02:00")
+        return viewModel
     }
 
 }

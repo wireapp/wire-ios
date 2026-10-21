@@ -89,7 +89,7 @@
 "conversation.creationForm.wireCells.toggle" = "Geteiltes Drive";
 "conversation.creationForm.wireCells.description" = "Ermöglichen Sie den Teilnehmern, ihre Dokumente und Mediendateien in einem geteilten Drive zu verwalten. Dieser Vorgang kann nicht rückgängig gemacht werden.";
 "conversation.creationForm.wireCells.learnMore" = "Mehr erfahren";
-
+"conversation.creationForm.wireCells.sharedDriveAccess" = "Personen außerhalb Ihres Teams können Dateien lesen, jedoch weder hochladen noch bearbeiten.";
 
 // MARK: - Channel history
 "conversation.channelHistory.upgradeBanner.title" = "Ältere Nachrichten anzeigen?";
@@ -119,7 +119,7 @@
 "conversation.wireCells.files.navigationTitle" = "Geteiltes Drive";
 "conversation.wireCells.files.viewerAccess.navigationSubtitle" = "Betrachter-Zugriff";
 "conversation.wireCells.allFiles.navigationTitle" = "Drive";
-"conversation.wireCells.files.viewerAccess.banner" = "Viewer access: you can’t upload or edit files.";
+"conversation.wireCells.files.viewerAccess.banner" = "Betrachter-Zugriff: Sie können keine Dateien hochladen oder bearbeiten.";
 "conversation.wireCells.files.item.subtitle" = "%@ von %@";
 "conversation.wireCells.allFiles.item.subtitle" = "%@ in %@";
 "conversation.wireCells.files.loadMore.title" = "Weitere Objekte laden";
@@ -191,6 +191,14 @@
 "conversation.wireCells.files.downloadFailed" = "Laden unmöglich, wiederholen";
 "conversation.wireCells.files.downloadingFile" = "Datei wird heruntergeladen...";
 "conversation.wireCells.files.offlineModeHint" = "Sie können weiterhin auf Ihre Offline-Dateien zugreifen.";
+"conversation.wireCells.files.time.just_now" = "Gerade eben";
+
+
+// MARK: - Shared Drive uploads
+
+"conversation.wireCells.files.upload.permissionWarning.title" = "Wire benötigt Zugriff auf Ihre Fotos.";
+"conversation.wireCells.files.upload.permissionWarning.restrictions.message" = "Wire konnte nicht auf Ihre Bibliothek zugreifen, da Einschränkungen aktiviert sind.";
+"conversation.wireCells.files.upload.permissionWarning.denied.message" = "Erlauben Sie Wire Zugriff auf Ihre Fotos in den Einstellungen.";
 
 // MARK: - Recycle Bin
 "conversation.wireCells.recycleBin.navigationTitle" = "Papierkorb";
@@ -342,3 +350,5 @@
 "conversation.details.sharedDriveAccessSection.footer.title" = "Bearbeiter können auf alle Dateien zugreifen und diese verwalten. Betrachter können Dateien nur lesen; sie können keine Dateien oder Ordner hochladen, bearbeiten oder verwalten.";
 "conversation.details.sharedDriveAccessSection.footer.subtitle" = "Personen, die nicht zu dem Team gehören, das die Unterhaltung erstellt hat, sind standardmäßig Betrachter.";
 "conversation.details.sharedDriveAccessSection.you" = "Sie";
+"conversation.details.sharedDriveAccessSection.editor" = "Bearbeiter";
+"conversation.details.sharedDriveAccessSection.viewer" = "Betrachter";

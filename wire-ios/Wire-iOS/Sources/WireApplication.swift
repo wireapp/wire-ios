@@ -65,17 +65,24 @@ final class WireApplication: UIApplication {
     }
 
     private func presentDeveloperTools() {
-        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
-            return
-        }
         developerToolsPresenter.presentIfNotDisplayed(
-            with: appDelegate.appRootRouter,
+            with: UIApplication.shared.sceneDelegates.first?.appRootRouter,
             from: self.topmostViewController(onlyFullScreen: false)
         )
     }
 
     private func presentDebugShareSheet() {
         shareDebugPresenter.present(from: topmostViewController(onlyFullScreen: false))
+    }
+
+    @objc
+    private func handleTripleTapGestureAction() {
+        #if DEBUG
+            guard UITestConfig.environment?.useTripleTapForShakeGesture == true else {
+                return
+            }
+            handleShakeAction()
+        #endif
     }
 
     // MARK: - UITest support
@@ -105,7 +112,7 @@ final class WireApplication: UIApplication {
                 return
             }
 
-            let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleShakeAction))
+            let tapGesture = UITapGestureRecognizer(target: self, action: #selector(handleTripleTapGestureAction))
             tapGesture.numberOfTapsRequired = 3
             tapGesture.cancelsTouchesInView = false
             window.addGestureRecognizer(tapGesture)

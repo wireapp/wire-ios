@@ -18,7 +18,9 @@
 
 import Combine
 import Foundation
+import UserNotifications
 import WireCallingData
+import WireCallingDomain
 import WireCoreCrypto
 import WireDataModel
 import WireFoundation
@@ -30,17 +32,23 @@ public final class ClientSessionComponent {
     /// Provides callbacks for other modules.
     public struct CompletionHandlers {
         let onProcessedCallEvent: (CallEventInfo) -> Void
+        let onMeetingNotification: (UNNotificationContent) async -> Void
+        let isApplicationActive: @Sendable () async -> Bool
         let onSelfClientInvalidated: () async -> Void
         let onProcessedTypingUsers: ([ConversationTypingUsersInfo]) -> Void
         let onAuthenticationFailure: @Sendable () -> Void
 
         public init(
             onProcessedCallEvent: @escaping (CallEventInfo) -> Void,
+            onMeetingNotification: @escaping (UNNotificationContent) async -> Void = { _ in },
+            isApplicationActive: @escaping @Sendable () async -> Bool,
             onSelfClientInvalidated: @escaping () async -> Void,
             onAuthenticationFailure: @escaping @Sendable () -> Void,
             onProcessedTypingUsers: @escaping ([ConversationTypingUsersInfo]) -> Void,
         ) {
             self.onProcessedCallEvent = onProcessedCallEvent
+            self.onMeetingNotification = onMeetingNotification
+            self.isApplicationActive = isApplicationActive
             self.onSelfClientInvalidated = onSelfClientInvalidated
             self.onProcessedTypingUsers = onProcessedTypingUsers
             self.onAuthenticationFailure = onAuthenticationFailure
@@ -425,7 +433,10 @@ public final class ClientSessionComponent {
         journal: journal,
         mlsGroupRepairAgent: mlsGroupRepairAgent,
         earService: earService,
-        backgroundTaskExecuter: backgroundTaskExecuter
+        backgroundTaskExecuter: backgroundTaskExecuter,
+        beforeProcessingLiveEvent: { [weak self] event in
+            await self?.handleBeforeProcessingLiveEvent(event)
+        }
     )
 
     public lazy var incrementalSyncV2: IncrementalSyncV2 = if let sharedContainerURL {
@@ -447,6 +458,9 @@ public final class ClientSessionComponent {
             backgroundTaskExecuter: backgroundTaskExecuter,
             createPushChannelState: { [selfClientID] in
                 PushChannelState(sharedContainerURL: sharedContainerURL, clientID: selfClientID)
+            },
+            beforeProcessingLiveEvent: { [weak self] event in
+                await self?.handleBeforeProcessingLiveEvent(event)
             }
         )
     } else {
@@ -555,7 +569,10 @@ public final class ClientSessionComponent {
     )
 
     private lazy var conversationMemberLeaveEventProcessor = ConversationMemberLeaveEventProcessor(
-        repository: conversationRepository
+        repository: conversationRepository,
+        meetingLocalStore: MeetingLocalStore(context: syncContext),
+        reminderCanceller: MeetingReminderScheduler(),
+        accountID: selfUserID
     )
 
     private lazy var conversationMemberUpdateEventProcessor = ConversationMemberUpdateEventProcessor(
@@ -617,7 +634,10 @@ public final class ClientSessionComponent {
     )
 
     private lazy var featureConfigUpdateEventProcessor = FeatureConfigUpdateEventProcessor(
-        repository: featureConfigRepository
+        repository: featureConfigRepository,
+        onMeetingsDisabled: { [selfUserID] in
+            await MeetingReminderScheduler().cancelAll(accountID: selfUserID)
+        }
     )
 
     private lazy var federationConnectionRemovedEventProcessor = FederationConnectionRemovedEventProcessor(
@@ -707,24 +727,190 @@ public final class ClientSessionComponent {
         lockRepository: resetMLSConversationLockRepository
     )
 
+    private lazy var adminlessReminderEventProcessor = ConversationAdminlessReminderEventProcessor(
+        repository: conversationRepository
+    )
+
     public private(set) lazy var meetingRepository = MeetingRepository(
         meetingsAPI: meetingsAPI,
-        localStore: MeetingLocalStore(context: syncContext)
+        localStore: MeetingLocalStore(context: syncContext),
+        onMeetingCreated: reconcileMeetingReminder,
+        onMeetingUpdated: reconcileMeetingReminder,
+        onMeetingsRefreshed: { [weak self] meetings in
+            await self?.reconcileRefreshedMeetingReminders(meetings)
+        },
+        pullConversation: { [conversationRepository, syncContext] id in
+            try await conversationRepository.pullConversation(id: id.id, domain: id.domain)
+            await syncContext.perform { _ = syncContext.saveOrRollback() }
+        }
     )
+
+    private func reconcileRefreshedMeetingReminders(_ meetings: [Meeting]) async {
+        let scheduler = MeetingReminderScheduler()
+        guard await featureConfigRepository.isFeatureEnabled(.meetings) else {
+            await scheduler.cancelAll(accountID: selfUserID)
+            return
+        }
+        let now = Date.now
+        let shouldHideNotification = await conversationLocalStore.shouldHideNotification()
+        do {
+            try await scheduler.reconcileAll(
+                accountID: selfUserID,
+                meetings: meetings,
+                occurrenceLimit: 5,
+                now: now
+            ) { meeting, occurrenceStart in
+                MeetingReminderNotificationContentBuilder().build(
+                    meeting: meeting,
+                    occurrenceStart: occurrenceStart,
+                    accountID: selfUserID,
+                    showMeetingTitle: !shouldHideNotification
+                )
+            }
+        } catch {
+            WireLogger.meetings.error("Failed to reconcile refreshed meeting reminders: \(error)")
+        }
+    }
+
+    private lazy var meetingDeleteEventNotificationBuilder = MeetingDeleteEventNotificationBuilder(
+        meetingLocalStore: MeetingLocalStore(context: syncContext),
+        userLocalStore: userLocalStore,
+        featureConfigLocalStore: featureConfigsLocalStore,
+        accountID: selfUserID
+    )
+
+    private lazy var meetingMemberAddEventNotificationBuilder = MeetingMemberAddEventNotificationBuilder(
+        meetingsAPI: meetingsAPI,
+        usersAPI: usersAPI,
+        featureConfigLocalStore: featureConfigsLocalStore,
+        meetingLocalStore: MeetingLocalStore(context: syncContext),
+        accountID: selfUserID
+    )
+
+    private lazy var meetingUpdateEventNotificationBuilder = MeetingUpdateEventNotificationBuilder(
+        meetingsAPI: meetingsAPI,
+        usersAPI: usersAPI,
+        featureConfigLocalStore: featureConfigsLocalStore,
+        accountID: selfUserID
+    )
+
+    private lazy var conversationMemberLeaveEventNotificationBuilder = ConversationMemberLeaveEventNotificationBuilder(
+        context: .init(
+            conversationLocalStore: conversationLocalStore,
+            userLocalStore: userLocalStore,
+            conversationsAPI: conversationsAPI,
+            meetingLocalStore: MeetingLocalStore(context: syncContext)
+        ),
+        validator: .init(
+            userLocalStore: userLocalStore,
+            featureConfigLocalStore: featureConfigsLocalStore
+        )
+    )
+
+    private lazy var reconcileMeetingReminder: @Sendable (Meeting) async throws -> Void =
+        { [selfUserID, conversationLocalStore, featureConfigRepository] meeting in
+            let scheduler = MeetingReminderScheduler()
+            guard await featureConfigRepository.isFeatureEnabled(.meetings) else {
+                await scheduler.cancelAll(accountID: selfUserID)
+                return
+            }
+            let now = Date.now
+            let shouldHideNotification = await conversationLocalStore.shouldHideNotification()
+            let occurrenceStarts = MeetingReminderOccurrenceCalculator().starts(for: meeting, after: now, limit: 5)
+            try await scheduler.reconcile(
+                accountID: selfUserID,
+                meetingID: meeting.id,
+                occurrenceStarts: occurrenceStarts,
+                now: now
+            ) { occurrenceStart in
+                MeetingReminderNotificationContentBuilder().build(
+                    meeting: meeting,
+                    occurrenceStart: occurrenceStart,
+                    accountID: selfUserID,
+                    showMeetingTitle: !shouldHideNotification
+                )
+            }
+        }
+
+    /// Updates pending reminders after this account's notification-content setting changes.
+    public func refreshMeetingReminderContent(showMeetingTitle: Bool) async {
+        let scheduler = MeetingReminderScheduler()
+        guard await featureConfigRepository.isFeatureEnabled(.meetings) else {
+            await scheduler.cancelAll(accountID: selfUserID)
+            return
+        }
+
+        if !showMeetingTitle {
+            // Clear title-bearing requests first so a failed refresh cannot leave private content pending.
+            await scheduler.cancelAll(accountID: selfUserID)
+        }
+
+        let meetings = await MeetingLocalStore(context: syncContext).storedMeetings()
+        do {
+            try await scheduler.reconcileAll(
+                accountID: selfUserID,
+                meetings: meetings,
+                occurrenceLimit: 5
+            ) { meeting, occurrenceStart in
+                MeetingReminderNotificationContentBuilder().build(
+                    meeting: meeting,
+                    occurrenceStart: occurrenceStart,
+                    accountID: selfUserID,
+                    showMeetingTitle: showMeetingTitle
+                )
+            }
+        } catch {
+            WireLogger.meetings.error("Failed to refresh meeting reminder content: \(error)")
+        }
+    }
 
     private lazy var meetingCreateEventProcessor = MeetingCreateEventProcessor(
         repository: meetingRepository,
-        conversationRepository: conversationRepository
+        conversationRepository: conversationRepository,
+        reconcileReminder: reconcileMeetingReminder,
+        cancelReminder: { [selfUserID] meetingID in
+            await MeetingReminderScheduler().cancelAll(accountID: selfUserID, meetingID: meetingID)
+        }
     )
 
     private lazy var meetingDeleteEventProcessor = MeetingDeleteEventProcessor(
-        repository: meetingRepository
+        repository: meetingRepository,
+        reminderCanceller: MeetingReminderScheduler(),
+        accountID: selfUserID
     )
 
     private lazy var meetingUpdateEventProcessor = MeetingUpdateEventProcessor(
         repository: meetingRepository,
-        conversationRepository: conversationRepository
+        conversationRepository: conversationRepository,
+        reconcileReminder: reconcileMeetingReminder,
+        cancelReminder: { [selfUserID] meetingID in
+            await MeetingReminderScheduler().cancelAll(accountID: selfUserID, meetingID: meetingID)
+        }
     )
+
+    private func handleBeforeProcessingLiveEvent(_ event: UpdateEvent) async {
+        // Meeting notifications are only shown while the app is foregrounded.
+        // Bail before the builders' REST calls so live-event processing isn't
+        // blocked on network work whose result would be discarded anyway.
+        guard await completionHandlers.isApplicationActive() else { return }
+
+        let notification: UserNotification?
+        switch event {
+        case let .meeting(.delete(event)):
+            notification = await meetingDeleteEventNotificationBuilder.buildContent(event: event)
+        case let .meeting(.memberAdd(event)):
+            notification = await meetingMemberAddEventNotificationBuilder.buildContent(event: event)
+        case let .meeting(.update(event)):
+            notification = await meetingUpdateEventNotificationBuilder.buildContent(event: event)
+        case let .conversation(.memberLeave(event)):
+            notification = await conversationMemberLeaveEventNotificationBuilder
+                .buildMeetingCancellationContent(event: event)
+        default:
+            return
+        }
+        guard case let .text(content)? = notification else { return }
+        await completionHandlers.onMeetingNotification(content)
+    }
 
     private lazy var conversationEventProcessor = ConversationEventProcessor(
         accessUpdateEventProcessor: conversationAccessUpdateEventProcessor,
@@ -742,7 +928,8 @@ public final class ClientSessionComponent {
         renameEventProcessor: conversationRenameEventProcessor,
         typingEventProcessor: conversationTypingEventProcessor,
         addPermissionEventProcessor: addPermissionEventProcessor,
-        mlsResetEventProcessor: mlsResetEventProcessor
+        mlsResetEventProcessor: mlsResetEventProcessor,
+        adminlessReminderEventProcessor: adminlessReminderEventProcessor
     )
 
     private lazy var updateEventProcessor: UpdateEventProcessor = {
@@ -835,6 +1022,24 @@ public final class ClientSessionComponent {
             conversationID: conversationID,
             syncContext: syncContext
         )
+    }
+
+    /// Debug-only: simulates receiving a `conversation.adminless-reminder` backend event, routing it through
+    /// the same `conversationEventProcessor` a real incoming event would use, so it can be verified without
+    /// waiting on the backend to actually send one.
+    public func debugSimulateAdminlessReminderEvent(
+        conversationID: WireDataModel.QualifiedID,
+        scheduledDeletionDate: Date
+    ) async throws {
+        let event = ConversationAdminlessReminderEvent(
+            conversationID: WireNetwork.ConversationID(id: conversationID.uuid, domain: conversationID.domain),
+            senderID: WireNetwork.UserID(id: selfUserID, domain: backendMetadata.domain),
+            timestamp: Date(),
+            scheduledDeletionDate: scheduledDeletionDate
+        )
+
+        try await conversationEventProcessor.processEvent(.adminlessReminder(event))
+        try await databaseSaver.save()
     }
 
     // MARK: - Other

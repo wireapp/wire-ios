@@ -34,6 +34,12 @@ class MeetingsAPIV0: MeetingsAPI, VersionedAPI {
         throw MeetingsAPIError.unsupportedEndpointForAPIVersion
     }
 
+    // MARK: - Get meeting
+
+    func getMeeting(id: QualifiedID) async throws -> MeetingResponse {
+        throw MeetingsAPIError.unsupportedEndpointForAPIVersion
+    }
+
     // MARK: - Create meeting
 
     func createMeeting(parameters: CreateMeetingParameters) async throws -> MeetingResponse {
@@ -43,6 +49,16 @@ class MeetingsAPIV0: MeetingsAPI, VersionedAPI {
     // MARK: - Update meeting
 
     func updateMeeting(id: QualifiedID, parameters: UpdateMeetingParameters) async throws -> MeetingResponse {
+        throw MeetingsAPIError.unsupportedEndpointForAPIVersion
+    }
+
+    // MARK: - Meeting invitations
+
+    func addMeetingInvitations(id: QualifiedID, emails: [String]) async throws {
+        throw MeetingsAPIError.unsupportedEndpointForAPIVersion
+    }
+
+    func removeMeetingInvitations(id: QualifiedID, emails: [String]) async throws {
         throw MeetingsAPIError.unsupportedEndpointForAPIVersion
     }
 

@@ -102,6 +102,10 @@ public enum FeatureConfig: Equatable, Sendable, Hashable {
 
     case mlsMigration(MLSMigrationFeatureConfig)
 
+    /// Config for the *Meetings* feature.
+
+    case meetings(MeetingsFeatureConfig)
+
     /// Config for the *Self Deleting Messages* feature.
     ///
     /// *Self Deleting Messages* enables team admins

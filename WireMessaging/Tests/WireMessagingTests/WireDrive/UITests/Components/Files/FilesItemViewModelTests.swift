@@ -49,7 +49,6 @@ final class FilesItemViewModelTests {
     private let fileCache = MockFileCache()
 
     init() async {
-        UserDefaults.standard.set(true, forKey: "enableDrivePermissions")
         localAssetRepository.observeAssetNodeID_MockValue = Just(WireDriveLocalAsset.fixture()).eraseToAnyPublisher()
         localAssetRepository.assetNodeID_MockValue = .fixture()
     }
@@ -82,11 +81,9 @@ final class FilesItemViewModelTests {
             item: .fixture(isReadOnly: isReadOnly),
             selectedSortingKey: .date,
             conversationName: "Hello",
-            localAssetRepository: localAssetRepository,
+            observeAssetUseCase: WireDriveObserveAssetUseCase(localAssetRepository: localAssetRepository),
+            getAssetUseCase: WireDriveGetAssetUseCase(localAssetRepository: localAssetRepository, fileCache: fileCache),
             onItemAction: { _, _ in },
-            locale: Locale(identifier: "en_US_POSIX"),
-            calendar: Calendar(identifier: .gregorian),
-            timeZone: .gmt,
             isBrowsing: false,
             isInRecycleBin: false
         )

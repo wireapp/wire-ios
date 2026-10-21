@@ -95,6 +95,61 @@ final class MeetingsAPITests: XCTestCase {
         XCTAssertEqual(result.title, "Engineering Sync")
     }
 
+    func testCreateMeeting_V19_SendsTypeAndPasswordAndReadsReturnedLink() async throws {
+        let resource = try MockJSONPayloadResource(name: "MeetingResponse")
+        var responseJSON = try XCTUnwrap(JSONSerialization.jsonObject(with: resource.jsonData) as? [String: Any])
+        let link = "https://account.wire.com/meeting-join/?key=returned-key&code=returned-code&domain=wire.com"
+        responseJSON.removeValue(forKey: "trial")
+        responseJSON["type"] = "immediate"
+        responseJSON["link"] = link
+        let responseData = try JSONSerialization.data(withJSONObject: responseJSON)
+        let apiService = MockAPIServiceProtocol()
+        apiService.executeRequestRequiringAccessToken_MockMethod = { request, _ in
+            let (_, response) = try request.mockResponse(statusCode: .created)
+            return (responseData, response)
+        }
+        let sut = APIVersion.v19.buildAPI(apiService: apiService)
+        let parameters = CreateMeetingParameters(
+            title: "Engineering Sync",
+            startTime: Scaffolding.startTime,
+            endTime: Scaffolding.endTime,
+            timeZoneIdentifier: "America/New_York",
+            type: .immediate,
+            password: "meeting-password",
+            invitedEmails: Scaffolding.invitedEmails
+        )
+
+        let result = try await sut.createMeeting(parameters: parameters)
+
+        XCTAssertEqual(apiService.executeRequestRequiringAccessToken_Invocations.count, 1)
+        let body = try XCTUnwrap(apiService.executeRequestRequiringAccessToken_Invocations.first?.request.httpBody)
+        let json = try XCTUnwrap(JSONSerialization.jsonObject(with: body) as? [String: Any])
+        XCTAssertEqual(json["type"] as? String, "immediate")
+        XCTAssertEqual(json["password"] as? String, "meeting-password")
+        XCTAssertEqual(json["invited_emails"] as? [String], Scaffolding.invitedEmails)
+        XCTAssertEqual(result.link?.absoluteString, link)
+    }
+
+    func testCreateMeeting_RejectsPassword_V16_To_V18() async {
+        for version in [APIVersion.v16, .v17, .v18] {
+            let apiService = MockAPIServiceProtocol()
+            let sut = version.buildAPI(apiService: apiService)
+            let parameters = CreateMeetingParameters(
+                title: "Engineering Sync",
+                startTime: Scaffolding.startTime,
+                endTime: Scaffolding.endTime,
+                timeZoneIdentifier: "America/New_York",
+                password: "meeting-password"
+            )
+
+            await XCTAssertThrowsErrorAsync(MeetingsAPIError.unsupportedEndpointForAPIVersion) {
+                _ = try await sut.createMeeting(parameters: parameters)
+            }
+
+            XCTAssertTrue(apiService.executeRequestRequiringAccessToken_Invocations.isEmpty)
+        }
+    }
+
     func testCreateMeeting_ThrowsUnsupportedEndpoint_V0_to_V15() async throws {
         let unsupportedVersions = APIVersion.allCasesUpTo(.v16)
 
@@ -271,6 +326,20 @@ final class MeetingsAPITests: XCTestCase {
         }
     }
 
+    func testDeleteMeeting_ThrowsInvalidOperation_403_V16() async throws {
+        // Given
+        let apiService = MockAPIServiceProtocol.withError(
+            statusCode: .forbidden,
+            label: "invalid-op"
+        )
+        let sut = APIVersion.v16.buildAPI(apiService: apiService)
+
+        // When / Then
+        await XCTAssertThrowsErrorAsync(MeetingsAPIError.invalidOperation) {
+            try await sut.deleteMeeting(id: Scaffolding.meetingID)
+        }
+    }
+
     func testDeleteMeeting_ThrowsAccessDenied_403_V16() async throws {
         // Given
         let apiService = MockAPIServiceProtocol.withError(
@@ -299,9 +368,67 @@ final class MeetingsAPITests: XCTestCase {
         }
     }
 
+    // MARK: - Email invitations
+
+    func testMeetingInvitations_V19_SendExpectedRequests() async throws {
+        let apiService = MockAPIServiceProtocol.withResponses([(.ok, nil), (.ok, nil)])
+        let sut = APIVersion.v19.buildAPI(apiService: apiService)
+
+        try await sut.addMeetingInvitations(id: Scaffolding.meetingID, emails: Scaffolding.invitedEmails)
+        try await sut.removeMeetingInvitations(id: Scaffolding.meetingID, emails: Scaffolding.invitedEmails)
+
+        let invocations = apiService.executeRequestRequiringAccessToken_Invocations
+        XCTAssertEqual(invocations.count, 2)
+        for (invocation, suffix) in zip(invocations, ["", "/delete"]) {
+            XCTAssertEqual(
+                invocation.request.url?.absoluteString,
+                "/v19/meetings/wire.com/9c2e5e1a-1234-5678-abcd-0123456789ab/invitations\(suffix)"
+            )
+            XCTAssertEqual(invocation.request.httpMethod, "POST")
+            XCTAssertEqual(invocation.request.value(forHTTPHeaderField: "Content-Type"), "application/json")
+            XCTAssertTrue(invocation.requiringAccessToken)
+            let body = try XCTUnwrap(invocation.request.httpBody)
+            let json = try XCTUnwrap(JSONSerialization.jsonObject(with: body) as? [String: [String]])
+            XCTAssertEqual(json, ["emails": Scaffolding.invitedEmails])
+        }
+    }
+
+    func testMeetingInvitations_V18_ThrowsUnsupportedEndpointWithoutRequest() async {
+        let apiService = MockAPIServiceProtocol()
+        let sut = APIVersion.v18.buildAPI(apiService: apiService)
+
+        await XCTAssertThrowsErrorAsync(MeetingsAPIError.unsupportedEndpointForAPIVersion) {
+            try await sut.addMeetingInvitations(id: Scaffolding.meetingID, emails: Scaffolding.invitedEmails)
+        }
+        await XCTAssertThrowsErrorAsync(MeetingsAPIError.unsupportedEndpointForAPIVersion) {
+            try await sut.removeMeetingInvitations(id: Scaffolding.meetingID, emails: Scaffolding.invitedEmails)
+        }
+
+        XCTAssertTrue(apiService.executeRequestRequiringAccessToken_Invocations.isEmpty)
+    }
+
+    func testAddMeetingInvitations_V19_ThrowsAccessDenied() async {
+        let apiService = MockAPIServiceProtocol.withError(statusCode: .forbidden, label: "access-denied")
+        let sut = APIVersion.v19.buildAPI(apiService: apiService)
+
+        await XCTAssertThrowsErrorAsync(MeetingsAPIError.accessDenied) {
+            try await sut.addMeetingInvitations(id: Scaffolding.meetingID, emails: Scaffolding.invitedEmails)
+        }
+    }
+
+    func testRemoveMeetingInvitations_V19_ThrowsMeetingNotFound() async {
+        let apiService = MockAPIServiceProtocol.withError(statusCode: .notFound, label: "meeting-not-found")
+        let sut = APIVersion.v19.buildAPI(apiService: apiService)
+
+        await XCTAssertThrowsErrorAsync(MeetingsAPIError.meetingNotFound) {
+            try await sut.removeMeetingInvitations(id: Scaffolding.meetingID, emails: Scaffolding.invitedEmails)
+        }
+    }
+
     // MARK: -
 
     enum Scaffolding {
+        static let invitedEmails = ["guest@example.com", "member@wire.com"]
         static let meetingID = QualifiedID(
             id: UUID(uuidString: "9c2e5e1a-1234-5678-abcd-0123456789ab")!,
             domain: "wire.com"
@@ -311,7 +438,8 @@ final class MeetingsAPITests: XCTestCase {
         static let createParameters = CreateMeetingParameters(
             title: "Engineering Sync",
             startTime: startTime,
-            endTime: endTime
+            endTime: endTime,
+            timeZoneIdentifier: "America/New_York"
         )
         static let updateParameters = UpdateMeetingParameters(
             title: "Engineering Sync (Updated)",
