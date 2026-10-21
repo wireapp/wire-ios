@@ -87,7 +87,8 @@ public struct E2EIdentityCertificateUpdateStatusUseCase: E2EIdentityCertificateU
         }
         guard let mlsClientID else { throw Failure.missingSelfMLSClientID }
 
-        let verificationExpiration = e2eiFeature.config?.verificationExpiration ?? Feature.E2EI.Config().verificationExpiration
+        let verificationExpiration = e2eiFeature.config?.verificationExpiration ?? Feature.E2EI.Config()
+            .verificationExpiration
         let gracePeriod = TimeInterval(verificationExpiration)
 
         let selfMLSConversationGroupID = await context.perform {
