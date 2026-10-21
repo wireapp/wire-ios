@@ -213,25 +213,12 @@ struct MeetingFormView: View {
 
     private var passwordSection: some View {
         Section {
-            HStack {
-                passwordField(
-                    $viewModel.password,
-                    placeholder: Strings.Password.placeholder,
-                    isValid: viewModel.isPasswordValid,
-                    locator: .password
-                )
-                Button {
-                    isPasswordVisible.toggle()
-                } label: {
-                    Label(
-                        isPasswordVisible ? Strings.Password.hide : Strings.Password.show,
-                        systemImage: isPasswordVisible ? "eye.slash" : "eye"
-                    )
-                    .labelStyle(.iconOnly)
-                }
-                .buttonStyle(.borderless)
-                .accessibilityIdentifier(Locators.WireMeetings.MeetingForm.passwordVisibility)
-            }
+            passwordField(
+                $viewModel.password,
+                placeholder: Strings.Password.placeholder,
+                isValid: viewModel.isPasswordValid,
+                locator: .password
+            )
             passwordField(
                 $viewModel.confirmPassword,
                 placeholder: Strings.Password.confirm,
@@ -300,7 +287,7 @@ struct MeetingFormView: View {
                     text.wrappedValue = ""
                 } label: {
                     Image(systemName: "xmark.circle.fill")
-                        .foregroundStyle(ColorTheme.Buttons.Secondary.onEnabled.color)
+                        .foregroundStyle(Color(.lightGray))
                         .frame(width: 44, height: 44)
                         .contentShape(.rect)
                 }
@@ -309,6 +296,18 @@ struct MeetingFormView: View {
                 .accessibilityIdentifier(locator == .password ? Locators.WireMeetings.MeetingForm.clearPassword :
                     Locators.WireMeetings.MeetingForm.clearConfirmPassword)
             }
+            Button {
+                isPasswordVisible.toggle()
+            } label: {
+                Label(
+                    isPasswordVisible ? Strings.Password.hide : Strings.Password.show,
+                    systemImage: isPasswordVisible ? "eye.slash" : "eye"
+                )
+                .labelStyle(.iconOnly)
+            }
+            .buttonStyle(.borderless)
+            .accessibilityIdentifier(locator == .password ? Locators.WireMeetings.MeetingForm.passwordVisibility :
+                Locators.WireMeetings.MeetingForm.confirmPasswordVisibility)
         }
     }
 

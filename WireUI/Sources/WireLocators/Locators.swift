@@ -778,6 +778,7 @@ public enum Locators {
             case clearPassword = "meetingFormClearPassword"
             case clearConfirmPassword = "meetingFormClearConfirmPassword"
             case passwordVisibility = "meetingFormPasswordVisibility"
+            case confirmPasswordVisibility = "meetingFormConfirmPasswordVisibility"
             case copyPassword = "meetingFormCopyPassword"
             case generatePassword = "meetingFormGeneratePassword"
             case passwordRequirements = "meetingFormPasswordRequirements"
