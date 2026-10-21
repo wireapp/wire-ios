@@ -191,6 +191,8 @@
 "conversation.wireCells.files.downloadFailed" = "Не удалось загрузить, повторите попытку";
 "conversation.wireCells.files.downloadingFile" = "Загрузка файла...";
 "conversation.wireCells.files.offlineModeHint" = "Вы по-прежнему можете получить доступ к своим файлам в режиме оффлайн.";
+"conversation.wireCells.files.time.just_now" = "Только что";
+
 
 // MARK: - Recycle Bin
 "conversation.wireCells.recycleBin.navigationTitle" = "Корзина";

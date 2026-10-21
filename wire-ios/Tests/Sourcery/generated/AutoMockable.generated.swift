@@ -1940,6 +1940,36 @@ class MockWireMessagingFactoryProtocol: WireMessagingFactoryProtocol {
         }
     }
 
+    // MARK: - startDirectUploads
+
+    var startDirectUploads_Invocations: [Void] = []
+    var startDirectUploads_MockMethod: (() async -> Void)?
+
+    func startDirectUploads() async {
+        startDirectUploads_Invocations.append(())
+
+        guard let mock = startDirectUploads_MockMethod else {
+            fatalError("no mock for `startDirectUploads`")
+        }
+
+        await mock()
+    }
+
+    // MARK: - tearDownDirectUploads
+
+    var tearDownDirectUploads_Invocations: [Void] = []
+    var tearDownDirectUploads_MockMethod: (() async -> Void)?
+
+    func tearDownDirectUploads() async {
+        tearDownDirectUploads_Invocations.append(())
+
+        guard let mock = tearDownDirectUploads_MockMethod else {
+            fatalError("no mock for `tearDownDirectUploads`")
+        }
+
+        await mock()
+    }
+
     // MARK: - makeFilesView
 
     var makeFilesViewCellNameIsCellsStatePendingAccentColorProvider_Invocations: [(cellName: String, isCellsStatePending: Bool, accentColorProvider: () -> WireAccentColor)] = []

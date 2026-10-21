@@ -2113,9 +2113,9 @@
 "account_deleted_missing_passcode_alert.message" = "Для использования Wire, пожалуйста, установите код доступа в настройках вашего устройства";
 "account_limit_alert.title.remove_one" = "Удалить аккаунт";
 "account_limit_alert.title.remove_two" = "Удалить 2 аккаунта";
-"account_limit_alert.message.max_one.remove_one" = "You can only use one account at once on this device. Log out of this account or select Later to log out of the other account.\nCreate a backup to preserve your conversation history.";
-"account_limit_alert.message.max_one.remove_two" = "You can only use one account at once on this device. Log out of this account or select Later to log out of the other accounts.\nCreate a backup to preserve your conversation history.";
-"account_limit_alert.message.max_two.remove_one" = "You can only use two accounts at once on this device. Log out of this account or select Later to log out of the other account.\nCreate a backup to preserve your conversation history.";
+"account_limit_alert.message.max_one.remove_one" = "На этом устройстве можно использовать только один аккаунт одновременно. Выйдите из этого аккаунта или нажмите Позже, чтобы выйти из другого аккаунта.\nСоздайте резервную копию, чтобы сохранить историю переписки.";
+"account_limit_alert.message.max_one.remove_two" = "На этом устройстве можно использовать только один аккаунт одновременно. Выйдите из этого аккаунта или нажмите Позже, чтобы выйти из других аккаунтов.\nСоздайте резервную копию, чтобы сохранить историю переписки.";
+"account_limit_alert.message.max_two.remove_one" = "На этом устройстве можно использовать только два аккаунта одновременно. Выйдите из этого аккаунта или нажмите Позже, чтобы выйти из другого аккаунта.\nСоздайте резервную копию, чтобы сохранить историю переписки.";
 "account_limit_alert.logout" = "Выйти из этого аккаунта";
 "account_limit_alert.later" = "Позже";
 
