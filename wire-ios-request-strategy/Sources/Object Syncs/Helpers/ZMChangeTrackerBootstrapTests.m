@@ -305,6 +305,26 @@
     XCTAssertEqual(thirdTracker.addTrackedObjectsCallCount, 2u);
 }
 
+- (void)testThatItKeepsAddedTrackersWhenInitializedWithoutTrackers
+{
+    // given
+    NSFetchRequest *userRequest = [NSFetchRequest fetchRequestWithEntityName:ZMUser.entityName];
+    userRequest.predicate = [NSPredicate predicateWithFormat:@"name == %@", self.user1.name];
+    self.changeTracker1.fetchRequest = userRequest;
+
+    self.sut = [[ZMChangeTrackerBootstrap alloc]
+                initWithManagedObjectContext:self.coreDataStack.viewContext
+                changeTrackers:nil];
+
+    // when
+    [self.sut addChangeTrackers:@[self.changeTracker1]];
+    [self.sut fetchObjectsForChangeTrackers];
+
+    // then
+    XCTAssertEqualObjects(self.changeTracker1.objectsToUpdate, [NSSet setWithObject:self.user1]);
+    XCTAssertEqual(self.changeTracker1.addTrackedObjectsCallCount, 2u);
+}
+
 - (void)testThatItDoesNotCrashWhen_fetchRequestForTrackedObjects_ReturnsNil
 {
     // given

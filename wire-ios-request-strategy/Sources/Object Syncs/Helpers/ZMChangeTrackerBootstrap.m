@@ -92,7 +92,7 @@
 {
     [self fetchObjectsForChangeTrackers:changeTrackers];
     
-    NSMutableArray* allTrackers = self.changeTrackers.mutableCopy;
+    NSMutableArray* allTrackers = [NSMutableArray arrayWithArray:self.changeTrackers];
     [allTrackers addObjectsFromArray:changeTrackers];
     self.changeTrackers = allTrackers;
 }
