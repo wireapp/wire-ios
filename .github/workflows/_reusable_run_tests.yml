@@ -28,6 +28,11 @@ on:
         required: false
         default: ''
         description: 'Testiny case ID(s), class(es), or function(s), comma separated'
+      uitest_parallel_workers:
+        type: string
+        required: false
+        default: '1'
+        description: 'Number of parallel simulator workers for UITests'
       rerun_failed_from_previous:
         type: boolean
         required: false
@@ -91,6 +96,20 @@ jobs:
       KALIUM_TEST_SERVICE_ENABLED: ${{ inputs.run_critical_flows && inputs.mac_runner != 'in-house' }}
 
     steps:
+      - name: Validate UITest workers
+        if: ${{ inputs.run_critical_flows }}
+        shell: bash
+        env:
+          UITEST_PARALLEL_WORKERS: ${{ inputs.uitest_parallel_workers }}
+        run: |
+          case "$UITEST_PARALLEL_WORKERS" in
+            1|2|3|4) ;;
+            *) echo "::error::uitest_parallel_workers must be 1, 2, 3, or 4"; exit 1 ;;
+          esac
+          echo "UITest workers: $UITEST_PARALLEL_WORKERS"
+          echo "Host logical CPUs: $(sysctl -n hw.logicalcpu)"
+          echo "Host memory bytes: $(sysctl -n hw.memsize)"
+
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ inputs.branch }}
@@ -214,21 +233,59 @@ jobs:
         uses: ./.github/actions/kalium-testservice/setup
 
       - name: "Test new critical flows"
+        id: ui-tests
         if: ${{ inputs.run_critical_flows }}
         env:
           UI_TEST_TAGS: ${{ inputs.ui_test_tags }}
           UI_TEST_CASES: ${{ inputs.ui_test_cases }}
           PREVIOUS_FAILED_UI_TEST_CASES: ${{ steps.previous-failed-ui-tests.outputs.ui_test_cases }}
+          UITEST_PARALLEL_WORKERS: ${{ inputs.uitest_parallel_workers }}
         run: |
-          if [ -n "$UI_TEST_CASES" ]; then
-            bundle exec fastlane run_uitests testiny_cases:"$UI_TEST_CASES"
-          elif [ -n "$PREVIOUS_FAILED_UI_TEST_CASES" ]; then
-            bundle exec fastlane run_uitests testiny_cases:"$PREVIOUS_FAILED_UI_TEST_CASES"
-          elif [ -n "$UI_TEST_TAGS" ]; then
-            bundle exec fastlane run_uitests tags:"$UI_TEST_TAGS"
+          if mkdir -p build/ui-test-diagnostics; then
+            ruby scripts/collect-ui-test-diagnostics.rb monitor > build/ui-test-diagnostics/monitor.log 2>&1 &
+            diagnostics_pid=$!
+            stop_diagnostics() {
+              test_status=$?
+              trap - EXIT
+              printf '{"exit_code": %s, "finished_at": "%s"}\n' "$test_status" "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+                > build/ui-test-diagnostics/test-step.json || true
+              touch build/ui-test-diagnostics/stop || kill "$diagnostics_pid" || true
+              wait "$diagnostics_pid" || true
+              exit "$test_status"
+            }
+            trap stop_diagnostics EXIT
           else
-            bundle exec fastlane run_uitests
+            echo "::warning::Could not create UI test diagnostics directory."
           fi
+
+          if [ -n "$UI_TEST_CASES" ]; then
+            bundle exec fastlane run_uitests testiny_cases:"$UI_TEST_CASES" parallel_workers:"$UITEST_PARALLEL_WORKERS"
+          elif [ -n "$PREVIOUS_FAILED_UI_TEST_CASES" ]; then
+            bundle exec fastlane run_uitests testiny_cases:"$PREVIOUS_FAILED_UI_TEST_CASES" parallel_workers:"$UITEST_PARALLEL_WORKERS"
+          elif [ -n "$UI_TEST_TAGS" ]; then
+            bundle exec fastlane run_uitests tags:"$UI_TEST_TAGS" parallel_workers:"$UITEST_PARALLEL_WORKERS"
+          else
+            bundle exec fastlane run_uitests parallel_workers:"$UITEST_PARALLEL_WORKERS"
+          fi
+
+      - name: Collect UI test diagnostics before cleanup
+        if: ${{ always() && inputs.run_critical_flows && steps.ui-tests.outcome != 'skipped' }}
+        continue-on-error: true
+        timeout-minutes: 5
+        env:
+          TEST_OUTCOME: ${{ steps.ui-tests.outcome }}
+          UITEST_PARALLEL_WORKERS: ${{ inputs.uitest_parallel_workers }}
+        run: ruby scripts/collect-ui-test-diagnostics.rb collect "$TEST_OUTCOME"
+
+      - name: Upload UI test diagnostics
+        if: ${{ always() && inputs.run_critical_flows && steps.ui-tests.outcome != 'skipped' }}
+        continue-on-error: true
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: UI test diagnostics (${{ github.run_id }} - ${{ github.run_attempt }})
+          path: build/ui-test-diagnostics/
+          retention-days: 7
+          if-no-files-found: warn
 
       - name: Stop Kalium Testservice
         if: ${{ always() && env.KALIUM_TEST_SERVICE_ENABLED == 'true' }}
@@ -248,17 +305,18 @@ jobs:
           echo "::add-mask::$TESTINY_API_KEY"
           export TESTINY_API_KEY
 
-          # Find a xcresult bundle produced by the run
-          XCRESULT="$(find artifacts -type d -name '*.xcresult' | head -n 1)"
-          if [ -z "$XCRESULT" ]; then
+          XCRESULTS=()
+          while IFS= read -r -d '' XCRESULT; do
+            XCRESULTS+=("$XCRESULT")
+          done < <(find artifacts -type d -name '*.xcresult' -print0)
+
+          if [ "${#XCRESULTS[@]}" -eq 0 ]; then
             echo "[ERROR] No .xcresult found under artifacts/"
             exit 1
           fi
 
-          echo "[INFO] Using xcresult: $XCRESULT"
-
           python3 ./scripts/send_xcresult_to_testiny.py \
-            --xcresult "$XCRESULT" \
+            --xcresult "${XCRESULTS[@]}" \
             --run-name "$TESTINY_RUN_NAME" \
             --require-existing-run
 
@@ -342,8 +400,8 @@ jobs:
           path: |
             build/reports/*.junit
             artifacts/**/*.junit
-            app-group.zip
-            fastlane/app-group.zip
+            app-group*.zip
+            fastlane/app-group*.zip
 
       - name: Publish Test Results Summary
         if: always()
@@ -409,7 +467,7 @@ jobs:
           {
             echo "## 📊 Allure Report";
             echo "";
-            echo "⚠️ No \`.xcresult\` found under \`artifacts\`. Allure report was not generated.";
+            echo "⚠️ Allure report unavailable: ${ALLURE_REPORT_REASON:-Report-generation step did not complete.}";
           } >> "$GITHUB_STEP_SUMMARY"
 
 
