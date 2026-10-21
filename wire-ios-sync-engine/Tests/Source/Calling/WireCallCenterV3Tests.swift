@@ -1346,6 +1346,24 @@ final class WireCallCenterV3Tests: MessagingTest {
         }
     }
 
+    func testMLSMeetingStartsWithMeetingFlag_TC_11979() throws {
+        groupConversation.groupType = .meeting
+
+        try assertMLSConference(
+            expectedCallState: .outgoing(isVideo: false, degraded: false),
+            expectedCallerID: selfUserID,
+            expectedConversationID: groupConversationID
+        ) {
+            try sut.startCall(in: groupConversation, isVideo: false)
+            XCTAssertNil(mockAVSWrapper.startCallArguments)
+            XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
+
+            let arguments = try XCTUnwrap(mockAVSWrapper.startCallArguments)
+            XCTAssertEqual(arguments.conversationType, .mlsConference)
+            XCTAssertTrue(arguments.isMeeting)
+        }
+    }
+
     func assertMLSConference(
         expectedCallState: CallState,
         expectedCallerID: AVSIdentifier,
@@ -1641,6 +1659,32 @@ final class WireCallCenterV3Tests: MessagingTest {
             XCTAssertEqual(event.data, data)
             XCTAssertEqual(conversationType, .oneToOne)
             XCTAssertFalse(isMeeting)
+        }
+    }
+
+    func testReceivedMLSCallPreservesMeetingFlag_TC_11979() throws {
+        groupConversation.messageProtocol = .mls
+        groupConversation.mlsGroupID = .random()
+        try uiMOC.save()
+        sut.setCallReady(version: 3)
+
+        for isMeeting in [true, false] {
+            groupConversation.groupType = isMeeting ? .meeting : .group
+            let previousCount = mockAVSWrapper.receivedCallEvents.count
+            sut.processCallEvent(CallEvent(
+                data: verySmallJPEGData(),
+                currentTimestamp: .now,
+                serverTimestamp: .now,
+                conversationId: groupConversationID,
+                userId: otherUserID,
+                clientId: otherUserClientID
+            ))
+            XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+            XCTAssertEqual(mockAVSWrapper.receivedCallEvents.count, previousCount + 1)
+            let (_, conversationType, receivedIsMeeting) = try XCTUnwrap(mockAVSWrapper.receivedCallEvents.last)
+            XCTAssertEqual(conversationType, .mlsConference)
+            XCTAssertEqual(receivedIsMeeting, isMeeting)
         }
     }
 
