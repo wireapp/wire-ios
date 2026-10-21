@@ -915,7 +915,13 @@ public final class SessionManager: NSObject, SessionManagerType {
         }
 
         cancelMeetingReminders(for: account.userIdentifier)
-        state.withLockUnchecked { $0.backgroundUserSessions[account.userIdentifier] = nil }
+        state.withLockUnchecked { state in
+            state.backgroundUserSessions[account.userIdentifier] = nil
+            if state.backgroundUserSessions.isEmpty {
+                // Release backing storage that can still hold references to removed sessions.
+                state.backgroundUserSessions = [:]
+            }
+        }
         tearDownObservers(account: account.userIdentifier)
         notifyUserSessionDestroyed(account.userIdentifier)
 

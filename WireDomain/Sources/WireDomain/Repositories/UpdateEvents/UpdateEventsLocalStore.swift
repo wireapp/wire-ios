@@ -72,6 +72,10 @@ final class UpdateEventsLocalStore: UpdateEventsLocalStoreProtocol {
         _ serverTimeDelta: TimeInterval
     ) async {
         await syncContext.perform { [syncContext] in
+            guard syncContext.zm_isSyncContext else {
+                WireLogger.localStorage.warn("Skipping server time delta update after sync context teardown")
+                return
+            }
             syncContext.serverTimeDelta = serverTimeDelta
         }
     }

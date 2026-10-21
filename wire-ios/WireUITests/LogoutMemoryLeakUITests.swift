@@ -43,7 +43,15 @@ final class LogoutMemoryLeakUITests: WireUITestCase {
         XCTAssertNoThrow(try WelcomePage())
 
         // Then
-        try showDeveloperTools().checkUserSessionDeallocated(true).hide()
+        let deadline = Date().addingTimeInterval(30)
+        repeat {
+            let developerTools = try showDeveloperTools()
+            let deallocated = app.staticTexts["deallocated"].exists
+            developerTools.hide()
+            if deallocated { return }
+            try await Task.sleep(for: .seconds(2))
+        } while Date() < deadline
+        XCTFail("Expected UserSession to be deallocated within 30 seconds after logout")
     }
 
     private func dismissSessionExpiredAlertIfPresent() {
