@@ -12,6 +12,10 @@ Investigation staging branch (latest plan and isolated prerequisite fix):
 Local testing preference: use `xcodebuild` directly. The user confirmed this on
 2026-10-21; repository CI can continue using Fastlane.
 
+Latest validation preference (2026-10-21): the user will run formatting, lint,
+and tests when required. Do not execute those checks as the agent. Earlier runs
+below predate that instruction; do not rerun them without a new request.
+
 This is the working checklist for investigation, design, implementation, and rollout.
 Check an item only when its result has been verified. Record relevant PRs and test
 results here as work progresses. Implementation details below are proposals until
@@ -22,13 +26,16 @@ the design decisions are approved.
 Current working branch: `feat/pending-message-foundation-WPB-26307`, based on
 `develop` at `53a362f1b3fe0e0a9ae907b0e532840bd30a8532`. This began as a provisional
 merge-queue base with the user's approval; the latest fetch confirms it landed.
-See the provisional-base update below. The user agreed to the lifecycle/schema review, proposed PR sequence, and
-default-off flag direction. The concrete PR 1 contract below is ready for review;
-schema implementation and uncertain-delivery retry policy are not yet approved.
+See the provisional-base update below. The user clarified the workflow: implement
+on this one feature branch and tick off the checklist. The two older branches
+are parked investigation history; do not create further stage branches. The
+foundation contract is authorized and implemented; validation belongs to the user.
+Uncertain-delivery automatic retry policy remains unresolved before activation.
 
 Current state: 2026-10-21. The prerequisite bootstrap tracker fix is implemented
 on `fix/preserve-bootstrap-trackers-WPB-26307`, with two regression tests and all
-13 bootstrap tests passing. The offline outbox feature itself has not started.
+13 bootstrap tests passing. The offline outbox foundation is now being implemented;
+production enrollment/sending behavior has not yet been enabled.
 Read `AGENTS.md`, the reported manual results, and the code verification section
 before continuing. The user reports that the fix resolves the device upload
 problem. The user is handling a separate bug ticket, PR/branch, merge, and
@@ -48,11 +55,12 @@ Next steps, in order:
    sync implementation and video receiver confirmation remain unrecorded; do not
    treat those as established. The bootstrap upload bug is separate from this feature
    and should not be reimplemented or backported again by the new session.
-3. Review the concrete PR 1 contract below. Resolve the exact schema and test
-   scope before implementing it. The user has agreed to the PR sequence and
-   default-off flag direction; do not ask for those approvals again.
-4. Start PR 1 implementation after agreeing its concrete contract. Use `feat/`, `chore/`, or `fix/` branch
-   prefixes and include `WPB-26307` in commits and PR titles.
+3. Foundation code and regression coverage are implemented. User owns further
+   validation. See the foundation execution record and continue with queuing.
+4. Continue through regular queuing, queued editing, and asset recovery on the
+   same branch. Treat the numbered PR checklists below as implementation stages;
+   defer PR packaging until there is working code to review. Do not repeat the
+   approval loop for the agreed foundation, sequence, or flag direction.
 
 All feature findings and reported observations are recorded in this file. The
 temporary RFC is not part of the plan commits. Keep this plan on working branches
@@ -173,7 +181,8 @@ No production or test implementation has started. No new tests have been run.
 
 ## PR 1 concrete contract for review (2026-10-21)
 
-The user agreed to proceed with this review before implementation. PR 1 remains
+The user authorized proceeding on the single feature branch after this review.
+Foundation implementation is now in progress. Stage 1 remains
 foundation-only: schema, model lifecycle primitives, flag, and meaningful tests;
 no creation/edit/send call site enrolls a message yet, even with the flag on.
 
@@ -310,7 +319,8 @@ self-deleting messages remains gated on agreeing their timer policy before PR 2.
 
 - [x] User agreement to the staged review, sequence, and default-off flag direction.
 - [x] Source review and concrete lifecycle/schema/test proposal prepared.
-- [ ] Agree the concrete PR 1 contract before schema/code implementation.
+- [x] Proceed with the concrete foundation contract following the user's
+      clarification to start implementation on one branch and tick TODOs.
 - [ ] Before PR 2: verify/agree uncertain-delivery recovery and ordering policy.
 
 ## Goal
@@ -334,8 +344,8 @@ edited marker. Edits to previously sent messages retain normal edit semantics.
 - [x] Agree to keep this plan committed during feature work, carry it to later
       branches/PRs as needed, and remove it before merging into `develop`.
 - [x] Agree the staged PR sequence and default-off local flag direction.
-- [ ] Agree the concrete PR 1 contract; resolve later product decisions before
-      activating the corresponding feature paths.
+- [x] Proceed with the concrete foundation contract on the one active branch.
+- [ ] Resolve later product decisions before activating corresponding paths.
 - [x] Record the Jira issue key before creating commits or PRs: `WPB-26307`.
 - [x] Audit the reported baseline behaviors against the code, including asset
       reconnect handling and the cancel-to-Retry transition. See the verification
@@ -859,9 +869,12 @@ xcodebuild test -quiet \
 
 ### Rollout
 
-Recommendation: use small PRs targeting `develop`, with a single default-off local
-developer flag. Each PR uses a short-lived branch with the appropriate repository
-prefix. A long-lived feature branch is not currently proposed.
+Current agreed workflow: implement the stages below on
+`feat/pending-message-foundation-WPB-26307`, using a single default-off local
+developer flag. Keep the TODO checklist current as code and tests are completed.
+The previous recommendation of separate short-lived stage branches is superseded.
+Decide PR packaging once working feature code is ready for review; target
+`develop` and remove the temporary plan from the final merge changes.
 
 - [x] Agree default-off `DeveloperFlag.offlinePendingMessages` direction.
 - [ ] Preserve legacy behavior while the feature is disabled.
@@ -902,13 +915,48 @@ feature's issue; do not assume it is the new bug ticket.
 
 ### PR 1: Outbox foundation
 
-- [ ] Confirm the design decisions listed below.
-- [ ] Add persisted metadata and migration with safe legacy defaults.
-- [ ] Add the default-off local flag and define enrollment rules.
-- [ ] Add lifecycle and migration tests.
-- [ ] Keep actual message enrollment disabled in this foundation PR.
+- [x] Agree foundation contract and start implementation on the active branch.
+- [x] Add persisted metadata and migration with safe legacy defaults.
+- [x] Add the default-off local flag and define enrollment rules.
+- [x] Add lifecycle and migration tests (coverage added; final rerun is user-owned).
+- [x] Keep actual message enrollment disabled in this foundation PR.
 - [ ] Validate that existing sending behavior is unchanged.
 - [ ] Record PR URL and validation results.
+
+### Foundation execution record (2026-10-21)
+
+Implemented on the one active feature branch:
+
+- New `2.145.0` messaging model, version selection and migration sequencing.
+- Seven local-only outbox fields, excluded from upstream modification tracking.
+- Typed lifecycle operations with context-owned claims, per-attempt tokens,
+  immutable payload values/snapshots, backoff metadata, terminal states, and
+  distinct pre-handoff versus uncertain crash recovery. No sender/creation call
+  site enrolls or uses this lifecycle yet.
+- Default-off `offlinePendingMessages` developer flag.
+- Lifecycle, SQLite migration, and flag regression coverage.
+
+Before the user's instruction to stop automated checks, a direct `xcodebuild`
+run completed with **13 passing tests and one failing migration test**. The
+failure was the fixture's use of an invalid local modification key `testKey`.
+Source inspection confirmed `ZMManagedObject.awakeFromFetch/removeObsoleteKeys`
+intentionally removes unknown keys. The fixture now uses actual tracked keys:
+`dataSet` for regular messages and `transferState` for assets. This correction
+and a deleted-message recovery guard have **not been rerun**, per user preference.
+The implementation compiled in the earlier run. Do not present the current tree
+as fully validated.
+
+Earlier result bundle: `/private/tmp/wpb-26307-foundation-model.xcresult`.
+Earlier build/test log: `/private/tmp/wpb-26307-foundation-model.log`.
+Earlier SwiftFormat completed; SwiftLint reported zero violations in the six
+Swift files then checked. No further formatting, linting, or test execution is
+authorized under the latest preference.
+
+The earlier test selection was `WireDataModelTests/MessageOutboxTests`,
+`WireDataModelTests/DatabaseMigrationTests_Outbox`, and
+`WireDataModelTests/CoreDataMessagingMigrationVersionTests`, using scheme
+`WireDataModel`, test plan `AllTests`, iPhone 17 / iOS 26.5 and local `DerivedData`.
+The new utilities flag test has not been executed. No PR has been created.
 
 ### PR 2: Regular-message queuing and recovery
 

@@ -34,6 +34,7 @@ public enum DeveloperFlag: String, CaseIterable {
     case ignoreIncomingEvents
     case newRegistration
     case noAPNSTokenCache
+    case offlinePendingMessages
     case showCreateMLSGroupToggle
     case showUnreadConversationsFilter
     case skipMLSMessagesDecryption
@@ -87,6 +88,9 @@ public enum DeveloperFlag: String, CaseIterable {
 
         case .noAPNSTokenCache:
             "Turn on to always request the APNS token from the system instead of reading a cached one"
+
+        case .offlinePendingMessages:
+            "Queue messages while offline. Restart the app after changing this setting."
 
         case .showUnreadConversationsFilter:
             "Turn on to show the new conversation filter options"
