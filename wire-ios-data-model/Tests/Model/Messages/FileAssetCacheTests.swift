@@ -85,7 +85,7 @@ class FileAssetCacheTests: XCTestCase {
             "\(UUID().uuidString)-../../../../escaped.bin",
             "../../../../escaped.bin",
             "sub/../../escaped.bin",
-            "/escaped.bin",
+            "/escaped.bin"
         ]
         let cacheFolder = location.standardized.path + "/"
 
