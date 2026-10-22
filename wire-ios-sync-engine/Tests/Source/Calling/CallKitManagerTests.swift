@@ -938,6 +938,34 @@ class CallKitManagerTest: DatabaseTest {
         XCTAssertEqual(callKitProvider.timesReportCallEndedAtCalled, 0)
     }
 
+    func testNonRingingMeetingCallDoesNotReportIncomingCall_TC_11979() {
+        let meeting = conversation(type: .group)
+        meeting.groupType = .meeting
+        let caller = otherUser(moc: uiMOC)
+
+        sut.callCenterDidChange(
+            callState: .incoming(isVideo: false, shouldRing: false, degraded: false),
+            conversation: meeting,
+            caller: caller,
+            timestamp: nil,
+            previousCallState: nil,
+            callEndReason: nil
+        )
+        XCTAssertEqual(callKitProvider.timesReportNewIncomingCallCalled, 0)
+
+        for (index, type) in [ZMConversationType.oneOnOne, .group].enumerated() {
+            sut.callCenterDidChange(
+                callState: .incoming(isVideo: false, shouldRing: true, degraded: false),
+                conversation: conversation(type: type),
+                caller: caller,
+                timestamp: nil,
+                previousCallState: nil,
+                callEndReason: nil
+            )
+            XCTAssertEqual(callKitProvider.timesReportNewIncomingCallCalled, index + 1)
+        }
+    }
+
     func testThatItIgnoresNewIncomingCall_v3_Incoming_Silenced() {
         // given
         let conversation = conversation()

@@ -127,7 +127,8 @@ private final class MeetingRepositoryProtocolMock: MeetingRepositoryProtocol, @u
         endTime: Date,
         recurrence: MeetingRecurrence?,
         type: MeetingType,
-        password: String?
+        password: String?,
+        invitedEmails: [String]
     ) async throws -> MeetingCreationResult {
         createMeetingTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceMeetingCallsCount += 1
         createMeetingTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceMeetingReceivedArguments = (
@@ -242,6 +243,16 @@ private final class MeetingRepositoryProtocolMock: MeetingRepositoryProtocol, @u
             return updateMeetingIdQualifiedIDTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceMeetingReturnValue
         }
     }
+
+    public func fetchMeetingLink(id: QualifiedID) async throws -> MeetingLink? {
+        nil
+    }
+
+    public func fetchInvitedEmails(id: QualifiedID) async throws -> [String] {
+        []
+    }
+
+    public func updateInvitedEmails(id: QualifiedID, adding: [String], removing: [String]) async throws {}
 
     // MARK: - storeMeeting
 

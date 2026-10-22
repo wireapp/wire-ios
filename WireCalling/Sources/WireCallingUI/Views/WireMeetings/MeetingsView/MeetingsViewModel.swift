@@ -267,6 +267,10 @@ package final class MeetingsViewModel {
         occurrence.start <= currentDate && currentDate < occurrence.end
     }
 
+    func hasEnded(_ occurrence: MeetingOccurrence) -> Bool {
+        occurrence.end <= currentDate
+    }
+
     func formatDay(_ date: Date) -> String {
         _ = dateTimeStateRevision
         return formatter.dayHeader(for: date, now: currentDate)

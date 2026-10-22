@@ -567,6 +567,10 @@ package final class FilesViewModel: ObservableObject {
             await restoreItems(Array(selectedItems))
         }
     }
+    
+    func moveToFolder() {
+        sheetNavigation = .moveToFolder(fileItems: Array(selectedItems))
+    }
 }
 
 private extension Sequence {

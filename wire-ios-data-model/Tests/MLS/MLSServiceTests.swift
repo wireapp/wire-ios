@@ -1509,6 +1509,59 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         XCTAssertEqual(mockMLSActionExecutor.mockJoinGroupCount, 1)
     }
 
+    func test_RecoverPendingConversationBatchIfNeeded_ContinuesWhenRecoveryIsRequestedWhileRunning() async {
+        // Given
+        let groupIDA = MLSGroupID.random()
+        let groupIDB = MLSGroupID.random()
+        await insertPendingForeignGroupConversation(groupID: groupIDA)
+
+        mockActionsProvider.fetchConversationGroupInfoConversationIdDomainSubgroupTypeContext_MockValue = Data()
+
+        var joinedGroupIDs = [MLSGroupID]()
+        var overlappingRecoveryResult: Bool?
+        mockMLSActionExecutor.mockJoinGroup = { groupID, _ in
+            joinedGroupIDs.append(groupID)
+            guard groupID == groupIDA else { return }
+
+            // While A is being joined, a sync marks B as pending and requests recovery.
+            await self.insertPendingForeignGroupConversation(groupID: groupIDB)
+            overlappingRecoveryResult = await self.sut.recoverPendingConversationBatchIfNeeded()
+        }
+
+        // When
+        let shouldRecoverNextBatch = await sut.recoverPendingConversationBatchIfNeeded()
+
+        // Then
+        XCTAssertEqual(overlappingRecoveryResult, false)
+        XCTAssertTrue(shouldRecoverNextBatch)
+        XCTAssertEqual(joinedGroupIDs, [groupIDA])
+
+        // When
+        let shouldRecoverAnotherBatch = await sut.recoverPendingConversationBatchIfNeeded()
+
+        // Then
+        XCTAssertFalse(shouldRecoverAnotherBatch)
+        XCTAssertEqual(joinedGroupIDs, [groupIDA, groupIDB])
+    }
+
+    private func insertPendingForeignGroupConversation(groupID: MLSGroupID) async {
+        await uiMOC.perform { [uiMOC] in
+            let conversation = ZMConversation.insertNewObject(in: uiMOC)
+            conversation.remoteIdentifier = UUID.create()
+            conversation.mlsGroupID = groupID
+            conversation.messageProtocol = .mls
+            conversation.mlsStatus = .pendingJoin
+            conversation.conversationType = .group
+            conversation.epoch = 0
+            conversation.domain = "foreign.domain"
+            conversation.addParticipantAndUpdateConversationState(
+                user: ZMUser.selfUser(in: uiMOC),
+                role: nil
+            )
+            XCTAssertTrue(uiMOC.saveOrRollback())
+        }
+    }
+
     func assert_PerformPendingJoins_It_Establishes_Group(
         conversationType: ZMConversationType,
         file: StaticString = #file,

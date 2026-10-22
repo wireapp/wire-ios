@@ -40,7 +40,8 @@ public protocol MeetingRepositoryProtocol: Sendable {
         endTime: Date,
         recurrence: MeetingRecurrence?,
         type: MeetingType,
-        password: String?
+        password: String?,
+        invitedEmails: [String]
     ) async throws -> MeetingCreationResult
 
     /// Updates a meeting on the server and refreshes the locally stored copy.
@@ -54,6 +55,10 @@ public protocol MeetingRepositoryProtocol: Sendable {
         endTime: Date,
         recurrence: MeetingRecurrence?
     ) async throws -> Meeting
+
+    func fetchInvitedEmails(id: QualifiedID) async throws -> [String]
+
+    func updateInvitedEmails(id: QualifiedID, adding: [String], removing: [String]) async throws
 
     /// Stores a meeting locally without contacting the server, linking it to
     /// locally stored entities such as its conversation and creator.
@@ -70,6 +75,8 @@ public protocol MeetingRepositoryProtocol: Sendable {
 
     @discardableResult
     func pullMeeting(id: QualifiedID) async throws -> Meeting?
+
+    func fetchMeetingLink(id: QualifiedID) async throws -> MeetingLink?
 
     /// Pulls all meetings from the server, replacing the locally stored
     /// meetings, e.g. as part of a sync.

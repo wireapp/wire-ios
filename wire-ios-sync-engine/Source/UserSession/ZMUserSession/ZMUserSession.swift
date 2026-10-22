@@ -54,6 +54,14 @@ public final class ZMUserSession: NSObject {
     private var syncStateCancellable: AnyCancellable?
     private var meetingReminderContentRefreshTask: Task<Void, Never>?
 
+    /// Set when pending MLS conversation recovery stopped because the app was not active.
+    ///
+    /// Foregrounding resumes the sync while the app is still `.inactive`, so a quick sync can
+    /// finish before `didBecomeActive`. Without this flag the skipped recovery would only be
+    /// retried after the next sync, e.g. a cold start, leaving newly joined channels unjoined
+    /// (WPB-28035). It is resumed in `resumeDeferredPendingConversationRecovery()`.
+    @MainActor private var isPendingConversationRecoveryDeferred = false
+
     public private(set) var coreDataStack: CoreDataStack!
 
     let application: ZMApplication
@@ -1025,6 +1033,7 @@ public final class ZMUserSession: NSObject {
             self,
             selector: #selector(applicationWillEnterForeground(_:))
         )
+        application.registerObserverForDidBecomeActive(self, selector: #selector(applicationDidBecomeActive(_:)))
 
     }
 
@@ -1383,16 +1392,56 @@ extension ZMUserSession: SyncAgentDelegate {
 
             // always check if need to upload key packages if needed
             await mlsService.uploadKeyPackagesIfNeeded()
-            while mlsFeature.isEnabled,
-                  isBackendMLSEnabled,
-                  await MainActor.run(body: { [application] in application.applicationState == .active }) {
-                guard await mlsService.recoverPendingConversationBatchIfNeeded() else { break }
-            }
+            await recoverPendingConversations()
             await resolveOneOnOneConversationsIfNeeded()
             await recurringActionService.performActionsIfNeeded()
         }
 
         performPostQuickSyncE2EIActions()
+    }
+
+    /// Joins pending MLS conversations in batches while the app is active.
+    ///
+    /// If the app is not active, the remaining recovery is deferred until the app becomes
+    /// active again, see `resumeDeferredPendingConversationRecovery()`.
+    private func recoverPendingConversations() async {
+        while mlsFeature.isEnabled, isBackendMLSEnabled {
+            // Read the state and record the deferral in one main-actor step, so that
+            // `didBecomeActive` is either observed here or sees the flag afterwards.
+            let applicationState = await MainActor.run { [self] in
+                let applicationState = application.applicationState
+                isPendingConversationRecoveryDeferred = applicationState != .active
+                return applicationState
+            }
+
+            guard applicationState == .active else {
+                WireLogger.mls.info(
+                    "deferring pending conversation recovery, application state: \(applicationState.rawValue)"
+                )
+                return
+            }
+
+            guard await mlsService.recoverPendingConversationBatchIfNeeded() else { break }
+        }
+    }
+
+    /// Resumes pending MLS conversation recovery that was skipped because the app was not active.
+    ///
+    /// Only runs after `recoverPendingConversations()` deferred it, which happens after the
+    /// MLS client initialization and key-package check of `didFinishIncrementalSync`.
+    ///
+    /// This can run concurrently with an incremental sync started on foreground. If that sync requests
+    /// recovery while this one is running, `MLSService` lets this loop continue with another batch, so
+    /// conversations the sync marked as pending are joined as well.
+    @MainActor
+    func resumeDeferredPendingConversationRecovery() {
+        guard isPendingConversationRecoveryDeferred else { return }
+        isPendingConversationRecoveryDeferred = false
+
+        WireLogger.mls.info("resuming deferred pending conversation recovery")
+        WaitingGroupTask(context: syncContext) { [weak self] in
+            await self?.recoverPendingConversations()
+        }
     }
 
     private func resolveOneOnOneConversationsIfNeeded() async {
