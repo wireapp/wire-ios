@@ -118,6 +118,36 @@ class AssetV3UploadRequestStrategyTests: MessagingTestBase {
 
     // MARK: - Request generation
 
+    func testTearDownLeavesQueuedOutboxAssetsUntouchedByLateUploadCallbacks() throws {
+        try syncMOC.performAndWait {
+            let message = createImageMessage()
+            try message.enqueueInOutbox(operation: .initialMessage)
+            let keys: Set<String> = [#keyPath(ZMAssetClientMessage.transferState)]
+            let request = try XCTUnwrap(sut.request(forUpdating: message, forKeys: keys, apiVersion: .v0))
+            let content = message.underlyingMessage
+            sut.tearDown()
+            let success = ZMTransportResponse(
+                payload: ["key": "late-upload"] as ZMTransportData, httpStatus: 201,
+                transportSessionError: nil, apiVersion: 0
+            )
+            let failure = ZMTransportResponse(payload: nil, httpStatus: 403, transportSessionError: nil, apiVersion: 0)
+
+            XCTAssertFalse(sut.updateUpdatedObject(
+                message, requestUserInfo: request.userInfo, response: success, keysToParse: keys
+            ))
+            XCTAssertFalse(sut.shouldRetryFailedRequest(
+                for: message, requestUserInfo: request.userInfo, response: failure, keysToParse: keys
+            ))
+            sut.addTrackedObjects([message])
+            sut.objectsDidChange([message])
+
+            XCTAssertNil(sut.nextRequestIfAllowed(for: .v0))
+            XCTAssertEqual(message.underlyingMessage, content)
+            XCTAssertEqual(message.outboxState, .queued)
+            XCTAssertFalse(message.isExpired)
+        }
+    }
+
     func testOutboxBootstrapFailsActionablyWhenTheMainAssetBytesAreMissing() throws {
         try syncMOC.performAndWait {
             let message = createImageMessage()

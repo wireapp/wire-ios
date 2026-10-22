@@ -39,6 +39,9 @@ The share extension explicitly leaves main-app outbox ownership with the main ap
 The 2026-10-22 source review also closes UI Retry/Cancel races with sync-context
 send claims and cancellation after asset upload but before message handoff. The
 regression source is written; no build, test, lint, or formatting execution occurred.
+Follow-up source fixes stop repeated sends after a failed handoff save and ignore
+asset preprocessing/upload work after teardown. Sender response-classification
+and teardown regressions are written, still unexecuted.
 Uncertain-delivery automatic retry policy remains unresolved before broad activation;
 the development implementation exposes manual Retry while retaining frozen content.
 
@@ -73,8 +76,9 @@ Next steps, in order:
    executing checks. Classic asset enrollment/retention/recovery is also written.
    See the PR 3/4/5 execution records below. Continue source integration review and
    any fixes alongside user-owned validation; do not run checks without a new
-   user instruction. Sender response-classification coverage and session teardown
-   still need review; the new tests have not established runtime correctness.
+   user instruction. Proteus sender response-classification and asset teardown
+   coverage are now written. MLS repairs and full account/session lifecycle still
+   need review; the new tests have not established runtime correctness.
 4. Continue through regular queuing, queued editing, and asset recovery on the
    same branch. Treat the numbered PR checklists below as implementation stages;
    defer PR packaging until there is working code to review. Do not repeat the
@@ -1228,6 +1232,13 @@ Execution record (2026-10-21, source only; no formatting/lint/build/test command
       re-enrolling an already completed edit.
 - [x] Source review: cancel queued/preparing asset-reference sends even when the
       upload has just finished; retain uploaded references for explicit Retry.
+- [x] Source review: fail a handoff-save error without clearing ownership early
+      and causing the scheduler to immediately restart the send.
+- [x] Source review: ignore late asset preprocessing/upload work after teardown
+      and release preprocessing groups independently of preprocessor lifetime.
+- [x] Add unexecuted sender regression source for non-submission, rejection,
+      unknown delivery, known acceptance with an unreadable body, and failed
+      handoff persistence.
 - [ ] Confirm rollout and flag-disable behavior.
 - [ ] Review failure diagnostics without exposing message content.
 - [ ] Decide whether to enable the feature and later remove the temporary flag.
@@ -1256,6 +1267,35 @@ Execution record, 2026-10-22 (source inspection only):
 - Source inclusion uses Xcode synchronized folders, including the new model
   versions. Compilation remains unverified. No PR or push was performed here;
   continue on the existing branch. `.ruby-version` remains unrelated and untouched.
+
+Follow-up source review, 2026-10-22 (no validation execution):
+
+- Handoff persistence previously rescheduled the row and cleared its attempt
+  token before throwing. The outer handler then reported a stale attempt, so the
+  scheduler could immediately start another send for the still-queued row. A
+  distinct internal persistence error now retains ownership until the outer
+  handler fails the operation. No message request is submitted; the existing
+  scheduler failure path can surface Retry without a repeated-send loop.
+- Asset preprocessing now has explicit teardown, invoked by the upload strategy.
+  New processing and downsample/completion mutations stop after teardown or
+  context invalidation. Existing completion operations finish so dispatch groups
+  can drain; cancelling those operations would prevent their cleanup blocks.
+- Preprocessing completion captures the exact context groups entered at startup,
+  and releases those groups even if the preprocessor has been deallocated or the
+  context's group registry has changed. Image completion operations retain their
+  processing group, rather than relying on a weak preprocessor to leave it.
+- The upload strategy stops tracking/request polling after teardown/context
+  invalidation, and ignores late upload success/failure callbacks. Existing
+  retained bytes and queued rows remain available for recovery by a later session.
+- Regression source covers those teardown boundaries and group cleanup. Sender
+  source also distinguishes a scheduler-confirmed non-submission (queued with a
+  retry date), an ambiguous timeout (uncertain), a definite rejection (failed), and
+  known 201 acceptance with an undecodable status body (sent without resubmission).
+  A failing-context test exercises the handoff-save boundary before API submission.
+- All changes remain source-only. No build, test, lint, formatter, push, or PR was
+  run/created here. Full account switching/logout behavior, late final-message
+  callbacks around context closure, and MLS repair paths remain review/validation
+  items; asset teardown changes do not establish those broader guarantees.
 
 ## Decisions to settle before the relevant implementation
 

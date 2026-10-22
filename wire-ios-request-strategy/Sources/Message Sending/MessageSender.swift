@@ -624,6 +624,11 @@ public final class MessageSender: MessageSenderInterface {
 
 private extension MessageSender {
 
+    /// No message request was submitted when persisting the handoff failed.
+    struct OutboxHandoffPersistenceError: Error {
+        let underlyingError: Error
+    }
+
     func sendOutboxMessage(_ message: any SendableMessage) async throws {
         guard let row = message as? ZMMessage else { throw MessageOutboxError.invalidTransition }
         guard context.canProcessOfflinePendingMessages else { throw MessageSendError.outboxWaitingForConnection }
@@ -674,7 +679,10 @@ private extension MessageSender {
                         guard self.isCurrentOutboxAttempt(attempt.identifier, row: row) else {
                             throw MessageOutboxError.staleAttempt
                         }
-                        if notSubmitted || canRepair || row.outboxState == .preparing {
+                        if error is OutboxHandoffPersistenceError {
+                            try row.failOutboxAttempt(attempt.identifier)
+                            row.expirationDate = nil
+                        } else if notSubmitted || canRepair || row.outboxState == .preparing {
                             let retryDate = notSubmitted
                                 ? Date(timeIntervalSinceNow: TimeInterval(min(30, max(1, row.outboxAttemptCount))))
                                 : nil
@@ -734,10 +742,9 @@ private extension MessageSender {
         do {
             try context.save()
         } catch {
-            // No request was submitted. Keep the live context from looking like an in-flight send.
-            try? row.rescheduleOutboxAttempt(attempt.identifier)
-            row.expirationDate = nil
-            throw error
+            // Keep ownership until the outer handler fails this operation. Clearing its token here
+            // would make the persistence error look stale and immediately restart the queued send.
+            throw OutboxHandoffPersistenceError(underlyingError: error)
         }
         return message.expirationDate
     }

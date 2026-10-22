@@ -24,15 +24,16 @@ import Foundation
 /// - all assets are encrypted
 ///
 @objcMembers
-public final class AssetsPreprocessor: NSObject, ZMContextChangeTracker {
+public final class AssetsPreprocessor: NSObject, ZMContextChangeTracker, TearDownCapable {
 
     /// Group to track preprocessing operations
     fileprivate let processingGroup: ZMSDispatchGroup
 
     /// List of objects currently being processed
     fileprivate var objectsBeingProcessed = Set<ZMAssetClientMessage>()
-    fileprivate let imageProcessingQueue: OperationQueue
+    let imageProcessingQueue: OperationQueue
     fileprivate var imageAssetPreprocessor: ZMAssetsPreprocessor?
+    private var isTornDown = false
 
     /// Managed object context. Is is assumed that all methods of this class
     /// are called from the thread of this managed object context
@@ -65,7 +66,17 @@ public final class AssetsPreprocessor: NSObject, ZMContextChangeTracker {
         processObjects(objects)
     }
 
+    public func tearDown() {
+        managedObjectContext.performAndWait {
+            isTornDown = true
+            objectsBeingProcessed.removeAll()
+        }
+        // Let queued completion operations finish so their processing-group entries are balanced.
+        // Downsample callbacks below will ignore their results after teardown.
+    }
+
     private func processObjects(_ objects: Set<NSManagedObject>) {
+        guard !isTornDown, managedObjectContext.zm_isValidContext else { return }
         objects
             .compactMap(needsPreprocessing)
             .filter(!objectsBeingProcessed.contains)
@@ -76,7 +87,7 @@ public final class AssetsPreprocessor: NSObject, ZMContextChangeTracker {
     fileprivate func startProcessing(_ message: ZMAssetClientMessage) {
         objectsBeingProcessed.insert(message)
 
-        _ = managedObjectContext.enterAllGroups()
+        let groups = managedObjectContext.enterAllGroups()
 
         // We only want to start processing originals.
         for asset in message.assets where asset.hasOriginal {
@@ -91,14 +102,17 @@ public final class AssetsPreprocessor: NSObject, ZMContextChangeTracker {
             }
         }
 
-        notifyWhenProcessingIsComplete(message)
+        notifyWhenProcessingIsComplete(message, groups: groups)
     }
 
     /// Removes the message from the list of messages being processed when the processing is completed
-    fileprivate func notifyWhenProcessingIsComplete(_ message: ZMAssetClientMessage) {
+    fileprivate func notifyWhenProcessingIsComplete(_ message: ZMAssetClientMessage, groups: [ZMSDispatchGroup]) {
+        let context = managedObjectContext
         processingGroup.notify(on: .global()) { [weak self] in
-            self?.managedObjectContext.performGroupedBlock {
-                self?.objectsBeingProcessed.remove(message)
+            context.performGroupedBlock { [weak self] in
+                defer { groups.forEach { $0.leave() } }
+                guard let self, !self.isTornDown, context.zm_isValidContext else { return }
+                self.objectsBeingProcessed.remove(message)
                 let legacy = message.outboxState == .notEnrolled
                 if legacy || (!message.isDeleted && !message.hasBeenDeleted && !message.isExpired
                     && message.outboxState == .queued && message.transferState == .uploading) {
@@ -120,7 +134,6 @@ public final class AssetsPreprocessor: NSObject, ZMContextChangeTracker {
                         }
                     }
                 }
-                self?.managedObjectContext.leaveAllGroups(self!.managedObjectContext.allGroups)
             }
         }
     }
@@ -147,6 +160,7 @@ extension AssetsPreprocessor: ZMAssetsPreprocessorDelegate {
         guard let assetImageOwnerAdapter = imageOwner as? AssetImageOwnerAdapter else { return }
 
         managedObjectContext.performGroupedBlock {
+            guard !self.isTornDown, self.managedObjectContext.zm_isValidContext else { return }
             assetImageOwnerAdapter.asset.updateWithPreprocessedData(
                 operation.downsampleImageData,
                 imageProperties: operation.properties
@@ -166,8 +180,9 @@ extension AssetsPreprocessor: ZMAssetsPreprocessorDelegate {
     }
 
     public func preprocessingCompleteOperation(for imageOwner: ZMImageOwner) -> Operation? {
-        BlockOperation { [weak self] in
-            self?.processingGroup.leave()
+        let group = processingGroup
+        return BlockOperation {
+            group.leave()
         }
     }
 

@@ -39,6 +39,52 @@ class AssetsPreprocessorTests: MessagingTestBase {
         super.tearDown()
     }
 
+    func testTearDownPreventsNewOutboxProcessingAndIgnoresLateDownsampleResults() throws {
+        let message = try XCTUnwrap(conversation.appendImage(
+            SendableImage(name: "picture.jpg", utType: .jpeg, data: verySmallJPEGData()), nonce: UUID()
+        ) as? ZMAssetClientMessage)
+        try message.enqueueInOutbox(operation: .initialMessage)
+        try uiMOC.save()
+        let original = uiMOC.zm_fileAssetCache.originalImageData(for: message)
+        let content = message.underlyingMessage
+        let asset = try XCTUnwrap(message.assets.first)
+
+        sut.tearDown()
+        sut.objectsDidChange([message])
+        sut.completedDownsampleOperation(
+            LateAssetDownsampleOperation(), imageOwner: AssetImageOwnerAdapter(asset: asset)
+        )
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        XCTAssertFalse(asset.hasEncrypted)
+        XCTAssertEqual(message.underlyingMessage, content)
+        XCTAssertEqual(uiMOC.zm_fileAssetCache.originalImageData(for: message), original)
+        XCTAssertEqual(message.outboxState, .queued)
+        XCTAssertFalse(message.hasChanges)
+    }
+
+    func testReleasingPreprocessorWhileImagesAreQueuedBalancesContextGroups() throws {
+        let message = try XCTUnwrap(conversation.appendImage(
+            SendableImage(name: "picture.jpg", utType: .jpeg, data: verySmallJPEGData()), nonce: UUID()
+        ) as? ZMAssetClientMessage)
+        try message.enqueueInOutbox(operation: .initialMessage)
+        try uiMOC.save()
+        let queue = sut.imageProcessingQueue
+        queue.isSuspended = true
+        defer { queue.isSuspended = false }
+        sut.objectsDidChange([message])
+        weak var releasedPreprocessor = sut
+
+        sut.tearDown()
+        sut = nil
+        XCTAssertNil(releasedPreprocessor)
+        queue.isSuspended = false
+
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 2))
+        XCTAssertFalse(message.assets.contains(where: \.hasEncrypted))
+        XCTAssertEqual(message.outboxState, .queued)
+    }
+
     func testThatItPreprocessAssetMessage() {
         // given
         let message = try! conversation.appendImage(
@@ -97,4 +143,12 @@ class AssetsPreprocessorTests: MessagingTestBase {
         XCTAssertTrue(message.modifiedKeys!.contains(#keyPath(ZMAssetClientMessage.transferState)))
     }
 
+}
+
+private final class LateAssetDownsampleOperation: NSObject, ZMImageDownsampleOperationProtocol {
+    var downsampleImageData: Data { Data([1, 2, 3]) }
+    var format: ZMImageFormat { .medium }
+    var properties: ZMIImageProperties {
+        ZMIImageProperties(size: CGSize(width: 1, height: 1), length: 3, mimeType: "image/jpeg")
+    }
 }

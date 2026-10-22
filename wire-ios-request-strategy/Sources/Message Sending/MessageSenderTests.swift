@@ -33,6 +33,97 @@ final class MessageSenderTests: MessagingTestBase {
         BackendInfo.apiVersion = .v0
     }
 
+    func testOutboxDistinguishesNonSubmissionRejectionUncertaintyAndKnownAcceptance() async throws {
+        let timedOut = NSError(domain: NSURLErrorDomain, code: NSURLErrorTimedOut)
+        let notSubmitted = NSError(
+            domain: NSURLErrorDomain, code: NSURLErrorCancelled,
+            userInfo: [ZMTransportSessionRequestNotSubmittedKey: true]
+        )
+        let cases: [(Int, NSError?, MessageOutboxState)] = [
+            (0, notSubmitted, .queued),
+            (0, timedOut, .uncertain),
+            (403, nil, .failed),
+            (201, nil, .sent)
+        ]
+        for (httpStatus, transportError, expectedState) in cases {
+            let message = try await makeOutboxMessage()
+            let response = ZMTransportResponse(
+                payload: nil, httpStatus: httpStatus, transportSessionError: transportError, apiVersion: 0
+            )
+            let (arrangement, sender) = Arrangement(coreDataStack: coreDataStack)
+                .withProteusConfigured()
+                .withIncrementalSyncObserverCompleting()
+                .withMessageDependencyResolverReturning(result: .success(()))
+                .withApiVersionResolving(to: .v0)
+                .withSendProteusMessage(returning: .failure(NetworkError.errorDecodingResponse(response)))
+                .arrange()
+
+            do {
+                try await sender.sendMessage(message: message)
+                XCTAssertEqual(expectedState, .sent)
+            } catch {
+                XCTAssertNotEqual(expectedState, .sent)
+                if expectedState == .queued {
+                    guard case MessageSendError.outboxWaitingForConnection = error else {
+                        return XCTFail("Proven non-submission should wait before retrying")
+                    }
+                }
+            }
+
+            XCTAssertEqual(arrangement.messageApi.sendProteusMessageMessageConversationIDExpirationDate_Invocations.count, 1)
+            try await syncMOC.perform {
+                XCTAssertEqual(message.outboxState, expectedState)
+                XCTAssertEqual(message.delivered, expectedState == .sent)
+                XCTAssertEqual(message.outboxNextAttemptAt != nil, expectedState == .queued)
+                XCTAssertEqual(try message.loadOutboxPayload() != nil, expectedState != .sent)
+                XCTAssertFalse(message.hasChanges)
+            }
+        }
+    }
+
+    func testFailedHandoffSaveFailsWithoutSubmissionOrAStaleAttemptError() async throws {
+        let original = try await makeOutboxMessage()
+        let messageID = original.objectID
+        let context = OutboxHandoffFailingContext(concurrencyType: .privateQueueConcurrencyType)
+        context.persistentStoreCoordinator = syncMOC.persistentStoreCoordinator
+        context.performAndWait { context.markAsSyncContext() }
+        let message = try await context.perform {
+            try XCTUnwrap(context.existingObject(with: messageID) as? ZMClientMessage)
+        }
+        let (arrangement, sender) = Arrangement(coreDataStack: coreDataStack, context: context)
+            .withProteusConfigured()
+            .withIncrementalSyncObserverCompleting()
+            .withMessageDependencyResolverReturning(result: .success(()))
+            .withApiVersionResolving(to: .v0)
+            .arrange()
+
+        do {
+            try await sender.sendMessage(message: message)
+            XCTFail("A failed handoff save must abort sending")
+        } catch {
+            XCTAssertFalse(error is MessageOutboxError, "A persistence failure is not a stale callback")
+        }
+
+        XCTAssertTrue(arrangement.messageApi.sendProteusMessageMessageConversationIDExpirationDate_Invocations.isEmpty)
+        await context.perform {
+            XCTAssertEqual(message.outboxState, .failed)
+            XCTAssertNil(message.outboxAttemptIdentifier)
+            XCTAssertNil(message.outboxNextAttemptAt)
+            XCTAssertNil(message.expirationDate)
+            XCTAssertFalse(message.hasChanges)
+            context.reset()
+        }
+    }
+
+    private func makeOutboxMessage() async throws -> ZMClientMessage {
+        try await syncMOC.perform {
+            let message = try XCTUnwrap(self.groupConversation.appendText(content: "queued") as? ZMClientMessage)
+            try message.enqueueInOutbox(operation: .initialMessage)
+            try self.syncMOC.save()
+            return message
+        }
+    }
+
     func testThatWhenSecurityLevelIsDegraded_thenFailWithSecurityLevelDegraded() async throws {
         // given
         await syncMOC.perform { [self] in
@@ -983,13 +1074,15 @@ final class MessageSenderTests: MessagingTestBase {
         let mlsService = MockMLSServiceInterface()
         let proteusService = MockProteusServiceInterface()
         let coreDataStack: CoreDataStack
+        let context: NSManagedObjectContext
         let initiateResetMLSConversationUseCase = WireRequestStrategySupport
             .MockInitiateResetMLSConversationUseCaseProtocol()
         let featureRepository = MockLegacyFeatureRepositoryInterface()
         var apiVersion: APIVersion?
 
-        init(coreDataStack: CoreDataStack) {
+        init(coreDataStack: CoreDataStack, context: NSManagedObjectContext? = nil) {
             self.coreDataStack = coreDataStack
+            self.context = context ?? coreDataStack.syncContext
 
             apiProvider.messageAPIApiVersion_MockValue = messageApi
 
@@ -1071,8 +1164,8 @@ final class MessageSenderTests: MessagingTestBase {
         }
 
         func withProteusConfigured() -> Arrangement {
-            coreDataStack.syncContext.performAndWait {
-                coreDataStack.syncContext.proteusService = proteusService
+            context.performAndWait {
+                context.proteusService = proteusService
                 proteusService.encryptBatchedDataForSessions_MockMethod = { _, _ in
                     // success dumb data
                     ["test": Data()]
@@ -1159,7 +1252,7 @@ final class MessageSenderTests: MessagingTestBase {
                     apiProvider: apiProvider,
                     sessionEstablisher: sessionEstablisher,
                     messageDependencyResolver: messageDependencyResolver,
-                    context: coreDataStack.syncContext,
+                    context: context,
                     incrementalSyncObserver: incrementalSyncObserver,
                     initiateResetMLSConversationUseCase: initiateResetMLSConversationUseCase,
                     featureRepository: featureRepository,
@@ -1170,6 +1263,15 @@ final class MessageSenderTests: MessagingTestBase {
         }
     }
 
+}
+
+private final class OutboxHandoffFailingContext: NSManagedObjectContext {
+    override func save() throws {
+        if registeredObjects.contains(where: { ($0 as? ZMMessage)?.outboxState == .sending }) {
+            throw NSError(domain: "MessageSenderTests.HandoffSave", code: 1)
+        }
+        try super.save()
+    }
 }
 
 extension MessageSendError: @retroactive Equatable {

@@ -73,7 +73,8 @@ public final class AssetV3UploadRequestStrategy: AbstractRequestStrategy, ZMCont
     }
 
     public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
-        upstreamSync.nextRequest(for: apiVersion)
+        guard !isTornDown, managedObjectContext.zm_isValidContext else { return nil }
+        return upstreamSync.nextRequest(for: apiVersion)
     }
 
     private static func updatePredicate(context: NSManagedObjectContext) -> NSPredicate {
@@ -93,6 +94,7 @@ public final class AssetV3UploadRequestStrategy: AbstractRequestStrategy, ZMCont
         managedObjectContext.performAndWait {
             isTornDown = true
             uploadGenerations.removeAll()
+            preprocessor.tearDown()
         }
     }
 }
@@ -103,6 +105,7 @@ extension AssetV3UploadRequestStrategy: ZMContextChangeTracker {
     // will not pick up a change to keys which are already being synchronized (transferState)
     // WHEN the user cancels a file upload
     public func objectsDidChange(_ object: Set<NSManagedObject>) {
+        guard !isTornDown, managedObjectContext.zm_isValidContext else { return }
         for message in object.compactMap({ $0 as? ZMAssetClientMessage }) where message.outboxState != .notEnrolled
             && managedObjectContext.canProcessOfflinePendingMessages {
             if message.isDeleted || message.hasBeenDeleted || message.outboxState == .cancelled {
@@ -128,12 +131,14 @@ extension AssetV3UploadRequestStrategy: ZMContextChangeTracker {
     }
 
     public func fetchRequestForTrackedObjects() -> NSFetchRequest<NSFetchRequestResult>? {
-        guard managedObjectContext.canProcessOfflinePendingMessages else { return nil }
+        guard !isTornDown, managedObjectContext.zm_isValidContext,
+              managedObjectContext.canProcessOfflinePendingMessages else { return nil }
         return ZMAssetClientMessage.sortedFetchRequest(with: NSPredicate(format: "version >= 3 && outboxStateRaw == 1"))
     }
 
     public func addTrackedObjects(_ objects: Set<NSManagedObject>) {
-        guard managedObjectContext.canProcessOfflinePendingMessages else { return }
+        guard !isTornDown, managedObjectContext.zm_isValidContext,
+              managedObjectContext.canProcessOfflinePendingMessages else { return }
         for message in objects.compactMap({ $0 as? ZMAssetClientMessage }) where message.outboxState == .queued {
             // Previous-process transport callbacks are not attached to this strategy. Cancel any recorded
             // background task, then reuse retained encrypted bytes and persisted remote references.
@@ -173,7 +178,7 @@ extension AssetV3UploadRequestStrategy: ZMContextChangeTracker {
     }
 
     private func canUploadOutboxAsset(_ message: ZMAssetClientMessage) -> Bool {
-        managedObjectContext.canProcessOfflinePendingMessages && !isTornDown
+        !isTornDown && managedObjectContext.zm_isValidContext && managedObjectContext.canProcessOfflinePendingMessages
             && !message.isDeleted && !message.hasBeenDeleted && !message.isExpired
             && message.outboxState == .queued && message.transferState == .uploading
             && message.outboxOperation == .initialMessage
@@ -383,6 +388,7 @@ extension AssetV3UploadRequestStrategy: ZMUpstreamTranscoder {
         response: ZMTransportResponse,
         keysToParse: Set<String>
     ) -> Bool {
+        guard !isTornDown, managedObjectContext.zm_isValidContext else { return false }
         guard
             response.result == .success,
             let message = managedObject as? ZMAssetClientMessage,
@@ -483,6 +489,7 @@ extension AssetV3UploadRequestStrategy: ZMUpstreamTranscoder {
         response: ZMTransportResponse,
         keysToParse: Set<String>
     ) -> Bool {
+        guard !isTornDown, managedObjectContext.zm_isValidContext else { return false }
         guard let message = managedObject as? ZMAssetClientMessage else { return false }
         if message.outboxState == .notEnrolled {
             message.expire(withReason: .other)
