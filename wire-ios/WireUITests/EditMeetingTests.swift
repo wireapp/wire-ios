@@ -425,6 +425,65 @@ final class EditMeetingTests: WireUITestCase {
     }
 
     @MainActor
+    func testRetryEditAfterControlledConnectionFailure_TC_12003() async throws {
+        let failureID = UUID().uuidString
+        let name = "\(UITestConfig.meetingsUpdateFailureNotificationPrefix).\(failureID)"
+        var token: Int32 = NOTIFY_TOKEN_INVALID
+        guard notify_register_check(name, &token) == UInt32(NOTIFY_STATUS_OK) else {
+            throw RuntimeError("Meeting update control could not be registered")
+        }
+        defer { notify_cancel(token) }
+        guard notify_set_state(token, 0) == UInt32(NOTIFY_STATUS_OK) else {
+            throw RuntimeError("Meeting update control could not hold the request")
+        }
+        uiTestConfig.meetingsUpdateFailureID = failureID
+        let (host, _, _, _) = try await UserHelper.default.registerMeetingsTeam()
+        let fixtures = try await MeetingsTestHelper(user: host)
+        let original = try await fixtures.create(title: "TC12003 original", start: date(hour: 12))
+        let page = try launchMeetings(for: host, now: date())
+        let form = try page.edit(original)
+        form.replaceTitle(with: "TC12003 retained")
+        try form.selectRepeat(.weekly)
+
+        // Hold the update, then fail before any request reaches the backend.
+        guard form.saveButton.waitAndTap(), form.loadingIndicator.waitForExistence(timeout: 10) else {
+            throw RuntimeError("The update did not show a loading indicator")
+        }
+        XCTAssertFalse(form.saveButton.exists)
+        let pending = try await onlyMeeting(fixtures, original: original)
+        assertUnchanged(pending, original: original)
+        guard notify_set_state(token, 1) == UInt32(NOTIFY_STATUS_OK) else {
+            throw RuntimeError("Meeting update control could not fail the request")
+        }
+        let alert = form.schedulingErrorAlert
+        guard alert.waitForExistence(timeout: 10) else { throw RuntimeError("The update error did not appear") }
+        XCTAssertEqual(alert.label, "Could not update meeting")
+        XCTAssertTrue(alert.staticTexts.allElementsBoundByIndex.contains {
+            $0.label == "Something went wrong while updating the meeting. Please try again."
+        })
+        let failed = try await onlyMeeting(fixtures, original: original)
+        assertUnchanged(failed, original: original)
+        guard alert.buttons[Locators.WireMeetings.MeetingForm.errorDismiss.rawValue].firstMatch.waitAndTap() else {
+            throw RuntimeError("The update error could not close")
+        }
+        XCTAssertEqual(form.titleField.value as? String, "TC12003 retained")
+        form.assertDateTimes(start: original.startTime, end: original.endTime)
+        try form.assertRepeat(.weekly)
+
+        // Restore the request and retry the retained changes on the same meeting.
+        guard notify_set_state(token, 2) == UInt32(NOTIFY_STATUS_OK) else {
+            throw RuntimeError("Meeting update control could not restore the request")
+        }
+        _ = try form.save()
+        let updated = try await onlyMeeting(fixtures, original: original)
+        XCTAssertEqual(updated.title, "TC12003 retained")
+        XCTAssertEqual(updated.recurrence?.frequency, .weekly)
+        XCTAssertEqual(updated.startTime, original.startTime)
+        XCTAssertEqual(updated.endTime, original.endTime)
+        try assertTitle(updated.title, meeting: updated, on: page)
+    }
+
+    @MainActor
     private func minimizeMeetingCall(_ call: OngoingCallPage) throws {
         // The group-call helper returns ActiveConversationPage; Meetings has a different return page.
         guard call.minimizeCallButton.waitAndTap() else { throw RuntimeError("The meeting call did not minimize") }

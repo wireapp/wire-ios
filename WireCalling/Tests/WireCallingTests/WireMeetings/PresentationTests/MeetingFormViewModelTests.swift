@@ -1044,22 +1044,71 @@ struct MeetingFormViewModelTests {
         #expect(viewModel.hasError == false)
     }
 
-    @Test("submit in edit mode sets the error flag when the use case fails")
-    func submit_EditMode_Failure_SetsError() async {
-        // Given
-        var onSuccessCalled = false
-        let viewModel = makeViewModel(mode: .edit(makeEditableMeeting())) { _ in onSuccessCalled = true }
+    @Test("a failed edit keeps all draft values and can retry the same meeting once")
+    func submit_EditMode_FailureRetainsDraftAndRetries_TC_12003() async throws {
+        // Change all editable values, including member and email invitations.
+        let original = makeEditableMeeting()
+        var savedMeetings: [Meeting] = []
+        let viewModel = makeViewModel(mode: .edit(original), supportsMeetingLinks: true) { savedMeetings.append($0) }
+        updateMeetingUseCaseMock.fetchInvitedEmailsForMeetingMeetingStringReturnValue = ["old@example.com"]
+        await viewModel.loadInvitedEmails()
+        let draftStart = try makeDate(year: 2026, month: 7, day: 7, hour: 10, minute: 0)
+        let draftEnd = draftStart.addingTimeInterval(90 * TimeInterval.oneMinute)
+        viewModel.meetingTitle = "Updated Title"
+        viewModel.startDate = draftStart
+        viewModel.endDate = draftEnd
+        viewModel.repeatOption = .daily
+        viewModel.selectedMembers = []
+        viewModel.invitedEmails = ["new@example.com"]
         updateMeetingUseCaseMock
             .invokeMeetingMeetingTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceParticipantsMeetingMemberEmailsToAddStringEmailsToRemoveStringMeetingThrowableError =
-            URLError(.badServerResponse)
+            URLError(.notConnectedToInternet)
 
-        // When
+        // Fail the first save and keep the form open with all draft values.
         await viewModel.submit()
 
-        // Then
         #expect(viewModel.hasError == true)
         #expect(viewModel.isLoading == false)
-        #expect(onSuccessCalled == false)
+        #expect(viewModel.dismissAfterError == false)
+        #expect(savedMeetings.isEmpty)
+        #expect(viewModel.meetingTitle == "Updated Title")
+        #expect(viewModel.startDate == draftStart)
+        #expect(viewModel.endDate == draftEnd)
+        #expect(viewModel.repeatOption == .daily)
+        #expect(viewModel.selectedMembers.isEmpty)
+        #expect(viewModel.invitedEmails == ["new@example.com"])
+        let failedArguments = updateMeetingUseCaseMock
+            .invokeMeetingMeetingTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceParticipantsMeetingMemberEmailsToAddStringEmailsToRemoveStringMeetingReceivedArguments
+        #expect(failedArguments?.meeting.id == original.id)
+
+        // Restore the connection and retry the same draft without creating another meeting.
+        updateMeetingUseCaseMock
+            .invokeMeetingMeetingTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceParticipantsMeetingMemberEmailsToAddStringEmailsToRemoveStringMeetingThrowableError =
+            nil
+        updateMeetingUseCaseMock
+            .invokeMeetingMeetingTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceParticipantsMeetingMemberEmailsToAddStringEmailsToRemoveStringMeetingReturnValue =
+            original
+        await viewModel.submit()
+
+        let savedArguments = updateMeetingUseCaseMock
+            .invokeMeetingMeetingTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceParticipantsMeetingMemberEmailsToAddStringEmailsToRemoveStringMeetingReceivedArguments
+        #expect(savedArguments?.meeting.id == original.id)
+        #expect(savedArguments?.title == "Updated Title")
+        #expect(savedArguments?.startTime == draftStart)
+        #expect(savedArguments?.endTime == draftEnd)
+        #expect(savedArguments?.recurrence == MeetingRecurrence(frequency: .daily, interval: 1))
+        #expect(savedArguments?.participants.isEmpty == true)
+        #expect(savedArguments?.emailsToAdd == ["new@example.com"])
+        #expect(savedArguments?.emailsToRemove == ["old@example.com"])
+        #expect(updateMeetingUseCaseMock
+            .invokeMeetingMeetingTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceParticipantsMeetingMemberEmailsToAddStringEmailsToRemoveStringMeetingCallsCount ==
+            2)
+        #expect(createMeetingUseCaseMock
+            .invokeTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceTypeMeetingTypePasswordStringParticipantsMeetingMemberInvitedEmailsStringMeetingCreationResultCallsCount ==
+            0)
+        #expect(savedMeetings == [original])
+        #expect(viewModel.hasError == false)
+        #expect(viewModel.isLoading == false)
     }
 
     @Test("submit while a submission is in flight is ignored")
