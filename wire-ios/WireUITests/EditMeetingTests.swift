@@ -246,4 +246,103 @@ final class EditMeetingTests: WireUITestCase {
         }
     }
 
+    @MainActor
+    func testEditDetailsAndParticipants_TC_11995() async throws {
+        executionTimeAllowance = 600
+        let (host, users, ids, _) = try await UserHelper.default.registerMeetingsTeam(withMemberCount: 3)
+        try await registerClients(for: users)
+        let fixtures = try await MeetingsTestHelper(user: host)
+        let page = try launchMeetings(for: host, now: date())
+        let creation = try page.schedule()
+        creation.replaceTitle(with: "TC11995 original")
+        try creation.addParticipants([users[0], users[1]])
+        _ = try creation.save()
+        let created = try await fixtures.list()
+        let original = try XCTUnwrap(created.first)
+        let before = try await members(fixtures, meeting: original)
+        let hostRole = try XCTUnwrap(before.selfMember?.conversationRole)
+        let inviteeRole = try XCTUnwrap(before.others.first { $0.qualifiedID == ids[0] }?.conversationRole)
+        let earlier = try await fixtures.create(title: "Earlier meeting", start: date(hour: 14, dayOffset: 1))
+
+        // Change meeting details and add the new participant.
+        let form = try page.edit(original)
+        form.replaceTitle(with: "TC11995 updated")
+        try form.selectStartDate(date(dayOffset: 1))
+        try form.selectTime(start: true, hour: 15, minute: 0)
+        try form.selectRepeat(.weekly)
+        try form.addParticipants([users[2]])
+        try form.openParticipants()
+        if form.selectedMembersButton.identifier == Locators.WireMeetings.MeetingForm.selectedMembersIdentifier(
+            isExpanded: true
+        ) {
+            guard form.selectedMembersButton.waitAndTap() else { throw RuntimeError("Selected members did not close") }
+        }
+        for excluded in [users[2], host] {
+            form.searchMember(excluded.name)
+            XCTAssertTrue(form.noMemberSearchResults.waitForExistence(timeout: 10))
+            XCTAssertFalse(form.member(excluded).exists, "A selected participant or the host was offered for addition")
+            try form.clearMemberSearch()
+        }
+        try form.confirmParticipants()
+
+        // Remove one existing invitee and save all changes.
+        try form.openParticipants()
+        XCTAssertFalse(form.member(host).exists, "The host must not have a removal control")
+        guard form.member(users[1]).waitAndTap() else { throw RuntimeError("The invitee could not be removed") }
+        try form.confirmParticipants()
+        XCTAssertEqual(form.participantsButton.value as? String, "2")
+        form.assertDateTimes(start: date(hour: 15, dayOffset: 1), end: date(hour: 16, dayOffset: 1))
+        try form.assertRepeat(.weekly)
+        _ = try form.save()
+        let saved = try await fixtures.list()
+        XCTAssertEqual(Set(saved.map(\.id)), Set([original.id, earlier.id]))
+        let updated = try XCTUnwrap(saved.first { $0.id == original.id })
+        XCTAssertEqual(updated.conversationID, original.conversationID)
+        XCTAssertEqual(updated.creatorID, original.creatorID)
+        XCTAssertEqual(updated.title, "TC11995 updated")
+        XCTAssertEqual(updated.startTime, date(hour: 15, dayOffset: 1))
+        XCTAssertEqual(updated.endTime, date(hour: 16, dayOffset: 1))
+        XCTAssertEqual(updated.recurrence?.frequency, .weekly)
+        try assertTitle(updated.title, meeting: updated, on: page)
+        try page.scrollToTop(first: earlier)
+        let dayFormatter = DateFormatter()
+        dayFormatter.locale = Locale(identifier: "en_GB")
+        dayFormatter.setLocalizedDateFormatFromTemplate("EEEE MMMM d")
+        XCTAssertEqual(page.dayHeaders.firstMatch.label, "Tomorrow (\(dayFormatter.string(from: updated.startTime)))")
+        XCTAssertLessThan(page.row(earlier).frame.minY, page.row(updated).frame.minY)
+        let after = try await members(fixtures, meeting: updated)
+        XCTAssertEqual(after.selfMember?.qualifiedID?.id, UUID(uuidString: host.id))
+        XCTAssertEqual(after.selfMember?.conversationRole, hostRole)
+        XCTAssertEqual(Set(after.others.compactMap(\.qualifiedID)), Set([ids[0], ids[2]]))
+        XCTAssertEqual(after.others.count, 2)
+        XCTAssertEqual(
+            after.others.first { $0.qualifiedID == ids[0] }?.conversationRole,
+            inviteeRole
+        )
+        XCTAssertEqual(after.others.first { $0.qualifiedID == ids[2] }?.conversationRole, inviteeRole)
+        for (index, user) in users.enumerated() {
+            let participantFixtures = try await MeetingsTestHelper(user: user)
+            let visible = try await participantFixtures.list()
+            XCTAssertEqual(visible.contains { $0.id == original.id }, index != 1)
+            if index == 1 {
+                let access = try await participantFixtures.conversationsAPI
+                    .getConversations(for: [original.conversationID])
+                XCTAssertTrue(
+                    access.found.isEmpty,
+                    "The removed participant still has access to the meeting conversation"
+                )
+            }
+        }
+
+        // Keep the retained invitee on Meetings while a host API edit arrives without refresh.
+        let inviteePage = try launchMeetings(for: users[0], now: date())
+        _ = try inviteePage.showRow(updated)
+        let synchronized = try await fixtures.update(
+            meeting: updated,
+            title: "TC11995 synchronized",
+            start: date(hour: 14, dayOffset: 1)
+        )
+        try assertTitle(synchronized.title, meeting: synchronized, on: inviteePage)
+    }
+
 }
