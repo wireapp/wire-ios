@@ -51,7 +51,7 @@ final class FilesViewTests: XCTestCase {
     private var fetchOfflineAvailableAssetsUseCase: WireDriveFetchOfflineAvailableAssetsUseCase!
     private var fetchNodesUseCase: WireDriveFetchNodesUseCase!
     private var observeAssetUseCase: WireDriveObserveAssetUseCase!
-    private var moveNodeUseCase: WireDriveMoveNodeUseCase!
+    private var moveNodesUseCase: WireDriveMoveNodesUseCase!
     private var networkMonitor: NetworkMonitor!
 
     private let record: Bool? = nil
@@ -122,7 +122,7 @@ final class FilesViewTests: XCTestCase {
         )
 
         observeAssetUseCase = WireDriveObserveAssetUseCase(localAssetRepository: localAssetsRepository)
-        moveNodeUseCase = WireDriveMoveNodeUseCase(
+        moveNodesUseCase = WireDriveMoveNodesUseCase(
             nodesRepository: nodesRepository,
             localAssetRepository: localAssetsRepository
         )
@@ -153,7 +153,7 @@ final class FilesViewTests: XCTestCase {
         updatePublicLinkPassword = nil
         driveConversationsUseCase = nil
         observeAssetUseCase = nil
-        moveNodeUseCase = nil
+        moveNodesUseCase = nil
         networkMonitor = nil
         WRDateFormatter.resetOverrides()
     }
@@ -502,7 +502,7 @@ final class FilesViewTests: XCTestCase {
             removeAssetAvailableOffline: removeAssetAvailableOfflineUseCase,
             getOfflineAvailableAssets: fetchOfflineAvailableAssetsUseCase,
             observeAsset: observeAssetUseCase,
-            moveNode: moveNodeUseCase,
+            moveNodes: moveNodesUseCase,
             enqueueUploads: MockWireDriveEnqueueDirectUploadsUseCaseProtocol()
         )
 

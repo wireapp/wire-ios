@@ -130,12 +130,18 @@ private extension FilesView {
 
         if !viewModel.isRecycleBin, !viewModel.isOffline {
             ToolbarItem(placement: .navigationBarTrailing) {
-                moreActionsButton
+                if viewModel.multipleSelection == .active {
+                    doneActionButton
+                } else {
+                    moreActionsButton
+                }
             }
         }
 
-        ToolbarItem(placement: .navigationBarTrailing) {
-            closeButton
+        if viewModel.multipleSelection != .active {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                closeButton
+            }
         }
     }
 
@@ -160,6 +166,15 @@ private extension FilesView {
         .accessibilityLabel(Accessibility.Files.close)
         .accessibilityIdentifier(Locators.WireDrive.FilesPage.close.rawValue)
         .tint(ColorTheme.Base.primary(accentColor).color)
+    }
+
+    var doneActionButton: some View {
+        Button {
+            viewModel.enableMultipleSelection(false)
+        } label: {
+            Text(L10n.Localizable.General.done)
+        }
+        .accessibilityIdentifier(Locators.WireDrive.FilesPage.done)
     }
 
     var moreActionsButton: some View {
@@ -193,6 +208,20 @@ private extension FilesView {
 
     private var editorActions: some View {
         Group {
+            if viewModel.isBulkActionsEnabled {
+                Button {
+                    viewModel.enableMultipleSelection(true)
+                } label: {
+                    Label {
+                        Text(Strings.Files.List.selectItems)
+                    } icon: {
+                        Image(systemName: "checkmark.circle")
+                            .tint(ColorTheme.Backgrounds.onBackground.color)
+                    }
+                }
+                .accessibilityIdentifier(Locators.WireDrive.FilesPage.selectItems.rawValue)
+            }
+
             Button {
                 viewModel.onCreate(target: .folder)
             } label: {
@@ -274,8 +303,8 @@ private extension FilesView {
             FileRenameView(viewModel: viewModel.fileRenameViewModel(item: item))
         case let .versionHistory(item):
             FileVersioningView(viewModel: viewModel.fileVersioningViewModel(item: item))
-        case let .moveToFolder(item):
-            MoveToFolderView(viewModel: viewModel.moveToFolderViewModel(item: item))
+        case let .moveToFolder(items):
+            MoveToFolderView(viewModel: viewModel.moveToFolderViewModel(items: items))
         }
     }
 }

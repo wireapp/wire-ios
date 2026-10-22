@@ -18,6 +18,7 @@
 
 import SwiftUI
 import Testing
+import UIKit
 import WireCallingDomain
 import WireCallingDomainSupport
 import WireFoundation
@@ -320,6 +321,8 @@ struct MeetingFormViewModelTests {
         dateProviderMock.now = try makeDate(year: 2026, month: 7, day: 7, hour: hour, minute: minute)
             .addingTimeInterval(TimeInterval(second))
         viewModel.meetingTitle = "Team Standup"
+        #expect(!viewModel.canSetPassword)
+        viewModel.password = "ignored"
         viewModel.invitedEmails = ["ignored@example.com"]
         viewModel.selectedMembers = [member]
         createMeetingUseCaseMock
@@ -341,6 +344,7 @@ struct MeetingFormViewModelTests {
         #expect(!viewModel.makeMemberSelectionViewModel().allowsEmailInvitations)
         #expect(arguments?.type == .immediate)
         #expect(arguments?.password == nil)
+        #expect(viewModel.password.isEmpty)
         #expect(arguments?.title == "Team Standup")
         #expect(arguments?.startTime == dateProviderMock.now)
         #expect(arguments?.endTime == dateProviderMock.now.addingTimeInterval(TimeInterval.oneHour))
@@ -367,6 +371,8 @@ struct MeetingFormViewModelTests {
         var receivedMeeting: Meeting?
         let viewModel = makeViewModel(mode: .scheduled, supportsMeetingLinks: true) { receivedMeeting = $0 }
         viewModel.meetingTitle = "Planning"
+        viewModel.password = " exact Password1! "
+        viewModel.confirmPassword = viewModel.password
         viewModel.invitedEmails = ["guest@example.com"]
         viewModel.repeatOption = repeatOption
         viewModel.selectedMembers = [member]
@@ -390,7 +396,9 @@ struct MeetingFormViewModelTests {
             .invokeTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceTypeMeetingTypePasswordStringParticipantsMeetingMemberInvitedEmailsStringMeetingCreationResultReceivedArguments
         #expect(arguments?.invitedEmails == ["guest@example.com"])
         #expect(arguments?.type == .scheduled)
-        #expect(arguments?.password == nil)
+        #expect(arguments?.password == " exact Password1! ")
+        #expect(viewModel.password.isEmpty)
+        #expect(viewModel.confirmPassword.isEmpty)
         #expect(arguments?.title == "Planning")
         #expect(arguments?.startTime == viewModel.startDate)
         #expect(arguments?.endTime == viewModel.endDate)
@@ -406,6 +414,8 @@ struct MeetingFormViewModelTests {
     func submit_ParticipantsNotAdded_ContinuesWithCreatedMeeting(mode: MeetingFormViewModel.Mode) async {
         var completedMeetings: [Meeting] = []
         let viewModel = makeViewModel(mode: mode, supportsMeetingLinks: true) { completedMeetings.append($0) }
+        viewModel.password = "Abcdef1!"
+        viewModel.confirmPassword = viewModel.password
         createMeetingUseCaseMock
             .invokeTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceTypeMeetingTypePasswordStringParticipantsMeetingMemberInvitedEmailsStringMeetingCreationResultThrowableError =
             CreateMeetingUseCaseError.participantsNotAdded(
@@ -417,6 +427,8 @@ struct MeetingFormViewModelTests {
 
         #expect(viewModel.hasParticipantsNotAddedAlert)
         #expect(viewModel.participantsNotAdded == [member])
+        #expect(viewModel.password.isEmpty)
+        #expect(viewModel.confirmPassword.isEmpty)
         #expect(viewModel.participantsNotAddedMessage.contains(L10n.Localizable.Meetings.Error.missingLink))
         #expect(!viewModel.hasError)
         #expect(!viewModel.isLoading)
@@ -453,17 +465,91 @@ struct MeetingFormViewModelTests {
         #expect(onSuccessCalled == false)
     }
 
+    @Test("scheduled passwords require 8–1024 Unicode scalars and all four character classes")
+    func passwordValidation() async {
+        let viewModel = makeViewModel(mode: .scheduled, supportsMeetingLinks: true)
+        viewModel.meetingTitle = "Meeting"
+        for unavailableModel in [
+            makeViewModel(mode: .instant, supportsMeetingLinks: true),
+            makeViewModel(mode: .edit(makeEditableMeeting()), supportsMeetingLinks: true),
+            makeViewModel(mode: .scheduled)
+        ] {
+            unavailableModel.password = "ignored"
+            #expect(!unavailableModel.canSetPassword)
+            #expect(unavailableModel.isPasswordValid)
+            #expect(unavailableModel.passwordsMatch)
+        }
+        #expect(viewModel.canSetPassword)
+        for (password, expected) in [
+            ("", true), ("Abcde1!", false), ("Abcdef1!", true),
+            ("ABCDEF1!", false), ("abcdef1!", false), ("Abcdefg!", false), ("Abcdef12", false),
+            ("Abcdef١!", true), ("Äbcdef1!", true), ("äBCDEF1!", true), ("Abcdef1é", false),
+            ("Abcdef1e\u{301}", false),
+            ("Abcde1😀", false), ("Abcdef1\n", true), ("Abcd1!e\u{301}", true),
+            ("Aa1!" + String(repeating: "e\u{301}", count: 510), true),
+            ("Aa1!" + String(repeating: "e\u{301}", count: 510) + "a", false)
+        ] {
+            viewModel.password = password
+            viewModel.confirmPassword = password
+            #expect(viewModel.isNextButtonEnabled == expected)
+            if !expected { await viewModel.submit() }
+        }
+        viewModel.password = "Abcdef1!"
+        for confirmation in ["", "Abcdef2!"] {
+            viewModel.confirmPassword = confirmation
+            #expect(!viewModel.isNextButtonEnabled)
+            await viewModel.submit()
+        }
+        viewModel.confirmPassword = viewModel.password
+        #expect(viewModel.isNextButtonEnabled)
+        viewModel.password = "Abcd1!e\u{301}"
+        viewModel.confirmPassword = "Abcd1!é"
+        #expect(!viewModel.passwordsMatch)
+        #expect(!viewModel.isNextButtonEnabled)
+        await viewModel.submit()
+        #expect(createMeetingUseCaseMock
+            .invokeTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceTypeMeetingTypePasswordStringParticipantsMeetingMemberInvitedEmailsStringMeetingCreationResultCallsCount ==
+            0)
+    }
+
+    @Test("generate produces valid eight-character passwords and copy uses the current value")
+    func generateAndCopyPassword() {
+        let viewModel = makeViewModel(mode: .scheduled, supportsMeetingLinks: true)
+        let pasteboard = UIPasteboard.withUniqueName()
+        defer { UIPasteboard.remove(withName: pasteboard.name) }
+        for _ in 0 ..< 64 {
+            viewModel.generatePassword()
+            #expect(viewModel.password.count == 8)
+            #expect(viewModel.isPasswordValid)
+            #expect(viewModel.confirmPassword == viewModel.password)
+        }
+        viewModel.copyPassword(to: pasteboard)
+        #expect(pasteboard.string == viewModel.password)
+        viewModel.password = "Manual2!"
+        #expect(!viewModel.passwordsMatch)
+        viewModel.copyPassword(to: pasteboard)
+        #expect(pasteboard.string == "Manual2!")
+        viewModel.password = ""
+        viewModel.copyPassword(to: pasteboard)
+        #expect(pasteboard.string?.count == 8)
+    }
+
     @Test("missing-link warnings complete the saved meeting once")
     func submit_MissingLink() async {
         var completedMeetings: [Meeting] = []
         let viewModel = makeViewModel(mode: .instant, supportsMeetingLinks: true) { completedMeetings.append($0) }
         viewModel.meetingTitle = "Meeting"
+        viewModel.password = "password"
         createMeetingUseCaseMock
             .invokeTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceTypeMeetingTypePasswordStringParticipantsMeetingMemberInvitedEmailsStringMeetingCreationResultReturnValue =
             MeetingCreationResult(meeting: meeting, link: nil)
 
         await viewModel.submit()
         #expect(completedMeetings.isEmpty)
+        #expect(viewModel.password.isEmpty)
+        #expect(createMeetingUseCaseMock
+            .invokeTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceTypeMeetingTypePasswordStringParticipantsMeetingMemberInvitedEmailsStringMeetingCreationResultReceivedArguments?
+            .password == nil)
         #expect(viewModel.hasError)
         #expect(viewModel.errorMessage.contains(L10n.Localizable.Meetings.Error.missingLink))
 

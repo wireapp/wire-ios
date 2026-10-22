@@ -162,8 +162,13 @@ struct MeetingsView: View {
                 formatTime: viewModel.formatTime(for:),
                 isAttending: viewModel.isAttending(_:),
                 isHappeningNow: viewModel.isHappeningNow(_:),
+                hasEnded: viewModel.hasEnded(_:),
                 isOrganizer: viewModel.isOrganizer(_:),
-                onEdit: { onEditMeeting($0) },
+                onEdit: {
+                    viewModel.refreshCurrentDate()
+                    guard !viewModel.hasEnded($0) else { return }
+                    onEditMeeting($0.meeting)
+                },
                 onDelete: { viewModel.meetingToDelete = $0 },
                 onJoin: { onJoinMeeting($0) },
                 onMeetingLink: onMeetingLink
@@ -220,8 +225,9 @@ private struct GroupedSections: View {
     let formatTime: (MeetingOccurrence) -> String
     let isAttending: (MeetingOccurrence) -> Bool
     let isHappeningNow: (MeetingOccurrence) -> Bool
+    let hasEnded: (MeetingOccurrence) -> Bool
     let isOrganizer: (Meeting) -> Bool
-    let onEdit: (Meeting) -> Void
+    let onEdit: (MeetingOccurrence) -> Void
     let onDelete: (Meeting) -> Void
     let onJoin: (MeetingOccurrence) -> Void
     let onMeetingLink: ((Meeting) -> Void)?
@@ -240,7 +246,8 @@ private struct GroupedSections: View {
                         isOrganizer: isOrganizer(occurrence.meeting),
                         isAttending: isAttending(occurrence),
                         isLive: isLive,
-                        onEdit: { onEdit(occurrence.meeting) },
+                        hasEnded: hasEnded(occurrence),
+                        onEdit: { onEdit(occurrence) },
                         onDelete: { onDelete(occurrence.meeting) },
                         onJoin: { onJoin(occurrence) },
                         onMeetingLink: onMeetingLink.map { action in { action(occurrence.meeting) } }
