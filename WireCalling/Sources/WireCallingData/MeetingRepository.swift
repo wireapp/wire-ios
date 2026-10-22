@@ -131,7 +131,7 @@ public final class MeetingRepository: MeetingRepositoryProtocol {
                 title: title,
                 startTime: startTime,
                 endTime: endTime,
-                recurrence: recurrence?.toNetworkRecurrence(),
+                recurrence: .some(recurrence?.toNetworkRecurrence()),
                 timeZoneIdentifier: TimeZone.current.identifier
             )
         )

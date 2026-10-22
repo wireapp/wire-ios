@@ -81,7 +81,7 @@ final class MeetingsTestHelper {
                 title: title,
                 startTime: start,
                 endTime: start?.addingTimeInterval(duration),
-                recurrence: meeting.recurrence,
+                recurrence: meeting.recurrence.map { .some($0) },
                 timeZoneIdentifier: meeting.timeZoneIdentifier
             )
         )
