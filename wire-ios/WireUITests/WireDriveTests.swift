@@ -26,7 +26,8 @@ final class WireDriveTests: WireUITestCase {
     override func additionalDeveloperFlags() -> [DeveloperFlag: Bool] {
         [
             .simulateDriveOffline: false,
-            .enableDriveDirectUploads: true
+            .enableDriveDirectUploads: true,
+            .enableDriveBulkActions: true
         ]
     }
 
@@ -320,6 +321,57 @@ final class WireDriveTests: WireUITestCase {
             XCTAssertTrue(
                 sharedDrivePage.verifyFileIsCreated(fileName: fileName, fileExtension: template.fileExtension),
                 "\(template) should be created"
+            )
+        }
+    }
+
+    @MainActor
+    func testMoveMultipleItemsToFolder_TC_12305() async throws {
+
+        // GIVEN
+        let folderName = "Destination"
+        let teamOwner = try await createDriveEnabledConversation(
+            .group(UserGenerator.generateRandomConversationName())
+        )
+
+        var sharedDrivePage = try loginAndOpenConversation(for: teamOwner)
+            .openSharedDrive()
+            .createFolder()
+            .enterFolderNameAndValidate(name: folderName)
+        XCTAssertTrue(sharedDrivePage.verifyFolderIsCreated(folderName: folderName))
+
+        let files: [(name: String, template: CreateFilePage.Template)] = [
+            ("First", .document),
+            ("Second", .spreadsheet)
+        ]
+        for file in files {
+            sharedDrivePage = try sharedDrivePage
+                .createFile(template: file.template)
+                .enterFileNameAndCreate(name: file.name)
+            XCTAssertTrue(sharedDrivePage.verifyFileIsCreated(
+                fileName: file.name,
+                fileExtension: file.template.fileExtension
+            ))
+        }
+        let fileNames = files.map { "\($0.name).\($0.template.fileExtension)" }
+
+        // WHEN
+        sharedDrivePage.selectItems(named: fileNames)
+        sharedDrivePage.moveSelectedItems(toFolder: folderName)
+
+        // THEN
+        for fileName in fileNames {
+            XCTAssertTrue(
+                sharedDrivePage.fileRow(named: fileName).waitForNonExistence(timeout: 10),
+                "Moved file '\(fileName)' should leave the source folder"
+            )
+        }
+
+        let destinationPage = try sharedDrivePage.openFolder(named: folderName)
+        for fileName in fileNames {
+            XCTAssertTrue(
+                destinationPage.fileRow(named: fileName).waitForExistence(timeout: 10),
+                "Moved file '\(fileName)' should appear in the destination folder"
             )
         }
     }

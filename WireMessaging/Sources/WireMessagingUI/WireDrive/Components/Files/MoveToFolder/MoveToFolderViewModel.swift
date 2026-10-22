@@ -76,30 +76,27 @@ final class MoveToFolderViewModel: MoveToFolderViewModelProtocol {
     let rootPath: String
 
     private let originalContainerPath: String
-    private let nodeID: UUID
-    private let nodeName: String
+    private let nodeIDs: [UUID]
     private let onFinish: () -> Void
-    private let moveNodeUseCase: WireDriveMoveNodeUseCase
+    private let moveNodesUseCase: WireDriveMoveNodesUseCase
     private let createFileUseCase: any WireDriveCreateFileUseCaseProtocol
     private let fetchNodesUseCase: WireDriveFetchNodesUseCase
     @Published var navigationPath: [FilesNavigationItem]
 
     init(
         containerPath: String,
-        nodeID: UUID,
-        nodeName: String,
+        nodeIDs: [UUID],
         onFinish: @escaping () -> Void,
-        moveNodeUseCase: WireDriveMoveNodeUseCase,
+        moveNodesUseCase: WireDriveMoveNodesUseCase,
         createFileUseCase: any WireDriveCreateFileUseCaseProtocol,
         fetchNodesUseCase: WireDriveFetchNodesUseCase
     ) {
         self.navigationPath = FilesNavigationItem.items(for: containerPath)
         self.rootPath = containerPath.components(separatedBy: "/").first ?? ""
         self.originalContainerPath = containerPath
-        self.nodeID = nodeID
-        self.nodeName = nodeName
+        self.nodeIDs = nodeIDs
         self.onFinish = onFinish
-        self.moveNodeUseCase = moveNodeUseCase
+        self.moveNodesUseCase = moveNodesUseCase
         self.createFileUseCase = createFileUseCase
         self.fetchNodesUseCase = fetchNodesUseCase
     }
@@ -113,8 +110,7 @@ final class MoveToFolderViewModel: MoveToFolderViewModelProtocol {
         MoveToFolderPageViewModel(
             containerPath: path,
             originalContainerPath: originalContainerPath,
-            nodeID: nodeID,
-            nodeName: nodeName,
+            nodeIDs: nodeIDs,
             onNavigate: { [weak self] path in
                 self?.navigationPath = MoveToFolderViewModel.FilesNavigationItem.items(for: path)
             },
@@ -122,7 +118,7 @@ final class MoveToFolderViewModel: MoveToFolderViewModelProtocol {
                 self?.onFinish()
             },
             fetchNodesUseCase: fetchNodesUseCase,
-            moveNodeUseCase: moveNodeUseCase,
+            moveNodesUseCase: moveNodesUseCase,
             createFileUseCase: createFileUseCase
         )
     }

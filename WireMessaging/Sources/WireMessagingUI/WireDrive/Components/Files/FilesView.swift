@@ -303,8 +303,8 @@ private extension FilesView {
             FileRenameView(viewModel: viewModel.fileRenameViewModel(item: item))
         case let .versionHistory(item):
             FileVersioningView(viewModel: viewModel.fileVersioningViewModel(item: item))
-        case let .moveToFolder(item):
-            MoveToFolderView(viewModel: viewModel.moveToFolderViewModel(item: item))
+        case let .moveToFolder(items):
+            MoveToFolderView(viewModel: viewModel.moveToFolderViewModel(items: items))
         }
     }
 }

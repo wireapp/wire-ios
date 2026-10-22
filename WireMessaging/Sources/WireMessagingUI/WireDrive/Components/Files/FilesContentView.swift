@@ -176,14 +176,14 @@ private extension FilesContentView {
             if viewModel.multipleSelection == .active {
                 FilesFloatingActionBar {
                     Button {
-                        // TODO: [WPB-29414] Present moveToFolder sheet with selected items (`sheetNavigation = .moveToFolder(selectedItems)`)
+                        viewModel.moveToFolder()
                     } label: {
                         Image(systemName: "folder")
                             .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
                             .opacity(viewModel.selectedItems.isEmpty ? 0.3 : 1)
                     }
                     .accessibilityLabel(Strings.Files.Item.Menu.moveToFolder)
-                    .accessibilityIdentifier(Locators.WireDrive.FilesPage.moveToFolder)
+                    .accessibilityIdentifier(Locators.WireDrive.FilesPage.moveToFolderFloatingButton)
                     .disabled(viewModel.selectedItems.isEmpty)
                 }
                 .padding(.horizontal, 16)
@@ -324,7 +324,6 @@ private extension FilesContentView {
             placement: .navigationBarDrawer(displayMode: .always),
             prompt: Strings.Files.Search.title
         )
-        .accessibilityIdentifier(Locators.WireDrive.FilesContentPage.search)
     }
 }
 
