@@ -32,6 +32,7 @@ public actor WorkAgent {
     /// Whether dequeuing should begin after ticket submission.
 
     private var shouldAutoStart = false
+    private var isShutDown = false
     public func setAutoStartEnabled(_ enabled: Bool) async {
         shouldAutoStart = enabled
     }
@@ -49,12 +50,14 @@ public actor WorkAgent {
     // MARK: - Operation
 
     func submitItem(_ item: any WorkItem) {
+        guard !isShutDown else { return }
         WireLogger.workAgent.debug(
             "item submitted: \(item)",
             attributes: .init(item)
         )
 
         Task {
+            guard !isShutDown else { return }
             await scheduler.enqueueItem(item)
 
             if shouldAutoStart, !isRunning {
@@ -64,13 +67,14 @@ public actor WorkAgent {
     }
 
     public func start() async {
+        guard !isShutDown else { return }
         try? await nonReentrantTaskManager.performIfNeeded { [weak self] in
             await self?.internalStart()
         }
     }
 
     private func internalStart() async {
-        guard task == nil else {
+        guard !isShutDown, task == nil else {
             return
         }
 
@@ -133,6 +137,17 @@ public actor WorkAgent {
             attributes: .safePublic
         )
         task?.cancel()
+        task = nil
+    }
+
+    /// Permanently stops accepting work, cancels the active item, and waits until it releases its resources.
+    public func stopAndWait() async {
+        WireLogger.workAgent.info("stopping and waiting", attributes: .safePublic)
+        isShutDown = true
+        shouldAutoStart = false
+        let runningTask = task
+        runningTask?.cancel()
+        await runningTask?.value
         task = nil
     }
 
