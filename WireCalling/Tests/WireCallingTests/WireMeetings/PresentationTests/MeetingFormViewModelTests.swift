@@ -968,30 +968,45 @@ struct MeetingFormViewModelTests {
         #expect(viewModel.startDateRange.lowerBound == dateProviderMock.now.addingTimeInterval(-86_400))
     }
 
-    @Test("submit in edit mode sends the next occurrence time for a recurring meeting that started in the past")
-    func submit_EditModePastRecurringMeeting_UsesNextOccurrenceTime() async throws {
-        // Given
-        let originalStart = try makeDate(year: 2026, month: 7, day: 5, hour: 9, minute: 0)
+    @Test("editing either occurrence keeps today's ongoing occurrence as the series start", arguments: [0, 1])
+    func submit_EditModePastRecurringMeeting_UsesCurrentOccurrenceTime_TC_11999(occurrenceOffset: Int) async throws {
+        // Create an old daily series with an ongoing occurrence today and a future occurrence tomorrow.
+        dateProviderMock.now = try makeDate(year: 2026, month: 7, day: 6, hour: 9, minute: 30)
+        let originalStart = try makeDate(year: 2026, month: 7, day: 1, hour: 9, minute: 0)
         let original = makeEditableMeeting(
             start: originalStart,
             recurrence: MeetingRecurrence(frequency: .daily, interval: 1)
         )
-        let viewModel = makeViewModel(mode: .edit(original))
+        let expectedStart = try makeDate(year: 2026, month: 7, day: 6, hour: 9, minute: 0)
+        let expectedEnd = expectedStart.addingTimeInterval(TimeInterval.oneHour)
+        let occurrences = MeetingOccurrencePaginator().occurrences(
+            for: [original],
+            startingAt: expectedStart,
+            offset: 0,
+            limit: 2
+        )
+        #expect(occurrences.count == 2)
+        let selectedOccurrence = try #require(occurrences.dropFirst(occurrenceOffset).first)
+        #expect(selectedOccurrence.start == expectedStart.addingTimeInterval(Double(occurrenceOffset) * 86_400))
+
+        // Open the form from either occurrence, which has the same underlying meeting.
+        let viewModel = makeViewModel(mode: .edit(selectedOccurrence.meeting))
+        #expect(viewModel.startDate == expectedStart)
+        #expect(viewModel.endDate == expectedEnd)
+        #expect(viewModel.repeatOption == .daily)
         updateMeetingUseCaseMock
             .invokeMeetingMeetingTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceParticipantsMeetingMemberEmailsToAddStringEmailsToRemoveStringMeetingReturnValue =
-            meeting
-        let expectedStart = try makeDate(year: 2026, month: 7, day: 6, hour: 9, minute: 0)
-        let expectedEnd = try makeDate(year: 2026, month: 7, day: 6, hour: 10, minute: 0)
+            original
 
-        // When
+        // Save the series with today's dates, not tomorrow's dates or the original generator date.
         await viewModel.submit()
 
-        // Then
         let arguments = updateMeetingUseCaseMock
             .invokeMeetingMeetingTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceParticipantsMeetingMemberEmailsToAddStringEmailsToRemoveStringMeetingReceivedArguments
         #expect(arguments?.meeting == original)
         #expect(arguments?.startTime == expectedStart)
         #expect(arguments?.endTime == expectedEnd)
+        #expect(arguments?.recurrence == original.recurrence)
     }
 
     @Test("submit in edit mode updates the meeting with the form values and calls onSuccess")

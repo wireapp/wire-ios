@@ -396,6 +396,35 @@ final class EditMeetingTests: WireUITestCase {
     }
 
     @MainActor
+    func testEditOngoingRecurringMeetingAnchor_TC_11999() async throws {
+        let (host, _, _, _) = try await UserHelper.default.registerMeetingsTeam()
+        let fixtures = try await MeetingsTestHelper(user: host)
+        let original = try await fixtures.create(
+            title: "TC11999 daily", start: date(), duration: 3600,
+            recurrence: MeetingRecurrence(frequency: .daily, interval: 1, until: nil)
+        )
+        let now = date(minute: 30, dayOffset: 2)
+        let today = date(dayOffset: 2)
+        let page = try launchMeetings(for: host, now: now)
+
+        // Open today's ongoing occurrence, then a future occurrence of the same series.
+        let current = try page.edit(original, start: today)
+        current.assertDateTimes(start: today, end: date(hour: 11, dayOffset: 2))
+        _ = try current.cancel()
+        let future = try page.edit(original, start: date(dayOffset: 3))
+        future.assertDateTimes(start: today, end: date(hour: 11, dayOffset: 2))
+
+        // Save from the future row and check that today's occurrence remains.
+        _ = try future.save()
+        let updated = try await onlyMeeting(fixtures, original: original)
+        XCTAssertEqual(updated.startTime, today)
+        XCTAssertEqual(updated.endTime, date(hour: 11, dayOffset: 2))
+        XCTAssertEqual(updated.recurrence?.frequency, .daily)
+        _ = try page.showRow(updated, start: today)
+        _ = try page.showRow(updated, start: date(dayOffset: 3))
+    }
+
+    @MainActor
     private func minimizeMeetingCall(_ call: OngoingCallPage) throws {
         // The group-call helper returns ActiveConversationPage; Meetings has a different return page.
         guard call.minimizeCallButton.waitAndTap() else { throw RuntimeError("The meeting call did not minimize") }
