@@ -643,7 +643,10 @@ public enum Locators {
             case recycleBinPageheader = "Recycle Bin"
             case moveToFolder
             case moveToFolderFloatingButton
+            case deleteFloatingButton
+            case restoreFloatingButton
             case done
+            case deleteAll
 
             public static func createFileTemplate(_ kind: String) -> String {
                 "createFileTemplate.\(kind)"
