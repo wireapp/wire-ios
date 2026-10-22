@@ -174,20 +174,10 @@ private extension FilesContentView {
         .overlay(listBackgroundView)
         .safeAreaInset(edge: .bottom, alignment: .leading, spacing: 0) {
             if viewModel.multipleSelection == .active {
-                FilesFloatingActionBar {
-                    Button {
-                        viewModel.moveToFolder()
-                    } label: {
-                        Image(systemName: "folder")
-                            .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
-                            .opacity(viewModel.selectedItems.isEmpty ? 0.3 : 1)
-                    }
-                    .accessibilityLabel(Strings.Files.Item.Menu.moveToFolder)
-                    .accessibilityIdentifier(Locators.WireDrive.FilesPage.moveToFolderFloatingButton)
+                FilesFloatingActionBar(actions: floatingBarActions)
                     .disabled(viewModel.selectedItems.isEmpty)
-                }
-                .padding(.horizontal, 16)
-                .padding(.bottom, 12)
+                    .padding(.horizontal, 16)
+                    .padding(.bottom, 12)
             }
         }
         .animation(.default, value: viewModel.state)
@@ -196,6 +186,46 @@ private extension FilesContentView {
                 .frame(height: trackerHeight)
         }
 
+    }
+
+    var floatingBarActions: [FilesFloatingActionBar.Action] {
+        var actions: [FilesFloatingActionBar.Action] = []
+
+        if viewModel.isRecycleBin {
+            // restore
+            actions.append(
+                .init(
+                    id: Locators.WireDrive.FilesPage.restoreFloatingButton.rawValue,
+                    title: Strings.RecycleBin.Item.Menu.restore,
+                    systemImage: "arrow.uturn.backward",
+                    isEnabled: !viewModel.selectedItems.isEmpty,
+                    perform: { viewModel.isPresentingRestoreConfirmation = true }
+                )
+            )
+        } else {
+            // move to folder
+            actions.append(
+                .init(
+                    id: Locators.WireDrive.FilesPage.moveToFolderFloatingButton.rawValue,
+                    title: Strings.Files.Item.Menu.moveToFolder,
+                    systemImage: "folder",
+                    isEnabled: !viewModel.selectedItems.isEmpty,
+                    perform: viewModel.moveSelectedItemsToFolder
+                )
+            )
+        }
+        // delete
+        actions.append(
+            .init(
+                id: Locators.WireDrive.FilesPage.deleteFloatingButton.rawValue,
+                title: Strings.Files.Item.Menu.delete,
+                systemImage: "trash",
+                isEnabled: !viewModel.selectedItems.isEmpty,
+                perform: { viewModel.isPresentingDeleteConfirmation = true }
+            )
+        )
+
+        return actions
     }
 
     @ViewBuilder var itemsSection: some View {

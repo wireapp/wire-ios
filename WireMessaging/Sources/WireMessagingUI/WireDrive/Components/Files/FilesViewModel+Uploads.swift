@@ -33,15 +33,11 @@ package extension FilesViewModel {
         return navigationPath.last?.filePath ?? cellName
     }
 
-    private var isDriveDirectUploadsEnabled: Bool {
+    var isDriveDirectUploadsEnabled: Bool {
         UserDefaults.standard.bool(forKey: "enableDriveDirectUploads")
     }
 
     private static var pickedMediaDirectoryName: String { "drive-upload-picked" }
-
-    var canUpload: Bool {
-        uploadDestinationPath != nil && selfUserRole == .editor && isDriveDirectUploadsEnabled
-    }
 
     func requestPhotosPermissions() async -> Bool {
         let result = await PHPhotoLibrary.requestAuthorization(for: .readWrite)
