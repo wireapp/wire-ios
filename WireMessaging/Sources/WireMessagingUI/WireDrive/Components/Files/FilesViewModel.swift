@@ -19,6 +19,7 @@
 package import Combine
 import Foundation
 import WireLogging
+package import SwiftUI
 package import WireMessagingDomain
 
 private typealias Strings = L10n.Localizable.Conversation.WireCells
@@ -79,6 +80,10 @@ package final class FilesViewModel: ObservableObject {
         selfUser?.role ?? .viewer
     }
 
+    var isBulkActionsEnabled: Bool {
+        UserDefaults.standard.bool(forKey: "enableDriveBulkActions")
+    }
+
     var navigationTitle: String {
         if let title {
             title
@@ -114,6 +119,8 @@ package final class FilesViewModel: ObservableObject {
     @Published var networkMonitor: NetworkMonitor
     @Published var filesController: FilesListStateController
     @Published var showReadOnlyBanner: Bool = false
+    @Published var selectedItems: Set<FilesViewItem> = []
+    @Published var multipleSelection: EditMode = .inactive
 
     // MARK: init
 
@@ -332,6 +339,8 @@ package final class FilesViewModel: ObservableObject {
     /// If item is a folder, navigates into it. If it's a file, downloads the related asset if necessary or views it or
     /// cancels the download.
     func performPrimaryAction(item: FilesViewItem) async {
+        guard multipleSelection != .active else { return }
+
         switch item.kind {
         case .file:
             if failedItemActions[item.id] == .makeAvailableOffline {
@@ -504,6 +513,12 @@ package final class FilesViewModel: ObservableObject {
                     .error("Failed to remove asset from available offline: \(String(describing: error))")
             }
         }
+    }
+
+    // MARK: Bulk actions
+
+    func enableMultipleSelection(_ enabled: Bool) {
+        multipleSelection = enabled ? .active : .inactive
     }
 }
 
