@@ -1,0 +1,136 @@
+//
+// Wire
+// Copyright (C) 2026 Wire Swiss GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+//
+
+import Foundation
+import notify
+import WireFoundation
+import WireLocators
+import WireNetwork
+import XCTest
+
+/// [collaboration]
+final class EditMeetingTests: WireUITestCase {
+
+    private let fixtureDate = Date()
+
+    private func date(hour: Int = 10, minute: Int = 0, dayOffset: Int = 0) -> Date {
+        let calendar = Calendar.current
+        let day = calendar.date(byAdding: .day, value: 2 + dayOffset, to: calendar.startOfDay(for: fixtureDate))!
+        return calendar.date(bySettingHour: hour, minute: minute, second: 0, of: day)!
+    }
+
+    @MainActor
+    private func launchMeetings(for user: UserInfo, now: Date, locale: String = "en_GB") throws -> MeetingsPage {
+        app.terminate()
+        uiTestConfig.meetingsDate = now
+        app.launchEnvironment[UITestConfig.environmentKey] = uiTestConfig.encode()
+        app.launchArguments = ["-resetData", "--useEnvStaging", "-AppleLanguages", "(en)", "-AppleLocale", locale]
+        app.setDeveloperFlags([.useWireAuthentication: true])
+        app.launch()
+        return try app.loginUser(email: user.email, password: user.password).acceptPopup().openMeetings()
+    }
+
+    private func registerClients(for users: [UserInfo]) async throws {
+        for user in users {
+            _ = try await testServicesClient.getInstanceId(
+                email: user.email, password: user.password, name: user.name, verificationCode: nil
+            )
+        }
+    }
+
+    private func onlyMeeting(
+        _ fixtures: MeetingsTestHelper,
+        original: MeetingResponse
+    ) async throws -> MeetingResponse {
+        let meetings = try await fixtures.list()
+        XCTAssertEqual(meetings.map(\.id), [original.id], "Editing must retain one meeting with the same ID")
+        let meeting = try XCTUnwrap(meetings.first)
+        XCTAssertEqual(meeting.conversationID, original.conversationID)
+        XCTAssertEqual(meeting.creatorID, original.creatorID)
+        return meeting
+    }
+
+    private func assertUnchanged(_ meeting: MeetingResponse, original: MeetingResponse) {
+        XCTAssertEqual(meeting.title, original.title)
+        XCTAssertEqual(meeting.startTime, original.startTime)
+        XCTAssertEqual(meeting.endTime, original.endTime)
+        XCTAssertEqual(meeting.recurrence?.frequency, original.recurrence?.frequency)
+        XCTAssertEqual(meeting.recurrence?.interval, original.recurrence?.interval)
+        XCTAssertEqual(meeting.recurrence?.until, original.recurrence?.until)
+        XCTAssertEqual(meeting.timeZoneIdentifier, original.timeZoneIdentifier)
+    }
+
+    private func members(_ fixtures: MeetingsTestHelper, meeting: MeetingResponse) async throws -> Conversation
+        .Members {
+        let response = try await fixtures.conversationsAPI.getConversations(for: [meeting.conversationID])
+        XCTAssertTrue(response.notFound.isEmpty)
+        XCTAssertTrue(response.failed.isEmpty)
+        return try XCTUnwrap(response.found.first?.members)
+    }
+
+    @MainActor
+    private func assertTitle(_ title: String, meeting: MeetingResponse, on page: MeetingsPage) throws {
+        let row = try page.showRow(meeting)
+        let text = row.staticTexts[Locators.WireMeetings.MeetingRow.title.rawValue]
+        let updated = XCTNSPredicateExpectation(predicate: NSPredicate(format: "label == %@", title), object: text)
+        guard XCTWaiter().wait(for: [updated], timeout: 15) == .completed else {
+            throw RuntimeError("The meeting row did not show '\(title)'")
+        }
+    }
+
+    @MainActor
+    func testCancelEditRetainsExistingValues_TC_11987() async throws {
+        let (host, users, _, _) = try await UserHelper.default.registerMeetingsTeam(withMemberCount: 1)
+        try await registerClients(for: users)
+        let fixtures = try await MeetingsTestHelper(user: host)
+        let page = try launchMeetings(for: host, now: date())
+        let creation = try page.schedule()
+        creation.replaceTitle(with: "TC11987 original")
+        try creation.addParticipants(users)
+        try creation.selectRepeat(.weekly)
+        _ = try creation.save()
+        let initial = try await fixtures.list()
+        let original = try XCTUnwrap(initial.first)
+        let originalMembers = try await members(fixtures, meeting: original)
+
+        // Open Edit and check the saved title, dates, repeat rule, and participants.
+        let form = try page.edit(original)
+        XCTAssertEqual(form.titleField.value as? String, original.title)
+        form.assertDateTimes(start: original.startTime, end: original.endTime)
+        try form.assertRepeat(.weekly)
+        XCTAssertEqual(form.participantsButton.value as? String, "1")
+        XCTAssertTrue(form.participantsButton.label.contains(users[0].name))
+
+        // Change the form, cancel, and open the same meeting again.
+        form.replaceTitle(with: "TC11987 discarded")
+        try form.selectTime(start: true, hour: 15, minute: 0)
+        try form.selectRepeat(.daily)
+        _ = try form.cancel()
+        let reopened = try page.edit(original)
+        XCTAssertEqual(reopened.titleField.value as? String, original.title)
+        reopened.assertDateTimes(start: original.startTime, end: original.endTime)
+        try reopened.assertRepeat(.weekly)
+        XCTAssertEqual(reopened.participantsButton.value as? String, "1")
+        _ = try reopened.cancel()
+        let unchanged = try await onlyMeeting(fixtures, original: original)
+        assertUnchanged(unchanged, original: original)
+        let unchangedMembers = try await members(fixtures, meeting: original)
+        XCTAssertEqual(unchangedMembers, originalMembers)
+    }
+
+}
