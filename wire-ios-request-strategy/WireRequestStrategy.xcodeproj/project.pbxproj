@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		A1E2E1000000000000000002 /* E2EIRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1E2E1000000000000000001 /* E2EIRepositoryTests.swift */; };
 		0106AC8C2C9832EF0022E2CF /* ProteusMessagePayloadBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0106AC8B2C9832EF0022E2CF /* ProteusMessagePayloadBuilder.swift */; };
 		0106AC8E2C99A4DC0022E2CF /* MessageInfoExtractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0106AC8D2C99A4DC0022E2CF /* MessageInfoExtractor.swift */; };
 		0106AC902C9B00A30022E2CF /* MessageInfoExtractorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0106AC8F2C9B00A30022E2CF /* MessageInfoExtractorTests.swift */; };
@@ -224,6 +223,7 @@
 		7AEBB679285A16400090B524 /* CountSelfMLSKeyPackagesActionHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AEBB678285A16400090B524 /* CountSelfMLSKeyPackagesActionHandlerTests.swift */; };
 		8792F55721AD944100795027 /* UserPropertyRequestStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8792F55621AD944100795027 /* UserPropertyRequestStrategy.swift */; };
 		87F7288521AFF37D000ED371 /* UserPropertyRequestStrategyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87F7288421AFF37D000ED371 /* UserPropertyRequestStrategyTests.swift */; };
+		882897CB308A0C130027ADAC /* E2EIRepositoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 882897CA308A0C130027ADAC /* E2EIRepositoryTests.swift */; };
 		A90C56E62685C20E00F1007B /* ZMImagePreprocessingTrackerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A90C56E52685C20E00F1007B /* ZMImagePreprocessingTrackerTests.swift */; };
 		BF1F52C61ECC74E5002FB553 /* Array+RequestGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF1F52C51ECC74E5002FB553 /* Array+RequestGenerator.swift */; };
 		BF7D9BE11D8C351900949267 /* WireRequestStrategy.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1669016A1D707509000FE4AF /* WireRequestStrategy.framework */; };
@@ -436,7 +436,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		A1E2E1000000000000000001 /* E2EIRepositoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = E2EIRepositoryTests.swift; sourceTree = "<group>"; };
 		0106AC8B2C9832EF0022E2CF /* ProteusMessagePayloadBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProteusMessagePayloadBuilder.swift; sourceTree = "<group>"; };
 		0106AC8D2C99A4DC0022E2CF /* MessageInfoExtractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageInfoExtractor.swift; sourceTree = "<group>"; };
 		0106AC8F2C9B00A30022E2CF /* MessageInfoExtractorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageInfoExtractorTests.swift; sourceTree = "<group>"; };
@@ -699,6 +698,7 @@
 		7AEBB678285A16400090B524 /* CountSelfMLSKeyPackagesActionHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountSelfMLSKeyPackagesActionHandlerTests.swift; sourceTree = "<group>"; };
 		8792F55621AD944100795027 /* UserPropertyRequestStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserPropertyRequestStrategy.swift; sourceTree = "<group>"; };
 		87F7288421AFF37D000ED371 /* UserPropertyRequestStrategyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserPropertyRequestStrategyTests.swift; sourceTree = "<group>"; };
+		882897CA308A0C130027ADAC /* E2EIRepositoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = E2EIRepositoryTests.swift; sourceTree = "<group>"; };
 		A90C56E52685C20E00F1007B /* ZMImagePreprocessingTrackerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZMImagePreprocessingTrackerTests.swift; sourceTree = "<group>"; };
 		A90C56EB2685C23400F1007B /* ZMImagePreprocessingTrackerTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZMImagePreprocessingTrackerTests.h; sourceTree = "<group>"; };
 		BF1F52C51ECC74E5002FB553 /* Array+RequestGenerator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Array+RequestGenerator.swift"; sourceTree = "<group>"; };
@@ -1061,7 +1061,6 @@
 				064824972B10E32C00115329 /* EnrollE2EICertificateUseCase.swift */,
 				639971B32B2779A9009DD5CF /* E2EIKeyPackageRotator.swift */,
 				63457C072B2CA8E300AFFEF3 /* E2EIKeyPackageRotatorTests.swift */,
-				A1E2E1000000000000000001 /* E2EIRepositoryTests.swift */,
 			);
 			path = E2EIdentity;
 			sourceTree = "<group>";
@@ -1384,6 +1383,7 @@
 		633722BD2B7E2C0400BE4E45 /* E2EIdentity */ = {
 			isa = PBXGroup;
 			children = (
+				882897CA308A0C130027ADAC /* E2EIRepositoryTests.swift */,
 				63FD7E9E2B7E5EE300C9B210 /* CertificateRevocationListAPITests.swift */,
 			);
 			path = E2EIdentity;
@@ -2588,6 +2588,7 @@
 				F14B7AEC222009C200458624 /* UserRichProfileRequestStrategyTests.swift in Sources */,
 				01F5AED02CAD892000B01069 /* ProteusMessageTests.swift in Sources */,
 				63CC83E5285C9C72008549AD /* UploadSelfMLSKeyPackagesActionHandlerTests.swift in Sources */,
+				882897CB308A0C130027ADAC /* E2EIRepositoryTests.swift in Sources */,
 				EEB5DE0F28379A19009B4741 /* GetFeatureConfigsActionHandlerTests.swift in Sources */,
 				F18401F02073C26C00E9F4CC /* LinkPreviewAssetDownloadRequestStrategyTests.swift in Sources */,
 				16BBA1F62AF3D41200CDF38A /* MessageDependencyResolverTests.swift in Sources */,
@@ -2606,7 +2607,6 @@
 				E6BBCF1D2C33E1ED00BD0259 /* MessageLogAttributesBuilderTests.swift in Sources */,
 				06FDC63128354DBD008300DB /* PushTokenStorageTests.swift in Sources */,
 				63457C082B2CA8E300AFFEF3 /* E2EIKeyPackageRotatorTests.swift in Sources */,
-				A1E2E1000000000000000002 /* E2EIRepositoryTests.swift in Sources */,
 				EE8807932AC40AB100278E3C /* ConnectionPayloadProcessorTests.swift in Sources */,
 				F18401EE2073C26C00E9F4CC /* LinkPreviewAssetUploadRequestStrategyTests.swift in Sources */,
 				F18401EA2073C26700E9F4CC /* AbstractRequestStrategyTests.swift in Sources */,
