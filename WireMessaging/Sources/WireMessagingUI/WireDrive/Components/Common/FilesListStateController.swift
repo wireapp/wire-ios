@@ -76,9 +76,9 @@ class FilesListStateController: Observable, ObservableObject {
 
     /// Removes an item from the list, then performs an async action.
     /// If the action fails, restores the list to how it was before removing the item.
-    func removeItem(_ item: FilesViewItem, withAction action: @escaping () async throws -> Void) async {
-        let items = controller.state.items
-        let changedItems = items.filter { $0.id != item.id }
+    func removeItems(_ items: [FilesViewItem], withAction action: @escaping () async throws -> Void) async {
+        let currentItems = controller.state.items
+        let changedItems = currentItems.filter { !items.map(\.id).contains($0.id) }
         controller.state = .received(items: changedItems)
 
         do {

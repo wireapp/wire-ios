@@ -33,11 +33,11 @@ extension FilesViewModel {
                 case .primaryAction:
                     await performPrimaryAction(item: item)
                 case .deleteToRecycleBin:
-                    await deleteItem(item, permanently: false)
+                    await deleteItems([item], permanently: false)
                 case .deletePermanently:
-                    await deleteItem(item, permanently: true)
+                    await deleteItems([item], permanently: true)
                 case .restore:
-                    await restoreItem(item)
+                    await restoreItems([item])
                 case .rename:
                     sheetNavigation = .renameFile(fileItem: item)
                 case .editTags:
