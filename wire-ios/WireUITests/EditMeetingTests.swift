@@ -209,4 +209,41 @@ final class EditMeetingTests: WireUITestCase {
         }
     }
 
+    @MainActor
+    func testEditWholeMeetingSeries_TC_11994() async throws {
+        executionTimeAllowance = 600
+        let (host, _, _, _) = try await UserHelper.default.registerMeetingsTeam()
+        let fixtures = try await MeetingsTestHelper(user: host)
+        let original = try await fixtures.create(title: "TC11994 series", start: date(hour: 12))
+        let page = try launchMeetings(for: host, now: date())
+        let options: [(MeetingFormPage.RepeatOption, MeetingFrequency?, Int?, Int)] = [
+            (.daily, .daily, 1, 1), (.weekly, .weekly, 1, 7),
+            (.everyTwoWeeks, .weekly, 2, 14), (.everyFourWeeks, .weekly, 4, 28), (.never, nil, nil, 0)
+        ]
+        var selectedStart = original.startTime
+        for (option, frequency, interval, days) in options {
+            // Edit a future occurrence after the first change; all edits target the same series.
+            let form = try page.edit(original, start: selectedStart)
+            guard form.repeatButton.waitAndTap() else { throw RuntimeError("Repeat menu did not open") }
+            XCTAssertFalse(form.repeatChoice(.monthly).exists)
+            XCTAssertFalse(form.repeatChoice(.yearly).exists)
+            guard form.repeatChoice(option).waitAndTap() else { throw RuntimeError("Repeat choice did not appear") }
+            _ = try form.save()
+            XCTAssertFalse(app.alerts.firstMatch.exists, "The edit must not ask for occurrence or series scope")
+            let updated = try await onlyMeeting(fixtures, original: original)
+            XCTAssertEqual(updated.recurrence?.frequency, frequency)
+            XCTAssertEqual(updated.recurrence?.interval, interval)
+            XCTAssertEqual(updated.startTime, original.startTime)
+            XCTAssertEqual(updated.endTime, original.endTime)
+            if selectedStart != original.startTime {
+                XCTAssertTrue(page.row(original, start: selectedStart).waitToDisappear(timeout: 15))
+            }
+            selectedStart = Calendar.current.date(byAdding: .day, value: days, to: original.startTime)!
+            _ = try page.showRow(updated, start: selectedStart)
+            if option == .never {
+                try page.assertRows([updated], now: date(), locale: "en_GB")
+            }
+        }
+    }
+
 }
