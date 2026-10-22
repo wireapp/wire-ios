@@ -159,7 +159,12 @@ class AddParticipantActionHandler: ActionHandler<AddParticipantAction> {
             let success = {
                 action.succeed()
             }
-            Task {
+            WaitingGroupTask(context: context) { [self] in
+                guard await context.perform({ context.isAvailableForConversationProcessing }) else {
+                    var failedAction = action
+                    failedAction.fail(with: .unknown)
+                    return
+                }
                 await eventProcessor.processAndSaveConversationEvents([updateEvent])
                 success()
             }

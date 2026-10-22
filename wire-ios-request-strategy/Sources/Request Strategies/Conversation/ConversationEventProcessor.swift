@@ -109,7 +109,8 @@ public class ConversationEventProcessor: NSObject, LegacyConversationEventProces
     public func processAndSaveConversationEvents(_ events: [ZMUpdateEvent]) async {
         await processConversationEvents(events)
         _ = await context.perform { [weak self] in
-            self?.context.saveOrRollback()
+            guard let self, context.isAvailableForConversationProcessing else { return }
+            context.saveOrRollback()
         }
     }
 

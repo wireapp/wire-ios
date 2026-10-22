@@ -191,8 +191,8 @@ final class CreateGroupConversationActionHandler: ActionHandler<CreateGroupConve
             }
 
             if unreachableDomains.isEmpty {
-                Task { [action] in
-                    await handleSuccessResponse(response, action: action)
+                WaitingGroupTask(context: context) { [action] in
+                    await self.handleSuccessResponse(response, action: action)
                 }
             } else {
                 action.fail(with: .unreachableDomains(Set(unreachableDomains)))

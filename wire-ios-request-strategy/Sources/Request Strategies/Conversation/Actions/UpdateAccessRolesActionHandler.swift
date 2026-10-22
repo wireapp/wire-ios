@@ -106,7 +106,12 @@ final class UpdateAccessRolesActionHandler: ActionHandler<UpdateAccessRolesActio
             let success = {
                 action.notifyResult(.success(()))
             }
-            Task {
+            WaitingGroupTask(context: context) { [self] in
+                guard await context.perform({ context.isAvailableForConversationProcessing }) else {
+                    var failedAction = action
+                    failedAction.notifyResult(.failure(.unknown))
+                    return
+                }
                 await eventProcessor.processAndSaveConversationEvents([updateEvent])
                 success()
             }
