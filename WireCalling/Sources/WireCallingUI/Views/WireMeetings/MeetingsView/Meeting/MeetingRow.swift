@@ -30,6 +30,7 @@ struct MeetingRow: View {
     let isOrganizer: Bool
     var isAttending: Bool = false
     var isLive: Bool = false
+    var hasEnded: Bool = false
     let onEdit: () -> Void
     let onDelete: () -> Void
     var onJoin: () -> Void = {}
@@ -83,12 +84,14 @@ struct MeetingRow: View {
                         .disabled(meeting.conversation == nil)
 
                         if isOrganizer {
-                            Button {
-                                onEdit()
-                            } label: {
-                                Label(Strings.Actions.edit, systemImage: "pencil")
+                            if !hasEnded {
+                                Button {
+                                    onEdit()
+                                } label: {
+                                    Label(Strings.Actions.edit, systemImage: "pencil")
+                                }
+                                .disabled(meeting.conversation == nil)
                             }
-                            .disabled(meeting.conversation == nil)
 
                             if let onMeetingLink {
                                 Button(action: onMeetingLink) {
