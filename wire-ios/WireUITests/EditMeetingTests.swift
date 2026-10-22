@@ -133,4 +133,39 @@ final class EditMeetingTests: WireUITestCase {
         XCTAssertEqual(unchangedMembers, originalMembers)
     }
 
+    @MainActor
+    func testEditTitleValidation_TC_11990() async throws {
+        let (host, _, _, _) = try await UserHelper.default.registerMeetingsTeam()
+        let fixtures = try await MeetingsTestHelper(user: host)
+        let original = try await fixtures.create(title: "TC11990 original", start: date(hour: 12))
+        let page = try launchMeetings(for: host, now: date())
+        let form = try page.edit(original)
+
+        // Empty and over-limit titles must not change the saved meeting.
+        for title in ["", "   ", String(repeating: "A", count: 65), String(repeating: "🧑🏽‍💻", count: 32)] {
+            form.replaceTitle(with: title)
+            XCTAssertFalse(form.saveButton.isEnabled)
+            if title.count > 64 || title.utf8.count > 256 {
+                XCTAssertTrue(form.titleError.waitForExistence(timeout: 5))
+            }
+        }
+        let beforeSave = try await onlyMeeting(fixtures, original: original)
+        XCTAssertEqual(beforeSave.title, original.title)
+        _ = try form.cancel()
+
+        // Save each supported title and check the row and the stable meeting ID.
+        for title in ["TC11990 Standard title", "TC11990 & + / 😀", String(repeating: "A", count: 64)] {
+            let edit = try page.edit(original)
+            edit.replaceTitle(with: title)
+            XCTAssertEqual(edit.titleField.value as? String, title)
+            XCTAssertTrue(edit.saveButton.isEnabled)
+            _ = try edit.save()
+            let updated = try await onlyMeeting(fixtures, original: original)
+            XCTAssertEqual(updated.title, title)
+            XCTAssertEqual(updated.startTime, original.startTime)
+            XCTAssertEqual(updated.endTime, original.endTime)
+            try assertTitle(title, meeting: updated, on: page)
+        }
+    }
+
 }
