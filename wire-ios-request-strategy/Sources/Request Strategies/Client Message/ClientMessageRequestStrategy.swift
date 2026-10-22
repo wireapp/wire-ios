@@ -251,7 +251,8 @@ extension ClientMessageRequestStrategy: ZMContextChangeTracker, TearDownCapable 
 extension ClientMessageRequestStrategy {
 
     func enqueueOutboxMessage(_ message: PendingOutboxMessage, isFresh: Bool, completion: @escaping () -> Void) {
-        guard context.canProcessOfflinePendingMessages, !isTornDown, !message.isDeleted, !message.hasBeenDeleted else {
+        guard context.zm_isValidContext, context.canProcessOfflinePendingMessages,
+              !isTornDown, !message.isDeleted, !message.hasBeenDeleted else {
             completion()
             return
         }
@@ -278,6 +279,10 @@ extension ClientMessageRequestStrategy {
     }
 
     private func drainOutbox() {
+        guard context.zm_isValidContext else {
+            tearDown()
+            return
+        }
         guard !isTornDown, reachability?.mayBeReachable != false else { return }
         outboxRetryWakeup?.cancel()
         outboxRetryWakeup = nil
@@ -320,7 +325,8 @@ extension ClientMessageRequestStrategy {
                     waitsForConnection = false
                 } catch {
                     await context.perform {
-                        guard !self.isTornDown, !message.isDeleted, !message.hasBeenDeleted,
+                        guard self.context.zm_isValidContext, !self.isTornDown,
+                              !message.isDeleted, !message.hasBeenDeleted,
                               message.outboxState != .cancelled, message.outboxState != .sent
                         else { return }
                         if message.outboxState == .queued {
@@ -341,6 +347,10 @@ extension ClientMessageRequestStrategy {
                     waitsForConnection = false
                 }
                 await context.perform {
+                    guard self.context.zm_isValidContext else {
+                        self.tearDown()
+                        return
+                    }
                     guard !self.isTornDown else { return }
                     self.outboxTasks.removeValue(forKey: objectID)
                     self.activeOutboxConversations.remove(conversationID)

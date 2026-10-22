@@ -42,6 +42,9 @@ regression source is written; no build, test, lint, or formatting execution occu
 Follow-up source fixes stop repeated sends after a failed handoff save and ignore
 asset preprocessing/upload work after teardown. Sender response-classification
 and teardown regressions are written, still unexecuted.
+Further source review guards late final-message callbacks and reconnects after
+account-context closure. Bounded MLS repair/frozen-content regression source is
+also written; it has not been executed.
 Uncertain-delivery automatic retry policy remains unresolved before broad activation;
 the development implementation exposes manual Retry while retaining frozen content.
 
@@ -77,8 +80,10 @@ Next steps, in order:
    See the PR 3/4/5 execution records below. Continue source integration review and
    any fixes alongside user-owned validation; do not run checks without a new
    user instruction. Proteus sender response-classification and asset teardown
-   coverage are now written. MLS repairs and full account/session lifecycle still
-   need review; the new tests have not established runtime correctness.
+   coverage are now written. Bounded MLS repairs and late callbacks after account
+   context closure also have unexecuted regression source. Cancellation while
+   waiting for sync, interruption during preparation, and full account/session
+   lifecycle still need review; these tests have not established runtime correctness.
 4. Continue through regular queuing, queued editing, and asset recovery on the
    same branch. Treat the numbered PR checklists below as implementation stages;
    defer PR packaging until there is working code to review. Do not repeat the
@@ -1239,6 +1244,11 @@ Execution record (2026-10-21, source only; no formatting/lint/build/test command
 - [x] Add unexecuted sender regression source for non-submission, rejection,
       unknown delivery, known acceptance with an unreadable body, and failed
       handoff persistence.
+- [x] Source review: reject late final-message callbacks after context closure,
+      and stop reconnect scheduling against reset account objects.
+- [x] Add unexecuted MLS repair regression source for stale epochs, client
+      mismatch, missing commit references, and missing group members, checking
+      the three-repair limit and retained frozen payload.
 - [ ] Confirm rollout and flag-disable behavior.
 - [ ] Review failure diagnostics without exposing message content.
 - [ ] Decide whether to enable the feature and later remove the temporary flag.
@@ -1296,6 +1306,38 @@ Follow-up source review, 2026-10-22 (no validation execution):
   run/created here. Full account switching/logout behavior, late final-message
   callbacks around context closure, and MLS repair paths remain review/validation
   items; asset teardown changes do not establish those broader guarantees.
+
+MLS and account-closure source review, 2026-10-22 (no validation execution):
+
+- Existing outbox MLS repair code already uses a per-operation loop with at most
+  three repairs after the initial attempt. Its regression source now covers
+  stale-message repair, client mismatch, missing commit references, and missing
+  members, checking four attempted sends, the expected repair calls, unchanged
+  nonce/frozen content, and a persisted failed operation when the limit is reached.
+  The retry policy itself was not expanded.
+- The strategy directory can outlive account-context closure. Outbox claim,
+  preparation, final handoff, and final response guards now check context validity
+  before reading managed rows. Late accepted responses after closure leave the
+  persisted sending operation for conservative uncertain-delivery recovery in
+  the next session. They cannot complete the detached row or resubmit its content.
+- MLS now passes the expiration value captured during the handoff save directly
+  to the API, avoiding a separate read of the managed message after that boundary.
+- A reconnect or task completion reaching a closed outbox context tears down the
+  scheduler and releases queued completions without reading or expiring reset
+  rows. Regression source covers a queued reconnect after closure.
+- Message log-attribute extraction skips reset rows after context invalidation.
+  The Proteus payload processor accepts an explicit owning context and checks
+  validity before fetching status changes or applying final mutations. This avoids
+  deriving a context from a detached message. Its old content-bearing debug log
+  now uses a fixed diagnostic without the message payload.
+- New sender source exercises both Proteus and MLS acceptance after actual
+  context teardown/reset, then refetches the persisted operation and checks
+  uncertain recovery with its snapshot retained. Logging after context closure
+  also has regression source. None of these tests were executed.
+- Full lifecycle acceptance remains unchecked. In particular, review cancellation
+  while waiting for sync (the V2 observer uses a continuation), interruption inside
+  asynchronous preparation/status-processing work, and actual account switching
+  before declaring session lifecycle complete. Keep the developer flag off.
 
 ## Decisions to settle before the relevant implementation
 

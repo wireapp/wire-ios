@@ -32,19 +32,25 @@ final class MessageSendingStatusPayloadProcessor {
     @discardableResult
     func updateClientsChanges(
         from payload: Payload.MessageSendingStatus,
-        for message: any ProteusMessage
+        for message: any ProteusMessage,
+        in providedContext: NSManagedObjectContext? = nil
     ) async -> [ZMUser: [UserClient]] {
-        let context = message.context
-        let (deletedClients, redundantUsers, missingClients, failedToConfirmUsers) = await context.perform {
-            WireLogger.messaging.debug("update client changes for message \(message.debugInfo)")
+        // A reset managed object no longer exposes its context; senders pass their owning context explicitly.
+        let context = providedContext ?? message.context
+        let changes = await context.perform { () -> (
+            [ZMUser: [UserClient]], [ZMUser], [ZMUser: [UserClient]], [ZMUser]
+        )? in
+            guard context.zm_isValidContext else { return nil }
+            WireLogger.messaging.debug("update client changes after message send")
 
             return (
                 payload.deleted.fetchClients(in: context),
                 payload.redundant.fetchUsers(in: context),
-                payload.missing.fetchOrCreateClients(in: message.context),
-                payload.failedToConfirm.fetchUsers(in: message.context)
+                payload.missing.fetchOrCreateClients(in: context),
+                payload.failedToConfirm.fetchUsers(in: context)
             )
         }
+        guard let (deletedClients, redundantUsers, missingClients, failedToConfirmUsers) = changes else { return [:] }
 
         if !deletedClients.isEmpty {
             WireLogger.messaging.debug("detected deleted clients")
@@ -65,6 +71,7 @@ final class MessageSendingStatusPayloadProcessor {
         }
 
         await context.perform {
+            guard context.zm_isValidContext else { return }
             if !redundantUsers.isEmpty {
                 WireLogger.messaging.debug("detected redundant users")
 

@@ -73,6 +73,20 @@ final class MessageLogAttributesBuilderTests: XCTestCase {
         XCTAssertEqual(attributes[.public] as? Bool, true)
     }
 
+    func testLogAttributesAfterContextClosureDoNotReadTheResetMessage() async throws {
+        let builder = makeBuilder()
+        let message = await context.perform {
+            ZMClientMessage(nonce: Scaffolding.nonce, managedObjectContext: self.context)
+        }
+        context.tearDown()
+
+        let attributes = await builder.logAttributes(message)
+
+        XCTAssertNil(attributes[.nonce])
+        XCTAssertNil(attributes[.messageType])
+        XCTAssertNil(attributes[.conversationId])
+    }
+
     // MARK: Helpers
 
     private func makeBuilder() -> MessageLogAttributesBuilder {

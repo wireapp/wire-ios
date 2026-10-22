@@ -87,6 +87,43 @@ class ClientMessageRequestStrategyTests: MessagingTestBase {
 
 extension ClientMessageRequestStrategyTests {
 
+    func testReconnectAfterContextClosureReleasesQueuedWorkWithoutSendingIt() async throws {
+        let completed = expectation(description: "closed context releases queued completion")
+        completed.assertForOverFulfill = true
+        let reachability = PendingMessageReachability()
+        let original = try await syncMOC.perform {
+            let message = try XCTUnwrap(self.groupConversation.appendText(content: "offline") as? ZMClientMessage)
+            try message.enqueueInOutbox(operation: .initialMessage)
+            try self.syncMOC.save()
+            return message
+        }
+        let messageID = original.objectID
+        let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
+        context.persistentStoreCoordinator = syncMOC.persistentStoreCoordinator
+        context.performAndWait { context.markAsSyncContext() }
+        syncMOC.performAndWait { sut.tearDown() }
+        try await context.perform {
+            self.sut = ClientMessageRequestStrategy(
+                context: context, localNotificationDispatcher: self.localNotificationDispatcher,
+                messageSender: self.mockMessageSender, reachability: reachability
+            )
+            let message = try XCTUnwrap(context.existingObject(with: messageID) as? ZMClientMessage)
+            self.sut.enqueueOutboxMessage(message, isFresh: false) { completed.fulfill() }
+        }
+        context.tearDown()
+
+        reachability.reconnect()
+        await fulfillment(of: [completed], timeout: 5)
+
+        XCTAssertTrue(mockMessageSender.sendMessageMessage_Invocations.isEmpty)
+        await syncMOC.perform {
+            self.syncMOC.refresh(original, mergeChanges: false)
+            XCTAssertEqual(original.outboxState, .queued)
+            XCTAssertFalse(original.isExpired)
+        }
+        context.performAndWait { sut.tearDown() }
+    }
+
     func testShareScopeDoesNotClaimOrExpireMainAppOutboxMessages() throws {
         try syncMOC.performAndWait {
             let queued = try XCTUnwrap(groupConversation.appendText(content: "main app outbox") as? ZMClientMessage)

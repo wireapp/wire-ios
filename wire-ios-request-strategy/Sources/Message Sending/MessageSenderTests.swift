@@ -124,6 +124,118 @@ final class MessageSenderTests: MessagingTestBase {
         }
     }
 
+    func testOutboxMLSRepairsKeepFrozenContentAndStopAfterThreeRetries() async throws {
+        let missingUsers = Set([QualifiedID.randomID()])
+        let failures: [SendMLSMessageFailure] = [
+            .mlsStaleMessage, .mlsClientMismatch,
+            .mlsCommitMissingReferences(message: "missing reference"), .groupOutOfSync(missingUsers: missingUsers)
+        ]
+        for failure in failures {
+            await syncMOC.perform {
+                self.groupConversation.mlsGroupID = Arrangement.Scaffolding.groupID
+                self.groupConversation.messageProtocol = .mls
+                self.groupConversation.mlsStatus = .ready
+            }
+            let message = try await makeOutboxMessage()
+            let (nonce, frozenContent) = try await syncMOC.perform {
+                (message.nonce, try XCTUnwrap(message.underlyingMessage).serializedData())
+            }
+            let (arrangement, sender) = Arrangement(coreDataStack: coreDataStack)
+                .withIncrementalSyncObserverCompleting()
+                .withMessageDependencyResolverReturning(result: .success(()))
+                .withApiVersionResolving(to: .v13)
+                .withMLServiceConfigured()
+                .withSendMlsMessage(returning: .failure(failure))
+                .arrange()
+            arrangement.mlsService.fetchAndRepairGroupWith_MockMethod = { _ in }
+            arrangement.mlsService.addMembersToConversationWithFor_MockMethod = { _, _ in }
+            arrangement.mlsService.encryptMessageFor_MockMethod = { data, _ in data }
+
+            do {
+                try await sender.sendMessage(message: message)
+                XCTFail("Repeated MLS rejections must eventually fail")
+            } catch {
+                XCTAssertEqual(error as? SendMLSMessageFailure, failure)
+            }
+
+            let encryptedContent = arrangement.mlsService.encryptMessageFor_Invocations.map(\.message)
+            XCTAssertEqual(encryptedContent.count, 4)
+            XCTAssertEqual(Set(encryptedContent).count, 1)
+            XCTAssertEqual(arrangement.messageApi.sendMLSMessageMessageConversationIDExpirationDate_Invocations.count, 4)
+            XCTAssertEqual(arrangement.mlsService.fetchAndRepairGroupWith_Invocations.count,
+                           failure == .mlsStaleMessage ? 3 : 0)
+            XCTAssertEqual(arrangement.mlsService.addMembersToConversationWithFor_Invocations.count,
+                           failure == .groupOutOfSync(missingUsers: missingUsers) ? 3 : 0)
+            try await syncMOC.perform {
+                XCTAssertEqual(message.outboxState, .failed)
+                XCTAssertEqual(message.outboxAttemptCount, 4)
+                XCTAssertEqual(message.nonce, nonce)
+                XCTAssertEqual(try message.loadOutboxPayload(), frozenContent)
+                XCTAssertNil(message.outboxAttemptIdentifier)
+                XCTAssertFalse(message.hasChanges)
+            }
+        }
+    }
+
+    func testLateOutboxAcceptanceAfterContextClosureRemainsUncertainOnRecovery() async throws {
+        for usesMLS in [false, true] {
+            await syncMOC.perform {
+                self.groupConversation.messageProtocol = usesMLS ? .mls : .proteus
+                self.groupConversation.mlsGroupID = Arrangement.Scaffolding.groupID
+                self.groupConversation.mlsStatus = .ready
+            }
+            let original = try await makeOutboxMessage()
+            let messageID = original.objectID
+            let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
+            context.persistentStoreCoordinator = syncMOC.persistentStoreCoordinator
+            context.performAndWait { context.markAsSyncContext() }
+            let message = try await context.perform {
+                try XCTUnwrap(context.existingObject(with: messageID) as? ZMClientMessage)
+            }
+            let (arrangement, sender) = Arrangement(coreDataStack: coreDataStack, context: context)
+                .withProteusConfigured()
+                .withMLServiceConfigured()
+                .withIncrementalSyncObserverCompleting()
+                .withMessageDependencyResolverReturning(result: .success(()))
+                .withApiVersionResolving(to: .v13)
+                .arrange()
+            arrangement.mlsService.encryptMessageFor_MockMethod = { data, _ in data }
+            arrangement.messageApi.sendProteusMessageMessageConversationIDExpirationDate_MockMethod = { _, _, _ in
+                context.tearDown()
+                return (Arrangement.Scaffolding.messageSendingStatusSuccess, Arrangement.Scaffolding.responseSuccess)
+            }
+            arrangement.messageApi.sendMLSMessageMessageConversationIDExpirationDate_MockMethod = { _, _, _ in
+                context.tearDown()
+                return (
+                    Payload.MLSMessageSendingStatus(time: Date(), events: [], failedToSend: nil),
+                    Arrangement.Scaffolding.responseSuccess
+                )
+            }
+
+            do {
+                try await sender.sendMessage(message: message)
+                XCTFail("A closed account context must reject its late callback")
+            } catch {
+                XCTAssertEqual(error as? MessageOutboxError, .staleAttempt)
+            }
+
+            XCTAssertEqual(arrangement.messageApi.sendProteusMessageMessageConversationIDExpirationDate_Invocations.count,
+                           usesMLS ? 0 : 1)
+            XCTAssertEqual(arrangement.messageApi.sendMLSMessageMessageConversationIDExpirationDate_Invocations.count,
+                           usesMLS ? 1 : 0)
+            try await syncMOC.perform {
+                self.syncMOC.refresh(original, mergeChanges: false)
+                XCTAssertEqual(original.outboxState, .sending)
+                XCTAssertFalse(original.delivered)
+                let frozen = try original.loadOutboxPayload()
+                original.recoverOutboxAfterRestart()
+                XCTAssertEqual(original.outboxState, .uncertain)
+                XCTAssertEqual(try original.loadOutboxPayload(), frozen)
+                try self.syncMOC.save()
+            }
+        }
+    }
+
     func testThatWhenSecurityLevelIsDegraded_thenFailWithSecurityLevelDegraded() async throws {
         // given
         await syncMOC.perform { [self] in
@@ -1145,8 +1257,8 @@ final class MessageSenderTests: MessagingTestBase {
         }
 
         func withMLServiceConfigured(domain: String = "local.domain") -> Arrangement {
-            coreDataStack.syncContext.performAndWait {
-                coreDataStack.syncContext.mlsService = mlsService
+            context.performAndWait {
+                context.mlsService = mlsService
             }
             mlsService.conversationExistsGroupID_MockValue = true
             mlsService.epochFor_MockValue = 1
