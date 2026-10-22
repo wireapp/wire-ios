@@ -558,7 +558,10 @@ struct ConversationEventPayloadProcessor {
             // The account may have been deleted (logout) while this payload was being processed,
             // in which case the store file is gone and any fetch would assert.
             guard context.isAvailableForConversationProcessing else {
-                WireLogger.eventProcessing.warn("Persistent store is unavailable, skipping group conversation update")
+                WireLogger.eventProcessing.warn(
+                    "Context or persistent store is unavailable, skipping group conversation update",
+                    attributes: .safePublic
+                )
                 return nil
             }
 
@@ -626,7 +629,13 @@ struct ConversationEventPayloadProcessor {
             return nil
         }
         let didFinish = await context.perform {
-            guard context.isAvailableForConversationProcessing else { return false }
+            guard context.isAvailableForConversationProcessing else {
+                WireLogger.eventProcessing.warn(
+                    "Context or persistent store is unavailable, skipping final group conversation update",
+                    attributes: .safePublic
+                )
+                return false
+            }
 
             if isInitialFetch {
                 // we just got a new conversation, we display new conversation header
@@ -1040,7 +1049,13 @@ struct ConversationEventPayloadProcessor {
         source: Source
     ) async -> Bool {
         let mlsFeature = await context.perform {
-            guard context.isAvailableForConversationProcessing else { return nil as Feature.MLS? }
+            guard context.isAvailableForConversationProcessing else {
+                WireLogger.eventProcessing.warn(
+                    "Context or persistent store is unavailable, skipping MLS status update",
+                    attributes: .safePublic
+                )
+                return nil as Feature.MLS?
+            }
             return LegacyFeatureRepository(context: context).fetchMLS()
         }
         guard let mlsFeature else { return false }

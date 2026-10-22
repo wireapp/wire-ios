@@ -44,7 +44,7 @@ public final class ZMOperationLoopTeardownLogging: NSObject {
 
     @objc
     public static func warnAboutPendingWork() {
-        WireLogger.sync.warn("Operation loop teardown is still waiting for pending blocks")
+        WireLogger.sync.warn("Operation loop teardown is still waiting for pending blocks", attributes: .safePublic)
     }
 }
 
@@ -822,28 +822,20 @@ public final class ZMUserSession: NSObject {
     /// Tears down the session. `completion` is called once the session is completely torn down, i.e. after
     /// pending work has been drained and the core data stack is closed, so it's safe to delete the account data.
     public func tearDown(completion: @escaping () -> Void) {
-        enum Start {
-            case complete
-            case queued
-            case start
-        }
-
-        let start: Start = tearDownLock.withLock {
-            if isTornDown { return .complete }
+        var isAlreadyTornDown = false
+        let shouldStart = tearDownLock.withLock { () -> Bool in
+            if isTornDown {
+                isAlreadyTornDown = true
+                return false
+            }
             tearDownCompletions.append(completion)
-            if isTearingDown { return .queued }
+            guard !isTearingDown else { return false }
             isTearingDown = true
-            return .start
+            return true
         }
-
-        switch start {
-        case .complete:
-            completion()
+        guard shouldStart else {
+            if isAlreadyTornDown { completion() }
             return
-        case .queued:
-            return
-        case .start:
-            break
         }
 
         let workAgentStopTask = Task { [clientSessionComponent] in
