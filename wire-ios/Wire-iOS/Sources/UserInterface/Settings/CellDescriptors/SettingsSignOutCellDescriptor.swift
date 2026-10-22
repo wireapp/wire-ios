@@ -25,7 +25,7 @@ final class SettingsSignOutCellDescriptor: SettingsExternalScreenCellDescriptor 
 
     private let userSession: UserSession
 
-    lazy var logoutHelper: LogOutHelper? = LogOutHelper(userSession: userSession, showLoading: { [weak self] in
+    lazy var logoutHelper: LogOutHelper? = LogOutHelper(showLoading: { [weak self] in
         Task { @MainActor in self?.activityIndicator.start() }
     }, hideLoading: { [weak self] in
         Task { @MainActor in self?.activityIndicator.stop() }
@@ -53,7 +53,7 @@ final class SettingsSignOutCellDescriptor: SettingsExternalScreenCellDescriptor 
     }
 
     override func generateViewController() -> UIViewController? {
-        logoutHelper?.makeLogOutViewControllerToPresent()
+        logoutHelper?.makeLogOutViewControllerToPresent(userSession: userSession)
     }
 
 }
