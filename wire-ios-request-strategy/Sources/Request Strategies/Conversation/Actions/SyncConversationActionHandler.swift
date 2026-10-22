@@ -102,22 +102,32 @@ final class SyncConversationActionHandler: ActionHandler<SyncConversationAction>
                 return
             }
 
-            Task { [action, context] in
-                await processor.updateOrCreateConversation(
+            WaitingGroupTask(context: context) { [action, context] in
+                await self.processor.updateOrCreateConversation(
                     from: conversationData,
                     in: context
                 )
-                await context.perform {
+                let didSave = await context.perform {
+                    guard context.isAvailableForConversationProcessing else { return false }
                     do {
                         try context.save()
                     } catch {
                         Logging.network.warn("SyncConversationActionHandler: failed to save context: \(error)")
                         assertionFailure("SyncConversationActionHandler: failed to save context: \(error)")
                     }
+                    return true
                 }
 
                 var action = action
-                action.succeed()
+                if didSave {
+                    action.succeed()
+                } else {
+                    action.fail(with: .unknownError(
+                        code: 0,
+                        label: "session-closed",
+                        message: "Conversation sync was cancelled by logout"
+                    ))
+                }
             }
 
         case 400:

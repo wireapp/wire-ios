@@ -174,6 +174,37 @@ final class MLSEventProcessorTests: MessagingTestBase {
         }
     }
 
+    func testUpdateConversationStopsWhenContextTearsDownDuringMLSLookup() async {
+        await syncMOC.perform { self.conversation.mlsStatus = .pendingJoin }
+
+        let lookupStarted = expectation(description: "MLS lookup started")
+        let (resumeStream, resumeContinuation) = AsyncStream<Void>.makeStream()
+        mlsServiceMock.conversationExistsGroupID_MockMethod = { _ in
+            lookupStarted.fulfill()
+            var iterator = resumeStream.makeAsyncIterator()
+            _ = await iterator.next()
+            return true
+        }
+
+        let processing = Task {
+            await sut.updateConversationIfNeeded(conversation: conversation, fallbackGroupID: nil, context: syncMOC)
+        }
+        await fulfillment(of: [lookupStarted], timeout: 5)
+        let userInfo = await syncMOC.perform { () -> NSDictionary in
+            let userInfo = self.syncMOC.userInfo.copy() as! NSDictionary
+            self.syncMOC.userInfo.removeAllObjects()
+            return userInfo
+        }
+        resumeContinuation.yield(())
+        resumeContinuation.finish()
+        await processing.value
+
+        await syncMOC.perform {
+            self.syncMOC.userInfo.addEntries(from: userInfo as! [AnyHashable: Any])
+            XCTAssertEqual(self.conversation.mlsStatus, .pendingJoin)
+        }
+    }
+
     func test_itUpdates_MlsStatus_WhenProtocolIsMLS_AndWelcomeMessageWasProcessed() async {
         await assert_mlsStatus(
             originalValue: .pendingJoin,

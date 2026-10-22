@@ -116,13 +116,16 @@ public class MLSEventProcessor: MLSEventProcessing {
     ) async {
         WireLogger.mls.debug("MLS event processor updating conversation if needed")
 
-        let (messageProtocol, mlsGroupID, mlsService) = await context.perform {
-            (
+        let state = await context.perform { () -> (MessageProtocol, MLSGroupID?, MLSServiceInterface?)? in
+            guard context.isAvailableForConversationProcessing else { return nil }
+            return (
                 conversation.messageProtocol,
                 conversation.mlsGroupID,
                 context.mlsService
             )
         }
+        guard let state else { return }
+        let (messageProtocol, mlsGroupID, mlsService) = state
 
         guard messageProtocol.isOne(of: .mls, .mixed) else {
             return logWarn(aborting: .conversationUpdate, withReason: .conversationNotMLSCapable)
@@ -131,7 +134,8 @@ public class MLSEventProcessor: MLSEventProcessing {
         guard let mlsGroupID = mlsGroupID ?? fallbackGroupID else {
             return logWarn(aborting: .conversationUpdate, withReason: .missingGroupID)
         }
-        await context.perform {
+        let didUpdate = await context.perform {
+            guard context.isAvailableForConversationProcessing else { return false }
             if conversation.mlsGroupID == nil {
                 conversation.mlsGroupID = mlsGroupID
                 WireLogger.mls
@@ -139,7 +143,9 @@ public class MLSEventProcessor: MLSEventProcessing {
                         "MLS event processor set the group ID to value: (\(mlsGroupID.safeForLoggingDescription)) for conversation: (\(String(describing: conversation.qualifiedID))"
                     )
             }
+            return true
         }
+        guard didUpdate else { return }
 
         guard let mlsService else {
             return logWarn(aborting: .conversationUpdate, withReason: .missingMLSService)
@@ -156,6 +162,7 @@ public class MLSEventProcessor: MLSEventProcessing {
         var newStatus: MLSGroupStatus = conversationExists ? .ready : .pendingJoin
 
         await context.perform {
+            guard context.isAvailableForConversationProcessing else { return }
             let previousStatus = conversation.mlsStatus
 
             if previousStatus == .pendingJoinAfterReset {

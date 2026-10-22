@@ -48,13 +48,12 @@
                          isSyncV2Enabled:(BOOL)isSyncV2Enabled
                               apiVersion:(nullable NSNumber *)apiVersion;
 
-/// Stops the loop and invokes `completion` once all pending grouped blocks on the sync context have finished
-/// (or after a timeout). Does not block the calling thread. `completion` is invoked on a background queue.
+/// Stops the loop and invokes `completion` once all pending grouped blocks on the sync context have finished.
+/// Does not block the calling thread. `completion` is invoked on a background queue.
 - (void)tearDownWithCompletion:(nullable void (^)(void))completion;
 /// Same as `tearDownWithCompletion:` without a completion.
 - (void)tearDown;
 - (void)resumeEnqueuing;
 
 @end
-
 

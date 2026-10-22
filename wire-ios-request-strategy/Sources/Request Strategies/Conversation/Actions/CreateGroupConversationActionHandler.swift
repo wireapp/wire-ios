@@ -135,8 +135,8 @@ final class CreateGroupConversationActionHandler: ActionHandler<CreateGroupConve
 
         switch (response.httpStatus, response.payloadLabel()) {
         case (200, _), (201, _):
-            Task { [action] in
-                await handleSuccessResponse(response, action: action)
+            WaitingGroupTask(context: context) { [action] in
+                await self.handleSuccessResponse(response, action: action)
             }
 
         case (400, "mls-not-enabled"):
@@ -175,8 +175,8 @@ final class CreateGroupConversationActionHandler: ActionHandler<CreateGroupConve
             }
 
             if nonFederatingDomains.isEmpty {
-                Task { [action] in
-                    await handleSuccessResponse(response, action: action)
+                WaitingGroupTask(context: context) { [action] in
+                    await self.handleSuccessResponse(response, action: action)
                 }
             } else {
                 action.fail(with: .nonFederatingDomains(Set(nonFederatingDomains)))
@@ -230,6 +230,10 @@ final class CreateGroupConversationActionHandler: ActionHandler<CreateGroupConve
             return
         }
         await context.perform {
+            guard self.context.isAvailableForConversationProcessing else {
+                action.fail(with: .proccessingError("Conversation creation was cancelled by logout"))
+                return
+            }
             self.context.saveOrRollback()
 
             action.succeed(with: newConversation.objectID)

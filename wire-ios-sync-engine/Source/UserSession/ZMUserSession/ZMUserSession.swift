@@ -39,6 +39,15 @@ enum ZMUserSessionError: Error {
     case selfClientNotReady
 }
 
+@objc
+public final class ZMOperationLoopTeardownLogging: NSObject {
+
+    @objc
+    public static func warnAboutPendingWork() {
+        WireLogger.sync.warn("Operation loop teardown is still waiting for pending blocks")
+    }
+}
+
 @objcMembers
 public final class ZMUserSession: NSObject {
 
@@ -50,6 +59,8 @@ public final class ZMUserSession: NSObject {
     private var tokens: [Any] = []
     public private(set) var isTornDown = false
     private var isTearingDown = false
+    private let tearDownLock = NSLock()
+    private var tearDownCompletions: [() -> Void] = []
 
     private(set) var isNetworkOnline = true
     private var syncStateCancellable: AnyCancellable?
@@ -811,15 +822,33 @@ public final class ZMUserSession: NSObject {
     /// Tears down the session. `completion` is called once the session is completely torn down, i.e. after
     /// pending work has been drained and the core data stack is closed, so it's safe to delete the account data.
     public func tearDown(completion: @escaping () -> Void) {
-        guard !isTornDown, !isTearingDown else {
-            if isTornDown { completion() }
-            return
+        enum Start {
+            case complete
+            case queued
+            case start
         }
-        isTearingDown = true
+
+        let start: Start = tearDownLock.withLock {
+            if isTornDown { return .complete }
+            tearDownCompletions.append(completion)
+            if isTearingDown { return .queued }
+            isTearingDown = true
+            return .start
+        }
+
+        switch start {
+        case .complete:
+            completion()
+            return
+        case .queued:
+            return
+        case .start:
+            break
+        }
 
         let workAgentStopTask = Task { [clientSessionComponent] in
+            await clientSessionComponent?.workAgent.stopAndWait()
             await clientSessionComponent?.workAgent.clearSchedulerQueue()
-            await clientSessionComponent?.workAgent.stop()
         }
         tearDownMLSGroupVerification()
 
@@ -855,7 +884,6 @@ public final class ZMUserSession: NSObject {
                 await workAgentStopTask.value
                 syncManagedObjectContext.performGroupedBlock { [self] in
                     completeTearDown(callCenter: callCenterToTearDown)
-                    completion()
                 }
             }
         }
@@ -882,8 +910,14 @@ public final class ZMUserSession: NSObject {
         NotificationCenter.default.removeObserver(self)
         WireLogger.authentication.clearClientID()
 
-        isTornDown = true
-        isTearingDown = false
+        let completions = tearDownLock.withLock { () -> [() -> Void] in
+            isTornDown = true
+            isTearingDown = false
+            let completions = tearDownCompletions
+            tearDownCompletions.removeAll()
+            return completions
+        }
+        completions.forEach { $0() }
     }
 
     // MARK: - Methods

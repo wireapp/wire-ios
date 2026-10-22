@@ -101,7 +101,7 @@ static const NSTimeInterval ZMOperationLoopTearDownTimeout = 5.0;
     self.transportSession = nil;
 
     // Wait (without blocking) for pending grouped blocks, e.g. request completion handlers, to finish.
-    // A timeout makes sure a block that never finishes can't prevent the teardown from completing.
+    // A slow block should be reported, but must not allow stores to close while it is still running.
     NSLock *lock = [[NSLock alloc] init];
     __block BOOL didComplete = NO;
     void (^finish)(void) = ^{
@@ -121,9 +121,8 @@ static const NSTimeInterval ZMOperationLoopTearDownTimeout = 5.0;
         BOOL alreadyCompleted = didComplete;
         [lock unlock];
         if (!alreadyCompleted) {
-            ZMLogError(@"ZMOperationLoop teardown timed out waiting for pending blocks");
+            [ZMOperationLoopTeardownLogging warnAboutPendingWork];
         }
-        finish();
     });
 }
 

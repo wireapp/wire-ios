@@ -92,6 +92,23 @@
     XCTAssertTrue(finishedBeforeCompletion);
 }
 
+- (void)testThatTearDownDoesNotCompleteAfterTimeoutWhileGroupedWorkIsRunning
+{
+    dispatch_semaphore_t releaseBlock = dispatch_semaphore_create(0);
+    dispatch_semaphore_t completed = dispatch_semaphore_create(0);
+    [self.syncMOC performGroupedBlock:^{
+        dispatch_semaphore_wait(releaseBlock, DISPATCH_TIME_FOREVER);
+    }];
+
+    [self.sut tearDownWithCompletion:^{
+        dispatch_semaphore_signal(completed);
+    }];
+
+    XCTAssertNotEqual(dispatch_semaphore_wait(completed, dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5.2 * NSEC_PER_SEC))), 0);
+    dispatch_semaphore_signal(releaseBlock);
+    XCTAssertEqual(dispatch_semaphore_wait(completed, dispatch_time(DISPATCH_TIME_NOW, 2 * NSEC_PER_SEC)), 0);
+}
+
 - (void)testThatItSendsTheNextOperation
 {
 

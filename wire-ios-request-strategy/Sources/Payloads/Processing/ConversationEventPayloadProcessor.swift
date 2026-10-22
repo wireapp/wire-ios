@@ -557,7 +557,7 @@ struct ConversationEventPayloadProcessor {
         let conversation: ZMConversation? = await context.perform {
             // The account may have been deleted (logout) while this payload was being processed,
             // in which case the store file is gone and any fetch would assert.
-            guard context.isPersistentStoreAvailable else {
+            guard context.isAvailableForConversationProcessing else {
                 WireLogger.eventProcessing.warn("Persistent store is unavailable, skipping group conversation update")
                 return nil
             }
@@ -622,8 +622,11 @@ struct ConversationEventPayloadProcessor {
             return nil
         }
 
-        await updateMLSStatus(from: payload, for: conversation, context: context, source: source)
-        await context.perform {
+        guard await updateMLSStatus(from: payload, for: conversation, context: context, source: source) else {
+            return nil
+        }
+        let didFinish = await context.perform {
+            guard context.isAvailableForConversationProcessing else { return false }
 
             if isInitialFetch {
                 // we just got a new conversation, we display new conversation header
@@ -642,9 +645,10 @@ struct ConversationEventPayloadProcessor {
             // If we discover this group is actually a fake one on one,
             // then we should link the one on one user.
             linkOneOnOneUserIfNeeded(for: conversation)
+            return true
         }
 
-        return conversation
+        return didFinish ? conversation : nil
     }
 
     private func linkOneOnOneUserIfNeeded(
@@ -1034,15 +1038,20 @@ struct ConversationEventPayloadProcessor {
         for conversation: ZMConversation,
         context: NSManagedObjectContext,
         source: Source
-    ) async {
-        let mlsFeature = await LegacyFeatureRepository(context: context).fetchMLS()
-        guard mlsFeature.isEnabled else { return }
+    ) async -> Bool {
+        let mlsFeature = await context.perform {
+            guard context.isAvailableForConversationProcessing else { return nil as Feature.MLS? }
+            return LegacyFeatureRepository(context: context).fetchMLS()
+        }
+        guard let mlsFeature else { return false }
+        guard mlsFeature.isEnabled else { return true }
 
         await mlsEventProcessor.updateConversationIfNeeded(
             conversation: conversation,
             fallbackGroupID: payload.mlsGroupID.map { .init(base64Encoded: $0) } ?? nil,
             context: context
         )
+        return await context.perform { context.isAvailableForConversationProcessing }
     }
 
     func fetchCreator(
@@ -1221,10 +1230,14 @@ private extension PrivateChannelPermission {
     }
 }
 
-private extension NSManagedObjectContext {
+extension NSManagedObjectContext {
+
+    var isAvailableForConversationProcessing: Bool {
+        zm_isValidContext && isPersistentStoreAvailable
+    }
 
     /// Whether the persistent store is attached and its file still exists on disk.
-    var isPersistentStoreAvailable: Bool {
+    private var isPersistentStoreAvailable: Bool {
         guard let stores = persistentStoreCoordinator?.persistentStores, !stores.isEmpty else {
             return false
         }
