@@ -48,8 +48,10 @@ public final class SelfClientCertificateProvider: SelfClientCertificateProviderP
 
     public var hasCertificate: Bool {
         get async {
-            let certificate = try? await getCertificate()
-            return certificate != nil
+            // A certificate is always returned, even when the client never enrolled -
+            // in that case it's a placeholder that isn't actually enrolled.
+            guard let certificate = try? await getCertificate() else { return false }
+            return certificate.isEnrolled
         }
     }
 
