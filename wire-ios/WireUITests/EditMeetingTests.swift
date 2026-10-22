@@ -168,4 +168,45 @@ final class EditMeetingTests: WireUITestCase {
         }
     }
 
+    @MainActor
+    func testEditDateAndTimeRange_TC_11992() async throws {
+        let (host, _, _, _) = try await UserHelper.default.registerMeetingsTeam()
+        let fixtures = try await MeetingsTestHelper(user: host)
+        let original = try await fixtures.create(title: "TC11992 edited", start: date(hour: 12))
+        let earlier = try await fixtures.create(title: "Earlier meeting", start: date(hour: 14, dayOffset: 1))
+        let later = try await fixtures.create(title: "Later meeting", start: date(hour: 17, dayOffset: 1))
+        let page = try launchMeetings(for: host, now: date())
+        let form = try page.edit(original)
+
+        // Move to tomorrow and attempt equal and earlier End times.
+        try form.selectStartDate(date(dayOffset: 1))
+        try form.selectTime(start: true, hour: 15, minute: 0)
+        for hour in [15, 14] {
+            try form.selectTime(start: false, hour: hour, minute: 0, allowClamping: true)
+            let selected = try form.dateTimes()
+            XCTAssertEqual(selected.start, date(hour: 15, dayOffset: 1))
+            XCTAssertGreaterThan(selected.end, selected.start)
+            XCTAssertTrue(Calendar.current.isDate(selected.start, inSameDayAs: selected.end))
+        }
+
+        // Save a valid range and check its day and position in the list.
+        try form.selectTime(start: false, hour: 16, minute: 30)
+        _ = try form.save()
+        let saved = try await fixtures.list()
+        XCTAssertEqual(Set(saved.map(\.id)), Set([original.id, earlier.id, later.id]))
+        let updated = try XCTUnwrap(saved.first { $0.id == original.id })
+        XCTAssertEqual(updated.startTime, date(hour: 15, dayOffset: 1))
+        XCTAssertEqual(updated.endTime, date(hour: 16, minute: 30, dayOffset: 1))
+        XCTAssertEqual(updated.title, original.title)
+        try page.assertRows([earlier, updated, later], now: date(), locale: "en_GB")
+
+        // Reopen under both locale settings to check displayed date and time values.
+        for locale in ["en_GB", "en_US"] {
+            let localizedPage = try launchMeetings(for: host, now: date(), locale: locale)
+            let edit = try localizedPage.edit(updated)
+            edit.assertDateTimes(start: updated.startTime, end: updated.endTime, locale: locale)
+            _ = try edit.cancel()
+        }
+    }
+
 }
