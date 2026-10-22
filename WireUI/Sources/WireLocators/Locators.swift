@@ -625,9 +625,15 @@ public enum Locators {
             }
         }
 
+        public enum MoveToFolderPage: String {
+            case moveHere
+            case cancel
+        }
+
         public enum FilesPage: String {
             case close
             case createFolder
+            case selectItems
             case createFile
             case upload
             case recycleBin
@@ -635,6 +641,9 @@ public enum Locators {
             case deleteOnBottomSheet = "Delete"
             case moreOptions = "More"
             case recycleBinPageheader = "Recycle Bin"
+            case moveToFolder
+            case moveToFolderFloatingButton
+            case done
 
             public static func createFileTemplate(_ kind: String) -> String {
                 "createFileTemplate.\(kind)"
