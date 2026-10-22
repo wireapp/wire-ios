@@ -239,7 +239,7 @@ public class UserClient: ZMManagedObject, UserClientType {
     }
 
     private func deleteClient() {
-        guard let managedObjectContext else { return }
+        guard let managedObjectContext, managedObjectContext.zm_isValidContext, !isDeleted else { return }
 
         assert(managedObjectContext.zm_isSyncContext, "clients can only be deleted on syncContext")
         // hold on to the conversations that are affected by removing this client
@@ -277,14 +277,7 @@ public class UserClient: ZMManagedObject, UserClientType {
 
     public var hasSessionWithSelfClient: Bool {
         get async {
-            guard
-                let sessionID = await managedObjectContext?.perform({ self.proteusSessionID }),
-                let proteusService = await managedObjectContext?
-                .perform({ [managedObjectContext] in managedObjectContext?.proteusService })
-            else {
-                return false
-            }
-
+            guard let (sessionID, proteusService) = await sessionDetails(excludingSelf: false) else { return false }
             return await proteusService.sessionExists(id: sessionID)
         }
     }
@@ -522,15 +515,18 @@ public extension UserClient {
     /// Deletes the session between the selfClient and the given userClient
     /// If there is no session it does nothing
     func deleteSession() async throws {
-        guard
-            let context = managedObjectContext,
-            await context.perform({ !self.isSelfClient() }),
-            let sessionID = await context.perform({ self.proteusSessionID }),
-            let proteusService = await context.perform({ context.proteusService })
-        else {
-            return
-        }
+        guard let (sessionID, proteusService) = await sessionDetails(excludingSelf: true) else { return }
         try await proteusService.deleteSession(id: sessionID)
+    }
+
+    private func sessionDetails(excludingSelf: Bool) async -> (ProteusSessionID, ProteusServiceInterface)? {
+        guard let context = managedObjectContext else { return nil }
+        return await context.perform {
+            guard context.zm_isValidContext, self.managedObjectContext === context, !self.isDeleted,
+                  !excludingSelf || !self.isSelfClient(),
+                  let sessionID = self.proteusSessionID, let service = context.proteusService else { return nil }
+            return (sessionID, service)
+        }
     }
 
     func establishSessionWithClient(

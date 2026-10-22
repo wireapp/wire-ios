@@ -124,6 +124,25 @@ final class MessageSenderTests: MessagingTestBase {
         }
     }
 
+    func testPreparationRejectsTheDetachedMessageAfterContextClosure() async throws {
+        let original = try await makeOutboxMessage()
+        let messageID = original.objectID
+        let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
+        context.persistentStoreCoordinator = syncMOC.persistentStoreCoordinator
+        context.performAndWait { context.markAsSyncContext() }
+        let message = try await context.perform {
+            try XCTUnwrap(context.existingObject(with: messageID) as? ZMClientMessage)
+        }
+        context.tearDown()
+
+        do {
+            try await message.prepareMessageForSending()
+            XCTFail("Preparation must reject detached content")
+        } catch {
+            XCTAssertEqual(error as? MessageOutboxError, .staleAttempt)
+        }
+    }
+
     func testOutboxMLSRepairsKeepFrozenContentAndStopAfterThreeRetries() async throws {
         let missingUsers = Set([QualifiedID.randomID()])
         let failures: [SendMLSMessageFailure] = [

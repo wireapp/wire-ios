@@ -373,13 +373,19 @@ public final class MessageSender: MessageSenderInterface {
         await proteusPayloadProcessor.updateClientsChanges(
             from: messageSendingStatus,
             for: message,
-            in: context
+            in: context,
+            ifStillCurrent: {
+                guard let outboxAttempt else { return true }
+                guard let row = message as? ZMMessage else { return false }
+                return self.isCurrentOutboxAttempt(outboxAttempt.identifier, row: row)
+            }
         )
     }
 
     private func handleProteusFailure(
         message: any ProteusMessage,
-        _ failure: NetworkError
+        _ failure: NetworkError,
+        ifStillCurrent: (() -> Bool)? = nil
     ) async throws -> Set<QualifiedClientID> {
         let logAttributes = await logAttributesBuilder.logAttributes(message)
 
@@ -388,14 +394,23 @@ public final class MessageSender: MessageSenderInterface {
             await proteusPayloadProcessor.updateClientsChanges(
                 from: messageSendingStatus,
                 for: message,
-                in: context
+                in: context,
+                ifStillCurrent: ifStillCurrent
             )
-            await context.perform {
-                guard self.context.zm_isValidContext else { return }
+            let expired = try await context.perform {
+                guard self.context.zm_isValidContext, ifStillCurrent?() != false else {
+                    throw MessageOutboxError.staleAttempt
+                }
+                if let row = message as? ZMMessage {
+                    guard row.managedObjectContext === self.context, !row.isDeleted, !row.hasBeenDeleted else {
+                        throw MessageOutboxError.staleAttempt
+                    }
+                }
                 self.context.enqueueDelayedSave()
+                return message.isExpired
             }
 
-            if await context.perform({ !self.context.zm_isValidContext || message.isExpired }) {
+            if expired {
                 WireLogger.messaging.warn(
                     "attempt to send with proteus failed - missing clients and message is expired",
                     attributes: logAttributes
@@ -715,7 +730,7 @@ private extension MessageSender {
                     }
                     if notSubmitted { throw MessageSendError.outboxWaitingForConnection }
                     if canRepair {
-                        try await repairOutboxRejection(error, message: message)
+                        try await repairOutboxRejection(error, message: message, attempt: attempt)
                         continue
                     }
                     await resetOutboxConversationIfNeeded(error, message: message)
@@ -833,9 +848,17 @@ private extension MessageSender {
         }
     }
 
-    func repairOutboxRejection(_ error: Error, message: any SendableMessage) async throws {
+    func repairOutboxRejection(
+        _ error: Error, message: any SendableMessage, attempt: MessageOutboxAttempt
+    ) async throws {
         if let error = error as? NetworkError, let apiVersion {
-            let clients = try await handleProteusFailure(message: message, error)
+            let isStillQueued = {
+                guard self.context.zm_isValidContext, let row = message as? ZMMessage,
+                      row.managedObjectContext === self.context, !row.isDeleted, !row.hasBeenDeleted,
+                      row.outboxState == .queued else { return false }
+                return (try? row.loadOutboxPayload()) == attempt.payload
+            }
+            let clients = try await handleProteusFailure(message: message, error, ifStillCurrent: isStillQueued)
             try await sessionEstablisher.establishSession(with: clients, apiVersion: apiVersion)
             return
         }

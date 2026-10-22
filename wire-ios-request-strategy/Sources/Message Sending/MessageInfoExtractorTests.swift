@@ -63,6 +63,19 @@ final class MessageInfoExtractorTests: XCTestCase {
         coreDataStack.syncContext
     }
 
+    func testExtractionRejectsAClosedContextBeforeReadingTheMessage() async {
+        context.tearDown()
+
+        do {
+            _ = try await sut.infoForSending(message: mockProteusMessage, conversationID: Scaffolding.conversationID)
+            XCTFail("A closed context cannot produce recipient information")
+        } catch {
+            guard case MessageInfoExtractorError.contextUnavailable = error else {
+                return XCTFail("Unexpected extraction error: \(error)")
+            }
+        }
+    }
+
     func test_infoForSending_For2DifferentsUsersWithOneClient() async throws {
         // GIVEN
         let expectedListClients: MessageInfo.ClientList = [

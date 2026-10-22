@@ -67,7 +67,11 @@ public extension ProteusMessage where Self: ZMOTRMessage {
     }
 
     func prepareMessageForSending() async throws {
+        try Task.checkCancellation()
+        guard let context = managedObjectContext else { throw MessageOutboxError.staleAttempt }
         try await context.perform { [self] in
+            guard context.zm_isValidContext, managedObjectContext === context,
+                  !isDeleted, !hasBeenDeleted else { throw MessageOutboxError.staleAttempt }
             if conversation?.conversationType == .oneOnOne {
                 // Update expectsReadReceipt flag to reflect the current user setting
                 if var updatedGenericMessage = underlyingMessage {

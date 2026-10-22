@@ -48,6 +48,11 @@ also written; it has not been executed.
 Sync-wait cancellation is now written as well: V2 waits use a cancellation-aware
 stream, and context teardown cancels outbox tasks through a weak owner hook rather
 than waiting for strategy-directory deallocation. New regressions remain unexecuted.
+Preparation/status interruption review now has source fixes too: recipient
+information is captured in one context block, dependency wakeups cannot be lost
+during the first check, and status processing rechecks the operation after crypto
+awaits. Client-session metadata reads are also atomic. Compilation and runtime
+acceptance remain outstanding.
 Uncertain-delivery automatic retry policy remains unresolved before broad activation;
 the development implementation exposes manual Retry while retaining frozen content.
 
@@ -85,9 +90,10 @@ Next steps, in order:
    user instruction. Proteus sender response-classification and asset teardown
    coverage are now written. Bounded MLS repairs and late callbacks after account
    context closure also have unexecuted regression source. Cancellation while
-   waiting for sync has a source fix and regressions. Interruption during
-   preparation/status processing and full account/session lifecycle still need
-   review; these tests have not established runtime correctness.
+   waiting for sync and interruption during preparation/status processing now
+   have source fixes and regressions. The next practical milestone is user-owned
+   compilation and runtime validation, followed by any resulting fixes and rollout
+   decisions; these source tests have not established runtime correctness.
 4. Continue through regular queuing, queued editing, and asset recovery on the
    same branch. Treat the numbered PR checklists below as implementation stages;
    defer PR packaging until there is working code to review. Do not repeat the
@@ -1257,6 +1263,13 @@ Execution record (2026-10-21, source only; no formatting/lint/build/test command
       tasks at account-context teardown while the strategy directory is alive.
 - [x] Add unexecuted regression source for V1/V2 wait cancellation, isolation
       between waiters, and queued-content preservation when teardown cancels a task.
+- [x] Source review: capture recipient/dependency state atomically, guard detached
+      message preparation, and recheck status ownership after crypto/session awaits.
+- [x] Source review: subscribe before reading dependency state to retain a wakeup
+      arriving during that first read; remove observation on exit/cancellation.
+- [x] Add unexecuted regression source for preparation/context closure, cancelled
+      dependency waits, dependency wakeup races, and status results after deletion
+      or replacement of the sending operation.
 - [ ] Confirm rollout and flag-disable behavior.
 - [ ] Review failure diagnostics without exposing message content.
 - [ ] Decide whether to enable the feature and later remove the temporary flag.
@@ -1374,6 +1387,39 @@ Sync-wait cancellation source review, 2026-10-22 (no validation execution):
   Continue with interruption during asynchronous preparation/status processing
   and user-owned lifecycle/device validation. The developer flag remains off;
   `.ruby-version` remains unrelated and untouched.
+
+Preparation/status interruption source review, 2026-10-22 (no validation execution):
+
+- Proteus recipient extraction previously made several context hops, carrying
+  users, conversations, and clients across suspension points. Sending/broadcast
+  entry points now capture the same transport metadata inside one context block,
+  returning value data. Private extraction helpers are synchronous on that queue.
+  Cancelled extraction and closed contexts abort before reading managed content.
+- Read-receipt/legal-hold metadata preparation still performs its existing local
+  updates. It now captures an optional owning context and checks validity,
+  attachment to that context, deletion, and cancellation instead of force-reading
+  the context from a message that may already have been reset.
+- Dependency privacy/eligibility checks are one context snapshot, with cancellation
+  and detached/deleted-message guards. A bounded notification stream is installed
+  before the first read so an event emitted during that read cannot be lost before
+  observation starts. Observation is removed on success, failure, or cancellation.
+- Status processing now rechecks the live message and an optional operation
+  predicate after asynchronous session checks, before attaching discovered clients
+  or applying message/conversation bookkeeping. Outbox success checks the attempt
+  token; missing-client repair checks the queued frozen operation. A deleted or
+  replaced operation receives no stale bookkeeping or returned missing-client rows.
+- Client session lookup/deletion captures the service and session ID in one guarded
+  context block before awaiting crypto. Client deletion rechecks context validity
+  afterwards; crypto completion cannot resume mutation of a reset client.
+- Regression source covers an event emitted synchronously during the first
+  dependency read, cancelled waits retaining unclaimed queued content, dependency/
+  recipient/metadata preparation against closed contexts, deletion/replacement
+  while a status-processing session lookup is suspended, and a session deletion
+  completing after context closure. Existing recipient-selection cases remain.
+- No builds, tests, lint, formatting, push, or PR were run/created here. These
+  checkmarks record source completion only. Compilation, protocol/sync coverage,
+  flag-off regressions, and actual device/account lifecycle checks remain open.
+  Keep the feature default-off and preserve `.ruby-version` unchanged.
 
 ## Decisions to settle before the relevant implementation
 
