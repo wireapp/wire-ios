@@ -39,6 +39,16 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         cancellables = nil
     }
 
+    func testTearDownCompletesAllCallers() {
+        let first = expectation(description: "first teardown completed")
+        let second = expectation(description: "second teardown completed")
+
+        sut.tearDown { first.fulfill() }
+        sut.tearDown { second.fulfill() }
+
+        wait(for: [first, second], timeout: 10)
+    }
+
     func testThatMeetingsAvailabilityFollowsBackendFeatureStatus() {
         let testCases: [(status: Feature.Status, isEnabled: Bool)] = [
             (.enabled, true),

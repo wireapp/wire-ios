@@ -311,9 +311,17 @@ public final class ConversationService: ConversationServiceInterface {
         action.perform(in: context.notificationContext) { result in
 
             self.context.perform {
+                guard self.context.isAvailableForConversationProcessing else {
+                    completion(.failure(.conversationNotFound))
+                    return
+                }
                 switch result {
                 case let .success(objectID):
-                    Task {
+                    guard let syncContext = self.context.zm_sync else {
+                        completion(.failure(.conversationNotFound))
+                        return
+                    }
+                    WaitingGroupTask(context: syncContext) {
                         do {
                             try await self.handleMLSConversationIfNeeded(
                                 for: objectID,
@@ -332,6 +340,10 @@ public final class ConversationService: ConversationServiceInterface {
                         }
 
                         await self.context.perform {
+                            guard self.context.isAvailableForConversationProcessing else {
+                                completion(.failure(.conversationNotFound))
+                                return
+                            }
                             if let conversation = try? self.context.existingObject(with: objectID) as? ZMConversation {
                                 completion(.success(conversation))
                             } else {
@@ -356,11 +368,13 @@ public final class ConversationService: ConversationServiceInterface {
         for conversationObjectId: NSManagedObjectID,
         participantObjectIDs: Set<NSManagedObjectID>
     ) async throws {
-        guard let syncContext = await context.perform({ self.context.zm_sync }) else {
-            assertionFailure("handleMLSConversationIfNeeded must be done on syncContext")
+        guard let syncContext = await context.perform({
+            self.context.isAvailableForConversationProcessing ? self.context.zm_sync : nil
+        }) else {
             return
         }
         guard let syncConversation = await syncContext.perform({
+            guard syncContext.isAvailableForConversationProcessing else { return ZMConversation?.none }
             let conversation = try? syncContext.existingObject(with: conversationObjectId) as? ZMConversation
 
             guard conversation?.messageProtocol == .mls else {
@@ -374,6 +388,7 @@ public final class ConversationService: ConversationServiceInterface {
         }
 
         guard let syncParticipants: [ZMUser] = await syncContext.perform({
+            guard syncContext.isAvailableForConversationProcessing else { return nil }
             var participants: [ZMUser] = participantObjectIDs.existingObjects(in: syncContext) ?? []
             participants.append(ZMUser.selfUser(in: syncContext))
             return participants
@@ -382,7 +397,10 @@ public final class ConversationService: ConversationServiceInterface {
         }
 
         let (mlsGroupID, mlsService) = await syncContext.perform {
-            (syncConversation.mlsGroupID, syncContext.mlsService)
+            guard syncContext.isAvailableForConversationProcessing else {
+                return (nil as MLSGroupID?, nil as MLSServiceInterface?)
+            }
+            return (syncConversation.mlsGroupID, syncContext.mlsService)
         }
 
         guard let mlsGroupID, let mlsService else { return }
@@ -390,7 +408,8 @@ public final class ConversationService: ConversationServiceInterface {
         createGroupFlow.checkpoint(description: "create MLS group with ID (\(mlsGroupID))")
         let ciphersuite = try await mlsService.createGroup(for: mlsGroupID, removalKeys: nil)
 
-        await syncContext.perform {
+        let didUpdate = await syncContext.perform {
+            guard syncContext.isAvailableForConversationProcessing else { return false }
             self.createGroupFlow
                 .checkpoint(
                     description: "marking MLS ZMConversation ready, group ID (\(String(describing: syncConversation.mlsGroupID)))"
@@ -400,7 +419,9 @@ public final class ConversationService: ConversationServiceInterface {
             syncConversation.mlsStatus = .ready
             syncConversation.ciphersuite = ciphersuite
             syncContext.saveOrRollback()
+            return true
         }
+        guard didUpdate else { throw ConversationCreationFailure.conversationNotFound }
 
         if DeveloperFlag.simulateUnestablishedMLSGroup.isOn {
             DeveloperFlag.simulateUnestablishedMLSGroup.enable(false)

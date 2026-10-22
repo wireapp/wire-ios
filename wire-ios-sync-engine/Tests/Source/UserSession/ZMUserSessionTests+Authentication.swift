@@ -127,16 +127,36 @@ final class ZMUserSessionTests_Authentication: ZMUserSessionTestsBase {
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
     }
 
+    func testThatItLogsOut_WhenLogoutRequestFailsBecauseTheClientIsAlreadyDeleted() {
+        // given
+        let userSessionDelegate = MockUserSessionDelegate()
+        sut.delegate = userSessionDelegate
+        let credentials = UserEmailCredentials(email: "john.doe@domain.com", password: "123456")
+        let completionHandlerCalled = customExpectation(description: "Completion handler called")
+
+        // when
+        sut.logout(credentials: credentials) { result in
+            switch result {
+            case .success:
+                completionHandlerCalled.fulfill()
+            case .failure:
+                XCTFail()
+            }
+        }
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        transportSession.lastEnqueuedRequest?.complete(with: ZMTransportResponse(
+            payload: ["label": "client-not-found"] as ZMTransportData,
+            httpStatus: 404,
+            transportSessionError: nil,
+            apiVersion: APIVersion.v0.rawValue
+        ))
+
+        // then
+        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
+        XCTAssertNotNil(userSessionDelegate.calleduserDidLogout)
+    }
+
     func testThatItCallsTheCompletionHandlerWithCorrectErrorCode_WhenLogoutRequestFails() {
-        checkThatItCallsTheCompletionHandler(
-            with: .clientDeletedRemotely,
-            for: ZMTransportResponse(
-                payload: ["label": "client-not-found"] as ZMTransportData,
-                httpStatus: 404,
-                transportSessionError: nil,
-                apiVersion: APIVersion.v0.rawValue
-            )
-        )
         checkThatItCallsTheCompletionHandler(
             with: .invalidCredentials,
             for: ZMTransportResponse(

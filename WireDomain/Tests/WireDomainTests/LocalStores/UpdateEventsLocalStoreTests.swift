@@ -74,6 +74,12 @@ final class UpdateEventsLocalStoreTests: XCTestCase {
 
     // MARK: - Tests
 
+    func testStoreServerTimeDeltaAfterContextTeardownDoesNotCrash() async {
+        stack.close()
+
+        await sut.storeServerTimeDelta(1)
+    }
+
     func testPersistEventEnvelope_It_Stores_Envelope_Locally() async throws {
         // When
 

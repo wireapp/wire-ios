@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireDataModelSupport
 import XCTest
 
 @testable import WireRequestStrategy
@@ -232,6 +233,56 @@ final class AddParticipantActionHandlerTests: MessagingTestBase {
             XCTAssertTrue(conversation.localParticipants.contains(user))
         }
 
+    }
+
+    func testResponseProcessingRemainsInSyncGroupUntilFinished() async throws {
+        let processingStarted = expectation(description: "processing started")
+        let actionCompleted = expectation(description: "action completed")
+        let (resumeStream, resumeContinuation) = AsyncStream<Void>.makeStream()
+        let mockProcessor = MockLegacyConversationEventProcessorProtocol()
+        mockProcessor.processAndSaveConversationEvents_MockMethod = { _ in
+            processingStarted.fulfill()
+            var iterator = resumeStream.makeAsyncIterator()
+            _ = await iterator.next()
+        }
+        sut = AddParticipantActionHandler(context: syncMOC, eventProcessor: mockProcessor)
+
+        let responseAndAction: (ZMTransportResponse, AddParticipantAction) = syncMOC.performGroupedAndWait { [self] in
+            let action = AddParticipantAction(users: [user], conversation: conversation)
+            let member = Payload.ConversationMember(
+                id: user.remoteIdentifier,
+                qualifiedID: user.qualifiedID,
+                conversationRole: ZMConversation.defaultMemberRoleName
+            )
+            let memberJoined = Payload.UpdateConversationMemberJoin(
+                userIDs: [user.remoteIdentifier],
+                users: [member]
+            )
+            let event = conversationEventPayload(
+                from: memberJoined,
+                conversationID: conversation.qualifiedID,
+                senderID: ZMUser.selfUser(in: syncMOC).qualifiedID
+            )
+            let payload = String(bytes: event.payloadData()!, encoding: .utf8)!
+            let response = ZMTransportResponse(
+                payload: payload as ZMTransportData,
+                httpStatus: 200,
+                transportSessionError: nil,
+                apiVersion: APIVersion.v0.rawValue
+            )
+            return (response, action)
+        }
+        let (response, action) = responseAndAction
+        action.resultHandler = { _ in actionCompleted.fulfill() }
+
+        sut.handleResponse(response, action: action)
+        await fulfillment(of: [processingStarted], timeout: 5)
+        XCTAssertEqual(try XCTUnwrap(syncMOC.dispatchGroup).wait(forInterval: 0.05), 1)
+
+        resumeContinuation.yield(())
+        resumeContinuation.finish()
+        await fulfillment(of: [actionCompleted], timeout: 5)
+        XCTAssertEqual(try XCTUnwrap(syncMOC.dispatchGroup).wait(forInterval: 1), 0)
     }
 
     func testThatItRefetchTeamUsers_On403() {

@@ -358,6 +358,58 @@ final class ConversationServiceTests: MessagingTestBase {
         XCTAssertEqual(addParticipantCalls.first?.users, [user1Sync, selfUserSync])
     }
 
+    func testCreateMLSGroupKeepsSyncGroupEnteredWhileCoreCryptoIsRunning() async throws {
+        let groupID = MLSGroupID.random()
+        syncMOC.performAndWait {
+            self.groupConversation.messageProtocol = .mls
+            self.groupConversation.mlsGroupID = groupID
+            self.syncMOC.saveOrRollback()
+        }
+
+        let mockActionHandler = MockActionHandler<CreateGroupConversationAction>(
+            result: .success(groupConversation.objectID),
+            context: uiMOC.notificationContext
+        )
+        let mlsService = MockMLSServiceInterface()
+        let createStarted = expectation(description: "CoreCrypto group creation started")
+        let actionCompleted = expectation(description: "conversation created")
+        let (resumeStream, resumeContinuation) = AsyncStream<Void>.makeStream()
+        mlsService.createGroupForRemovalKeys_MockMethod = { _, _ in
+            createStarted.fulfill()
+            var iterator = resumeStream.makeAsyncIterator()
+            _ = await iterator.next()
+            return .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519
+        }
+        syncMOC.performAndWait { self.syncMOC.mlsService = mlsService }
+        mockConversationParticipantsService.addParticipantsTo_MockMethod = { _, _ in }
+
+        await uiMOC.perform { [self] in
+            sut.createGroupConversation(
+                name: nil,
+                users: [user1],
+                allowGuests: true,
+                allowApps: true,
+                enableReceipts: true,
+                messageProtocol: .mls
+            ) { result in
+                if case .success = result {
+                    actionCompleted.fulfill()
+                } else {
+                    XCTFail("Unexpected result: \(result)")
+                }
+            }
+        }
+
+        await fulfillment(of: [createStarted], timeout: 5)
+        XCTAssertEqual(try XCTUnwrap(syncMOC.dispatchGroup).wait(forInterval: 0.05), 1)
+
+        resumeContinuation.yield(())
+        resumeContinuation.finish()
+        await fulfillment(of: [actionCompleted], timeout: 5)
+        XCTAssertEqual(try XCTUnwrap(syncMOC.dispatchGroup).wait(forInterval: 1), 0)
+        XCTAssertEqual(mockActionHandler.performedActions.count, 1)
+    }
+
     func test_CreateGroupConversation_CreatesMLSGroup_WithOnlyReachableUsers() throws {
         // Given
         let groupID = MLSGroupID.random()

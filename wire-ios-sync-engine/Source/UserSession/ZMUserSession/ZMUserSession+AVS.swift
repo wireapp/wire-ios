@@ -22,28 +22,28 @@ extension ZMUserSession {
 
     func notifyAVSWillProcessEvents() {
         managedObjectContext.perform { [weak self] in
-            guard let self else { return }
+            guard let self, managedObjectContext.zm_isUserInterfaceContext else { return }
             callCenter?.avsWrapper.notify(isProcessingNotifications: true)
         }
     }
 
     func notifyAVSDidProcessEvents() {
         managedObjectContext.perform { [weak self] in
-            guard let self else { return }
+            guard let self, managedObjectContext.zm_isUserInterfaceContext else { return }
             callCenter?.avsWrapper.notify(isProcessingNotifications: false)
         }
     }
 
     func notifyAVSOfNetworkInterfaceChanged() {
         managedObjectContext.perform { [weak self] in
-            guard let self else { return }
+            guard let self, managedObjectContext.zm_isUserInterfaceContext else { return }
             callCenter?.avsWrapper.networkInterfaceChanged()
         }
     }
 
     func notifyAVSOfLiveSyncState(isLiveSyncOngoing: Bool) {
         managedObjectContext.perform { [weak self] in
-            guard let self else { return }
+            guard let self, managedObjectContext.zm_isUserInterfaceContext else { return }
             callCenter?.avsWrapper.setLiveSyncPaused(!isLiveSyncOngoing)
         }
     }

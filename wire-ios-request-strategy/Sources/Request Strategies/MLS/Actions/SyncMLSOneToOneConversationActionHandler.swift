@@ -135,7 +135,7 @@ final class SyncMLSOneToOneConversationActionHandler: ActionHandler<SyncMLSOneTo
         payload: Payload.Conversation,
         publicKeys: BackendMLSPublicKeys? = nil
     ) {
-        Task { [action] in
+        WaitingGroupTask(context: context) { [action] in
             var action = action
 
             // TODO: [WPB-7415] backend doesn't always include the other member
@@ -143,13 +143,22 @@ final class SyncMLSOneToOneConversationActionHandler: ActionHandler<SyncMLSOneTo
             payload.addMissingMember(userID: QualifiedID(uuid: action.userID, domain: action.domain))
 
             guard
-                let conversation = await processor.updateOrCreateConversation(
+                let conversation = await self.processor.updateOrCreateConversation(
                     from: payload,
-                    in: context
-                ),
-                let groupID = await context.perform({ conversation.mlsGroupID }),
-                let conversationID = await context.perform({ conversation.qualifiedID })
+                    in: self.context
+                )
             else {
+                action.fail(with: .failedToProcessResponse)
+                return
+            }
+
+            let identifiers = await self.context.perform { () -> (QualifiedID, MLSGroupID)? in
+                guard self.context.isAvailableForConversationProcessing,
+                      let conversationID = conversation.qualifiedID,
+                      let groupID = conversation.mlsGroupID else { return nil }
+                return (conversationID, groupID)
+            }
+            guard let (conversationID, groupID) = identifiers else {
                 action.fail(with: .failedToProcessResponse)
                 return
             }

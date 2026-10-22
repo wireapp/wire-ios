@@ -30,6 +30,18 @@ final class DeveloperDebugActionsViewModelTests: XCTestCase {
         XCTAssertEqual(viewModel.debugItems.count, 19)
     }
 
+    func testViewModelDeallocatesWithDebugItems() {
+        weak var weakViewModel: DeveloperDebugActionsViewModel?
+
+        autoreleasepool {
+            let viewModel = makeViewModel()
+            weakViewModel = viewModel
+            XCTAssertEqual(viewModel.debugItems.count, 19)
+        }
+
+        XCTAssertNil(weakViewModel)
+    }
+
     // MARK: - Helpers
 
     private func makeViewModel() -> DeveloperDebugActionsViewModel {

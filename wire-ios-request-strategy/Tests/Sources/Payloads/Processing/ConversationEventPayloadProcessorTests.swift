@@ -1135,6 +1135,42 @@ final class ConversationEventPayloadProcessorTests: MessagingTestBase {
         }
     }
 
+    func testUpdateOrCreateConversation_Group_StopsWhenContextTearsDownDuringMLSUpdate() async {
+        let qualifiedID = await syncMOC.perform { self.groupConversation.qualifiedID! }
+        let payload = Payload.Conversation(
+            qualifiedID: qualifiedID,
+            type: BackendConversationType.group.rawValue,
+            messageProtocol: "mls"
+        )
+        await syncMOC.perform {
+            LegacyFeatureRepository(context: self.syncMOC).storeMLS(Feature.MLS(status: .enabled))
+        }
+
+        let mlsUpdateStarted = expectation(description: "MLS update started")
+        let (resumeStream, resumeContinuation) = AsyncStream<Void>.makeStream()
+        mockMLSEventProcessor.updateConversationIfNeededConversationFallbackGroupIDContext_MockMethod = { _, _, _ in
+            mlsUpdateStarted.fulfill()
+            var iterator = resumeStream.makeAsyncIterator()
+            _ = await iterator.next()
+        }
+
+        let processing = Task { await sut.updateOrCreateConversation(from: payload, in: syncMOC) }
+        await fulfillment(of: [mlsUpdateStarted], timeout: 5)
+        // Mimic the user-info invalidation performed by context teardown without closing
+        // the fixture's stack, which is still needed by MessagingTestBase.tearDown().
+        let userInfo = await syncMOC.perform { () -> NSDictionary in
+            let userInfo = self.syncMOC.userInfo.copy() as! NSDictionary
+            self.syncMOC.userInfo.removeAllObjects()
+            return userInfo
+        }
+        resumeContinuation.yield(())
+        resumeContinuation.finish()
+
+        let result = await processing.value
+        XCTAssertNil(result)
+        await syncMOC.perform { self.syncMOC.userInfo.addEntries(from: userInfo as! [AnyHashable: Any]) }
+    }
+
     func testUpdateOrCreateConversation_Group_UpdatesEpoch() async {
         // given
         let payload = await syncMOC.perform {

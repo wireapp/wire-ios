@@ -74,35 +74,43 @@ final class DeveloperDebugActionsViewModel: ObservableObject {
     }
 
     private func setupButtons() {
+        func button(
+            _ title: String,
+            action: @escaping (DeveloperDebugActionsViewModel) -> Void
+        ) -> DeveloperDebugActionsDisplayModel.ButtonItem {
+            .init(title: title, action: { [weak self] in
+                guard let self else { return }
+                action(self)
+            })
+        }
+
         let buttonItems: [DeveloperDebugActionsDisplayModel.ButtonItem] = [
-            .init(title: "Share debug logs", action: shareDebugLogs),
-            .init(title: "Trigger incremental sync", action: triggerIncrementalSync),
-            .init(title: "Trigger resources sync", action: triggerResourcesSync),
-            .init(title: "Break next incremental sync", action: breakNextIncrementalSync),
-            .init(title: "Update Conversation to mixed protocol", action: updateConversationProtocolToMixed),
-            .init(title: "Update Conversation to MLS protocol", action: updateConversationProtocolToMLS),
-            .init(title: "Update MLS migration status", action: updateMLSMigrationStatus),
-            .init(title: "Delete domains in the database", action: deleteDomains),
-            .init(title: "Find Conversation with MLS Group", action: showSearchMLSConversations),
-            .init(title: "Clear collapsed messages cache", action: clearCollapsedMessagesCache),
-            .init(title: "Simulate access token failure", action: simulateAccessTokenFailure),
-            .init(title: "Invalidate all conversations", action: invalidateAllConversations),
-            .init(title: "Set last app version migration", action: requestAppVersionInput),
-            .init(title: "Initiate reset of first from top MLS", action: initiateResetBrokenMLSConversation),
-            .init(title: "Initiate reset of affected MLS groups", action: initiateRepairRemovalKeys),
-            .init(title: "Trigger 15s CC transaction", action: { [weak self] in
-                self?.simulateLongCCTransaction(seconds: 15)
-            }),
-            .init(title: "Trigger 60s CC transaction", action: { [weak self] in
-                self?.simulateLongCCTransaction(seconds: 60)
-            }),
-            .init(title: "Logout", action: logout)
+            button("Share debug logs") { viewModel in
+                Task { @MainActor in viewModel.shareDebugLogs() }
+            },
+            button("Trigger incremental sync") { $0.triggerIncrementalSync() },
+            button("Trigger resources sync") { $0.triggerResourcesSync() },
+            button("Break next incremental sync") { $0.breakNextIncrementalSync() },
+            button("Update Conversation to mixed protocol") { $0.updateConversationProtocolToMixed() },
+            button("Update Conversation to MLS protocol") { $0.updateConversationProtocolToMLS() },
+            button("Update MLS migration status") { $0.updateMLSMigrationStatus() },
+            button("Delete domains in the database") { $0.deleteDomains() },
+            button("Find Conversation with MLS Group") { $0.showSearchMLSConversations() },
+            button("Clear collapsed messages cache") { $0.clearCollapsedMessagesCache() },
+            button("Simulate access token failure") { $0.simulateAccessTokenFailure() },
+            button("Invalidate all conversations") { $0.invalidateAllConversations() },
+            button("Set last app version migration") { $0.requestAppVersionInput() },
+            button("Initiate reset of first from top MLS") { $0.initiateResetBrokenMLSConversation() },
+            button("Initiate reset of affected MLS groups") { $0.initiateRepairRemovalKeys() },
+            button("Trigger 15s CC transaction") { $0.simulateLongCCTransaction(seconds: 15) },
+            button("Trigger 60s CC transaction") { $0.simulateLongCCTransaction(seconds: 60) },
+            button("Logout") { $0.logout() }
         ]
 
         let toggleItems: [DeveloperDebugActionsDisplayModel.ToggleItem] = [
             .init(title: "Use CallKit", isOn: Binding(
-                get: { self.isCallKitEnabled() },
-                set: { self.enableCallKit($0) }
+                get: { [weak self] in self?.isCallKitEnabled() ?? false },
+                set: { [weak self] in self?.enableCallKit($0) }
             ), enabled: !UIDevice.isSimulator)
         ]
 

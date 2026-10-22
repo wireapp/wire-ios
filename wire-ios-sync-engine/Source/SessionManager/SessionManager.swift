@@ -1200,8 +1200,7 @@ public final class SessionManager: NSObject, SessionManagerType {
     }
 
     fileprivate func deleteAccountData(for account: Account) {
-        WireLogger.sessionManager.debug("Deleting the data for \(account.userName) -- \(account.userIdentifier)")
-        WireLogger.session.debug("Deleting the data for account \(account)")
+        WireLogger.sessionManager.debug("Deleting the data for account id: \(account.userIdentifier)")
 
         do {
             try deleteAccountData(for: account, keepAccountOnFailure: false)

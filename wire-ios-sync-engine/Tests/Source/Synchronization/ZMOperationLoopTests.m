@@ -58,10 +58,55 @@
     self.mockTransportSesssion = nil;
     self.mockRequestStrategy = nil;
     self.mockUpdateEventProcessor = nil;
-    [self.sut tearDown];
+    XCTestExpectation *tearDownExpectation = [self expectationWithDescription:@"operation loop torn down"];
+    [self.sut tearDownWithCompletion:^{
+        [tearDownExpectation fulfill];
+    }];
+    [self waitForExpectations:@[tearDownExpectation] timeout:5];
     self.sut = nil;
 
     [super tearDown];
+}
+
+- (void)testThatTearDownCompletionIsCalledAfterPendingGroupedBlocksFinished
+{
+    // given
+    dispatch_semaphore_t releaseBlock = dispatch_semaphore_create(0);
+    __block BOOL groupedBlockFinished = NO;
+    [self.syncMOC performGroupedBlock:^{
+        dispatch_semaphore_wait(releaseBlock, DISPATCH_TIME_FOREVER);
+        groupedBlockFinished = YES;
+    }];
+
+    // when
+    XCTestExpectation *completionExpectation = [self expectationWithDescription:@"tear down completed"];
+    __block BOOL finishedBeforeCompletion = NO;
+    [self.sut tearDownWithCompletion:^{
+        finishedBeforeCompletion = groupedBlockFinished;
+        [completionExpectation fulfill];
+    }];
+
+    // then the tear down doesn't block the caller, and completes only after the pending block finished
+    dispatch_semaphore_signal(releaseBlock);
+    [self waitForExpectations:@[completionExpectation] timeout:5];
+    XCTAssertTrue(finishedBeforeCompletion);
+}
+
+- (void)testThatTearDownDoesNotCompleteAfterTimeoutWhileGroupedWorkIsRunning
+{
+    dispatch_semaphore_t releaseBlock = dispatch_semaphore_create(0);
+    dispatch_semaphore_t completed = dispatch_semaphore_create(0);
+    [self.syncMOC performGroupedBlock:^{
+        dispatch_semaphore_wait(releaseBlock, DISPATCH_TIME_FOREVER);
+    }];
+
+    [self.sut tearDownWithCompletion:^{
+        dispatch_semaphore_signal(completed);
+    }];
+
+    XCTAssertNotEqual(dispatch_semaphore_wait(completed, dispatch_time(DISPATCH_TIME_NOW, (int64_t)(5.2 * NSEC_PER_SEC))), 0);
+    dispatch_semaphore_signal(releaseBlock);
+    XCTAssertEqual(dispatch_semaphore_wait(completed, dispatch_time(DISPATCH_TIME_NOW, 2 * NSEC_PER_SEC)), 0);
 }
 
 - (void)testThatItSendsTheNextOperation
@@ -99,6 +144,7 @@
 - (void)testThatItDoesNotSendARequestIfThereIsNoCurrentAPIVersion
 {
     // given
+    WaitForAllGroupsToBeEmpty(0.5); // let the requests triggered by `resumeEnqueuing` in `setUp` finish
     [self.sut setApiVersion:nil];
     self.mockRequestStrategy.nextRequestCalled = NO;
     XCTAssertNil(self.sut.currentAPIVersion);

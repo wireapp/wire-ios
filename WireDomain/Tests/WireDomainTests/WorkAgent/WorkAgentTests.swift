@@ -105,6 +105,74 @@ struct WorkAgentTests {
         #expect(await scheduler.enqueuedItems.isEmpty)
     }
 
+    @Test("Stopping waits for the active work item")
+    func stoppingWaitsForActiveWork() async {
+        let (started, startedContinuation) = AsyncStream<Void>.makeStream()
+        let (cancelled, cancelledContinuation) = AsyncStream<Void>.makeStream()
+        let item = BlockingWorkItem(
+            started: startedContinuation,
+            cancelled: cancelledContinuation
+        )
+        let queuedItem = MockWorkItem(priority: .medium)
+        await scheduler.enqueueItem(item)
+        await scheduler.enqueueItem(queuedItem)
+
+        let running = Task { await sut.start() }
+        var startedIterator = started.makeAsyncIterator()
+        _ = await startedIterator.next()
+
+        let stopping = Task { await sut.stopAndWait() }
+        var cancelledIterator = cancelled.makeAsyncIterator()
+        _ = await cancelledIterator.next()
+        #expect(await sut.isRunning)
+
+        await item.releaseWork()
+        await stopping.value
+        await running.value
+        #expect(await sut.isRunning == false)
+        #expect(await queuedItem.didStart == false)
+
+        let submittedAfterShutdown = MockWorkItem(priority: .medium)
+        await sut.submitItem(submittedAfterShutdown)
+        await sut.start()
+        #expect(await submittedAfterShutdown.didStart == false)
+    }
+
+}
+
+private actor BlockingWorkItem: WorkItem {
+
+    let id = UUID().uuidString
+    let priority: WorkItemPriority = .medium
+    let started: AsyncStream<Void>.Continuation
+    let cancelled: AsyncStream<Void>.Continuation
+    private var releaseContinuation: CheckedContinuation<Void, Never>?
+
+    init(
+        started: AsyncStream<Void>.Continuation,
+        cancelled: AsyncStream<Void>.Continuation
+    ) {
+        self.started = started
+        self.cancelled = cancelled
+    }
+
+    func start() async throws {
+        await withTaskCancellationHandler {
+            await withCheckedContinuation { continuation in
+                releaseContinuation = continuation
+                started.yield(())
+            }
+        } onCancel: {
+            cancelled.yield(())
+        }
+    }
+
+    func releaseWork() {
+        releaseContinuation?.resume()
+        releaseContinuation = nil
+    }
+
+    func cancel() {}
 }
 
 private actor MockWorkItem: WorkItem {
