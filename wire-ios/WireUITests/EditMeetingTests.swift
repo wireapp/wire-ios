@@ -45,6 +45,14 @@ final class EditMeetingTests: WireUITestCase {
         return try app.loginUser(email: user.email, password: user.password).acceptPopup().openMeetings()
     }
 
+    private func requireConferenceCalling() async throws {
+        let configs = try await UserHelper.default.featureConfigsAPI.getFeatureConfigs()
+        guard configs.contains(where: {
+            guard case let .conferenceCalling(config) = $0 else { return false }
+            return config.status == .enabled
+        }) else { throw RuntimeError("The call test requires conference calling to be enabled") }
+    }
+
     private func registerClients(for users: [UserInfo]) async throws {
         for user in users {
             _ = try await testServicesClient.getInstanceId(
@@ -345,4 +353,73 @@ final class EditMeetingTests: WireUITestCase {
         try assertTitle(synchronized.title, meeting: synchronized, on: inviteePage)
     }
 
+    @MainActor
+    func testEditAvailabilityForMeetingStates_TC_11997() async throws {
+        let (host, _, _, _) = try await UserHelper.default.registerMeetingsTeam(withMemberCount: 1)
+        try await requireConferenceCalling()
+        let fixtures = try await MeetingsTestHelper(user: host)
+        let upcoming = try await fixtures.create(title: "TC11997 upcoming", start: date(hour: 14))
+        let ongoing = try await fixtures.create(title: "TC11997 ongoing", start: date(hour: 11), duration: 7200)
+        let completed = try await fixtures.create(title: "TC11997 completed", start: date(hour: 9))
+        let page = try launchMeetings(for: host, now: date(hour: 12))
+
+        // Upcoming and ongoing meetings must open the edit form.
+        for meeting in [upcoming, ongoing] {
+            let form = try page.edit(meeting)
+            XCTAssertEqual(form.titleField.value as? String, meeting.title)
+            form.assertDateTimes(start: meeting.startTime, end: meeting.endTime)
+            _ = try form.cancel()
+        }
+
+        // Create a real Meet Now meeting and check its edit form during the call.
+        guard page.createMeetingButton.waitAndTap(), page.meetNowOption.waitAndTap() else {
+            throw RuntimeError("Meet Now did not open")
+        }
+        let instantForm = try MeetingFormPage()
+        instantForm.replaceTitle(with: "TC11997 Meet Now")
+        guard instantForm.saveButton.waitAndTap() else { throw RuntimeError("Meet Now did not start") }
+        let call = try waitForMeetingCall()
+        try minimizeMeetingCall(call)
+        let allMeetings = try await fixtures.list()
+        let instant = try XCTUnwrap(allMeetings.first { $0.title == "TC11997 Meet Now" })
+        let edit = try page.edit(instant)
+        edit.assertDateTimes(start: instant.startTime, end: instant.endTime)
+        _ = try edit.cancel()
+
+        // Completed meetings must keep Delete and hide Edit.
+        try page.openMenu(for: completed)
+        XCTAssertFalse(
+            app.buttons["Edit meeting"].exists,
+            "TC-11997 requires completed meetings to have no Edit action"
+        )
+        XCTAssertTrue(app.buttons["Delete meeting for all"].exists)
+    }
+
+    @MainActor
+    private func minimizeMeetingCall(_ call: OngoingCallPage) throws {
+        // The group-call helper returns ActiveConversationPage; Meetings has a different return page.
+        guard call.minimizeCallButton.waitAndTap() else { throw RuntimeError("The meeting call did not minimize") }
+        _ = try MeetingsPage()
+    }
+
+    @MainActor
+    private func waitForMeetingCall() throws -> OngoingCallPage {
+        let timer = app.staticTexts[Locators.OngoingCallPage.timeLabel.rawValue]
+        let permission = springboard.alerts.buttons["Allow"].firstMatch
+        let pattern = "^[0-9]+:[0-5][0-9]$"
+        let ready = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
+            permission.exists || (timer.exists && timer.label.range(of: pattern, options: .regularExpression) != nil)
+        }, object: nil)
+        guard XCTWaiter().wait(for: [ready], timeout: 30) == .completed else {
+            throw RuntimeError("The meeting call or microphone permission did not appear")
+        }
+        if permission.exists { permission.tap() }
+        let established = XCTNSPredicateExpectation(
+            predicate: NSPredicate(format: "exists == true AND label MATCHES %@", pattern), object: timer
+        )
+        guard XCTWaiter().wait(for: [established], timeout: 30) == .completed else {
+            throw RuntimeError("The meeting call did not connect")
+        }
+        return try OngoingCallPage()
+    }
 }
