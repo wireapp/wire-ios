@@ -1,6 +1,6 @@
 # Offline pending messages: implementation plan
 
-Last updated: 2026-10-21
+Last updated: 2026-10-22
 
 Jira issue: [WPB-26307](https://wearezeta.atlassian.net/browse/WPB-26307)
 
@@ -15,6 +15,8 @@ Local testing preference: use `xcodebuild` directly. The user confirmed this on
 Latest validation preference (2026-10-21): the user will run formatting, lint,
 and tests when required. Do not execute those checks as the agent. Earlier runs
 below predate that instruction; do not rerun them without a new request.
+Reconfirmed 2026-10-22: the user requested validation instructions rather than
+agent execution. See the feature validation walkthrough below.
 
 This is the working checklist for investigation, design, implementation, and rollout.
 Check an item only when its result has been verified. Record relevant PRs and test
@@ -1439,6 +1441,109 @@ Preparation/status interruption source review, 2026-10-22 (no validation executi
 - [x] Development scope: main-app enrollment/recovery only. The share extension
       leaves main-app outbox work untouched and uses legacy sharing behavior.
 - [ ] Agree any broader offline share-extension support and cross-process ownership.
+
+## Feature validation walkthrough (2026-10-22)
+
+The user owns execution. None of the steps in this walkthrough has been run by
+the agent. Start with compilation and the short device pass; the wider matrix
+below is still required before activation. Record the tested commit, Xcode,
+device/OS, protocol, synchronization implementation, and receiver observations.
+
+### Compile and enable on the physical device
+
+1. Open `wire-ios-mono.xcworkspace` in Xcode (the repository currently specifies
+   Xcode `26.6` in `.xcode-version`). Select `Wire-iOS` and the physical device,
+   then Build/Run. Preserve the installed account/database for migration and
+   recovery checks. If compilation fails, retain the first compiler diagnostic
+   and its file/line; resolve compilation before interpreting runtime behavior.
+2. Keep Wire Drive disabled for the team. In the developer build, shake to open
+   Developer Tools; when shake-to-report is enabled, shake again while the debug
+   share sheet is open. Open **Configure feature flags**, enable
+   `offlinePendingMessages`, then restart and relaunch the app. The flag now uses
+   the existing restart-required prompt. This prompt change is source-only too.
+   A toggle without restarting does not reconfigure the existing account stack.
+3. Use an existing conversation and a second online client/account. Confirm an
+   online message arrives. Turn self-deleting messages off and resolve existing
+   verification/legal-hold prompts. Prepare an image and a small file locally.
+
+### First device pass
+
+Run each scenario with distinguishable content and check actual receiver content
+and count. Do not use manual Retry before observing automatic reconnection.
+
+| Scenario | Steps | Expected result to verify |
+| --- | --- | --- |
+| Queue and edit | Enable Airplane Mode and turn Wi-Fi off. Send text, wait at least 90 seconds, then edit it twice while still offline. Reconnect. | Text remains pending offline rather than timing out. Receiver gets the final content once, without an edited marker for the initially queued text. |
+| Cold restart | Queue different text offline. Terminate the app while still offline and relaunch it, then reconnect. | The pending text survives relaunch and sends without Retry. |
+| Classic attachments | Separately queue the local image and file offline. Restart offline, then reconnect. | Both survive, upload automatically, and open correctly on the receiver. Repeat with audio/video before considering asset recovery validated. |
+| Delete/cancel | Queue text and a file offline; delete the text and cancel the file before reconnecting. | Neither is sent. Retry of the cancelled file, if offered and chosen, must be a deliberate user action. |
+| Enrollment off with queued work | Queue text with the flag on. Turn it off, restart while offline, then reconnect. | Existing enrolled text still recovers. New submissions use the legacy path; turning enrollment off is not a stop switch for already queued work. |
+| Legacy and normal edits | With the flag off after restart, send text and a file online. With the flag on after restart, edit a previously delivered text. | Normal sends still work; a normal sent-message edit retains its edited marker. |
+
+Follow with reconnect-during-edit (a rejected edit must retain the draft),
+location/knock/multipart, quotes/mentions/previews, and mixed text/asset ordering.
+Record mixed ordering rather than treating either asset-blocking policy as agreed.
+Repeat for Proteus/MLS and both sync implementations. Interrupt an upload and
+switch/close an account while work is active. Lost acknowledgements and the
+development manual-Retry policy need separate controlled coverage; an offline
+send alone does not validate uncertain delivery or prove duplicate prevention.
+
+### Focused automated checks with direct xcodebuild
+
+Run from the repository root. The example destination matches `fastlane/.env`;
+substitute an installed simulator if needed. Start with the model/migration pass:
+
+```sh
+xcodebuild test \
+  -workspace wire-ios-mono.xcworkspace \
+  -scheme WireDataModel -testPlan AllTests \
+  -destination 'platform=iOS Simulator,name=iPhone 17,OS=26.5' \
+  -only-testing:WireDataModelTests/MessageOutboxTests \
+  -only-testing:WireDataModelTests/DatabaseMigrationTests_Outbox \
+  -only-testing:WireDataModelTests/CoreDataMessagingMigrationVersionTests \
+  -only-testing:WireDataModelTests/FileAssetCacheTests \
+  -only-testing:WireDataModelTests/ZMAssetClientMessageTests \
+  -only-testing:WireDataModelTests/ZMGenericMessageDataTests \
+  -only-testing:WireDataModelTests/UserClientTests \
+  CODE_SIGNING_ALLOWED=NO
+```
+
+Then run the sender/scheduler/preprocessing pass:
+
+```sh
+xcodebuild test \
+  -workspace wire-ios-mono.xcworkspace \
+  -scheme WireRequestStrategy -testPlan AllTests \
+  -destination 'platform=iOS Simulator,name=iPhone 17,OS=26.5' \
+  -only-testing:WireRequestStrategyTests/ClientMessageRequestStrategyTests \
+  -only-testing:WireRequestStrategyTests/MessageSenderTests \
+  -only-testing:WireRequestStrategyTests/MessageDependencyResolverTests \
+  -only-testing:WireRequestStrategyTests/MessageInfoExtractorTests \
+  -only-testing:WireRequestStrategyTests/MessageSendingStatusPayloadProcessorTests \
+  -only-testing:WireRequestStrategyTests/AssetsPreprocessorTests \
+  -only-testing:WireRequestStrategyTests/LinkPreviewPreprocessorTests \
+  -only-testing:WireRequestStrategyTests/LinkPreviewAssetUploadRequestStrategyTests \
+  -only-testing:WireRequestStrategyTests/MessageLogAttributesBuilderTests \
+  CODE_SIGNING_ALLOWED=NO
+```
+
+For the remaining focused passes, use the same workspace/destination and replace
+the scheme, plan, and all `-only-testing` selections with the following. Repeat
+`-only-testing` for each suite; identifiers containing spaces must be quoted.
+
+| Scheme | Plan | Test identifiers |
+| --- | --- | --- |
+| `WireSyncEngine` | `AllTests` | `UnitTests/IncrementalSyncObserverTests`, `UnitTests/ZMUserSessionTests` |
+| `WireUtilities` | `AllTests` | `WireUtilities-Tests/DeveloperFlagTests` |
+| `Wire-iOS` | `UnitTests` | `Wire-iOS UnitTests/ConversationContentViewControllerTests`, `Wire-iOS UnitTests/ConversationInputBarViewControllerDelegateTests`, `Wire-iOS UnitTests/MessageToolboxViewTests` |
+
+Check the result bundle/report lists executed cases rather than assuming a zero
+exit code proves each selection ran. In particular, the existing request-strategy
+`AllTests` plan skips `AssetV3UploadRequestStrategyTests`; the commands above do
+not establish upload callback coverage. Running that suite requires a deliberate
+test-plan adjustment/separate plan in addition to physical-device asset checks.
+Do not remove existing skips silently. Keep compiler diagnostics, failing test
+names, and result bundles with the tested commit for follow-up fixes.
 
 ## Acceptance and validation checklist
 
