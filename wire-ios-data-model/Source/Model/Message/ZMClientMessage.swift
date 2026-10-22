@@ -131,7 +131,9 @@ public class ZMClientMessage: ZMOTRMessage {
     }
 
     public override func resend() {
-        if outboxState == .failed || outboxState == .uncertain {
+        if outboxState != .notEnrolled {
+            guard !isDeleted, !hasBeenDeleted,
+                  outboxState == .failed || outboxState == .uncertain else { return }
             do {
                 if let messageID = underlyingMessage?.messageID {
                     nonce = UUID(uuidString: messageID)

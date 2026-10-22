@@ -69,6 +69,13 @@ extension ConversationContentViewController {
     ) {
         switch actionId {
         case .cancel:
+            if let row = message as? ZMMessage, row.outboxState != .notEnrolled {
+                let context = userSession.contextProvider.syncContext
+                Task { @MainActor in
+                    _ = await row.performOutboxAction(.cancelTransfer, in: context)
+                }
+                return
+            }
             userSession.enqueue {
                 WireLogger.messaging.info(
                     "cancel message",
@@ -81,6 +88,13 @@ extension ConversationContentViewController {
                 message.fileMessageData?.cancelTransfer()
             }
         case .resend:
+            if let row = message as? ZMMessage, row.outboxState != .notEnrolled {
+                let context = userSession.contextProvider.syncContext
+                Task { @MainActor in
+                    _ = await row.performOutboxAction(.retry, in: context)
+                }
+                return
+            }
             userSession.enqueue {
                 WireLogger.messaging.info(
                     "resend message",

@@ -250,6 +250,45 @@ final class MessageOutboxTests: BaseZMClientMessageTests {
         XCTAssertEqual(message.outboxAttemptCount, 1)
     }
 
+    func testRetryDoesNotReviveCancelledText() throws {
+        let message = try makeMessage()
+        try message.enqueueInOutbox(operation: .initialMessage)
+        try message.cancelOutboxOperation()
+        message.expire(withReason: .cancelled)
+        let originalContent = try payload(of: message)
+
+        message.resend()
+
+        XCTAssertEqual(message.outboxState, .cancelled)
+        XCTAssertTrue(message.isExpired)
+        XCTAssertEqual(try payload(of: message), originalContent)
+    }
+
+    func testRetryDoesNotReopenACompletedOutboxEdit() throws {
+        let previous = uiMOC.offlinePendingMessagesEnabled
+        uiMOC.offlinePendingMessagesEnabled = true
+        defer { uiMOC.offlinePendingMessagesEnabled = previous }
+        let message = try makeMessage()
+        let initial = try message.prepareOutboxAttempt(payload: payload(of: message))
+        try message.markOutboxAttemptSending(initial)
+        try message.completeOutboxAttempt(initial.identifier)
+        message.markAsSent()
+        message.editText("sent edit", mentions: [], fetchLinkPreview: false)
+        let edit = try message.prepareOutboxAttempt(payload: payload(of: message))
+        try message.markOutboxAttemptSending(edit)
+        try message.completeOutboxAttempt(edit.identifier)
+        message.markAsSent()
+        let nonce = message.nonce
+        let content = try payload(of: message)
+
+        message.resend()
+
+        XCTAssertEqual(message.outboxState, .sent)
+        XCTAssertTrue(message.delivered)
+        XCTAssertEqual(message.nonce, nonce)
+        XCTAssertEqual(try payload(of: message), content)
+    }
+
     func testInvalidNonceCannotBeClaimedAndDoesNotMutateQueue() throws {
         let message = try makeMessage()
         try message.enqueueInOutbox(operation: .initialMessage)

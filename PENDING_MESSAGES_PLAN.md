@@ -36,10 +36,13 @@ Queued-text editing, draft retention when a send claim wins, and a local Queued
 status are now written as well; all validation for these stages belongs to the user.
 Classic asset enrollment/retention/recovery is now written with regression source.
 The share extension explicitly leaves main-app outbox ownership with the main app.
+The 2026-10-22 source review also closes UI Retry/Cancel races with sync-context
+send claims and cancellation after asset upload but before message handoff. The
+regression source is written; no build, test, lint, or formatting execution occurred.
 Uncertain-delivery automatic retry policy remains unresolved before broad activation;
 the development implementation exposes manual Retry while retaining frozen content.
 
-Current state: 2026-10-21. The prerequisite bootstrap tracker fix is implemented
+Current state: 2026-10-22. The prerequisite bootstrap tracker fix is implemented
 on `fix/preserve-bootstrap-trackers-WPB-26307`, with two regression tests and all
 13 bootstrap tests passing. Foundation and regular-message integration are written.
 New enrollment requires the local flag at stack/session startup. It remains off
@@ -68,8 +71,10 @@ Next steps, in order:
    validation; no checks were executed for the regular-message integration.
    Queued editing/presentation are also written with regression source, without
    executing checks. Classic asset enrollment/retention/recovery is also written.
-   See the PR 3/4 execution records below. Next is user-owned validation and any
-   resulting integration fixes; do not run checks without a new user instruction.
+   See the PR 3/4/5 execution records below. Continue source integration review and
+   any fixes alongside user-owned validation; do not run checks without a new
+   user instruction. Sender response-classification coverage and session teardown
+   still need review; the new tests have not established runtime correctness.
 4. Continue through regular queuing, queued editing, and asset recovery on the
    same branch. Treat the numbered PR checklists below as implementation stages;
    defer PR packaging until there is working code to review. Do not repeat the
@@ -1217,10 +1222,40 @@ Execution record (2026-10-21, source only; no formatting/lint/build/test command
 ### PR 5, if needed: Integration and rollout preparation
 
 - [ ] Complete cross-layer verification and fix integration gaps.
+- [x] Source review: route outbox Retry/Cancel to the sync context and recheck
+      the current row before applying the action.
+- [x] Source review: prevent text Retry from reviving cancelled/deleted work or
+      re-enrolling an already completed edit.
+- [x] Source review: cancel queued/preparing asset-reference sends even when the
+      upload has just finished; retain uploaded references for explicit Retry.
 - [ ] Confirm rollout and flag-disable behavior.
 - [ ] Review failure diagnostics without exposing message content.
 - [ ] Decide whether to enable the feature and later remove the temporary flag.
 - [ ] Record PR URL and validation results, or explain why a separate PR is unnecessary.
+
+Execution record, 2026-10-22 (source inspection only):
+
+- Retry and Cancel in conversation UI, plus Cancel in collections, previously
+  mutated UI-context objects while send claims and callbacks mutated the sync
+  context. They now refetch by object ID on the sync queue and save there, using
+  the current lifecycle state. Stale Retry cannot replace a newer attempt.
+- `ZMClientMessage.resend()` now uses the legacy path only for unenrolled rows.
+  Enrolled text retries require live failed/uncertain work; completed, cancelled,
+  unknown, or active operations are left untouched.
+- Cancelling an enrolled initial asset while queued/preparing now synchronously
+  fails the operation and expires it with the existing cancellation reason. An
+  upload in progress keeps the existing cancelled transfer state; a completed
+  upload retains its uploaded state and remote reference. Retry can reuse it.
+  Cancelling after final-message handoff does not claim delivery was prevented.
+- Regression source covers two-context Retry/refetch behavior, stale Retry
+  during an active send, cancelled text, completed edits, cancellation both before
+  and after upload, preparation invalidation, uploaded-reference reuse on Retry,
+  and the handoff boundary. None of these tests were executed.
+- New action-failure logging uses a fixed diagnostic without message content or
+  serialized payload. Broader diagnostics review remains open.
+- Source inclusion uses Xcode synchronized folders, including the new model
+  versions. Compilation remains unverified. No PR or push was performed here;
+  continue on the existing branch. `.ruby-version` remains unrelated and untouched.
 
 ## Decisions to settle before the relevant implementation
 

@@ -113,6 +113,62 @@ class BaseZMAssetClientMessageTests: BaseZMClientMessageTests {
 
 final class ZMAssetClientMessageTests: BaseZMAssetClientMessageTests {
 
+    func testCancellingAfterUploadStopsTheQueuedMessageAndRetryReusesTheAssetReference() throws {
+        for preparing in [false, true] {
+            let message = try XCTUnwrap(appendFileMessage(to: conversation))
+            try message.enqueueInOutbox(operation: .initialMessage)
+            var content = try XCTUnwrap(message.underlyingMessage)
+            content.updateUploaded(assetId: "retained-upload", token: nil, domain: "wire.com")
+            try message.setUnderlyingMessage(content)
+            message.updateTransferState(.uploaded, synchronize: false)
+            let nonce = message.nonce
+            let attempt = preparing ? try message.prepareOutboxAttempt(payload: content.serializedData()) : nil
+
+            message.cancelTransfer()
+
+            XCTAssertEqual(message.outboxState, .failed)
+            XCTAssertTrue(message.isExpired)
+            XCTAssertEqual(message.transferState, .uploaded)
+            if let attempt { XCTAssertThrowsError(try message.markOutboxAttemptSending(attempt)) }
+
+            message.resend()
+
+            XCTAssertEqual(message.outboxState, .queued)
+            XCTAssertFalse(message.isExpired)
+            XCTAssertEqual(message.transferState, .uploaded)
+            XCTAssertEqual(message.nonce, nonce)
+            XCTAssertEqual(message.underlyingMessage?.assetData?.uploaded.assetID, "retained-upload")
+        }
+    }
+
+    func testCancellingAnOutboxUploadFailsTheOperationBeforeTrackerCallbacks() throws {
+        let message = try XCTUnwrap(appendFileMessage(to: conversation))
+        try message.enqueueInOutbox(operation: .initialMessage)
+
+        message.cancelTransfer()
+
+        XCTAssertEqual(message.outboxState, .failed)
+        XCTAssertTrue(message.isExpired)
+        XCTAssertEqual(message.transferState, .uploadingCancelled)
+        let payload = try XCTUnwrap(message.underlyingMessage).serializedData()
+        XCTAssertThrowsError(try message.prepareOutboxAttempt(payload: payload))
+    }
+
+    func testCancellingAfterMessageHandoffDoesNotClaimThatDeliveryWasStopped() throws {
+        let message = try XCTUnwrap(appendFileMessage(to: conversation))
+        try message.enqueueInOutbox(operation: .initialMessage)
+        message.updateTransferState(.uploaded, synchronize: false)
+        let attempt = try message.prepareOutboxAttempt(payload: XCTUnwrap(message.underlyingMessage).serializedData())
+        try message.markOutboxAttemptSending(attempt)
+
+        message.cancelTransfer()
+
+        XCTAssertEqual(message.outboxState, .sending)
+        XCTAssertFalse(message.isExpired)
+        XCTAssertEqual(message.outboxAttemptIdentifier, attempt.identifier)
+        XCTAssertEqual(message.transferState, .uploaded)
+    }
+
     func testEnabledFileSubmissionPersistsItsOutboxAndRetainedOriginalBeforeReturning() throws {
         let previous = uiMOC.offlinePendingMessagesEnabled
         uiMOC.offlinePendingMessagesEnabled = true
