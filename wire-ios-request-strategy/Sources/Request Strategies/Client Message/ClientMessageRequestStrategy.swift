@@ -49,6 +49,7 @@ public class ClientMessageRequestStrategy: NSObject, ZMContextChangeTrackerSourc
     private var activeOutboxConversations = Set<NSManagedObjectID>()
     private var outboxRetryWakeup: DispatchWorkItem?
     private var isTornDown = false
+    private let contextTeardownKey = "offlinePendingMessageOwner.\(UUID().uuidString)"
 
     // MARK: - Life cycle
 
@@ -80,6 +81,9 @@ public class ClientMessageRequestStrategy: NSObject, ZMContextChangeTrackerSourc
 
         super.init()
 
+        context.performAndWait {
+            context.userInfo[contextTeardownKey] = PendingMessageContextTeardown(owner: self)
+        }
         insertedObjectSync.transcoder = self
         reachabilityToken = reachability?.addReachabilityObserver(on: nil) { [weak self] _ in
             self?.context.performGroupedBlock { [weak self] in
@@ -89,6 +93,9 @@ public class ClientMessageRequestStrategy: NSObject, ZMContextChangeTrackerSourc
     }
 
     deinit {
+        let context = self.context
+        let key = contextTeardownKey
+        context.performAndWait { context.userInfo.removeObject(forKey: key) }
         self.messageExpirationTimer.tearDown()
     }
 
@@ -101,6 +108,21 @@ public class ClientMessageRequestStrategy: NSObject, ZMContextChangeTrackerSourc
             linkAttachmentsPreprocessor,
             self
         ]
+    }
+}
+
+/// Context teardown must stop outbox tasks even while the strategy directory remains alive.
+/// The weak owner avoids extending the strategy's lifetime through context userInfo.
+private final class PendingMessageContextTeardown: NSObject, TearDownCapable {
+    private weak var owner: ClientMessageRequestStrategy?
+
+    init(owner: ClientMessageRequestStrategy) {
+        self.owner = owner
+        super.init()
+    }
+
+    func tearDown() {
+        owner?.tearDown()
     }
 }
 

@@ -87,6 +87,54 @@ class ClientMessageRequestStrategyTests: MessagingTestBase {
 
 extension ClientMessageRequestStrategyTests {
 
+    func testContextClosureCancelsAWaitingOutboxTaskWhileItsStrategyRemainsAlive() async throws {
+        let started = expectation(description: "outbox task started waiting")
+        let cancelled = expectation(description: "context closure cancels waiting task")
+        let completed = expectation(description: "queued completion released")
+        completed.assertForOverFulfill = true
+        let original = try await syncMOC.perform {
+            let message = try XCTUnwrap(self.groupConversation.appendText(content: "waiting") as? ZMClientMessage)
+            try message.enqueueInOutbox(operation: .initialMessage)
+            try self.syncMOC.save()
+            return message
+        }
+        let messageID = original.objectID
+        let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
+        context.persistentStoreCoordinator = syncMOC.persistentStoreCoordinator
+        context.performAndWait { context.markAsSyncContext() }
+        syncMOC.performAndWait { sut.tearDown() }
+        mockMessageSender.sendMessageMessage_MockMethod = { _ in
+            started.fulfill()
+            do {
+                try await Task.sleep(for: .seconds(60))
+            } catch {
+                cancelled.fulfill()
+                throw error
+            }
+        }
+        try await context.perform {
+            self.sut = ClientMessageRequestStrategy(
+                context: context, localNotificationDispatcher: self.localNotificationDispatcher,
+                messageSender: self.mockMessageSender
+            )
+            let message = try XCTUnwrap(context.existingObject(with: messageID) as? ZMClientMessage)
+            self.sut.enqueueOutboxMessage(message, isFresh: false) { completed.fulfill() }
+        }
+        defer { context.performAndWait { sut.tearDown() } }
+        await fulfillment(of: [started], timeout: 5)
+
+        context.tearDown()
+
+        await fulfillment(of: [cancelled, completed], timeout: 1)
+        await syncMOC.perform {
+            self.syncMOC.refresh(original, mergeChanges: false)
+            XCTAssertEqual(original.outboxState, .queued)
+            XCTAssertFalse(original.isExpired)
+            XCTAssertNil(original.outboxAttemptIdentifier)
+        }
+        XCTAssertEqual(mockMessageSender.sendMessageMessage_Invocations.count, 1)
+    }
+
     func testReconnectAfterContextClosureReleasesQueuedWorkWithoutSendingIt() async throws {
         let completed = expectation(description: "closed context releases queued completion")
         completed.assertForOverFulfill = true

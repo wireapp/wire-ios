@@ -45,6 +45,9 @@ and teardown regressions are written, still unexecuted.
 Further source review guards late final-message callbacks and reconnects after
 account-context closure. Bounded MLS repair/frozen-content regression source is
 also written; it has not been executed.
+Sync-wait cancellation is now written as well: V2 waits use a cancellation-aware
+stream, and context teardown cancels outbox tasks through a weak owner hook rather
+than waiting for strategy-directory deallocation. New regressions remain unexecuted.
 Uncertain-delivery automatic retry policy remains unresolved before broad activation;
 the development implementation exposes manual Retry while retaining frozen content.
 
@@ -82,8 +85,9 @@ Next steps, in order:
    user instruction. Proteus sender response-classification and asset teardown
    coverage are now written. Bounded MLS repairs and late callbacks after account
    context closure also have unexecuted regression source. Cancellation while
-   waiting for sync, interruption during preparation, and full account/session
-   lifecycle still need review; these tests have not established runtime correctness.
+   waiting for sync has a source fix and regressions. Interruption during
+   preparation/status processing and full account/session lifecycle still need
+   review; these tests have not established runtime correctness.
 4. Continue through regular queuing, queued editing, and asset recovery on the
    same branch. Treat the numbered PR checklists below as implementation stages;
    defer PR packaging until there is working code to review. Do not repeat the
@@ -1249,6 +1253,10 @@ Execution record (2026-10-21, source only; no formatting/lint/build/test command
 - [x] Add unexecuted MLS repair regression source for stale epochs, client
       mismatch, missing commit references, and missing group members, checking
       the three-repair limit and retained frozen payload.
+- [x] Source review: make V2 sync waits cancellation-aware and cancel outbox
+      tasks at account-context teardown while the strategy directory is alive.
+- [x] Add unexecuted regression source for V1/V2 wait cancellation, isolation
+      between waiters, and queued-content preservation when teardown cancels a task.
 - [ ] Confirm rollout and flag-disable behavior.
 - [ ] Review failure diagnostics without exposing message content.
 - [ ] Decide whether to enable the feature and later remove the temporary flag.
@@ -1338,6 +1346,34 @@ MLS and account-closure source review, 2026-10-22 (no validation execution):
   while waiting for sync (the V2 observer uses a continuation), interruption inside
   asynchronous preparation/status-processing work, and actual account switching
   before declaring session lifecycle complete. Keep the developer flag off.
+
+Sync-wait cancellation source review, 2026-10-22 (no validation execution):
+
+- The V2 observer's checked continuation did not react to task cancellation. A
+  send waiting for decryption could remain suspended indefinitely if no later
+  sync-completion event arrived. It now waits on a bounded `AsyncStream` backed
+  by the first completed decryption state. Stream termination cancels that
+  waiter's Combine subscription, including when completion races cancellation.
+- Already-cancelled callers return before waiting, and cancellation is not logged
+  as successful decryption. The nonthrowing protocol is unchanged; the outbox
+  sender's existing cancellation check aborts before claiming/encrypting content.
+- The outbox scheduler now registers a private weak teardown proxy in its owning
+  context's `userInfo`. Existing context teardown invokes it before resetting
+  managed objects, cancelling active outbox tasks and releasing queued completions
+  even if the strategy directory is still retained by the old user session. The
+  proxy does not retain the strategy, and its registration is removed at deinit.
+  Other strategy teardown ordering remains unchanged.
+- Teardown does not expire, cancel, or delete the persisted queued operation.
+  New sessions can recover it normally. The per-waiter subscription also avoids
+  releasing other sends when only one waiter is cancelled.
+- Regression source covers V1 and V2 cancellation without a sync-completion event,
+  cancellation of one of two V2 waiters, repeated completion events, and account
+  context teardown while the strategy and a waiting task are still alive. The
+  scheduler test refetches queued content to check it was not failed or claimed.
+- No builds, tests, lint, formatting, push, or PR were run/created for this work.
+  Continue with interruption during asynchronous preparation/status processing
+  and user-owned lifecycle/device validation. The developer flag remains off;
+  `.ruby-version` remains unrelated and untouched.
 
 ## Decisions to settle before the relevant implementation
 
