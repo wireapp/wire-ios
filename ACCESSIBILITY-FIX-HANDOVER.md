@@ -1,7 +1,8 @@
 # First accessibility fixes — session handover
 
 Prepared October 22, 2026. This is an implementation handover, not a request to
-repeat the backlog estimation. No fixes have been implemented yet.
+repeat the backlog estimation. All three fixes are now implemented; see the
+implementation and validation record below.
 
 ## Task and Git state
 
@@ -12,17 +13,22 @@ repeat the backlog estimation. No fixes have been implemented yet.
   initial combined commit is fine**. This supersedes the earlier request for
   one commit per ticket. User may later split work into separate/stacked PRs;
   keep each ticket's code and string changes easy to identify.
-- Do not create PRs, push, split branches, or start another chat automatically.
-  The user intends to start the fresh session themselves.
-- This handover is deliberately uncommitted so it can accompany the initial
-  combined fix commit. No new implementation files have been edited.
+- Do not create PRs, split branches, modify Jira, or start another chat automatically.
+  The user subsequently authorized pushing this branch after completion.
+- Per the latest request, the initial handover was committed separately as
+  `a1424aca7c`, followed by the existing data-model project-file changes as
+  `0da43c149d`. The implementation and this updated handover form one combined
+  commit after those two preparatory commits.
 - Existing unrelated working-tree changes, observed after the user switched
   branches: `.ruby-version`, `Gemfile.lock`,
   `wire-ios-data-model/WireDataModel.xcodeproj/project.pbxproj`,
   `wire-ios/Configuration/Debug.xcconfig`,
   `wire-ios/Configuration/Security-Flags.xcconfig`, and
   `wire-ios/Configuration/session_manager.json`.
-  Preserve all six. Inspect current status first; never stage them with the fixes.
+  The data-model project-file changes were committed separately as requested.
+  Preserve the other five unstaged edits; never stage them with the fixes.
+  These files are already tracked; the user’s “stay untracked” instruction is
+  treated as keeping their existing modifications uncommitted and unstaged.
   Do not dump configuration/session contents unnecessarily.
 
 ## Selected tickets (all currently estimated at 1 point)
@@ -78,6 +84,11 @@ must describe “Apply changes”.
 - Verify Undo and Apply changes are announced correctly in editing states.
 
 ## Localization and checks
+
+- Latest user instruction: **do not run tests unless explicitly asked**. Suggest
+  useful checks and print commands for Christoph to run. This supersedes earlier
+  directions to run tests autonomously. The test attempt recorded below predates
+  this instruction; do not rerun it without a new request.
 
 - Inspect and reuse existing strings before adding keys. Relevant files:
   `wire-ios/Wire-iOS/Resources/Localization/Base.lproj/Accessibility.strings` and
@@ -147,3 +158,85 @@ Fresh-session prompt:
 > Read ACCESSIBILITY-FIX-HANDOVER.md and implement its three selected tickets on
 > the current fix/accessibility-labels branch. One combined commit is fine for
 > now; preserve my unrelated changes and don't create PRs or modify Jira fields.
+
+
+## Implementation record — October 22, 2026
+
+Ticket boundaries for a later split into stacked PRs:
+
+- **WPB-14706:** `InputBarButtonsView.swift` derives the ellipsis label centrally
+  in `setupAccessibility()` from `currentRow`, including initial configuration.
+  Keeps the existing open string and adds `conversation.moreButton.closeDescription`
+  in Base/German plus its SwiftGen accessor. `InputBarButtonsViewTests.swift`
+  in the unit-test target covers toggle round trips, reset after another action,
+  and reset to a single row after a width change. No action or identifier changes.
+- **WPB-23323:** `BasicReactionPicker.swift` explicitly labels the Add Emojis
+  button with existing `L10n.Localizable.Image.addEmoji` (English “Add an emoji”,
+  German “Emoji hinzufügen”). Its target/action still invokes `didTapMoreEmojis()`.
+  No new strings or generated changes belong to this ticket.
+- **WPB-23346:** `InputBarEditView.swift` explicitly labels Undo, Apply changes,
+  and Cancel. Undo reuses `sketch.undoButton.description` (“Undo last step” /
+  “Letzten Schritt rückgängig machen”): the actual implementation calls
+  `textView.undoManager.undo()`, so the wording fits despite the sketch namespace.
+  Cancel had no explicit label or title in this icon-button path; it now reuses
+  `general.cancel`. Adds `conversation.applyChangesButton.description` with
+  “Apply changes” / “Änderungen übernehmen” and its SwiftGen accessor. Identifiers,
+  enabled-state logic, tap delegates, and long-press handling are unchanged.
+
+The only shared files for a future split are Base/German `Accessibility.strings`
+(one new key per WPB-14706 and WPB-23346), `Strings+Generated.swift` (one accessor
+per key), and this record. SwiftGen ran via `scripts/run-swiftgen.sh config run
+--config swiftgen.yml` from `wire-ios/`. Its unrelated account-limit backup-hint
+regeneration was excluded from the final diff by restoring that existing block.
+Other languages follow the existing Crowdin workflow; the two new keys currently
+fall back to English outside German. Reused strings retain existing translations.
+
+### Validation and limitations
+
+- SwiftFormat lint: passed for all three changed production Swift files and the
+  new state-transition test file (after formatting that new file).
+- SwiftLint: passed for those four files, with no cache and no diagnostics.
+- `plutil -lint`: passed for both changed Accessibility string tables.
+- Swift parser: passed for all four Swift files and generated string accessors.
+- A temporary Foundation/Bundle check loaded all six action labels directly from
+  Base/German bundles and verified all 12 expected localized values successfully.
+  This checks resource lookup, not VoiceOver speech.
+- Focused unit tests were attempted with the command below. `xcodebuild` exited
+  65: WireDesign failed to emit its module because `StyleKitIcon` was not found
+  in `StyleKitIconSize.swift` and `UIImage+StyleKit.swift`. Tests never executed;
+  this is a build blocker in unchanged dependency code, not a passing test result.
+  Build log: `/tmp/wire-accessibility-tests.log`.
+  Result: `DerivedData/wire-ios-mono/Logs/Test/Test-Wire-iOS-2026.10.22_18-10-49-+0200.xcresult`.
+
+  ```sh
+  xcodebuild test -workspace wire-ios-mono.xcworkspace -scheme Wire-iOS \
+    -testPlan UnitTests \
+    -destination 'platform=iOS Simulator,name=iPhone 17 (Tests),OS=26.5' \
+    -derivedDataPath DerivedData/wire-ios-mono \
+    -only-testing:'Wire-iOS UnitTests/InputBarButtonsViewTests' \
+    -disableAutomaticPackageResolution
+  ```
+- Interactive simulator, Accessibility Inspector, and VoiceOver testing have not
+  run. Coordinate readiness with Christoph before doing that work. Pending manual
+  checks: English/German speech for all actions, full emoji picker activation,
+  editing enabled/disabled states, Undo and long press, Apply changes and Cancel.
+- Installed tools are Xcode 26.6 (17F113) and iOS 26.5 only; the branch requests
+  Xcode 26.1.1 / iOS 26.1. The available `iPhone 17 (Tests)` was used for the
+  command-line test attempt. No simulator settings or runtime installations changed.
+
+
+### Commit and working-tree record
+
+- Initial handover: `a1424aca7c`.
+- Existing data-model project-file fixes: `0da43c149d`.
+- Combined implementation commit includes this updated handover and only the
+  ticket-specific production, string, generated-accessor, and regression-test files.
+- Final diff whitespace check passed. No PRs created or Jira changes made.
+- Original five unrelated modified files remain untouched and unstaged.
+- During validation, an additional app-project reference-ordering change appeared
+  in `wire-ios/Wire-iOS.xcodeproj/project.pbxproj` and was subsequently found staged.
+  It was not part of the initial working-tree diff. Preserve it in its observed
+  state and exclude it from the accessibility commit.
+- The user authorized pushing the completed branch in a follow-up. Push the
+  three task commits to the existing `github/fix/accessibility-labels` upstream;
+  no force push. Verify the upstream matches HEAD afterward.
