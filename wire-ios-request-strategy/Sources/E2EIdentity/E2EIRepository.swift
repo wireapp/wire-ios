@@ -70,8 +70,10 @@ public final class E2EIRepository: E2EIRepositoryInterface {
         // (e.g. cancelled) enrollment attempt, in which case adding it again fails.
         let existingAnchors = try await pkiEnvironment.getTrustAnchors()
 
-        // CoreCrypto returns stored anchors with a trailing newline, so compare without surrounding whitespace.
-        let trimmedTrustAnchor = trustAnchor.trimmingCharacters(in: .whitespacesAndNewlines)
+        // CoreCrypto returns LF line endings and a trailing newline; normalize before comparing.
+        let trimmedTrustAnchor = trustAnchor
+            .replacingOccurrences(of: "\r\n", with: "\n")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
 
         guard !existingAnchors.contains(where: {
             $0.trimmingCharacters(in: .whitespacesAndNewlines) == trimmedTrustAnchor
