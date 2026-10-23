@@ -34,12 +34,12 @@ package protocol WireDriveNodesRepositoryProtocol: Sendable {
     /// - Returns: A tuple containing an array of `WireDriveNode` objects and an optional next offset for pagination.
     func getNodes(_ request: WireDriveGetNodesRequest) async throws -> (nodes: [WireDriveNode], nextOffset: Int?)
 
-    /// Deletes nodes with the specified IDs.
+    /// Deletes nodes with the specified IDs or paths.
     ///
     /// - Parameters:
-    ///  - nodeIDs: An array of UUIDs representing the IDs of the nodes to delete.
+    ///  - locators: An array of UUIDs or paths representing the location of the nodes to delete.
     ///  - permanently: A boolean indicating whether to delete the nodes permanently or move them to the recycle bin.
-    func deleteNodes(nodeIDs: [UUID], permanently: Bool) async throws -> Bool
+    func deleteNodes(locators: [WireDriveNodeLocator], permanently: Bool) async throws -> Bool
 
     /// Restores nodes with the specified IDs from the recycle bin.
     ///

@@ -20,6 +20,7 @@ package import Combine
 import Foundation
 import WireLogging
 package import SwiftUI
+import WireLocators
 package import WireMessagingDomain
 
 private typealias Strings = L10n.Localizable.Conversation.WireCells
@@ -121,6 +122,8 @@ package final class FilesViewModel: ObservableObject {
     @Published var showReadOnlyBanner: Bool = false
     @Published var selectedItems: Set<FilesViewItem> = []
     @Published var multipleSelection: EditMode = .inactive
+    @Published var isPresentingDeleteConfirmation = false
+    @Published var isPresentingRestoreConfirmation = false
 
     // MARK: init
 
@@ -409,27 +412,44 @@ package final class FilesViewModel: ObservableObject {
 
     // MARK: recycle bin
 
-    func deleteItem(_ asset: FilesViewItem, permanently: Bool) async {
+    func deleteItems(_ assets: [FilesViewItem], permanently: Bool) async {
         guard state.isLoaded else {
             WireLogger.wireDrive.error("Attempt to delete asset while not visible", attributes: .safePublic)
             return
         }
 
-        await filesController.removeItem(asset) { [weak self] in
-            try await self?.useCases.deleteNodes.invoke(nodeIDs: [asset.id], deletePermanently: permanently)
+        await filesController.removeItems(assets) { [weak self] in
+            try await self?.useCases.deleteNodes.invoke(nodeIDs: assets.map(\.id), deletePermanently: permanently)
         }
     }
 
-    func restoreItem(_ asset: FilesViewItem) async {
+    func emptyRecycleBin() async {
+        guard state.isLoaded else {
+            WireLogger.wireDrive.error("Attempt to delete asset while not visible", attributes: .safePublic)
+            return
+        }
+
+        await filesController.removeItems(state.items) { [weak self] in
+            guard let self, let cellName else { return }
+            try await useCases.emptyRecycleBin.invoke(cellName: cellName)
+        }
+    }
+
+    func restoreItems(_ assets: [FilesViewItem]) async {
         guard state.isLoaded else {
             WireLogger.wireDrive.error("Attempt to restore asset while not visible", attributes: .safePublic)
             return
         }
 
-        await filesController.removeItem(asset) { [weak self] in
+        await filesController.removeItems(assets) { [weak self] in
             guard let self else { return }
-            let nodeIdToRestore = navigationPath.last?.recycleBinTopFolderId ?? asset.id
-            try await useCases.restoreNodes.invoke(nodeIDs: [nodeIdToRestore])
+            let nodeIdsToRestore = if let recycleBinTopFolderId = navigationPath.last?.recycleBinTopFolderId,
+                                      multipleSelection == .inactive {
+                [recycleBinTopFolderId]
+            } else {
+                assets.map(\.id)
+            }
+            try await useCases.restoreNodes.invoke(nodeIDs: nodeIdsToRestore)
             setNavigation([])
         }
     }
@@ -519,6 +539,38 @@ package final class FilesViewModel: ObservableObject {
 
     func enableMultipleSelection(_ enabled: Bool) {
         multipleSelection = enabled ? .active : .inactive
+        deselectAllItems()
+    }
+
+    func selectAllItems() {
+        selectedItems = Set(state.items)
+    }
+
+    func deselectAllItems() {
+        selectedItems.removeAll()
+    }
+
+    func moveSelectedItemsToFolder() {
+        sheetNavigation = .moveToFolder(fileItems: Array(selectedItems))
+    }
+
+    func deleteSelectedItems() {
+        Task {
+            multipleSelection = .inactive
+
+            if selectedItems.count == state.items.count, isRecycleBin {
+                await emptyRecycleBin()
+            } else {
+                await deleteItems(Array(selectedItems), permanently: isRecycleBin)
+            }
+        }
+    }
+
+    func restoreSelectedItems() {
+        Task {
+            multipleSelection = .inactive
+            await restoreItems(Array(selectedItems))
+        }
     }
 
     func moveToFolder() {
