@@ -1,4 +1,4 @@
-# Accessibility batch 3 — composer focus and feedback
+# Accessibility batch 04 — composer focus and feedback
 
 Prepared and implemented October 23, 2026. WPB-14710 and WPB-14712 are
 implemented in this isolated worktree. Scoped static checks passed; tests, builds,
@@ -28,6 +28,29 @@ and interactive simulator/VoiceOver checks have not run. Runtime acceptance is p
   identify for later separate/stacked PRs. Leave this preparation commit intact.
 - Do not push, create PRs, modify Jira, start another chat, or alter the earlier
   batches. PR #5437 is already reviewed by someone else; no review requested here.
+
+## Batch 04 revalidation — October 23, 2026
+
+- This chat resumed with both tickets already implemented in commit
+  `1b5460f0d35e0ea1896b7fe4c864cc1bd799a873` on the requested branch, with
+  a clean worktree. Preserved that combined implementation commit; no additional
+  source changes were needed after scoped review.
+- Corrected the batch title to **04**. Kept this handover's existing filename
+  because it is the requested entry point. The chat is named
+  `Accessibility04 WPB-14710, WPB-14712`.
+- Reviewed the committed mention insertion/availability feedback, pending-callback
+  invalidation, explicit Reply focus handoff, message-action dismissal completion,
+  localized strings, and separate restored-draft entry point.
+- Re-ran `xcrun swiftc -frontend -parse` on the four changed source files and
+  generated strings: passed. Re-ran `plutil -lint` on Base/German accessibility
+  strings: passed. Ran `git diff --check` from the recorded release base through
+  the implementation commit: passed. These are static checks only.
+- Earlier lint results below are historical; lint and SwiftGen were not rerun in
+  this resumption. No tests, builds, simulator/VoiceOver checks, Jira writes,
+  pushes, PR creation, primary-checkout edits, or other-batch edits were performed.
+- Runtime acceptance and the limitations below remain pending, especially speech
+  ordering, keyboard/menu animation timing, alternate Reply menu entry points,
+  and integration with batch 2's composer label and mention candidate hints.
 
 ## Implementation handoff — October 23, 2026
 
