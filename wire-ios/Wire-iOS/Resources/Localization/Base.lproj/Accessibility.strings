@@ -39,6 +39,8 @@
 "conversation.timerButton.description" = "Set a timer for self-deleting messages";
 "conversation.mentionButton.description" = "Mention someone";
 "conversation.cameraButton.description" = "Take or select a photo";
+"conversation.camera.maximizeButton.description" = "Maximize view";
+"conversation.mentionSuggestion.hint" = "Double tap to insert mention";
 "conversation.sketchButton.description" = "Open sketch to draw or write";
 "conversation.gifButton.description" = "Select a GIF";
 "conversation.audioButton.description" = "Record an audio message";

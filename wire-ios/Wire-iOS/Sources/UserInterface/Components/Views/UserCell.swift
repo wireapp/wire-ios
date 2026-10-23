@@ -40,6 +40,11 @@ final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
     typealias IconColors = SemanticColors.Icon
     typealias LabelColors = SemanticColors.Label
 
+    /// Keeps context-specific hints across accessibility updates, including selection changes.
+    var accessibilityHintOverride: String? {
+        didSet { setupAccessibilityHint() }
+    }
+
     var hidesSubtitle: Bool = false
     let avatarSpacer = UIView()
     let avatarImageView = BadgeUserImageView()
@@ -114,6 +119,7 @@ final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
 
     override func prepareForReuse() {
         super.prepareForReuse()
+        accessibilityHintOverride = nil
 
         UIView.performWithoutAnimation {
             hidesSubtitle = false
@@ -351,7 +357,9 @@ final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
 
         accessibilityIdentifier = Locators.NewConversationPage.userCellInContactList.rawValue
 
-        if !checkmarkIconView.isHidden {
+        if let accessibilityHintOverride {
+            accessibilityHint = accessibilityHintOverride
+        } else if !checkmarkIconView.isHidden {
             accessibilityHint = isSelected ? CreateConversation.SelectedUser.hint : CreateConversation.UnselectedUser
                 .hint
         } else if userIsAppOrBot {

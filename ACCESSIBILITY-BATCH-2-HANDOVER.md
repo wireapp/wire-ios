@@ -1,7 +1,8 @@
 # Accessibility batch 2 — implementation handover
 
-Prepared October 23, 2026. Implement the three selected tickets below in a fresh
-session. No implementation or tests have been performed for this batch yet.
+Prepared and implemented October 23, 2026. The three selected tickets are now
+implemented locally in one combined implementation commit. No tests or interactive
+simulator checks were run. The ticket investigation notes below remain as context.
 
 ## Branch, scope, and current state
 
@@ -15,10 +16,9 @@ session. No implementation or tests have been performed for this batch yet.
 - First batch is [PR #5437](https://github.com/wireapp/wire-ios/pull/5437), already
   being reviewed by someone else. **Do not review or modify that PR.** It covers
   WPB-14706, WPB-23323, WPB-23346. Those tickets are not part of this batch.
-- This branch contains only the preparation handover beyond the release base.
-  Implement the three fixes with clear boundaries; one combined implementation
-  commit is acceptable, as for the previous batch. Do not push or create PRs
-  without a subsequent request. User may split work into separate/stacked PRs later.
+- This branch contains the preparation handover and one combined implementation
+  commit beyond the release base. Do not push or create PRs without a subsequent
+  request. User may split work into separate/stacked PRs later.
 - Preserve these unrelated modified files, observed before/after branch creation:
   `.ruby-version`, `Gemfile.lock`, `wire-ios/Configuration/Debug.xcconfig`,
   `wire-ios/Configuration/Security-Flags.xcconfig`,
@@ -147,23 +147,84 @@ a conversation even though selection inserts the mention.
 - Suggested implementation commit:
   `fix: correct camera and composer accessibility - WPB-14708, WPB-14756, WPB-14707`.
 
-## Start / finish checklist
+## Implementation completed — October 23, 2026
 
-1. Read this file, confirm branch/status, and inspect only relevant current code.
-2. Implement the three local fixes and necessary string/accessor updates.
-3. Run permitted focused static checks; suggest runtime/test checks for Christoph.
-4. Review the diff; stage only ticket-related changes and this handover update.
-5. Make the implementation commit and record changes/checks/limitations here.
-6. Leave publishing and PR decisions to a later user request.
+Combined implementation commit title:
+`fix: correct camera and composer accessibility - WPB-14708, WPB-14756, WPB-14707`.
+
+- **WPB-14708:** `CameraCell` now labels all three controls. Reused
+  `voice.flip_video_button.title` (Switch camera / Kamera wechseln), which
+  describes the same front/back switch, and
+  `self.settings.account_picture_group.alert.take_picture` (Take Photo /
+  Foto aufnehmen). Added `conversation.camera.maximizeButton.description`
+  (Maximize view / Ansicht maximieren). Identifiers, targets and camera behavior
+  are unchanged.
+- **WPB-14756:** `InputBar.setupViews()` assigns the stable localized
+  `compose.message.title` (Message / Nachricht) to the composer. Source inspection
+  found no later label assignment. Empty/filled, editing/reply and ephemeral
+  states retain that label; placeholder logic and the shared `TextView`'s
+  `accessibilityValue` implementation are unchanged, preserving entered content.
+- **WPB-14707:** cleared the combined message-info and message-options gesture
+  hints in both text and reply-text cells. Inspection of the action controller
+  and table adapter found no text-message single-tap info action; ordinary double
+  taps react when allowed, long press opens the menu, and filtered accessibility
+  custom actions expose available operations, including details when allowed.
+  No triple-tap menu route was found. Existing custom actions, menus, reply taps
+  and global strings remain unchanged; no replacement gesture is advertised.
+- Mention suggestions now use `conversation.mentionSuggestion.hint`
+  (Double tap to insert mention / Doppeltippen, um die Erwähnung einzufügen).
+  The delegate route was traced through `didSelect(user:)` to `insertMention`.
+  A small `UserCell.accessibilityHintOverride` hook preserves the call-site hint
+  across selection/accessibility refreshes and clears it on reuse. Ordinary
+  contacts/services keep their existing default hints.
+- Added only the two necessary Base/German accessibility keys. Ran SwiftGen
+  using `../scripts/run-swiftgen.sh config run --config swiftgen.yml` from
+  `wire-ios/`; kept the two generated accessors and excluded unrelated existing
+  account-limit fallback regeneration churn. No generated accessor was authored
+  manually. Other locales await the normal translation workflow and use the
+  Base/English fallback for these new keys.
+
+### Static checks actually performed
+
+All completed successfully:
+
+- `./scripts/run-swiftlint.sh --strict --no-cache <six changed source files>`:
+  zero violations.
+- `./scripts/run-swiftformat.sh --lint <six changed source files>`:
+  zero files require formatting. The tool reported that its user cache directory
+  could not be created; lint itself completed successfully without changing files.
+- `xcrun swiftc -frontend -parse <six changed source files plus generated strings>`:
+  syntax parsing passed; this is not a build or type check.
+- `plutil -lint` on Base/German `Accessibility.strings`: both valid.
+- Static resource checks: each new key occurs exactly once with a nonempty
+  Base/German value; generated diff contains only the requested accessors.
+- `git diff --check` and scoped diff review.
+- SHA-256 comparison confirmed the five unrelated modified configuration/dependency
+  files and untracked `.derived-data-log-0CA5RPJ1` retain their initial contents.
+  These files were excluded from staging. The configuration stash was not applied.
+
+### Remaining limitations / follow-up only when requested
+
+No tests, build, simulator, Accessibility Inspector or device VoiceOver checks
+were run. Static checks do not verify spoken output, focus, runtime cell reuse,
+custom-action discoverability or camera operation. When requested, verify English
+and German camera labels/actions on a camera-capable device; composer name and
+editable value in empty, filled, editing, reply and ephemeral states; text/reply
+hints and available custom actions; mention insertion after selection/reuse; and
+ordinary contact hints. Existing test paths listed above remain suggestions only.
+
+Jira and PR #5437 were not accessed or changed. No push, PR creation, dependency
+updates or changes to unrelated local files were performed.
 
 Full backlog notes remain on `chore/accessibility-estimation` in
 `ACCESSIBILITY-ESTIMATION.md`. Read with `git show` only if needed; do not copy
 the whole assessment or first batch's implementation onto this branch.
 
-Fresh-session prompt:
+Fresh-session follow-up prompt:
 
-> Read ACCESSIBILITY-BATCH-2-HANDOVER.md and implement WPB-14708, WPB-14756,
-> and WPB-14707 on the current branch. One combined implementation commit is
-> fine. Preserve unrelated changes; don't run tests unless I ask, modify Jira,
-> review PR #5437, push, or create PRs. Update the handover with what changed
-> and which checks actually ran. Continue unless a significant decision needs me.
+> Read ACCESSIBILITY-BATCH-2-HANDOVER.md and inspect the completed combined
+> implementation commit on fix/accessibility-labels-batch-2. Preserve unrelated
+> local changes and do not reapply the configuration stash. Do not run tests or
+> interactive checks unless asked, change Jira, review/change PR #5437, push or
+> create PRs. The remaining limitations are runtime validation and translations
+> through the normal workflow; further work requires a subsequent request.
