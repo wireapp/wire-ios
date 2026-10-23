@@ -20,7 +20,7 @@ package import Foundation
 
 /// Moves a `WireDriveNode` on the server.
 @MainActor
-package struct WireDriveMoveNodeUseCase {
+package struct WireDriveMoveNodesUseCase {
 
     private let nodesRepository: any WireDriveNodesRepositoryProtocol
     private let localAssetRepository: any WireDriveLocalAssetRepositoryProtocol
@@ -39,15 +39,17 @@ package struct WireDriveMoveNodeUseCase {
     ///  - nodeID: The ID of the node to move.
     ///  - containerPath: The path of the new container (e.g folder or conversation) of the node.
     package func invoke(
-        nodeID: UUID,
+        nodeIDs: [UUID],
         containerPath: String
     ) async throws {
-        try await nodesRepository.moveNode(nodeID: nodeID, newContainerPath: containerPath)
+        try await nodesRepository.moveNodes(nodeIDs: nodeIDs, newContainerPath: containerPath)
 
-        if var localAsset = try localAssetRepository.asset(nodeID: nodeID),
-           let node = try await nodesRepository.getNode(id: nodeID) {
-            localAsset.path = node.path
-            try localAssetRepository.updateAsset(localAsset)
+        for nodeID in nodeIDs {
+            if var localAsset = try localAssetRepository.asset(nodeID: nodeID),
+               let node = try await nodesRepository.getNode(id: nodeID) {
+                localAsset.path = node.path
+                try localAssetRepository.updateAsset(localAsset)
+            }
         }
 
     }

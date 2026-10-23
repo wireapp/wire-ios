@@ -19,6 +19,7 @@
 package import Combine
 import Foundation
 import WireLogging
+package import SwiftUI
 package import WireMessagingDomain
 
 private typealias Strings = L10n.Localizable.Conversation.WireCells
@@ -32,7 +33,7 @@ package final class FilesViewModel: ObservableObject {
         case create(target: WireDriveCreateFileUseCase.Target)
         case editTags(fileItem: FilesViewItem)
         case shareLink(fileItem: FilesViewItem)
-        case moveToFolder(fileItem: FilesViewItem)
+        case moveToFolder(fileItems: [FilesViewItem])
         case renameFile(fileItem: FilesViewItem)
         case versionHistory(fileItem: FilesViewItem)
 
@@ -44,8 +45,8 @@ package final class FilesViewModel: ObservableObject {
                 "editTags(\(item.id))"
             case let .shareLink(item):
                 "shareLink(\(item.id))"
-            case let .moveToFolder(item):
-                "moveToFolder(\(item.id))"
+            case let .moveToFolder(items):
+                "moveToFolder(\(items.compactMap(\.id)))"
             case let .renameFile(item):
                 "renameFile(\(item.id))"
             case let .versionHistory(item):
@@ -77,6 +78,10 @@ package final class FilesViewModel: ObservableObject {
 
     var selfUserRole: WireDriveConversation.Participant.Role {
         selfUser?.role ?? .viewer
+    }
+
+    var isBulkActionsEnabled: Bool {
+        UserDefaults.standard.bool(forKey: "enableDriveBulkActions")
     }
 
     var navigationTitle: String {
@@ -114,6 +119,8 @@ package final class FilesViewModel: ObservableObject {
     @Published var networkMonitor: NetworkMonitor
     @Published var filesController: FilesListStateController
     @Published var showReadOnlyBanner: Bool = false
+    @Published var selectedItems: Set<FilesViewItem> = []
+    @Published var multipleSelection: EditMode = .inactive
 
     // MARK: init
 
@@ -332,6 +339,8 @@ package final class FilesViewModel: ObservableObject {
     /// If item is a folder, navigates into it. If it's a file, downloads the related asset if necessary or views it or
     /// cancels the download.
     func performPrimaryAction(item: FilesViewItem) async {
+        guard multipleSelection != .active else { return }
+
         switch item.kind {
         case .file:
             if failedItemActions[item.id] == .makeAvailableOffline {
@@ -504,6 +513,16 @@ package final class FilesViewModel: ObservableObject {
                     .error("Failed to remove asset from available offline: \(String(describing: error))")
             }
         }
+    }
+
+    // MARK: Bulk actions
+
+    func enableMultipleSelection(_ enabled: Bool) {
+        multipleSelection = enabled ? .active : .inactive
+    }
+
+    func moveToFolder() {
+        sheetNavigation = .moveToFolder(fileItems: Array(selectedItems))
     }
 }
 

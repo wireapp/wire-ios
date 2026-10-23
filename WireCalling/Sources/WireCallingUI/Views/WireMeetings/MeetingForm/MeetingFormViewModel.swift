@@ -20,6 +20,7 @@ package import WireCallingDomain
 package import WireFoundation
 
 import Foundation
+import UIKit
 import WireLogging
 
 @Observable
@@ -72,6 +73,50 @@ package final class MeetingFormViewModel {
     private static let minimumDuration = TimeInterval(timePickerMinuteInterval) * TimeInterval.oneMinute
 
     var meetingTitle: String = ""
+    var password: String = ""
+    var confirmPassword: String = ""
+
+    static let minimumPasswordLength = 8
+    private static let passwordCharacterGroups = [
+        "abcdefghijklmnopqrstuvwxyz",
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+        "0123456789",
+        "!@#$%^&*()-_+=<>?/[]{|}"
+    ]
+
+    var canSetPassword: Bool { supportsMeetingLinks && mode == .scheduled }
+
+    var passwordsMatch: Bool {
+        !canSetPassword || password.unicodeScalars.elementsEqual(confirmPassword.unicodeScalars)
+    }
+
+    var isPasswordValid: Bool {
+        guard canSetPassword, !password.isEmpty else { return true }
+        let characterSets: [CharacterSet] = [
+            .lowercaseLetters,
+            .uppercaseLetters,
+            .decimalDigits,
+            .alphanumerics.inverted
+        ]
+        return (Self.minimumPasswordLength ... 1024).contains(password.unicodeScalars.count) &&
+            characterSets.allSatisfy { password.rangeOfCharacter(from: $0) != nil }
+    }
+
+    func generatePassword() {
+        let groups = Self.passwordCharacterGroups
+        let allCharacters = groups.joined()
+        var characters = groups.map { $0.randomElement()! }
+        while characters.count < Self.minimumPasswordLength {
+            characters.append(allCharacters.randomElement()!)
+        }
+        password = String(characters.shuffled())
+        confirmPassword = password
+    }
+
+    func copyPassword(to pasteboard: UIPasteboard = .general) {
+        guard !password.isEmpty, isPasswordValid else { return }
+        pasteboard.string = password
+    }
 
     /// Changing the start date normally preserves duration. If that would pass
     /// the same-day limit, the end time is clamped instead.
@@ -243,7 +288,7 @@ package final class MeetingFormViewModel {
 
     var isNextButtonEnabled: Bool {
         !meetingTitle.trimmingCharacters(in: .whitespacesAndNewlines)
-            .isEmpty && !isMeetingTitleTooLong && !needsInvitedEmails
+            .isEmpty && !isMeetingTitleTooLong && !needsInvitedEmails && isPasswordValid && passwordsMatch
     }
 
     var isMeetingTitleTooLong: Bool {
@@ -331,7 +376,7 @@ package final class MeetingFormViewModel {
         // unexpectedly). Consider making load(pageSize:) return/throw on failure so reloadLoadedMeetings() can restore
         // futureOffset (and possibly coalesce missed reloads while isLoading is true).
         guard !isLoading, !needsInvitedEmails, meetingWithParticipantsNotAdded == nil,
-              !dismissAfterError else { return }
+              !dismissAfterError, isPasswordValid, passwordsMatch else { return }
         hasError = false
         submitError = nil
         hasConversationNameUpdateError = false
@@ -348,6 +393,8 @@ package final class MeetingFormViewModel {
             let meeting = try await saveMeeting()
             onSuccess(meeting)
         } catch let CreateMeetingUseCaseError.participantsNotAdded(result, participants) {
+            password = ""
+            confirmPassword = ""
             participantMeetingHasLink = result.link != nil
             meetingWithParticipantsNotAdded = result.meeting
             participantsNotAdded = participants
@@ -361,6 +408,10 @@ package final class MeetingFormViewModel {
             participantsNotAdded = participants
             hasConversationNameUpdateError = true
         } catch {
+            if error is CreateMeetingUseCaseError {
+                password = ""
+                confirmPassword = ""
+            }
             let errorType = Swift.type(of: error)
             WireLogger.search.error("failed to save meeting: \(String(describing: errorType))")
             submitError = error
@@ -449,7 +500,7 @@ package final class MeetingFormViewModel {
                 endTime: endDate,
                 recurrence: repeatOption.toRecurrence(),
                 type: .scheduled,
-                password: nil,
+                password: canSetPassword && !password.isEmpty ? password : nil,
                 participants: selectedMembers,
                 invitedEmails: allowsEmailInvitations ? invitedEmails : []
             )
@@ -473,6 +524,8 @@ package final class MeetingFormViewModel {
     }
 
     private func completeCreation(_ result: MeetingCreationResult) throws -> Meeting {
+        password = ""
+        confirmPassword = ""
         guard !supportsMeetingLinks || result.link != nil else {
             throw CreateMeetingUseCaseError.missingLink(meeting: result.meeting)
         }

@@ -47,6 +47,7 @@ public enum DeveloperFlag: String, CaseIterable {
     case simulateUnestablishedMLSGroup
     case unSafeLogsForPublic
     case useBackgroundActivityFactoryInAppBackgroundTaskExecuter
+    case enableDriveBulkActions
     case enableDriveDirectUploads
     case simulateAppTerminationInBackground
 
@@ -126,6 +127,9 @@ public enum DeveloperFlag: String, CaseIterable {
 
         case .useBackgroundActivityFactoryInAppBackgroundTaskExecuter:
             "Turn on to use BackgroundActivityFactory in AppBackgroundTaskExecuter"
+
+        case .enableDriveBulkActions:
+            "Turn on to enable bulk actions in Drive"
 
         case .enableDriveDirectUploads:
             "Turn on to enable drive direct uploads"

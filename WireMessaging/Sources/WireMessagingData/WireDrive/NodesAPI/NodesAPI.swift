@@ -113,11 +113,11 @@ package final actor NodesAPI: NodesAPIProtocol, WireDriveNodesRepositoryProtocol
     }
 
     package func renameNode(nodeID: UUID, targetPath: String) async throws -> Bool {
-        try await restAPI.renameNode(nodeID: nodeID, targetPath: targetPath, targetIsParent: false)
+        try await restAPI.renameNodes(nodeIDs: [nodeID], targetPath: targetPath, targetIsParent: false)
     }
 
-    package func moveNode(nodeID: UUID, newContainerPath: String) async throws {
-        guard try await restAPI.renameNode(nodeID: nodeID, targetPath: newContainerPath, targetIsParent: true) else {
+    package func moveNodes(nodeIDs: [UUID], newContainerPath: String) async throws {
+        guard try await restAPI.renameNodes(nodeIDs: nodeIDs, targetPath: newContainerPath, targetIsParent: true) else {
             throw NodesAPIError.moveFailed
         }
     }

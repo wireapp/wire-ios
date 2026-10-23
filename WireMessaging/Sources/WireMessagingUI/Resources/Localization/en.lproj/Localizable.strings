@@ -161,6 +161,7 @@
 "conversation.wireCells.files.error.noConnection.message" = "Your list of files could not be loaded. Please check your Internet connection and try again.";
 "conversation.wireCells.files.error.noConnection.retry" = "Try again";
 "conversation.wireCells.files.search.title" = "Search files";
+"conversation.wireCells.files.list.selectItems" = "Select";
 "conversation.wireCells.files.list.createFolder" = "Create folder";
 "conversation.wireCells.files.list.createFile" = "Create file";
 "conversation.wireCells.files.list.createFile.presentation" = "Presentation";
