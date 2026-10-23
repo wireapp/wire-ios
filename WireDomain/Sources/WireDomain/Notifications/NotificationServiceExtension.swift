@@ -40,6 +40,7 @@ public final class NotificationServiceExtension {
     private let request: UNNotificationRequest
     private let contentHandler: (UNNotificationContent) -> Void
     private let didComplete: () -> Void
+    private let messageNotificationSound: UNNotificationSound
 
     private let currentAppVersion: String
     private let currentBuildNumber: String
@@ -59,12 +60,14 @@ public final class NotificationServiceExtension {
         minTLSVersion: String?,
         preferredAPIVersion: UInt?,
         request: UNNotificationRequest,
+        messageNotificationSound: UNNotificationSound,
         contentHandler: @escaping (UNNotificationContent) -> Void,
         didComplete: @escaping () -> Void
     ) {
         // Avoid `WireLogger.notifications` as we want a logger specific to this NSE instance.
         self.logger = WireLogger(tag: "notifications", instanceAttributes: [.notificationRequestID: request.identifier])
         self.request = request
+        self.messageNotificationSound = messageNotificationSound
         self.contentHandler = contentHandler
         self.didComplete = didComplete
         self.currentAppVersion = currentAppVersion
@@ -86,7 +89,8 @@ public final class NotificationServiceExtension {
         let notificationContentHandler: (UNNotificationContent) -> Void = { [weak self] in
             guard let self else { return }
 
-            contentHandler($0) // Finishes current notification flow by calling system built-in handler.
+            // Finishes the current notification flow by calling the system built-in handler.
+            contentHandler(applyingMessageNotificationSound(to: $0))
             didComplete()
             onGoingTask = nil // Current notification flow was completed, nil out the task.
         }
@@ -148,6 +152,21 @@ public final class NotificationServiceExtension {
             contentHandler(content)
         }
         await onGoingTask?.value
+    }
+
+    private func applyingMessageNotificationSound(
+        to content: UNNotificationContent
+    ) -> UNNotificationContent {
+        guard content.sound == NotificationSound.newMessage.userNotificationSound else {
+            return content
+        }
+
+        guard let mutableContent = content.mutableCopy() as? UNMutableNotificationContent else {
+            return content
+        }
+
+        mutableContent.sound = messageNotificationSound
+        return mutableContent
     }
 }
 

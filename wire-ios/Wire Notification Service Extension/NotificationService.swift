@@ -157,6 +157,10 @@ final class NotificationService: UNNotificationServiceExtension {
             "loading new notification service",
             attributes: .safePublic
         )
+
+        let fileName = ExtensionSettings(defaults: sharedUserDefaults).messageNotificationSound.fileName
+        let messageNotificationSound = UNNotificationSound(named: .init(fileName))
+
         return NotificationServiceExtension(
             currentAppVersion: currentAppVersion,
             currentBuildNumber: currentBuildNumber,
@@ -168,6 +172,7 @@ final class NotificationService: UNNotificationServiceExtension {
                 UInt($0.rawValue)
             },
             request: request,
+            messageNotificationSound: messageNotificationSound,
             contentHandler: contentHandler,
             didComplete: { [weak self] in
                 guard let self else { return }

@@ -1368,13 +1368,6 @@
 "self.settings.notifications.chat_alerts.toggle" = "Viesti Bannerit";
 "self.settings.notifications.chat_alerts.footer" = "Uusia viestejä toisissa keskusteluissa.";
 
-"self.settings.sound_menu.sounds.title" = "Äänet";
-"self.settings.sound_menu.ringtone.title" = "Soittoääni";
-"self.settings.sound_menu.message.title" = "Tekstin merkkiääni";
-"self.settings.sound_menu.ping.title" = "Pinggaa";
-"self.settings.sound_menu.ringtones.title" = "Soittoäänet";
-"self.settings.sound_menu.sounds.wire_sound" = "Wire";
-"self.settings.sound_menu.sounds.none" = "Ei mitään";
 
 "self.settings.callkit.title" = "Soittaa";
 "self.settings.callkit.caption" = "Jaa iOS: lle";
@@ -1386,9 +1379,6 @@
 "self.settings.vbr.title" = "Vaihteleva bittitaajuus";
 "self.settings.vbr.description" = "This makes audio calls use less data and work better on slower networks. Turn off to use constant bitrate encoding (CBR). This setting only affects 1:1 calls; conference calls always use CBR encoding.";
 
-"self.settings.sound_menu.sounds.wire_call" = "Wire Puhelu";
-"self.settings.sound_menu.sounds.wire_message" = "Wire Viesti";
-"self.settings.sound_menu.sounds.wire_ping" = "Wire Pingi";
 
 // By popular demand
 "self.settings.popular_demand.title" = "Yleisön pyynnöstä";
