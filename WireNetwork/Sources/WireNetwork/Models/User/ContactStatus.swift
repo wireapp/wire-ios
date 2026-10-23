@@ -16,21 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireDataModel
-import WireSyncEngine
+/// Whether a user can be contacted.
 
-struct AccountViewBuilder {
+public enum ContactStatus: Equatable, Sendable {
 
-    var account: Account
-    var user: ZMUser?
-    var userSession: UserSession
-    var displayContext: DisplayContext
+    case contactable
+    case nonContactable
 
-    func build() -> BaseAccountView {
-        if let accountView = TeamAccountView(user: user, account: account, displayContext: displayContext) {
-            accountView
-        } else {
-            PersonalAccountView(account: account, user: user, userSession: userSession, displayContext: displayContext)
-        }
-    }
 }

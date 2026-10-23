@@ -33,10 +33,6 @@ package extension FilesViewModel {
         return navigationPath.last?.filePath ?? cellName
     }
 
-    var isDriveDirectUploadsEnabled: Bool {
-        UserDefaults.standard.bool(forKey: "enableDriveDirectUploads")
-    }
-
     private static var pickedMediaDirectoryName: String { "drive-upload-picked" }
 
     func requestPhotosPermissions() async -> Bool {
