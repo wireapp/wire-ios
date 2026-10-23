@@ -103,7 +103,9 @@ class RecycleBinPage: PageModel {
     }
 
     func selectItems(named names: [String], isRecycleBin: Bool = false) {
-        let moreButton = app.buttons[isRecycleBin ? Locators.WireDrive.FilesPage.moreOptionRecycleBin.rawValue : Locators.WireDrive.FilesPage.moreOptions.rawValue]
+        let moreButton = app
+            .buttons[isRecycleBin ? Locators.WireDrive.FilesPage.moreOptionRecycleBin.rawValue : Locators.WireDrive
+                .FilesPage.moreOptions.rawValue]
         XCTAssertTrue(moreButton.waitAndTap(timeout: 3))
         XCTAssertTrue(app.buttons[Locators.WireDrive.FilesPage.selectItems.rawValue].waitAndTap(timeout: 3))
 

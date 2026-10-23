@@ -110,7 +110,7 @@ package struct FilesView: View {
             confirm: { viewModel.restoreSelectedItems() }
         )
     }
-    
+
     private var restoreConfirmationTitle: String {
         if viewModel.selectedItems.count == 1 {
             let item = viewModel.selectedItems.first!
@@ -119,7 +119,7 @@ package struct FilesView: View {
             } else {
                 return Strings.RecycleBin.Item.RestoreFileConfirmation.title(item.name)
             }
-            
+
         } else {
             return Strings.Files.Restore.title("\(viewModel.selectedItems.count)")
         }
@@ -141,9 +141,10 @@ package struct FilesView: View {
                     return Strings.Files.Item.DeleteFileConfirmation.title(item.name)
                 }
             }
-            
+
         } else {
-            return viewModel.isRecycleBin ? Strings.Files.DeletePermanently.title("\(viewModel.selectedItems.count)") : Strings
+            return viewModel.isRecycleBin ? Strings.Files.DeletePermanently
+                .title("\(viewModel.selectedItems.count)") : Strings
                 .Files.DeleteToRecycleBin.title("\(viewModel.selectedItems.count)")
         }
     }

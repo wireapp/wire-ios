@@ -86,7 +86,7 @@ private extension FilesTrailingToolbar {
         viewModel.uploadDestinationPath != nil && viewModel.selfUserRole == .editor && !viewModel
             .isRecycleBin && viewModel.isDriveDirectUploadsEnabled
     }
-    
+
     var showMoreButton: Bool {
         !viewModel.isRecycleBin || (viewModel.isRecycleBin && canSelectItems)
     }
@@ -149,7 +149,8 @@ private extension FilesTrailingToolbar {
             Image(systemName: "ellipsis.circle")
         }
         .tint(ColorTheme.Base.primary(accentColor).color)
-        .accessibilityIdentifier(viewModel.isRecycleBin ? Locators.WireDrive.FilesPage.moreOptionRecycleBin.rawValue : Locators.WireDrive.FilesPage.moreOptions.rawValue)
+        .accessibilityIdentifier(viewModel.isRecycleBin ? Locators.WireDrive.FilesPage.moreOptionRecycleBin
+            .rawValue : Locators.WireDrive.FilesPage.moreOptions.rawValue)
     }
 
     var recycleBinButton: some View {
