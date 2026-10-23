@@ -314,6 +314,16 @@ final class UserHelper {
         return (qualifiedID: qualifiedId, owner: teamOwner)
     }
 
+    /// Read contactability using the helper's currently authenticated user, without signing in the target user.
+    func getContactStatus(for userID: QualifiedID) async throws -> ContactStatus? {
+        let api = UsersAPIBuilder(apiService: networkStack.apiService).makeAPI(for: apiVersion)
+        let result = try await api.getUsers(userIDs: [userID], includeContactStatus: true)
+        guard let user = result.found.first(where: { $0.id == userID }) else {
+            throw RuntimeError("Contact-status fixture user was not returned by /list-users")
+        }
+        return user.contactStatus
+    }
+
     /// get accesstoken of user by email and password
     /// - Parameters:
     ///   - email: email

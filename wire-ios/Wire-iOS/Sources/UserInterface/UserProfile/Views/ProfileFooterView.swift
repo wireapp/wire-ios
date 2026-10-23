@@ -39,6 +39,10 @@ final class ProfileFooterView: ConversationDetailFooterView {
     /// The action on the left button.
     var leftAction: ProfileAction?
 
+    var isUserNonContactable = false {
+        didSet { updateStartConversationButton() }
+    }
+
     /// The actions hidden behind the ellipsis on the right.
     var rightActions: [ProfileAction]?
 
@@ -69,6 +73,7 @@ final class ProfileFooterView: ConversationDetailFooterView {
 
         self.leftAction = leftAction
         self.rightActions = rightActions
+        updateStartConversationButton()
 
         // Display the left action
         if let leftAction {
@@ -86,10 +91,15 @@ final class ProfileFooterView: ConversationDetailFooterView {
         }
     }
 
+    private func updateStartConversationButton() {
+        leftButton.isEnabled = !(isUserNonContactable && leftAction == .startOneToOne)
+        leftButton.alpha = leftButton.isEnabled ? 1 : 0.4
+    }
+
     // MARK: - Events
 
     override func leftButtonTapped(_ sender: IconButton) {
-        guard let leftAction else { return }
+        guard leftButton.isEnabled, let leftAction else { return }
         delegate?.footerView(self, shouldPerformAction: leftAction)
     }
 
