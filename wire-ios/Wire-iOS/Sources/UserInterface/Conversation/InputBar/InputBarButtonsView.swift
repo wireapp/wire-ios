@@ -110,12 +110,7 @@ final class InputBarButtonsView: UIView {
         }
 
         buttonInnerContainer.clipsToBounds = true
-<<<<<<< HEAD
         expandRowButton.accessibilityIdentifier = Locators.ActiveConversationPage.showOtherRowButton.rawValue
-        expandRowButton.accessibilityLabel = L10n.Accessibility.Conversation.MoreButton.description
-=======
-        expandRowButton.accessibilityIdentifier = "showOtherRowButton"
->>>>>>> c8113c8cf3 (fix: correct accessibility labels - WPB-14706, WPB-23323, WPB-23346 (#5437))
         expandRowButton.hitAreaPadding = .zero
         expandRowButton.setIcon(.ellipsis, size: .tiny, for: [])
 
