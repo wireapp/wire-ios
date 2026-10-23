@@ -105,15 +105,47 @@ package struct FilesView: View {
         )
         .restorationConfirmationDialog(
             isPresented: $viewModel.isPresentingRestoreConfirmation,
-            title: Strings.Files.Restore.title("\(viewModel.selectedItems.count)"),
+            title: restoreConfirmationTitle,
             buttonText: Strings.Files.Restore.confirmation,
             confirm: { viewModel.restoreSelectedItems() }
         )
     }
+    
+    private var restoreConfirmationTitle: String {
+        if viewModel.selectedItems.count == 1 {
+            let item = viewModel.selectedItems.first!
+            if item.kind == .folder {
+                return Strings.RecycleBin.Item.RestoreFolderConfirmation.title(item.name)
+            } else {
+                return Strings.RecycleBin.Item.RestoreFileConfirmation.title(item.name)
+            }
+            
+        } else {
+            return Strings.Files.Restore.title("\(viewModel.selectedItems.count)")
+        }
+    }
 
     private var deleteConfirmationTitle: String {
-        viewModel.isRecycleBin ? Strings.Files.DeletePermanently.title("\(viewModel.selectedItems.count)") : Strings
-            .Files.DeleteToRecycleBin.title("\(viewModel.selectedItems.count)")
+        if viewModel.selectedItems.count == 1 {
+            let item = viewModel.selectedItems.first!
+            if viewModel.isRecycleBin {
+                if item.kind == .folder {
+                    return Strings.RecycleBin.Item.DeleteFolderConfirmation.title(item.name)
+                } else {
+                    return Strings.RecycleBin.Item.DeleteFileConfirmation.title(item.name)
+                }
+            } else {
+                if item.kind == .folder {
+                    return Strings.Files.Item.DeleteFolderConfirmation.title(item.name)
+                } else {
+                    return Strings.Files.Item.DeleteFileConfirmation.title(item.name)
+                }
+            }
+            
+        } else {
+            return viewModel.isRecycleBin ? Strings.Files.DeletePermanently.title("\(viewModel.selectedItems.count)") : Strings
+                .Files.DeleteToRecycleBin.title("\(viewModel.selectedItems.count)")
+        }
     }
 
     private var deleteConfirmationButtonText: String {

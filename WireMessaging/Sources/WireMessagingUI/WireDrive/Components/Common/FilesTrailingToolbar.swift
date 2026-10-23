@@ -50,7 +50,7 @@ struct FilesTrailingToolbar: ToolbarContent {
                 if !viewModel.isOffline {
                     if isSelecting {
                         doneActionButton
-                    } else {
+                    } else if showMoreButton {
                         moreButton
                     }
                 }
@@ -85,6 +85,10 @@ private extension FilesTrailingToolbar {
     var canUploadItems: Bool {
         viewModel.uploadDestinationPath != nil && viewModel.selfUserRole == .editor && !viewModel
             .isRecycleBin && viewModel.isDriveDirectUploadsEnabled
+    }
+    
+    var showMoreButton: Bool {
+        !viewModel.isRecycleBin || (viewModel.isRecycleBin && canSelectItems)
     }
 
     var deleteAllButton: some View {
