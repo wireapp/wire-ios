@@ -47,6 +47,8 @@
 "conversation.locationButton.description" = "Share your location";
 "conversation.videoButton.description" = "ビデオを録画";
 "conversation.moreButton.description" = "Open more messaging options";
+"conversation.moreButton.closeDescription" = "Close more messaging options";
+"conversation.applyChangesButton.description" = "Apply changes";
 "conversation.emphemeralButton.description" = "自動削除メッセージのタイマーを設定します";
 "conversation.timerForSelfDeletingMessagesSeconds.value" = "%@ seconds";
 "conversation.timerForSelfDeletingMessagesMinutes.value" = "%@ minutes";
