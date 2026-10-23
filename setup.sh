@@ -66,7 +66,9 @@ REPO_ROOT=$(git rev-parse --show-toplevel)
 if [[ "$TEST_ONLY" == "false" ]]; then
     echo "ℹ️ Installing Homebrew dependencies from Brewfile..."
     # Install dependencies from Brewfile (respects CI environment variable)
-    brew bundle install || echo "Make sure the dependencies in Brewfile are installed as runner-admin." >&2
+    if ! brew bundle install && [[ -n "${CI-}" ]]; then
+        echo "Make sure the dependencies in Brewfile are installed as runner-admin." >&2
+    fi
     echo ""
 fi
 
