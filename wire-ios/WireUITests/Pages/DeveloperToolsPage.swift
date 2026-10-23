@@ -28,6 +28,16 @@ class DeveloperToolsPage: PageModel {
         app.buttons["Close"].firstMatch.tap()
     }
 
+    @discardableResult
+    func checkUserSessionDeallocated(_ deallocated: Bool) -> Self {
+        let expected = deallocated ? "deallocated" : "retained"
+        XCTAssertTrue(
+            app.staticTexts[expected].waitForExistence(timeout: 5),
+            "Expected UserSession to be \(expected). If 'retained' after logout, the user session is leaked."
+        )
+        return self
+    }
+
     var preferredAPIVersionButton: XCUIElement {
         app.buttons["Preferred API version"].firstMatch
     }
