@@ -429,7 +429,10 @@ extension ConversationInputBarViewController {
         // PHPhotoLibrary via XPC, which hangs when the library is in a cloud-synced path.
         // UIDocumentPickerViewController reads directly from the filesystem and avoids
         // Photos Library entirely.
-        if ProcessInfo.processInfo.isiOSAppOnMac {
+        // The file picker can import existing media, so it needs the same restrictions as the camera roll.
+        if ProcessInfo.processInfo.isiOSAppOnMac,
+           SecurityFlags.cameraRoll.isEnabled,
+           mediaShareRestrictionManager.hasAccessToCameraRoll {
             let types: [UTType] = [.image, .jpeg, .png, .heic, .gif, .movie, .video, .mpeg4Movie]
             let picker = UIDocumentPickerViewController(forOpeningContentTypes: types, asCopy: true)
             picker.allowsMultipleSelection = false
@@ -503,12 +506,14 @@ private final class MacMediaPickerCoordinator: NSObject, UIDocumentPickerDelegat
                 }
             }
         } else if type?.conforms(to: .image) == true {
-            guard let data = try? Data(contentsOf: url),
-                  let image = UIImage(data: data),
-                  let jpegData = image.jpegData(compressionQuality: 0.9)
-            else { return }
-            let sendable = SendableImage(name: nil, utType: .jpeg, data: jpegData)
-            vc.showConfirmationForImage(sendable, isFromCamera: false)
+            // Keep the original data and type so animated GIFs stay animated.
+            guard let data = try? Data(contentsOf: url), UIImage(data: data) != nil else { return }
+            let utType = type ?? .image
+            if vc.useWireDrive() {
+                vc.uploadDraft(data: data, type: utType)
+            } else {
+                vc.showConfirmationForImage(SendableImage(name: nil, utType: utType, data: data), isFromCamera: false)
+            }
         }
     }
 }

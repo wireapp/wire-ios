@@ -27,6 +27,14 @@ protocol TextViewInteractionDelegate: AnyObject {
 final class LinkInteractionTextView: UITextView {
     weak var interactionDelegate: TextViewInteractionDelegate?
 
+    /// Whether the text may be copied or dragged out (ephemeral messages and clipboard restrictions).
+    var isCopyAllowed: () -> Bool = { true }
+
+    override func canPerformAction(_ action: Selector, withSender sender: Any?) -> Bool {
+        if action == #selector(copy(_:)) || action == #selector(cut(_:)), !isCopyAllowed() { return false }
+        return super.canPerformAction(action, withSender: sender)
+    }
+
     override var selectedTextRange: UITextRange? {
         get {
             guard !ProcessInfo.processInfo.isiOSAppOnMac else { return super.selectedTextRange }
@@ -214,6 +222,8 @@ extension LinkInteractionTextView: UITextDragDelegate {
             attributeTuple.0 == NSAttributedString.Key.link && (attributeTuple.1 as? NSURL)?.scheme == Mention
                 .mentionScheme
         }
+
+        guard isCopyAllowed() else { return [] }
 
         if let attributes = textStyling(at: dragRequest.dragRange.start, in: .forward) {
             if attributes.contains(where: isMentionLink) {

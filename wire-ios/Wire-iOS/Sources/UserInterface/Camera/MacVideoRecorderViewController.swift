@@ -99,7 +99,11 @@ final class MacVideoRecorderViewController: UIViewController {
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        if movieOutput.isRecording { movieOutput.stopRecording() }
+        if movieOutput.isRecording {
+            // Leaving mid-recording discards the partial clip instead of uploading it.
+            onVideoRecorded = nil
+            movieOutput.stopRecording()
+        }
         sessionQueue.async { self.session.stopRunning() }
         recordingTimer?.invalidate()
     }
@@ -214,7 +218,9 @@ extension MacVideoRecorderViewController: AVCaptureFileOutputRecordingDelegate {
             self.recordingTimer?.invalidate()
             self.recordingIndicator.isHidden = true
 
-            guard error == nil else { return }
+            // Hitting maxRecordedDuration reports an error but the file is complete.
+            let finished = (error as NSError?)?.userInfo[AVErrorRecordingSuccessfullyFinishedKey] as? Bool ?? false
+            guard error == nil || finished else { return }
 
             self.dismiss(animated: true) {
                 self.onVideoRecorded?(outputFileURL)
