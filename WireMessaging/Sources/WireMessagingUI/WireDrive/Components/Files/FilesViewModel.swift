@@ -545,7 +545,7 @@ package final class FilesViewModel: ObservableObject {
     func selectAllItems() {
         selectedItems = Set(state.items)
     }
-    
+
     func deselectAllItems() {
         selectedItems.removeAll()
     }
