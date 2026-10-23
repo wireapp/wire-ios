@@ -743,6 +743,14 @@ struct MeetingRepositoryTests {
         )
 
         let recorded = await updatedMeetings.meetings
+        let parameters = try #require(meetingsAPI.updateMeetingIdParameters_Invocations.first?.parameters)
+        let payload = try #require(JSONSerialization
+            .jsonObject(with: JSONEncoder().encode(parameters)) as? [String: Any])
+        if recurring {
+            #expect((payload["recurrence"] as? [String: Any])?["frequency"] as? String == "daily")
+        } else {
+            #expect(payload["recurrence"] is NSNull)
+        }
         #expect(recorded.map(\.start) == [updatedStart])
         #expect((recorded.first?.recurrence != nil) == recurring)
         #expect(localStore.storeMeetingMeetingMeetingVoidCallsCount == 1)
