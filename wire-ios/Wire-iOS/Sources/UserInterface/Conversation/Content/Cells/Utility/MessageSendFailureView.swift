@@ -82,7 +82,17 @@ final class MessageSendFailureView: UIView {
     }
 
     private func setupAccessibility() {
+        isAccessibilityElement = false
+        accessibilityElements = [titleLabel, retryButton]
+
+        // This is read-only error text. Keep selection enabled for the federation error's link,
+        // without exposing an editor that WebLinkTextView cannot become first responder for.
+        titleLabel.isEditable = false
+        titleLabel.isSelectable = true
+        titleLabel.isAccessibilityElement = true
+        titleLabel.accessibilityTraits = .staticText
         titleLabel.accessibilityIdentifier = "failedToSend.label"
+        retryButton.isAccessibilityElement = true
         retryButton.accessibilityIdentifier = "retry.button"
     }
 

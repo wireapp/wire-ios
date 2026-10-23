@@ -1,7 +1,8 @@
 # Accessibility batch 4 — failed-message error and retry
 
-Prepared October 23, 2026. Preparation only: no fixes, tests, builds, simulator
-interaction or dependency setup have run for this batch.
+Prepared October 23, 2026. Implementation updated October 23, 2026; see the
+finish record below. No tests, builds, simulator interaction or dependency setup
+have run for this batch.
 
 ## Worktree and branch
 
@@ -160,3 +161,74 @@ the complete assessment onto this branch.
 > modify Jira, push, create PRs, or touch other worktrees/batches. Update the
 > handover with changes, checks and limitations. Continue unless a significant
 > decision needs my input.
+
+
+## Implementation finish record — October 23, 2026
+
+### Shared implementation: WPB-14758 and WPB-14759
+
+Changed only `MessageSendFailureView.swift` and this handover:
+
+- Explicitly expose the failure view as a container with error text followed by
+  the independently accessible native Retry button.
+- Make the local `WebLinkTextView` read-only and selectable, expose it as an
+  accessibility element with static-text semantics, and remove the inherited
+  blanket link trait. Previously this instance retained UITextView's default
+  editable behavior while `WebLinkTextView` refused first-responder focus.
+  This is a source-level accessibility mismatch, not a reproduced diagnosis.
+- Keep the attributed markdown and selection support for the federation error's
+  Learn more link. Do not replace the text with a flattened accessibility label.
+- Preserve identifiers, localization, visual layout, native Retry title/traits,
+  retry target/delegate/session routing, and existing visibility transitions.
+  The existing hidden-state observer hides both ordered children on recovery;
+  reuse continues to update the error through the existing data source.
+- No global WebLinkTextView, toolbox status/timestamp, composer, or message-menu
+  changes. No announcements or focus redirects on configuration/layout updates.
+
+### Separate navigation investigation: WPB-14759
+
+Statically traced the failure view through MessageToolboxView,
+ConversationMessageToolboxCell, the table-view adapter and message-cell
+configuration, then inspected conversation accessibility escape and focus
+notifications. The toolbox occupies a separate row after message content;
+ordinary status grouping is confined to a different subtree. No failure-specific
+modal accessibility container, explicit traversal cycle, or focus-reset loop
+was found on this path. The toolbox's tap handler does not open details for a
+send failure; Retry continues through `.resend` and the existing session enqueue.
+
+The inherited editable-text / refused-first-responder mismatch is a plausible
+contributor to the reported navigation trouble and is corrected locally. The
+ordered error and Retry elements do not include the composer or create a modal
+boundary. However, static inspection cannot establish that users can now swipe
+out to Compose, or rule out another runtime cause. **WPB-14759's additional
+navigation symptom remains unverified; do not claim both tickets fully validated.**
+
+### Checks performed and limitations
+
+- `xcrun swiftc -frontend -parse` on the changed Swift file: passed using installed
+  Xcode 26.6. This checks syntax only, not UIKit type checking or a build with the
+  branch's specified Xcode 26.1.1.
+- `git diff --check`: passed.
+- Reviewed the scoped diff, actual error variants (general/timeout/other,
+  cancelled upload, federation with markdown link), button inheritance, hidden
+  state/recovery paths, and retry routing.
+- Compared changed path lists from the release base against local committed tips:
+  `fix/accessibility-composer-focus` at `fc5387ab0f098c48262ef75ced81aa905b50851a`
+  and `fix/accessibility-labels-batch-2` at
+  `8ce0886d782cf0098b27c8ff7aab7a009d597f13`. Neither changes either file modified
+  here, so no direct file merge conflict is expected at those tips. No fetch,
+  merge, or inspection/modification of their working directories was performed;
+  uncommitted or future changes are outside this comparison.
+- Requested both Jira tickets open in the Codex browser for Christoph; the app
+  returned queued tab opens. No Jira content or workflow fields were changed.
+- SwiftLint/SwiftFormat were not run: this worktree has no bundled artifacts and
+  neither tool is on PATH. No setup or dependency resolution was attempted.
+- No tests, builds, interactive simulator checks, VoiceOver checks or Accessibility
+  Inspector. Speech, Retry activation, link rotor/touch activation, traversal to
+  Compose, repeated failure/success, scrolling/reuse and German/English behavior
+  still require the manual checks listed above when requested.
+- No new tests were added for this small local configuration correction; existing
+  snapshot cases were read as setup references, not executed.
+
+One combined implementation commit uses the suggested ticket-qualified message.
+No push or PR creation; other batches/worktrees remain untouched.
