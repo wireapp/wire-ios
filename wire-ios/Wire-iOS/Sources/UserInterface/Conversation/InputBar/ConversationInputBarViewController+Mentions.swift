@@ -71,6 +71,19 @@ extension ConversationInputBarViewController {
         MentionsHandler.startMentioning(in: textView)
         let position = MentionsHandler.cursorPosition(in: inputBar.textView) ?? 0
         mentionsHandler = MentionsHandler(text: inputBar.textView.text, cursorPosition: position)
+        triggerMentionsIfNeeded(from: textView)
+
+        if UIAccessibility.isVoiceOverRunning, textView.window != nil {
+            view.window?.layoutIfNeeded()
+            UIAccessibility.post(notification: .layoutChanged, argument: textView)
+            UIAccessibility.post(
+                notification: .announcement,
+                argument: NSAttributedString(
+                    string: L10n.Accessibility.Conversation.Mentions.started,
+                    attributes: [.accessibilitySpeechQueueAnnouncement: true]
+                )
+            )
+        }
     }
 }
 

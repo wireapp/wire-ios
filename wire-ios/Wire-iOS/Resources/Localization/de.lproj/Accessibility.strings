@@ -38,6 +38,9 @@
 "conversation.hideFormattingButton.description" = "Formatierungsoptionen ausblenden";
 "conversation.timerButton.description" = "Timer für selbstlöschende Nachrichten festlegen";
 "conversation.mentionButton.description" = "Jemanden erwähnen";
+"conversation.mentions.started" = "At-Zeichen eingefügt. Gib einen Namen ein, um jemanden zu erwähnen.";
+"conversation.mentions.suggestions_available" = "Erwähnungsvorschläge sind über dem Nachrichtenfeld verfügbar.";
+"conversation.mentions.no_suggestions" = "Keine passenden Erwähnungsvorschläge.";
 "conversation.cameraButton.description" = "Foto aufnehmen oder auswählen";
 "conversation.sketchButton.description" = "Skizze zum Zeichnen oder Schreiben öffnen";
 "conversation.gifButton.description" = "Ein GIF auswählen";

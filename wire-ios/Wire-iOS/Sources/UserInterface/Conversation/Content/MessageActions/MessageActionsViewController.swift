@@ -87,8 +87,16 @@ final class MessageActionsViewController: UIAlertController {
               actionController.canPerformAction(selector)
         else { return }
         let style: UIAlertAction.Style = (action == .delete) ? .destructive : .default
-        let newAction = UIAlertAction(title: title, style: style) { [action, weak actionController] _ in
-            actionController?.perform(action: action)
+        let newAction = UIAlertAction(title: title, style: style) { [action, weak self, weak actionController] _ in
+            guard let actionController else { return }
+            if action == .reply, let self {
+                // Complete dismissal before Reply hands VoiceOver focus to the composer.
+                dismiss(animated: true) {
+                    actionController.perform(action: action)
+                }
+            } else {
+                actionController.perform(action: action)
+            }
         }
         if let image = action.icon?.makeImage(size: .small, color: SemanticColors.Icon.foregroundDefaultBlack) {
             newAction.setValue(image, forKey: "image")

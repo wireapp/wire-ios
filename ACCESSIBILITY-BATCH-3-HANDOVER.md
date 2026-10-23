@@ -1,8 +1,8 @@
 # Accessibility batch 3 — composer focus and feedback
 
-Prepared October 23, 2026. This is preparation for a fresh implementation session.
-No fixes, tests, builds, dependency setup, or simulator interaction have run for
-this batch. Implement only the two tickets below.
+Prepared and implemented October 23, 2026. WPB-14710 and WPB-14712 are
+implemented in this isolated worktree. Scoped static checks passed; tests, builds,
+and interactive simulator/VoiceOver checks have not run. Runtime acceptance is pending.
 
 ## Worktree and branch — important
 
@@ -18,7 +18,7 @@ this batch. Implement only the two tickets below.
   `fix/accessibility-labels-batch-2` when preparation started. **Do not switch
   branches or edit files there for this batch.** Set command working directories
   to this isolated checkout, even if a new chat opens in the primary project.
-- This branch has only the committed handover beyond the release base. No local
+- At the start of implementation, this branch had only the committed handover beyond the release base. No local
   configurations, Ruby edits, credentials, session files, or logs were copied.
   Tool dependencies/build products may therefore be absent here.
 - Read this worktree's current `AGENTS.md` and current status before editing.
@@ -28,6 +28,79 @@ this batch. Implement only the two tickets below.
   identify for later separate/stacked PRs. Leave this preparation commit intact.
 - Do not push, create PRs, modify Jira, start another chat, or alter the earlier
   batches. PR #5437 is already reviewed by someone else; no review requested here.
+
+## Implementation handoff — October 23, 2026
+
+Implemented only WPB-14710 and WPB-14712 on `fix/accessibility-composer-focus`.
+The original preparation commit remains intact. The combined implementation commit
+uses `fix: improve composer accessibility focus - WPB-14710, WPB-14712`.
+
+### Changes
+
+- **WPB-14710:** the mention button explicitly refreshes matching users after
+  inserting `@`, lays out the attached editor, and posts a VoiceOver layout-change
+  notification targeting the message field. Queued localized feedback confirms
+  that the at sign was inserted and invites typing a name.
+- The results controller announces that suggestions are available above the field,
+  or that no matching suggestions exist. It announces only transitions between
+  empty/nonempty results, rather than every query, cursor or selection update.
+  A main-queue turn coalesces synchronous updates without a fixed delay; an update
+  generation discards obsolete callbacks. Dismissal invalidates pending callbacks
+  and resets announcement state for re-entry. Empty results hide the list without
+  resetting that state. Announcements leave VoiceOver focus in the editor and use
+  queued speech so they can follow the initiating focus notification.
+- **WPB-14712:** Reply from the message action sheet performs its action in the
+  dismissal completion, retaining the action controller until completion. The
+  explicit input-bar `reply` path switches to text input for VoiceOver, makes the
+  attached editor first responder, lays out the window and posts a layout-change
+  notification targeting the field. No additional Reply announcement duplicates
+  the field's own speech. Quote replacement, cancellation and typed text retain
+  their existing code paths. Restored drafts still call `addReplyComposingView`
+  directly and do not receive the focus handoff.
+- Added three strings in Base English and German `Accessibility.strings` and
+  regenerated accessors with `scripts/run-swiftgen.sh config run --config
+  swiftgen.yml` from `wire-ios/`. Reused a copy of the existing local SwiftGen
+  artifact inside this worktree's ignored `.build`; no setup, download or dependency
+  resolution ran. Excluded unrelated account-limit fallback/comment churn emitted
+  by generation. No candidate-hint or composer-label changes from batch 2 were copied.
+
+### Checks actually performed
+
+- Read branch/status and traced mention insertion, selection observation, result
+  reload/dismissal, action-sheet dismissal, explicit Reply and restored-draft paths.
+- SwiftFormat 0.58.3 in `--lint --cache ignore` mode on the four changed source
+  files: passed, zero files require formatting.
+- SwiftLint 0.61.0 with `lint --strict --quiet --no-cache` on those four files:
+  passed. Both lint binaries were read from the existing primary-checkout artifact
+  paths, with this worktree as the working directory; primary files were not edited.
+- `xcrun swiftc -frontend -parse` on the four source files and generated strings:
+  passed. This checks syntax only, not SDK type checking or app integration.
+- `plutil -lint` on both changed localization files: passed.
+- `git diff --check` and scoped diff review: passed.
+- No tests, builds, interactive simulator checks, Accessibility Inspector sessions,
+  Jira changes, pushes or PR creation. No primary-checkout or other-batch edits.
+
+### Limitations and next validation
+
+- VoiceOver notification delivery, speech ordering, focus retention through the
+  keyboard/menu animations and actual suggestion navigation remain unverified.
+  Coalescing cancels callbacks before posting; already queued VoiceOver speech is
+  managed by the system and cannot be withdrawn by the update-generation guard.
+- Manually validate mention-button entry, typed `@`, filtering through empty and
+  nonempty results, selection, dismissal/re-entry, and English/German feedback.
+  Verify no repeated feedback for unchanged availability and no focus jump while
+  typing; candidate text/selection and hardware-keyboard shortcuts need runtime checks.
+- Manually validate Reply through the action sheet and VoiceOver custom action,
+  quote replacement, cancellation, existing drafts and restored drafts. Also check
+  alternate Reply entry points (collections and link context menus), especially
+  their system-menu dismissal timing. Only the message action sheet has an explicit
+  dismissal completion in this patch.
+- Composer naming still depends on batch 2's WPB-14756; candidate hints remain
+  owned by WPB-14707. Neither patch was duplicated. Other locales use the existing
+  fallback workflow; only English/German translations were added.
+- Tests and interactive checks require Christoph's explicit request. The suggested
+  acceptance scenarios below remain pending; static-check success is not evidence
+  that VoiceOver runtime behavior has passed.
 
 ## Why two tickets
 
@@ -155,7 +228,7 @@ editing behavior with VoiceOver as well as ordinary use.
 The original inventory is on `chore/accessibility-estimation` in
 `ACCESSIBILITY-ESTIMATION.md`; read via `git show` if more background is needed.
 
-Fresh-session prompt:
+Original implementation prompt (historical):
 
 > Work in /Users/christoph/.codex/worktrees/accessibility-composer-focus/wire-ios
 > on fix/accessibility-composer-focus. Read ACCESSIBILITY-BATCH-3-HANDOVER.md and

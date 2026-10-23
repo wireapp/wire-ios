@@ -38,6 +38,9 @@
 "conversation.hideFormattingButton.description" = "Hide formatting options";
 "conversation.timerButton.description" = "Set a timer for self-deleting messages";
 "conversation.mentionButton.description" = "Mention someone";
+"conversation.mentions.started" = "At sign inserted. Type a name to mention someone.";
+"conversation.mentions.suggestions_available" = "Mention suggestions are available above the message field.";
+"conversation.mentions.no_suggestions" = "No matching mention suggestions.";
 "conversation.cameraButton.description" = "Take or select a photo";
 "conversation.sketchButton.description" = "Open sketch to draw or write";
 "conversation.gifButton.description" = "Select a GIF";
