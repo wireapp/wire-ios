@@ -398,6 +398,14 @@ internal enum L10n {
         /// Mention someone
         internal static let description = L10n.tr("Accessibility", "conversation.mentionButton.description", fallback: "Mention someone")
       }
+      internal enum Mentions {
+        /// No matching mention suggestions.
+        internal static let noSuggestions = L10n.tr("Accessibility", "conversation.mentions.no_suggestions", fallback: "No matching mention suggestions.")
+        /// At sign inserted. Type a name to mention someone.
+        internal static let started = L10n.tr("Accessibility", "conversation.mentions.started", fallback: "At sign inserted. Type a name to mention someone.")
+        /// Mention suggestions are available above the message field.
+        internal static let suggestionsAvailable = L10n.tr("Accessibility", "conversation.mentions.suggestions_available", fallback: "Mention suggestions are available above the message field.")
+      }
       internal enum MessageInfo {
         /// Double tap to hide or show message info
         internal static let hint = L10n.tr("Accessibility", "conversation.messageInfo.hint", fallback: "Double tap to hide or show message info")

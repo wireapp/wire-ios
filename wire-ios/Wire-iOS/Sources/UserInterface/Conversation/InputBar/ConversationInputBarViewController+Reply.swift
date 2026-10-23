@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import UIKit
 import WireDataModel
 
 extension ConversationInputBarViewController: ReplyComposingViewDelegate {
@@ -27,6 +27,13 @@ extension ConversationInputBarViewController: ReplyComposingViewDelegate {
         }
 
         addReplyComposingView(composingView)
+
+        // Draft restoration uses addReplyComposingView directly and must not move reading focus.
+        guard UIAccessibility.isVoiceOverRunning, inputBar.textView.window != nil else { return }
+        mode = .textInput
+        inputBar.textView.becomeFirstResponder()
+        view.window?.layoutIfNeeded()
+        UIAccessibility.post(notification: .layoutChanged, argument: inputBar.textView)
     }
 
     func addReplyComposingView(_ composingView: ReplyComposingView) {
