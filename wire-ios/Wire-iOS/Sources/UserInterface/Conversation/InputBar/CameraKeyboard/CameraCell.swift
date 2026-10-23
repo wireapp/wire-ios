@@ -66,6 +66,7 @@ final class CameraCell: UICollectionViewCell {
         expandButton.setIconColor(UIColor.white, for: [])
         expandButton.translatesAutoresizingMaskIntoConstraints = false
         expandButton.addTarget(self, action: #selector(expandButtonPressed(_:)), for: .touchUpInside)
+        expandButton.accessibilityLabel = L10n.Accessibility.Conversation.Camera.MaximizeButton.description
         expandButton.accessibilityIdentifier = "fullscreenCameraButton"
         contentView.addSubview(expandButton)
 
@@ -73,6 +74,7 @@ final class CameraCell: UICollectionViewCell {
         takePictureButton.setIconColor(UIColor.white, for: [])
         takePictureButton.translatesAutoresizingMaskIntoConstraints = false
         takePictureButton.addTarget(self, action: #selector(shutterButtonPressed(_:)), for: .touchUpInside)
+        takePictureButton.accessibilityLabel = L10n.Localizable.Self.Settings.AccountPictureGroup.Alert.takePicture
         takePictureButton.accessibilityIdentifier = "takePictureButton"
         contentView.addSubview(takePictureButton)
 
@@ -80,6 +82,7 @@ final class CameraCell: UICollectionViewCell {
         changeCameraButton.setIconColor(UIColor.white, for: [])
         changeCameraButton.translatesAutoresizingMaskIntoConstraints = false
         changeCameraButton.addTarget(self, action: #selector(changeCameraPressed(_:)), for: .touchUpInside)
+        changeCameraButton.accessibilityLabel = L10n.Localizable.Voice.FlipVideoButton.title
         changeCameraButton.accessibilityIdentifier = "changeCameraButton"
         contentView.addSubview(changeCameraButton)
 
