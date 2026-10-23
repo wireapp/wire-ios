@@ -47,6 +47,8 @@
 "conversation.locationButton.description" = "Поделиться местоположением";
 "conversation.videoButton.description" = "Записать видео";
 "conversation.moreButton.description" = "Открыть дополнительные параметры обмена сообщениями";
+"conversation.moreButton.closeDescription" = "Close more messaging options";
+"conversation.applyChangesButton.description" = "Apply changes";
 "conversation.emphemeralButton.description" = "Установите таймер для самоудаления сообщений";
 "conversation.timerForSelfDeletingMessagesSeconds.value" = "%@ сек.";
 "conversation.timerForSelfDeletingMessagesMinutes.value" = "%@ мин.";
