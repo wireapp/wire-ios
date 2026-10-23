@@ -124,7 +124,7 @@ struct WireMeetingsMemberRepository: MeetingMemberRepositoryProtocol, @unchecked
             return seen.insert(id).inserted ? id : nil
         }
 
-        let profiles = try await usersAPI.getUsers(userIDs: memberIDs)
+        let profiles = try await usersAPI.getUsers(userIDs: memberIDs, includeContactStatus: false)
         guard
             profiles.failed.isEmpty,
             Set(profiles.found.map(\.id)) == Set(memberIDs),

@@ -31,9 +31,12 @@ public protocol UsersAPI {
 
     /// Get user details for a list of users
     ///
-    /// - Parameter userIDs: lists of user ids
+    /// - Parameters:
+    ///   - userIDs: List of user ids.
+    ///   - includeContactStatus: Request contact status for local users on API v17 and later.
+    ///     Older API versions ignore this argument.
     /// - Returns: List user details response.
 
-    func getUsers(userIDs: [UserID]) async throws -> UserList
+    func getUsers(userIDs: [UserID], includeContactStatus: Bool) async throws -> UserList
 
 }

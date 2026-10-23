@@ -543,7 +543,7 @@ public final class SearchTask {
 
         try Task.checkCancellation()
 
-        let collaboratorProfiles = try await usersAPI.getUsers(userIDs: collaboratorIDs)
+        let collaboratorProfiles = try await usersAPI.getUsers(userIDs: collaboratorIDs, includeContactStatus: false)
         if !collaboratorProfiles.failed.isEmpty {
             WireLogger.network.warn("at least one collaborator's info couldn't be fetched", attributes: .safePublic)
         }
@@ -920,7 +920,7 @@ public final class SearchTask {
 
         let usersByID: [UUID: User]
         do {
-            let userList = try await usersAPI.getUsers(userIDs: userIDsToFetch)
+            let userList = try await usersAPI.getUsers(userIDs: userIDsToFetch, includeContactStatus: false)
             usersByID = Dictionary(
                 userList.found.map { ($0.id.id, $0) },
                 uniquingKeysWith: { first, _ in first }
