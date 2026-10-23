@@ -322,6 +322,10 @@ internal enum L10n {
       }
     }
     internal enum Conversation {
+      internal enum ApplyChangesButton {
+        /// Apply changes
+        internal static let description = L10n.tr("Accessibility", "conversation.applyChangesButton.description", fallback: "Apply changes")
+      }
       internal enum AudioButton {
         /// Record an audio message
         internal static let description = L10n.tr("Accessibility", "conversation.audioButton.description", fallback: "Record an audio message")
@@ -397,6 +401,8 @@ internal enum L10n {
         internal static let hint = L10n.tr("Accessibility", "conversation.messageOptions.hint", fallback: "Triple tap to open messaging options")
       }
       internal enum MoreButton {
+        /// Close more messaging options
+        internal static let closeDescription = L10n.tr("Accessibility", "conversation.moreButton.closeDescription", fallback: "Close more messaging options")
         /// Open more messaging options
         internal static let description = L10n.tr("Accessibility", "conversation.moreButton.description", fallback: "Open more messaging options")
       }
