@@ -539,10 +539,15 @@ package final class FilesViewModel: ObservableObject {
 
     func enableMultipleSelection(_ enabled: Bool) {
         multipleSelection = enabled ? .active : .inactive
+        deselectAllItems()
     }
 
     func selectAllItems() {
         selectedItems = Set(state.items)
+    }
+    
+    func deselectAllItems() {
+        selectedItems.removeAll()
     }
 
     func moveSelectedItemsToFolder() {

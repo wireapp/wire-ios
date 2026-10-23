@@ -84,7 +84,7 @@ private extension FilesTrailingToolbar {
 
     var canUploadItems: Bool {
         viewModel.uploadDestinationPath != nil && viewModel.selfUserRole == .editor && !viewModel
-            .isRecycleBin && viewModel.isDriveDirectUploadsEnabled
+            .isRecycleBin
     }
 
     var showMoreButton: Bool {
