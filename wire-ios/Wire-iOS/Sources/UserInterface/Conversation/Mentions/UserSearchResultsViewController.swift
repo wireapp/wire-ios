@@ -322,7 +322,6 @@ extension UserSearchResultsViewController: UICollectionViewDataSource {
             cell.backgroundColor = SemanticColors.View.backgroundUserCell
         }
 
-        cell.accessibilityHintOverride = L10n.Accessibility.Conversation.MentionSuggestion.hint
         cell.accessibilityIdentifier = Locators.ActiveConversationPage.userCellName.rawValue
         return cell
     }

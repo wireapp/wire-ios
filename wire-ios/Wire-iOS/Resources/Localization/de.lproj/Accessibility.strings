@@ -40,7 +40,6 @@
 "conversation.mentionButton.description" = "Jemanden erwähnen";
 "conversation.cameraButton.description" = "Foto aufnehmen oder auswählen";
 "conversation.camera.maximizeButton.description" = "Ansicht maximieren";
-"conversation.mentionSuggestion.hint" = "Doppeltippen, um die Erwähnung einzufügen";
 "conversation.sketchButton.description" = "Skizze zum Zeichnen oder Schreiben öffnen";
 "conversation.gifButton.description" = "Ein GIF auswählen";
 "conversation.audioButton.description" = "Audionachricht aufnehmen";
