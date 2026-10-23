@@ -640,6 +640,7 @@ public enum Locators {
             case sharedDrivePageHeader = "Shared Drive"
             case deleteOnBottomSheet = "Delete"
             case moreOptions = "More"
+            case moreOptionRecycleBin
             case recycleBinPageheader = "Recycle Bin"
             case moveToFolder
             case moveToFolderFloatingButton

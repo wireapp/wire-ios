@@ -124,6 +124,7 @@ private extension FilesTrailingToolbar {
             Text(L10n.Localizable.General.done)
         }
         .accessibilityIdentifier(Locators.WireDrive.FilesPage.done)
+        .tint(ColorTheme.Base.primary(accentColor).color)
     }
 
     var moreButton: some View {
@@ -148,7 +149,7 @@ private extension FilesTrailingToolbar {
             Image(systemName: "ellipsis.circle")
         }
         .tint(ColorTheme.Base.primary(accentColor).color)
-        .accessibilityIdentifier(Locators.WireDrive.FilesPage.moreOptions.rawValue)
+        .accessibilityIdentifier(viewModel.isRecycleBin ? Locators.WireDrive.FilesPage.moreOptionRecycleBin.rawValue : Locators.WireDrive.FilesPage.moreOptions.rawValue)
     }
 
     var recycleBinButton: some View {
