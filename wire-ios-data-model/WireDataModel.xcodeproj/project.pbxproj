@@ -87,8 +87,8 @@
 		069BCC5A2B30945500DF4EC2 /* E2EIClientID.swift in Sources */ = {isa = PBXBuildFile; fileRef = 069BCC532B30945500DF4EC2 /* E2EIClientID.swift */; };
 		069BCC5B2B30945500DF4EC2 /* E2EISetupService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 069BCC542B30945500DF4EC2 /* E2EISetupService.swift */; };
 		069BCC5C2B30945500DF4EC2 /* E2EIVerificationStatusService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 069BCC552B30945500DF4EC2 /* E2EIVerificationStatusService.swift */; };
-		069BCC5E2B3094D000DF4EC2 /* E2eIServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 069BCC562B30945500DF4EC2 /* E2eIServiceTests.swift */; };
-		069BCC662B30994300DF4EC2 /* E2eIVerificationStatusServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 069BCC652B30994300DF4EC2 /* E2eIVerificationStatusServiceTests.swift */; };
+		069BCC5E2B3094D000DF4EC2 /* E2EIServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 069BCC562B30945500DF4EC2 /* E2EIServiceTests.swift */; };
+		069BCC662B30994300DF4EC2 /* E2EIVerificationStatusServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 069BCC652B30994300DF4EC2 /* E2EIVerificationStatusServiceTests.swift */; };
 		069D07B82562671D00DBA592 /* FeatureTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 069D07B72562671D00DBA592 /* FeatureTests.swift */; };
 		06A0E60B281AE65D00E5F822 /* store2-99-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = 06A0E60A281AE65D00E5F822 /* store2-99-0.wiredatabase */; };
 		06B1C493248F9173007FDA8D /* GenericMessage+Debug.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06B1C492248F9173007FDA8D /* GenericMessage+Debug.swift */; };
@@ -843,8 +843,8 @@
 		069BCC532B30945500DF4EC2 /* E2EIClientID.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = E2EIClientID.swift; sourceTree = "<group>"; };
 		069BCC542B30945500DF4EC2 /* E2EISetupService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = E2EISetupService.swift; sourceTree = "<group>"; };
 		069BCC552B30945500DF4EC2 /* E2EIVerificationStatusService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = E2EIVerificationStatusService.swift; sourceTree = "<group>"; };
-		069BCC562B30945500DF4EC2 /* E2eIServiceTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = E2eIServiceTests.swift; sourceTree = "<group>"; };
-		069BCC652B30994300DF4EC2 /* E2eIVerificationStatusServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = E2eIVerificationStatusServiceTests.swift; sourceTree = "<group>"; };
+		069BCC562B30945500DF4EC2 /* E2EIServiceTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = E2EIServiceTests.swift; sourceTree = "<group>"; };
+		069BCC652B30994300DF4EC2 /* E2EIVerificationStatusServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = E2EIVerificationStatusServiceTests.swift; sourceTree = "<group>"; };
 		069D07B72562671D00DBA592 /* FeatureTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureTests.swift; sourceTree = "<group>"; };
 		06A0E60A281AE65D00E5F822 /* store2-99-0.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; path = "store2-99-0.wiredatabase"; sourceTree = "<group>"; };
 		06B1C492248F9173007FDA8D /* GenericMessage+Debug.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GenericMessage+Debug.swift"; sourceTree = "<group>"; };
@@ -1681,8 +1681,8 @@
 		069BCC632B3098F500DF4EC2 /* E2EIdentity */ = {
 			isa = PBXGroup;
 			children = (
-				069BCC562B30945500DF4EC2 /* E2eIServiceTests.swift */,
-				069BCC652B30994300DF4EC2 /* E2eIVerificationStatusServiceTests.swift */,
+				069BCC562B30945500DF4EC2 /* E2EIServiceTests.swift */,
+				069BCC652B30994300DF4EC2 /* E2EIVerificationStatusServiceTests.swift */,
 				633722B92B7D1AAA00BE4E45 /* CRLExpirationDatesRepositoryTests.swift */,
 			);
 			name = E2EIdentity;
@@ -3907,7 +3907,7 @@
 				54F84D041F995B0700ABD7D5 /* DiskDatabaseTests.swift in Sources */,
 				EE85C8B22B557C3D00D3182D /* DatabaseMigrationTests+OneOnOneConversation.swift in Sources */,
 				D5FA30D12063FD3A00716618 /* VersionTests.swift in Sources */,
-				069BCC662B30994300DF4EC2 /* E2eIVerificationStatusServiceTests.swift in Sources */,
+				069BCC662B30994300DF4EC2 /* E2EIVerificationStatusServiceTests.swift in Sources */,
 				54A885A81F62EEB600AFBA95 /* ZMConversationTests+Messages.swift in Sources */,
 				013887AE2B9A5CA800323DD0 /* CoreDataMigrationActionFactoryTests.swift in Sources */,
 				54ED3A9D1F38CB6A0066AD47 /* DatabaseMigrationTests.swift in Sources */,
@@ -4050,7 +4050,7 @@
 				BF1B980D1EC3410000DE033B /* PermissionsTests.swift in Sources */,
 				63E313D3274D5F57002EAF1D /* ZMConversationTests+Team.swift in Sources */,
 				880A44402F7EB47100446049 /* RemoveEARKeysUseCaseTests.swift in Sources */,
-				069BCC5E2B3094D000DF4EC2 /* E2eIServiceTests.swift in Sources */,
+				069BCC5E2B3094D000DF4EC2 /* E2EIServiceTests.swift in Sources */,
 				63370CF82431F5DE0072C37F /* BaseCompositeMessageTests.swift in Sources */,
 				546D3DE91CE5D24C00A6047F /* RichAssetFileTypeTests.swift in Sources */,
 				59BAE1102C3429EB00F8EEDC /* FilterConversationsUseCaseTests.swift in Sources */,

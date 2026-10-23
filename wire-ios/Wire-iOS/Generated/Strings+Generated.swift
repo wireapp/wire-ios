@@ -306,6 +306,10 @@ internal enum L10n {
       }
     }
     internal enum Conversation {
+      internal enum ApplyChangesButton {
+        /// Apply changes
+        internal static let description = L10n.tr("Accessibility", "conversation.applyChangesButton.description", fallback: "Apply changes")
+      }
       internal enum AudioButton {
         /// Record an audio message
         internal static let description = L10n.tr("Accessibility", "conversation.audioButton.description", fallback: "Record an audio message")
@@ -377,6 +381,8 @@ internal enum L10n {
         internal static let hint = L10n.tr("Accessibility", "conversation.messageOptions.hint", fallback: "Triple tap to open messaging options")
       }
       internal enum MoreButton {
+        /// Close more messaging options
+        internal static let closeDescription = L10n.tr("Accessibility", "conversation.moreButton.closeDescription", fallback: "Close more messaging options")
         /// Open more messaging options
         internal static let description = L10n.tr("Accessibility", "conversation.moreButton.description", fallback: "Open more messaging options")
       }
@@ -1227,13 +1233,16 @@ internal enum L10n {
       internal enum Message {
         internal enum MaxOne {
           /// You can only use one account at once on this device. Log out of this account or select Later to log out of the other account.
-          internal static let removeOne = L10n.tr("Localizable", "account_limit_alert.message.max_one.remove_one", fallback: "You can only use one account at once on this device. Log out of this account or select Later to log out of the other account.")
+          /// Create a backup to preserve your conversation history.
+          internal static let removeOne = L10n.tr("Localizable", "account_limit_alert.message.max_one.remove_one", fallback: "You can only use one account at once on this device. Log out of this account or select Later to log out of the other account.\nCreate a backup to preserve your conversation history.")
           /// You can only use one account at once on this device. Log out of this account or select Later to log out of the other accounts.
-          internal static let removeTwo = L10n.tr("Localizable", "account_limit_alert.message.max_one.remove_two", fallback: "You can only use one account at once on this device. Log out of this account or select Later to log out of the other accounts.")
+          /// Create a backup to preserve your conversation history.
+          internal static let removeTwo = L10n.tr("Localizable", "account_limit_alert.message.max_one.remove_two", fallback: "You can only use one account at once on this device. Log out of this account or select Later to log out of the other accounts.\nCreate a backup to preserve your conversation history.")
         }
         internal enum MaxTwo {
           /// You can only use two accounts at once on this device. Log out of this account or select Later to log out of the other account.
-          internal static let removeOne = L10n.tr("Localizable", "account_limit_alert.message.max_two.remove_one", fallback: "You can only use two accounts at once on this device. Log out of this account or select Later to log out of the other account.")
+          /// Create a backup to preserve your conversation history.
+          internal static let removeOne = L10n.tr("Localizable", "account_limit_alert.message.max_two.remove_one", fallback: "You can only use two accounts at once on this device. Log out of this account or select Later to log out of the other account.\nCreate a backup to preserve your conversation history.")
         }
       }
       internal enum Title {
