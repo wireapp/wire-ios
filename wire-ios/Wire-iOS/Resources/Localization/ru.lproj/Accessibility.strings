@@ -39,6 +39,7 @@
 "conversation.timerButton.description" = "Установите таймер для самоудаления сообщений";
 "conversation.mentionButton.description" = "Упомянуть кого-нибудь";
 "conversation.cameraButton.description" = "Сделать или выбрать фото";
+"conversation.camera.maximizeButton.description" = "Maximize view";
 "conversation.sketchButton.description" = "Открыть скетч для рисования или записи";
 "conversation.gifButton.description" = "Выбрать GIF";
 "conversation.audioButton.description" = "Запись аудиосообщения";
@@ -47,8 +48,8 @@
 "conversation.locationButton.description" = "Поделиться местоположением";
 "conversation.videoButton.description" = "Записать видео";
 "conversation.moreButton.description" = "Открыть дополнительные параметры обмена сообщениями";
-"conversation.moreButton.closeDescription" = "Close more messaging options";
-"conversation.applyChangesButton.description" = "Apply changes";
+"conversation.moreButton.closeDescription" = "Закрыть дополнительные параметры обмена сообщениями";
+"conversation.applyChangesButton.description" = "Применить изменения";
 "conversation.emphemeralButton.description" = "Установите таймер для самоудаления сообщений";
 "conversation.timerForSelfDeletingMessagesSeconds.value" = "%@ сек.";
 "conversation.timerForSelfDeletingMessagesMinutes.value" = "%@ мин.";
