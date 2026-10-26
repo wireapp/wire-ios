@@ -54,7 +54,7 @@ final class FilesTrailingToolBarTests: XCTestCase {
             ("recycle_bin_viewer", .init(role: .viewer, isRecycleBin: true)),
             ("recycle_bin_empty", .init(isRecycleBin: true, hasItems: false)),
             ("recycle_bin_selecting", .init(isRecycleBin: true, isSelecting: true)),
-            ("recycle_bin_offline", .init(isRecycleBin: true, isOffline: true)),
+            ("recycle_bin_offline", .init(isRecycleBin: true, isOffline: true))
         ]
 
         for (name, configuration) in scenarios {
