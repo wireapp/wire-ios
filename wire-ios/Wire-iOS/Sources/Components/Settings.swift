@@ -143,7 +143,8 @@ class Settings {
     static var shared: Settings = .init()
 
     init() {
-        // Preserve the user's preference unless the security flag requires previews to be disabled.
+        // Enforce the security flag for the share extension, which reads the stored preference directly.
+        // Otherwise, preserve the user's preference across launches.
         if !SecurityFlags.generateLinkPreviews.isEnabled {
             ExtensionSettings.shared.disableLinkPreviews = true
         }
