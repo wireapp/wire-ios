@@ -39,6 +39,7 @@
 "conversation.timerButton.description" = "Timer für selbstlöschende Nachrichten festlegen";
 "conversation.mentionButton.description" = "Jemanden erwähnen";
 "conversation.cameraButton.description" = "Foto aufnehmen oder auswählen";
+"conversation.camera.maximizeButton.description" = "Ansicht maximieren";
 "conversation.sketchButton.description" = "Skizze zum Zeichnen oder Schreiben öffnen";
 "conversation.gifButton.description" = "Ein GIF auswählen";
 "conversation.audioButton.description" = "Audionachricht aufnehmen";

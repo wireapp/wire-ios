@@ -342,6 +342,12 @@ internal enum L10n {
         /// Use bullet list
         internal static let description = L10n.tr("Accessibility", "conversation.bulletListButton.description", fallback: "Use bullet list")
       }
+      internal enum Camera {
+        internal enum MaximizeButton {
+          /// Maximize view
+          internal static let description = L10n.tr("Accessibility", "conversation.camera.maximizeButton.description", fallback: "Maximize view")
+        }
+      }
       internal enum CameraButton {
         /// Take or select a photo
         internal static let description = L10n.tr("Accessibility", "conversation.cameraButton.description", fallback: "Take or select a photo")

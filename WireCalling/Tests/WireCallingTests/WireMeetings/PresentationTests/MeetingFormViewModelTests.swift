@@ -968,30 +968,45 @@ struct MeetingFormViewModelTests {
         #expect(viewModel.startDateRange.lowerBound == dateProviderMock.now.addingTimeInterval(-86_400))
     }
 
-    @Test("submit in edit mode sends the next occurrence time for a recurring meeting that started in the past")
-    func submit_EditModePastRecurringMeeting_UsesNextOccurrenceTime() async throws {
-        // Given
-        let originalStart = try makeDate(year: 2026, month: 7, day: 5, hour: 9, minute: 0)
+    @Test("editing either occurrence keeps today's ongoing occurrence as the series start", arguments: [0, 1])
+    func submit_EditModePastRecurringMeeting_UsesCurrentOccurrenceTime_TC_11999(occurrenceOffset: Int) async throws {
+        // Create an old daily series with an ongoing occurrence today and a future occurrence tomorrow.
+        dateProviderMock.now = try makeDate(year: 2026, month: 7, day: 6, hour: 9, minute: 30)
+        let originalStart = try makeDate(year: 2026, month: 7, day: 1, hour: 9, minute: 0)
         let original = makeEditableMeeting(
             start: originalStart,
             recurrence: MeetingRecurrence(frequency: .daily, interval: 1)
         )
-        let viewModel = makeViewModel(mode: .edit(original))
+        let expectedStart = try makeDate(year: 2026, month: 7, day: 6, hour: 9, minute: 0)
+        let expectedEnd = expectedStart.addingTimeInterval(TimeInterval.oneHour)
+        let occurrences = MeetingOccurrencePaginator().occurrences(
+            for: [original],
+            startingAt: expectedStart,
+            offset: 0,
+            limit: 2
+        )
+        #expect(occurrences.count == 2)
+        let selectedOccurrence = try #require(occurrences.dropFirst(occurrenceOffset).first)
+        #expect(selectedOccurrence.start == expectedStart.addingTimeInterval(Double(occurrenceOffset) * 86_400))
+
+        // Open the form from either occurrence, which has the same underlying meeting.
+        let viewModel = makeViewModel(mode: .edit(selectedOccurrence.meeting))
+        #expect(viewModel.startDate == expectedStart)
+        #expect(viewModel.endDate == expectedEnd)
+        #expect(viewModel.repeatOption == .daily)
         updateMeetingUseCaseMock
             .invokeMeetingMeetingTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceParticipantsMeetingMemberEmailsToAddStringEmailsToRemoveStringMeetingReturnValue =
-            meeting
-        let expectedStart = try makeDate(year: 2026, month: 7, day: 6, hour: 9, minute: 0)
-        let expectedEnd = try makeDate(year: 2026, month: 7, day: 6, hour: 10, minute: 0)
+            original
 
-        // When
+        // Save the series with today's dates, not tomorrow's dates or the original generator date.
         await viewModel.submit()
 
-        // Then
         let arguments = updateMeetingUseCaseMock
             .invokeMeetingMeetingTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceParticipantsMeetingMemberEmailsToAddStringEmailsToRemoveStringMeetingReceivedArguments
         #expect(arguments?.meeting == original)
         #expect(arguments?.startTime == expectedStart)
         #expect(arguments?.endTime == expectedEnd)
+        #expect(arguments?.recurrence == original.recurrence)
     }
 
     @Test("submit in edit mode updates the meeting with the form values and calls onSuccess")
@@ -1029,22 +1044,71 @@ struct MeetingFormViewModelTests {
         #expect(viewModel.hasError == false)
     }
 
-    @Test("submit in edit mode sets the error flag when the use case fails")
-    func submit_EditMode_Failure_SetsError() async {
-        // Given
-        var onSuccessCalled = false
-        let viewModel = makeViewModel(mode: .edit(makeEditableMeeting())) { _ in onSuccessCalled = true }
+    @Test("a failed edit keeps all draft values and can retry the same meeting once")
+    func submit_EditMode_FailureRetainsDraftAndRetries_TC_12003() async throws {
+        // Change all editable values, including member and email invitations.
+        let original = makeEditableMeeting()
+        var savedMeetings: [Meeting] = []
+        let viewModel = makeViewModel(mode: .edit(original), supportsMeetingLinks: true) { savedMeetings.append($0) }
+        updateMeetingUseCaseMock.fetchInvitedEmailsForMeetingMeetingStringReturnValue = ["old@example.com"]
+        await viewModel.loadInvitedEmails()
+        let draftStart = try makeDate(year: 2026, month: 7, day: 7, hour: 10, minute: 0)
+        let draftEnd = draftStart.addingTimeInterval(90 * TimeInterval.oneMinute)
+        viewModel.meetingTitle = "Updated Title"
+        viewModel.startDate = draftStart
+        viewModel.endDate = draftEnd
+        viewModel.repeatOption = .daily
+        viewModel.selectedMembers = []
+        viewModel.invitedEmails = ["new@example.com"]
         updateMeetingUseCaseMock
             .invokeMeetingMeetingTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceParticipantsMeetingMemberEmailsToAddStringEmailsToRemoveStringMeetingThrowableError =
-            URLError(.badServerResponse)
+            URLError(.notConnectedToInternet)
 
-        // When
+        // Fail the first save and keep the form open with all draft values.
         await viewModel.submit()
 
-        // Then
         #expect(viewModel.hasError == true)
         #expect(viewModel.isLoading == false)
-        #expect(onSuccessCalled == false)
+        #expect(viewModel.dismissAfterError == false)
+        #expect(savedMeetings.isEmpty)
+        #expect(viewModel.meetingTitle == "Updated Title")
+        #expect(viewModel.startDate == draftStart)
+        #expect(viewModel.endDate == draftEnd)
+        #expect(viewModel.repeatOption == .daily)
+        #expect(viewModel.selectedMembers.isEmpty)
+        #expect(viewModel.invitedEmails == ["new@example.com"])
+        let failedArguments = updateMeetingUseCaseMock
+            .invokeMeetingMeetingTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceParticipantsMeetingMemberEmailsToAddStringEmailsToRemoveStringMeetingReceivedArguments
+        #expect(failedArguments?.meeting.id == original.id)
+
+        // Restore the connection and retry the same draft without creating another meeting.
+        updateMeetingUseCaseMock
+            .invokeMeetingMeetingTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceParticipantsMeetingMemberEmailsToAddStringEmailsToRemoveStringMeetingThrowableError =
+            nil
+        updateMeetingUseCaseMock
+            .invokeMeetingMeetingTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceParticipantsMeetingMemberEmailsToAddStringEmailsToRemoveStringMeetingReturnValue =
+            original
+        await viewModel.submit()
+
+        let savedArguments = updateMeetingUseCaseMock
+            .invokeMeetingMeetingTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceParticipantsMeetingMemberEmailsToAddStringEmailsToRemoveStringMeetingReceivedArguments
+        #expect(savedArguments?.meeting.id == original.id)
+        #expect(savedArguments?.title == "Updated Title")
+        #expect(savedArguments?.startTime == draftStart)
+        #expect(savedArguments?.endTime == draftEnd)
+        #expect(savedArguments?.recurrence == MeetingRecurrence(frequency: .daily, interval: 1))
+        #expect(savedArguments?.participants.isEmpty == true)
+        #expect(savedArguments?.emailsToAdd == ["new@example.com"])
+        #expect(savedArguments?.emailsToRemove == ["old@example.com"])
+        #expect(updateMeetingUseCaseMock
+            .invokeMeetingMeetingTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceParticipantsMeetingMemberEmailsToAddStringEmailsToRemoveStringMeetingCallsCount ==
+            2)
+        #expect(createMeetingUseCaseMock
+            .invokeTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceTypeMeetingTypePasswordStringParticipantsMeetingMemberInvitedEmailsStringMeetingCreationResultCallsCount ==
+            0)
+        #expect(savedMeetings == [original])
+        #expect(viewModel.hasError == false)
+        #expect(viewModel.isLoading == false)
     }
 
     @Test("submit while a submission is in flight is ignored")
