@@ -107,8 +107,12 @@ jobs:
             *) echo "::error::uitest_parallel_workers must be 1, 2, 3, or 4"; exit 1 ;;
           esac
           echo "UITest workers: $UITEST_PARALLEL_WORKERS"
-          echo "Host logical CPUs: $(sysctl -n hw.logicalcpu)"
-          echo "Host memory bytes: $(sysctl -n hw.memsize)"
+          CPUS=$(sysctl -n hw.logicalcpu)
+          MEM_GB=$(( $(sysctl -n hw.memsize) / 1073741824 ))
+          FREE_PCT=$(memory_pressure 2>/dev/null | sed -n 's/.*free percentage: *\([0-9]*\)%.*/\1/p' || true)
+          LOAD1=$(sysctl -n vm.loadavg | awk '{print $2}')
+          BOOTED=$(( $(xcrun simctl list devices booted 2>/dev/null | grep -c "(Booted)" || true) + $(xcrun simctl --set "$HOME/Library/Developer/XCTestDevices" list devices booted 2>/dev/null | grep -c "(Booted)" || true) ))
+          echo "Host: ${CPUS} CPUs, ${MEM_GB} GB RAM, ${FREE_PCT:-?}% memory free, load ${LOAD1}, ${BOOTED} simulators already booted"
 
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
