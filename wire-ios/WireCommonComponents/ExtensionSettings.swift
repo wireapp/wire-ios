@@ -68,7 +68,8 @@ public final class ExtensionSettings: NSObject {
     public var disableLinkPreviews: Bool {
         get {
             // Enforce the flag in both the app and share extension without overwriting the user's preference.
-            !isLinkPreviewGenerationEnabled() || defaults.bool(forKey: ExtensionSettingsKey.disableLinkPreviews.rawValue)
+            !isLinkPreviewGenerationEnabled() || defaults
+                .bool(forKey: ExtensionSettingsKey.disableLinkPreviews.rawValue)
         }
         set { defaults.set(newValue, forKey: ExtensionSettingsKey.disableLinkPreviews.rawValue) }
     }
