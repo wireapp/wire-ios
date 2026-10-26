@@ -192,6 +192,32 @@ final class MeetingsAPITests: XCTestCase {
 
     // MARK: - updateMeeting V16+
 
+    func testUpdateMeeting_EncodesRecurrenceChanges_TC_11994() async throws {
+        // Check unchanged, cleared and replaced recurrence through each supported API version.
+        for version in APIVersion.v16.andNextVersions {
+            let parameters = [
+                UpdateMeetingParameters(title: "New title"),
+                UpdateMeetingParameters(recurrence: .some(nil)),
+                UpdateMeetingParameters(recurrence: MeetingRecurrence(frequency: .weekly, interval: 2, until: nil))
+            ]
+            let apiService = MockAPIServiceProtocol.withResponses(
+                .init(repeating: (.ok, "MeetingResponse"), count: parameters.count)
+            )
+            let sut = version.buildAPI(apiService: apiService)
+            for parameter in parameters {
+                _ = try await sut.updateMeeting(id: Scaffolding.meetingID, parameters: parameter)
+            }
+            let payloads = try apiService.executeRequestRequiringAccessToken_Invocations.map {
+                try XCTUnwrap(JSONSerialization.jsonObject(with: XCTUnwrap($0.request.httpBody)) as? [String: Any])
+            }
+            XCTAssertNil(payloads[0]["recurrence"])
+            XCTAssertTrue(payloads[1]["recurrence"] is NSNull)
+            let recurrence = try XCTUnwrap(payloads[2]["recurrence"] as? [String: Any])
+            XCTAssertEqual(recurrence["frequency"] as? String, "weekly")
+            XCTAssertEqual(recurrence["interval"] as? Int, 2)
+        }
+    }
+
     func testUpdateMeeting_SuccessResponse_200_V16() async throws {
         // Given
         let apiService = MockAPIServiceProtocol.withResponses([(.ok, "MeetingResponse")])
