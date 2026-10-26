@@ -216,7 +216,7 @@
 "conversation.wireCells.files.upload.failedMany" = "Couldn't upload %d files";
 "conversation.wireCells.files.upload.someFailedOne" = "1 couldn't upload";
 "conversation.wireCells.files.upload.someFailedMany" = "%d couldn't upload";
-"conversation.wireCells.files.upload.tapToReview" = "Tap to review";
+"conversation.wireCells.files.upload.tapToReview" = "Select to review";
 
 "conversation.wireCells.files.upload.cancel" = "Cancelar";
 "conversation.wireCells.files.upload.cancelAll" = "Cancel all";
@@ -228,7 +228,7 @@
 "conversation.wireCells.files.upload.prepareFailed.title" = "Upload couldn't start";
 "conversation.wireCells.files.upload.prepareFailed.message" = "\"%@\" couldn't be prepared for upload. Make sure the file is available and your device has enough free storage.";
 "conversation.wireCells.files.upload.importFailed.title" = "Couldn't import files";
-"conversation.wireCells.files.upload.importFailed.message" = "Some of the selected files couldn't be imported, so they weren't uploaded.";
+"conversation.wireCells.files.upload.importFailed.message" = "Some of the selected files couldn't be uploaded.";
 "conversation.wireCells.files.upload.permissionWarning.title" = "Wire necesita acceder a tus fotos";
 "conversation.wireCells.files.upload.permissionWarning.restrictions.message" = "Wire no puede acceder a la librería debido a que no cuenta con el permiso";
 "conversation.wireCells.files.upload.permissionWarning.denied.message" = "Vaya a ajustes y permita el acceso a sus fotos";
