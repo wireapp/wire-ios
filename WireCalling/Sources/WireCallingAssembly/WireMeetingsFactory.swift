@@ -104,6 +104,7 @@ public struct WireMeetingsFactory {
                     accentColorState: accentColorState
                 )
                 .environment(\.isClipboardEnabled, isClipboardEnabled)
+                .environment(\.supportsMeetingEmailInvitations, supportsMeetingLinks)
             )
         )
     }

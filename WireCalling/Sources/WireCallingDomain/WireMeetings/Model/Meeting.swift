@@ -40,6 +40,8 @@ public struct Meeting: Hashable, Sendable {
     /// The meeting's IANA time zone identifier, absent for legacy meetings.
     public let timeZoneIdentifier: String?
 
+    public var invitedEmails: [String]
+
     /// The participants of the meeting's conversation, resolved from the
     /// local store when the meeting is read. `nil` when the conversation has
     /// not been fetched yet (e.g. a meeting built straight from a network
@@ -57,6 +59,7 @@ public struct Meeting: Hashable, Sendable {
         end: Date,
         recurrence: MeetingRecurrence?,
         timeZoneIdentifier: String? = nil,
+        invitedEmails: [String] = [],
         conversation: MeetingConversation? = nil,
         conversationID: QualifiedID,
         creatorID: QualifiedID
@@ -67,6 +70,7 @@ public struct Meeting: Hashable, Sendable {
         self.end = end
         self.recurrence = recurrence
         self.timeZoneIdentifier = timeZoneIdentifier
+        self.invitedEmails = invitedEmails
         self.conversation = conversation
         self.conversationID = conversationID
         self.creatorID = creatorID

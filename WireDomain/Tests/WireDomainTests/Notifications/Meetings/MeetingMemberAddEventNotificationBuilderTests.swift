@@ -81,6 +81,7 @@ final class MeetingMemberAddEventNotificationBuilderTests: XCTestCase {
             return XCTFail("Expected an invitation notification")
         }
         XCTAssertEqual(meetingsAPI.requestedIDs, [Scaffolding.meetingID])
+        XCTAssertEqual(meetingStore.meetings.first?.invitedEmails, Scaffolding.meeting.invitedEmails)
         XCTAssertEqual(usersAPI.requestedIDs, [Scaffolding.senderID])
         XCTAssertNotEqual(Scaffolding.meeting.creatorID, Scaffolding.senderID)
         XCTAssertEqual(content.title, "Planning")
@@ -199,7 +200,7 @@ private enum Scaffolding {
         startTime: startTime,
         endTime: startTime.addingTimeInterval(3600),
         conversationID: .init(id: UUID(), domain: "example.com"),
-        invitedEmails: [],
+        invitedEmails: ["guest@example.com"],
         isTrial: false,
         createdAt: startTime,
         updatedAt: startTime

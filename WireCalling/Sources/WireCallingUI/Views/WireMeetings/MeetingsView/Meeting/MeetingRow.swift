@@ -16,11 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
+package import SwiftUI
+
 import WireCallingDomain
 import WireDesign
 import WireFoundation
 import WireLocators
+
+package extension EnvironmentValues {
+    @Entry var supportsMeetingEmailInvitations: Bool = false
+}
 
 struct MeetingRow: View {
     private typealias Strings = L10n.Localizable.WireMeetings.List
@@ -37,6 +42,7 @@ struct MeetingRow: View {
     var onMeetingLink: (() -> Void)?
 
     @Environment(\.wireAccentColor) private var wireAccentColor
+    @Environment(\.supportsMeetingEmailInvitations) private var supportsMeetingEmailInvitations
 
     @ScaledMetric private var iconBoxSize: CGFloat = 31
     @ScaledMetric private var iconFontSize: CGFloat = 15
@@ -144,6 +150,22 @@ struct MeetingRow: View {
                 if let conversation = meeting.conversation, !conversation.participants.isEmpty {
                     MemberAvatarsView(members: Array(conversation.participants))
                         .padding(.top, 2)
+                }
+                if supportsMeetingEmailInvitations {
+                    ForEach(meeting.invitedEmails, id: \.self) { email in
+                        HStack(alignment: .firstTextBaseline, spacing: 6) {
+                            Image(systemName: "envelope")
+                                .font(.system(size: 14))
+                                .frame(width: 24)
+                                .accessibilityHidden(true)
+                            Text(email)
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
+                        .font(for: .subline1)
+                        .foregroundStyle(ColorTheme.Base.secondaryText.color)
+                        .accessibilityElement(children: .combine)
+                        .accessibilityIdentifier("meetingEmailInvitee_\(email)")
+                    }
                 }
                 if isAttending {
                     attendingLabel
