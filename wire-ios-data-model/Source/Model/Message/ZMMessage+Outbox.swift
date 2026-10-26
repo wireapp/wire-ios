@@ -206,7 +206,7 @@ public extension ZMMessage {
         outboxStateRaw = MessageOutboxState.queued.rawValue
         outboxAttemptIdentifier = nil
         outboxNextAttemptAt = nil
-        expirationDate = nil
+        removeExpirationDate()
     }
 
     func failQueuedOutboxOperation() throws {

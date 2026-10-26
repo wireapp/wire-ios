@@ -17,6 +17,9 @@ and tests when required. Do not execute those checks as the agent. Earlier runs
 below predate that instruction; do not rerun them without a new request.
 Reconfirmed 2026-10-22: the user requested validation instructions rather than
 agent execution. See the feature validation walkthrough below.
+Exception authorized 2026-10-26: run `build-for-testing` for `WireDataModel` on
+`iPhone 17 (Tests)` and fix compiler errors. Test execution, lint, and formatting
+remain user-owned. See the build record below for the scoped result.
 
 This is the working checklist for investigation, design, implementation, and rollout.
 Check an item only when its result has been verified. Record relevant PRs and test
@@ -59,6 +62,9 @@ information is captured in one context block, dependency wakeups cannot be lost
 during the first check, and status processing rechecks the operation after crypto
 awaits. Client-session metadata reads are also atomic. Compilation and runtime
 acceptance remain outstanding.
+Update 2026-10-26: the explicitly requested `WireDataModel` build-for-testing now
+succeeds on `iPhone 17 (Tests)` after the fixes recorded below. This does not
+establish app/other-scheme compilation or runtime acceptance.
 Uncertain-delivery automatic retry policy remains unresolved before broad activation;
 the development implementation exposes manual Retry while retaining frozen content.
 
@@ -1460,10 +1466,43 @@ Preparation/status interruption source review, 2026-10-22 (no validation executi
       leaves main-app outbox work untouched and uses legacy sharing behavior.
 - [ ] Agree any broader offline share-extension support and cross-process ownership.
 
+## WireDataModel build-for-testing (2026-10-26)
+
+The user consolidated the schema into `2.145.0`, removed `2.146.0`, and updated
+the migration chain/current model. Those edits are staged user work and are
+preserved separately from the agent's build fixes; `.ruby-version` is untouched.
+The old `2.146.0` narrative above records implementation history rather than the
+current migration target. The compatibility `outboxPayload` field/code is still
+present; removing that intermediate-build compatibility remains separate cleanup.
+
+- Reproduced the compiler error in `ZMMessage+Outbox.retryOutboxOperation()`:
+  `expirationDate` is read-only. Replaced direct assignment with the existing
+  `removeExpirationDate()` method.
+- Updated the migration regression source to target the consolidated
+  `2.144.0` -> `2.145.0` path, removing references to the deleted `2.146.0` model.
+- The final build, including the migration-test source update, returned exit 0
+  with `TEST BUILD SUCCEEDED`. No tests, lint, or formatting
+  have been executed. This result covers only the `WireDataModel` scheme and its
+  test build dependencies; app/request-strategy/sync-engine acceptance is open.
+
+Command authorized and run directly (build output in
+`/private/tmp/wpb-26307-wire-data-model-build-for-testing.log`):
+
+```sh
+xcodebuild build-for-testing \
+  -workspace wire-ios-mono.xcworkspace \
+  -scheme WireDataModel \
+  -testPlan AllTests \
+  -destination 'platform=iOS Simulator,name=iPhone 17 (Tests)' \
+  CODE_SIGNING_ALLOWED=NO
+```
+
 ## Feature validation walkthrough (2026-10-22)
 
-The user owns execution. None of the steps in this walkthrough has been run by
-the agent. Start with compilation and the short device pass; the wider matrix
+The user owns execution except for the explicitly requested WireDataModel
+build-for-testing recorded above. The automated commands below execute tests and
+have not been run by the agent. Start with compilation and the short device pass;
+the wider matrix
 below is still required before activation. Record the tested commit, Xcode,
 device/OS, protocol, synchronization implementation, and receiver observations.
 

@@ -25,15 +25,13 @@ import XCTest
 final class DatabaseMigrationTests_Outbox: XCTestCase {
 
     func testMigrationPreservesLegacyMessagesWithoutEnrollingThem() throws {
-        for version in ["2.144.0", "2.145.0"] {
-            try assertMigrationPreservesLegacyMessages(from: version)
-        }
+        try assertMigrationPreservesLegacyMessages(from: "2.144.0")
     }
 
     private func assertMigrationPreservesLegacyMessages(from version: String) throws {
         let helper = DatabaseMigrationHelper()
         let source = try helper.createObjectModel(version: version)
-        let destination = try helper.createObjectModel(version: "2.146.0")
+        let destination = try helper.createObjectModel(version: "2.145.0")
         let mapping = try NSMappingModel.inferredMappingModel(forSourceModel: source, destinationModel: destination)
         let directory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
         try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
@@ -46,7 +44,7 @@ final class DatabaseMigrationTests_Outbox: XCTestCase {
 
         try helper.migrateStore(
             sourceVersion: version,
-            destinationVersion: "2.146.0",
+            destinationVersion: "2.145.0",
             mappingModel: mapping,
             storeDirectory: directory,
             preMigrationAction: { context in
