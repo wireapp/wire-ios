@@ -151,6 +151,7 @@
         <attribute name="nonce" optional="YES" attributeType="Binary"/>
         <relationship name="asset" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="AssetClientMessage" inverseName="dataSet" inverseEntity="AssetClientMessage"/>
         <relationship name="message" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ClientMessage" inverseName="dataSet" inverseEntity="ClientMessage"/>
+        <relationship name="outboxMessage" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Message" inverseName="outboxSnapshot" inverseEntity="Message"/>
     </entity>
     <entity name="ImageMessage" representedClassName="ZMImageMessage" parentEntity="Message" syncable="YES">
         <attribute name="imageType" optional="YES" attributeType="String"/>
@@ -200,13 +201,6 @@
         </fetchIndex>
     </entity>
     <entity name="Message" representedClassName="ZMMessage" isAbstract="YES" syncable="YES">
-        <attribute name="outboxAttemptCount" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
-        <attribute name="outboxAttemptIdentifier" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
-        <attribute name="outboxEnqueuedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
-        <attribute name="outboxNextAttemptAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
-        <attribute name="outboxOperationRaw" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
-        <attribute name="outboxPayload" optional="YES" attributeType="Binary"/>
-        <attribute name="outboxStateRaw" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="cachedCategory" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="delivered" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO"/>
         <attribute name="destructionDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
@@ -222,6 +216,13 @@
         <attribute name="nonce" optional="YES" transient="YES"/>
         <attribute name="nonce_data" optional="YES" attributeType="Binary" versionHashModifier="add_index1"/>
         <attribute name="normalizedText" optional="YES" attributeType="String"/>
+        <attribute name="outboxAttemptCount" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="outboxAttemptIdentifier" optional="YES" attributeType="UUID" usesScalarValueType="NO"/>
+        <attribute name="outboxEnqueuedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="outboxNextAttemptAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="outboxOperationRaw" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="outboxPayload" optional="YES" attributeType="Binary"/>
+        <attribute name="outboxStateRaw" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="senderClientID" optional="YES" attributeType="String"/>
         <attribute name="serverTimestamp" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="shouldExpire" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
@@ -231,6 +232,7 @@
         <relationship name="failedToSendRecipients" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="User" inverseName="messagesFailedToSendRecipient" inverseEntity="User"/>
         <relationship name="hiddenInConversation" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Conversation" inverseName="hiddenMessages" inverseEntity="Conversation"/>
         <relationship name="missingRecipients" optional="YES" transient="YES" toMany="YES" deletionRule="Nullify" destinationEntity="UserClient" inverseName="messagesMissingRecipient" inverseEntity="UserClient"/>
+        <relationship name="outboxSnapshot" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="GenericMessageData" inverseName="outboxMessage" inverseEntity="GenericMessageData"/>
         <relationship name="quote" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Message" inverseName="replies" inverseEntity="Message"/>
         <relationship name="reactions" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Reaction" inverseName="message" inverseEntity="Reaction"/>
         <relationship name="replies" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Message" inverseName="quote" inverseEntity="Message"/>
