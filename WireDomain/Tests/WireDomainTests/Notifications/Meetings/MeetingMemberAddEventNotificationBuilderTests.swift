@@ -264,11 +264,15 @@ private final class InvitationUsersAPI: UsersAPI {
             app: nil,
             service: nil,
             supportedProtocols: nil,
-            legalholdStatus: .disabled
+            legalholdStatus: .disabled,
+            contactStatus: nil
         )
     }
 
-    func getUsers(userIDs: [UserID]) async throws -> UserList { throw InvitationTestError.unavailable }
+    func getUsers(
+        userIDs: [UserID],
+        includeContactStatus: Bool
+    ) async throws -> UserList { throw InvitationTestError.unavailable }
 }
 
 private final class InvitationMeetingStore: MeetingLocalStoreProtocol, @unchecked Sendable {
