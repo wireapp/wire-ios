@@ -143,6 +143,7 @@ class Settings {
     static var shared: Settings = .init()
 
     init() {
+        // Preserve the user's preference unless the security flag requires previews to be disabled.
         if !SecurityFlags.generateLinkPreviews.isEnabled {
             ExtensionSettings.shared.disableLinkPreviews = true
         }
