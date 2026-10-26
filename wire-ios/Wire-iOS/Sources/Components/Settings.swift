@@ -143,11 +143,6 @@ class Settings {
     static var shared: Settings = .init()
 
     init() {
-        // Enforce the security flag for the share extension, which reads the stored preference directly.
-        // Otherwise, preserve the user's preference across launches.
-        if !SecurityFlags.generateLinkPreviews.isEnabled {
-            ExtensionSettings.shared.disableLinkPreviews = true
-        }
         restoreLastUsedAVSSettings()
 
         NotificationCenter.default.addObserver(
@@ -170,9 +165,7 @@ class Settings {
 
     static var disableLinkPreviews: Bool {
         get {
-            !SecurityFlags.generateLinkPreviews.isEnabled
-                ? true
-                : ExtensionSettings.shared.disableLinkPreviews
+            ExtensionSettings.shared.disableLinkPreviews
         }
         set {
             ExtensionSettings.shared.disableLinkPreviews = newValue
