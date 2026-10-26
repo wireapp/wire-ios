@@ -10,9 +10,15 @@ As it is hard to spot changes from version to version of database models (.xcdat
 
 ## zmessaging
 
-### 2.145.0 (TODO, not created yet)
+### 2.146.0 (TODO, not created yet)
 
 * remove `Conversation.commitPendingProposalDate`, superseded by the `PendingProposalTimer` entity (values are moved by `PendingProposalTimerMigrationAction` when migrating to 2.143.0). Also remove the `@NSManaged` property in `ZMConversation` and its remaining usages.
+
+### 2.145.0
+
+* added `Message.outboxStateRaw`, `outboxOperationRaw`, `outboxEnqueuedAt`, `outboxAttemptIdentifier`, `outboxAttemptCount` and `outboxNextAttemptAt` to persist pending-message lifecycle, send ownership and retry scheduling (WPB-26307). Existing messages default to not enrolled.
+* added the optional `Message.outboxSnapshot` relationship to `GenericMessageData`, with inverse `GenericMessageData.outboxMessage`, so frozen outgoing payloads use existing encryption-at-rest support. Deleting a message cascades to its snapshot.
+* added optional binary `Message.outboxPayload` for compatibility with intermediate local builds; new snapshots use `outboxSnapshot`.
 
 ### 2.144.0
 
