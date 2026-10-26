@@ -53,6 +53,10 @@ public struct UITestConfig: Codable {
     public var meetingsCreateFailureID: String?
     public static let meetingsCreateFailureNotificationPrefix = "com.wire.ios.uitests.meetings.create-failure"
 
+    /// A unique Darwin state name suffix for a controlled Meetings update failure.
+    public var meetingsUpdateFailureID: String?
+    public static let meetingsUpdateFailureNotificationPrefix = "com.wire.ios.uitests.meetings.update-failure"
+
     /// A unique notification name suffix to advance the Meetings test clock across local midnight.
     public var meetingsClockID: String?
     public static let meetingsClockNotificationPrefix = "com.wire.ios.uitests.meetings.advance-local-day"
