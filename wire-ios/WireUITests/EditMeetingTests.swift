@@ -150,13 +150,16 @@ final class EditMeetingTests: WireUITestCase {
         let form = try page.edit(original)
 
         // Empty and over-limit titles must not change the saved meeting.
-        for title in ["", "   ", String(repeating: "A", count: 65), String(repeating: "🧑🏽‍💻", count: 32)] {
+        for title in ["", "   ", String(repeating: "🧑🏽‍💻", count: 32)] {
             form.replaceTitle(with: title)
             XCTAssertFalse(form.saveButton.isEnabled)
             if title.count > 64 || title.utf8.count > 256 {
                 XCTAssertTrue(form.titleError.waitForExistence(timeout: 5))
             }
         }
+        form.replaceTitle(with: String(repeating: "A", count: 65))
+        XCTAssertEqual(form.titleField.value as? String, String(repeating: "A", count: 64))
+        XCTAssertTrue(form.saveButton.isEnabled)
         let beforeSave = try await onlyMeeting(fixtures, original: original)
         XCTAssertEqual(beforeSave.title, original.title)
         _ = try form.cancel()
