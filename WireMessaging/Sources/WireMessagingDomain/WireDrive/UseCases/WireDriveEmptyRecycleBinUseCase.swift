@@ -39,6 +39,33 @@ package struct WireDriveEmptyRecycleBinUseCase {
 
     package func invoke(cellName: String) async throws {
         let recycleBinPath = "\(cellName)/recycle_bin"
+
+        let nodeIDs = try await repository.getNodes(
+            .init(
+                searchTerm: nil,
+                limit: 0,
+                offset: 0,
+                configuration: .conversationFileView(root: .path(recycleBinPath))
+            )
+        ).nodes.map(\.id)
+
+        // First delete local assets as this is less likely to fail then deleting nodes on server and local assets can
+        // be re-downloaded if needed.
+        for nodeID in nodeIDs {
+            guard let localAsset = try await localAssetStore.asset(nodeID: nodeID) else { continue }
+            switch localAsset.downloadState {
+
+            // If the file is just moved to the recycle bin, the download cache still needs to be cleared because the
+            // cache key changes.
+            case let .downloaded(cacheKey):
+                try await fileCache.deleteFile(forKey: cacheKey)
+            default:
+                break
+            }
+        }
+        try await localAssetStore.deleteAssets(nodeIDs: nodeIDs)
+
+        // Then empty recycle bin from server.
         guard try await repository.deleteNodes(locators: [.path(recycleBinPath)], permanently: true) else {
             throw WireDriveEmptyRecycleBinError.serverFailedToEmptyRecycleBin
         }

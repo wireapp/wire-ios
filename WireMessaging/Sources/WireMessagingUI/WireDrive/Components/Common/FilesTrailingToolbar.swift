@@ -94,13 +94,13 @@ private extension FilesTrailingToolbar {
     var deleteAllButton: some View {
         Button(
             action: {
-                viewModel.selectAllItems()
-                viewModel.isPresentingDeleteConfirmation = true
+                viewModel.isPresentingEmptyRecycleBinConfirmation = true
             },
             label: {
                 Image(systemName: "trash")
             }
         )
+        .accessibilityLabel(Strings.RecycleBin.EmptyConfirmation.button)
         .accessibilityIdentifier(Locators.WireDrive.FilesPage.deleteAll.rawValue)
         .tint(ColorTheme.Base.primary(accentColor).color)
     }

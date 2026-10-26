@@ -86,8 +86,7 @@ class FilesListStateController: Observable, ObservableObject {
         } catch {
             guard controller.state.isLoaded else { return }
 
-            // set items to how they were before the change:
-            controller.state = .received(items: items)
+            controller.state = .received(items: currentItems)
         }
     }
 

@@ -376,7 +376,7 @@ final class WireDriveTests: WireUITestCase {
     }
 
     @MainActor
-    func testDeleteMultipleItems() async throws {
+    func testDeleteMultipleItems_TC_12309() async throws {
 
         // GIVEN
         let teamOwner = try await createDriveEnabledConversation(
@@ -445,7 +445,7 @@ final class WireDriveTests: WireUITestCase {
     }
 
     @MainActor
-    func testRestoreMultipleItems() async throws {
+    func testRestoreMultipleItems_TC_12310() async throws {
 
         // GIVEN
         let teamOwner = try await createDriveEnabledConversation(

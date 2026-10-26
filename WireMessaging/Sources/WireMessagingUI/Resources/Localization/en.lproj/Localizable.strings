@@ -392,3 +392,6 @@
 "conversation.details.sharedDriveAccessSection.you" = "You";
 "conversation.details.sharedDriveAccessSection.editor" = "Editor";
 "conversation.details.sharedDriveAccessSection.viewer" = "Viewer";
+
+"conversation.wireCells.recycleBin.emptyConfirmation.title" = "This will permanently delete all items in this conversation’s recycle bin, including all files and subfolders. Everyone will lose access and there is no way to recover these items.";
+"conversation.wireCells.recycleBin.emptyConfirmation.button" = "Empty Recycle Bin";

@@ -25,18 +25,22 @@ import WireMessagingDomainSupport
 final class WireDriveEmptyRecycleBinUseCaseTests {
 
     private let repository = MockWireDriveNodesRepositoryProtocol()
+    private let store = MockWireDriveLocalAssetStoreProtocol()
     private let sut: WireDriveEmptyRecycleBinUseCase
 
     init() {
         self.sut = WireDriveEmptyRecycleBinUseCase(
             repository: repository,
             fileCache: MockFileCache(),
-            localAssetStore: MockWireDriveLocalAssetStoreProtocol()
+            localAssetStore: store
         )
     }
 
     @Test
     func invoke_PermanentlyDeletesCellRecycleBin() async throws {
+        repository.getNodes_MockValue = ([.fixture()], nil)
+        store.assetNodeID_MockValue = .fixture()
+        store.deleteAssetsNodeIDs_MockMethod = { _ in }
         repository.deleteNodesLocatorsPermanently_MockMethod = { locators, permanently in
             #expect(locators == [.path("conversation/recycle_bin")])
             #expect(permanently)
@@ -50,6 +54,9 @@ final class WireDriveEmptyRecycleBinUseCaseTests {
 
     @Test
     func invoke_ServerRejectsDeletion() async {
+        repository.getNodes_MockValue = ([.fixture()], nil)
+        store.assetNodeID_MockValue = .fixture()
+        store.deleteAssetsNodeIDs_MockMethod = { _ in }
         repository.deleteNodesLocatorsPermanently_MockValue = false
 
         await #expect(throws: WireDriveEmptyRecycleBinError.self) {
@@ -60,6 +67,9 @@ final class WireDriveEmptyRecycleBinUseCaseTests {
     @Test
     func invoke_PropagatesRepositoryError() async {
         enum RepositoryError: Error { case unavailable }
+        repository.getNodes_MockValue = ([.fixture()], nil)
+        store.assetNodeID_MockValue = .fixture()
+        store.deleteAssetsNodeIDs_MockMethod = { _ in }
         repository.deleteNodesLocatorsPermanently_MockError = RepositoryError.unavailable
 
         await #expect(throws: RepositoryError.unavailable) {

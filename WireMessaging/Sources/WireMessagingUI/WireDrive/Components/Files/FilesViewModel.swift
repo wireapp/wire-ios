@@ -123,6 +123,7 @@ package final class FilesViewModel: ObservableObject {
     @Published var selectedItems: Set<FilesViewItem> = []
     @Published var multipleSelection: EditMode = .inactive
     @Published var isPresentingDeleteConfirmation = false
+    @Published var isPresentingEmptyRecycleBinConfirmation = false
     @Published var isPresentingRestoreConfirmation = false
 
     // MARK: init
@@ -443,8 +444,7 @@ package final class FilesViewModel: ObservableObject {
 
         await filesController.removeItems(assets) { [weak self] in
             guard let self else { return }
-            let nodeIdsToRestore = if let recycleBinTopFolderId = navigationPath.last?.recycleBinTopFolderId,
-                                      multipleSelection == .inactive {
+            let nodeIdsToRestore = if let recycleBinTopFolderId = navigationPath.last?.recycleBinTopFolderId {
                 [recycleBinTopFolderId]
             } else {
                 assets.map(\.id)
@@ -452,6 +452,14 @@ package final class FilesViewModel: ObservableObject {
             try await useCases.restoreNodes.invoke(nodeIDs: nodeIdsToRestore)
             setNavigation([])
         }
+    }
+
+    var nameOfTopmostFolderInRecycleBin: String? {
+        guard let folder = navigationPath.last, folder.recycleBinTopFolderId != nil else {
+            return nil
+        }
+
+        return folder.filePath.split(separator: "/").dropFirst(2).first.map(String.init) ?? folder.name
     }
 
     // MARK: search
@@ -554,23 +562,14 @@ package final class FilesViewModel: ObservableObject {
         sheetNavigation = .moveToFolder(fileItems: Array(selectedItems))
     }
 
-    func deleteSelectedItems() {
-        Task {
-            multipleSelection = .inactive
-
-            if selectedItems.count == state.items.count, isRecycleBin {
-                await emptyRecycleBin()
-            } else {
-                await deleteItems(Array(selectedItems), permanently: isRecycleBin)
-            }
-        }
+    func deleteSelectedItems() async {
+        multipleSelection = .inactive
+        await deleteItems(Array(selectedItems), permanently: isRecycleBin)
     }
 
-    func restoreSelectedItems() {
-        Task {
-            multipleSelection = .inactive
-            await restoreItems(Array(selectedItems))
-        }
+    func restoreSelectedItems() async {
+        multipleSelection = .inactive
+        await restoreItems(Array(selectedItems))
     }
 
     func moveToFolder() {

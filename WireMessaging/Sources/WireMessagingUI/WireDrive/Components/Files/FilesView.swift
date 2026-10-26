@@ -101,18 +101,26 @@ package struct FilesView: View {
             isPresented: $viewModel.isPresentingDeleteConfirmation,
             title: deleteConfirmationTitle,
             buttonText: deleteConfirmationButtonText,
-            confirm: { viewModel.deleteSelectedItems() }
+            confirm: { Task { await viewModel.deleteSelectedItems() } }
+        )
+        .deletionConfirmationDialog(
+            isPresented: $viewModel.isPresentingEmptyRecycleBinConfirmation,
+            title: Strings.RecycleBin.EmptyConfirmation.title,
+            buttonText: Strings.RecycleBin.EmptyConfirmation.button,
+            confirm: { Task { await viewModel.emptyRecycleBin() } }
         )
         .restorationConfirmationDialog(
             isPresented: $viewModel.isPresentingRestoreConfirmation,
             title: restoreConfirmationTitle,
             buttonText: Strings.Files.Restore.confirmation,
-            confirm: { viewModel.restoreSelectedItems() }
+            confirm: { Task { await viewModel.restoreSelectedItems() } }
         )
     }
 
     private var restoreConfirmationTitle: String {
-        if viewModel.selectedItems.count == 1 {
+        if let topmostFolderName = viewModel.nameOfTopmostFolderInRecycleBin {
+            return Strings.RecycleBin.Item.RestoreParentConfirmation.title(topmostFolderName)
+        } else if viewModel.selectedItems.count == 1 {
             let item = viewModel.selectedItems.first!
             if item.kind == .folder {
                 return Strings.RecycleBin.Item.RestoreFolderConfirmation.title(item.name)
