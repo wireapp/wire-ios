@@ -381,6 +381,8 @@ extension ZMAssetClientMessage {
             } catch {
                 return
             }
+            // Preserve an already uploaded reference so explicit Retry can send it without uploading
+            // again; only an active transfer needs the upload-cancellation state.
             let wasUploading = transferState == .uploading
             expire(withReason: .cancelled)
             if wasUploading { updateTransferState(.uploadingCancelled, synchronize: false) }

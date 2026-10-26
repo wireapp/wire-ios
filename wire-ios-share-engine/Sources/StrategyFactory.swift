@@ -46,6 +46,8 @@ final class StrategyFactory {
         localDomain: String?,
         backgroundTaskExecuter: any BackgroundTaskExecuter
     ) {
+        // Set ownership before strategies capture their tracking predicates; changing it afterward
+        // could let extension bootstrap claim messages already owned by the main app.
         syncContext.performAndWait { syncContext.disableOfflinePendingMessageProcessing() }
         let httpClient = HttpClientImpl(transportSession: transportSession, queue: syncContext)
         let apiProvider = APIProvider(httpClient: httpClient)

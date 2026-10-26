@@ -71,6 +71,8 @@ final class DeletionDialogPresenter: NSObject {
             if case let .delete(type) = action {
 
                 if let outboxMessage = message as? ZMMessage, outboxMessage.outboxState != .notEnrolled {
+                    // The UI copy may still look unclaimed while reconnect has started sending.
+                    // Decide local discard versus remote deletion on the same queue as send claims.
                     let messageID = outboxMessage.objectID
                     let syncContext = userSession.contextProvider.syncContext
                     Task { @MainActor in

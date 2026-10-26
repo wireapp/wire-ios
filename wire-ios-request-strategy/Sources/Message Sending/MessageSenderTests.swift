@@ -39,6 +39,8 @@ final class MessageSenderTests: MessagingTestBase {
             domain: NSURLErrorDomain, code: NSURLErrorCancelled,
             userInfo: [ZMTransportSessionRequestNotSubmittedKey: true]
         )
+        // All cases surface as decode errors below, including HTTP 201 with no status body.
+        // Delivery classification must use transport/acceptance evidence, not the decoding error alone.
         let cases: [(Int, NSError?, MessageOutboxState)] = [
             (0, notSubmitted, .queued),
             (0, timedOut, .uncertain),
@@ -1396,6 +1398,7 @@ final class MessageSenderTests: MessagingTestBase {
 
 }
 
+/// Allow claim/failure saves but reject the handoff save, isolating the window before any HTTP request.
 private final class OutboxHandoffFailingContext: NSManagedObjectContext {
     override func save() throws {
         if registeredObjects.contains(where: { ($0 as? ZMMessage)?.outboxState == .sending }) {

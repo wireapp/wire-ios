@@ -69,6 +69,7 @@ public final class AssetV3UploadRequestStrategy: AbstractRequestStrategy, ZMCont
     }
 
     public var contextChangeTrackers: [ZMContextChangeTracker] {
+        // Reconcile restored upload state before preprocessing/upstream tracking inspect the row.
         [self, preprocessor, upstreamSync]
     }
 
@@ -164,6 +165,8 @@ extension AssetV3UploadRequestStrategy: ZMContextChangeTracker {
         }
         let cache = managedObjectContext.zm_fileAssetCache!
         let hasMainBytes = message.isFile ? cache.hasFileData(for: message) : cache.hasImageData(for: message)
+        // Missing local bytes are harmless for already-uploaded parts: their persisted remote
+        // reference is sufficient. Unuploaded parts need recoverable bytes before retry can proceed.
         if !content.uploaded.hasAssetID && !hasMainBytes {
             failOutboxUpload(message)
         } else if content.hasPreview && !content.preview.remote.hasAssetID && !cache.hasImageData(for: message) {
@@ -214,6 +217,8 @@ extension AssetV3UploadRequestStrategy: ZMUpstreamTranscoder {
         } catch {
             return false
         }
+        // The preceding save makes key/digest metadata durable. Only then may recovery discard
+        // original plaintext or reject ciphertext whose persisted metadata does not match.
         if message.recoverOutboxAssetPreparation() {
             preprocessor.objectsDidChange([message])
             return false
@@ -343,6 +348,8 @@ extension AssetV3UploadRequestStrategy: ZMUpstreamTranscoder {
             return nil
         }
 
+        // A retry can reuse the same row and transfer state. Generation identifies this request;
+        // the fingerprint below also binds its response to the exact encrypted asset part.
         let generation = UUID()
         if enrolled { uploadGenerations[message.objectID] = generation }
 

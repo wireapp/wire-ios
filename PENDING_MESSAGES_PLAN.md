@@ -1497,6 +1497,19 @@ xcodebuild build-for-testing \
   CODE_SIGNING_ALLOWED=NO
 ```
 
+## Explanatory comment review (2026-10-26)
+
+- At the user's request, reviewed the feature diff across model, sending, asset,
+  session, transport, UI, and regression-test changes. Added rationale where it
+  was implicit; kept already-documented or self-explanatory code unchanged.
+- Comments explain persisted ownership/frozen content, enrollment versus recovery,
+  EAR protection, filesystem/database save ordering, retry evidence, stale callback
+  rejection, shared scheduling, account/share-extension scope, draft retention,
+  and deliberate race/crash windows in test fixtures.
+- This pass changes comments/documentation only. No build, tests, lint, or
+  formatting were run; the earlier WireDataModel build result remains the latest
+  executed validation. The user's unrelated `.ruby-version` remains excluded.
+
 ## Feature validation walkthrough (2026-10-22)
 
 The user owns execution except for the explicitly requested WireDataModel

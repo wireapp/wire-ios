@@ -61,6 +61,8 @@ final class MessageSendingStatusPayloadProcessorTests: MessagingTestBase {
                 )
                 return (message, attempt.identifier, payload)
             }
+            // Change ownership at the async crypto boundary, after the processor's first validity
+            // check but before its final missing-client bookkeeping.
             service.sessionExistsId_MockMethod = { _ in
                 await self.syncMOC.perform {
                     if deleteMessage {

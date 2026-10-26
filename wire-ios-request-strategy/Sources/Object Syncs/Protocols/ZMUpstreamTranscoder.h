@@ -55,6 +55,7 @@
 
 /// Optional failure policy with immutable request metadata, including cancellation/expiration.
 /// Temporary transport responses continue to use the standard retry path.
+/// Implementations can reject stale request generations without failing a newer operation on the same row.
 - (BOOL)shouldRetryFailedRequestForObject:(ZMManagedObject * _Nonnull)managedObject
                          requestUserInfo:(NSDictionary * _Nonnull)requestUserInfo
                                 response:(ZMTransportResponse * _Nonnull)response

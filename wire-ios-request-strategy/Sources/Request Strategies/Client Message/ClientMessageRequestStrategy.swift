@@ -44,6 +44,8 @@ public class ClientMessageRequestStrategy: NSObject, ZMContextChangeTrackerSourc
     let localNotificationDispatcher: PushMessageHandler
     private let reachability: ReachabilityProvider?
     private var reachabilityToken: Any?
+    // Waiting entries retain tracker ownership without running a Task/dispatch group while offline.
+    // The sync-context queue owns this registry and the per-conversation active set.
     private var queuedOutboxMessages: [NSManagedObjectID: (message: PendingOutboxMessage, completion: () -> Void)] = [:]
     private var outboxTasks: [NSManagedObjectID: Task<Void, Never>] = [:]
     private var activeOutboxConversations = Set<NSManagedObjectID>()
@@ -324,6 +326,8 @@ extension ClientMessageRequestStrategy {
             }
             let conversationID = conversation.objectID
             guard !blockedConversations.contains(conversationID) else { continue }
+            // Reserve the conversation even if its earliest tracked message is backing off or
+            // awaiting MLS registration, so a later ready entry cannot overtake it in this drain.
             blockedConversations.insert(conversationID)
             if conversation.messageProtocol == .mls,
                ZMUser.selfUser(in: context).selfClient()?.hasRegisteredMLSClient != true {
@@ -385,6 +389,8 @@ extension ClientMessageRequestStrategy {
             }
         }
         if let nextWakeup {
+            // One timer covers the earliest persisted backoff; reachability/context changes provide
+            // the other wakeups, without polling or keeping one sleeping task per queued message.
             let work = DispatchWorkItem { [weak self] in
                 self?.context.performGroupedBlock { [weak self] in self?.drainOutbox() }
             }

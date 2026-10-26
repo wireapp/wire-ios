@@ -34,6 +34,7 @@ public enum DeveloperFlag: String, CaseIterable {
     case ignoreIncomingEvents
     case newRegistration
     case noAPNSTokenCache
+    /// Controls new enrollment at stack startup; persisted outbox work still recovers when disabled.
     case offlinePendingMessages
     case showCreateMLSGroupToggle
     case showUnreadConversationsFilter

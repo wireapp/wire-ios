@@ -19,6 +19,8 @@
 import Foundation
 import GenericMessageProtocol
 
+/// Persisted local send lifecycle. In `sending`, HTTP handoff may have occurred; after an interruption,
+/// `uncertain` preserves that ambiguity rather than treating the operation as safe to send again.
 public enum MessageOutboxState: Int16 {
     case notEnrolled = 0
     case queued = 1
@@ -101,6 +103,8 @@ public extension ZMMessage {
         return outboxPayload
     }
 
+    /// Creates the first operation or starts another after completion. Reusing the row must not
+    /// erase a pending operation's frozen content or let a late callback complete its replacement.
     func enqueueInOutbox(operation: MessageOutboxOperation, at date: Date = Date()) throws {
         guard !isDeleted, !hasBeenDeleted,
               self is ZMClientMessage || self is ZMAssetClientMessage,
@@ -124,6 +128,8 @@ public extension ZMMessage {
         outboxNextAttemptAt = nil
     }
 
+    /// Claims content against concurrent edits. Each attempt gets a new token to reject old callbacks,
+    /// but retries reuse an existing snapshot because that content may already have reached recipients.
     func prepareOutboxAttempt(payload: Data, at date: Date = Date()) throws -> MessageOutboxAttempt {
         guard !isDeleted, !hasBeenDeleted, outboxState == .queued,
               let operation = outboxOperation, operation != .none,
@@ -230,9 +236,11 @@ public extension ZMMessage {
         guard !isDeleted, !hasBeenDeleted else { return }
         switch outboxState {
         case .preparing:
+            // Handoff requires a saved `sending` state, so interrupted preparation is safe to resume.
             outboxStateRaw = MessageOutboxState.queued.rawValue
             outboxAttemptIdentifier = nil
         case .sending:
+            // The database cannot tell whether the server accepted the request before termination.
             outboxStateRaw = MessageOutboxState.uncertain.rawValue
         default:
             break
@@ -274,6 +282,7 @@ public extension ZMMessage {
 
     private func storeOutboxSnapshot(_ payload: Data) throws {
         guard let context = managedObjectContext else { throw MessageOutboxError.invalidTransition }
+        // Use the same record encryption as message content; raw binary storage would bypass EAR.
         let snapshot = ZMGenericMessageData.insertNewObject(in: context)
         do {
             try snapshot.setGenericMessage(GenericMessage(serializedData: payload))
@@ -291,6 +300,8 @@ public extension ZMMessage {
         }
     }
 
+    /// Content erasure invalidates any outstanding callback token and removes the separate frozen
+    /// snapshot too; clearing only the live message could otherwise leave deleted plaintext recoverable.
     internal func discardOutboxContent() {
         if outboxState != .notEnrolled, outboxState != .sent {
             outboxStateRaw = MessageOutboxState.cancelled.rawValue

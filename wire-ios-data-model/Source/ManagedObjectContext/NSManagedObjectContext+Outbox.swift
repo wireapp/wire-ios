@@ -25,11 +25,13 @@ extension NSManagedObjectContext {
         set { userInfo["offlinePendingMessagesEnabled"] = newValue }
     }
 
-    /// The share extension leaves main-app outbox ownership with the main app.
+    /// Processing is independent of enrollment so existing work survives disabling the feature flag.
+    /// The share extension opts out because it has no cross-process claim on main-app outbox work.
     public var canProcessOfflinePendingMessages: Bool {
         userInfo["canProcessOfflinePendingMessages"] as? Bool ?? true
     }
 
+    /// Disables both creation and recovery for contexts that must not own the main app's queue.
     public func disableOfflinePendingMessageProcessing() {
         offlinePendingMessagesEnabled = false
         userInfo["canProcessOfflinePendingMessages"] = false

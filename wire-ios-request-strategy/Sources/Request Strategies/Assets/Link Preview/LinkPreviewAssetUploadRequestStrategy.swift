@@ -326,6 +326,7 @@ extension LinkPreviewAssetUploadRequestStrategy: ZMUpstreamTranscoder {
         }
     }
 
+    /// Include preview metadata as well as text: two edits can keep the same URL but replace its image.
     private func previewFingerprint(for message: ZMClientMessage) -> Data? {
         guard let text = message.underlyingMessage?.textData,
               let data = try? text.serializedData() else { return nil }

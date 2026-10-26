@@ -44,6 +44,7 @@ struct MessageLogAttributesBuilder {
     }
 
     private func clientMessageLogAttributes(_ message: ZMClientMessage) -> LogAttributes {
+        // Logging can run after a late network completion; even diagnostic reads must avoid reset rows.
         guard context.zm_isValidContext else { return [:] }
         return [
             .nonce: message.nonce?.safeForLoggingDescription ?? "<nil>",

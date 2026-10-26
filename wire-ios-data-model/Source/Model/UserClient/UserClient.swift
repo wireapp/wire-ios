@@ -519,6 +519,8 @@ public extension UserClient {
         try await proteusService.deleteSession(id: sessionID)
     }
 
+    /// Capture identifiers and service in one context turn. Separate awaits could straddle account
+    /// closure and read a reset row; crypto work can then use this snapshot without further row access.
     private func sessionDetails(excludingSelf: Bool) async -> (ProteusSessionID, ProteusServiceInterface)? {
         guard let context = managedObjectContext else { return nil }
         return await context.perform {

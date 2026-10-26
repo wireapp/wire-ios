@@ -80,6 +80,8 @@ final class MessageSendingStatusPayloadProcessor {
             newMissingClients.append(missingClient)
         }
 
+        // Session deletion/existence checks suspend. The message may have been cancelled, replaced,
+        // or reset meanwhile, so the initial validity check does not authorize these later mutations.
         let applied = await context.perform {
             guard canApplyChanges() else { return false }
             if !redundantUsers.isEmpty {

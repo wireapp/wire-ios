@@ -40,6 +40,8 @@ final class DatabaseMigrationTests_Outbox: XCTestCase {
         let timestamp = Date(timeIntervalSince1970: 1_700_000_000)
         let nonce = UUID()
         let content = try GenericMessage(content: Text(content: "preserve me"), nonce: nonce).serializedData()
+        // Include unsent text/assets, delivered, expired and edited rows. None should become new
+        // outbox work merely because migration adds the lifecycle fields.
         let entities = ["ClientMessage", "AssetClientMessage", "ClientMessage", "ClientMessage", "ClientMessage"]
 
         try helper.migrateStore(
@@ -48,6 +50,8 @@ final class DatabaseMigrationTests_Outbox: XCTestCase {
             mappingModel: mapping,
             storeDirectory: directory,
             preMigrationAction: { context in
+                // Use the source model's raw entities: current subclasses reference fields that
+                // deliberately do not exist in the pre-outbox schema.
                 let conversation = NSManagedObject(
                     entity: try XCTUnwrap(context.persistentStoreCoordinator?.managedObjectModel
                         .entitiesByName["Conversation"]),

@@ -49,6 +49,8 @@ extension ZMAssetClientMessage {
     }
 
     public override func removeClearingSender(_ clearingSender: Bool) {
+        // Upload can finish before the asset-reference message is sent. Local removal of an
+        // unsubmitted message must also clean up those remote objects, after its deletion is saved.
         let removeUnsubmittedAssets = clearingSender && (canDiscardOutboxLocally
             || (outboxState == .cancelled && outboxOperation == .initialMessage))
         if !clearingSender {

@@ -104,6 +104,8 @@ final class IncrementalSyncObserver: IncrementalSyncObserverProtocol {
                 attributes: .safePublic
             )
 
+            // Account teardown cancels the waiting task. AsyncStream ends the wait on cancellation,
+            // while each waiter owns its subscription so cancelling one cannot silence another.
             let completion = AsyncStream<Void>(bufferingPolicy: .bufferingNewest(1)) { continuation in
                 let subscription = $decryptionState.first(where: { $0 == .done }).sink { _ in
                     continuation.yield(())

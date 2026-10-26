@@ -211,6 +211,8 @@ private final class ResolvingDependencyMessage: GenericMessageEntity {
     private var checkedDependency = false
 
     override var dependentObjectNeedingUpdateBeforeProcessing: NSObject? {
+        // Deliver the only wakeup inside the initial read while still reporting a dependency.
+        // Subscribing after that read would wait forever; the next read intentionally returns nil.
         guard !checkedDependency else { return nil }
         checkedDependency = true
         NotificationCenter.default.post(name: .requestAvailableNotification, object: nil)

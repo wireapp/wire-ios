@@ -136,6 +136,8 @@ public class ZMClientMessage: ZMOTRMessage {
                   outboxState == .failed || outboxState == .uncertain else { return }
             do {
                 if let messageID = underlyingMessage?.messageID {
+                    // Expiration can restore the original message's nonce for UI purposes. Retry must
+                    // use the pending edit's ID so its live envelope still matches the frozen snapshot.
                     nonce = UUID(uuidString: messageID)
                 }
                 try retryOutboxOperation()
@@ -143,6 +145,7 @@ public class ZMClientMessage: ZMOTRMessage {
             } catch {
                 WireLogger.messaging.error("could not retry outbox operation")
             }
+            // Never fall through to legacy resend, which may rebuild the content of an uncertain send.
             return
         }
         if let genericMessage = underlyingMessage,

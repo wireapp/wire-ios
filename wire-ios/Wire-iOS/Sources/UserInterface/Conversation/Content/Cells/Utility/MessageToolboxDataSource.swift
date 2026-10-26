@@ -177,6 +177,8 @@ final class MessageToolboxDataSource {
             return nil
         }
 
+        // Legacy pending also covers an active send. Consult outbox state first to show waiting
+        // separately, while expired/uncertain operations retain the existing failure presentation.
         if let row = message as? ZMMessage, row.outboxState == .queued, !row.isExpired {
             return .queued
         }

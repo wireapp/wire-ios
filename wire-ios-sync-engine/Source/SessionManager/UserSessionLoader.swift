@@ -503,6 +503,8 @@ final class UserSessionLoader {
             in: sharedContainerURL
         )
 
+        // Pending originals must survive OS cache eviction; keep this account-data location aligned
+        // with ZMUserSessionBuilder and the share extension's cache routing.
         let dependencies = UserSessionDependencies(
             caches: .init(
                 fileAssets: FileAssetCache(

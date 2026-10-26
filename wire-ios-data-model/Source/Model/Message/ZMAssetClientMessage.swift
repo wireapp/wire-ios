@@ -348,6 +348,8 @@ struct CacheAsset: AssetType {
     var cache: FileAssetCache
 
     private var acceptsProcessingCallbacks: Bool {
+        // Preprocessing may finish after cancellation or a send claim. It must not mutate content
+        // once the operation has stopped accepting asset-preparation results.
         owner.outboxState == .notEnrolled || (!owner.isDeleted && !owner.hasBeenDeleted && !owner.isExpired
             && owner.outboxState == .queued && owner.transferState == .uploading)
     }
@@ -498,6 +500,7 @@ struct CacheAsset: AssetType {
 
     func encrypt() {
         guard acceptsProcessingCallbacks else { return }
+        // A remote reference already contains the matching key/digest; re-encryption would break it.
         if owner.outboxState != .notEnrolled, isUploaded { return }
         guard var genericMessage = owner.underlyingMessage else {
             return

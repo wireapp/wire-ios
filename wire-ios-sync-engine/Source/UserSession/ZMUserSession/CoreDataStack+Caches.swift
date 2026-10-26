@@ -28,6 +28,8 @@ extension CoreDataStack {
         syncContext.performGroupedAndWait {
             syncContext.zm_fileAssetCache = caches.fileAssets
             syncContext.zm_userImageCache = caches.userImages
+            // Database state and file writes can diverge on termination. Reconcile after installing
+            // this account's cache, before restored upload work starts using retained entries.
             do {
                 try caches.fileAssets.reconcileOutboxAssets(in: syncContext)
             } catch {

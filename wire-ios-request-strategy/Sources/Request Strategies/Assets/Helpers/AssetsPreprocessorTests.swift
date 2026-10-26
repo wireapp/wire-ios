@@ -70,6 +70,8 @@ class AssetsPreprocessorTests: MessagingTestBase {
         try message.enqueueInOutbox(operation: .initialMessage)
         try uiMOC.save()
         let queue = sut.imageProcessingQueue
+        // Keep completion operations alive beyond the preprocessor so the regression exercises
+        // group cleanup after deallocation, rather than an ordinary teardown with finished work.
         queue.isSuspended = true
         defer { queue.isSuspended = false }
         sut.objectsDidChange([message])

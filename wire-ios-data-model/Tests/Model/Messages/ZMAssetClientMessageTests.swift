@@ -192,6 +192,8 @@ final class ZMAssetClientMessageTests: BaseZMAssetClientMessageTests {
         let message = try XCTUnwrap(appendFileMessage(to: conversation))
         let cache = uiMOC.zm_fileAssetCache!
         let original = try XCTUnwrap(cache.originalFileData(for: message))
+        // Write ciphertext without updating the message's keys/digest to model termination between
+        // the filesystem write and the metadata save, rather than ordinary successful encryption.
         _ = try XCTUnwrap(cache.encryptFileAndComputeSHA256Digest(message))
         try uiMOC.save()
 

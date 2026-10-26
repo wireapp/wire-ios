@@ -141,6 +141,8 @@ public final class MessageChangeInfo: ObjectChangeInfo {
     }
 
     public var deliveryStateChanged: Bool {
+        // Queued and actively sending can both have legacy deliveryState == pending. The toolbox
+        // still needs a refresh when only local outbox state changes.
         changedKeysContain(keys: #keyPath(ZMMessage.deliveryState), #keyPath(ZMMessage.outboxStateRaw))
     }
 

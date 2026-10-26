@@ -48,6 +48,8 @@ public final class LinkPreviewPreprocessor: LinkPreprocessor<LinkMetadata> {
     }
 
     override func processLinks(in message: ZMClientMessage, text: String, excluding excludedRanges: [NSRange]) {
+        // The row/nonce survives queued edits. Compare text as well, otherwise a slow download
+        // could overwrite the preview for a newer draft on that same message.
         let originalText = message.underlyingMessage?.textData
         linkPreviewDetector.downloadLinkPreviews(inText: text, excluding: excludedRanges) { [weak self] linkPreviews in
             self?.managedObjectContext.performGroupedBlock {
@@ -115,6 +117,7 @@ public final class LinkPreviewPreprocessor: LinkPreprocessor<LinkMetadata> {
 
         do {
             if message.outboxState != .notEnrolled {
+                // Preserve text/edit/multipart envelopes and attachments while replacing metadata.
                 try message.setOutboxLinkPreviews(updatedText.linkPreview)
             } else {
                 try message.setUnderlyingMessage(updatedMessage)

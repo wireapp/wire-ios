@@ -357,6 +357,8 @@ final class MessageToolboxView: UIView {
 
     private func updateState(_ state: MessageToolboxState?) {
         statusLabel.isHidden = true
+        // Toolbox views are reused across states. Undo the queued label's Dynamic Type settings
+        // and identifier before rendering the existing delivery-state presentations.
         statusLabel.font = font
         statusLabel.adjustsFontForContentSizeCategory = false
         statusContainerView.isHidden = false

@@ -163,6 +163,8 @@ public final class FileAssetCache: NSObject {
         guard !pending.isEmpty else { return }
         let deleted = notification.userInfo?[NSDeletedObjectsKey] as? Set<NSManagedObject> ?? []
         let updated = notification.userInfo?[NSUpdatedObjectsKey] as? Set<NSManagedObject> ?? []
+        // A pending deletion can have been rolled back. Release only rows this save actually deleted
+        // or obfuscated, otherwise the restored message would lose the bytes needed for recovery.
         let removedIDs = Set(deleted.map(\.objectID)).union(updated.compactMap {
             guard let message = $0 as? ZMMessage, message.hasBeenDeleted else { return nil }
             return message.objectID
@@ -738,6 +740,8 @@ public final class FileAssetCache: NSObject {
             encryptedEntryKey: encryptedCacheKey
         )
 
+        // Encryption and the database save are separate transactions. Keep pinned plaintext until
+        // recovery can verify that persisted keys/digest describe the retained ciphertext.
         if !outboxPins.hasDataForKey(plaintextCacheKey) {
             cache.deleteAssetData(plaintextCacheKey)
         }
@@ -910,6 +914,8 @@ public final class FileAssetCache: NSObject {
                     context: ObjectIdentifier(context), keys: retainedKeys, uploadedAssetIDs: uploadedAssetIDs
                 )
                 deletionLock.unlock()
+                // Clear ordinary cache entries now, but keep durable copies until contextDidSave
+                // confirms deletion. A failed save or rollback must leave the message recoverable.
                 deletionCache = fileCache
             }
         }
@@ -1214,6 +1220,7 @@ private struct FileCache: Cache {
 
         return try files.filter { file -> Bool in
             let attributes = try fileManager.attributesOfItem(atPath: file.path)
+            // Retained data/pin subdirectories are managed by outbox reconciliation, not cache age.
             guard attributes[.type] as? FileAttributeType == .typeRegular else { return false }
 
             guard let creationDate = attributes[.creationDate] as? Date else { return true }

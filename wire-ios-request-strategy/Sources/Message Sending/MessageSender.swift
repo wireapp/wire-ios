@@ -114,6 +114,8 @@ public final class MessageSender: MessageSenderInterface {
     }
 
     public func sendMessage(message: any SendableMessage) async throws {
+        // Persisted enrollment owns routing even after the flag is disabled. Falling back to the
+        // legacy retry loop could replace an uncertain operation's content or send it twice.
         let usesOutbox = try await context.perform {
             guard self.context.zm_isValidContext else { throw MessageOutboxError.staleAttempt }
             return (message as? ZMMessage).map { $0.outboxState != .notEnrolled } ?? false
@@ -666,6 +668,8 @@ private extension MessageSender {
         guard context.canProcessOfflinePendingMessages else { throw MessageSendError.outboxWaitingForConnection }
         guard reachability?.mayBeReachable != false else { throw MessageSendError.outboxWaitingForConnection }
 
+        // Waiting for connectivity/readiness consumes no attempt deadline or background-task budget.
+        // Only claim an operation once sync and dependencies allow actual send preparation.
         await incrementalSyncObserver.waitUntilCanSendMessage()
         try Task.checkCancellation()
         try await messageDependencyResolver.waitForDependenciesToResolve(for: message)
@@ -705,6 +709,8 @@ private extension MessageSender {
                         return
                     }
 
+                    // A transient error alone says nothing about delivery. Only the scheduler's
+                    // explicit pre-submission marker permits automatic connectivity retry.
                     let notSubmitted = (error as? NetworkError)?.response?.transportSessionError?
                         .userInfo[ZMTransportSessionRequestNotSubmittedKey] as? Bool == true
                     let canRepair = retry < maxRetryAttempts && isRepairableOutboxRejection(error)
@@ -745,6 +751,8 @@ private extension MessageSender {
             guard let row = message as? ZMMessage,
                   self.isCurrentOutboxAttempt(attempt.identifier, row: row)
             else { throw MessageOutboxError.staleAttempt }
+            // User content comes from the claim; compliance/read-receipt metadata is sampled now.
+            // Preview callbacks may have changed the live row while encryption was being prepared.
             var content = try GenericMessage(serializedData: attempt.payload)
             if message.conversation?.conversationType == .oneOnOne {
                 content.setExpectsReadConfirmation(ZMUser.selfUser(in: self.context).readReceiptsEnabled)
@@ -757,6 +765,8 @@ private extension MessageSender {
     }
 
     /// Called on the context queue after encryption, immediately before HTTP handoff.
+    /// Membership/security can change across crypto awaits. Recheck them, then save the snapshot
+    /// and `sending` state before HTTP so restart recovery never mistakes a submitted send for queued work.
     func prepareOutboxHandoff(_ attempt: MessageOutboxAttempt, message: any SendableMessage) throws -> Date? {
         try requireCurrentOutboxAttempt(attempt, message: message)
         guard reachability?.mayBeReachable != false else { throw MessageSendError.outboxWaitingForConnection }
@@ -801,6 +811,8 @@ private extension MessageSender {
             try row.completeOutboxAttempt(attempt.identifier)
             row.expirationDate = nil
             if needsPreviewUpdate {
+                // Preview work may finish during HTTP. Send it as a new operation after acceptance
+                // rather than replacing content that recipients may already have received.
                 try row.enqueueInOutbox(operation: .contentUpdate)
                 row.delivered = false
             }
@@ -812,6 +824,7 @@ private extension MessageSender {
     }
 
     func isCurrentOutboxAttempt(_ identifier: UUID, row: ZMMessage) -> Bool {
+        // Check context validity before touching a row that account teardown may already have reset.
         guard context.zm_isValidContext, let state = row.outboxState else { return false }
         return !row.isDeleted && !row.hasBeenDeleted && !row.isObfuscated && row.outboxAttemptIdentifier == identifier
             && [.preparing, .sending, .uncertain].contains(state)
@@ -824,6 +837,8 @@ private extension MessageSender {
     }
 
     func isRepairableOutboxRejection(_ error: Error) -> Bool {
+        // These protocol failures explicitly reject the send. Repair changes encryption/recipients
+        // while preserving the content snapshot; ambiguous transport failures do not qualify.
         if let error = error as? NetworkError, case .missingClients = error { return true }
         guard let error = error as? SendMLSMessageFailure else { return false }
         switch error {

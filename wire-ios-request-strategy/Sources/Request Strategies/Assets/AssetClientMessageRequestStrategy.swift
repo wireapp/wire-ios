@@ -90,6 +90,8 @@ extension AssetClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
                 completion()
                 return
             }
+            // Upload completion only makes the reference message ready. Share final-message
+            // ownership/serialization with text instead of starting a second independent sender.
             outboxStrategy.enqueueOutboxMessage(object, isFresh: isFresh, completion: completion)
             return
         }

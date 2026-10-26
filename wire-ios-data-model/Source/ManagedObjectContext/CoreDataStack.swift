@@ -175,6 +175,8 @@ public final class CoreDataStack: NSObject, CoreDataStackProtocol, ContextProvid
 
     private let localDomain: String?
     private let isFederationEnabled: Bool
+    // Both contexts must agree for the stack's lifetime; changing enrollment requires a restart.
+    // Recovery is gated separately so disabling enrollment cannot strand persisted outbox work.
     private let offlinePendingMessagesEnabled = DeveloperFlag.offlinePendingMessages.isOn
 
     // MARK: - Initialization

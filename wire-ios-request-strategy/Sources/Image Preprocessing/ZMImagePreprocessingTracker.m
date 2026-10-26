@@ -203,6 +203,8 @@
 
 - (BOOL)isCurrentPreprocessingForImageOwner:(id<ZMImageOwner>)imageOwner
 {
+    // Object identity survives queued edits; content identity prevents old downsampling results
+    // from being written onto the replacement preview. Owners without an identifier retain legacy behavior.
     NSData *identifier = [self.preprocessingIdentifiers objectForKey:imageOwner];
     return identifier == nil || [identifier isEqualToData:imageOwner.imagePreprocessingIdentifier];
 }

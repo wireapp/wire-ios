@@ -110,6 +110,8 @@ public final class AssetsPreprocessor: NSObject, ZMContextChangeTracker, TearDow
         let context = managedObjectContext
         processingGroup.notify(on: .global()) { [weak self] in
             context.performGroupedBlock { [weak self] in
+                // Teardown can replace the context's group registry or release this preprocessor.
+                // Balance the exact groups entered for this work even when its result is ignored.
                 defer { groups.forEach { $0.leave() } }
                 guard let self, !self.isTornDown, context.zm_isValidContext else { return }
                 self.objectsBeingProcessed.remove(message)
@@ -180,6 +182,7 @@ extension AssetsPreprocessor: ZMAssetsPreprocessorDelegate {
     }
 
     public func preprocessingCompleteOperation(for imageOwner: ZMImageOwner) -> Operation? {
+        // The completion owns the entered group independently of the preprocessor's lifetime.
         let group = processingGroup
         return BlockOperation {
             group.leave()

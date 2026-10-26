@@ -68,6 +68,8 @@ public extension ProteusMessage where Self: ZMOTRMessage {
 
     func prepareMessageForSending() async throws {
         try Task.checkCancellation()
+        // Capture the optional context before hopping queues; account closure can detach the row
+        // while this task waits, so the throwing path must avoid its force-unwrapped context accessor.
         guard let context = managedObjectContext else { throw MessageOutboxError.staleAttempt }
         try await context.perform { [self] in
             guard context.zm_isValidContext, managedObjectContext === context,

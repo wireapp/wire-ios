@@ -845,6 +845,8 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
     ) async -> Bool {
         if let queuedMessage = message as? ZMClientMessage, queuedMessage.outboxState != .notEnrolled {
             let messageID = queuedMessage.objectID
+            // Mentions contain managed users from the UI context. Transfer IDs/ranges and rebuild
+            // them on the sync context so the edit never mixes objects from different contexts.
             let mentionedUsers = mentions.compactMap { mention -> (NSRange, NSManagedObjectID)? in
                 guard let user = mention.user as? ZMUser else { return nil }
                 return (mention.range, user.objectID)
@@ -853,6 +855,8 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
             let syncContext = userSession.contextProvider.syncContext
             let fetchLinkPreview = !Settings.disableLinkPreviews
             let accepted = await syncContext.perform {
+                // Opening the editor reserves nothing. A send claim can win before confirmation,
+                // so reject here and let the input bar retain the draft instead of overwriting it.
                 guard let row = try? syncContext.existingObject(with: messageID) as? ZMClientMessage,
                       row.canEditOutboxText else { return false }
                 do {

@@ -52,6 +52,8 @@ public class MessageExpirationTimer: ZMMessageTimer, ZMContextChangeTracker {
     }
 
     private func timerFired(for message: ZMMessage) {
+        // Outbox waiting has no deadline. Its sender starts an attempt deadline at HTTP handoff;
+        // the legacy timer must not expire queued or restored enrolled messages independently.
         guard message.outboxState == .notEnrolled else { return }
         if let proteusMessage = message as? (any ProteusMessage) {
             WireLogger.messaging.debug("expiration timer fired for message \(proteusMessage.debugInfo)")

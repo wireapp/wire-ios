@@ -25,6 +25,8 @@ extension ZMMessage {
     }
 
     public class func deleteMessagesOlderThan(_ date: Date, context: NSManagedObjectContext) throws {
+        // Batch deletion bypasses per-message cleanup. Capture keys while rows are readable, then
+        // release durable assets only after the database deletion has succeeded.
         let expiredOutboxAssets = ZMAssetClientMessage.sortedFetchRequest(with: NSCompoundPredicate(
             andPredicateWithSubpredicates: [
                 predicateForMessagesOlderThan(date), NSPredicate(format: "outboxStateRaw != 0")

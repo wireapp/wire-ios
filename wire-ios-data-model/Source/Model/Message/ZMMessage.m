@@ -615,6 +615,8 @@ NSString * const ZMSystemMessageConversationScheduledDeletionDateKey = @"convers
                              ZMMessageNeedsLinkAttachmentsUpdateKey,
                              ZMMessageDiscoveredClientsKey,
                              ZMMessageButtonStatesKey,
+                             // Queue bookkeeping is local. Tracking these as upstream modifications
+                             // would turn lifecycle saves into unrelated network update work.
                              @"outboxStateRaw",
                              @"outboxOperationRaw",
                              @"outboxEnqueuedAt",

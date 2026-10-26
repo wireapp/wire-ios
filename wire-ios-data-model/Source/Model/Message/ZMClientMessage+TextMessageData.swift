@@ -138,6 +138,8 @@ extension ZMClientMessage: TextMessageData {
         guard let nonce, isEditableMessage else { throw MessageOutboxError.invalidTransition }
 
         if hasUnclaimedOutboxContent {
+            // Recipients have not seen this operation. Replace its text in place to keep the nonce,
+            // quote, attachments and queue position, without creating a remote edit/edited marker.
             guard var original = underlyingMessage, let originalText = original.textData else {
                 throw MessageOutboxError.invalidPayload
             }
@@ -194,6 +196,7 @@ extension ZMClientMessage: TextMessageData {
                outboxState == .notEnrolled || outboxState == .sent {
                 try enqueueInOutbox(operation: .edit)
             } else if outboxState == .sent {
+                // The completed operation must not keep ownership when a later edit uses legacy sending.
                 try leaveCompletedOutbox()
             }
         }

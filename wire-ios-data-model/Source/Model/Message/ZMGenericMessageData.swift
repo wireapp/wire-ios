@@ -79,6 +79,8 @@ public class ZMGenericMessageData: ZMManagedObject {
 
     // MARK: - Methods
 
+    /// Outbox snapshots use this throwing read too: an unavailable EAR key must not look like an
+    /// absent snapshot, which could incorrectly permit editing or replacing an in-flight payload.
     func getProtobufData() throws -> Data {
         guard let moc = managedObjectContext else {
             throw ProcessingError.missingManagedObjectContext

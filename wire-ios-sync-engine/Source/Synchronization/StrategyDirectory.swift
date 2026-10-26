@@ -336,6 +336,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 reachability: transportSession.reachability
             )
 
+            // Text and uploaded asset references must share one final-message scheduler. Separate
+            // instances would maintain independent conversation ownership and could send concurrently.
             let outboxStrategy = ClientMessageRequestStrategy(
                 context: syncContext,
                 localNotificationDispatcher: pushMessageHandler,
