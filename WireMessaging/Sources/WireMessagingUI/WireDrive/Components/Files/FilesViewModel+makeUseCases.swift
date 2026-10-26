@@ -28,6 +28,7 @@ extension FilesViewModel {
         let localAssetRepository: any WireDriveLocalAssetRepositoryProtocol
         let nodeRenameNotifier: WireDriveNodeRenameNotifier
         let nodeCache: any WireDriveNodeCacheProtocol
+        let uploadManager: any WireDriveDirectUploadManagerProtocol
     }
 
     static func makeUseCases(dependencies: FilesViewModel.Dependencies) -> FilesViewModel.UseCases {
@@ -88,9 +89,12 @@ extension FilesViewModel {
             observeAsset: WireDriveObserveAssetUseCase(
                 localAssetRepository: dependencies.localAssetRepository
             ),
-            moveNode: WireDriveMoveNodeUseCase(
+            moveNodes: WireDriveMoveNodesUseCase(
                 nodesRepository: dependencies.nodesRepository,
                 localAssetRepository: dependencies.localAssetRepository
+            ),
+            enqueueUploads: WireDriveEnqueueDirectUploadsUseCase(
+                uploadManager: dependencies.uploadManager
             )
         )
     }

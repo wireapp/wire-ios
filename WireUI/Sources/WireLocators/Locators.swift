@@ -431,6 +431,14 @@ public enum Locators {
         case themeCell
         case lockWithPasscode = "Lock With Passcode"
         case createLinkPreviews = "Create Link Previews"
+        case browserCell
+        case chromeBrowserOption
+        case mockedChromeAlert
+        case mockedChromeAlertTitle = "Opening in Chrome"
+        case mapsCell
+        case googleMapsOption
+        case mockedGoogleMapsAlert
+        case mockedGoogleMapsAlertTitle = "Opening in Google Maps"
     }
 
     public enum SaveBackupFileBottomSheetPage: String {
@@ -617,15 +625,25 @@ public enum Locators {
             }
         }
 
+        public enum MoveToFolderPage: String {
+            case moveHere
+            case cancel
+        }
+
         public enum FilesPage: String {
             case close
             case createFolder
+            case selectItems
             case createFile
+            case upload
             case recycleBin
             case sharedDrivePageHeader = "Shared Drive"
             case deleteOnBottomSheet = "Delete"
             case moreOptions = "More"
             case recycleBinPageheader = "Recycle Bin"
+            case moveToFolder
+            case moveToFolderFloatingButton
+            case done
 
             public static func createFileTemplate(_ kind: String) -> String {
                 "createFileTemplate.\(kind)"
@@ -666,6 +684,31 @@ public enum Locators {
 
             case closeButton
             case restoreButton
+        }
+
+        /// The Shared Drive direct uploads tracker: the collapsed pill and the expanded sheet.
+        public enum UploadsPage: AutoPrefixedEnum {
+
+            case uploadFile
+            case uploadMedia
+
+            case pill
+            case expand
+            case collapse
+            case cancelAll
+            case retryAll
+
+            public static func item(_ fileName: String) -> String {
+                "UploadsPage.item.\(fileName)"
+            }
+
+            public static func cancel(_ fileName: String) -> String {
+                "UploadsPage.cancel.\(fileName)"
+            }
+
+            public static func retry(_ fileName: String) -> String {
+                "UploadsPage.retry.\(fileName)"
+            }
         }
 
         public enum TagsEditPage: String {
@@ -739,6 +782,15 @@ public enum Locators {
         public enum MeetingForm: String {
             case save = "meetingFormSave"
             case title = "meetingFormTitle"
+            case password = "meetingFormPassword"
+            case confirmPassword = "meetingFormConfirmPassword"
+            case clearPassword = "meetingFormClearPassword"
+            case clearConfirmPassword = "meetingFormClearConfirmPassword"
+            case passwordVisibility = "meetingFormPasswordVisibility"
+            case confirmPasswordVisibility = "meetingFormConfirmPasswordVisibility"
+            case copyPassword = "meetingFormCopyPassword"
+            case generatePassword = "meetingFormGeneratePassword"
+            case passwordRequirements = "meetingFormPasswordRequirements"
             case clearTitle = "meetingFormClearTitle"
             case participants = "meetingFormParticipants"
             case membersSelect = "meetingMembersSelect"
@@ -792,6 +844,17 @@ public enum Locators {
             case attendingLabel = "Attending Label"
         }
 
+        public enum MeetingLink: String {
+            case url = "meetingLinkURL"
+            case passwordState = "meetingLinkPasswordState"
+            case copy = "meetingLinkCopy"
+            case copied = "meetingLinkCopied"
+            case cancel = "meetingLinkCancel"
+            case loading = "meetingLinkLoading"
+            case error = "meetingLinkError"
+            case retry = "meetingLinkRetry"
+        }
+
         public enum MeetingRow: String {
             case title = "meetingTitle"
             case menu = "meetingMenu"
@@ -801,6 +864,7 @@ public enum Locators {
             case rowPrefix = "meetingRow."
             case deleteForMeButton = "Delete Meeting for Me Button"
             case joinButton = "Join Button"
+            case meetingLink = "meetingRowLink"
 
             public static func rowIdentifier(domain: String, id: UUID, start: Date) -> String {
                 "meetingRow.\(domain).\(id.uuidString).\(Int(start.timeIntervalSince1970))"

@@ -95,25 +95,25 @@ final class RestAPI: Sendable {
         }
     }
 
-    /// Renames a node.
+    /// Renames nodes.
     ///
     /// - Parameters:
-    ///  - nodeID: The `UUID`s of the node to rename.
-    ///  - targetPath: The new path for the node.
-    ///  - targetIsParent: Whether the `targetPath` is the parent folder of the node.
+    ///  - nodeIDs: The `UUID`s of the nodes to rename.
+    ///  - targetPath: The new path for the nodes.
+    ///  - targetIsParent: Whether the `targetPath` is the parent folder of the nodes.
     /// - Returns: Whether the renaming was successful.
 
-    func renameNode(nodeID: UUID, targetPath: String, targetIsParent: Bool) async throws -> Bool {
-        let node = RestNodeLocator(uuid: nodeID.uuidString)
+    func renameNodes(nodeIDs: [UUID], targetPath: String, targetIsParent: Bool) async throws -> Bool {
+        let nodes = nodeIDs.map { RestNodeLocator(uuid: $0.uuidString) }
 
         let parameters = RestActionParameters(
             awaitStatus: .finished,
-            awaitTimeout: "5s",
+            awaitTimeout: "60s",
             copyMoveOptions: RestActionOptionsCopyMove(
                 targetIsParent: targetIsParent,
                 targetPath: targetPath
             ),
-            nodes: [node],
+            nodes: nodes,
         )
 
         do {

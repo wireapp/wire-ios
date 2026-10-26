@@ -32,7 +32,8 @@ package protocol CreateMeetingUseCaseProtocol: Sendable {
         recurrence: MeetingRecurrence?,
         type: MeetingType,
         password: String?,
-        participants: [MeetingMember]
+        participants: [MeetingMember],
+        invitedEmails: [String]
     ) async throws -> MeetingCreationResult
 
 }
