@@ -53,7 +53,7 @@ public struct WireMeetingsFactory {
             meetingRepository: meetingRepository,
             conversationRepository: conversationRepository
         )
-        let updateMeetingUseCase = UpdateMeetingUseCase(
+        let updateMeetingUseCase = makeUpdateMeetingUseCase(
             meetingRepository: meetingRepository,
             conversationRepository: conversationRepository
         )
@@ -131,6 +131,22 @@ public struct WireMeetingsFactory {
             }
         #endif
         return createUseCase
+    }
+
+    private func makeUpdateMeetingUseCase(
+        meetingRepository: any MeetingRepositoryProtocol,
+        conversationRepository: any MeetingConversationRepositoryProtocol
+    ) -> any UpdateMeetingUseCaseProtocol {
+        let updateUseCase = UpdateMeetingUseCase(
+            meetingRepository: meetingRepository,
+            conversationRepository: conversationRepository
+        )
+        #if DEBUG
+            if let failureID = UITestConfig.environment?.meetingsUpdateFailureID {
+                return MeetingsUITestUpdateUseCase(wrapping: updateUseCase, failureID: failureID)
+            }
+        #endif
+        return updateUseCase
     }
 
     private func makeFetchUpcomingMeetingsUseCase(

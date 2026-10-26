@@ -131,7 +131,9 @@ public final class MeetingRepository: MeetingRepositoryProtocol {
                 title: title,
                 startTime: startTime,
                 endTime: endTime,
-                recurrence: recurrence?.toNetworkRecurrence(),
+                // The form supplies the desired recurrence: .some(nil) sends null to clear it.
+                // Outer nil would omit the field and leave the saved rule unchanged.
+                recurrence: .some(recurrence?.toNetworkRecurrence()),
                 timeZoneIdentifier: TimeZone.current.identifier
             )
         )
