@@ -1,0 +1,54 @@
+name: Label PRs with Jira Components
+
+# **What it does**: Reads the Jira components of the ticket referenced in the PR title (e.g. WPB-1234)
+#                   and syncs the matching component labels on the PR. Unmapped components (such as "iOS") are ignored.
+# **Why we have it**: Lets reviewers and release tooling filter PRs by product area without reading the ticket.
+# **Who does it impact**: Engineers, reviewers, and QA filtering PRs by component.
+#
+# Manual backfill: run the workflow with `pr_number` empty to sync every open PR, or set it to one PR number.
+# Jira component changes are not picked up automatically; re-run the backfill (or edit the PR title) to resync.
+#
+# Required secrets:
+#   JIRA_TOKEN — Same secret used by jira_lint_and_link.yml.
+
+on:
+  pull_request:
+    types: [opened, reopened, edited, ready_for_review]
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: 'PR number to sync. Leave empty to sync all open PRs.'
+        required: false
+        type: string
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
+# Serialize runs per PR so a queued sync for one PR never replaces another PR's pending sync.
+# Label creation races across PRs are handled in the script (422 = already created).
+concurrency:
+  group: label-prs-${{ github.event.pull_request.number || inputs.pr_number || 'all' }}
+  cancel-in-progress: false
+
+jobs:
+  label-prs:
+    runs-on: ubuntu-24.04
+    # Fork PRs are not labeled: they can't access JIRA_TOKEN.
+    if: >
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.pull_request.draft != true &&
+       github.event.pull_request.head.repo.full_name == github.repository)
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          sparse-checkout: scripts
+
+      - name: Sync component labels
+        run: ruby ./scripts/sync_pr_component_labels.rb
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          JIRA_TOKEN: ${{ secrets.JIRA_TOKEN }}
+          PR_NUMBER: ${{ inputs.pr_number }}

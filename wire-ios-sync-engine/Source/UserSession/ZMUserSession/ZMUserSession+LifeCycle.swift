@@ -61,6 +61,13 @@ public extension ZMUserSession {
         deleteOldEphemeralMessages()
     }
 
+    @objc @MainActor
+    func applicationDidBecomeActive(_ note: Notification?) {
+        // A sync started in `applicationWillEnterForeground` can finish while the app is still
+        // inactive, which defers pending MLS conversation recovery - WPB-28035.
+        resumeDeferredPendingConversationRecovery()
+    }
+
     internal func deleteOldEphemeralMessages() {
         // In the case that an ephemeral was sent via the share extension, we need
         // to ensure that they have timers running or are deleted/obfuscated if

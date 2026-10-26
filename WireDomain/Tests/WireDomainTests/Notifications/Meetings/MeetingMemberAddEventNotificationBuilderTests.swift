@@ -232,6 +232,14 @@ private final class InvitationMeetingsAPI: MeetingsAPI, @unchecked Sendable {
         throw InvitationTestError.unavailable
     }
 
+    func addMeetingInvitations(id: WireNetwork.QualifiedID, emails: [String]) async throws {
+        throw InvitationTestError.unavailable
+    }
+
+    func removeMeetingInvitations(id: WireNetwork.QualifiedID, emails: [String]) async throws {
+        throw InvitationTestError.unavailable
+    }
+
     func deleteMeeting(id: WireNetwork.QualifiedID) async throws { throw InvitationTestError.unavailable }
 }
 
@@ -256,11 +264,15 @@ private final class InvitationUsersAPI: UsersAPI {
             app: nil,
             service: nil,
             supportedProtocols: nil,
-            legalholdStatus: .disabled
+            legalholdStatus: .disabled,
+            contactStatus: nil
         )
     }
 
-    func getUsers(userIDs: [UserID]) async throws -> UserList { throw InvitationTestError.unavailable }
+    func getUsers(
+        userIDs: [UserID],
+        includeContactStatus: Bool
+    ) async throws -> UserList { throw InvitationTestError.unavailable }
 }
 
 private final class InvitationMeetingStore: MeetingLocalStoreProtocol, @unchecked Sendable {

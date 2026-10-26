@@ -42,11 +42,12 @@ public enum DeveloperFlag: String, CaseIterable {
     case enabledCCDebugLogs
     case shakeToReport
     case showNSEErrors
+    case simulateDriveOffline
     case simulateMainAppRequiredError
     case simulateUnestablishedMLSGroup
     case unSafeLogsForPublic
     case useBackgroundActivityFactoryInAppBackgroundTaskExecuter
-    case enableDriveDirectUploads
+    case enableDriveBulkActions
     case simulateAppTerminationInBackground
 
     public var description: String {
@@ -111,6 +112,9 @@ public enum DeveloperFlag: String, CaseIterable {
         case .showNSEErrors:
             "Turn on to show Notification Service Extension errors as notifications"
 
+        case .simulateDriveOffline:
+            "Turn on to make Wire Drive behave as if the device had no network connection"
+
         case .simulateMainAppRequiredError:
             "Turn on to force a 'main app required' error in the Notification Service and Share Extensions"
 
@@ -123,8 +127,8 @@ public enum DeveloperFlag: String, CaseIterable {
         case .useBackgroundActivityFactoryInAppBackgroundTaskExecuter:
             "Turn on to use BackgroundActivityFactory in AppBackgroundTaskExecuter"
 
-        case .enableDriveDirectUploads:
-            "Turn on to enable drive direct uploads"
+        case .enableDriveBulkActions:
+            "Turn on to enable bulk actions in Drive"
 
         case .simulateAppTerminationInBackground:
             "Turn on to simulate app termination in background"

@@ -39,14 +39,21 @@ package struct CreateMeetingUseCase: CreateMeetingUseCaseProtocol {
         startTime: Date,
         endTime: Date,
         recurrence: MeetingRecurrence?,
-        participants: [MeetingMember]
-    ) async throws -> Meeting {
-        let meeting = try await meetingRepository.createMeeting(
+        type: MeetingType,
+        password: String?,
+        participants: [MeetingMember],
+        invitedEmails: [String] = []
+    ) async throws -> MeetingCreationResult {
+        let result = try await meetingRepository.createMeeting(
             title: title,
             startTime: startTime,
             endTime: endTime,
-            recurrence: recurrence
+            recurrence: recurrence,
+            type: type,
+            password: password,
+            invitedEmails: invitedEmails
         )
+        let meeting = result.meeting
         var isAddingParticipants = false
         do {
             // The backend creates a conversation for the meeting but doesn't
@@ -62,40 +69,44 @@ package struct CreateMeetingUseCase: CreateMeetingUseCaseProtocol {
             try await conversationRepository.addParticipants(participants, to: meeting.conversationID)
         } catch let MeetingParticipantsError.failedToAddParticipants(participants) {
             await meetingRepository.storeMeeting(meeting)
-            throw CreateMeetingUseCaseError.participantsNotAdded(meeting: meeting, participants: participants)
+            throw CreateMeetingUseCaseError.participantsNotAdded(result: result, participants: participants)
         } catch let MeetingParticipantsError.failedToSetUpParticipants(participants, reasons) {
             await meetingRepository.storeMeeting(meeting)
             throw CreateMeetingUseCaseError.addParticipantsFailed(
                 participants: participants,
-                reasons: reasons
+                reasons: reasons,
+                hasLink: result.link != nil
             )
         } catch {
             WireLogger.meetings.error(
-                "failed to set up saved meeting: \(String(describing: type(of: error)))",
+                "failed to set up saved meeting: \(String(describing: Swift.type(of: error)))",
                 attributes: .safePublic
             )
             await meetingRepository.storeMeeting(meeting)
             if isAddingParticipants, !participants.isEmpty {
-                throw CreateMeetingUseCaseError.addParticipantsFailed()
+                throw CreateMeetingUseCaseError.addParticipantsFailed(hasLink: result.link != nil)
             }
-            throw CreateMeetingUseCaseError.conversationSetupFailed
+            throw CreateMeetingUseCaseError.conversationSetupFailed(hasLink: result.link != nil)
         }
         // Store the meeting again now that its conversation exists locally, so the two are linked.
         await meetingRepository.storeMeeting(meeting)
-        return meeting
+        return result
     }
 
 }
 
 package enum CreateMeetingUseCaseError: Error, Equatable {
 
-    case conversationSetupFailed
+    case conversationSetupFailed(hasLink: Bool)
 
-    case participantsNotAdded(meeting: Meeting, participants: [MeetingMember])
+    case missingLink(meeting: Meeting)
+
+    case participantsNotAdded(result: MeetingCreationResult, participants: [MeetingMember])
 
     case addParticipantsFailed(
         participants: [MeetingMember] = [],
-        reasons: [QualifiedID: MeetingParticipantFailureReason] = [:]
+        reasons: [QualifiedID: MeetingParticipantFailureReason] = [:],
+        hasLink: Bool
     )
 
 }

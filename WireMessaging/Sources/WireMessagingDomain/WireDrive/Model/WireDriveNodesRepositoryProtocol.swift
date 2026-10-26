@@ -68,12 +68,12 @@ package protocol WireDriveNodesRepositoryProtocol: Sendable {
     /// - Returns: Whether the renaming was successful.
     func renameNode(nodeID: UUID, targetPath: String) async throws -> Bool
 
-    /// Moves a node to a new container path.
+    /// Moves nodes to a new container path.
     ///
     /// - Parameters:
-    ///  - nodeID: The `UUID` of the node to move.
-    ///  - newContainerPath: The new container path for the node.
-    func moveNode(nodeID: UUID, newContainerPath: String) async throws
+    ///  - nodeID: The `UUID` of the nodes to move.
+    ///  - newContainerPath: The new container path for the nodes.
+    func moveNodes(nodeIDs: [UUID], newContainerPath: String) async throws
 
     /// Apply some pre-validation checks on node name before sending an upload
     ///

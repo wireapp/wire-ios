@@ -154,6 +154,11 @@ struct MLSMessageDecryptor: MLSMessageDecryptorProtocol {
                 )
 
             case let .proposal(commitDelay):
+                let mlsGroupID = await mlsConversation.managedObjectContext?.perform { mlsConversation.mlsGroupID }
+                WireLogger.mls.info(
+                    "received proposal (sender: \(senderID.safeForLoggingDescription), eventDate: \(String(describing: date)), commitDelay: \(commitDelay))",
+                    attributes: [.mlsGroupID: mlsGroupID?.safeForLoggingDescription ?? "nil"]
+                )
                 await conversationLocalStore.updateCommitPendingProposal(
                     date: date ?? .now,
                     for: mlsConversation,

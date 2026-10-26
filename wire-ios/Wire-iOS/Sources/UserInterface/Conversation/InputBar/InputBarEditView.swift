@@ -73,10 +73,13 @@ final class InputBarEditView: UIView {
             action: #selector(didLongPressUndoButton)
         ))
         undoButton.setIcon(.undo, size: .tiny, for: [])
+        undoButton.accessibilityLabel = L10n.Accessibility.Sketch.UndoButton.description
         undoButton.accessibilityIdentifier = "undoButton"
         confirmButton.setIcon(.checkmark, size: .medium, for: [])
+        confirmButton.accessibilityLabel = L10n.Accessibility.Conversation.ApplyChangesButton.description
         confirmButton.accessibilityIdentifier = "confirmButton"
         cancelButton.setIcon(.cross, size: .tiny, for: [])
+        cancelButton.accessibilityLabel = L10n.Localizable.General.cancel
         cancelButton.accessibilityIdentifier = "cancelButton"
         undoButton.isEnabled = false
         confirmButton.isEnabled = false

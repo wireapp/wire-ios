@@ -47,6 +47,8 @@
 "conversation.locationButton.description" = "Konumunu paylaş";
 "conversation.videoButton.description" = "Bir video kaydet";
 "conversation.moreButton.description" = "Diğer mesajlaşma seçeneklerini aç";
+"conversation.moreButton.closeDescription" = "Close more messaging options";
+"conversation.applyChangesButton.description" = "Apply changes";
 "conversation.emphemeralButton.description" = "Set a timer for self-deleting messages";
 "conversation.timerForSelfDeletingMessagesSeconds.value" = "%@ saniye";
 "conversation.timerForSelfDeletingMessagesMinutes.value" = "%@ dakika";

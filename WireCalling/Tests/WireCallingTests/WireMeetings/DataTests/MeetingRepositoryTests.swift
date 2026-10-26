@@ -102,6 +102,41 @@ struct MeetingRepositoryTests {
         #expect(localStore.deleteMeetingIdQualifiedIDVoidReceivedInvocations.isEmpty)
     }
 
+    // MARK: - fetchMeetingLink
+
+    @Test
+    func fetchMeetingLinkRequiresURLAndPasswordStateWithoutChangingStore() async throws {
+        let response = Scaffolding.meetingResponse
+        let url = try #require(response.link)
+        let cases: [(URL?, Bool?, MeetingLink?)] = [
+            (url, true, MeetingLink(url: url, hasPassword: true)),
+            (url, false, MeetingLink(url: url, hasPassword: false)),
+            (url, nil, nil),
+            (nil, true, nil)
+        ]
+        for (link, hasPassword, expected) in cases {
+            meetingsAPI.getMeetingId_MockValue = MeetingResponse(
+                id: response.id,
+                title: response.title,
+                creatorID: response.creatorID,
+                startTime: response.startTime,
+                endTime: response.endTime,
+                conversationID: response.conversationID,
+                invitedEmails: response.invitedEmails,
+                isTrial: response.isTrial,
+                createdAt: response.createdAt,
+                updatedAt: response.updatedAt,
+                link: link,
+                hasPassword: hasPassword
+            )
+
+            #expect(try await sut.fetchMeetingLink(id: Scaffolding.meetingID) == expected)
+        }
+        #expect(meetingsAPI.getMeetingId_Invocations == Array(repeating: Scaffolding.meetingID, count: cases.count))
+        #expect(localStore.storeMeetingMeetingMeetingVoidReceivedInvocations.isEmpty)
+        #expect(localStore.deleteMeetingIdQualifiedIDVoidReceivedInvocations.isEmpty)
+    }
+
     // MARK: - pullMeetings
 
     @Test
@@ -332,7 +367,9 @@ struct MeetingRepositoryTests {
             title: Scaffolding.meetingResponse.title,
             startTime: Scaffolding.meetingResponse.startTime,
             endTime: Scaffolding.meetingResponse.endTime,
-            recurrence: nil
+            recurrence: nil,
+            type: .scheduled,
+            password: nil
         )
 
         // Then
@@ -485,6 +522,41 @@ struct MeetingRepositoryTests {
         #expect(payload["tzid"] as? String == TimeZone.current.identifier)
     }
 
+    // MARK: - Email invitations
+
+    @Test
+    func updateInvitedEmailsRetriesOnlyPendingChangesAfterRemovalFails() async throws {
+        let current = ["Already@example.com", "Remove@Example.com", "other-device@example.com"]
+        meetingsAPI.getMeetingId_MockValue = Scaffolding.response(invitedEmails: current)
+        meetingsAPI.addMeetingInvitationsIdEmails_MockMethod = { _, _ in }
+        meetingsAPI.removeMeetingInvitationsIdEmails_MockMethod = { _, _ in }
+        meetingsAPI.removeMeetingInvitationsIdEmails_MockError = MeetingsAPIError.accessDenied
+
+        await #expect(throws: MeetingsAPIError.accessDenied) {
+            try await sut.updateInvitedEmails(
+                id: Scaffolding.meetingID,
+                adding: ["already@EXAMPLE.COM", "New@example.com"],
+                removing: ["remove@example.com", "gone@example.com"]
+            )
+        }
+
+        meetingsAPI.getMeetingId_MockValue = Scaffolding.response(invitedEmails: current + ["New@example.com"])
+        meetingsAPI.removeMeetingInvitationsIdEmails_MockError = nil
+        try await sut.updateInvitedEmails(
+            id: Scaffolding.meetingID,
+            adding: ["already@EXAMPLE.COM", "New@example.com"],
+            removing: ["remove@example.com", "gone@example.com"]
+        )
+
+        #expect(meetingsAPI.getMeetingId_Invocations == [Scaffolding.meetingID, Scaffolding.meetingID])
+        let additions = meetingsAPI.addMeetingInvitationsIdEmails_Invocations
+        #expect(additions.map(\.id) == [Scaffolding.meetingID])
+        #expect(additions.map(\.emails) == [["New@example.com"]])
+        let removals = meetingsAPI.removeMeetingInvitationsIdEmails_Invocations
+        #expect(removals.map(\.id) == [Scaffolding.meetingID, Scaffolding.meetingID])
+        #expect(removals.map(\.emails) == [["Remove@Example.com"], ["Remove@Example.com"]])
+    }
+
     // MARK: - createMeeting
 
     @Test
@@ -495,11 +567,13 @@ struct MeetingRepositoryTests {
 
         // When
 
-        let meeting = try await sut.createMeeting(
+        let result = try await sut.createMeeting(
             title: Scaffolding.meetingResponse.title,
             startTime: Scaffolding.meetingResponse.startTime,
             endTime: Scaffolding.meetingResponse.endTime,
-            recurrence: nil
+            recurrence: nil,
+            type: .immediate,
+            password: " exact password "
         )
 
         // Then
@@ -508,7 +582,10 @@ struct MeetingRepositoryTests {
         #expect(
             meetingsAPI.createMeetingParameters_Invocations.first?.timeZoneIdentifier == TimeZone.current.identifier
         )
-        #expect(meeting.id == Scaffolding.meetingID)
+        #expect(meetingsAPI.createMeetingParameters_Invocations.first?.type == .immediate)
+        #expect(meetingsAPI.createMeetingParameters_Invocations.first?.password == " exact password ")
+        #expect(result.link == Scaffolding.meetingResponse.link)
+        #expect(result.meeting.id == Scaffolding.meetingID)
         #expect(localStore.storeMeetingMeetingMeetingVoidReceivedInvocations.count == 1)
         #expect(localStore.storeMeetingMeetingMeetingVoidReceivedInvocations.first?.id == Scaffolding.meetingID)
     }
@@ -522,18 +599,25 @@ struct MeetingRepositoryTests {
 
         // When
 
-        let meeting = try await sut.createMeeting(
+        let result = try await sut.createMeeting(
             title: Scaffolding.meetingResponse.title,
             startTime: Scaffolding.meetingResponse.startTime,
             endTime: Scaffolding.meetingResponse.endTime,
-            recurrence: nil
+            recurrence: nil,
+            type: .scheduled,
+            password: nil,
+            invitedEmails: ["Guest@example.com", "member@wire.com"]
         )
 
         // Then
 
         #expect(localStore.storedMeetingIdQualifiedIDMeetingReceivedId == Scaffolding.meetingID)
-        #expect(meeting == Scaffolding.storedMeeting)
-        #expect(meeting.conversation?.participants == [Scaffolding.member])
+        #expect(meetingsAPI.createMeetingParameters_Invocations.first?.invitedEmails == [
+            "Guest@example.com", "member@wire.com"
+        ])
+        #expect(result.meeting == Scaffolding.storedMeeting)
+        #expect(result.link == Scaffolding.meetingResponse.link)
+        #expect(result.meeting.conversation?.participants == [Scaffolding.member])
     }
 
     @Test("createMeeting falls back to the mapped meeting when the store can't provide it")
@@ -545,17 +629,19 @@ struct MeetingRepositoryTests {
 
         // When
 
-        let meeting = try await sut.createMeeting(
+        let result = try await sut.createMeeting(
             title: Scaffolding.meetingResponse.title,
             startTime: Scaffolding.meetingResponse.startTime,
             endTime: Scaffolding.meetingResponse.endTime,
-            recurrence: nil
+            recurrence: nil,
+            type: .scheduled,
+            password: nil
         )
 
         // Then
 
-        #expect(meeting.id == Scaffolding.meetingID)
-        #expect(meeting.conversation == nil)
+        #expect(result.meeting.id == Scaffolding.meetingID)
+        #expect(result.meeting.conversation == nil)
     }
 
     @Test("createMeeting reconciles reminders after storing the meeting", arguments: [false, true])
@@ -587,7 +673,9 @@ struct MeetingRepositoryTests {
             title: Scaffolding.meetingResponse.title,
             startTime: Scaffolding.meetingResponse.startTime,
             endTime: Scaffolding.meetingResponse.endTime,
-            recurrence: recurring ? WireCallingDomain.MeetingRecurrence(frequency: .daily, interval: 1) : nil
+            recurrence: recurring ? WireCallingDomain.MeetingRecurrence(frequency: .daily, interval: 1) : nil,
+            type: .scheduled,
+            password: nil
         )
 
         let recordedIDs = await createdMeetings.ids
@@ -604,14 +692,16 @@ struct MeetingRepositoryTests {
             onMeetingCreated: { _ in throw ReminderError.schedulingFailed }
         )
 
-        let meeting = try await sut.createMeeting(
+        let result = try await sut.createMeeting(
             title: Scaffolding.meetingResponse.title,
             startTime: Scaffolding.meetingResponse.startTime,
             endTime: Scaffolding.meetingResponse.endTime,
-            recurrence: nil
+            recurrence: nil,
+            type: .scheduled,
+            password: nil
         )
 
-        #expect(meeting.id == Scaffolding.meetingID)
+        #expect(result.meeting.id == Scaffolding.meetingID)
     }
 
     // MARK: - updateMeeting
@@ -653,6 +743,14 @@ struct MeetingRepositoryTests {
         )
 
         let recorded = await updatedMeetings.meetings
+        let parameters = try #require(meetingsAPI.updateMeetingIdParameters_Invocations.first?.parameters)
+        let payload = try #require(JSONSerialization
+            .jsonObject(with: JSONEncoder().encode(parameters)) as? [String: Any])
+        if recurring {
+            #expect((payload["recurrence"] as? [String: Any])?["frequency"] as? String == "daily")
+        } else {
+            #expect(payload["recurrence"] is NSNull)
+        }
         #expect(recorded.map(\.start) == [updatedStart])
         #expect((recorded.first?.recurrence != nil) == recurring)
         #expect(localStore.storeMeetingMeetingMeetingVoidCallsCount == 1)
@@ -753,7 +851,8 @@ struct MeetingRepositoryTests {
             isTrial: false,
             createdAt: Date(timeIntervalSince1970: 900_000),
             updatedAt: Date(timeIntervalSince1970: 900_000),
-            timeZoneIdentifier: "Asia/Tokyo"
+            timeZoneIdentifier: "Asia/Tokyo",
+            link: URL(string: "https://wire.example/meeting-join/?key=server&code=link")
         )
 
         static let member = MeetingMember(
@@ -765,6 +864,21 @@ struct MeetingRepositoryTests {
             accentColor: .default,
             avatarImageData: nil
         )
+
+        static func response(invitedEmails: [String]) -> MeetingResponse {
+            MeetingResponse(
+                id: meetingResponse.id,
+                title: meetingResponse.title,
+                creatorID: meetingResponse.creatorID,
+                startTime: meetingResponse.startTime,
+                endTime: meetingResponse.endTime,
+                conversationID: meetingResponse.conversationID,
+                invitedEmails: invitedEmails,
+                isTrial: meetingResponse.isTrial,
+                createdAt: meetingResponse.createdAt,
+                updatedAt: meetingResponse.updatedAt
+            )
+        }
 
         /// The meeting as the local store provides it,
         /// with its participants populated from the conversation.

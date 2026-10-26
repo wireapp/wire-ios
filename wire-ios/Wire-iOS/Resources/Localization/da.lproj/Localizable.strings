@@ -2111,6 +2111,13 @@
 
 "account_deleted_missing_passcode_alert.title" = "No device passcode";
 "account_deleted_missing_passcode_alert.message" = "In order to use Wire, please set a passcode in your device settings.";
+"account_limit_alert.title.remove_one" = "Remove an account";
+"account_limit_alert.title.remove_two" = "Remove 2 accounts";
+"account_limit_alert.message.max_one.remove_one" = "You can only use one account at once on this device. Log out of this account or select Later to log out of the other account.\nCreate a backup to preserve your conversation history.";
+"account_limit_alert.message.max_one.remove_two" = "You can only use one account at once on this device. Log out of this account or select Later to log out of the other accounts.\nCreate a backup to preserve your conversation history.";
+"account_limit_alert.message.max_two.remove_one" = "You can only use two accounts at once on this device. Log out of this account or select Later to log out of the other account.\nCreate a backup to preserve your conversation history.";
+"account_limit_alert.logout" = "Log out of this account";
+"account_limit_alert.later" = "Senere";
 
 // Button cell state
 "button_message_cell.state.unselected" = "unselected";
@@ -2261,3 +2268,6 @@
 "account_blocked.generic_error.alert.switch_accounts" = "Switch accounts";
 "account_blocked.generic_error.alert.send_logs" = "Send Debug Report";
 "account_blocked.generic_error.alert.retry" = "Retry";
+
+/* Shown in a user profile while their account is not ready to receive connections. */
+"profile.details.non_contactable" = "You can communicate with %@ once they are set up.";
