@@ -342,6 +342,12 @@ internal enum L10n {
         /// Use bullet list
         internal static let description = L10n.tr("Accessibility", "conversation.bulletListButton.description", fallback: "Use bullet list")
       }
+      internal enum Camera {
+        internal enum MaximizeButton {
+          /// Maximize view
+          internal static let description = L10n.tr("Accessibility", "conversation.camera.maximizeButton.description", fallback: "Maximize view")
+        }
+      }
       internal enum CameraButton {
         /// Take or select a photo
         internal static let description = L10n.tr("Accessibility", "conversation.cameraButton.description", fallback: "Take or select a photo")
@@ -5208,10 +5214,6 @@ internal enum L10n {
         /// Wire’s Support team will never reach out to you in the app.
         internal static func identityWarning(_ p1: Any) -> String {
           return L10n.tr("Localizable", "profile.details.identity_warning", String(describing: p1), fallback: "Get certainty about %@’s identity before connecting.\nWire’s Support team will never reach out to you in the app.")
-        }
-        /// You can communicate with %@ once they are set up.
-        internal static func nonContactable(_ p1: Any) -> String {
-          return L10n.tr("Localizable", "profile.details.non_contactable", String(describing: p1), fallback: "You can communicate with %@ once they are set up.")
         }
         /// external
         internal static let partner = L10n.tr("Localizable", "profile.details.partner", fallback: "external")

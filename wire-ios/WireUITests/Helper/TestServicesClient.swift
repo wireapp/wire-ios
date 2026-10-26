@@ -21,24 +21,10 @@ import ImageIO
 
 class TestServicesClient {
 
-    let testServiceURL: String
+    let testServiceURL = "http://localhost:8080"
     let CONNECT_TIMEOUT: TimeInterval = 120
     let RESPONSE_TIMEOUT: TimeInterval = 120
     private var instanceCache: [String: String] = [:]
-
-    init() {
-        self.testServiceURL = Self.testServiceURL()
-    }
-
-    private static func testServiceURL() -> String {
-        let environment = ProcessInfo.processInfo.environment
-        let flag = environment["USE_IN_HOUSE_SERVICES"]?.lowercased()
-        let flagUnset = flag?.isEmpty ?? true
-        let useInHouseServices = flag == "true" || (flagUnset && environment["CI"]?.lowercased() != "true")
-        let hostname = useInHouseServices ? "kalium.qa.zinfra.io" : "localhost:8080"
-
-        return "http://\(hostname)"
-    }
 
     // MARK: - Created instances log
 
@@ -208,7 +194,6 @@ class TestServicesClient {
         return conversationResponse.conversationId
     }
 
-    @discardableResult
     func sendText(
         user: UserInfo,
         text: String,
@@ -216,9 +201,8 @@ class TestServicesClient {
         domain: String,
         timeoutMillis: Int = 0,
         expectsReadConfirmation: Bool = true,
-        buttons: [[String: Any]]? = nil,
-        returnMessageId: Bool = false
-    ) async throws -> String {
+        buttons: [[String: Any]]? = nil
+    ) async throws {
 
         let instanceId = try await getInstanceId(
             email: user.email,
@@ -265,104 +249,6 @@ class TestServicesClient {
         if pureResponse.statusCode != 200 {
             throw RuntimeError("Error \(pureResponse.description)")
         }
-
-        if !returnMessageId {
-            return ""
-        }
-
-        return try await textMessageId(
-            user: user,
-            text: text,
-            conversationId: conversationId,
-            domain: domain
-        )
-    }
-
-    func updateText(
-        user: UserInfo,
-        originalMessageId: String,
-        newText: String,
-        conversationId: UUID,
-        domain: String
-    ) async throws {
-
-        let instanceId = try await getInstanceId(
-            email: user.email,
-            password: user.password,
-            name: user.name,
-            verificationCode: nil
-        )
-
-        let url = URL(string: "\(testServiceURL)/api/v1/instance/\(instanceId)/updateText")
-        guard let requestUrl = url else { fatalError("Invalid URL") }
-
-        var body: [String: Any] = [
-            "conversationId": conversationId.uuidString.lowercased(),
-            "firstMessageId": originalMessageId,
-            "text": newText
-        ]
-
-        if domain != BackendTarget.staging.domainInfo {
-            body["conversationDomain"] = domain
-        }
-
-        let (_, response) = try await sendHttpRequest(
-            url: requestUrl.absoluteString,
-            body: body,
-            requestType: "POST"
-        )
-
-        guard let pureResponse = response as? HTTPURLResponse else {
-            throw RuntimeError("Invalid response")
-        }
-        if pureResponse.statusCode != 200 {
-            throw RuntimeError("Error \(pureResponse.description)")
-        }
-    }
-
-    private func textMessageId(
-        user: UserInfo,
-        text: String,
-        conversationId: UUID,
-        domain: String
-    ) async throws -> String {
-        let instanceId = try await getInstanceId(
-            email: user.email,
-            password: user.password,
-            name: user.name,
-            verificationCode: nil
-        )
-
-        let url = URL(string: "\(testServiceURL)/api/v1/instance/\(instanceId)/getMessages")
-        guard let requestUrl = url else { fatalError("Invalid URL") }
-
-        var body: [String: Any] = [
-            "conversationId": conversationId.uuidString.lowercased()
-        ]
-
-        if domain != BackendTarget.staging.domainInfo {
-            body["conversationDomain"] = domain
-        }
-
-        let (responseData, response) = try await sendHttpRequest(
-            url: requestUrl.absoluteString,
-            body: body,
-            requestType: "POST"
-        )
-
-        guard let pureResponse = response as? HTTPURLResponse else {
-            throw RuntimeError("Invalid response")
-        }
-        if pureResponse.statusCode != 200 {
-            throw RuntimeError("Error \(pureResponse.description)")
-        }
-
-        let messages = try JSONDecoder().decode([TestServiceMessage].self, from: responseData)
-        guard let message = messages.reversed().first(where: { $0.content?.textValue == text }) else {
-            throw RuntimeError("Message id not found for text \(text)")
-        }
-
-        return message.id
     }
 
     func fileToBase64String(fileURL: URL) throws -> String {
@@ -627,18 +513,4 @@ private struct CreateInstanceResponse: Decodable {
 
 private struct CreateConversationResponse: Decodable {
     let conversationId: String
-}
-
-private struct TestServiceMessage: Decodable {
-    let id: String
-    let content: TestServiceMessageContent?
-}
-
-private struct TestServiceMessageContent: Decodable {
-    let text: String?
-    let value: String?
-
-    var textValue: String? {
-        text ?? value
-    }
 }

@@ -1,2 +1,0 @@
-curl \
-	"/v19/properties/WIRE_TYPING_INDICATOR_MODE"

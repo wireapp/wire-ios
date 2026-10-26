@@ -35,8 +35,7 @@ final class AudioRecordKeyboardViewControllerSnapshotTests: XCTestCase {
         mockAudioRecorder = MockAudioRecorder()
         sut = AudioRecordKeyboardViewController(
             audioRecorder: mockAudioRecorder,
-            userSession: mockUserSession,
-            isSnapshotTesting: true
+            userSession: mockUserSession
         )
     }
 

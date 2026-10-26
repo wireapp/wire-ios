@@ -97,32 +97,6 @@ class NewConversationPage: PageModel {
         return try ConversationsPage()
     }
 
-    func searchResult(named name: String) -> XCUIElement {
-        app.descendants(matching: .any)
-            .matching(identifier: Locators.NewConversationPage.userCellInContactList.rawValue)
-            .matching(NSPredicate(format: "label CONTAINS %@", name))
-            .firstMatch
-    }
-
-    @discardableResult
-    func verifySearchResultWithoutPendingBadge(named name: String) -> Self {
-        let result = searchResult(named: name)
-        XCTAssertTrue(result.waitForExistence(timeout: 15), "Teammate was not found in search results")
-        XCTAssertFalse(result.label.localizedCaseInsensitiveContains("Onboarding pending"))
-        XCTAssertFalse(
-            result.descendants(matching: .any)
-                .matching(NSPredicate(format: "label ==[c] %@", "Onboarding pending"))
-                .firstMatch.exists,
-            "Search results must not display an onboarding-pending badge"
-        )
-        return self
-    }
-
-    func openSearchResult(named name: String) throws -> UserDetailsPage {
-        XCTAssertTrue(searchResult(named: name).waitAndTap(), "Could not open the teammate's search result")
-        return try UserDetailsPage()
-    }
-
     func openUserDetailsInContactList() throws -> UserDetailsPage {
         userCellInContactList.tap()
         return try UserDetailsPage()

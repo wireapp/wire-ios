@@ -22,8 +22,6 @@ import WireFoundation
 package import WireMessagingDomain
 package import WireMessagingData
 
-private typealias Strings = L10n.Localizable.Conversation.WireCells.Files
-
 package struct FilesViewContainer: View {
     @Environment(\.dismiss) private var dismiss
 
@@ -38,11 +36,6 @@ package struct FilesViewContainer: View {
     private let nodeCache: any WireDriveNodeCacheProtocol
     private let nodeRenameNotifier: WireDriveNodeRenameNotifier
     private let fileCache: any FileCache
-    private let uploadManager: any WireDriveDirectUploadManagerProtocol
-
-    /// Owned here, not by `FilesViewModel`, because a `FilesViewModel` is created per navigation
-    /// destination. The tracker has to survive folder navigation.
-    @StateObject private var uploadsViewModel: WireDriveDirectUploadsViewModel
 
     private let triggerReloadFiles: PassthroughSubject<Void, Never> = .init()
 
@@ -53,7 +46,6 @@ package struct FilesViewContainer: View {
     }
 
     @State private var fullScreenCoverNavigation: FullScreenCoverNavigation?
-    @State private var trackerHeight: CGFloat = 0
 
     package init(
         cellName: String,
@@ -64,9 +56,7 @@ package struct FilesViewContainer: View {
         localAssetRepository: any WireDriveLocalAssetRepositoryProtocol,
         nodeCache: any WireDriveNodeCacheProtocol,
         nodeRenameNotifier: WireDriveNodeRenameNotifier,
-        fileCache: any FileCache,
-        uploadManager: any WireDriveDirectUploadManagerProtocol,
-        uploadsViewModel: @autoclosure @escaping () -> WireDriveDirectUploadsViewModel
+        fileCache: any FileCache
     ) {
         self.cellName = cellName
         self.nodesAPI = nodesAPI
@@ -77,8 +67,6 @@ package struct FilesViewContainer: View {
         self.nodeCache = nodeCache
         self.nodeRenameNotifier = nodeRenameNotifier
         self.fileCache = fileCache
-        self.uploadManager = uploadManager
-        self._uploadsViewModel = StateObject(wrappedValue: uploadsViewModel())
     }
 
     var body: some View {
@@ -87,41 +75,14 @@ package struct FilesViewContainer: View {
         }
 
         NavigationStack(path: $path) {
-            FilesView(
-                viewModel: makeViewModel(),
-                trackerHeight: trackerHeight,
-                onOpenRecycleBin: onOpenRecycleBin,
-                onDismissContainer: { dismiss() }
-            )
-            .navigationDestination(for: FilesViewItem.self) { _ in
-                FilesView(
-                    viewModel: makeViewModel(),
-                    trackerHeight: trackerHeight,
-                    onOpenRecycleBin: onOpenRecycleBin,
-                    onDismissContainer: { dismiss() }
-                )
-            }
-        }
-        .safeAreaInset(edge: .bottom, spacing: 0) {
-            WireDriveDirectUploadsTrackerView(viewModel: uploadsViewModel)
-                .onGeometryChange(for: CGFloat.self) { proxy in
-                    proxy.size.height
-                } action: { height in
-                    guard trackerHeight != height else { return }
-                    trackerHeight = height
-                }
-                .task(id: currentFolderPath(for: path)) {
-                    uploadsViewModel.observe(
-                        folderPath: currentFolderPath(for: path),
-                        folderName: currentFolderName(for: path)
+            FilesView(viewModel: makeViewModel(), onOpenRecycleBin: onOpenRecycleBin, onDismissContainer: { dismiss() })
+                .navigationDestination(for: FilesViewItem.self) { _ in
+                    FilesView(
+                        viewModel: makeViewModel(),
+                        onOpenRecycleBin: onOpenRecycleBin,
+                        onDismissContainer: { dismiss() }
                     )
                 }
-        }
-        .onReceive(uploadsViewModel.uploadCompleted) {
-            triggerReloadFiles.send()
-        }
-        .onDisappear {
-            Task { await uploadsViewModel.dismiss() }
         }
         .fullScreenCover(
             item: $fullScreenCoverNavigation,
@@ -138,8 +99,7 @@ package struct FilesViewContainer: View {
                         localAssetRepository: localAssetRepository,
                         nodeCache: nodeCache,
                         nodeRenameNotifier: nodeRenameNotifier,
-                        fileCache: fileCache,
-                        uploadManager: uploadManager
+                        fileCache: fileCache
                     )
                 }
             }
@@ -156,8 +116,7 @@ package struct FilesViewContainer: View {
                     localAssetStore: localAssetStore,
                     localAssetRepository: localAssetRepository,
                     nodeRenameNotifier: nodeRenameNotifier,
-                    nodeCache: nodeCache,
-                    uploadManager: uploadManager
+                    nodeCache: nodeCache
                 )
             ),
             title: path.last?.name,
@@ -171,13 +130,5 @@ package struct FilesViewContainer: View {
             isRecycleBin: false,
             triggerReload: triggerReloadFiles
         )
-    }
-
-    private func currentFolderPath(for path: [FilesViewItem]) -> String {
-        path.last?.filePath ?? cellName
-    }
-
-    private func currentFolderName(for path: [FilesViewItem]) -> String {
-        path.last?.name ?? Strings.navigationTitle
     }
 }

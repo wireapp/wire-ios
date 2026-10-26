@@ -20,7 +20,6 @@ import SwiftUI
 import WireCallingDomain
 import WireDesign
 import WireFoundation
-import WireLocators
 import WireReusableUIComponents
 
 struct MeetingsView: View {
@@ -34,18 +33,15 @@ struct MeetingsView: View {
     /// Presenting the edit UI is up to the owner of this view.
     private let onEditMeeting: (Meeting) -> Void
     private let onJoinMeeting: (MeetingOccurrence) -> Void
-    private let onMeetingLink: ((Meeting) -> Void)?
 
     init(
         viewModel: MeetingsViewModel,
         onEditMeeting: @escaping (Meeting) -> Void = { _ in },
-        onJoinMeeting: @escaping (MeetingOccurrence) -> Void = { _ in },
-        onMeetingLink: ((Meeting) -> Void)? = nil
+        onJoinMeeting: @escaping (MeetingOccurrence) -> Void = { _ in }
     ) {
         self.viewModel = viewModel
         self.onEditMeeting = onEditMeeting
         self.onJoinMeeting = onJoinMeeting
-        self.onMeetingLink = onMeetingLink
     }
 
     var body: some View {
@@ -66,17 +62,11 @@ struct MeetingsView: View {
             viewModel.deleteErrorTitle,
             isPresented: $viewModel.hasDeleteError
         ) {
-            if viewModel.canRetryDelete {
-                Button(L10n.Localizable.WireMeetings.retry) {
-                    Task { await viewModel.retryDelete() }
-                }
-                .accessibilityIdentifier("meetingDeleteRetryButton")
+            Button(L10n.Localizable.WireMeetings.retry) {
+                Task { await viewModel.retryDelete() }
             }
-            Button(
-                viewModel.canRetryDelete
-                    ? Strings.Delete.Alert.Cancel.button : L10n.Localizable.WireMeetings.Schedule.Error.Alert.ok,
-                role: .cancel
-            ) {}
+            .accessibilityIdentifier("meetingDeleteRetryButton")
+            Button(Strings.Delete.Alert.Cancel.button, role: .cancel) {}
         } message: {
             Text(viewModel.deleteErrorMessage)
         }
@@ -110,7 +100,7 @@ struct MeetingsView: View {
                 ProgressView()
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .accessibilityLabel(Strings.title)
-                    .accessibilityIdentifier(Locators.WireMeetings.MeetingsPage.loadProgress)
+                    .accessibilityIdentifier("meetingsLoadProgress")
             } else if viewModel.hasLoadError {
                 loadError
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -135,7 +125,7 @@ struct MeetingsView: View {
                 Task { await viewModel.loadInitialData() }
             }
             .wireButtonStyle(.tertiary)
-            .accessibilityIdentifier(Locators.WireMeetings.MeetingsPage.loadRetryButton)
+            .accessibilityIdentifier("meetingsLoadRetryButton")
         }
         .padding()
     }
@@ -153,7 +143,7 @@ struct MeetingsView: View {
                     .listRowSeparator(.hidden)
                     .listRowBackground(Color.clear)
                     .accessibilityLabel(Strings.title)
-                    .accessibilityIdentifier(Locators.WireMeetings.MeetingsPage.loadProgress)
+                    .accessibilityIdentifier("meetingsLoadProgress")
             }
 
             GroupedSections(
@@ -162,23 +152,16 @@ struct MeetingsView: View {
                 formatTime: viewModel.formatTime(for:),
                 isAttending: viewModel.isAttending(_:),
                 isHappeningNow: viewModel.isHappeningNow(_:),
-                hasEnded: viewModel.hasEnded(_:),
                 isOrganizer: viewModel.isOrganizer(_:),
-                onEdit: {
-                    viewModel.refreshCurrentDate()
-                    guard !viewModel.hasEnded($0) else { return }
-                    onEditMeeting($0.meeting)
-                },
+                onEdit: { onEditMeeting($0) },
                 onDelete: { viewModel.meetingToDelete = $0 },
-                onJoin: { onJoinMeeting($0) },
-                onMeetingLink: onMeetingLink
+                onJoin: { onJoinMeeting($0) }
             )
 
             if viewModel.hasMore {
                 HStack {
                     Spacer()
                     ProgressView()
-                        .accessibilityIdentifier(Locators.WireMeetings.MeetingsPage.paginationProgress)
                     Spacer()
                 }
                 .listRowBackground(Color.clear)
@@ -186,7 +169,6 @@ struct MeetingsView: View {
             }
         }
         .listStyle(.grouped)
-        .accessibilityIdentifier(Locators.WireMeetings.MeetingsPage.list)
         .scrollContentBackground(.hidden)
         .background(ColorTheme.Backgrounds.surface.color)
         .refreshable {
@@ -225,12 +207,10 @@ private struct GroupedSections: View {
     let formatTime: (MeetingOccurrence) -> String
     let isAttending: (MeetingOccurrence) -> Bool
     let isHappeningNow: (MeetingOccurrence) -> Bool
-    let hasEnded: (MeetingOccurrence) -> Bool
     let isOrganizer: (Meeting) -> Bool
-    let onEdit: (MeetingOccurrence) -> Void
+    let onEdit: (Meeting) -> Void
     let onDelete: (Meeting) -> Void
     let onJoin: (MeetingOccurrence) -> Void
-    let onMeetingLink: ((Meeting) -> Void)?
 
     @Environment(\.wireAccentColor) private var wireAccentColor
 
@@ -246,11 +226,9 @@ private struct GroupedSections: View {
                         isOrganizer: isOrganizer(occurrence.meeting),
                         isAttending: isAttending(occurrence),
                         isLive: isLive,
-                        hasEnded: hasEnded(occurrence),
-                        onEdit: { onEdit(occurrence) },
+                        onEdit: { onEdit(occurrence.meeting) },
                         onDelete: { onDelete(occurrence.meeting) },
-                        onJoin: { onJoin(occurrence) },
-                        onMeetingLink: onMeetingLink.map { action in { action(occurrence.meeting) } }
+                        onJoin: { onJoin(occurrence) }
                     )
                     .listRowBackground(
                         isLive ? Color(wireAccentColor.secondaryUIColor) : Color.clear
@@ -258,7 +236,6 @@ private struct GroupedSections: View {
                 }
             } header: {
                 SectionTitle(formatDay(dayGroup.day))
-                    .accessibilityIdentifier(Locators.WireMeetings.MeetingsPage.dayHeader)
             }
         }
     }

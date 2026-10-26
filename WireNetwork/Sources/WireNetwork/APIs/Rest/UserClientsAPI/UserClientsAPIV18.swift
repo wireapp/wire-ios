@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-class UserClientsAPIV18: UserClientsAPIV17 {
+final class UserClientsAPIV18: UserClientsAPIV17 {
 
     override var apiVersion: APIVersion {
         .v18

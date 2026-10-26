@@ -54,10 +54,7 @@ private func backupMessageContent(_ content: MessageBackupModel.Content) -> Back
     case let .asset(content):
         BackupMessageContent.Asset(
             mimeType: content.mimeType,
-            // Kalium models size as Int32; clamp instead of defaulting to 0 so an oversized
-            // (>2.1GB) asset is reported as "very large" rather than falsely "empty".
-            // TODO: [WPB-16658] match data types between CoreCrypto, Kalium and iOS
-            size: Int32(clamping: content.size),
+            size: Int32(exactly: content.size) ?? 0,
             name: content.name,
             otrKey: KotlinByteArray(content.otrKey),
             sha256: KotlinByteArray(content.sha256),

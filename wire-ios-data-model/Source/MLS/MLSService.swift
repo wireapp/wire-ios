@@ -19,7 +19,6 @@
 import Combine
 import Foundation
 import WireCoreCrypto
-import WireData
 import WireFoundation
 import WireLogging
 import WireNetwork
@@ -66,8 +65,6 @@ public final class MLSService: MLSServiceInterface {
     private let groupsBeingRepaired = GroupsBeingRepaired()
     private let pendingConversationRecoveryLock = NSLock()
     private var isRecoveringPendingConversations = false
-    /// Whether recovery was requested while a batch was running; guarded by `pendingConversationRecoveryLock`.
-    private var isPendingConversationRecoveryRequested = false
     private let featureRepository: LegacyFeatureRepositoryInterface
     private weak var resetBrokenMLSConversationDelegate: (any ResetBrokenMLSConversationDelegate)?
     private let onEpochChangedSubject = PassthroughSubject<MLSGroupID, Never>()
@@ -1152,35 +1149,18 @@ public final class MLSService: MLSServiceInterface {
 
     public func recoverPendingConversationBatchIfNeeded() async -> Bool {
         guard pendingConversationRecoveryLock.withLock({
-            guard !isRecoveringPendingConversations else {
-                // The running batch works on a snapshot fetched before this request, e.g. a sync
-                // that just marked another conversation as pending join. Ask it to continue with
-                // another batch instead of dropping the request - WPB-28035.
-                isPendingConversationRecoveryRequested = true
-                return false
-            }
+            guard !isRecoveringPendingConversations else { return false }
             isRecoveringPendingConversations = true
-            // This batch fetches the current pending conversations, which covers earlier requests.
-            isPendingConversationRecoveryRequested = false
             return true
         }) else {
             return false
         }
-
-        let hasMoreBatches = await recoverNextPendingConversationBatch()
-
-        // Release the recovery and read the requests in one step, so that a request arriving
-        // concurrently either sees the running batch or is returned here.
-        let isRecoveryRequested = pendingConversationRecoveryLock.withLock {
-            isRecoveringPendingConversations = false
-            defer { isPendingConversationRecoveryRequested = false }
-            return isPendingConversationRecoveryRequested
+        defer {
+            pendingConversationRecoveryLock.withLock {
+                isRecoveringPendingConversations = false
+            }
         }
 
-        return hasMoreBatches || isRecoveryRequested
-    }
-
-    private func recoverNextPendingConversationBatch() async -> Bool {
         guard let context else { return false }
 
         do {
@@ -1735,7 +1715,6 @@ public final class MLSService: MLSServiceInterface {
         await context.perform {
             let conversation = ZMConversation.fetch(with: groupID, in: context)
             conversation?.commitPendingProposalDate = nil
-            PendingProposalTimer.remove(mlsGroupID: groupID.data, in: context)
         }
     }
 

@@ -77,7 +77,6 @@ let package = Package(
         .testTarget(
             name: "WireMessagingTests",
             dependencies: [
-                "WireMessagingAssembly",
                 "WireMessagingData",
                 "WireMessagingUI",
                 "WireMessagingDomainSupport",

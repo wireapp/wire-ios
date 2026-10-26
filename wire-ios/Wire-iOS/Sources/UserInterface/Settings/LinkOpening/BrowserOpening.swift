@@ -17,8 +17,6 @@
 //
 
 import UIKit
-import WireFoundation
-import WireLocators
 import WireLogging
 import WireSystem
 
@@ -49,11 +47,7 @@ enum BrowserOpeningOption: Int, LinkOpeningOption {
     }
 
     var isAvailable: Bool {
-        #if DEBUG
-            if isMockedAsInstalled { return true }
-        #endif
-
-        return switch self {
+        switch self {
         case .safari: true
         case .chrome: UIApplication.shared.chromeInstalled
         case .firefox: UIApplication.shared.firefoxInstalled
@@ -61,13 +55,6 @@ enum BrowserOpeningOption: Int, LinkOpeningOption {
         case .brave: UIApplication.shared.braveInstalled
         }
     }
-
-    #if DEBUG
-        /// `true` when UITests pretend this browser is installed, see `UITestConfig.mockInstalledBrowsers`.
-        var isMockedAsInstalled: Bool {
-            UITestConfig.environment?.mockInstalledBrowsers.contains(String(describing: self)) == true
-        }
-    #endif
 }
 
 extension URL {
@@ -77,21 +64,6 @@ extension URL {
         let saved = BrowserOpeningOption.storedPreference
         WireLogger.ui.debug("Saved option to open a regular link: \(saved.displayString)")
         let app = UIApplication.shared
-
-        #if DEBUG
-            // No Chrome on the simulator to receive the link, so show where it would have been opened instead.
-            if saved == .chrome, saved.isMockedAsInstalled, let mockedURL = chromeURL {
-                let alert = UIAlertController(
-                    title: Locators.OptionsOnSettingsPage.mockedChromeAlertTitle.rawValue,
-                    message: mockedURL.absoluteString,
-                    preferredStyle: .alert
-                )
-                alert.view.accessibilityIdentifier = Locators.OptionsOnSettingsPage.mockedChromeAlert.rawValue
-                alert.addAction(UIAlertAction(title: "OK", style: .default))
-                app.topmostViewController(onlyFullScreen: false)?.present(alert, animated: true)
-                return true
-            }
-        #endif
 
         switch saved {
         case .safari: return false

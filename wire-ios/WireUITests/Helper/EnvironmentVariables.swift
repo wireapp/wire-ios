@@ -27,9 +27,6 @@ struct EnvironmentVariables {
         case missingCallingServiceURL
         case missingCallingServiceUsername
         case missingCallingServicePassword
-        case missingInternalCallingServiceURL
-        case missingInternalCallingServiceUsername
-        case missingInternalCallingServicePassword
         case missingCallingBackend
         case missingCallingInstanceTypeName
         case missingCallingInstanceTypeVersion
@@ -52,9 +49,6 @@ struct EnvironmentVariables {
             case .missingCallingServiceURL: "Missing env var: CALLINGSERVICE_URL"
             case .missingCallingServiceUsername: "Missing env var: CALLINGSERVICE_USERNAME"
             case .missingCallingServicePassword: "Missing env var: CALLINGSERVICE_PASSWORD"
-            case .missingInternalCallingServiceURL: "Missing env var: CALLINGSERVICE_INTERNAL_URL"
-            case .missingInternalCallingServiceUsername: "Missing env var: CALLINGSERVICE_INTERNAL_USERNAME"
-            case .missingInternalCallingServicePassword: "Missing env var: CALLINGSERVICE_INTERNAL_PASSWORD"
             case .missingCallingBackend: "Missing env var: PREDEFINED_BACKEND"
             case .missingCallingInstanceTypeName: "Missing env var: CALLING_INSTANCE_TYPE_NAME"
             case .missingCallingInstanceTypeVersion: "Missing env var: CALLING_INSTANCE_TYPE_VERSION"
@@ -225,7 +219,7 @@ struct EnvironmentVariables {
         self.stagingInbucketURL = URL(string: "https://\(inbucketHostname)")!
         self.inbucketUsername = inbucketUsername
         self.inbucketPassword = inbucketPassword
-        let callingServiceEnvironment = try Self.callingServiceEnvironment(
+        let callingServiceEnvironment = Self.callingServiceEnvironment(
             defaultURLString: callingServiceURLString,
             defaultUsername: callingServiceUsername,
             defaultPassword: callingServicePassword
@@ -257,27 +251,17 @@ struct EnvironmentVariables {
         defaultURLString: String,
         defaultUsername: String,
         defaultPassword: String
-    ) throws -> (url: URL, username: String, password: String) {
+    ) -> (url: URL, username: String, password: String) {
         let environment = ProcessInfo.processInfo.environment
-        let flag = environment["USE_IN_HOUSE_SERVICES"]?.lowercased()
-        let flagUnset = flag?.isEmpty ?? true
-        // Local runs use in-house services by default
-        let useInHouseServices = flag == "true" || (flagUnset && environment["CI"]?.lowercased() != "true")
+        let isCI = environment["CI"]?.lowercased() == "true"
 
-        if useInHouseServices {
-            guard let internalURLString = environment["CALLINGSERVICE_INTERNAL_URL"],
-                  !internalURLString.isEmpty else {
-                throw Failure.missingInternalCallingServiceURL
-            }
-            guard let internalUsername = environment["CALLINGSERVICE_INTERNAL_USERNAME"],
-                  !internalUsername.isEmpty else {
-                throw Failure.missingInternalCallingServiceUsername
-            }
-            guard let internalPassword = environment["CALLINGSERVICE_INTERNAL_PASSWORD"],
-                  !internalPassword.isEmpty else {
-                throw Failure.missingInternalCallingServicePassword
-            }
-
+        if !isCI,
+           let internalURLString = environment["CALLINGSERVICE_INTERNAL_URL"],
+           let internalUsername = environment["CALLINGSERVICE_INTERNAL_USERNAME"],
+           let internalPassword = environment["CALLINGSERVICE_INTERNAL_PASSWORD"],
+           !internalURLString.isEmpty,
+           !internalUsername.isEmpty,
+           !internalPassword.isEmpty {
             return (
                 url: callingServiceURL(from: internalURLString, defaultScheme: "http"),
                 username: internalUsername,

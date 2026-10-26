@@ -144,27 +144,6 @@ final class MeetingMemberAddEventNotificationBuilderTests: XCTestCase {
         XCTAssertEqual(meetingsAPI.requestedIDs, [Scaffolding.meetingID])
     }
 
-    func testInvitationUsesMeetingFetchedForReminderWithoutSecondMeetingRequest() async {
-        let api = meetingsAPI!
-        let builder = MeetingEventNotificationBuilder(
-            meetingDeleteEventBuilder: UnusedMeetingDeleteBuilder(),
-            meetingMemberAddEventBuilder: sut,
-            meetingUpdateEventBuilder: UnusedMeetingUpdateBuilder(),
-            reminderReconciler: MeetingEventReminderReconciler(
-                pullMeeting: { try await api.getMeeting(id: $0).toDomainMeeting() },
-                reconcileMeeting: { _ in },
-                cancelMeeting: { _ in },
-                isMeetingsEnabled: { true },
-                cancelAccount: {}
-            )
-        )
-
-        let result = await builder.buildContent(event: .memberAdd(Scaffolding.event))
-
-        XCTAssertNotNil(result)
-        XCTAssertEqual(api.requestedIDs, [Scaffolding.meetingID])
-    }
-
     func testMemberAddStillRefreshesMeetingThroughUpdateProcessor() async throws {
         let processors = InvitationEventProcessors()
         let processor = MeetingEventProcessor(
@@ -232,14 +211,6 @@ private final class InvitationMeetingsAPI: MeetingsAPI, @unchecked Sendable {
         throw InvitationTestError.unavailable
     }
 
-    func addMeetingInvitations(id: WireNetwork.QualifiedID, emails: [String]) async throws {
-        throw InvitationTestError.unavailable
-    }
-
-    func removeMeetingInvitations(id: WireNetwork.QualifiedID, emails: [String]) async throws {
-        throw InvitationTestError.unavailable
-    }
-
     func deleteMeeting(id: WireNetwork.QualifiedID) async throws { throw InvitationTestError.unavailable }
 }
 
@@ -264,15 +235,11 @@ private final class InvitationUsersAPI: UsersAPI {
             app: nil,
             service: nil,
             supportedProtocols: nil,
-            legalholdStatus: .disabled,
-            contactStatus: nil
+            legalholdStatus: .disabled
         )
     }
 
-    func getUsers(
-        userIDs: [UserID],
-        includeContactStatus: Bool
-    ) async throws -> UserList { throw InvitationTestError.unavailable }
+    func getUsers(userIDs: [UserID]) async throws -> UserList { throw InvitationTestError.unavailable }
 }
 
 private final class InvitationMeetingStore: MeetingLocalStoreProtocol, @unchecked Sendable {

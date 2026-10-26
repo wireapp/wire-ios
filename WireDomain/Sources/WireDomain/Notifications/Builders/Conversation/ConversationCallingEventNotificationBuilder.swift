@@ -18,7 +18,6 @@
 
 import GenericMessageProtocol
 import WireDataModel
-import WireFoundation
 import WireLogging
 import WireNetwork
 
@@ -52,17 +51,6 @@ struct ConversationCallingEventNotificationBuilder: ConversationCallingEventNoti
             }
             return QualifiedID(id: conversationUUID, domain: callingConversationID.domain)
         }()
-        let selfUser = await context.userLocalStore.fetchSelfUser()
-        let sender = await context.userLocalStore.fetchOrCreateUser(
-            id: senderID.id,
-            domain: senderID.domain
-        )
-        let wasAnsweredElsewhere = AnsweredElsewhereCallTracker(userDefaults: validator.userDefaults).track(
-            callContent: callContent,
-            conversationID: resolvedConversationID.id,
-            accountID: accountID,
-            isCallerSelf: selfUser == sender
-        )
         let displayCallKitNotification = await validator.validateCallKitNotification(
             conversationID: resolvedConversationID,
             senderID: senderID,
@@ -73,10 +61,9 @@ struct ConversationCallingEventNotificationBuilder: ConversationCallingEventNoti
 
         let displayCallNotification = await validator.validateCallNotification(
             conversationID: resolvedConversationID,
+            senderID: senderID,
             eventTimestamp: time,
-            callContent: callContent,
-            isCallerSelf: selfUser == sender,
-            wasAnsweredElsewhere: wasAnsweredElsewhere
+            callContent: callContent
         )
 
         if displayCallKitNotification {
@@ -454,14 +441,20 @@ extension ConversationCallingEventNotificationBuilder {
         /// When a CallKit notification cannot be displayed, we'll try to validate a regular call notification.
         func validateCallNotification(
             conversationID: ConversationID,
+            senderID: UserID,
             eventTimestamp: Date?,
-            callContent: CallContent,
-            isCallerSelf: Bool,
-            wasAnsweredElsewhere: Bool
+            callContent: CallContent
         ) async -> Bool {
             let conversation = await conversationLocalStore.fetchOrCreateConversation(
                 id: conversationID.id,
                 domain: conversationID.domain
+            )
+
+            let selfUser = await userLocalStore.fetchSelfUser()
+
+            let caller = await userLocalStore.fetchOrCreateUser(
+                id: senderID.id,
+                domain: senderID.domain
             )
 
             let serverTimeDelta = await conversationLocalStore.fetchServerTimeDelta()
@@ -472,6 +465,7 @@ extension ConversationCallingEventNotificationBuilder {
             let isConversationMuted = mutedMessagesTypes == .all
             let isCallTimeOut = eventTimestamp != nil ? Int(currentTimestamp.timeIntervalSince(eventTimestamp!)) > 30 :
                 true
+            let isCallerSelf = selfUser == caller
             let needsBackendUpdate = await conversationLocalStore.conversationNeedsBackendUpdate(conversation)
 
             // A meeting is joined deliberately from the meetings list, so neither its
@@ -482,9 +476,7 @@ extension ConversationCallingEventNotificationBuilder {
             let isEndCall = callContent.isEndCall
             let isValidState = isIncomingCall || isEndCall
 
-            guard isValidState, !isCallerSelf, !wasAnsweredElsewhere, !isConversationMuted, !isMeetingConversation,
-                  !isCallTimeOut
-            else {
+            guard isValidState, !isCallerSelf, !isConversationMuted, !isMeetingConversation, !isCallTimeOut else {
                 return false
             }
 

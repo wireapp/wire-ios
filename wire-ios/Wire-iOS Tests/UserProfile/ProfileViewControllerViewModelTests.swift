@@ -32,8 +32,6 @@ final class ProfileViewControllerViewModelTests: XCTestCase {
     private var mockCoreDataStack: CoreDataStack!
     private var user: MockUserType!
     private var oneToOneConversation: ZMConversation!
-    private var contactability: Bool?
-    private var contactStatusError: Error?
 
     private var viewContext: NSManagedObjectContext {
         mockCoreDataStack.viewContext
@@ -55,7 +53,6 @@ final class ProfileViewControllerViewModelTests: XCTestCase {
         mockViewModelDelegate = MockProfileViewControllerViewModelDelegate()
         mockViewModelDelegate.startAnimatingActivity_MockMethod = {}
         mockViewModelDelegate.stopAnimatingActivity_MockMethod = {}
-        mockViewModelDelegate.updateContactStatusIsNonContactable_MockMethod = { _ in }
 
         sut = ProfileViewControllerViewModel(
             user: user,
@@ -64,11 +61,7 @@ final class ProfileViewControllerViewModelTests: XCTestCase {
             context: .profileViewer,
             classificationProvider: nil,
             userSession: mockUserSession,
-            profileActionsFactory: mockProfileActionsFactory,
-            fetchContactability: { [weak self] in
-                if let error = self?.contactStatusError { throw error }
-                return self?.contactability
-            }
+            profileActionsFactory: mockProfileActionsFactory
         )
 
         sut.setDelegate(mockViewModelDelegate)
@@ -82,8 +75,6 @@ final class ProfileViewControllerViewModelTests: XCTestCase {
         mockUserSession = nil
         user = nil
         oneToOneConversation = nil
-        contactability = nil
-        contactStatusError = nil
         super.tearDown()
     }
 
@@ -197,64 +188,6 @@ final class ProfileViewControllerViewModelTests: XCTestCase {
         // Then
         await fulfillment(of: [expectation], timeout: 1)
         XCTAssertEqual(mockViewModelDelegate.updateFooterActionsViews_Invocations.first, [.openOneToOne])
-    }
-
-    // MARK: - Contact status
-
-    @MainActor
-    func test_ContactStatus_NonContactableUserCannotStartConversation() async {
-        contactability = false
-
-        await sut.refreshContactStatus()
-        sut.startOneToOneConversation()
-
-        XCTAssertTrue(sut.isUserNonContactable)
-        XCTAssertEqual(mockViewModelDelegate.updateContactStatusIsNonContactable_Invocations, [true])
-        XCTAssertTrue(mockUserSession.createTeamOneOnOneWithCompletion_Invocations.isEmpty)
-        XCTAssertTrue(mockViewModelDelegate.startAnimatingActivity_Invocations.isEmpty)
-    }
-
-    @MainActor
-    func test_ContactStatus_RefreshCanRemoveRestriction() async {
-        contactability = false
-        await sut.refreshContactStatus()
-
-        contactability = true
-        await sut.refreshContactStatus()
-
-        XCTAssertFalse(sut.isUserNonContactable)
-        XCTAssertEqual(mockViewModelDelegate.updateContactStatusIsNonContactable_Invocations, [true, false])
-    }
-
-    @MainActor
-    func test_ContactStatus_UnknownDoesNotRestrictUser() async {
-        await sut.refreshContactStatus()
-
-        XCTAssertFalse(sut.isUserNonContactable)
-        XCTAssertEqual(mockViewModelDelegate.updateContactStatusIsNonContactable_Invocations, [false])
-    }
-
-    @MainActor
-    func test_ContactStatus_FailedRefreshPreservesRestriction() async {
-        contactability = false
-        await sut.refreshContactStatus()
-
-        contactStatusError = NSError(domain: "ContactStatusTests", code: 1)
-        await sut.refreshContactStatus()
-
-        XCTAssertTrue(sut.isUserNonContactable)
-        XCTAssertEqual(mockViewModelDelegate.updateContactStatusIsNonContactable_Invocations, [true])
-    }
-
-    @MainActor
-    func test_ContactStatus_CancelledRefreshDoesNotUpdateUI() async {
-        contactability = false
-        let task = Task { await sut.refreshContactStatus() }
-        task.cancel()
-        await task.value
-
-        XCTAssertFalse(sut.isUserNonContactable)
-        XCTAssertTrue(mockViewModelDelegate.updateContactStatusIsNonContactable_Invocations.isEmpty)
     }
 
 }

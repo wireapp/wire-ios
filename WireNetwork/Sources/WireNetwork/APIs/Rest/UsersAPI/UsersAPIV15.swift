@@ -40,7 +40,7 @@ class UsersAPIV15: UsersAPIV14 {
             .parse(code: response.statusCode, data: data)
     }
 
-    override func getUsers(userIDs: [UserID], includeContactStatus: Bool) async throws -> UserList {
+    override func getUsers(userIDs: [UserID]) async throws -> UserList {
         let body = try JSONEncoder.defaultEncoder
             .encode(ListUsersRequestV0(qualifiedIDs: userIDs.map { $0.toNetworkModel() }))
         let path = "\(pathPrefix)/list-users"
@@ -133,8 +133,7 @@ struct UserResponseV15: Decodable, ToAPIModelConvertible {
             app: app?.toAPIModel(),
             service: service?.toAPIModel(),
             supportedProtocols: supportedProtocols.flatMap { Set($0) },
-            legalholdStatus: legalholdStatus.toAPIModel(),
-            contactStatus: nil
+            legalholdStatus: legalholdStatus.toAPIModel()
         )
     }
 

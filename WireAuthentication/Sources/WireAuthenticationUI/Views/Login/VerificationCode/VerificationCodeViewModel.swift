@@ -76,7 +76,6 @@ public final class VerificationCodeViewModel: ObservableObject {
 
     private let proxyCredentials: ProxyCredentials?
     private(set) var countdownTimer: Task<Void, Never>?
-    private let isSnapshotTesting: Bool
 
     // MARK: - Life cycle
 
@@ -86,8 +85,7 @@ public final class VerificationCodeViewModel: ObservableObject {
         password: String,
         proxyCredentials: ProxyCredentials?,
         router: any Router,
-        numberOfDigits: Int = VerificationCodeViewModel.numberOfDigits,
-        isSnapshotTesting: Bool = false
+        numberOfDigits: Int = VerificationCodeViewModel.numberOfDigits
     ) {
         precondition(numberOfDigits > 0)
 
@@ -98,7 +96,6 @@ public final class VerificationCodeViewModel: ObservableObject {
         self.router = router
         self.code = Array(repeating: "", count: numberOfDigits)
         self.numberOfDigits = numberOfDigits
-        self.isSnapshotTesting = isSnapshotTesting
     }
 
     // MARK: - Actions
@@ -172,8 +169,6 @@ public final class VerificationCodeViewModel: ObservableObject {
     }
 
     func requestVerificationCode() async {
-        guard !isSnapshotTesting else { return }
-
         WireLogger.authentication.info("Requesting 2FA code...")
         isResending = true
 

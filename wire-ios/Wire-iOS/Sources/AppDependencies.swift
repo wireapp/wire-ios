@@ -18,7 +18,6 @@
 
 import Foundation
 import UIKit
-import WireMessagingAssembly
 import WireNetwork
 import WireSyncEngine
 
@@ -31,10 +30,5 @@ enum AppDependencies {
     static let cookieStorage = CookieStorage(cookieEncryptionKey: UserDefaults.cookiesKey())
     static let pushTokenService = PushTokenService()
     static let voIPPushManager = VoIPPushManager(application: UIApplication.shared)
-
-    /// Owns the background `URLSession`s carrying Wire Drive direct uploads.
-    static let wireDriveUploadSessions = WireDriveDirectUploadSessionHolder(
-        sharedContainerIdentifier: Bundle.main.applicationGroupIdentifier
-    )
 
 }

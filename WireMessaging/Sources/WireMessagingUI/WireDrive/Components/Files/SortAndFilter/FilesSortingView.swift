@@ -88,8 +88,6 @@ struct FilesSortingView: View {
             }
             .foregroundStyle(.primary)
             .accessibilityIdentifier(Locators.WireDrive.FilesSortingPage.menuButton)
-            .accessibilityElement(children: .ignore)
-            .accessibilityLabel(viewModel.menuLabel)
 
             Spacer()
 

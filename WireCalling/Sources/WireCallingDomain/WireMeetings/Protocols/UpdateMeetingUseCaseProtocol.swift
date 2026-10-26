@@ -38,12 +38,8 @@ package protocol UpdateMeetingUseCaseProtocol: Sendable {
         startTime: Date,
         endTime: Date,
         recurrence: MeetingRecurrence?,
-        participants: [MeetingMember],
-        emailsToAdd: [String],
-        emailsToRemove: [String]
+        participants: [MeetingMember]
     ) async throws -> Meeting
-
-    func fetchInvitedEmails(for meeting: Meeting) async throws -> [String]
 
     /// Updates the meeting's dedicated conversation name without updating the meeting itself.
     func updateConversationName(for meeting: Meeting) async throws

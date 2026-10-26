@@ -1113,21 +1113,6 @@ class MockProfileViewControllerViewModelDelegate: ProfileViewControllerViewModel
         mock(actions)
     }
 
-    // MARK: - updateContactStatus
-
-    var updateContactStatusIsNonContactable_Invocations: [Bool] = []
-    var updateContactStatusIsNonContactable_MockMethod: ((Bool) -> Void)?
-
-    func updateContactStatus(isNonContactable: Bool) {
-        updateContactStatusIsNonContactable_Invocations.append(isNonContactable)
-
-        guard let mock = updateContactStatusIsNonContactable_MockMethod else {
-            fatalError("no mock for `updateContactStatusIsNonContactable`")
-        }
-
-        mock(isNonContactable)
-    }
-
     // MARK: - updateIncomingRequestFooter
 
     var updateIncomingRequestFooter_Invocations: [Void] = []
@@ -1327,22 +1312,6 @@ class MockProfileViewControllerViewModeling: ProfileViewControllerViewModeling {
         }
 
         mock()
-    }
-
-    // MARK: - refreshContactStatus
-
-    var refreshContactStatus_Invocations: [Void] = []
-    var refreshContactStatus_MockMethod: (() async -> Void)?
-
-    @MainActor
-    func refreshContactStatus() async {
-        refreshContactStatus_Invocations.append(())
-
-        guard let mock = refreshContactStatus_MockMethod else {
-            fatalError("no mock for `refreshContactStatus`")
-        }
-
-        await mock()
     }
 
     // MARK: - sendConnectionRequest
@@ -1969,36 +1938,6 @@ class MockWireMessagingFactoryProtocol: WireMessagingFactoryProtocol {
         } else {
             fatalError("no mock for `makeFetchCachedNodeUseCase`")
         }
-    }
-
-    // MARK: - startDirectUploads
-
-    var startDirectUploads_Invocations: [Void] = []
-    var startDirectUploads_MockMethod: (() async -> Void)?
-
-    func startDirectUploads() async {
-        startDirectUploads_Invocations.append(())
-
-        guard let mock = startDirectUploads_MockMethod else {
-            fatalError("no mock for `startDirectUploads`")
-        }
-
-        await mock()
-    }
-
-    // MARK: - tearDownDirectUploads
-
-    var tearDownDirectUploads_Invocations: [Void] = []
-    var tearDownDirectUploads_MockMethod: (() async -> Void)?
-
-    func tearDownDirectUploads() async {
-        tearDownDirectUploads_Invocations.append(())
-
-        guard let mock = tearDownDirectUploads_MockMethod else {
-            fatalError("no mock for `tearDownDirectUploads`")
-        }
-
-        await mock()
     }
 
     // MARK: - makeFilesView

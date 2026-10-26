@@ -37,8 +37,8 @@ final class VerificationCodeViewTests: XCTestCase {
     }
 
     @MainActor
-    func testColorSchemeVariantsEmptyState() throws {
-        let view = VerificationCodeView_Previews(code: ["", "", "", "", "", ""], isSnapshotTesting: true)
+    func testColorSchemeVariantsEmptyState() {
+        let view = VerificationCodeView_Previews(code: ["", "", "", "", "", ""])
             .frame(width: testContainerSize.width, height: testContainerSize.height)
 
         snapshotHelper
@@ -50,8 +50,8 @@ final class VerificationCodeViewTests: XCTestCase {
     }
 
     @MainActor
-    func testDynamicTypeVariantsEmptyState() throws {
-        let view = VerificationCodeView_Previews(code: ["", "", "", "", "", ""], isSnapshotTesting: true)
+    func testDynamicTypeVariantsEmptyState() {
+        let view = VerificationCodeView_Previews(code: ["", "", "", "", "", ""])
             .frame(width: testContainerSize.width, height: testContainerSize.height)
 
         for dynamicTypeSize in DynamicTypeSize.allCases {

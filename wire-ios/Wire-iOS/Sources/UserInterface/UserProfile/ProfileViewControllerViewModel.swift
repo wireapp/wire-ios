@@ -48,8 +48,6 @@ protocol ProfileViewControllerViewModeling {
     var incomingRequestFooterHidden: Bool { get }
 
     func updateActionsList()
-    @MainActor
-    func refreshContactStatus() async
     func sendConnectionRequest()
     func acceptConnectionRequest()
     func ignoreConnectionRequest()
@@ -80,10 +78,6 @@ final class ProfileViewControllerViewModel: NSObject, ProfileViewControllerViewM
 
     private weak var viewModelDelegate: ProfileViewControllerViewModelDelegate?
 
-    private let fetchContactability: @MainActor () async throws -> Bool?
-    private var contactStatusRequestID = UUID()
-    private(set) var isUserNonContactable = false
-
     private var observerToken: NSObjectProtocol?
     private let profileActionsFactory: ProfileActionsFactoryProtocol
     private let classificationProvider: SecurityClassificationProviding?
@@ -98,8 +92,7 @@ final class ProfileViewControllerViewModel: NSObject, ProfileViewControllerViewM
         context: ProfileViewControllerContext,
         classificationProvider: SecurityClassificationProviding?,
         userSession: UserSession,
-        profileActionsFactory: ProfileActionsFactoryProtocol,
-        fetchContactability: @escaping @MainActor () async throws -> Bool?
+        profileActionsFactory: ProfileActionsFactoryProtocol
     ) {
         self.user = user
         self.conversation = conversation
@@ -108,7 +101,6 @@ final class ProfileViewControllerViewModel: NSObject, ProfileViewControllerViewM
         self.classificationProvider = classificationProvider
         self.userSession = userSession
         self.profileActionsFactory = profileActionsFactory
-        self.fetchContactability = fetchContactability
 
         super.init()
 
@@ -191,8 +183,6 @@ final class ProfileViewControllerViewModel: NSObject, ProfileViewControllerViewM
     }
 
     func startOneToOneConversation() {
-        guard !isUserNonContactable else { return }
-
         viewModelDelegate?.startAnimatingActivity()
 
         userSession.createTeamOneOnOne(with: user) { [weak self] in
@@ -206,26 +196,6 @@ final class ProfileViewControllerViewModel: NSObject, ProfileViewControllerViewM
                 guard let username = self?.user.name else { return }
                 self?.viewModelDelegate?.presentConversationCreationError(username: username)
             }
-        }
-    }
-
-    // MARK: - Contact status
-
-    @MainActor
-    func refreshContactStatus() async {
-        let requestID = UUID()
-        contactStatusRequestID = requestID
-
-        do {
-            let isContactable = try await fetchContactability()
-            guard !Task.isCancelled, contactStatusRequestID == requestID else { return }
-
-            isUserNonContactable = isContactable == false
-            viewModelDelegate?.updateContactStatus(isNonContactable: isUserNonContactable)
-        } catch {
-            // Keep the current screen's status if a refresh fails.
-            guard !Task.isCancelled else { return }
-            WireLogger.conversation.warn("Failed to fetch profile contact status: \(error)")
         }
     }
 
@@ -386,7 +356,6 @@ extension ProfileViewControllerViewModel: UserObserving {
 protocol ProfileViewControllerViewModelDelegate: AnyObject {
     func setupNavigationItems()
     func updateFooterActionsViews(_ actions: [ProfileAction])
-    func updateContactStatus(isNonContactable: Bool)
     func updateIncomingRequestFooter()
     func returnToPreviousScreen()
     func presentError(_ error: LocalizedError)

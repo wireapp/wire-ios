@@ -51,7 +51,8 @@ class SSOWebLoginPage: PageModel {
     @discardableResult
     func ssoWebLogin(email: String, password: String) async throws -> FirstTimePage {
         usernameTextField.waitAndTap()
-        usernameTextField.typeText(email + "\t")
+        usernameTextField.typeText(email)
+        webView.tap()
 
         passwordSecureTextField.waitAndTap()
         passwordSecureTextField.typeText(password + "\n")

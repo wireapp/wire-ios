@@ -28,8 +28,7 @@ extension ZMUserSession: WireCallCenterCallStateObserver {
         conversation: ZMConversation,
         caller: any UserType,
         timestamp: Date?,
-        previousCallState: CallState?,
-        callEndReason: CallClosedReason?
+        previousCallState: CallState?
     ) {
         // Prevent duplicate tracking if state hasn't changed
         guard callState != previousCallState else { return }

@@ -657,21 +657,6 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     @MainActor
     public func start(connectionOptions: UIScene.ConnectionOptions) async {
-        // A logout may have been interrupted before its asynchronous reminder cancellation finished.
-        // Sweep stale reminders before loading any account session.
-        let cancellationJournal = MeetingReminderCancellationJournal(defaults: sharedUserDefaults)
-        let pendingCancellations = cancellationJournal.pending()
-        let authenticatedAccountIDs = Set(accountManager.accounts.filter { environment.isAuthenticated($0) }
-            .map(\.userIdentifier))
-        // An account can still appear authenticated while its cancellation is pending.
-        await AccountMeetingReminderCanceller().cancelAll(
-            exceptAccountIDs: authenticatedAccountIDs.subtracting(pendingCancellations.keys)
-        )
-        // Token matching leaves a newer cancellation request intact if logout ran during this sweep.
-        for (accountID, token) in pendingCancellations {
-            cancellationJournal.clear(accountID: accountID, token: token)
-        }
-
         if
             let url = connectionOptions.urlContexts.first?.url, // Currently we only support one URL
             let urlAction = try? URLAction(url: url),
@@ -847,7 +832,6 @@ public final class SessionManager: NSObject, SessionManagerType {
     }
 
     fileprivate func tearDownSessionAndDelete(account: Account, eraseData: Bool) {
-        cancelMeetingReminders(for: account.userIdentifier)
         tearDownBackgroundSession(for: account.userIdentifier) {
             if eraseData {
                 self.deleteAccountData(for: account)
@@ -858,15 +842,11 @@ public final class SessionManager: NSObject, SessionManagerType {
     public func logout(account: Account, error: Error? = nil) {
         WireLogger.sessionManager.debug("Logging out account \(account.userIdentifier)...")
 
-        guard let isActiveSession = backgroundSessionStatus(for: account.userIdentifier) else {
-            cancelMeetingReminders(for: account.userIdentifier)
-            return
-        }
+        guard let isActiveSession = backgroundSessionStatus(for: account.userIdentifier) else { return }
 
         if isActiveSession {
             logoutCurrentSession(deleteCookie: true, deleteAccount: false, error: error)
         } else {
-            cancelMeetingReminders(for: account.userIdentifier)
             tearDownBackgroundSession(for: account.userIdentifier)
         }
     }
@@ -914,7 +894,6 @@ public final class SessionManager: NSObject, SessionManagerType {
             return
         }
 
-        cancelMeetingReminders(for: account.userIdentifier)
         state.withLockUnchecked { $0.backgroundUserSessions[account.userIdentifier] = nil }
         tearDownObservers(account: account.userIdentifier)
         notifyUserSessionDestroyed(account.userIdentifier)
@@ -974,7 +953,6 @@ public final class SessionManager: NSObject, SessionManagerType {
             delete(account: account, reason: .sessionExpired)
         } else {
             createUnauthenticatedSession(accountId: account.userIdentifier)
-            cancelMeetingReminders(for: account.userIdentifier)
 
             let error = NSError(
                 userSessionErrorCode: .accessTokenExpired,
@@ -1223,20 +1201,6 @@ public final class SessionManager: NSObject, SessionManagerType {
         }
 
         try deleteAccountData(for: account, keepAccountOnFailure: true)
-        cancelMeetingReminders(for: account.userIdentifier)
-    }
-
-    /// Starts account-scoped reminder cancellation and records the intent before launching the task.
-    /// The startup sweep retries it if the app exits before cancellation finishes.
-    private func cancelMeetingReminders(for accountID: UUID) {
-        let token = MeetingReminderCancellationJournal(defaults: sharedUserDefaults).record(accountID: accountID)
-        Task { [weak self] in
-            await AccountMeetingReminderCanceller().cancelAll(accountID: accountID)
-            if let self {
-                MeetingReminderCancellationJournal(defaults: sharedUserDefaults)
-                    .clear(accountID: accountID, token: token)
-            }
-        }
     }
 
     /// Tears down any live background session for the account (if it isn't
@@ -1856,8 +1820,7 @@ extension SessionManager: WireCallCenterCallStateObserver {
         conversation: ZMConversation,
         caller: WireDataModel.UserType,
         timestamp: Date?,
-        previousCallState: CallState?,
-        callEndReason: CallClosedReason?
+        previousCallState: CallState?
     ) {
         guard let moc = conversation.managedObjectContext else { return }
 

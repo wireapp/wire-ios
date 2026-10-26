@@ -22,10 +22,6 @@
             "value" : "$(CALLINGSERVICE_INTERNAL_PASSWORD)"
           },
           {
-            "key" : "USE_IN_HOUSE_SERVICES",
-            "value" : "$(USE_IN_HOUSE_SERVICES)"
-          },
-          {
             "key" : "SSO_CLAIMED_USER_PASSWORD",
             "value" : "$(SSO_CLAIMED_USER_PASSWORD)"
           },

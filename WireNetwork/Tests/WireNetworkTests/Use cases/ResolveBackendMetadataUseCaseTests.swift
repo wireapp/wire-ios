@@ -27,28 +27,23 @@ struct ResolveBackendMetadataUseCaseTests {
 
     // MARK: - Resolve for preferred version
 
-    @Test("Resolves to preferred version only when advertised", arguments: [true, false])
-    func resolvesToPreferredVersion(isAdvertised: Bool) async throws {
+    @Test("Resolves to preferred version")
+    func resolvesToPreferredVersion() async throws {
         // Given
         let sut = ResolveBackendMetadataUseCase(
             backendMetadataAPI: api,
-            clientProductionVersions: APIVersion.productionVersions,
-            preferredAPIVersion: .v19
+            clientProductionVersions: [.v6, .v7],
+            preferredAPIVersion: .v8
         )
 
         // Mock
-        api.getBackendMetadata_MockValue = BackendMetadata(
-            domain: "wire.com",
-            isFederationEnabled: true,
-            supportedVersions: [.v18],
-            developmentVersions: isAdvertised ? [.v19] : []
-        )
+        api.getBackendMetadata_MockValue = Scaffolding.backendMetadata
 
         // When
         let backendMetadata = try await sut.invoke()
 
         // Then
-        #expect(backendMetadata.apiVersion == (isAdvertised ? .v19 : .v18))
+        #expect(backendMetadata.apiVersion == .v8)
         #expect(backendMetadata.domain == "wire.com")
         #expect(backendMetadata.isFederationEnabled == true)
     }

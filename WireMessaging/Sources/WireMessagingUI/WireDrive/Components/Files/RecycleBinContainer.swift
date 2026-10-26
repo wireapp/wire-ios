@@ -35,7 +35,6 @@ package struct RecycleBinContainer: View {
     private let nodeCache: any WireDriveNodeCacheProtocol
     private let nodeRenameNotifier: WireDriveNodeRenameNotifier
     private let fileCache: any FileCache
-    private let uploadManager: any WireDriveDirectUploadManagerProtocol
 
     package init(
         cellName: String,
@@ -46,8 +45,7 @@ package struct RecycleBinContainer: View {
         localAssetRepository: any WireDriveLocalAssetRepositoryProtocol,
         nodeCache: any WireDriveNodeCacheProtocol,
         nodeRenameNotifier: WireDriveNodeRenameNotifier,
-        fileCache: any FileCache,
-        uploadManager: any WireDriveDirectUploadManagerProtocol
+        fileCache: any FileCache
     ) {
         self.cellName = cellName
         self.nodesAPI = nodesAPI
@@ -58,7 +56,6 @@ package struct RecycleBinContainer: View {
         self.nodeCache = nodeCache
         self.nodeRenameNotifier = nodeRenameNotifier
         self.fileCache = fileCache
-        self.uploadManager = uploadManager
     }
 
     var body: some View {
@@ -80,10 +77,7 @@ package struct RecycleBinContainer: View {
                     localAssetStore: localAssetStore,
                     localAssetRepository: localAssetRepository,
                     nodeRenameNotifier: nodeRenameNotifier,
-                    nodeCache: nodeCache,
-                    // The recycle bin is not an upload destination (`canUpload` is false there),
-                    // but the use case set is shared with the file list.
-                    uploadManager: uploadManager
+                    nodeCache: nodeCache
                 )
             ),
             title: path.last?.name,

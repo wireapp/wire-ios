@@ -22,41 +22,4 @@ class TeamsAPIV17: TeamsAPIV16 {
         .v17
     }
 
-    // MARK: - Get apps
-
-    override func getApps(
-        for teamID: Team.ID
-    ) async throws -> [User] {
-
-        let path = "\(basePath(for: teamID))/apps"
-        let request = try URLRequestBuilder(path: path)
-            .withMethod(.get)
-            .build()
-
-        let (data, response) = try await apiService.executeRequest(
-            request,
-            requiringAccessToken: true
-        )
-
-        return try ResponseParser()
-            .success(code: .ok, type: GetAppsResponseV17.self)
-            .parse(code: response.statusCode, data: data)
-
-    }
-
-}
-
-private struct GetAppsResponseV17: Decodable, ToAPIModelConvertible {
-
-    var apps: [UserResponseV17]
-
-    init(from decoder: any Decoder) throws {
-        let container = try decoder.singleValueContainer()
-        self.apps = try container.decode([UserResponseV17].self)
-    }
-
-    func toAPIModel() -> [User] {
-        apps.map { $0.toAPIModel() }
-    }
-
 }

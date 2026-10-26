@@ -45,7 +45,7 @@ extension FilesViewModel {
                 case .shareLink:
                     sheetNavigation = .shareLink(fileItem: item)
                 case .moveToFolder:
-                    sheetNavigation = .moveToFolder(fileItems: [item])
+                    sheetNavigation = .moveToFolder(fileItem: item)
                 case .showVersionHistory:
                     sheetNavigation = .versionHistory(fileItem: item)
                 case .edit:
@@ -81,18 +81,17 @@ extension FilesViewModel {
         )
     }
 
-    func moveToFolderViewModel(items: [FilesViewItem]) -> MoveToFolderViewModel {
-        // All selected items share the same parent folder, so derive the container path from the first item.
-        let containerPath = items[0].filePath.components(separatedBy: "/").dropLast().joined(separator: "/")
+    func moveToFolderViewModel(item: FilesViewItem) -> MoveToFolderViewModel {
+        let containerPath = item.filePath.components(separatedBy: "/").dropLast().joined(separator: "/")
         return .init(
             containerPath: containerPath,
-            nodeIDs: items.map(\.id),
+            nodeID: item.id,
+            nodeName: item.name,
             onFinish: { [weak self] in
                 self?.sheetNavigation = nil
-                self?.enableMultipleSelection(false)
                 Task { await self?.reload(refreshing: true) }
             },
-            moveNodesUseCase: useCases.moveNodes,
+            moveNodeUseCase: useCases.moveNode,
             createFileUseCase: useCases.createFile,
             fetchNodesUseCase: useCases.fetchNodes
         )

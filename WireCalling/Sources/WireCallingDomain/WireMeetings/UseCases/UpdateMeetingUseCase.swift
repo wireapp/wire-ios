@@ -19,7 +19,6 @@
 package import Foundation
 
 import WireFoundation
-import WireLogging
 
 package struct UpdateMeetingUseCase: UpdateMeetingUseCaseProtocol {
 
@@ -40,9 +39,7 @@ package struct UpdateMeetingUseCase: UpdateMeetingUseCaseProtocol {
         startTime: Date,
         endTime: Date,
         recurrence: MeetingRecurrence?,
-        participants: [MeetingMember],
-        emailsToAdd: [String] = [],
-        emailsToRemove: [String] = []
+        participants: [MeetingMember]
     ) async throws -> Meeting {
         // The participant diff below needs the conversation's current members
         // as its baseline; without it, every existing participant would look
@@ -61,18 +58,6 @@ package struct UpdateMeetingUseCase: UpdateMeetingUseCaseProtocol {
             endTime: endTime,
             recurrence: recurrence
         )
-
-        if !emailsToAdd.isEmpty || !emailsToRemove.isEmpty {
-            do {
-                try await meetingRepository.updateInvitedEmails(
-                    id: meeting.id,
-                    adding: emailsToAdd,
-                    removing: emailsToRemove
-                )
-            } catch {
-                throw UpdateMeetingUseCaseError.emailInvitationsFailed(updatedMeeting: updatedMeeting)
-            }
-        }
 
         // The creator is implicit in the form's participant selection, so it
         // is excluded from the baseline too — otherwise every update would
@@ -95,32 +80,8 @@ package struct UpdateMeetingUseCase: UpdateMeetingUseCaseProtocol {
             try await conversationRepository.addParticipants(membersToAdd, to: meeting.conversationID)
         } catch let MeetingParticipantsError.failedToAddParticipants(participants) {
             participantsNotAdded = participants
-        } catch let MeetingParticipantsError.failedToSetUpParticipants(participants, reasons) {
-            await meetingRepository.storeMeeting(updatedMeeting)
-            throw UpdateMeetingUseCaseError.addParticipantsFailed(
-                participants: participants,
-                reasons: reasons
-            )
-        } catch {
-            WireLogger.meetings.error(
-                "failed to add meeting participants: \(String(describing: type(of: error)))",
-                attributes: .safePublic
-            )
-            await meetingRepository.storeMeeting(updatedMeeting)
-            throw UpdateMeetingUseCaseError.addParticipantsFailed()
         }
-        do {
-            try await conversationRepository.removeParticipants(membersToRemove, from: meeting.conversationID)
-        } catch {
-            WireLogger.meetings.error(
-                "failed to remove meeting participants: \(String(describing: type(of: error)))",
-                attributes: .safePublic
-            )
-            await meetingRepository.storeMeeting(updatedMeeting)
-            throw UpdateMeetingUseCaseError.removeParticipantsFailed(
-                participantsNotAdded: participantsNotAdded
-            )
-        }
+        try await conversationRepository.removeParticipants(membersToRemove, from: meeting.conversationID)
         await meetingRepository.storeMeeting(updatedMeeting)
 
         if title != meeting.title {
@@ -144,10 +105,6 @@ package struct UpdateMeetingUseCase: UpdateMeetingUseCaseProtocol {
         return updatedMeeting
     }
 
-    package func fetchInvitedEmails(for meeting: Meeting) async throws -> [String] {
-        try await meetingRepository.fetchInvitedEmails(id: meeting.id)
-    }
-
     package func updateConversationName(for meeting: Meeting) async throws {
         try await conversationRepository.updateConversationName(
             meeting.title,
@@ -163,18 +120,9 @@ package enum UpdateMeetingUseCaseError: Error, Equatable {
     /// so there is no baseline to diff the selected participants against.
     case conversationNotResolved
 
-    case emailInvitationsFailed(updatedMeeting: Meeting)
-
     /// The meeting update succeeded, but its dedicated conversation could not be renamed.
     case conversationNameUpdateFailed(updatedMeeting: Meeting, participantsNotAdded: [MeetingMember] = [])
 
     case participantsNotAdded(meeting: Meeting, participants: [MeetingMember])
-
-    case addParticipantsFailed(
-        participants: [MeetingMember] = [],
-        reasons: [QualifiedID: MeetingParticipantFailureReason] = [:]
-    )
-
-    case removeParticipantsFailed(participantsNotAdded: [MeetingMember] = [])
 
 }

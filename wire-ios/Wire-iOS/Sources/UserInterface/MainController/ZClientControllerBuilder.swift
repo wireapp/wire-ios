@@ -102,57 +102,19 @@ final class ZClientControllerBuilder {
             isFederationEnabled: userSession.resolvedBackendMetadata.isFederationEnabled
         )
 
-        let factory = WireMessagingFactory(
+        return WireMessagingFactory(
             driveURLResolver: driveURLResolver,
             driveConversationLocalStore: driveConversationLocalStore,
             accessToken: DefaultAccessTokenProvider(userSession: userSession),
             fileCache: userSession.fileAssetCache,
             contextProvider: DefaultManagedObjectContextProvider(contextProvider: userSession.contextProvider),
-            analyticsProvider: { [self] in userSession.analyticsEventTracker },
-            selfUserID: account.userIdentifier,
-            uploadSessions: AppDependencies.wireDriveUploadSessions,
-            uploadStagingDirectory: driveUploadStagingURL
+            analyticsProvider: { [self] in userSession.analyticsEventTracker }
         )
-
-        // The database exists by this point, so persisted uploads can be reconciled against the
-        // background session. Until this runs, the session buffers its events rather than losing
-        // them, which is what makes a background relaunch safe.
-        Task { await factory.startDirectUploads() }
-
-        return factory
-    }
-
-    private var driveUploadStagingURL: URL {
-        let fileManager = FileManager.default
-
-        if let appGroupIdentifier = Bundle.main.applicationGroupIdentifier,
-           let url = fileManager.driveUploadStagingURL(
-               for: appGroupIdentifier,
-               accountIdentifier: account.userIdentifier
-           ) {
-            return url
-        }
-
-        WireLogger.wireDrive.warn(
-            "no app group container for drive upload staging; background uploads will not resume",
-            attributes: .safePublic
-        )
-
-        return fileManager.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
-            .appendingPathComponent(
-                "\(FileManager.cachesFolderPrefix)-\(account.userIdentifier.uuidString)",
-                isDirectory: true
-            )
-            .appendingPathComponent(FileManager.driveUploadStagingFolderName, isDirectory: true)
     }
 
     @MainActor
     private func buildWireMeetingsFactory() -> any WireMeetingsFactoryProtocol {
-        WireMeetingsFactory(
-            selfUserID: account.userIdentifier,
-            supportsMeetingLinks: userSession.resolvedBackendMetadata.apiVersion.map { $0 >= .v19 } ?? false,
-            isClipboardEnabled: Settings.isClipboardEnabled
-        )
+        WireMeetingsFactory(selfUserID: account.userIdentifier)
     }
 
 }

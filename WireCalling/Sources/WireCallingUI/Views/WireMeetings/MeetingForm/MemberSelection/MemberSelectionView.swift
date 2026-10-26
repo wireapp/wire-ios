@@ -20,34 +20,17 @@ import SwiftUI
 import WireCallingDomain
 import WireDesign
 import WireFoundation
-import WireLocators
 
 struct MemberSelectionView: View {
     private typealias Strings = L10n.Localizable.WireMeetings.Schedule.Members
 
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.isClipboardEnabled) private var isClipboardEnabled
     @Environment(\.wireAccentColor) private var wireAccentColor
     @State private(set) var viewModel: MemberSelectionViewModel
-    @State private var isEmailExpanded = true
 
     var body: some View {
         NavigationStack {
             List {
-                Section {
-                    NavigationLink {
-                        GroupSelectionView(viewModel: viewModel)
-                    } label: {
-                        Label(Strings.Groups.importButton, systemImage: "person.3")
-                    }
-                    .accessibilityLabel(Strings.Groups.importButton)
-                    .accessibilityIdentifier("meetingImportFromGroup")
-                }
-
-                if viewModel.allowsEmailInvitations {
-                    emailSection
-                }
-
                 Section {
                     if viewModel.isSelectedExpanded {
                         ForEach(viewModel.selectedMembers, id: \.qualifiedID) { row(for: $0) }
@@ -57,12 +40,6 @@ struct MemberSelectionView: View {
                         title: "\(Strings.Selected.title) (\(viewModel.selectedMembers.count))",
                         isExpanded: $viewModel.isSelectedExpanded
                     )
-                    .accessibilityIdentifier(
-                        Locators.WireMeetings.MeetingForm.selectedMembersIdentifier(
-                            isExpanded: viewModel.isSelectedExpanded
-                        )
-                    )
-                    .accessibilityValue(String(viewModel.selectedMembers.count))
                 }
 
                 Section {
@@ -97,82 +74,12 @@ struct MemberSelectionView: View {
                         viewModel.confirmSelection()
                         dismiss()
                     }
-                    .accessibilityIdentifier(Locators.WireMeetings.MeetingForm.membersSelect)
                 }
             }
         }
     }
 
     // MARK: - Subviews
-
-    private var emailSection: some View {
-        Section {
-            if isEmailExpanded {
-                HStack {
-                    ContextMenuControllableTextField(
-                        text: $viewModel.emailAddress,
-                        placeholder: Strings.Email.placeholder,
-                        isContextMenuAllowed: isClipboardEnabled,
-                        keyboardType: .emailAddress,
-                        textContentType: .emailAddress
-                    )
-                    .accessibilityLabel(Strings.Email.placeholder)
-                    .accessibilityIdentifier("meetingEmailAddress")
-
-                    if !viewModel.emailAddress.isEmpty {
-                        Button {
-                            viewModel.emailAddress = ""
-                        } label: {
-                            Image(systemName: "xmark.circle.fill")
-                                .foregroundStyle(ColorTheme.Buttons.Secondary.onEnabled.color)
-                                .frame(minWidth: 44, minHeight: 44)
-                        }
-                        .buttonStyle(.borderless)
-                        .accessibilityLabel(L10n.Accessibility.WireMeetings.Email.ClearButton.description)
-                        .accessibilityIdentifier("meetingEmailClear")
-                    }
-
-                    Button(Strings.Email.add, action: viewModel.addEmail)
-                        .buttonStyle(.borderless)
-                        .accessibilityIdentifier("meetingEmailAdd")
-                }
-                .frame(minHeight: 44)
-
-                if let error = viewModel.emailValidationError {
-                    Text(error == .invalidAddress ? Strings.Email.invalidAddress : Strings.Email.duplicateAddress)
-                        .font(.footnote)
-                        .foregroundStyle(
-                            error == .invalidAddress ? ColorTheme.Base.error.color : ColorTheme.Base.warning.color
-                        )
-                        .accessibilityIdentifier("meetingEmailValidation")
-                }
-
-                ForEach(viewModel.selectedEmails, id: \.self) { email in
-                    HStack {
-                        Text(email)
-                            .font(.body)
-                        Spacer()
-                        Button {
-                            viewModel.removeEmail(email)
-                        } label: {
-                            Image(systemName: "minus.circle")
-                                .foregroundStyle(ColorTheme.Base.error.color)
-                                .frame(minWidth: 44, minHeight: 44)
-                        }
-                        .buttonStyle(.borderless)
-                        .accessibilityLabel(Strings.Email.remove(email))
-                        .accessibilityIdentifier("meetingEmailRemove_\(email)")
-                    }
-                }
-            }
-        } header: {
-            sectionHeader(
-                title: "\(Strings.Email.title) (\(viewModel.selectedEmails.count))",
-                isExpanded: $isEmailExpanded
-            )
-            .accessibilityIdentifier("meetingEmailSection")
-        }
-    }
 
     @ViewBuilder private var contactsContent: some View {
         if !viewModel.filteredUnselected.isEmpty {
@@ -210,7 +117,6 @@ struct MemberSelectionView: View {
             ContentUnavailableView {
                 Label {
                     Text(Strings.Empty.title)
-                        .accessibilityIdentifier(Locators.WireMeetings.MeetingForm.membersEmptySearch.rawValue)
                 } icon: {
                     Image(systemName: "magnifyingglass")
                         .foregroundStyle(.primary)
@@ -238,7 +144,6 @@ struct MemberSelectionView: View {
                     .rotationEffect(.degrees(isExpanded.wrappedValue ? 0 : -90))
                     .foregroundStyle(accentColor)
             }
-            .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
         .textCase(nil)
@@ -281,13 +186,12 @@ struct MemberSelectionView: View {
             }
         }
         .buttonStyle(.plain)
-        .accessibilityIdentifier(Locators.WireMeetings.MeetingForm.memberIdentifier(member.qualifiedID.id.uuidString))
     }
 }
 
 // MARK: - Preview
 
-#Preview("Meeting group import") {
+#Preview("success") {
     MemberSelectionView(viewModel: MemberSelectionViewModel(source: MockSearchMembersUseCase()))
 }
 
@@ -306,11 +210,6 @@ struct MemberSelectionView: View {
 private struct MockSearchMembersUseCase: SearchMembersUseCaseProtocol {
 
     let result: Result<[MeetingMember], any Error>
-    private let groups = [
-        MeetingGroup(id: QualifiedID(id: UUID(), domain: ""), name: "Design team", isChannel: false),
-        MeetingGroup(id: QualifiedID(id: UUID(), domain: ""), name: "All hands", isChannel: true)
-    ]
-    private let guest = MeetingMember(name: "Group guest", handle: "guest")
 
     init(members: [MeetingMember] = .mock) {
         self.result = .success(members)
@@ -328,15 +227,6 @@ private struct MockSearchMembersUseCase: SearchMembersUseCaseProtocol {
             guard !query.isEmpty else { return members }
             return members.filter { $0.name.localizedCaseInsensitiveContains(query) }
         }
-    }
-
-    func searchGroups(query: String) async throws -> [MeetingGroup] {
-        _ = try result.get()
-        return groups.filter { query.isEmpty || $0.name.localizedStandardContains(query) }
-    }
-
-    func members(in groupID: QualifiedID) async throws -> [MeetingMember] {
-        Array(try result.get().prefix(3)) + [guest]
     }
 }
 

@@ -108,9 +108,7 @@ struct UpdateMeetingUseCaseTests {
             startTime: meeting.start,
             endTime: meeting.end,
             recurrence: recurrence,
-            participants: [Self.keptMember, Self.removedMember],
-            emailsToAdd: ["new@example.com"],
-            emailsToRemove: ["removed@example.com"]
+            participants: [Self.keptMember, Self.removedMember]
         )
 
         // Then
@@ -121,11 +119,6 @@ struct UpdateMeetingUseCaseTests {
         #expect(arguments?.startTime == meeting.start)
         #expect(arguments?.endTime == meeting.end)
         #expect(arguments?.recurrence == recurrence)
-        let emailArguments = meetingRepository
-            .updateInvitedEmailsIdQualifiedIDAddingStringRemovingStringVoidReceivedArguments
-        #expect(emailArguments?.id == meeting.id)
-        #expect(emailArguments?.adding == ["new@example.com"])
-        #expect(emailArguments?.removing == ["removed@example.com"])
         #expect(result == meeting)
     }
 
@@ -264,7 +257,6 @@ struct UpdateMeetingUseCaseTests {
         let removeArguments = conversationRepository
             .removeParticipantsParticipantsMeetingMemberFromConversationIDQualifiedIDVoidReceivedArguments
         #expect(removeArguments?.participants.isEmpty == true)
-        #expect(meetingRepository.updateInvitedEmailsIdQualifiedIDAddingStringRemovingStringVoidCallsCount == 0)
     }
 
     @Test("invoke does not touch the participants when updating the meeting fails")
@@ -282,43 +274,11 @@ struct UpdateMeetingUseCaseTests {
                 startTime: meeting.start,
                 endTime: meeting.end,
                 recurrence: nil,
-                participants: [Self.addedMember],
-                emailsToAdd: ["new@example.com"]
+                participants: [Self.addedMember]
             )
         }
         #expect(conversationRepository
             .updateConversationNameNameStringForConversationIDQualifiedIDVoidCallsCount == 0)
-        #expect(conversationRepository
-            .addParticipantsParticipantsMeetingMemberToConversationIDQualifiedIDVoidCallsCount == 0)
-        #expect(conversationRepository
-            .removeParticipantsParticipantsMeetingMemberFromConversationIDQualifiedIDVoidCallsCount == 0)
-        #expect(meetingRepository.updateInvitedEmailsIdQualifiedIDAddingStringRemovingStringVoidCallsCount == 0)
-    }
-
-    @Test("invoke reports an email failure before changing conversation members")
-    func invokeStopsWhenEmailInvitationsFail() async {
-        meetingRepository
-            .updateMeetingIdQualifiedIDTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceMeetingReturnValue =
-            meeting
-        meetingRepository.updateInvitedEmailsIdQualifiedIDAddingStringRemovingStringVoidThrowableError =
-            URLError(.networkConnectionLost)
-
-        await #expect(throws: UpdateMeetingUseCaseError.emailInvitationsFailed(updatedMeeting: meeting)) {
-            _ = try await useCase.invoke(
-                meeting: meeting,
-                title: meeting.title,
-                startTime: meeting.start,
-                endTime: meeting.end,
-                recurrence: nil,
-                participants: [Self.keptMember, Self.addedMember],
-                emailsToAdd: ["new@example.com"],
-                emailsToRemove: ["removed@example.com"]
-            )
-        }
-
-        #expect(meetingRepository
-            .updateMeetingIdQualifiedIDTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceMeetingCallsCount ==
-            1)
         #expect(conversationRepository
             .addParticipantsParticipantsMeetingMemberToConversationIDQualifiedIDVoidCallsCount == 0)
         #expect(conversationRepository

@@ -56,9 +56,7 @@ struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAd
 
         let logAttributes: LogAttributes = [
             .messageType: "conversation.otr-message-add",
-            .conversationId: conversationID.id.safeForLoggingDescription,
-            .senderUserId: senderID.id.safeForLoggingDescription,
-            .public: true
+            .conversationId: conversationID.id.safeForLoggingDescription
         ]
 
         // Deserialize early so availability updates can be handled before conversation-level

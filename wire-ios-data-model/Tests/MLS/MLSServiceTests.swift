@@ -19,7 +19,6 @@
 import Combine
 import Foundation
 import WireCoreCrypto
-import WireData
 import WireFoundation
 import WireTesting
 import XCTest
@@ -802,13 +801,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             // A group with pending proposal in the future
             conversation = createConversation(in: uiMOC)
             conversation.mlsGroupID = groupID
-            PendingProposalTimer.schedule(
-                mlsGroupID: groupID.data,
-                conversationID: UUID(),
-                conversationDomain: nil,
-                fireDate: futureCommitDate,
-                in: uiMOC
-            )
+            conversation.commitPendingProposalDate = futureCommitDate
         }
 
         // Mock commiting a pending proposal
@@ -843,8 +836,8 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         // Then we committed pending proposals.
         XCTAssertEqual(mockCommitPendingProposalsArgument, [groupID])
 
-        await uiMOC.perform { [uiMOC] in
-            XCTAssertNil(PendingProposalTimer.fetch(mlsGroupID: groupID.data, in: uiMOC))
+        await uiMOC.perform {
+            XCTAssertNil(conversation.commitPendingProposalDate)
         }
 
         // Then we added the members.
@@ -1301,13 +1294,7 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             // A group with pending proposal in the future
             conversation = createConversation(in: uiMOC)
             conversation.mlsGroupID = groupID
-            PendingProposalTimer.schedule(
-                mlsGroupID: groupID.data,
-                conversationID: UUID(),
-                conversationDomain: nil,
-                fireDate: futureCommitDate,
-                in: uiMOC
-            )
+            conversation.commitPendingProposalDate = futureCommitDate
         }
 
         // Mock commiting a pending proposal.
@@ -1332,8 +1319,8 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
         // Then we committed pending proposals.
         XCTAssertEqual(mockCommitPendingProposalsArgument, [groupID])
 
-        await uiMOC.perform { [uiMOC] in
-            XCTAssertNil(PendingProposalTimer.fetch(mlsGroupID: groupID.data, in: uiMOC))
+        await uiMOC.perform {
+            XCTAssertNil(conversation.commitPendingProposalDate)
         }
 
         // Then we removed the clients.
@@ -1507,59 +1494,6 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
 
         // Then
         XCTAssertEqual(mockMLSActionExecutor.mockJoinGroupCount, 1)
-    }
-
-    func test_RecoverPendingConversationBatchIfNeeded_ContinuesWhenRecoveryIsRequestedWhileRunning() async {
-        // Given
-        let groupIDA = MLSGroupID.random()
-        let groupIDB = MLSGroupID.random()
-        await insertPendingForeignGroupConversation(groupID: groupIDA)
-
-        mockActionsProvider.fetchConversationGroupInfoConversationIdDomainSubgroupTypeContext_MockValue = Data()
-
-        var joinedGroupIDs = [MLSGroupID]()
-        var overlappingRecoveryResult: Bool?
-        mockMLSActionExecutor.mockJoinGroup = { groupID, _ in
-            joinedGroupIDs.append(groupID)
-            guard groupID == groupIDA else { return }
-
-            // While A is being joined, a sync marks B as pending and requests recovery.
-            await self.insertPendingForeignGroupConversation(groupID: groupIDB)
-            overlappingRecoveryResult = await self.sut.recoverPendingConversationBatchIfNeeded()
-        }
-
-        // When
-        let shouldRecoverNextBatch = await sut.recoverPendingConversationBatchIfNeeded()
-
-        // Then
-        XCTAssertEqual(overlappingRecoveryResult, false)
-        XCTAssertTrue(shouldRecoverNextBatch)
-        XCTAssertEqual(joinedGroupIDs, [groupIDA])
-
-        // When
-        let shouldRecoverAnotherBatch = await sut.recoverPendingConversationBatchIfNeeded()
-
-        // Then
-        XCTAssertFalse(shouldRecoverAnotherBatch)
-        XCTAssertEqual(joinedGroupIDs, [groupIDA, groupIDB])
-    }
-
-    private func insertPendingForeignGroupConversation(groupID: MLSGroupID) async {
-        await uiMOC.perform { [uiMOC] in
-            let conversation = ZMConversation.insertNewObject(in: uiMOC)
-            conversation.remoteIdentifier = UUID.create()
-            conversation.mlsGroupID = groupID
-            conversation.messageProtocol = .mls
-            conversation.mlsStatus = .pendingJoin
-            conversation.conversationType = .group
-            conversation.epoch = 0
-            conversation.domain = "foreign.domain"
-            conversation.addParticipantAndUpdateConversationState(
-                user: ZMUser.selfUser(in: uiMOC),
-                role: nil
-            )
-            XCTAssertTrue(uiMOC.saveOrRollback())
-        }
     }
 
     func assert_PerformPendingJoins_It_Establishes_Group(

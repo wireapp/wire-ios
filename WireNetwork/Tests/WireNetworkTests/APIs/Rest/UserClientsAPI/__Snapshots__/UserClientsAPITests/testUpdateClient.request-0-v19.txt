@@ -1,5 +1,0 @@
-curl \
-	--request PUT \
-	--header "Content-Type: application/json" \
-	--data "{\"capabilities\":[\"legalhold-implicit-consent\",\"consumable-notifications\"]}" \
-	"/v19/clients/000600d0-000b-9c1a-000d-a4130002c221"

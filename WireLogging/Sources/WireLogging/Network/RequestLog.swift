@@ -85,26 +85,15 @@ public extension URL {
         let searchContactPath = "/search/contacts"
 
         let path = components?.path ?? ""
-        let keyPairIdName = "Key-Pair-Id"
-
         guard path.contains(searchContactPath) else {
-            // redact the CloudFront key pair id of asset URLs
-            guard var items = components?.queryItems,
-                  items.contains(where: { $0.name == keyPairIdName }) else {
-                return absoluteString
-            }
-            for index in items.indices where items[index].name == keyPairIdName {
-                items[index].value = "***"
-            }
-            components?.queryItems = items
-            return components?.string ?? absoluteString
+            return absoluteString
         }
 
         // redact query param
         var queryComponents = components?.queryItems ?? []
         queryComponents.enumerated().forEach { item in
             var redactedItem = item.element
-            if redactedItem.name == "q" || redactedItem.name == keyPairIdName {
+            if redactedItem.name == "q" {
                 redactedItem.value = "***"
             }
             queryComponents[item.offset] = redactedItem

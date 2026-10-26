@@ -79,8 +79,6 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
         userSession.isAppLockActive
     }
 
-    private let isSnapshotTesting: Bool
-
     // MARK: - Life Cycle
 
     convenience init(userSession: UserSession) {
@@ -103,10 +101,9 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
         )
     }
 
-    init(audioRecorder: AudioRecorderType, userSession: UserSession, isSnapshotTesting: Bool = false) {
+    init(audioRecorder: AudioRecorderType, userSession: UserSession) {
         self.recorder = audioRecorder
         self.userSession = userSession
-        self.isSnapshotTesting = isSnapshotTesting
         super.init(nibName: nil, bundle: nil)
         configureViews(userSession: userSession)
         configureAudioRecorder()
@@ -193,7 +190,7 @@ final class AudioRecordKeyboardViewController: UIViewController, AudioRecordBase
         let recordingHintText = L10n.Localizable.Conversation.InputBar.AudioMessage.Keyboard.recordTip("%@")
 
         let effects = AVSAudioEffectType.displayedEffects.filter { $0 != .none }
-        let randomIndex = isSnapshotTesting ? 0 : Int.random(in: 0 ..< effects.count)
+        let randomIndex = Int.random(in: 0 ..< effects.count)
         let effect = effects[randomIndex]
         let image = effect.icon.makeImage(size: 14, color: color)
 

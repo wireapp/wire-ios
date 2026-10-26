@@ -136,12 +136,8 @@ class E2eIAPIV17: E2eIAPIV16 {
     override var apiVersion: APIVersion { .v17 }
 }
 
-class E2eIAPIV18: E2eIAPIV17 {
+final class E2eIAPIV18: E2eIAPIV17 {
     override var apiVersion: APIVersion { .v18 }
-}
-
-final class E2eIAPIV19: E2eIAPIV18 {
-    override var apiVersion: APIVersion { .v19 }
 }
 
 private enum Constant {

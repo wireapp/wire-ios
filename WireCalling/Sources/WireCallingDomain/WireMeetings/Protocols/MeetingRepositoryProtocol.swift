@@ -38,11 +38,8 @@ public protocol MeetingRepositoryProtocol: Sendable {
         title: String,
         startTime: Date,
         endTime: Date,
-        recurrence: MeetingRecurrence?,
-        type: MeetingType,
-        password: String?,
-        invitedEmails: [String]
-    ) async throws -> MeetingCreationResult
+        recurrence: MeetingRecurrence?
+    ) async throws -> Meeting
 
     /// Updates a meeting on the server and refreshes the locally stored copy.
     ///
@@ -55,10 +52,6 @@ public protocol MeetingRepositoryProtocol: Sendable {
         endTime: Date,
         recurrence: MeetingRecurrence?
     ) async throws -> Meeting
-
-    func fetchInvitedEmails(id: QualifiedID) async throws -> [String]
-
-    func updateInvitedEmails(id: QualifiedID, adding: [String], removing: [String]) async throws
 
     /// Stores a meeting locally without contacting the server, linking it to
     /// locally stored entities such as its conversation and creator.
@@ -76,8 +69,6 @@ public protocol MeetingRepositoryProtocol: Sendable {
     @discardableResult
     func pullMeeting(id: QualifiedID) async throws -> Meeting?
 
-    func fetchMeetingLink(id: QualifiedID) async throws -> MeetingLink?
-
     /// Pulls all meetings from the server, replacing the locally stored
     /// meetings, e.g. as part of a sync.
     ///
@@ -86,11 +77,10 @@ public protocol MeetingRepositoryProtocol: Sendable {
     func pullMeetings() async throws
 
     /// Deletes a locally stored meeting without contacting the server.
-    /// Throws if local cleanup fails.
     ///
     /// - Parameter id: The qualified id of the meeting to delete.
 
-    func deleteLocalMeeting(id: QualifiedID) async throws
+    func deleteLocalMeeting(id: QualifiedID) async
 
     /// Deletes a meeting on the server and removes the locally stored copy.
     ///

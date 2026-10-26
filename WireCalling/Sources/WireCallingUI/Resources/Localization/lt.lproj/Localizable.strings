@@ -21,12 +21,8 @@
 "meetings.list.loadError" = "Could not load meetings. Please try again.";
 "meetings.deleteModal.error.deleteFailedTitle" = "Could not delete meeting";
 "meetings.deleteModal.error.deleteFailed" = "Something went wrong while deleting the meeting. Please try again.";
-"meetings.deleteModal.error.cleanupFailedTitle" = "Meeting deleted";
-"meetings.deleteModal.error.deleteSucceededButLocalCleanupFailed" = "The meeting was deleted, but something went wrong while cleaning up the conversation locally. Please refresh the meetings list if it still appears.";
-"meetings.deleteModal.error.notAllowedTitle" = "Cannot delete meeting";
-"meetings.deleteModal.error.notAllowed" = "This meeting can no longer be deleted. It may have already ended, or you may not have permission to delete it.";
 "meetings.deleteModal.error.leaveConversationFailedTitle" = "Could not leave meeting";
-"meetings.deleteModal.error.leaveConversationFailed" = "Something went wrong while leaving the meeting. Please try again.";
+"meetings.deleteModal.error.leaveConversationFailed" = "Something went wrong while leaving the meeting conversation. Please try again.";
 "wireMeetings.retry" = "Retry";
 "wireMeetings.list.title" = "Meetings";
 "wireMeetings.list.tabs.past" = "Past";
@@ -62,42 +58,14 @@
 "wireMeetings.list.delete.error.alert.title" = "Kažkas atsitiko";
 "wireMeetings.list.delete.error.alert.ok" = "GERAI";
 
-// MARK: - Meeting link
-
-"wireMeetings.link.title" = "Meeting link";
-"wireMeetings.link.description" = "Anyone with the link can access the meeting.";
-"wireMeetings.link.passwordProtected" = "The link is password protected. To set a new password, generate a new link.";
-"wireMeetings.link.notPasswordProtected" = "This link is not password protected. Make sure to share it only with the right people. To add a password, generate a new link.";
-"wireMeetings.link.copy" = "Copy link";
-"wireMeetings.link.copied" = "Link copied to clipboard";
-"wireMeetings.link.unavailable" = "The meeting link is unavailable.";
-"wireMeetings.link.loadError" = "Could not load the meeting link. Please try again.";
-
 // MARK: - Schedule a meeting
 
-"meetings.error.missingLink" = "The meeting was created, but its link is unavailable.";
-"meetings.error.setupFailedTitle" = "Could not finish meeting setup";
-"meetings.error.conversationSetupFailed" = "The meeting was saved, but something went wrong while setting up the conversation. Please try again.";
-"meetings.error.addParticipantsFailed" = "The meeting was saved, but some participants could not be added. Please try again.";
 "meetings.scheduleModal.error.createFailedTitle" = "Could not schedule meeting";
 "meetings.scheduleModal.error.createFailed" = "Something went wrong while scheduling the meeting. Please try again.";
 "meetings.meetNowModal.error.createFailedTitle" = "Could not start meeting";
 "meetings.meetNowModal.error.createFailed" = "Something went wrong while starting the meeting. Please try again.";
 "meetings.scheduleModal.error.updateFailedTitle" = "Could not update meeting";
 "meetings.scheduleModal.error.updateFailed" = "Something went wrong while updating the meeting. Please try again.";
-"meetings.scheduleModal.error.editMeetingIdMissing" = "Something went wrong while updating the meeting. Please close the dialog and try again.";
-"meetings.scheduleModal.error.removeParticipantsFailed" = "The meeting was updated, but some participants could not be removed. Please try again.";
-"meetings.scheduleModal.error.addParticipantsFailed" = "The meeting was saved, but some participants could not be added. Please try again.";
-"failedToAddParticipantSingularNonFederatingBackends" = "**%@** could not be added to the group as their backend doesn't federate with the backends of all group participants.";
-"failedToAddParticipantSingularOfflineBackend" = "**%@** could not be added to the group as the backend of **%@** could not be reached.";
-"failedToAddParticipantSingularOfflineForTooLong" = "**%@** could not be added to the group.";
-"failedToAddParticipantsPlural" = "**%d participants** could not be added to the group.";
-"failedToAddParticipantsPluralDetailsNonFederatingBackends" = "**%@** and **%@** could not be added to the group as their backends do not federate with each other.";
-"failedToAddParticipantsPluralDetailsOfflineBackend" = "**%@** and **%@** could not be added to the group as the backend of **%@** could not be reached.";
-"failedToAddParticipantsPluralDetailsOfflineForTooLong" = "**%@** and **%@** could not be added to the group.";
-"failedToAddParticipantsSingularDetailsNonFederatingBackends" = "**%@** could not be added to the group as their backends do not federate with each other.";
-"failedToAddParticipantsSingularDetailsOfflineBackend" = "**%@** could not be added to the group as the backend of **%@** could not be reached.";
-"failedToAddParticipantsSingularDetailsOfflineForTooLong" = "**%@** could not be added to the group.";
 "wireMeetings.schedule.now.title" = "Meet now";
 "wireMeetings.schedule.future.title" = "New meeting";
 "wireMeetings.schedule.edit.title" = "Edit Meeting";
@@ -109,18 +77,6 @@
 "wireMeetings.schedule.setupTitle.header" = "Title";
 "wireMeetings.schedule.setupTitle.placeholder" = "Enter meeting title";
 "wireMeetings.schedule.setupTitle.error.tooLong" = "Per daug simbolių";
-"wireMeetings.schedule.password.title" = "Optional: set a password on the meeting link";
-"wireMeetings.schedule.password.placeholder" = "Enter a password";
-"wireMeetings.schedule.password.requirements" = "Use at least %d characters, with one lowercase letter, one capital letter, a number, and a special character.";
-"wireMeetings.schedule.password.copy" = "Copy password";
-"wireMeetings.schedule.password.copied" = "Copied";
-"wireMeetings.schedule.password.clear" = "Clear password";
-"wireMeetings.schedule.password.clear_confirmation" = "Clear password confirmation";
-"wireMeetings.schedule.password.generate" = "Generate password";
-"wireMeetings.schedule.password.confirm" = "Confirm password";
-"wireMeetings.schedule.password.mismatch" = "Passwords do not match";
-"wireMeetings.schedule.password.show" = "Show password";
-"wireMeetings.schedule.password.hide" = "Hide password";
 "wireMeetings.schedule.setupParticipants.header" = "Dalyviai";
 "wireMeetings.schedule.setupParticipants.placeholder" = "Pridėti pašnekovų";
 "wireMeetings.schedule.error.alert.title" = "Kažkas atsitiko";
@@ -155,25 +111,6 @@
 "wireMeetings.schedule.members.retry.button" = "Retry";
 "wireMeetings.schedule.members.selected.title" = "Selected";
 "wireMeetings.schedule.members.contacts.title" = "Kontaktai";
-"wireMeetings.schedule.members.groups.importButton" = "Add group members";
-"wireMeetings.schedule.members.groups.title" = "Groups and channels";
-"wireMeetings.schedule.members.groups.searchPlaceholder" = "Search groups and channels";
-"wireMeetings.schedule.members.groups.group" = "Group";
-"wireMeetings.schedule.members.groups.channel" = "Channel";
-"wireMeetings.schedule.members.groups.emptyTitle" = "No groups or channels found";
-"wireMeetings.schedule.members.groups.emptyDescription" = "The list only shows groups and channels you have joined.";
-"wireMeetings.schedule.members.groups.loading" = "Loading groups and channels";
-"wireMeetings.schedule.members.groups.importing" = "Adding participants";
-"wireMeetings.schedule.members.groups.importError" = "Participants could not be added";
 
 "wireMeetings.schedule.error.expiredStartDate.title" = "Choose a later start time";
 "wireMeetings.schedule.error.expiredStartDate.message" = "You can only edit meetings that started less than 24 hours ago. Please select a later start time and try again.";
-
-"wireMeetings.schedule.members.email.title" = "Invitation via email";
-"wireMeetings.schedule.members.email.placeholder" = "Enter an email address";
-"wireMeetings.schedule.members.email.add" = "Pridėti";
-"wireMeetings.schedule.members.email.invalidAddress" = "Enter a valid email address.";
-"wireMeetings.schedule.members.email.duplicateAddress" = "This email address is already added.";
-"wireMeetings.schedule.members.email.remove" = "Remove %@";
-"wireMeetings.schedule.email.loadFailed" = "Could not load email invitees.";
-"wireMeetings.schedule.email.saveFailed" = "The meeting was saved, but some invitation changes could not be completed. Open Edit to check the participants.";

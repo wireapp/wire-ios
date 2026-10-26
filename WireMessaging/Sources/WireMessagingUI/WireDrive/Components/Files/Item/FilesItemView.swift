@@ -35,7 +35,6 @@ struct FilesItemView: View {
     @ScaledMetric private var iconHorizontalPadding: CGFloat = 7
     @ScaledMetric private var scale: CGFloat = 1
     @Environment(\.wireAccentColor) private var wireAccentColor
-    @Environment(\.editMode) var editMode
 
     init(viewModel: @autoclosure @escaping () -> FilesItemViewModel) {
         self._viewModel = StateObject(wrappedValue: viewModel())
@@ -57,7 +56,6 @@ struct FilesItemView: View {
                         .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
 
                     infoRow()
-                        .task { await viewModel.keepSubtitleUpToDate() }
                 }
                 .accessibilityElement(children: .combine)
                 .accessibilitySortPriority(2)
@@ -80,7 +78,6 @@ struct FilesItemView: View {
                 }
                 .tint(nil)
                 .menuOrder(.fixed)
-                .disabled(editMode?.wrappedValue ?? .inactive == .active)
                 .accessibilitySortPriority(1)
                 .deletionConfirmationDialog( // delete file to recycle bin
                     isPresented: $viewModel.isPresentingDeleteFileToRecycleBinConfirmation,

@@ -26,14 +26,7 @@ import XCTest
 
 public struct SnapshotHelper {
 
-    /// The default fraction of pixels that must match the reference snapshot.
-    public static let defaultPrecision: Float = 0.99999
-
-    /// The default similarity required for an individual pixel to count as matching.
-    public static let defaultPerceptualPrecision: Float = 0.95
-
-    private let precision = Self.defaultPrecision
-    private var perceptualPrecision = Self.defaultPerceptualPrecision
+    private var perceptualPrecision: Float = 1
     private var traits = UITraitCollection()
     private var layout: SwiftUISnapshotLayout = .sizeThatFits
     /// If empty, the `SNAPSHOT_REFERENCE_DIR` environment variable is read.
@@ -210,7 +203,6 @@ public struct SnapshotHelper {
             let failure = verifySnapshot(
                 of: value,
                 as: .image(
-                    precision: precision,
                     perceptualPrecision: perceptualPrecision,
                     layout: layout,
                     traits: traits
@@ -389,10 +381,7 @@ public struct SnapshotHelper {
         withSnapshotTesting(record: defaultRecordMode) {
             let failure = verifySnapshot(
                 of: value,
-                as: config.map {
-                    .image(on: $0, precision: precision, perceptualPrecision: perceptualPrecision, traits: traits)
-                } ?? .image(
-                    precision: precision,
+                as: config.map { .image(on: $0, perceptualPrecision: perceptualPrecision, traits: traits) } ?? .image(
                     perceptualPrecision: perceptualPrecision,
                     traits: traits
                 ),
@@ -430,7 +419,7 @@ public struct SnapshotHelper {
         withSnapshotTesting(record: defaultRecordMode) {
             let failure = verifySnapshot(
                 of: value,
-                as: .image(precision: precision, perceptualPrecision: perceptualPrecision, traits: traits),
+                as: .image(perceptualPrecision: perceptualPrecision, traits: traits),
                 named: name,
                 record: record,
                 snapshotDirectory: snapshotDirectory,
@@ -479,7 +468,7 @@ public struct SnapshotHelper {
         for (config, name) in allDevices {
             let failure = verifySnapshot(
                 of: value,
-                as: .image(on: config, precision: precision, perceptualPrecision: perceptualPrecision),
+                as: .image(on: config, perceptualPrecision: perceptualPrecision),
                 named: name,
                 snapshotDirectory: snapshotDirectory,
                 file: file,
@@ -516,7 +505,6 @@ public struct SnapshotHelper {
                     of: value,
                     as: .image(
                         on: config,
-                        precision: precision,
                         perceptualPrecision: perceptualPrecision
                     ),
                     named: name, snapshotDirectory: snapshotDirectory,
@@ -552,7 +540,7 @@ public struct SnapshotHelper {
         withSnapshotTesting(record: defaultRecordMode) {
             let failure = verifySnapshot(
                 of: value,
-                as: .image(precision: precision, perceptualPrecision: perceptualPrecision),
+                as: .image,
                 named: name,
                 record: recording,
                 snapshotDirectory: snapshotDirectory,
@@ -602,8 +590,6 @@ public struct SnapshotHelper {
                 let failure = verifySnapshot(
                     of: value,
                     as: .image(
-                        precision: precision,
-                        perceptualPrecision: perceptualPrecision,
                         traits: .init(preferredContentSizeCategory: contentSize)
                     ),
                     named: name,

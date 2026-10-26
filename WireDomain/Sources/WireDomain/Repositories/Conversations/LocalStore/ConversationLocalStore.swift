@@ -18,7 +18,6 @@
 
 import CoreData
 import GenericMessageProtocol
-import WireData
 import WireDataModel
 import WireLogging
 
@@ -113,12 +112,11 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         epoch: UInt64,
         conversation: ZMConversation
     ) async {
-        await context.perform { [context] in
+        await context.perform {
             conversation.mlsStatus = .ready
             conversation.epoch = epoch
             conversation.mlsGroupID = mlsGroupID
             conversation.commitPendingProposalDate = nil
-            PendingProposalTimer.remove(mlsGroupID: mlsGroupID.data, in: context)
         }
     }
 
@@ -126,15 +124,10 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         newMLSGroupID: MLSGroupID,
         conversation: ZMConversation
     ) async {
-        await context.perform { [context] in
-            if let previousGroupID = conversation.mlsGroupID {
-                PendingProposalTimer.remove(mlsGroupID: previousGroupID.data, in: context)
-            }
-
+        await context.perform {
             conversation.mlsStatus = .pendingJoinAfterReset
             conversation.mlsGroupID = newMLSGroupID
             conversation.commitPendingProposalDate = nil
-            PendingProposalTimer.remove(mlsGroupID: newMLSGroupID.data, in: context)
             conversation.epoch = 0
         }
     }
@@ -657,19 +650,8 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     ) async {
         let scheduledDate = date + TimeInterval(commitDelay)
 
-        await context.perform { [context] in
-            guard let mlsGroupID = conversation.mlsGroupID, let conversationID = conversation.remoteIdentifier else {
-                return
-            }
-
-            PendingProposalTimer.schedule(
-                mlsGroupID: mlsGroupID.data,
-                conversationID: conversationID,
-                conversationDomain: conversation.domain,
-                fireDate: scheduledDate,
-                keepExistingFireDate: true,
-                in: context
-            )
+        await context.perform {
+            conversation.commitPendingProposalDate = scheduledDate
         }
     }
 
@@ -920,7 +902,6 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             ) else {
                 return
             }
-            PendingProposalTimer.remove(mlsGroupID: mlsGroupID.data, in: context)
             conversation.mlsGroupID = nil
             context.saveOrRollback()
         }

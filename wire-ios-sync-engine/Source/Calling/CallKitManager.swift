@@ -804,8 +804,7 @@ extension CallKitManager: WireCallCenterCallStateObserver, WireCallCenterMissedC
         conversation: ZMConversation,
         caller: UserType,
         timestamp: Date?,
-        previousCallState: CallState?,
-        callEndReason: CallClosedReason?
+        previousCallState: CallState?
     ) {
         logger.info("received new call state: \(callState)")
 
@@ -830,13 +829,12 @@ extension CallKitManager: WireCallCenterCallStateObserver, WireCallCenterMissedC
                 )
 
             } else {
-                let reason = callEndReason?.CXCallEndedReason ?? .unanswered
-                logger.info("will report call ended, reason \(reason)")
+                logger.info("will report call ended, reason unanswered")
 
                 reportCallEnded(
                     in: conversation,
                     atTime: timestamp,
-                    reason: reason
+                    reason: .unanswered
                 )
             }
 

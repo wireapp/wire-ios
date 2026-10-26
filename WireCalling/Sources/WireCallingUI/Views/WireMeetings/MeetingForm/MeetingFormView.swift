@@ -17,12 +17,10 @@
 //
 
 import SwiftUI
-import UIKit
 import WireCallingDomain
 import WireCallingDomainSupport
 import WireDesign
 import WireFoundation
-import WireLocators
 
 struct MeetingFormView: View {
     private typealias Strings = L10n.Localizable.WireMeetings.Schedule
@@ -31,13 +29,9 @@ struct MeetingFormView: View {
 
     @Environment(\.dismiss) private var dismiss
     @Environment(\.wireAccentColor) private var wireAccentColor
-    @Environment(\.isClipboardEnabled) private var isClipboardEnabled
     @State private(set) var viewModel: MeetingFormViewModel
     @State private var expandedField: ExpandedField?
     @State private var isPresentingMemberSelection = false
-    @State private var isPasswordVisible = false
-    @State private var isPasswordCopied = false
-    @ScaledMetric private var passwordFieldHeight: CGFloat = 44
     @FocusState private var isTitleFieldFocused: Bool
 
     var body: some View {
@@ -48,9 +42,6 @@ struct MeetingFormView: View {
                     scheduleSection
                 }
                 participantsSection
-                if viewModel.canSetPassword {
-                    passwordSection
-                }
             }
             .listSectionSpacing(.compact)
             .onAppear {
@@ -60,7 +51,6 @@ struct MeetingFormView: View {
                     isTitleFieldFocused = true
                 }
             }
-            .task { await viewModel.loadInvitedEmails() }
             .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in
                 formatter = MeetingsFormatter()
             }
@@ -73,19 +63,17 @@ struct MeetingFormView: View {
                     Button(Strings.Cancel.button) {
                         dismiss()
                     }
-                    .accessibilityIdentifier(Locators.WireMeetings.MeetingForm.cancel)
                 }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     if viewModel.isLoading {
                         ProgressView()
                             .accessibilityLabel(actionButtonLabel)
-                            .accessibilityIdentifier(Locators.WireMeetings.MeetingForm.loading)
+                            .accessibilityIdentifier("meetingFormLoading")
                     } else {
                         Button(actionButtonLabel) {
                             Task { await viewModel.submit() }
                         }
                         .disabled(!viewModel.isNextButtonEnabled)
-                        .accessibilityIdentifier(Locators.WireMeetings.MeetingForm.save)
                     }
                 }
             }
@@ -93,21 +81,21 @@ struct MeetingFormView: View {
             .sheet(isPresented: $isPresentingMemberSelection) {
                 MemberSelectionView(viewModel: viewModel.makeMemberSelectionViewModel())
             }
-            .alert(viewModel.errorTitle, isPresented: $viewModel.hasError) {
-                Button(Strings.Error.Alert.ok) {
-                    viewModel.acknowledgeError { dismiss() }
-                }
-                .accessibilityIdentifier(Locators.WireMeetings.MeetingForm.errorDismiss)
-            } message: {
-                Text(MeetingParticipantErrorFormatter.attributed(viewModel.errorMessage))
+            .alert(isPresented: $viewModel.hasError) {
+                Alert(
+                    title: Text(errorContent.title),
+                    message: Text(errorContent.message),
+                    dismissButton: .default(Text(Strings.Error.Alert.ok))
+                )
             }
             .alert(
-                viewModel.mode.isEdit ? Strings.ParticipantsNotAdded.title : Strings.ParticipantsNotAdded.createdTitle,
+                Strings.ParticipantsNotAdded.title,
                 isPresented: $viewModel.hasParticipantsNotAddedAlert
             ) {
                 Button(Strings.Error.Alert.ok, action: viewModel.acknowledgeParticipantsNotAdded)
             } message: {
-                Text(MeetingParticipantErrorFormatter.attributed(viewModel.participantsNotAddedMessage))
+                Text(Strings.ParticipantsNotAdded
+                    .message(viewModel.participantsNotAdded.map(\.name).joined(separator: ", ")))
             }
             .alert(
                 Strings.Error.ExpiredStartDate.title,
@@ -126,10 +114,21 @@ struct MeetingFormView: View {
                 Button(Strings.Error.ConversationName.retry) {
                     Task { await viewModel.retryConversationNameUpdate() }
                 }
-                Button(Strings.Error.Alert.ok, role: .cancel) { dismiss() }
             } message: {
-                Text(MeetingParticipantErrorFormatter.attributed(viewModel.conversationNameErrorMessage))
+                Text(Strings.Error.ConversationName.message)
             }
+        }
+    }
+
+    private var errorContent: (title: String, message: String) {
+        typealias Errors = L10n.Localizable.Meetings
+        switch viewModel.mode {
+        case .instant:
+            return (Errors.MeetNowModal.Error.createFailedTitle, Errors.MeetNowModal.Error.createFailed)
+        case .scheduled:
+            return (Errors.ScheduleModal.Error.createFailedTitle, Errors.ScheduleModal.Error.createFailed)
+        case .edit:
+            return (Errors.ScheduleModal.Error.updateFailedTitle, Errors.ScheduleModal.Error.updateFailed)
         }
     }
 
@@ -159,7 +158,6 @@ struct MeetingFormView: View {
         Section {
             HStack {
                 TextField(Strings.SetupTitle.placeholder, text: $viewModel.meetingTitle)
-                    .accessibilityIdentifier(Locators.WireMeetings.MeetingForm.title)
                     .focused($isTitleFieldFocused)
                 if !viewModel.meetingTitle.isEmpty {
                     Image(systemName: "xmark.circle.fill")
@@ -167,7 +165,6 @@ struct MeetingFormView: View {
                         .onTapGesture {
                             viewModel.clearTitle()
                         }
-                        .accessibilityIdentifier(Locators.WireMeetings.MeetingForm.clearTitle)
                 }
             }
         } header: {
@@ -176,7 +173,6 @@ struct MeetingFormView: View {
             if viewModel.isMeetingTitleTooLong {
                 Text(Strings.SetupTitle.Error.tooLong)
                     .foregroundStyle(ColorTheme.Base.error.color)
-                    .accessibilityIdentifier(Locators.WireMeetings.MeetingForm.titleError)
             }
         }
         .textCase(nil)
@@ -205,120 +201,18 @@ struct MeetingFormView: View {
                 ForEach(viewModel.availableRepeatOptions, id: \.self) { option in
                     Text(option.title)
                         .tag(option)
-                        .accessibilityIdentifier(option.locator.rawValue)
                 }
             }
-            .accessibilityIdentifier(Locators.WireMeetings.MeetingForm.repeatOption)
-        }
-    }
-
-    private var passwordSection: some View {
-        Section {
-            passwordField(
-                $viewModel.password,
-                placeholder: Strings.Password.placeholder,
-                isValid: viewModel.isPasswordValid,
-                locator: .password
-            )
-            passwordField(
-                $viewModel.confirmPassword,
-                placeholder: Strings.Password.confirm,
-                isValid: viewModel.confirmPassword.isEmpty || viewModel.passwordsMatch,
-                locator: .confirmPassword
-            )
-            Button(Strings.Password.generate, action: viewModel.generatePassword)
-                .accessibilityIdentifier(Locators.WireMeetings.MeetingForm.generatePassword)
-            Button(isPasswordCopied ? Strings.Password.copied : Strings.Password.copy) {
-                viewModel.copyPassword()
-                isPasswordCopied = true
-            }
-            .disabled(viewModel.password.isEmpty || !isClipboardEnabled || !viewModel.isPasswordValid)
-            .accessibilityIdentifier(Locators.WireMeetings.MeetingForm.copyPassword)
-            .task(id: isPasswordCopied) {
-                guard isPasswordCopied else { return }
-                do {
-                    try await Task.sleep(for: .seconds(3))
-                    isPasswordCopied = false
-                } catch {}
-            }
-            .onChange(of: Array(viewModel.password.unicodeScalars)) {
-                isPasswordCopied = false
-            }
-        } header: {
-            Text(Strings.Password.title)
-        } footer: {
-            VStack(alignment: .leading) {
-                if !viewModel.confirmPassword.isEmpty, !viewModel.passwordsMatch {
-                    Text(Strings.Password.mismatch)
-                        .foregroundStyle(ColorTheme.Base.error.color)
-                }
-                Text(Strings.Password.requirements(MeetingFormViewModel.minimumPasswordLength))
-                    .foregroundStyle(viewModel.isPasswordValid ? ColorTheme.Base.secondaryText.color : ColorTheme.Base
-                        .error.color)
-                    .accessibilityIdentifier(Locators.WireMeetings.MeetingForm.passwordRequirements)
-            }
-        }
-        .disabled(viewModel.isLoading)
-        .textCase(nil)
-    }
-
-    private func passwordField(
-        _ text: Binding<String>,
-        placeholder: String,
-        isValid: Bool,
-        locator: Locators.WireMeetings.MeetingForm
-    ) -> some View {
-        HStack {
-            ContextMenuControllableTextField(
-                text: text,
-                placeholder: placeholder,
-                isSecureTextEntry: !isPasswordVisible,
-                isContextMenuAllowed: isClipboardEnabled,
-                textContentType: .newPassword,
-                textColor: UIColor(isValid ? ColorTheme.Backgrounds.onSurface.color : ColorTheme.Base.error.color)
-            )
-            .id(isPasswordVisible)
-            .frame(height: passwordFieldHeight)
-            .accessibilityLabel(locator == .password ? Strings.Password.title : placeholder)
-            .accessibilityHint(locator == .password ?
-                Strings.Password.requirements(MeetingFormViewModel.minimumPasswordLength) : "")
-            .accessibilityIdentifier(locator)
-            if !text.wrappedValue.isEmpty {
-                Button {
-                    text.wrappedValue = ""
-                } label: {
-                    Image(systemName: "xmark.circle.fill")
-                        .foregroundStyle(Color(.lightGray))
-                        .frame(width: 44, height: 44)
-                        .contentShape(.rect)
-                }
-                .buttonStyle(.borderless)
-                .accessibilityLabel(locator == .password ? Strings.Password.clear : Strings.Password.clearConfirmation)
-                .accessibilityIdentifier(locator == .password ? Locators.WireMeetings.MeetingForm.clearPassword :
-                    Locators.WireMeetings.MeetingForm.clearConfirmPassword)
-            }
-            Button {
-                isPasswordVisible.toggle()
-            } label: {
-                Label(
-                    isPasswordVisible ? Strings.Password.hide : Strings.Password.show,
-                    systemImage: isPasswordVisible ? "eye.slash" : "eye"
-                )
-                .labelStyle(.iconOnly)
-            }
-            .buttonStyle(.borderless)
-            .accessibilityIdentifier(locator == .password ? Locators.WireMeetings.MeetingForm.passwordVisibility :
-                Locators.WireMeetings.MeetingForm.confirmPasswordVisibility)
         }
     }
 
     private var participantsSection: some View {
-        Section {
+        Section(Strings.SetupParticipants.header) {
             Button {
                 isPresentingMemberSelection = true
             } label: {
                 HStack {
-                    if viewModel.selectedParticipantCount == 0 {
+                    if viewModel.selectedMembers.isEmpty {
                         Text(Strings.SetupParticipants.placeholder)
                             .foregroundStyle(Color(.placeholderText))
                         Spacer()
@@ -327,7 +221,7 @@ struct MeetingFormView: View {
                             .foregroundStyle(.primary)
                             .lineLimit(1)
                         Spacer()
-                        Text("\(viewModel.selectedParticipantCount)")
+                        Text("\(viewModel.selectedMembers.count)")
                             .foregroundStyle(.secondary)
                             .lineLimit(1)
                             .truncationMode(.tail)
@@ -339,25 +233,6 @@ struct MeetingFormView: View {
                 .contentShape(.rect)
             }
             .buttonStyle(.plain)
-            .accessibilityIdentifier(Locators.WireMeetings.MeetingForm.participants)
-            .accessibilityValue(String(viewModel.selectedParticipantCount))
-            .disabled(viewModel.isLoading || viewModel.needsInvitedEmails)
-        } header: {
-            Text(Strings.SetupParticipants.header)
-        } footer: {
-            if viewModel.isLoadingInvitedEmails {
-                ProgressView()
-                    .accessibilityLabel(Strings.SetupParticipants.header)
-            } else if viewModel.hasEmailLoadError {
-                VStack(alignment: .leading) {
-                    Text(Strings.Email.loadFailed)
-                        .foregroundStyle(ColorTheme.Base.error.color)
-                    Button(Strings.Members.Retry.button) {
-                        Task { await viewModel.loadInvitedEmails() }
-                    }
-                    .accessibilityIdentifier("meetingEmailsRetry")
-                }
-            }
         }
         .textCase(nil)
     }
@@ -381,8 +256,7 @@ struct MeetingFormView: View {
             Spacer()
             pill(
                 text: formatter.date(date.wrappedValue),
-                isSelected: expandedField == dateField,
-                identifier: dateField.accessibilityIdentifier
+                isSelected: expandedField == dateField
             ) {
                 toggleExpansion(dateField)
             }
@@ -391,9 +265,7 @@ struct MeetingFormView: View {
             .accessibilityHidden(!isDateFieldEnabled)
             pill(
                 text: formatter.time(date.wrappedValue),
-                isSelected: expandedField == timeField,
-                identifier: timeField.accessibilityIdentifier,
-                value: formatter.date(date.wrappedValue)
+                isSelected: expandedField == timeField
             ) {
                 toggleExpansion(timeField)
             }
@@ -403,7 +275,6 @@ struct MeetingFormView: View {
             DatePicker("", selection: pickerDate ?? date, in: range, displayedComponents: .date)
                 .datePickerStyle(.graphical)
                 .labelsHidden()
-                .accessibilityIdentifier(Locators.WireMeetings.MeetingForm.datePicker)
         }
         if expandedField == timeField {
             timePicker(date: pickerDate ?? date, range: range, maximumDate: maximumDate)
@@ -418,15 +289,12 @@ struct MeetingFormView: View {
             maximumDate: maximumDate,
             minuteInterval: Self.timePickerMinuteInterval
         )
-        .accessibilityIdentifier(Locators.WireMeetings.MeetingForm.timePicker)
         .id(Calendar.current.isDate(date.wrappedValue, equalTo: range.lowerBound, toGranularity: .hour))
     }
 
     private func pill(
         text: String,
         isSelected: Bool,
-        identifier: String,
-        value: String = "",
         action: @escaping () -> Void
     ) -> some View {
         let accentColor = ColorTheme.Base.primary(wireAccentColor).color
@@ -442,8 +310,6 @@ struct MeetingFormView: View {
                 .foregroundStyle(isSelected ? accentColor : Color.primary)
         }
         .buttonStyle(.plain)
-        .accessibilityIdentifier(identifier)
-        .accessibilityValue(value)
     }
 
     private func toggleExpansion(_ field: ExpandedField) {
@@ -455,15 +321,6 @@ struct MeetingFormView: View {
         case startTime
         case endDate
         case endTime
-
-        var accessibilityIdentifier: String {
-            switch self {
-            case .startDate: Locators.WireMeetings.MeetingForm.startDate.rawValue
-            case .startTime: Locators.WireMeetings.MeetingForm.startTime.rawValue
-            case .endDate: Locators.WireMeetings.MeetingForm.endDate.rawValue
-            case .endTime: Locators.WireMeetings.MeetingForm.endTime.rawValue
-            }
-        }
     }
 }
 
@@ -523,18 +380,6 @@ private struct MinuteIntervalTimePicker: UIViewRepresentable {
 }
 
 private extension MeetingRepeatOption {
-
-    var locator: Locators.WireMeetings.MeetingForm.RepeatOption {
-        switch self {
-        case .never: .never
-        case .daily: .daily
-        case .weekly: .weekly
-        case .everyTwoWeeks: .everyTwoWeeks
-        case .everyFourWeeks: .everyFourWeeks
-        case .monthly: .monthly
-        case .yearly: .yearly
-        }
-    }
 
     typealias Strings = L10n.Localizable.WireMeetings.Schedule.Time
 
@@ -631,10 +476,6 @@ private struct MockSearchMembersUseCase: SearchMembersUseCaseProtocol {
         guard !query.isEmpty else { return members }
         return members.filter { $0.name.localizedCaseInsensitiveContains(query) }
     }
-
-    func searchGroups(query: String) async throws -> [MeetingGroup] { [] }
-
-    func members(in groupID: QualifiedID) async throws -> [MeetingMember] { [] }
 }
 
 private extension [MeetingMember] {

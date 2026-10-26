@@ -87,8 +87,10 @@ final class MemberSelectionViewSnapshotTests: XCTestCase {
     ) {
         let screenBounds = UIScreen.main.bounds
 
-        let view = MemberSelectionView(viewModel: viewModel)
-            .frame(width: screenBounds.width, height: screenBounds.height)
+        let view = NavigationStack {
+            MemberSelectionView(viewModel: viewModel)
+        }
+        .frame(width: screenBounds.width, height: screenBounds.height)
 
         snapshotHelper
             .withUserInterfaceStyle(.light)
@@ -105,12 +107,13 @@ final class MemberSelectionViewSnapshotTests: XCTestCase {
     ) {
         let screenBounds = UIScreen.main.bounds
 
-        let view = MemberSelectionView(viewModel: viewModel)
-            .frame(width: screenBounds.width, height: screenBounds.height)
+        let view = NavigationStack {
+            MemberSelectionView(viewModel: viewModel)
+        }
+        .frame(width: screenBounds.width, height: screenBounds.height)
 
         for dynamicTypeSize in DynamicTypeSize.allCases {
             snapshotHelper
-                .withUserInterfaceStyle(.light)
                 .verify(
                     matching: view.dynamicTypeSize(dynamicTypeSize),
                     named: "\(dynamicTypeSize)",

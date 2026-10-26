@@ -38,8 +38,4 @@ public enum WireDriveUploadError: Error, Equatable, Hashable, Sendable {
     case fileNotFound
     case urlError(error: URLError)
     case other(message: String)
-    case serverError(statusCode: Int)
-    case unauthorized
-    case insufficientStorage
-    case cancelledBySystem
 }

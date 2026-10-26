@@ -66,7 +66,7 @@ final class UsersAPITests: XCTestCase {
 
         let apiService = MockAPIServiceProtocol.withResponses(responses)
         try await apiSnapshotHelper.verifyRequestForAllAPIVersions(apiService: apiService) { sut in
-            _ = try await sut.getUsers(userIDs: [.mockID1, .mockID2, .mockID3], includeContactStatus: false)
+            _ = try await sut.getUsers(userIDs: [.mockID1, .mockID2, .mockID3])
         }
     }
 
@@ -100,7 +100,7 @@ final class UsersAPITests: XCTestCase {
 
         try await apiSnapshotHelper.verifyRequest(for: [.v0], apiService: apiService) { sut in
             // When
-            let result = try await sut.getUsers(userIDs: [Scaffolding.userID], includeContactStatus: false)
+            let result = try await sut.getUsers(userIDs: [Scaffolding.userID])
 
             // Then
             XCTAssertEqual(
@@ -172,7 +172,7 @@ final class UsersAPITests: XCTestCase {
 
         try await apiSnapshotHelper.verifyRequest(for: [.v4], apiService: apiService) { sut in
             // When
-            let result = try await sut.getUsers(userIDs: [Scaffolding.userID], includeContactStatus: false)
+            let result = try await sut.getUsers(userIDs: [Scaffolding.userID])
 
             // Then
             XCTAssertEqual(
@@ -228,7 +228,7 @@ final class UsersAPITests: XCTestCase {
 
         try await apiSnapshotHelper.verifyRequest(for: [.v12], apiService: apiService) { sut in
             // When
-            let result = try await sut.getUsers(userIDs: [Scaffolding.userID], includeContactStatus: false)
+            let result = try await sut.getUsers(userIDs: [Scaffolding.userID])
 
             // Then
             XCTAssertEqual(
@@ -268,7 +268,7 @@ final class UsersAPITests: XCTestCase {
 
         try await apiSnapshotHelper.verifyRequest(for: [.v15], apiService: apiService) { sut in
             // When
-            let result = try await sut.getUsers(userIDs: [Scaffolding.userID], includeContactStatus: false)
+            let result = try await sut.getUsers(userIDs: [Scaffolding.userID])
 
             // Then
             XCTAssertEqual(
@@ -307,8 +307,7 @@ final class UsersAPITests: XCTestCase {
                 provider: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!
             ),
             supportedProtocols: [.proteus],
-            legalholdStatus: .enabled,
-            contactStatus: nil
+            legalholdStatus: .enabled
         )
         static let userV12 = User(
             id: userID,
@@ -331,8 +330,7 @@ final class UsersAPITests: XCTestCase {
                 provider: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!
             ),
             supportedProtocols: [.proteus],
-            legalholdStatus: .enabled,
-            contactStatus: nil
+            legalholdStatus: .enabled
         )
         static let userV15 = User(
             id: userID,
@@ -358,8 +356,7 @@ final class UsersAPITests: XCTestCase {
                 provider: UUID(uuidString: "99db9768-04e3-4b5d-9268-831b6a25c4ab")!
             ),
             supportedProtocols: [.proteus],
-            legalholdStatus: .enabled,
-            contactStatus: nil
+            legalholdStatus: .enabled
         )
     }
 

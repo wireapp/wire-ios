@@ -47,8 +47,6 @@
 "conversation.locationButton.description" = "分享您的位置";
 "conversation.videoButton.description" = "录制视频";
 "conversation.moreButton.description" = "打开更多消息选项";
-"conversation.moreButton.closeDescription" = "Close more messaging options";
-"conversation.applyChangesButton.description" = "Apply changes";
 "conversation.emphemeralButton.description" = "设置自动删除邮件计时器";
 "conversation.timerForSelfDeletingMessagesSeconds.value" = "%@ 秒";
 "conversation.timerForSelfDeletingMessagesMinutes.value" = "%@ 分钟";

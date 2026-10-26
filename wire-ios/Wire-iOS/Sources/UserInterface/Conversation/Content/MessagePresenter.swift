@@ -40,27 +40,7 @@ final class MessagePresenter: NSObject {
     var mediaPlayerController: MediaPlayerController?
     var mediaPlaybackManager: MediaPlaybackManager?
     var videoPlayerObserver: NSObjectProtocol?
-
-    /// Observers waiting for a file download to conclude, keyed by message nonce.
-    var fileAvailabilityObservers: [UUID: FileDownloadObserving] = [:]
-
-    /// Re-checks pending downloads once the initial sync ends, because change notifications
-    /// are not delivered while it runs.
-    private var initialSyncObservers: [UUID: Any] = [:]
-
-    /// Injectable so tests can simulate multiple concurrent pending downloads without a real `ZMUserSession`.
-    var makeFileDownloadObserver: (
-        _ message: ZMConversationMessage,
-        _ userSession: UserSession,
-        _ onChanged: @escaping (ZMConversationMessage) -> Void
-    ) -> FileDownloadObserving? = { message, userSession, onChanged in
-        MessageKeyPathObserver(
-            message: message,
-            userSession: userSession,
-            keypath: \.fileDownloadStateChanged,
-            onChanged
-        )
-    }
+    var fileAvailabilityObserver: MessageKeyPathObserver?
 
     private let userSession: UserSession
     private var documentInteractionController: UIDocumentInteractionController?
@@ -156,40 +136,15 @@ final class MessagePresenter: NSObject {
     // MARK: - File
 
     func openFileMessage(_ message: ZMConversationMessage, targetView: UIView) {
-        if !message.isFileDownloaded() {
-            guard let nonce = message.nonce else { return }
 
+        if !message.isFileDownloaded() {
             message.fileMessageData?.requestFileDownload()
 
-            initialSyncObservers[nonce] = NotificationInContext.addObserver(
-                name: .initialSync,
-                context: userSession.notificationContext
-            ) { [weak self] _ in
-                DispatchQueue.main.async {
-                    guard let self, self.fileAvailabilityObservers[nonce] != nil else { return }
-
-                    // One-shot: later syncs must not reopen a stale message.
-                    self.initialSyncObservers[nonce] = nil
-
-                    WireLogger.ui.debug("initial sync finished, re-checking pending file download")
-
-                    guard message.isFileDownloaded() else { return }
-
-                    self.fileAvailabilityObservers[nonce] = nil
-                    self.openFileMessage(message, targetView: targetView)
-                }
-            }
-
-            fileAvailabilityObservers[nonce] = makeFileDownloadObserver(message, userSession) { [weak self] message in
-
-                // Ignore the change that merely signals the download has started; wait for it to conclude.
-                guard message.fileMessageData?.downloadState != .downloading else { return }
-
-                // The download concluded, either way: stop observing so failed/cancelled
-                // downloads don't leave a stale observer behind.
-                self?.fileAvailabilityObservers[nonce] = nil
-                self?.initialSyncObservers[nonce] = nil
-
+            fileAvailabilityObserver = MessageKeyPathObserver(
+                message: message,
+                userSession: userSession,
+                keypath: \.fileAvailabilityChanged
+            ) { [weak self] message in
                 guard message.isFileDownloaded() else { return }
 
                 self?.openFileMessage(message, targetView: targetView)
@@ -202,10 +157,6 @@ final class MessagePresenter: NSObject {
             let fileMessageData = message.fileMessageData,
             fileMessageData.hasLocalFileData
         else {
-            WireLogger.ui.warn(
-                "file is marked as downloaded but has no local file data",
-                attributes: .safePublic
-            )
             return
         }
 
@@ -215,30 +166,23 @@ final class MessagePresenter: NSObject {
             Task {
                 await openPassesViewController(fileMessageData: fileMessageData)
             }
-        } else if fileMessageData.isVideo {
-            let fileURL = fileMessageData.temporaryURLToDecryptedFile()
+        } else if
+            fileMessageData.isVideo,
+            let fileURL = fileMessageData.temporaryURLToDecryptedFile(),
+            let mediaPlaybackManager {
+            let player = AVPlayer(url: fileURL)
+            mediaPlayerController = MediaPlayerController(
+                player: player,
+                message: message,
+                delegate: mediaPlaybackManager
+            )
+            let playerViewController = AVPlayerViewController()
+            playerViewController.player = player
 
-            if let fileURL, let mediaPlaybackManager {
-                let player = AVPlayer(url: fileURL)
-                mediaPlayerController = MediaPlayerController(
-                    player: player,
-                    message: message,
-                    delegate: mediaPlaybackManager
-                )
-                let playerViewController = AVPlayerViewController()
-                playerViewController.player = player
+            observePlayerDismissal()
 
-                observePlayerDismissal()
-
-                targetViewController?.present(playerViewController, animated: true) {
-                    player.play()
-                }
-            } else {
-                WireLogger.ui.warn(
-                    "no playable file URL or playback manager, falling back to document controller for a video",
-                    attributes: .safePublic
-                )
-                openDocumentController(for: message, targetView: targetView, withPreview: true)
+            targetViewController?.present(playerViewController, animated: true) {
+                player.play()
             }
         } else {
             openDocumentController(for: message, targetView: targetView, withPreview: true)
@@ -261,10 +205,7 @@ final class MessagePresenter: NSObject {
         selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol,
         conversationCreationRepository: any ConversationCreationRepositoryProtocol
     ) {
-        if let nonce = message.nonce {
-            fileAvailabilityObservers[nonce] = nil
-            initialSyncObservers[nonce] = nil
-        }
+        fileAvailabilityObserver = nil
         modalTargetController?.view.window?.endEditing(true)
 
         if Message.isLocation(message) {

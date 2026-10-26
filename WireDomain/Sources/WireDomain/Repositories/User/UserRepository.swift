@@ -92,7 +92,7 @@ public final class UserRepository: UserRepositoryProtocol {
 
     public func pullUsers(userIDs: [WireDataModel.QualifiedID]) async throws {
         do {
-            let userList = try await usersAPI.getUsers(userIDs: userIDs.toAPIModel(), includeContactStatus: false)
+            let userList = try await usersAPI.getUsers(userIDs: userIDs.toAPIModel())
 
             for user in userList.found {
                 await userLocalStore.persistUser(userInfo: user.toDomainModel())

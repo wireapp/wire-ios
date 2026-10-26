@@ -341,11 +341,7 @@ final class ZClientViewController: UIViewController {
     }
 
     private func makeMeetingsUI() -> UIViewController {
-        let memberRepository = WireMeetingsMemberRepository(
-            userSession: userSession,
-            conversationsAPI: clientSessionComponent.conversationsAPI,
-            usersAPI: clientSessionComponent.usersAPI
-        )
+        let memberRepository = WireMeetingsMemberRepository(userSession: userSession)
         let conversationRepository = clientSessionComponent.conversationRepository
 
         return wireMeetingsFactory.makeMeetingsView(

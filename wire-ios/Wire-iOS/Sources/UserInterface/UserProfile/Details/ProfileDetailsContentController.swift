@@ -53,9 +53,6 @@ final class ProfileDetailsContentController: NSObject,
         /// Display the reason for the forced user block.
         case blockingReason
 
-        /// The user cannot be contacted until account setup is complete.
-        case nonContactable
-
         /// Display the message protocol used for a 1:1 conversation
         case messageProtocol(MessageProtocol)
     }
@@ -76,10 +73,6 @@ final class ProfileDetailsContentController: NSObject,
 
     /// The contents to display for the current configuration.
     private(set) var contents: [Content] = []
-
-    var isUserNonContactable = false {
-        didSet { updateContent() }
-    }
 
     /// The object that will receive notifications in case of content change.
     weak var delegate: ProfileDetailsContentControllerDelegate?
@@ -205,16 +198,11 @@ final class ProfileDetailsContentController: NSObject,
             contents = []
         }
 
-        if isUserNonContactable {
-            contents.insert(.nonContactable, at: 0)
-        }
-
         delegate?.profileDetailsContentDidChange()
     }
 
     func userDidChange(_ changeInfo: UserChangeInfo) {
-        guard changeInfo.readReceiptsEnabledChanged || changeInfo.richProfileChanged || changeInfo.nameChanged
-        else { return }
+        guard changeInfo.readReceiptsEnabledChanged || changeInfo.richProfileChanged else { return }
         updateContent()
     }
 
@@ -228,7 +216,7 @@ final class ProfileDetailsContentController: NSObject,
         switch contents[section] {
         case let .richProfile(fields):
             fields.count
-        case .readReceiptsStatus, .nonContactable:
+        case .readReceiptsStatus:
             0
         case .groupAdminStatus:
             1
@@ -243,7 +231,7 @@ final class ProfileDetailsContentController: NSObject,
         let header = SectionTableHeader()
 
         switch contents[section] {
-        case .groupAdminStatus, .nonContactable:
+        case .groupAdminStatus:
             header.titleLabel.text = nil
             header.accessibilityIdentifier = nil
         case .richProfile:
@@ -296,7 +284,7 @@ final class ProfileDetailsContentController: NSObject,
             cell.propertyValue = field.value
             return cell
 
-        case .readReceiptsStatus, .nonContactable:
+        case .readReceiptsStatus:
             fatalError("We do not create cells for the readReceiptsStatus section.")
 
         case .blockingReason:
@@ -320,12 +308,6 @@ final class ProfileDetailsContentController: NSObject,
 
     func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
         switch contents[section] {
-        case .nonContactable:
-            let footer = SectionTableFooter()
-            footer.titleLabel.text = L10n.Localizable.Profile.Details.nonContactable(user.name ?? "")
-            footer.titleLabel.accessibilityLabel = footer.titleLabel.text
-            footer.titleLabel.accessibilityIdentifier = "profile.contact_status.hint"
-            return footer
         case .richProfile:
             return nil
         case .readReceiptsStatus:

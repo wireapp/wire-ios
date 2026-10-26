@@ -497,8 +497,7 @@ extension AudioMessageView: WireCallCenterCallStateObserver {
         conversation: ZMConversation,
         caller: UserType,
         timestamp: Date?,
-        previousCallState: CallState?,
-        callEndReason: CallClosedReason?
+        previousCallState: CallState?
     ) {
         guard let player = audioTrackPlayer else { return }
         guard isOwnTrackPlayingInAudioPlayer() else { return }

@@ -44,24 +44,6 @@ final class ProfileFooterViewTests: XCTestCase {
         super.tearDown()
     }
 
-    func testNonContactableUserDisablesStartConversationAndCanBeReenabled() {
-        sut.configure(with: [.startOneToOne])
-        sut.isUserNonContactable = true
-        XCTAssertFalse(sut.leftButton.isEnabled)
-
-        sut.isUserNonContactable = false
-        XCTAssertTrue(sut.leftButton.isEnabled)
-    }
-
-    func testNonContactableUserCanStillOpenExistingConversation() {
-        sut.isUserNonContactable = true
-        sut.configure(with: [.startOneToOne])
-        XCTAssertFalse(sut.leftButton.isEnabled)
-
-        sut.configure(with: [.openOneToOne])
-        XCTAssertTrue(sut.leftButton.isEnabled)
-    }
-
     // MARK: - Unit Test
 
     func testThatItOnlyAllowsEligibleActionsAsKey() {

@@ -55,7 +55,6 @@ public struct APIProvider: APIProviderInterface {
         case .v16: PrekeyAPIV16(httpClient: httpClient)
         case .v17: PrekeyAPIV17(httpClient: httpClient)
         case .v18: PrekeyAPIV18(httpClient: httpClient)
-        case .v19: PrekeyAPIV19(httpClient: httpClient)
         }
     }
 
@@ -80,7 +79,6 @@ public struct APIProvider: APIProviderInterface {
         case .v16: MessageAPIV16(httpClient: httpClient)
         case .v17: MessageAPIV17(httpClient: httpClient)
         case .v18: MessageAPIV18(httpClient: httpClient)
-        case .v19: MessageAPIV19(httpClient: httpClient)
         }
     }
 
@@ -101,7 +99,6 @@ public struct APIProvider: APIProviderInterface {
         case .v16: E2eIAPIV16(httpClient: httpClient)
         case .v17: E2eIAPIV17(httpClient: httpClient)
         case .v18: E2eIAPIV18(httpClient: httpClient)
-        case .v19: E2eIAPIV19(httpClient: httpClient)
         }
     }
 
@@ -126,7 +123,6 @@ public struct APIProvider: APIProviderInterface {
         case .v16: UserClientAPIV16(httpClient: httpClient)
         case .v17: UserClientAPIV17(httpClient: httpClient)
         case .v18: UserClientAPIV18(httpClient: httpClient)
-        case .v19: UserClientAPIV19(httpClient: httpClient)
         }
     }
 }

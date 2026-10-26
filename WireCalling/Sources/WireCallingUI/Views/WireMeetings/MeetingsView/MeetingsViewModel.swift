@@ -36,9 +36,6 @@ package final class MeetingsViewModel {
     private(set) var isDeleting = false
     var hasDeleteError = false
     private var failedMeetingToDelete: Meeting?
-    private var deleteError: DeleteMeetingUseCaseError?
-
-    var canRetryDelete: Bool { deleteError == nil }
 
     package var loadedMeetings: [Meeting] {
         loadedOccurrences.map(\.meeting)
@@ -82,16 +79,12 @@ package final class MeetingsViewModel {
 
     var deleteErrorTitle: String {
         let strings = L10n.Localizable.Meetings.DeleteModal.Error.self
-        if deleteError == .notAllowed { return strings.notAllowedTitle }
-        if deleteError == .cleanupFailed { return strings.cleanupFailedTitle }
         return failedMeetingToDelete.map { !isOrganizer($0) } == true
             ? strings.leaveConversationFailedTitle : strings.deleteFailedTitle
     }
 
     var deleteErrorMessage: String {
         let strings = L10n.Localizable.Meetings.DeleteModal.Error.self
-        if deleteError == .notAllowed { return strings.notAllowed }
-        if deleteError == .cleanupFailed { return strings.deleteSucceededButLocalCleanupFailed }
         return failedMeetingToDelete.map { !isOrganizer($0) } == true
             ? strings.leaveConversationFailed : strings.deleteFailed
     }
@@ -123,8 +116,6 @@ package final class MeetingsViewModel {
     /// Incremented whenever date/time formatting state is refreshed so SwiftUI re-evaluates
     /// formatter and grouper output from private cached collaborators.
     private var dateTimeStateRevision = 0
-    private let isSnapshotTesting: Bool
-
     private let grouper = MeetingsGrouper()
 
     package init(
@@ -135,8 +126,7 @@ package final class MeetingsViewModel {
         deleteMeetingUseCase: any DeleteMeetingUseCaseProtocol,
         selfUserID: UUID,
         observeAttendedMeetingsUseCase: (any ObserveAttendedMeetingsUseCaseProtocol)? = nil,
-        isApplicationActiveProvider: @escaping () -> Bool = { UIApplication.shared.applicationState == .active },
-        isSnapshotTesting: Bool = false
+        isApplicationActiveProvider: @escaping () -> Bool = { UIApplication.shared.applicationState == .active }
     ) {
         self.currentDateProvider = currentDateProvider
         self.formatter = formatter
@@ -147,7 +137,6 @@ package final class MeetingsViewModel {
         self.observeAttendedMeetingsUseCase = observeAttendedMeetingsUseCase
         self.isApplicationActiveProvider = isApplicationActiveProvider
         self.currentDate = currentDateProvider.now
-        self.isSnapshotTesting = isSnapshotTesting
     }
 
     // MARK: - Public Interface
@@ -158,7 +147,7 @@ package final class MeetingsViewModel {
     }
 
     func loadInitialData() async {
-        guard !isFetching, !isSnapshotTesting else { return }
+        guard !isFetching else { return }
         futureOffset = 0
         hasMore = false
         await load(pageSize: initialPageSize)
@@ -267,10 +256,6 @@ package final class MeetingsViewModel {
         occurrence.start <= currentDate && currentDate < occurrence.end
     }
 
-    func hasEnded(_ occurrence: MeetingOccurrence) -> Bool {
-        occurrence.end <= currentDate
-    }
-
     func formatDay(_ date: Date) -> String {
         _ = dateTimeStateRevision
         return formatter.dayHeader(for: date, now: currentDate)
@@ -301,7 +286,6 @@ package final class MeetingsViewModel {
         isDeleting = true
         hasDeleteError = false
         failedMeetingToDelete = nil
-        deleteError = nil
         defer { isDeleting = false }
 
         do {
@@ -309,17 +293,13 @@ package final class MeetingsViewModel {
             loadedOccurrences.removeAll { $0.meeting.id == meeting.id }
         } catch {
             failedMeetingToDelete = meeting
-            deleteError = error as? DeleteMeetingUseCaseError
-            if deleteError == .cleanupFailed {
-                loadedOccurrences.removeAll { $0.meeting.id == meeting.id }
-            }
             hasDeleteError = true
             WireLogger.meetings.error("failed to delete meeting: \(String(reflecting: error))")
         }
     }
 
     func retryDelete() async {
-        guard canRetryDelete, let meeting = failedMeetingToDelete else { return }
+        guard let meeting = failedMeetingToDelete else { return }
         await deleteMeeting(meeting)
     }
 

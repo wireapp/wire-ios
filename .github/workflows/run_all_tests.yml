@@ -3,11 +3,6 @@ name: Run all tests
 on:
   workflow_dispatch:
     inputs:
-      folders:
-        description: 'Comma-separated framework folders (e.g. wire-ios-sync-engine,WireNetwork); leave empty to run all'
-        type: string
-        required: false
-        default: ''
       mac_runner:
         description: 'macOS runner'
         type: choice
@@ -30,15 +25,12 @@ jobs:
   trigger_tests:
     uses: ./.github/workflows/_reusable_run_tests.yml
     with:
-      folders: ${{ inputs.folders }}
-      all: ${{ inputs.folders == '' }}
+      all: true
       mac_runner: ${{ inputs.mac_runner }}
-      timeout_minutes: 120
       run_critical_flows: ${{ inputs.run_critical_flows }}
       notify: always
     secrets:
       ZENKINS_USERNAME: ${{ secrets.ZENKINS_USERNAME }}
       DD_API_KEY: ${{ secrets.DD_API_KEY }}
       OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
-      WIRE_WEBHOOK_URL: ${{ secrets.WIRE_IOS_CI_URL }}
-      WIRE_WEBHOOK_TOKEN: ${{ secrets.WIRE_IOS_CI_TOKEN }}
+      SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_CI_WEBHOOK }}

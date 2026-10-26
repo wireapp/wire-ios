@@ -54,7 +54,7 @@ final class FilesBrowserViewTests: XCTestCase {
     private var makeAssetAvailableOfflineUseCase: WireDriveMakeAssetAvailableOfflineUseCase!
     private var removeAssetAvailableOfflineUseCase: WireDriveRemoveAssetAvailableOfflineUseCase!
     private var observeAssetUseCase: WireDriveObserveAssetUseCase!
-    private var moveNodesUseCase: WireDriveMoveNodesUseCase!
+    private var moveNodeUseCase: WireDriveMoveNodeUseCase!
 
     private let record: Bool? = nil
 
@@ -134,7 +134,7 @@ final class FilesBrowserViewTests: XCTestCase {
             localAssetRepository: localAssetsRepository
         )
         observeAssetUseCase = WireDriveObserveAssetUseCase(localAssetRepository: localAssetsRepository)
-        moveNodesUseCase = WireDriveMoveNodesUseCase(
+        moveNodeUseCase = WireDriveMoveNodeUseCase(
             nodesRepository: nodesRepository,
             localAssetRepository: localAssetsRepository
         )
@@ -156,7 +156,7 @@ final class FilesBrowserViewTests: XCTestCase {
         restoreNodeVersionUseCase = nil
         getDriveConversationsUseCase = nil
         observeAssetUseCase = nil
-        moveNodesUseCase = nil
+        moveNodeUseCase = nil
     }
 
     @MainActor
@@ -265,8 +265,7 @@ final class FilesBrowserViewTests: XCTestCase {
                     localAssetRepository: MockWireDriveLocalAssetRepositoryProtocol()
                 ),
                 observeAsset: observeAssetUseCase,
-                moveNodes: moveNodesUseCase,
-                enqueueUploads: MockWireDriveEnqueueDirectUploadsUseCaseProtocol()
+                moveNode: moveNodeUseCase
             ),
             isCellsStatePending: false,
             isBrowsing: true

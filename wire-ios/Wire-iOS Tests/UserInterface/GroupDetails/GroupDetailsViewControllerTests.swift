@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import WireTestingPackage
 import XCTest
 @testable import Wire
 
@@ -24,18 +23,15 @@ final class GroupDetailsFooterViewTests: XCTestCase, CoreDataFixtureTestHelper {
 
     var sut: GroupDetailsFooterView!
     var coreDataFixture: CoreDataFixture!
-    private var snapshotHelper: SnapshotHelper!
 
     override func setUp() async throws {
         try await super.setUp()
         coreDataFixture = try await CoreDataFixture()
         SelfUser.provider = coreDataFixture.selfUserProvider
-        snapshotHelper = SnapshotHelper().withUserInterfaceStyle(.light)
     }
 
     override func tearDown() {
         sut = nil
-        snapshotHelper = nil
         coreDataFixture = nil
         SelfUser.provider = nil
         super.tearDown()
@@ -43,7 +39,8 @@ final class GroupDetailsFooterViewTests: XCTestCase, CoreDataFixtureTestHelper {
 
     func testForAllPhoneWidths() {
         teamTest {
-            verifyFooterInAllPhoneWidths()
+            sut = GroupDetailsFooterView()
+            verifyInAllPhoneWidths(matching: sut)
         }
     }
 
@@ -52,30 +49,10 @@ final class GroupDetailsFooterViewTests: XCTestCase, CoreDataFixtureTestHelper {
             let groupConversation = createGroupConversation()
             groupConversation.teamRemoteIdentifier = team?.remoteIdentifier
             selfUser.membership?.setTeamRole(.partner)
-            verifyFooterInAllPhoneWidths { footer in
-                footer.update(for: groupConversation, user: selfUser)
-            }
-        }
-    }
-
-    private func verifyFooterInAllPhoneWidths(
-        file: StaticString = #filePath,
-        testName: String = #function,
-        line: UInt = #line,
-        configure: (GroupDetailsFooterView) -> Void = { _ in }
-    ) {
-        for width in phoneWidths().sorted() {
             sut = GroupDetailsFooterView()
-            sut.frame = CGRect(x: 0, y: 0, width: width, height: 56)
-            configure(sut)
+            sut.update(for: groupConversation, user: selfUser)
 
-            snapshotHelper.verify(
-                matching: sut,
-                named: "\(width)",
-                file: file,
-                testName: testName,
-                line: line
-            )
+            verifyInAllPhoneWidths(matching: sut)
         }
     }
 }

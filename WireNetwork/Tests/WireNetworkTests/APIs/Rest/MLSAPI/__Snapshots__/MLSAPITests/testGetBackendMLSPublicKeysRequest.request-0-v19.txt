@@ -1,3 +1,0 @@
-curl \
-	--header "Accept: application/json" \
-	"/v19/mls/public-keys"

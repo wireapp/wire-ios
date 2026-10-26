@@ -62,7 +62,6 @@ final class FeatureConfigsAPITests: XCTestCase {
             (.ok, "GetFeatureConfigsSuccessResponseV14"),
             (.ok, "GetFeatureConfigsSuccessResponseV16"),
             (.ok, "GetFeatureConfigsSuccessResponseV16"),
-            (.ok, "GetFeatureConfigsSuccessResponseV18"),
             (.ok, "GetFeatureConfigsSuccessResponseV18")
         ])
 

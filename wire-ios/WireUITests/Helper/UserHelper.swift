@@ -50,8 +50,6 @@ final class UserHelper {
     let conversationsAPI: ConversationsAPI
     let connectionsAPI: ConnectionsAPI
     let accountsAPI: AccountsAPI
-    let userClientsAPI: UserClientsAPI
-    let featureConfigsAPI: FeatureConfigsAPI
 
     private let cookieStorage = MockCookieStorage()
     private let authenticationManager = MockAuthManager()
@@ -113,8 +111,6 @@ final class UserHelper {
         self.conversationsAPI = ConversationsAPIBuilder(apiService: networkStack.apiService).makeAPI(for: apiVersion)
         self.connectionsAPI = ConnectionsAPIBuilder(apiService: networkStack.apiService).makeAPI(for: apiVersion)
         self.accountsAPI = AccountsAPIBuilder(apiService: networkStack.apiService).makeAPI(for: apiVersion)
-        self.userClientsAPI = UserClientsAPIBuilder(apiService: networkStack.apiService).makeAPI(for: apiVersion)
-        self.featureConfigsAPI = FeatureConfigsAPIBuilder(apiService: networkStack.apiService).makeAPI(for: apiVersion)
         self.environment = environment
     }
 
@@ -314,16 +310,6 @@ final class UserHelper {
         return (qualifiedID: qualifiedId, owner: teamOwner)
     }
 
-    /// Read contactability using the helper's currently authenticated user, without signing in the target user.
-    func getContactStatus(for userID: QualifiedID) async throws -> ContactStatus? {
-        let api = UsersAPIBuilder(apiService: networkStack.apiService).makeAPI(for: apiVersion)
-        let result = try await api.getUsers(userIDs: [userID], includeContactStatus: true)
-        guard let user = result.found.first(where: { $0.id == userID }) else {
-            throw RuntimeError("Contact-status fixture user was not returned by /list-users")
-        }
-        return user.contactStatus
-    }
-
     /// get accesstoken of user by email and password
     /// - Parameters:
     ///   - email: email
@@ -377,27 +363,6 @@ final class UserHelper {
         guard response.statusCode == 200 else {
             throw RuntimeError("disableConsentPopup failed with code \(response.statusCode)")
         }
-    }
-
-    func clientID(of user: UserInfo) async throws -> UserClientID {
-        let previousAccessToken = authenticationManager.accessToken
-        defer { authenticationManager.accessToken = previousAccessToken }
-        authenticationManager.accessToken = try await fetchAccessToken(email: user.email, password: user.password)
-
-        let clients = try await userClientsAPI.getSelfClients()
-        guard let client = clients.first, clients.count == 1 else {
-            throw RuntimeError("Expected one client for \(user.email), found \(clients.count)")
-        }
-
-        return client.id
-    }
-
-    func removeClient(id: UserClientID, of user: UserInfo) async throws {
-        let previousAccessToken = authenticationManager.accessToken
-        defer { authenticationManager.accessToken = previousAccessToken }
-        authenticationManager.accessToken = try await fetchAccessToken(email: user.email, password: user.password)
-
-        try await userClientsAPI.deleteClient(id: id, password: user.password)
     }
 
     /// Register user in team as member
@@ -730,47 +695,6 @@ final class UserHelper {
             qualifiedIDs: qualifiedIDs,
             conversationId: conversationId
         )
-    }
-
-    func registerMeetingsTeam(
-        withMemberCount memberCount: Int = 0,
-        names: [String] = []
-    ) async throws
-        -> (teamOwner: UserInfo, teamMembers: [UserInfo], qualifiedIDs: [QualifiedID], conversationId: UUID?) {
-        let team = try await registerTeam(withMemberCount: memberCount, names: names)
-        guard let teamID = team.teamOwner.teamID else {
-            throw RuntimeError("registerMeetingsTeam: teamOwner.teamID is nil")
-        }
-
-        let ownerAccessToken = try await fetchAccessToken(
-            email: team.teamOwner.email,
-            password: team.teamOwner.password
-        )
-        authenticationManager.accessToken = ownerAccessToken
-        team.teamOwner.id = try await selfUserAPI.getSelfUser().id.uuidString
-        for (member, qualifiedID) in zip(team.teamMembers, team.qualifiedIDs) {
-            member.id = qualifiedID.id.uuidString
-        }
-
-        let backOffice = BackOffice(backendURL: backendURL)
-        try await backOffice.unlockMeetingsFeature(teamId: teamID.uuidString, basicAuth: basicAuth())
-        try await backOffice.enableMeetingsFeature(
-            teamId: teamID.uuidString,
-            apiVersion: apiVersion,
-            accessToken: ownerAccessToken.token
-        )
-
-        let featureConfigs = try await featureConfigsAPI.getFeatureConfigs()
-        let meetingsEnabled = featureConfigs.contains { featureConfig in
-            guard case let .meetings(config) = featureConfig else { return false }
-            if case .enabled = config.status { return true }
-            return false
-        }
-        guard meetingsEnabled else {
-            throw RuntimeError("registerMeetingsTeam: Meetings feature is not enabled")
-        }
-
-        return team
     }
 
     /// Creates a team group with configurable team-member count and total admin count.

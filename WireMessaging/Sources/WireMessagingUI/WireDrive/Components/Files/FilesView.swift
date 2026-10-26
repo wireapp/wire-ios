@@ -17,14 +17,11 @@
 //
 
 import Combine
-import Photos
-import PhotosUI
 import QuickLook
 package import SwiftUI
 import WireDesign
 import WireFoundation
 import WireLocators
-import WireLogging
 import WireMessagingDomain
 import WireReusableUIComponents
 
@@ -39,20 +36,13 @@ package struct FilesView: View {
 
     let onOpenRecycleBin: () -> Void
     let onDismissContainer: () -> Void
-    let trackerHeight: CGFloat
-
-    @State private var isFileImporterPresented = false
-    @State private var isMediaPickerPresented = false
-    @State private var pickedMedia: [PhotosPickerItem] = []
 
     package init(
         viewModel: @autoclosure @escaping () -> FilesViewModel,
-        trackerHeight: CGFloat = 0,
         onOpenRecycleBin: @escaping () -> Void = {},
         onDismissContainer: @escaping () -> Void = {}
     ) {
         self._viewModel = StateObject(wrappedValue: viewModel())
-        self.trackerHeight = trackerHeight
         self.onOpenRecycleBin = onOpenRecycleBin
         self.onDismissContainer = onDismissContainer
     }
@@ -62,33 +52,13 @@ package struct FilesView: View {
             viewModel: viewModel,
             isBrowsing: isBrowsing,
             backgroundColor: ColorTheme.Backgrounds.background.color,
-            trackerHeight: trackerHeight,
             toolbarContent: { toolbarContent },
             sheetContent: { sheetContent($0) }
         )
         // FilesView-specific extras
-        .fileImporter(
-            isPresented: $isFileImporterPresented,
-            allowedContentTypes: [.data],
-            allowsMultipleSelection: true,
-            onCompletion: { result in
-                Task { await handleFileImport(result) }
-            }
-        )
-        .photosPicker(
-            isPresented: $isMediaPickerPresented,
-            selection: $pickedMedia,
-            maxSelectionCount: WireDriveDirectUploadLimits.maxFilesPerBatch,
-            matching: .any(of: [.images, .videos]),
-            photoLibrary: .shared()
-        )
-        .onChange(of: pickedMedia) { _, newValue in
-            guard !newValue.isEmpty else { return }
-            Task { await handleMediaPick(newValue) }
-        }
         .onReceive(viewModel.triggerReload) { _ in
             Task {
-                await viewModel.reload(refreshing: true)
+                await viewModel.reload()
             }
         }
         .fullScreenCover(
@@ -130,18 +100,12 @@ private extension FilesView {
 
         if !viewModel.isRecycleBin, !viewModel.isOffline {
             ToolbarItem(placement: .navigationBarTrailing) {
-                if viewModel.multipleSelection == .active {
-                    doneActionButton
-                } else {
-                    moreActionsButton
-                }
+                moreActionsButton
             }
         }
 
-        if viewModel.multipleSelection != .active {
-            ToolbarItem(placement: .navigationBarTrailing) {
-                closeButton
-            }
+        ToolbarItem(placement: .navigationBarTrailing) {
+            closeButton
         }
     }
 
@@ -168,15 +132,6 @@ private extension FilesView {
         .tint(ColorTheme.Base.primary(accentColor).color)
     }
 
-    var doneActionButton: some View {
-        Button {
-            viewModel.enableMultipleSelection(false)
-        } label: {
-            Text(L10n.Localizable.General.done)
-        }
-        .accessibilityIdentifier(Locators.WireDrive.FilesPage.done)
-    }
-
     var moreActionsButton: some View {
         Menu {
             switch viewModel.selfUserRole {
@@ -189,7 +144,6 @@ private extension FilesView {
             Image(systemName: "ellipsis.circle")
         }
         .tint(ColorTheme.Base.primary(accentColor).color)
-        .accessibilityIdentifier(Locators.WireDrive.FilesPage.moreOptions.rawValue)
     }
 
     private var viewerActions: some View {
@@ -208,20 +162,6 @@ private extension FilesView {
 
     private var editorActions: some View {
         Group {
-            if viewModel.isBulkActionsEnabled {
-                Button {
-                    viewModel.enableMultipleSelection(true)
-                } label: {
-                    Label {
-                        Text(Strings.Files.List.selectItems)
-                    } icon: {
-                        Image(systemName: "checkmark.circle")
-                            .tint(ColorTheme.Backgrounds.onBackground.color)
-                    }
-                }
-                .accessibilityIdentifier(Locators.WireDrive.FilesPage.selectItems.rawValue)
-            }
-
             Button {
                 viewModel.onCreate(target: .folder)
             } label: {
@@ -246,7 +186,6 @@ private extension FilesView {
                                 .tint(ColorTheme.Backgrounds.onBackground.color)
                         }
                     }
-                    .accessibilityIdentifier(Locators.WireDrive.FilesPage.createFileTemplate(template.kind.identifier))
                 }
 
             } label: {
@@ -258,10 +197,6 @@ private extension FilesView {
                 }
             }
             .accessibilityIdentifier(Locators.WireDrive.FilesPage.createFile.rawValue)
-
-            if viewModel.canUpload {
-                uploadActions
-            }
 
             Button {
                 onOpenRecycleBin()
@@ -303,84 +238,13 @@ private extension FilesView {
             FileRenameView(viewModel: viewModel.fileRenameViewModel(item: item))
         case let .versionHistory(item):
             FileVersioningView(viewModel: viewModel.fileVersioningViewModel(item: item))
-        case let .moveToFolder(items):
-            MoveToFolderView(viewModel: viewModel.moveToFolderViewModel(items: items))
+        case let .moveToFolder(item):
+            MoveToFolderView(viewModel: viewModel.moveToFolderViewModel(item: item))
         }
     }
 }
 
 // MARK: - folder menu title
-
-// MARK: - Uploads
-
-private extension FilesView {
-
-    @ViewBuilder var uploadActions: some View {
-        Menu {
-            Button {
-                isFileImporterPresented = true
-            } label: {
-                Label {
-                    Text(Strings.Files.Upload.Menu.file)
-                } icon: {
-                    Image(systemName: "document.badge.arrow.up")
-                        .tint(ColorTheme.Backgrounds.onBackground.color)
-                }
-            }
-            .accessibilityIdentifier(Locators.WireDrive.UploadsPage.uploadFile.rawValue)
-
-            Button {
-                Task {
-                    pickedMedia = []
-                    guard await viewModel.requestPhotosPermissions() else { return }
-                    isMediaPickerPresented = true
-                }
-            } label: {
-                Label {
-                    Text(Strings.Files.Upload.Menu.media)
-                } icon: {
-                    Image(systemName: "photo.badge.plus")
-                        .tint(ColorTheme.Backgrounds.onBackground.color)
-                }
-            }
-            .accessibilityIdentifier(Locators.WireDrive.UploadsPage.uploadMedia.rawValue)
-
-        } label: {
-            Label {
-                Text(Strings.Files.Upload.Menu.upload)
-            } icon: {
-                Image(systemName: "arrow.up.folder")
-                    .tint(ColorTheme.Backgrounds.onBackground.color)
-            }
-        }
-        .accessibilityIdentifier(Locators.WireDrive.FilesPage.upload.rawValue)
-    }
-
-    func handleFileImport(_ result: Result<[URL], any Error>) async {
-        switch result {
-        case let .success(urls):
-            // Document picker URLs are security scoped, so the uploader must be told to open access
-            // before reading them.
-            let sources = urls.map { url in
-                WireDriveDirectUploadSource(
-                    url: url,
-                    fileName: url.lastPathComponent,
-                    fileType: UTType(filenameExtension: url.pathExtension),
-                    isSecurityScoped: true
-                )
-            }
-            await viewModel.enqueueUploads(sources: sources)
-
-        case let .failure(error):
-            WireLogger.wireDrive.error("drive upload file import failed: \(error)")
-            viewModel.showImportFailedAlert()
-        }
-    }
-
-    func handleMediaPick(_ items: [PhotosPickerItem]) async {
-        await viewModel.enqueueUploads(mediaItems: items)
-    }
-}
 
 private extension FilesViewModel.FolderMenuOption {
     var title: String {
@@ -404,17 +268,6 @@ private extension WireDriveFileTemplate.Kind {
             Strings.Files.List.CreateFile.spreadsheet
         case .presentation:
             Strings.Files.List.CreateFile.presentation
-        }
-    }
-
-    var identifier: String {
-        switch self {
-        case .document:
-            "document"
-        case .spreadsheet:
-            "spreadsheet"
-        case .presentation:
-            "presentation"
         }
     }
 

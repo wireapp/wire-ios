@@ -137,8 +137,7 @@ extension CallQualityController: WireCallCenterCallStateObserver {
         conversation: ZMConversation,
         caller: UserType,
         timestamp: Date?,
-        previousCallState: CallState?,
-        callEndReason: CallClosedReason?
+        previousCallState: CallState?
     ) {
         guard canPresentCallQualitySurvey else { return }
         let eventDate = Date()

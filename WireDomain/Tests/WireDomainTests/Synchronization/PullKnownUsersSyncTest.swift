@@ -42,7 +42,7 @@ final class PullKnownUsersSyncTests: XCTestCase {
 
     func testPull() async throws {
         // Mock
-        api.getUsersUserIDsIncludeContactStatus_MockValue = WireNetwork.UserList(
+        api.getUsersUserIDs_MockValue = WireNetwork.UserList(
             found: [Scaffolding.user1],
             failed: [Scaffolding.user2.id]
         )
@@ -60,10 +60,9 @@ final class PullKnownUsersSyncTests: XCTestCase {
         // Then
         XCTAssertEqual(store.fetchUsersQualifiedIDs_Invocations.count, 1)
 
-        let apiInvocations = api.getUsersUserIDsIncludeContactStatus_Invocations
+        let apiInvocations = api.getUsersUserIDs_Invocations
         try XCTAssertCount(apiInvocations, count: 1)
-        XCTAssertEqual(apiInvocations[0].userIDs, [Scaffolding.user1.id, Scaffolding.user2.id])
-        XCTAssertFalse(apiInvocations[0].includeContactStatus)
+        XCTAssertEqual(apiInvocations[0], [Scaffolding.user1.id, Scaffolding.user2.id])
 
         let storeInvocations = store.persistUserUserInfo_Invocations
         try XCTAssertCount(storeInvocations, count: 1)
@@ -88,8 +87,7 @@ private enum Scaffolding {
         app: nil,
         service: nil,
         supportedProtocols: [.mls],
-        legalholdStatus: .disabled,
-        contactStatus: nil
+        legalholdStatus: .disabled
     )
 
     static let user2 = User(
@@ -106,8 +104,7 @@ private enum Scaffolding {
         app: nil,
         service: nil,
         supportedProtocols: [.mls],
-        legalholdStatus: .disabled,
-        contactStatus: nil
+        legalholdStatus: .disabled
     )
 
     static var localUser1: NewUserInfo {

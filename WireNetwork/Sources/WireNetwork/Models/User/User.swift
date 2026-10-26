@@ -83,10 +83,6 @@ public struct User: Equatable, Sendable {
 
     public let legalholdStatus: LegalholdStatus
 
-    /// Whether the user can be contacted, when provided by API v17 or later.
-
-    public let contactStatus: ContactStatus?
-
     // MARK: -
 
     public init(
@@ -103,8 +99,7 @@ public struct User: Equatable, Sendable {
         app: AppInfo?,
         service: Service?,
         supportedProtocols: Set<MessageProtocol>?,
-        legalholdStatus: LegalholdStatus,
-        contactStatus: ContactStatus?
+        legalholdStatus: LegalholdStatus
     ) {
         self.id = id
         self.name = name
@@ -120,7 +115,6 @@ public struct User: Equatable, Sendable {
         self.service = service
         self.supportedProtocols = supportedProtocols
         self.legalholdStatus = legalholdStatus
-        self.contactStatus = contactStatus
     }
 
 }

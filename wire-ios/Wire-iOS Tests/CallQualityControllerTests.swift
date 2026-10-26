@@ -224,8 +224,7 @@ extension CallQualityControllerTests {
             conversation: conversation,
             caller: otherUser,
             timestamp: nil,
-            previousCallState: nil,
-            callEndReason: nil
+            previousCallState: nil
         )
     }
 }

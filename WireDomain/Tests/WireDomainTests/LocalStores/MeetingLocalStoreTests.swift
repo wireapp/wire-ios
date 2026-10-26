@@ -299,7 +299,7 @@ final class MeetingLocalStoreTests: XCTestCase {
 
         // When
 
-        try await sut.deleteMeeting(id: Scaffolding.meetingID)
+        await sut.deleteMeeting(id: Scaffolding.meetingID)
 
         // Then
 
@@ -316,7 +316,7 @@ final class MeetingLocalStoreTests: XCTestCase {
 
         // When
 
-        try await sut.deleteMeeting(id: .init(id: UUID(), domain: Scaffolding.meetingID.domain))
+        await sut.deleteMeeting(id: .init(id: UUID(), domain: Scaffolding.meetingID.domain))
 
         // Then
 

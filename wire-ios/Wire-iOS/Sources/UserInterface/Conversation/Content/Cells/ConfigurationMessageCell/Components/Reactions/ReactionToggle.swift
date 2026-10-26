@@ -20,7 +20,6 @@ import UIKit
 import WireCommonComponents
 import WireDesign
 import WireFoundation
-import WireLocators
 import WireSyncEngine
 
 // MARK: - ReactionToggle
@@ -96,7 +95,10 @@ final class ReactionToggle: UIControl {
         updateAppearance(accentColor: accentColor)
         addTarget(self, action: #selector(didToggle), for: .touchUpInside)
 
-        setupAccessibility(value: emoji)
+        setupAccessibility(
+            value: emoji,
+            count: count
+        )
         addAccentColorChangeObserver(userSession: userSession)
     }
 
@@ -141,9 +143,12 @@ final class ReactionToggle: UIControl {
 
     // MARK: - Accessibility
 
-    private func setupAccessibility(value: String) {
+    func setupAccessibility(
+        value: String,
+        count: UInt
+    ) {
         isAccessibilityElement = true
-        accessibilityIdentifier = Locators.ActiveConversationPage.reactionOnMessageIdentifier(emoji: value)
+        accessibilityIdentifier = "value: \(value), count: \(count)"
     }
 
 }

@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-class ConversationsAPIV18: ConversationsAPIV17 {
+final class ConversationsAPIV18: ConversationsAPIV17 {
 
     override var apiVersion: APIVersion {
         .v18

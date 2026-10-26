@@ -18,7 +18,6 @@
 
 import SwiftUI
 import WireDesign
-import WireLocators
 import WireMessagingDomain
 
 private typealias Strings = L10n.Localizable.Conversation.WireCells
@@ -143,7 +142,7 @@ struct MoveToFolderPage<ViewModel>: View where ViewModel: MoveToFolderPageViewMo
         )
         .disabled(viewModel.moveButtonState == .disabled)
         .accessibilityLabel(Accessibility.Files.MoveToFolder.move)
-        .accessibilityIdentifier(Locators.WireDrive.MoveToFolderPage.moveHere)
+        .accessibilityIdentifier("moveHere")
     }
 
     var cancelButton: some View {
@@ -156,7 +155,7 @@ struct MoveToFolderPage<ViewModel>: View where ViewModel: MoveToFolderPageViewMo
             }
         )
         .accessibilityLabel(L10n.Accessibility.General.cancel)
-        .accessibilityIdentifier(Locators.WireDrive.MoveToFolderPage.cancel)
+        .accessibilityIdentifier("cancel")
     }
 
 }

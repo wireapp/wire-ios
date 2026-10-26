@@ -325,7 +325,7 @@ public final class MainTabBarController<
             image: .init(resource: .videoCall),
             selectedImage: .init(resource: .videoCallFilled)
         )
-        tabBarItem.accessibilityIdentifier = Locators.ConversationsPage.bottomBarMeetingsButton.rawValue
+        tabBarItem.accessibilityIdentifier = "bottomBarMeetingsButton"
         tabBarItem.accessibilityLabel = String(
             localized: "tabBar.meetings.description",
             table: "Accessibility",

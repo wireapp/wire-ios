@@ -17,7 +17,6 @@
 //
 
 import Foundation
-import WireData
 import WireDataModel
 import WireLogging
 import WireNetwork
@@ -465,9 +464,6 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
     public func clearPendingProposals(in conversationID: WireDataModel.QualifiedID) async {
         await conversationsLocalStore.execute(conversationID: conversationID) { conversation, context in
             conversation?.commitPendingProposalDate = nil
-            if let mlsGroupID = conversation?.mlsGroupID {
-                PendingProposalTimer.remove(mlsGroupID: mlsGroupID.data, in: context)
-            }
             context.saveOrRollback()
         }
     }

@@ -19,7 +19,6 @@
 package import Foundation
 
 import WireFoundation
-import WireLogging
 
 package struct CreateMeetingUseCase: CreateMeetingUseCaseProtocol {
 
@@ -39,74 +38,40 @@ package struct CreateMeetingUseCase: CreateMeetingUseCaseProtocol {
         startTime: Date,
         endTime: Date,
         recurrence: MeetingRecurrence?,
-        type: MeetingType,
-        password: String?,
-        participants: [MeetingMember],
-        invitedEmails: [String] = []
-    ) async throws -> MeetingCreationResult {
-        let result = try await meetingRepository.createMeeting(
+        participants: [MeetingMember]
+    ) async throws -> Meeting {
+        let meeting = try await meetingRepository.createMeeting(
             title: title,
             startTime: startTime,
             endTime: endTime,
-            recurrence: recurrence,
-            type: type,
-            password: password,
-            invitedEmails: invitedEmails
+            recurrence: recurrence
         )
-        let meeting = result.meeting
-        var isAddingParticipants = false
+        // The backend creates a conversation for the meeting but doesn't
+        // notify this client about it, so pull it explicitly.
+        try await conversationRepository.pullConversation(
+            id: meeting.conversationID.id,
+            domain: meeting.conversationID.domain
+        )
+        // The backend doesn't name the conversation it creates for the
+        // meeting, so mirror the meeting title onto it.
+        try await conversationRepository.setConversationName(title, for: meeting.conversationID)
         do {
-            // The backend creates a conversation for the meeting but doesn't
-            // notify this client about it, so pull it explicitly.
-            try await conversationRepository.pullConversation(
-                id: meeting.conversationID.id,
-                domain: meeting.conversationID.domain
-            )
-            // The backend doesn't name the conversation it creates for the
-            // meeting, so mirror the meeting title onto it.
-            try await conversationRepository.setConversationName(title, for: meeting.conversationID)
-            isAddingParticipants = true
             try await conversationRepository.addParticipants(participants, to: meeting.conversationID)
         } catch let MeetingParticipantsError.failedToAddParticipants(participants) {
             await meetingRepository.storeMeeting(meeting)
-            throw CreateMeetingUseCaseError.participantsNotAdded(result: result, participants: participants)
-        } catch let MeetingParticipantsError.failedToSetUpParticipants(participants, reasons) {
-            await meetingRepository.storeMeeting(meeting)
-            throw CreateMeetingUseCaseError.addParticipantsFailed(
-                participants: participants,
-                reasons: reasons,
-                hasLink: result.link != nil
-            )
-        } catch {
-            WireLogger.meetings.error(
-                "failed to set up saved meeting: \(String(describing: Swift.type(of: error)))",
-                attributes: .safePublic
-            )
-            await meetingRepository.storeMeeting(meeting)
-            if isAddingParticipants, !participants.isEmpty {
-                throw CreateMeetingUseCaseError.addParticipantsFailed(hasLink: result.link != nil)
-            }
-            throw CreateMeetingUseCaseError.conversationSetupFailed(hasLink: result.link != nil)
+            throw CreateMeetingUseCaseError.participantsNotAdded(meeting: meeting, participants: participants)
         }
-        // Store the meeting again now that its conversation exists locally, so the two are linked.
+        // Store the meeting again now that its conversation exists locally,
+        // so the two are linked; meetings without a local conversation are
+        // not listed.
         await meetingRepository.storeMeeting(meeting)
-        return result
+        return meeting
     }
 
 }
 
 package enum CreateMeetingUseCaseError: Error, Equatable {
 
-    case conversationSetupFailed(hasLink: Bool)
-
-    case missingLink(meeting: Meeting)
-
-    case participantsNotAdded(result: MeetingCreationResult, participants: [MeetingMember])
-
-    case addParticipantsFailed(
-        participants: [MeetingMember] = [],
-        reasons: [QualifiedID: MeetingParticipantFailureReason] = [:],
-        hasLink: Bool
-    )
+    case participantsNotAdded(meeting: Meeting, participants: [MeetingMember])
 
 }

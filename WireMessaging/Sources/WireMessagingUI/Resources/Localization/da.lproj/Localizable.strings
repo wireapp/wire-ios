@@ -89,7 +89,7 @@
 "conversation.creationForm.wireCells.toggle" = "Shared Drive";
 "conversation.creationForm.wireCells.description" = "Enable participants to manage their documents and media files in a shared Drive. This can’t be undone.";
 "conversation.creationForm.wireCells.learnMore" = "Lær mere";
-"conversation.creationForm.wireCells.sharedDriveAccess" = "People outside your team can view files, not upload or edit.";
+
 
 // MARK: - Channel history
 "conversation.channelHistory.upgradeBanner.title" = "Show older messages?";
@@ -160,7 +160,6 @@
 "conversation.wireCells.files.error.noConnection.message" = "Your list of files could not be loaded. Please check your Internet connection and try again.";
 "conversation.wireCells.files.error.noConnection.retry" = "Try again";
 "conversation.wireCells.files.search.title" = "Search files";
-"conversation.wireCells.files.list.selectItems" = "Select";
 "conversation.wireCells.files.list.createFolder" = "Create folder";
 "conversation.wireCells.files.list.createFile" = "Create file";
 "conversation.wireCells.files.list.createFile.presentation" = "Presentation";
@@ -192,46 +191,6 @@
 "conversation.wireCells.files.downloadFailed" = "Unable to load, retry";
 "conversation.wireCells.files.downloadingFile" = "Downloading file...";
 "conversation.wireCells.files.offlineModeHint" = "You can still access your offline files.";
-"conversation.wireCells.files.time.just_now" = "Just now";
-
-
-// MARK: - Shared Drive uploads
-
-"conversation.wireCells.files.upload.menu.upload" = "Upload";
-"conversation.wireCells.files.upload.menu.file" = "Upload file";
-"conversation.wireCells.files.upload.menu.media" = "Upload photo or video";
-
-"conversation.wireCells.files.upload.destination" = "to %@";
-
-"conversation.wireCells.files.upload.uploadingFile" = "Uploading file...";
-"conversation.wireCells.files.upload.uploadedFile" = "Uploaded";
-"conversation.wireCells.files.upload.failedFile" = "Couldn't upload file";
-
-"conversation.wireCells.files.upload.uploadingOne" = "Uploading 1 file";
-"conversation.wireCells.files.upload.uploadingMany" = "Uploading %d files";
-"conversation.wireCells.files.upload.completeOne" = "Upload complete";
-"conversation.wireCells.files.upload.completeMany" = "%d of %d uploaded";
-"conversation.wireCells.files.upload.progress" = "%d of %d uploaded";
-"conversation.wireCells.files.upload.failedOne" = "Couldn't upload file";
-"conversation.wireCells.files.upload.failedMany" = "Couldn't upload %d files";
-"conversation.wireCells.files.upload.someFailedOne" = "1 couldn't upload";
-"conversation.wireCells.files.upload.someFailedMany" = "%d couldn't upload";
-"conversation.wireCells.files.upload.tapToReview" = "Tap to review";
-
-"conversation.wireCells.files.upload.cancel" = "Annuller";
-"conversation.wireCells.files.upload.cancelAll" = "Cancel all";
-"conversation.wireCells.files.upload.retry" = "Retry";
-"conversation.wireCells.files.upload.retryAll" = "Retry all";
-
-"conversation.wireCells.files.upload.tooManyFiles.title" = "Too many files";
-"conversation.wireCells.files.upload.tooManyFiles.message" = "You can upload up to %d files at a time.";
-"conversation.wireCells.files.upload.prepareFailed.title" = "Upload couldn't start";
-"conversation.wireCells.files.upload.prepareFailed.message" = "\"%@\" couldn't be prepared for upload. Make sure the file is available and your device has enough free storage.";
-"conversation.wireCells.files.upload.importFailed.title" = "Couldn't import files";
-"conversation.wireCells.files.upload.importFailed.message" = "Some of the selected files couldn't be imported, so they weren't uploaded.";
-"conversation.wireCells.files.upload.permissionWarning.title" = "Wire needs access to your Photos";
-"conversation.wireCells.files.upload.permissionWarning.restrictions.message" = "Wire cannot access your library because restrictions are enabled.";
-"conversation.wireCells.files.upload.permissionWarning.denied.message" = "Go to Settings and allow Wire to access your photos.";
 
 // MARK: - Recycle Bin
 "conversation.wireCells.recycleBin.navigationTitle" = "Recycle Bin";
@@ -383,5 +342,3 @@
 "conversation.details.sharedDriveAccessSection.footer.title" = "Editors can access and manage all files. Viewers can only read files, they can't upload, edit, or manage files and folders.";
 "conversation.details.sharedDriveAccessSection.footer.subtitle" = "People outside the team that created the conversation are viewers by default.";
 "conversation.details.sharedDriveAccessSection.you" = "Dig";
-"conversation.details.sharedDriveAccessSection.editor" = "Editor";
-"conversation.details.sharedDriveAccessSection.viewer" = "Viewer";

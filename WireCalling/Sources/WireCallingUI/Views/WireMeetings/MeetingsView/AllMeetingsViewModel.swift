@@ -39,12 +39,8 @@ package final class AllMeetingsViewModel {
 
     var presentedFormMode: MeetingFormViewModel.Mode?
     var hasJoinError = false
-    var presentedLink: MeetingLinkViewModel?
 
     private let joinMeetingCallUseCase: any JoinMeetingCallUseCaseProtocol
-    private let fetchMeetingLink: (@Sendable (QualifiedID) async throws -> MeetingLink?)?
-
-    var supportsMeetingLinks: Bool { fetchMeetingLink != nil }
 
     package init(
         currentDateProvider: any CurrentDateProviding,
@@ -55,7 +51,6 @@ package final class AllMeetingsViewModel {
         selfUserID: UUID,
         observeAttendedMeetingsUseCase: (any ObserveAttendedMeetingsUseCaseProtocol)? = nil,
         joinMeetingCallUseCase: any JoinMeetingCallUseCaseProtocol,
-        fetchMeetingLink: (@Sendable (QualifiedID) async throws -> MeetingLink?)? = nil,
         makeFormViewModel: @escaping @MainActor (
             _ mode: MeetingFormViewModel.Mode,
             _ onSuccess: @escaping (Meeting) -> Void
@@ -71,7 +66,6 @@ package final class AllMeetingsViewModel {
             observeAttendedMeetingsUseCase: observeAttendedMeetingsUseCase
         )
         self.joinMeetingCallUseCase = joinMeetingCallUseCase
-        self.fetchMeetingLink = fetchMeetingLink
         self.makeFormViewModel = makeFormViewModel
     }
 
@@ -87,11 +81,6 @@ package final class AllMeetingsViewModel {
 
     func editMeetingTapped(_ meeting: Meeting) {
         presentedFormMode = .edit(meeting)
-    }
-
-    func meetingLinkTapped(_ meeting: Meeting) {
-        guard let fetchMeetingLink, meetingsViewModel.isOrganizer(meeting) else { return }
-        presentedLink = MeetingLinkViewModel { try await fetchMeetingLink(meeting.id) }
     }
 
     func joinMeetingTapped(_ occurrence: MeetingOccurrence) async {

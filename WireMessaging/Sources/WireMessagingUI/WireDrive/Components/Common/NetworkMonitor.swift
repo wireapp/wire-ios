@@ -30,7 +30,7 @@ package final class NetworkMonitor: Observable, ObservableObject {
         case disconnected
     }
 
-    static let shared = NetworkMonitor.makeShared()
+    static let shared = NetworkMonitor()
 
     private var monitor: any NWPathMonitoring
     private let queue = DispatchQueue(label: "NetworkMonitorQueue")

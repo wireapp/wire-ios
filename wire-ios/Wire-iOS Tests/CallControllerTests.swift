@@ -183,8 +183,7 @@ extension CallControllerTests {
             conversation: conversation,
             caller: otherUser,
             timestamp: nil,
-            previousCallState: nil,
-            callEndReason: nil
+            previousCallState: nil
         )
     }
 }

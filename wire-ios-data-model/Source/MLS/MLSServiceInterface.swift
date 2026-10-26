@@ -155,11 +155,7 @@ public protocol MLSServiceInterface: MLSEncryptionServiceInterface, MLSDecryptio
 
     /// Recovers one bounded batch of pending conversations.
     ///
-    /// Only one batch runs at a time. A call made while a batch is running returns `false` and makes the
-    /// running batch return `true`, so its caller recovers the conversations that became pending meanwhile.
-    ///
-    /// - Returns: `true` when another pending batch remains after this batch completed successfully, or
-    ///   when recovery was requested while this batch was running.
+    /// - Returns: `true` when another pending batch remains after this batch completed successfully.
     func recoverPendingConversationBatchIfNeeded() async -> Bool
 
     /// Wipes the group from core crypto's storage

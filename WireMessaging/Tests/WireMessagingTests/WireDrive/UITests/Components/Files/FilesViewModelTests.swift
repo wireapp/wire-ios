@@ -105,11 +105,10 @@ final class FilesViewModelTests {
                     localAssetRepository: localAssetRepository
                 ),
                 observeAsset: WireDriveObserveAssetUseCase(localAssetRepository: localAssetRepository),
-                moveNodes: WireDriveMoveNodesUseCase(
+                moveNode: WireDriveMoveNodeUseCase(
                     nodesRepository: nodesRepository,
                     localAssetRepository: localAssetRepository
-                ),
-                enqueueUploads: MockWireDriveEnqueueDirectUploadsUseCaseProtocol()
+                )
             ),
             isCellsStatePending: false,
             isBrowsing: false,

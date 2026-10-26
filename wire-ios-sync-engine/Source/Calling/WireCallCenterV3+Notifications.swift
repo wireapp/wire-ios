@@ -101,14 +101,12 @@ public protocol WireCallCenterCallStateObserver: AnyObject {
     /// - parameter conversation: where the call is ongoing
     /// - parameter caller: user which initiated the call
     /// - parameter timestamp: when the call state change occured
-    /// - parameter callEndReason: why the call ended, when available
     func callCenterDidChange(
         callState: CallState,
         conversation: ZMConversation,
         caller: UserType,
         timestamp: Date?,
-        previousCallState: CallState?,
-        callEndReason: CallClosedReason?
+        previousCallState: CallState?
     )
 }
 
@@ -121,7 +119,6 @@ public struct WireCallCenterCallStateNotification: SelfPostingNotification {
     let callerId: AVSIdentifier
     let messageTime: Date?
     let previousCallState: CallState?
-    let callEndReason: CallClosedReason?
 }
 
 // MARK: - Missed call observer
@@ -265,8 +262,7 @@ extension WireCallCenterV3 {
                     conversation: conversation,
                     caller: caller,
                     timestamp: note.messageTime,
-                    previousCallState: note.previousCallState,
-                    callEndReason: note.callEndReason
+                    previousCallState: note.previousCallState
                 )
             }
         }
@@ -300,8 +296,7 @@ extension WireCallCenterV3 {
                     conversation: conversation,
                     caller: caller,
                     timestamp: note.messageTime,
-                    previousCallState: note.previousCallState,
-                    callEndReason: note.callEndReason
+                    previousCallState: note.previousCallState
                 )
             }
         }
@@ -343,8 +338,7 @@ extension WireCallCenterV3 {
                     conversation: conversation,
                     caller: caller,
                     timestamp: note.messageTime,
-                    previousCallState: note.previousCallState,
-                    callEndReason: note.callEndReason
+                    previousCallState: note.previousCallState
                 )
             }
         }

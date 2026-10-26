@@ -25,10 +25,6 @@ class MeetingsAPIV17: MeetingsAPIV16 {
     }
 
     override func createMeeting(parameters: CreateMeetingParameters) async throws -> MeetingResponse {
-        guard parameters.password == nil else {
-            throw MeetingsAPIError.unsupportedEndpointForAPIVersion
-        }
-
         let body = try JSONEncoder.defaultEncoder.encode(parameters)
         let path = "\(pathPrefix)/meetings"
 

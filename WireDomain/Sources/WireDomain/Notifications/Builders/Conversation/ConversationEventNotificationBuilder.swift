@@ -30,8 +30,6 @@ protocol ConversationEventNotificationBuilderProtocol {
 struct ConversationEventNotificationBuilder: ConversationEventNotificationBuilderProtocol {
 
     let validator: ConversationEventNotificationBuilder.Validator
-    let answeredElsewhereCallTracker: AnsweredElsewhereCallTracker
-    let accountID: UUID
     let conversationMessageAddEventNotificationBuilder: ConversationMessageAddEventNotificationBuilder
     let conversationMemberLeaveEventNotificationBuilder: ConversationMemberLeaveEventNotificationBuilder
     let conversationMemberJoinEventNotificationBuilder: ConversationMemberJoinEventNotificationBuilder
@@ -42,14 +40,11 @@ struct ConversationEventNotificationBuilder: ConversationEventNotificationBuilde
     func buildContent(
         event: ConversationEvent
     ) async throws -> [UserNotification]? {
-        if case let .memberLeave(memberLeaveEvent) = event {
-            // Cancellation must run even when display rules suppress the member-leave notification.
-            await conversationMemberLeaveEventNotificationBuilder.cancelMeetingReminders(event: memberLeaveEvent)
-            if let notification = await conversationMemberLeaveEventNotificationBuilder.buildMeetingCancellationContent(
-                event: memberLeaveEvent
-            ) {
-                return [notification]
-            }
+        if case let .memberLeave(memberLeaveEvent) = event,
+           let notification = await conversationMemberLeaveEventNotificationBuilder.buildMeetingCancellationContent(
+               event: memberLeaveEvent
+           ) {
+            return [notification]
         }
 
         let canDisplayNotification = await validator.validate(
@@ -59,11 +54,6 @@ struct ConversationEventNotificationBuilder: ConversationEventNotificationBuilde
         )
 
         guard canDisplayNotification else {
-            let isCallerSelf = (try? await validator.userLocalStore.isSelfUser(
-                id: event.senderID.id,
-                domain: event.senderID.domain
-            ).isSelfUser) ?? false
-            answeredElsewhereCallTracker.track(event: event, accountID: accountID, isCallerSelf: isCallerSelf)
             return nil
         }
 

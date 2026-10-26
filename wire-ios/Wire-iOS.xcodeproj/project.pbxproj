@@ -595,7 +595,6 @@
 				ConversationCell/ConversationSystemMessageCellSnapshotTests.swift,
 				ConversationCell/ConversationSystemMessageChannelHistoryDepthSnapshotTests.swift,
 				ConversationCell/ConversationSystemMessageMlsSupportSnapshotTests.swift,
-				ConversationCell/ConversationTextMessageTableViewSnapshotTests.swift,
 				ConversationCell/GroupConversationHeaderViewSnapshotTests.swift,
 				ConversationCell/LocationMessageCellTests.swift,
 				ConversationCell/MarkDownSnapshotTests.swift,

@@ -178,15 +178,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 "application:handleEventsForBackgroundURLSession:completionHandler: session identifier: \(identifier)"
             )
 
-        // Claimed here, before scene routing: a background-only relaunch may have no connected
-        // scene yet, and `sceneDelegate` would then be nil, silently dropping this handler.
-        if AppDependencies.wireDriveUploadSessions.handleEventsForBackgroundURLSession(
-            identifier: identifier,
-            completionHandler: completionHandler
-        ) {
-            return
-        }
-
         sceneDelegate?.application(
             application,
             handleEventsForBackgroundURLSession: identifier,

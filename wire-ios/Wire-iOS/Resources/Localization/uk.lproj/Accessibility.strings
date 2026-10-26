@@ -47,8 +47,6 @@
 "conversation.locationButton.description" = "Поділися розташуванням";
 "conversation.videoButton.description" = "Записати відео";
 "conversation.moreButton.description" = "Відкрити більше налаштувань повідомлень";
-"conversation.moreButton.closeDescription" = "Close more messaging options";
-"conversation.applyChangesButton.description" = "Apply changes";
 "conversation.emphemeralButton.description" = "Встановіть таймер для тимчасових повідомлень";
 "conversation.timerForSelfDeletingMessagesSeconds.value" = "%@ секунд";
 "conversation.timerForSelfDeletingMessagesMinutes.value" = "%@ хвилин";

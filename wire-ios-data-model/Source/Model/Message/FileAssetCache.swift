@@ -548,7 +548,6 @@ public final class FileAssetCache: NSObject {
                 sha256Digest: sha256Digest
             )
         else {
-            WireLogger.assets.warn("playback file: could not decrypt file")
             return nil
         }
 
@@ -706,17 +705,14 @@ public final class FileAssetCache: NSObject {
             !encryptionKey.isEmpty,
             !sha256Digest.isEmpty
         else {
-            WireLogger.assets.warn("decrypt asset: empty key or digest")
             return nil
         }
 
         guard let encryptedData = cache.assetData(key) else {
-            WireLogger.assets.warn("decrypt asset: encrypted cache data missing")
             return nil
         }
 
         guard encryptedData.zmSHA256Digest() == sha256Digest else {
-            WireLogger.assets.warn("decrypt asset: checksum mismatch")
             cache.deleteAssetData(key)
             return nil
         }

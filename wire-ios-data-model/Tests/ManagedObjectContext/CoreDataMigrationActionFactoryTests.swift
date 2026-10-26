@@ -24,7 +24,6 @@ final class CoreDataMigrationActionFactoryTests: XCTestCase {
 
     // add version with actions here - aka custom migration
     let excludedVersions: [CoreDataMessagingMigrationVersion] = [
-        .v143,
         .v136,
         .v131,
         .v120,
@@ -34,20 +33,6 @@ final class CoreDataMigrationActionFactoryTests: XCTestCase {
         .v111,
         .v107
     ]
-
-    // MARK: - Version 143
-
-    func test_createPostMigrationAction_ReturnsPostActionForVersion143() {
-        let action = CoreDataMigrationActionFactory.createPostMigrationAction(for: .v143)
-
-        XCTAssertTrue(action is PendingProposalTimerMigrationAction)
-    }
-
-    func test_createPostMigrationAction_ReturnsNoPreActionForVersion143() {
-        let action = CoreDataMigrationActionFactory.createPreMigrationAction(for: .v143)
-
-        XCTAssertNil(action)
-    }
 
     // MARK: - Version 136
 

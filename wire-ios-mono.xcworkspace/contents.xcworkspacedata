@@ -86,16 +86,7 @@
          location = "group:auto_approve_cherry_pick.yml">
       </FileRef>
       <FileRef
-         location = "group:playground_pr_comment.yml">
-      </FileRef>
-      <FileRef
-         location = "group:pr_component_labels.yml">
-      </FileRef>
-      <FileRef
          location = "group:beta_app_release.yml">
-      </FileRef>
-      <FileRef
-         location = "group:localization_reminder.yml">
       </FileRef>
       <FileRef
          location = "group:create_release_branch.yml">

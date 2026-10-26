@@ -65,23 +65,6 @@ public final class E2EIRepository: E2EIRepositoryInterface {
         }
 
         let trustAnchor = try await acmeApi.getTrustAnchor()
-
-        // The PKI environment is persisted, so the anchor may already have been added by a previous
-        // (e.g. cancelled) enrollment attempt, in which case adding it again fails.
-        let existingAnchors = try await pkiEnvironment.getTrustAnchors()
-
-        // CoreCrypto returns LF line endings and a trailing newline; normalize before comparing.
-        let trimmedTrustAnchor = trustAnchor
-            .replacingOccurrences(of: "\r\n", with: "\n")
-            .trimmingCharacters(in: .whitespacesAndNewlines)
-
-        guard !existingAnchors.contains(where: {
-            $0.trimmingCharacters(in: .whitespacesAndNewlines) == trimmedTrustAnchor
-        }) else {
-            logger.info("trust anchor already registered, skipping")
-            return
-        }
-
         try await pkiEnvironment.addTrustAnchor(certPem: trustAnchor)
     }
 

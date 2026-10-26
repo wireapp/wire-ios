@@ -242,8 +242,7 @@ extension CallEndedAnalyticsController: WireCallCenterCallStateObserver {
         conversation: ZMConversation,
         caller: any UserType,
         timestamp: Date?,
-        previousCallState: CallState?,
-        callEndReason: CallClosedReason?
+        previousCallState: CallState?
     ) {
         logger.info("callCenterDidChange: \(callState)")
 

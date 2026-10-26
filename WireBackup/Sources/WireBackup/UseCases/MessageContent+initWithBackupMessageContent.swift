@@ -68,10 +68,7 @@ extension WireBackup.MessageBackupModel.Content.AssetContent {
     init(_ assetContent: BackupMessageContent.Asset) {
         self.init(
             mimeType: assetContent.mimeType,
-            // Kalium models size as Int32; guard against a negative value here rather than
-            // trapping, since UInt64(Int32) crashes for negative input.
-            // TODO: [WPB-16658] match data types between CoreCrypto, Kalium and iOS
-            size: UInt64(max(assetContent.size, 0)),
+            size: UInt64(assetContent.size), // TODO: [WPB-16658] match data types between CoreCrypto, Kalium and iOS
             name: assetContent.name,
             otrKey: Data(assetContent.otrKey),
             sha256: Data(assetContent.sha256),

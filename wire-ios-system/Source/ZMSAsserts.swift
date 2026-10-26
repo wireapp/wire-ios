@@ -26,8 +26,13 @@ public func fatal(
     line: UInt = #line
 ) -> Never {
 
-    // `%s` expects a C string, not a Swift `String`, so use interpolation to keep the dump readable.
-    let output = "ASSERT: [\(file):\(line)] <Swift assertion> \(message)"
+    let output = NSString(
+        format: "ASSERT: [%s:%d] <%s> %@",
+        "\(file)",
+        Int32(line),
+        "Swift assertion",
+        message
+    ) as String
 
     // report error to datadog or other loggers
     WireLogger.system.critical(output, attributes: .safePublic)

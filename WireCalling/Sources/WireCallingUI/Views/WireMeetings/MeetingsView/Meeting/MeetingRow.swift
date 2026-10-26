@@ -30,11 +30,9 @@ struct MeetingRow: View {
     let isOrganizer: Bool
     var isAttending: Bool = false
     var isLive: Bool = false
-    var hasEnded: Bool = false
     let onEdit: () -> Void
     let onDelete: () -> Void
     var onJoin: () -> Void = {}
-    var onMeetingLink: (() -> Void)?
 
     @Environment(\.wireAccentColor) private var wireAccentColor
 
@@ -63,7 +61,6 @@ struct MeetingRow: View {
             VStack(alignment: .leading, spacing: 2) {
                 HStack(alignment: .top) {
                     Text(meeting.title)
-                        .accessibilityIdentifier(Locators.WireMeetings.MeetingRow.title)
                         .font(for: .body2)
                         .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
                         .lineLimit(2)
@@ -84,21 +81,12 @@ struct MeetingRow: View {
                         .disabled(meeting.conversation == nil)
 
                         if isOrganizer {
-                            if !hasEnded {
-                                Button {
-                                    onEdit()
-                                } label: {
-                                    Label(Strings.Actions.edit, systemImage: "pencil")
-                                }
-                                .disabled(meeting.conversation == nil)
+                            Button {
+                                onEdit()
+                            } label: {
+                                Label(Strings.Actions.edit, systemImage: "pencil")
                             }
-
-                            if let onMeetingLink {
-                                Button(action: onMeetingLink) {
-                                    Label(L10n.Localizable.WireMeetings.Link.title, systemImage: "link")
-                                }
-                                .accessibilityIdentifier(Locators.WireMeetings.MeetingRow.meetingLink)
-                            }
+                            .disabled(meeting.conversation == nil)
 
                             Button(role: .destructive) {
                                 onDelete()
@@ -125,19 +113,16 @@ struct MeetingRow: View {
                             .contentShape(Rectangle())
                     }
                     .menuOrder(.fixed)
-                    .accessibilityIdentifier(Locators.WireMeetings.MeetingRow.menu)
                     .padding(.vertical, -12)
                 }
 
                 HStack(spacing: 8) {
                     Text(formatTime(occurrence))
-                        .accessibilityIdentifier(Locators.WireMeetings.MeetingRow.time)
                         .font(for: .subline1)
                         .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
 
                     if let recurrence = meeting.recurrence {
                         recurrenceBadge(recurrence.title)
-                            .accessibilityIdentifier(Locators.WireMeetings.MeetingRow.recurrence)
                     }
                 }
 
@@ -154,14 +139,6 @@ struct MeetingRow: View {
                 }
             }
         }
-        .accessibilityElement(children: .contain)
-        .accessibilityIdentifier(
-            Locators.WireMeetings.MeetingRow.rowIdentifier(
-                domain: meeting.id.domain,
-                id: meeting.id.id,
-                start: occurrence.start
-            )
-        )
     }
 
     private var joinButton: some View {

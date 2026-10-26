@@ -27,12 +27,10 @@ on:
         required: true
       DD_API_KEY:
         required: true
-      # Wire webhook this run should post to. Callers resolve which
+      # Slack webhook this run should post to. Callers resolve which
       # environment-specific webhook to pass, e.g.
-      # `WIRE_WEBHOOK_URL: ${{ secrets.WIRE_IOS_CI_URL }}`.
-      WIRE_WEBHOOK_URL:
-        required: true
-      WIRE_WEBHOOK_TOKEN:
+      # `SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_CI_WEBHOOK }}`.
+      SLACK_WEBHOOK_URL:
         required: true
 
 env: # https://docs.fastlane.tools/getting-started/ios/setup/
@@ -216,8 +214,7 @@ jobs:
       - name: Notify on Wire
         uses: ./.github/actions/notify-wire
         env:
-          WIRE_WEBHOOK_URL: ${{ secrets.WIRE_WEBHOOK_URL }}
-          WIRE_WEBHOOK_TOKEN: ${{ secrets.WIRE_WEBHOOK_TOKEN }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
         with:
           notify: ${{ inputs.notify }}
           status: ${{ needs.test-framework.result }}
