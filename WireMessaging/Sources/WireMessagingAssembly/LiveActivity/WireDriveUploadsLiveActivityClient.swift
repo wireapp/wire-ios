@@ -58,8 +58,7 @@ final class ActivityKitUploadsActivityClient: WireDriveUploadsActivityClient {
     }
 
     var areActivitiesEnabled: Bool {
-        ActivityAuthorizationInfo().areActivitiesEnabled && UserDefaults.standard
-            .bool(forKey: "enableDriveDirectUploads")
+        ActivityAuthorizationInfo().areActivitiesEnabled
     }
 
     var hasActivity: Bool {
