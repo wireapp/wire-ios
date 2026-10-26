@@ -25,6 +25,7 @@ import WireLocators
 
 struct MemberAvatarsView: View {
     let members: [MeetingMember]
+    let creatorID: QualifiedID
 
     private let maxVisible = 5
     private let circleSize: CGFloat = 24
@@ -69,7 +70,11 @@ struct MemberAvatarsView: View {
         }
     }
 
-    private func areInDisplayOrder(_ lhs: MeetingMember, _ rhs: MeetingMember) -> Bool {
+    func areInDisplayOrder(_ lhs: MeetingMember, _ rhs: MeetingMember) -> Bool {
+        if (lhs.qualifiedID == creatorID) != (rhs.qualifiedID == creatorID) {
+            return lhs.qualifiedID == creatorID
+        }
+
         if lhs.isSelfUser != rhs.isSelfUser {
             return lhs.isSelfUser
         }
@@ -106,5 +111,5 @@ struct MemberAvatarsView: View {
 }
 
 #Preview {
-    MemberAvatarsView(members: [])
+    MemberAvatarsView(members: [], creatorID: QualifiedID(id: UUID(), domain: "example.com"))
 }
