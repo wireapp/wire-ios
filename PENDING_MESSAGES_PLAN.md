@@ -1,6 +1,6 @@
 # Offline pending messages: implementation plan
 
-Last updated: 2026-10-22
+Last updated: 2026-10-26
 
 Jira issue: [WPB-26307](https://wearezeta.atlassian.net/browse/WPB-26307)
 
@@ -37,6 +37,10 @@ the default-off flag, with source coverage added and no build/test execution.
 Queued-text editing, draft retention when a send claim wins, and a local Queued
 status are now written as well; all validation for these stages belongs to the user.
 Classic asset enrollment/retention/recovery is now written with regression source.
+Scope clarification (2026-10-26): plain text also uses the outbox in Drive-enabled
+conversations. Wire Drive attachment upload/publishing before message creation is
+excluded; multipart support begins once the message exists with its references.
+Drive folder uploads have their own recovery manager and require separate validation.
 The share extension explicitly leaves main-app outbox ownership with the main app.
 The 2026-10-22 source review also closes UI Retry/Cancel races with sync-context
 send claims and cancellation after asset upload but before message handoff. The
@@ -411,7 +415,10 @@ Proposed scope:
 
 - Queue user-authored text, location, knock, multipart, and asset messages in
   conversations where sending is otherwise allowed.
-- Support images, files, audio, and video through the asset pipeline.
+- Support images, files, audio, and video through the classic asset pipeline.
+- Cover sending an already-created multipart message, including its existing
+  attachment references. This does not cover uploading/publishing Wire Drive
+  composer drafts before that message is created.
 - Preserve existing edit eligibility by message type: add queued text editing;
   do not introduce editing for standalone assets or locations.
 - Preserve existing restrictions for self-deleting messages and security checks.
@@ -419,6 +426,17 @@ Proposed scope:
 - Do not automatically apply the outbox policy to receipts, reactions, typing
   notifications, or other hidden protocol traffic.
 - Do not automatically revive messages that already failed under legacy behavior.
+
+Wire Drive scope, source reviewed 2026-10-26: plain text in a Drive-enabled
+conversation uses the regular message path. Composer attachments first use
+`UploadDraftUseCase` and `DraftsRepository.publishAll`; the send action awaits
+publishing before asking its delegate to create the multipart message. Upload
+failures are recorded as failed drafts and the current composer draft repository
+is held in memory. This branch does not add durable offline submission/restart
+recovery for that earlier phase. Drive folder uploads use the separate
+`WireDriveDirectUploadManager`, which loads persisted records and reconciles
+uploads at startup; that does not establish composer draft recovery or runtime
+correctness. Describe these boundaries explicitly in the PR. No checks were run.
 
 ## Current behavior
 
