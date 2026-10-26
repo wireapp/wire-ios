@@ -146,7 +146,7 @@ final class OneOnOneMessagingTests: WireUITestCase {
         let mediaURLs = TestServiceMediaFixtures.mediaURLs(relativeTo: #filePath)
 
         let (conversationId, domain) = try await UserHelper.default
-            .getConversationId(matching: .conversationType(.group))
+            .getConversationId(matching: .conversationType(.oneOnOne))
         let conversationDomain = try XCTUnwrap(domain, "domain is nil")
 
         // WHEN member sends text, image, audio and ping
@@ -251,7 +251,7 @@ final class OneOnOneMessagingTests: WireUITestCase {
         // GIVEN
         let (teamOwner, activeConversationPage) = try await openOneOnOneConversation()
         let (conversationId, domain) = try await UserHelper.default
-            .getConversationId(matching: .conversationType(.group))
+            .getConversationId(matching: .conversationType(.oneOnOne))
         let conversationDomain = try XCTUnwrap(domain, "domain is nil")
         let mediaURLs = TestServiceMediaFixtures.mediaURLs(relativeTo: #filePath)
 
