@@ -58,7 +58,10 @@ if [ -n "$CHANGED_STRINGS" ]; then
     while IFS= read -r line; do
       [ -z "$line" ] && continue
       key=$(echo "$line" | sed -E 's/^"([^"]*)".*/\1/')
-      if ! printf '%s\n' "$BASE_KEYS" | grep -qxF "$key"; then
+      # Here-string, not a pipe: with pipefail, `grep -q` exiting on the first
+      # match makes `printf` die with SIGPIPE on large files, which would
+      # wrongly report existing keys as new.
+      if ! grep -qxF "$key" <<< "$BASE_KEYS"; then
         value=$(echo "$line" | sed -E 's/^"[^"]*" *= *"(.*)";.*/\1/')
         ENTRY="\`$key\` = \"$value\""
         if [ -n "$NEW_KEYS" ]; then

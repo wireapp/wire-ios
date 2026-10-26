@@ -119,7 +119,7 @@ extension FilesViewModel {
                 observeAsset: WireDriveObserveAssetUseCase(
                     localAssetRepository: localAssetRepository
                 ),
-                moveNode: WireDriveMoveNodeUseCase(
+                moveNodes: WireDriveMoveNodesUseCase(
                     nodesRepository: previewNodesRepository(),
                     localAssetRepository: localAssetRepository
                 ),

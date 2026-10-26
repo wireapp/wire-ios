@@ -431,6 +431,14 @@ public enum Locators {
         case themeCell
         case lockWithPasscode = "Lock With Passcode"
         case createLinkPreviews = "Create Link Previews"
+        case browserCell
+        case chromeBrowserOption
+        case mockedChromeAlert
+        case mockedChromeAlertTitle = "Opening in Chrome"
+        case mapsCell
+        case googleMapsOption
+        case mockedGoogleMapsAlert
+        case mockedGoogleMapsAlertTitle = "Opening in Google Maps"
     }
 
     public enum SaveBackupFileBottomSheetPage: String {
@@ -571,6 +579,10 @@ public enum Locators {
             case saveButton
             case cancelButton
             case removeFilterButton
+
+            public static func typeItem(_ type: String) -> String {
+                "typeItem.\(type)"
+            }
         }
 
         public enum FilesFilteringPage: String {
@@ -606,15 +618,22 @@ public enum Locators {
             case deleteToRecycleBin
             case deletePermanently
             case restore
+            case makeAvailableOffline
 
             public var identifier: String {
                 "fileMenu.\(rawValue)"
             }
         }
 
+        public enum MoveToFolderPage: String {
+            case moveHere
+            case cancel
+        }
+
         public enum FilesPage: String {
             case close
             case createFolder
+            case selectItems
             case createFile
             case upload
             case recycleBin
@@ -622,6 +641,13 @@ public enum Locators {
             case deleteOnBottomSheet = "Delete"
             case moreOptions = "More"
             case recycleBinPageheader = "Recycle Bin"
+            case moveToFolder
+            case moveToFolderFloatingButton
+            case done
+
+            public static func createFileTemplate(_ kind: String) -> String {
+                "createFileTemplate.\(kind)"
+            }
         }
 
         public enum FilesInfoPage: String {
@@ -639,7 +665,7 @@ public enum Locators {
         }
 
         public enum EditFilePage: String {
-            case close
+            case closeEditFilePage
         }
 
         /// UI elements for both file or folder creation.
@@ -756,10 +782,46 @@ public enum Locators {
         public enum MeetingForm: String {
             case save = "meetingFormSave"
             case title = "meetingFormTitle"
+            case password = "meetingFormPassword"
+            case confirmPassword = "meetingFormConfirmPassword"
+            case clearPassword = "meetingFormClearPassword"
+            case clearConfirmPassword = "meetingFormClearConfirmPassword"
+            case passwordVisibility = "meetingFormPasswordVisibility"
+            case confirmPasswordVisibility = "meetingFormConfirmPasswordVisibility"
+            case copyPassword = "meetingFormCopyPassword"
+            case generatePassword = "meetingFormGeneratePassword"
+            case passwordRequirements = "meetingFormPasswordRequirements"
             case clearTitle = "meetingFormClearTitle"
             case participants = "meetingFormParticipants"
             case membersSelect = "meetingMembersSelect"
+            case membersSelected = "meetingMembersSelected"
+            case membersEmptySearch = "meetingMembersEmptySearch"
+            case errorDismiss = "meetingFormErrorDismiss"
+            case cancel = "meetingFormCancel"
+            case startDate = "meetingFormStartDate"
+            case startTime = "meetingFormStartTime"
+            case endDate = "meetingFormEndDate"
+            case endTime = "meetingFormEndTime"
+            case repeatOption = "meetingFormRepeat"
+            case titleError = "meetingFormTitleError"
+            case loading = "meetingFormLoading"
+            case datePicker = "meetingFormDatePicker"
+            case timePicker = "meetingFormTimePicker"
             case selectedMembersSection = "Selected ("
+
+            public enum RepeatOption: String {
+                case never = "meetingFormRepeat.never"
+                case daily = "meetingFormRepeat.daily"
+                case weekly = "meetingFormRepeat.weekly"
+                case everyTwoWeeks = "meetingFormRepeat.everyTwoWeeks"
+                case everyFourWeeks = "meetingFormRepeat.everyFourWeeks"
+                case monthly = "meetingFormRepeat.monthly"
+                case yearly = "meetingFormRepeat.yearly"
+            }
+
+            public static func selectedMembersIdentifier(isExpanded: Bool) -> String {
+                "\(membersSelected.rawValue).\(isExpanded ? "expanded" : "collapsed")"
+            }
 
             public static func memberIdentifier(_ id: String) -> String {
                 "meetingMember.\(id.uppercased())"
@@ -782,6 +844,17 @@ public enum Locators {
             case attendingLabel = "Attending Label"
         }
 
+        public enum MeetingLink: String {
+            case url = "meetingLinkURL"
+            case passwordState = "meetingLinkPasswordState"
+            case copy = "meetingLinkCopy"
+            case copied = "meetingLinkCopied"
+            case cancel = "meetingLinkCancel"
+            case loading = "meetingLinkLoading"
+            case error = "meetingLinkError"
+            case retry = "meetingLinkRetry"
+        }
+
         public enum MeetingRow: String {
             case title = "meetingTitle"
             case menu = "meetingMenu"
@@ -791,6 +864,7 @@ public enum Locators {
             case rowPrefix = "meetingRow."
             case deleteForMeButton = "Delete Meeting for Me Button"
             case joinButton = "Join Button"
+            case meetingLink = "meetingRowLink"
 
             public static func rowIdentifier(domain: String, id: UUID, start: Date) -> String {
                 "meetingRow.\(domain).\(id.uuidString).\(Int(start.timeIntervalSince1970))"

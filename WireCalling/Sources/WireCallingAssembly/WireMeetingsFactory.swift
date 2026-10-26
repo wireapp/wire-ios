@@ -23,15 +23,20 @@ public import WireCallingDomain
 import SwiftUI
 import WireCallingData
 import WireCallingUI
+import WireDesign
 import WireFoundation
 
 public struct WireMeetingsFactory {
 
     private let selfUserID: UUID
+    private let supportsMeetingLinks: Bool
+    private let isClipboardEnabled: Bool
 
     @MainActor
-    public init(selfUserID: UUID) {
+    public init(selfUserID: UUID, supportsMeetingLinks: Bool = false, isClipboardEnabled: Bool = true) {
         self.selfUserID = selfUserID
+        self.supportsMeetingLinks = supportsMeetingLinks
+        self.isClipboardEnabled = isClipboardEnabled
     }
 
     @MainActor
@@ -44,11 +49,11 @@ public struct WireMeetingsFactory {
     ) -> UIViewController {
         let currentDateProvider = makeCurrentDateProvider()
 
-        let createMeetingUseCase = CreateMeetingUseCase(
+        let createMeetingUseCase = makeCreateMeetingUseCase(
             meetingRepository: meetingRepository,
             conversationRepository: conversationRepository
         )
-        let updateMeetingUseCase = UpdateMeetingUseCase(
+        let updateMeetingUseCase = makeUpdateMeetingUseCase(
             meetingRepository: meetingRepository,
             conversationRepository: conversationRepository
         )
@@ -68,6 +73,9 @@ public struct WireMeetingsFactory {
         let observeAttendedMeetingsUseCase = ObserveAttendedMeetingsUseCase(repository: callRepository)
         let joinMeetingCallUseCase = JoinMeetingCallUseCase(repository: callRepository)
         let searchMembersUseCase = SearchMembersUseCase(repository: memberRepository)
+        let fetchMeetingLink: @Sendable (QualifiedID) async throws -> MeetingLink? = {
+            try await meetingRepository.fetchMeetingLink(id: $0)
+        }
         let meetingsViewModel = AllMeetingsViewModel(
             currentDateProvider: currentDateProvider,
             upcomingMeetingsUseCase: fetchUpcomingMeetingsUseCase,
@@ -76,6 +84,7 @@ public struct WireMeetingsFactory {
             selfUserID: selfUserID,
             observeAttendedMeetingsUseCase: observeAttendedMeetingsUseCase,
             joinMeetingCallUseCase: joinMeetingCallUseCase,
+            fetchMeetingLink: supportsMeetingLinks ? fetchMeetingLink : nil,
             makeFormViewModel: { mode, onSuccess in
                 MeetingFormViewModel(
                     mode: mode,
@@ -83,6 +92,7 @@ public struct WireMeetingsFactory {
                     createMeetingUseCase: createMeetingUseCase,
                     updateMeetingUseCase: updateMeetingUseCase,
                     currentDateProvider: currentDateProvider,
+                    supportsMeetingLinks: supportsMeetingLinks,
                     onSuccess: onSuccess
                 )
             }
@@ -93,6 +103,7 @@ public struct WireMeetingsFactory {
                     viewModel: meetingsViewModel,
                     accentColorState: accentColorState
                 )
+                .environment(\.isClipboardEnabled, isClipboardEnabled)
             )
         )
     }
@@ -104,6 +115,38 @@ public struct WireMeetingsFactory {
             }
         #endif
         return .system
+    }
+
+    private func makeCreateMeetingUseCase(
+        meetingRepository: any MeetingRepositoryProtocol,
+        conversationRepository: any MeetingConversationRepositoryProtocol
+    ) -> any CreateMeetingUseCaseProtocol {
+        let createUseCase = CreateMeetingUseCase(
+            meetingRepository: meetingRepository,
+            conversationRepository: conversationRepository
+        )
+        #if DEBUG
+            if let failureID = UITestConfig.environment?.meetingsCreateFailureID {
+                return MeetingsUITestCreateUseCase(wrapping: createUseCase, failureID: failureID)
+            }
+        #endif
+        return createUseCase
+    }
+
+    private func makeUpdateMeetingUseCase(
+        meetingRepository: any MeetingRepositoryProtocol,
+        conversationRepository: any MeetingConversationRepositoryProtocol
+    ) -> any UpdateMeetingUseCaseProtocol {
+        let updateUseCase = UpdateMeetingUseCase(
+            meetingRepository: meetingRepository,
+            conversationRepository: conversationRepository
+        )
+        #if DEBUG
+            if let failureID = UITestConfig.environment?.meetingsUpdateFailureID {
+                return MeetingsUITestUpdateUseCase(wrapping: updateUseCase, failureID: failureID)
+            }
+        #endif
+        return updateUseCase
     }
 
     private func makeFetchUpcomingMeetingsUseCase(

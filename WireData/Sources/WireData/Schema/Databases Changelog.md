@@ -10,9 +10,17 @@ As it is hard to spot changes from version to version of database models (.xcdat
 
 ## zmessaging
 
-### 2.143.0
+### 2.145.0 (TODO, not created yet)
+
+* remove `Conversation.commitPendingProposalDate`, superseded by the `PendingProposalTimer` entity (values are moved by `PendingProposalTimerMigrationAction` when migrating to 2.143.0). Also remove the `@NSManaged` property in `ZMConversation` and its remaining usages.
+
+### 2.144.0
 
 * removed unused `WireDriveDirectUpload.presignedRequestHeaders`, `sessionIdentifier` and `taskIdentifier` attributes
+
+### 2.143.0
+
+* added `PendingProposalTimer` entity, persisting when pending MLS proposals must be committed, separately from `Conversation`, so unrelated conversation saves cannot re-trigger commits
 
 ### 2.142.0
 

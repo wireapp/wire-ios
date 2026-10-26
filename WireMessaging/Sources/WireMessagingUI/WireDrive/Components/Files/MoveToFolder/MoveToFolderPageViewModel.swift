@@ -19,6 +19,7 @@
 import Combine
 import Foundation
 import SwiftUI
+import WireFoundation
 import WireMessagingDomain
 
 private typealias Strings = L10n.Localizable.Conversation.WireCells
@@ -92,12 +93,11 @@ final class MoveToFolderPageViewModel: MoveToFolderPageViewModelProtocol {
 
     private let containerPath: String
     private let originalContainerPath: String
-    private let nodeID: UUID
-    private let nodeName: String
+    private let nodeIDs: [UUID]
     private let onNavigate: (String) -> Void
     private let onFinish: () -> Void
     private let fetchNodesUseCase: WireDriveFetchNodesUseCase
-    private let moveNodeUseCase: WireDriveMoveNodeUseCase
+    private let moveNodesUseCase: WireDriveMoveNodesUseCase
     private let createFileUseCase: any WireDriveCreateFileUseCaseProtocol
     private var subscriptions = Set<AnyCancellable>()
 
@@ -114,28 +114,26 @@ final class MoveToFolderPageViewModel: MoveToFolderPageViewModelProtocol {
     init(
         containerPath: String,
         originalContainerPath: String,
-        nodeID: UUID,
-        nodeName: String,
+        nodeIDs: [UUID],
         onNavigate: @escaping (String) -> Void,
         onFinish: @escaping () -> Void,
         fetchNodesUseCase: WireDriveFetchNodesUseCase,
-        moveNodeUseCase: WireDriveMoveNodeUseCase,
+        moveNodesUseCase: WireDriveMoveNodesUseCase,
         createFileUseCase: any WireDriveCreateFileUseCaseProtocol
     ) {
         self.title = Self.title(for: containerPath)
-        self.nodeID = nodeID
-        self.nodeName = nodeName
+        self.nodeIDs = nodeIDs
         self.containerPath = containerPath
         self.originalContainerPath = originalContainerPath
         self.onNavigate = onNavigate
         self.onFinish = onFinish
         self.fetchNodesUseCase = fetchNodesUseCase
-        self.moveNodeUseCase = moveNodeUseCase
+        self.moveNodesUseCase = moveNodesUseCase
         self.createFileUseCase = createFileUseCase
 
         fetchNodesUseCase.clearNodes()
         fetchNodesUseCase.nodes.sink { [weak self] nodes in
-            self?.nodes = nodes.filter { $0.id != nodeID }
+            self?.nodes = nodes.filter { !nodeIDs.contains($0.id) }
         }.store(in: &subscriptions)
     }
 
@@ -146,10 +144,7 @@ final class MoveToFolderPageViewModel: MoveToFolderPageViewModelProtocol {
                 name: node.name,
                 subtitle: Self.subtitle(
                     modifiedAt: node.modified,
-                    ownedBy: node.ownerUserName,
-                    locale: .autoupdatingCurrent,
-                    calendar: .autoupdatingCurrent,
-                    timeZone: .autoupdatingCurrent
+                    ownedBy: node.ownerUserName
                 )
             )
         }
@@ -228,7 +223,7 @@ final class MoveToFolderPageViewModel: MoveToFolderPageViewModelProtocol {
 
         isMoving = true
         do {
-            try await moveNodeUseCase.invoke(nodeID: nodeID, containerPath: containerPath)
+            try await moveNodesUseCase.invoke(nodeIDs: nodeIDs, containerPath: containerPath)
             onFinish()
         } catch {
             alert = Self.alert(error: error)
@@ -274,22 +269,9 @@ final class MoveToFolderPageViewModel: MoveToFolderPageViewModelProtocol {
 
     private static func subtitle(
         modifiedAt: Date?,
-        ownedBy: String?,
-        locale: Locale,
-        calendar: Calendar,
-        timeZone: TimeZone
+        ownedBy: String?
     ) -> String? {
-        let modifiedAt = modifiedAt.map { date in
-            let style = Date.FormatStyle(
-                date: .abbreviated,
-                time: .shortened,
-                locale: locale,
-                calendar: calendar,
-                timeZone: timeZone,
-                capitalizationContext: .beginningOfSentence
-            )
-            return date.formatted(style)
-        }
+        let modifiedAt = modifiedAt?.formattedDate(justNowText: Strings.Files.Time.justNow)
         return if let modifiedAt, let ownedBy {
             L10n.Localizable.Conversation.WireCells.Files.Item.subtitle(modifiedAt, ownedBy)
         } else {
