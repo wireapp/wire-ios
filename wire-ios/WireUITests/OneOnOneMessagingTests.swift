@@ -26,6 +26,12 @@ final class OneOnOneMessagingTests: WireUITestCase {
     private func openOneOnOneConversation() async throws
         -> (teamOwner: UserInfo, activeConversationPage: ActiveConversationPage) {
         let (teamOwner, teamMembers, _, _) = try await UserHelper.default.registerTeam(withMemberCount: 1)
+
+        _ = try app.loginUser(email: teamOwner.email, password: teamOwner.password)
+            .acceptPopup()
+            .openUserProfilePage()
+            .tapAddAccountOrTeamButton()
+
         let firstTimePage = try app.loginUser(email: teamMembers[0].email, password: teamMembers[0].password)
         let activeConversationPage = try firstTimePage.acceptPopup()
             .tapPlusButtonToCreateGroup()
@@ -140,7 +146,7 @@ final class OneOnOneMessagingTests: WireUITestCase {
         let mediaURLs = TestServiceMediaFixtures.mediaURLs(relativeTo: #filePath)
 
         let (conversationId, domain) = try await UserHelper.default
-            .getConversationId(matching: .conversationType(.group))
+            .getConversationId(matching: .conversationType(.oneOnOne))
         let conversationDomain = try XCTUnwrap(domain, "domain is nil")
 
         // WHEN member sends text, image, audio and ping
@@ -245,7 +251,7 @@ final class OneOnOneMessagingTests: WireUITestCase {
         // GIVEN
         let (teamOwner, activeConversationPage) = try await openOneOnOneConversation()
         let (conversationId, domain) = try await UserHelper.default
-            .getConversationId(matching: .conversationType(.group))
+            .getConversationId(matching: .conversationType(.oneOnOne))
         let conversationDomain = try XCTUnwrap(domain, "domain is nil")
         let mediaURLs = TestServiceMediaFixtures.mediaURLs(relativeTo: #filePath)
 
