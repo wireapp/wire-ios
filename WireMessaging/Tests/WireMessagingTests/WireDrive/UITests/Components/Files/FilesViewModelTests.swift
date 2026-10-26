@@ -105,7 +105,7 @@ final class FilesViewModelTests {
                     localAssetRepository: localAssetRepository
                 ),
                 observeAsset: WireDriveObserveAssetUseCase(localAssetRepository: localAssetRepository),
-                moveNode: WireDriveMoveNodeUseCase(
+                moveNodes: WireDriveMoveNodesUseCase(
                     nodesRepository: nodesRepository,
                     localAssetRepository: localAssetRepository
                 ),

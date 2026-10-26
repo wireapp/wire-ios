@@ -75,7 +75,9 @@ struct ConversationMLSMessageAddEventProcessor: ConversationMLSMessageAddEventPr
 
         let logAttributes: LogAttributes = [
             .messageType: "conversation.mls-message-add",
-            .conversationId: conversationID.id.safeForLoggingDescription
+            .conversationId: conversationID.id.safeForLoggingDescription,
+            .senderUserId: senderID.id.safeForLoggingDescription,
+            .public: true
         ]
 
         // Ensure is self conversation, sender is self user and conversation is not read-only

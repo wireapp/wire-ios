@@ -116,6 +116,7 @@ private extension BasicReactionPicker {
         buttons.append(button)
         let image = UIImage(resource: .addEmojis)
         button.setImage(image, for: .normal)
+        button.accessibilityLabel = L10n.Localizable.Image.addEmoji
         button.addTarget(self, action: #selector(didTapMoreEmojis), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         horizontalStackView.addArrangedSubview(button)

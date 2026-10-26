@@ -47,6 +47,8 @@
 "conversation.locationButton.description" = "Share your location";
 "conversation.videoButton.description" = "Nagraj film";
 "conversation.moreButton.description" = "Open more messaging options";
+"conversation.moreButton.closeDescription" = "Close more messaging options";
+"conversation.applyChangesButton.description" = "Apply changes";
 "conversation.emphemeralButton.description" = "Set a timer for self-deleting messages";
 "conversation.timerForSelfDeletingMessagesSeconds.value" = "%@ seconds";
 "conversation.timerForSelfDeletingMessagesMinutes.value" = "%@ minutes";

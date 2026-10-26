@@ -324,7 +324,7 @@ public extension WireMessagingFactory {
                         observeAsset: WireDriveObserveAssetUseCase(
                             localAssetRepository: localAssetRepository
                         ),
-                        moveNode: WireDriveMoveNodeUseCase(
+                        moveNodes: WireDriveMoveNodesUseCase(
                             nodesRepository: nodesAPI,
                             localAssetRepository: localAssetRepository
                         ),

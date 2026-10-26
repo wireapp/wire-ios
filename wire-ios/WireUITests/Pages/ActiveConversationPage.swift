@@ -88,6 +88,12 @@ class ActiveConversationPage: PageModel {
         app.descendants(matching: .any)[Locators.ActiveConversationPage.videoPlayButton.rawValue].firstMatch
     }
 
+    /// The fullscreen `AVPlayerViewController` presented when a video message is played.
+    /// AVKit exposes the video frame as an image with this (system provided) accessibility label.
+    var videoPlayer: XCUIElement {
+        app.images["Liftable subject available"].firstMatch
+    }
+
     var imagePreview: XCUIElement {
         app.descendants(matching: .any)[Locators.ActiveConversationPage.imagePreview.rawValue].firstMatch
     }
@@ -177,6 +183,13 @@ class ActiveConversationPage: PageModel {
         app.otherElements[Locators.ActiveConversationPage.classifiedBanner.rawValue]
     }
 
+    /// The banner shown in the input bar to users with viewer access to the conversation's drive.
+    var driveViewerAccessBanner: XCUIElement {
+        app.staticTexts
+            .matching(NSPredicate(format: "label BEGINSWITH 'Viewer access'"))
+            .firstMatch
+    }
+
     var guestsArePresentBanner: XCUIElement {
         app.staticTexts[Locators.ActiveConversationPage.guestsArePresent.rawValue]
     }
@@ -191,6 +204,15 @@ class ActiveConversationPage: PageModel {
 
     var photoButton: XCUIElement {
         app.buttons[Locators.ActiveConversationPage.photoButton.rawValue]
+    }
+
+    var videoButton: XCUIElement {
+        app.buttons["videoButton"]
+    }
+
+    /// The input bar buttons that are disabled for users with viewer access to the conversation's drive.
+    var driveViewerDisabledInputBarButtons: [XCUIElement] {
+        [photoButton, sketchButton, videoButton, uploadFileButton]
     }
 
     var cameraRollButton: XCUIElement {
@@ -275,6 +297,30 @@ class ActiveConversationPage: PageModel {
 
     var linkPreviewCell: XCUIElement {
         app.cells[Locators.ActiveConversationPage.linkPreviewCell.rawValue].firstMatch
+    }
+
+    var mockedChromeAlert: XCUIElement {
+        app.descendants(matching: .any)[Locators.OptionsOnSettingsPage.mockedChromeAlert.rawValue].firstMatch
+    }
+
+    var mockedChromeAlertTitle: XCUIElement {
+        app.alerts.firstMatch.staticTexts[Locators.OptionsOnSettingsPage.mockedChromeAlertTitle.rawValue]
+    }
+
+    func mockedChromeAlertLink(urlPrefix: String) -> XCUIElement {
+        app.alerts.firstMatch.staticTexts.matching(NSPredicate(format: "label BEGINSWITH %@", urlPrefix)).firstMatch
+    }
+
+    var mockedGoogleMapsAlert: XCUIElement {
+        app.descendants(matching: .any)[Locators.OptionsOnSettingsPage.mockedGoogleMapsAlert.rawValue].firstMatch
+    }
+
+    var mockedGoogleMapsAlertTitle: XCUIElement {
+        app.alerts.firstMatch.staticTexts[Locators.OptionsOnSettingsPage.mockedGoogleMapsAlertTitle.rawValue]
+    }
+
+    func mockedGoogleMapsAlertLink(urlPrefix: String) -> XCUIElement {
+        app.alerts.firstMatch.staticTexts.matching(NSPredicate(format: "label BEGINSWITH %@", urlPrefix)).firstMatch
     }
 
     var latestMessageCell: XCUIElement {
@@ -843,7 +889,7 @@ class ActiveConversationPage: PageModel {
         return self
     }
 
-    func openLocationInDefaultMapsApp(locationName: String) {
+    func tapLocation(named locationName: String) {
         let locationMap = app.descendants(matching: .any)
             .matching(identifier: Locators.ActiveConversationPage.locationMap.rawValue)
             .matching(NSPredicate(format: "label CONTAINS[c] %@", locationName))
@@ -853,6 +899,25 @@ class ActiveConversationPage: PageModel {
             locationMap.waitAndTap(),
             "Location \(locationName) could not be opened"
         )
+    }
+
+    func verifyLocationOpensInGoogleMapsAlert(urlPrefix: String) {
+        XCTAssertTrue(
+            mockedGoogleMapsAlert.waitForExistence(timeout: 5),
+            "Alert about opening in Google Maps did not appear"
+        )
+        XCTAssertTrue(
+            mockedGoogleMapsAlertTitle.exists,
+            "Alert title should say it opens in Google Maps"
+        )
+        XCTAssertTrue(
+            mockedGoogleMapsAlertLink(urlPrefix: urlPrefix).exists,
+            "Expected alert to show a link starting with \(urlPrefix)"
+        )
+    }
+
+    func openLocationInDefaultMapsApp(locationName: String) {
+        tapLocation(named: locationName)
 
         let mapsApp = XCUIApplication(bundleIdentifier: "com.apple.Maps")
         XCTAssertTrue(
@@ -873,6 +938,29 @@ class ActiveConversationPage: PageModel {
             line: line
         )
         return self
+    }
+
+    func tapLinkPreview() {
+        XCTAssertTrue(linkPreviewCell.waitForExistence(timeout: 10), "Link preview cell did not appear")
+        XCTAssertTrue(linkPreviewCell.waitAndTap(), "Link preview cell could not be tapped")
+    }
+
+    func verifyLinkOpenedInSafari() {
+        let safariApp = XCUIApplication(bundleIdentifier: "com.apple.mobilesafari")
+        XCTAssertTrue(safariApp.wait(for: .runningForeground, timeout: 10), "Expected link to open in Safari")
+        app.activate()
+    }
+
+    func verifyLinkOpensInChromeAlert(urlPrefix: String) {
+        XCTAssertTrue(
+            mockedChromeAlert.waitForExistence(timeout: 5),
+            "Alert about opening the link in Chrome did not appear"
+        )
+        XCTAssertTrue(mockedChromeAlertTitle.exists, "Alert title should say it opens in Chrome")
+        XCTAssertTrue(
+            mockedChromeAlertLink(urlPrefix: urlPrefix).exists,
+            "Expected alert to show a link starting with \(urlPrefix)"
+        )
     }
 
     @discardableResult

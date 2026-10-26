@@ -28,7 +28,9 @@ public extension NSManagedObjectContext {
         } catch {
             WireLogger.localStorage
                 .error("CoreData: Error in fetching request : \(request),  \(error.localizedDescription)")
-            assertionFailure("Error in fetching \(error.localizedDescription)")
+            if !error.isPersistentStoreGone {
+                assertionFailure("Error in fetching \(error.localizedDescription)")
+            }
             return []
         }
     }
@@ -40,8 +42,38 @@ public extension NSManagedObjectContext {
         } catch {
             WireLogger.localStorage
                 .error("CoreData: Error in counting for request : \(request), \(error.localizedDescription)")
-            assertionFailure("Error in fetching \(error.localizedDescription)")
+            if !error.isPersistentStoreGone {
+                assertionFailure("Error in fetching \(error.localizedDescription)")
+            }
             return 0
         }
+    }
+}
+
+private extension Error {
+
+    /// Whether the error means the store file can't be opened (SQLITE_CANTOPEN), which happens
+    /// when the account's database was deleted during teardown (logout, account deletion, backup restore)
+    /// while some work was still running on the context. This is not a programmer error.
+
+    var isPersistentStoreGone: Bool {
+        let sqliteDomain = "NSSQLiteErrorDomain"
+        let sqliteCantOpen = 14
+
+        let error = self as NSError
+
+        // Core Data reports the SQLite result code either as a plain `NSSQLiteErrorDomain` entry in the
+        // user info of the (NSCocoaErrorDomain 256) error, or as an underlying NSError.
+        if let code = error.userInfo[sqliteDomain] as? Int, code == sqliteCantOpen {
+            return true
+        }
+
+        if let underlying = error.userInfo[NSUnderlyingErrorKey] as? NSError,
+           underlying.domain == sqliteDomain,
+           underlying.code == sqliteCantOpen {
+            return true
+        }
+
+        return error.domain == sqliteDomain && error.code == sqliteCantOpen
     }
 }

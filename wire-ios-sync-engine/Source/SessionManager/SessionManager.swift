@@ -1856,7 +1856,8 @@ extension SessionManager: WireCallCenterCallStateObserver {
         conversation: ZMConversation,
         caller: WireDataModel.UserType,
         timestamp: Date?,
-        previousCallState: CallState?
+        previousCallState: CallState?,
+        callEndReason: CallClosedReason?
     ) {
         guard let moc = conversation.managedObjectContext else { return }
 
