@@ -42,11 +42,11 @@ class ActionHandler<T: EntityAction>: NSObject, EntityActionHandler, ZMRequestGe
     }
 
     func request(for action: Action, apiVersion: APIVersion) -> ZMTransportRequest? {
-        preconditionFailure("request(for:) must be overriden in subclasses")
+        preconditionFailure("request(for:) must be overridden in subclasses")
     }
 
     func handleResponse(_ response: ZMTransportResponse, action: Action) {
-        preconditionFailure("handleResponse(response:action:) must be overriden in subclasses")
+        preconditionFailure("handleResponse(response:action:) must be overridden in subclasses")
     }
 
     func nextRequest(for apiVersion: APIVersion) -> ZMTransportRequest? {

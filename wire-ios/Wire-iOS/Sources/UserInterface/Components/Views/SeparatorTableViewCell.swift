@@ -66,7 +66,7 @@ class SeparatorTableViewCell: UITableViewCell, SeparatorViewProtocol {
     }
 
     func setUp() {
-        // can be overriden to customize interface
+        // can be overridden to customize interface
     }
 
     override var isHighlighted: Bool {

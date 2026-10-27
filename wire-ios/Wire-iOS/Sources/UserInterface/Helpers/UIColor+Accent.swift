@@ -22,14 +22,14 @@ import WireDesign
 import WireFoundation
 import WireSyncEngine
 
-private var overridenAccentColor: AccentColor?
+private var overriddenAccentColor: AccentColor?
 
 extension UIColor {
 
     class func indexedAccentColor() -> ZMAccentColor? {
-        // priority 1: overriden color
-        if overridenAccentColor != nil {
-            return overridenAccentColor.map { .from(accentColor: $0) }
+        // priority 1: overridden color
+        if overriddenAccentColor != nil {
+            return overriddenAccentColor.map { .from(accentColor: $0) }
         }
 
         guard
@@ -48,11 +48,11 @@ extension UIColor {
     ///
     /// - Parameter overrideColor: the override color
     class func setAccentOverride(_ overrideColor: ZMAccentColor?) {
-        if overridenAccentColor == overrideColor?.accentColor {
+        if overriddenAccentColor == overrideColor?.accentColor {
             return
         }
 
-        overridenAccentColor = overrideColor?.accentColor
+        overriddenAccentColor = overrideColor?.accentColor
     }
 
     static var accentDarken: UIColor {

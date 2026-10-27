@@ -233,7 +233,7 @@ public class ZMAssetClientMessage: ZMOTRMessage {
 
         conversation?.updateTimestampsAfterUpdatingMessage(self)
 
-        // NOTE: Calling super since this is method overriden to handle special cases when receiving an asset
+        // NOTE: Calling super since this is method overridden to handle special cases when receiving an asset
         super.startDestructionIfNeeded()
     }
 

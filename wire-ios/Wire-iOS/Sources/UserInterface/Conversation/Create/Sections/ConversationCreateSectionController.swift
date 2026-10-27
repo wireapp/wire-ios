@@ -75,7 +75,7 @@ extension ConversationCreateSectionController {
         _ collectionView: UICollectionView,
         cellForItemAt indexPath: IndexPath
     ) -> UICollectionViewCell {
-        assertionFailure("Must be overriden.")
+        assertionFailure("Must be overridden.")
         return UICollectionViewCell()
     }
 
