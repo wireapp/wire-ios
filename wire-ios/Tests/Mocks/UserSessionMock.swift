@@ -63,10 +63,6 @@ final class UserSessionMock: UserSession {
         MLSGroupID(Data())
     }
 
-    func e2eIdentityUpdateCertificateUpdateStatus() -> E2EIdentityCertificateUpdateStatusUseCaseProtocol? {
-        MockE2EIdentityCertificateUpdateStatusUseCaseProtocol()
-    }
-
     var isE2eIdentityEnabled = false
     var certificate = E2eIdentityCertificate.mockNotActivated
     typealias Preference = AppLockPasscodePreference
@@ -408,6 +404,8 @@ final class UserSessionMock: UserSession {
     }
 
     var e2eiFeature: Feature.E2EI = .init(status: .enabled)
+
+    var selfDeletingMessagesFeature: Feature.SelfDeletingMessages = .init(status: .disabled)
 
     var channelsFeature: Feature.Channels = .init(status: .disabled)
 

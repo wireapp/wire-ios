@@ -65,7 +65,7 @@ extension UpdateEventDecodingProxy {
                 let event = FeatureConfigUpdateEvent(featureConfig: .digitalSignature(config))
                 updateEvent = .featureConfig(.update(event))
 
-            case "e2ei":
+            case "mlsE2EId":
                 let config = try EndToEndIdentityFeatureConfigDecoder().decode(from: container)
                 let event = FeatureConfigUpdateEvent(featureConfig: .endToEndIdentity(config))
                 updateEvent = .featureConfig(.update(event))

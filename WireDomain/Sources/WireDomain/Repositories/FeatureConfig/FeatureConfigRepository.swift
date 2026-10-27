@@ -73,6 +73,14 @@ public final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
         featureStateSubject.eraseToAnyPublisher()
     }
 
+    /// Acknowledges that the user has been notified about a feature's current state,
+    /// so the same state won't be flagged as needing notification again.
+    /// - parameter name: The name of the feature.
+
+    public func acknowledgeFeatureChange(for name: Feature.Name) async {
+        await featureConfigLocalStore.setNeedsToNotifyUser(false, for: name)
+    }
+
     public func updateFeatureConfig(
         _ featureConfig: FeatureConfig
     ) async {
@@ -115,147 +123,102 @@ public final class FeatureConfigRepository: FeatureConfigRepositoryProtocol {
         )
     }
 
+    public func fetchE2EIConfig() async throws -> LocalFeature<Feature.E2EI.Config> {
+        try await fetchFeatureConfig(
+            name: .e2ei,
+            type: Feature.E2EI.Config.self
+        )
+    }
+
     // MARK: - Private
 
     private func sendFeatureState(for featureConfig: FeatureConfig) async {
-        guard let featureState = try? await getFeatureState(
-            forFeatureConfig: featureConfig
-        ) else { return }
+        guard let (name, isEnabled) = getFeatureState(forFeatureConfig: featureConfig) else { return }
 
-        featureStateSubject.send(featureState)
+        let needsToNotifyUser = await featureConfigLocalStore.needsToNotifyUser(for: name)
+
+        featureStateSubject.send(
+            FeatureState(
+                name: name,
+                isEnabled: isEnabled,
+                needsToNotifyUser: needsToNotifyUser
+            )
+        )
     }
 
-    private func getFeatureState(forFeatureConfig config: FeatureConfig) async throws -> FeatureState? {
+    private func getFeatureState(
+        forFeatureConfig config: FeatureConfig
+    ) -> (name: Feature.Name, isEnabled: Bool)? {
         switch config {
         case let .appLock(appLockFeatureConfig):
-            return FeatureState(
-                name: .appLock,
-                isEnabled: appLockFeatureConfig.status == .enabled
-            )
+            return (name: .appLock, isEnabled: appLockFeatureConfig.status == .enabled)
 
         case let .apps(appsConfig):
-            return FeatureState(
-                name: .apps,
-                isEnabled: appsConfig.status == .enabled
-            )
+            return (name: .apps, isEnabled: appsConfig.status == .enabled)
 
         case let .assetAuditLog(config):
-            return FeatureState(
-                name: .assetAuditLog,
-                isEnabled: config.status == .enabled
-            )
+            return (name: .assetAuditLog, isEnabled: config.status == .enabled)
 
         case let .classifiedDomains(classifiedDomainsFeatureConfig):
 
-            return FeatureState(
-                name: .classifiedDomains,
-                isEnabled: classifiedDomainsFeatureConfig.status == .enabled
-            )
+            return (name: .classifiedDomains, isEnabled: classifiedDomainsFeatureConfig.status == .enabled)
 
         case let .conferenceCalling(conferenceCallingFeatureConfig):
 
-            return FeatureState(
-                name: .conferenceCalling,
-                isEnabled: conferenceCallingFeatureConfig.status == .enabled
-            )
+            return (name: .conferenceCalling, isEnabled: conferenceCallingFeatureConfig.status == .enabled)
 
         case let .conversationGuestLinks(conversationGuestLinksFeatureConfig):
 
-            return FeatureState(
-                name: .conversationGuestLinks,
-                isEnabled: conversationGuestLinksFeatureConfig.status == .enabled
-            )
+            return (name: .conversationGuestLinks, isEnabled: conversationGuestLinksFeatureConfig.status == .enabled)
 
         case let .digitalSignature(digitalSignatureFeatureConfig):
 
-            return FeatureState(
-                name: .digitalSignature,
-                isEnabled: digitalSignatureFeatureConfig.status == .enabled
-            )
+            return (name: .digitalSignature, isEnabled: digitalSignatureFeatureConfig.status == .enabled)
 
         case let .endToEndIdentity(endToEndIdentityFeatureConfig):
 
-            return FeatureState(
-                name: .e2ei,
-                isEnabled: endToEndIdentityFeatureConfig.status == .enabled
-            )
+            return (name: .e2ei, isEnabled: endToEndIdentityFeatureConfig.status == .enabled)
 
         case let .fileSharing(fileSharingFeatureConfig):
 
-            return FeatureState(
-                name: .fileSharing,
-                isEnabled: fileSharingFeatureConfig.status == .enabled
-            )
+            return (name: .fileSharing, isEnabled: fileSharingFeatureConfig.status == .enabled)
 
         case let .mls(mlsFeatureConfig):
 
-            return FeatureState(
-                name: .mls,
-                isEnabled: mlsFeatureConfig.status == .enabled
-            )
+            return (name: .mls, isEnabled: mlsFeatureConfig.status == .enabled)
 
         case let .mlsMigration(mLSMigrationFeatureConfig):
 
-            return FeatureState(
-                name: .mlsMigration,
-                isEnabled: mLSMigrationFeatureConfig.status == .enabled
-            )
+            return (name: .mlsMigration, isEnabled: mLSMigrationFeatureConfig.status == .enabled)
 
         case let .meetings(config):
-            return FeatureState(
-                name: .meetings,
-                isEnabled: config.status == .enabled
-            )
+            return (name: .meetings, isEnabled: config.status == .enabled)
 
         case let .selfDeletingMessages(selfDeletingMessagesFeatureConfig):
 
-            return FeatureState(
-                name: .selfDeletingMessages,
-                isEnabled: selfDeletingMessagesFeatureConfig.status == .enabled
-            )
+            return (name: .selfDeletingMessages, isEnabled: selfDeletingMessagesFeatureConfig.status == .enabled)
 
         case let .channels(channelsFeatureConfig):
 
-            return FeatureState(
-                name: .channels,
-                isEnabled: channelsFeatureConfig.status == .enabled
-            )
+            return (name: .channels, isEnabled: channelsFeatureConfig.status == .enabled)
 
         case let .allowedGlobalOperations(config):
-            return FeatureState(
-                name: .allowedGlobalOperations,
-                isEnabled: config.status == .enabled
-            )
+            return (name: .allowedGlobalOperations, isEnabled: config.status == .enabled)
 
         case let .consumableNotifications(config):
-            return FeatureState(
-                name: .consumableNotifications,
-                isEnabled: config.status == .enabled
-            )
+            return (name: .consumableNotifications, isEnabled: config.status == .enabled)
 
         case let .simplifiedUserConnectionRequestQRCode(config):
-            return FeatureState(
-                name: .simplifiedUserConnectionRequestQRCode,
-                isEnabled: config.status == .enabled
-            )
+            return (name: .simplifiedUserConnectionRequestQRCode, isEnabled: config.status == .enabled)
 
         case let .cells(cellsConfig):
-            return FeatureState(
-                name: .cells,
-                isEnabled: cellsConfig.status == .enabled
-            )
+            return (name: .cells, isEnabled: cellsConfig.status == .enabled)
 
         case let .cellsInternal(cellsInternalConfig):
-            return FeatureState(
-                name: .cellsInternal,
-                isEnabled: cellsInternalConfig.status == .enabled
-            )
+            return (name: .cellsInternal, isEnabled: cellsInternalConfig.status == .enabled)
 
         case let .preventAdminlessGroups(config):
-            return FeatureState(
-                name: .preventAdminlessGroups,
-                isEnabled: config.status == .enabled
-            )
+            return (name: .preventAdminlessGroups, isEnabled: config.status == .enabled)
 
         case let .unknown(featureName):
             logger.warn(
