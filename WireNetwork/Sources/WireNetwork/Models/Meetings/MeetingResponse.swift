@@ -127,6 +127,16 @@ public struct MeetingResponse: Sendable {
     }
 }
 
+public struct MeetingJoinResponse: Sendable {
+    public let meeting: MeetingResponse
+    public let conversation: Conversation
+
+    public init(meeting: MeetingResponse, conversation: Conversation) {
+        self.meeting = meeting
+        self.conversation = conversation
+    }
+}
+
 // MARK: - MeetingListResponseV16 (internal, for decoding an array response)
 
 struct MeetingListResponseV16: Decodable, ToAPIModelConvertible {

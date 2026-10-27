@@ -221,6 +221,10 @@ private final class InvitationMeetingsAPI: MeetingsAPI, @unchecked Sendable {
     }
 
     func listMeetings() async throws -> [MeetingResponse] { throw InvitationTestError.unavailable }
+    func joinMeeting(domain: String, key: String, code: String, password: String?) async throws -> MeetingJoinResponse {
+        throw InvitationTestError.unavailable
+    }
+
     func createMeeting(parameters: CreateMeetingParameters) async throws -> MeetingResponse {
         throw InvitationTestError.unavailable
     }

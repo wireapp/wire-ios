@@ -18,6 +18,7 @@
 
 import SwiftUI
 import WireCommonComponents
+import enum WireNetwork.MeetingsAPIError
 import WireSyncEngine
 
 extension Notification.Name {
@@ -139,11 +140,12 @@ class URLActionRouter: URLActionRouterProtocol {
 
 extension URLActionRouter: PresentationDelegate {
 
-    func showPasswordPrompt(for conversationName: String, completion: @escaping (String?) -> Void) {
+    func showPasswordPrompt(for conversationName: String?, completion: @escaping (String?) -> Void) {
         typealias ConversationAlert = L10n.Localizable.Join.Group.Conversation.Alert
 
         let alertController = UIAlertController(
-            title: ConversationAlert.title(conversationName),
+            title: conversationName.map(ConversationAlert.title)
+                ?? L10n.Localizable.Registration.Signin.Alert.PasswordNeeded.title,
             message: ConversationAlert.message,
             preferredStyle: .alert
         )
@@ -392,16 +394,16 @@ private extension URLActionRouter {
 
         init(from error: Error) {
             switch error {
-            case ConversationJoinError.invalidCode:
+            case ConversationJoinError.invalidCode, MeetingsAPIError.meetingNotFound:
                 self = .conversationLinkIsInvalid
 
-            case ConversationJoinError.tooManyMembers:
+            case ConversationJoinError.tooManyMembers, MeetingsAPIError.tooManyMembers:
                 self = .conversationIsFull
 
             case ConversationJoinError.guestLinksDisabled, ConversationFetchError.guestLinksDisabled:
                 self = .conversationLinkIsDisabled
 
-            case ConversationJoinError.invalidConversationPassword:
+            case ConversationJoinError.invalidConversationPassword, MeetingsAPIError.invalidMeetingPassword:
                 self = .invalidConversationPassword
 
             default:

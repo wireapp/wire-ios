@@ -904,7 +904,18 @@ public final class ZMUserSession: NSObject {
                 contextProvider: coreDataStack,
                 transportSession: transportSession,
                 eventProcessor: conversationEventProcessor,
-                metadata: resolvedBackendMetadata
+                metadata: resolvedBackendMetadata,
+                joinMeeting: { [weak self] domain, key, code, password in
+                    guard let self, isMeetingsEnabled, let clientSessionComponent else {
+                        throw ConversationJoinError.unknown
+                    }
+                    return try await clientSessionComponent.joinMeeting(
+                        domain: domain,
+                        key: key,
+                        code: code,
+                        password: password
+                    )
+                }
             ),
             ConnectToBotURLActionProcessor(
                 contextProvider: coreDataStack,
