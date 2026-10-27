@@ -191,10 +191,17 @@ def wait_until_launchable(udid, timeout: 180)
 end
 
 def prepare_simulator(udid)
+    started = Time.now
     run("xcrun", "simctl", "boot", udid, timeout: 120) # fails harmlessly when already booted
     run!("xcrun", "simctl", "bootstatus", udid, "-b", timeout: 600)
-    run!("bash", File.join(ROOT, "scripts/seed-simulator-media.sh"), env: { "IOS_SIM_ID" => udid }, timeout: 120)
+    booted = Time.now
+    output, seeded = run("bash", File.join(ROOT, "scripts/seed-simulator-media.sh"), env: { "IOS_SIM_ID" => udid }, timeout: 120)
+    unless seeded
+        load_average = `uptime`.strip[/load averages?: .*/]
+        raise "seeding #{udid} failed after #{(Time.now - booted).round}s (#{load_average}):\n#{output.lines.last(10).join}"
+    end
     wait_until_launchable(udid)
+    say("shards", "simulator #{udid} ready: boot #{(booted - started).round}s, seed #{(Time.now - booted).round}s")
 end
 
 Dir.chdir(ROOT)
@@ -228,7 +235,7 @@ extras_ready = Thread.new do
                 run("xcrun", "simctl", "delete", udid, timeout: 60)
             end
             if attempts < 2
-                say("shards", "simulator for shard #{index} failed (#{error.message.lines.first.strip}), trying a new one")
+                say("shards", "simulator for shard #{index} failed: #{error.message.strip}\n  trying a new one")
                 retry
             end
             error
