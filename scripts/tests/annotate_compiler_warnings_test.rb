@@ -183,6 +183,33 @@ class CompilerWarningsTest < Minitest::Test
     end
   end
 
+  def test_cli_attaches_the_check_to_the_event_pr_head_instead_of_the_built_merge_commit
+    in_repository do
+      pr_head = CompilerWarnings.git('rev-parse', 'HEAD').strip
+      assert system('git', '-c', 'commit.gpgsign=false', '-c', 'core.hooksPath=/dev/null',
+                    '-c', 'user.name=Test', '-c', 'user.email=test@example.com',
+                    'commit', '--allow-empty', '-qm', 'Simulated merge revision')
+      built_sha = CompilerWarnings.git('rev-parse', 'HEAD').strip
+      refute_equal pr_head, built_sha
+      FileUtils.mkdir_p('build')
+      File.write('build/current.log', diagnostic)
+      event_path = File.join(@root, 'event.json')
+      File.write(event_path, JSON.generate('pull_request' => {
+        'head' => { 'sha' => pr_head, 'repo' => { 'full_name' => 'wireapp/wire-ios' } }
+      }))
+      ENV['GITHUB_EVENT_PATH'] = event_path
+      ENV['GITHUB_REPOSITORY'] = 'wireapp/wire-ios'
+      ENV['GITHUB_RUN_ID'] = '123'
+      ENV['GITHUB_SHA'] = built_sha
+      api = FakeAPI.new
+      CompilerWarnings.run(['--publish'], api: api)
+      assert_equal pr_head, api.requests.first[2].fetch('head_sha')
+      report = JSON.parse(File.read(CompilerWarnings::REPORT))
+      assert_equal built_sha, report.fetch('sha')
+      assert_equal 1, api.requests[1][2].fetch('output').fetch('annotations').length
+    end
+  end
+
   def test_full_report_survives_publishing_failure
     in_repository do
       FileUtils.mkdir_p('build')

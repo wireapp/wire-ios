@@ -112,7 +112,7 @@ module CompilerWarnings
     raise
   end
 
-  def self.run(arguments)
+  def self.run(arguments, api: nil)
     options = { publish: false }
     OptionParser.new do |parser|
       parser.banner = 'Usage: ruby scripts/annotate_compiler_warnings.rb [--publish]'
@@ -127,8 +127,8 @@ module CompilerWarnings
       # contain logs produced by this job. No separate start marker is needed.
       logs = LOG_PATTERNS.flat_map { |pattern| Dir.glob(pattern) }.sort
       report = collect(root: root, logs: logs, tracked_files: git('ls-files', '-z').split("\0"))
-      # Use the actual built revision, including the PR merge revision, rather
-      # than attaching diagnostics to a newer or differently checked-out commit.
+      # Keep the built revision in the report for troubleshooting. PR jobs build
+      # a temporary merge commit, which cannot associate a custom check with a PR.
       report['sha'] = git('rev-parse', 'HEAD').strip
       File.write(REPORT, JSON.pretty_generate(report) + "\n")
       puts "Collected #{report.fetch('annotations').length} unique compiler warnings from #{logs.length} build logs."
@@ -147,10 +147,12 @@ module CompilerWarnings
         puts 'Fork PR: report saved as an artifact; check publishing requires a writable token.'
         return
       end
-      api = API.new(token: ENV.fetch('GH_TOKEN'), base_url: ENV.fetch('GITHUB_API_URL', 'https://api.github.com'))
+      api ||= API.new(token: ENV.fetch('GH_TOKEN'), base_url: ENV.fetch('GITHUB_API_URL', 'https://api.github.com'))
       repository = ENV.fetch('GITHUB_REPOSITORY')
       details_url = "#{ENV.fetch('GITHUB_SERVER_URL', 'https://github.com')}/#{repository}/actions/runs/#{ENV.fetch('GITHUB_RUN_ID')}"
-      publish(api: api, repository: repository, sha: report.fetch('sha'),
+      # Use the head from the original event, not a live PR lookup: a newer push
+      # may arrive while this build is running.
+      publish(api: api, repository: repository, sha: pull_request.fetch('head').fetch('sha'),
               name: ENV.fetch('COMPILER_WARNINGS_CHECK_NAME', 'Compiler warnings'), report: report, details_url: details_url)
     end
   end
