@@ -1,6 +1,6 @@
 # Compiler warnings on pull requests
 
-The reusable sequential and parallel test workflows collect compiler warnings
+A single reporting step in each reusable sequential and parallel test workflow collects compiler warnings
 from Fastlane's raw `build/*.log` (or `fastlane/build/*.log`) files after tests,
 including when tests fail. The reporter uses Ruby's standard library only.
 
@@ -18,13 +18,16 @@ check names. The check succeeds even when warnings exist; it does not introduce 
 new merge requirement. A run with no current build logs gets a neutral check
 explaining that collection was unavailable.
 
-The `compiler-warnings-*` artifact contains the complete JSON report, including
-repository annotations, warnings without source locations, log names, and the
-built revision. The artifact is uploaded even when API publishing fails. Publishing
-is best effort and does not change the test job result. Fork PRs save the report
-but skip publishing because their tokens do not have check write permissions.
+The existing test-report artifact upload includes `build/compiler-warnings.json`,
+with repository annotations, warnings without source locations, log names, and the
+built revision. The report is saved before publishing, so it remains available
+when API publishing fails. Publishing is best effort and does not change the test
+job result. Fork PRs save the report but skip publishing because their tokens do
+not have check write permissions.
 
-A start marker excludes old logs left on persistent runners. Incremental builds
+The workflows use checkout's default cleanup, which removes previous build logs
+before the job runs. No preparation or separate warning-upload step is needed.
+Local runs scan all logs currently in the build directories. Incremental builds
 only report diagnostics actually emitted in that run; this is not an inventory of
 warnings in files the compiler did not rebuild. Warnings that lack a standard
 `file:line:column: warning: message` (or `file:line: warning: message`) location
@@ -35,7 +38,6 @@ cannot be annotated. This does not change the existing lint or formatting checks
 From the repository root:
 
 ```sh
-ruby scripts/annotate_compiler_warnings.rb --start
 # Run the normal Fastlane build/tests.
 ruby scripts/annotate_compiler_warnings.rb
 ```

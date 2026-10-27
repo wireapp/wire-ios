@@ -6,12 +6,10 @@ require 'open3'
 require 'optparse'
 require 'pathname'
 require 'set'
-require 'time'
 require 'fileutils'
 
 module CompilerWarnings
   REPORT = 'build/compiler-warnings.json'.freeze
-  START = 'build/compiler-warnings-start'.freeze
   LOG_PATTERNS = ['build/*.log', 'fastlane/build/*.log'].freeze
 
   def self.git(*arguments)
@@ -115,10 +113,9 @@ module CompilerWarnings
   end
 
   def self.run(arguments)
-    options = { publish: false, start: false }
+    options = { publish: false }
     OptionParser.new do |parser|
-      parser.banner = 'Usage: ruby scripts/annotate_compiler_warnings.rb [--start | --publish]'
-      parser.on('--start', 'Mark the start of a build to exclude stale runner logs') { options[:start] = true }
+      parser.banner = 'Usage: ruby scripts/annotate_compiler_warnings.rb [--publish]'
       parser.on('--publish', 'Publish all repository warnings using the GitHub Checks API') { options[:publish] = true }
     end.parse!(arguments)
     raise 'Unexpected arguments' unless arguments.empty?
@@ -126,15 +123,9 @@ module CompilerWarnings
     root = git('rev-parse', '--show-toplevel').strip
     Dir.chdir(root) do
       FileUtils.mkdir_p('build')
-      if options[:start]
-        File.write(START, Time.now.utc.iso8601(6))
-        File.delete(REPORT) if File.exist?(REPORT)
-        return
-      end
-      raise 'Run with --start before building to exclude stale logs' unless File.file?(START)
-
-      started_at = Time.iso8601(File.read(START))
-      logs = LOG_PATTERNS.flat_map { |pattern| Dir.glob(pattern) }.select { |log| File.mtime(log) >= started_at }.sort
+      # CI starts with checkout's default cleanup, so the build directories only
+      # contain logs produced by this job. No separate start marker is needed.
+      logs = LOG_PATTERNS.flat_map { |pattern| Dir.glob(pattern) }.sort
       report = collect(root: root, logs: logs, tracked_files: git('ls-files', '-z').split("\0"))
       # Use the actual built revision, including the PR merge revision, rather
       # than attaching diagnostics to a newer or differently checked-out commit.

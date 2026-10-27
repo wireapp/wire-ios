@@ -159,31 +159,33 @@ class CompilerWarningsTest < Minitest::Test
     end
   end
 
-  def test_cli_excludes_stale_logs_and_saves_the_full_report
+  def test_cli_discovers_build_logs_and_saves_the_full_report
     in_repository do
       FileUtils.mkdir_p('build')
-      File.write('build/old.log', diagnostic(message: 'Stale warning'))
-      File.utime(Time.at(0), Time.at(0), 'build/old.log')
-      CompilerWarnings.run(['--start'])
+      FileUtils.mkdir_p('fastlane/build')
       File.write('build/current.log', (1..327).map { |line| diagnostic(line: line) }.join("\n"))
+      File.write('fastlane/build/second.log', diagnostic)
+      File.write('unrelated.log', diagnostic(message: 'Not a build log'))
       CompilerWarnings.run([])
       report = JSON.parse(File.read(CompilerWarnings::REPORT))
-      assert_equal ['build/current.log'], report.fetch('logs')
+      assert_equal ['build/current.log', 'fastlane/build/second.log'], report.fetch('logs')
       assert_equal 327, report.fetch('annotations').length
       assert_equal CompilerWarnings.git('rev-parse', 'HEAD').strip, report.fetch('sha')
     end
   end
 
-  def test_cli_requires_the_start_marker
+  def test_cli_handles_missing_logs_without_preparation
     in_repository do
-      error = assert_raises(RuntimeError) { CompilerWarnings.run([]) }
-      assert_match(/--start/, error.message)
+      CompilerWarnings.run([])
+      report = JSON.parse(File.read(CompilerWarnings::REPORT))
+      assert_empty report.fetch('logs')
+      assert_empty report.fetch('annotations')
     end
   end
 
   def test_full_report_survives_publishing_failure
     in_repository do
-      CompilerWarnings.run(['--start'])
+      FileUtils.mkdir_p('build')
       File.write('build/current.log', diagnostic)
       event_path = File.join(@root, 'event.json')
       File.write(event_path, JSON.generate('pull_request' => { 'head' => { 'repo' => { 'full_name' => 'wireapp/wire-ios' } } }))

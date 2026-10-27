@@ -213,12 +213,6 @@ jobs:
         if: ${{ env.KALIUM_TEST_SERVICE_ENABLED == 'true' }}
         uses: ./.github/actions/kalium-testservice/setup
 
-      - name: Mark compiler warning collection start
-        if: ${{ github.event_name == 'pull_request' }}
-        id: compiler-warnings-start
-        continue-on-error: true
-        run: ruby scripts/annotate_compiler_warnings.rb --start
-
       - name: "Test new critical flows"
         if: ${{ inputs.run_critical_flows }}
         env:
@@ -305,20 +299,12 @@ jobs:
           echo "xcresult files: ${{ steps.find-xcresults.outputs.xcresult_files }}"
 
       - name: Publish compiler warnings
-        if: ${{ always() && github.event_name == 'pull_request' && steps.compiler-warnings-start.outcome == 'success' }}
+        if: ${{ always() && github.event_name == 'pull_request' }}
         continue-on-error: true
         env:
           GH_TOKEN: ${{ github.token }}
           COMPILER_WARNINGS_CHECK_NAME: Compiler warnings (${{ github.workflow }})
         run: ruby scripts/annotate_compiler_warnings.rb --publish
-
-      - name: Upload compiler warning report
-        continue-on-error: true
-        if: ${{ always() && github.event_name == 'pull_request' && steps.compiler-warnings-start.outcome == 'success' }}
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-        with:
-          name: compiler-warnings-${{ github.run_id }}-${{ github.run_attempt }}
-          path: build/compiler-warnings.json
 
       - name: Annotate test failures
         if: ${{ always() && github.event_name == 'pull_request' }}
@@ -363,6 +349,7 @@ jobs:
         with:
           name: Test reports for ${{ env.SANITIZED_BRANCH }} (${{ github.run_id }} - ${{ github.run_attempt}})
           path: |
+            build/compiler-warnings.json
             build/reports/*.junit
             artifacts/**/*.junit
             app-group.zip
