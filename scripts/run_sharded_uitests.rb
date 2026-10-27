@@ -20,10 +20,10 @@
 #
 
 # Runs UI tests on several simulators at once. Every simulator is created, seeded and checked to launch an app
-# before any test starts, and the app is built once with `build-for-testing`. The tests are split into small pieces
-# (a class with more than MAX_TESTS_PER_PIECE tests is cut up) held in one shared queue. Each shard, one per
-# simulator, takes the next piece when it is free and runs it with its own `xcodebuild test-without-building`; at
-# the end the piece results of a shard are merged into one `<result-dir>/shard-<n>/<scheme>.xcresult`.
+# before any test starts, and the app is built once with `build-for-testing`. The tests are split into small batches
+# (a class with more than MAX_TESTS_PER_BATCH tests is cut up) held in one shared queue. Each shard, one per
+# simulator, takes the next batch when it is free and runs it with its own `xcodebuild test-without-building`; at
+# the end the batch results of a shard are merged into one `<result-dir>/shard-<n>/<scheme>.xcresult`.
 #
 # Exit status: 0 when every test ran and passed, 1 otherwise.
 
@@ -155,15 +155,15 @@ def stream(label, command, log_path)
     end
 end
 
-MAX_TESTS_PER_PIECE = 5
+MAX_TESTS_PER_BATCH = 5
 
-# Splits the tests into pieces for a shared queue. A class of up to MAX_TESTS_PER_PIECE tests stays whole; a bigger
-# one is cut into the fewest pieces that fit, of even size, so there is no tiny leftover. Biggest pieces come first,
+# Splits the tests into batches for a shared queue. A class of up to MAX_TESTS_PER_BATCH tests stays whole; a bigger
+# one is cut into the fewest batches that fit, of even size, so there is no tiny leftover. Biggest batches come first,
 # so the long ones start early and the short ones fill the gaps at the end.
 def chunk(identifiers)
     classes = identifiers.group_by { |identifier| identifier.split("/")[0..1].join("/") }
-    pieces = classes.values.flat_map do |tests|
-        count = (tests.size / MAX_TESTS_PER_PIECE.to_f).ceil
+    batches = classes.values.flat_map do |tests|
+        count = (tests.size / MAX_TESTS_PER_BATCH.to_f).ceil
         base, extra = tests.size.divmod(count)
         offset = 0
         Array.new(count) do |index|
@@ -171,7 +171,7 @@ def chunk(identifiers)
             tests[offset, size].tap { offset += size }
         end
     end
-    pieces.sort_by.with_index { |tests, index| [-tests.size, index] }
+    batches.sort_by.with_index { |tests, index| [-tests.size, index] }
 end
 
 # A booted simulator can refuse app launches while SpringBoard finishes starting up. Launching a system app checks
@@ -193,7 +193,7 @@ end
 def prepare_simulator(udid)
     run("xcrun", "simctl", "boot", udid, timeout: 120) # fails harmlessly when already booted
     run!("xcrun", "simctl", "bootstatus", udid, "-b", timeout: 600)
-    run!("bash", File.join(ROOT, "scripts/seed-simulator-media.sh"), env: { "IOS_SIM_ID" => udid }, timeout: 600)
+    run!("bash", File.join(ROOT, "scripts/seed-simulator-media.sh"), env: { "IOS_SIM_ID" => udid }, timeout: 120)
     wait_until_launchable(udid)
 end
 
@@ -201,27 +201,41 @@ Dir.chdir(ROOT)
 tests = File.readlines(options[:tests_file]).map(&:strip).reject(&:empty?).uniq
 abort("No tests to run in #{options[:tests_file]}") if tests.empty?
 
-pieces = chunk(tests)
-planned = [options[:workers], pieces.size].min
-say("shards", "#{tests.size} tests in #{pieces.size} pieces (#{pieces.map(&:size).join(', ')}) for #{planned} shards")
+batches = chunk(tests)
+planned = [options[:workers], batches.size].min
+say("shards", "#{tests.size} tests, #{planned} shards, #{batches.size} batches of up to #{MAX_TESTS_PER_BATCH} tests taken from a shared queue")
 FileUtils.mkdir_p([options[:log_dir], options[:result_dir], File.dirname(options[:simulators_file])])
 
-# Extra simulators are created and seeded while the app builds.
-simulators_lock = Mutex.new
-preparations = [Thread.new do
+# Extra simulators are created and seeded while the app builds, one at a time so they do not compete with the build
+# and with each other. A simulator that does not become ready is replaced by a fresh one, once.
+base_ready = Thread.new do
     wait_until_launchable(options[:base_simulator])
     options[:base_simulator]
-end]
-(2..planned).each do |index|
-    preparations << Thread.new do
-        name = "#{options[:base_simulator]}-shard-#{index}"
-        udid = run!("xcrun", "simctl", "create", name, options[:device_type], options[:runtime]).strip
-        simulators_lock.synchronize { File.open(options[:simulators_file], "a") { |file| file.puts(udid) } }
-        prepare_simulator(udid)
-        udid
+end
+extras_ready = Thread.new do
+    (2..planned).map do |index|
+        udid = nil
+        begin
+            attempts ||= 0
+            attempts += 1
+            udid = run!("xcrun", "simctl", "create", "#{options[:base_simulator]}-shard-#{index}", options[:device_type], options[:runtime]).strip
+            File.open(options[:simulators_file], "a") { |file| file.puts(udid) }
+            prepare_simulator(udid)
+            udid
+        rescue => error
+            if udid
+                run("xcrun", "simctl", "shutdown", udid, timeout: 60)
+                run("xcrun", "simctl", "delete", udid, timeout: 60)
+            end
+            if attempts < 2
+                say("shards", "simulator for shard #{index} failed (#{error.message.lines.first.strip}), trying a new one")
+                retry
+            end
+            error
+        end
     end
 end
-preparations.each { |thread| thread.report_on_exception = false }
+[base_ready, extras_ready].each { |thread| thread.report_on_exception = false }
 
 build_command = [
     "xcodebuild",
@@ -244,10 +258,14 @@ build_log = File.join(options[:log_dir], "#{options[:scheme]}-build-for-testing.
 built = stream("build", build_command, build_log)
 publish_log(build_log, options[:published_log_dir], secrets)
 
-simulators = preparations.each_with_index.filter_map do |thread, index|
-    thread.value
+simulators = [begin
+    base_ready.value
 rescue => error
-    say("shards", "simulator for shard #{index + 1} is not usable, continuing without it: #{error.message}")
+    error
+end, *extras_ready.value].each_with_index.filter_map do |simulator, index|
+    next simulator unless simulator.is_a?(Exception)
+
+    say("shards", "simulator for shard #{index + 1} is not usable, continuing without it: #{simulator.message}")
     nil
 end
 
@@ -271,42 +289,47 @@ if simulators.size < planned
     write_job_summary("> [!WARNING]\n> UITest shards: #{message}")
 end
 
-# The runner can still be refused on a simulator that just opened Settings fine; such a piece ran no test, so
+# The runner can still be refused on a simulator that just opened Settings fine; such a batch ran no test, so
 # running it once more costs little.
 RUNNER_LAUNCH_FAILURE = /Failed to install or launch the test runner|Application failed preflight checks/.freeze
 TEST_STARTED = /Test Case '.*' started/.freeze
 
 launch_refused = ->(text) { text.match?(RUNNER_LAUNCH_FAILURE) && !text.match?(TEST_STARTED) }
 
-# Every shard takes the next piece from this queue when it is free, so a shard that got short pieces simply
-# takes more of them. `in_flight` keeps shards waiting while a piece could still come back to the queue.
+# Every shard takes the next batch from this queue when it is free, so a shard that got short batches simply
+# takes more of them. `in_flight` keeps shards waiting while a batch could still come back to the queue.
 queue_lock = Mutex.new
-queue = pieces.each_with_index.map { |piece_tests, index| { number: index + 1, tests: piece_tests, launch_failures: 0 } }
+queue = batches.each_with_index.map { |batch_tests, index| { number: index + 1, tests: batch_tests, launch_failures: 0 } }
 in_flight = 0
 alive = simulators.size
 
-take_piece = lambda do
+take_batch = lambda do
     loop do
-        piece, busy = queue_lock.synchronize do
+        batch, busy = queue_lock.synchronize do
             taken = queue.shift
             in_flight += 1 if taken
             [taken, in_flight]
         end
-        return piece if piece
+        return batch if batch
         return nil if busy.zero?
 
         sleep(5)
     end
 end
 
-finish_piece = ->(piece, requeue: false) do
+finish_batch = ->(batch, requeue: false) do
     queue_lock.synchronize do
         in_flight -= 1
-        queue.unshift(piece) if requeue
+        queue.unshift(batch) if requeue
     end
 end
 
-# Combines the result bundles of a shard's pieces into the single bundle the reports expect.
+# Final outcome of each test in an xcodebuild log; a test that failed and then passed on retry counts as passed.
+def test_outcomes(log)
+    log.scan(/Test Case '(.+?)' (passed|failed) \(/).to_h { |name, outcome| [name, outcome == "passed"] }
+end
+
+# Combines the result bundles of a shard's batches into the single bundle the reports expect.
 def merge_bundles(bundles, target)
     FileUtils.rm_rf(target)
     FileUtils.mkdir_p(File.dirname(target))
@@ -324,17 +347,17 @@ results = simulators.each_with_index.map do |simulator, index|
     Thread.new do
         label = "shard #{number}"
         shard_dir = File.join(options[:result_dir], "shard-#{number}")
-        pieces_dir = File.join(options[:log_dir], "shard-#{number}-pieces")
-        FileUtils.rm_rf([shard_dir, pieces_dir])
-        FileUtils.mkdir_p(pieces_dir)
+        batches_dir = File.join(options[:log_dir], "shard-#{number}-batches")
+        FileUtils.rm_rf([shard_dir, batches_dir])
+        FileUtils.mkdir_p(batches_dir)
 
         done = []
         retired = false
         started = Time.now
-        while (piece = take_piece.call)
-            piece_label = "#{label} piece #{piece[:number]}"
-            result_bundle = File.join(pieces_dir, "piece-#{piece[:number]}.xcresult")
-            log_path = File.join(options[:log_dir], "#{options[:scheme]}-shard-#{number}-piece-#{piece[:number]}.log")
+        while (batch = take_batch.call)
+            batch_label = "#{label} batch #{batch[:number]}"
+            result_bundle = File.join(batches_dir, "batch-#{batch[:number]}.xcresult")
+            log_path = File.join(options[:log_dir], "#{options[:scheme]}-shard-#{number}-batch-#{batch[:number]}.log")
 
             command = [
                 "xcodebuild", "test-without-building",
@@ -346,19 +369,19 @@ results = simulators.each_with_index.map do |simulator, index|
                 "-parallel-testing-enabled", "NO"
             ]
             command += ["-retry-tests-on-failure", "-test-iterations", options[:test_iterations].to_s] if options[:test_iterations] > 1
-            command += piece[:tests].map { |identifier| "-only-testing:#{identifier}" }
+            command += batch[:tests].map { |identifier| "-only-testing:#{identifier}" }
 
-            piece_started = Time.now
-            say(piece_label, "#{piece[:tests].size} tests on simulator #{simulator}")
-            passed = stream(piece_label, command, log_path)
+            batch_started = Time.now
+            say(batch_label, "#{batch[:tests].size} tests on simulator #{simulator}")
+            passed = stream(batch_label, command, log_path)
             log = File.exist?(log_path) ? File.read(log_path, encoding: "UTF-8", invalid: :replace) : ""
             relaunched = !passed && launch_refused.call(log)
             if relaunched
-                say(piece_label, "test runner did not launch and no test ran, running this piece once more")
+                say(batch_label, "test runner did not launch and no test ran, running this batch once more")
                 # Keep the first attempt for debugging, outside the results directory so reports ignore it.
                 # A result bundle is a directory: moving it onto an earlier run's copy would nest it inside, so replace that copy.
                 first_log = log_path.sub(/\.log\z/, "-attempt-1.log")
-                first_bundle = File.join(options[:log_dir], "#{options[:scheme]}-shard-#{number}-piece-#{piece[:number]}-attempt-1.xcresult")
+                first_bundle = File.join(options[:log_dir], "#{options[:scheme]}-shard-#{number}-batch-#{batch[:number]}-attempt-1.xcresult")
                 FileUtils.rm_rf([first_log, first_bundle])
                 FileUtils.mv(log_path, first_log)
                 FileUtils.mv(result_bundle, first_bundle) if File.exist?(result_bundle)
@@ -366,30 +389,31 @@ results = simulators.each_with_index.map do |simulator, index|
                 begin
                     wait_until_launchable(simulator)
                 rescue => error
-                    say(piece_label, error.message)
+                    say(batch_label, error.message)
                 end
-                passed = stream(piece_label, command, log_path)
+                passed = stream(batch_label, command, log_path)
                 log = File.exist?(log_path) ? File.read(log_path, encoding: "UTF-8", invalid: :replace) : ""
             end
             publish_log(log_path, options[:published_log_dir], secrets)
 
-            # Refused twice with no test run: this simulator is bad. Hand the piece to another shard rather than
+            # Refused twice with no test run: this simulator is bad. Hand the batch to another shard rather than
             # let this one burn through the whole queue.
-            if !passed && relaunched && launch_refused.call(log) && piece[:launch_failures].zero? &&
+            if !passed && relaunched && launch_refused.call(log) && batch[:launch_failures].zero? &&
                     queue_lock.synchronize { alive > 1 }
-                say(piece_label, "simulator #{simulator} keeps refusing the runner, giving the piece to another shard")
+                say(batch_label, "simulator #{simulator} keeps refusing the runner, giving the batch to another shard")
                 FileUtils.rm_rf(result_bundle)
-                piece[:launch_failures] += 1
+                batch[:launch_failures] += 1
                 queue_lock.synchronize { alive -= 1 }
-                finish_piece.call(piece, requeue: true)
+                finish_batch.call(batch, requeue: true)
                 retired = true
                 break
             end
 
-            finish_piece.call(piece)
-            done << { number: piece[:number], tests: piece[:tests].size, passed: passed, relaunched: relaunched,
+            finish_batch.call(batch)
+            done << { number: batch[:number], tests: batch[:tests].size, passed: passed, relaunched: relaunched,
+                      outcomes: test_outcomes(log),
                       bundle: (result_bundle if File.exist?(result_bundle)),
-                      minutes: ((Time.now - piece_started) / 60).round(1) }
+                      minutes: ((Time.now - batch_started) / 60).round(1) }
         end
 
         bundles = done.filter_map { |entry| entry[:bundle] }
@@ -398,14 +422,15 @@ results = simulators.each_with_index.map do |simulator, index|
             target = File.join(shard_dir, "#{options[:scheme]}.xcresult")
             merged = merge_bundles(bundles, target)
             unless merged
-                # Keep every piece's results rather than lose them: reports read all bundles in the shard directory.
+                # Keep every batch's results rather than lose them: reports read all bundles in the shard directory.
                 say(label, "merging result bundles failed, keeping them separate")
                 FileUtils.mkdir_p(shard_dir)
                 bundles.each { |bundle| FileUtils.cp_r(bundle, File.join(shard_dir, File.basename(bundle))) }
             end
         end
         {
-            number: number, pieces: done.map { |entry| entry[:number] }, tests: done.sum { |entry| entry[:tests] },
+            number: number, tests: done.sum { |entry| entry[:tests] },
+            outcomes: done.map { |entry| entry[:outcomes] }.reduce({}, :merge),
             passed: done.all? { |entry| entry[:passed] },
             relaunched: done.count { |entry| entry[:relaunched] }, merged: merged, retired: retired,
             minutes: ((Time.now - started) / 60).round(1)
@@ -413,14 +438,21 @@ results = simulators.each_with_index.map do |simulator, index|
     end
 end.map(&:value)
 
-# Pieces left in the queue mean every shard retired; those tests did not run.
-unrun = queue.sum { |piece| piece[:tests].size }
+# Batches left in the queue mean every shard retired; those tests did not run.
+unrun = queue.sum { |batch| batch[:tests].size }
 summary = results.map do |result|
-    "shard #{result[:number]}: #{result[:passed] ? 'passed' : 'FAILED'}, #{result[:tests]} tests in #{result[:pieces].size} pieces, #{result[:minutes]} min" +
+    ran = result[:outcomes].size
+    passed = result[:outcomes].values.count(true)
+    failed = ran - passed
+    missing = result[:tests] - ran
+    "shard #{result[:number]}: #{result[:tests]} tests, #{passed} passed, #{failed} failed" +
+        (missing.positive? ? ", #{missing} without a result" : "") + ", #{result[:minutes]} min" +
         (result[:relaunched].positive? ? " (runner relaunched #{result[:relaunched]}x)" : "") +
         (result[:retired] ? " (simulator retired, kept refusing the runner)" : "") +
         (result[:merged] ? "" : " (result bundles not merged)")
 end
+all_outcomes = results.map { |result| result[:outcomes] }.reduce({}, :merge)
+summary << "total: #{tests.size} tests, #{all_outcomes.values.count(true)} passed, #{all_outcomes.values.count(false)} failed"
 summary << "#{unrun} tests never ran, no shard was left to take them" if unrun.positive?
 summary.each { |line| say("shards", line) }
 write_job_summary(["UITest shards (#{results.size} of #{options[:workers]} requested):", *summary.map { |line| "- #{line}" }])
