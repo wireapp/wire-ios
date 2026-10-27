@@ -16,8 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-package import Foundation
-
 /// Forgets Wire Drive direct uploads that succeeded or were cancelled.
 ///
 /// Failed uploads are left alone, since they can still be retried.

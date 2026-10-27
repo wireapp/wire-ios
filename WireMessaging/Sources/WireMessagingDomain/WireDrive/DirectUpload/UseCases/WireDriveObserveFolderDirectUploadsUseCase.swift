@@ -17,7 +17,6 @@
 //
 
 package import Combine
-package import Foundation
 
 /// Observes the uploads destined for one folder.
 @MainActor

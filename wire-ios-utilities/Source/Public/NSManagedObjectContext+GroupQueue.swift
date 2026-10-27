@@ -51,12 +51,14 @@ public extension NSManagedObjectContext {
 
     @objc var dispatchGroupContext: DispatchGroupContext? {
         get { objc_getAssociatedObject(self, &AssociatedDispatchGroupContextKey) as? DispatchGroupContext }
-        set { objc_setAssociatedObject(
-            self,
-            &AssociatedDispatchGroupContextKey,
-            newValue,
-            .OBJC_ASSOCIATION_RETAIN_NONATOMIC
-        ) }
+        set {
+            objc_setAssociatedObject(
+                self,
+                &AssociatedDispatchGroupContextKey,
+                newValue,
+                .OBJC_ASSOCIATION_RETAIN_NONATOMIC
+            )
+        }
     }
 
     /// List of all groups associated with this context

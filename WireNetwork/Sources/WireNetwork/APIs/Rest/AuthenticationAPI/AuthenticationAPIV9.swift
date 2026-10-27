@@ -16,11 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
-
 class AuthenticationAPIV9: AuthenticationAPIV8 {
-
-    override var apiVersion: APIVersion {
-        .v9
-    }
+    override var apiVersion: APIVersion { .v9 }
 }

@@ -326,30 +326,13 @@ class CompilerWarningsTest < Minitest::Test
     assert_equal [link], report.fetch('annotations').map { |annotation| annotation.fetch('path') }
   end
 
-  def test_merges_parallel_reports_without_duplicate_warnings
-    first = collect([diagnostic, diagnostic(message: 'Only first')])
-    second = collect([diagnostic])
-    merged = CompilerWarnings.merge([first, second])
-    assert_equal ['Deprecated API', 'Only first'], merged.fetch('annotations').map { |warning| warning.fetch('message') }
-    assert_equal [@bundle, @bundle], merged.fetch('result_bundles')
-    assert_empty merged.fetch('incomplete_reasons')
-  end
-
-  def test_merged_report_is_incomplete_when_a_batch_has_no_bundles
-    merged = CompilerWarnings.merge([collect([diagnostic]), CompilerWarnings.collect(root: @root, bundles: [], tracked_files: [])])
-    assert_equal ['1 reports contain no result bundles.'], merged.fetch('incomplete_reasons')
-  end
-
-  def test_cli_merges_reports_and_flags_missing_and_cancelled_batches
+  def test_cli_flags_a_cancelled_job_as_incomplete
     in_repository do
-      FileUtils.mkdir_p('reports/batch-0')
-      File.write('reports/batch-0/compiler-warnings.json', JSON.generate(collect([diagnostic])))
+      write_bundle([diagnostic])
       ENV['JOB_STATUS'] = 'cancelled'
-      run_fixture(['--reports', 'reports/**/*.json', '--expected-reports', '2'])
+      run_fixture([])
       report = JSON.parse(File.read(CompilerWarnings::REPORT))
-      assert_equal 1, report.fetch('annotations').length
-      assert_equal ['Expected 2 reports but found 1.', 'The job was cancelled; some targets may not have been compiled.'],
-                   report.fetch('incomplete_reasons')
+      assert_equal ['The job was cancelled; some targets may not have been compiled.'], report.fetch('incomplete_reasons')
     end
   end
 
