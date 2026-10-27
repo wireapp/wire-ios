@@ -315,6 +315,9 @@ class AdminPromotionTests: WireUITestCase {
         )
         let leaveResponses = try await [firstResponse, secondResponse]
 
+        let successfulLeaves = leaveResponses.filter { $0.statusCode == 200 }
+        XCTAssertEqual(successfulLeaves.count, 1, "Exactly one leave request should be accepted: \(leaveResponses)")
+
         let leavingAdmins = [firstLeavingAdmin, secondLeavingAdmin]
         for response in leaveResponses {
             if response.statusCode != 200 {
