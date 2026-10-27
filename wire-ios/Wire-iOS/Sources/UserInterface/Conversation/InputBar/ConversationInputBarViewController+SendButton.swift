@@ -50,7 +50,7 @@ extension ConversationInputBarViewController {
             ) == true else { return }
             // Confirmation can suspend while reconnecting claims the message. Keep any newer draft.
             let current = inputBar.textView.preparedText
-            guard editingMessage === message, current.0 == text, current.1 == mentions else { return }
+            guard editingMessage === message, current.text == text, current.mentions == mentions else { return }
             editingMessage = nil
             updateWritingState(animated: true)
         } else {
