@@ -121,11 +121,11 @@ extension ConversationMessageCell {
     }
 
     func willDisplay() {
-        // to be overridden
+        // to be overriden
     }
 
     func didEndDisplaying() {
-        // to be overridden
+        // to be overriden
     }
 
     func prepareForReuse() {}

@@ -134,7 +134,7 @@ extension AccessoryTextField {
 
     @objc
     open func textFieldDidChange(textField: UITextField) {
-        // to be overridden
+        // to be overriden
     }
 
     private func setupTextField(with textFieldAttributes: Attributes) {

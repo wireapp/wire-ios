@@ -68,7 +68,7 @@ class SeparatorCollectionViewCell: UICollectionViewCell, SeparatorViewProtocol {
     }
 
     func setUp() {
-        // can be overridden to customize interface
+        // can be overriden to customize interface
     }
 
 }

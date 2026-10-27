@@ -139,7 +139,7 @@ public enum SemanticColors {
         public static let backgroundCollectionCell = UIColor(
             light: .white,
             dark: .gray90
-        ) // this is/should always be overridden and could be remove
+        ) // this is/should always be overriden and could be remove
         public static let borderCollectionCell = UIColor(light: .gray30, dark: .gray80)
         public static let backgroundSecurityLevel = UIColor(light: .gray20, dark: .gray95)
         public static let borderSecurityEnabled = UIColor(light: .green500Light, dark: .green500Dark)

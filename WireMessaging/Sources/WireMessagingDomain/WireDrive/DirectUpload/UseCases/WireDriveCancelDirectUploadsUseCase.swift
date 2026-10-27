@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+package import Foundation
+
 /// Cancels every Wire Drive direct upload that still has work left to do.
 package struct WireDriveCancelDirectUploadsUseCase: WireDriveCancelDirectUploadsUseCaseProtocol {
 

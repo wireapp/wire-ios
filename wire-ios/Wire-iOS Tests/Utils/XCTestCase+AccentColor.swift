@@ -27,7 +27,7 @@ private extension UIColor {
 }
 
 extension XCTestCase {
-    /// If this is set the accent color will be overridden for the tests
+    /// If this is set the accent color will be overriden for the tests
     static var accentColor: ZMAccentColor {
         get { UIColor.accentOverrideColor! }
         set { UIColor.setAccentOverride(newValue) }

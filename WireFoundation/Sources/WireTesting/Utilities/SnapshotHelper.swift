@@ -109,7 +109,7 @@ public struct SnapshotHelper {
         return helper
     }
 
-    /// Creates a copy of the current helper with the overridden snapshot directory.
+    /// Creates a copy of the current helper with the overriden snapshot directory.
     ///
     /// - Parameter snapshotReferenceDirectory: The path to the directory or an empty string to use the environment
     /// variable `SNAPSHOT_REFERENCE_DIR`.

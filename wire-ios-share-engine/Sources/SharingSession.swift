@@ -331,7 +331,7 @@ public final class SharingSession {
             onProcessedTypingUsers: { _ in }
         )
 
-        _ = ZMUser.selfUser(in: coreDataStack.viewContext).selfClient()
+        let selfClient = ZMUser.selfUser(in: coreDataStack.viewContext).selfClient()
         let clientUserSessionComponent = userSessionComponent.clientSessionComponent(
             clientID: selfClientID,
             completionHandlers: completionHandlers
