@@ -306,6 +306,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           COMPILER_WARNINGS_CHECK_NAME: Compiler warnings (${{ github.workflow }})
+          JOB_STATUS: ${{ job.status }}
         run: ruby scripts/annotate_compiler_warnings.rb --publish
 
       - name: Annotate test failures

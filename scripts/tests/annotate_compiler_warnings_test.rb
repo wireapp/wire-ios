@@ -20,6 +20,7 @@ class CompilerWarningsTest < Minitest::Test
   def setup
     @environment = ENV.to_h
     ENV.delete('GITHUB_STEP_SUMMARY')
+    ENV.delete('JOB_STATUS')
     @root = File.realpath(Dir.mktmpdir('compiler-warnings'))
     @source = 'Sources/Some File.swift'
     @bundle = File.join(@root, 'artifacts', 'sample.xcresult')
@@ -275,7 +276,10 @@ class CompilerWarningsTest < Minitest::Test
       assert_equal pr_head, api.requests.first[2].fetch('head_sha')
       report = JSON.parse(File.read(CompilerWarnings::REPORT))
       assert_equal built_sha, report.fetch('sha')
-      assert_equal 1, api.requests[1][2].fetch('output').fetch('annotations').length
+      # Without a merge commit the PR's files are unknown, so nothing is annotated.
+      assert_empty api.requests.flat_map { |request| request[2].dig('output', 'annotations') || [] }
+      assert_equal 'neutral', api.requests.last[2].fetch('conclusion')
+      assert_match(/not a PR merge commit/, api.requests.last[2].fetch('output').fetch('summary'))
     end
   end
 
@@ -290,7 +294,62 @@ class CompilerWarningsTest < Minitest::Test
       ENV['GITHUB_REPOSITORY'] = 'wireapp/wire-ios'
       ENV.delete('GH_TOKEN')
       assert_raises(KeyError) { run_fixture(['--publish']) }
-      assert_equal 1, JSON.parse(File.read(CompilerWarnings::REPORT)).fetch('annotations').length
+      report = JSON.parse(File.read(CompilerWarnings::REPORT))
+      # Not a merge commit, so the warning is kept but not marked for inline annotation.
+      assert_equal 1, report.fetch('annotations').length + report.fetch('unchanged_file_warnings').length
+    end
+  end
+
+  def test_skips_a_malformed_issue_but_keeps_the_rest_of_the_bundle
+    report = collect([diagnostic, { 'issueType' => 'Warning' }, diagnostic(line: 43)])
+    assert_equal [42, 43], report.fetch('annotations').map { |warning| warning.fetch('start_line') }
+    assert_equal [@bundle], report.fetch('result_errors').map { |error| error.fetch('path') }
+    publish(report)
+    assert_equal 'neutral', @api.requests.last[2].fetch('conclusion')
+  end
+
+  def test_build_errors_make_the_check_neutral
+    write_bundle([diagnostic], errors: [diagnostic(line: 44, message: 'An error')])
+    report = CompilerWarnings.collect(root: @root, bundles: [@bundle], tracked_files: [@source], reader: method(:fixture_results))
+    assert_equal 1, report.fetch('incomplete_reasons').length
+    publish(report)
+    assert_equal 'neutral', @api.requests.last[2].fetch('conclusion')
+    assert_match(/contains build errors/, @api.requests.last[2].fetch('output').fetch('summary'))
+  end
+
+  def test_annotates_tracked_symlinks_by_their_tracked_path
+    FileUtils.mkdir_p(File.join(@root, 'Sources'))
+    File.write(File.join(@root, 'Sources', 'Target.swift'), '// fixture')
+    link = 'Sources/Link.swift'
+    File.symlink('Target.swift', File.join(@root, link))
+    report = collect([diagnostic(path: link)], [link, 'Sources/Target.swift'])
+    assert_equal [link], report.fetch('annotations').map { |annotation| annotation.fetch('path') }
+  end
+
+  def test_merges_parallel_reports_without_duplicate_warnings
+    first = collect([diagnostic, diagnostic(message: 'Only first')])
+    second = collect([diagnostic])
+    merged = CompilerWarnings.merge([first, second])
+    assert_equal ['Deprecated API', 'Only first'], merged.fetch('annotations').map { |warning| warning.fetch('message') }
+    assert_equal [@bundle, @bundle], merged.fetch('result_bundles')
+    assert_empty merged.fetch('incomplete_reasons')
+  end
+
+  def test_merged_report_is_incomplete_when_a_batch_has_no_bundles
+    merged = CompilerWarnings.merge([collect([diagnostic]), CompilerWarnings.collect(root: @root, bundles: [], tracked_files: [])])
+    assert_equal ['1 reports contain no result bundles.'], merged.fetch('incomplete_reasons')
+  end
+
+  def test_cli_merges_reports_and_flags_missing_and_cancelled_batches
+    in_repository do
+      FileUtils.mkdir_p('reports/batch-0')
+      File.write('reports/batch-0/compiler-warnings.json', JSON.generate(collect([diagnostic])))
+      ENV['JOB_STATUS'] = 'cancelled'
+      run_fixture(['--reports', 'reports/**/*.json', '--expected-reports', '2'])
+      report = JSON.parse(File.read(CompilerWarnings::REPORT))
+      assert_equal 1, report.fetch('annotations').length
+      assert_equal ['Expected 2 reports but found 1.', 'The job was cancelled; some targets may not have been compiled.'],
+                   report.fetch('incomplete_reasons')
     end
   end
 
@@ -419,7 +478,7 @@ class CompilerWarningsTest < Minitest::Test
       uploaded = api.requests.flat_map { |request| request[2].dig('output', 'annotations') || [] }
       assert_equal ['Sources/PROnly.swift'], uploaded.map { |warning| warning.fetch('path') }
       report = JSON.parse(File.read(CompilerWarnings::REPORT))
-      assert_equal [[@source, 3]], report.fetch('unchanged_file_warnings').map { |warning| [warning.fetch('path'), warning.fetch('start_line')] }
+      assert_equal [[@source, 4]], report.fetch('unchanged_file_warnings').map { |warning| [warning.fetch('path'), warning.fetch('start_line')] }
       assert_match(/1 available inline, 1 in files not changed by the PR/, CompilerWarnings.summary(report))
     end
   end
@@ -514,6 +573,12 @@ class CompilerWarningsTest < Minitest::Test
     assert_equal({ 'id' => 123 }, api.request(:patch, '/check-runs/123', { 'conclusion' => 'success' }))
     assert_equal 3, api.calls.length
     assert_equal [1, 2], api.delays
+  end
+
+  def test_retries_tls_errors_on_metadata_updates
+    api = StubTransportAPI.new([OpenSSL::SSL::SSLError.new('Connection reset'), http_response(200)])
+    assert_equal({ 'id' => 123 }, api.request(:patch, '/check-runs/123', { 'conclusion' => 'success' }))
+    assert_equal [1], api.delays
   end
 
   def test_stops_retrying_after_three_attempts

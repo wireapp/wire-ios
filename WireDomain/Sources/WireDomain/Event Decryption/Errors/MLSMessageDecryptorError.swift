@@ -21,8 +21,11 @@ import WireDataModel
 enum MLSMessageDecryptorError: Error {
 
     case conversationNotFound
+
     case missingMLSGroupID
+
     case mlsConversationNotReady
+
     case wrongEpoch(mlsGroupID: MLSGroupID)
 
 }

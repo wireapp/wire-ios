@@ -3,6 +3,7 @@
 require 'json'
 require 'uri'
 require 'net/http'
+require 'openssl'
 require 'open3'
 require 'optparse'
 require 'pathname'
@@ -12,6 +13,9 @@ require 'fileutils'
 module CompilerWarnings
   REPORT = 'build/compiler-warnings.json'.freeze
   RESULT_PATTERN = 'artifacts/**/*.xcresult'.freeze
+  ANNOTATION_KEY = ->(warning) { warning.values_at('path', 'start_line', 'message') }
+  # Ignore timestamp fragments when deduplicating warnings without a line.
+  UNLOCATED_KEY = ->(issue) { [issue['issueType'], issue['message'], issue['sourceURL'].to_s.split('#', 2).first] }
 
   def self.git(*arguments)
     output, _error, status = Open3.capture3('git', *arguments)
@@ -45,6 +49,10 @@ module CompilerWarnings
     nil
   end
 
+  def self.sorted(warnings)
+    warnings.sort_by { |warning| [warning['path'], warning['start_line'], warning['message']] }
+  end
+
   def self.collect(root:, bundles:, tracked_files:, reader: method(:read_build_results))
     root = File.realpath(root)
     tracked = tracked_files.to_set
@@ -52,39 +60,65 @@ module CompilerWarnings
     untracked = {}
     unlocated = {}
     errors = []
+    incomplete = []
     bundles.each do |bundle|
       begin
         results = reader.call(bundle)
         issues = results.fetch('warnings') + results.fetch('analyzerWarnings')
-        issues.each do |issue|
-          message = issue.fetch('message')
-          location = source_location(issue['sourceURL'])
-          unless location
-            # Keep the structured issue, including project/target context. Ignore
-            # timestamp fragments when deduplicating warnings without a line.
-            source = issue['sourceURL'].to_s.split('#', 2).first
-            unlocated[[issue['issueType'], message, source]] = issue
-            next
-          end
-          source, line = location
-          absolute = File.expand_path(source, root)
-          absolute = File.realpath(absolute) if File.exist?(absolute)
-          path = Pathname.new(absolute).relative_path_from(Pathname.new(root)).to_s
-          key = [path, line, message]
-          destination = tracked.include?(path) ? annotations : untracked
-          destination[key] = {
-            'path' => path, 'start_line' => line, 'end_line' => line,
-            'annotation_level' => 'warning', 'title' => 'Compiler warning', 'message' => message
-          }
-        end
       rescue StandardError => error
         errors << { 'path' => bundle, 'message' => error.message }
+        next
+      end
+      # A failed build can stop before every target is compiled.
+      incomplete << "#{bundle} contains build errors; some targets may not have been compiled." unless Array(results['errors']).empty?
+      issues.each do |issue|
+        message = issue.fetch('message')
+        location = source_location(issue['sourceURL'])
+        unless location
+          # Keep the structured issue, including project/target context.
+          unlocated[UNLOCATED_KEY.call(issue)] = issue
+          next
+        end
+        source, line = location
+        absolute = File.expand_path(source, root)
+        # Prefer the path as reported so tracked symlinks match; fall back to the
+        # resolved path for sources reached through a symlinked directory.
+        candidates = [absolute]
+        candidates << File.realpath(absolute) if File.exist?(absolute)
+        paths = candidates.map { |candidate| Pathname.new(candidate).relative_path_from(Pathname.new(root)).to_s }
+        path = paths.find { |candidate| tracked.include?(candidate) } || paths.last
+        warning = {
+          'path' => path, 'start_line' => line, 'end_line' => line,
+          'annotation_level' => 'warning', 'title' => 'Compiler warning', 'message' => message
+        }
+        (tracked.include?(path) ? annotations : untracked)[ANNOTATION_KEY.call(warning)] = warning
+      rescue StandardError => error
+        # Skip only the malformed issue and keep the rest of the bundle.
+        errors << { 'path' => bundle, 'message' => "Skipped an issue: #{error.message}" }
       end
     end
-    sort = ->(warnings) { warnings.values.sort_by { |a| [a['path'], a['start_line'], a['message']] } }
     {
-      'result_bundles' => bundles, 'result_errors' => errors, 'annotations' => sort.call(annotations),
-      'untracked_warnings' => sort.call(untracked), 'unlocated_warnings' => unlocated.values
+      'result_bundles' => bundles, 'result_errors' => errors, 'incomplete_reasons' => incomplete,
+      'annotations' => sorted(annotations.values), 'untracked_warnings' => sorted(untracked.values),
+      'unlocated_warnings' => unlocated.values
+    }
+  end
+
+  # Combines reports collected by parallel jobs that built overlapping targets,
+  # so each warning is published once.
+  def self.merge(reports)
+    unique = lambda do |field, key|
+      reports.flat_map { |report| report.fetch(field, []) }.to_h { |warning| [key.call(warning), warning] }.values
+    end
+    empty = reports.count { |report| report.fetch('result_bundles').empty? }
+    {
+      'result_bundles' => reports.flat_map { |report| report.fetch('result_bundles') },
+      'result_errors' => reports.flat_map { |report| report.fetch('result_errors', []) },
+      'incomplete_reasons' => reports.flat_map { |report| report.fetch('incomplete_reasons', []) } +
+        (empty.positive? ? ["#{empty} reports contain no result bundles."] : []),
+      'annotations' => sorted(unique.call('annotations', ANNOTATION_KEY)),
+      'untracked_warnings' => sorted(unique.call('untracked_warnings', ANNOTATION_KEY)),
+      'unlocated_warnings' => unique.call('unlocated_warnings', UNLOCATED_KEY)
     }
   end
 
@@ -165,7 +199,8 @@ module CompilerWarnings
            "#{counts[:unmapped]} without matching PR-head source lines. " \
            'The complete report is available in the workflow artifacts.'
     failures = report.fetch('result_errors', []).length
-    text += " #{failures} result bundles could not be read; the report is incomplete." if failures.positive?
+    text += " #{failures} result bundles or issues could not be read; the report is incomplete." if failures.positive?
+    report.fetch('incomplete_reasons', []).each { |reason| text += " #{reason}" }
     text
   end
 
@@ -178,7 +213,8 @@ module CompilerWarnings
         super("GitHub Checks API returned HTTP #{status}")
       end
     end
-    RETRYABLE_ERRORS = [HTTPError, Timeout::Error, EOFError, IOError, SocketError, SystemCallError].freeze
+    RETRYABLE_ERRORS = [HTTPError, Timeout::Error, EOFError, IOError, SocketError, SystemCallError,
+                        OpenSSL::SSL::SSLError].freeze
 
     def initialize(token:, base_url:)
       @token = token
@@ -225,7 +261,8 @@ module CompilerWarnings
   def self.publish(api:, repository:, sha:, name:, report:, details_url:)
     completed = false
     output = { 'title' => name, 'summary' => summary(report) }
-    collected = !report.fetch('result_bundles').empty? && report.fetch('result_errors', []).empty?
+    collected = !report.fetch('result_bundles').empty? && report.fetch('result_errors', []).empty? &&
+                report.fetch('incomplete_reasons', []).empty?
     # Start neutral and completed: even SIGKILL or a lost POST response cannot
     # leave a blocking check stuck in progress. Success is set after all batches.
     check = api.request(:post, "/repos/#{repository}/check-runs", {
@@ -259,25 +296,40 @@ module CompilerWarnings
   def self.run(arguments, api: nil, reader: method(:read_build_results))
     options = { publish: false }
     OptionParser.new do |parser|
-      parser.banner = 'Usage: ruby scripts/annotate_compiler_warnings.rb [--publish]'
+      parser.banner = 'Usage: ruby scripts/annotate_compiler_warnings.rb [--publish] [--reports GLOB [--expected-reports COUNT]]'
       parser.on('--publish', 'Publish warnings in files changed by the PR using the GitHub Checks API') { options[:publish] = true }
+      parser.on('--reports GLOB', 'Merge reports saved by earlier runs instead of reading result bundles') { |glob| options[:reports] = glob }
+      parser.on('--expected-reports COUNT', Integer, 'Number of reports --reports must find') { |count| options[:expected_reports] = count }
     end.parse!(arguments)
     raise 'Unexpected arguments' unless arguments.empty?
 
     root = git('rev-parse', '--show-toplevel').strip
     Dir.chdir(root) do
       FileUtils.mkdir_p('build')
-      bundles = Dir.glob(RESULT_PATTERN).select { |path| File.directory?(path) }.sort
-      report = collect(root: root, bundles: bundles, tracked_files: git('ls-files', '-z').split("\0"), reader: reader)
+      if options[:reports]
+        paths = Dir.glob(options[:reports]).sort
+        report = merge(paths.map { |path| JSON.parse(File.read(path)) })
+        expected = options[:expected_reports]
+        report['incomplete_reasons'] << "Expected #{expected} reports but found #{paths.length}." if expected && paths.length < expected
+      else
+        bundles = Dir.glob(RESULT_PATTERN).select { |path| File.directory?(path) }.sort
+        report = collect(root: root, bundles: bundles, tracked_files: git('ls-files', '-z').split("\0"), reader: reader)
+      end
+      report['incomplete_reasons'] << 'The job was cancelled; some targets may not have been compiled.' if ENV['JOB_STATUS'] == 'cancelled'
       report['sha'] = git('rev-parse', 'HEAD').strip
       # Save the collected diagnostics first, even if PR-head mapping or publishing fails.
       File.write(REPORT, JSON.pretty_generate(report) + "\n")
       if options[:publish]
         event = JSON.parse(File.read(ENV.fetch('GITHUB_EVENT_PATH')))
         pull_request = event.fetch('pull_request')
-        report = for_pr_head(report, pull_request.fetch('head').fetch('sha'))
+        # Filter before mapping so only the PR's files need per-file git calls.
         changed = pr_changed_files(report.fetch('sha'))
-        report = for_changed_files(report, changed) if changed
+        report = for_changed_files(report, changed || Set.new)
+        unless changed
+          report['incomplete_reasons'] << 'The build is not a PR merge commit, so the files changed by the PR ' \
+                                          'are unknown and no warnings were annotated inline.'
+        end
+        report = for_pr_head(report, pull_request.fetch('head').fetch('sha'))
         File.write(REPORT, JSON.pretty_generate(report) + "\n")
       end
       puts summary(report)
