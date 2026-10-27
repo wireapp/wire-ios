@@ -343,7 +343,8 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 ClientMessageRequestStrategy(
                     context: syncContext,
                     localNotificationDispatcher: pushMessageHandler,
-                    messageSender: messageSender
+                    messageSender: messageSender,
+                    reachability: transportSession.reachability
                 ),
                 AvailabilityRequestStrategy(
                     context: syncContext,

@@ -17,7 +17,9 @@
 //
 
 import GenericMessageProtocol
+import WireSystem
 import WireTransport
+import WireUtilities
 import XCTest
 
 @testable import WireDataModelSupport
@@ -30,6 +32,7 @@ class ClientMessageRequestStrategyTests: MessagingTestBase {
     var sut: ClientMessageRequestStrategy!
     var mockAttachmentsDetector: MockAttachmentDetector!
     var mockMessageSender: MockMessageSenderInterface!
+    var mockReachability: MockReachabilityProvider!
     var apiVersion: APIVersion! {
         didSet {
             BackendInfo.apiVersion = apiVersion
@@ -43,6 +46,7 @@ class ClientMessageRequestStrategyTests: MessagingTestBase {
             localNotificationDispatcher = MockPushMessageHandler()
             mockAttachmentsDetector = MockAttachmentDetector()
             mockMessageSender = MockMessageSenderInterface()
+            mockReachability = MockReachabilityProvider()
             LinkAttachmentDetectorHelper.setTest_debug_linkAttachmentDetector(mockAttachmentsDetector)
             makeSut()
         }
@@ -55,7 +59,9 @@ class ClientMessageRequestStrategyTests: MessagingTestBase {
         localNotificationDispatcher = nil
         mockAttachmentsDetector = nil
         LinkAttachmentDetectorHelper.tearDown()
+        mockReachability = nil
         sut = nil
+        DeveloperFlag.storage = .standard
 
         super.tearDown()
     }
@@ -69,8 +75,31 @@ class ClientMessageRequestStrategyTests: MessagingTestBase {
         sut = ClientMessageRequestStrategy(
             context: syncMOC,
             localNotificationDispatcher: localNotificationDispatcher,
-            messageSender: mockMessageSender
+            messageSender: mockMessageSender,
+            reachability: mockReachability
         )
+    }
+
+    func enableOfflinePendingMessages() {
+        DeveloperFlag.storage = .temporary()
+        DeveloperFlag.offlinePendingMessages.enable(true)
+    }
+
+    func makeTryAgainLaterError() -> any Error {
+        let response = ZMTransportResponse(
+            transportSessionError: NSError.tryAgainLaterError(),
+            apiVersion: APIVersion.v0.rawValue
+        )
+        return MessageSendError.failed(NetworkError.errorDecodingResponse(response))
+    }
+
+    /// Inserts the message as the inserted object sync would and returns an expectation for its completion.
+    func insert(_ message: ZMClientMessage, isFresh: Bool) -> XCTestExpectation {
+        let didComplete = XCTestExpectation(description: "didComplete")
+        sut.insert(object: message, isFresh: isFresh, completion: {
+            didComplete.fulfill()
+        })
+        return didComplete
     }
 
     /// Makes a conversation secure
@@ -289,5 +318,216 @@ extension ClientMessageRequestStrategyTests {
             XCTAssertTrue(message.isExpired)
             XCTAssertEqual(self.mockMessageSender.sendMessageMessage_Invocations.count, 0)
         }
+    }
+}
+
+// MARK: - Offline pending messages
+
+extension ClientMessageRequestStrategyTests {
+
+    func testThatItSendsStaleMessage_OfflinePendingMessages() {
+        // GIVEN
+        enableOfflinePendingMessages()
+        var message: ZMClientMessage!
+        var didComplete: XCTestExpectation!
+        syncMOC.performAndWait {
+            self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
+            message = try! self.groupConversation.appendText(content: "Lorem ipsum") as? ZMClientMessage
+            self.syncMOC.saveOrRollback()
+
+            // WHEN
+            didComplete = self.insert(message, isFresh: false)
+        }
+        wait(for: [didComplete], timeout: 5)
+
+        // THEN
+        syncMOC.performAndWait {
+            XCTAssertEqual(self.mockMessageSender.sendMessageMessage_Invocations.count, 1)
+            XCTAssertFalse(message.isExpired)
+            XCTAssertTrue(message.delivered)
+        }
+    }
+
+    func testThatItExpiresStaleEphemeralMessage_OfflinePendingMessages() {
+        syncMOC.performAndWait {
+            // GIVEN
+            self.enableOfflinePendingMessages()
+            self.groupConversation.setMessageDestructionTimeoutValue(.tenSeconds, for: .selfUser)
+            let message = try! self.groupConversation.appendText(content: "Lorem ipsum") as! ZMClientMessage
+            self.syncMOC.saveOrRollback()
+            XCTAssertTrue(message.isEphemeral)
+
+            // WHEN
+            let didComplete = self.insert(message, isFresh: false)
+
+            // THEN
+            self.wait(for: [didComplete], timeout: 5)
+            XCTAssertTrue(message.isExpired)
+            XCTAssertEqual(self.mockMessageSender.sendMessageMessage_Invocations.count, 0)
+        }
+    }
+
+    func testThatItWaitsForNetworkBeforeSending_OfflinePendingMessages() {
+        // GIVEN
+        enableOfflinePendingMessages()
+        mockReachability.mayBeReachable = false
+        var message: ZMClientMessage!
+        var didComplete: XCTestExpectation!
+        syncMOC.performAndWait {
+            self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
+            message = try! self.groupConversation.appendText(content: "Lorem ipsum") as? ZMClientMessage
+            self.syncMOC.saveOrRollback()
+
+            // WHEN
+            didComplete = self.insert(message, isFresh: true)
+        }
+        XCTAssertTrue(mockReachability.waitForObserver())
+        syncMOC.performAndWait {
+            XCTAssertEqual(self.mockMessageSender.sendMessageMessage_Invocations.count, 0)
+        }
+        mockReachability.setMayBeReachable(true)
+        wait(for: [didComplete], timeout: 5)
+
+        // THEN
+        syncMOC.performAndWait {
+            XCTAssertEqual(self.mockMessageSender.sendMessageMessage_Invocations.count, 1)
+            XCTAssertFalse(message.isExpired)
+            XCTAssertTrue(message.delivered)
+        }
+    }
+
+    func testThatItResendsWithSameNonceAfterGoingOffline_OfflinePendingMessages() {
+        // GIVEN
+        enableOfflinePendingMessages()
+        let tryAgainLater = makeTryAgainLaterError()
+        var message: ZMClientMessage!
+        var nonce: UUID?
+        var didComplete: XCTestExpectation!
+        syncMOC.performAndWait {
+            // The first attempt fails because the network goes away, the second one succeeds.
+            self.mockMessageSender.sendMessageMessage_MockMethod = { [mockReachability] _ in
+                if self.mockMessageSender.sendMessageMessage_Invocations.count == 1 {
+                    mockReachability?.mayBeReachable = false
+                    throw tryAgainLater
+                }
+            }
+            message = try! self.groupConversation.appendText(content: "Lorem ipsum") as? ZMClientMessage
+            nonce = message.nonce
+            self.syncMOC.saveOrRollback()
+
+            // WHEN
+            didComplete = self.insert(message, isFresh: true)
+        }
+        XCTAssertTrue(mockReachability.waitForObserver())
+        mockReachability.setMayBeReachable(true)
+        wait(for: [didComplete], timeout: 5)
+
+        // THEN
+        syncMOC.performAndWait {
+            XCTAssertEqual(self.mockMessageSender.sendMessageMessage_Invocations.count, 2)
+            XCTAssertEqual(message.nonce, nonce)
+            XCTAssertFalse(message.isExpired)
+            XCTAssertNil(message.expirationDate)
+            XCTAssertTrue(message.delivered)
+            XCTAssertTrue(self.localNotificationDispatcher.failedToSend.isEmpty)
+        }
+    }
+
+    func testThatItExpiresMessageAfterPermanentFailureWhileOnline_OfflinePendingMessages() {
+        // GIVEN
+        enableOfflinePendingMessages()
+        var message: ZMClientMessage!
+        var didComplete: XCTestExpectation!
+        syncMOC.performAndWait {
+            self.mockMessageSender.sendMessageMessage_MockError = MessageSendError.missingQualifiedID
+            message = try! self.groupConversation.appendText(content: "Lorem ipsum") as? ZMClientMessage
+            self.syncMOC.saveOrRollback()
+
+            // WHEN
+            didComplete = self.insert(message, isFresh: true)
+        }
+        wait(for: [didComplete], timeout: 5)
+
+        // THEN
+        syncMOC.performAndWait {
+            XCTAssertEqual(self.mockMessageSender.sendMessageMessage_Invocations.count, 1)
+            XCTAssertTrue(message.isExpired)
+        }
+    }
+
+    func testThatItDoesNotSendMessageDeletedWhileWaiting_OfflinePendingMessages() {
+        // GIVEN
+        enableOfflinePendingMessages()
+        mockReachability.mayBeReachable = false
+        var message: ZMClientMessage!
+        var didComplete: XCTestExpectation!
+        syncMOC.performAndWait {
+            self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
+            message = try! self.groupConversation.appendText(content: "Lorem ipsum") as? ZMClientMessage
+            self.syncMOC.saveOrRollback()
+            didComplete = self.insert(message, isFresh: true)
+        }
+        XCTAssertTrue(mockReachability.waitForObserver())
+
+        // WHEN
+        syncMOC.performAndWait {
+            ZMMessage.deleteForEveryone(message)
+            self.syncMOC.saveOrRollback()
+        }
+        mockReachability.setMayBeReachable(true)
+        wait(for: [didComplete], timeout: 5)
+
+        // THEN
+        syncMOC.performAndWait {
+            XCTAssertEqual(self.mockMessageSender.sendMessageMessage_Invocations.count, 0)
+            XCTAssertFalse(message.isExpired)
+        }
+    }
+}
+
+// MARK: - Helpers
+
+final class MockReachabilityProvider: NSObject, ReachabilityProvider {
+
+    private let lock = NSLock()
+    private var observers: [ReachabilityObserverBlock] = []
+    private var _mayBeReachable = true
+
+    var mayBeReachable: Bool {
+        get { lock.withLock { _mayBeReachable } }
+        set { lock.withLock { _mayBeReachable = newValue } }
+    }
+
+    var oldMayBeReachable = true
+
+    func add(_ observer: ZMReachabilityObserver, queue: OperationQueue?) -> Any {
+        NSObject()
+    }
+
+    func addReachabilityObserver(on queue: OperationQueue?, block: @escaping ReachabilityObserverBlock) -> Any {
+        lock.withLock { observers.append(block) }
+        return NSObject()
+    }
+
+    /// Waits until the sut observes reachability, i.e. waits for the network.
+    func waitForObserver(timeout: TimeInterval = 5) -> Bool {
+        let deadline = Date().addingTimeInterval(timeout)
+        while Date() < deadline {
+            if lock.withLock({ !observers.isEmpty }) {
+                return true
+            }
+            RunLoop.current.run(until: Date().addingTimeInterval(0.01))
+        }
+        return false
+    }
+
+    func setMayBeReachable(_ value: Bool) {
+        mayBeReachable = value
+        let observers = lock.withLock {
+            let observers = self.observers
+            self.observers.removeAll()
+            return observers
+        }
+        observers.forEach { $0(self) }
     }
 }
