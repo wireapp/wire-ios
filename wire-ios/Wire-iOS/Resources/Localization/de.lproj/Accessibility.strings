@@ -47,8 +47,8 @@
 "conversation.locationButton.description" = "Standort teilen";
 "conversation.videoButton.description" = "Video aufnehmen";
 "conversation.moreButton.description" = "Weitere Nachrichtenoptionen öffnen";
-"conversation.moreButton.closeDescription" = "Close more messaging options";
-"conversation.applyChangesButton.description" = "Apply changes";
+"conversation.moreButton.closeDescription" = "Weitere Nachrichtenoptionen schließen";
+"conversation.applyChangesButton.description" = "Änderungen übernehmen";
 "conversation.emphemeralButton.description" = "Timer für selbstlöschende Nachrichten festlegen";
 "conversation.timerForSelfDeletingMessagesSeconds.value" = "%@ Sekunden";
 "conversation.timerForSelfDeletingMessagesMinutes.value" = "%@ Minuten";
