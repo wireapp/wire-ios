@@ -68,7 +68,7 @@ struct MeetingFormViewModelTests {
     private func makeViewModel(
         mode: MeetingFormViewModel.Mode,
         supportsMeetingLinks: Bool = false,
-        onSuccess: @escaping (Meeting) -> Void = { _ in }
+        onSuccess: @escaping (Meeting, URL?) -> Void = { _, _ in }
     ) -> MeetingFormViewModel {
         let searchMembersUseCase = SearchMembersUseCaseProtocolMock()
         searchMembersUseCase.invokeQueryStringMeetingMemberReturnValue = []
@@ -316,7 +316,11 @@ struct MeetingFormViewModelTests {
     func submit_InstantMode_Success_TC_11981(hour: Int, minute: Int, second: Int) async throws {
         // Given
         var receivedMeeting: Meeting?
-        let viewModel = makeViewModel(mode: .instant, supportsMeetingLinks: true) { receivedMeeting = $0 }
+        var receivedLink: URL?
+        let viewModel = makeViewModel(mode: .instant, supportsMeetingLinks: true) {
+            receivedMeeting = $0
+            receivedLink = $1
+        }
         // Advance the clock after opening the form to check the actual submission time.
         dateProviderMock.now = try makeDate(year: 2026, month: 7, day: 7, hour: hour, minute: minute)
             .addingTimeInterval(TimeInterval(second))
@@ -350,6 +354,7 @@ struct MeetingFormViewModelTests {
         #expect(arguments?.endTime == dateProviderMock.now.addingTimeInterval(TimeInterval.oneHour))
         #expect(arguments?.recurrence == nil)
         #expect(arguments?.participants == [member])
+        #expect(receivedLink == URL(string: "https://wire.example/meeting-join/"))
         #expect(receivedMeeting == meeting)
         #expect(viewModel.isLoading == false)
         #expect(viewModel.hasError == false)
@@ -369,7 +374,11 @@ struct MeetingFormViewModelTests {
     ) async {
         // Given
         var receivedMeeting: Meeting?
-        let viewModel = makeViewModel(mode: .scheduled, supportsMeetingLinks: true) { receivedMeeting = $0 }
+        var receivedLink: URL?
+        let viewModel = makeViewModel(mode: .scheduled, supportsMeetingLinks: true) {
+            receivedMeeting = $0
+            receivedLink = $1
+        }
         viewModel.meetingTitle = "Planning"
         viewModel.password = " exact Password1! "
         viewModel.confirmPassword = viewModel.password
@@ -394,6 +403,7 @@ struct MeetingFormViewModelTests {
         )
         let arguments = createMeetingUseCaseMock
             .invokeTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceTypeMeetingTypePasswordStringParticipantsMeetingMemberInvitedEmailsStringMeetingCreationResultReceivedArguments
+        #expect(receivedLink == URL(string: "https://wire.example/meeting-join/?key=server&code=link"))
         #expect(arguments?.invitedEmails == ["guest@example.com"])
         #expect(arguments?.type == .scheduled)
         #expect(arguments?.password == " exact Password1! ")
@@ -410,16 +420,20 @@ struct MeetingFormViewModelTests {
 
     @Test("missing participants are acknowledged without creating another meeting", arguments: [
         MeetingFormViewModel.Mode.instant, .scheduled
-    ])
-    func submit_ParticipantsNotAdded_ContinuesWithCreatedMeeting(mode: MeetingFormViewModel.Mode) async {
+    ], [nil, URL(string: "https://wire.example/meeting-join/?key=partial&code=link")])
+    func submit_ParticipantsNotAdded_ContinuesWithCreatedMeeting(mode: MeetingFormViewModel.Mode, link: URL?) async {
         var completedMeetings: [Meeting] = []
-        let viewModel = makeViewModel(mode: mode, supportsMeetingLinks: true) { completedMeetings.append($0) }
+        var completedLinks: [URL?] = []
+        let viewModel = makeViewModel(mode: mode, supportsMeetingLinks: true) { meeting, link in
+            completedMeetings.append(meeting)
+            completedLinks.append(link)
+        }
         viewModel.password = "Abcdef1!"
         viewModel.confirmPassword = viewModel.password
         createMeetingUseCaseMock
             .invokeTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceTypeMeetingTypePasswordStringParticipantsMeetingMemberInvitedEmailsStringMeetingCreationResultThrowableError =
             CreateMeetingUseCaseError.participantsNotAdded(
-                result: MeetingCreationResult(meeting: meeting, link: nil),
+                result: MeetingCreationResult(meeting: meeting, link: link),
                 participants: [member]
             )
 
@@ -429,7 +443,8 @@ struct MeetingFormViewModelTests {
         #expect(viewModel.participantsNotAdded == [member])
         #expect(viewModel.password.isEmpty)
         #expect(viewModel.confirmPassword.isEmpty)
-        #expect(viewModel.participantsNotAddedMessage.contains(L10n.Localizable.Meetings.Error.missingLink))
+        #expect(viewModel.participantsNotAddedMessage
+            .contains(L10n.Localizable.Meetings.Error.missingLink) == (link == nil))
         #expect(!viewModel.hasError)
         #expect(!viewModel.isLoading)
         #expect(completedMeetings.isEmpty)
@@ -441,6 +456,7 @@ struct MeetingFormViewModelTests {
 
         #expect(!viewModel.hasParticipantsNotAddedAlert)
         #expect(completedMeetings == [meeting])
+        #expect(completedLinks == [link])
         #expect(createMeetingUseCaseMock
             .invokeTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceTypeMeetingTypePasswordStringParticipantsMeetingMemberInvitedEmailsStringMeetingCreationResultCallsCount ==
             1)
@@ -450,7 +466,7 @@ struct MeetingFormViewModelTests {
     func submit_Failure_SetsError() async {
         // Given
         var onSuccessCalled = false
-        let viewModel = makeViewModel(mode: .instant) { _ in onSuccessCalled = true }
+        let viewModel = makeViewModel(mode: .instant) { _, _ in onSuccessCalled = true }
         viewModel.meetingTitle = "Team Standup"
         createMeetingUseCaseMock
             .invokeTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceTypeMeetingTypePasswordStringParticipantsMeetingMemberInvitedEmailsStringMeetingCreationResultThrowableError =
@@ -537,7 +553,9 @@ struct MeetingFormViewModelTests {
     @Test("missing-link warnings complete the saved meeting once")
     func submit_MissingLink() async {
         var completedMeetings: [Meeting] = []
-        let viewModel = makeViewModel(mode: .instant, supportsMeetingLinks: true) { completedMeetings.append($0) }
+        let viewModel = makeViewModel(mode: .instant, supportsMeetingLinks: true) { meeting, _ in
+            completedMeetings.append(meeting)
+        }
         viewModel.meetingTitle = "Meeting"
         viewModel.password = "password"
         createMeetingUseCaseMock
@@ -603,7 +621,7 @@ struct MeetingFormViewModelTests {
             updateMeetingUseCase: updateMeetingUseCaseMock,
             currentDateProvider: dateProviderMock,
             supportsMeetingLinks: true,
-            onSuccess: { _ in didComplete = true }
+            onSuccess: { _, _ in didComplete = true }
         )
         viewModel.meetingTitle = meeting.title
         viewModel.selectedMembers = [member]
@@ -680,7 +698,7 @@ struct MeetingFormViewModelTests {
     @Test("partial email save refreshes server state and prevents resubmission", arguments: [false, true])
     func partialEmailSave(refreshFails: Bool) async {
         var completed = false
-        let form = makeViewModel(mode: .edit(makeEditableMeeting()), supportsMeetingLinks: true) { _ in
+        let form = makeViewModel(mode: .edit(makeEditableMeeting()), supportsMeetingLinks: true) { _, _ in
             completed = true
         }
         updateMeetingUseCaseMock.fetchInvitedEmailsForMeetingMeetingStringReturnValue = ["old@example.com"]
@@ -1013,8 +1031,12 @@ struct MeetingFormViewModelTests {
     func submit_EditMode_Success() async {
         // Given
         var receivedMeeting: Meeting?
+        var receivedLink: URL?
         let original = makeEditableMeeting()
-        let viewModel = makeViewModel(mode: .edit(original)) { receivedMeeting = $0 }
+        let viewModel = makeViewModel(mode: .edit(original)) {
+            receivedMeeting = $0
+            receivedLink = $1
+        }
         viewModel.meetingTitle = "Updated Title"
         viewModel.repeatOption = .daily
         viewModel.selectedMembers = []
@@ -1040,6 +1062,7 @@ struct MeetingFormViewModelTests {
                 0
         )
         #expect(receivedMeeting == meeting)
+        #expect(receivedLink == nil)
         #expect(viewModel.isLoading == false)
         #expect(viewModel.hasError == false)
     }
@@ -1049,7 +1072,9 @@ struct MeetingFormViewModelTests {
         // Change all editable values, including member and email invitations.
         let original = makeEditableMeeting()
         var savedMeetings: [Meeting] = []
-        let viewModel = makeViewModel(mode: .edit(original), supportsMeetingLinks: true) { savedMeetings.append($0) }
+        let viewModel = makeViewModel(mode: .edit(original), supportsMeetingLinks: true) { meeting, _ in
+            savedMeetings.append(meeting)
+        }
         updateMeetingUseCaseMock.fetchInvitedEmailsForMeetingMeetingStringReturnValue = ["old@example.com"]
         await viewModel.loadInvitedEmails()
         let draftStart = try makeDate(year: 2026, month: 7, day: 7, hour: 10, minute: 0)
@@ -1115,7 +1140,7 @@ struct MeetingFormViewModelTests {
     func submit_WhileLoading_IsIgnored_TC_11983() async {
         // Given
         var successCount = 0
-        let viewModel = makeViewModel(mode: .instant) { _ in successCount += 1 }
+        let viewModel = makeViewModel(mode: .instant) { _, _ in successCount += 1 }
         viewModel.meetingTitle = "Team Standup"
         let meeting = meeting
         createMeetingUseCaseMock

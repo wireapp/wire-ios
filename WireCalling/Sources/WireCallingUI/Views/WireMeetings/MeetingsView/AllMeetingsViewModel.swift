@@ -32,7 +32,7 @@ package final class AllMeetingsViewModel {
 
     private let makeFormViewModel: @MainActor (
         _ mode: MeetingFormViewModel.Mode,
-        _ onSuccess: @escaping (Meeting) -> Void
+        _ onSuccess: @escaping (Meeting, URL?) -> Void
     ) -> MeetingFormViewModel
 
     package let meetingsViewModel: MeetingsViewModel
@@ -40,6 +40,8 @@ package final class AllMeetingsViewModel {
     var presentedFormMode: MeetingFormViewModel.Mode?
     var hasJoinError = false
     var presentedLink: MeetingLinkViewModel?
+    var createdMeetingLink: URL?
+    private let onInstantMeetingCreated: @MainActor (MeetingCreationResult) -> Void
 
     private let joinMeetingCallUseCase: any JoinMeetingCallUseCaseProtocol
     private let fetchMeetingLink: (@Sendable (QualifiedID) async throws -> MeetingLink?)?
@@ -56,9 +58,10 @@ package final class AllMeetingsViewModel {
         observeAttendedMeetingsUseCase: (any ObserveAttendedMeetingsUseCaseProtocol)? = nil,
         joinMeetingCallUseCase: any JoinMeetingCallUseCaseProtocol,
         fetchMeetingLink: (@Sendable (QualifiedID) async throws -> MeetingLink?)? = nil,
+        onInstantMeetingCreated: @escaping @MainActor (MeetingCreationResult) -> Void = { _ in },
         makeFormViewModel: @escaping @MainActor (
             _ mode: MeetingFormViewModel.Mode,
-            _ onSuccess: @escaping (Meeting) -> Void
+            _ onSuccess: @escaping (Meeting, URL?) -> Void
         ) -> MeetingFormViewModel
     ) {
         self.meetingsViewModel = MeetingsViewModel(
@@ -73,6 +76,7 @@ package final class AllMeetingsViewModel {
         self.joinMeetingCallUseCase = joinMeetingCallUseCase
         self.fetchMeetingLink = fetchMeetingLink
         self.makeFormViewModel = makeFormViewModel
+        self.onInstantMeetingCreated = onInstantMeetingCreated
     }
 
     // MARK: - Public Interface
@@ -99,23 +103,33 @@ package final class AllMeetingsViewModel {
     }
 
     func makeMeetingFormViewModel(mode: MeetingFormViewModel.Mode) -> MeetingFormViewModel {
-        makeFormViewModel(mode) { [weak self] meeting in
+        makeFormViewModel(mode) { [weak self] meeting, link in
             guard let self else { return }
             presentedFormMode = nil
             if case .instant = mode {
-                Task { await self.joinCall(conversationID: meeting.conversationID) }
+                onInstantMeetingCreated(MeetingCreationResult(meeting: meeting, link: link))
+                Task {
+                    if await !self.joinCall(conversationID: meeting.conversationID) {
+                        self.onInstantMeetingCreated(MeetingCreationResult(meeting: meeting, link: nil))
+                    }
+                }
+            } else if case .scheduled = mode {
+                createdMeetingLink = link
             }
         }
     }
 
     // MARK: - Private Helpers
 
-    private func joinCall(conversationID: QualifiedID) async {
+    @discardableResult
+    private func joinCall(conversationID: QualifiedID) async -> Bool {
         do {
             try await joinMeetingCallUseCase.invoke(conversationID: conversationID)
+            return true
         } catch {
             hasJoinError = true
             WireLogger.meetings.error("failed to join meeting call: \(String(reflecting: error))")
+            return false
         }
     }
 

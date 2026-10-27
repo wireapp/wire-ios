@@ -19,7 +19,7 @@
 package import WireCallingDomain
 package import WireFoundation
 
-import Foundation
+package import Foundation
 import UIKit
 import WireLogging
 
@@ -62,7 +62,8 @@ package final class MeetingFormViewModel {
     private let createMeetingUseCase: any CreateMeetingUseCaseProtocol
     private let updateMeetingUseCase: any UpdateMeetingUseCaseProtocol
     private let currentDateProvider: any CurrentDateProviding
-    private let onSuccess: (Meeting) -> Void
+    private var createdMeetingLink: URL?
+    private let onSuccess: (Meeting, URL?) -> Void
 
     private static let timePickerMinuteInterval = 15
     // Match the limits enforced by SimpleTextFieldValidator for conversation names.
@@ -305,7 +306,7 @@ package final class MeetingFormViewModel {
         updateMeetingUseCase: any UpdateMeetingUseCaseProtocol,
         currentDateProvider: any CurrentDateProviding,
         supportsMeetingLinks: Bool = false,
-        onSuccess: @escaping (Meeting) -> Void = { _ in }
+        onSuccess: @escaping (Meeting, URL?) -> Void = { _, _ in }
     ) {
         self.mode = mode
         self.supportsMeetingLinks = supportsMeetingLinks
@@ -391,10 +392,11 @@ package final class MeetingFormViewModel {
         defer { isLoading = false }
         do {
             let meeting = try await saveMeeting()
-            onSuccess(meeting)
+            onSuccess(meeting, createdMeetingLink)
         } catch let CreateMeetingUseCaseError.participantsNotAdded(result, participants) {
             password = ""
             confirmPassword = ""
+            createdMeetingLink = result.link
             participantMeetingHasLink = result.link != nil
             meetingWithParticipantsNotAdded = result.meeting
             participantsNotAdded = participants
@@ -437,7 +439,7 @@ package final class MeetingFormViewModel {
             guard !didCompleteSavedMeeting else { return }
             didCompleteSavedMeeting = true
             hasError = false
-            onSuccess(meeting)
+            onSuccess(meeting, createdMeetingLink)
         } else if dismissAfterError {
             dismiss()
         }
@@ -447,7 +449,7 @@ package final class MeetingFormViewModel {
         guard !didCompleteSavedMeeting, let meeting = meetingWithParticipantsNotAdded else { return }
         didCompleteSavedMeeting = true
         hasParticipantsNotAddedAlert = false
-        onSuccess(meeting)
+        onSuccess(meeting, createdMeetingLink)
     }
 
     func retryConversationNameUpdate() async {
@@ -462,7 +464,7 @@ package final class MeetingFormViewModel {
             if dismissAfterError {
                 hasError = true
             } else if participantsNotAdded.isEmpty {
-                onSuccess(meeting)
+                onSuccess(meeting, createdMeetingLink)
             } else {
                 meetingWithParticipantsNotAdded = meeting
                 hasParticipantsNotAddedAlert = true
@@ -524,6 +526,7 @@ package final class MeetingFormViewModel {
     }
 
     private func completeCreation(_ result: MeetingCreationResult) throws -> Meeting {
+        createdMeetingLink = result.link
         password = ""
         confirmPassword = ""
         guard !supportsMeetingLinks || result.link != nil else {
