@@ -323,20 +323,27 @@ class CompilerWarningsTest < Minitest::Test
     end
   end
 
+  # Builds a merge of a PR that adds Sources/PROnly.swift into a base branch
+  # that inserts a line at the top of @source. Like GitHub's PR merge commit,
+  # the base is the first parent and the PR head the second. Returns the PR head.
+  def merge_pr_into_base
+    File.write(@source, "one\ntwo\nthree\nfour\n")
+    common = fixture_commit(@source)
+    assert system('git', 'checkout', '-qb', 'fixture-pr')
+    File.write('Sources/PROnly.swift', "// PR change\n")
+    pr_head = fixture_commit('Sources/PROnly.swift')
+    assert system('git', 'checkout', '-qb', 'fixture-base', common)
+    File.write(@source, "prefix\none\ntwo\nthree\nfour\n")
+    fixture_commit(@source)
+    assert system('git', '-c', 'commit.gpgsign=false', '-c', 'core.hooksPath=/dev/null',
+                  '-c', 'user.name=Test', '-c', 'user.email=test@example.com',
+                  'merge', '--quiet', '--no-edit', 'fixture-pr')
+    pr_head
+  end
+
   def test_maps_a_real_merge_build_from_a_depth_two_checkout
     in_repository do
-      File.write(@source, "one\ntwo\nthree\nfour\n")
-      common = fixture_commit(@source)
-      assert system('git', 'checkout', '-qb', 'fixture-pr')
-      File.write('Sources/PROnly.swift', "// PR change\n")
-      pr_head = fixture_commit('Sources/PROnly.swift')
-      assert system('git', 'checkout', '-qb', 'fixture-base', common)
-      File.write(@source, "prefix\none\ntwo\nthree\nfour\n")
-      fixture_commit(@source)
-      assert system('git', 'checkout', '-q', 'fixture-pr')
-      assert system('git', '-c', 'commit.gpgsign=false', '-c', 'core.hooksPath=/dev/null',
-                    '-c', 'user.name=Test', '-c', 'user.email=test@example.com',
-                    'merge', '--quiet', '--no-edit', 'fixture-base')
+      pr_head = merge_pr_into_base
       report = collect([diagnostic(line: 4)]).merge('sha' => CompilerWarnings.git('rev-parse', 'HEAD').strip)
       clone = File.join(@root, 'shallow-copy')
       assert system('git', 'clone', '--quiet', '--depth=2', '--no-local', "file://#{@root}", clone)
@@ -346,6 +353,34 @@ class CompilerWarningsTest < Minitest::Test
         mapped = CompilerWarnings.for_pr_head(report, pr_head)
         assert_equal 3, mapped.fetch('annotations').first.fetch('start_line')
       end
+    end
+  end
+
+  def test_publishes_only_warnings_in_files_changed_by_the_pr
+    in_repository do
+      pr_head = merge_pr_into_base
+      FileUtils.mkdir_p('build')
+      File.write('build/current.log', [diagnostic(line: 4), diagnostic(path: 'Sources/PROnly.swift', line: 1)].join("\n"))
+      event_path = File.join(@root, 'event.json')
+      File.write(event_path, JSON.generate('pull_request' => {
+        'head' => { 'sha' => pr_head, 'repo' => { 'full_name' => 'wireapp/wire-ios' } }
+      }))
+      ENV['GITHUB_EVENT_PATH'] = event_path
+      ENV['GITHUB_REPOSITORY'] = 'wireapp/wire-ios'
+      ENV['GITHUB_RUN_ID'] = '123'
+      api = FakeAPI.new
+      CompilerWarnings.run(['--publish'], api: api)
+      uploaded = api.requests.flat_map { |request| request[2].dig('output', 'annotations') || [] }
+      assert_equal ['Sources/PROnly.swift'], uploaded.map { |warning| warning.fetch('path') }
+      report = JSON.parse(File.read(CompilerWarnings::REPORT))
+      assert_equal [[@source, 3]], report.fetch('unchanged_file_warnings').map { |warning| [warning.fetch('path'), warning.fetch('start_line')] }
+      assert_match(/1 available inline, 1 in files not changed by the PR/, CompilerWarnings.summary(report))
+    end
+  end
+
+  def test_does_not_filter_warnings_when_the_build_is_not_a_merge_commit
+    in_repository do
+      assert_nil CompilerWarnings.pr_changed_files(CompilerWarnings.git('rev-parse', 'HEAD').strip)
     end
   end
 

@@ -104,15 +104,33 @@ module CompilerWarnings
                  'annotations' => annotations, 'unmapped_warnings' => unmapped)
   end
 
+  # PR jobs build a merge commit whose first parent is the base branch, so the
+  # diff against that parent lists exactly the files changed by the PR.
+  def self.pr_changed_files(built_sha)
+    parents = git('rev-list', '--parents', '-n', '1', built_sha).split.drop(1)
+    return nil unless parents.length == 2
+
+    git('diff', '--no-renames', '--name-only', '-z', parents.first, built_sha).split("\0").to_set
+  end
+
+  def self.for_changed_files(report, changed)
+    # Reviewers only see annotations on diff lines, so warnings in other files
+    # stay in the report instead of being uploaded.
+    inside, outside = report.fetch('annotations').partition { |warning| changed.include?(warning.fetch('path')) }
+    report.merge('annotations' => inside, 'unchanged_file_warnings' => outside)
+  end
+
   def self.summary(report)
     counts = {
       inline: report.fetch('annotations').length,
+      unchanged: report.fetch('unchanged_file_warnings', []).length,
       untracked: report.fetch('untracked_warnings', []).length,
       unlocated: report.fetch('unlocated_warnings').length,
       unmapped: report.fetch('unmapped_warnings', []).length
     }
     "Collected #{counts.values.sum} unique compiler warnings: #{counts[:inline]} available inline, " \
-      "#{counts[:untracked]} in untracked files, #{counts[:unlocated]} without source locations, " \
+      "#{counts[:unchanged]} in files not changed by the PR, #{counts[:untracked]} in untracked files, " \
+      "#{counts[:unlocated]} without source locations, " \
       "#{counts[:unmapped]} without matching PR-head source lines. " \
       'The complete report is available in the workflow artifacts.'
   end
@@ -210,7 +228,7 @@ module CompilerWarnings
     options = { publish: false }
     OptionParser.new do |parser|
       parser.banner = 'Usage: ruby scripts/annotate_compiler_warnings.rb [--publish]'
-      parser.on('--publish', 'Publish all repository warnings using the GitHub Checks API') { options[:publish] = true }
+      parser.on('--publish', 'Publish warnings in files changed by the PR using the GitHub Checks API') { options[:publish] = true }
     end.parse!(arguments)
     raise 'Unexpected arguments' unless arguments.empty?
 
@@ -226,6 +244,8 @@ module CompilerWarnings
         event = JSON.parse(File.read(ENV.fetch('GITHUB_EVENT_PATH')))
         pull_request = event.fetch('pull_request')
         report = for_pr_head(report, pull_request.fetch('head').fetch('sha'))
+        changed = pr_changed_files(report.fetch('sha'))
+        report = for_changed_files(report, changed) if changed
         File.write(REPORT, JSON.pretty_generate(report) + "\n")
       end
       puts summary(report)
