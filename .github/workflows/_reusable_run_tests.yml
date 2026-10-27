@@ -300,6 +300,9 @@ jobs:
         run: |
           echo "xcresult files: ${{ steps.find-xcresults.outputs.xcresult_files }}"
 
+      # Not done in _reusable_run_tests_parallel.yml: batches rebuild shared
+      # dependencies, so publishing once would require merging per-batch reports
+      # in a follow-up job. That adds maintenance cost for little benefit.
       - name: Publish compiler warnings
         if: ${{ always() && github.event_name == 'pull_request' }}
         continue-on-error: true
