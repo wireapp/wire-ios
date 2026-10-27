@@ -79,7 +79,7 @@ package final class MeetingFormViewModel {
 
     private static let timePickerMinuteInterval = 15
     // Match the limits enforced by SimpleTextFieldValidator for conversation names.
-    private static let maximumConversationNameLength = 64
+    static let maximumConversationNameLength = 64
     private static let maximumConversationNameByteLength = 256
 
     /// The smallest selectable interval between start and end time.

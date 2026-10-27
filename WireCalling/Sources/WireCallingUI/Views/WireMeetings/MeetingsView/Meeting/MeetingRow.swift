@@ -124,6 +124,7 @@ struct MeetingRow: View {
                             .padding(.vertical, 20)
                             .contentShape(Rectangle())
                     }
+                    .tint(ColorTheme.Backgrounds.onSurface.color)
                     .menuOrder(.fixed)
                     .accessibilityIdentifier(Locators.WireMeetings.MeetingRow.menu)
                     .padding(.vertical, -12)
@@ -142,7 +143,7 @@ struct MeetingRow: View {
                 }
 
                 if let conversation = meeting.conversation, !conversation.participants.isEmpty {
-                    MemberAvatarsView(members: Array(conversation.participants))
+                    MemberAvatarsView(members: Array(conversation.participants), creatorID: meeting.creatorID)
                         .padding(.top, 2)
                 }
                 if isAttending {
