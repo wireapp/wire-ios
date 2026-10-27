@@ -22,7 +22,7 @@ class CompilerWarningsTest < Minitest::Test
     ENV.delete('GITHUB_STEP_SUMMARY')
     @root = File.realpath(Dir.mktmpdir('compiler-warnings'))
     @source = 'Sources/Some File.swift'
-    @log = File.join(@root, 'build.log')
+    @bundle = File.join(@root, 'artifacts', 'sample.xcresult')
   end
 
   def teardown
@@ -30,13 +30,33 @@ class CompilerWarningsTest < Minitest::Test
     ENV.replace(@environment)
   end
 
-  def collect(lines, tracked = [@source])
-    File.write(@log, lines.join("\n") + "\n")
-    CompilerWarnings.collect(root: @root, logs: [@log], tracked_files: tracked)
+  def write_bundle(warnings, analyzer_warnings: [], errors: [], path: @bundle)
+    FileUtils.mkdir_p(path)
+    File.write(File.join(path, 'build-results.json'), JSON.generate(
+      'warnings' => warnings, 'analyzerWarnings' => analyzer_warnings, 'errors' => errors
+    ))
+    path
+  end
+
+  def fixture_results(bundle)
+    JSON.parse(File.read(File.join(bundle, 'build-results.json')))
+  end
+
+  def collect(issues, tracked = [@source])
+    write_bundle(issues)
+    CompilerWarnings.collect(root: @root, bundles: [@bundle], tracked_files: tracked, reader: method(:fixture_results))
+  end
+
+  def run_fixture(arguments = [], api: nil)
+    CompilerWarnings.run(arguments, api: api, reader: method(:fixture_results))
   end
 
   def diagnostic(line: 42, column: 7, message: 'Deprecated API', path: File.join(@root, @source))
-    "#{path}:#{line}:#{column}: warning: #{message}"
+    absolute = URI::DEFAULT_PARSER.escape(File.expand_path(path, @root))
+    {
+      'issueType' => 'Warning', 'message' => message,
+      'sourceURL' => "file://#{absolute}#StartingLineNumber=#{line - 1}&StartingColumnNumber=#{column - 1}"
+    }
   end
 
   def publish(report)
@@ -45,11 +65,17 @@ class CompilerWarningsTest < Minitest::Test
                              name: 'Compiler warnings', report: report, details_url: 'https://example.com/run')
   end
 
-  def test_parses_absolute_paths_with_spaces_and_ansi_colors
-    report = collect(["\e[33m#{diagnostic}\e[0m"])
+  def test_reads_percent_encoded_source_paths_with_spaces
+    report = collect([diagnostic])
     assert_equal [{ 'path' => @source, 'start_line' => 42, 'end_line' => 42,
                     'annotation_level' => 'warning', 'title' => 'Compiler warning', 'message' => 'Deprecated API' }],
                  report.fetch('annotations')
+  end
+
+  def test_preserves_plus_characters_in_file_paths
+    path = 'Sources/Some + File.swift'
+    report = collect([diagnostic(path: path)], [path])
+    assert_equal path, report.fetch('annotations').first.fetch('path')
   end
 
   def test_resolves_source_paths_through_macos_workspace_symlinks
@@ -60,14 +86,22 @@ class CompilerWarningsTest < Minitest::Test
     assert_equal [@source], report.fetch('annotations').map { |annotation| annotation.fetch('path') }
   end
 
-  def test_parses_relative_paths_and_diagnostics_without_columns
-    report = collect(["#{@source}:12: warning: Unused value"])
-    assert_equal 12, report.fetch('annotations').first.fetch('start_line')
+  def test_translates_xcode_line_zero_to_github_line_one
+    report = collect([diagnostic(line: 1)])
+    assert_equal 1, report.fetch('annotations').first.fetch('start_line')
   end
 
-  def test_deduplicates_warnings_across_logs_and_preserves_distinct_messages
-    collect([diagnostic, diagnostic, diagnostic(message: 'Unused value')])
-    report = CompilerWarnings.collect(root: @root, logs: [@log, @log], tracked_files: [@source])
+  def test_reads_normal_and_static_analyzer_warnings_but_ignores_errors
+    write_bundle([diagnostic], analyzer_warnings: [diagnostic(line: 43, message: 'Analyzer warning')],
+                 errors: [diagnostic(line: 44, message: 'An error')])
+    report = CompilerWarnings.collect(root: @root, bundles: [@bundle], tracked_files: [@source], reader: method(:fixture_results))
+    assert_equal [42, 43], report.fetch('annotations').map { |warning| warning.fetch('start_line') }
+  end
+
+  def test_deduplicates_warnings_across_bundles_and_preserves_distinct_messages
+    write_bundle([diagnostic, diagnostic, diagnostic(message: 'Unused value')])
+    second = write_bundle([diagnostic], path: File.join(@root, 'artifacts', 'second.xcresult'))
+    report = CompilerWarnings.collect(root: @root, bundles: [@bundle, second], tracked_files: [@source], reader: method(:fixture_results))
     assert_equal 2, report.fetch('annotations').length
   end
 
@@ -83,11 +117,15 @@ class CompilerWarningsTest < Minitest::Test
     assert_match(/Collected 4 unique compiler warnings/, CompilerWarnings.summary(report))
   end
 
-  def test_deduplicates_the_same_warning_across_target_suffixes
-    report = collect([diagnostic + " (in target 'App' from project 'Wire')",
-                      diagnostic + " (in target 'Tests' from project 'Wire')"])
+  def test_deduplicates_the_same_warning_across_targets
+    report = collect([diagnostic.merge('targetName' => 'App'), diagnostic.merge('targetName' => 'Tests')])
     assert_equal 1, report.fetch('annotations').length
-    assert_equal 'Deprecated API', report.fetch('annotations').first.fetch('message')
+  end
+
+  def test_preserves_unicode_and_multiline_messages_without_text_rewriting
+    message = "Deprecated API → replacement\nMore information (in target 'Example' from project 'Wire')"
+    report = collect([diagnostic(message: message)])
+    assert_equal message, report.fetch('annotations').first.fetch('message')
   end
 
   def test_keeps_warning_text_that_looks_like_a_workflow_command_as_data
@@ -119,12 +157,22 @@ class CompilerWarningsTest < Minitest::Test
     assert_equal %w[First Second], report.fetch('annotations').map { |annotation| annotation.fetch('message') }
   end
 
-  def test_ignores_errors_notes_and_invalid_lines_and_records_unlocated_warnings
-    report = collect(['warning: Linker warning', 'warning: Linker warning',
-                      diagnostic(line: 0), diagnostic.sub('warning:', 'error:'), 'note: More information'])
+  def test_keeps_unlocated_issues_with_their_project_context
+    project = { 'issueType' => 'Warning', 'message' => 'Deployment target is old',
+                'sourceURL' => 'file:///path/Project.xcodeproj#Timestamp=1', 'targetName' => 'App' }
+    linker = { 'issueType' => 'Warning', 'message' => 'Duplicate libraries' }
+    report = collect([project, project.merge('sourceURL' => 'file:///path/Project.xcodeproj#Timestamp=2'), linker, linker])
     assert_empty report.fetch('annotations')
-    assert_includes report.fetch('unlocated_warnings'), 'Linker warning'
-    assert_equal 2, report.fetch('unlocated_warnings').length
+    assert_equal [project.merge('sourceURL' => 'file:///path/Project.xcodeproj#Timestamp=2'), linker], report.fetch('unlocated_warnings')
+  end
+
+  def test_keeps_invalid_or_non_file_locations_without_crashing
+    warnings = [diagnostic(line: 0), diagnostic.merge('sourceURL' => 'file://bad host/source.swift'),
+                diagnostic.merge('sourceURL' => 'https://example.com/source.swift#StartingLineNumber=0')]
+    report = collect(warnings)
+    assert_empty report.fetch('annotations')
+    assert_equal 3, report.fetch('unlocated_warnings').length
+    assert_empty report.fetch('result_errors')
   end
 
   def test_publishes_hundreds_of_warnings_without_truncation_in_batches_of_50
@@ -138,16 +186,36 @@ class CompilerWarningsTest < Minitest::Test
     assert_equal 'success', @api.requests.last[2].fetch('conclusion')
   end
 
-  def test_creates_a_successful_check_without_annotations_when_logs_have_no_warnings
-    publish(collect(['Build succeeded']))
+  def test_creates_a_successful_check_when_a_valid_bundle_has_no_warnings
+    publish(collect([]))
     assert_equal 2, @api.requests.length
     assert_equal 'success', @api.requests.last[2].fetch('conclusion')
   end
 
-  def test_missing_logs_are_reported_as_unavailable_rather_than_warning_free
-    publish({ 'annotations' => [], 'logs' => [], 'unlocated_warnings' => [] })
+  def test_missing_bundles_are_reported_as_unavailable_rather_than_warning_free
+    publish({ 'annotations' => [], 'result_bundles' => [], 'unlocated_warnings' => [] })
     assert_equal 'neutral', @api.requests.last[2].fetch('conclusion')
     assert_match(/could not be collected/, @api.requests.first[2].fetch('output').fetch('summary'))
+  end
+
+  def test_an_unreadable_bundle_keeps_other_results_and_makes_the_check_neutral
+    write_bundle([diagnostic])
+    broken = File.join(@root, 'artifacts', 'broken.xcresult')
+    FileUtils.mkdir_p(broken)
+    report = CompilerWarnings.collect(root: @root, bundles: [broken, @bundle], tracked_files: [@source], reader: method(:fixture_results))
+    assert_equal 1, report.fetch('annotations').length
+    assert_equal [broken], report.fetch('result_errors').map { |error| error.fetch('path') }
+    publish(report)
+    assert_equal 'neutral', @api.requests.last[2].fetch('conclusion')
+    assert_match(/report is incomplete/, @api.requests.last[2].fetch('output').fetch('summary'))
+  end
+
+  def test_malformed_json_is_reported_as_a_collection_error
+    write_bundle([])
+    File.write(File.join(@bundle, 'build-results.json'), 'invalid JSON')
+    report = CompilerWarnings.collect(root: @root, bundles: [@bundle], tracked_files: [@source], reader: method(:fixture_results))
+    assert_empty report.fetch('annotations')
+    assert_equal 1, report.fetch('result_errors').length
   end
 
   def in_repository
@@ -163,26 +231,24 @@ class CompilerWarningsTest < Minitest::Test
     end
   end
 
-  def test_cli_discovers_build_logs_and_saves_the_full_report
+  def test_cli_discovers_nested_result_bundles_and_saves_the_full_report
     in_repository do
-      FileUtils.mkdir_p('build')
-      FileUtils.mkdir_p('fastlane/build')
-      File.write('build/current.log', (1..327).map { |line| diagnostic(line: line) }.join("\n"))
-      File.write('fastlane/build/second.log', diagnostic)
-      File.write('unrelated.log', diagnostic(message: 'Not a build log'))
-      CompilerWarnings.run([])
+      write_bundle((1..327).map { |line| diagnostic(line: line) }, path: 'artifacts/tests/current.xcresult')
+      write_bundle([diagnostic], path: 'artifacts/other/second.xcresult')
+      File.write('unrelated.log', 'warning: unrelated output')
+      run_fixture([])
       report = JSON.parse(File.read(CompilerWarnings::REPORT))
-      assert_equal ['build/current.log', 'fastlane/build/second.log'], report.fetch('logs')
+      assert_equal ['artifacts/other/second.xcresult', 'artifacts/tests/current.xcresult'], report.fetch('result_bundles')
       assert_equal 327, report.fetch('annotations').length
       assert_equal CompilerWarnings.git('rev-parse', 'HEAD').strip, report.fetch('sha')
     end
   end
 
-  def test_cli_handles_missing_logs_without_preparation
+  def test_cli_handles_missing_bundles_without_preparation
     in_repository do
-      CompilerWarnings.run([])
+      run_fixture([])
       report = JSON.parse(File.read(CompilerWarnings::REPORT))
-      assert_empty report.fetch('logs')
+      assert_empty report.fetch('result_bundles')
       assert_empty report.fetch('annotations')
     end
   end
@@ -195,8 +261,7 @@ class CompilerWarningsTest < Minitest::Test
                     'commit', '--allow-empty', '-qm', 'Simulated merge revision')
       built_sha = CompilerWarnings.git('rev-parse', 'HEAD').strip
       refute_equal pr_head, built_sha
-      FileUtils.mkdir_p('build')
-      File.write('build/current.log', diagnostic)
+      write_bundle([diagnostic])
       event_path = File.join(@root, 'event.json')
       File.write(event_path, JSON.generate('pull_request' => {
         'head' => { 'sha' => pr_head, 'repo' => { 'full_name' => 'wireapp/wire-ios' } }
@@ -206,7 +271,7 @@ class CompilerWarningsTest < Minitest::Test
       ENV['GITHUB_RUN_ID'] = '123'
       ENV['GITHUB_SHA'] = built_sha
       api = FakeAPI.new
-      CompilerWarnings.run(['--publish'], api: api)
+      run_fixture(['--publish'], api: api)
       assert_equal pr_head, api.requests.first[2].fetch('head_sha')
       report = JSON.parse(File.read(CompilerWarnings::REPORT))
       assert_equal built_sha, report.fetch('sha')
@@ -216,35 +281,17 @@ class CompilerWarningsTest < Minitest::Test
 
   def test_full_report_survives_publishing_failure
     in_repository do
-      FileUtils.mkdir_p('build')
-      File.write('build/current.log', diagnostic)
+      write_bundle([diagnostic])
       event_path = File.join(@root, 'event.json')
-      File.write(event_path, JSON.generate('pull_request' => { 'head' => { 'sha' => CompilerWarnings.git('rev-parse', 'HEAD').strip, 'repo' => { 'full_name' => 'wireapp/wire-ios' } } }))
-      previous = ENV.to_h
-      begin
-        ENV['GITHUB_EVENT_PATH'] = event_path
-        ENV['GITHUB_REPOSITORY'] = 'wireapp/wire-ios'
-        ENV.delete('GH_TOKEN')
-        assert_raises(KeyError) { CompilerWarnings.run(['--publish']) }
-        assert_equal 1, JSON.parse(File.read(CompilerWarnings::REPORT)).fetch('annotations').length
-      ensure
-        ENV.replace(previous)
-      end
+      File.write(event_path, JSON.generate('pull_request' => { 'head' => {
+        'sha' => CompilerWarnings.git('rev-parse', 'HEAD').strip, 'repo' => { 'full_name' => 'wireapp/wire-ios' }
+      } }))
+      ENV['GITHUB_EVENT_PATH'] = event_path
+      ENV['GITHUB_REPOSITORY'] = 'wireapp/wire-ios'
+      ENV.delete('GH_TOKEN')
+      assert_raises(KeyError) { run_fixture(['--publish']) }
+      assert_equal 1, JSON.parse(File.read(CompilerWarnings::REPORT)).fetch('annotations').length
     end
-  end
-
-  def test_replaces_invalid_utf8_bytes_before_parsing
-    File.binwrite(@log, "unrelated binary \xFF\n#{diagnostic(message: "Invalid byte \xFF")}\n")
-    report = CompilerWarnings.collect(root: @root, logs: [@log], tracked_files: [@source])
-    assert_equal "Invalid byte \uFFFD", report.fetch('annotations').first.fetch('message')
-    assert report.fetch('annotations').first.fetch('message').valid_encoding?
-  end
-
-  def test_keeps_prefixed_linker_and_project_warnings
-    lines = ['ld: warning: duplicate libraries', '/path/Project.xcodeproj: warning: Deployment target is old']
-    report = collect(lines + lines)
-    assert_equal lines.sort, report.fetch('unlocated_warnings')
-    assert_match(/2 without source locations/, CompilerWarnings.summary(report))
   end
 
   def test_deduplicates_identical_line_annotations_at_different_columns
@@ -359,8 +406,7 @@ class CompilerWarningsTest < Minitest::Test
   def test_publishes_only_warnings_in_files_changed_by_the_pr
     in_repository do
       pr_head = merge_pr_into_base
-      FileUtils.mkdir_p('build')
-      File.write('build/current.log', [diagnostic(line: 4), diagnostic(path: 'Sources/PROnly.swift', line: 1)].join("\n"))
+      write_bundle([diagnostic(line: 4), diagnostic(path: 'Sources/PROnly.swift', line: 1)])
       event_path = File.join(@root, 'event.json')
       File.write(event_path, JSON.generate('pull_request' => {
         'head' => { 'sha' => pr_head, 'repo' => { 'full_name' => 'wireapp/wire-ios' } }
@@ -369,7 +415,7 @@ class CompilerWarningsTest < Minitest::Test
       ENV['GITHUB_REPOSITORY'] = 'wireapp/wire-ios'
       ENV['GITHUB_RUN_ID'] = '123'
       api = FakeAPI.new
-      CompilerWarnings.run(['--publish'], api: api)
+      run_fixture(['--publish'], api: api)
       uploaded = api.requests.flat_map { |request| request[2].dig('output', 'annotations') || [] }
       assert_equal ['Sources/PROnly.swift'], uploaded.map { |warning| warning.fetch('path') }
       report = JSON.parse(File.read(CompilerWarnings::REPORT))

@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
-# Collect compiler warnings from Fastlane's raw build logs and publish a check run.
+# Collect structured warnings from Xcode result bundles and publish a check run.
 require 'json'
+require 'uri'
 require 'net/http'
 require 'open3'
 require 'optparse'
@@ -10,7 +11,7 @@ require 'fileutils'
 
 module CompilerWarnings
   REPORT = 'build/compiler-warnings.json'.freeze
-  LOG_PATTERNS = ['build/*.log', 'fastlane/build/*.log'].freeze
+  RESULT_PATTERN = 'artifacts/**/*.xcresult'.freeze
 
   def self.git(*arguments)
     output, _error, status = Open3.capture3('git', *arguments)
@@ -19,44 +20,71 @@ module CompilerWarnings
     output
   end
 
-  def self.collect(root:, logs:, tracked_files:)
+  def self.read_build_results(bundle)
+    output, error, status = Open3.capture3('xcrun', 'xcresulttool', 'get', 'build-results',
+                                         '--schema-version', '0.1.0', '--path', bundle, '--compact')
+    raise "xcresulttool exited #{status.exitstatus}: #{error.strip}" unless status.success?
+
+    JSON.parse(output)
+  end
+
+  def self.source_location(source_url)
+    uri = URI.parse(source_url.to_s)
+    return nil unless uri.scheme == 'file' && [nil, '', 'localhost'].include?(uri.host)
+
+    return nil unless uri.path && uri.path.start_with?('/')
+
+    path = URI::DEFAULT_PARSER.unescape(uri.path)
+    attributes = URI.decode_www_form(uri.fragment.to_s).to_h
+    line = Integer(attributes.fetch('StartingLineNumber'), 10)
+    return nil if line.negative?
+
+    # Xcode uses zero-based locations; GitHub uses one-based line numbers.
+    [path, line + 1]
+  rescue URI::InvalidURIError, ArgumentError, KeyError
+    nil
+  end
+
+  def self.collect(root:, bundles:, tracked_files:, reader: method(:read_build_results))
     root = File.realpath(root)
     tracked = tracked_files.to_set
     annotations = {}
     untracked = {}
-    unlocated = Set.new
-    logs.each do |log|
-      File.foreach(log, encoding: 'UTF-8') do |raw|
-        line = raw.scrub.gsub(/\e\[[0-9;]*m/, '').strip
-        match = line.match(/\A(.+?):(\d+):(?:(\d+):)?\s+warning:\s*(.+)\z/)
-        unless match
-          # Keep tool and project prefixes so their context survives in the report.
-          unlocated.add(line.sub(/\Awarning:\s*/, '')) if line.match?(/\bwarning:/)
-          next
+    unlocated = {}
+    errors = []
+    bundles.each do |bundle|
+      begin
+        results = reader.call(bundle)
+        issues = results.fetch('warnings') + results.fetch('analyzerWarnings')
+        issues.each do |issue|
+          message = issue.fetch('message')
+          location = source_location(issue['sourceURL'])
+          unless location
+            # Keep the structured issue, including project/target context. Ignore
+            # timestamp fragments when deduplicating warnings without a line.
+            source = issue['sourceURL'].to_s.split('#', 2).first
+            unlocated[[issue['issueType'], message, source]] = issue
+            next
+          end
+          source, line = location
+          absolute = File.expand_path(source, root)
+          absolute = File.realpath(absolute) if File.exist?(absolute)
+          path = Pathname.new(absolute).relative_path_from(Pathname.new(root)).to_s
+          key = [path, line, message]
+          destination = tracked.include?(path) ? annotations : untracked
+          destination[key] = {
+            'path' => path, 'start_line' => line, 'end_line' => line,
+            'annotation_level' => 'warning', 'title' => 'Compiler warning', 'message' => message
+          }
         end
-
-        source, number, _column, message = match.captures
-        unless number.to_i.positive?
-          unlocated.add(line)
-          next
-        end
-        message = message.sub(/ \(in target '.+' from project '.+'\)\z/, '')
-        absolute = File.expand_path(source, root)
-        absolute = File.realpath(absolute) if File.exist?(absolute)
-        path = Pathname.new(absolute).relative_path_from(Pathname.new(root)).to_s
-        # Annotations are line-based, so columns must not create identical entries.
-        key = [path, number.to_i, message]
-        destination = tracked.include?(path) ? annotations : untracked
-        destination[key] = {
-          'path' => path, 'start_line' => number.to_i, 'end_line' => number.to_i,
-          'annotation_level' => 'warning', 'title' => 'Compiler warning', 'message' => message
-        }
+      rescue StandardError => error
+        errors << { 'path' => bundle, 'message' => error.message }
       end
     end
     sort = ->(warnings) { warnings.values.sort_by { |a| [a['path'], a['start_line'], a['message']] } }
     {
-      'logs' => logs, 'annotations' => sort.call(annotations),
-      'untracked_warnings' => sort.call(untracked), 'unlocated_warnings' => unlocated.to_a.sort
+      'result_bundles' => bundles, 'result_errors' => errors, 'annotations' => sort.call(annotations),
+      'untracked_warnings' => sort.call(untracked), 'unlocated_warnings' => unlocated.values
     }
   end
 
@@ -121,6 +149,9 @@ module CompilerWarnings
   end
 
   def self.summary(report)
+    if report.fetch('result_bundles').empty?
+      return 'No .xcresult bundles were found; compiler warnings could not be collected.'
+    end
     counts = {
       inline: report.fetch('annotations').length,
       unchanged: report.fetch('unchanged_file_warnings', []).length,
@@ -128,11 +159,14 @@ module CompilerWarnings
       unlocated: report.fetch('unlocated_warnings').length,
       unmapped: report.fetch('unmapped_warnings', []).length
     }
-    "Collected #{counts.values.sum} unique compiler warnings: #{counts[:inline]} available inline, " \
-      "#{counts[:unchanged]} in files not changed by the PR, #{counts[:untracked]} in untracked files, " \
-      "#{counts[:unlocated]} without source locations, " \
-      "#{counts[:unmapped]} without matching PR-head source lines. " \
-      'The complete report is available in the workflow artifacts.'
+    text = "Collected #{counts.values.sum} unique compiler warnings: #{counts[:inline]} available inline, " \
+           "#{counts[:unchanged]} in files not changed by the PR, #{counts[:untracked]} in untracked files, " \
+           "#{counts[:unlocated]} without source locations, " \
+           "#{counts[:unmapped]} without matching PR-head source lines. " \
+           'The complete report is available in the workflow artifacts.'
+    failures = report.fetch('result_errors', []).length
+    text += " #{failures} result bundles could not be read; the report is incomplete." if failures.positive?
+    text
   end
 
   class API
@@ -191,9 +225,7 @@ module CompilerWarnings
   def self.publish(api:, repository:, sha:, name:, report:, details_url:)
     completed = false
     output = { 'title' => name, 'summary' => summary(report) }
-    if report.fetch('logs').empty?
-      output['summary'] = 'No build logs from this run were found; compiler warnings could not be collected.'
-    end
+    collected = !report.fetch('result_bundles').empty? && report.fetch('result_errors', []).empty?
     # Start neutral and completed: even SIGKILL or a lost POST response cannot
     # leave a blocking check stuck in progress. Success is set after all batches.
     check = api.request(:post, "/repos/#{repository}/check-runs", {
@@ -206,7 +238,7 @@ module CompilerWarnings
       api.request(:patch, endpoint, { 'output' => output.merge('annotations' => batch) })
     end
     api.request(:patch, endpoint, {
-      'status' => 'completed', 'conclusion' => report.fetch('logs').empty? ? 'neutral' : 'success', 'output' => output
+      'status' => 'completed', 'conclusion' => collected ? 'success' : 'neutral', 'output' => output
     })
     completed = true
   ensure
@@ -224,7 +256,7 @@ module CompilerWarnings
     end
   end
 
-  def self.run(arguments, api: nil)
+  def self.run(arguments, api: nil, reader: method(:read_build_results))
     options = { publish: false }
     OptionParser.new do |parser|
       parser.banner = 'Usage: ruby scripts/annotate_compiler_warnings.rb [--publish]'
@@ -235,10 +267,10 @@ module CompilerWarnings
     root = git('rev-parse', '--show-toplevel').strip
     Dir.chdir(root) do
       FileUtils.mkdir_p('build')
-      logs = LOG_PATTERNS.flat_map { |pattern| Dir.glob(pattern) }.sort
-      report = collect(root: root, logs: logs, tracked_files: git('ls-files', '-z').split("\0"))
+      bundles = Dir.glob(RESULT_PATTERN).select { |path| File.directory?(path) }.sort
+      report = collect(root: root, bundles: bundles, tracked_files: git('ls-files', '-z').split("\0"), reader: reader)
       report['sha'] = git('rev-parse', 'HEAD').strip
-      # Save the raw report first, even if PR-head mapping or publishing fails.
+      # Save the collected diagnostics first, even if PR-head mapping or publishing fails.
       File.write(REPORT, JSON.pretty_generate(report) + "\n")
       if options[:publish]
         event = JSON.parse(File.read(ENV.fetch('GITHUB_EVENT_PATH')))
@@ -252,7 +284,6 @@ module CompilerWarnings
       if ENV['GITHUB_STEP_SUMMARY']
         File.open(ENV.fetch('GITHUB_STEP_SUMMARY'), 'a') do |file|
           file.puts "### Compiler warnings\n\n#{summary(report)}\n"
-          file.puts "\nNo build logs were found; this does not indicate a warning-free build." if logs.empty?
         end
       end
       return unless options[:publish]
