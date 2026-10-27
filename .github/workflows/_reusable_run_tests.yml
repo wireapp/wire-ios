@@ -381,6 +381,7 @@ jobs:
             artifacts/**/*.junit
             app-group*.zip
             fastlane/app-group*.zip
+            build/uitest-shard-logs/*.log
 
       - name: Publish Test Results Summary
         if: always()
