@@ -442,7 +442,7 @@ class AdminPromotionTests: WireUITestCase {
 
     @MainActor
     func testTemporaryGuestIsOnlyMember_groupBecomesGhostGroupAndIsDeleted_TC_11037() async throws {
-        
+
         // GIVEN
         let groupName = UserGenerator.generateRandomConversationName()
         let (owner, teamMembers, qualifiedIDs, conversationId) = try await userHelper.registerTeam(
@@ -501,7 +501,11 @@ class AdminPromotionTests: WireUITestCase {
         XCTAssertEqual(reminders.count, 2, "Expected both reminders before deletion")
         let deletionDate = try XCTUnwrap(reminders.first?.scheduledDeletionDate)
         XCTAssertEqual(deletionDate.timeIntervalSince(ghostGroupStart), 10, accuracy: 3)
-        XCTAssertEqual(reminders.last?.scheduledDeletionDate, deletionDate, "Reminders should keep the same deletion date")
+        XCTAssertEqual(
+            reminders.last?.scheduledDeletionDate,
+            deletionDate,
+            "Reminders should keep the same deletion date"
+        )
         XCTAssertGreaterThanOrEqual(deletedAt, deletionDate, "Group should not be deleted before its countdown ends")
         let conversations = try await guestHelper.conversationsAPI.getConversations(for: [conversationID])
         XCTAssertTrue(conversations.notFound.contains(conversationID), "Ghost group should be deleted")

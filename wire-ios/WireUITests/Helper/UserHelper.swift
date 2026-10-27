@@ -1026,7 +1026,8 @@ final class UserHelper {
             throw RuntimeError("Register guest failed: HTTP \(response.statusCode)")
         }
         let cookies = HTTPCookie.cookies(withResponseHeaderFields: headers, for: responseURL)
-        authenticationManager.accessToken = try await AccessTokenExchange(networkService: networkStack.apiNetworkService)
+        authenticationManager
+            .accessToken = try await AccessTokenExchange(networkService: networkStack.apiNetworkService)
             .exchange(cookies: cookies, clientID: nil, lastKnownAccessToken: nil)
         return try await selfUserAPI.getSelfUser()
     }
