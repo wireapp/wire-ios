@@ -216,7 +216,7 @@
 "conversation.wireCells.files.upload.failedMany" = "Couldn't upload %d files";
 "conversation.wireCells.files.upload.someFailedOne" = "1 couldn't upload";
 "conversation.wireCells.files.upload.someFailedMany" = "%d couldn't upload";
-"conversation.wireCells.files.upload.tapToReview" = "Tap to review";
+"conversation.wireCells.files.upload.tapToReview" = "Select to review";
 
 "conversation.wireCells.files.upload.cancel" = "キャンセル";
 "conversation.wireCells.files.upload.cancelAll" = "Cancel all";
@@ -228,7 +228,7 @@
 "conversation.wireCells.files.upload.prepareFailed.title" = "Upload couldn't start";
 "conversation.wireCells.files.upload.prepareFailed.message" = "\"%@\" couldn't be prepared for upload. Make sure the file is available and your device has enough free storage.";
 "conversation.wireCells.files.upload.importFailed.title" = "Couldn't import files";
-"conversation.wireCells.files.upload.importFailed.message" = "Some of the selected files couldn't be imported, so they weren't uploaded.";
+"conversation.wireCells.files.upload.importFailed.message" = "Some of the selected files couldn't be uploaded.";
 "conversation.wireCells.files.upload.permissionWarning.title" = "\"Wire\"が 写真へのアクセスを求めています。";
 "conversation.wireCells.files.upload.permissionWarning.restrictions.message" = "機能制限が有効になっているため、Wire はあなたのライブラリにアクセスできません。";
 "conversation.wireCells.files.upload.permissionWarning.denied.message" = "設定に移動して、Wire が写真にアクセスすることを許可してください。";
