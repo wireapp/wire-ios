@@ -120,6 +120,12 @@ jobs:
       - name: Setup test environment
         uses: ./.github/actions/setup-test-environment
 
+      - name: Mark compiler warning collection start
+        if: ${{ github.event_name == 'pull_request' }}
+        id: compiler-warnings-start
+        continue-on-error: true
+        run: ruby scripts/annotate_compiler_warnings.rb --start
+
       - name: "Test batch ${{ matrix.batch_index }}"
         timeout-minutes: 90
         env:
@@ -137,6 +143,22 @@ jobs:
         if: always()
         continue-on-error: true
         run: ./scripts/check_duplicate_classes.sh .
+
+      - name: Publish compiler warnings
+        if: ${{ always() && github.event_name == 'pull_request' && steps.compiler-warnings-start.outcome == 'success' }}
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+          COMPILER_WARNINGS_CHECK_NAME: Compiler warnings (${{ github.workflow }}, batch ${{ matrix.batch_index }})
+        run: ruby scripts/annotate_compiler_warnings.rb --publish
+
+      - name: Upload compiler warning report
+        continue-on-error: true
+        if: ${{ always() && github.event_name == 'pull_request' && steps.compiler-warnings-start.outcome == 'success' }}
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: compiler-warnings-batch-${{ matrix.batch_index }}-${{ github.run_id }}-${{ github.run_attempt }}
+          path: build/compiler-warnings.json
 
       - name: Annotate test failures
         if: always()
