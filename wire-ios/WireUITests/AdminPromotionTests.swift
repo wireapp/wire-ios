@@ -23,7 +23,7 @@ import XCTest
 /// [core-messenger]
 class AdminPromotionTests: WireUITestCase {
 
-    private let userHelper = UserHelper.instance(apiVersion: .v18)
+    private let userHelper = UserHelper.default
 
     @MainActor
     func testLastAdmin_promotesNewAdmin_andLeavesGroup_TC_11032() async throws {
@@ -36,9 +36,6 @@ class AdminPromotionTests: WireUITestCase {
         let member = try XCTUnwrap(teamMembers.first)
         let teamID = try XCTUnwrap(owner.teamID)
         try await userHelper.unlockAndEnablePreventAdminlessGroupsFeature(teamID: teamID)
-
-        // TODO: [WPB-28649] - Remove when v18 is PROD ready.
-        try switchToPreferredAPIVersion("18")
 
         let conversationDetailsPage = try app.loginUser(email: owner.email, password: owner.password)
             .acceptPopup()
@@ -75,8 +72,6 @@ class AdminPromotionTests: WireUITestCase {
         let teamID = try XCTUnwrap(owner.teamID)
         try await userHelper.unlockAndEnablePreventAdminlessGroupsFeature(teamID: teamID)
 
-        try switchToPreferredAPIVersion("18")
-
         let conversationsPage = try app.loginUser(email: owner.email, password: owner.password)
             .acceptPopup()
             .openConversation()
@@ -110,8 +105,6 @@ class AdminPromotionTests: WireUITestCase {
         let teamID = try XCTUnwrap(owner.teamID)
         try await userHelper.unlockAndEnablePreventAdminlessGroupsFeature(teamID: teamID)
 
-        try switchToPreferredAPIVersion("18")
-
         let conversationDetailsPage = try app.loginUser(email: owner.email, password: owner.password)
             .acceptPopup()
             .openConversation()
@@ -138,8 +131,6 @@ class AdminPromotionTests: WireUITestCase {
             guestUser
         ) =
             try await createGroupConversationWithTeamMemberAndLastGuestUserAdmin(groupName: groupName)
-
-        try switchToPreferredAPIVersion("18")
 
         let conversationsPage = try app
             .loginUser(email: guestUser.email, password: guestUser.password)
@@ -251,8 +242,6 @@ class AdminPromotionTests: WireUITestCase {
         let teamID = try XCTUnwrap(owner.teamID)
         try await userHelper.unlockAndEnablePreventAdminlessGroupsFeature(teamID: teamID)
 
-        try switchToPreferredAPIVersion("18")
-
         let conversationDetailsPage = try app.loginUser(email: owner.email, password: owner.password)
             .acceptPopup()
             .openConversation()
@@ -279,6 +268,7 @@ class AdminPromotionTests: WireUITestCase {
 
     @MainActor
     func testTwoAdminsLeaveAtTheSameTime_onlyOneAdminRemains_TC_11064() async throws {
+        // GIVEN
         let groupName = UserGenerator.generateRandomConversationName()
 
         let (owner, admins, members, conversation) = try await userHelper.createGroupConversationWithAdminsAndMembers(
@@ -292,43 +282,33 @@ class AdminPromotionTests: WireUITestCase {
 
         let ownerHelper = UserHelper.makeIsolatedInstance()
         let secondAdminHelper = UserHelper.makeIsolatedInstance()
-        var firstLeavingAdmin = owner
-        var secondLeavingAdmin = secondAdmin
-        try await ownerHelper.login(user: &firstLeavingAdmin)
-        try await secondAdminHelper.login(user: &secondLeavingAdmin)
+        var leavingAdmins = [owner, secondAdmin]
+        try await ownerHelper.login(user: &leavingAdmins[0])
+        try await secondAdminHelper.login(user: &leavingAdmins[1])
 
-        let firstAdminID = try qualifiedID(of: firstLeavingAdmin)
-        let secondAdminID = try qualifiedID(of: secondLeavingAdmin)
-
-        let barrier = SimultaneousStartBarrier(participantCount: 2)
+        // WHEN
+        let barrier = AdminLeaveBarrier()
         async let firstResponse = leaveConversationOnceAllAreReady(
             using: ownerHelper,
-            userID: firstAdminID,
+            user: leavingAdmins[0],
             conversationID: conversationID,
             barrier: barrier
         )
         async let secondResponse = leaveConversationOnceAllAreReady(
             using: secondAdminHelper,
-            userID: secondAdminID,
+            user: leavingAdmins[1],
             conversationID: conversationID,
             barrier: barrier
         )
         let leaveResponses = try await [firstResponse, secondResponse]
 
+        // THEN
         let successfulLeaves = leaveResponses.filter { $0.statusCode == 200 }
         XCTAssertEqual(successfulLeaves.count, 1, "Exactly one leave request should be accepted: \(leaveResponses)")
 
-        let leavingAdmins = [firstLeavingAdmin, secondLeavingAdmin]
-        for response in leaveResponses {
-            if response.statusCode != 200 {
-                XCTAssertEqual(response.statusCode, 403, "Last admin's leave request should be forbidden")
-                XCTAssertEqual(
-                    response.errorLabel,
-                    "adminless-conversation",
-                    "Leave request should be rejected because no admin would remain"
-                )
-            }
-        }
+        let rejectedLeave = try XCTUnwrap(leaveResponses.first { $0.statusCode != 200 })
+        XCTAssertEqual(rejectedLeave.statusCode, 403, "Last admin's leave request should be forbidden")
+        XCTAssertEqual(rejectedLeave.errorLabel, "adminless-conversation", "Last admin should not be allowed to leave")
         let observer = try XCTUnwrap(members.first)
         let conversationDetailsPage = try app.loginUser(email: observer.email, password: observer.password)
             .acceptPopup()
@@ -349,15 +329,12 @@ class AdminPromotionTests: WireUITestCase {
             }
         }
 
-        XCTAssertTrue(
-            conversationDetailsPage.adminCells.firstMatch.waitForExistence(timeout: 30),
-            "Group should have an admin after both leave requests"
-        )
         XCTAssertEqual(conversationDetailsPage.adminCells.count, 1, "Exactly one admin should remain in the group")
     }
 
     @MainActor
     func testLastAdminDeleted_promotesEligibleMember_TC_11035() async throws {
+        // GIVEN
         let groupName = UserGenerator.generateRandomConversationName()
 
         let (owner, teamMembers, qualifiedIDs, conversationId) = try await userHelper.registerTeam(
@@ -374,22 +351,12 @@ class AdminPromotionTests: WireUITestCase {
         )
         try await userHelper.unlockAndEnablePreventAdminlessGroupsFeature(teamID: teamID)
 
-        // Leave one admin and one eligible member in the group.
-        var groupOwner = owner
-        try await userHelper.login(user: &groupOwner)
-        try await userHelper.updateRole("wire_admin", userID: adminMemberID, conversationID: conversationID)
-        try await userHelper.removeParticipant(userID: try qualifiedID(of: groupOwner), conversationID: conversationID)
+        try await userHelper.promoteMemberAndLeave(userID: adminMemberID, conversationID: conversationID)
 
-        // WHEN the only admin is deleted from the team
-        let ownerAccessToken = try await userHelper.fetchAccessToken(email: owner.email, password: owner.password)
-        try await userHelper.removeTeamMember(
-            ownerAccessToken: ownerAccessToken.token,
-            ownerPassword: owner.password,
-            teamID: teamID,
-            userID: adminMemberID.id
-        )
+        // WHEN
+        try await userHelper.removeTeamMember(userID: adminMemberID.id, owner: owner)
 
-        // THEN the eligible member is auto-promoted
+        // THEN
         let conversationDetailsPage = try app
             .loginUser(email: eligibleMember.email, password: eligibleMember.password)
             .acceptPopup()
@@ -408,6 +375,7 @@ class AdminPromotionTests: WireUITestCase {
 
     @MainActor
     func testLastAdminDeleted_schedulesGroupDeletion_whenOnlyFederatedMemberRemains_TC_11040() async throws {
+        // GIVEN
         let groupName = UserGenerator.generateRandomConversationName()
         let helperA = UserHelper.instance(backend: .qaFederationA)
         let helperB = UserHelper.instance(backend: .qaFederationB)
@@ -438,10 +406,7 @@ class AdminPromotionTests: WireUITestCase {
             userId: groupOwner.id
         )
 
-        let federatedUserID = WireFoundation.QualifiedID(
-            id: try XCTUnwrap(UUID(uuidString: federatedUser.id)),
-            domain: BackendTarget.qaFederationB.domainInfo
-        )
+        let federatedUserID = try qualifiedID(of: federatedUser, on: .qaFederationB)
         let conversation = try await helperA.createGroupConversations(
             qualifiedIds: [adminA, federatedUserID],
             owner: groupOwner,
@@ -449,27 +414,16 @@ class AdminPromotionTests: WireUITestCase {
         )
         let conversationID = try XCTUnwrap(conversation.qualifiedID)
 
-        // Federated user cannot replace the last admin.
-        try await helperA.updateRole("wire_admin", userID: adminA, conversationID: conversationID)
-        try await helperA.removeParticipant(
-            userID: try qualifiedID(of: groupOwner, on: .qaFederationA),
-            conversationID: conversationID
-        )
+        try await helperA.promoteMemberAndLeave(userID: adminA, conversationID: conversationID)
 
         try switchBackend(target: .qaFederationB)
         let activeConversationPage = try await loginToBackend(user: federatedUser)
             .openConversation(named: groupName)
 
-        // WHEN the only admin is deleted from the team
-        let ownerAccessToken = try await helperA.fetchAccessToken(email: ownerA.email, password: ownerA.password)
-        try await helperA.removeTeamMember(
-            ownerAccessToken: ownerAccessToken.token,
-            ownerPassword: ownerA.password,
-            teamID: teamIDA,
-            userID: adminA.id
-        )
+        // WHEN
+        try await helperA.removeTeamMember(userID: adminA.id, owner: ownerA)
 
-        // THEN the remaining federated user sees the group scheduled for deletion
+        // THEN
         XCTAssertTrue(
             activeConversationPage.scheduledForDeletionSystemMessage.waitForExistence(timeout: 30),
             "Expected the group to be scheduled for deletion as there is no eligible admin"
@@ -478,12 +432,79 @@ class AdminPromotionTests: WireUITestCase {
 
     private func leaveConversationOnceAllAreReady(
         using helper: UserHelper,
-        userID: WireFoundation.QualifiedID,
+        user: UserInfo,
         conversationID: WireFoundation.QualifiedID,
-        barrier: SimultaneousStartBarrier
+        barrier: AdminLeaveBarrier
     ) async throws -> (statusCode: Int, errorLabel: String?) {
-        await barrier.waitForAllParticipants()
-        return try await helper.leaveConversation(userID: userID, conversationID: conversationID)
+        await barrier.waitForBothAdmins()
+        return try await helper.leaveConversation(userID: try qualifiedID(of: user), conversationID: conversationID)
+    }
+
+    @MainActor
+    func testTemporaryGuestIsOnlyMember_groupBecomesGhostGroupAndIsDeleted_TC_11037() async throws {
+        
+        // GIVEN
+        let groupName = UserGenerator.generateRandomConversationName()
+        let (owner, teamMembers, qualifiedIDs, conversationId) = try await userHelper.registerTeam(
+            withMemberCount: 1,
+            conversation: .group(groupName)
+        )
+        let teamID = try XCTUnwrap(owner.teamID)
+        let member = try XCTUnwrap(teamMembers.first)
+        let memberID = try XCTUnwrap(qualifiedIDs.first)
+        let conversationID = WireFoundation.QualifiedID(
+            id: try XCTUnwrap(conversationId),
+            domain: BackendTarget.staging.domainInfo
+        )
+        // Remind after one and three seconds; allow time for the backend worker before deletion.
+        try await userHelper.unlockAndEnablePreventAdminlessGroupsFeature(
+            teamID: teamID,
+            deletionTimeout: "10s",
+            reminderTimeouts: ["9s", "7s"]
+        )
+
+        let guestOptionsPage = try app.loginUser(email: owner.email, password: owner.password)
+            .acceptPopup()
+            .openConversation(named: groupName)
+            .openConversationDetails()
+            .openGuestOptions()
+            .createLinkWithoutPassword()
+        let guestLink = try guestOptionsPage.guestLink()
+        let guestHelper = UserHelper.makeIsolatedInstance()
+        let guest = try await guestHelper.registerGuest(name: "Guest")
+        XCTAssertNotNil(guest.expiresAt, "Guest account should have an expiry date")
+        try await guestHelper.joinGuestLink(guestLink)
+
+        let conversationDetailsPage = try guestOptionsPage.goBackToConversationDetails()
+            .moreOptionsConversationDetails()
+            .leaveOptionsConversationDetails()
+            .tapPromoteNewAdmin()
+            .selectUser(named: member.name)
+            .tapPromote()
+
+        try verifyUserLeftGroup(
+            conversationDetailsPage,
+            leavingUserName: owner.name,
+            participantDescription: "Owner"
+        )
+
+        // WHEN
+        let ghostGroupStart = Date()
+        try await userHelper.removeTeamMember(userID: memberID.id, owner: owner)
+
+        // THEN
+        let remainingMember = try await guestHelper.waitForOnlyMember(in: conversationID)
+        XCTAssertEqual(remainingMember.qualifiedID?.id, guest.id, "Guest should be the only member")
+        XCTAssertEqual(remainingMember.conversationRole, "wire_member", "Guest should not be promoted")
+
+        let (reminders, deletedAt) = try await guestHelper.waitForAdminlessGroupDeletion(conversationID)
+        XCTAssertEqual(reminders.count, 2, "Expected both reminders before deletion")
+        let deletionDate = try XCTUnwrap(reminders.first?.scheduledDeletionDate)
+        XCTAssertEqual(deletionDate.timeIntervalSince(ghostGroupStart), 10, accuracy: 3)
+        XCTAssertEqual(reminders.last?.scheduledDeletionDate, deletionDate, "Reminders should keep the same deletion date")
+        XCTAssertGreaterThanOrEqual(deletedAt, deletionDate, "Group should not be deleted before its countdown ends")
+        let conversations = try await guestHelper.conversationsAPI.getConversations(for: [conversationID])
+        XCTAssertTrue(conversations.notFound.contains(conversationID), "Ghost group should be deleted")
     }
 
     private func qualifiedID(
@@ -499,25 +520,17 @@ class AdminPromotionTests: WireUITestCase {
 }
 
 /// Waits until both admins are ready to send their leave requests.
-private actor SimultaneousStartBarrier {
+private actor AdminLeaveBarrier {
 
-    private let participantCount: Int
-    private var suspendedParticipants: [CheckedContinuation<Void, Never>] = []
+    private var waitingAdmin: CheckedContinuation<Void, Never>?
 
-    init(participantCount: Int) {
-        self.participantCount = participantCount
-    }
-
-    func waitForAllParticipants() async {
-        let isLastParticipant = suspendedParticipants.count + 1 == participantCount
-        guard isLastParticipant else {
-            await withCheckedContinuation { suspendedParticipants.append($0) }
-            return
+    func waitForBothAdmins() async {
+        if let waitingAdmin {
+            self.waitingAdmin = nil
+            waitingAdmin.resume()
+        } else {
+            await withCheckedContinuation { waitingAdmin = $0 }
         }
-
-        let continuations = suspendedParticipants
-        suspendedParticipants = []
-        continuations.forEach { $0.resume() }
     }
 
 }

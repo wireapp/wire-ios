@@ -975,6 +975,23 @@ final class UserHelper {
         try await conversationsAPI.removeParticipant(userID: userID, conversationID: conversationID)
     }
 
+    func promoteMemberAndLeave(userID: UserID, conversationID: ConversationID) async throws {
+        let ownerID = try await selfUserAPI.getSelfUser().qualifiedID
+        try await updateRole("wire_admin", userID: userID, conversationID: conversationID)
+        try await removeParticipant(userID: ownerID, conversationID: conversationID)
+    }
+
+    func removeTeamMember(userID: UUID, owner: UserInfo) async throws {
+        guard let teamID = owner.teamID else { throw RuntimeError("Owner has no team ID") }
+        let accessToken = try await fetchAccessToken(email: owner.email, password: owner.password)
+        try await removeTeamMember(
+            ownerAccessToken: accessToken.token,
+            ownerPassword: owner.password,
+            teamID: teamID,
+            userID: userID
+        )
+    }
+
     func leaveConversation(
         userID: UserID,
         conversationID: ConversationID
@@ -994,6 +1011,88 @@ final class UserHelper {
         let body = try JSONSerialization.jsonObject(with: data) as? [String: Any]
         return (response.statusCode, body?["label"] as? String)
     }
+
+    func registerGuest(name: String) async throws -> SelfUser {
+        let url = backendURL.appendingPathComponent("\(apiVersion)/register")
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.httpBody = try JSONSerialization.data(withJSONObject: ["name": name, "locale": "en"])
+        request.setValue(HttpClient.ContentType.json, forHTTPHeaderField: HttpClient.HeaderKey.contentType)
+
+        let (_, response) = try await networkStack.apiNetworkService.executeRequest(request)
+        guard response.statusCode == 201,
+              let headers = response.allHeaderFields as? [String: String],
+              let responseURL = response.url else {
+            throw RuntimeError("Register guest failed: HTTP \(response.statusCode)")
+        }
+        let cookies = HTTPCookie.cookies(withResponseHeaderFields: headers, for: responseURL)
+        authenticationManager.accessToken = try await AccessTokenExchange(networkService: networkStack.apiNetworkService)
+            .exchange(cookies: cookies, clientID: nil, lastKnownAccessToken: nil)
+        return try await selfUserAPI.getSelfUser()
+    }
+
+    func joinGuestLink(_ link: URL) async throws {
+        let query = URLComponents(url: link, resolvingAgainstBaseURL: false)?.queryItems
+        guard let key = query?.first(where: { $0.name == "key" })?.value,
+              let code = query?.first(where: { $0.name == "code" })?.value else {
+            throw RuntimeError("Guest link is missing its key or code")
+        }
+        let url = backendURL.appendingPathComponent("\(apiVersion)/conversations/join")
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.httpBody = try JSONSerialization.data(withJSONObject: ["key": key, "code": code])
+        request.setValue(HttpClient.ContentType.json, forHTTPHeaderField: HttpClient.HeaderKey.contentType)
+        let (_, response) = try await networkStack.apiService.executeRequest(request, requiringAccessToken: true)
+        guard (200 ..< 300).contains(response.statusCode) else {
+            throw RuntimeError("Join guest link failed: HTTP \(response.statusCode)")
+        }
+    }
+
+    func waitForOnlyMember(in conversationID: QualifiedID) async throws -> Conversation.Member {
+        let deadline = Date().addingTimeInterval(10)
+        while Date() < deadline {
+            let conversations = try await conversationsAPI.getConversations(for: [conversationID])
+            guard let members = conversations.found.first?.members,
+                  let selfMember = members.selfMember else {
+                throw RuntimeError("Conversation response is missing member data")
+            }
+            if members.others.isEmpty {
+                return selfMember
+            }
+            try await Task.sleep(for: .seconds(1))
+        }
+        throw RuntimeError("Guest did not become the only member within 10 seconds")
+    }
+
+    func waitForAdminlessGroupDeletion(
+        _ conversationID: QualifiedID
+    ) async throws -> (reminders: [ConversationAdminlessReminderEvent], deletedAt: Date) {
+        let api = UpdateEventsAPIBuilder(apiService: networkStack.apiService).makeAPI(for: apiVersion)
+        let deadline = Date().addingTimeInterval(25)
+        var lastEventID: UUID?
+        var reminders: [ConversationAdminlessReminderEvent] = []
+        while Date() < deadline {
+            for try await batch in api.getUpdateEvents(selfClientID: nil, sinceEventID: lastEventID) {
+                for envelope in batch.updateEventEnvelopes {
+                    for event in envelope.events {
+                        switch event {
+                        case let .conversation(.adminlessReminder(reminder))
+                            where reminder.conversationID == conversationID:
+                            reminders.append(reminder)
+                        case let .conversation(.delete(deletion)) where deletion.conversationID == conversationID:
+                            return (reminders, deletion.timestamp)
+                        default:
+                            break
+                        }
+                    }
+                    lastEventID = envelope.id
+                }
+            }
+            try await Task.sleep(for: .seconds(1))
+        }
+        throw RuntimeError("Ghost group was not deleted within 25 seconds; received \(reminders.count) reminders")
+    }
+
 }
 
 extension BackendEnvironment {

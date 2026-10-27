@@ -68,6 +68,15 @@ class GuestOptionsPage: PageModel {
         app.buttons[Locators.AlertActions.confirm.rawValue].firstMatch
     }
 
+    private var backButton: XCUIElement {
+        app.buttons[Locators.GuestOptionsPage.backButton.rawValue].firstMatch
+    }
+
+    func goBackToConversationDetails() throws -> ConversationDetailsPage {
+        backButton.waitAndTap()
+        return try ConversationDetailsPage()
+    }
+
     func startCreatingLinkWithPassword() throws -> CreateSecureGuestLinkPage {
         createLinkButton.waitAndTap()
         createLinkWithPasswordAction.waitAndTap()
@@ -87,6 +96,11 @@ class GuestOptionsPage: PageModel {
         confirmRevokeButton.waitAndTap()
         XCTAssertTrue(createLinkButton.waitForExistence(timeout: 10), "Create link button did not appear after revoke")
         return self
+    }
+
+    func guestLink() throws -> URL {
+        XCTAssertTrue(linkText.waitForExistence(timeout: 10), "Guest link did not appear")
+        return try XCTUnwrap(URL(string: linkText.label), "Guest link should be a valid URL")
     }
 
     @discardableResult
