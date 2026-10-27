@@ -15,7 +15,8 @@ module CompilerWarnings
   RESULT_PATTERN = 'artifacts/**/*.xcresult'.freeze
 
   def self.git(*arguments)
-    output, _error, status = Open3.capture3('git', *arguments)
+    # Treat paths as literal names, not globs, so `Foo[1].swift` cannot match other files.
+    output, _error, status = Open3.capture3('git', '--literal-pathspecs', *arguments)
     raise "Could not run git #{arguments.first}" unless status.success?
 
     output
@@ -35,7 +36,7 @@ module CompilerWarnings
 
     return nil unless uri.path && uri.path.start_with?('/')
 
-    path = URI::DEFAULT_PARSER.unescape(uri.path)
+    path = URI.decode_uri_component(uri.path)
     attributes = URI.decode_www_form(uri.fragment.to_s).to_h
     line = Integer(attributes.fetch('StartingLineNumber'), 10)
     return nil if line.negative?
@@ -145,11 +146,12 @@ module CompilerWarnings
                  'annotations' => annotations, 'unmapped_warnings' => unmapped)
   end
 
-  # PR jobs build a merge commit whose first parent is the base branch, so the
-  # diff against that parent lists exactly the files changed by the PR.
-  def self.pr_changed_files(built_sha)
+  # PR jobs build a merge commit whose first parent is the base branch and whose
+  # second parent is the PR head, so the diff against the first parent lists
+  # exactly the files changed by the PR.
+  def self.pr_changed_files(built_sha, head_sha)
     parents = git('rev-list', '--parents', '-n', '1', built_sha).split.drop(1)
-    return nil unless parents.length == 2
+    return nil unless parents.length == 2 && parents.last == head_sha
 
     git('diff', '--no-renames', '--name-only', '-z', parents.first, built_sha).split("\0").to_set
   end
@@ -170,7 +172,9 @@ module CompilerWarnings
       unchanged: report.fetch('unchanged_file_warnings', []).length,
       untracked: report.fetch('untracked_warnings', []).length,
       unlocated: report.fetch('unlocated_warnings').length,
-      unmapped: report.fetch('unmapped_warnings', []).length
+      unmapped: report.fetch('unmapped_warnings', []).length,
+      # Explained by the incomplete reason added when the PR's files are unknown.
+      unfiltered: report.fetch('unfiltered_warnings', []).length
     }
     text = "Collected #{counts.values.sum} unique compiler warnings: #{counts[:inline]} available inline, " \
            "#{counts[:unchanged]} in files not changed by the PR, #{counts[:untracked]} in untracked files, " \
@@ -293,19 +297,24 @@ module CompilerWarnings
         event = JSON.parse(File.read(ENV.fetch('GITHUB_EVENT_PATH')))
         pull_request = event.fetch('pull_request')
         # Filter before mapping so only the PR's files need per-file git calls.
-        changed = pr_changed_files(report.fetch('sha'))
-        report = for_changed_files(report, changed || Set.new)
-        unless changed
-          report['incomplete_reasons'] << 'The build is not a PR merge commit, so the files changed by the PR ' \
-                                          'are unknown and no warnings were annotated inline.'
+        head_sha = pull_request.fetch('head').fetch('sha')
+        changed = pr_changed_files(report.fetch('sha'), head_sha)
+        if changed
+          report = for_changed_files(report, changed)
+        else
+          unfiltered = report.fetch('annotations')
+          report = report.merge('annotations' => [], 'unfiltered_warnings' => unfiltered)
+          report['incomplete_reasons'] << 'The build is not the PR merge commit, so the files changed by the PR ' \
+                                          "are unknown and #{unfiltered.length} warnings were not annotated inline."
         end
-        report = for_pr_head(report, pull_request.fetch('head').fetch('sha'))
+        report = for_pr_head(report, head_sha)
         File.write(REPORT, JSON.pretty_generate(report) + "\n")
       end
-      puts summary(report)
+      text = summary(report)
+      puts text
       if ENV['GITHUB_STEP_SUMMARY']
         File.open(ENV.fetch('GITHUB_STEP_SUMMARY'), 'a') do |file|
-          file.puts "### Compiler warnings\n\n#{summary(report)}\n"
+          file.puts "### Compiler warnings\n\n#{text}\n"
         end
       end
       return unless options[:publish]

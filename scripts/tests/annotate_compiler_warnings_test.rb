@@ -279,7 +279,10 @@ class CompilerWarningsTest < Minitest::Test
       # Without a merge commit the PR's files are unknown, so nothing is annotated.
       assert_empty api.requests.flat_map { |request| request[2].dig('output', 'annotations') || [] }
       assert_equal 'neutral', api.requests.last[2].fetch('conclusion')
-      assert_match(/not a PR merge commit/, api.requests.last[2].fetch('output').fetch('summary'))
+      summary = api.requests.last[2].fetch('output').fetch('summary')
+      assert_match(/0 in files not changed by the PR/, summary)
+      assert_match(/not the PR merge commit, so the files changed by the PR are unknown and 1 warnings/, summary)
+      assert_equal 1, report.fetch('unfiltered_warnings').length
     end
   end
 
@@ -296,7 +299,7 @@ class CompilerWarningsTest < Minitest::Test
       assert_raises(KeyError) { run_fixture(['--publish']) }
       report = JSON.parse(File.read(CompilerWarnings::REPORT))
       # Not a merge commit, so the warning is kept but not marked for inline annotation.
-      assert_equal 1, report.fetch('annotations').length + report.fetch('unchanged_file_warnings').length
+      assert_equal 1, report.fetch('annotations').length + report.fetch('unfiltered_warnings').length
     end
   end
 
@@ -468,7 +471,34 @@ class CompilerWarningsTest < Minitest::Test
 
   def test_does_not_filter_warnings_when_the_build_is_not_a_merge_commit
     in_repository do
-      assert_nil CompilerWarnings.pr_changed_files(CompilerWarnings.git('rev-parse', 'HEAD').strip)
+      head = CompilerWarnings.git('rev-parse', 'HEAD').strip
+      assert_nil CompilerWarnings.pr_changed_files(head, head)
+    end
+  end
+
+  def test_does_not_filter_warnings_when_the_second_merge_parent_is_not_the_pr_head
+    in_repository do
+      merge_pr_into_base
+      # Like a branch tip that merged develop into the feature branch.
+      assert_nil CompilerWarnings.pr_changed_files(CompilerWarnings.git('rev-parse', 'HEAD').strip, 'other-sha')
+    end
+  end
+
+  def test_treats_paths_with_glob_characters_literally
+    in_repository do
+      glob_path = 'Sources/Foo[12].swift'
+      other_path = 'Sources/Foo1.swift'
+      File.write(glob_path, "one\ntwo\nthree\nfour\n")
+      File.write(other_path, "one\ntwo\nthree\nfour\n")
+      head_sha = fixture_commit(glob_path, other_path)
+      File.write(glob_path, "prefix\none\ntwo\nthree\nfour\n")
+      File.write(other_path, "a\nb\none\ntwo\nthree\nfour\n")
+      built_sha = fixture_commit(glob_path, other_path)
+      warning = diagnostic(path: glob_path, line: 4)
+      # Xcode percent-encodes brackets in source URLs.
+      warning['sourceURL'] = warning.fetch('sourceURL').gsub('[', '%5B').gsub(']', '%5D')
+      report = collect([warning], [glob_path, other_path]).merge('sha' => built_sha)
+      assert_equal [3], CompilerWarnings.for_pr_head(report, head_sha).fetch('annotations').map { |warning| warning.fetch('start_line') }
     end
   end
 
