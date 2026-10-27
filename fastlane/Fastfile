@@ -846,8 +846,8 @@ platform :ios do
         return 1 if value.to_s.strip.empty?
 
         count = value.to_i
-        unless count.between?(1, 4) && count.to_s == value.to_s.strip
-            UI.user_error!("parallel_workers must be 1, 2, 3, or 4")
+        unless count.between?(1, 5) && count.to_s == value.to_s.strip
+            UI.user_error!("parallel_workers must be 1, 2, 3, 4, or 5")
         end
 
         count

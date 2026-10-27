@@ -19,6 +19,7 @@ on:
           - '2'
           - '3'
           - '4'
+          - '5'
         default: '2'
       testiny_run_name:
         description: "Testiny test run name: paste the exact run name from Testiny"

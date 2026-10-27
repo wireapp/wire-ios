@@ -103,8 +103,8 @@ jobs:
           UITEST_PARALLEL_WORKERS: ${{ inputs.uitest_parallel_workers }}
         run: |
           case "$UITEST_PARALLEL_WORKERS" in
-            1|2|3|4) ;;
-            *) echo "::error::uitest_parallel_workers must be 1, 2, 3, or 4"; exit 1 ;;
+            1|2|3|4|5) ;;
+            *) echo "::error::uitest_parallel_workers must be 1, 2, 3, 4, or 5"; exit 1 ;;
           esac
           echo "UITest workers: $UITEST_PARALLEL_WORKERS"
           CPUS=$(sysctl -n hw.logicalcpu)

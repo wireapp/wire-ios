@@ -19,6 +19,7 @@ on:
           - '2'
           - '3'
           - '4'
+          - '5'
         default: '2'
   schedule:
     - cron: "0 21 * * MON-FRI"

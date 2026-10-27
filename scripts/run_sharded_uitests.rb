@@ -19,12 +19,13 @@
 # along with this program. If not, see http://www.gnu.org/licenses/.
 #
 
-# Runs UI tests in shards, one simulator per shard, instead of Xcode's parallel testing.
-
-# serial. Here every simulator is created, seeded and proven to launch an app before any test starts, the app is
-# built once with `build-for-testing`, and each shard runs its own `xcodebuild test-without-building`.
+# Runs UI tests on several simulators at once. Every simulator is created, seeded and checked to launch an app
+# before any test starts, and the app is built once with `build-for-testing`. The tests are split into small pieces
+# (a class with more than MAX_TESTS_PER_PIECE tests is cut up) held in one shared queue. Each shard, one per
+# simulator, takes the next piece when it is free and runs it with its own `xcodebuild test-without-building`; at
+# the end the piece results of a shard are merged into one `<result-dir>/shard-<n>/<scheme>.xcresult`.
 #
-# Exit status: 0 when every shard passed, 1 otherwise.
+# Exit status: 0 when every test ran and passed, 1 otherwise.
 
 require "fileutils"
 require "open3"
@@ -120,8 +121,8 @@ def secret_values(env_file)
     end.uniq.sort_by { |value| -value.length }
 end
 
-# Xcode prints the test runner's environment, credentials included, when a launch fails. The raw logs stay in
-# the log directory; this writes a copy with those values replaced, which is what CI uploads.
+# A failed runner launch prints the test runner's environment, credentials included. The raw logs stay in the log
+# directory; this writes a copy with those values replaced, which is what CI uploads.
 def publish_log(raw_path, published_dir, secrets)
     return if published_dir.to_s.empty? || !File.exist?(raw_path)
 
@@ -154,18 +155,27 @@ def stream(label, command, log_path)
     end
 end
 
-# Keeps every test of a class in one shard and fills the least loaded shard with the largest class first.
-def balance(identifiers, count)
+MAX_TESTS_PER_PIECE = 5
+
+# Splits the tests into pieces for a shared queue. A class of up to MAX_TESTS_PER_PIECE tests stays whole; a bigger
+# one is cut into the fewest pieces that fit, of even size, so there is no tiny leftover. Biggest pieces come first,
+# so the long ones start early and the short ones fill the gaps at the end.
+def chunk(identifiers)
     classes = identifiers.group_by { |identifier| identifier.split("/")[0..1].join("/") }
-    shards = Array.new([count, classes.size].min) { [] }
-    classes.values.sort_by { |tests| -tests.size }.each do |tests|
-        shards.min_by(&:size).concat(tests)
+    pieces = classes.values.flat_map do |tests|
+        count = (tests.size / MAX_TESTS_PER_PIECE.to_f).ceil
+        base, extra = tests.size.divmod(count)
+        offset = 0
+        Array.new(count) do |index|
+            size = base + (index < extra ? 1 : 0)
+            tests[offset, size].tap { offset += size }
+        end
     end
-    shards.reject(&:empty?)
+    pieces.sort_by.with_index { |tests, index| [-tests.size, index] }
 end
 
-# A booted simulator can still refuse app launches while SpringBoard finishes starting up, which is exactly how
-# Xcode's runner launch fails. Launching a system app is the same check, so wait until it works.
+# A booted simulator can refuse app launches while SpringBoard finishes starting up. Launching a system app checks
+# for that, so wait until it works.
 def wait_until_launchable(udid, timeout: 180)
     deadline = Time.now + timeout
     loop do
@@ -191,8 +201,9 @@ Dir.chdir(ROOT)
 tests = File.readlines(options[:tests_file]).map(&:strip).reject(&:empty?).uniq
 abort("No tests to run in #{options[:tests_file]}") if tests.empty?
 
-planned = balance(tests, options[:workers])
-say("shards", "#{tests.size} tests in #{planned.size} shards: #{planned.map(&:size).join(', ')} tests")
+pieces = chunk(tests)
+planned = [options[:workers], pieces.size].min
+say("shards", "#{tests.size} tests in #{pieces.size} pieces (#{pieces.map(&:size).join(', ')}) for #{planned} shards")
 FileUtils.mkdir_p([options[:log_dir], options[:result_dir], File.dirname(options[:simulators_file])])
 
 # Extra simulators are created and seeded while the app builds.
@@ -201,7 +212,7 @@ preparations = [Thread.new do
     wait_until_launchable(options[:base_simulator])
     options[:base_simulator]
 end]
-(2..planned.size).each do |index|
+(2..planned).each do |index|
     preparations << Thread.new do
         name = "#{options[:base_simulator]}-shard-#{index}"
         udid = run!("xcrun", "simctl", "create", name, options[:device_type], options[:runtime]).strip
@@ -253,72 +264,164 @@ end
 xctestrun = Dir.glob(File.join(options[:derived_data], "Build/Products", "#{options[:scheme]}_#{options[:test_plan]}_*.xctestrun")).max_by { |path| File.mtime(path) }
 abort("[shards] no .xctestrun for #{options[:scheme]}/#{options[:test_plan]} in #{options[:derived_data]}") if xctestrun.nil?
 
-shards = simulators.size == planned.size ? planned : balance(tests, simulators.size)
-if shards.size < planned.size
+if simulators.size < planned
     # A green run must not hide that the requested parallelism did not happen.
-    message = "Only #{simulators.size} of #{planned.size} simulators were ready, running #{shards.size} shards instead of #{planned.size}"
+    message = "Only #{simulators.size} of #{planned} simulators were ready, running #{simulators.size} shards instead of #{planned}"
     say("shards", message)
     write_job_summary("> [!WARNING]\n> UITest shards: #{message}")
 end
 
-# The runner can still be refused on a simulator that just opened Settings fine; such a shard ran no test, so
+# The runner can still be refused on a simulator that just opened Settings fine; such a piece ran no test, so
 # running it once more costs little.
 RUNNER_LAUNCH_FAILURE = /Failed to install or launch the test runner|Application failed preflight checks/.freeze
 TEST_STARTED = /Test Case '.*' started/.freeze
 
-results = shards.each_with_index.map do |shard_tests, index|
+launch_refused = ->(text) { text.match?(RUNNER_LAUNCH_FAILURE) && !text.match?(TEST_STARTED) }
+
+# Every shard takes the next piece from this queue when it is free, so a shard that got short pieces simply
+# takes more of them. `in_flight` keeps shards waiting while a piece could still come back to the queue.
+queue_lock = Mutex.new
+queue = pieces.each_with_index.map { |piece_tests, index| { number: index + 1, tests: piece_tests, launch_failures: 0 } }
+in_flight = 0
+alive = simulators.size
+
+take_piece = lambda do
+    loop do
+        piece, busy = queue_lock.synchronize do
+            taken = queue.shift
+            in_flight += 1 if taken
+            [taken, in_flight]
+        end
+        return piece if piece
+        return nil if busy.zero?
+
+        sleep(5)
+    end
+end
+
+finish_piece = ->(piece, requeue: false) do
+    queue_lock.synchronize do
+        in_flight -= 1
+        queue.unshift(piece) if requeue
+    end
+end
+
+# Combines the result bundles of a shard's pieces into the single bundle the reports expect.
+def merge_bundles(bundles, target)
+    FileUtils.rm_rf(target)
+    FileUtils.mkdir_p(File.dirname(target))
+    if bundles.size == 1
+        FileUtils.mv(bundles.first, target)
+        return true
+    end
+
+    _, merged = run("xcrun", "xcresulttool", "merge", *bundles, "--output-path", target, timeout: 900)
+    merged
+end
+
+results = simulators.each_with_index.map do |simulator, index|
     number = index + 1
     Thread.new do
         label = "shard #{number}"
         shard_dir = File.join(options[:result_dir], "shard-#{number}")
-        result_bundle = File.join(shard_dir, "#{options[:scheme]}.xcresult")
-        log_path = File.join(options[:log_dir], "#{options[:scheme]}-shard-#{number}.log")
-        FileUtils.rm_rf(result_bundle)
-        FileUtils.mkdir_p(shard_dir)
+        pieces_dir = File.join(options[:log_dir], "shard-#{number}-pieces")
+        FileUtils.rm_rf([shard_dir, pieces_dir])
+        FileUtils.mkdir_p(pieces_dir)
 
-        command = [
-            "xcodebuild", "test-without-building",
-            "-xctestrun", xctestrun,
-            "-destination", "platform=iOS Simulator,id=#{simulators[index]}",
-            "-derivedDataPath", File.join(options[:log_dir], "shard-#{number}-DerivedData"),
-            "-resultBundlePath", result_bundle,
-            "-collect-test-diagnostics", "never",
-            "-parallel-testing-enabled", "NO"
-        ]
-        command += ["-retry-tests-on-failure", "-test-iterations", options[:test_iterations].to_s] if options[:test_iterations] > 1
-        command += shard_tests.map { |identifier| "-only-testing:#{identifier}" }
-
+        done = []
+        retired = false
         started = Time.now
-        say(label, "#{shard_tests.size} tests on simulator #{simulators[index]}")
-        passed = stream(label, command, log_path)
-        log = File.exist?(log_path) ? File.read(log_path, encoding: "UTF-8", invalid: :replace) : ""
-        relaunched = !passed && log.match?(RUNNER_LAUNCH_FAILURE) && !log.match?(TEST_STARTED)
-        if relaunched
-            say(label, "test runner did not launch and no test ran, running this shard once more")
-            # Keep the first attempt for debugging, outside the results directory so reports ignore it.
-            # A result bundle is a directory: moving it onto an earlier run's copy would nest it inside, so replace that copy.
-            first_log = log_path.sub(/\.log\z/, "-attempt-1.log")
-            first_bundle = File.join(options[:log_dir], "#{options[:scheme]}-shard-#{number}-attempt-1.xcresult")
-            FileUtils.rm_rf([first_log, first_bundle])
-            FileUtils.mv(log_path, first_log)
-            FileUtils.mv(result_bundle, first_bundle) if File.exist?(result_bundle)
-            publish_log(first_log, options[:published_log_dir], secrets)
-            begin
-                wait_until_launchable(simulators[index])
-            rescue => error
-                say(label, error.message)
+        while (piece = take_piece.call)
+            piece_label = "#{label} piece #{piece[:number]}"
+            result_bundle = File.join(pieces_dir, "piece-#{piece[:number]}.xcresult")
+            log_path = File.join(options[:log_dir], "#{options[:scheme]}-shard-#{number}-piece-#{piece[:number]}.log")
+
+            command = [
+                "xcodebuild", "test-without-building",
+                "-xctestrun", xctestrun,
+                "-destination", "platform=iOS Simulator,id=#{simulator}",
+                "-derivedDataPath", File.join(options[:log_dir], "shard-#{number}-DerivedData"),
+                "-resultBundlePath", result_bundle,
+                "-collect-test-diagnostics", "never",
+                "-parallel-testing-enabled", "NO"
+            ]
+            command += ["-retry-tests-on-failure", "-test-iterations", options[:test_iterations].to_s] if options[:test_iterations] > 1
+            command += piece[:tests].map { |identifier| "-only-testing:#{identifier}" }
+
+            piece_started = Time.now
+            say(piece_label, "#{piece[:tests].size} tests on simulator #{simulator}")
+            passed = stream(piece_label, command, log_path)
+            log = File.exist?(log_path) ? File.read(log_path, encoding: "UTF-8", invalid: :replace) : ""
+            relaunched = !passed && launch_refused.call(log)
+            if relaunched
+                say(piece_label, "test runner did not launch and no test ran, running this piece once more")
+                # Keep the first attempt for debugging, outside the results directory so reports ignore it.
+                # A result bundle is a directory: moving it onto an earlier run's copy would nest it inside, so replace that copy.
+                first_log = log_path.sub(/\.log\z/, "-attempt-1.log")
+                first_bundle = File.join(options[:log_dir], "#{options[:scheme]}-shard-#{number}-piece-#{piece[:number]}-attempt-1.xcresult")
+                FileUtils.rm_rf([first_log, first_bundle])
+                FileUtils.mv(log_path, first_log)
+                FileUtils.mv(result_bundle, first_bundle) if File.exist?(result_bundle)
+                publish_log(first_log, options[:published_log_dir], secrets)
+                begin
+                    wait_until_launchable(simulator)
+                rescue => error
+                    say(piece_label, error.message)
+                end
+                passed = stream(piece_label, command, log_path)
+                log = File.exist?(log_path) ? File.read(log_path, encoding: "UTF-8", invalid: :replace) : ""
             end
-            passed = stream(label, command, log_path)
+            publish_log(log_path, options[:published_log_dir], secrets)
+
+            # Refused twice with no test run: this simulator is bad. Hand the piece to another shard rather than
+            # let this one burn through the whole queue.
+            if !passed && relaunched && launch_refused.call(log) && piece[:launch_failures].zero? &&
+                    queue_lock.synchronize { alive > 1 }
+                say(piece_label, "simulator #{simulator} keeps refusing the runner, giving the piece to another shard")
+                FileUtils.rm_rf(result_bundle)
+                piece[:launch_failures] += 1
+                queue_lock.synchronize { alive -= 1 }
+                finish_piece.call(piece, requeue: true)
+                retired = true
+                break
+            end
+
+            finish_piece.call(piece)
+            done << { number: piece[:number], tests: piece[:tests].size, passed: passed, relaunched: relaunched,
+                      bundle: (result_bundle if File.exist?(result_bundle)),
+                      minutes: ((Time.now - piece_started) / 60).round(1) }
         end
-        publish_log(log_path, options[:published_log_dir], secrets)
-        { number: number, tests: shard_tests.size, passed: passed, relaunched: relaunched, minutes: ((Time.now - started) / 60).round(1) }
+
+        bundles = done.filter_map { |entry| entry[:bundle] }
+        merged = true
+        unless bundles.empty?
+            target = File.join(shard_dir, "#{options[:scheme]}.xcresult")
+            merged = merge_bundles(bundles, target)
+            unless merged
+                # Keep every piece's results rather than lose them: reports read all bundles in the shard directory.
+                say(label, "merging result bundles failed, keeping them separate")
+                FileUtils.mkdir_p(shard_dir)
+                bundles.each { |bundle| FileUtils.cp_r(bundle, File.join(shard_dir, File.basename(bundle))) }
+            end
+        end
+        {
+            number: number, pieces: done.map { |entry| entry[:number] }, tests: done.sum { |entry| entry[:tests] },
+            passed: done.all? { |entry| entry[:passed] },
+            relaunched: done.count { |entry| entry[:relaunched] }, merged: merged, retired: retired,
+            minutes: ((Time.now - started) / 60).round(1)
+        }
     end
 end.map(&:value)
 
+# Pieces left in the queue mean every shard retired; those tests did not run.
+unrun = queue.sum { |piece| piece[:tests].size }
 summary = results.map do |result|
-    "shard #{result[:number]}: #{result[:passed] ? 'passed' : 'FAILED'}, #{result[:tests]} tests, #{result[:minutes]} min" +
-        (result[:relaunched] ? " (runner relaunched once)" : "")
+    "shard #{result[:number]}: #{result[:passed] ? 'passed' : 'FAILED'}, #{result[:tests]} tests in #{result[:pieces].size} pieces, #{result[:minutes]} min" +
+        (result[:relaunched].positive? ? " (runner relaunched #{result[:relaunched]}x)" : "") +
+        (result[:retired] ? " (simulator retired, kept refusing the runner)" : "") +
+        (result[:merged] ? "" : " (result bundles not merged)")
 end
+summary << "#{unrun} tests never ran, no shard was left to take them" if unrun.positive?
 summary.each { |line| say("shards", line) }
 write_job_summary(["UITest shards (#{results.size} of #{options[:workers]} requested):", *summary.map { |line| "- #{line}" }])
-exit(results.all? { |result| result[:passed] } ? 0 : 1)
+exit(results.all? { |result| result[:passed] } && unrun.zero? ? 0 : 1)
