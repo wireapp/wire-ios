@@ -39,6 +39,7 @@
 "conversation.timerButton.description" = "Definir um temporizador para auto-exclusão de mensagens";
 "conversation.mentionButton.description" = "Mencionar alguém";
 "conversation.cameraButton.description" = "Take or select a photo";
+"conversation.camera.maximizeButton.description" = "Maximize view";
 "conversation.sketchButton.description" = "Open sketch to draw or write";
 "conversation.gifButton.description" = "Selecione um GIF";
 "conversation.audioButton.description" = "Gravar uma mensagem de áudio";
