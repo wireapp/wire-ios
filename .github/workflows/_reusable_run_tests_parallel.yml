@@ -138,15 +138,6 @@ jobs:
         continue-on-error: true
         run: ./scripts/check_duplicate_classes.sh .
 
-      # Batches rebuild shared dependencies, so post-tests merges the reports
-      # and publishes each warning once.
-      - name: Collect compiler warnings
-        if: ${{ always() && github.event_name == 'pull_request' }}
-        continue-on-error: true
-        env:
-          JOB_STATUS: ${{ job.status }}
-        run: ruby scripts/annotate_compiler_warnings.rb
-
       - name: Annotate test failures
         if: always()
         continue-on-error: true
@@ -167,13 +158,6 @@ jobs:
           path: |
             build/reports/*.junit
             artifacts/**/*.junit
-
-      - name: Upload compiler warnings
-        if: ${{ always() && github.event_name == 'pull_request' }}
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-        with:
-          name: "compiler-warnings-batch-${{ matrix.batch_index }}-${{ env.SANITIZED_BRANCH }}-(${{ github.run_id }}-${{ github.run_attempt }})"
-          path: build/compiler-warnings.json
 
       - name: Upload failed snapshots
         if: failure()
@@ -206,12 +190,9 @@ jobs:
   # ── 3. Notify + upload to Datadog ──────────────────────────────────────────
   post-tests:
     name: Run tests
-    needs: [generate-framework-list, test-framework]
+    needs: test-framework
     if: always()
     runs-on: ubuntu-24.04
-    permissions:
-      contents: read
-      checks: write
     steps:
       - name: Sanitize branch name
         shell: bash
@@ -231,8 +212,6 @@ jobs:
         with:
           ref: ${{ inputs.branch }}
           lfs: 'false'
-          # Include the merge parents to map warning locations and list PR files.
-          fetch-depth: ${{ github.event_name == 'pull_request' && 2 || 1 }}
 
       - name: Notify on Wire
         uses: ./.github/actions/notify-wire
@@ -258,38 +237,6 @@ jobs:
         uses: ./.github/actions/upload-datadog-junit
         with:
           api_key: ${{ secrets.DD_API_KEY }}
-
-      - name: Test Scripts
-        if: ${{ contains(inputs.folders, 'scripts') || inputs.all }}
-        run: ruby scripts/tests/annotate_compiler_warnings_test.rb
-
-      - name: Download compiler warnings
-        if: ${{ always() && github.event_name == 'pull_request' && needs.test-framework.result != 'skipped' }}
-        continue-on-error: true
-        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
-        with:
-          pattern: "compiler-warnings-*-${{ env.SANITIZED_BRANCH }}-(${{ github.run_id }}-${{ github.run_attempt }})"
-          path: compiler-warnings
-
-      - name: Publish compiler warnings
-        if: ${{ always() && github.event_name == 'pull_request' && needs.test-framework.result != 'skipped' }}
-        continue-on-error: true
-        env:
-          GH_TOKEN: ${{ github.token }}
-          COMPILER_WARNINGS_CHECK_NAME: Compiler warnings (${{ github.workflow }})
-          JOB_STATUS: ${{ needs.test-framework.result }}
-          BATCHES: ${{ needs.generate-framework-list.outputs.batches }}
-        run: |
-          ruby scripts/annotate_compiler_warnings.rb --publish \
-            --reports 'compiler-warnings/**/compiler-warnings.json' \
-            --expected-reports "$(jq length <<< "$BATCHES")"
-
-      - name: Upload compiler warnings report
-        if: ${{ always() && github.event_name == 'pull_request' && needs.test-framework.result != 'skipped' }}
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-        with:
-          name: "merged-compiler-warnings-${{ env.SANITIZED_BRANCH }}-(${{ github.run_id }}-${{ github.run_attempt }})"
-          path: build/compiler-warnings.json
 
       - name: Propagate test result
         if: needs.test-framework.result != 'success'

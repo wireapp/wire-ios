@@ -17,7 +17,6 @@
 //
 
 package import Combine
-package import Foundation
 
 // sourcery: AutoMockable
 @MainActor

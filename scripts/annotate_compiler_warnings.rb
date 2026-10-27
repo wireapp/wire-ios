@@ -13,9 +13,6 @@ require 'fileutils'
 module CompilerWarnings
   REPORT = 'build/compiler-warnings.json'.freeze
   RESULT_PATTERN = 'artifacts/**/*.xcresult'.freeze
-  ANNOTATION_KEY = ->(warning) { warning.values_at('path', 'start_line', 'message') }
-  # Ignore timestamp fragments when deduplicating warnings without a line.
-  UNLOCATED_KEY = ->(issue) { [issue['issueType'], issue['message'], issue['sourceURL'].to_s.split('#', 2).first] }
 
   def self.git(*arguments)
     output, _error, status = Open3.capture3('git', *arguments)
@@ -49,10 +46,6 @@ module CompilerWarnings
     nil
   end
 
-  def self.sorted(warnings)
-    warnings.sort_by { |warning| [warning['path'], warning['start_line'], warning['message']] }
-  end
-
   def self.collect(root:, bundles:, tracked_files:, reader: method(:read_build_results))
     root = File.realpath(root)
     tracked = tracked_files.to_set
@@ -75,8 +68,10 @@ module CompilerWarnings
         message = issue.fetch('message')
         location = source_location(issue['sourceURL'])
         unless location
-          # Keep the structured issue, including project/target context.
-          unlocated[UNLOCATED_KEY.call(issue)] = issue
+          # Keep the structured issue, including project/target context. Ignore
+          # timestamp fragments when deduplicating warnings without a line.
+          source = issue['sourceURL'].to_s.split('#', 2).first
+          unlocated[[issue['issueType'], message, source]] = issue
           next
         end
         source, line = location
@@ -87,38 +82,22 @@ module CompilerWarnings
         candidates << File.realpath(absolute) if File.exist?(absolute)
         paths = candidates.map { |candidate| Pathname.new(candidate).relative_path_from(Pathname.new(root)).to_s }
         path = paths.find { |candidate| tracked.include?(candidate) } || paths.last
-        warning = {
+        key = [path, line, message]
+        destination = tracked.include?(path) ? annotations : untracked
+        destination[key] = {
           'path' => path, 'start_line' => line, 'end_line' => line,
           'annotation_level' => 'warning', 'title' => 'Compiler warning', 'message' => message
         }
-        (tracked.include?(path) ? annotations : untracked)[ANNOTATION_KEY.call(warning)] = warning
       rescue StandardError => error
         # Skip only the malformed issue and keep the rest of the bundle.
         errors << { 'path' => bundle, 'message' => "Skipped an issue: #{error.message}" }
       end
     end
+    sort = ->(warnings) { warnings.values.sort_by { |a| [a['path'], a['start_line'], a['message']] } }
     {
       'result_bundles' => bundles, 'result_errors' => errors, 'incomplete_reasons' => incomplete,
-      'annotations' => sorted(annotations.values), 'untracked_warnings' => sorted(untracked.values),
+      'annotations' => sort.call(annotations), 'untracked_warnings' => sort.call(untracked),
       'unlocated_warnings' => unlocated.values
-    }
-  end
-
-  # Combines reports collected by parallel jobs that built overlapping targets,
-  # so each warning is published once.
-  def self.merge(reports)
-    unique = lambda do |field, key|
-      reports.flat_map { |report| report.fetch(field, []) }.to_h { |warning| [key.call(warning), warning] }.values
-    end
-    empty = reports.count { |report| report.fetch('result_bundles').empty? }
-    {
-      'result_bundles' => reports.flat_map { |report| report.fetch('result_bundles') },
-      'result_errors' => reports.flat_map { |report| report.fetch('result_errors', []) },
-      'incomplete_reasons' => reports.flat_map { |report| report.fetch('incomplete_reasons', []) } +
-        (empty.positive? ? ["#{empty} reports contain no result bundles."] : []),
-      'annotations' => sorted(unique.call('annotations', ANNOTATION_KEY)),
-      'untracked_warnings' => sorted(unique.call('untracked_warnings', ANNOTATION_KEY)),
-      'unlocated_warnings' => unique.call('unlocated_warnings', UNLOCATED_KEY)
     }
   end
 
@@ -296,25 +275,16 @@ module CompilerWarnings
   def self.run(arguments, api: nil, reader: method(:read_build_results))
     options = { publish: false }
     OptionParser.new do |parser|
-      parser.banner = 'Usage: ruby scripts/annotate_compiler_warnings.rb [--publish] [--reports GLOB [--expected-reports COUNT]]'
+      parser.banner = 'Usage: ruby scripts/annotate_compiler_warnings.rb [--publish]'
       parser.on('--publish', 'Publish warnings in files changed by the PR using the GitHub Checks API') { options[:publish] = true }
-      parser.on('--reports GLOB', 'Merge reports saved by earlier runs instead of reading result bundles') { |glob| options[:reports] = glob }
-      parser.on('--expected-reports COUNT', Integer, 'Number of reports --reports must find') { |count| options[:expected_reports] = count }
     end.parse!(arguments)
     raise 'Unexpected arguments' unless arguments.empty?
 
     root = git('rev-parse', '--show-toplevel').strip
     Dir.chdir(root) do
       FileUtils.mkdir_p('build')
-      if options[:reports]
-        paths = Dir.glob(options[:reports]).sort
-        report = merge(paths.map { |path| JSON.parse(File.read(path)) })
-        expected = options[:expected_reports]
-        report['incomplete_reasons'] << "Expected #{expected} reports but found #{paths.length}." if expected && paths.length < expected
-      else
-        bundles = Dir.glob(RESULT_PATTERN).select { |path| File.directory?(path) }.sort
-        report = collect(root: root, bundles: bundles, tracked_files: git('ls-files', '-z').split("\0"), reader: reader)
-      end
+      bundles = Dir.glob(RESULT_PATTERN).select { |path| File.directory?(path) }.sort
+      report = collect(root: root, bundles: bundles, tracked_files: git('ls-files', '-z').split("\0"), reader: reader)
       report['incomplete_reasons'] << 'The job was cancelled; some targets may not have been compiled.' if ENV['JOB_STATUS'] == 'cancelled'
       report['sha'] = git('rev-parse', 'HEAD').strip
       # Save the collected diagnostics first, even if PR-head mapping or publishing fails.

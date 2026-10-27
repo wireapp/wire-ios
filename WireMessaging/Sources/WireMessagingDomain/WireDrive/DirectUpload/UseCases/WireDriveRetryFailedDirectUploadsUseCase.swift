@@ -16,8 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-package import Foundation
-
 /// Retries every Wire Drive direct upload that failed and can still be retried.
 package struct WireDriveRetryFailedDirectUploadsUseCase: WireDriveRetryFailedDirectUploadsUseCaseProtocol {
 

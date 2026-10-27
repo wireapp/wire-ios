@@ -17,10 +17,11 @@
 //
 
 package import Combine
+
 import Foundation
 import WireLogging
-package import SwiftUI
-package import WireMessagingDomain
+import SwiftUI
+import WireMessagingDomain
 
 private typealias Strings = L10n.Localizable.Conversation.WireCells
 private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
