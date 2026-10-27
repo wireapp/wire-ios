@@ -197,38 +197,38 @@
 
 // MARK: - Shared Drive uploads
 
-"conversation.wireCells.files.upload.menu.upload" = "Upload";
-"conversation.wireCells.files.upload.menu.file" = "Upload file";
-"conversation.wireCells.files.upload.menu.media" = "Upload photo or video";
+"conversation.wireCells.files.upload.menu.upload" = "Hochladen";
+"conversation.wireCells.files.upload.menu.file" = "Datei hochladen";
+"conversation.wireCells.files.upload.menu.media" = "Foto oder Video hochladen";
 
-"conversation.wireCells.files.upload.destination" = "to %@";
+"conversation.wireCells.files.upload.destination" = "auf %@";
 
-"conversation.wireCells.files.upload.uploadingFile" = "Uploading file...";
-"conversation.wireCells.files.upload.uploadedFile" = "Uploaded";
-"conversation.wireCells.files.upload.failedFile" = "Couldn't upload file";
+"conversation.wireCells.files.upload.uploadingFile" = "Datei wird hochgeladen...";
+"conversation.wireCells.files.upload.uploadedFile" = "Hochgeladen";
+"conversation.wireCells.files.upload.failedFile" = "Datei nicht hochgeladen";
 
-"conversation.wireCells.files.upload.uploadingOne" = "Uploading 1 file";
-"conversation.wireCells.files.upload.uploadingMany" = "Uploading %d files";
-"conversation.wireCells.files.upload.completeOne" = "Upload complete";
-"conversation.wireCells.files.upload.completeMany" = "%d of %d uploaded";
-"conversation.wireCells.files.upload.progress" = "%d of %d uploaded";
-"conversation.wireCells.files.upload.failedOne" = "Couldn't upload file";
-"conversation.wireCells.files.upload.failedMany" = "Couldn't upload %d files";
-"conversation.wireCells.files.upload.someFailedOne" = "1 couldn't upload";
-"conversation.wireCells.files.upload.someFailedMany" = "%d couldn't upload";
-"conversation.wireCells.files.upload.tapToReview" = "Tap to review";
+"conversation.wireCells.files.upload.uploadingOne" = "Eine Datei hochladen";
+"conversation.wireCells.files.upload.uploadingMany" = "%d Dateien hochladen";
+"conversation.wireCells.files.upload.completeOne" = "Upload abgeschlossen";
+"conversation.wireCells.files.upload.completeMany" = "%d von %d hochgeladen";
+"conversation.wireCells.files.upload.progress" = "%d von %d hochgeladen";
+"conversation.wireCells.files.upload.failedOne" = "Datei nicht hochgeladen";
+"conversation.wireCells.files.upload.failedMany" = "%d Dateien nicht hochgeladen";
+"conversation.wireCells.files.upload.someFailedOne" = "1 nicht hochgeladen";
+"conversation.wireCells.files.upload.someFailedMany" = "%d nicht hochgeladen";
+"conversation.wireCells.files.upload.tapToReview" = "Zum Überprüfen auswählen";
 
 "conversation.wireCells.files.upload.cancel" = "Abbrechen";
-"conversation.wireCells.files.upload.cancelAll" = "Cancel all";
+"conversation.wireCells.files.upload.cancelAll" = "Alle abbrechen";
 "conversation.wireCells.files.upload.retry" = "Wiederholen";
-"conversation.wireCells.files.upload.retryAll" = "Retry all";
+"conversation.wireCells.files.upload.retryAll" = "Alle wiederholen";
 
-"conversation.wireCells.files.upload.tooManyFiles.title" = "Too many files";
-"conversation.wireCells.files.upload.tooManyFiles.message" = "You can upload up to %d files at a time.";
-"conversation.wireCells.files.upload.prepareFailed.title" = "Upload couldn't start";
-"conversation.wireCells.files.upload.prepareFailed.message" = "\"%@\" couldn't be prepared for upload. Make sure the file is available and your device has enough free storage.";
-"conversation.wireCells.files.upload.importFailed.title" = "Couldn't import files";
-"conversation.wireCells.files.upload.importFailed.message" = "Some of the selected files couldn't be imported, so they weren't uploaded.";
+"conversation.wireCells.files.upload.tooManyFiles.title" = "Zu viele Dateien";
+"conversation.wireCells.files.upload.tooManyFiles.message" = "Sie können bis zu %d Dateien gleichzeitig hochladen.";
+"conversation.wireCells.files.upload.prepareFailed.title" = "Upload konnte nicht beginnen";
+"conversation.wireCells.files.upload.prepareFailed.message" = "„%@“ konnte nicht für den Upload vorbereitet werden. Stellen Sie sicher, dass die Datei verfügbar ist und auf Ihrem Gerät genügend Speicherplatz vorhanden ist.";
+"conversation.wireCells.files.upload.importFailed.title" = "Dateien konnten nicht importiert werden";
+"conversation.wireCells.files.upload.importFailed.message" = "Einige der ausgewählten Dateien konnten nicht hochgeladen werden.";
 "conversation.wireCells.files.upload.permissionWarning.title" = "Wire benötigt Zugriff auf Ihre Fotos.";
 "conversation.wireCells.files.upload.permissionWarning.restrictions.message" = "Wire konnte nicht auf Ihre Bibliothek zugreifen, da Einschränkungen aktiviert sind.";
 "conversation.wireCells.files.upload.permissionWarning.denied.message" = "Erlauben Sie Wire Zugriff auf Ihre Fotos in den Einstellungen.";

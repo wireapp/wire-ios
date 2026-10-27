@@ -197,38 +197,38 @@
 
 // MARK: - Shared Drive uploads
 
-"conversation.wireCells.files.upload.menu.upload" = "Upload";
-"conversation.wireCells.files.upload.menu.file" = "Upload file";
-"conversation.wireCells.files.upload.menu.media" = "Upload photo or video";
+"conversation.wireCells.files.upload.menu.upload" = "Загрузить";
+"conversation.wireCells.files.upload.menu.file" = "Загрузить файл";
+"conversation.wireCells.files.upload.menu.media" = "Загрузить фото или видео";
 
-"conversation.wireCells.files.upload.destination" = "to %@";
+"conversation.wireCells.files.upload.destination" = "в %@";
 
-"conversation.wireCells.files.upload.uploadingFile" = "Uploading file...";
-"conversation.wireCells.files.upload.uploadedFile" = "Uploaded";
-"conversation.wireCells.files.upload.failedFile" = "Couldn't upload file";
+"conversation.wireCells.files.upload.uploadingFile" = "Загрузка файла...";
+"conversation.wireCells.files.upload.uploadedFile" = "Загружено";
+"conversation.wireCells.files.upload.failedFile" = "Не удалось загрузить файл";
 
-"conversation.wireCells.files.upload.uploadingOne" = "Uploading 1 file";
-"conversation.wireCells.files.upload.uploadingMany" = "Uploading %d files";
-"conversation.wireCells.files.upload.completeOne" = "Upload complete";
-"conversation.wireCells.files.upload.completeMany" = "%d of %d uploaded";
-"conversation.wireCells.files.upload.progress" = "%d of %d uploaded";
-"conversation.wireCells.files.upload.failedOne" = "Couldn't upload file";
-"conversation.wireCells.files.upload.failedMany" = "Couldn't upload %d files";
-"conversation.wireCells.files.upload.someFailedOne" = "1 couldn't upload";
-"conversation.wireCells.files.upload.someFailedMany" = "%d couldn't upload";
-"conversation.wireCells.files.upload.tapToReview" = "Tap to review";
+"conversation.wireCells.files.upload.uploadingOne" = "Загрузка 1 файла";
+"conversation.wireCells.files.upload.uploadingMany" = "Загрузка %d файлов";
+"conversation.wireCells.files.upload.completeOne" = "Загрузка завершена";
+"conversation.wireCells.files.upload.completeMany" = "%d из %d загружено";
+"conversation.wireCells.files.upload.progress" = "%d из %d загружено";
+"conversation.wireCells.files.upload.failedOne" = "Не удалось загрузить файл";
+"conversation.wireCells.files.upload.failedMany" = "Не удалось загрузить %d файлов";
+"conversation.wireCells.files.upload.someFailedOne" = "Не удалось загрузить 1";
+"conversation.wireCells.files.upload.someFailedMany" = "Не удалось загрузить %d";
+"conversation.wireCells.files.upload.tapToReview" = "Выбрать для проверки";
 
 "conversation.wireCells.files.upload.cancel" = "Отмена";
-"conversation.wireCells.files.upload.cancelAll" = "Cancel all";
+"conversation.wireCells.files.upload.cancelAll" = "Отменить все";
 "conversation.wireCells.files.upload.retry" = "Повторить";
-"conversation.wireCells.files.upload.retryAll" = "Retry all";
+"conversation.wireCells.files.upload.retryAll" = "Повторить все";
 
-"conversation.wireCells.files.upload.tooManyFiles.title" = "Too many files";
-"conversation.wireCells.files.upload.tooManyFiles.message" = "You can upload up to %d files at a time.";
-"conversation.wireCells.files.upload.prepareFailed.title" = "Upload couldn't start";
-"conversation.wireCells.files.upload.prepareFailed.message" = "\"%@\" couldn't be prepared for upload. Make sure the file is available and your device has enough free storage.";
-"conversation.wireCells.files.upload.importFailed.title" = "Couldn't import files";
-"conversation.wireCells.files.upload.importFailed.message" = "Some of the selected files couldn't be imported, so they weren't uploaded.";
+"conversation.wireCells.files.upload.tooManyFiles.title" = "Слишком много файлов";
+"conversation.wireCells.files.upload.tooManyFiles.message" = "Вы можете одновременно загрузить до %d файлов.";
+"conversation.wireCells.files.upload.prepareFailed.title" = "Не удалось начать загрузку";
+"conversation.wireCells.files.upload.prepareFailed.message" = "%@ не удалось подготовить к загрузке. Убедитесь, что файл доступен и на вашем устройстве достаточно свободного места.";
+"conversation.wireCells.files.upload.importFailed.title" = "Не удалось импортировать файлы";
+"conversation.wireCells.files.upload.importFailed.message" = "Некоторые из выбранных файлов не могут быть загружены.";
 "conversation.wireCells.files.upload.permissionWarning.title" = "Wire необходим доступ к вашим фото";
 "conversation.wireCells.files.upload.permissionWarning.restrictions.message" = "Wire не может получить доступ к библиотеке, поскольку включены ограничения.";
 "conversation.wireCells.files.upload.permissionWarning.denied.message" = "Перейдите в Настройки и разрешите Wire доступ к вашим фото.";
