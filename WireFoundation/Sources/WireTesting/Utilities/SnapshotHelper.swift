@@ -102,10 +102,12 @@ public struct SnapshotHelper {
 
     public func withPreferredContentSizeCategory(_ category: UIContentSizeCategory) -> Self {
         var helper = self
-        helper.traits = UITraitCollection(traitsFrom: [
-            helper.traits,
-            UITraitCollection(preferredContentSizeCategory: category)
-        ])
+        helper.traits = UITraitCollection(
+            traitsFrom: [
+                helper.traits,
+                UITraitCollection(preferredContentSizeCategory: category)
+            ]
+        )
         return helper
     }
 
