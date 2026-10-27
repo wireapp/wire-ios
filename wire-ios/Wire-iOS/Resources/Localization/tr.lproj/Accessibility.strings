@@ -39,6 +39,7 @@
 "conversation.timerButton.description" = "Set a timer for self-deleting messages";
 "conversation.mentionButton.description" = "Birinden bahset";
 "conversation.cameraButton.description" = "Take or select a photo";
+"conversation.camera.maximizeButton.description" = "Maximize view";
 "conversation.sketchButton.description" = "Open sketch to draw or write";
 "conversation.gifButton.description" = "GIF seç";
 "conversation.audioButton.description" = "Sesli mesaj kaydet";
