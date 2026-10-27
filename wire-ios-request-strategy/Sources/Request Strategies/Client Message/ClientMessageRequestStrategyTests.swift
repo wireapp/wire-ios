@@ -20,6 +20,7 @@ import GenericMessageProtocol
 import WireTransport
 import XCTest
 
+@testable import WireDataModel
 @testable import WireDataModelSupport
 @testable import WireRequestStrategy
 @testable import WireRequestStrategySupport

@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import GenericMessageProtocol
 import WireDataModel
 import WireImages
 import WireLinkPreview
@@ -68,7 +69,7 @@ class LinkPreviewPreprocessorTests: MessagingTestBase {
 
     func createMessage(
         text: String = "text message 123",
-        mentions: [Mention] = [],
+        mentions: [WireDataModel.Mention] = [],
         state: ZMLinkPreviewState = .waitingToBeProcessed,
         isEphemeral: Bool = false
     ) -> ZMClientMessage {

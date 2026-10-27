@@ -675,73 +675,85 @@ private extension MessageSender {
         try await messageDependencyResolver.waitForDependenciesToResolve(for: message)
         try Task.checkCancellation()
 
-        try await withBackgroundTask(name: "send queued message", executer: backgroundTaskExecuter) { [self] in
-            for retry in 0...maxRetryAttempts {
-                try Task.checkCancellation()
-                let attempt = try await context.perform {
-                    guard self.context.zm_isValidContext else { throw MessageOutboxError.staleAttempt }
-                    guard self.reachability?.mayBeReachable != false else {
-                        throw MessageSendError.outboxWaitingForConnection
-                    }
-                    guard let content = message.underlyingMessage else { throw MessageOutboxError.invalidPayload }
-                    let attempt = try row.prepareOutboxAttempt(payload: content.serializedData())
-                    do {
-                        try self.context.save()
-                    } catch {
-                        try? row.rescheduleOutboxAttempt(attempt.identifier)
-                        throw error
-                    }
-                    return attempt
+        try await withBackgroundTask(name: "send queued message", executer: backgroundTaskExecuter) {
+            [self] () async throws -> Void in
+            try await sendOutboxAttempts(message, row: row)
+        }
+    }
+
+    // Keep the retry state machine outside the generic background-task closure so the compiler can
+    // type-check its context operations independently and report errors at their actual source.
+    func sendOutboxAttempts(_ message: any SendableMessage, row: ZMMessage) async throws {
+        for retry in 0...maxRetryAttempts {
+            try Task.checkCancellation()
+            let attempt = try await context.perform {
+                guard self.context.zm_isValidContext else { throw MessageOutboxError.staleAttempt }
+                guard self.reachability?.mayBeReachable != false else {
+                    throw MessageSendError.outboxWaitingForConnection
                 }
-
+                guard let content = message.underlyingMessage else { throw MessageOutboxError.invalidPayload }
+                let attempt = try row.prepareOutboxAttempt(payload: content.serializedData())
                 do {
-                    try await attemptToSend(message: message, outboxAttempt: attempt)
-                    try await finishOutboxAttempt(attempt, message: message)
-                    RequestAvailableNotification.notifyNewRequestsAvailable(nil)
-                    return
+                    try self.context.save()
                 } catch {
-                    if let networkError = error as? NetworkError,
-                       let response = networkError.response, response.result == .success {
-                        // Server acceptance is known even if its recipient-status payload could not be decoded.
-                        WireLogger.messaging.warn("outbox send accepted with unreadable recipient status")
-                        try await finishOutboxAttempt(attempt, message: message, response: response)
-                        RequestAvailableNotification.notifyNewRequestsAvailable(nil)
-                        return
-                    }
-
-                    // A transient error alone says nothing about delivery. Only the scheduler's
-                    // explicit pre-submission marker permits automatic connectivity retry.
-                    let notSubmitted = (error as? NetworkError)?.response?.transportSessionError?
-                        .userInfo[ZMTransportSessionRequestNotSubmittedKey] as? Bool == true
-                    let canRepair = retry < maxRetryAttempts && isRepairableOutboxRejection(error)
-                    try await context.perform {
-                        guard self.isCurrentOutboxAttempt(attempt.identifier, row: row) else {
-                            throw MessageOutboxError.staleAttempt
-                        }
-                        if error is OutboxHandoffPersistenceError {
-                            try row.failOutboxAttempt(attempt.identifier)
-                            row.expirationDate = nil
-                        } else if notSubmitted || canRepair || row.outboxState == .preparing {
-                            let retryDate = notSubmitted
-                                ? Date(timeIntervalSinceNow: TimeInterval(min(30, max(1, row.outboxAttemptCount))))
-                                : nil
-                            try row.rescheduleOutboxAttempt(attempt.identifier, notBefore: retryDate)
-                            row.expirationDate = nil
-                        } else if self.isDefiniteOutboxRejection(error) {
-                            try row.failOutboxAttempt(attempt.identifier)
-                        } else {
-                            try row.markOutboxAttemptUncertain(attempt.identifier)
-                        }
-                        try self.context.save()
-                    }
-                    if notSubmitted { throw MessageSendError.outboxWaitingForConnection }
-                    if canRepair {
-                        try await repairOutboxRejection(error, message: message, attempt: attempt)
-                        continue
-                    }
-                    await resetOutboxConversationIfNeeded(error, message: message)
+                    try? row.rescheduleOutboxAttempt(attempt.identifier)
                     throw error
                 }
+                return attempt
+            }
+
+            do {
+                try await attemptToSend(message: message, outboxAttempt: attempt)
+                try await finishOutboxAttempt(attempt, message: message)
+                RequestAvailableNotification.notifyNewRequestsAvailable(nil)
+                return
+            } catch {
+                if let networkError = error as? NetworkError,
+                   let response = networkError.response, response.result == .success {
+                    // Server acceptance is known even if its recipient-status payload could not be decoded.
+                    WireLogger.messaging.warn("outbox send accepted with unreadable recipient status")
+                    try await finishOutboxAttempt(attempt, message: message, response: response)
+                    RequestAvailableNotification.notifyNewRequestsAvailable(nil)
+                    return
+                }
+
+                // A transient error alone says nothing about delivery. Only the scheduler's
+                // explicit pre-submission marker permits automatic connectivity retry.
+                let notSubmitted: Bool
+                if let transportError = (error as? NetworkError)?.response?.transportSessionError {
+                    let errorInfo = (transportError as NSError).userInfo
+                    notSubmitted = errorInfo[ZMTransportSessionRequestNotSubmittedKey] as? Bool == true
+                } else {
+                    notSubmitted = false
+                }
+                let canRepair = retry < maxRetryAttempts && isRepairableOutboxRejection(error)
+                try await context.perform {
+                    guard self.isCurrentOutboxAttempt(attempt.identifier, row: row) else {
+                        throw MessageOutboxError.staleAttempt
+                    }
+                    if error is OutboxHandoffPersistenceError {
+                        try row.failOutboxAttempt(attempt.identifier)
+                        row.removeExpirationDate()
+                    } else if notSubmitted || canRepair || row.outboxState == .preparing {
+                        let retryDate: Date? = notSubmitted
+                            ? Date(timeIntervalSinceNow: TimeInterval(min(30, max(1, row.outboxAttemptCount))))
+                            : nil
+                        try row.rescheduleOutboxAttempt(attempt.identifier, notBefore: retryDate)
+                        row.removeExpirationDate()
+                    } else if self.isDefiniteOutboxRejection(error) {
+                        try row.failOutboxAttempt(attempt.identifier)
+                    } else {
+                        try row.markOutboxAttemptUncertain(attempt.identifier)
+                    }
+                    try self.context.save()
+                }
+                if notSubmitted { throw MessageSendError.outboxWaitingForConnection }
+                if canRepair {
+                    try await repairOutboxRejection(error, message: message, attempt: attempt)
+                    continue
+                }
+                await resetOutboxConversationIfNeeded(error, message: message)
+                throw error
             }
         }
     }
@@ -809,7 +821,7 @@ private extension MessageSender {
             if let response { message.delivered(with: response) }
             row.markAsSent()
             try row.completeOutboxAttempt(attempt.identifier)
-            row.expirationDate = nil
+            row.removeExpirationDate()
             if needsPreviewUpdate {
                 // Preview work may finish during HTTP. Send it as a new operation after acceptance
                 // rather than replacing content that recipients may already have received.

@@ -1,6 +1,6 @@
 # Offline pending messages: implementation plan
 
-Last updated: 2026-10-26
+Last updated: 2026-10-27
 
 Jira issue: [WPB-26307](https://wearezeta.atlassian.net/browse/WPB-26307)
 
@@ -20,6 +20,9 @@ agent execution. See the feature validation walkthrough below.
 Exception authorized 2026-10-26: run `build-for-testing` for `WireDataModel` on
 `iPhone 17 (Tests)` and fix compiler errors. Test execution, lint, and formatting
 remain user-owned. See the build record below for the scoped result.
+Additional exception authorized 2026-10-27: run `build-for-testing` for
+`WireRequestStrategy` on the same simulator and fix build blockers. The final
+build succeeded; no tests, lint, or formatting were run.
 
 This is the working checklist for investigation, design, implementation, and rollout.
 Check an item only when its result has been verified. Record relevant PRs and test
@@ -65,6 +68,8 @@ acceptance remain outstanding.
 Update 2026-10-26: the explicitly requested `WireDataModel` build-for-testing now
 succeeds on `iPhone 17 (Tests)` after the fixes recorded below. This does not
 establish app/other-scheme compilation or runtime acceptance.
+Update 2026-10-27: `WireRequestStrategy` build-for-testing also succeeds on that
+simulator after the compiler/test-import fixes below. Runtime acceptance remains open.
 Uncertain-delivery automatic retry policy remains unresolved before broad activation;
 the development implementation exposes manual Retry while retaining frozen content.
 
@@ -1496,6 +1501,41 @@ xcodebuild build-for-testing \
   -destination 'platform=iOS Simulator,name=iPhone 17 (Tests)' \
   CODE_SIGNING_ALLOWED=NO
 ```
+
+## Request-strategy compiler follow-up (2026-10-27)
+
+The user reported the same read-only `expirationDate` assignment error in
+`MessageSender.swift`. Replaced all three direct clears (handoff-save failure,
+rescheduling, and completion) with the existing `removeExpirationDate()` API.
+
+The user then authorized `WireRequestStrategy` build-for-testing. Reproduced
+`failed to produce diagnostic for expression` at the outbox background-task
+closure. Explicit `Void`/`Date?` annotations alone did not resolve it. Extracting
+the retry state machine into `sendOutboxAttempts` narrowed the diagnostic to the
+transport-error `userInfo` expression. Splitting that expression and explicitly
+bridging to `NSError` allowed the production target to compile. `[self]` remains;
+the reported non-Sendable captures are warnings, separate from the blocking error.
+
+The test build also exposed missing `@testable import WireDataModel` in
+`ClientMessageRequestStrategyTests` and missing `GenericMessageProtocol` in
+`LinkPreviewPreprocessorTests`; added these and qualified the latter's model
+`Mention` parameter to avoid a protobuf name collision.
+
+Final command returned exit 0 and `TEST BUILD SUCCEEDED`:
+
+```sh
+xcodebuild build-for-testing \
+  -workspace wire-ios-mono.xcworkspace \
+  -scheme WireRequestStrategy \
+  -testPlan AllTests \
+  -destination 'platform=iOS Simulator,name=iPhone 17 (Tests)' \
+  CODE_SIGNING_ALLOWED=NO
+```
+
+Log: `/private/tmp/wpb-26307-wire-request-strategy-build-for-testing.log`.
+No tests, lint, or formatting were run. The app and sync-engine schemes and
+runtime scenarios still need validation. Fixes are uncommitted for review;
+the user's unrelated `.ruby-version` and `Gemfile.lock` edits are untouched.
 
 ## Explanatory comment review (2026-10-26)
 
