@@ -1056,6 +1056,8 @@
 
 // Edit message
 "message.menu.edit.title" = "Edit";
+"message.edit_pending_failed.title" = "Message Is Being Sent";
+"message.edit_pending_failed.message" = "You can edit this message once it has been sent.";
 
 // Accept connection request
 "profile.connection_request_dialog.title" = "Accept?";

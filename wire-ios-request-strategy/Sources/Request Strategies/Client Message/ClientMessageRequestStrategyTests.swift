@@ -396,6 +396,29 @@ extension ClientMessageRequestStrategyTests {
         }
     }
 
+    func testThatItMarksSendAttemptBeforeSending_OfflinePendingMessages() {
+        // GIVEN
+        enableOfflinePendingMessages()
+        var message: ZMClientMessage!
+        var wasMarkedWhenSending: Bool?
+        var didComplete: XCTestExpectation!
+        syncMOC.performAndWait {
+            self.mockMessageSender.sendMessageMessage_MockMethod = { _ in
+                wasMarkedWhenSending = await self.syncMOC.perform { message.sendAttemptStarted }
+            }
+            message = try! self.groupConversation.appendText(content: "Lorem ipsum") as? ZMClientMessage
+            self.syncMOC.saveOrRollback()
+            XCTAssertFalse(message.sendAttemptStarted)
+
+            // WHEN
+            didComplete = self.insert(message, isFresh: true)
+        }
+        wait(for: [didComplete], timeout: 5)
+
+        // THEN
+        XCTAssertEqual(wasMarkedWhenSending, true)
+    }
+
     func testThatItResendsWithSameNonceAfterGoingOffline_OfflinePendingMessages() {
         // GIVEN
         enableOfflinePendingMessages()

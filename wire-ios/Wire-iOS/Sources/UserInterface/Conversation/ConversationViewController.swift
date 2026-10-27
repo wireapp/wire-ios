@@ -844,6 +844,13 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
         mentions: [Mention]
     ) {
         contentViewController?.didFinishEditing(message)
+
+        if let newText, !newText.isEmpty, let clientMessage = message as? ZMClientMessage,
+           clientMessage.isEditableInPlace {
+            replacePendingText(of: clientMessage, with: newText, mentions: mentions)
+            return
+        }
+
         userSession.enqueue {
             if let newText,
                !newText.isEmpty || message.isMultipart {
@@ -853,6 +860,36 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
                 ZMMessage.deleteForEveryone(message)
             }
         }
+    }
+
+    /// Replaces the text of a message that hasn't been sent yet, without an edited marker. This happens on
+    /// the sync context, which also marks the message before sending it, so it can't race with a send.
+    private func replacePendingText(of message: ZMClientMessage, with text: String, mentions: [Mention]) {
+        let pendingText = message.makePendingText(text, mentions: mentions)
+        let fetchLinkPreview = !Settings.disableLinkPreviews
+        let objectID = message.objectID
+        let syncContext = userSession.contextProvider.syncContext
+
+        syncContext.perform {
+            let syncMessage = try? syncContext.existingObject(with: objectID) as? ZMClientMessage
+            guard syncMessage?.replacePendingText(with: pendingText, fetchLinkPreview: fetchLinkPreview) == true else {
+                DispatchQueue.main.async { [weak self] in
+                    self?.presentPendingEditFailedAlert()
+                }
+                return
+            }
+            syncContext.saveOrRollback()
+        }
+    }
+
+    private func presentPendingEditFailedAlert() {
+        let alert = UIAlertController(
+            title: L10n.Localizable.Message.EditPendingFailed.title,
+            message: L10n.Localizable.Message.EditPendingFailed.message,
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(title: L10n.Localizable.General.ok, style: .default))
+        present(alert, animated: true)
     }
 
     func conversationInputBarViewControllerDidCancelEditing(_ message: ZMConversationMessage) {

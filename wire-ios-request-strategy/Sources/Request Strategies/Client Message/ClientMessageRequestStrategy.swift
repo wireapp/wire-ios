@@ -217,9 +217,21 @@ extension ClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
             await reachability.waitUntilMayBeReachable()
 
             let shouldStillBeSent = await context.perform {
-                !message.isZombieObject
-                    && message.underlyingMessage != nil
-                    && Self.shouldBeSentPredicate(context: self.context).evaluate(with: message)
+                guard
+                    !message.isZombieObject,
+                    message.underlyingMessage != nil,
+                    Self.shouldBeSentPredicate(context: self.context).evaluate(with: message)
+                else {
+                    return false
+                }
+
+                // From now on the text may reach recipients, so it must no longer be replaced in place.
+                // Both happen on this context, so an in-place edit can't interleave with the send.
+                if !message.sendAttemptStarted {
+                    message.sendAttemptStarted = true
+                    self.context.saveOrRollback()
+                }
+                return true
             }
             guard shouldStillBeSent else { throw PendingMessageError.noLongerNeeded }
 
