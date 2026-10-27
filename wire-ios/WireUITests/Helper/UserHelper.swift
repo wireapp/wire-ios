@@ -72,6 +72,14 @@ final class UserHelper {
         return instance
     }
 
+    /// Keeps separate access tokens for concurrent requests from different users.
+    static func makeIsolatedInstance(
+        apiVersion: APIVersion = APIVersion.productionVersions.max()!,
+        backend: BackendTarget = .staging
+    ) -> UserHelper {
+        UserHelper(apiVersion: apiVersion, backend: backend)
+    }
+
     static var `default`: UserHelper {
         instance(
             apiVersion: APIVersion.productionVersions.max()!,
@@ -882,11 +890,20 @@ final class UserHelper {
 
     /// Unlock and enable Prevent Adminless Groups feature
     /// - Parameter teamID: teamID where this needs to be enabled
-    func unlockAndEnablePreventAdminlessGroupsFeature(teamID: UUID) async throws {
+    func unlockAndEnablePreventAdminlessGroupsFeature(
+        teamID: UUID,
+        deletionTimeout: String = "7d",
+        reminderTimeouts: [String] = ["2d", "4d", "6d"]
+    ) async throws {
         let backOffice = BackOffice(backendURL: backendURL)
         let basicAuth = basicAuth()
         try await backOffice.unlockPreventAdminlessGroupsFeature(teamId: teamID.uuidString, basicAuth: basicAuth)
-        try await backOffice.enablePreventAdminlessGroupsFeature(teamId: teamID.uuidString, basicAuth: basicAuth)
+        try await backOffice.enablePreventAdminlessGroupsFeature(
+            teamId: teamID.uuidString,
+            basicAuth: basicAuth,
+            deletionTimeout: deletionTimeout,
+            reminderTimeouts: reminderTimeouts
+        )
     }
 
     func connectDriveEnabledTeamUserWithGuestUser() async throws -> (userA: UserInfo, userB: UserInfo) {
@@ -956,6 +973,26 @@ final class UserHelper {
 
     func removeParticipant(userID: UserID, conversationID: ConversationID) async throws {
         try await conversationsAPI.removeParticipant(userID: userID, conversationID: conversationID)
+    }
+
+    func leaveConversation(
+        userID: UserID,
+        conversationID: ConversationID
+    ) async throws -> (statusCode: Int, errorLabel: String?) {
+        let url = backendURL
+            .appendingPathComponent(String(describing: apiVersion))
+            .appendingPathComponent("conversations/\(conversationID.domain)/\(conversationID.id)")
+            .appendingPathComponent("members/\(userID.domain)/\(userID.id)")
+        var request = URLRequest(url: url)
+        request.httpMethod = "DELETE"
+
+        let (data, response) = try await networkStack.apiService.executeRequest(request, requiringAccessToken: true)
+        if response.statusCode == 200 {
+            return (response.statusCode, nil)
+        }
+
+        let body = try JSONSerialization.jsonObject(with: data) as? [String: Any]
+        return (response.statusCode, body?["label"] as? String)
     }
 }
 
