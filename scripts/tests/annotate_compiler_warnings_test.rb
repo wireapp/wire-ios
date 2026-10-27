@@ -71,7 +71,7 @@ class CompilerWarningsTest < Minitest::Test
     assert_equal 2, report.fetch('annotations').length
   end
 
-  def test_ignores_dependencies_generated_files_and_paths_outside_repository
+  def test_records_dependencies_generated_files_and_paths_outside_repository_without_annotating_them
     report = collect([
       diagnostic(path: 'DerivedData/CachedSwiftPackages/Dependency.swift'),
       diagnostic(path: File.join(@root, '..', 'External.swift')),
@@ -79,6 +79,8 @@ class CompilerWarningsTest < Minitest::Test
       diagnostic(path: @source)
     ])
     assert_equal [@source], report.fetch('annotations').map { |annotation| annotation.fetch('path') }
+    assert_equal 3, report.fetch('untracked_warnings').length
+    assert_match(/Collected 4 unique compiler warnings/, CompilerWarnings.summary(report))
   end
 
   def test_deduplicates_the_same_warning_across_target_suffixes
@@ -121,7 +123,8 @@ class CompilerWarningsTest < Minitest::Test
     report = collect(['warning: Linker warning', 'warning: Linker warning',
                       diagnostic(line: 0), diagnostic.sub('warning:', 'error:'), 'note: More information'])
     assert_empty report.fetch('annotations')
-    assert_equal ['Linker warning'], report.fetch('unlocated_warnings')
+    assert_includes report.fetch('unlocated_warnings'), 'Linker warning'
+    assert_equal 2, report.fetch('unlocated_warnings').length
   end
 
   def test_publishes_hundreds_of_warnings_without_truncation_in_batches_of_50
@@ -131,7 +134,8 @@ class CompilerWarningsTest < Minitest::Test
     assert_equal [50, 50, 50, 50, 50, 50, 27], batches.map { |request| request[2]['output']['annotations'].length }
     assert_equal report.fetch('annotations'), batches.flat_map { |request| request[2]['output']['annotations'] }
     assert_equal 'built-sha', @api.requests.first[2].fetch('head_sha')
-    assert_equal({ 'status' => 'completed', 'conclusion' => 'success' }, @api.requests.last[2])
+    assert_equal 'completed', @api.requests.last[2].fetch('status')
+    assert_equal 'success', @api.requests.last[2].fetch('conclusion')
   end
 
   def test_creates_a_successful_check_without_annotations_when_logs_have_no_warnings
@@ -215,7 +219,7 @@ class CompilerWarningsTest < Minitest::Test
       FileUtils.mkdir_p('build')
       File.write('build/current.log', diagnostic)
       event_path = File.join(@root, 'event.json')
-      File.write(event_path, JSON.generate('pull_request' => { 'head' => { 'repo' => { 'full_name' => 'wireapp/wire-ios' } } }))
+      File.write(event_path, JSON.generate('pull_request' => { 'head' => { 'sha' => CompilerWarnings.git('rev-parse', 'HEAD').strip, 'repo' => { 'full_name' => 'wireapp/wire-ios' } } }))
       previous = ENV.to_h
       begin
         ENV['GITHUB_EVENT_PATH'] = event_path
@@ -227,5 +231,239 @@ class CompilerWarningsTest < Minitest::Test
         ENV.replace(previous)
       end
     end
+  end
+
+  def test_replaces_invalid_utf8_bytes_before_parsing
+    File.binwrite(@log, "unrelated binary \xFF\n#{diagnostic(message: "Invalid byte \xFF")}\n")
+    report = CompilerWarnings.collect(root: @root, logs: [@log], tracked_files: [@source])
+    assert_equal "Invalid byte \uFFFD", report.fetch('annotations').first.fetch('message')
+    assert report.fetch('annotations').first.fetch('message').valid_encoding?
+  end
+
+  def test_keeps_prefixed_linker_and_project_warnings
+    lines = ['ld: warning: duplicate libraries', '/path/Project.xcodeproj: warning: Deployment target is old']
+    report = collect(lines + lines)
+    assert_equal lines.sort, report.fetch('unlocated_warnings')
+    assert_match(/2 without source locations/, CompilerWarnings.summary(report))
+  end
+
+  def test_deduplicates_identical_line_annotations_at_different_columns
+    report = collect([diagnostic(column: 1), diagnostic(column: 20)])
+    assert_equal 1, report.fetch('annotations').length
+  end
+
+  def test_deduplicates_untracked_warnings_and_counts_them_when_no_repository_warnings_exist
+    warning = diagnostic(path: 'DerivedData/Dependency.swift')
+    report = collect([warning, warning])
+    assert_empty report.fetch('annotations')
+    assert_equal 1, report.fetch('untracked_warnings').length
+    publish(report)
+    assert_match(/Collected 1 unique compiler warnings/, @api.requests.last[2].fetch('output').fetch('summary'))
+    assert_match(/1 in untracked files/, @api.requests.last[2].fetch('output').fetch('summary'))
+  end
+
+  def fixture_commit(*paths)
+    assert system('git', 'add', '--', *paths)
+    assert system('git', '-c', 'commit.gpgsign=false', '-c', 'core.hooksPath=/dev/null',
+                  '-c', 'user.name=Test', '-c', 'user.email=test@example.com', 'commit', '-qm', 'Fixture change')
+    CompilerWarnings.git('rev-parse', 'HEAD').strip
+  end
+
+  def map_versions(head, built, lines)
+    in_repository do
+      File.write(@source, head.join("\n") + "\n")
+      head_sha = fixture_commit(@source)
+      File.write(@source, built.join("\n") + "\n")
+      built_sha = fixture_commit(@source)
+      report = collect(lines.map { |line| diagnostic(line: line) }).merge('sha' => built_sha)
+      yield CompilerWarnings.for_pr_head(report, head_sha)
+    end
+  end
+
+  def test_maps_lines_shifted_by_base_branch_insertions
+    map_versions(%w[one two three four], %w[prefix one two three four], [4]) do |report|
+      assert_equal 3, report.fetch('annotations').first.fetch('start_line')
+      assert_equal 4, report.fetch('build_annotations').first.fetch('start_line')
+      assert_empty report.fetch('unmapped_warnings')
+    end
+  end
+
+  def test_maps_lines_around_base_branch_deletions
+    map_versions(%w[one two three four], %w[one three four], [1, 2]) do |report|
+      assert_equal [1, 3], report.fetch('annotations').map { |warning| warning.fetch('start_line') }
+    end
+  end
+
+  def test_retains_changed_lines_in_the_report_instead_of_annotating_the_wrong_source
+    map_versions(%w[one two three four], %w[one replaced three four], [2, 3]) do |report|
+      assert_equal [3], report.fetch('annotations').map { |warning| warning.fetch('start_line') }
+      assert_equal [2], report.fetch('unmapped_warnings').map { |warning| warning.fetch('start_line') }
+      assert_equal 2, report.fetch('build_annotations').length
+      assert_match(/1 without matching PR-head source lines/, CompilerWarnings.summary(report))
+    end
+  end
+
+  def test_handles_multiple_hunks_and_insertions_at_the_start_of_a_file
+    map_versions(%w[one two three four five], %w[prefix one two three five], [1, 4, 5]) do |report|
+      assert_equal [3, 5], report.fetch('annotations').map { |warning| warning.fetch('start_line') }
+      assert_equal [1], report.fetch('unmapped_warnings').map { |warning| warning.fetch('start_line') }
+    end
+  end
+
+  def test_keeps_warnings_for_files_that_only_exist_in_the_merge_build_in_the_report
+    in_repository do
+      head_sha = CompilerWarnings.git('rev-parse', 'HEAD').strip
+      path = 'Sources/BaseOnly.swift'
+      File.write(path, "// only on the base branch\n")
+      built_sha = fixture_commit(path)
+      report = collect([diagnostic(path: path, line: 1)], [path]).merge('sha' => built_sha)
+      mapped = CompilerWarnings.for_pr_head(report, head_sha)
+      assert_empty mapped.fetch('annotations')
+      assert_equal [path], mapped.fetch('unmapped_warnings').map { |warning| warning.fetch('path') }
+    end
+  end
+
+  def test_maps_a_real_merge_build_from_a_depth_two_checkout
+    in_repository do
+      File.write(@source, "one\ntwo\nthree\nfour\n")
+      common = fixture_commit(@source)
+      assert system('git', 'checkout', '-qb', 'fixture-pr')
+      File.write('Sources/PROnly.swift', "// PR change\n")
+      pr_head = fixture_commit('Sources/PROnly.swift')
+      assert system('git', 'checkout', '-qb', 'fixture-base', common)
+      File.write(@source, "prefix\none\ntwo\nthree\nfour\n")
+      fixture_commit(@source)
+      assert system('git', 'checkout', '-q', 'fixture-pr')
+      assert system('git', '-c', 'commit.gpgsign=false', '-c', 'core.hooksPath=/dev/null',
+                    '-c', 'user.name=Test', '-c', 'user.email=test@example.com',
+                    'merge', '--quiet', '--no-edit', 'fixture-base')
+      report = collect([diagnostic(line: 4)]).merge('sha' => CompilerWarnings.git('rev-parse', 'HEAD').strip)
+      clone = File.join(@root, 'shallow-copy')
+      assert system('git', 'clone', '--quiet', '--depth=2', '--no-local', "file://#{@root}", clone)
+      Dir.chdir(clone) do
+        assert_equal 'true', CompilerWarnings.git('rev-parse', '--is-shallow-repository').strip
+        assert_equal 'commit', CompilerWarnings.git('cat-file', '-t', pr_head).strip
+        mapped = CompilerWarnings.for_pr_head(report, pr_head)
+        assert_equal 3, mapped.fetch('annotations').first.fetch('start_line')
+      end
+    end
+  end
+
+  def test_cleanup_failure_preserves_the_original_error_and_the_initial_neutral_check
+    original = IOError.new('Upload response lost')
+    api = FakeAPI.new
+    api.define_singleton_method(:request) do |method, path, body|
+      @requests << [method, path, body]
+      raise original if body.dig('output', 'annotations')
+      raise 'Cleanup also failed' if method == :patch
+
+      { 'id' => 123 }
+    end
+    raised = assert_raises(IOError) do
+      CompilerWarnings.publish(api: api, repository: 'wireapp/wire-ios', sha: 'built-sha',
+                               name: 'Compiler warnings', report: collect([diagnostic]), details_url: 'https://example.com')
+    end
+    assert_same original, raised
+    assert_equal 'completed', api.requests.first[2].fetch('status')
+    assert_equal 'neutral', api.requests.first[2].fetch('conclusion')
+  end
+
+  def test_check_is_neutral_and_completed_even_before_uploading_annotations
+    publish(collect([diagnostic]))
+    assert_equal 'completed', @api.requests.first[2].fetch('status')
+    assert_equal 'neutral', @api.requests.first[2].fetch('conclusion')
+  end
+
+  def assert_cancellation_cleanup(exception)
+    api = FakeAPI.new
+    api.define_singleton_method(:request) do |method, path, body|
+      @requests << [method, path, body]
+      raise exception if body.dig('output', 'annotations')
+
+      { 'id' => 123 }
+    end
+    raised = assert_raises(exception.class) do
+      CompilerWarnings.publish(api: api, repository: 'wireapp/wire-ios', sha: 'built-sha',
+                               name: 'Compiler warnings', report: collect([diagnostic]), details_url: 'https://example.com')
+    end
+    assert_same exception, raised
+    assert_equal 'neutral', api.requests.last[2].fetch('conclusion')
+    assert_equal 'completed', api.requests.last[2].fetch('status')
+  end
+
+  def test_interrupt_completes_the_check_without_swallowing_the_interrupt
+    assert_cancellation_cleanup(Interrupt.new('Cancelled'))
+  end
+
+  def test_signal_exception_completes_the_check_without_swallowing_the_signal
+    assert_cancellation_cleanup(SignalException.new('TERM'))
+  end
+
+  class StubTransportAPI < CompilerWarnings::API
+    attr_reader :calls, :delays
+
+    def initialize(outcomes)
+      super(token: 'fixture-token', base_url: 'https://api.github.com')
+      @outcomes = outcomes
+      @calls = []
+      @delays = []
+    end
+
+    def perform(uri, request)
+      @calls << [uri, request]
+      outcome = @outcomes.shift
+      raise outcome if outcome.is_a?(Exception)
+
+      outcome
+    end
+
+    def sleep(seconds)
+      @delays << seconds
+    end
+  end
+
+  def http_response(status)
+    response = Net::HTTPResponse::CODE_TO_OBJ.fetch(status.to_s).new('1.1', status.to_s, 'Fixture response')
+    response.define_singleton_method(:body) { '{"id":123}' }
+    response
+  end
+
+  def test_retries_transient_metadata_update_errors_with_bounded_backoff
+    api = StubTransportAPI.new([Timeout::Error.new('Timeout'), http_response(502), http_response(200)])
+    assert_equal({ 'id' => 123 }, api.request(:patch, '/check-runs/123', { 'conclusion' => 'success' }))
+    assert_equal 3, api.calls.length
+    assert_equal [1, 2], api.delays
+  end
+
+  def test_stops_retrying_after_three_attempts
+    api = StubTransportAPI.new([http_response(503), http_response(503), http_response(503)])
+    assert_raises(CompilerWarnings::API::HTTPError) do
+      api.request(:patch, '/check-runs/123', { 'conclusion' => 'success' })
+    end
+    assert_equal 3, api.calls.length
+  end
+
+  def test_does_not_retry_authorization_errors
+    api = StubTransportAPI.new([http_response(403)])
+    assert_raises(CompilerWarnings::API::HTTPError) do
+      api.request(:patch, '/check-runs/123', { 'conclusion' => 'success' })
+    end
+    assert_empty api.delays
+  end
+
+  def test_does_not_replay_a_check_creation_after_an_ambiguous_failure
+    api = StubTransportAPI.new([http_response(503)])
+    assert_raises(CompilerWarnings::API::HTTPError) { api.request(:post, '/check-runs', { 'name' => 'Warnings' }) }
+    assert_equal 1, api.calls.length
+    assert_empty api.delays
+  end
+
+  def test_does_not_duplicate_appended_annotations_after_a_lost_response
+    api = StubTransportAPI.new([Timeout::Error.new('Response lost')])
+    assert_raises(Timeout::Error) do
+      api.request(:patch, '/check-runs/123', { 'output' => { 'annotations' => [{}] } })
+    end
+    assert_equal 1, api.calls.length
+    assert_empty api.delays
   end
 end

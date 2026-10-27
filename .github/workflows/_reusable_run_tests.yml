@@ -95,6 +95,8 @@ jobs:
         with:
           ref: ${{ inputs.branch }}
           lfs: 'true'
+          # Include the PR head parent for mapping merge-build warning locations.
+          fetch-depth: ${{ github.event_name == 'pull_request' && 2 || 1 }}
 
       - name: Materialize Git LFS files
         run: git lfs checkout
