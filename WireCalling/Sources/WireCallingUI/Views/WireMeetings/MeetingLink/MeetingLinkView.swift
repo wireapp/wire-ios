@@ -28,6 +28,9 @@ struct MeetingLinkView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.isClipboardEnabled) private var isClipboardEnabled
     @State private var viewModel: MeetingLinkViewModel
+    @State private var viewerContentHeight: CGFloat = 0
+    @State private var actionAreaHeight: CGFloat = 0
+    @State private var navigationTopInset: CGFloat = 0
 
     init(viewModel: MeetingLinkViewModel) {
         self.viewModel = viewModel
@@ -35,56 +38,157 @@ struct MeetingLinkView: View {
 
     var body: some View {
         NavigationStack {
-            VStack(spacing: 16) {
-                ScrollView {
-                    VStack(alignment: .leading, spacing: 20) {
-                        Text(Strings.description)
-                            .font(for: .body1)
-
-                        content
+            VStack(spacing: 0) {
+                formContent
+                    .overlay(alignment: .bottom) {
+                        if viewModel.copyConfirmation != nil {
+                            Text(Strings.copied)
+                                .font(for: .body2)
+                                .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
+                                .padding(12)
+                                .background(
+                                    ColorTheme.Backgrounds.surface.color,
+                                    in: RoundedRectangle(cornerRadius: 12)
+                                )
+                                .overlay(RoundedRectangle(cornerRadius: 12).stroke(ColorTheme.Strokes.outline.color))
+                                .padding(16)
+                                .accessibilityIdentifier(Locators.WireMeetings.MeetingLink.copied)
+                        }
                     }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(16)
-                }
-                .overlay(alignment: .bottom) {
-                    if viewModel.copyConfirmation != nil {
-                        Text(Strings.copied)
-                            .font(for: .body2)
-                            .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
-                            .padding(12)
-                            .background(ColorTheme.Backgrounds.surface.color, in: RoundedRectangle(cornerRadius: 12))
-                            .overlay(RoundedRectangle(cornerRadius: 12).stroke(ColorTheme.Strokes.outline.color))
-                            .padding(16)
-                            .accessibilityIdentifier(Locators.WireMeetings.MeetingLink.copied)
-                    }
-                }
 
-                Button(Strings.copy) {
-                    viewModel.copyLink(isClipboardEnabled: isClipboardEnabled)
-                }
-                .wireButtonStyle(.primary)
-                .disabled(!canCopy)
-                .accessibilityIdentifier(Locators.WireMeetings.MeetingLink.copy)
-                .padding([.horizontal, .bottom], 16)
+                actionArea
+                    .fixedSize(horizontal: false, vertical: true)
+                    .onGeometryChange(for: CGFloat.self) { proxy in
+                        proxy.size.height
+                    } action: { height in
+                        actionAreaHeight = height
+                    }
             }
-            .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
+            .onGeometryChange(for: CGFloat.self) { proxy in
+                proxy.safeAreaInsets.top
+            } action: { inset in
+                navigationTopInset = inset
+            }
             .background(ColorTheme.Backgrounds.background.color)
-            .navigationTitle(Strings.title)
+            .navigationTitle(viewModel.isGeneratingLink ? Strings.generate : Strings.title)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button(L10n.Localizable.WireMeetings.Schedule.Cancel.button) { dismiss() }
-                        .accessibilityIdentifier(Locators.WireMeetings.MeetingLink.cancel)
+                    Button(viewModel.didCreateLink ? Strings.close : L10n.Localizable.WireMeetings.Schedule.Cancel
+                        .button) {
+                            dismiss()
+                        }
+                        .disabled(viewModel.isCreating)
+                        .accessibilityIdentifier(viewModel.didCreateLink ? Locators.WireMeetings.MeetingLink
+                            .close : .cancel)
                 }
             }
         }
-        .presentationDetents([.medium, .large])
+        .presentationDetents(sheetDetents)
+        .interactiveDismissDisabled(viewModel.isCreating)
         .task { await viewModel.load() }
+        .onDisappear {
+            viewModel.password = ""
+            viewModel.confirmPassword = ""
+        }
+        .alert(Strings.createError, isPresented: $viewModel.hasRotationError) {
+            Button(L10n.Localizable.WireMeetings.Schedule.Error.Alert.ok) {}
+        }
         .task(id: viewModel.copyConfirmation) {
             guard viewModel.copyConfirmation != nil else { return }
             try? await Task.sleep(for: .seconds(3))
             guard !Task.isCancelled else { return }
             viewModel.copyConfirmation = nil
+        }
+    }
+
+    private var isEditingPassword: Bool { viewModel.isGeneratingLink && !viewModel.didCreateLink }
+
+    private var sheetDetents: Set<PresentationDetent> {
+        if isEditingPassword {
+            [.large]
+        } else if viewerContentHeight > 0, actionAreaHeight > 0 {
+            // The system adds the bottom safe area to a height detent.
+            [.height(ceil(viewerContentHeight + actionAreaHeight + navigationTopInset))]
+        } else {
+            [.medium]
+        }
+    }
+
+    private var actionArea: some View {
+        VStack(spacing: 16) {
+            if !viewModel.isGeneratingLink, viewModel.canRotate {
+                Button(action: viewModel.beginRotation) {
+                    Text(Strings.generate)
+                        .lineLimit(nil)
+                        .multilineTextAlignment(.center)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                .wireButtonStyle(.secondary)
+                .accessibilityIdentifier(Locators.WireMeetings.MeetingLink.generate)
+                .padding(.horizontal, 16)
+            }
+
+            Button {
+                if isEditingPassword {
+                    Task { await viewModel.createLink() }
+                } else {
+                    viewModel.copyLink(isClipboardEnabled: isClipboardEnabled)
+                }
+            } label: {
+                Text(isEditingPassword ? (viewModel.isCreating ? Strings.creating : Strings.generate) : Strings
+                    .copy)
+                    .lineLimit(nil)
+                    .multilineTextAlignment(.center)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            .wireButtonStyle(.primary)
+            .disabled(isEditingPassword ?
+                viewModel.isCreating || !viewModel.isPasswordValid || !viewModel.passwordsMatch : !canCopy)
+            .accessibilityIdentifier(isEditingPassword ? Locators.WireMeetings.MeetingLink.create : .copy)
+            .padding([.horizontal, .bottom], 16)
+        }
+        .padding(.top, 16)
+    }
+
+    @ViewBuilder private var formContent: some View {
+        if isEditingPassword {
+            Form {
+                Section {
+                    Text(Strings.consequence)
+                        .font(for: .body1)
+                        .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
+                        .accessibilityIdentifier(Locators.WireMeetings.MeetingLink.consequence)
+                }
+                MeetingPasswordSection(
+                    password: $viewModel.password,
+                    confirmPassword: $viewModel.confirmPassword,
+                    isPasswordValid: viewModel.isPasswordValid,
+                    passwordsMatch: viewModel.passwordsMatch,
+                    isDisabled: viewModel.isCreating,
+                    generatePassword: viewModel.generatePassword,
+                    copyPassword: { viewModel.copyPassword(isClipboardEnabled: isClipboardEnabled) }
+                )
+            }
+            .listSectionSpacing(.compact)
+            .scrollContentBackground(.hidden)
+        } else {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 20) {
+                    Text(Strings.description)
+                        .font(for: .body1)
+                        .accessibilityIdentifier(Locators.WireMeetings.MeetingLink.consequence)
+                    content
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(16)
+                .onGeometryChange(for: CGFloat.self) { proxy in
+                    proxy.size.height
+                } action: { height in
+                    viewerContentHeight = height
+                }
+            }
+            .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
         }
     }
 

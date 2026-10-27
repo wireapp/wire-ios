@@ -55,6 +55,24 @@ final class MeetingsAPIV19: MeetingsAPIV18 {
         try await sendInvitationRequest(path: path, emails: emails)
     }
 
+    override func refreshMeetingLink(id: QualifiedID, password: String?) async throws -> MeetingResponse {
+        let path = "\(pathPrefix)/meetings/\(id.domain)/\(id.id.uuidString.lowercased())/link/refresh"
+        let body = try JSONEncoder.defaultEncoder.encode(RefreshMeetingLinkParameters(password: password))
+        let request = try URLRequestBuilder(path: path)
+            .withMethod(.post)
+            .withBody(body, contentType: .json)
+            .build()
+
+        let (data, response) = try await apiService.executeRequest(
+            request,
+            requiringAccessToken: true
+        )
+
+        return try ResponseParser()
+            .success(code: .ok, type: MeetingResponseV16.self)
+            .parse(code: response.statusCode, data: data)
+    }
+
     private func sendInvitationRequest(path: String, emails: [String]) async throws {
         let body = try JSONEncoder.defaultEncoder.encode(MeetingInvitationsParameters(emails: emails))
         let request = try URLRequestBuilder(path: path)
@@ -79,6 +97,10 @@ final class MeetingsAPIV19: MeetingsAPIV18 {
 
 private struct MeetingInvitationsParameters: Encodable {
     let emails: [String]
+}
+
+private struct RefreshMeetingLinkParameters: Encodable {
+    let password: String?
 }
 
 private struct CreateMeetingParametersV19: Encodable {

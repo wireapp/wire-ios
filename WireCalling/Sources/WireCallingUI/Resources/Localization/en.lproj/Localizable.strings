@@ -69,7 +69,12 @@
 "wireMeetings.link.passwordProtected" = "The link is password protected. To set a new password, generate a new link.";
 "wireMeetings.link.notPasswordProtected" = "This link is not password protected. Make sure to share it only with the right people. To add a password, generate a new link.";
 "wireMeetings.link.copy" = "Copy link";
-"wireMeetings.link.copied" = "Link copied to clipboard";
+"wireMeetings.link.copied" = "Link copied in clipboard";
+"wireMeetings.link.generate" = "Generate new link";
+"wireMeetings.link.consequence" = "Any previous link to this meetings will be revoked and a new link will be created.";
+"wireMeetings.link.creating" = "Creating...";
+"wireMeetings.link.close" = "Close";
+"wireMeetings.link.createError" = "Could not create the meeting link. Please try again.";
 "wireMeetings.link.unavailable" = "The meeting link is unavailable.";
 "wireMeetings.link.loadError" = "Could not load the meeting link. Please try again.";
 

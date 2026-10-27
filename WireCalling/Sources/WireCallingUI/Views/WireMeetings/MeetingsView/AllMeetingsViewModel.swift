@@ -43,6 +43,7 @@ package final class AllMeetingsViewModel {
 
     private let joinMeetingCallUseCase: any JoinMeetingCallUseCaseProtocol
     private let fetchMeetingLink: (@Sendable (QualifiedID) async throws -> MeetingLink?)?
+    private let refreshMeetingLink: (@Sendable (QualifiedID, String?) async throws -> MeetingLink?)?
 
     var supportsMeetingLinks: Bool { fetchMeetingLink != nil }
 
@@ -56,6 +57,7 @@ package final class AllMeetingsViewModel {
         observeAttendedMeetingsUseCase: (any ObserveAttendedMeetingsUseCaseProtocol)? = nil,
         joinMeetingCallUseCase: any JoinMeetingCallUseCaseProtocol,
         fetchMeetingLink: (@Sendable (QualifiedID) async throws -> MeetingLink?)? = nil,
+        refreshMeetingLink: (@Sendable (QualifiedID, String?) async throws -> MeetingLink?)? = nil,
         makeFormViewModel: @escaping @MainActor (
             _ mode: MeetingFormViewModel.Mode,
             _ onSuccess: @escaping (Meeting) -> Void
@@ -72,6 +74,7 @@ package final class AllMeetingsViewModel {
         )
         self.joinMeetingCallUseCase = joinMeetingCallUseCase
         self.fetchMeetingLink = fetchMeetingLink
+        self.refreshMeetingLink = refreshMeetingLink
         self.makeFormViewModel = makeFormViewModel
     }
 
@@ -91,7 +94,16 @@ package final class AllMeetingsViewModel {
 
     func meetingLinkTapped(_ meeting: Meeting) {
         guard let fetchMeetingLink, meetingsViewModel.isOrganizer(meeting) else { return }
-        presentedLink = MeetingLinkViewModel { try await fetchMeetingLink(meeting.id) }
+        let refreshLink: (@Sendable (String?) async throws -> MeetingLink?)?
+        if let refreshMeetingLink {
+            refreshLink = { try await refreshMeetingLink(meeting.id, $0) }
+        } else {
+            refreshLink = nil
+        }
+        presentedLink = MeetingLinkViewModel(
+            fetchLink: { try await fetchMeetingLink(meeting.id) },
+            refreshLink: refreshLink
+        )
     }
 
     func joinMeetingTapped(_ occurrence: MeetingOccurrence) async {
