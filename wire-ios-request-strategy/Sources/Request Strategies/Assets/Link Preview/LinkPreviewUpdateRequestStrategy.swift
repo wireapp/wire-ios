@@ -66,6 +66,10 @@ extension LinkPreviewUpdateRequestStrategy: ModifiedKeyObjectSyncTranscoder {
     func synchronize(key: String, for object: ZMClientMessage, completion: @escaping () -> Void) {
 
         if object.outboxState != .notEnrolled {
+            guard !object.hasPendingOutboxDeletion else {
+                completion()
+                return
+            }
             guard managedObjectContext.canProcessOfflinePendingMessages else {
                 completion()
                 return

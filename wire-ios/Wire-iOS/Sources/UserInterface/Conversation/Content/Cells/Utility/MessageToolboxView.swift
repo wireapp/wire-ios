@@ -364,6 +364,17 @@ final class MessageToolboxView: UIView {
         statusContainerView.isHidden = false
         statusContainerView.accessibilityIdentifier = nil
         switch state {
+        case .deletionPending:
+            let pending = String(
+                localized: "content.message.deletion_pending", defaultValue: "Deletion pending", bundle: .main
+            )
+            statusImageView.image = UIImage(systemName: "clock")
+            statusLabel.isHidden = false
+            statusLabel.text = pending
+            statusLabel.font = .preferredFont(forTextStyle: .caption1)
+            statusLabel.adjustsFontForContentSizeCategory = true
+            statusContainerView.accessibilityLabel = pending
+            statusContainerView.accessibilityIdentifier = "PendingMessageDeletionStatus"
         case .queued:
             let queued = String(localized: "content.message.queued", defaultValue: "Queued", bundle: .main)
             statusImageView.image = UIImage(systemName: "clock")

@@ -37,6 +37,14 @@ public enum MessageOutboxOperation: Int16 {
     case initialMessage = 1
     case edit = 2
     case contentUpdate = 3
+    /// Hidden hide/delete traffic created only after its target's acceptance is known.
+    case deletion = 4
+}
+
+public enum MessageOutboxDeletionScope: Int16 {
+    case none = 0
+    case local = 1
+    case everyone = 2
 }
 
 public enum MessageOutboxError: Error, Equatable {
@@ -62,6 +70,8 @@ public struct MessageOutboxAttempt: Sendable {
 public extension ZMMessage {
     @NSManaged internal var outboxStateRaw: Int16
     @NSManaged internal var outboxOperationRaw: Int16
+    @NSManaged internal var outboxDeletionScopeRaw: Int16
+    @NSManaged internal var outboxDeletionMessages: Set<ZMClientMessage>
     @NSManaged private(set) var outboxEnqueuedAt: Date?
     @NSManaged private(set) var outboxAttemptIdentifier: UUID?
     // Retained for stores created by the foundation commit; new writes use EAR-aware GenericMessageData.
@@ -75,6 +85,12 @@ public extension ZMMessage {
 /// Save enrollment before reporting acceptance, and save preparation/sending before encryption/HTTP handoff.
 /// A failed save must abort the attempt. Send eligibility and transport error classification belong to the sender.
 public extension ZMMessage {
+
+    var hasPendingOutboxDeletion: Bool { outboxDeletionScopeRaw != MessageOutboxDeletionScope.none.rawValue }
+
+    var canRetryPendingOutboxDeletion: Bool {
+        hasPendingOutboxDeletion && outboxDeletionMessages.contains { $0.outboxState == .failed }
+    }
 
     /// Unknown persisted values deliberately remain unknown; they must not enter the legacy sending path.
     var outboxState: MessageOutboxState? {
@@ -106,13 +122,16 @@ public extension ZMMessage {
     /// Creates the first operation or starts another after completion. Reusing the row must not
     /// erase a pending operation's frozen content or let a late callback complete its replacement.
     func enqueueInOutbox(operation: MessageOutboxOperation, at date: Date = Date()) throws {
-        guard !isDeleted, !hasBeenDeleted,
+        let enrollingDeletion = operation == .deletion && (self as? ZMClientMessage)?.outboxDeletionTarget != nil
+        guard !isDeleted, !hasBeenDeleted || enrollingDeletion,
+              !hasPendingOutboxDeletion,
               self is ZMClientMessage || self is ZMAssetClientMessage,
               outboxState == .notEnrolled || outboxState == .sent
         else {
             throw MessageOutboxError.invalidTransition
         }
         guard operation != .none,
+              operation != .deletion || enrollingDeletion,
               operation != .initialMessage || (outboxState == .notEnrolled && !delivered),
               operation != .contentUpdate || outboxState == .sent
         else {
@@ -131,7 +150,7 @@ public extension ZMMessage {
     /// Claims content against concurrent edits. Each attempt gets a new token to reject old callbacks,
     /// but retries reuse an existing snapshot because that content may already have reached recipients.
     func prepareOutboxAttempt(payload: Data, at date: Date = Date()) throws -> MessageOutboxAttempt {
-        guard !isDeleted, !hasBeenDeleted, outboxState == .queued,
+        guard !isDeleted, !hasBeenDeleted, !hasPendingOutboxDeletion, outboxState == .queued,
               let operation = outboxOperation, operation != .none,
               outboxAttemptCount < Int32.max
         else {
@@ -165,7 +184,8 @@ public extension ZMMessage {
         outboxStateRaw = MessageOutboxState.sending.rawValue
     }
 
-    /// Use only after proven non-submission or an explicitly retryable rejection, never an ambiguous timeout.
+    /// Originals require proven non-submission or a retryable rejection. An idempotent deletion
+    /// marker may also be rescheduled after an ambiguous timeout because its target is already accepted.
     func rescheduleOutboxAttempt(_ identifier: UUID, notBefore date: Date? = nil) throws {
         try requireOutboxAttempt(identifier, in: [.preparing, .sending])
         outboxStateRaw = MessageOutboxState.queued.rawValue
@@ -204,7 +224,7 @@ public extension ZMMessage {
 
     /// Explicit user Retry may retry a frozen operation whose earlier delivery is unknown.
     func retryOutboxOperation() throws {
-        guard !isDeleted, !hasBeenDeleted,
+        guard !isDeleted, !hasBeenDeleted, !hasPendingOutboxDeletion,
               outboxState == .failed || outboxState == .uncertain
         else {
             throw MessageOutboxError.invalidTransition
@@ -241,14 +261,23 @@ public extension ZMMessage {
             outboxAttemptIdentifier = nil
         case .sending:
             // The database cannot tell whether the server accepted the request before termination.
-            outboxStateRaw = MessageOutboxState.uncertain.rawValue
+            if outboxOperation == .deletion {
+                // Its target was accepted before this marker was created. Repeating a hide/delete
+                // is idempotent; repeating an original message to resolve its deletion is not.
+                outboxStateRaw = MessageOutboxState.queued.rawValue
+                outboxAttemptIdentifier = nil
+                outboxNextAttemptAt = Date(timeIntervalSinceNow: 1)
+            } else {
+                outboxStateRaw = MessageOutboxState.uncertain.rawValue
+            }
         default:
             break
         }
     }
 
     private func requireOutboxAttempt(_ identifier: UUID, in states: [MessageOutboxState]) throws {
-        guard !isDeleted, !hasBeenDeleted, outboxAttemptIdentifier == identifier else {
+        guard managedObjectContext != nil, !isDeleted, !hasBeenDeleted,
+              outboxAttemptIdentifier == identifier else {
             throw MessageOutboxError.staleAttempt
         }
         guard let state = outboxState, states.contains(state) else {
@@ -303,9 +332,41 @@ public extension ZMMessage {
     /// Content erasure invalidates any outstanding callback token and removes the separate frozen
     /// snapshot too; clearing only the live message could otherwise leave deleted plaintext recoverable.
     internal func discardOutboxContent() {
+        outboxDeletionScopeRaw = MessageOutboxDeletionScope.none.rawValue
+        for marker in outboxDeletionMessages {
+            try? marker.cancelOutboxOperation()
+            managedObjectContext?.delete(marker)
+        }
         if outboxState != .notEnrolled, outboxState != .sent {
             outboxStateRaw = MessageOutboxState.cancelled.rawValue
         }
         clearOutboxAttempt()
+    }
+
+    /// An unsent edit/update can be abandoned because its preceding visible content was already
+    /// accepted. Once a snapshot exists, retain the ambiguity instead of guessing which ID arrived.
+    internal func prepareOutboxDeletionIfDeliveryKnown() throws -> Bool {
+        guard let state = outboxState, state != .sending else { return false }
+        if state == .sent, delivered { return true }
+        if state == .preparing, outboxSnapshot != nil || outboxPayload != nil { return false }
+        if delivered {
+            if let payload = try loadOutboxPayload() {
+                nonce = UUID(uuidString: try GenericMessage(serializedData: payload).messageID)
+            }
+        } else {
+            guard [.queued, .preparing, .failed].contains(state),
+                  outboxSnapshot == nil, outboxPayload == nil,
+                  outboxOperation == .edit || outboxOperation == .contentUpdate else { return false }
+            if outboxOperation == .edit {
+                guard let identifier = (self as? ZMClientMessage)?.underlyingMessage?.edited.replacingMessageID,
+                      let targetID = UUID(uuidString: identifier) else { throw MessageOutboxError.invalidPayload }
+                nonce = targetID
+            }
+            delivered = true
+        }
+        outboxStateRaw = MessageOutboxState.sent.rawValue
+        clearOutboxAttempt()
+        markAsSent()
+        return true
     }
 }

@@ -79,11 +79,8 @@ final class DeletionDialogPresenter: NSObject {
                         let succeeded = await syncContext.perform {
                             guard let row = try? syncContext.existingObject(with: messageID) as? ZMMessage,
                                   !row.isDeleted else { return false }
-                            switch type {
-                            case .local: ZMMessage.hideMessage(row)
-                            case .everywhere: ZMMessage.deleteForEveryone(row)
-                            }
                             do {
+                                try row.requestOutboxDeletion(type == .local ? .local : .everyone)
                                 try syncContext.save()
                                 return true
                             } catch {

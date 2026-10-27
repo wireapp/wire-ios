@@ -6,7 +6,7 @@ Jira issue: [WPB-26307](https://wearezeta.atlassian.net/browse/WPB-26307)
 
 Original plan branch (older snapshot): `chore/pending-messages-plan-WPB-26307`
 
-Investigation staging branch (latest plan and isolated prerequisite fix):
+Historical investigation staging branch (isolated prerequisite fix and earlier plan):
 `fix/preserve-bootstrap-trackers-WPB-26307`
 
 Local testing preference: use `xcodebuild` directly. The user confirmed this on
@@ -70,12 +70,22 @@ succeeds on `iPhone 17 (Tests)` after the fixes recorded below. This does not
 establish app/other-scheme compilation or runtime acceptance.
 Update 2026-10-27: `WireRequestStrategy` build-for-testing also succeeds on that
 simulator after the compiler/test-import fixes below. Runtime acceptance remains open.
+Update 2026-10-27: the user approved addressing delete/send ordering. Persisted
+deletion intent, linked outbox control messages, a Deletion pending status, and
+handoff/restart regression source are now implemented. Original content remains
+visible until follow-up acceptance; an uncertain original is never automatically
+resent to resolve deletion. See the deferred-deletion execution record below.
+Both updated WireDataModel and WireRequestStrategy build-for-testing runs passed.
+Tests and app compilation remain user-owned.
 Uncertain-delivery automatic retry policy remains unresolved before broad activation;
-the development implementation exposes manual Retry while retaining frozen content.
+ordinary uncertain sends expose manual Retry while retaining frozen content.
+An original with deletion pending blocks that Retry; only failed follow-up control
+messages can be retried through it.
 
-Current state: 2026-10-22. The prerequisite bootstrap tracker fix is implemented
-on `fix/preserve-bootstrap-trackers-WPB-26307`, with two regression tests and all
-13 bootstrap tests passing. Foundation and regular-message integration are written.
+Current state: 2026-10-27. The prerequisite bootstrap tracker fix reached develop
+and is already included in this feature branch. Its two regressions and all
+13 bootstrap tests passed before feature implementation. Foundation and
+regular-message integration are written.
 New enrollment requires the local flag at stack/session startup. It remains off
 by default. Implementation stages 1-4 are written; compilation, execution of new
 regressions, device verification, and rollout decisions remain outstanding.
@@ -87,34 +97,21 @@ The separate bug is `WPB-29555`, PR #5427; see the candidate verification below.
 
 Next steps, in order:
 
-1. Inspect the current checkout and preserve unrelated local changes. Confirm
-   the prerequisite fix is present on the intended base before beginning feature
-   implementation; its merge/backport work is being handled by the user. Check
-   the implementation, not only the original commit hash, since cherry-picks or
-   squash merges may change the hash.
-2. Resume the pending-message feature under `WPB-26307`. Review the regular versus
-   asset send paths and remaining open decisions. Known test setup is a physical
-   device from Xcode with Wire Drive disabled for the team. Exact build/protocol/
-   sync implementation and video receiver confirmation remain unrecorded; do not
-   treat those as established. The bootstrap upload bug is separate from this feature
-   and should not be reimplemented or backported again by the new session.
-3. Foundation and regular-message integration are implemented. User owns
-   validation; no checks were executed for the regular-message integration.
-   Queued editing/presentation are also written with regression source, without
-   executing checks. Classic asset enrollment/retention/recovery is also written.
-   See the PR 3/4/5 execution records below. Continue source integration review and
-   any fixes alongside user-owned validation; do not run checks without a new
-   user instruction. Proteus sender response-classification and asset teardown
-   coverage are now written. Bounded MLS repairs and late callbacks after account
-   context closure also have unexecuted regression source. Cancellation while
-   waiting for sync and interruption during preparation/status processing now
-   have source fixes and regressions. The next practical milestone is user-owned
-   compilation and runtime validation, followed by any resulting fixes and rollout
-   decisions; these source tests have not established runtime correctness.
-4. Continue through regular queuing, queued editing, and asset recovery on the
-   same branch. Treat the numbered PR checklists below as implementation stages;
-   defer PR packaging until there is working code to review. Do not repeat the
-   approval loop for the agreed foundation, sequence, or flag direction.
+1. Preserve unrelated `.ruby-version` and `Gemfile.lock` edits and continue on
+   this branch. The user merged develop in `bab7b502de`; current pre-deletion
+   handoff is `45578c95a4`. Do not repeat bootstrap-fix work or create stage branches.
+2. Review the deferred-deletion source changes. Both scoped build-for-testing
+   commands passed. No test execution, lint, or formatting is authorized.
+3. Regenerate the `store2-145-0.wiredatabase` fixture for the final unreleased
+   2.145 schema. The existing fixture predates deletion fields/relationships.
+   Earlier feature-build development stores also have incompatible 2.145 hashes;
+   use a fresh disposable test store or arrange an explicit development migration.
+   Do not erase account data automatically or add a second release migration.
+4. The user runs the new model/sender/scheduler/toolbox regressions and physical
+   device checks, including both protocols, restart, lost acknowledgements, assets,
+   and flag-off recovery. App/sync-engine compilation remains outstanding.
+5. Review remaining rollout decisions, especially reconciliation for uncertain
+   originals. Remove this plan from final merge changes after preserving a handoff.
 
 All feature findings and reported observations are recorded in this file. The
 temporary RFC is not part of the plan commits. Keep this plan on working branches
@@ -1534,8 +1531,90 @@ xcodebuild build-for-testing \
 
 Log: `/private/tmp/wpb-26307-wire-request-strategy-build-for-testing.log`.
 No tests, lint, or formatting were run. The app and sync-engine schemes and
-runtime scenarios still need validation. Fixes are uncommitted for review;
-the user's unrelated `.ruby-version` and `Gemfile.lock` edits are untouched.
+runtime scenarios still need validation. Fixes were committed in `574cac1804`;
+the user subsequently merged develop and pushed the branch. The user's unrelated
+`.ruby-version` and `Gemfile.lock` edits are untouched.
+
+## Deferred deletion implementation (2026-10-27)
+
+The user approved implementing the ordering fix after reviewing the risks. The
+following checkmarks record source implementation, not passing runtime tests.
+
+- [x] Persist deletion scope on the original and link its follow-up hide/delete
+      records through Core Data inverses. Extend the single unreleased 2.145
+      migration; no new schema version is added.
+- [x] Keep immediate withdrawal when deletion wins before first handoff. During
+      encryption, a detached/deleted row fails the final handoff guard.
+- [x] After possible handoff, keep the original row, nonce, frozen snapshot and
+      attempt token until acceptance is known. Do not send independent legacy
+      deletion traffic or clear asset references while the original is in flight.
+- [x] Once accepted, create durable enrolled control messages and save them with
+      original completion. Finalize local removal/remote asset cleanup only after
+      all required controls are accepted. Preserve the existing everyone-delete
+      tombstone; local hide removes the row.
+- [x] Treat live linked hidden control rows as sendable protocol traffic, and
+      prevent their legacy response handling from prematurely clearing the target.
+- [x] Block edits, preview follow-ups, transfer cancellation and original Retry
+      while deletion is pending. Retry failed controls only. A local request may
+      be upgraded to everyone, and repeated requests do not create duplicates.
+- [x] Recover pending intents and controls with enrollment disabled. Controls
+      may be retried after lost acknowledgement with frozen content/backoff;
+      originals remain uncertain and are never automatically resent for deletion.
+- [x] Present Deletion pending before legacy failed-to-send status, with dynamic
+      type, VoiceOver text and an accessibility identifier.
+- [x] Add regression source for deletion during crypto, HTTP entry on Proteus/MLS,
+      deferred cleanup, failed-control Retry, lost acknowledgement/backoff,
+      cross-context persistence, restart, flag-off recovery, asset cleanup timing,
+      migration defaults and toolbox status.
+- [x] Build-for-testing WireDataModel on iPhone 17 (Tests), including model tests.
+- [x] Build-for-testing WireRequestStrategy after the final scheduler/control-
+      timeout regression additions, on the same simulator. Both commands returned
+      exit 0 and `TEST BUILD SUCCEEDED`.
+- [ ] Regenerate `wire-ios-data-model/Tests/Resources/store2-145-0.wiredatabase`.
+      Its earlier 2.145 model hashes no longer match. Use the existing fixture
+      generation procedure in `DatabaseMigrationTests.swift` (the missing-current-
+      fixture branch of
+      `testThatItPerformsMigrationFrom_Between_2_80_0_and_PreLast_ToCurrentModelVersion`).
+      The user owns test execution/fixture generation. Do not rewrite SQLite model
+      metadata or remove a real account's data to hide this incompatibility.
+- [ ] User executes the new regressions and migration checks, compiles the app,
+      and validates on a physical device/another receiving client. No test, lint,
+      or formatting command has been executed for these changes.
+
+Build logs:
+`/private/tmp/wpb-26307-deferred-deletion-model-build.log` and
+`/private/tmp/wpb-26307-deferred-deletion-strategy-build.log`.
+
+Known conservative limit: without delivery evidence, an original with a frozen
+snapshot remains visible as Deletion pending. This also holds a queued/failed
+frozen operation when persisted history cannot rule out earlier submission.
+Reachability is not delivery evidence, and there is no new automatic server
+reconciliation. An unsubmitted edit with no snapshot can instead be abandoned and
+deletion targets its previously accepted ID. Broader uncertainty resolution is a
+separate rollout decision; do not describe all pending deletions as guaranteed to
+complete automatically.
+
+## Delete/send ordering review (2026-10-27, pre-fix source findings)
+
+- The UI refetches enrolled messages on the sync context. Checking
+  `canDiscardOutboxLocally`, cancellation, deletion and save are serialized with
+  send claims. A delete that wins before handoff invalidates the attempt, and
+  `prepareOutboxHandoff` rejects it before submitting the original message.
+- A remaining ordering window exists after `sending` is saved. `deleteForEveryone`
+  then appends a separate, unenrolled hidden `MessageDelete` and erases the original
+  content/token. The original HTTP request can still be submitted or complete;
+  the delete uses legacy sending rather than the shared outbox scheduler.
+- There is no explicit original-message dependency on that delete. The legacy
+  ordering scan depends on visible message ordering/pending state, while the delete
+  is hidden and erasing the original changes that state. Receiver-side
+  `ZMMessage.remove(remotelyDeletedMessage:...)` returns if the target nonce has not
+  arrived, without retaining a tombstone for a later original.
+- Consequently the delete may overtake the original and be ineffective on the
+  receiver. Local hide/self-client notifications need the same ordering review.
+  Existing before-handoff/stale-callback tests do not cover this end-to-end window.
+- The follow-up was approved and is implemented in the execution record above.
+  These original findings came from source inspection, without a runtime
+  reproduction. The original defect and its fix still need runtime validation.
 
 ## Explanatory comment review (2026-10-26)
 

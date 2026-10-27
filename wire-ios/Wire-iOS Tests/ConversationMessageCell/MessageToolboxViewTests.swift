@@ -59,6 +59,30 @@ final class MessageToolboxViewTests: CoreDataSnapshotTestCase {
 
     // MARK: - Snapshot Tests
 
+    func testUncertainDeletionShowsPendingStatusWithoutOfferingToResendTheOriginal() throws {
+        let message = try XCTUnwrap(otherUserConversation.appendText(content: "pending deletion") as? ZMClientMessage)
+        try message.enqueueInOutbox(operation: .initialMessage)
+        let attempt = try message.prepareOutboxAttempt(payload: XCTUnwrap(message.underlyingMessage).serializedData())
+        try message.markOutboxAttemptSending(attempt)
+        try message.requestOutboxDeletion(.everyone)
+        try message.markOutboxAttemptUncertain(attempt.identifier)
+        message.expire(withReason: .other)
+
+        sut.configureForMessage(message, animated: false)
+
+        guard case let .details(_, status, _) = try XCTUnwrap(sut.dataSource?.content) else {
+            return XCTFail("Deletion intent must take precedence over the original's failed-send presentation")
+        }
+        XCTAssertEqual(status, .deletionPending)
+        XCTAssertFalse(message.canBeEdited)
+        XCTAssertFalse(message.canBeResent)
+        XCTAssertEqual(sut.statusImageView.superview?.accessibilityIdentifier, "PendingMessageDeletionStatus")
+        XCTAssertEqual(
+            sut.statusImageView.superview?.accessibilityLabel,
+            String(localized: "content.message.deletion_pending", defaultValue: "Deletion pending", bundle: .main)
+        )
+    }
+
     func testQueuedTextHasAnAccessiblePendingStatusAndIsEditableUntilClaimed() throws {
         let queued = try XCTUnwrap(otherUserConversation.appendText(content: "queued") as? ZMClientMessage)
         try queued.enqueueInOutbox(operation: .initialMessage)

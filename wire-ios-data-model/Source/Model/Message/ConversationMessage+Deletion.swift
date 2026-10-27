@@ -50,6 +50,14 @@ public extension ZMMessage {
     @objc
     func hideForSelfUser() {
         guard !isZombieObject else { return }
+        if outboxState != .notEnrolled {
+            do { try requestOutboxDeletion(.local) }
+            catch {
+                managedObjectContext?.rollback()
+                Logging.messageProcessing.warn("Could not request outbox hide")
+            }
+            return
+        }
         if discardUnsubmittedOutboxMessage() { return }
 
         do {
@@ -73,6 +81,14 @@ public extension ZMMessage {
     @discardableResult @objc
     internal func deleteForEveryone() -> ZMClientMessage? {
         guard !isZombieObject, let sender, sender.isSelfUser || isEphemeral else { return nil }
+        if outboxState != .notEnrolled {
+            do { try requestOutboxDeletion(.everyone) }
+            catch {
+                managedObjectContext?.rollback()
+                Logging.messageProcessing.warn("Could not request outbox deletion")
+            }
+            return nil
+        }
         if discardUnsubmittedOutboxMessage() { return nil }
         guard let conversation, let messageNonce = nonce else { return nil }
 
@@ -105,10 +121,94 @@ public extension ZMMessage {
         context?.delete(self)
         return true
     }
+
+    /// Run and save on the send owner's context. Keep the row, snapshot and attempt token intact
+    /// after handoff: a local delete is not proof that the original HTTP request was stopped.
+    func requestOutboxDeletion(_ scope: MessageOutboxDeletionScope) throws {
+        guard scope != .none, let context = managedObjectContext, context.zm_isValidContext,
+              context.canProcessOfflinePendingMessages, !isDeleted, !hasBeenDeleted,
+              outboxState != .notEnrolled, outboxOperation != .deletion,
+              MessageOutboxDeletionScope(rawValue: outboxDeletionScopeRaw) != nil,
+              scope != .everyone || sender?.isSelfUser == true else {
+            throw MessageOutboxError.invalidTransition
+        }
+        if discardUnsubmittedOutboxMessage() { return }
+        // A repeated local hide must not downgrade an existing delete-for-everyone request.
+        outboxDeletionScopeRaw = max(outboxDeletionScopeRaw, scope.rawValue)
+        try processPendingOutboxDeletion()
+    }
+
+    /// Called after acceptance or during bootstrap/context tracking. Creating markers and saving
+    /// them with the original's completed state makes the follow-up durable across termination.
+    func processPendingOutboxDeletion() throws {
+        guard hasPendingOutboxDeletion, !isDeleted, !hasBeenDeleted,
+              let context = managedObjectContext, context.canProcessOfflinePendingMessages,
+              let scope = MessageOutboxDeletionScope(rawValue: outboxDeletionScopeRaw), scope != .none,
+              try prepareOutboxDeletionIfDeliveryKnown(), let nonce, let conversation else { return }
+
+        switch scope {
+        case .everyone:
+            if !outboxDeletionMessages.contains(where: { $0.underlyingMessage?.hasDeleted == true }) {
+                let content = GenericMessage(content: MessageDelete(messageId: nonce))
+                let marker = try conversation.appendClientMessage(with: content, expires: false, hidden: true)
+                try enrollDeletionMarker(marker)
+            }
+        case .local:
+            if outboxDeletionMessages.isEmpty {
+                guard let conversationID = conversation.remoteIdentifier else {
+                    throw MessageOutboxError.invalidPayload
+                }
+                let content = MessageHide(conversationId: conversationID, messageId: nonce)
+                let markers = try ZMConversation.sendMessageToSelfClients(content, in: context)
+                try enrollDeletionMarker(markers.proteus)
+                if let mls = markers.mls { try enrollDeletionMarker(mls) }
+            }
+        case .none:
+            return
+        }
+        guard !outboxDeletionMessages.isEmpty,
+              outboxDeletionMessages.allSatisfy({ $0.outboxState == .sent }) else { return }
+
+        // Erase content only after all required markers were accepted. Until then the UI keeps a
+        // visible deletion-pending row, including when a permanent failure requires explicit Retry.
+        outboxDeletionScopeRaw = MessageOutboxDeletionScope.none.rawValue
+        switch scope {
+        case .everyone:
+            removeClearingSender(false)
+            updateCategoryCache()
+        case .local:
+            removeClearingSender(true)
+            context.delete(self)
+        case .none:
+            break
+        }
+    }
+
+    /// Retry the follow-up markers only; an uncertain original must never be resent just to delete it.
+    func retryPendingOutboxDeletion() throws {
+        guard hasPendingOutboxDeletion else { throw MessageOutboxError.invalidTransition }
+        for marker in outboxDeletionMessages where marker.outboxState == .failed {
+            marker.resend()
+            guard marker.outboxState == .queued else { throw MessageOutboxError.invalidTransition }
+        }
+    }
+
+    private func enrollDeletionMarker(_ marker: ZMClientMessage) throws {
+        do {
+            marker.outboxDeletionTarget = self
+            try marker.enqueueInOutbox(operation: .deletion)
+        } catch {
+            marker.managedObjectContext?.delete(marker)
+            throw error
+        }
+    }
 }
 
 extension ZMClientMessage {
+    @NSManaged public internal(set) var outboxDeletionTarget: ZMMessage?
+
     override var isEditableMessage: Bool {
+        guard !hasPendingOutboxDeletion else { return false }
         guard
             let genericMessage = underlyingMessage,
             let sender, sender.isSelfUser,

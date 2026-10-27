@@ -383,7 +383,14 @@ public extension ZMMessage {
     }
 
     @objc var hasBeenDeleted: Bool {
-        isZombieObject || (visibleInConversation == nil && hiddenInConversation != nil)
+        guard !isZombieObject else { return true }
+        if let marker = self as? ZMClientMessage, marker.outboxOperation == .deletion,
+           marker.outboxDeletionTarget != nil {
+            // These live control records are hidden protocol traffic, not erased target rows.
+            // Reusing the legacy hidden/tombstone test would stop their outbox send preparation.
+            return false
+        }
+        return visibleInConversation == nil && hiddenInConversation != nil
     }
 
     @objc var updatedAt: Date? {

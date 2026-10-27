@@ -215,6 +215,10 @@ public class ZMAssetClientMessage: ZMOTRMessage {
     }
 
     public override func resend() {
+        if hasPendingOutboxDeletion {
+            try? retryPendingOutboxDeletion()
+            return
+        }
         if outboxState != .notEnrolled {
             guard !isDeleted, !hasBeenDeleted else { return }
             do {

@@ -157,6 +157,9 @@ extension ZMConversationMessage {
 
     /// Whether the message sending failed in the past and we can attempt to resend the message.
     var canBeResent: Bool {
+        if let row = self as? ZMMessage, row.hasPendingOutboxDeletion {
+            return row.canRetryPendingOutboxDeletion
+        }
         guard let conversation = conversationLike,
               let sender = senderUser else {
             return false
@@ -192,8 +195,14 @@ extension ZMMessage {
                   let state = message.outboxState, state != .notEnrolled else { return false }
             switch action {
             case .retry:
-                guard state == .failed || state == .uncertain else { return false }
-                message.resend()
+                if message.hasPendingOutboxDeletion {
+                    guard message.canRetryPendingOutboxDeletion else { return false }
+                    do { try message.retryPendingOutboxDeletion() }
+                    catch { return false }
+                } else {
+                    guard state == .failed || state == .uncertain else { return false }
+                    message.resend()
+                }
             case .cancelTransfer:
                 guard let asset = message as? ZMAssetClientMessage else { return false }
                 asset.cancelTransfer()

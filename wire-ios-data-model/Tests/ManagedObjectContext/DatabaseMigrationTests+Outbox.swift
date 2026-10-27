@@ -108,6 +108,11 @@ final class DatabaseMigrationTests_Outbox: XCTestCase {
                     XCTAssertEqual(message.value(forKey: "outboxStateRaw") as? Int16, 0)
                     XCTAssertEqual(message.value(forKey: "outboxOperationRaw") as? Int16, 0)
                     XCTAssertEqual(message.value(forKey: "outboxAttemptCount") as? Int32, 0)
+                    XCTAssertEqual(message.value(forKey: "outboxDeletionScopeRaw") as? Int16, 0)
+                    XCTAssertEqual((message.value(forKey: "outboxDeletionMessages") as? NSSet)?.count ?? 0, 0)
+                    if entities[index] == "ClientMessage" {
+                        XCTAssertNil(message.value(forKey: "outboxDeletionTarget"))
+                    }
                     for key in [
                         "outboxEnqueuedAt", "outboxAttemptIdentifier", "outboxPayload", "outboxNextAttemptAt",
                         "outboxSnapshot"

@@ -131,6 +131,10 @@ public class ZMClientMessage: ZMOTRMessage {
     }
 
     public override func resend() {
+        if hasPendingOutboxDeletion {
+            try? retryPendingOutboxDeletion()
+            return
+        }
         if outboxState != .notEnrolled {
             guard !isDeleted, !hasBeenDeleted,
                   outboxState == .failed || outboxState == .uncertain else { return }
@@ -171,6 +175,9 @@ public class ZMClientMessage: ZMOTRMessage {
         case .confirmation, .reaction:
             return
         case .deleted:
+            // Outbox deletion completion owns target cleanup. Clearing it here would discard its
+            // intent/other markers before all required follow-ups have completed.
+            if outboxOperation == .deletion { return }
             let originalID = UUID(uuidString: genericMessage.deleted.messageID)
             guard
                 let managedObjectContext,

@@ -105,7 +105,7 @@ extension ZMClientMessage: TextMessageData {
 
     /// Preview preparation changes metadata on the live message, never its frozen send snapshot.
     public func setOutboxLinkPreviews(_ previews: [GenericMessageProtocol.LinkPreview]) throws {
-        guard outboxState != .notEnrolled, outboxState != .cancelled,
+        guard outboxState != .notEnrolled, outboxState != .cancelled, !hasPendingOutboxDeletion,
               !isDeleted, !hasBeenDeleted, !isObfuscated,
               var original = underlyingMessage, var text = original.textData else {
             throw MessageOutboxError.invalidTransition

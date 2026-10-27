@@ -113,6 +113,43 @@ class BaseZMAssetClientMessageTests: BaseZMClientMessageTests {
 
 final class ZMAssetClientMessageTests: BaseZMAssetClientMessageTests {
 
+    func testPendingDeletionRetainsRemoteAssetUntilItsDeleteMarkerIsAccepted() throws {
+        let message = try XCTUnwrap(appendFileMessage(to: conversation))
+        var content = try XCTUnwrap(message.underlyingMessage)
+        content.updateUploaded(assetId: "deferred-delete-asset", token: nil, domain: "wire.com")
+        try message.setUnderlyingMessage(content)
+        message.updateTransferState(.uploaded, synchronize: false)
+        try message.enqueueInOutbox(operation: .initialMessage)
+        let original = try message.prepareOutboxAttempt(payload: content.serializedData())
+        try message.markOutboxAttemptSending(original)
+        try uiMOC.save()
+        var deletedAssetIDs: [String] = []
+        let observer = NotificationCenter.default.addObserver(
+            forName: .deleteAssetNotification, object: nil, queue: nil
+        ) { if let identifier = $0.object as? String { deletedAssetIDs.append(identifier) } }
+        defer { NotificationCenter.default.removeObserver(observer) }
+
+        try message.requestOutboxDeletion(.everyone)
+        try uiMOC.save()
+        XCTAssertTrue(deletedAssetIDs.isEmpty)
+        message.markAsSent()
+        try message.completeOutboxAttempt(original.identifier)
+        try message.processPendingOutboxDeletion()
+        try uiMOC.save()
+        XCTAssertTrue(deletedAssetIDs.isEmpty)
+        XCTAssertEqual(message.underlyingMessage?.assetData?.uploaded.assetID, "deferred-delete-asset")
+
+        let marker = try XCTUnwrap(message.outboxDeletionMessages.first)
+        let deletion = try marker.prepareOutboxAttempt(payload: XCTUnwrap(marker.underlyingMessage).serializedData())
+        try marker.markOutboxAttemptSending(deletion)
+        marker.markAsSent()
+        try marker.completeOutboxAttempt(deletion.identifier)
+        try message.processPendingOutboxDeletion()
+
+        XCTAssertTrue(message.hasBeenDeleted)
+        XCTAssertTrue(deletedAssetIDs.contains("deferred-delete-asset"))
+    }
+
     func testCancellingAfterUploadStopsTheQueuedMessageAndRetryReusesTheAssetReference() throws {
         for preparing in [false, true] {
             let message = try XCTUnwrap(appendFileMessage(to: conversation))

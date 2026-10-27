@@ -619,12 +619,15 @@ NSString * const ZMSystemMessageConversationScheduledDeletionDateKey = @"convers
                              // would turn lifecycle saves into unrelated network update work.
                              @"outboxStateRaw",
                              @"outboxOperationRaw",
+                             @"outboxDeletionScopeRaw",
+                             @"outboxDeletionMessages",
                              @"outboxEnqueuedAt",
                              @"outboxAttemptIdentifier",
                              @"outboxPayload",
                              @"outboxSnapshot",
                              @"outboxAttemptCount",
                              @"outboxNextAttemptAt",
+                             @"outboxDeletionTarget",
                              ZMMessageDecryptionErrorCodeKey,
                              ZMSystemMessageConversationScheduledDeletionDateKey
                              ];

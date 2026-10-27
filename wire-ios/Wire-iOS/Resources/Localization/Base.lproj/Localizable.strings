@@ -201,6 +201,8 @@
 
 /* Status of a locally queued outgoing message, before a send attempt. */
 "content.message.queued" = "Queued";
+/* Deletion requested while waiting for delivery or for a remote deletion to complete. */
+"content.message.deletion_pending" = "Deletion pending";
 "conversation_list.voiceover.status.active_call" = "active call";
 "conversation_list.voiceover.status.missed_call" = "missed call";
 "conversation_list.voiceover.status.pause_media" = "pause media";

@@ -88,6 +88,70 @@ class ClientMessageRequestStrategyTests: MessagingTestBase {
 
 extension ClientMessageRequestStrategyTests {
 
+    func testRestoredPendingDeletionKeepsUncertainOriginalOutOfTheSendQueue() throws {
+        try syncMOC.performAndWait {
+            let message = try XCTUnwrap(groupConversation.appendText(content: "held original") as? ZMClientMessage)
+            try message.enqueueInOutbox(operation: .initialMessage)
+            let content = try XCTUnwrap(message.underlyingMessage).serializedData()
+            let attempt = try message.prepareOutboxAttempt(payload: content)
+            try message.markOutboxAttemptSending(attempt)
+            try message.requestOutboxDeletion(.everyone)
+            try syncMOC.save()
+            // Recovery must continue enrolled work even when new enrollment is disabled.
+            syncMOC.offlinePendingMessagesEnabled = false
+
+            var completed = false
+            sut.enqueueOutboxMessage(message, isFresh: false) { completed = true }
+            sut.addTrackedObjects([message])
+
+            XCTAssertTrue(completed)
+            XCTAssertEqual(message.outboxState, .uncertain)
+            XCTAssertTrue(message.hasPendingOutboxDeletion)
+            XCTAssertFalse(message.isExpired)
+            XCTAssertTrue(message.outboxDeletionMessages.isEmpty)
+            XCTAssertEqual(try message.loadOutboxPayload(), content)
+            XCTAssertTrue(mockMessageSender.sendMessageMessage_Invocations.isEmpty)
+        }
+    }
+
+    func testRestoredDeletionControlIsQueuedWithoutReopeningTheAcceptedOriginal() throws {
+        try syncMOC.performAndWait {
+            sut.tearDown()
+            sut = ClientMessageRequestStrategy(
+                context: syncMOC, localNotificationDispatcher: localNotificationDispatcher,
+                messageSender: mockMessageSender, reachability: PendingMessageReachability()
+            )
+            let message = try XCTUnwrap(groupConversation.appendText(content: "accepted original") as? ZMClientMessage)
+            try message.enqueueInOutbox(operation: .initialMessage)
+            let content = try XCTUnwrap(message.underlyingMessage).serializedData()
+            let original = try message.prepareOutboxAttempt(payload: content)
+            try message.markOutboxAttemptSending(original)
+            message.markAsSent()
+            try message.completeOutboxAttempt(original.identifier)
+            try message.requestOutboxDeletion(.everyone)
+            let marker = try XCTUnwrap(message.outboxDeletionMessages.first)
+            let payload = try XCTUnwrap(marker.underlyingMessage).serializedData()
+            let deletion = try marker.prepareOutboxAttempt(payload: payload)
+            try marker.markOutboxAttemptSending(deletion)
+            try syncMOC.save()
+            syncMOC.offlinePendingMessagesEnabled = false
+
+            sut.insert(object: marker, isFresh: false, completion: {})
+            sut.addTrackedObjects([message, marker])
+            sut.objectsDidChange([message, marker])
+
+            XCTAssertEqual(marker.outboxState, .queued)
+            XCTAssertNotNil(marker.outboxNextAttemptAt)
+            XCTAssertEqual(try marker.loadOutboxPayload(), payload)
+            XCTAssertEqual(message.outboxState, .sent)
+            XCTAssertTrue(message.delivered)
+            XCTAssertTrue(message.hasPendingOutboxDeletion)
+            XCTAssertEqual(message.outboxDeletionMessages.count, 1)
+            XCTAssertTrue(mockMessageSender.sendMessageMessage_Invocations.isEmpty)
+            sut.tearDown()
+        }
+    }
+
     func testContextClosureCancelsAWaitingOutboxTaskWhileItsStrategyRemainsAlive() async throws {
         let started = expectation(description: "outbox task started waiting")
         let cancelled = expectation(description: "context closure cancels waiting task")

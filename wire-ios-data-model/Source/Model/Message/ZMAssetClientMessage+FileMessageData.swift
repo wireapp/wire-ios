@@ -365,6 +365,7 @@ extension ZMAssetClientMessage: ZMFileMessageData {
 extension ZMAssetClientMessage {
 
     public func cancelTransfer() {
+        guard !hasPendingOutboxDeletion else { return }
         if outboxState != .notEnrolled, outboxState != .sent {
             guard !isDeleted, !hasBeenDeleted, outboxOperation == .initialMessage else { return }
             do {

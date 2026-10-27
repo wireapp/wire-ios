@@ -23,6 +23,173 @@ import XCTest
 
 final class MessageOutboxTests: BaseZMClientMessageTests {
 
+    func testDeletionAfterHandoffKeepsAttemptUntilAcceptanceAndQueuesOneDurableControl() throws {
+        let message = try makeMessage()
+        try message.enqueueInOutbox(operation: .initialMessage)
+        let content = try payload(of: message)
+        let attempt = try message.prepareOutboxAttempt(payload: content)
+        try message.markOutboxAttemptSending(attempt)
+        try uiMOC.save()
+
+        try message.requestOutboxDeletion(.everyone)
+        try message.requestOutboxDeletion(.everyone)
+        try uiMOC.save()
+
+        XCTAssertTrue(message.hasPendingOutboxDeletion)
+        XCTAssertEqual(message.outboxState, .sending)
+        XCTAssertEqual(message.outboxAttemptIdentifier, attempt.identifier)
+        XCTAssertEqual(try message.loadOutboxPayload(), content)
+        XCTAssertTrue(message.outboxDeletionMessages.isEmpty)
+        XCTAssertFalse(message.hasBeenDeleted)
+
+        message.markAsSent()
+        try message.completeOutboxAttempt(attempt.identifier)
+        try message.processPendingOutboxDeletion()
+        try message.processPendingOutboxDeletion()
+        try uiMOC.save()
+
+        let marker = try XCTUnwrap(message.outboxDeletionMessages.first)
+        XCTAssertEqual(message.outboxDeletionMessages.count, 1)
+        XCTAssertEqual(marker.outboxOperation, .deletion)
+        XCTAssertEqual(marker.outboxState, .queued)
+        XCTAssertFalse(marker.hasBeenDeleted, "Hidden live control records are not erased target rows")
+        XCTAssertEqual(marker.underlyingMessage?.deleted.messageID, message.nonce?.transportString())
+        XCTAssertEqual(marker.outboxDeletionTarget, message)
+        syncMOC.performGroupedAndWait {
+            let restored = try! self.syncMOC.existingObject(with: message.objectID) as! ZMClientMessage
+            XCTAssertTrue(restored.hasPendingOutboxDeletion)
+            XCTAssertEqual(restored.outboxDeletionMessages.count, 1)
+        }
+
+        let deletion = try marker.prepareOutboxAttempt(payload: payload(of: marker))
+        try marker.markOutboxAttemptSending(deletion)
+        marker.markAsSent()
+        try marker.completeOutboxAttempt(deletion.identifier)
+        try message.processPendingOutboxDeletion()
+        try uiMOC.save()
+
+        XCTAssertFalse(message.hasPendingOutboxDeletion)
+        XCTAssertTrue(message.hasBeenDeleted)
+    }
+
+    func testUncertainOriginalRetainsDeletionAcrossRecoveryAndCannotBeRetriedToDeleteIt() throws {
+        let message = try makeMessage()
+        try message.enqueueInOutbox(operation: .initialMessage)
+        let attempt = try message.prepareOutboxAttempt(payload: payload(of: message))
+        try message.markOutboxAttemptSending(attempt)
+        try message.requestOutboxDeletion(.everyone)
+        try uiMOC.save()
+
+        message.recoverOutboxAfterRestart()
+        try message.processPendingOutboxDeletion()
+        message.resend()
+        try uiMOC.save()
+
+        XCTAssertEqual(message.outboxState, .uncertain)
+        XCTAssertTrue(message.hasPendingOutboxDeletion)
+        XCTAssertFalse(message.canRetryPendingOutboxDeletion)
+        XCTAssertTrue(message.outboxDeletionMessages.isEmpty)
+        XCTAssertEqual(try message.loadOutboxPayload(), attempt.payload)
+        XCTAssertThrowsError(try message.retryOutboxOperation())
+
+        // A later accepted delivery/echo is evidence; changing reachability alone is not.
+        message.markAsSent()
+        try message.processPendingOutboxDeletion()
+        XCTAssertEqual(message.outboxDeletionMessages.count, 1)
+        XCTAssertEqual(message.outboxState, .sent)
+    }
+
+    func testPendingDeletionAbandonsAnEditBeforeHandoffAndDeletesTheAcceptedVersion() throws {
+        let message = try makeMessage()
+        message.markAsSent()
+        let acceptedID = message.nonce
+        message.editText("unsent edit", mentions: [], fetchLinkPreview: false)
+        try message.enqueueInOutbox(operation: .edit)
+        let edit = try message.prepareOutboxAttempt(payload: payload(of: message))
+
+        try message.requestOutboxDeletion(.everyone)
+
+        XCTAssertEqual(message.nonce, acceptedID)
+        XCTAssertEqual(message.outboxState, .sent)
+        XCTAssertThrowsError(try message.markOutboxAttemptSending(edit))
+        XCTAssertEqual(message.outboxDeletionMessages.first?.underlyingMessage?.deleted.messageID,
+                       acceptedID?.transportString())
+    }
+
+    func testDeletionControlCanRecoverAfterLostAcknowledgementWithoutRequeueingItsOriginal() throws {
+        let message = try makeMessage()
+        try message.enqueueInOutbox(operation: .initialMessage)
+        let original = try message.prepareOutboxAttempt(payload: payload(of: message))
+        try message.markOutboxAttemptSending(original)
+        message.markAsSent()
+        try message.completeOutboxAttempt(original.identifier)
+        try message.requestOutboxDeletion(.everyone)
+        let marker = try XCTUnwrap(message.outboxDeletionMessages.first)
+        let attempt = try marker.prepareOutboxAttempt(payload: payload(of: marker))
+        try marker.markOutboxAttemptSending(attempt)
+        try uiMOC.save()
+
+        marker.recoverOutboxAfterRestart()
+
+        XCTAssertEqual(marker.outboxState, .queued)
+        XCTAssertEqual(try marker.loadOutboxPayload(), attempt.payload)
+        XCTAssertEqual(message.outboxState, .sent)
+        XCTAssertTrue(message.delivered)
+        XCTAssertTrue(message.hasPendingOutboxDeletion)
+        XCTAssertThrowsError(try message.enqueueInOutbox(operation: .contentUpdate))
+    }
+
+    func testRetryOfPendingDeletionRetriesOnlyAFailedControlMessage() throws {
+        let message = try makeMessage()
+        try message.enqueueInOutbox(operation: .initialMessage)
+        let original = try message.prepareOutboxAttempt(payload: payload(of: message))
+        try message.markOutboxAttemptSending(original)
+        message.markAsSent()
+        try message.completeOutboxAttempt(original.identifier)
+        try message.requestOutboxDeletion(.everyone)
+        let marker = try XCTUnwrap(message.outboxDeletionMessages.first)
+        try marker.failQueuedOutboxOperation()
+        marker.expire(withReason: .other)
+        let originalContent = try payload(of: message)
+
+        XCTAssertTrue(message.canRetryPendingOutboxDeletion)
+        message.resend()
+
+        XCTAssertEqual(marker.outboxState, .queued)
+        XCTAssertFalse(marker.isExpired)
+        XCTAssertEqual(message.outboxState, .sent)
+        XCTAssertEqual(try payload(of: message), originalContent)
+        XCTAssertTrue(message.delivered)
+    }
+
+    func testLocalHideCanBeUpgradedToEveryoneWithoutClearingTheOriginalEarly() throws {
+        let message = try makeMessage()
+        try message.enqueueInOutbox(operation: .initialMessage)
+        let original = try message.prepareOutboxAttempt(payload: payload(of: message))
+        try message.markOutboxAttemptSending(original)
+        message.markAsSent()
+        try message.completeOutboxAttempt(original.identifier)
+        try message.requestOutboxDeletion(.local)
+        XCTAssertTrue(message.outboxDeletionMessages.contains { $0.underlyingMessage?.hasHidden == true })
+
+        try message.requestOutboxDeletion(.everyone)
+        try message.requestOutboxDeletion(.local)
+        XCTAssertEqual(message.outboxDeletionScopeRaw, MessageOutboxDeletionScope.everyone.rawValue)
+        XCTAssertTrue(message.outboxDeletionMessages.contains { $0.underlyingMessage?.hasDeleted == true })
+        XCTAssertFalse(message.hasBeenDeleted)
+
+        for marker in message.outboxDeletionMessages {
+            let attempt = try marker.prepareOutboxAttempt(payload: payload(of: marker))
+            try marker.markOutboxAttemptSending(attempt)
+            marker.markAsSent()
+            try marker.completeOutboxAttempt(attempt.identifier)
+        }
+        try message.processPendingOutboxDeletion()
+        try uiMOC.save()
+        XCTAssertTrue(message.hasBeenDeleted)
+        XCTAssertFalse(message.isDeleted, "An everyone delete leaves the existing deleted-message tombstone")
+    }
+
     func testRepeatedQueuedEditsKeepIdentityQuoteAndMentionsWithoutAnEditedMarker() throws {
         let message = try makeMessage()
         try message.enqueueInOutbox(operation: .initialMessage)

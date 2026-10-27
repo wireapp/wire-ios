@@ -19,6 +19,7 @@ As it is hard to spot changes from version to version of database models (.xcdat
 * added `Message.outboxStateRaw`, `outboxOperationRaw`, `outboxEnqueuedAt`, `outboxAttemptIdentifier`, `outboxAttemptCount` and `outboxNextAttemptAt` to persist pending-message lifecycle, send ownership and retry scheduling (WPB-26307). Existing messages default to not enrolled.
 * added the optional `Message.outboxSnapshot` relationship to `GenericMessageData`, with inverse `GenericMessageData.outboxMessage`, so frozen outgoing payloads use existing encryption-at-rest support. Deleting a message cascades to its snapshot.
 * added optional binary `Message.outboxPayload` for compatibility with intermediate local builds; new snapshots use `outboxSnapshot`.
+* added `Message.outboxDeletionScopeRaw` and the `Message.outboxDeletionMessages` / `ClientMessage.outboxDeletionTarget` relationship to retain deletion requests across send handoff and restart. Follow-up hide/delete messages are queued only after the target's acceptance is known; deleting the target cascades to its control records.
 
 ### 2.144.0
 

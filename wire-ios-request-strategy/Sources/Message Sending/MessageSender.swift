@@ -34,6 +34,7 @@ public enum MessageSendError: Error {
     case failed(Error)
     case outboxWaitingForConnection
     case outboxConversationUnavailable
+    case outboxDeletionPending
 }
 
 public typealias SendableMessage = MLSMessage & ProteusMessage
@@ -687,7 +688,9 @@ private extension MessageSender {
         for retry in 0...maxRetryAttempts {
             try Task.checkCancellation()
             let attempt = try await context.perform {
-                guard self.context.zm_isValidContext else { throw MessageOutboxError.staleAttempt }
+                guard self.context.zm_isValidContext, row.managedObjectContext === self.context,
+                      !row.isDeleted else { throw MessageOutboxError.staleAttempt }
+                guard !row.hasPendingOutboxDeletion else { throw MessageSendError.outboxDeletionPending }
                 guard self.reachability?.mayBeReachable != false else {
                     throw MessageSendError.outboxWaitingForConnection
                 }
@@ -707,6 +710,15 @@ private extension MessageSender {
                 try await finishOutboxAttempt(attempt, message: message)
                 RequestAvailableNotification.notifyNewRequestsAvailable(nil)
                 return
+            } catch MessageSendError.outboxDeletionPending {
+                try await context.perform {
+                    guard self.isCurrentOutboxAttempt(attempt.identifier, row: row) else {
+                        throw MessageOutboxError.staleAttempt
+                    }
+                    try row.rescheduleOutboxAttempt(attempt.identifier)
+                    try self.context.save()
+                }
+                throw MessageSendError.outboxDeletionPending
             } catch {
                 if let networkError = error as? NetworkError,
                    let response = networkError.response, response.result == .success {
@@ -727,15 +739,19 @@ private extension MessageSender {
                     notSubmitted = false
                 }
                 let canRepair = retry < maxRetryAttempts && isRepairableOutboxRejection(error)
-                try await context.perform {
+                let retryDeletion = try await context.perform { () throws -> Bool in
                     guard self.isCurrentOutboxAttempt(attempt.identifier, row: row) else {
                         throw MessageOutboxError.staleAttempt
                     }
+                    // A control marker is idempotent and its target was already accepted. Retrying
+                    // that marker after a lost acknowledgement never retransmits the original content.
+                    let retryDeletion = row.outboxOperation == .deletion && row.outboxState == .sending
+                        && !(error is OutboxHandoffPersistenceError) && !self.isDefiniteOutboxRejection(error)
                     if error is OutboxHandoffPersistenceError {
                         try row.failOutboxAttempt(attempt.identifier)
                         row.removeExpirationDate()
-                    } else if notSubmitted || canRepair || row.outboxState == .preparing {
-                        let retryDate: Date? = notSubmitted
+                    } else if notSubmitted || retryDeletion || canRepair || row.outboxState == .preparing {
+                        let retryDate: Date? = notSubmitted || retryDeletion
                             ? Date(timeIntervalSinceNow: TimeInterval(min(30, max(1, row.outboxAttemptCount))))
                             : nil
                         try row.rescheduleOutboxAttempt(attempt.identifier, notBefore: retryDate)
@@ -746,8 +762,9 @@ private extension MessageSender {
                         try row.markOutboxAttemptUncertain(attempt.identifier)
                     }
                     try self.context.save()
+                    return retryDeletion
                 }
-                if notSubmitted { throw MessageSendError.outboxWaitingForConnection }
+                if notSubmitted || retryDeletion { throw MessageSendError.outboxWaitingForConnection }
                 if canRepair {
                     try await repairOutboxRejection(error, message: message, attempt: attempt)
                     continue
@@ -783,8 +800,11 @@ private extension MessageSender {
         try requireCurrentOutboxAttempt(attempt, message: message)
         guard reachability?.mayBeReachable != false else { throw MessageSendError.outboxWaitingForConnection }
         guard let row = message as? ZMMessage else { throw MessageOutboxError.invalidTransition }
+        guard !row.hasPendingOutboxDeletion else { throw MessageSendError.outboxDeletionPending }
         guard !row.isExpired else { throw MessageSendError.messageExpired }
-        guard let conversation = message.conversation, conversation.isSelfAnActiveMember else {
+        guard let conversation = message.conversation,
+              conversation.isSelfAnActiveMember || (conversation.isSelfConversation && row.outboxOperation == .deletion)
+        else {
             throw MessageSendError.outboxConversationUnavailable
         }
         if conversation.isDegraded, !message.shouldIgnoreTheSecurityLevelCheck {
@@ -814,32 +834,51 @@ private extension MessageSender {
             guard let row = message as? ZMMessage,
                   self.isCurrentOutboxAttempt(attempt.identifier, row: row)
             else { throw MessageOutboxError.staleAttempt }
-            let clientMessage = row as? ZMClientMessage
-            let claimedContent = try GenericMessage(serializedData: attempt.payload)
-            let needsPreviewUpdate = clientMessage?.linkPreviewState == .uploaded
-                && clientMessage?.underlyingMessage?.linkPreviews != claimedContent.linkPreviews
-            if let response { message.delivered(with: response) }
-            row.markAsSent()
-            try row.completeOutboxAttempt(attempt.identifier)
-            row.removeExpirationDate()
-            if needsPreviewUpdate {
-                // Preview work may finish during HTTP. Send it as a new operation after acceptance
-                // rather than replacing content that recipients may already have received.
-                try row.enqueueInOutbox(operation: .contentUpdate)
-                row.delivered = false
-            }
-            try self.context.save()
-            if let assetMessage = row as? ZMAssetClientMessage {
-                self.context.zm_fileAssetCache.releaseOutboxAssets(for: assetMessage)
+            do {
+                let clientMessage = row as? ZMClientMessage
+                let claimedContent = try GenericMessage(serializedData: attempt.payload)
+                let needsPreviewUpdate = !row.hasPendingOutboxDeletion && row.outboxOperation != .deletion
+                    && clientMessage?.linkPreviewState == .uploaded
+                    && clientMessage?.underlyingMessage?.linkPreviews != claimedContent.linkPreviews
+                if let response { message.delivered(with: response) }
+                if row.hasPendingOutboxDeletion {
+                    // A failed edit can have restored its previous nonce while awaiting this response.
+                    // Follow-up deletion must target the operation the server actually accepted.
+                    row.nonce = UUID(uuidString: claimedContent.messageID)
+                }
+                row.markAsSent()
+                try row.completeOutboxAttempt(attempt.identifier)
+                row.removeExpirationDate()
+                if let target = clientMessage?.outboxDeletionTarget {
+                    try target.processPendingOutboxDeletion()
+                } else if row.hasPendingOutboxDeletion {
+                    try row.processPendingOutboxDeletion()
+                }
+                if needsPreviewUpdate {
+                    // Preview work may finish during HTTP. Send it as a new operation after acceptance
+                    // rather than replacing content that recipients may already have received.
+                    try row.enqueueInOutbox(operation: .contentUpdate)
+                    row.delivered = false
+                }
+                try self.context.save()
+                if let assetMessage = row as? ZMAssetClientMessage {
+                    self.context.zm_fileAssetCache.releaseOutboxAssets(for: assetMessage)
+                }
+            } catch {
+                // Roll back marker creation and completion together. No control message may become
+                // eligible only in memory when the original's acceptance could not be saved.
+                self.context.rollback()
+                throw error
             }
         }
     }
 
     func isCurrentOutboxAttempt(_ identifier: UUID, row: ZMMessage) -> Bool {
         // Check context validity before touching a row that account teardown may already have reset.
-        guard context.zm_isValidContext, let state = row.outboxState else { return false }
-        return !row.isDeleted && !row.hasBeenDeleted && !row.isObfuscated && row.outboxAttemptIdentifier == identifier
-            && [.preparing, .sending, .uncertain].contains(state)
+        guard context.zm_isValidContext, row.managedObjectContext === context,
+              !row.isDeleted, !row.hasBeenDeleted, !row.isObfuscated,
+              let state = row.outboxState else { return false }
+        return row.outboxAttemptIdentifier == identifier && [.preparing, .sending, .uncertain].contains(state)
     }
 
     func requireCurrentOutboxAttempt(_ attempt: MessageOutboxAttempt, message: any SendableMessage) throws {

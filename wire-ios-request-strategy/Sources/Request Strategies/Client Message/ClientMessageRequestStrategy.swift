@@ -245,14 +245,37 @@ extension ClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
 
 extension ClientMessageRequestStrategy: ZMContextChangeTracker, TearDownCapable {
 
-    public func fetchRequestForTrackedObjects() -> NSFetchRequest<NSFetchRequestResult>? { nil }
+    public func fetchRequestForTrackedObjects() -> NSFetchRequest<NSFetchRequestResult>? {
+        guard context.canProcessOfflinePendingMessages else { return nil }
+        return ZMMessage.sortedFetchRequest(with: NSPredicate(format: "outboxDeletionScopeRaw != 0"))
+    }
 
     public func addTrackedObjects(_ objects: Set<NSManagedObject>) {
+        processPendingDeletions(objects)
         drainOutbox()
     }
 
     public func objectsDidChange(_ objects: Set<NSManagedObject>) {
+        processPendingDeletions(objects)
         drainOutbox()
+    }
+
+    private func processPendingDeletions(_ objects: Set<NSManagedObject>) {
+        guard !isTornDown, context.zm_isValidContext, context.canProcessOfflinePendingMessages else { return }
+        let liveMessages = objects.compactMap { $0 as? ZMMessage }.filter {
+            $0.managedObjectContext === context && !$0.isDeleted
+        }
+        var targets = Set(liveMessages.filter(\.hasPendingOutboxDeletion))
+        for marker in liveMessages.compactMap({ $0 as? ZMClientMessage }) {
+            if let target = marker.outboxDeletionTarget { targets.insert(target) }
+        }
+        do {
+            for target in targets { try target.processPendingOutboxDeletion() }
+            if !targets.isEmpty, context.hasChanges { try context.save() }
+        } catch {
+            context.rollback()
+            WireLogger.messaging.error("could not persist pending outbox deletion")
+        }
     }
 
     public func tearDown() {
@@ -282,6 +305,16 @@ extension ClientMessageRequestStrategy {
         }
         if !isFresh {
             message.recoverOutboxAfterRestart()
+        }
+        if message.hasPendingOutboxDeletion {
+            do {
+                try message.processPendingOutboxDeletion()
+                try context.save()
+            } catch {
+                context.rollback()
+            }
+            completion()
+            return
         }
         if message.outboxState == .uncertain {
             // Surface existing Retry until automatic reconciliation of unknown delivery is agreed.
@@ -319,7 +352,8 @@ extension ClientMessageRequestStrategy {
             let message = entry.message
             guard outboxTasks[message.objectID] == nil else { continue }
             guard !message.isDeleted, !message.hasBeenDeleted, !message.isExpired,
-                  message.outboxState == .queued, let conversation = message.conversation
+                  !message.hasPendingOutboxDeletion, message.outboxState == .queued,
+                  let conversation = message.conversation
             else {
                 queuedOutboxMessages.removeValue(forKey: message.objectID)?.completion()
                 continue
@@ -349,6 +383,8 @@ extension ClientMessageRequestStrategy {
                 } catch MessageOutboxError.staleAttempt {
                     // An obsolete operation must not expire its replacement or a cancelled message.
                     waitsForConnection = false
+                } catch MessageSendError.outboxDeletionPending {
+                    waitsForConnection = false
                 } catch {
                     await context.perform {
                         guard self.context.zm_isValidContext, !self.isTornDown,
@@ -359,7 +395,9 @@ extension ClientMessageRequestStrategy {
                             try? message.failQueuedOutboxOperation()
                         }
                         message.expire(withReason: .other)
-                        self.localNotificationDispatcher.didFailToSend(message)
+                        if message.outboxOperation != .deletion {
+                            self.localNotificationDispatcher.didFailToSend(message)
+                        }
                         if case let NetworkError.invalidRequestError(failure, _) = error,
                            failure.label == .missingLegalholdConsent {
                             self.context.zm_userInterface.performGroupedBlock {
@@ -380,7 +418,8 @@ extension ClientMessageRequestStrategy {
                     guard !self.isTornDown else { return }
                     self.outboxTasks.removeValue(forKey: objectID)
                     self.activeOutboxConversations.remove(conversationID)
-                    if !waitsForConnection, message.outboxState != .queued {
+                    if !waitsForConnection, message.isDeleted || message.managedObjectContext !== self.context
+                        || message.hasPendingOutboxDeletion || message.outboxState != .queued {
                         self.queuedOutboxMessages.removeValue(forKey: objectID)?.completion()
                     }
                     self.context.enqueueDelayedSave()

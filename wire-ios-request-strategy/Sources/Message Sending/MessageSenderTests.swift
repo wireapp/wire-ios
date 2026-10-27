@@ -22,10 +22,179 @@ import WireSystem
 import WireTransport
 import XCTest
 
+@testable import WireDataModel
 @testable import WireDataModelSupport
 @testable import WireRequestStrategySupport
 
 final class MessageSenderTests: MessagingTestBase {
+
+    func testDeletionDuringEncryptionStopsTheOriginalBeforeHandoff() async throws {
+        let message = try await makeOutboxMessage()
+        let (arrangement, sender) = Arrangement(coreDataStack: coreDataStack)
+            .withProteusConfigured()
+            .withIncrementalSyncObserverCompleting()
+            .withMessageDependencyResolverReturning(result: .success(()))
+            .withApiVersionResolving(to: .v0)
+            .arrange()
+        arrangement.proteusService.encryptBatchedDataForSessions_MockMethod = { _, _ in
+            // Delete and save while crypto suspends, so the final guard must handle a detached row.
+            try await self.syncMOC.perform {
+                try message.requestOutboxDeletion(.everyone)
+                try self.syncMOC.save()
+            }
+            return ["test": Data()]
+        }
+
+        do {
+            try await sender.sendMessage(message: message)
+            XCTFail("Deletion before handoff must stop HTTP submission")
+        } catch {
+            XCTAssertEqual(error as? MessageOutboxError, .staleAttempt)
+        }
+        XCTAssertTrue(arrangement.messageApi.sendProteusMessageMessageConversationIDExpirationDate_Invocations.isEmpty)
+    }
+
+    func testDeleteAtHTTPHandoffQueuesControlOnlyAfterAcceptanceForBothProtocols() async throws {
+        for usesMLS in [false, true] {
+            await syncMOC.perform {
+                self.groupConversation.messageProtocol = usesMLS ? .mls : .proteus
+                self.groupConversation.mlsGroupID = Arrangement.Scaffolding.groupID
+                self.groupConversation.mlsStatus = .ready
+            }
+            let message = try await makeOutboxMessage()
+            let (arrangement, sender) = Arrangement(coreDataStack: coreDataStack)
+                .withProteusConfigured()
+                .withMLServiceConfigured()
+                .withIncrementalSyncObserverCompleting()
+                .withMessageDependencyResolverReturning(result: .success(()))
+                .withApiVersionResolving(to: .v13)
+                .arrange()
+            arrangement.mlsService.encryptMessageFor_MockMethod = { data, _ in data }
+            let requestDeletion = {
+                try await self.syncMOC.perform {
+                    let token = try XCTUnwrap(message.outboxAttemptIdentifier)
+                    XCTAssertEqual(message.outboxState, .sending)
+                    try message.requestOutboxDeletion(.everyone)
+                    try self.syncMOC.save()
+                    XCTAssertEqual(message.outboxAttemptIdentifier, token)
+                    XCTAssertTrue(message.outboxDeletionMessages.isEmpty)
+                    XCTAssertFalse(message.hasBeenDeleted)
+                }
+            }
+            arrangement.messageApi.sendProteusMessageMessageConversationIDExpirationDate_MockMethod = { _, _, _ in
+                try await requestDeletion()
+                return (Arrangement.Scaffolding.messageSendingStatusSuccess, Arrangement.Scaffolding.responseSuccess)
+            }
+            arrangement.messageApi.sendMLSMessageMessageConversationIDExpirationDate_MockMethod = { _, _, _ in
+                try await requestDeletion()
+                return (
+                    Payload.MLSMessageSendingStatus(time: Date(), events: [], failedToSend: nil),
+                    Arrangement.Scaffolding.responseSuccess
+                )
+            }
+
+            try await sender.sendMessage(message: message)
+
+            let marker = try await syncMOC.perform {
+                XCTAssertEqual(message.outboxState, .sent)
+                XCTAssertTrue(message.hasPendingOutboxDeletion)
+                XCTAssertFalse(message.hasBeenDeleted)
+                let marker = try XCTUnwrap(message.outboxDeletionMessages.first)
+                XCTAssertEqual(marker.outboxState, .queued)
+                XCTAssertFalse(marker.hasBeenDeleted)
+                return marker
+            }
+            arrangement.messageApi.sendProteusMessageMessageConversationIDExpirationDate_MockMethod = { _, _, _ in
+                (Arrangement.Scaffolding.messageSendingStatusSuccess, Arrangement.Scaffolding.responseSuccess)
+            }
+            arrangement.messageApi.sendMLSMessageMessageConversationIDExpirationDate_MockMethod = { _, _, _ in
+                (
+                    Payload.MLSMessageSendingStatus(time: Date(), events: [], failedToSend: nil),
+                    Arrangement.Scaffolding.responseSuccess
+                )
+            }
+            try await sender.sendMessage(message: marker)
+
+            await syncMOC.perform {
+                XCTAssertTrue(message.hasBeenDeleted)
+                XCTAssertFalse(message.hasPendingOutboxDeletion)
+            }
+        }
+    }
+
+    func testDeletionControlTimeoutRequeuesOnlyTheControlWithBackoff() async throws {
+        let message = try await makeOutboxMessage()
+        let marker = try await syncMOC.perform {
+            let content = try XCTUnwrap(message.underlyingMessage).serializedData()
+            let attempt = try message.prepareOutboxAttempt(payload: content)
+            try message.markOutboxAttemptSending(attempt)
+            message.markAsSent()
+            try message.completeOutboxAttempt(attempt.identifier)
+            try message.requestOutboxDeletion(.everyone)
+            try self.syncMOC.save()
+            return try XCTUnwrap(message.outboxDeletionMessages.first)
+        }
+        let (arrangement, sender) = Arrangement(coreDataStack: coreDataStack)
+            .withProteusConfigured()
+            .withIncrementalSyncObserverCompleting()
+            .withMessageDependencyResolverReturning(result: .success(()))
+            .withApiVersionResolving(to: .v0)
+            .arrange()
+        arrangement.messageApi.sendProteusMessageMessageConversationIDExpirationDate_MockMethod = { _, _, _ in
+            let response = ZMTransportResponse(
+                payload: nil, httpStatus: 0,
+                transportSessionError: NSError(domain: NSURLErrorDomain, code: NSURLErrorTimedOut), apiVersion: 0
+            )
+            throw NetworkError.errorDecodingResponse(response)
+        }
+
+        do { try await sender.sendMessage(message: marker); XCTFail("Expected a deferred control retry") }
+        catch MessageSendError.outboxWaitingForConnection {} catch { XCTFail("Unexpected error: \(error)") }
+
+        try await syncMOC.perform {
+            XCTAssertEqual(marker.outboxState, .queued)
+            XCTAssertNotNil(marker.outboxNextAttemptAt)
+            XCTAssertNotNil(try marker.loadOutboxPayload())
+            XCTAssertEqual(message.outboxState, .sent)
+            XCTAssertTrue(message.delivered)
+            XCTAssertTrue(message.hasPendingOutboxDeletion)
+            XCTAssertFalse(message.hasBeenDeleted)
+        }
+        XCTAssertEqual(arrangement.messageApi.sendProteusMessageMessageConversationIDExpirationDate_Invocations.count, 1)
+    }
+
+    func testDeleteRequestWithUncertainOriginalDoesNotAutomaticallyResubmitIt() async throws {
+        let message = try await makeOutboxMessage()
+        let (arrangement, sender) = Arrangement(coreDataStack: coreDataStack)
+            .withProteusConfigured()
+            .withIncrementalSyncObserverCompleting()
+            .withMessageDependencyResolverReturning(result: .success(()))
+            .withApiVersionResolving(to: .v0)
+            .arrange()
+        arrangement.messageApi.sendProteusMessageMessageConversationIDExpirationDate_MockMethod = { _, _, _ in
+            try await self.syncMOC.perform {
+                try message.requestOutboxDeletion(.everyone)
+                try self.syncMOC.save()
+            }
+            let response = ZMTransportResponse(
+                payload: nil, httpStatus: 0,
+                transportSessionError: NSError(domain: NSURLErrorDomain, code: NSURLErrorTimedOut), apiVersion: 0
+            )
+            throw NetworkError.errorDecodingResponse(response)
+        }
+        do { try await sender.sendMessage(message: message); XCTFail("Expected uncertain delivery") }
+        catch {}
+        do { try await sender.sendMessage(message: message); XCTFail("Pending deletion must block the original") }
+        catch MessageSendError.outboxDeletionPending {} catch { XCTFail("Unexpected error: \(error)") }
+
+        XCTAssertEqual(arrangement.messageApi.sendProteusMessageMessageConversationIDExpirationDate_Invocations.count, 1)
+        try await syncMOC.perform {
+            XCTAssertEqual(message.outboxState, .uncertain)
+            XCTAssertTrue(message.hasPendingOutboxDeletion)
+            XCTAssertTrue(message.outboxDeletionMessages.isEmpty)
+            XCTAssertNotNil(try message.loadOutboxPayload())
+        }
+    }
 
     override func setUp() {
         super.setUp()
