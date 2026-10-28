@@ -61,6 +61,7 @@ final class MeetingMemberAddEventNotificationBuilderTests: XCTestCase {
             locale: Locale(identifier: "en_GB"),
             timeZone: TimeZone(secondsFromGMT: 0)!
         )
+        sut.currentDate = { Scaffolding.startTime.addingTimeInterval(-1) }
     }
 
     override func tearDown() async throws {
@@ -81,6 +82,7 @@ final class MeetingMemberAddEventNotificationBuilderTests: XCTestCase {
             return XCTFail("Expected an invitation notification")
         }
         XCTAssertEqual(meetingsAPI.requestedIDs, [Scaffolding.meetingID])
+        XCTAssertEqual(meetingStore.meetings.first?.invitedEmails, Scaffolding.meeting.invitedEmails)
         XCTAssertEqual(usersAPI.requestedIDs, [Scaffolding.senderID])
         XCTAssertNotEqual(Scaffolding.meeting.creatorID, Scaffolding.senderID)
         XCTAssertEqual(content.title, "Planning")
@@ -90,6 +92,23 @@ final class MeetingMemberAddEventNotificationBuilderTests: XCTestCase {
         XCTAssertEqual(content.userInfo[NotificationUserInfoKey.selfUserID] as? String, sut.accountID.uuidString)
         XCTAssertEqual(meetingStore.meetings.map(\.id.id), [Scaffolding.meetingID.id])
         XCTAssertEqual(meetingStore.meetings.map(\.conversationID.id), [Scaffolding.meeting.conversationID.id])
+    }
+
+    func testInvitationTitleReflectsMeetingTimeWindow() async throws {
+        let cases: [(TimeInterval, String)] = [
+            (-1, "Planning"),
+            (0, "Ongoing: Planning"),
+            (1800, "Ongoing: Planning"),
+            (3600, "Planning")
+        ]
+        for (offset, title) in cases {
+            sut.currentDate = { Scaffolding.startTime.addingTimeInterval(offset) }
+            let result = await sut.buildContent(event: Scaffolding.event)
+            guard case let .text(content) = try XCTUnwrap(result) else {
+                return XCTFail("Expected an invitation notification")
+            }
+            XCTAssertEqual(content.title, title, "Offset: \(offset)")
+        }
     }
 
     func testInvitationUsesRecipientTimeZone() async throws {
@@ -199,7 +218,7 @@ private enum Scaffolding {
         startTime: startTime,
         endTime: startTime.addingTimeInterval(3600),
         conversationID: .init(id: UUID(), domain: "example.com"),
-        invitedEmails: [],
+        invitedEmails: ["guest@example.com"],
         isTrial: false,
         createdAt: startTime,
         updatedAt: startTime

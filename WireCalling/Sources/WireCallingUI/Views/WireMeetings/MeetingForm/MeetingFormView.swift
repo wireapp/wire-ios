@@ -161,6 +161,12 @@ struct MeetingFormView: View {
                 TextField(Strings.SetupTitle.placeholder, text: $viewModel.meetingTitle)
                     .accessibilityIdentifier(Locators.WireMeetings.MeetingForm.title)
                     .focused($isTitleFieldFocused)
+                    .onChange(of: viewModel.meetingTitle) { oldValue, newValue in
+                        if newValue.count > MeetingFormViewModel.maximumConversationNameLength,
+                           newValue.count > oldValue.count {
+                            viewModel.meetingTitle = oldValue
+                        }
+                    }
                 if !viewModel.meetingTitle.isEmpty {
                     Image(systemName: "xmark.circle.fill")
                         .foregroundStyle(Color(.lightGray))
