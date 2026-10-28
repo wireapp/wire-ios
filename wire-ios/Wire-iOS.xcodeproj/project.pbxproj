@@ -117,6 +117,11 @@
 		76EF74902E9E6380006A1579 /* WireLocators in Frameworks */ = {isa = PBXBuildFile; productRef = 76EF748F2E9E6380006A1579 /* WireLocators */; };
 		A96867FA26A5EB8400679D95 /* WireCommonComponents.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F1FEA14A21DCEB1700790A54 /* WireCommonComponents.framework */; };
 		A96867FB26A5EB8400679D95 /* WireCommonComponents.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F1FEA14A21DCEB1700790A54 /* WireCommonComponents.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		C90EFB7A307E274200818217 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C90EFB79307E274200818217 /* WidgetKit.framework */; };
+		C90EFB7C307E274200818217 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C90EFB7B307E274200818217 /* SwiftUI.framework */; };
+		C90EFB89307E274300818217 /* Wire Live Activity Extension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = C90EFB78307E274200818217 /* Wire Live Activity Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		C90EFB98307E27A000818217 /* WireDesign in Frameworks */ = {isa = PBXBuildFile; productRef = C90EFB97307E27A000818217 /* WireDesign */; };
+		C90EFB8F307E276800818217 /* WireDriveUploadsLiveActivity in Frameworks */ = {isa = PBXBuildFile; productRef = C90EFB8E307E276800818217 /* WireDriveUploadsLiveActivity */; };
 		C9954F8E2E38D08D00A5EB01 /* WireMessagingDomain in Frameworks */ = {isa = PBXBuildFile; productRef = C9954F8D2E38D08D00A5EB01 /* WireMessagingDomain */; };
 		CB43D9BD2CDBBBB900BF5AEB /* WireFolderPickerUI in Frameworks */ = {isa = PBXBuildFile; productRef = CB43D9BC2CDBBBB900BF5AEB /* WireFolderPickerUI */; };
 		CB4870F22C7F4FE5001E9151 /* WireTransportSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB4870F12C7F4FE5001E9151 /* WireTransportSupport.framework */; };
@@ -193,6 +198,13 @@
 			remoteGlobalIDString = 8F42C537199244A700288E4D;
 			remoteInfo = "ZClient-iOS";
 		};
+		C90EFB87307E274300818217 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8F42C530199244A700288E4D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C90EFB77307E274200818217;
+			remoteInfo = "Wire Live ActivityExtension";
+		};
 		E6579E3A2AFF9B30004E7FD8 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 8F42C530199244A700288E4D /* Project object */;
@@ -225,6 +237,7 @@
 			files = (
 				EE7905F627F326EB00FCBF8C /* Wire Share Extension.appex in Embed App Extensions */,
 				065A5AE5279B07AC002D4D1E /* Wire Notification Service Extension.appex in Embed App Extensions */,
+				C90EFB89307E274300818217 /* Wire Live Activity Extension.appex in Embed App Extensions */,
 			);
 			name = "Embed App Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -407,6 +420,13 @@
 		8F42C538199244A700288E4D /* Wire.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Wire.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8FC853A0199245770008B66B /* Wire-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "Wire-Info.plist"; path = "Wire-iOS/Wire-Info.plist"; sourceTree = "<group>"; };
 		BACB88511AF7C48900DDCDB0 /* Wire-iOS-Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Wire-iOS-Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		C90EFB78307E274200818217 /* Wire Live Activity Extension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "Wire Live Activity Extension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		C90EFB79307E274200818217 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		C90EFB7B307E274200818217 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		C90EFB90307E27A000818217 /* Live-Activity-Extension-Base.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Live-Activity-Extension-Base.xcconfig"; sourceTree = "<group>"; };
+		C90EFB91307E27A000818217 /* Live-Activity-Extension-Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Live-Activity-Extension-Debug.xcconfig"; sourceTree = "<group>"; };
+		C90EFB92307E27A000818217 /* Live-Activity-Extension-Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Live-Activity-Extension-Release.xcconfig"; sourceTree = "<group>"; };
+		C90EFB94307E27A000818217 /* swiftgenLiveActivityExtension.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = swiftgenLiveActivityExtension.yml; sourceTree = "<group>"; };
 		CB4870F12C7F4FE5001E9151 /* WireTransportSupport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTransportSupport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		E6579E362AFF9B30004E7FD8 /* Wire-iOS UnitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Wire-iOS UnitTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E6C25FC42AFFAAC300406A1C /* WireTesting.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WireTesting.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -893,6 +913,13 @@
 			);
 			target = 8F42C537199244A700288E4D /* Wire-iOS */;
 		};
+		C90EFB8D307E274300818217 /* PBXFileSystemSynchronizedBuildFileExceptionSet */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = C90EFB77307E274200818217 /* Wire Live Activity Extension */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -907,6 +934,7 @@
 		015DD59D2D68E261004EE8C9 /* Wire-iOS Tests */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (015DD6E62D68E261004EE8C9 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 015DD6E72D68E261004EE8C9 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = "Wire-iOS Tests"; sourceTree = "<group>"; };
 		01B71BB42D6D2DB3002C5A38 /* Configuration */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (01B71BC62D6D2DC6002C5A38 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, 01B71BC42D6D2DB3002C5A38 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = Configuration; sourceTree = "<group>"; };
 		01DFC4322D7B4C6F00D1962A /* WireUITests */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = WireUITests; sourceTree = "<group>"; };
+		C90EFB7D307E274200818217 /* Wire Live Activity */ = {isa = PBXFileSystemSynchronizedRootGroup; exceptions = (C90EFB8D307E274300818217 /* PBXFileSystemSynchronizedBuildFileExceptionSet */, ); explicitFileTypes = {}; explicitFolders = (); path = "Wire Live Activity"; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -1027,6 +1055,17 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		C90EFB75307E274200818217 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C90EFB7C307E274200818217 /* SwiftUI.framework in Frameworks */,
+				C90EFB7A307E274200818217 /* WidgetKit.framework in Frameworks */,
+				C90EFB8F307E276800818217 /* WireDriveUploadsLiveActivity in Frameworks */,
+				C90EFB98307E27A000818217 /* WireDesign in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		E6579E332AFF9B30004E7FD8 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -1114,6 +1153,7 @@
 			children = (
 				01B71A8D2D6D2DAB002C5A38 /* CommonComponents */,
 				01B71A912D6D2DAB002C5A38 /* Notification Extension */,
+				C90EFB93307E27A000818217 /* Live Activity Extension */,
 				01B71A952D6D2DAB002C5A38 /* Share Extension */,
 				01B71A972D6D2DAB002C5A38 /* Tests */,
 				01B71A9B2D6D2DAB002C5A38 /* Wire-iOS */,
@@ -1216,6 +1256,8 @@
 				EEE25B2629719A730008B894 /* Clibsodium.xcframework */,
 				EE67F6D7296F06B3001D7C88 /* FLAnimatedImage.xcframework */,
 				EEE25B5229719D540008B894 /* libPhoneNumberiOS.xcframework */,
+				C90EFB79307E274200818217 /* WidgetKit.framework */,
+				C90EFB7B307E274200818217 /* SwiftUI.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -1229,6 +1271,7 @@
 				015DC1DD2D68DD85004EE8C9 /* SECURITY.md */,
 				015DC1DE2D68DD85004EE8C9 /* swiftgen.yml */,
 				015DC1DF2D68DD85004EE8C9 /* swiftgenShareExtension.yml */,
+				C90EFB94307E27A000818217 /* swiftgenLiveActivityExtension.yml */,
 				87C8D7FB1BA8261C00B0530B /* Entitlements-Dev.entitlements */,
 				87C8D7FC1BA8261C00B0530B /* Entitlements-Prod.entitlements */,
 				8FC853A0199245770008B66B /* Wire-Info.plist */,
@@ -1244,6 +1287,7 @@
 				015DB12B2D68DB7B004EE8C9 /* WireCommonComponents */,
 				015DB15C2D68DB7F004EE8C9 /* Wire Notification Service Extension */,
 				01DFC4322D7B4C6F00D1962A /* WireUITests */,
+				C90EFB7D307E274200818217 /* Wire Live Activity */,
 				8286E48D7CC440448CBD8F48 /* Frameworks */,
 				8F42C539199244A700288E4D /* Products */,
 			);
@@ -1263,8 +1307,19 @@
 				065A5ADE279B07AC002D4D1E /* Wire Notification Service Extension.appex */,
 				E6579E362AFF9B30004E7FD8 /* Wire-iOS UnitTests.xctest */,
 				01DFC4312D7B4C6F00D1962A /* WireUITests.xctest */,
+				C90EFB78307E274200818217 /* Wire Live Activity Extension.appex */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		C90EFB93307E27A000818217 /* Live Activity Extension */ = {
+			isa = PBXGroup;
+			children = (
+				C90EFB90307E27A000818217 /* Live-Activity-Extension-Base.xcconfig */,
+				C90EFB91307E27A000818217 /* Live-Activity-Extension-Debug.xcconfig */,
+				C90EFB92307E27A000818217 /* Live-Activity-Extension-Release.xcconfig */,
+			);
+			path = "Live Activity Extension";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1368,6 +1423,7 @@
 				F1FEA15021DCEB1700790A54 /* PBXTargetDependency */,
 				168A16B21D9597C2005CFA6C /* PBXTargetDependency */,
 				065A5AE4279B07AC002D4D1E /* PBXTargetDependency */,
+				C90EFB88307E274300818217 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				015DA6092D68DA96004EE8C9 /* Generated */,
@@ -1451,6 +1507,31 @@
 			productReference = BACB88511AF7C48900DDCDB0 /* Wire-iOS-Tests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		C90EFB77307E274200818217 /* Wire Live Activity Extension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C90EFB8C307E274300818217 /* Build configuration list for PBXNativeTarget "Wire Live Activity Extension" */;
+			buildPhases = (
+				C90EFB96307E27A000818217 /* Run SwiftGen */,
+				C90EFB74307E274200818217 /* Sources */,
+				C90EFB75307E274200818217 /* Frameworks */,
+				C90EFB76307E274200818217 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				C90EFB7D307E274200818217 /* Wire Live Activity */,
+			);
+			name = "Wire Live Activity Extension";
+			packageProductDependencies = (
+				C90EFB8E307E276800818217 /* WireDriveUploadsLiveActivity */,
+				C90EFB97307E27A000818217 /* WireDesign */,
+			);
+			productName = "Wire Live ActivityExtension";
+			productReference = C90EFB78307E274200818217 /* Wire Live Activity Extension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		E6579E352AFF9B30004E7FD8 /* Wire-iOS UnitTests */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = E6579E3E2AFF9B30004E7FD8 /* Build configuration list for PBXNativeTarget "Wire-iOS UnitTests" */;
@@ -1512,7 +1593,7 @@
 			attributes = {
 				DefaultBuildSystemTypeForWorkspace = Original;
 				LastSwiftMigration = 0710;
-				LastSwiftUpdateCheck = 1620;
+				LastSwiftUpdateCheck = 2660;
 				LastUpgradeCheck = 1310;
 				ORGANIZATIONNAME = "Zeta Project Germany GmbH";
 				TargetAttributes = {
@@ -1553,6 +1634,9 @@
 						LastSwiftMigration = 1000;
 						ProvisioningStyle = Manual;
 						TestTargetID = 8F42C537199244A700288E4D;
+					};
+					C90EFB77307E274200818217 = {
+						CreatedOnToolsVersion = 26.6;
 					};
 					E6579E352AFF9B30004E7FD8 = {
 						CreatedOnToolsVersion = 15.0.1;
@@ -1645,6 +1729,7 @@
 				E6579E352AFF9B30004E7FD8 /* Wire-iOS UnitTests */,
 				592996512C2EB98A008C334F /* Format & Lint Swift Code */,
 				01DFC4302D7B4C6F00D1962A /* WireUITests */,
+				C90EFB77307E274200818217 /* Wire Live Activity Extension */,
 			);
 		};
 /* End PBXProject section */
@@ -1702,6 +1787,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				01B71BA72D6D2DAB002C5A38 /* emoticons.min.json in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C90EFB76307E274200818217 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1783,6 +1875,25 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "rm -rf \"${SOURCE_ROOT}\"/SnapshotResults/*\n";
+		};
+		C90EFB96307E27A000818217 /* Run SwiftGen */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Run SwiftGen";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "../scripts/run-swiftgen.sh --config \"$PROJECT_DIR/swiftgenLiveActivityExtension.yml\"\n";
 		};
 		E64120D52C1C7A820097526C /* Run Sourcery */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -1879,6 +1990,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		C90EFB74307E274200818217 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		E6579E322AFF9B30004E7FD8 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1920,6 +2038,11 @@
 			isa = PBXTargetDependency;
 			target = 8F42C537199244A700288E4D /* Wire-iOS */;
 			targetProxy = BACB88571AF7C48900DDCDB0 /* PBXContainerItemProxy */;
+		};
+		C90EFB88307E274300818217 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C90EFB77307E274200818217 /* Wire Live Activity Extension */;
+			targetProxy = C90EFB87307E274300818217 /* PBXContainerItemProxy */;
 		};
 		E6579E3B2AFF9B30004E7FD8 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -2505,6 +2628,166 @@
 			};
 			name = Release;
 		};
+		C90EFB8A307E274300818217 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = C90EFB91307E27A000818217 /* Live-Activity-Extension-Debug.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Wire Live Activity/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Wire Live Activity";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 Zeta Project Germany GmbH. All rights reserved.";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		C90EFB8B307E274300818217 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = C90EFB92307E27A000818217 /* Live-Activity-Extension-Release.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "Wire Live Activity/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Wire Live Activity";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 Zeta Project Germany GmbH. All rights reserved.";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 		E6579E3C2AFF9B30004E7FD8 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 01B71A962D6D2DAB002C5A38 /* Tests-Debug.xcconfig */;
@@ -2753,6 +3036,15 @@
 			buildConfigurations = (
 				BACB885A1AF7C48900DDCDB0 /* Debug */,
 				BACB885B1AF7C48900DDCDB0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C90EFB8C307E274300818217 /* Build configuration list for PBXNativeTarget "Wire Live Activity Extension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C90EFB8A307E274300818217 /* Debug */,
+				C90EFB8B307E274300818217 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -3066,6 +3358,14 @@
 		76EF748F2E9E6380006A1579 /* WireLocators */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireLocators;
+		};
+		C90EFB8E307E276800818217 /* WireDriveUploadsLiveActivity */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireDriveUploadsLiveActivity;
+		};
+		C90EFB97307E27A000818217 /* WireDesign */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireDesign;
 		};
 		C9954F8D2E38D08D00A5EB01 /* WireMessagingDomain */ = {
 			isa = XCSwiftPackageProductDependency;

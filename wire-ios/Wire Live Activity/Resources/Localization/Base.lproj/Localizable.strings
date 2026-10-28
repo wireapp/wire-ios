@@ -1,0 +1,16 @@
+"live_activity.uploads.uploading.title" = "Uploading to Shared Drive";
+"live_activity.uploads.uploading.subtitle" = "%1$lld of %2$lld uploaded";
+"live_activity.uploads.uploading.failed" = "%lld failed";
+
+"live_activity.uploads.stale.title" = "Shared Drive uploads";
+"live_activity.uploads.stale.subtitle" = "Open Wire to check upload status";
+"live_activity.uploads.stale.compact_text" = "Open Wire";
+
+"live_activity.uploads.completed.title" = "Upload complete";
+"live_activity.uploads.completed.subtitle_one" = "1 file to Shared Drive";
+"live_activity.uploads.completed.subtitle_many" = "%lld files to Shared Drive";
+
+"live_activity.uploads.failed.title_one" = "Couldn’t upload 1 file";
+"live_activity.uploads.failed.title_many" = "Couldn’t upload %lld files";
+"live_activity.uploads.failed.subtitle" = "to Shared Drive";
+"live_activity.uploads.failed.subtitle_with_uploaded" = "%1$lld of %2$lld uploaded";
