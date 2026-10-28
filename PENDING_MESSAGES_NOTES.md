@@ -36,3 +36,41 @@ PRD "Pending connection, pending invite, pending message":
 - **M2 (GA), "Sending of multipart messages when offline" (MEDIUM/LOW):** "As a Wire user with Drive, I want to be able to draft and send a message with attachments, that will be sent after I have internet connection again." It's marked "To be discussed".
 - **Open questions:** "How to handle multipart messages (drive)".
 - **No-Drive assets:** not mentioned anywhere.
+
+## Follow-up PR: assets with Drive off (sketch)
+
+### Current behaviour (from reading the code, not tested)
+1. **Preprocessing** (`AssetsPreprocessor`): local, no network needed.
+2. **Upload** (`AssetV3UploadRequestStrategy` via `ZMUpstreamModifiedObjectSync`):
+   - On `tryAgainLater`, which is what we get offline, the object is retried, not expired.
+   - It's expired only on `cancelled`/`expired` (`requestExpired`) or on a real error (`shouldRetryToSyncAfterFailed`).
+   - In the background it uses a background URLSession, whose offline behaviour is unchecked.
+3. **Message** (`AssetClientMessageRequestStrategy`): same pattern as text before our change.
+   - It expires on restart (`!isFresh`) and on any `MessageSender` error.
+   - Its deadline is checked by the shared `MessageExpirationTimer`, which lives in `ClientMessageRequestStrategy`.
+
+**Step 0:** manual test with logs. Send an image offline with the flag on and check which of the above actually fails it (log lines with "asset" and "expir").
+
+### Sketch
+1. **Rule:** move `staysPendingWhileOffline` from `ZMClientMessage` up to `ZMOTRMessage`.
+2. **Timer:**
+   - `timerFired` ignores messages whose deadline has been removed, so the retry loop only needs `removeExpirationDate()` and no timer reference.
+   - Extend the startup cleanup to assets.
+3. **Shared retry loop:** move the loop, including releasing the groups while waiting, from `ClientMessageRequestStrategy` into a small `PendingMessageSending` helper. Both strategies use it, with their own `shouldBeSentPredicate`.
+4. **Asset strategy:** skip expiring stale messages for pending messages and use the helper. If the user cancels the upload, the predicate no longer matches and the loop stops.
+5. **Upload strategy:**
+   - For pending messages, `cancelled`/`expired` while offline or in the background re-queue the upload instead of expiring the message.
+   - Check that interrupted uploads resume after a restart; the encrypted data should still be in the cache.
+   - Real errors still fail.
+6. **Ordering:** the dependency fetch also includes `ZMAssetClientMessage`, so text and images stay in order. Within the 3-minute window that's already the rule today.
+7. **UI:** check how an image waiting for the network looks (progress or pending, not failed) and that Cancel still works. Delete while pending stays text-only unless wanted for assets.
+8. **Tests:**
+   - `AssetClientMessageRequestStrategyTests`: the same cases as for text.
+   - `AssetV3UploadRequestStrategyTests`: a cancel while offline keeps the message pending.
+
+**Estimate:** about 150–250 lines plus tests.
+
+**Risks:**
+- Background URLSession behaviour.
+- Large files: the upload restarts from the beginning.
+- Long uploads block later text messages; already the case today within the 3-minute window.
