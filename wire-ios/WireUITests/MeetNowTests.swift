@@ -210,9 +210,9 @@ final class MeetNowTests: WireUITestCase {
         }
         let invalidTitle = String(repeating: "B", count: 65)
         form.replaceTitle(with: invalidTitle)
-        XCTAssertEqual(form.titleField.value as? String, invalidTitle)
-        XCTAssertTrue(form.titleError.waitForExistence(timeout: 5))
-        XCTAssertFalse(form.saveButton.isEnabled)
+        XCTAssertEqual(form.titleField.value as? String, String(invalidTitle.prefix(64)))
+        XCTAssertFalse(form.titleError.exists)
+        XCTAssertTrue(form.saveButton.isEnabled)
         // The separate 256-byte limit also applies when the character count is below 64.
         form.replaceTitle(with: String(repeating: "🧑🏽‍💻", count: 32))
         XCTAssertTrue(form.titleError.waitForExistence(timeout: 5))

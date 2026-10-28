@@ -390,7 +390,7 @@ private extension VoiceChannel {
             activeSpeakersLimit: CallInfoConfiguration.maxActiveSpeakers
         )
 
-        return sortedParticipants.map {
+        return orderedMeetingParticipants(sortedParticipants).map {
             CallParticipantsListCellConfiguration.callParticipant(
                 user: HashBox(value: $0.user),
                 callParticipantState: $0.state,
