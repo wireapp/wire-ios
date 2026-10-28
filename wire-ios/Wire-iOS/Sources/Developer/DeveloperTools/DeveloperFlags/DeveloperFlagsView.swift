@@ -100,7 +100,8 @@ private enum FlagSection: String, CaseIterable {
             self = .notifications
         case .createLegacyBackups, .debugDuplicateObjects, .forceDatabaseLoadingFailure:
             self = .storage
-        case .decryptAndStoreEventsSleep, .disablePushChannelBatching, .ignoreIncomingEvents, .useBackgroundActivityFactoryInAppBackgroundTaskExecuter:
+        case .decryptAndStoreEventsSleep, .disablePushChannelBatching, .ignoreIncomingEvents,
+             .useBackgroundActivityFactoryInAppBackgroundTaskExecuter:
             self = .synchronization
         }
     }
