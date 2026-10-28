@@ -30,12 +30,18 @@ package struct MeetingCreationConfirmationView: View {
 
     let link: URL
     let isInstant: Bool
+    let hasEmailInvitees: Bool
     let onClose: () -> Void
 
-    package init(link: URL, isInstant: Bool, onClose: @escaping () -> Void) {
+    package init(link: URL, isInstant: Bool, hasEmailInvitees: Bool = false, onClose: @escaping () -> Void) {
         self.link = link
         self.isInstant = isInstant
+        self.hasEmailInvitees = hasEmailInvitees
         self.onClose = onClose
+    }
+
+    var confirmationDescription: String {
+        hasEmailInvitees ? Strings.Confirmation.description : Strings.Confirmation.sharingDescription
     }
 
     package var body: some View {
@@ -77,7 +83,7 @@ package struct MeetingCreationConfirmationView: View {
                         }
                     }
                     if !isInstant {
-                        Text(Strings.Confirmation.description)
+                        Text(confirmationDescription)
                             .font(for: .body1)
                     }
                     Text(verbatim: link.absoluteString)

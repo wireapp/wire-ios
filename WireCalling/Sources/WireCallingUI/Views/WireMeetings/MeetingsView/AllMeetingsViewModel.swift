@@ -32,7 +32,7 @@ package final class AllMeetingsViewModel {
 
     private let makeFormViewModel: @MainActor (
         _ mode: MeetingFormViewModel.Mode,
-        _ onSuccess: @escaping (Meeting, URL?) -> Void
+        _ onSuccess: @escaping (Meeting, URL?, Bool) -> Void
     ) -> MeetingFormViewModel
 
     package let meetingsViewModel: MeetingsViewModel
@@ -41,6 +41,7 @@ package final class AllMeetingsViewModel {
     var hasJoinError = false
     var presentedLink: MeetingLinkViewModel?
     var createdMeetingLink: URL?
+    private(set) var createdMeetingHasEmailInvitees = false
     private let onInstantMeetingCreated: @MainActor (MeetingCreationResult) -> Void
 
     private let joinMeetingCallUseCase: any JoinMeetingCallUseCaseProtocol
@@ -61,7 +62,7 @@ package final class AllMeetingsViewModel {
         onInstantMeetingCreated: @escaping @MainActor (MeetingCreationResult) -> Void = { _ in },
         makeFormViewModel: @escaping @MainActor (
             _ mode: MeetingFormViewModel.Mode,
-            _ onSuccess: @escaping (Meeting, URL?) -> Void
+            _ onSuccess: @escaping (Meeting, URL?, Bool) -> Void
         ) -> MeetingFormViewModel
     ) {
         self.meetingsViewModel = MeetingsViewModel(
@@ -103,7 +104,7 @@ package final class AllMeetingsViewModel {
     }
 
     func makeMeetingFormViewModel(mode: MeetingFormViewModel.Mode) -> MeetingFormViewModel {
-        makeFormViewModel(mode) { [weak self] meeting, link in
+        makeFormViewModel(mode) { [weak self] meeting, link, hasEmailInvitees in
             guard let self else { return }
             presentedFormMode = nil
             if case .instant = mode {
@@ -114,6 +115,7 @@ package final class AllMeetingsViewModel {
                     }
                 }
             } else if case .scheduled = mode {
+                createdMeetingHasEmailInvitees = hasEmailInvitees
                 createdMeetingLink = link
             }
         }
