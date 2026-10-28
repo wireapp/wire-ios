@@ -701,12 +701,17 @@ platform :ios do
             # Keep Debug builds, but use release assertion behavior for UI tests.
             xcargs << "OTHER_SWIFT_FLAGS='$(inherited) -assert-config Release'"
 
+            result_dir = File.join(File.expand_path("..", __dir__), build.artifact_path(with_filename: false), "tests", scheme)
+            clear_ui_test_results(result_dir)
+            unless ENV['GITHUB_OUTPUT'].to_s.empty?
+                File.open(ENV['GITHUB_OUTPUT'], "a") { |file| file.puts("xcresult_directory=#{result_dir}") }
+            end
+
             parallel_workers = ui_test_parallel_workers(options[:parallel_workers])
             if parallel_workers > 1
                 run_ui_test_shards(build, scheme, testplan, options, parallel_workers)
                 return
             end
-            clear_ui_test_results(File.join(File.expand_path("..", __dir__), build.artifact_path(with_filename: false), "tests", scheme))
             xcargs << "-parallel-testing-enabled NO"
         end
 
@@ -749,8 +754,6 @@ platform :ios do
         tests_file = File.join(root, build.build_path, "uitest_shard_tests.txt")
         published_log_dir = File.join(root, build.build_path, "uitest-shard-logs")
 
-        # A serial run of the same results directory leaves a .xcresult and .junit of its own.
-        clear_ui_test_results(result_dir, include_serial_results: true)
         FileUtils.rm_rf(published_log_dir)
         FileUtils.mkdir_p(File.dirname(tests_file))
         File.write(tests_file, tests.join("\n") + "\n")
@@ -795,11 +798,10 @@ platform :ios do
         UI.test_failure!("UITest shards failed, see the shard summary above") if failed
     end
 
-    # Shards and a serial run write into the same results directory, and the reporters search it recursively,
-    # so whatever an earlier run of the other kind left there would be reported again.
-    def clear_ui_test_results(result_dir, include_serial_results: false)
+    # Both serial and sharded runs must start without results from an earlier invocation.
+    def clear_ui_test_results(result_dir)
         FileUtils.rm_rf(Dir.glob(File.join(result_dir, "shard-*")))
-        FileUtils.rm_rf(Dir.glob(File.join(result_dir, "*.{xcresult,junit}"))) if include_serial_results
+        FileUtils.rm_rf(Dir.glob(File.join(result_dir, "*.{xcresult,junit}")))
     end
 
     def selected_ui_test_identifiers(options)
@@ -846,8 +848,8 @@ platform :ios do
         return 1 if value.to_s.strip.empty?
 
         count = value.to_i
-        unless count.between?(1, 5) && count.to_s == value.to_s.strip
-            UI.user_error!("parallel_workers must be 1, 2, 3, 4, or 5")
+        unless count.between?(1, 6) && count.to_s == value.to_s.strip
+            UI.user_error!("parallel_workers must be 1, 2, 3, 4, 5, or 6")
         end
 
         count

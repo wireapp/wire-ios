@@ -103,8 +103,8 @@ jobs:
           UITEST_PARALLEL_WORKERS: ${{ inputs.uitest_parallel_workers }}
         run: |
           case "$UITEST_PARALLEL_WORKERS" in
-            1|2|3|4|5) ;;
-            *) echo "::error::uitest_parallel_workers must be 1, 2, 3, 4, or 5"; exit 1 ;;
+            1|2|3|4|5|6) ;;
+            *) echo "::error::uitest_parallel_workers must be 1, 2, 3, 4, 5, or 6"; exit 1 ;;
           esac
           echo "UITest workers: $UITEST_PARALLEL_WORKERS"
           CPUS=$(sysctl -n hw.logicalcpu)
@@ -249,6 +249,7 @@ jobs:
         uses: ./.github/actions/kalium-testservice/setup
 
       - name: "Test new critical flows"
+        id: critical_flows
         if: ${{ inputs.run_critical_flows }}
         env:
           UI_TEST_TAGS: ${{ inputs.ui_test_tags }}
@@ -277,6 +278,7 @@ jobs:
         shell: bash
         env:
           TESTINY_RUN_NAME: ${{ inputs.testiny_run_name }}
+          XCRESULT_DIRECTORY: ${{ steps.critical_flows.outputs.xcresult_directory }}
           OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
         run: |
           set -euo pipefail
@@ -284,13 +286,18 @@ jobs:
           echo "::add-mask::$TESTINY_API_KEY"
           export TESTINY_API_KEY
 
+          if [ -z "$XCRESULT_DIRECTORY" ] || [ ! -d "$XCRESULT_DIRECTORY" ]; then
+            echo "[ERROR] No UITest result directory from this invocation"
+            exit 1
+          fi
+
           XCRESULTS=()
           while IFS= read -r -d '' XCRESULT; do
             XCRESULTS+=("$XCRESULT")
-          done < <(find artifacts -type d -name '*.xcresult' -print0)
+          done < <(find "$XCRESULT_DIRECTORY" -type d -name '*.xcresult' -prune -print0)
 
           if [ "${#XCRESULTS[@]}" -eq 0 ]; then
-            echo "[ERROR] No .xcresult found under artifacts/"
+            echo "[ERROR] No .xcresult found for this UITest invocation: $XCRESULT_DIRECTORY"
             exit 1
           fi
 
@@ -324,12 +331,41 @@ jobs:
         continue-on-error: true
         run: ./scripts/check_duplicate_classes.sh .
 
+      - name: Select test report paths
+        id: report-paths
+        if: always()
+        shell: bash
+        env:
+          UITEST_ONLY: ${{ inputs.run_critical_flows && !inputs.all && !inputs.test_dependencies && inputs.folders == '' }}
+          UITEST_RESULT_DIRECTORY: ${{ steps.critical_flows.outputs.xcresult_directory }}
+        run: |
+          set -euo pipefail
+          if [ "$UITEST_ONLY" == "true" ]; then
+            RESULT_DIRECTORY="$UITEST_RESULT_DIRECTORY"
+            if [ -z "$RESULT_DIRECTORY" ]; then
+              # Preparation may fail before Fastlane publishes a directory. Never report old results instead.
+              RESULT_DIRECTORY="$(mktemp -d "$RUNNER_TEMP/uitest-results.XXXXXX")"
+            fi
+            echo "xcresult_search_path=$RESULT_DIRECTORY" >> "$GITHUB_OUTPUT"
+            echo "junit_files=$RESULT_DIRECTORY/**/*.junit" >> "$GITHUB_OUTPUT"
+          else
+            echo "xcresult_search_path=artifacts" >> "$GITHUB_OUTPUT"
+            {
+              echo "junit_files<<EOF"
+              echo "build/reports/*.junit"
+              echo "artifacts/**/*.junit"
+              echo "EOF"
+            } >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Find all .xcresult files
-        if: ${{ always() && github.event_name == 'pull_request' }}
+        if: ${{ always() && steps.report-paths.outcome == 'success' && github.event_name == 'pull_request' }}
         id: find-xcresults
+        env:
+          XCRESULT_SEARCH_PATH: ${{ steps.report-paths.outputs.xcresult_search_path }}
         run: |
           # Find all .xcresult directories and convert them to a JSON array
-          files=`find artifacts -type d -name "*.xcresult" | jq -R . | jq -s .`
+          files=`find "$XCRESULT_SEARCH_PATH" -type d -name "*.xcresult" -prune | jq -R . | jq -s .`
           echo xcresult_files=${files} >> $GITHUB_OUTPUT
       - name: Debug Print xcresult files
         run: |
@@ -341,11 +377,11 @@ jobs:
         run: ruby scripts/annotate_test_failures.rb
 
       - name: Extract test summary
-        if: ${{ always() }}
+        if: ${{ always() && steps.report-paths.outcome == 'success' }}
         id: test-summary
         uses: ./.github/actions/generate-test-summary
         with:
-          xcresult_search_path: artifacts
+          xcresult_search_path: ${{ steps.report-paths.outputs.xcresult_search_path }}
 
       - name: Upload .xcresult files as artifact
         if: always()
@@ -384,22 +420,20 @@ jobs:
             build/uitest-shard-logs/*.log
 
       - name: Publish Test Results Summary
-        if: always()
+        if: ${{ always() && steps.report-paths.outcome == 'success' }}
         uses: EnricoMi/publish-unit-test-result-action/macos@c950f6fb443cb5af20a377fd0dfaa78838901040 # v2.23.0
         with:
-          files: |
-            build/reports/*.junit
-            artifacts/**/*.junit
+          files: ${{ steps.report-paths.outputs.junit_files }}
           compare_to_earlier_commit: false
           comment_title: "Test Results"
 
       - name: Publish test results + Allure report
         id: allure-report
-        if: always()
+        if: ${{ always() && steps.report-paths.outcome == 'success' }}
         uses: ./.github/actions/allure-reporting
         with:
           allure_artifact_name: "html-report-${{ github.run_number }}-${{ env.SANITIZED_BRANCH }}"
-          xcresult_search_path: "artifacts"
+          xcresult_search_path: ${{ steps.report-paths.outputs.xcresult_search_path }}
 
       - name: Resolve HTML report link
         id: html-report-link

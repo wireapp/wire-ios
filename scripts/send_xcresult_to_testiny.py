@@ -423,8 +423,15 @@ def main():
     if not TESTINY_API_KEY:
         sys.exit("TESTINY_API_KEY not set")
 
-    run_id = resolve_run(args.run_name, args.require_existing_run)
     paths = sorted(set(args.xcresult)) if args.xcresult else [args.junit]
+    for path in paths:
+        if args.xcresult:
+            if not os.path.isdir(path):
+                sys.exit(f"XCResult bundle not found or not a directory: {path}")
+        elif not os.path.isfile(path):
+            sys.exit(f"JUnit report not found or not a file: {path}")
+
+    run_id = resolve_run(args.run_name, args.require_existing_run)
     combined = {}
     uploaded = {}
     priority = {"NOTRUN": 0, "SKIPPED": 1, "PASSED": 2, "FAILED": 3}

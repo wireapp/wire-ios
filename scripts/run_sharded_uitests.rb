@@ -19,8 +19,8 @@
 # along with this program. If not, see http://www.gnu.org/licenses/.
 #
 
-# Runs UI tests on several simulators at once. Every simulator is created, seeded and checked to launch an app
-# before any test starts, and the app is built once with `build-for-testing`. The tests are split into small batches
+# Runs UI tests on several simulators at once. Each simulator is created, seeded and checked to launch an app
+# before it takes tests, and the app is built once with `build-for-testing`. The tests are split into small batches
 # (a class with more than MAX_TESTS_PER_BATCH tests is cut up) held in one shared queue. Each shard, one per
 # simulator, takes the next batch when it is free and runs it with its own `xcodebuild test-without-building`; at
 # the end the batch results of a shard are merged into one `<result-dir>/shard-<n>/<scheme>.xcresult`.
@@ -204,6 +204,22 @@ def prepare_simulator(udid)
     say("shards", "simulator #{udid} ready: boot #{(booted - started).round}s, seed #{(Time.now - booted).round}s")
 end
 
+# Wait for slow preparation, but surface a dead producer instead of waiting on an empty queue forever.
+def next_ready_simulator(ready_simulators, preparation_threads)
+    loop do
+        begin
+            return ready_simulators.pop(true)
+        rescue ThreadError
+            preparation_threads.each { |thread| thread.value unless thread.alive? }
+            if preparation_threads.none?(&:alive?)
+                preparation_threads.each(&:value)
+                raise "Simulator preparation ended without reporting all shards" if ready_simulators.empty?
+            end
+            sleep(0.5)
+        end
+    end
+end
+
 Dir.chdir(ROOT)
 tests = File.readlines(options[:tests_file]).map(&:strip).reject(&:empty?).uniq
 abort("No tests to run in #{options[:tests_file]}") if tests.empty?
@@ -213,17 +229,23 @@ planned = [options[:workers], batches.size].min
 say("shards", "#{tests.size} tests, #{planned} shards, #{batches.size} batches of up to #{MAX_TESTS_PER_BATCH} tests taken from a shared queue")
 FileUtils.mkdir_p([options[:log_dir], options[:result_dir], File.dirname(options[:simulators_file])])
 
-# Extra simulators are created and seeded while the app builds, one at a time so they do not compete with the build
-# and with each other. A simulator that does not become ready is replaced by a fresh one, once.
+# Prepare extras one at a time alongside the build. Publish each simulator as it becomes ready,
+# so it can join the test queue without waiting for the others.
+ready_simulators = Queue.new
 base_ready = Thread.new do
-    wait_until_launchable(options[:base_simulator])
-    options[:base_simulator]
+    simulator = begin
+        wait_until_launchable(options[:base_simulator])
+        options[:base_simulator]
+    rescue => error
+        error
+    end
+    ready_simulators << [1, simulator]
 end
 extras_ready = Thread.new do
-    (2..planned).map do |index|
+    (2..planned).each do |index|
         udid = nil
-        begin
-            attempts ||= 0
+        attempts = 0
+        simulator = begin
             attempts += 1
             udid = run!("xcrun", "simctl", "create", "#{options[:base_simulator]}-shard-#{index}", options[:device_type], options[:runtime]).strip
             File.open(options[:simulators_file], "a") { |file| file.puts(udid) }
@@ -231,8 +253,13 @@ extras_ready = Thread.new do
             udid
         rescue => error
             if udid
-                run("xcrun", "simctl", "shutdown", udid, timeout: 60)
-                run("xcrun", "simctl", "delete", udid, timeout: 60)
+                %w[shutdown delete].each do |action|
+                    begin
+                        run("xcrun", "simctl", action, udid, timeout: 60)
+                    rescue => cleanup_error
+                        say("shards", "could not #{action} simulator #{udid}: #{cleanup_error.message}")
+                    end
+                end
             end
             if attempts < 2
                 say("shards", "simulator for shard #{index} failed: #{error.message.strip}\n  trying a new one")
@@ -240,6 +267,7 @@ extras_ready = Thread.new do
             end
             error
         end
+        ready_simulators << [index, simulator]
     end
 end
 [base_ready, extras_ready].each { |thread| thread.report_on_exception = false }
@@ -265,35 +293,16 @@ build_log = File.join(options[:log_dir], "#{options[:scheme]}-build-for-testing.
 built = stream("build", build_command, build_log)
 publish_log(build_log, options[:published_log_dir], secrets)
 
-simulators = [begin
-    base_ready.value
-rescue => error
-    error
-end, *extras_ready.value].each_with_index.filter_map do |simulator, index|
-    next simulator unless simulator.is_a?(Exception)
-
-    say("shards", "simulator for shard #{index + 1} is not usable, continuing without it: #{simulator.message}")
-    nil
-end
-
 unless built
+    [base_ready, extras_ready].each(&:value)
     say("shards", "build-for-testing failed, no tests were run")
     exit(1)
 end
 
-if simulators.empty?
-    say("shards", "no simulator accepted an app launch, no tests were run")
-    exit(1)
-end
-
 xctestrun = Dir.glob(File.join(options[:derived_data], "Build/Products", "#{options[:scheme]}_#{options[:test_plan]}_*.xctestrun")).max_by { |path| File.mtime(path) }
-abort("[shards] no .xctestrun for #{options[:scheme]}/#{options[:test_plan]} in #{options[:derived_data]}") if xctestrun.nil?
-
-if simulators.size < planned
-    # A green run must not hide that the requested parallelism did not happen.
-    message = "Only #{simulators.size} of #{planned} simulators were ready, running #{simulators.size} shards instead of #{planned}"
-    say("shards", message)
-    write_job_summary("> [!WARNING]\n> UITest shards: #{message}")
+if xctestrun.nil?
+    [base_ready, extras_ready].each(&:value)
+    abort("[shards] no .xctestrun for #{options[:scheme]}/#{options[:test_plan]} in #{options[:derived_data]}")
 end
 
 # The runner can still be refused on a simulator that just opened Settings fine; such a batch ran no test, so
@@ -308,7 +317,8 @@ launch_refused = ->(text) { text.match?(RUNNER_LAUNCH_FAILURE) && !text.match?(T
 queue_lock = Mutex.new
 queue = batches.each_with_index.map { |batch_tests, index| { number: index + 1, tests: batch_tests, launch_failures: 0 } }
 in_flight = 0
-alive = simulators.size
+alive = 0
+pending_simulators = planned
 
 take_batch = lambda do
     loop do
@@ -349,10 +359,21 @@ def merge_bundles(bundles, target)
     merged
 end
 
-results = simulators.each_with_index.map do |simulator, index|
-    number = index + 1
-    Thread.new do
+worker_threads = []
+planned.times do
+    number, simulator = next_ready_simulator(ready_simulators, [base_ready, extras_ready])
+    queue_lock.synchronize do
+        pending_simulators -= 1
+        alive += 1 unless simulator.is_a?(Exception)
+    end
+    if simulator.is_a?(Exception)
+        say("shards", "simulator for shard #{number} is not usable, continuing without it: #{simulator.message}")
+        next
+    end
+
+    worker_threads << Thread.new do
         label = "shard #{number}"
+        say(label, "simulator #{simulator} ready, joining the shared test queue")
         shard_dir = File.join(options[:result_dir], "shard-#{number}")
         batches_dir = File.join(options[:log_dir], "shard-#{number}-batches")
         FileUtils.rm_rf([shard_dir, batches_dir])
@@ -405,12 +426,19 @@ results = simulators.each_with_index.map do |simulator, index|
 
             # Refused twice with no test run: this simulator is bad. Hand the batch to another shard rather than
             # let this one burn through the whole queue.
-            if !passed && relaunched && launch_refused.call(log) && batch[:launch_failures].zero? &&
-                    queue_lock.synchronize { alive > 1 }
+            retire = !passed && relaunched && launch_refused.call(log) && batch[:launch_failures].zero? &&
+                queue_lock.synchronize do
+                    if alive > 1 || pending_simulators.positive?
+                        alive -= 1
+                        true
+                    else
+                        false
+                    end
+                end
+            if retire
                 say(batch_label, "simulator #{simulator} keeps refusing the runner, giving the batch to another shard")
                 FileUtils.rm_rf(result_bundle)
                 batch[:launch_failures] += 1
-                queue_lock.synchronize { alive -= 1 }
                 finish_batch.call(batch, requeue: true)
                 retired = true
                 break
@@ -422,6 +450,8 @@ results = simulators.each_with_index.map do |simulator, index|
                       bundle: (result_bundle if File.exist?(result_bundle)),
                       minutes: ((Time.now - batch_started) / 60).round(1) }
         end
+        queue_lock.synchronize { alive -= 1 } unless retired
+        say(label, "no batches left to run") if done.empty? && !retired
 
         bundles = done.filter_map { |entry| entry[:bundle] }
         merged = true
@@ -443,9 +473,17 @@ results = simulators.each_with_index.map do |simulator, index|
             minutes: ((Time.now - started) / 60).round(1)
         }
     end
-end.map(&:value)
+end
+[base_ready, extras_ready].each(&:value)
 
-# Batches left in the queue mean every shard retired; those tests did not run.
+if worker_threads.size < planned
+    message = "Only #{worker_threads.size} of #{planned} simulators became ready"
+    say("shards", message)
+    write_job_summary("> [!WARNING]\n> UITest shards: #{message}")
+end
+results = worker_threads.map(&:value).sort_by { |result| result[:number] }
+
+# Batches left in the queue had no usable worker left to take them.
 unrun = queue.sum { |batch| batch[:tests].size }
 summary = results.map do |result|
     ran = result[:outcomes].size
