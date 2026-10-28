@@ -36,6 +36,14 @@ internal enum L10n {
         /// Couldn’t upload 1 file
         internal static let titleOne = L10n.tr("Localizable", "live_activity.uploads.failed.title_one", fallback: "Couldn’t upload 1 file")
       }
+      internal enum Stale {
+        /// Open Wire
+        internal static let compactText = L10n.tr("Localizable", "live_activity.uploads.stale.compact_text", fallback: "Open Wire")
+        /// Open Wire to check upload status
+        internal static let subtitle = L10n.tr("Localizable", "live_activity.uploads.stale.subtitle", fallback: "Open Wire to check upload status")
+        /// Shared Drive uploads
+        internal static let title = L10n.tr("Localizable", "live_activity.uploads.stale.title", fallback: "Shared Drive uploads")
+      }
       internal enum Uploading {
         /// %lld failed
         internal static func failed(_ p1: Int) -> String {
