@@ -530,7 +530,7 @@ private extension WireDriveGetNodesRequest {
                 recursive: isRecursive,
                 root: RestNodeLocator(root)
             )
-        case let .recycleBinView(root: root):
+        case let .recycleBinView(root: root, recursive):
             let lookupFilterTextSearch: LookupFilterTextSearch? = if let searchTerm {
                 LookupFilterTextSearch(searchIn: .baseName, term: searchTerm)
             } else {
@@ -550,8 +550,11 @@ private extension WireDriveGetNodesRequest {
                 text: lookupFilterTextSearch,
                 type: .unknown // .unknown includes files (leafs) & folders (collections)
             )
+
+            let isRecursive = recursive || searchTerm?.isEmpty == false
+
             request.scope = RestLookupScope(
-                recursive: searchTerm?.isEmpty == false,
+                recursive: isRecursive,
                 root: RestNodeLocator(root)
             )
         case .filesBrowserView:

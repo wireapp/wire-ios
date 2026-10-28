@@ -111,7 +111,8 @@ package struct WireDriveGetNodesRequest: Equatable, Sendable {
         case conversationFileView(root: WireDriveNodeLocator)
 
         /// A `Configuration` suitable for the recycle bin, where deleted files are stored.
-        case recycleBinView(root: WireDriveNodeLocator)
+        /// Includes items in nested folders when recursive is `true`.
+        case recycleBinView(root: WireDriveNodeLocator, recursive: Bool = false)
 
         /// A `Configuration` suitable for the files browser view.
         case filesBrowserView

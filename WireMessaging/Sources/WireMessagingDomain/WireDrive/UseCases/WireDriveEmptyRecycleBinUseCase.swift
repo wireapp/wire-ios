@@ -45,7 +45,7 @@ package struct WireDriveEmptyRecycleBinUseCase {
                 searchTerm: nil,
                 limit: 0,
                 offset: 0,
-                configuration: .conversationFileView(root: .path(recycleBinPath))
+                configuration: .recycleBinView(root: .path(recycleBinPath), recursive: true)
             )
         ).nodes.map(\.id)
 
