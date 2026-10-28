@@ -49,7 +49,7 @@ final class MarkdownTextView: NextResponderTextView {
 
     /// The string containing markdown syntax for the corresponding
     /// attributed text.
-    var preparedText: (text: String, mentions: [Mention]) {
+    var preparedText: (String, [Mention]) {
         let markdownText = parser.parse(attributedString: attributedText)
         let mentions = mentions(from: markdownText)
         let markdownTextWithMentions = replaceMentionAttachmentsWithPlainText(in: markdownText)

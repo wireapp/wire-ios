@@ -1930,8 +1930,6 @@ internal enum L10n {
         internal static let `open` = L10n.tr("Localizable", "content.message.open", fallback: "Open")
         /// Original message
         internal static let originalLabel = L10n.tr("Localizable", "content.message.original_label", fallback: "Original message")
-        /// Status of a locally queued outgoing message, before a send attempt.
-        internal static let queued = L10n.tr("Localizable", "content.message.queued", fallback: "Queued")
         /// Reactions
         internal static let reactions = L10n.tr("Localizable", "content.message.reactions", fallback: "Reactions")
         /// Reply

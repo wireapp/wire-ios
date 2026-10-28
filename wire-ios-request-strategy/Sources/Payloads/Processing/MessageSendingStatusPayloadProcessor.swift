@@ -32,35 +32,19 @@ final class MessageSendingStatusPayloadProcessor {
     @discardableResult
     func updateClientsChanges(
         from payload: Payload.MessageSendingStatus,
-        for message: any ProteusMessage,
-        in providedContext: NSManagedObjectContext? = nil,
-        ifStillCurrent: (() -> Bool)? = nil
+        for message: any ProteusMessage
     ) async -> [ZMUser: [UserClient]] {
-        // A reset managed object no longer exposes its context; senders pass their owning context explicitly.
-        let context = providedContext ?? message.context
-        // Called only on the context queue, including after asynchronous crypto/session checks.
-        func canApplyChanges() -> Bool {
-            guard context.zm_isValidContext else { return false }
-            if let row = message as? ZMMessage {
-                guard row.managedObjectContext === context, !row.isDeleted,
-                      !row.hasBeenDeleted, !row.isObfuscated else { return false }
-            }
-            return ifStillCurrent?() ?? true
-        }
-        let changes = await context.perform { () -> (
-            [ZMUser: [UserClient]], [ZMUser], [ZMUser: [UserClient]], [ZMUser]
-        )? in
-            guard canApplyChanges() else { return nil }
-            WireLogger.messaging.debug("update client changes after message send")
+        let context = message.context
+        let (deletedClients, redundantUsers, missingClients, failedToConfirmUsers) = await context.perform {
+            WireLogger.messaging.debug("update client changes for message \(message.debugInfo)")
 
             return (
                 payload.deleted.fetchClients(in: context),
                 payload.redundant.fetchUsers(in: context),
-                payload.missing.fetchOrCreateClients(in: context),
-                payload.failedToConfirm.fetchUsers(in: context)
+                payload.missing.fetchOrCreateClients(in: message.context),
+                payload.failedToConfirm.fetchUsers(in: message.context)
             )
         }
-        guard let (deletedClients, redundantUsers, missingClients, failedToConfirmUsers) = changes else { return [:] }
 
         if !deletedClients.isEmpty {
             WireLogger.messaging.debug("detected deleted clients")
@@ -80,10 +64,7 @@ final class MessageSendingStatusPayloadProcessor {
             newMissingClients.append(missingClient)
         }
 
-        // Session deletion/existence checks suspend. The message may have been cancelled, replaced,
-        // or reset meanwhile, so the initial validity check does not authorize these later mutations.
-        let applied = await context.perform {
-            guard canApplyChanges() else { return false }
+        await context.perform {
             if !redundantUsers.isEmpty {
                 WireLogger.messaging.debug("detected redundant users")
 
@@ -109,10 +90,9 @@ final class MessageSendingStatusPayloadProcessor {
             if !failedToConfirmUsers.isEmpty {
                 message.addFailedToSendRecipients(failedToConfirmUsers)
             }
-            return true
         }
 
-        return applied ? missingClients : [:]
+        return missingClients
     }
 
     func missingClientListByUser(

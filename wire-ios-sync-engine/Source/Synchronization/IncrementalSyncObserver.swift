@@ -87,7 +87,6 @@ final class IncrementalSyncObserver: IncrementalSyncObserverProtocol {
     }
 
     func waitUntilCanSendMessage() async {
-        guard !Task.isCancelled else { return }
         if syncAgent.isSyncV2Enabled {
             await waitUntilCanSendMessageV2()
         } else {
@@ -104,19 +103,17 @@ final class IncrementalSyncObserver: IncrementalSyncObserverProtocol {
                 attributes: .safePublic
             )
 
-            // Account teardown cancels the waiting task. AsyncStream ends the wait on cancellation,
-            // while each waiter owns its subscription so cancelling one cannot silence another.
-            let completion = AsyncStream<Void>(bufferingPolicy: .bufferingNewest(1)) { continuation in
-                let subscription = $decryptionState.first(where: { $0 == .done }).sink { _ in
-                    continuation.yield(())
-                    continuation.finish()
-                }
-                continuation.onTermination = { _ in
-                    subscription.cancel()
+            var cancellable: AnyCancellable?
+            await withCheckedContinuation { continuation in
+                var resumed = false
+                cancellable = $decryptionState.sink { newDecryptionState in
+                    if newDecryptionState == .done, !resumed {
+                        resumed = true
+                        continuation.resume()
+                        cancellable?.cancel()
+                    }
                 }
             }
-            for await _ in completion { break }
-            guard !Task.isCancelled else { return }
 
             WireLogger.messaging.info(
                 "decryption finished",

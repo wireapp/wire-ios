@@ -17,26 +17,8 @@
 //
 
 import Foundation
-import GenericMessageProtocol
 
 extension ZMImagePreprocessingTrackerTests {
-    func testCompletionFromBeforeAQueuedEditDoesNotAdvanceTheNewPreview() throws {
-        let message = linkPreviewMessage1!
-        try message.setUnderlyingMessage(GenericMessage(content: Text(content: "old text"), nonce: message.nonce!))
-        try message.enqueueInOutbox(operation: .initialMessage)
-        message.linkPreviewState = .downloaded
-        imagePreprocessingQueue.isSuspended = true
-        defer { imagePreprocessingQueue.isSuspended = false }
-        sut.addTrackedObjects([message])
-        let completion = sut.preprocessingCompleteOperation(for: message)
-
-        try message.setUnderlyingMessage(GenericMessage(content: Text(content: "new text"), nonce: message.nonce!))
-        completion?.start()
-
-        XCTAssertEqual(message.linkPreviewState, .downloaded)
-        XCTAssertEqual(message.messageText, "new text")
-    }
-
     @objc
     func setUpLinkPreviewMessage() {
         linkPreviewMessage1 = ZMClientMessage(nonce: NSUUID.create(), managedObjectContext: coreDataStack.viewContext)

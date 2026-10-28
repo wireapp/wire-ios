@@ -103,13 +103,6 @@ public class EARMigrator: EARMigratorProtocol {
 
             let contextData = try context.earContextData()
 
-            // Convert raw snapshots from intermediate local builds before the GenericMessageData
-            // encryption pass; otherwise those outgoing payloads would remain outside EAR protection.
-            let legacySnapshots = NSFetchRequest<ZMMessage>(entityName: ZMMessage.entityName())
-            legacySnapshots.predicate = NSPredicate(format: "outboxPayload != nil")
-            for message in try context.fetch(legacySnapshots) {
-                try message.migrateLegacyOutboxSnapshotIfNeeded()
-            }
             context.saveOrRollback()
             try migrateInstancesTowardEncryptionAtRest(
                 type: ZMGenericMessageData.self,

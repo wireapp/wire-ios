@@ -40,23 +40,29 @@ public class MessageDependencyResolver: MessageDependencyResolverInterface {
     public func waitForDependenciesToResolve(for message: any SendableMessage) async throws {
 
         func dependenciesAreResolved() async throws -> Bool {
-            try Task.checkCancellation()
-            let hasDependencies = try await context.perform {
-                guard self.context.zm_isValidContext else { throw MessageOutboxError.staleAttempt }
-                if let row = message as? ZMMessage {
-                    guard row.managedObjectContext === self.context, !row.isDeleted, !row.hasBeenDeleted else {
-                        throw MessageOutboxError.staleAttempt
-                    }
-                }
-                if message.conversation?.legalHoldStatus == .pendingApproval {
-                    throw MessageDependencyResolverError.legalHoldPendingApproval
-                }
-                if message.conversation?.isDegraded == true, !message.shouldIgnoreTheSecurityLevelCheck {
-                    throw MessageDependencyResolverError.securityLevelDegraded
-                }
-                return message.dependentObjectNeedingUpdateBeforeProcessing != nil
+            let isSecurityLevelDegraded = await context.perform {
+                message.conversation?.isDegraded == true
             }
-            try Task.checkCancellation()
+
+            let shouldIgnoreTheSecurityLevelCheck = await context.perform {
+                message.shouldIgnoreTheSecurityLevelCheck
+            }
+
+            let legalHoldPendingApproval = await context.perform {
+                message.conversation?.legalHoldStatus == .pendingApproval
+            }
+
+            if legalHoldPendingApproval {
+                throw MessageDependencyResolverError.legalHoldPendingApproval
+            }
+
+            if isSecurityLevelDegraded, !shouldIgnoreTheSecurityLevelCheck {
+                throw MessageDependencyResolverError.securityLevelDegraded
+            }
+
+            let hasDependencies = await context.perform {
+                message.dependentObjectNeedingUpdateBeforeProcessing != nil
+            }
 
             let logAttributes = await MessageLogAttributesBuilder(context: context).logAttributes(message)
 
@@ -69,26 +75,16 @@ public class MessageDependencyResolver: MessageDependencyResolverInterface {
             }
         }
 
-        // Subscribe before the first snapshot so a dependency resolved during that read is not lost.
-        let (wakeups, continuation) = AsyncStream<Void>.makeStream(bufferingPolicy: .bufferingNewest(1))
-        let token = NotificationCenter.default.addObserver(
-            forName: .requestAvailableNotification, object: nil, queue: nil
-        ) { _ in continuation.yield(()) }
-        defer {
-            NotificationCenter.default.removeObserver(token)
-            continuation.finish()
-        }
         if try await dependenciesAreResolved() {
             return
         }
 
         // swiftlint:disable for_where
-        for await _ in wakeups {
+        for await _ in NotificationCenter.default.notifications(named: .requestAvailableNotification) {
             if try await dependenciesAreResolved() {
                 break
             }
         }
         // swiftlint:enable for_where
-        try Task.checkCancellation()
     }
 }

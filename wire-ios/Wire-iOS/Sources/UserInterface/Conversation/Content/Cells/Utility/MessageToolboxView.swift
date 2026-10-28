@@ -357,33 +357,8 @@ final class MessageToolboxView: UIView {
 
     private func updateState(_ state: MessageToolboxState?) {
         statusLabel.isHidden = true
-        // Toolbox views are reused across states. Undo the queued label's Dynamic Type settings
-        // and identifier before rendering the existing delivery-state presentations.
-        statusLabel.font = font
-        statusLabel.adjustsFontForContentSizeCategory = false
         statusContainerView.isHidden = false
-        statusContainerView.accessibilityIdentifier = nil
         switch state {
-        case .deletionPending:
-            let pending = String(
-                localized: "content.message.deletion_pending", defaultValue: "Deletion pending", bundle: .main
-            )
-            statusImageView.image = UIImage(systemName: "clock")
-            statusLabel.isHidden = false
-            statusLabel.text = pending
-            statusLabel.font = .preferredFont(forTextStyle: .caption1)
-            statusLabel.adjustsFontForContentSizeCategory = true
-            statusContainerView.accessibilityLabel = pending
-            statusContainerView.accessibilityIdentifier = "PendingMessageDeletionStatus"
-        case .queued:
-            let queued = String(localized: "content.message.queued", defaultValue: "Queued", bundle: .main)
-            statusImageView.image = UIImage(systemName: "clock")
-            statusLabel.isHidden = false
-            statusLabel.text = queued
-            statusLabel.font = .preferredFont(forTextStyle: .caption1)
-            statusLabel.adjustsFontForContentSizeCategory = true
-            statusContainerView.accessibilityLabel = queued
-            statusContainerView.accessibilityIdentifier = "QueuedMessageStatus"
         case .sending:
             statusImageView.image = UIImage(resource: .sending)
             statusContainerView.accessibilityLabel = "sending"

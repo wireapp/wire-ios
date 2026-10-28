@@ -44,9 +44,7 @@ struct MessageLogAttributesBuilder {
     }
 
     private func clientMessageLogAttributes(_ message: ZMClientMessage) -> LogAttributes {
-        // Logging can run after a late network completion; even diagnostic reads must avoid reset rows.
-        guard context.zm_isValidContext else { return [:] }
-        return [
+        [
             .nonce: message.nonce?.safeForLoggingDescription ?? "<nil>",
             .messageType: message.underlyingMessage?.safeTypeForLoggingDescription ?? "<nil>",
             .conversationId: message.conversation?.qualifiedID?.safeForLoggingDescription ?? "<nil>"
@@ -66,8 +64,7 @@ struct MessageLogAttributesBuilder {
     }
 
     private func assetClientMessageLogAttributes(_ message: ZMAssetClientMessage) -> LogAttributes {
-        guard context.zm_isValidContext else { return [:] }
-        return [
+        [
             .nonce: message.nonce?.safeForLoggingDescription ?? "<nil>",
             .messageType: message.underlyingMessage?.safeTypeForLoggingDescription ?? "<nil>",
             .conversationId: message.conversation?.qualifiedID?.safeForLoggingDescription ?? "<nil>"
@@ -87,8 +84,7 @@ struct MessageLogAttributesBuilder {
     }
 
     private func genericMessageLogAttributes(_ message: GenericMessageEntity) -> LogAttributes {
-        guard context.zm_isValidContext else { return [:] }
-        return [
+        [
             .nonce: message.message.safeIdForLoggingDescription,
             .messageType: message.message.safeTypeForLoggingDescription,
             .conversationId: message.conversation?.qualifiedID?.safeForLoggingDescription ?? "<nil>"

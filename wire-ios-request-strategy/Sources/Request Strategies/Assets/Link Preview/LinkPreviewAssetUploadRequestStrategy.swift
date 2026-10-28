@@ -50,14 +50,6 @@ extension ZMImagePreprocessingTracker {
         )
         let needsProccessing = NSPredicate { object, _ in
             guard let message = object as? ZMClientMessage else { return false }
-            if message.outboxState != .notEnrolled, !managedObjectContext.canProcessOfflinePendingMessages {
-                return false
-            }
-            if message.outboxState != .notEnrolled,
-               message.isDeleted || message.hasBeenDeleted || message.outboxState == .cancelled
-                || message.linkPreviewState != .downloaded {
-                return false
-            }
             return managedObjectContext.zm_fileAssetCache.hasOriginalImageData(for: message)
         }
 
@@ -159,16 +151,6 @@ public final class LinkPreviewAssetUploadRequestStrategy: AbstractRequestStrateg
 
 extension LinkPreviewAssetUploadRequestStrategy: ZMUpstreamTranscoder {
 
-    public func shouldCreateRequest(
-        toSyncObject managedObject: ZMManagedObject,
-        forKeys keys: Set<String>,
-        withSync sync: Any,
-        apiVersion: APIVersion
-    ) -> Bool {
-        guard let message = managedObject as? ZMClientMessage else { return false }
-        return message.outboxState == .notEnrolled || managedObjectContext.canProcessOfflinePendingMessages
-    }
-
     public func request(
         forUpdating managedObject: ZMManagedObject,
         forKeys keys: Set<String>,
@@ -235,10 +217,7 @@ extension LinkPreviewAssetUploadRequestStrategy: ZMUpstreamTranscoder {
                 retention: retention,
                 assetAuditLogMetaData: extraMetaData,
                 apiVersion: apiVersion
-            ),
-            userInfo: message.outboxState == .notEnrolled ? [:] : [
-                "outboxPreviewFingerprint": previewFingerprint(for: message) ?? Data()
-            ]
+            )
         )
     }
 
@@ -266,14 +245,6 @@ extension LinkPreviewAssetUploadRequestStrategy: ZMUpstreamTranscoder {
     ) -> Bool {
         guard let message = managedObject as? ZMClientMessage else { return false }
         guard keysToParse.contains(ZMClientMessage.linkPreviewStateKey) else { return false }
-        if message.outboxState != .notEnrolled {
-            guard !message.isDeleted, !message.hasBeenDeleted, message.outboxState != .cancelled,
-                  let fingerprint = requestUserInfo?["outboxPreviewFingerprint"] as? Data,
-                  !fingerprint.isEmpty, previewFingerprint(for: message) == fingerprint else {
-                // An earlier edit's image upload must not attach its asset key to the current preview.
-                return false
-            }
-        }
         guard let payload = response.payload?.asDictionary(),
               let assetKey = payload["key"] as? String else { fatal("No asset ID present in payload") }
 
@@ -298,11 +269,7 @@ extension LinkPreviewAssetUploadRequestStrategy: ZMUpstreamTranscoder {
             )
 
             do {
-                if message.outboxState != .notEnrolled {
-                    try message.setOutboxLinkPreviews([linkPreview])
-                } else {
-                    try message.setUnderlyingMessage(genericMessage)
-                }
+                try message.setUnderlyingMessage(genericMessage)
             } catch {
                 zmLog.warn("Failed to update genericMessage. Reason: \(error.localizedDescription)")
                 return true
@@ -324,13 +291,6 @@ extension LinkPreviewAssetUploadRequestStrategy: ZMUpstreamTranscoder {
             message.linkPreviewState = .done
             return false
         }
-    }
-
-    /// Include preview metadata as well as text: two edits can keep the same URL but replace its image.
-    private func previewFingerprint(for message: ZMClientMessage) -> Data? {
-        guard let text = message.underlyingMessage?.textData,
-              let data = try? text.serializedData() else { return nil }
-        return data.zmSHA256Digest()
     }
 
     public func updateInsertedObject(

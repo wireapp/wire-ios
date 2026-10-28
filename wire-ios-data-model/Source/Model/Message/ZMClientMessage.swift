@@ -131,27 +131,6 @@ public class ZMClientMessage: ZMOTRMessage {
     }
 
     public override func resend() {
-        if hasPendingOutboxDeletion {
-            try? retryPendingOutboxDeletion()
-            return
-        }
-        if outboxState != .notEnrolled {
-            guard !isDeleted, !hasBeenDeleted,
-                  outboxState == .failed || outboxState == .uncertain else { return }
-            do {
-                if let messageID = underlyingMessage?.messageID {
-                    // Expiration can restore the original message's nonce for UI purposes. Retry must
-                    // use the pending edit's ID so its live envelope still matches the frozen snapshot.
-                    nonce = UUID(uuidString: messageID)
-                }
-                try retryOutboxOperation()
-                super.resend()
-            } catch {
-                WireLogger.messaging.error("could not retry outbox operation")
-            }
-            // Never fall through to legacy resend, which may rebuild the content of an uncertain send.
-            return
-        }
         if let genericMessage = underlyingMessage,
            case .edited? = genericMessage.content {
             // Re-apply the edit since we've restored the orignal nonce when the message expired
@@ -175,9 +154,6 @@ public class ZMClientMessage: ZMOTRMessage {
         case .confirmation, .reaction:
             return
         case .deleted:
-            // Outbox deletion completion owns target cleanup. Clearing it here would discard its
-            // intent/other markers before all required follow-ups have completed.
-            if outboxOperation == .deletion { return }
             let originalID = UUID(uuidString: genericMessage.deleted.messageID)
             guard
                 let managedObjectContext,

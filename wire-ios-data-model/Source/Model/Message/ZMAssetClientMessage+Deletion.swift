@@ -27,11 +27,8 @@ public extension Notification.Name {
 
 extension ZMAssetClientMessage {
 
-    func deleteContent(deleteUploadedAssetsAfterSave: Bool = false) {
-        discardOutboxContent()
-        managedObjectContext?.zm_fileAssetCache.deleteAssetData(
-            self, deleteUploadedAssetsAfterSave: deleteUploadedAssetsAfterSave
-        )
+    func deleteContent() {
+        managedObjectContext?.zm_fileAssetCache.deleteAssetData(self)
 
         if let url = temporaryDirectoryURL,
            FileManager.default.fileExists(atPath: url.path) {
@@ -49,14 +46,10 @@ extension ZMAssetClientMessage {
     }
 
     public override func removeClearingSender(_ clearingSender: Bool) {
-        // Upload can finish before the asset-reference message is sent. Local removal of an
-        // unsubmitted message must also clean up those remote objects, after its deletion is saved.
-        let removeUnsubmittedAssets = clearingSender && (canDiscardOutboxLocally
-            || (outboxState == .cancelled && outboxOperation == .initialMessage))
         if !clearingSender {
             markRemoteAssetToBeDeleted()
         }
-        deleteContent(deleteUploadedAssetsAfterSave: removeUnsubmittedAssets)
+        deleteContent()
         super.removeClearingSender(clearingSender)
     }
 

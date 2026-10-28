@@ -23,7 +23,6 @@
 
 NSString * const ZMTransportSessionErrorDomain = @"ZMTransportSession";
 NSString * const FederationNotAvailableError = @"federation-not-available";
-NSString * const ZMTransportSessionRequestNotSubmittedKey = @"ZMTransportSessionRequestNotSubmitted";
 
 @implementation NSError (ZMTransportSession)
 

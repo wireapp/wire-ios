@@ -280,19 +280,6 @@ ZM_EMPTY_ASSERTING_INIT();
                 [self.updatedObjects didSynchronizeToken:token];
             }
         }
-        else if (response.result != ZMTransportResponseStatusTemporaryError &&
-                 response.result != ZMTransportResponseStatusTryAgainLater &&
-                 [localTranscoder respondsToSelector:@selector(shouldRetryFailedRequestForObject:requestUserInfo:response:keysToParse:)]) {
-            BOOL retry = [localTranscoder shouldRetryFailedRequestForObject:objectWithKeys.object
-                                                           requestUserInfo:userInfo
-                                                                  response:response
-                                                               keysToParse:keysToParse];
-            if (retry) {
-                [self.updatedObjects didNotFinishToSynchronizeToken:token];
-            } else {
-                [self.updatedObjects didFailToSynchronizeToken:token];
-            }
-        }
         else if (response.result == ZMTransportResponseStatusCancelled) {
             [self.updatedObjects didFailToSynchronizeToken:token];
             if ([localTranscoder respondsToSelector:@selector(requestExpiredForObject:forKeys:)]) {

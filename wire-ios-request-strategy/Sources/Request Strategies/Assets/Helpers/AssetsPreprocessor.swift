@@ -24,16 +24,15 @@ import Foundation
 /// - all assets are encrypted
 ///
 @objcMembers
-public final class AssetsPreprocessor: NSObject, ZMContextChangeTracker, TearDownCapable {
+public final class AssetsPreprocessor: NSObject, ZMContextChangeTracker {
 
     /// Group to track preprocessing operations
     fileprivate let processingGroup: ZMSDispatchGroup
 
     /// List of objects currently being processed
     fileprivate var objectsBeingProcessed = Set<ZMAssetClientMessage>()
-    let imageProcessingQueue: OperationQueue
+    fileprivate let imageProcessingQueue: OperationQueue
     fileprivate var imageAssetPreprocessor: ZMAssetsPreprocessor?
-    private var isTornDown = false
 
     /// Managed object context. Is is assumed that all methods of this class
     /// are called from the thread of this managed object context
@@ -66,17 +65,7 @@ public final class AssetsPreprocessor: NSObject, ZMContextChangeTracker, TearDow
         processObjects(objects)
     }
 
-    public func tearDown() {
-        managedObjectContext.performAndWait {
-            isTornDown = true
-            objectsBeingProcessed.removeAll()
-        }
-        // Let queued completion operations finish so their processing-group entries are balanced.
-        // Downsample callbacks below will ignore their results after teardown.
-    }
-
     private func processObjects(_ objects: Set<NSManagedObject>) {
-        guard !isTornDown, managedObjectContext.zm_isValidContext else { return }
         objects
             .compactMap(needsPreprocessing)
             .filter(!objectsBeingProcessed.contains)
@@ -87,11 +76,10 @@ public final class AssetsPreprocessor: NSObject, ZMContextChangeTracker, TearDow
     fileprivate func startProcessing(_ message: ZMAssetClientMessage) {
         objectsBeingProcessed.insert(message)
 
-        let groups = managedObjectContext.enterAllGroups()
+        _ = managedObjectContext.enterAllGroups()
 
         // We only want to start processing originals.
         for asset in message.assets where asset.hasOriginal {
-            if message.outboxState != .notEnrolled, asset.isUploaded || asset.hasEncrypted { continue }
             if asset.needsPreprocessing,
                let imageOperations = imageAssetPreprocessor?
                .operations(forPreprocessingImageOwner: AssetImageOwnerAdapter(asset: asset)) {
@@ -102,40 +90,19 @@ public final class AssetsPreprocessor: NSObject, ZMContextChangeTracker, TearDow
             }
         }
 
-        notifyWhenProcessingIsComplete(message, groups: groups)
+        notifyWhenProcessingIsComplete(message)
     }
 
     /// Removes the message from the list of messages being processed when the processing is completed
-    fileprivate func notifyWhenProcessingIsComplete(_ message: ZMAssetClientMessage, groups: [ZMSDispatchGroup]) {
-        let context = managedObjectContext
+    fileprivate func notifyWhenProcessingIsComplete(_ message: ZMAssetClientMessage) {
         processingGroup.notify(on: .global()) { [weak self] in
-            context.performGroupedBlock { [weak self] in
-                // Teardown can replace the context's group registry or release this preprocessor.
-                // Balance the exact groups entered for this work even when its result is ignored.
-                defer { groups.forEach { $0.leave() } }
-                guard let self, !self.isTornDown, context.zm_isValidContext else { return }
-                self.objectsBeingProcessed.remove(message)
-                let legacy = message.outboxState == .notEnrolled
-                if legacy || (!message.isDeleted && !message.hasBeenDeleted && !message.isExpired
-                    && message.outboxState == .queued && message.transferState == .uploading) {
-                    if !legacy, message.assets.contains(where: { !$0.isUploaded && !$0.hasEncrypted }) {
-                        try? message.failQueuedOutboxOperation()
-                        message.expire(withReason: .other)
-                    } else {
-                        let assetClientMessageSet: Set<AnyHashable> = [#keyPath(ZMAssetClientMessage.transferState)]
-                        message.setLocallyModifiedKeys(assetClientMessageSet)
-                    }
-                    if legacy {
-                        message.managedObjectContext?.saveOrRollback()
-                    } else if let context = message.managedObjectContext {
-                        do {
-                            try context.save()
-                            _ = message.recoverOutboxAssetPreparation()
-                        } catch {
-                            context.rollback()
-                        }
-                    }
-                }
+            self?.managedObjectContext.performGroupedBlock {
+                self?.objectsBeingProcessed.remove(message)
+                let assetClientMessageSet: Set<AnyHashable> = [#keyPath(ZMAssetClientMessage.transferState)]
+                // swiftlint:disable:next todo_requires_jira_link
+                message.setLocallyModifiedKeys(assetClientMessageSet) // TODO: jacob hacky
+                message.managedObjectContext?.saveOrRollback()
+                self?.managedObjectContext.leaveAllGroups(self!.managedObjectContext.allGroups)
             }
         }
     }
@@ -143,11 +110,6 @@ public final class AssetsPreprocessor: NSObject, ZMContextChangeTracker, TearDow
     /// Returns the object as a ZMAssetClientMessage if it is asset that needs preprocessing
     private func needsPreprocessing(_ object: NSManagedObject) -> ZMAssetClientMessage? {
         guard let message = object as? ZMAssetClientMessage else { return nil }
-        if message.outboxState != .notEnrolled {
-            guard managedObjectContext.canProcessOfflinePendingMessages,
-                  !message.isDeleted, !message.hasBeenDeleted, !message.isExpired,
-                  message.outboxState == .queued, message.transferState == .uploading else { return nil }
-        }
 
         return message.processingState == .preprocessing ? message : nil
     }
@@ -162,7 +124,6 @@ extension AssetsPreprocessor: ZMAssetsPreprocessorDelegate {
         guard let assetImageOwnerAdapter = imageOwner as? AssetImageOwnerAdapter else { return }
 
         managedObjectContext.performGroupedBlock {
-            guard !self.isTornDown, self.managedObjectContext.zm_isValidContext else { return }
             assetImageOwnerAdapter.asset.updateWithPreprocessedData(
                 operation.downsampleImageData,
                 imageProperties: operation.properties
@@ -182,10 +143,8 @@ extension AssetsPreprocessor: ZMAssetsPreprocessorDelegate {
     }
 
     public func preprocessingCompleteOperation(for imageOwner: ZMImageOwner) -> Operation? {
-        // The completion owns the entered group independently of the preprocessor's lifetime.
-        let group = processingGroup
-        return BlockOperation {
-            group.leave()
+        BlockOperation { [weak self] in
+            self?.processingGroup.leave()
         }
     }
 

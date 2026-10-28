@@ -371,19 +371,11 @@ public final class SharingSession {
 
     private func setupCaches(at cachesDirectory: URL) {
 
-        // The extension shares storage but has no cross-process send lease. It must neither enroll
-        // new outbox work nor process the main app's persisted queue.
-        userInterfaceContext.disableOfflinePendingMessageProcessing()
-
         let userImageCache = UserImageLocalCache(location: cachesDirectory)
         userInterfaceContext.zm_userImageCache = userImageCache
         syncContext.zm_userImageCache = userImageCache
 
-        // Honor the main app's on-disk pins even though this process does not send enrolled messages.
-        let fileAssetcache = FileAssetCache(
-            location: cachesDirectory,
-            outboxLocation: coreDataStack.accountContainer.appendingPathComponent("PendingMessageAssets")
-        )
+        let fileAssetcache = FileAssetCache(location: cachesDirectory)
         userInterfaceContext.zm_fileAssetCache = fileAssetcache
         syncContext.zm_fileAssetCache = fileAssetcache
     }

@@ -70,29 +70,6 @@ final class DeletionDialogPresenter: NSObject {
             // Tracking needs to be called before performing the action, since the content of the message is cleared
             if case let .delete(type) = action {
 
-                if let outboxMessage = message as? ZMMessage, outboxMessage.outboxState != .notEnrolled {
-                    // The UI copy may still look unclaimed while reconnect has started sending.
-                    // Decide local discard versus remote deletion on the same queue as send claims.
-                    let messageID = outboxMessage.objectID
-                    let syncContext = userSession.contextProvider.syncContext
-                    Task { @MainActor in
-                        let succeeded = await syncContext.perform {
-                            guard let row = try? syncContext.existingObject(with: messageID) as? ZMMessage,
-                                  !row.isDeleted else { return false }
-                            do {
-                                try row.requestOutboxDeletion(type == .local ? .local : .everyone)
-                                try syncContext.save()
-                                return true
-                            } catch {
-                                syncContext.rollback()
-                                return false
-                            }
-                        }
-                        completion(succeeded, succeeded ? type : nil)
-                    }
-                    return
-                }
-
                 userSession.enqueue {
                     switch type {
                     case .local:

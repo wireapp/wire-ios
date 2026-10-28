@@ -67,13 +67,7 @@ public extension ProteusMessage where Self: ZMOTRMessage {
     }
 
     func prepareMessageForSending() async throws {
-        try Task.checkCancellation()
-        // Capture the optional context before hopping queues; account closure can detach the row
-        // while this task waits, so the throwing path must avoid its force-unwrapped context accessor.
-        guard let context = managedObjectContext else { throw MessageOutboxError.staleAttempt }
         try await context.perform { [self] in
-            guard context.zm_isValidContext, managedObjectContext === context,
-                  !isDeleted, !hasBeenDeleted else { throw MessageOutboxError.staleAttempt }
             if conversation?.conversationType == .oneOnOne {
                 // Update expectsReadReceipt flag to reflect the current user setting
                 if var updatedGenericMessage = underlyingMessage {

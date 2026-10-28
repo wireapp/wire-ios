@@ -52,8 +52,6 @@ extension MessageToolboxContent: Comparable {
 }
 
 enum MessageToolboxState: Equatable {
-    case deletionPending
-    case queued
     case sending
     case sent
     case delivered
@@ -113,11 +111,6 @@ final class MessageToolboxDataSource {
         // 1b) Call list for missed calls
         else if message.systemMessageData?.systemMessageType == .missedCall {
             content = .callList(makeCallList())
-        }
-        // An uncertain original may still carry a legacy failure state. Explain the persisted
-        // deletion intent instead of presenting Retry as if it would resend that original.
-        else if let row = message as? ZMMessage, row.hasPendingOutboxDeletion {
-            content = .details(timestamp: "", status: .deletionPending, countdown: "")
         }
         // 2) Failed to send
         else if let errorMessage = MessageErrorHelper.errorMessage(message) {
@@ -181,12 +174,6 @@ final class MessageToolboxDataSource {
     private func selfMessageState(for message: ZMConversationMessage) -> MessageToolboxState? {
         guard let sender = message.senderUser, sender.isSelfUser else {
             return nil
-        }
-
-        // Legacy pending also covers an active send. Consult outbox state first to show waiting
-        // separately, while expired/uncertain operations retain the existing failure presentation.
-        if let row = message as? ZMMessage, row.outboxState == .queued, !row.isExpired {
-            return .queued
         }
 
         switch message.deliveryState {

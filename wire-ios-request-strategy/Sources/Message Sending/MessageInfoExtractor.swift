@@ -21,7 +21,6 @@ import GenericMessageProtocol
 import WireLogging
 
 enum MessageInfoExtractorError: Error {
-    case contextUnavailable
     case missingConversation
     case missingGenericMessage
     case missingValidSelfClient
@@ -36,84 +35,83 @@ struct MessageInfoExtractor {
     var context: NSManagedObjectContext
 
     func infoForBroadcast(message: any ProteusMessage) async throws -> MessageInfo {
-        try Task.checkCancellation()
         guard let message = message as? GenericMessageEntity else {
             throw MessageInfoExtractorError.unsupportedBroadcastMessage
         }
 
-        return try await context.perform {
-            try requireActiveContext()
-            guard let genericMessage = message.underlyingMessage else {
-                throw MessageInfoExtractorError.missingGenericMessage
-            }
-            switch message.targetRecipients {
-            case let .users(users):
-                var info = try infoForTransport(message: genericMessage, for: users)
-                let userQualifiedIDs = Set(users.compactMap(\.qualifiedID))
-                info.missingClientsStrategy = MissingClientsStrategy
-                    .ignoreAllMissingClientsNotFromUsers(userIds: userQualifiedIDs)
-                return info
-            case .conversationParticipants, .clients:
-                throw MessageInfoExtractorError.unsupportedTargetRecipient
-            }
+        let genericMessage = message.underlyingMessage
+
+        guard let genericMessage else {
+            throw MessageInfoExtractorError.missingGenericMessage
+        }
+
+        switch message.targetRecipients {
+        case let .users(users):
+            var info = try await infoForTransport(message: genericMessage, for: users)
+            let userQualifiedIDs = await context.perform { Set(users.compactMap(\.qualifiedID)) }
+
+            info.missingClientsStrategy = MissingClientsStrategy
+                .ignoreAllMissingClientsNotFromUsers(userIds: userQualifiedIDs)
+            return info
+
+        case .conversationParticipants, .clients:
+            throw MessageInfoExtractorError.unsupportedTargetRecipient
         }
 
     }
 
     func infoForSending(message: any ProteusMessage, conversationID: QualifiedID) async throws -> MessageInfo {
-        try Task.checkCancellation()
-        return try await context.perform {
-            try requireActiveContext()
-            if let row = message as? ZMMessage {
-                guard row.managedObjectContext === context, !row.isDeleted, !row.hasBeenDeleted else {
-                    throw MessageInfoExtractorError.missingGenericMessage
-                }
-            }
-            guard let conversation = ZMConversation.fetch(
-                with: conversationID.uuid, domain: conversationID.domain, in: context
-            ) else { throw MessageInfoExtractorError.missingConversation }
-            guard let genericMessage = message.underlyingMessage else {
-                throw MessageInfoExtractorError.missingGenericMessage
-            }
-            switch message.targetRecipients {
-            case .conversationParticipants:
-                return try infoForTransport(message: genericMessage, in: conversation)
-            case let .users(users):
-                return try infoForTransport(message: genericMessage, for: users)
-            case let .clients(messageRecipients):
-                return try infoForTransport(message: genericMessage, for: messageRecipients)
-            }
+        let (conversation, genericMessage) = await context.perform { [context] in
+            (
+                ZMConversation.fetch(with: conversationID.uuid, domain: conversationID.domain, in: context),
+                message.underlyingMessage
+            )
+        }
+
+        guard let conversation else {
+            throw MessageInfoExtractorError.missingConversation
+        }
+
+        guard let genericMessage else {
+            throw MessageInfoExtractorError.missingGenericMessage
+        }
+
+        switch message.targetRecipients {
+        case .conversationParticipants:
+            return try await infoForTransport(message: genericMessage, in: conversation)
+        case let .users(users):
+            return try await infoForTransport(message: genericMessage, for: users)
+        case let .clients(messageRecipients):
+            return try await infoForTransport(message: genericMessage, for: messageRecipients)
         }
     }
 
     // MARK: - Private
 
-    // These helpers run synchronously inside the entry point's context block. No managed rows
-    // cross an async suspension while extracting the immutable transport information.
-    private func requireActiveContext() throws {
-        guard context.zm_isValidContext else { throw MessageInfoExtractorError.contextUnavailable }
-    }
+    private func infoForTransport(message: GenericMessage, for users: Set<ZMUser>) async throws -> MessageInfo {
+        let messageRecipients = await context.perform { users.mapToDictionary { $0.clients } }
 
-    private func infoForTransport(message: GenericMessage, for users: Set<ZMUser>) throws -> MessageInfo {
-        let messageRecipients = users.mapToDictionary { $0.clients }
-
-        return try infoForTransport(message: message, for: messageRecipients)
+        return try await infoForTransport(message: message, for: messageRecipients)
     }
 
     private func infoForTransport(
         message: GenericMessage,
         for messageRecipients: [ZMUser: Set<UserClient>]
-    ) throws -> MessageInfo {
-        let selfDomain = ZMUser.selfUser(in: context).domain
-        let selfClientID = try selfClientID()
+    ) async throws -> MessageInfo {
+        let selfDomain = await context.perform {
+            let user = ZMUser.selfUser(in: context)
+            return user.domain
+        }
+        let selfClientID = try await selfClientID()
         guard let selfDomain else {
             throw MessageInfoExtractorError.missingSelfDomain
         }
-        let listClients = listOfClients(
+        let listClients = await listOfClients(
             for: messageRecipients,
             selfDomain: selfDomain,
             selfClientID: selfClientID
         )
+        let userClients = await context.perform { messageRecipients.map { $1 }.flatMap(\.self) }
 
         return MessageInfo(
             genericMessage: message,
@@ -126,23 +124,26 @@ struct MessageInfoExtractor {
     private func infoForTransport(
         message: GenericMessage,
         in conversation: ZMConversation
-    ) throws -> MessageInfo {
-        let selfUser = ZMUser.selfUser(in: context)
-        let selfDomain = selfUser.domain
-        let selfClientID = try selfClientID()
+    ) async throws -> MessageInfo {
+        let (selfUser, selfDomain) = await context.perform {
+            let user = ZMUser.selfUser(in: context)
+            return (user, user.domain)
+        }
+        let selfClientID = try await selfClientID()
         guard let selfDomain else {
             throw MessageInfoExtractorError.missingSelfDomain
         }
 
         // get the recipients and the missing clientsStrategy
-        let (recipients, missingClientsStrategy) = self.recipients(
+        let (recipients, missingClientsStrategy) = await self.recipients(
             for: message,
             selfUser: selfUser,
             in: conversation
         )
 
         // get the list of clients
-        let clients = listOfClients(for: recipients, selfDomain: selfDomain, selfClientID: selfClientID)
+        let clients = await listOfClients(for: recipients, selfDomain: selfDomain, selfClientID: selfClientID)
+        let userClients = await context.perform { recipients.map { $1 }.flatMap(\.self) }
         return MessageInfo(
             genericMessage: message,
             listClients: clients,
@@ -151,8 +152,10 @@ struct MessageInfoExtractor {
         )
     }
 
-    private func selfClientID() throws -> String {
-        let selfClientID = ZMUser.selfUser(in: context).selfClient()?.remoteIdentifier
+    private func selfClientID() async throws -> String {
+        let selfClientID = await context.perform {
+            ZMUser.selfUser(in: context).selfClient()?.remoteIdentifier
+        }
         guard let id = selfClientID else { throw MessageInfoExtractorError.missingValidSelfClient }
         return id
     }
@@ -161,22 +164,26 @@ struct MessageInfoExtractor {
         for message: GenericMessage,
         selfUser: ZMUser,
         in conversation: ZMConversation
-    ) -> ([ZMUser: Set<UserClient>], MissingClientsStrategy) {
-        message.recipientUsersForMessage(
+    ) async -> ([ZMUser: Set<UserClient>], MissingClientsStrategy) {
+        let (users, missingClientsStrategy) = await context.perform { message.recipientUsersForMessage(
             in: conversation,
             selfUser: selfUser
-        )
+        ) }
+
+        return (users, missingClientsStrategy)
     }
 
     private func listOfClients(
         for recipients: [ZMUser: Set<UserClient>],
         selfDomain: String,
         selfClientID: String
-    ) -> MessageInfo.ClientList {
+    ) async -> MessageInfo.ClientList {
 
-        let recipientsByDomain = Dictionary(grouping: recipients) { element -> String in
-            element.key.domain ?? selfDomain
-            // is there really a need to keep selfDomain as backup values
+        let recipientsByDomain = await context.perform {
+            Dictionary(grouping: recipients) { element -> String in
+                element.key.domain ?? selfDomain
+                // is there really a need to keep selfDomain as backup values
+            }
         }
 
         var qualifiedUserEntries = MessageInfo.ClientList()
@@ -184,9 +191,11 @@ struct MessageInfoExtractor {
 
             var userEntries = [MessageInfo.UserID: [UserClientData]]()
             for (user, clients) in recipients {
-                guard !user.isAccountDeleted, let userId = user.remoteIdentifier else { continue }
+                guard let userId = await context.perform({
+                    !user.isAccountDeleted ? user.remoteIdentifier : nil
+                }) else { continue }
 
-                let userClientDatas = userClientDatas(selfClientID: selfClientID, userClients: clients)
+                let userClientDatas = await userClientDatas(selfClientID: selfClientID, userClients: clients)
                 if !userClientDatas.isEmpty {
                     userEntries[userId] = userClientDatas
                 }
@@ -196,29 +205,31 @@ struct MessageInfoExtractor {
         return qualifiedUserEntries
     }
 
-    private func userClientDatas(selfClientID: String, userClients: Set<UserClient>) -> [UserClientData] {
+    private func userClientDatas(selfClientID: String, userClients: Set<UserClient>) async -> [UserClientData] {
 
-        userClients.compactMap {
-            guard let sessionID = $0.proteusSessionID,
-                  $0.remoteIdentifier != selfClientID else {
-                // skips self client session
-                WireLogger.proteus
-                    .warn(
-                        "skips cliend id: \(String(describing: $0.remoteIdentifier)), proteusSession id: \(String(describing: $0.proteusSessionID))"
-                    )
-                return nil
+        await context.perform {
+            userClients.compactMap {
+                guard let sessionID = $0.proteusSessionID,
+                      $0.remoteIdentifier != selfClientID else {
+                    // skips self client session
+                    WireLogger.proteus
+                        .warn(
+                            "skips cliend id: \(String(describing: $0.remoteIdentifier)), proteusSession id: \(String(describing: $0.proteusSessionID))"
+                        )
+                    return nil
+                }
+
+                guard !$0.failedToEstablishSession else {
+                    let data = ZMFailedToCreateEncryptedMessagePayloadString.data(using: .utf8)!
+                    WireLogger.proteus
+                        .error(
+                            "Failed to encrypt payload: session couldn't be established with client: \(String(describing: $0.remoteIdentifier))"
+                        )
+                    return UserClientData(sessionID: sessionID, data: data)
+                }
+
+                return UserClientData(sessionID: sessionID, data: nil)
             }
-
-            guard !$0.failedToEstablishSession else {
-                let data = ZMFailedToCreateEncryptedMessagePayloadString.data(using: .utf8)!
-                WireLogger.proteus
-                    .error(
-                        "Failed to encrypt payload: session couldn't be established with client: \(String(describing: $0.remoteIdentifier))"
-                    )
-                return UserClientData(sessionID: sessionID, data: data)
-            }
-
-            return UserClientData(sessionID: sessionID, data: nil)
         }
     }
 }

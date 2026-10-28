@@ -20,73 +20,8 @@ import GenericMessageProtocol
 import XCTest
 
 @testable import WireDataModel
-@testable import WireRequestStrategy
 
 final class MessageDependencyResolverTests: MessagingTestBase {
-
-    func testDependencyResolvedDuringFirstReadDoesNotLoseItsWakeup() async {
-        let message = ResolvingDependencyMessage(
-            message: GenericMessage(content: Text(content: "queued")), context: syncMOC,
-            conversation: groupConversation, completionHandler: nil
-        )
-        let resolver = MessageDependencyResolver(context: syncMOC)
-        let completed = expectation(description: "dependency wakeup retained")
-        let waiter = Task {
-            do {
-                try await resolver.waitForDependenciesToResolve(for: message)
-                completed.fulfill()
-            } catch {}
-        }
-
-        await fulfillment(of: [completed], timeout: 1)
-
-        waiter.cancel()
-        await waiter.value
-    }
-
-    func testCancelledDependencyWaitThrowsWithoutClaimingTheMessage() async throws {
-        let message = try await syncMOC.perform {
-            let row = try XCTUnwrap(self.groupConversation.appendText(content: "queued") as? ZMClientMessage)
-            try row.enqueueInOutbox(operation: .initialMessage)
-            try self.syncMOC.save()
-            return row
-        }
-        let resolver = MessageDependencyResolver(context: syncMOC)
-        let waiter = Task {
-            withUnsafeCurrentTask { $0?.cancel() }
-            try await resolver.waitForDependenciesToResolve(for: message)
-        }
-
-        do {
-            try await waiter.value
-            XCTFail("A cancelled dependency wait must throw")
-        } catch is CancellationError {} catch {
-            XCTFail("Unexpected cancellation error: \(error)")
-        }
-        await syncMOC.perform {
-            XCTAssertEqual(message.outboxState, .queued)
-            XCTAssertNil(message.outboxAttemptIdentifier)
-            XCTAssertFalse(message.isExpired)
-        }
-    }
-
-    func testClosedContextRejectsDependencyReadsOfAResetMessage() async throws {
-        let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
-        context.persistentStoreCoordinator = syncMOC.persistentStoreCoordinator
-        context.performAndWait { context.markAsSyncContext() }
-        let message = try await context.perform {
-            let conversation = try XCTUnwrap(context.existingObject(with: self.groupConversation.objectID) as? ZMConversation)
-            return try XCTUnwrap(conversation.appendText(content: "queued") as? ZMClientMessage)
-        }
-        context.tearDown()
-
-        do {
-            try await MessageDependencyResolver(context: context).waitForDependenciesToResolve(for: message)
-            XCTFail("A reset message must not be read")
-        } catch {
-            XCTAssertEqual(error as? MessageOutboxError, .staleAttempt)
-        }
-    }
 
     func testThatGivenMessageWithoutDependencies_thenDontWait() async throws {
         // given
@@ -204,18 +139,5 @@ final class MessageDependencyResolverTests: MessagingTestBase {
                 MessageDependencyResolver(context: coreDataStack.syncContext)
             )
         }
-    }
-}
-
-private final class ResolvingDependencyMessage: GenericMessageEntity {
-    private var checkedDependency = false
-
-    override var dependentObjectNeedingUpdateBeforeProcessing: NSObject? {
-        // Deliver the only wakeup inside the initial read while still reporting a dependency.
-        // Subscribing after that read would wait forever; the next read intentionally returns nil.
-        guard !checkedDependency else { return nil }
-        checkedDependency = true
-        NotificationCenter.default.post(name: .requestAvailableNotification, object: nil)
-        return NSObject()
     }
 }

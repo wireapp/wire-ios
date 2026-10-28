@@ -28,13 +28,11 @@ protocol ConversationInputBarViewControllerDelegate: AnyObject {
     )
     func conversationInputBarViewControllerShouldBeginEditing(_ controller: ConversationInputBarViewController) -> Bool
     func conversationInputBarViewControllerShouldEndEditing(_ controller: ConversationInputBarViewController) -> Bool
-    /// Returns whether the edit was accepted (and persisted for enrolled messages). A false result
-    /// leaves the editor/draft intact when sending claimed the message or saving failed.
-    @MainActor func conversationInputBarViewControllerDidFinishEditing(
+    func conversationInputBarViewControllerDidFinishEditing(
         _ message: ZMConversationMessage,
         withText newText: String?,
         mentions: [Mention]
-    ) async -> Bool
+    )
     func conversationInputBarViewControllerDidCancelEditing(_ message: ZMConversationMessage)
     func conversationInputBarViewControllerWants(toShow message: ZMConversationMessage)
     func conversationInputBarViewControllerEditLastMessage()

@@ -88,27 +88,6 @@ class ZMGenericMessageDataTests: ModelObjectsTests {
 
     // MARK: - Negative Tests
 
-    func testOutboxSnapshotUsesEARAndCannotBeUnlockedByMissingKey() throws {
-        setEAREnabled(true)
-        earMessageEncryptionService.setDatabaseKey(validDatabaseKey)
-        let content = createGenericMessage(text: "queued private text")
-        let message = ZMClientMessage(nonce: UUID(uuidString: content.messageID)!, managedObjectContext: uiMOC)
-        try message.setUnderlyingMessage(content)
-        try message.enqueueInOutbox(operation: .initialMessage)
-        let attempt = try message.prepareOutboxAttempt(payload: content.serializedData())
-        try message.markOutboxAttemptSending(attempt)
-
-        XCTAssertTrue(try XCTUnwrap(message.outboxSnapshot).isEncrypted)
-        XCTAssertEqual(try message.loadOutboxPayload(), attempt.payload)
-
-        earMessageEncryptionService.setDatabaseKey(nil)
-        try message.rescheduleOutboxAttempt(attempt.identifier)
-
-        XCTAssertFalse(message.hasUnclaimedOutboxContent)
-        XCTAssertThrowsError(try message.loadOutboxPayload())
-        XCTAssertThrowsError(try message.prepareOutboxAttempt(payload: attempt.payload))
-    }
-
     // @SF.Storage @TSFI.FS-IOS @TSFI.Enclave-IOS @S0.1 @S0.2
     func test_ItDoesNotStoreData_IfDatabaseKeyIsMissing_WhenEncrypting() throws {
         // Given

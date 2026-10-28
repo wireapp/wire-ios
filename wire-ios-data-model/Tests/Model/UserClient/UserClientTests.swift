@@ -24,30 +24,6 @@ import XCTest
 
 final class UserClientTests: ZMBaseManagedObjectTest {
 
-    func testSessionDeletionCanFinishAfterItsContextClosesWithoutMutatingTheResetClient() async throws {
-        let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
-        context.persistentStoreCoordinator = syncMOC.persistentStoreCoordinator
-        context.performAndWait { context.markAsSyncContext() }
-        let service = MockProteusServiceInterface()
-        let client = await context.perform {
-            context.proteusService = service
-            let user = ZMUser.insertNewObject(in: context)
-            user.remoteIdentifier = UUID()
-            let client = UserClient.insertNewObject(in: context)
-            client.user = user
-            client.remoteIdentifier = UUID().transportString()
-            return client
-        }
-        service.deleteSessionId_MockMethod = { _ in context.tearDown() }
-
-        await client.deleteClientAndEndSession()
-
-        XCTAssertEqual(service.deleteSessionId_Invocations.count, 1)
-        let hasSession = await client.hasSessionWithSelfClient
-        XCTAssertFalse(hasSession)
-        XCTAssertNil(client.managedObjectContext)
-    }
-
     func clientWithTrustedClientCount(
         _ trustedCount: UInt,
         ignoredClientCount: UInt,

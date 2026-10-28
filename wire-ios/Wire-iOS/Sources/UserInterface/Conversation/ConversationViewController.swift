@@ -842,46 +842,7 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
         _ message: ZMConversationMessage,
         withText newText: String?,
         mentions: [Mention]
-    ) async -> Bool {
-        if let queuedMessage = message as? ZMClientMessage, queuedMessage.outboxState != .notEnrolled {
-            let messageID = queuedMessage.objectID
-            // Mentions contain managed users from the UI context. Transfer IDs/ranges and rebuild
-            // them on the sync context so the edit never mixes objects from different contexts.
-            let mentionedUsers = mentions.compactMap { mention -> (NSRange, NSManagedObjectID)? in
-                guard let user = mention.user as? ZMUser else { return nil }
-                return (mention.range, user.objectID)
-            }
-            guard mentionedUsers.count == mentions.count else { return false }
-            let syncContext = userSession.contextProvider.syncContext
-            let fetchLinkPreview = !Settings.disableLinkPreviews
-            let accepted = await syncContext.perform {
-                // Opening the editor reserves nothing. A send claim can win before confirmation,
-                // so reject here and let the input bar retain the draft instead of overwriting it.
-                guard let row = try? syncContext.existingObject(with: messageID) as? ZMClientMessage,
-                      row.canEditOutboxText else { return false }
-                do {
-                    let syncMentions = try mentionedUsers.map { range, userID in
-                        guard let user = try syncContext.existingObject(with: userID) as? ZMUser else {
-                            throw MessageOutboxError.invalidPayload
-                        }
-                        return Mention(range: range, user: user)
-                    }
-                    if let newText, !newText.isEmpty || row.isMultipart {
-                        try row.editOutboxText(newText, mentions: syncMentions, fetchLinkPreview: fetchLinkPreview)
-                    } else {
-                        ZMMessage.deleteForEveryone(row)
-                    }
-                    try syncContext.save()
-                    return true
-                } catch {
-                    syncContext.rollback()
-                    WireLogger.conversation.warn("Could not persist an outbox text edit")
-                    return false
-                }
-            }
-            if accepted { contentViewController?.didFinishEditing(message) }
-            return accepted
-        }
+    ) {
         contentViewController?.didFinishEditing(message)
         userSession.enqueue {
             if let newText,
@@ -892,7 +853,6 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
                 ZMMessage.deleteForEveryone(message)
             }
         }
-        return true
     }
 
     func conversationInputBarViewControllerDidCancelEditing(_ message: ZMConversationMessage) {

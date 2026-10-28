@@ -16,10 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import CoreData
 import Foundation
 import WireDataModel
-import WireLogging
 import WireSyncEngine
 
 extension ZMConversationMessage {
@@ -56,9 +54,6 @@ extension ZMConversationMessage {
         guard let conversation = conversationLike,
               let sender = senderUser else {
             return false
-        }
-        if let message = self as? ZMClientMessage, message.outboxState != .notEnrolled {
-            return message.canEditOutboxText
         }
         return !isEphemeral &&
             isText &&
@@ -157,9 +152,6 @@ extension ZMConversationMessage {
 
     /// Whether the message sending failed in the past and we can attempt to resend the message.
     var canBeResent: Bool {
-        if let row = self as? ZMMessage, row.hasPendingOutboxDeletion {
-            return row.canRetryPendingOutboxDeletion
-        }
         guard let conversation = conversationLike,
               let sender = senderUser else {
             return false
@@ -176,45 +168,4 @@ extension ZMConversationMessage {
         !isRestricted
     }
 
-}
-
-extension ZMMessage {
-
-    enum OutboxAction {
-        case retry
-        case cancelTransfer
-    }
-
-    /// Re-fetch on the send owner's queue so stale UI state cannot overwrite an active attempt.
-    @MainActor
-    func performOutboxAction(_ action: OutboxAction, in context: NSManagedObjectContext) async -> Bool {
-        let messageID = objectID
-        return await context.perform {
-            guard let message = try? context.existingObject(with: messageID) as? ZMMessage,
-                  !message.isDeleted, !message.hasBeenDeleted,
-                  let state = message.outboxState, state != .notEnrolled else { return false }
-            switch action {
-            case .retry:
-                if message.hasPendingOutboxDeletion {
-                    guard message.canRetryPendingOutboxDeletion else { return false }
-                    do { try message.retryPendingOutboxDeletion() }
-                    catch { return false }
-                } else {
-                    guard state == .failed || state == .uncertain else { return false }
-                    message.resend()
-                }
-            case .cancelTransfer:
-                guard let asset = message as? ZMAssetClientMessage else { return false }
-                asset.cancelTransfer()
-            }
-            do {
-                try context.save()
-                return true
-            } catch {
-                context.rollback()
-                WireLogger.messaging.error("could not persist outbox message action")
-                return false
-            }
-        }
-    }
 }

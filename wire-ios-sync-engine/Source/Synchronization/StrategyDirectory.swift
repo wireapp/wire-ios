@@ -332,25 +332,19 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 initiateResetMLSConversationUseCase: initiateResetMLSConversationUseCase,
                 featureRepository: LegacyFeatureRepository(context: syncContext),
                 apiVersion: metadata.apiVersion,
-                backgroundTaskExecuter: backgroundTaskExecuter,
-                reachability: transportSession.reachability
+                backgroundTaskExecuter: backgroundTaskExecuter
             )
 
-            // Text and uploaded asset references must share one final-message scheduler. Separate
-            // instances would maintain independent conversation ownership and could send concurrently.
-            let outboxStrategy = ClientMessageRequestStrategy(
-                context: syncContext,
-                localNotificationDispatcher: pushMessageHandler,
-                messageSender: messageSender,
-                reachability: transportSession.reachability
-            )
             let strategies: [Any] = [
                 AssetClientMessageRequestStrategy(
                     managedObjectContext: syncContext,
-                    messageSender: messageSender,
-                    outboxStrategy: outboxStrategy
+                    messageSender: messageSender
                 ),
-                outboxStrategy,
+                ClientMessageRequestStrategy(
+                    context: syncContext,
+                    localNotificationDispatcher: pushMessageHandler,
+                    messageSender: messageSender
+                ),
                 AvailabilityRequestStrategy(
                     context: syncContext,
                     messageSender: messageSender

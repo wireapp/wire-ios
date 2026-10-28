@@ -32,25 +32,16 @@ extension ConversationInputBarViewController {
     }
 
     @MainActor
-    func _sendText() async {
+    private func _sendText() async {
         let (text, mentions) = inputBar.textView.preparedText
         let quote = quotedMessage
 
         guard !showAlertIfTextIsTooLong(text: text) else { return }
 
         if inputBar.isEditing, let message = editingMessage {
-            guard !isSubmittingMessageEdit else { return }
-            guard message.textMessageData?.messageText != text
-                || message.textMessageData?.mentions != mentions else { return }
+            guard message.textMessageData?.messageText != text else { return }
 
-            isSubmittingMessageEdit = true
-            defer { isSubmittingMessageEdit = false }
-            guard await delegate?.conversationInputBarViewControllerDidFinishEditing(
-                message, withText: text, mentions: mentions
-            ) == true else { return }
-            // Confirmation can suspend while reconnecting claims the message. Keep any newer draft.
-            let current = inputBar.textView.preparedText
-            guard editingMessage === message, current.text == text, current.mentions == mentions else { return }
+            delegate?.conversationInputBarViewControllerDidFinishEditing(message, withText: text, mentions: mentions)
             editingMessage = nil
             updateWritingState(animated: true)
         } else {

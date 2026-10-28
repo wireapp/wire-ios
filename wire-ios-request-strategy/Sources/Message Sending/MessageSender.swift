@@ -16,11 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import GenericMessageProtocol
 import WireCoreCrypto
 import WireDataModel
 import WireLogging
-import WireTransport
 import WireUtilitiesPackage
 
 public enum MessageSendError: Error {
@@ -32,9 +30,6 @@ public enum MessageSendError: Error {
     case messageExpired
     case missingProteusService
     case failed(Error)
-    case outboxWaitingForConnection
-    case outboxConversationUnavailable
-    case outboxDeletionPending
 }
 
 public typealias SendableMessage = MLSMessage & ProteusMessage
@@ -64,8 +59,7 @@ public final class MessageSender: MessageSenderInterface {
         initiateResetMLSConversationUseCase: InitiateResetMLSConversationUseCaseProtocol,
         featureRepository: LegacyFeatureRepositoryInterface,
         apiVersion: WireTransport.APIVersion?,
-        backgroundTaskExecuter: any BackgroundTaskExecuter,
-        reachability: ReachabilityProvider? = nil
+        backgroundTaskExecuter: any BackgroundTaskExecuter
     ) {
         self.apiProvider = apiProvider
         self.sessionEstablisher = sessionEstablisher
@@ -77,7 +71,6 @@ public final class MessageSender: MessageSenderInterface {
         self.featureRepository = featureRepository
         self.apiVersion = apiVersion
         self.backgroundTaskExecuter = backgroundTaskExecuter
-        self.reachability = reachability
     }
 
     private let featureRepository: LegacyFeatureRepositoryInterface
@@ -94,7 +87,6 @@ public final class MessageSender: MessageSenderInterface {
     private var retryCount = 0
     private let apiVersion: WireTransport.APIVersion?
     private let backgroundTaskExecuter: any BackgroundTaskExecuter
-    private let reachability: ReachabilityProvider?
 
     public func broadcastMessage(message: any ProteusMessage) async throws {
         try await withBackgroundTask(name: "broadcast Message", executer: backgroundTaskExecuter) { [self] in
@@ -115,16 +107,6 @@ public final class MessageSender: MessageSenderInterface {
     }
 
     public func sendMessage(message: any SendableMessage) async throws {
-        // Persisted enrollment owns routing even after the flag is disabled. Falling back to the
-        // legacy retry loop could replace an uncertain operation's content or send it twice.
-        let usesOutbox = try await context.perform {
-            guard self.context.zm_isValidContext else { throw MessageOutboxError.staleAttempt }
-            return (message as? ZMMessage).map { $0.outboxState != .notEnrolled } ?? false
-        }
-        if usesOutbox {
-            try await sendOutboxMessage(message)
-            return
-        }
         try await withBackgroundTask(name: "send Message", executer: backgroundTaskExecuter) { [self] in
             let logAttributes = await logAttributesBuilder.logAttributes(message)
             WireLogger.messaging.debug("send message - start wait for quick sync to finish", attributes: logAttributes)
@@ -160,14 +142,8 @@ public final class MessageSender: MessageSenderInterface {
         }
     }
 
-    private func attemptToSend(
-        message: any SendableMessage,
-        outboxAttempt: MessageOutboxAttempt? = nil
-    ) async throws {
-        let messageProtocol = try await context.perform {
-            if let outboxAttempt { try self.requireCurrentOutboxAttempt(outboxAttempt, message: message) }
-            return message.conversation?.messageProtocol
-        }
+    private func attemptToSend(message: any SendableMessage) async throws {
+        let messageProtocol = await context.perform { message.conversation?.messageProtocol }
 
         guard let apiVersion else { throw MessageSendError.unresolvedApiVersion }
         guard let messageProtocol else {
@@ -177,16 +153,15 @@ public final class MessageSender: MessageSenderInterface {
         do {
             switch messageProtocol {
             case .proteus, .mixed:
-                try await attemptToSendWithProteus(message: message, apiVersion: apiVersion, outboxAttempt: outboxAttempt)
+                try await attemptToSendWithProteus(message: message, apiVersion: apiVersion)
             case .mls:
-                try await attemptToSendWithMLS(message: message, apiVersion: apiVersion, outboxAttempt: outboxAttempt)
+                try await attemptToSendWithMLS(message: message, apiVersion: apiVersion)
             }
 
             // Success! Reset count
-            if outboxAttempt == nil { retryCount = 0 }
+            retryCount = 0
 
         } catch let networkError as NetworkError {
-            if outboxAttempt != nil { throw networkError }
             try await context.perform { [self] in
                 try handleFederationFailure(networkError: networkError, message: message)
             }
@@ -236,15 +211,11 @@ public final class MessageSender: MessageSenderInterface {
         }
     }
 
-    private func attemptToSendWithProteus(
-        message: any SendableMessage,
-        apiVersion: APIVersion,
-        outboxAttempt: MessageOutboxAttempt? = nil
-    ) async throws {
-        let (proteusService, conversationID) = try await context.perform { [context] in
-            if let outboxAttempt { try self.requireCurrentOutboxAttempt(outboxAttempt, message: message) }
-            return (context.proteusService, message.conversation?.qualifiedID)
-        }
+    private func attemptToSendWithProteus(message: any SendableMessage, apiVersion: APIVersion) async throws {
+        let (proteusService, conversationID) = await context.perform { [context] in (
+            context.proteusService,
+            message.conversation?.qualifiedID
+        ) }
 
         guard let proteusService else {
             throw MessageSendError.missingProteusService
@@ -265,10 +236,7 @@ public final class MessageSender: MessageSenderInterface {
 
             // 1) get the info for the message from CoreData objects
             let extractor = MessageInfoExtractor(context: context)
-            var messageInfo = try await extractor.infoForSending(message: message, conversationID: conversationID)
-            if let outboxAttempt {
-                messageInfo.genericMessage = try await outboxContent(outboxAttempt, message: message)
-            }
+            let messageInfo = try await extractor.infoForSending(message: message, conversationID: conversationID)
 
             // 2) get the encrypted payload
             let payloadBuilder = ProteusMessagePayloadBuilder(
@@ -278,11 +246,7 @@ public final class MessageSender: MessageSenderInterface {
             let messageData = try await payloadBuilder.encryptForTransport(with: messageInfo)
 
             // set expiration so request can be expired later
-            if outboxAttempt != nil { try Task.checkCancellation() }
-            let expirationDate = try await context.perform {
-                if let outboxAttempt {
-                    return try self.prepareOutboxHandoff(outboxAttempt, message: message)
-                }
+            let expirationDate = await context.perform {
                 if message.shouldExpire {
                     message.setExpirationDate()
                     self.context.saveOrRollback()
@@ -298,14 +262,8 @@ public final class MessageSender: MessageSenderInterface {
                     conversationID: conversationID,
                     expirationDate: expirationDate
                 )
-            await handleProteusSuccess(
-                message: message,
-                messageSendingStatus: messageStatus,
-                response: response,
-                outboxAttempt: outboxAttempt
-            )
+            await handleProteusSuccess(message: message, messageSendingStatus: messageStatus, response: response)
         } catch let networkError as NetworkError {
-            if outboxAttempt != nil { throw networkError }
             let operation: () async throws -> Void = { [weak self] in
                 try await self?.sendMessage(message: message)
             }
@@ -346,49 +304,27 @@ public final class MessageSender: MessageSenderInterface {
     private func handleProteusSuccess(
         message: any ProteusMessage,
         messageSendingStatus: Payload.MessageSendingStatus,
-        response: ZMTransportResponse,
-        outboxAttempt: MessageOutboxAttempt? = nil
+        response: ZMTransportResponse
     ) async {
-        if let outboxAttempt {
-            let current = await context.perform {
-                guard let row = message as? ZMMessage else { return false }
-                return self.isCurrentOutboxAttempt(outboxAttempt.identifier, row: row)
-            }
-            guard current else { return }
-        }
         let logAttributes = await logAttributesBuilder.logAttributes(message)
         WireLogger.messaging.debug(
             "send message - via proteus succeeded",
             attributes: logAttributes
         )
 
-        let appliesToCurrentMessage = await context.perform { () -> Bool in
-            if let outboxAttempt {
-                guard let row = message as? ZMMessage,
-                      self.isCurrentOutboxAttempt(outboxAttempt.identifier, row: row)
-                else { return false }
-            }
+        await context.perform {
             // swiftlint:disable:next todo_requires_jira_link
             message.delivered(with: response) // FIXME: jacob refactor to not use raw response
-            return true
         }
-        guard appliesToCurrentMessage else { return }
         await proteusPayloadProcessor.updateClientsChanges(
             from: messageSendingStatus,
-            for: message,
-            in: context,
-            ifStillCurrent: {
-                guard let outboxAttempt else { return true }
-                guard let row = message as? ZMMessage else { return false }
-                return self.isCurrentOutboxAttempt(outboxAttempt.identifier, row: row)
-            }
+            for: message
         )
     }
 
     private func handleProteusFailure(
         message: any ProteusMessage,
-        _ failure: NetworkError,
-        ifStillCurrent: (() -> Bool)? = nil
+        _ failure: NetworkError
     ) async throws -> Set<QualifiedClientID> {
         let logAttributes = await logAttributesBuilder.logAttributes(message)
 
@@ -396,24 +332,13 @@ public final class MessageSender: MessageSenderInterface {
         case let .missingClients(messageSendingStatus, _):
             await proteusPayloadProcessor.updateClientsChanges(
                 from: messageSendingStatus,
-                for: message,
-                in: context,
-                ifStillCurrent: ifStillCurrent
+                for: message
             )
-            let expired = try await context.perform {
-                guard self.context.zm_isValidContext, ifStillCurrent?() != false else {
-                    throw MessageOutboxError.staleAttempt
-                }
-                if let row = message as? ZMMessage {
-                    guard row.managedObjectContext === self.context, !row.isDeleted, !row.hasBeenDeleted else {
-                        throw MessageOutboxError.staleAttempt
-                    }
-                }
+            await context.perform {
                 self.context.enqueueDelayedSave()
-                return message.isExpired
             }
 
-            if expired {
+            if await context.perform({ message.isExpired }) {
                 WireLogger.messaging.warn(
                     "attempt to send with proteus failed - missing clients and message is expired",
                     attributes: logAttributes
@@ -425,7 +350,7 @@ public final class MessageSender: MessageSenderInterface {
             }
         default:
             if case .tryAgainLater = failure.response?.result {
-                if await context.perform({ !self.context.zm_isValidContext || message.isExpired }) {
+                if await context.perform({ message.isExpired }) {
                     WireLogger.messaging.warn(
                         "attempt to send with proteus failed - message is expired and try again later",
                         attributes: logAttributes
@@ -459,20 +384,13 @@ public final class MessageSender: MessageSenderInterface {
         throw networkError
     }
 
-    private func attemptToSendWithMLS(
-        message: any SendableMessage,
-        apiVersion: APIVersion,
-        outboxAttempt: MessageOutboxAttempt? = nil
-    ) async throws {
-        let (conversationID, groupID, mlsService, mlsStatus) = try await context.perform {
-            if let outboxAttempt { try self.requireCurrentOutboxAttempt(outboxAttempt, message: message) }
-            return (
-                message.conversation?.qualifiedID,
-                message.conversation?.mlsGroupID,
-                self.context.mlsService,
-                message.conversation?.mlsStatus
-            )
-        }
+    private func attemptToSendWithMLS(message: any SendableMessage, apiVersion: APIVersion) async throws {
+        let (conversationID, groupID, mlsService, mlsStatus) = await context.perform { (
+            message.conversation?.qualifiedID,
+            message.conversation?.mlsGroupID,
+            self.context.mlsService,
+            message.conversation?.mlsStatus
+        ) }
 
         guard let conversationID else {
             throw MessageSendError.missingQualifiedID
@@ -501,52 +419,35 @@ public final class MessageSender: MessageSenderInterface {
             }
 
             try await mlsService.commitPendingProposals(in: groupID, skipRetry: true)
-            let encryptedData: Data
-            if let outboxAttempt {
-                let content = try await outboxContent(outboxAttempt, message: message)
-                encryptedData = try await mlsService.encrypt(message: content.serializedData(), for: groupID)
-            } else {
-                encryptedData = try await encryptMlsMessage(message, groupID: groupID)
-            }
+            let encryptedData = try await encryptMlsMessage(message, groupID: groupID)
 
             // set expiration so request can be expired later
-            if outboxAttempt != nil { try Task.checkCancellation() }
-            let expirationDate = try await context.perform {
-                if let outboxAttempt {
-                    return try self.prepareOutboxHandoff(outboxAttempt, message: message)
-                }
+            await context.perform {
                 if message.shouldExpire {
                     message.setExpirationDate()
                     self.context.saveOrRollback()
                 }
-                return message.expirationDate
             }
 
             let (payload, response) = try await apiProvider.messageAPI(apiVersion: apiVersion)
                 .sendMLSMessage(
                     message: encryptedData,
                     conversationID: conversationID,
-                    expirationDate: expirationDate
+                    expirationDate: await context.perform { message.expirationDate }
                 )
 
-            try await context.perform {
-                if let outboxAttempt {
-                    guard let row = message as? ZMMessage,
-                          self.isCurrentOutboxAttempt(outboxAttempt.identifier, row: row)
-                    else { throw MessageOutboxError.staleAttempt }
-                }
+            await context.perform {
                 // handle 201 case failed_to_send
                 // https://wearezeta.atlassian.net/wiki/spaces/ENGINEERIN/pages/556564601/Use+case+sending+a+message+MLS
                 self.mlsPayloadProcessor.updateFailedRecipients(from: payload, for: message)
                 message.delivered(with: response)
             }
         } catch let error as SendMLSMessageFailure {
-            if outboxAttempt != nil { throw error }
+
             try await handleSendMLSMessageFailure(error, message: message, groupID: groupID, mlsService: mlsService)
         } catch let CoreCryptoError.Mls(.MessageRejected(reason: reason)) {
 
             if let supportedError = SendMLSMessageFailure(from: reason) {
-                if outboxAttempt != nil { throw supportedError }
                 try await handleSendMLSMessageFailure(
                     supportedError,
                     message: message,
@@ -653,313 +554,6 @@ public final class MessageSender: MessageSenderInterface {
                 message: messageData,
                 for: groupID
             )
-        }
-    }
-}
-
-private extension MessageSender {
-
-    /// No message request was submitted when persisting the handoff failed.
-    struct OutboxHandoffPersistenceError: Error {
-        let underlyingError: Error
-    }
-
-    func sendOutboxMessage(_ message: any SendableMessage) async throws {
-        guard let row = message as? ZMMessage else { throw MessageOutboxError.invalidTransition }
-        guard context.canProcessOfflinePendingMessages else { throw MessageSendError.outboxWaitingForConnection }
-        guard reachability?.mayBeReachable != false else { throw MessageSendError.outboxWaitingForConnection }
-
-        // Waiting for connectivity/readiness consumes no attempt deadline or background-task budget.
-        // Only claim an operation once sync and dependencies allow actual send preparation.
-        await incrementalSyncObserver.waitUntilCanSendMessage()
-        try Task.checkCancellation()
-        try await messageDependencyResolver.waitForDependenciesToResolve(for: message)
-        try Task.checkCancellation()
-
-        try await withBackgroundTask(name: "send queued message", executer: backgroundTaskExecuter) {
-            [self] () async throws -> Void in
-            try await sendOutboxAttempts(message, row: row)
-        }
-    }
-
-    // Keep the retry state machine outside the generic background-task closure so the compiler can
-    // type-check its context operations independently and report errors at their actual source.
-    func sendOutboxAttempts(_ message: any SendableMessage, row: ZMMessage) async throws {
-        for retry in 0...maxRetryAttempts {
-            try Task.checkCancellation()
-            let attempt = try await context.perform {
-                guard self.context.zm_isValidContext, row.managedObjectContext === self.context,
-                      !row.isDeleted else { throw MessageOutboxError.staleAttempt }
-                guard !row.hasPendingOutboxDeletion else { throw MessageSendError.outboxDeletionPending }
-                guard self.reachability?.mayBeReachable != false else {
-                    throw MessageSendError.outboxWaitingForConnection
-                }
-                guard let content = message.underlyingMessage else { throw MessageOutboxError.invalidPayload }
-                let attempt = try row.prepareOutboxAttempt(payload: content.serializedData())
-                do {
-                    try self.context.save()
-                } catch {
-                    try? row.rescheduleOutboxAttempt(attempt.identifier)
-                    throw error
-                }
-                return attempt
-            }
-
-            do {
-                try await attemptToSend(message: message, outboxAttempt: attempt)
-                try await finishOutboxAttempt(attempt, message: message)
-                RequestAvailableNotification.notifyNewRequestsAvailable(nil)
-                return
-            } catch MessageSendError.outboxDeletionPending {
-                try await context.perform {
-                    guard self.isCurrentOutboxAttempt(attempt.identifier, row: row) else {
-                        throw MessageOutboxError.staleAttempt
-                    }
-                    try row.rescheduleOutboxAttempt(attempt.identifier)
-                    try self.context.save()
-                }
-                throw MessageSendError.outboxDeletionPending
-            } catch {
-                if let networkError = error as? NetworkError,
-                   let response = networkError.response, response.result == .success {
-                    // Server acceptance is known even if its recipient-status payload could not be decoded.
-                    WireLogger.messaging.warn("outbox send accepted with unreadable recipient status")
-                    try await finishOutboxAttempt(attempt, message: message, response: response)
-                    RequestAvailableNotification.notifyNewRequestsAvailable(nil)
-                    return
-                }
-
-                // A transient error alone says nothing about delivery. Only the scheduler's
-                // explicit pre-submission marker permits automatic connectivity retry.
-                let notSubmitted: Bool
-                if let transportError = (error as? NetworkError)?.response?.transportSessionError {
-                    let errorInfo = (transportError as NSError).userInfo
-                    notSubmitted = errorInfo[ZMTransportSessionRequestNotSubmittedKey] as? Bool == true
-                } else {
-                    notSubmitted = false
-                }
-                let canRepair = retry < maxRetryAttempts && isRepairableOutboxRejection(error)
-                let retryDeletion = try await context.perform { () throws -> Bool in
-                    guard self.isCurrentOutboxAttempt(attempt.identifier, row: row) else {
-                        throw MessageOutboxError.staleAttempt
-                    }
-                    // A control marker is idempotent and its target was already accepted. Retrying
-                    // that marker after a lost acknowledgement never retransmits the original content.
-                    let retryDeletion = row.outboxOperation == .deletion && row.outboxState == .sending
-                        && !(error is OutboxHandoffPersistenceError) && !self.isDefiniteOutboxRejection(error)
-                    if error is OutboxHandoffPersistenceError {
-                        try row.failOutboxAttempt(attempt.identifier)
-                        row.removeExpirationDate()
-                    } else if notSubmitted || retryDeletion || canRepair || row.outboxState == .preparing {
-                        let retryDate: Date? = notSubmitted || retryDeletion
-                            ? Date(timeIntervalSinceNow: TimeInterval(min(30, max(1, row.outboxAttemptCount))))
-                            : nil
-                        try row.rescheduleOutboxAttempt(attempt.identifier, notBefore: retryDate)
-                        row.removeExpirationDate()
-                    } else if self.isDefiniteOutboxRejection(error) {
-                        try row.failOutboxAttempt(attempt.identifier)
-                    } else {
-                        try row.markOutboxAttemptUncertain(attempt.identifier)
-                    }
-                    try self.context.save()
-                    return retryDeletion
-                }
-                if notSubmitted || retryDeletion { throw MessageSendError.outboxWaitingForConnection }
-                if canRepair {
-                    try await repairOutboxRejection(error, message: message, attempt: attempt)
-                    continue
-                }
-                await resetOutboxConversationIfNeeded(error, message: message)
-                throw error
-            }
-        }
-    }
-
-    func outboxContent(_ attempt: MessageOutboxAttempt, message: any SendableMessage) async throws -> GenericMessage {
-        try await context.perform {
-            guard let row = message as? ZMMessage,
-                  self.isCurrentOutboxAttempt(attempt.identifier, row: row)
-            else { throw MessageOutboxError.staleAttempt }
-            // User content comes from the claim; compliance/read-receipt metadata is sampled now.
-            // Preview callbacks may have changed the live row while encryption was being prepared.
-            var content = try GenericMessage(serializedData: attempt.payload)
-            if message.conversation?.conversationType == .oneOnOne {
-                content.setExpectsReadConfirmation(ZMUser.selfUser(in: self.context).readReceiptsEnabled)
-            }
-            if let legalHoldStatus = message.conversation?.legalHoldStatus {
-                content.setLegalHoldStatus(legalHoldStatus.denotesEnabledComplianceDevice ? .enabled : .disabled)
-            }
-            return content
-        }
-    }
-
-    /// Called on the context queue after encryption, immediately before HTTP handoff.
-    /// Membership/security can change across crypto awaits. Recheck them, then save the snapshot
-    /// and `sending` state before HTTP so restart recovery never mistakes a submitted send for queued work.
-    func prepareOutboxHandoff(_ attempt: MessageOutboxAttempt, message: any SendableMessage) throws -> Date? {
-        try requireCurrentOutboxAttempt(attempt, message: message)
-        guard reachability?.mayBeReachable != false else { throw MessageSendError.outboxWaitingForConnection }
-        guard let row = message as? ZMMessage else { throw MessageOutboxError.invalidTransition }
-        guard !row.hasPendingOutboxDeletion else { throw MessageSendError.outboxDeletionPending }
-        guard !row.isExpired else { throw MessageSendError.messageExpired }
-        guard let conversation = message.conversation,
-              conversation.isSelfAnActiveMember || (conversation.isSelfConversation && row.outboxOperation == .deletion)
-        else {
-            throw MessageSendError.outboxConversationUnavailable
-        }
-        if conversation.isDegraded, !message.shouldIgnoreTheSecurityLevelCheck {
-            throw MessageDependencyResolverError.securityLevelDegraded
-        }
-        if conversation.legalHoldStatus == .pendingApproval {
-            throw MessageDependencyResolverError.legalHoldPendingApproval
-        }
-        try row.markOutboxAttemptSending(attempt)
-        if message.shouldExpire { message.setExpirationDate() }
-        do {
-            try context.save()
-        } catch {
-            // Keep ownership until the outer handler fails this operation. Clearing its token here
-            // would make the persistence error look stale and immediately restart the queued send.
-            throw OutboxHandoffPersistenceError(underlyingError: error)
-        }
-        return message.expirationDate
-    }
-
-    func finishOutboxAttempt(
-        _ attempt: MessageOutboxAttempt,
-        message: any SendableMessage,
-        response: ZMTransportResponse? = nil
-    ) async throws {
-        try await context.perform {
-            guard let row = message as? ZMMessage,
-                  self.isCurrentOutboxAttempt(attempt.identifier, row: row)
-            else { throw MessageOutboxError.staleAttempt }
-            do {
-                let clientMessage = row as? ZMClientMessage
-                let claimedContent = try GenericMessage(serializedData: attempt.payload)
-                let needsPreviewUpdate = !row.hasPendingOutboxDeletion && row.outboxOperation != .deletion
-                    && clientMessage?.linkPreviewState == .uploaded
-                    && clientMessage?.underlyingMessage?.linkPreviews != claimedContent.linkPreviews
-                if let response { message.delivered(with: response) }
-                if row.hasPendingOutboxDeletion {
-                    // A failed edit can have restored its previous nonce while awaiting this response.
-                    // Follow-up deletion must target the operation the server actually accepted.
-                    row.nonce = UUID(uuidString: claimedContent.messageID)
-                }
-                row.markAsSent()
-                try row.completeOutboxAttempt(attempt.identifier)
-                row.removeExpirationDate()
-                if let target = clientMessage?.outboxDeletionTarget {
-                    try target.processPendingOutboxDeletion()
-                } else if row.hasPendingOutboxDeletion {
-                    try row.processPendingOutboxDeletion()
-                }
-                if needsPreviewUpdate {
-                    // Preview work may finish during HTTP. Send it as a new operation after acceptance
-                    // rather than replacing content that recipients may already have received.
-                    try row.enqueueInOutbox(operation: .contentUpdate)
-                    row.delivered = false
-                }
-                try self.context.save()
-                if let assetMessage = row as? ZMAssetClientMessage {
-                    self.context.zm_fileAssetCache.releaseOutboxAssets(for: assetMessage)
-                }
-            } catch {
-                // Roll back marker creation and completion together. No control message may become
-                // eligible only in memory when the original's acceptance could not be saved.
-                self.context.rollback()
-                throw error
-            }
-        }
-    }
-
-    func isCurrentOutboxAttempt(_ identifier: UUID, row: ZMMessage) -> Bool {
-        // Check context validity before touching a row that account teardown may already have reset.
-        guard context.zm_isValidContext, row.managedObjectContext === context,
-              !row.isDeleted, !row.hasBeenDeleted, !row.isObfuscated,
-              let state = row.outboxState else { return false }
-        return row.outboxAttemptIdentifier == identifier && [.preparing, .sending, .uncertain].contains(state)
-    }
-
-    func requireCurrentOutboxAttempt(_ attempt: MessageOutboxAttempt, message: any SendableMessage) throws {
-        guard let row = message as? ZMMessage, isCurrentOutboxAttempt(attempt.identifier, row: row) else {
-            throw MessageOutboxError.staleAttempt
-        }
-    }
-
-    func isRepairableOutboxRejection(_ error: Error) -> Bool {
-        // These protocol failures explicitly reject the send. Repair changes encryption/recipients
-        // while preserving the content snapshot; ambiguous transport failures do not qualify.
-        if let error = error as? NetworkError, case .missingClients = error { return true }
-        guard let error = error as? SendMLSMessageFailure else { return false }
-        switch error {
-        case .mlsStaleMessage, .mlsClientMismatch, .mlsCommitMissingReferences, .groupOutOfSync:
-            return true
-        default:
-            return false
-        }
-    }
-
-    func isDefiniteOutboxRejection(_ error: Error) -> Bool {
-        if let networkError = error as? NetworkError, let response = networkError.response {
-            return response.httpStatus == 400 || response.httpStatus == 403 || response.httpStatus == 404
-                || response.httpStatus == 412
-        }
-        guard let error = error as? SendMLSMessageFailure else { return false }
-        switch error {
-        case .malformedResponse, .unreachableDomains, .nonFederatingDomains, .unknown:
-            return false
-        default:
-            return true
-        }
-    }
-
-    func repairOutboxRejection(
-        _ error: Error, message: any SendableMessage, attempt: MessageOutboxAttempt
-    ) async throws {
-        if let error = error as? NetworkError, let apiVersion {
-            let isStillQueued = {
-                guard self.context.zm_isValidContext, let row = message as? ZMMessage,
-                      row.managedObjectContext === self.context, !row.isDeleted, !row.hasBeenDeleted,
-                      row.outboxState == .queued else { return false }
-                return (try? row.loadOutboxPayload()) == attempt.payload
-            }
-            let clients = try await handleProteusFailure(message: message, error, ifStillCurrent: isStillQueued)
-            try await sessionEstablisher.establishSession(with: clients, apiVersion: apiVersion)
-            return
-        }
-        guard let error = error as? SendMLSMessageFailure,
-              let (service, groupID) = await context.perform({ () -> (MLSServiceInterface, MLSGroupID)? in
-                  guard self.context.zm_isValidContext, let service = self.context.mlsService,
-                        let groupID = message.conversation?.mlsGroupID else { return nil }
-                  return (service, groupID)
-              })
-        else { throw error }
-        switch error {
-        case .mlsStaleMessage:
-            await service.fetchAndRepairGroup(with: groupID)
-        case let .groupOutOfSync(users):
-            try await service.addMembersToConversation(with: users.map { MLSUser($0) }, for: groupID)
-        default:
-            break
-        }
-    }
-
-    func resetOutboxConversationIfNeeded(_ error: Error, message: any SendableMessage) async {
-        guard let error = error as? SendMLSMessageFailure else { return }
-        switch error {
-        case .mlsInvalidLeafNodeIndex, .mlsInvalidLeafNodeSignature:
-            let feature = await featureRepository.fetchAllowedGlobalOperations()
-            guard feature.status == .enabled, feature.config.mlsConversationReset == true else { return }
-            let (groupID, epoch) = await context.perform { () -> (MLSGroupID?, UInt64) in
-                guard self.context.zm_isValidContext else { return (nil, 0) }
-                return (message.conversation?.mlsGroupID, message.conversation?.epoch ?? 0)
-            }
-            if let groupID {
-                await initiateResetMLSConversationUseCase.invoke(groupID: groupID, epoch: epoch)
-            }
-        default:
-            break
         }
     }
 }

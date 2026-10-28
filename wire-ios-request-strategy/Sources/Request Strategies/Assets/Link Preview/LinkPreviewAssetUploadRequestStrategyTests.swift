@@ -166,38 +166,6 @@ class LinkPreviewAssetUploadRequestStrategyTests: MessagingTestBase {
 
 extension LinkPreviewAssetUploadRequestStrategyTests {
 
-    func testAnOldPreviewUploadCannotOverwriteAnEditedQueuedMessage() {
-        syncMOC.performGroupedAndWait {
-            let article = self.createArticle()
-            let message = self.createMessage(
-                article.permanentURL!.absoluteString, linkPreviewState: .processed, linkPreview: article
-            )
-            try! message.enqueueInOutbox(operation: .initialMessage)
-            self.syncMOC.zm_fileAssetCache.storeEncryptedMediumImage(data: article.imageData.first!, for: message)
-            let request = self.sut.request(
-                forUpdating: message, forKeys: [ZMClientMessage.linkPreviewStateKey], apiVersion: .v0
-            )!
-            try! message.setUnderlyingMessage(GenericMessage(
-                content: Text(content: "edited without a preview"), nonce: message.nonce!
-            ))
-            message.linkPreviewState = .waitingToBeProcessed
-            let response = ZMTransportResponse(
-                payload: ["key": "obsolete-preview-asset"] as ZMTransportData,
-                httpStatus: 201, transportSessionError: nil, apiVersion: APIVersion.v0.rawValue
-            )
-
-            let applied = self.sut.updateUpdatedObject(
-                message, requestUserInfo: request.userInfo, response: response,
-                keysToParse: [ZMClientMessage.linkPreviewStateKey]
-            )
-
-            XCTAssertFalse(applied)
-            XCTAssertEqual(message.messageText, "edited without a preview")
-            XCTAssertTrue(message.underlyingMessage!.linkPreviews.isEmpty)
-            XCTAssertEqual(message.linkPreviewState, .waitingToBeProcessed)
-        }
-    }
-
     func testThatItCreatesRequestForProcessedLinkPreview() {
         syncMOC.performGroupedAndWait {
             // GIVEN

@@ -18,7 +18,6 @@
 
 import WireDataModelSupport
 import WireTesting
-import GenericMessageProtocol
 import XCTest
 
 @testable import WireDataModel
@@ -78,73 +77,6 @@ class FileAssetCacheTests: XCTestCase {
     }
 
     // MARK: - Storing and retrieving image assets
-
-    private func makeRetainedOutboxAsset() throws -> ZMAssetClientMessage {
-        context.zm_fileAssetCache = sut
-        let conversation = ZMConversation.insertNewObject(in: context)
-        conversation.remoteIdentifier = UUID()
-        let content = GenericMessageProtocol.Asset.with {
-            $0.original = .with { original in
-                original.mimeType = "application/octet-stream"
-                original.size = 8
-                original.name = "pending.bin"
-            }
-        }
-        let message = try ZMAssetClientMessage(
-            asset: content, nonce: UUID(), managedObjectContext: context, expiresAfter: nil
-        )
-        message.sender = ZMUser.selfUser(in: context)
-        conversation.append(message)
-        try message.enqueueInOutbox(operation: .initialMessage)
-        try sut.retainOutboxAssets(for: message)
-        return message
-    }
-
-    func testRetainedEncryptedBytesSurviveCacheEvictionAndANewCacheInstance() throws {
-        let ordinary = location.appendingPathComponent("ordinary")
-        let retained = location.appendingPathComponent("retained")
-        sut = FileAssetCache(location: ordinary, outboxLocation: retained)
-        let message = try makeRetainedOutboxAsset()
-        let original = testData()
-        sut.storeOriginalFile(data: original, for: message)
-        let keys = try XCTUnwrap(sut.encryptFileAndComputeSHA256Digest(message))
-        let encrypted = try XCTUnwrap(sut.encryptedFileData(for: message))
-        try context.save()
-
-        try FileManager.default.removeItem(at: ordinary)
-        sut = FileAssetCache(location: ordinary, outboxLocation: retained)
-        sut.deleteAssetsOlderThan(Date(timeIntervalSinceNow: 1))
-
-        XCTAssertEqual(sut.encryptedFileData(for: message), encrypted)
-        XCTAssertEqual(
-            sut.decryptData(
-                key: try XCTUnwrap(FileAssetCache.cacheKeyForAsset(message, encrypted: true)),
-                encryptionKey: keys.otrKey, sha256Digest: keys.sha256!
-            ),
-            original
-        )
-        sut.releaseOutboxAssets(for: message)
-        sut.deleteAssetsOlderThan(Date(timeIntervalSinceNow: 1))
-        XCTAssertFalse(sut.hasEncryptedFileData(for: message))
-    }
-
-    func testRollbackKeepsRetainedBytesAndSavedDeletionReleasesThem() throws {
-        let message = try makeRetainedOutboxAsset()
-        let original = testData()
-        sut.storeOriginalFile(data: original, for: message)
-        let key = try XCTUnwrap(FileAssetCache.cacheKeyForAsset(message))
-        try context.save()
-
-        message.hideForSelfUser()
-        XCTAssertEqual(sut.assetData(key), original)
-        context.rollback()
-        try context.save()
-        XCTAssertEqual(sut.assetData(key), original)
-
-        message.hideForSelfUser()
-        try context.save()
-        XCTAssertNil(sut.assetData(key))
-    }
 
     func testThatStoringAndRetrievingAssetsWithDifferentOptionsRetrievesTheRightData() throws {
         // given

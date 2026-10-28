@@ -32,62 +32,6 @@ class IncrementalSyncObserverTests {
     private let syncAgent = MockSyncAgentProtocol()
     private let notificationContext = MockNotificationContext()
 
-    @Test("Cancellation releases a sync waiter without a completion event", arguments: [false, true])
-    func cancellationReleasesWaiter(usesSyncV2: Bool) async {
-        syncAgent.isSyncV2Enabled = usesSyncV2
-        syncAgent.isLive = false
-        let subject = CurrentValueSubject<SyncState, Never>(.incrementalSyncing(.pullPendingEvents))
-        syncAgent.syncStatePublisher = subject.eraseToAnyPublisher()
-        let observer = sut
-        let finished = ObserverFlag()
-        let waiter = Task {
-            await observer.waitUntilCanSendMessage()
-            await finished.markStarted()
-        }
-        try? await Task.sleep(for: .milliseconds(50))
-
-        waiter.cancel()
-
-        let released = await finished.waitUntilStarted(timeout: 0.5)
-        #expect(released, "A cancelled send must stop waiting without another sync event")
-        // Also release a broken waiter so a failed regression does not leave a suspended task behind.
-        if usesSyncV2 {
-            subject.send(.liveSyncing(.ongoing))
-        } else {
-            NotificationCenter.default.post(name: .didStopDecryptingEventsNotification, object: notificationContext)
-        }
-        await waiter.value
-    }
-
-    @Test("Cancelling one waiter leaves other sends waiting for sync")
-    func cancellationDoesNotReleaseOtherWaiters() async {
-        syncAgent.isSyncV2Enabled = true
-        let subject = CurrentValueSubject<SyncState, Never>(.incrementalSyncing(.pullPendingEvents))
-        syncAgent.syncStatePublisher = subject.eraseToAnyPublisher()
-        let observer = sut
-        let cancelledFinished = ObserverFlag()
-        let remainingFinished = ObserverFlag()
-        let cancelledWaiter = Task {
-            await observer.waitUntilCanSendMessage()
-            await cancelledFinished.markStarted()
-        }
-        let remainingWaiter = Task {
-            await observer.waitUntilCanSendMessage()
-            await remainingFinished.markStarted()
-        }
-        try? await Task.sleep(for: .milliseconds(50))
-
-        cancelledWaiter.cancel()
-
-        #expect(await cancelledFinished.waitUntilStarted(timeout: 0.5))
-        #expect(await !remainingFinished.hasStarted())
-        subject.send(.incrementalSyncing(.processPendingEvents))
-        subject.send(.incrementalSyncing(.processPendingEvents))
-        await cancelledWaiter.value
-        await remainingWaiter.value
-        #expect(await remainingFinished.hasStarted())
-    }
-
     @Test("Don't wait if app is live")
     func ifAppIsLiveThenDontWait() async {
         // Given
@@ -197,10 +141,6 @@ private actor ObserverFlag {
 
     func markStarted() {
         started = true
-    }
-
-    func hasStarted() -> Bool {
-        started
     }
 
     func waitUntilStarted(timeout: TimeInterval = 1.0) async -> Bool {

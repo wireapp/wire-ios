@@ -17,7 +17,6 @@
 //
 
 import XCTest
-import WireDataModelSupport
 @testable import WireRequestStrategy
 
 final class MessageSendingStatusPayloadProcessorTests: MessagingTestBase {
@@ -41,67 +40,6 @@ final class MessageSendingStatusPayloadProcessorTests: MessagingTestBase {
     }
 
     // MARK: - Client Updates
-
-    func testMessageDeletedOrReplacedDuringSessionCheckDoesNotReceiveStaleClientUpdates() async throws {
-        for deleteMessage in [true, false] {
-            let service = MockProteusServiceInterface()
-            let clientID = UUID().transportString()
-            let (message, attemptID, payload) = try await syncMOC.perform {
-                self.syncMOC.proteusService = service
-                let message = try XCTUnwrap(self.groupConversation.appendText(content: "queued") as? ZMClientMessage)
-                try message.enqueueInOutbox(operation: .initialMessage)
-                let content = try XCTUnwrap(message.underlyingMessage).serializedData()
-                let attempt = try message.prepareOutboxAttempt(payload: content)
-                try message.markOutboxAttemptSending(attempt)
-                try self.syncMOC.save()
-                let payload = Payload.MessageSendingStatus(
-                    time: Date(),
-                    missing: [self.domain: [self.otherUser.remoteIdentifier.transportString(): [clientID]]],
-                    redundant: [:], deleted: [:], failedToSend: [:], failedToConfirm: [:]
-                )
-                return (message, attempt.identifier, payload)
-            }
-            // Change ownership at the async crypto boundary, after the processor's first validity
-            // check but before its final missing-client bookkeeping.
-            service.sessionExistsId_MockMethod = { _ in
-                await self.syncMOC.perform {
-                    if deleteMessage {
-                        self.syncMOC.delete(message)
-                    } else {
-                        do {
-                            try message.failOutboxAttempt(attemptID)
-                            try message.retryOutboxOperation()
-                            let content = try XCTUnwrap(message.underlyingMessage).serializedData()
-                            let replacement = try message.prepareOutboxAttempt(payload: content)
-                            try message.markOutboxAttemptSending(replacement)
-                        } catch { XCTFail("Could not replace attempt: \(error)") }
-                    }
-                }
-                return false
-            }
-
-            let result = await sut.updateClientsChanges(
-                from: payload, for: message, in: syncMOC,
-                ifStillCurrent: { message.outboxAttemptIdentifier == attemptID }
-            )
-
-            XCTAssertTrue(result.isEmpty)
-            XCTAssertEqual(service.sessionExistsId_Invocations.count, 1)
-            await syncMOC.perform {
-                XCTAssertTrue(self.selfClient.missingClients?.isEmpty ?? true)
-                let client = UserClient.fetchUserClient(
-                    withRemoteId: clientID, forUser: self.otherUser, createIfNeeded: false
-                )
-                XCTAssertNil(client?.discoveredByMessage)
-                if deleteMessage {
-                    XCTAssertTrue(message.isDeleted)
-                } else {
-                    XCTAssertEqual(message.outboxState, .sending)
-                    XCTAssertNotEqual(message.outboxAttemptIdentifier, attemptID)
-                }
-            }
-        }
-    }
 
     func testThatClientsAreDeleted_WhenDeletedClientsArePresent() async {
         // given

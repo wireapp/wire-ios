@@ -32,8 +32,7 @@ enum MessageKey: String {
 extension ZMMessage: ObjectInSnapshot {
 
     @objc public class var observableKeys: Set<String> {
-        [#keyPath(ZMMessage.deliveryState), #keyPath(ZMMessage.isObfuscated), #keyPath(ZMMessage.outboxStateRaw),
-         #keyPath(ZMMessage.outboxDeletionScopeRaw)]
+        [#keyPath(ZMMessage.deliveryState), #keyPath(ZMMessage.isObfuscated)]
     }
 
     public var notificationName: Notification.Name {
@@ -142,12 +141,7 @@ public final class MessageChangeInfo: ObjectChangeInfo {
     }
 
     public var deliveryStateChanged: Bool {
-        // Queued and actively sending can both have legacy deliveryState == pending. The toolbox
-        // still needs a refresh when only local outbox state changes.
-        changedKeysContain(
-            keys: #keyPath(ZMMessage.deliveryState), #keyPath(ZMMessage.outboxStateRaw),
-            #keyPath(ZMMessage.outboxDeletionScopeRaw)
-        )
+        changedKeysContain(keys: #keyPath(ZMMessage.deliveryState))
     }
 
     public var reactionsChanged: Bool {

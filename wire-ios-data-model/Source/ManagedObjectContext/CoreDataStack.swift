@@ -175,9 +175,6 @@ public final class CoreDataStack: NSObject, CoreDataStackProtocol, ContextProvid
 
     private let localDomain: String?
     private let isFederationEnabled: Bool
-    // Both contexts must agree for the stack's lifetime; changing enrollment requires a restart.
-    // Recovery is gated separately so disabling enrollment cannot strand persisted outbox work.
-    private let offlinePendingMessagesEnabled = DeveloperFlag.offlinePendingMessages.isOn
 
     // MARK: - Initialization
 
@@ -406,7 +403,6 @@ public final class CoreDataStack: NSObject, CoreDataStackProtocol, ContextProvid
     func configureViewContext(_ context: NSManagedObjectContext) async {
         context.markAsUIContext()
         await context.perform {
-            context.offlinePendingMessagesEnabled = self.offlinePendingMessagesEnabled
             context.localDomain = self.localDomain
             context.isFederationEnabled = self.isFederationEnabled
             context.createDispatchGroups()
@@ -428,7 +424,6 @@ public final class CoreDataStack: NSObject, CoreDataStackProtocol, ContextProvid
 
     func configureSyncContext(_ context: NSManagedObjectContext) async {
         await context.perform {
-            context.offlinePendingMessagesEnabled = self.offlinePendingMessagesEnabled
             // Mark as sync context directly (already on context's queue)
             context.markAsSyncContext()
 

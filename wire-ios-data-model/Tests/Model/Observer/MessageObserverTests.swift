@@ -283,23 +283,6 @@ class MessageObserverTests: NotificationDispatcherTestBase {
         )
     }
 
-    func testThatOutboxClaimsNotifyDeliveryPresentationWithoutChangingLegacyDeliveryState() throws {
-        let conversation = ZMConversation.insertNewObject(in: uiMOC)
-        let message = try XCTUnwrap(conversation.appendText(content: "queued") as? ZMClientMessage)
-        try message.enqueueInOutbox(operation: .initialMessage)
-        try uiMOC.save()
-        let content = try XCTUnwrap(message.underlyingMessage).serializedData()
-        let deliveryState = message.deliveryState
-
-        checkThatItNotifiesTheObserverOfAChange(
-            message,
-            modifier: { _ = try! $0.prepareOutboxAttempt(payload: content) },
-            expectedChangedField: #keyPath(MessageChangeInfo.deliveryStateChanged)
-        )
-
-        XCTAssertEqual(message.deliveryState, deliveryState)
-    }
-
     func testThatItStopsNotifyingAfterUnregisteringTheToken() {
 
         // given

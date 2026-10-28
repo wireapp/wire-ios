@@ -192,9 +192,6 @@ public extension ZMConversation {
 
     /// Appends a multipart message.
     ///
-    /// Attachments are references to existing assets. Uploading and publishing Wire Drive drafts
-    /// happens before this call; outbox enrollment here covers sending the resulting message only.
-    ///
     /// - Parameters:
     ///     - text: The message text.
     ///     - attachments: The list of attachments to be included in the message.
@@ -260,9 +257,6 @@ public extension ZMConversation {
 
     /// Append an image message.
     ///
-    /// When enrolled in the outbox, the original image and message are persisted before returning
-    /// so preprocessing and sending can recover after an app restart.
-    ///
     /// - Parameters:
     ///     - image: The image to append.
     ///     - nonce: The nonce of the message.
@@ -308,20 +302,11 @@ public extension ZMConversation {
                     data: imageData,
                     for: message
                 )
-                // Cache writes do not throw. Read back the bytes so a failed write cannot be
-                // reported as an accepted outbox message that cannot recover after restart.
-                if message.outboxState != .notEnrolled,
-                   moc.zm_fileAssetCache.originalImageData(for: message) != imageData {
-                    throw MessageOutboxError.assetDataUnavailable
-                }
             }
         )
     }
 
     /// Append a file message.
-    ///
-    /// When enrolled in the outbox, the file and any supplied thumbnail must be retained before
-    /// returning; recovery must not depend on the original picker URL remaining available.
     ///
     /// - Parameters:
     ///     - fileMetadata: Data describing the file.
@@ -358,40 +343,21 @@ public extension ZMConversation {
                 data: data,
                 for: message
             )
-            // The cache API cannot report write failures; verify the retained copy before acceptance.
-            if message.outboxState != .notEnrolled,
-               moc.zm_fileAssetCache.originalFileData(for: message) != data {
-                throw MessageOutboxError.assetDataUnavailable
-            }
 
             if let thumbnailData = fileMetadata.thumbnail {
                 moc.zm_fileAssetCache.storeOriginalImage(
                     data: thumbnailData,
                     for: message
                 )
-                // Reject partial retention rather than silently losing a supplied thumbnail on restart.
-                if message.outboxState != .notEnrolled,
-                   moc.zm_fileAssetCache.originalImageData(for: message) != thumbnailData {
-                    throw MessageOutboxError.assetDataUnavailable
-                }
             }
         }
     }
 
-    /// Creates a classic asset message and prepares its local data on the owning context's queue.
-    ///
-    /// Eligible outbox messages save the owning context before returning: success means durable
-    /// local acceptance, not upload or delivery. Self-deleting messages retain their existing
-    /// behavior, and MLS self-conversations are excluded because the send strategy skips them.
-    ///
-    /// - Parameter prepareMessage: Writes the original asset and optional thumbnail after retention
-    ///   is configured. Throwing rejects the insertion and releases its retained data.
-    /// - Throws: Message creation, retained-data verification, or context-save errors.
     private func append(
         asset: GenericMessageProtocol.Asset,
         nonce: UUID,
         expires: Bool,
-        prepareMessage: (ZMAssetClientMessage) throws -> Void
+        prepareMessage: (ZMAssetClientMessage) -> Void
     ) throws -> ZMAssetClientMessage {
 
         let logAttributes: LogAttributes = [
@@ -430,32 +396,7 @@ public extension ZMConversation {
 
         append(message)
         unarchiveIfNeeded()
-        if moc.offlinePendingMessagesEnabled, !message.isEphemeral,
-           !(isSelfConversation && messageProtocol == .mls) {
-            do {
-                try message.enqueueInOutbox(operation: .initialMessage)
-                // Pin before preparation so cache writes go to durable account storage rather than
-                // purgeable Caches. The message row alone is insufficient for attachment recovery.
-                try moc.zm_fileAssetCache.retainOutboxAssets(for: message)
-                try prepareMessage(message)
-                message.updateCategoryCache()
-                let hasBytes = message.isFile
-                    ? moc.zm_fileAssetCache.hasOriginalFileData(for: message)
-                    : moc.zm_fileAssetCache.hasOriginalImageData(for: message)
-                // Also enforce the shared helper's contract if preparation did not write an original.
-                guard hasBytes else { throw MessageOutboxError.assetDataUnavailable }
-                message.prepareToSend()
-                // Persist enrollment and prepared metadata before callers clear their composer state.
-                try moc.save()
-                return message
-            } catch {
-                // Local acceptance failed: leave neither a pending row nor orphaned retained bytes.
-                moc.zm_fileAssetCache.releaseOutboxAssets(for: message, discard: true)
-                moc.delete(message)
-                throw error
-            }
-        }
-        try prepareMessage(message)
+        prepareMessage(message)
         message.updateCategoryCache()
         message.prepareToSend()
 
@@ -464,15 +405,10 @@ public extension ZMConversation {
 
     /// Appends a new message to the conversation.
     ///
-    /// With outbox enrollment enabled at stack startup, supported visible, non-ephemeral messages
-    /// save the owning context before returning. Success then means durable local acceptance,
-    /// not delivery. Hidden protocol traffic and other unsupported content keep the legacy path.
-    ///
     /// - Parameters:
     ///     - genericMessage: The generic message that should be appended.
     ///     - expires: Whether the message should expire or tried to be send infinitively.
     ///     - hidden: Whether the message should be hidden in the conversation or not
-    ///     - configure: Configures metadata before the message is appended and any outbox save occurs.
     ///
     /// - Throws:
     ///     - `AppendMessageError` if the message couldn't be appended.
@@ -505,20 +441,6 @@ public extension ZMConversation {
 
         do {
             try append(message, expires: expires, hidden: hidden)
-            // Keep existing self-deleting behavior; MLS self-conversations are skipped by the sender.
-            if moc.offlinePendingMessagesEnabled, !hidden, !message.isEphemeral,
-               !(isSelfConversation && messageProtocol == .mls) {
-                // Enroll user-visible submissions explicitly, not receipts, reactions, or other
-                // protocol messages that happen to share the same append helper.
-                switch genericMessage.content {
-                case .text, .location, .knock, .multipart:
-                    try message.enqueueInOutbox(operation: .initialMessage)
-                    // A delayed save could lose an offline submission after the composer is cleared.
-                    try moc.save()
-                default:
-                    break
-                }
-            }
         } catch {
             moc.delete(message)
             throw error

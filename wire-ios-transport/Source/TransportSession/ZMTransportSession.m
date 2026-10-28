@@ -631,12 +631,7 @@ static NSInteger const DefaultMaximumRequests = 6;
 {
     ZMTransportRequest *request = item.transportRequest;
     if (request != nil) {
-        // This path rejects before task creation. The outbox may safely requeue using this proof;
-        // the same guarantee cannot be inferred from a generic timeout or try-again-later response.
-        NSDictionary *userInfo = @{
-            NSLocalizedDescriptionKey: @"Temporarily rejecting item to sync.",
-            ZMTransportSessionRequestNotSubmittedKey: @YES
-        };
+        NSDictionary *userInfo = @{NSLocalizedDescriptionKey: @"Temporarily rejecting item to sync."};
         NSError *error = [NSError tryAgainLaterErrorWithUserInfo:userInfo];
         ZMTransportResponse *tryAgainRespose = [ZMTransportResponse responseWithTransportSessionError:error apiVersion:request.apiVersion];
         [request completeWithResponse:tryAgainRespose];

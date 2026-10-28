@@ -51,7 +51,6 @@ public class LinkPreprocessor<Result>: NSObject, ZMContextChangeTracker {
     func processObjects(_ objects: Set<NSObject>) {
         objects
             .compactMap(objectsToPreprocess)
-            .filter { managedObjectContext.canProcessOfflinePendingMessages || $0.outboxState == .notEnrolled }
             .filter(!objectsBeingProcessed.contains)
             .forEach(processMessage)
     }

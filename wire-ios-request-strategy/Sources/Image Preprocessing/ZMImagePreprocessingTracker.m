@@ -29,7 +29,6 @@
 @property (nonatomic) NSPredicate *needsPreprocessingPredicate;
 @property (nonatomic) NSPredicate *fetchPredicate;
 @property (nonatomic) Class entityClass;
-@property (nonatomic) NSMapTable<id, NSData *> *preprocessingIdentifiers;
 
 @end
 
@@ -70,7 +69,6 @@
         
         _imageOwnersBeingPreprocessed = [NSMutableSet set];
         _imageOwnersThatNeedPreprocessing = [NSMutableOrderedSet orderedSet];
-        _preprocessingIdentifiers = [NSMapTable weakToStrongObjectsMapTable];
         self.imagePreprocessingQueue = imageProcessingQueue;
         self.entityClass = entityClass;
     }
@@ -142,18 +140,10 @@
     [self.imageOwnersThatNeedPreprocessing removeObjectAtIndex:0];
     
     id<ZMAssetsPreprocessor> const preprocessor = self.preprocessor;
-
-    if ([owner respondsToSelector:@selector(imagePreprocessingIdentifier)]) {
-        NSData *identifier = owner.imagePreprocessingIdentifier;
-        if (identifier != nil) {
-            [self.preprocessingIdentifiers setObject:identifier forKey:owner];
-        }
-    }
     
     NSArray *operations = [preprocessor operationsForPreprocessingImageOwner:owner];
     if (operations == nil) {
         [self failedPreprocessingImageOwner:owner];
-        [self.preprocessingIdentifiers removeObjectForKey:owner];
         return YES;
     }
     
@@ -183,13 +173,7 @@
     [group enter];
     [completionGroup notifyOnQueue:dispatch_get_global_queue(0, 0) block:^{
         [self.managedObjectContext performGroupedBlock:^{
-            BOOL obsolete = ![self isCurrentPreprocessingForImageOwner:owner];
             [self.imageOwnersBeingPreprocessed removeObject:owner];
-            [self.preprocessingIdentifiers removeObjectForKey:owner];
-            if (obsolete) {
-                [self addImageOwners:[NSSet setWithObject:owner]];
-                [self enqueueAll];
-            }
             [group leave];
         }];
     }];
@@ -200,14 +184,6 @@
 
 
 #pragma mark - ZMAssetsPreprocessorDelegate
-
-- (BOOL)isCurrentPreprocessingForImageOwner:(id<ZMImageOwner>)imageOwner
-{
-    // Object identity survives queued edits; content identity prevents old downsampling results
-    // from being written onto the replacement preview. Owners without an identifier retain legacy behavior.
-    NSData *identifier = [self.preprocessingIdentifiers objectForKey:imageOwner];
-    return identifier == nil || [identifier isEqualToData:imageOwner.imagePreprocessingIdentifier];
-}
 
 - (NSOperation * __nullable)preprocessingCompleteOperationForImageOwner:(id<ZMImageOwner> __nonnull)imageOwner
 {
@@ -220,8 +196,7 @@
         [group enter];
         [self.managedObjectContext performGroupedBlockAndWait:^{
             [group leave];
-            if ([self isCurrentPreprocessingForImageOwner:imageOwner] &&
-                [imageOwner respondsToSelector:@selector(processingDidFinish)])  {
+            if ([imageOwner respondsToSelector:@selector(processingDidFinish)])  {
                 [(id)imageOwner processingDidFinish];
             }
         }];
@@ -235,8 +210,7 @@
 - (void)completedDownsampleOperation:(ZMImageDownsampleOperation * __nonnull)operation imageOwner:(id<ZMImageOwner> __nonnull)imageOwner
 {    
     [self.managedObjectContext performGroupedBlock:^{
-        if ([self isCurrentPreprocessingForImageOwner:imageOwner] &&
-            [imageOwner respondsToSelector:@selector(setImageData:for:properties:)])  {
+        if ([imageOwner respondsToSelector:@selector(setImageData:for:properties:)])  {
             [(id)imageOwner setImageData:operation.downsampleImageData for:operation.format properties:operation.properties];
         }
     }];
@@ -244,8 +218,7 @@
 
 - (void)failedPreprocessingImageOwner:(id<ZMImageOwner>)imageOwner;
 {
-    if ([self isCurrentPreprocessingForImageOwner:imageOwner] &&
-        [imageOwner respondsToSelector:@selector(processingDidFinish)])  {
+    if ([imageOwner respondsToSelector:@selector(processingDidFinish)])  {
         [(id)imageOwner processingDidFinish];
     }
 }

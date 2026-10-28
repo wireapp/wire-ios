@@ -615,19 +615,6 @@ NSString * const ZMSystemMessageConversationScheduledDeletionDateKey = @"convers
                              ZMMessageNeedsLinkAttachmentsUpdateKey,
                              ZMMessageDiscoveredClientsKey,
                              ZMMessageButtonStatesKey,
-                             // Queue bookkeeping is local. Tracking these as upstream modifications
-                             // would turn lifecycle saves into unrelated network update work.
-                             @"outboxStateRaw",
-                             @"outboxOperationRaw",
-                             @"outboxDeletionScopeRaw",
-                             @"outboxDeletionMessages",
-                             @"outboxEnqueuedAt",
-                             @"outboxAttemptIdentifier",
-                             @"outboxPayload",
-                             @"outboxSnapshot",
-                             @"outboxAttemptCount",
-                             @"outboxNextAttemptAt",
-                             @"outboxDeletionTarget",
                              ZMMessageDecryptionErrorCodeKey,
                              ZMSystemMessageConversationScheduledDeletionDateKey
                              ];

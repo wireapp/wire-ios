@@ -319,16 +319,8 @@ struct ZMUserSessionBuilder {
             in: coreDataStack.applicationContainer
         )
 
-        // Use the same durable account directory as UserSessionLoader when constructing a session
-        // through this entry point, otherwise restored pins and their bytes would be invisible.
         return UserSessionDependencies.Caches(
-            fileAssets: FileAssetCache(
-                location: cacheLocation,
-                outboxLocation: CoreDataStack.accountDataFolder(
-                    accountIdentifier: coreDataStack.account.userIdentifier,
-                    applicationContainer: coreDataStack.applicationContainer
-                ).appendingPathComponent("PendingMessageAssets")
-            ),
+            fileAssets: FileAssetCache(location: cacheLocation),
             userImages: UserImageLocalCache(location: cacheLocation),
             searchUsers: NSCache()
         )
