@@ -471,6 +471,11 @@ final class FilesViewTests: XCTestCase {
             fetchNodesPage: fetchNodesPageUseCase,
             fetchNodes: fetchNodesUseCase,
             deleteNodes: deleteNodeUseCase,
+            emptyRecycleBin: WireDriveEmptyRecycleBinUseCase(
+                repository: nodesRepository,
+                fileCache: MockFileCache(),
+                localAssetStore: MockWireDriveLocalAssetStoreProtocol()
+            ),
             restoreNodes: restoreNodeUseCase,
             renameNode: renameNodeUseCase,
             updateTags: updateTagsUseCase,

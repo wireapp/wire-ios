@@ -280,6 +280,11 @@ public extension WireMessagingFactory {
                             fileCache: fileCache,
                             localAssetStore: localAssetStore
                         ),
+                        emptyRecycleBin: WireDriveEmptyRecycleBinUseCase(
+                            repository: nodesAPI,
+                            fileCache: fileCache,
+                            localAssetStore: localAssetStore
+                        ),
                         restoreNodes: WireDriveRestoreNodesUseCase(
                             repository: nodesAPI,
                             fileCache: fileCache,
