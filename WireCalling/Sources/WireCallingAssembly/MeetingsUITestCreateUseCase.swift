@@ -43,8 +43,11 @@
             startTime: Date,
             endTime: Date,
             recurrence: MeetingRecurrence?,
-            participants: [MeetingMember]
-        ) async throws -> Meeting {
+            type: MeetingType,
+            password: String?,
+            participants: [MeetingMember],
+            invitedEmails: [String]
+        ) async throws -> MeetingCreationResult {
             // Darwin notification state controls a failure in the app process before the real create request.
             // The test controls each transition: pending (0), failed (1), restored (2).
             var state: UInt64 = 0
@@ -62,7 +65,10 @@
                 startTime: startTime,
                 endTime: endTime,
                 recurrence: recurrence,
-                participants: participants
+                type: type,
+                password: password,
+                participants: participants,
+                invitedEmails: invitedEmails
             )
         }
     }

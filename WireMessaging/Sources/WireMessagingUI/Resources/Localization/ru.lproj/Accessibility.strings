@@ -79,3 +79,12 @@
 
 // MARK: - Conversation details shared drive options
 "conversation.details.sharedDrive.closeButton" = "Закрыть информацию о беседе";
+
+// MARK: - Shared Drive uploads
+
+"conversation.wireCells.files.upload.expand" = "Показать сведения о загрузке";
+"conversation.wireCells.files.upload.collapse" = "Скрыть сведения о загрузке";
+"conversation.wireCells.files.upload.cancelFile" = "Отменить загрузку {0}";
+"conversation.wireCells.files.upload.retryFile" = "Повторить загрузку {0}";
+"conversation.wireCells.files.upload.cancelAll" = "Отменить все загрузки";
+"conversation.wireCells.files.upload.retryAll" = "Повторить все неудачные загрузки";

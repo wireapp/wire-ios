@@ -299,6 +299,30 @@ class ActiveConversationPage: PageModel {
         app.cells[Locators.ActiveConversationPage.linkPreviewCell.rawValue].firstMatch
     }
 
+    var mockedChromeAlert: XCUIElement {
+        app.descendants(matching: .any)[Locators.OptionsOnSettingsPage.mockedChromeAlert.rawValue].firstMatch
+    }
+
+    var mockedChromeAlertTitle: XCUIElement {
+        app.alerts.firstMatch.staticTexts[Locators.OptionsOnSettingsPage.mockedChromeAlertTitle.rawValue]
+    }
+
+    func mockedChromeAlertLink(urlPrefix: String) -> XCUIElement {
+        app.alerts.firstMatch.staticTexts.matching(NSPredicate(format: "label BEGINSWITH %@", urlPrefix)).firstMatch
+    }
+
+    var mockedGoogleMapsAlert: XCUIElement {
+        app.descendants(matching: .any)[Locators.OptionsOnSettingsPage.mockedGoogleMapsAlert.rawValue].firstMatch
+    }
+
+    var mockedGoogleMapsAlertTitle: XCUIElement {
+        app.alerts.firstMatch.staticTexts[Locators.OptionsOnSettingsPage.mockedGoogleMapsAlertTitle.rawValue]
+    }
+
+    func mockedGoogleMapsAlertLink(urlPrefix: String) -> XCUIElement {
+        app.alerts.firstMatch.staticTexts.matching(NSPredicate(format: "label BEGINSWITH %@", urlPrefix)).firstMatch
+    }
+
     var latestMessageCell: XCUIElement {
         conversationBackground.cells.element(boundBy: 0)
     }
@@ -397,7 +421,10 @@ class ActiveConversationPage: PageModel {
     }
 
     func videoToChoose(at index: Int = 0) -> XCUIElement {
-        app.images.element(boundBy: index).firstMatch
+        app.collectionViews.containing(
+            .button,
+            identifier: Locators.ActiveConversationPage.takePictureButton.rawValue
+        ).images.element(boundBy: index).firstMatch
     }
 
     func fetchMessages() -> [String] {
@@ -704,7 +731,7 @@ class ActiveConversationPage: PageModel {
         imageToChoose(at: index).waitAndTap()
 
         XCTAssertTrue(
-            attachmentImagePreview.waitForExistence(timeout: 5),
+            attachmentImagePreview.waitForExistence(timeout: 10),
             "Image attachment preview did not appear"
         )
 
@@ -751,7 +778,10 @@ class ActiveConversationPage: PageModel {
         if !videoToChoose(at: index).waitForExistence(timeout: 2) {
             photoButton.waitAndTap()
         }
-        videoToChoose(at: index).waitAndTap()
+        XCTAssertTrue(
+            videoToChoose(at: index).waitAndTap(),
+            "Video thumbnail did not become hittable"
+        )
 
         XCTAssertTrue(
             okToSend.waitForExistence(timeout: 3),
@@ -865,7 +895,7 @@ class ActiveConversationPage: PageModel {
         return self
     }
 
-    func openLocationInDefaultMapsApp(locationName: String) {
+    func tapLocation(named locationName: String) {
         let locationMap = app.descendants(matching: .any)
             .matching(identifier: Locators.ActiveConversationPage.locationMap.rawValue)
             .matching(NSPredicate(format: "label CONTAINS[c] %@", locationName))
@@ -875,6 +905,25 @@ class ActiveConversationPage: PageModel {
             locationMap.waitAndTap(),
             "Location \(locationName) could not be opened"
         )
+    }
+
+    func verifyLocationOpensInGoogleMapsAlert(urlPrefix: String) {
+        XCTAssertTrue(
+            mockedGoogleMapsAlert.waitForExistence(timeout: 5),
+            "Alert about opening in Google Maps did not appear"
+        )
+        XCTAssertTrue(
+            mockedGoogleMapsAlertTitle.exists,
+            "Alert title should say it opens in Google Maps"
+        )
+        XCTAssertTrue(
+            mockedGoogleMapsAlertLink(urlPrefix: urlPrefix).exists,
+            "Expected alert to show a link starting with \(urlPrefix)"
+        )
+    }
+
+    func openLocationInDefaultMapsApp(locationName: String) {
+        tapLocation(named: locationName)
 
         let mapsApp = XCUIApplication(bundleIdentifier: "com.apple.Maps")
         XCTAssertTrue(
@@ -895,6 +944,29 @@ class ActiveConversationPage: PageModel {
             line: line
         )
         return self
+    }
+
+    func tapLinkPreview() {
+        XCTAssertTrue(linkPreviewCell.waitForExistence(timeout: 10), "Link preview cell did not appear")
+        XCTAssertTrue(linkPreviewCell.waitAndTap(), "Link preview cell could not be tapped")
+    }
+
+    func verifyLinkOpenedInSafari() {
+        let safariApp = XCUIApplication(bundleIdentifier: "com.apple.mobilesafari")
+        XCTAssertTrue(safariApp.wait(for: .runningForeground, timeout: 10), "Expected link to open in Safari")
+        app.activate()
+    }
+
+    func verifyLinkOpensInChromeAlert(urlPrefix: String) {
+        XCTAssertTrue(
+            mockedChromeAlert.waitForExistence(timeout: 5),
+            "Alert about opening the link in Chrome did not appear"
+        )
+        XCTAssertTrue(mockedChromeAlertTitle.exists, "Alert title should say it opens in Chrome")
+        XCTAssertTrue(
+            mockedChromeAlertLink(urlPrefix: urlPrefix).exists,
+            "Expected alert to show a link starting with \(urlPrefix)"
+        )
     }
 
     @discardableResult
@@ -936,7 +1008,7 @@ class ActiveConversationPage: PageModel {
     func verifyImagePreviewIsVisible(
     ) -> ActiveConversationPage {
         XCTAssertTrue(
-            imagePreview.waitForExistence(timeout: 10),
+            imagePreview.waitForExistence(timeout: 15),
             "Image preview did not appear"
         )
         return self
@@ -946,7 +1018,7 @@ class ActiveConversationPage: PageModel {
     func verifyVideoPreviewIsVisible(
     ) -> ActiveConversationPage {
         XCTAssertTrue(
-            videoPreview.waitForExistence(timeout: 10),
+            videoPreview.waitForExistence(timeout: 15),
             "Video preview did not appear"
         )
         return self

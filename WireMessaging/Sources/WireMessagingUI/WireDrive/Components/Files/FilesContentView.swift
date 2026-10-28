@@ -35,6 +35,7 @@ package struct FilesContentView<Toolbar: ToolbarContent, Sheet: View>: View {
     @ObservedObject package var viewModel: FilesViewModel
     package let isBrowsing: Bool
     package let backgroundColor: Color
+    package let trackerHeight: CGFloat
 
     @ToolbarContentBuilder package let toolbarContent: () -> Toolbar
     @ViewBuilder let sheetContent: (FilesViewModel.SheetNavigation) -> Sheet
@@ -108,6 +109,9 @@ package struct FilesContentView<Toolbar: ToolbarContent, Sheet: View>: View {
             .toolbarBackground(backgroundColor, for: .navigationBar)
             .toolbar { toolbarContent() }
             .if(viewModel.showSearchBar, transform: searchView(content:))
+            .onAppear {
+                viewModel.enableMultipleSelection(false)
+            }
             .onDisappear {
                 isSearchFocused = false
                 viewModel.resetFilters()
@@ -126,10 +130,14 @@ package struct FilesContentView<Toolbar: ToolbarContent, Sheet: View>: View {
             )
         }
         .onChange(of: viewModel.networkStatus) { _, newValue in
-            if newValue != nil {
-                Task {
-                    await viewModel.reload(refreshing: true)
-                }
+            guard let newValue else { return }
+
+            if newValue == .disconnected {
+                viewModel.enableMultipleSelection(false)
+            }
+
+            Task {
+                await viewModel.reload(refreshing: true)
             }
         }
         .task {
@@ -148,7 +156,7 @@ package struct FilesContentView<Toolbar: ToolbarContent, Sheet: View>: View {
 private extension FilesContentView {
 
     @ViewBuilder var filesList: some View {
-        List {
+        List(selection: $viewModel.selectedItems) {
             Group {
                 itemsSection
 
@@ -160,17 +168,45 @@ private extension FilesContentView {
             .listRowSeparator(.hidden)
             .listRowBackground(ColorTheme.Backgrounds.surface.color)
         }
+        .environment(\.editMode, $viewModel.multipleSelection)
         .listStyle(.plain)
         .refreshable { reloadTask(refreshing: true) }
         .overlay(listBackgroundView)
+        .safeAreaInset(edge: .bottom, alignment: .leading, spacing: 0) {
+            if viewModel.multipleSelection == .active {
+                FilesFloatingActionBar {
+                    Button {
+                        viewModel.moveToFolder()
+                    } label: {
+                        Image(systemName: "folder")
+                            .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
+                            .opacity(viewModel.selectedItems.isEmpty ? 0.3 : 1)
+                    }
+                    .accessibilityLabel(Strings.Files.Item.Menu.moveToFolder)
+                    .accessibilityIdentifier(Locators.WireDrive.FilesPage.moveToFolderFloatingButton)
+                    .disabled(viewModel.selectedItems.isEmpty)
+                }
+                .padding(.horizontal, 16)
+                .padding(.bottom, 12)
+            }
+        }
         .animation(.default, value: viewModel.state)
+        .safeAreaInset(edge: .bottom, spacing: 0) {
+            Color.clear
+                .frame(height: trackerHeight)
+        }
+
     }
 
     @ViewBuilder var itemsSection: some View {
         ForEach(Array(viewModel.state.items.enumerated()), id: \.element) { index, item in
             itemRow(index: index)
                 .onAppear { loadMoreIfNeededTask(index: index) }
-                .onTapGesture { Task { await viewModel.performPrimaryAction(item: item) } }
+                // otherwise interferes with the tappable area
+                .if(viewModel.multipleSelection != .active) { view in
+                    view.onTapGesture { Task { await viewModel.performPrimaryAction(item: item) } }
+
+                }
                 .accessibilityIdentifier(Locators.WireDrive.FilesContentPage.fileItem(index))
         }
     }
@@ -288,7 +324,6 @@ private extension FilesContentView {
             placement: .navigationBarDrawer(displayMode: .always),
             prompt: Strings.Files.Search.title
         )
-        .accessibilityIdentifier(Locators.WireDrive.FilesContentPage.search)
     }
 }
 

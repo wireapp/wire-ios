@@ -61,6 +61,7 @@ final class MeetingMemberAddEventNotificationBuilderTests: XCTestCase {
             locale: Locale(identifier: "en_GB"),
             timeZone: TimeZone(secondsFromGMT: 0)!
         )
+        sut.currentDate = { Scaffolding.startTime.addingTimeInterval(-1) }
     }
 
     override func tearDown() async throws {
@@ -90,6 +91,23 @@ final class MeetingMemberAddEventNotificationBuilderTests: XCTestCase {
         XCTAssertEqual(content.userInfo[NotificationUserInfoKey.selfUserID] as? String, sut.accountID.uuidString)
         XCTAssertEqual(meetingStore.meetings.map(\.id.id), [Scaffolding.meetingID.id])
         XCTAssertEqual(meetingStore.meetings.map(\.conversationID.id), [Scaffolding.meeting.conversationID.id])
+    }
+
+    func testInvitationTitleReflectsMeetingTimeWindow() async throws {
+        let cases: [(TimeInterval, String)] = [
+            (-1, "Planning"),
+            (0, "Ongoing: Planning"),
+            (1800, "Ongoing: Planning"),
+            (3600, "Planning")
+        ]
+        for (offset, title) in cases {
+            sut.currentDate = { Scaffolding.startTime.addingTimeInterval(offset) }
+            let result = await sut.buildContent(event: Scaffolding.event)
+            guard case let .text(content) = try XCTUnwrap(result) else {
+                return XCTFail("Expected an invitation notification")
+            }
+            XCTAssertEqual(content.title, title, "Offset: \(offset)")
+        }
     }
 
     func testInvitationUsesRecipientTimeZone() async throws {
@@ -232,6 +250,14 @@ private final class InvitationMeetingsAPI: MeetingsAPI, @unchecked Sendable {
         throw InvitationTestError.unavailable
     }
 
+    func addMeetingInvitations(id: WireNetwork.QualifiedID, emails: [String]) async throws {
+        throw InvitationTestError.unavailable
+    }
+
+    func removeMeetingInvitations(id: WireNetwork.QualifiedID, emails: [String]) async throws {
+        throw InvitationTestError.unavailable
+    }
+
     func deleteMeeting(id: WireNetwork.QualifiedID) async throws { throw InvitationTestError.unavailable }
 }
 
@@ -256,11 +282,15 @@ private final class InvitationUsersAPI: UsersAPI {
             app: nil,
             service: nil,
             supportedProtocols: nil,
-            legalholdStatus: .disabled
+            legalholdStatus: .disabled,
+            contactStatus: nil
         )
     }
 
-    func getUsers(userIDs: [UserID]) async throws -> UserList { throw InvitationTestError.unavailable }
+    func getUsers(
+        userIDs: [UserID],
+        includeContactStatus: Bool
+    ) async throws -> UserList { throw InvitationTestError.unavailable }
 }
 
 private final class InvitationMeetingStore: MeetingLocalStoreProtocol, @unchecked Sendable {

@@ -160,6 +160,7 @@
 "conversation.wireCells.files.error.noConnection.message" = "Ihre Datei-Liste konnte nicht geladen werden. Bitte überprüfen Sie Ihre Internetverbindung und versuchen Sie es erneut.";
 "conversation.wireCells.files.error.noConnection.retry" = "Erneut versuchen";
 "conversation.wireCells.files.search.title" = "Dateien suchen";
+"conversation.wireCells.files.list.selectItems" = "Auswählen";
 "conversation.wireCells.files.list.createFolder" = "Ordner erstellen";
 "conversation.wireCells.files.list.createFile" = "Datei erstellen";
 "conversation.wireCells.files.list.createFile.presentation" = "Präsentation";
@@ -191,6 +192,46 @@
 "conversation.wireCells.files.downloadFailed" = "Laden unmöglich, wiederholen";
 "conversation.wireCells.files.downloadingFile" = "Datei wird heruntergeladen...";
 "conversation.wireCells.files.offlineModeHint" = "Sie können weiterhin auf Ihre Offline-Dateien zugreifen.";
+"conversation.wireCells.files.time.just_now" = "Gerade eben";
+
+
+// MARK: - Shared Drive uploads
+
+"conversation.wireCells.files.upload.menu.upload" = "Hochladen";
+"conversation.wireCells.files.upload.menu.file" = "Datei hochladen";
+"conversation.wireCells.files.upload.menu.media" = "Foto oder Video hochladen";
+
+"conversation.wireCells.files.upload.destination" = "auf %@";
+
+"conversation.wireCells.files.upload.uploadingFile" = "Datei wird hochgeladen...";
+"conversation.wireCells.files.upload.uploadedFile" = "Hochgeladen";
+"conversation.wireCells.files.upload.failedFile" = "Datei nicht hochgeladen";
+
+"conversation.wireCells.files.upload.uploadingOne" = "Eine Datei hochladen";
+"conversation.wireCells.files.upload.uploadingMany" = "%d Dateien hochladen";
+"conversation.wireCells.files.upload.completeOne" = "Upload abgeschlossen";
+"conversation.wireCells.files.upload.completeMany" = "%d von %d hochgeladen";
+"conversation.wireCells.files.upload.progress" = "%d von %d hochgeladen";
+"conversation.wireCells.files.upload.failedOne" = "Datei nicht hochgeladen";
+"conversation.wireCells.files.upload.failedMany" = "%d Dateien nicht hochgeladen";
+"conversation.wireCells.files.upload.someFailedOne" = "1 nicht hochgeladen";
+"conversation.wireCells.files.upload.someFailedMany" = "%d nicht hochgeladen";
+"conversation.wireCells.files.upload.tapToReview" = "Zum Überprüfen auswählen";
+
+"conversation.wireCells.files.upload.cancel" = "Abbrechen";
+"conversation.wireCells.files.upload.cancelAll" = "Alle abbrechen";
+"conversation.wireCells.files.upload.retry" = "Wiederholen";
+"conversation.wireCells.files.upload.retryAll" = "Alle wiederholen";
+
+"conversation.wireCells.files.upload.tooManyFiles.title" = "Zu viele Dateien";
+"conversation.wireCells.files.upload.tooManyFiles.message" = "Sie können bis zu %d Dateien gleichzeitig hochladen.";
+"conversation.wireCells.files.upload.prepareFailed.title" = "Upload konnte nicht beginnen";
+"conversation.wireCells.files.upload.prepareFailed.message" = "„%@“ konnte nicht für den Upload vorbereitet werden. Stellen Sie sicher, dass die Datei verfügbar ist und auf Ihrem Gerät genügend Speicherplatz vorhanden ist.";
+"conversation.wireCells.files.upload.importFailed.title" = "Dateien konnten nicht importiert werden";
+"conversation.wireCells.files.upload.importFailed.message" = "Einige der ausgewählten Dateien konnten nicht hochgeladen werden.";
+"conversation.wireCells.files.upload.permissionWarning.title" = "Wire benötigt Zugriff auf Ihre Fotos.";
+"conversation.wireCells.files.upload.permissionWarning.restrictions.message" = "Wire konnte nicht auf Ihre Bibliothek zugreifen, da Einschränkungen aktiviert sind.";
+"conversation.wireCells.files.upload.permissionWarning.denied.message" = "Erlauben Sie Wire Zugriff auf Ihre Fotos in den Einstellungen.";
 
 // MARK: - Recycle Bin
 "conversation.wireCells.recycleBin.navigationTitle" = "Papierkorb";

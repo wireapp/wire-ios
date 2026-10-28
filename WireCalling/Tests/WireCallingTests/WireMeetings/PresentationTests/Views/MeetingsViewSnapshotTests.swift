@@ -75,6 +75,35 @@ final class MeetingsViewSnapshotTests: XCTestCase {
         }
     }
 
+    @MainActor
+    func testMemberAvatarOrder() {
+        let members = [
+            ("Zoe", "host", false), ("You", "you", true),
+            ("Alice", "z", false), ("alice", "a", false), ("Bob", "bob", false)
+        ].map { name, handle, isSelfUser in
+            MeetingMember(
+                qualifiedID: QualifiedID(id: UUID(), domain: "example.com"),
+                name: name,
+                handle: handle,
+                isSelfUser: isSelfUser,
+                initials: "",
+                accentColor: .default,
+                avatarImageData: nil
+            )
+        }
+        let hostView = MemberAvatarsView(members: members, creatorID: members[0].qualifiedID)
+        XCTAssertEqual(
+            members.sorted(by: hostView.areInDisplayOrder),
+            [members[0], members[1], members[3], members[2], members[4]]
+        )
+
+        let selfHostView = MemberAvatarsView(members: members, creatorID: members[1].qualifiedID)
+        XCTAssertEqual(
+            members.sorted(by: selfHostView.areInDisplayOrder),
+            [members[1], members[3], members[2], members[4], members[0]]
+        )
+    }
+
     // MARK: - Helpers
 
     @MainActor

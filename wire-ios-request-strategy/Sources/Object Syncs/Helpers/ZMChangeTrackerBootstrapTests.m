@@ -27,6 +27,7 @@
 @interface FakeChangeTracker : NSObject <ZMContextChangeTracker>
 @property (nonatomic) NSFetchRequest *fetchRequest;
 @property (nonatomic) NSSet *objectsToUpdate;
+@property (nonatomic) NSUInteger addTrackedObjectsCallCount;
 @end
 
 @implementation FakeChangeTracker
@@ -44,6 +45,7 @@
 - (void)addTrackedObjects:(NSSet *)objects
 {
     self.objectsToUpdate = objects;
+    self.addTrackedObjectsCallCount += 1;
 }
 
 @end
@@ -230,6 +232,98 @@
     XCTAssertEqualObjects(self.changeTracker2.objectsToUpdate, expectedSet);
 }
 
+
+- (void)testThatItPreservesExistingTrackersWhenAddingTrackersBeforeTheInitialFetch
+{
+    // given
+    NSFetchRequest *userRequest = [NSFetchRequest fetchRequestWithEntityName:ZMUser.entityName];
+    userRequest.predicate = [NSPredicate predicateWithFormat:@"name == %@", self.user1.name];
+    self.changeTracker1.fetchRequest = userRequest;
+
+    NSFetchRequest *conversationRequest = [NSFetchRequest fetchRequestWithEntityName:ZMConversation.entityName];
+    conversationRequest.predicate = [NSPredicate predicateWithFormat:@"userDefinedName != nil"];
+    self.changeTracker2.fetchRequest = conversationRequest;
+
+    FakeChangeTracker *addedTracker = [[FakeChangeTracker alloc] init];
+    NSFetchRequest *addedRequest = [NSFetchRequest fetchRequestWithEntityName:ZMUser.entityName];
+    addedRequest.predicate = [NSPredicate predicateWithFormat:@"name == %@", self.user2.name];
+    addedTracker.fetchRequest = addedRequest;
+
+    // when
+    [self.sut addChangeTrackers:@[addedTracker]];
+
+    // then: new trackers are fetched immediately, before the initial full fetch
+    XCTAssertEqualObjects(addedTracker.objectsToUpdate, [NSSet setWithObject:self.user2]);
+    XCTAssertEqual(addedTracker.addTrackedObjectsCallCount, 1u);
+    XCTAssertNil(self.changeTracker1.objectsToUpdate);
+    XCTAssertNil(self.changeTracker2.objectsToUpdate);
+
+    // when
+    [self.sut fetchObjectsForChangeTrackers];
+
+    // then: original trackers are retained and each tracker is fetched once per full fetch
+    NSSet *expectedConversations = [NSSet setWithObjects:self.conversation1, self.conversation2, nil];
+    XCTAssertEqualObjects(self.changeTracker1.objectsToUpdate, [NSSet setWithObject:self.user1]);
+    XCTAssertEqualObjects(self.changeTracker2.objectsToUpdate, expectedConversations);
+    XCTAssertEqual(self.changeTracker1.addTrackedObjectsCallCount, 1u);
+    XCTAssertEqual(self.changeTracker2.addTrackedObjectsCallCount, 1u);
+    XCTAssertEqual(addedTracker.addTrackedObjectsCallCount, 2u);
+}
+
+- (void)testThatItPreservesTrackersAcrossSuccessiveAdditions
+{
+    // given
+    NSFetchRequest *firstRequest = [NSFetchRequest fetchRequestWithEntityName:ZMUser.entityName];
+    firstRequest.predicate = [NSPredicate predicateWithFormat:@"name == %@", self.user1.name];
+    self.changeTracker1.fetchRequest = firstRequest;
+
+    NSFetchRequest *secondRequest = [NSFetchRequest fetchRequestWithEntityName:ZMUser.entityName];
+    secondRequest.predicate = [NSPredicate predicateWithFormat:@"name == %@", self.user2.name];
+    self.changeTracker2.fetchRequest = secondRequest;
+
+    FakeChangeTracker *thirdTracker = [[FakeChangeTracker alloc] init];
+    NSFetchRequest *thirdRequest = [NSFetchRequest fetchRequestWithEntityName:ZMConversation.entityName];
+    thirdRequest.predicate = [NSPredicate predicateWithFormat:@"userDefinedName != nil"];
+    thirdTracker.fetchRequest = thirdRequest;
+
+    self.sut = [[ZMChangeTrackerBootstrap alloc]
+                initWithManagedObjectContext:self.coreDataStack.viewContext
+                changeTrackers:@[self.changeTracker1]];
+
+    // when
+    [self.sut addChangeTrackers:@[self.changeTracker2]];
+    [self.sut addChangeTrackers:@[thirdTracker]];
+    [self.sut fetchObjectsForChangeTrackers];
+
+    // then
+    NSSet *expectedConversations = [NSSet setWithObjects:self.conversation1, self.conversation2, nil];
+    XCTAssertEqualObjects(self.changeTracker1.objectsToUpdate, [NSSet setWithObject:self.user1]);
+    XCTAssertEqualObjects(self.changeTracker2.objectsToUpdate, [NSSet setWithObject:self.user2]);
+    XCTAssertEqualObjects(thirdTracker.objectsToUpdate, expectedConversations);
+    XCTAssertEqual(self.changeTracker1.addTrackedObjectsCallCount, 1u);
+    XCTAssertEqual(self.changeTracker2.addTrackedObjectsCallCount, 2u);
+    XCTAssertEqual(thirdTracker.addTrackedObjectsCallCount, 2u);
+}
+
+- (void)testThatItKeepsAddedTrackersWhenInitializedWithoutTrackers
+{
+    // given
+    NSFetchRequest *userRequest = [NSFetchRequest fetchRequestWithEntityName:ZMUser.entityName];
+    userRequest.predicate = [NSPredicate predicateWithFormat:@"name == %@", self.user1.name];
+    self.changeTracker1.fetchRequest = userRequest;
+
+    self.sut = [[ZMChangeTrackerBootstrap alloc]
+                initWithManagedObjectContext:self.coreDataStack.viewContext
+                changeTrackers:nil];
+
+    // when
+    [self.sut addChangeTrackers:@[self.changeTracker1]];
+    [self.sut fetchObjectsForChangeTrackers];
+
+    // then
+    XCTAssertEqualObjects(self.changeTracker1.objectsToUpdate, [NSSet setWithObject:self.user1]);
+    XCTAssertEqual(self.changeTracker1.addTrackedObjectsCallCount, 2u);
+}
 
 - (void)testThatItDoesNotCrashWhen_fetchRequestForTrackedObjects_ReturnsNil
 {

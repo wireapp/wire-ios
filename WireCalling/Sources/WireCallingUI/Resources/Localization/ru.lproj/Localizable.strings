@@ -62,8 +62,20 @@
 "wireMeetings.list.delete.error.alert.title" = "Что-то пошло не так";
 "wireMeetings.list.delete.error.alert.ok" = "OK";
 
+// MARK: - Meeting link
+
+"wireMeetings.link.title" = "Ссылка на встречу";
+"wireMeetings.link.description" = "Любой пользователь со ссылкой может получить доступ к встрече.";
+"wireMeetings.link.passwordProtected" = "Ссылка защищена паролем. Чтобы установить новый пароль, сгенерируйте новую ссылку.";
+"wireMeetings.link.notPasswordProtected" = "Эта ссылка не защищена паролем. Убедитесь, что делитесь ею только с нужными людьми. Чтобы установить пароль, сгенерируйте новую ссылку.";
+"wireMeetings.link.copy" = "Скопировать ссылку";
+"wireMeetings.link.copied" = "Ссылка скопирована в буфер обмена";
+"wireMeetings.link.unavailable" = "Ссылка на встречу недоступна.";
+"wireMeetings.link.loadError" = "Не удалось загрузить ссылку на встречу. Попробуйте еще раз.";
+
 // MARK: - Schedule a meeting
 
+"meetings.error.missingLink" = "Встреча была создана, но ссылка на нее недоступна.";
 "meetings.error.setupFailedTitle" = "Не удалось завершить настройку встречи";
 "meetings.error.conversationSetupFailed" = "Информация о встрече была сохранена, но при настройке что-то пошло не так. Пожалуйста, попробуйте еще раз.";
 "meetings.error.addParticipantsFailed" = "Информация о встрече была сохранена, но некоторых участников добавить не удалось. Пожалуйста, попробуйте еще раз.";
@@ -97,6 +109,18 @@
 "wireMeetings.schedule.setupTitle.header" = "Название";
 "wireMeetings.schedule.setupTitle.placeholder" = "Введите название встречи";
 "wireMeetings.schedule.setupTitle.error.tooLong" = "Слишком много символов";
+"wireMeetings.schedule.password.title" = "Установить пароль для ссылки на встречу (необязательно)";
+"wireMeetings.schedule.password.placeholder" = "Введите пароль";
+"wireMeetings.schedule.password.requirements" = "Используйте как минимум %d символов, включая одну строчную букву, одну заглавную букву, цифру и специальный символ.";
+"wireMeetings.schedule.password.copy" = "Скопировать пароль";
+"wireMeetings.schedule.password.copied" = "Скопировано";
+"wireMeetings.schedule.password.clear" = "Очистить пароль";
+"wireMeetings.schedule.password.clear_confirmation" = "Подтверждение очистки пароля";
+"wireMeetings.schedule.password.generate" = "Сгенерировать пароль";
+"wireMeetings.schedule.password.confirm" = "Подтвердить пароль";
+"wireMeetings.schedule.password.mismatch" = "Пароли не совпадают";
+"wireMeetings.schedule.password.show" = "Показать пароль";
+"wireMeetings.schedule.password.hide" = "Скрыть пароль";
 "wireMeetings.schedule.setupParticipants.header" = "Участники";
 "wireMeetings.schedule.setupParticipants.placeholder" = "Добавить участников";
 "wireMeetings.schedule.error.alert.title" = "Что-то пошло не так";
@@ -131,16 +155,25 @@
 "wireMeetings.schedule.members.retry.button" = "Повторить";
 "wireMeetings.schedule.members.selected.title" = "Выбрано";
 "wireMeetings.schedule.members.contacts.title" = "Контакты";
-"wireMeetings.schedule.members.groups.importButton" = "Импортировать из группы";
+"wireMeetings.schedule.members.groups.importButton" = "Добавить участников группы";
 "wireMeetings.schedule.members.groups.title" = "Группы и каналы";
 "wireMeetings.schedule.members.groups.searchPlaceholder" = "Поиск групп и каналов";
 "wireMeetings.schedule.members.groups.group" = "Группа";
 "wireMeetings.schedule.members.groups.channel" = "Канал";
 "wireMeetings.schedule.members.groups.emptyTitle" = "Группы или каналы не найдены";
-"wireMeetings.schedule.members.groups.emptyDescription" = "Показаны только группы и каналы, к которым вы присоединились.";
+"wireMeetings.schedule.members.groups.emptyDescription" = "В списке отображаются только те группы и каналы, к которым вы присоединились.";
 "wireMeetings.schedule.members.groups.loading" = "Загрузка групп и каналов";
-"wireMeetings.schedule.members.groups.importing" = "Импорт участников";
-"wireMeetings.schedule.members.groups.importError" = "Не удалось импортировать участников";
+"wireMeetings.schedule.members.groups.importing" = "Добавление участников";
+"wireMeetings.schedule.members.groups.importError" = "Не удалось добавить участников";
 
 "wireMeetings.schedule.error.expiredStartDate.title" = "Выберите более позднее время начала";
 "wireMeetings.schedule.error.expiredStartDate.message" = "Вы можете редактировать только те встречи, которые начались менее 24 часов назад. Пожалуйста, выберите более позднее время начала и попробуйте еще раз.";
+
+"wireMeetings.schedule.members.email.title" = "Приглашение по email";
+"wireMeetings.schedule.members.email.placeholder" = "Введите адрес email";
+"wireMeetings.schedule.members.email.add" = "Добавить";
+"wireMeetings.schedule.members.email.invalidAddress" = "Введите действительный адрес email.";
+"wireMeetings.schedule.members.email.duplicateAddress" = "Этот адрес email уже добавлен.";
+"wireMeetings.schedule.members.email.remove" = "Удалить %@";
+"wireMeetings.schedule.email.loadFailed" = "Не удалось загрузить список адресов email для рассылки приглашений.";
+"wireMeetings.schedule.email.saveFailed" = "Встреча сохранена, но некоторые изменения в приглашениях внести не удалось.  Нажмите Изменить, чтобы подтвердить список участников.";
