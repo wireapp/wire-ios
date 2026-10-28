@@ -37,40 +37,26 @@ PRD "Pending connection, pending invite, pending message":
 - **Open questions:** "How to handle multipart messages (drive)".
 - **No-Drive assets:** not mentioned anywhere.
 
-## Follow-up PR: assets with Drive off (sketch)
+## Follow-up: assets with Drive off
 
-### Current behaviour (from reading the code, not tested)
-1. **Preprocessing** (`AssetsPreprocessor`): local, no network needed.
-2. **Upload** (`AssetV3UploadRequestStrategy` via `ZMUpstreamModifiedObjectSync`):
-   - On `tryAgainLater`, which is what we get offline, the object is retried, not expired.
-   - It's expired only on `cancelled`/`expired` (`requestExpired`) or on a real error (`shouldRetryToSyncAfterFailed`).
-   - In the background it uses a background URLSession, whose offline behaviour is unchecked.
-3. **Message** (`AssetClientMessageRequestStrategy`): same pattern as text before our change.
-   - It expires on restart (`!isFresh`) and on any `MessageSender` error.
-   - Its deadline is checked by the shared `MessageExpirationTimer`, which lives in `ClientMessageRequestStrategy`.
+### Manual test results (2026-10-28, flag on, staging)
+1. **Offline:** send an image and wait more than 2 minutes. It does not fail.
+2. **Reconnect:** the upload goes out (`POST /v18/assets` → 201), then the asset message is created and sent.
+3. **Restart offline:** send an image offline, kill the app, relaunch offline, reconnect. The image is sent automatically. No `expiring stale asset message` in the log.
 
-**Step 0:** manual test with logs. Send an image offline with the flag on and check which of the above actually fails it (log lines with "asset" and "expir").
+### Why it already works
+- **Upload** (`AssetV3UploadRequestStrategy` via `ZMUpstreamModifiedObjectSync`): offline requests get `tryAgainLater`, which only retries and never expires. Restarts resume the upload.
+- **Message** (`AssetClientMessageRequestStrategy`): the asset message is only created after the upload has succeeded, so after a restart it counts as fresh and the stale-message expiry doesn't run.
 
-### Sketch
-1. **Rule:** move `staysPendingWhileOffline` from `ZMClientMessage` up to `ZMOTRMessage`.
-2. **Timer:**
-   - `timerFired` ignores messages whose deadline has been removed, so the retry loop only needs `removeExpirationDate()` and no timer reference.
-   - Extend the startup cleanup to assets.
-3. **Shared retry loop:** move the loop, including releasing the groups while waiting, from `ClientMessageRequestStrategy` into a small `PendingMessageSending` helper. Both strategies use it, with their own `shouldBeSentPredicate`.
-4. **Asset strategy:** skip expiring stale messages for pending messages and use the helper. If the user cancels the upload, the predicate no longer matches and the loop stops.
-5. **Upload strategy:**
-   - For pending messages, `cancelled`/`expired` while offline or in the background re-queue the upload instead of expiring the message.
-   - Check that interrupted uploads resume after a restart; the encrypted data should still be in the cache.
-   - Real errors still fail.
-6. **Ordering:** the dependency fetch also includes `ZMAssetClientMessage`, so text and images stay in order. Within the 3-minute window that's already the rule today.
-7. **UI:** check how an image waiting for the network looks (progress or pending, not failed) and that Cancel still works. Delete while pending stays text-only unless wanted for assets.
-8. **Tests:**
-   - `AssetClientMessageRequestStrategyTests`: the same cases as for text.
-   - `AssetV3UploadRequestStrategyTests`: a cancel while offline keeps the message pending.
+### Remaining gaps
+1. **Ordering of text and images (probably real, test it):** a text written offline after an image could arrive before the image when more than 3 minutes pass. The image is still uploading, and the dependency fallback fetch only covers `ZMClientMessage`.
+   - Test: offline, send an image, wait more than 3 minutes, send a text, reconnect, check the order on the receiver.
+2. **Failures in the short message step after the upload:** a network drop, a cancelled background task, or the app killed in those few seconds. The image fails as today and can be retried. Rare.
+3. **Cosmetic:** `expiration timer fired for message … reaction { emoji: "" }` about 60 seconds after an asset is sent. The asset strategy never stops the shared timer, and `timerFired` ignores sent messages. Most likely on develop too.
 
-**Estimate:** about 150–250 lines plus tests.
+### Plan
+If gap 1 is confirmed, a small follow-up PR:
+- Include `ZMAssetClientMessage` in the dependency fallback fetch.
+- Optional, covers gap 2: use the text retry loop in `AssetClientMessageRequestStrategy`. About 30 lines if it calls the existing loop instead of refactoring it.
 
-**Risks:**
-- Background URLSession behaviour.
-- Large files: the upload restarts from the beginning.
-- Long uploads block later text messages; already the case today within the 3-minute window.
+No changes are needed to the upload strategy, the timer or the background session. If gap 1 doesn't show up, only document it.
