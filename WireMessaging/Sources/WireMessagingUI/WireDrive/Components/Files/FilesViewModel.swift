@@ -433,7 +433,6 @@ package final class FilesViewModel: ObservableObject {
         await filesController.removeItems(state.items) { [weak self] in
             guard let self, let cellName else { return }
             try await useCases.emptyRecycleBin.invoke(cellName: cellName)
-            setNavigation([])
         }
     }
 

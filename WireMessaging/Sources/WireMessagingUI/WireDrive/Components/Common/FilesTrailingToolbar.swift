@@ -71,7 +71,7 @@ private extension FilesTrailingToolbar {
 
     var canEmptyRecycleBin: Bool {
         viewModel.selfUserRole == .editor && viewModel.isRecycleBin && !isSelecting && !viewModel.state.items
-            .isEmpty && viewModel.isBulkActionsEnabled && !viewModel.isOffline
+            .isEmpty && !viewModel.isOffline && viewModel.navigationPath.isEmpty && viewModel.isBulkActionsEnabled
     }
 
     var canSelectItems: Bool {
