@@ -294,6 +294,85 @@ final class MeetingsAPITests: XCTestCase {
         }
     }
 
+    func testJoinMeeting_V19_SendsSafeAuthenticatedRequestAndDecodesRepeatedSuccess() async throws {
+        let responseData = try meetingJoinResponseData()
+        let apiService = MockAPIServiceProtocol()
+        apiService.executeRequestRequiringAccessToken_MockMethod = { request, _ in
+            let (_, response) = try request.mockResponse(statusCode: .ok)
+            return (responseData, response)
+        }
+        let sut = APIVersion.v19.buildAPI(apiService: apiService)
+
+        for password in [String?("päss word"), "päss word", nil] {
+            let result = try await sut.joinMeeting(
+                domain: "münich.example",
+                key: "key/part?x",
+                code: "code#part",
+                password: password
+            )
+            XCTAssertEqual(result.meeting.id, Scaffolding.meetingID)
+            XCTAssertEqual(result.meeting.title, "Engineering Sync")
+            XCTAssertEqual(result.conversation.groupType, .meeting)
+        }
+
+        XCTAssertEqual(apiService.executeRequestRequiringAccessToken_Invocations.count, 3)
+        XCTAssertEqual(apiService.executeRequestRequiringAccessToken_Invocations.first?.requiringAccessToken, true)
+        let request = try XCTUnwrap(apiService.executeRequestRequiringAccessToken_Invocations.first?.request)
+        XCTAssertEqual(request.httpMethod, "POST")
+        XCTAssertEqual(
+            URLComponents(url: try XCTUnwrap(request.url), resolvingAgainstBaseURL: false)?.percentEncodedPath,
+            "/v19/meeting/m%C3%BCnich.example/key%2Fpart%3Fx/code%23part/join"
+        )
+        XCTAssertEqual(
+            URLComponents(url: try XCTUnwrap(request.url), resolvingAgainstBaseURL: false)?.queryItems,
+            [URLQueryItem(name: "password", value: "päss word")]
+        )
+        XCTAssertNil(request.httpBody)
+        let passwordlessRequest = try XCTUnwrap(apiService.executeRequestRequiringAccessToken_Invocations.last?.request)
+        XCTAssertNil(URLComponents(url: try XCTUnwrap(passwordlessRequest.url), resolvingAgainstBaseURL: false)?.query)
+    }
+
+    func testJoinMeeting_IsUnsupportedInV18() async {
+        let apiService = MockAPIServiceProtocol()
+        let sut = APIVersion.v18.buildAPI(apiService: apiService)
+
+        await XCTAssertThrowsErrorAsync(MeetingsAPIError.unsupportedEndpointForAPIVersion) {
+            _ = try await sut.joinMeeting(domain: "wire.com", key: "key", code: "code", password: nil)
+        }
+        XCTAssertTrue(apiService.executeRequestRequiringAccessToken_Invocations.isEmpty)
+    }
+
+    func testJoinMeeting_MapsPasswordAndStaleLinkErrors() async {
+        for (status, label, error) in [
+            (HTTPStatusCode.forbidden, "invalid-meeting-password", MeetingsAPIError.invalidMeetingPassword),
+            (.notFound, "meeting-not-found", .meetingNotFound)
+        ] {
+            let apiService = MockAPIServiceProtocol.withError(statusCode: status, label: label)
+            let sut = APIVersion.v19.buildAPI(apiService: apiService)
+
+            await XCTAssertThrowsErrorAsync(error) {
+                _ = try await sut.joinMeeting(domain: "wire.com", key: "key", code: "code", password: "badpass8")
+            }
+        }
+    }
+
+    private func meetingJoinResponseData() throws -> Data {
+        let meetingResource = try MockJSONPayloadResource(name: "MeetingResponse")
+        var meeting = try XCTUnwrap(JSONSerialization.jsonObject(with: meetingResource.jsonData) as? [String: Any])
+        meeting.removeValue(forKey: "trial")
+        meeting["type"] = "scheduled"
+
+        let conversationResource = try MockJSONPayloadResource(
+            name: "testGetConversations_givenV16AndSuccessResponse200"
+        )
+        let payload = try XCTUnwrap(JSONSerialization.jsonObject(with: conversationResource.jsonData) as? [String: Any])
+        let conversations = try XCTUnwrap(payload["found"] as? [[String: Any]])
+        var conversation = try XCTUnwrap(conversations.first)
+        conversation["group_conv_type"] = "meeting"
+        meeting["conversation"] = conversation
+        return try JSONSerialization.data(withJSONObject: meeting)
+    }
+
     // MARK: - listMeetings V16
 
     func testListMeetings_SuccessResponse_200_V16() async throws {

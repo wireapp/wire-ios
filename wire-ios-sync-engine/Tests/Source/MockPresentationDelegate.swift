@@ -74,7 +74,7 @@ class MockPresentationDelegate: PresentationDelegate {
         showConnectionRequestCalls.append(qualifiedID.uuid)
     }
 
-    func showPasswordPrompt(for conversationName: String, completion: @escaping (String?) -> Void) {
+    func showPasswordPrompt(for conversationName: String?, completion: @escaping (String?) -> Void) {
         let mockPassword = "mockPassword12345678!3"
         completion(mockPassword)
     }

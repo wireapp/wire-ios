@@ -198,6 +198,10 @@ private final class UpdateMeetingsAPI: MeetingsAPI, @unchecked Sendable {
     }
 
     func listMeetings() async throws -> [MeetingResponse] { throw UpdateTestError.unavailable }
+    func joinMeeting(domain: String, key: String, code: String, password: String?) async throws -> MeetingJoinResponse {
+        throw UpdateTestError.unavailable
+    }
+
     func createMeeting(parameters: CreateMeetingParameters) async throws -> MeetingResponse {
         throw UpdateTestError.unavailable
     }
