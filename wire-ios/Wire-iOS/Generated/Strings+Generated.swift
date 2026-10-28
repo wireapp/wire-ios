@@ -4617,6 +4617,12 @@ internal enum L10n {
           internal static let hide = L10n.tr("Localizable", "message.delete_dialog.action.hide", fallback: "Delete for Me")
         }
       }
+      internal enum DeletePendingFailed {
+        /// You can delete this message once it has been sent.
+        internal static let message = L10n.tr("Localizable", "message.delete_pending_failed.message", fallback: "You can delete this message once it has been sent.")
+        /// Message Is Being Sent
+        internal static let title = L10n.tr("Localizable", "message.delete_pending_failed.title", fallback: "Message Is Being Sent")
+      }
       internal enum EditPendingFailed {
         /// You can edit this message once it has been sent.
         internal static let message = L10n.tr("Localizable", "message.edit_pending_failed.message", fallback: "You can edit this message once it has been sent.")

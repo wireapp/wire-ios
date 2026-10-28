@@ -1053,6 +1053,8 @@
 "message.delete_dialog.action.cancel" = "Cancel";
 "message.delete_dialog.action.hide" = "Delete for Me";
 "message.delete_dialog.action.delete" = "Delete for Everyone";
+"message.delete_pending_failed.title" = "Message Is Being Sent";
+"message.delete_pending_failed.message" = "You can delete this message once it has been sent.";
 
 // Edit message
 "message.menu.edit.title" = "Edit";

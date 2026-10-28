@@ -184,6 +184,28 @@ extension ZMClientMessage: TextMessageData {
         return true
     }
 
+    /// Whether the message can be deleted without sending a delete, because it's a new pending message
+    /// that hasn't been sent yet, so nobody else has it.
+    public var isDeletableWhilePending: Bool {
+        guard isEditableInPlace, case .text = underlyingMessage?.content else { return false }
+        return true
+    }
+
+    /// Deletes a pending message that hasn't been sent yet, without sending a delete.
+    ///
+    /// Call it on the sync context, which also marks the message before sending it, so it can't be
+    /// deleted while a send reads it.
+    ///
+    /// - Returns: `false` if the message can no longer be deleted this way, e.g. because sending started.
+    @discardableResult
+    public func deletePendingMessage() -> Bool {
+        guard isDeletableWhilePending, let managedObjectContext else { return false }
+
+        removeClearingSender(true)
+        managedObjectContext.delete(self)
+        return true
+    }
+
     var multipartAttachments: [GenericMessageProtocol.Attachment]? {
         switch underlyingMessage?.content {
         case let .multipart(multipart):

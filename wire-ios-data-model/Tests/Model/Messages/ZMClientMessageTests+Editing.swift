@@ -838,4 +838,61 @@ class ZMClientMessageTests_PendingText: BaseZMClientMessageTests {
         // THEN
         XCTAssertFalse(message.sendAttemptStarted)
     }
+
+    // MARK: - Deleting
+
+    func testThatPendingMessageCanBeDeleted() {
+        let message = makePendingMessage()
+        XCTAssertEqual(message.deliveryState, .pending)
+        XCTAssertTrue(message.isDeletableWhilePending)
+        XCTAssertTrue(message.canBeDeleted)
+    }
+
+    func testThatPendingMessageCanNotBeDeleted_WhenFlagIsDisabled() {
+        DeveloperFlag.offlinePendingMessages.enable(false)
+        let message = makePendingMessage()
+        XCTAssertFalse(message.isDeletableWhilePending)
+        XCTAssertFalse(message.canBeDeleted)
+    }
+
+    func testThatPendingMessageCanNotBeDeleted_AfterSendAttemptStarted() {
+        // GIVEN
+        let message = makePendingMessage()
+        message.sendAttemptStarted = true
+
+        // THEN
+        XCTAssertFalse(message.canBeDeleted)
+        XCTAssertFalse(message.deletePendingMessage())
+        XCTAssertFalse(message.isDeleted)
+    }
+
+    func testThatPendingEditCanNotBeDeletedWithoutSendingADelete() {
+        // GIVEN
+        let message = makePendingMessage()
+        message.markAsSent()
+        message.textMessageData?.editText("hi", mentions: [], fetchLinkPreview: false)
+
+        // THEN
+        XCTAssertTrue(message.isEditableInPlace)
+        XCTAssertFalse(message.isDeletableWhilePending)
+        XCTAssertFalse(message.deletePendingMessage())
+    }
+
+    func testThatItDeletesPendingMessageWithoutSendingADelete() {
+        // GIVEN
+        let message = makePendingMessage()
+        let conversation = message.conversation!
+        uiMOC.saveOrRollback()
+        let messageCount = conversation.allMessages.count
+
+        // WHEN
+        let didDelete = message.deletePendingMessage()
+        uiMOC.saveOrRollback()
+
+        // THEN
+        XCTAssertTrue(didDelete)
+        XCTAssertTrue(message.isZombieObject)
+        XCTAssertEqual(conversation.allMessages.count, messageCount - 1)
+        XCTAssertEqual(conversation.hiddenMessages.count, 0)
+    }
 }
