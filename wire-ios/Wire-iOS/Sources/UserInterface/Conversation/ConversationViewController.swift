@@ -845,8 +845,10 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
     ) {
         contentViewController?.didFinishEditing(message)
 
+        // A pending message can't be edited normally before it's sent, and whether it can still be edited
+        // in place is only certain on the sync context, which shows an alert if not.
         if let newText, !newText.isEmpty, let clientMessage = message as? ZMClientMessage,
-           clientMessage.isEditableInPlace {
+           clientMessage.staysPendingWhileOffline, clientMessage.deliveryState == .pending {
             replacePendingText(of: clientMessage, with: newText, mentions: mentions)
             return
         }

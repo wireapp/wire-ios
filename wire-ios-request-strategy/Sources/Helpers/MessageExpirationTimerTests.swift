@@ -20,6 +20,7 @@ import WireDataModel
 import WireRequestStrategy
 import WireTesting
 import WireTestingPackage
+import WireUtilities
 import XCTest
 
 final class MessageExpirationTimerTests: MessagingTestBase {
@@ -216,6 +217,23 @@ extension MessageExpirationTimerTests {
         // THEN
         XCTAssertTrue(sut.hasMessageTimersRunning)
         XCTAssertEqual(sut.runningTimersCount, 2)
+    }
+
+    func testThatItClearsTheExpirationDateOfStoredPendingMessages_OfflinePendingMessages() {
+        // GIVEN
+        DeveloperFlag.storage = .temporary()
+        DeveloperFlag.offlinePendingMessages.enable(true)
+        defer { DeveloperFlag.storage = .standard }
+        let message = clientMessage(expirationTime: -2)
+
+        // WHEN
+        sut.addTrackedObjects([message])
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // THEN
+        XCTAssertNil(message.expirationDate)
+        XCTAssertFalse(message.isExpired)
+        XCTAssertFalse(sut.hasMessageTimersRunning)
     }
 }
 
