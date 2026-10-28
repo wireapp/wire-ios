@@ -26,13 +26,17 @@ import WireFoundation
 struct WireDriveUploadsBannerView: View {
 
     let state: WireDriveUploadsActivityState
+    var isStale = false
+    var contentInsets = EdgeInsets(top: 29, leading: 20, bottom: 29, trailing: 20)
 
     private var presentation: WireDriveUploadsActivityPresentation {
-        .init(state)
+        .init(state, isStale: isStale)
     }
 
     var body: some View {
         VStack(spacing: 9) {
+            Spacer()
+
             HStack(spacing: 14) {
                 WireDriveUploadsTexts(presentation: presentation)
 
@@ -46,14 +50,15 @@ struct WireDriveUploadsBannerView: View {
                     .accessibilityHidden(true)
             }
 
-            if !presentation.isFinished {
+            if !presentation.isFinished, !presentation.needsStatusCheck {
                 ProgressView(value: state.progress)
                     .progressViewStyle(WireDriveUploadsProgressBarStyle())
                     .accessibilityHidden(true)
             }
+
+            Spacer()
         }
-        .padding(.horizontal, 20)
-        .padding(.vertical, 29)
+        .padding(contentInsets)
         .accessibilityElement(children: .combine)
     }
 }
@@ -147,14 +152,25 @@ struct WireDriveUploadsIslandIndicator: View {
     static let size: CGFloat = 20
 
     let state: WireDriveUploadsActivityState
+    var isStale = false
 
     var body: some View {
-        switch state.phase {
-        case .uploading, .uploadingWithFailures:
-            WireDriveUploadsProgressRing(progress: state.progress)
+        if WireDriveUploadsActivityPresentation(state, isStale: isStale).needsStatusCheck {
+            Image(systemName: "clock")
+                .resizable()
+                .scaledToFit()
                 .frame(width: Self.size, height: Self.size)
-        case .completed, .failed:
-            WireDriveUploadsStatusIcon(phase: state.phase, size: Self.size)
+                .foregroundStyle(ColorTheme.Base.secondaryText.onDarkSurface)
+                .accessibilityLabel(L10n.LiveActivity.Uploads.Stale.subtitle)
+                .accessibilityIdentifier("uploadsLiveActivityStatusCheck")
+        } else {
+            switch state.phase {
+            case .uploading, .uploadingWithFailures:
+                WireDriveUploadsProgressRing(progress: state.progress)
+                    .frame(width: Self.size, height: Self.size)
+            case .completed, .failed:
+                WireDriveUploadsStatusIcon(phase: state.phase, size: Self.size)
+            }
         }
     }
 }
@@ -187,9 +203,10 @@ struct WireDriveUploadsProgressRing: View {
 struct WireDriveUploadsIslandCompactText: View {
 
     let state: WireDriveUploadsActivityState
+    var isStale = false
 
     var body: some View {
-        Text(WireDriveUploadsActivityPresentation(state).compactText)
+        Text(WireDriveUploadsActivityPresentation(state, isStale: isStale).compactText)
             .font(.subheadline)
             .foregroundStyle(
                 ColorTheme.Backgrounds.onBackground.onDarkSurface

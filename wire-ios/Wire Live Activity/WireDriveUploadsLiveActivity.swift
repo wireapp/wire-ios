@@ -28,22 +28,27 @@ struct WireDriveUploadsLiveActivity: Widget {
 
     var body: some WidgetConfiguration {
         ActivityConfiguration(for: WireDriveUploadsActivityAttributes.self) { context in
-            WireDriveUploadsBannerView(state: context.state)
+            WireDriveUploadsBannerView(state: context.state, isStale: context.isStale)
                 .activityBackgroundTint(ColorTheme.Backgrounds.background.onDarkSurface)
                 .activitySystemActionForegroundColor(ColorTheme.Backgrounds.onBackground.onDarkSurface)
         } dynamicIsland: { context in
             DynamicIsland {
                 DynamicIslandExpandedRegion(.center) {
-                    WireDriveUploadsBannerView(state: context.state)
-                        .activityBackgroundTint(ColorTheme.Backgrounds.background.onDarkSurface)
-                        .activitySystemActionForegroundColor(ColorTheme.Backgrounds.onBackground.onDarkSurface)
+                    WireDriveUploadsBannerView(
+                        state: context.state,
+                        isStale: context.isStale,
+                        contentInsets: .init(top: 0, leading: 4, bottom: 14, trailing: 4)
+                    )
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
+                    .activityBackgroundTint(ColorTheme.Backgrounds.background.onDarkSurface)
+                    .activitySystemActionForegroundColor(ColorTheme.Backgrounds.onBackground.onDarkSurface)
                 }
             } compactLeading: {
-                WireDriveUploadsIslandIndicator(state: context.state)
+                WireDriveUploadsIslandIndicator(state: context.state, isStale: context.isStale)
             } compactTrailing: {
-                WireDriveUploadsIslandCompactText(state: context.state)
+                WireDriveUploadsIslandCompactText(state: context.state, isStale: context.isStale)
             } minimal: {
-                WireDriveUploadsIslandIndicator(state: context.state)
+                WireDriveUploadsIslandIndicator(state: context.state, isStale: context.isStale)
             }
             .keylineTint(ColorTheme.Base.primary(.blue).onDarkSurface)
         }

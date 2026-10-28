@@ -25,17 +25,26 @@ private typealias Strings = L10n.LiveActivity.Uploads
 struct WireDriveUploadsActivityPresentation {
 
     let state: WireDriveUploadsActivityState
+    let isStale: Bool
 
-    init(_ state: WireDriveUploadsActivityState) {
+    init(_ state: WireDriveUploadsActivityState, isStale: Bool = false) {
         self.state = state
+        self.isStale = isStale
     }
 
     var isFinished: Bool {
         state.phase == .completed || state.phase == .failed
     }
 
+    /// Missing updates do not confirm failure. Keep terminal results even if their content expires.
+    var needsStatusCheck: Bool {
+        isStale && !isFinished
+    }
+
     var title: String {
-        switch state.phase {
+        if needsStatusCheck { return Strings.Stale.title }
+
+        return switch state.phase {
         case .uploading, .uploadingWithFailures:
             Strings.Uploading.title
         case .completed:
@@ -58,11 +67,14 @@ struct WireDriveUploadsActivityPresentation {
     /// The part of the subtitle about the uploads that failed while others are still in progress, which is
     /// shown in red.
     var failureText: String? {
-        state.phase == .uploadingWithFailures ? Strings.Uploading.failed(state.failedCount) : nil
+        !needsStatusCheck && state.phase == .uploadingWithFailures
+            ? Strings.Uploading.failed(state.failedCount) : nil
     }
 
     var subtitle: String {
-        switch state.phase {
+        if needsStatusCheck { return Strings.Stale.subtitle }
+
+        return switch state.phase {
         case .uploading:
             progressSubtitle
         case .uploadingWithFailures:
@@ -80,7 +92,9 @@ struct WireDriveUploadsActivityPresentation {
 
     /// What the Dynamic Island shows next to its leading indicator when compact.
     var compactText: String {
-        switch state.phase {
+        if needsStatusCheck { return Strings.Stale.compactText }
+
+        return switch state.phase {
         case .uploading, .uploadingWithFailures: "\(state.uploadedCount)/\(state.totalCount)"
         case .completed: "\(state.uploadedCount)/\(state.totalCount)"
         case .failed: "\(state.failedCount)/\(state.totalCount)"
