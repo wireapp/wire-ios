@@ -54,9 +54,12 @@ PRD "Pending connection, pending invite, pending message":
 2. **Failures in the short message step after the upload:** a network drop, a cancelled background task, or the app killed in those few seconds. The image fails as today and can be retried. Rare.
 3. **Cosmetic:** `expiration timer fired for message … reaction { emoji: "" }` about 60 seconds after an asset is sent. The asset strategy never stops the shared timer, and `timerFired` ignores sent messages. Most likely on develop too.
 
-### Plan
-If gap 1 is confirmed, a small follow-up PR:
-- Include `ZMAssetClientMessage` in the dependency fallback fetch.
-- Optional, covers gap 2: use the text retry loop in `AssetClientMessageRequestStrategy`. About 30 lines if it calls the existing loop instead of refactoring it.
+### Ordering test result
+Gap 1 confirmed: offline, image, more than 3 minutes, then text → the text arrived first.
 
-No changes are needed to the upload strategy, the timer or the background session. If gap 1 doesn't show up, only document it.
+### Fix (branch `feat/offline-pending-assets-WPB-26307`)
+- The dependency fallback fetch in `ZMMessage+Dependency.swift` also covers the self user's assets that are uploading or uploaded but not yet sent (`version >= 3`, `transferState` uploading/uploaded, not delivered, not expired). It returns whichever pending message is newest.
+- Cancelled or failed uploads expire the message, so they can't block forever.
+- Test: `OTREntityTests_Dependency`, an uploading asset older than 3 minutes is returned as the dependency of a later text.
+- Gap 2 (retry in the short message step after upload) is skipped for now as optional.
+- Still to do: run the ordering test in the app again. The image should now arrive first.
