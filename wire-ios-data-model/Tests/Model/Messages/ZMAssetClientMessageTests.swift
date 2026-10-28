@@ -1682,3 +1682,71 @@ extension ZMAssetClientMessageTests {
         }
     }
 }
+
+// MARK: - Pending deletion
+
+final class ZMAssetClientMessageTests_PendingDeletion: BaseZMAssetClientMessageTests {
+
+    override func setUp() {
+        super.setUp()
+        DeveloperFlag.storage = .temporary()
+        DeveloperFlag.offlinePendingMessages.enable(true)
+    }
+
+    override func tearDown() {
+        DeveloperFlag.storage = .standard
+        super.tearDown()
+    }
+
+    private func makeUploadingAsset() -> ZMAssetClientMessage {
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
+        conversation.remoteIdentifier = UUID.create()
+        let message = appendFileMessage(to: conversation)!
+        XCTAssertEqual(message.transferState, .uploading)
+        return message
+    }
+
+    func testThatUploadingAssetCanBeDeleted() {
+        let message = makeUploadingAsset()
+        XCTAssertEqual(message.deliveryState, .pending)
+        XCTAssertTrue(message.isDeletableWhilePending)
+        XCTAssertTrue(message.canBeDeleted)
+    }
+
+    func testThatUploadingAssetCanNotBeDeleted_WhenFlagIsDisabled() {
+        DeveloperFlag.offlinePendingMessages.enable(false)
+        let message = makeUploadingAsset()
+        XCTAssertFalse(message.isDeletableWhilePending)
+        XCTAssertFalse(message.canBeDeleted)
+    }
+
+    func testThatUploadedAssetCanNotBeDeletedWithoutSendingADelete() {
+        // GIVEN
+        let message = makeUploadingAsset()
+        message.updateTransferState(.uploaded, synchronize: false)
+
+        // THEN
+        XCTAssertFalse(message.isDeletableWhilePending)
+        XCTAssertFalse(message.canBeDeleted)
+        XCTAssertFalse(message.deletePendingMessage())
+        XCTAssertFalse(message.isZombieObject)
+    }
+
+    func testThatItDeletesUploadingAssetWithoutSendingADelete() {
+        // GIVEN
+        let message = makeUploadingAsset()
+        let conversation = message.conversation!
+        uiMOC.saveOrRollback()
+        let messageCount = conversation.allMessages.count
+
+        // WHEN
+        let didDelete = message.deletePendingMessage()
+        uiMOC.saveOrRollback()
+
+        // THEN
+        XCTAssertTrue(didDelete)
+        XCTAssertTrue(message.isZombieObject)
+        XCTAssertEqual(conversation.allMessages.count, messageCount - 1)
+        XCTAssertEqual(conversation.hiddenMessages.count, 0)
+    }
+}

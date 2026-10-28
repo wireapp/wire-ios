@@ -63,9 +63,10 @@ Gap 1 confirmed: offline, image, more than 3 minutes, then text → the text arr
 - Test: `OTREntityTests_Dependency`, an uploading asset older than 3 minutes is returned as the dependency of a later text.
 - Gap 2 (retry in the short message step after upload) is skipped for now as optional.
 - Still to do: run the ordering test in the app again. The image should now arrive first.
-- Known limitation: a pending image can't be cancelled or deleted while it waits for the network. Images show no Cancel button, Delete is hidden for pending messages, and delete-while-pending covers text only.
+- Delete while uploading: with the flag on, an image or file that is still uploading can be deleted ("Delete for Me"). It's removed locally, since the asset message is only sent after the upload. The delete runs on the sync context, cancels the upload first, and shows "Message Is Being Sent" if the upload has finished in the meantime.
 
 ### Manual tests for the asset PR
 1. Offline: send an image, wait more than 3 minutes, send a text. Reconnect. The receiver gets the image first, then the text.
 2. Offline: send an image, kill and relaunch the app offline, reconnect. The image is sent automatically.
-3. Offline: send a file (not an image), cancel its upload, then send a text. Reconnect. The text is sent. Skip this if files can't be cancelled either.
+3. Offline: send an image, delete it ("Delete for Me"), then send a text. Reconnect. The receiver gets only the text.
+4. Online with a large file (Network Link Conditioner, slow): delete it while uploading. The upload stops and the receiver gets nothing.

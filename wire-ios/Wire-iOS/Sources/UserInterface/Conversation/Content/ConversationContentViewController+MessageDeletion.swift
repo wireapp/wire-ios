@@ -37,7 +37,7 @@ private extension ZMConversationMessage {
         }
 
         // A pending message that hasn't been sent yet is only deleted locally, since nobody else has it.
-        if (self as? ZMClientMessage)?.isDeletableWhilePending == true {
+        if (self as? any PendingMessageDeletable)?.isDeletableWhilePending == true {
             return .hide
         }
 
@@ -72,9 +72,9 @@ final class DeletionDialogPresenter: NSObject {
     ) -> UIAlertController {
         let alert = UIAlertController.forMessageDeletion(with: message.deletionConfiguration) { action, _ in
 
-            if case .delete = action, let clientMessage = message as? ZMClientMessage,
-               clientMessage.isDeletableWhilePending {
-                self.deletePendingMessage(clientMessage, userSession: userSession, completion: completion)
+            if case .delete = action, let pendingMessage = message as? any PendingMessageDeletable,
+               pendingMessage.isDeletableWhilePending {
+                self.deletePendingMessage(pendingMessage, userSession: userSession, completion: completion)
                 return
             }
 
@@ -113,7 +113,7 @@ final class DeletionDialogPresenter: NSObject {
     /// Deletes a message that hasn't been sent yet. This happens on the sync context, which also marks the
     /// message before sending it, so it can't race with a send.
     private func deletePendingMessage(
-        _ message: ZMClientMessage,
+        _ message: any PendingMessageDeletable,
         userSession: UserSession,
         completion: @escaping (_ succeeded: Bool, DeletionType?) -> Void
     ) {
@@ -121,7 +121,7 @@ final class DeletionDialogPresenter: NSObject {
         let syncContext = userSession.contextProvider.syncContext
 
         syncContext.perform {
-            let syncMessage = try? syncContext.existingObject(with: objectID) as? ZMClientMessage
+            let syncMessage = try? syncContext.existingObject(with: objectID) as? any PendingMessageDeletable
             let didDelete = syncMessage?.deletePendingMessage() == true
             if didDelete {
                 syncContext.saveOrRollback()
