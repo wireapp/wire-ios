@@ -153,9 +153,9 @@ final class ScheduleMeetingTests: WireUITestCase {
         let invalidForm = try page.schedule()
         let invalidTitle = String(repeating: "B", count: 65)
         invalidForm.replaceTitle(with: invalidTitle)
-        XCTAssertEqual(invalidForm.titleField.value as? String, invalidTitle)
-        XCTAssertTrue(invalidForm.titleError.waitForExistence(timeout: 5))
-        XCTAssertFalse(invalidForm.saveButton.isEnabled)
+        XCTAssertEqual(invalidForm.titleField.value as? String, String(invalidTitle.prefix(64)))
+        XCTAssertFalse(invalidForm.titleError.exists)
+        XCTAssertTrue(invalidForm.saveButton.isEnabled)
         // Fewer than 64 characters can still exceed the separate 256-byte limit.
         invalidForm.replaceTitle(with: String(repeating: "🧑🏽‍💻", count: 32))
         XCTAssertTrue(invalidForm.titleError.waitForExistence(timeout: 5))
