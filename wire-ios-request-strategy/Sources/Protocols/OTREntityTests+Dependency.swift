@@ -171,6 +171,34 @@ class OTREntityTests_Dependency: MessagingTestBase {
         }
     }
 
+    func testThatItReturnsAPreviousPendingMessageBeyondTheLastMessagesAsDependency_OfflinePendingMessages() {
+        DeveloperFlag.storage = .temporary()
+        DeveloperFlag.offlinePendingMessages.enable(true)
+        defer { DeveloperFlag.storage = .standard }
+
+        syncMOC.performGroupedAndWait {
+
+            // GIVEN
+            let timeZero = Date(timeIntervalSince1970: 10_000)
+            let pendingMessage = try! self.groupConversation.appendText(content: "foo") as! ZMClientMessage
+            pendingMessage.serverTimestamp = timeZero
+
+            for index in 1 ... 300 {
+                let message = try! self.groupConversation.appendText(content: "\(index)") as! ZMClientMessage
+                message.serverTimestamp = timeZero.addingTimeInterval(TimeInterval(index))
+                message.markAsSent()
+            }
+
+            // WHEN
+            let lastMessage = try! self.groupConversation.appendText(content: "zoo") as! ZMClientMessage
+            lastMessage.serverTimestamp = timeZero.addingTimeInterval(301)
+
+            // THEN
+            let dependency = lastMessage.dependentObjectNeedingUpdateBeforeProcessing
+            XCTAssertEqual(dependency as? ZMClientMessage, pendingMessage)
+        }
+    }
+
     func testThatItDoesNotReturnAPreviousSentMessageAsDependency() {
         syncMOC.performGroupedAndWait {
 

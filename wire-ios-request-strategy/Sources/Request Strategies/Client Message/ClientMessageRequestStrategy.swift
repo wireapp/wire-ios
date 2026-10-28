@@ -126,7 +126,7 @@ extension ClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
             return
         }
 
-        let staysPendingWhileOffline = staysPendingWhileOffline(object)
+        let staysPendingWhileOffline = object.staysPendingWhileOffline
         if !isFresh, !staysPendingWhileOffline {
             // This message was not added in this runtime. Rather than send it
             // which may no longer make sense after such as delay, we will
@@ -148,11 +148,12 @@ extension ClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
         // Enter groups to enable waiting for message sending to complete in tests
         let groups = context.enterAllGroupsExceptSecondary()
         Task {
+            var heldGroups = groups
             defer {
-                context.leaveAllGroups(groups)
+                context.leaveAllGroups(heldGroups)
             }
             do {
-                try await send(object, staysPendingWhileOffline: staysPendingWhileOffline)
+                try await send(object, staysPendingWhileOffline: staysPendingWhileOffline, groups: &heldGroups)
 
                 let logAttributes = await logAttributesBuilder.logAttributes(object)
                 WireLogger.messaging.debug("successfully sent message", attributes: logAttributes)
@@ -199,14 +200,15 @@ extension ClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
         case noLongerNeeded
     }
 
-    /// Whether the message waits for the network instead of failing when the device is offline.
-    private func staysPendingWhileOffline(_ message: ZMClientMessage) -> Bool {
-        DeveloperFlag.offlinePendingMessages.isOn && !message.isEphemeral
-    }
-
     /// Sends the message. If it stays pending while offline, transient network failures don't fail it:
     /// it waits until the network may be reachable again and is resent with the same nonce and content.
-    private func send(_ message: ZMClientMessage, staysPendingWhileOffline: Bool) async throws {
+    ///
+    /// - Parameter groups: The context's groups held for this send. They're released while waiting.
+    private func send(
+        _ message: ZMClientMessage,
+        staysPendingWhileOffline: Bool,
+        groups: inout [ZMSDispatchGroup]
+    ) async throws {
         guard staysPendingWhileOffline else {
             try await messageSender.sendMessage(message: message)
             return
@@ -214,7 +216,11 @@ extension ClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
 
         var onlineRetries = 0
         while true {
-            await reachability.waitUntilMayBeReachable()
+            if !reachability.mayBeReachable {
+                await waitWithoutHoldingGroups(&groups) {
+                    await self.reachability.waitUntilMayBeReachable()
+                }
+            }
 
             let shouldStillBeSent = await context.perform {
                 guard
@@ -261,13 +267,29 @@ extension ClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
                 }
 
                 if isCancelled {
-                    try? await Task.sleep(for: .seconds(cancelledRetryDelay))
+                    await waitWithoutHoldingGroups(&groups) {
+                        try? await Task.sleep(for: .seconds(self.cancelledRetryDelay))
+                    }
                 } else if !isOffline {
                     onlineRetries += 1
-                    try? await Task.sleep(for: .seconds(1 << onlineRetries))
+                    let delay = 1 << onlineRetries
+                    await waitWithoutHoldingGroups(&groups) {
+                        try? await Task.sleep(for: .seconds(delay))
+                    }
                 }
             }
         }
+    }
+
+    /// Runs `wait` without holding the context's groups, since tearing down the session waits until they're
+    /// empty and a pending message can wait for a long time.
+    private func waitWithoutHoldingGroups(
+        _ groups: inout [ZMSDispatchGroup],
+        _ wait: () async -> Void
+    ) async {
+        context.leaveAllGroups(groups)
+        await wait()
+        groups = context.enterAllGroupsExceptSecondary()
     }
 
     private static func isTransientFailure(_ error: any Error) -> Bool {
