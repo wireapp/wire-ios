@@ -209,6 +209,10 @@ struct MeetingRepositoryTests {
 
         #expect(localStore.replaceAllMeetingsWithMeetingsMeetingVoidReceivedInvocations.count == 1)
         #expect(
+            localStore.replaceAllMeetingsWithMeetingsMeetingVoidReceivedInvocations.first?.first?.invitedEmails
+                == Scaffolding.meetingResponse.invitedEmails
+        )
+        #expect(
             localStore.replaceAllMeetingsWithMeetingsMeetingVoidReceivedInvocations.first?.map(\.id)
                 == [Scaffolding.meetingID]
         )
@@ -605,6 +609,10 @@ struct MeetingRepositoryTests {
         )
 
         #expect(meetingsAPI.getMeetingId_Invocations == [Scaffolding.meetingID, Scaffolding.meetingID])
+        #expect(
+            localStore.storeMeetingMeetingMeetingVoidReceivedInvocations.map(\.invitedEmails)
+                == [current, current + ["New@example.com"]]
+        )
         let additions = meetingsAPI.addMeetingInvitationsIdEmails_Invocations
         #expect(additions.map(\.id) == [Scaffolding.meetingID])
         #expect(additions.map(\.emails) == [["New@example.com"]])
@@ -903,7 +911,7 @@ struct MeetingRepositoryTests {
             startTime: Date(timeIntervalSince1970: 1_000_000),
             endTime: Date(timeIntervalSince1970: 1_003_600),
             conversationID: WireNetwork.QualifiedID(id: UUID(), domain: "example.com"),
-            invitedEmails: [],
+            invitedEmails: ["guest@example.com", "member@wire.com"],
             isTrial: false,
             createdAt: Date(timeIntervalSince1970: 900_000),
             updatedAt: Date(timeIntervalSince1970: 900_000),
@@ -945,6 +953,7 @@ struct MeetingRepositoryTests {
             end: meetingResponse.endTime,
             recurrence: nil,
             timeZoneIdentifier: meetingResponse.timeZoneIdentifier,
+            invitedEmails: meetingResponse.invitedEmails,
             conversation: MeetingConversation(participants: [member]),
             conversationID: meetingResponse.conversationID,
             creatorID: meetingResponse.creatorID

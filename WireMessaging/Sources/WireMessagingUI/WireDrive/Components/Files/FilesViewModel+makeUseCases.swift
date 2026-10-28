@@ -45,6 +45,11 @@ extension FilesViewModel {
                 fileCache: dependencies.fileCache,
                 localAssetStore: dependencies.localAssetStore
             ),
+            emptyRecycleBin: WireDriveEmptyRecycleBinUseCase(
+                repository: dependencies.nodesRepository,
+                fileCache: dependencies.fileCache,
+                localAssetStore: dependencies.localAssetStore
+            ),
             restoreNodes: WireDriveRestoreNodesUseCase(
                 repository: dependencies.nodesRepository,
                 fileCache: dependencies.fileCache,

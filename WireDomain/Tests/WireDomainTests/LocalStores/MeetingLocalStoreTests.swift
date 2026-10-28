@@ -110,6 +110,7 @@ final class MeetingLocalStoreTests: XCTestCase {
         XCTAssertEqual(meeting.conversationID, Scaffolding.conversationID)
         XCTAssertEqual(meeting.creatorID, Scaffolding.creatorID)
         XCTAssertEqual(meeting.title, Scaffolding.meeting.title)
+        XCTAssertEqual(meeting.invitedEmails, Scaffolding.meeting.invitedEmails)
         XCTAssertNil(meeting.conversation)
 
         try await context.perform { [context] in
@@ -175,6 +176,7 @@ final class MeetingLocalStoreTests: XCTestCase {
 
             let storedMeeting = try XCTUnwrap(storedMeetings.first)
             XCTAssertEqual(storedMeeting.title, "Renamed Meeting")
+            XCTAssertEqual(storedMeeting.invitedEmails, [])
             XCTAssertEqual(storedMeeting.timeZoneIdentifier, "Europe/Berlin")
             XCTAssertNil(storedMeeting.recurrenceFrequency)
         }
@@ -366,6 +368,7 @@ final class MeetingLocalStoreTests: XCTestCase {
                 until: recurrenceUntil
             ),
             timeZoneIdentifier: "America/New_York",
+            invitedEmails: ["guest@example.com", "member@wire.com"],
             conversationID: conversationID,
             creatorID: creatorID
         )
