@@ -18,6 +18,8 @@
 
 import Foundation
 import WireDataModel
+import WireSystem
+import WireUtilities
 import XCTest
 
 // Tests that an OTREntity returns the correct objects as dependencies
@@ -127,6 +129,45 @@ class OTREntityTests_Dependency: MessagingTestBase {
             // THEN
             let dependency = lastMessage.dependentObjectNeedingUpdateBeforeProcessing
             XCTAssertEqual(dependency as? ZMClientMessage, nextMessage)
+        }
+    }
+
+    func testThatItDoesNotReturnAPreviousPendingMessageOlderThanThreeMinutesAsDependency() {
+        syncMOC.performGroupedAndWait {
+
+            // GIVEN
+            let timeZero = Date(timeIntervalSince1970: 10_000)
+            let pendingMessage = try! self.groupConversation.appendText(content: "foo") as! ZMClientMessage
+            pendingMessage.serverTimestamp = timeZero
+
+            // WHEN
+            let lastMessage = try! self.groupConversation.appendText(content: "zoo") as! ZMClientMessage
+            lastMessage.serverTimestamp = timeZero.addingTimeInterval(4 * 60)
+
+            // THEN
+            XCTAssertNil(lastMessage.dependentObjectNeedingUpdateBeforeProcessing)
+        }
+    }
+
+    func testThatItReturnsAPreviousPendingMessageOlderThanThreeMinutesAsDependency_OfflinePendingMessages() {
+        DeveloperFlag.storage = .temporary()
+        DeveloperFlag.offlinePendingMessages.enable(true)
+        defer { DeveloperFlag.storage = .standard }
+
+        syncMOC.performGroupedAndWait {
+
+            // GIVEN
+            let timeZero = Date(timeIntervalSince1970: 10_000)
+            let pendingMessage = try! self.groupConversation.appendText(content: "foo") as! ZMClientMessage
+            pendingMessage.serverTimestamp = timeZero
+
+            // WHEN
+            let lastMessage = try! self.groupConversation.appendText(content: "zoo") as! ZMClientMessage
+            lastMessage.serverTimestamp = timeZero.addingTimeInterval(4 * 60)
+
+            // THEN
+            let dependency = lastMessage.dependentObjectNeedingUpdateBeforeProcessing
+            XCTAssertEqual(dependency as? ZMClientMessage, pendingMessage)
         }
     }
 

@@ -18,6 +18,7 @@
 
 import Foundation
 import WireDataModel
+import WireUtilities
 
 private let zmLog = ZMSLog(tag: "Dependencies")
 
@@ -107,7 +108,12 @@ public extension ZMMessage {
                 // to old?
                 let tooOld = currentTimestamp.timeIntervalSince(previousTimestamp) > MaxDelayToConsiderForBlockingObject
                 if tooOld {
-                    break
+                    // Pending messages can wait for the network far longer than the cap above, so keep
+                    // the self user's queued text messages in order. Other old messages still don't block.
+                    guard DeveloperFlag.offlinePendingMessages.isOn else { break }
+                    guard previousMessage is ZMClientMessage, previousMessage.sender?.isSelfUser == true else {
+                        continue
+                    }
                 }
             }
 
