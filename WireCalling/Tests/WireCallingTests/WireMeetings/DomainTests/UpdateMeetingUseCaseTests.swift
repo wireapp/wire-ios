@@ -100,6 +100,11 @@ struct UpdateMeetingUseCaseTests {
             .updateMeetingIdQualifiedIDTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceMeetingReturnValue =
             meeting
         let recurrence = MeetingRecurrence(frequency: .weekly, interval: 1)
+        let emails = ["new@example.com", "other-device@example.com"]
+        meetingRepository.fetchInvitedEmailsIdQualifiedIDStringClosure = { _ in
+            #expect(meetingRepository.updateInvitedEmailsIdQualifiedIDAddingStringRemovingStringVoidCallsCount == 1)
+            return emails
+        }
 
         // When
         let result = try await useCase.invoke(
@@ -126,7 +131,10 @@ struct UpdateMeetingUseCaseTests {
         #expect(emailArguments?.id == meeting.id)
         #expect(emailArguments?.adding == ["new@example.com"])
         #expect(emailArguments?.removing == ["removed@example.com"])
-        #expect(result == meeting)
+        var expectedMeeting = meeting
+        expectedMeeting.invitedEmails = emails
+        #expect(result == expectedMeeting)
+        #expect(meetingRepository.storeMeetingMeetingMeetingVoidReceivedInvocations == [expectedMeeting])
     }
 
     @Test("invoke renames the underlying conversation when the title changed")
