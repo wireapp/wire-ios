@@ -29,9 +29,19 @@ struct DeveloperFlagsView: View {
     // MARK: - Views
 
     var body: some View {
-        List(viewModel.flags, id: \.self) { flag in
-            cell(for: flag)
-                .padding([.top, .bottom])
+        List {
+            ForEach(FlagSection.allCases, id: \.self) { section in
+                Section {
+                    ForEach(viewModel.flags.filter { FlagSection(flag: $0) == section }, id: \.self) { flag in
+                        cell(for: flag)
+                            .padding([.top, .bottom])
+                    }
+                } header: {
+                    Text(section.rawValue)
+                        .accessibilityLabel(section.rawValue)
+                        .accessibilityIdentifier("developerFlags.section.\(section.rawValue)")
+                }
+            }
         }
         .alert("Restart required", isPresented: $showRestartAlert) {
             Button("Restart now", role: .destructive) { exit(0) }
@@ -60,6 +70,39 @@ struct DeveloperFlagsView: View {
                 }
             }
         )
+    }
+}
+
+private enum FlagSection: String, CaseIterable {
+    case authentication = "Authentication"
+    case conversations = "Conversations"
+    case diagnostics = "Diagnostics"
+    case drive = "Drive"
+    case encryption = "Encryption"
+    case notifications = "Notifications & extensions"
+    case storage = "Storage & backups"
+    case synchronization = "Synchronization & background activity"
+
+    init(flag: DeveloperFlag) {
+        switch flag {
+        case .newRegistration, .useWireAuthentication:
+            self = .authentication
+        case .channelsHistory, .chatBubbles, .showUnreadConversationsFilter:
+            self = .conversations
+        case .shakeToReport, .unSafeLogsForPublic:
+            self = .diagnostics
+        case .enableDriveBulkActions, .simulateDriveOffline, .simulateAppTerminationInBackground:
+            self = .drive
+        case .enabledCCDebugLogs, .forceCRLExpiryAfterOneMinute, .lowKeyPackageCount,
+             .showCreateMLSGroupToggle, .simulateUnestablishedMLSGroup, .skipMLSMessagesDecryption:
+            self = .encryption
+        case .consumableNotifications, .noAPNSTokenCache, .showNSEErrors, .simulateMainAppRequiredError:
+            self = .notifications
+        case .createLegacyBackups, .debugDuplicateObjects, .forceDatabaseLoadingFailure:
+            self = .storage
+        case .decryptAndStoreEventsSleep, .disablePushChannelBatching, .ignoreIncomingEvents, .useBackgroundActivityFactoryInAppBackgroundTaskExecuter:
+            self = .synchronization
+        }
     }
 }
 
