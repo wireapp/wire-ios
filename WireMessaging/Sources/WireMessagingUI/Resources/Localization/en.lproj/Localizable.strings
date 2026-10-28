@@ -194,6 +194,12 @@
 "conversation.wireCells.files.downloadingFile" = "Downloading file...";
 "conversation.wireCells.files.offlineModeHint" = "You can still access your offline files.";
 "conversation.wireCells.files.time.just_now" = "Just now";
+"conversation.wireCells.files.deletePermanently.title" = "This will permanently delete %@ items for all participants. Everyone will lose access and there is no way to recover these items.";
+"conversation.wireCells.files.deletePermanently.confirmation" = "Delete Permanently";
+"conversation.wireCells.files.deleteToRecycleBin.title" = "%@ items will move to this conversation's recycle bin.";
+"conversation.wireCells.files.deleteToRecycleBin.confirmation" = "Delete";
+"conversation.wireCells.files.restore.title" = "%@ items will be restored and available again to everyone in this conversation.";
+"conversation.wireCells.files.restore.confirmation" = "Restore";
 
 
 // MARK: - Shared Drive uploads
@@ -386,3 +392,6 @@
 "conversation.details.sharedDriveAccessSection.you" = "You";
 "conversation.details.sharedDriveAccessSection.editor" = "Editor";
 "conversation.details.sharedDriveAccessSection.viewer" = "Viewer";
+
+"conversation.wireCells.recycleBin.emptyConfirmation.title" = "This will permanently delete all items in this conversation’s recycle bin, including all files and subfolders. Everyone will lose access and there is no way to recover these items.";
+"conversation.wireCells.recycleBin.emptyConfirmation.button" = "Empty Recycle Bin";
