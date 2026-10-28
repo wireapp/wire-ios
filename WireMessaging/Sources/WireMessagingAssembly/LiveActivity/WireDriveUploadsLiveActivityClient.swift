@@ -38,11 +38,14 @@ protocol WireDriveUploadsActivityClient: AnyObject {
     var hasActivity: Bool { get }
 
     /// Starts the activity. ActivityKit only allows this while the app is in the foreground.
-    func start(with state: WireDriveUploadsActivityState) throws
+    func start(with state: WireDriveUploadsActivityState) async throws
 
     func update(with state: WireDriveUploadsActivityState) async
 
     func end(with state: WireDriveUploadsActivityState?, dismissal: WireDriveUploadsActivityDismissal) async
+
+    /// Immediately removes every uploads activity, including finished results still on the lock screen.
+    func endAll() async
 }
 
 @MainActor
@@ -51,9 +54,14 @@ final class ActivityKitUploadsActivityClient: WireDriveUploadsActivityClient {
     typealias Attributes = WireDriveUploadsActivityAttributes
 
     private let staleInterval: TimeInterval
-    private var activity: Activity<Attributes>? = Activity<Attributes>.activities.first
 
-    init(staleInterval: TimeInterval = 5 * 60) {
+    private var activity: Activity<Attributes>? = Activity<Attributes>.activities.first {
+        $0.activityState == .active || $0.activityState == .stale
+    }
+
+    private var endedActivities: [Activity<Attributes>] = []
+
+    init(staleInterval: TimeInterval = .thirtySeconds) {
         self.staleInterval = staleInterval
     }
 
@@ -65,7 +73,9 @@ final class ActivityKitUploadsActivityClient: WireDriveUploadsActivityClient {
         activity != nil
     }
 
-    func start(with state: WireDriveUploadsActivityState) throws {
+    func start(with state: WireDriveUploadsActivityState) async throws {
+        // A retry or a new batch replaces the previous lock-screen result.
+        await endAll()
         activity = try Activity.request(
             attributes: Attributes(),
             content: content(for: state),
@@ -74,7 +84,9 @@ final class ActivityKitUploadsActivityClient: WireDriveUploadsActivityClient {
     }
 
     func update(with state: WireDriveUploadsActivityState) async {
-        await activity?.update(content(for: state))
+        guard let activity else { return }
+        await dismissActivities(except: activity.id)
+        await activity.update(content(for: state))
     }
 
     func end(with state: WireDriveUploadsActivityState?, dismissal: WireDriveUploadsActivityDismissal) async {
@@ -84,8 +96,39 @@ final class ActivityKitUploadsActivityClient: WireDriveUploadsActivityClient {
         case .systemDefault: .default
         }
 
-        await activity?.end(state.map { ActivityContent(state: $0, staleDate: nil) }, dismissalPolicy: policy)
-        activity = nil
+        guard let activity else { return }
+        await activity.end(state.map { ActivityContent(state: $0, staleDate: nil) }, dismissalPolicy: policy)
+        if dismissal != .immediately {
+            endedActivities.append(activity)
+        }
+        self.activity = nil
+    }
+
+    func endAll() async {
+        await dismissActivities()
+    }
+
+    private func dismissActivities(except activityID: String? = nil) async {
+        // Discover activities from previous launches too, and retain ended ones so their lock-screen
+        // cards can be dismissed even after they are no longer returned by ActivityKit.
+        var activities = Dictionary(
+            Activity<Attributes>.activities.map { ($0.id, $0) },
+            uniquingKeysWith: { first, _ in first }
+        )
+        for activity in endedActivities {
+            activities[activity.id] = activity
+        }
+        if let activity {
+            activities[activity.id] = activity
+        }
+        if activity?.id != activityID {
+            activity = nil
+        }
+        endedActivities = []
+
+        for activity in activities.values where activity.id != activityID {
+            await activity.end(nil, dismissalPolicy: .immediate)
+        }
     }
 
     private func content(for state: WireDriveUploadsActivityState) -> ActivityContent<WireDriveUploadsActivityState> {

@@ -173,8 +173,13 @@ final class WireDriveUploadsLiveActivityControllerTests {
         await delayGate.open()
         await settle()
 
-        let ends = client.calls.filter { if case .end = $0 { true } else { false } }
-        #expect(ends == [.end(nil, .immediately)])
+        let ends = client.calls.filter {
+            switch $0 {
+            case .end, .endAll: true
+            default: false
+            }
+        }
+        #expect(ends == [.endAll])
     }
 
     @Test
@@ -212,6 +217,27 @@ final class WireDriveUploadsLiveActivityControllerTests {
     }
 
     @Test
+    func startsAReplacementWhenAFailedUploadIsRetriedAfterTheActivityEnded() async {
+        client.hasActivity = true
+        sut.start()
+        publish([.failed(error: .unauthorized)])
+        await settle()
+        await delayGate.open()
+        await settle()
+
+        #expect(!client.hasActivity)
+
+        publish([.uploading(progress: 0.5)])
+        await settle()
+
+        #expect(client.calls == [
+            .update(makeState(.failed, total: 1, failed: 1)),
+            .end(makeState(.failed, total: 1, failed: 1), .systemDefault),
+            .start(makeState(total: 1, progress: 0.5))
+        ])
+    }
+
+    @Test
     func endsAtOnceWhenThereIsNothingLeftToShow() async {
         sut.start()
         publish([.queued])
@@ -220,7 +246,64 @@ final class WireDriveUploadsLiveActivityControllerTests {
         publishItems([])
         await settle()
 
-        #expect(client.calls.last == .end(nil, .immediately))
+        #expect(client.calls.last == .endAll)
+    }
+
+    @Test
+    func dismissesTheRetainedFailureWhenUploadsAreClearedAfterTheActivityEnded() async {
+        client.hasActivity = true
+        sut.start()
+        publish([.failed(error: .unauthorized), .failed(error: .unauthorized)])
+        await settle()
+        await delayGate.open()
+        await settle()
+
+        #expect(!client.hasActivity)
+        let final = makeState(.failed, total: 2, failed: 2)
+        #expect(client.calls.last == .end(final, .systemDefault))
+
+        publishItems([])
+        await settle()
+
+        #expect(client.calls.last == .endAll)
+    }
+
+    @Test
+    func dismissesRetainedActivitiesOnceLoadingFindsNoUploadsWithoutACurrentActivity() async {
+        sut.start()
+        await settle()
+
+        await sut.endActivityIfNoUploads()
+
+        #expect(client.calls == [.endAll])
+    }
+
+    @Test
+    func cancelsThePendingFailureEndWhenUploadsAreCleared() async {
+        client.hasActivity = true
+        sut.start()
+        publish([.failed(error: .unauthorized)])
+        await settle()
+
+        publishItems([])
+        await settle()
+        await delayGate.open()
+        await settle()
+
+        #expect(client.calls == [.update(makeState(.failed, total: 1, failed: 1)), .endAll])
+    }
+
+    @Test
+    func stillCleansUpEmptyUploadsWhenLiveActivitiesHaveBeenDisabled() async {
+        sut.start()
+        publish([.queued])
+        await settle()
+        client.areActivitiesEnabled = false
+
+        publishItems([])
+        await settle()
+
+        #expect(client.calls.last == .endAll)
     }
 
     /// The tracker is empty until the manager has loaded the persisted uploads, and an activity left from
@@ -242,7 +325,7 @@ final class WireDriveUploadsLiveActivityControllerTests {
 
         await sut.endActivityIfNoUploads()
 
-        #expect(client.calls == [.end(nil, .immediately)])
+        #expect(client.calls == [.endAll])
     }
 
     @Test
@@ -275,7 +358,7 @@ final class WireDriveUploadsLiveActivityControllerTests {
         publish([.queued])
         await settle()
 
-        #expect(client.calls == [.end(nil, .immediately)])
+        #expect(client.calls == [.endAll])
     }
 
     // MARK: - Helpers

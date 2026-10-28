@@ -74,7 +74,7 @@ final class WireDriveUploadsLiveActivityController {
         await previous?.value
 
         guard latestSummary?.trackedCount ?? 0 == 0 else { return }
-        await endActivity(with: nil, dismissal: .immediately)
+        await endAllActivities()
     }
 
     func stop() async {
@@ -87,8 +87,7 @@ final class WireDriveUploadsLiveActivityController {
         let previous = pendingWork
         await previous?.value
 
-        guard client.hasActivity else { return }
-        await client.end(with: nil, dismissal: .immediately)
+        await endAllActivities()
     }
 
     // MARK: - Handling summaries
@@ -106,18 +105,17 @@ final class WireDriveUploadsLiveActivityController {
     }
 
     private func apply(_ summary: WireDriveDirectUploadsSummary, at date: Date) async {
-        guard client.areActivitiesEnabled else {
-            WireLogger.wireDrive.info("uploads live activity: skipped, live activities are disabled for the app")
-            return
-        }
-
         guard summary.trackedCount > 0 else {
             // Everything was cleared or cancelled, so there is nothing left to describe. Before any
             // uploads were seen it only means that they have not been loaded yet.
             if hasSeenUploads {
-                cancelPendingEnd()
-                await endActivity(with: nil, dismissal: .immediately)
+                await endAllActivities()
             }
+            return
+        }
+
+        guard client.areActivitiesEnabled else {
+            WireLogger.wireDrive.info("uploads live activity: skipped, live activities are disabled for the app")
             return
         }
 
@@ -143,16 +141,16 @@ final class WireDriveUploadsLiveActivityController {
             guard throttle.shouldSend(state, at: date) else { return }
             await client.update(with: state)
         } else {
-            startActivity(with: state, at: date)
+            await startActivity(with: state, at: date)
         }
     }
 
-    private func startActivity(with state: WireDriveUploadsActivityState, at date: Date) {
+    private func startActivity(with state: WireDriveUploadsActivityState, at date: Date) async {
         throttle.reset()
         _ = throttle.shouldSend(state, at: date)
 
         do {
-            try client.start(with: state)
+            try await client.start(with: state)
             WireLogger.wireDrive.info("uploads live activity: started")
         } catch {
             WireLogger.wireDrive.error("could not start the uploads live activity: \(error)")
@@ -176,6 +174,12 @@ final class WireDriveUploadsLiveActivityController {
     private func cancelPendingEnd() {
         pendingEnd?.cancel()
         pendingEnd = nil
+    }
+
+    private func endAllActivities() async {
+        cancelPendingEnd()
+        throttle.reset()
+        await client.endAll()
     }
 
     private func endActivity(

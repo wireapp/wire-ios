@@ -81,6 +81,7 @@ final class FakeUploadsActivityClient: WireDriveUploadsActivityClient {
         case start(WireDriveUploadsActivityState)
         case update(WireDriveUploadsActivityState)
         case end(WireDriveUploadsActivityState?, WireDriveUploadsActivityDismissal)
+        case endAll
     }
 
     var areActivitiesEnabled = true
@@ -88,7 +89,7 @@ final class FakeUploadsActivityClient: WireDriveUploadsActivityClient {
     var startError: (any Error)?
     private(set) var calls: [Call] = []
 
-    func start(with state: WireDriveUploadsActivityState) throws {
+    func start(with state: WireDriveUploadsActivityState) async throws {
         if let startError { throw startError }
         calls.append(.start(state))
         hasActivity = true
@@ -100,6 +101,11 @@ final class FakeUploadsActivityClient: WireDriveUploadsActivityClient {
 
     func end(with state: WireDriveUploadsActivityState?, dismissal: WireDriveUploadsActivityDismissal) async {
         calls.append(.end(state, dismissal))
+        hasActivity = false
+    }
+
+    func endAll() async {
+        calls.append(.endAll)
         hasActivity = false
     }
 }
