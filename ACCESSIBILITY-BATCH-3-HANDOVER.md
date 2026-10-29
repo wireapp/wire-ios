@@ -125,6 +125,31 @@ uses `fix: improve composer accessibility focus - WPB-14710, WPB-14712`.
   acceptance scenarios below remain pending; static-check success is not evidence
   that VoiceOver runtime behavior has passed.
 
+## Follow-up — October 29, 2026
+
+Christoph reported during manual VoiceOver checks that messages covered by the
+mention suggestions overlay were still read. The overlay previously changed only
+visual visibility, leaving the underlying accessibility hierarchy exposed.
+
+- Added a visibility callback from the results controller to its conversation
+  content owner. While the list is visible, the covered message table, bottom
+  reply-preview container and scroll-to-bottom button have
+  `accessibilityElementsHidden` enabled. Closing the list or filtering to no
+  results restores them. The composer remains accessible as a separate view.
+- Routed result reload, show and dismissal through the same visibility update.
+  The callback runs only when visibility changes, with a weak owner capture and
+  no additional focus notification while typing.
+- Pending manual validation: while suggestions are visible, explore by swiping
+  and touch; covered messages/quotes/scroll control should not be read, but the
+  editor and candidates should remain reachable. After selection, dismissal and
+  empty results, verify conversation content becomes reachable again. Repeat
+  empty/nonempty filtering and opening/closing with VoiceOver initially off.
+- Scoped SwiftFormat lint (0/2 files require formatting), strict SwiftLint,
+  Swift frontend syntax parsing on the two changed source files, and
+  `git diff --check` passed. The `xcrun` lookup emitted developer-tool filesystem
+  event/cache warnings; no Swift parsing errors were reported.
+- No tests, builds or interactive simulator checks were run for this follow-up.
+
 ## Why two tickets
 
 Both concern intentional handoff to the composer and VoiceOver feedback. They

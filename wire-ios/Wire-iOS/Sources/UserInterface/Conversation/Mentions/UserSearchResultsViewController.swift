@@ -84,6 +84,8 @@ final class UserSearchResultsViewController: UIViewController, KeyboardCollapseO
         }
     }
 
+    var onVisibilityChanged: ((Bool) -> Void)?
+
     weak var delegate: UserSearchResultsViewControllerDelegate?
 
     private var keyboardObserver: KeyboardBlockObserver?
@@ -164,7 +166,7 @@ final class UserSearchResultsViewController: UIViewController, KeyboardCollapseO
 
         scrollToLastItem()
 
-        view.isHidden = results.isEmpty
+        setSuggestionsVisible(!results.isEmpty)
         announceResultsAvailability()
     }
 
@@ -216,7 +218,13 @@ final class UserSearchResultsViewController: UIViewController, KeyboardCollapseO
     }
 
     func show() {
-        view.isHidden = false
+        setSuggestionsVisible(true)
+    }
+
+    private func setSuggestionsVisible(_ isVisible: Bool) {
+        guard view.isHidden == isVisible else { return }
+        view.isHidden = !isVisible
+        onVisibilityChanged?(isVisible)
     }
 
     @objc
@@ -243,7 +251,7 @@ extension UserSearchResultsViewController: Dismissable {
     func dismiss() {
         accessibilityUpdateID += 1
         announcedResultsAvailable = nil
-        view.isHidden = true
+        setSuggestionsVisible(false)
         collectionViewSelectedIndex = .none
     }
 }
