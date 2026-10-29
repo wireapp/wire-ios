@@ -200,6 +200,11 @@
 "conversation.wireCells.files.deleteToRecycleBin.confirmation" = "Delete";
 "conversation.wireCells.files.restore.title" = "%@ items will be restored and available again to everyone in this conversation.";
 "conversation.wireCells.files.restore.confirmation" = "Restore";
+"conversation.wireCells.files.selection.selectItems" = "Select items";
+"conversation.wireCells.files.selection.oneItem" = "1 item";
+"conversation.wireCells.files.selection.items" = "%@ items";
+"conversation.wireCells.files.selection.selectAll" = "Select all";
+"conversation.wireCells.files.selection.deselectAll" = "Deselect all";
 
 
 // MARK: - Shared Drive uploads
