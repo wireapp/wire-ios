@@ -29,6 +29,10 @@ public protocol StrategyDirectoryProtocol {
     var contextChangeTrackers: [ZMContextChangeTracker] { get }
     var clientContextChangeTrackers: [ZMContextChangeTracker] { get }
 
+    /// Cancels message sends that are still running, e.g. pending messages waiting for the network. Call it
+    /// before the contexts are closed, since the strategies themselves are torn down later.
+    func cancelPendingSends()
+
 }
 
 @objcMembers
@@ -75,6 +79,10 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 return []
             }
         }
+    }
+
+    public func cancelPendingSends() {
+        strategies.forEach { ($0 as? ClientMessageRequestStrategy)?.cancelSends() }
     }
 
     deinit {
