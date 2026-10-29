@@ -70,10 +70,13 @@ final class DeletionDialogPresenter: NSObject {
         userSession: UserSession,
         completion: @escaping (_ succeeded: Bool, DeletionType?) -> Void
     ) -> UIAlertController {
+        // Decided when the sheet is shown, since sending may start before the user taps. The sync context
+        // then rejects the deletion instead of hiding a message that is being sent.
+        let pendingMessage = (message as? any PendingMessageDeletable).flatMap { $0.isDeletableWhilePending ? $0 : nil }
+
         let alert = UIAlertController.forMessageDeletion(with: message.deletionConfiguration) { action, _ in
 
-            if case .delete = action, let pendingMessage = message as? any PendingMessageDeletable,
-               pendingMessage.isDeletableWhilePending {
+            if case .delete = action, let pendingMessage {
                 self.deletePendingMessage(pendingMessage, userSession: userSession, completion: completion)
                 return
             }

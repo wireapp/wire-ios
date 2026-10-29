@@ -506,6 +506,34 @@ extension ClientMessageRequestStrategyTests {
             XCTAssertFalse(message.isExpired)
         }
     }
+
+    func testThatItStopsWaitingForNetworkWhenTornDown_OfflinePendingMessages() {
+        // GIVEN
+        enableOfflinePendingMessages()
+        mockReachability.mayBeReachable = false
+        var message: ZMClientMessage!
+        var didComplete: XCTestExpectation!
+        syncMOC.performAndWait {
+            self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
+            message = try! self.groupConversation.appendText(content: "Lorem ipsum") as? ZMClientMessage
+            self.syncMOC.saveOrRollback()
+            didComplete = self.insert(message, isFresh: true)
+        }
+        XCTAssertTrue(mockReachability.waitForObserver())
+
+        // WHEN
+        sut.tearDown()
+        XCTAssertTrue(mockReachability.waitForObserver(toBeRemoved: true))
+        mockReachability.setMayBeReachable(true)
+
+        // THEN
+        didComplete.isInverted = true
+        wait(for: [didComplete], timeout: 0.5)
+        syncMOC.performAndWait {
+            XCTAssertEqual(self.mockMessageSender.sendMessageMessage_Invocations.count, 0)
+            XCTAssertFalse(message.isExpired)
+        }
+    }
 }
 
 // MARK: - Helpers
@@ -513,7 +541,7 @@ extension ClientMessageRequestStrategyTests {
 final class MockReachabilityProvider: NSObject, ReachabilityProvider {
 
     private let lock = NSLock()
-    private var observers: [ReachabilityObserverBlock] = []
+    private var observers: [UUID: ReachabilityObserverBlock] = [:]
     private var _mayBeReachable = true
 
     var mayBeReachable: Bool {
@@ -528,15 +556,18 @@ final class MockReachabilityProvider: NSObject, ReachabilityProvider {
     }
 
     func addReachabilityObserver(on queue: OperationQueue?, block: @escaping ReachabilityObserverBlock) -> Any {
-        lock.withLock { observers.append(block) }
-        return NSObject()
+        let id = UUID()
+        lock.withLock { observers[id] = block }
+        return Token { [weak self] in
+            self?.lock.withLock { _ = self?.observers.removeValue(forKey: id) }
+        }
     }
 
-    /// Waits until the sut observes reachability, i.e. waits for the network.
-    func waitForObserver(timeout: TimeInterval = 5) -> Bool {
+    /// Waits until the sut observes reachability, i.e. waits for the network, or until it stopped observing.
+    func waitForObserver(toBeRemoved: Bool = false, timeout: TimeInterval = 5) -> Bool {
         let deadline = Date().addingTimeInterval(timeout)
         while Date() < deadline {
-            if lock.withLock({ !observers.isEmpty }) {
+            if lock.withLock({ observers.isEmpty == toBeRemoved }) {
                 return true
             }
             RunLoop.current.run(until: Date().addingTimeInterval(0.01))
@@ -547,10 +578,17 @@ final class MockReachabilityProvider: NSObject, ReachabilityProvider {
     func setMayBeReachable(_ value: Bool) {
         mayBeReachable = value
         let observers = lock.withLock {
-            let observers = self.observers
+            let observers = self.observers.values
             self.observers.removeAll()
             return observers
         }
         observers.forEach { $0(self) }
+    }
+
+    /// Removes the observer when released, like the real token.
+    private final class Token {
+        let onRelease: () -> Void
+        init(onRelease: @escaping () -> Void) { self.onRelease = onRelease }
+        deinit { onRelease() }
     }
 }

@@ -235,6 +235,23 @@ extension MessageExpirationTimerTests {
         XCTAssertFalse(message.isExpired)
         XCTAssertFalse(sut.hasMessageTimersRunning)
     }
+
+    func testThatItDoesNotExpireAPendingMessageDuringASendAttempt_OfflinePendingMessages() {
+        // GIVEN
+        DeveloperFlag.storage = .temporary()
+        DeveloperFlag.offlinePendingMessages.enable(true)
+        defer { DeveloperFlag.storage = .standard }
+        let message = clientMessage(expirationTime: 0.1)
+
+        // WHEN
+        sut.objectsDidChange([message])
+        spinMainQueue(withTimeout: 0.3)
+
+        // THEN
+        XCTAssertFalse(message.isExpired)
+        XCTAssertFalse(sut.hasMessageTimersRunning)
+        XCTAssertEqual(localNotificationDispatcher.failedToSend, [])
+    }
 }
 
 // MARK: - Helpers

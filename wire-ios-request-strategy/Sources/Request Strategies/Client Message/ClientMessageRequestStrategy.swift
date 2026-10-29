@@ -47,6 +47,10 @@ public class ClientMessageRequestStrategy: NSObject, ZMContextChangeTrackerSourc
     /// Delay before retrying an attempt that was cancelled, e.g. because the app is in the background.
     private let cancelledRetryDelay = 10
 
+    /// Sends that are still running, so they can be cancelled when the session closes.
+    private var sendTasks: [UUID: Task<Void, Never>] = [:]
+    private let sendTasksLock = NSLock()
+
     // MARK: - Life cycle
 
     public init(
@@ -147,10 +151,15 @@ extension ClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
 
         // Enter groups to enable waiting for message sending to complete in tests
         let groups = context.enterAllGroupsExceptSecondary()
-        Task {
+        let taskID = UUID()
+        // The task removes itself under the same lock, so it can't do that before it's stored.
+        sendTasksLock.lock()
+        defer { sendTasksLock.unlock() }
+        sendTasks[taskID] = Task {
             var heldGroups = groups
             defer {
                 context.leaveAllGroups(heldGroups)
+                self.sendTasksLock.withLock { _ = self.sendTasks.removeValue(forKey: taskID) }
             }
             do {
                 try await send(object, staysPendingWhileOffline: staysPendingWhileOffline, groups: &heldGroups)
@@ -165,6 +174,10 @@ extension ClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
             } catch PendingMessageError.noLongerNeeded {
                 let logAttributes = await logAttributesBuilder.logAttributes(object)
                 WireLogger.messaging.info("pending message no longer needs to be sent", attributes: logAttributes)
+            } catch PendingMessageError.sessionClosed {
+                // The context is being torn down, so leave the message as it is. It's sent after the next login.
+                WireLogger.messaging.info("stopped waiting to send pending message because the session closed")
+                return
             } catch {
                 let logAttributes = await logAttributesBuilder.logAttributes(object)
                 WireLogger.messaging.error("failed to send message: \(error)", attributes: logAttributes)
@@ -198,6 +211,8 @@ extension ClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
     private enum PendingMessageError: Error {
         /// The message was deleted, expired or otherwise changed while it was waiting.
         case noLongerNeeded
+        /// The session closed while the message was waiting.
+        case sessionClosed
     }
 
     /// Sends the message. If it stays pending while offline, transient network failures don't fail it:
@@ -221,6 +236,8 @@ extension ClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
                     await self.reachability.waitUntilMayBeReachable()
                 }
             }
+            // The task is only cancelled when the session closes.
+            guard !Task.isCancelled else { throw PendingMessageError.sessionClosed }
 
             let shouldStillBeSent = await context.perform {
                 guard
@@ -245,6 +262,8 @@ extension ClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
                 try await messageSender.sendMessage(message: message)
                 return
             } catch {
+                guard !Task.isCancelled else { throw PendingMessageError.sessionClosed }
+
                 let isOffline = !reachability.mayBeReachable
                 // The background task ran out of time, e.g. because the app went to the background.
                 let isCancelled = error is CancellationError
@@ -289,7 +308,8 @@ extension ClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
     ) async {
         context.leaveAllGroups(groups)
         await wait()
-        groups = context.enterAllGroupsExceptSecondary()
+        // If the session closed in the meantime, the context must no longer be used.
+        groups = Task.isCancelled ? [] : context.enterAllGroupsExceptSecondary()
     }
 
     private static func isTransientFailure(_ error: any Error) -> Bool {
@@ -322,37 +342,94 @@ extension ClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
 
 }
 
+// MARK: - Tear down
+
+extension ClientMessageRequestStrategy: TearDownCapable {
+
+    /// Cancels the sends that are still running, e.g. pending messages waiting for the network, so they
+    /// don't use the context after the session has closed.
+    public func tearDown() {
+        let tasks = sendTasksLock.withLock {
+            defer { sendTasks.removeAll() }
+            return Array(sendTasks.values)
+        }
+        tasks.forEach { $0.cancel() }
+    }
+}
+
 // MARK: - Reachability
 
 private extension ReachabilityProvider {
 
-    /// Returns once the network may be reachable, immediately if it already is.
+    /// Returns once the network may be reachable, immediately if it already is, or once the task is
+    /// cancelled.
     func waitUntilMayBeReachable() async {
         guard !mayBeReachable else { return }
 
-        var token: Any?
-        await withCheckedContinuation { (continuation: CheckedContinuation<Void, Never>) in
-            let lock = NSLock()
-            var resumed = false
-            let resumeOnce = {
-                lock.lock()
-                defer { lock.unlock() }
-                guard !resumed else { return }
-                resumed = true
-                continuation.resume()
+        let waiter = ReachabilityWaiter()
+        await withTaskCancellationHandler {
+            await withCheckedContinuation { continuation in
+                waiter.start(continuation, observing: self)
             }
+        } onCancel: {
+            waiter.finish()
+        }
+    }
+}
 
-            token = addReachabilityObserver(on: nil) { provider in
-                if provider.mayBeReachable {
-                    resumeOnce()
-                }
-            }
+/// Resumes a continuation exactly once, when the network may be reachable or the wait is cancelled,
+/// and then removes its reachability observer.
+private final class ReachabilityWaiter: @unchecked Sendable {
 
-            // Reachability may have changed before the observer was registered.
-            if mayBeReachable {
-                resumeOnce()
+    private let lock = NSLock()
+    private var continuation: CheckedContinuation<Void, Never>?
+    private var token: Any?
+    private var isFinished = false
+
+    func start(_ continuation: CheckedContinuation<Void, Never>, observing reachability: any ReachabilityProvider) {
+        lock.lock()
+        guard !isFinished else {
+            // Cancelled before the wait started.
+            lock.unlock()
+            continuation.resume()
+            return
+        }
+        self.continuation = continuation
+        lock.unlock()
+
+        let token = reachability.addReachabilityObserver(on: nil) { [weak self] provider in
+            if provider.mayBeReachable {
+                self?.finish()
             }
         }
+        lock.withLock {
+            // Dropping the token right away removes the observer if the wait already finished.
+            if !isFinished {
+                self.token = token
+            }
+        }
+
+        // Reachability may have changed before the observer was registered.
+        if reachability.mayBeReachable {
+            finish()
+        }
+    }
+
+    func finish() {
+        lock.lock()
+        guard !isFinished else {
+            lock.unlock()
+            return
+        }
+        isFinished = true
+        let continuation = self.continuation
+        let token = self.token
+        self.continuation = nil
+        self.token = nil
+        lock.unlock()
+
+        continuation?.resume()
+        // Releasing the token removes the observer.
         withExtendedLifetime(token) {}
     }
 }
