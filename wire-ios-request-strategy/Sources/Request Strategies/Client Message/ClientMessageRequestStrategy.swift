@@ -346,9 +346,13 @@ extension ClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
 
 extension ClientMessageRequestStrategy: TearDownCapable {
 
+    public func tearDown() {
+        cancelSends()
+    }
+
     /// Cancels the sends that are still running, e.g. pending messages waiting for the network, so they
     /// don't use the context after the session has closed.
-    public func tearDown() {
+    public func cancelSends() {
         let tasks = sendTasksLock.withLock {
             defer { sendTasks.removeAll() }
             return Array(sendTasks.values)
