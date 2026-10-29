@@ -33,7 +33,7 @@ class TestServicesClient {
     private var instanceCache: [String: String] = [:]
 
     init(service: Service = .standard) {
-        testServiceURL = Self.testServiceURL(service: service)
+        self.testServiceURL = Self.testServiceURL(service: service)
     }
 
     private static func testServiceURL(service: Service) -> String {
@@ -126,13 +126,15 @@ class TestServicesClient {
         case .staging?:
             body["backend"] = "staging"
         case let backend?:
-            let key = backend == .qaFederationA ? "QA_FEDERATION_A_DEEPLINK_URL" : "QA_FEDERATION_B_DEEPLINK_URL"
-            guard let value = ProcessInfo.processInfo.environment[key], let configURL = URL(string: value) else {
-                throw RuntimeError("Missing backend configuration: \(key)")
+            let backendConfigVariable = backend == .qaFederationA
+                ? "QA_FEDERATION_A_DEEPLINK_URL" : "QA_FEDERATION_B_DEEPLINK_URL"
+            guard let value = ProcessInfo.processInfo.environment[backendConfigVariable],
+                  let configURL = URL(string: value) else {
+                throw RuntimeError("Missing backend configuration: \(backendConfigVariable)")
             }
             let (data, response) = try await URLSession.shared.data(from: configURL)
             guard let response = response as? HTTPURLResponse, response.statusCode == 200 else {
-                throw RuntimeError("Could not fetch backend configuration: \(key)")
+                throw RuntimeError("Could not fetch backend configuration: \(backendConfigVariable)")
             }
             let environment = try BackendEnvironment2.fromJSON(data, environmentType: .custom(url: configURL))
             body["customBackend"] = [
