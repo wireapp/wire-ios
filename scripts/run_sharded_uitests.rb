@@ -341,9 +341,12 @@ finish_batch = ->(batch, requeue: false) do
     end
 end
 
-# Final outcome of each test in an xcodebuild log; a test that failed and then passed on retry counts as passed.
+# Final outcome of each test, keyed like the requested Target/Class/method identifiers. Skips are terminal too.
 def test_outcomes(log)
-    log.scan(/Test Case '(.+?)' (passed|failed) \(/).to_h { |name, outcome| [name, outcome == "passed"] }
+    log.scan(/Test Case '(.+?)' (passed|failed|skipped) \(/).to_h do |name, outcome|
+        identifier = name.delete_prefix("-[").delete_suffix("]").delete_suffix("()").tr(". ", "//")
+        [identifier, outcome == "skipped" ? :skipped : outcome == "passed"]
+    end
 end
 
 # Combines the result bundles of a shard's batches into the single bundle the reports expect.
@@ -488,17 +491,22 @@ unrun = queue.sum { |batch| batch[:tests].size }
 summary = results.map do |result|
     ran = result[:outcomes].size
     passed = result[:outcomes].values.count(true)
-    failed = ran - passed
+    failed = result[:outcomes].values.count(false)
+    skipped = result[:outcomes].values.count(:skipped)
     missing = result[:tests] - ran
     "shard #{result[:number]}: #{result[:tests]} tests, #{passed} passed, #{failed} failed" +
+        (skipped.positive? ? ", #{skipped} skipped" : "") +
         (missing.positive? ? ", #{missing} without a result" : "") + ", #{result[:minutes]} min" +
         (result[:relaunched].positive? ? " (runner relaunched #{result[:relaunched]}x)" : "") +
         (result[:retired] ? " (simulator retired, kept refusing the runner)" : "") +
         (result[:merged] ? "" : " (result bundles not merged)")
 end
 all_outcomes = results.map { |result| result[:outcomes] }.reduce({}, :merge)
+missing_tests = tests - all_outcomes.keys
 summary << "total: #{tests.size} tests, #{all_outcomes.values.count(true)} passed, #{all_outcomes.values.count(false)} failed"
+summary << "#{all_outcomes.values.count(:skipped)} tests skipped" if all_outcomes.value?(:skipped)
+summary << "#{missing_tests.size} requested tests without a terminal result: #{missing_tests.join(', ')}" unless missing_tests.empty?
 summary << "#{unrun} tests never ran, no shard was left to take them" if unrun.positive?
 summary.each { |line| say("shards", line) }
 write_job_summary(["UITest shards (#{results.size} of #{options[:workers]} requested):", *summary.map { |line| "- #{line}" }])
-exit(results.all? { |result| result[:passed] } && unrun.zero? ? 0 : 1)
+exit(results.all? { |result| result[:passed] } && unrun.zero? && missing_tests.empty? ? 0 : 1)

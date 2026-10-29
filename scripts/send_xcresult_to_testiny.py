@@ -7,7 +7,7 @@ How it works
 - Reads .xcresult bundles sequentially and uploads each to the same run
 - Bundles represent independent test executions, not ordered retry attempts
 - Across bundles, FAILED takes precedence over PASSED, SKIPPED, and NOTRUN
-- Retry attempts inside a bundle use the final attempt
+- Retry attempts inside a bundle or JUnit report use the final attempt
 - Retries split across separate bundles are not supported
 - Extracts Testiny case IDs from test names using the pattern: _TC_<id>[_<id>...]
   Examples:
@@ -217,7 +217,7 @@ def parse_junit_xml(path: str) -> List[FlatTest]:
     tree = ET.parse(path)
     root = tree.getroot()
 
-    raw = []
+    raw = {}
     for tc in root.iter("testcase"):
         name = tc.get("name", "").rstrip("()")
         if tc.find("failure") is not None or tc.find("error") is not None:
@@ -226,9 +226,9 @@ def parse_junit_xml(path: str) -> List[FlatTest]:
             status = "Skipped"
         else:
             status = "Success"
-        raw.append({"name": name, "status": status})
+        raw[(tc.get("classname", ""), name)] = {"name": name, "status": status}
 
-    return build_flat_test_models(raw)
+    return build_flat_test_models(list(raw.values()))
 
 
 def build_flat_test_models(raw: list) -> List[FlatTest]:
