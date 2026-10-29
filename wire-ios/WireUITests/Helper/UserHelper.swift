@@ -387,9 +387,11 @@ final class UserHelper {
         defer { authenticationManager.accessToken = previousAccessToken }
         authenticationManager.accessToken = try await fetchAccessToken(email: user.email, password: user.password)
 
-        let clients = try await userClientsAPI.getSelfClients()
+        let clients = try await userClientsAPI.getSelfClients().filter {
+            $0.deviceClass == .phone || $0.deviceClass == .tablet
+        }
         guard let client = clients.first, clients.count == 1 else {
-            throw RuntimeError("Expected one client for \(user.email), found \(clients.count)")
+            throw RuntimeError("Expected one iOS client for \(user.email), found \(clients.count)")
         }
 
         return client.id

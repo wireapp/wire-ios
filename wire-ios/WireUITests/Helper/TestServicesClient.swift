@@ -129,7 +129,7 @@ class TestServicesClient {
             let backendConfigVariable = backend == .qaFederationA
                 ? "QA_FEDERATION_A_DEEPLINK_URL" : "QA_FEDERATION_B_DEEPLINK_URL"
             guard let value = ProcessInfo.processInfo.environment[backendConfigVariable],
-                  let configURL = URL(string: value) else {
+                  let configURL = URL(string: "https://\(value)") else {
                 throw RuntimeError("Missing backend configuration: \(backendConfigVariable)")
             }
             let (data, response) = try await URLSession.shared.data(from: configURL)
