@@ -68,15 +68,6 @@ class GuestOptionsPage: PageModel {
         app.buttons[Locators.AlertActions.confirm.rawValue].firstMatch
     }
 
-    private var backButton: XCUIElement {
-        app.buttons[Locators.GuestOptionsPage.backButton.rawValue].firstMatch
-    }
-
-    func goBackToConversationDetails() throws -> ConversationDetailsPage {
-        backButton.waitAndTap()
-        return try ConversationDetailsPage()
-    }
-
     func startCreatingLinkWithPassword() throws -> CreateSecureGuestLinkPage {
         createLinkButton.waitAndTap()
         createLinkWithPasswordAction.waitAndTap()

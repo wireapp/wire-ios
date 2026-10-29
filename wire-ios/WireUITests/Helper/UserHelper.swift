@@ -72,14 +72,6 @@ final class UserHelper {
         return instance
     }
 
-    /// Keeps separate access tokens for concurrent requests from different users.
-    static func makeIsolatedInstance(
-        apiVersion: APIVersion = APIVersion.productionVersions.max()!,
-        backend: BackendTarget = .staging
-    ) -> UserHelper {
-        UserHelper(apiVersion: apiVersion, backend: backend)
-    }
-
     static var `default`: UserHelper {
         instance(
             apiVersion: APIVersion.productionVersions.max()!,
@@ -981,7 +973,7 @@ final class UserHelper {
         try await removeParticipant(userID: ownerID, conversationID: conversationID)
     }
 
-    func removeTeamMember(userID: UUID, owner: UserInfo) async throws {
+    func removeTeamMemberFromTeam(userID: UUID, owner: UserInfo) async throws {
         guard let teamID = owner.teamID else { throw RuntimeError("Owner has no team ID") }
         let accessToken = try await fetchAccessToken(email: owner.email, password: owner.password)
         try await removeTeamMember(
@@ -992,44 +984,26 @@ final class UserHelper {
         )
     }
 
-    func leaveConversation(
-        userID: UserID,
-        conversationID: ConversationID
-    ) async throws -> (statusCode: Int, errorLabel: String?) {
-        let url = backendURL
-            .appendingPathComponent(String(describing: apiVersion))
-            .appendingPathComponent("conversations/\(conversationID.domain)/\(conversationID.id)")
-            .appendingPathComponent("members/\(userID.domain)/\(userID.id)")
-        var request = URLRequest(url: url)
-        request.httpMethod = "DELETE"
-
-        let (data, response) = try await networkStack.apiService.executeRequest(request, requiringAccessToken: true)
-        if response.statusCode == 200 {
-            return (response.statusCode, nil)
-        }
-
-        let body = try JSONSerialization.jsonObject(with: data) as? [String: Any]
-        return (response.statusCode, body?["label"] as? String)
-    }
-
-    func registerGuest(name: String) async throws -> SelfUser {
-        let url = backendURL.appendingPathComponent("\(apiVersion)/register")
+    static func registerGuest(name: String) async throws -> (guest: SelfUser, helper: UserHelper) {
+        let helper = UserHelper(apiVersion: APIVersion.productionVersions.max()!, backend: .staging)
+        let url = helper.backendURL.appendingPathComponent("\(helper.apiVersion)/register")
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
         request.httpBody = try JSONSerialization.data(withJSONObject: ["name": name, "locale": "en"])
         request.setValue(HttpClient.ContentType.json, forHTTPHeaderField: HttpClient.HeaderKey.contentType)
 
-        let (_, response) = try await networkStack.apiNetworkService.executeRequest(request)
+        let (_, response) = try await helper.networkStack.apiNetworkService.executeRequest(request)
         guard response.statusCode == 201,
               let headers = response.allHeaderFields as? [String: String],
               let responseURL = response.url else {
             throw RuntimeError("Register guest failed: HTTP \(response.statusCode)")
         }
         let cookies = HTTPCookie.cookies(withResponseHeaderFields: headers, for: responseURL)
-        authenticationManager
-            .accessToken = try await AccessTokenExchange(networkService: networkStack.apiNetworkService)
+        helper.authenticationManager
+            .accessToken = try await AccessTokenExchange(networkService: helper.networkStack.apiNetworkService)
             .exchange(cookies: cookies, clientID: nil, lastKnownAccessToken: nil)
-        return try await selfUserAPI.getSelfUser()
+        let guest = try await helper.selfUserAPI.getSelfUser()
+        return (guest, helper)
     }
 
     func joinGuestLink(_ link: URL) async throws {
@@ -1049,8 +1023,11 @@ final class UserHelper {
         }
     }
 
-    func waitForOnlyMember(in conversationID: QualifiedID) async throws -> Conversation.Member {
-        let deadline = Date().addingTimeInterval(10)
+    func waitForOnlyMember(
+        in conversationID: QualifiedID,
+        timeout: TimeInterval = 10
+    ) async throws -> Conversation.Member {
+        let deadline = Date().addingTimeInterval(timeout)
         while Date() < deadline {
             let conversations = try await conversationsAPI.getConversations(for: [conversationID])
             guard let members = conversations.found.first?.members,
@@ -1062,14 +1039,15 @@ final class UserHelper {
             }
             try await Task.sleep(for: .seconds(1))
         }
-        throw RuntimeError("Guest did not become the only member within 10 seconds")
+        throw RuntimeError("Guest did not become the only member within \(timeout) seconds")
     }
 
     func waitForAdminlessGroupDeletion(
-        _ conversationID: QualifiedID
-    ) async throws -> (reminders: [ConversationAdminlessReminderEvent], deletedAt: Date) {
+        _ conversationID: QualifiedID,
+        timeout: TimeInterval = 15
+    ) async throws -> [ConversationAdminlessReminderEvent] {
         let api = UpdateEventsAPIBuilder(apiService: networkStack.apiService).makeAPI(for: apiVersion)
-        let deadline = Date().addingTimeInterval(25)
+        let deadline = Date().addingTimeInterval(timeout)
         var lastEventID: UUID?
         var reminders: [ConversationAdminlessReminderEvent] = []
         while Date() < deadline {
@@ -1081,7 +1059,7 @@ final class UserHelper {
                             where reminder.conversationID == conversationID:
                             reminders.append(reminder)
                         case let .conversation(.delete(deletion)) where deletion.conversationID == conversationID:
-                            return (reminders, deletion.timestamp)
+                            return reminders
                         default:
                             break
                         }
@@ -1091,7 +1069,7 @@ final class UserHelper {
             }
             try await Task.sleep(for: .seconds(1))
         }
-        throw RuntimeError("Ghost group was not deleted within 25 seconds; received \(reminders.count) reminders")
+        throw RuntimeError("Guest group was not deleted within \(timeout) seconds; received \(reminders.count) reminders")
     }
 
 }

@@ -286,7 +286,6 @@ public enum Locators {
     }
 
     public enum GuestOptionsPage: String {
-        case backButton = "BackButton"
         case createLinkButton
         case linkHeader
         case secureLinkHeader

@@ -67,13 +67,10 @@ class ConversationDetailsPage: PageModel {
         return userCells.matching(predicate).firstMatch
     }
 
-    var adminCells: XCUIElementQuery {
-        app.cells.matching(identifier: Locators.ConversationDetailsPage.adminCell.rawValue)
-    }
-
     func adminCell(named name: String) -> XCUIElement {
         let predicate = NSPredicate(format: "label CONTAINS %@", name)
-        return adminCells
+        return app.cells
+            .matching(identifier: Locators.ConversationDetailsPage.adminCell.rawValue)
             .matching(predicate)
             .firstMatch
     }

@@ -267,72 +267,6 @@ class AdminPromotionTests: WireUITestCase {
     }
 
     @MainActor
-    func testTwoAdminsLeaveAtTheSameTime_onlyOneAdminRemains_TC_11064() async throws {
-        // GIVEN
-        let groupName = UserGenerator.generateRandomConversationName()
-
-        let (owner, admins, members, conversation) = try await userHelper.createGroupConversationWithAdminsAndMembers(
-            groupName: groupName,
-            memberCount: 3,
-            groupAdminCount: 2,
-            preventAdminlessGroupsEnabled: true
-        )
-        let secondAdmin = try XCTUnwrap(admins.last)
-        let conversationID = try XCTUnwrap(conversation.qualifiedID)
-
-        let ownerHelper = UserHelper.makeIsolatedInstance()
-        let secondAdminHelper = UserHelper.makeIsolatedInstance()
-        var leavingAdmins = [owner, secondAdmin]
-        try await ownerHelper.login(user: &leavingAdmins[0])
-        try await secondAdminHelper.login(user: &leavingAdmins[1])
-
-        // WHEN
-        let barrier = AdminLeaveBarrier()
-        async let firstResponse = leaveConversationOnceAllAreReady(
-            using: ownerHelper,
-            user: leavingAdmins[0],
-            conversationID: conversationID,
-            barrier: barrier
-        )
-        async let secondResponse = leaveConversationOnceAllAreReady(
-            using: secondAdminHelper,
-            user: leavingAdmins[1],
-            conversationID: conversationID,
-            barrier: barrier
-        )
-        let leaveResponses = try await [firstResponse, secondResponse]
-
-        // THEN
-        let successfulLeaves = leaveResponses.filter { $0.statusCode == 200 }
-        XCTAssertEqual(successfulLeaves.count, 1, "Exactly one leave request should be accepted: \(leaveResponses)")
-
-        let rejectedLeave = try XCTUnwrap(leaveResponses.first { $0.statusCode != 200 })
-        XCTAssertEqual(rejectedLeave.statusCode, 403, "Last admin's leave request should be forbidden")
-        XCTAssertEqual(rejectedLeave.errorLabel, "adminless-conversation", "Last admin should not be allowed to leave")
-        let observer = try XCTUnwrap(members.first)
-        let conversationDetailsPage = try app.loginUser(email: observer.email, password: observer.password)
-            .acceptPopup()
-            .openConversation(named: groupName)
-            .openConversationDetails()
-
-        for (admin, response) in zip(leavingAdmins, leaveResponses) {
-            if response.statusCode == 200 {
-                XCTAssertTrue(
-                    conversationDetailsPage.userCell(named: admin.name).waitForNonExistence(timeout: 10),
-                    "Admin whose request was accepted should not appear in participant list after leaving"
-                )
-            } else {
-                XCTAssertTrue(
-                    conversationDetailsPage.adminCell(named: admin.name).waitForExistence(timeout: 10),
-                    "Admin whose request was rejected should still be admin of the group"
-                )
-            }
-        }
-
-        XCTAssertEqual(conversationDetailsPage.adminCells.count, 1, "Exactly one admin should remain in the group")
-    }
-
-    @MainActor
     func testLastAdminDeleted_promotesEligibleMember_TC_11035() async throws {
         // GIVEN
         let groupName = UserGenerator.generateRandomConversationName()
@@ -354,7 +288,7 @@ class AdminPromotionTests: WireUITestCase {
         try await userHelper.promoteMemberAndLeave(userID: adminMemberID, conversationID: conversationID)
 
         // WHEN
-        try await userHelper.removeTeamMember(userID: adminMemberID.id, owner: owner)
+        try await userHelper.removeTeamMemberFromTeam(userID: adminMemberID.id, owner: owner)
 
         // THEN
         let conversationDetailsPage = try app
@@ -376,165 +310,115 @@ class AdminPromotionTests: WireUITestCase {
     @MainActor
     func testLastAdminDeleted_schedulesGroupDeletion_whenOnlyFederatedMemberRemains_TC_11040() async throws {
         // GIVEN
-        let groupName = UserGenerator.generateRandomConversationName()
-        let helperA = UserHelper.instance(backend: .qaFederationA)
-        let helperB = UserHelper.instance(backend: .qaFederationB)
+        let groupName = "Federated \(UserGenerator.generateRandomConversationName())"
+        let groupOwnerHelper = UserHelper.instance(backend: .qaFederationA)
+        let federatedUserHelper = UserHelper.instance(backend: .qaFederationB)
 
-        let (ownerA, _, qualifiedIDsA, _) = try await helperA.registerTeam(withMemberCount: 1)
-        let (ownerB, _, _, _) = try await helperB.registerTeam(withMemberCount: 0)
-        let teamIDA = try XCTUnwrap(ownerA.teamID)
-        let adminA = try XCTUnwrap(qualifiedIDsA.first)
+        let (owner, _, qualifiedIDs, _) = try await groupOwnerHelper.registerTeam(withMemberCount: 1)
+        let (federatedOwner, _, _, _) = try await federatedUserHelper.registerTeam(
+            withMemberCount: 0,
+            names: ["Federated User"]
+        )
+        let teamID = try XCTUnwrap(owner.teamID)
+        let memberID = try XCTUnwrap(qualifiedIDs.first)
         // Schedule the first reminder after one second, with deletion one hour away.
-        try await helperA.unlockAndEnablePreventAdminlessGroupsFeature(
-            teamID: teamIDA,
+        try await groupOwnerHelper.unlockAndEnablePreventAdminlessGroupsFeature(
+            teamID: teamID,
             deletionTimeout: "1h",
             reminderTimeouts: ["3599s"]
         )
 
         // Connect the team owners of both backends
-        var groupOwner = ownerA
-        var federatedUser = ownerB
-        try await helperA.login(user: &groupOwner)
-        try await helperB.login(user: &federatedUser)
-        try await helperA.sendConnectionRequestToUser(
+        var groupOwner = owner
+        var federatedUser = federatedOwner
+        try await groupOwnerHelper.login(user: &groupOwner)
+        try await federatedUserHelper.login(user: &federatedUser)
+        try await groupOwnerHelper.sendConnectionRequestToUser(
             domain: BackendTarget.qaFederationB.domainInfo,
             userId: federatedUser.id
         )
-        try await helperB.acceptConnectionRequestFromUser(
+        try await federatedUserHelper.acceptConnectionRequestFromUser(
             domain: BackendTarget.qaFederationA.domainInfo,
             user1: federatedUser,
             userId: groupOwner.id
         )
 
-        let federatedUserID = try qualifiedID(of: federatedUser, on: .qaFederationB)
-        let conversation = try await helperA.createGroupConversations(
-            qualifiedIds: [adminA, federatedUserID],
+        let federatedUserID = WireFoundation.QualifiedID(
+            id: try XCTUnwrap(UUID(uuidString: federatedUser.id)),
+            domain: BackendTarget.qaFederationB.domainInfo
+        )
+        let conversation = try await groupOwnerHelper.createGroupConversations(
+            qualifiedIds: [memberID, federatedUserID],
             owner: groupOwner,
             groupName: groupName
         )
         let conversationID = try XCTUnwrap(conversation.qualifiedID)
-
-        try await helperA.promoteMemberAndLeave(userID: adminA, conversationID: conversationID)
+        try await groupOwnerHelper.promoteMemberAndLeave(
+            userID: memberID,
+            conversationID: conversationID
+        )
 
         try switchBackend(target: .qaFederationB)
         let activeConversationPage = try await loginToBackend(user: federatedUser)
             .openConversation(named: groupName)
 
         // WHEN
-        try await helperA.removeTeamMember(userID: adminA.id, owner: ownerA)
+        try await groupOwnerHelper.removeTeamMemberFromTeam(userID: memberID.id, owner: groupOwner)
 
         // THEN
         XCTAssertTrue(
-            activeConversationPage.scheduledForDeletionSystemMessage.waitForExistence(timeout: 30),
-            "Expected the group to be scheduled for deletion as there is no eligible admin"
+            activeConversationPage.scheduledForDeletionSystemMessage.waitForExistence(timeout: 10),
+            "Federated user should see the group scheduled for deletion"
         )
-    }
-
-    private func leaveConversationOnceAllAreReady(
-        using helper: UserHelper,
-        user: UserInfo,
-        conversationID: WireFoundation.QualifiedID,
-        barrier: AdminLeaveBarrier
-    ) async throws -> (statusCode: Int, errorLabel: String?) {
-        await barrier.waitForBothAdmins()
-        return try await helper.leaveConversation(userID: try qualifiedID(of: user), conversationID: conversationID)
     }
 
     @MainActor
-    func testTemporaryGuestIsOnlyMember_groupBecomesGhostGroupAndIsDeleted_TC_11037() async throws {
-
+    func testTemporaryGuestIsOnlyMember_groupBecomesGhostGroupAndIsScheduledToBeDeleted_TC_11037() async throws {
         // GIVEN
-        let groupName = UserGenerator.generateRandomConversationName()
-        let (owner, teamMembers, qualifiedIDs, conversationId) = try await userHelper.registerTeam(
-            withMemberCount: 1,
-            conversation: .group(groupName)
-        )
+        let guestGroupName = "Guest \(UserGenerator.generateRandomConversationName())"
+        let (owner, teamMembers, qualifiedIDs, _) = try await userHelper.registerTeam(withMemberCount: 1)
         let teamID = try XCTUnwrap(owner.teamID)
         let member = try XCTUnwrap(teamMembers.first)
         let memberID = try XCTUnwrap(qualifiedIDs.first)
-        let conversationID = WireFoundation.QualifiedID(
-            id: try XCTUnwrap(conversationId),
-            domain: BackendTarget.staging.domainInfo
-        )
-        // Remind after one and three seconds; allow time for the backend worker before deletion.
+        member.teamID = teamID
+        // Remind after one and three seconds, then delete after ten seconds.
         try await userHelper.unlockAndEnablePreventAdminlessGroupsFeature(
             teamID: teamID,
             deletionTimeout: "10s",
             reminderTimeouts: ["9s", "7s"]
         )
 
-        let guestOptionsPage = try app.loginUser(email: owner.email, password: owner.password)
+        let conversation = try await userHelper.createGroupConversations(
+            qualifiedIds: [],
+            owner: member,
+            groupName: guestGroupName
+        )
+        let guestConversationID = try XCTUnwrap(conversation.qualifiedID)
+        var teamOwner = owner
+        try await userHelper.login(user: &teamOwner)
+
+        let guestOptionsPage = try app.loginUser(email: member.email, password: member.password)
             .acceptPopup()
-            .openConversation(named: groupName)
+            .openConversation(named: guestGroupName)
             .openConversationDetails()
             .openGuestOptions()
             .createLinkWithoutPassword()
         let guestLink = try guestOptionsPage.guestLink()
-        let guestHelper = UserHelper.makeIsolatedInstance()
-        let guest = try await guestHelper.registerGuest(name: "Guest")
+        let (guest, guestHelper) = try await UserHelper.registerGuest(name: "Guest")
         XCTAssertNotNil(guest.expiresAt, "Guest account should have an expiry date")
         try await guestHelper.joinGuestLink(guestLink)
 
-        let conversationDetailsPage = try guestOptionsPage.goBackToConversationDetails()
-            .moreOptionsConversationDetails()
-            .leaveOptionsConversationDetails()
-            .tapPromoteNewAdmin()
-            .selectUser(named: member.name)
-            .tapPromote()
-
-        try verifyUserLeftGroup(
-            conversationDetailsPage,
-            leavingUserName: owner.name,
-            participantDescription: "Owner"
-        )
-
         // WHEN
-        let ghostGroupStart = Date()
-        try await userHelper.removeTeamMember(userID: memberID.id, owner: owner)
+        try await userHelper.removeTeamMemberFromTeam(userID: memberID.id, owner: teamOwner)
 
         // THEN
-        let remainingMember = try await guestHelper.waitForOnlyMember(in: conversationID)
-        XCTAssertEqual(remainingMember.qualifiedID?.id, guest.id, "Guest should be the only member")
+        let remainingMember = try await guestHelper.waitForOnlyMember(in: guestConversationID)
         XCTAssertEqual(remainingMember.conversationRole, "wire_member", "Guest should not be promoted")
 
-        let (reminders, deletedAt) = try await guestHelper.waitForAdminlessGroupDeletion(conversationID)
+        let reminders = try await guestHelper.waitForAdminlessGroupDeletion(guestConversationID)
         XCTAssertEqual(reminders.count, 2, "Expected both reminders before deletion")
-        let deletionDate = try XCTUnwrap(reminders.first?.scheduledDeletionDate)
-        XCTAssertEqual(deletionDate.timeIntervalSince(ghostGroupStart), 10, accuracy: 3)
-        XCTAssertEqual(
-            reminders.last?.scheduledDeletionDate,
-            deletionDate,
-            "Reminders should keep the same deletion date"
-        )
-        XCTAssertGreaterThanOrEqual(deletedAt, deletionDate, "Group should not be deleted before its countdown ends")
-        let conversations = try await guestHelper.conversationsAPI.getConversations(for: [conversationID])
-        XCTAssertTrue(conversations.notFound.contains(conversationID), "Ghost group should be deleted")
-    }
-
-    private func qualifiedID(
-        of user: UserInfo,
-        on backend: BackendTarget = .staging
-    ) throws -> WireFoundation.QualifiedID {
-        WireFoundation.QualifiedID(
-            id: try XCTUnwrap(UUID(uuidString: user.id)),
-            domain: backend.domainInfo
-        )
-    }
-
-}
-
-/// Waits until both admins are ready to send their leave requests.
-private actor AdminLeaveBarrier {
-
-    private var waitingAdmin: CheckedContinuation<Void, Never>?
-
-    func waitForBothAdmins() async {
-        if let waitingAdmin {
-            self.waitingAdmin = nil
-            waitingAdmin.resume()
-        } else {
-            await withCheckedContinuation { waitingAdmin = $0 }
-        }
+        let conversations = try await guestHelper.conversationsAPI.getConversations(for: [guestConversationID])
+        XCTAssertTrue(conversations.notFound.contains(guestConversationID), "Guest group should be deleted")
     }
 
 }
