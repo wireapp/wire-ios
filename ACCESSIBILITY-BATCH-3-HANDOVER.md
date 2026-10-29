@@ -150,6 +150,32 @@ visual visibility, leaving the underlying accessibility hierarchy exposed.
   event/cache warnings; no Swift parsing errors were reported.
 - No tests, builds or interactive simulator checks were run for this follow-up.
 
+## Reply focus follow-up — October 29, 2026
+
+Christoph reported that VoiceOver remained focused on the original message after
+Reply. The initial synchronous layout-change request did not achieve the required
+runtime behavior. Keyboard/menu timing is a suspected cause, not a confirmed diagnosis.
+
+- Replaced the immediate Reply notification with a pending request tied to the
+  current reply preview. Keyboard will/did-change-frame callbacks defer it until
+  movement finishes, then a main-queue turn lets the initiating action/callbacks
+  return before posting a targeted `screenChanged` notification for the editor.
+- If there is no keyboard transition (already open or hardware keyboard), the
+  main-queue callback can perform the handoff without waiting for a notification
+  that may never occur. No fixed delay or repeated focus retries were introduced.
+- The request is consumed once and checks the same reply preview, VoiceOver,
+  first-responder status and window attachment. Cancelling/replacing the reply or
+  leaving the input-bar screen clears the pending request. Restored drafts still
+  bypass this explicit-Reply path. Keyboard callbacks alone cannot trigger focus.
+- Runtime verification remains pending: Reply from the message menu and VoiceOver
+  custom action with keyboard closed/open; quote replacement with draft text;
+  cancelling/leaving before keyboard completion; hardware keyboard and alternate
+  Reply entry points. Confirm focus reaches the composer and stays navigable.
+- Scoped SwiftFormat lint (0/2 files require formatting), strict SwiftLint,
+  Swift frontend syntax parsing on both changed source files, and
+  `git diff --check` passed. These do not verify runtime focus behavior.
+- No tests, builds or interactive simulator checks were run.
+
 ## Why two tickets
 
 Both concern intentional handoff to the composer and VoiceOver feedback. They
