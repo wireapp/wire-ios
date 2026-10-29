@@ -54,6 +54,9 @@ final class UserSearchResultsViewController: UIViewController, KeyboardCollapseO
         }
     }
 
+    private var announcedResultsAvailable: Bool?
+    private var accessibilityUpdateID = 0
+
     private let rowHeight: CGFloat = 56.0
     private let avatarSpacing: CGFloat = 56.0
     private var isKeyboardCollapsedFirstCalled = true
@@ -80,6 +83,8 @@ final class UserSearchResultsViewController: UIViewController, KeyboardCollapseO
             isKeyboardCollapsedFirstCalled = false
         }
     }
+
+    var onVisibilityChanged: ((Bool) -> Void)?
 
     weak var delegate: UserSearchResultsViewControllerDelegate?
 
@@ -161,10 +166,34 @@ final class UserSearchResultsViewController: UIViewController, KeyboardCollapseO
 
         scrollToLastItem()
 
-        if !results.isEmpty {
-            show()
-        } else {
-            dismiss()
+        setSuggestionsVisible(!results.isEmpty)
+        announceResultsAvailability()
+    }
+
+    private func announceResultsAvailability() {
+        accessibilityUpdateID += 1
+        let updateID = accessibilityUpdateID
+
+        // Coalesce selection/text callbacks and let the initiating editor focus change finish first.
+        DispatchQueue.main.async { [weak self] in
+            guard let self,
+                  accessibilityUpdateID == updateID,
+                  isViewLoaded,
+                  view.window != nil,
+                  UIAccessibility.isVoiceOverRunning else { return }
+
+            let resultsAvailable = !searchResults.isEmpty
+            guard announcedResultsAvailable != resultsAvailable else { return }
+            announcedResultsAvailable = resultsAvailable
+
+            let feedback = resultsAvailable
+                ? L10n.Accessibility.Conversation.Mentions.suggestionsAvailable
+                : L10n.Accessibility.Conversation.Mentions.noSuggestions
+            let announcement = NSAttributedString(
+                string: feedback,
+                attributes: [.accessibilitySpeechQueueAnnouncement: true]
+            )
+            UIAccessibility.post(notification: .announcement, argument: announcement)
         }
     }
 
@@ -189,7 +218,13 @@ final class UserSearchResultsViewController: UIViewController, KeyboardCollapseO
     }
 
     func show() {
-        view.isHidden = false
+        setSuggestionsVisible(true)
+    }
+
+    private func setSuggestionsVisible(_ isVisible: Bool) {
+        guard view.isHidden == isVisible else { return }
+        view.isHidden = !isVisible
+        onVisibilityChanged?(isVisible)
     }
 
     @objc
@@ -214,7 +249,9 @@ final class UserSearchResultsViewController: UIViewController, KeyboardCollapseO
 
 extension UserSearchResultsViewController: Dismissable {
     func dismiss() {
-        view.isHidden = true
+        accessibilityUpdateID += 1
+        announcedResultsAvailable = nil
+        setSuggestionsVisible(false)
         collectionViewSelectedIndex = .none
     }
 }

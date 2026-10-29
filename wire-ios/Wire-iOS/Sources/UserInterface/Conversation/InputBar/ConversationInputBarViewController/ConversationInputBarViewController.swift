@@ -231,6 +231,8 @@ final class ConversationInputBarViewController: UIViewController,
     var editingMessage: ZMConversationMessage?
     var quotedMessage: ZMConversationMessage?
     var replyComposingView: ReplyComposingView?
+    weak var pendingReplyAccessibilityFocus: ReplyComposingView?
+    var isReplyKeyboardTransitioning = false
     private var accentColorChangeHandler: AccentColorChangeHandler?
 
     // MARK: feedback
@@ -456,6 +458,7 @@ final class ConversationInputBarViewController: UIViewController,
 
         configureMarkdownButton()
         configureMentionButton()
+        configureReplyAccessibilityFocus()
 
         sendButton.addTarget(self, action: #selector(sendButtonPressed(_:)), for: .touchUpInside)
         photoButton.addTarget(self, action: #selector(cameraButtonPressed(_:)), for: .touchUpInside)
@@ -520,6 +523,7 @@ final class ConversationInputBarViewController: UIViewController,
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+        pendingReplyAccessibilityFocus = nil
         inputBar.textView.endEditing(true)
     }
 
