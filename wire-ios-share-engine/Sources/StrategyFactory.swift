@@ -85,9 +85,7 @@ final class StrategyFactory {
 
     func tearDown() {
         strategies.forEach {
-            if $0.responds(to: #selector(ZMObjectSyncStrategy.tearDown)) {
-                ($0 as? ZMObjectSyncStrategy)?.tearDown()
-            }
+            ($0 as? TearDownCapable)?.tearDown()
         }
         tornDown = true
     }

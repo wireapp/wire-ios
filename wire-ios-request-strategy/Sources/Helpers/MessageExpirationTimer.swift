@@ -91,6 +91,10 @@ public class MessageExpirationTimer: ZMMessageTimer, ZMContextChangeTracker {
 
             if let filter = self.filter, !filter.evaluate(with: $0) { return }
 
+            // A pending message must not fail while it waits, e.g. if the network goes away during an attempt.
+            // The send request expires at the same deadline, and the send then decides whether to fail it.
+            if ($0 as? ZMClientMessage)?.staysPendingWhileOffline == true { return }
+
             guard let expirationDate = $0.expirationDate else { return }
 
             if expirationDate < .now {
