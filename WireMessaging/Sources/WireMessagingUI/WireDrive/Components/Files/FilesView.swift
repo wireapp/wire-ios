@@ -23,19 +23,16 @@ import QuickLook
 package import SwiftUI
 import WireDesign
 import WireFoundation
-import WireLocators
 import WireLogging
 import WireMessagingDomain
 import WireReusableUIComponents
 
 private typealias Strings = L10n.Localizable.Conversation.WireCells
-private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
 
 package struct FilesView: View {
     package var isBrowsing: Bool { false }
     @StateObject package var viewModel: FilesViewModel
     @Environment(\.dismiss) var dismiss
-    @Environment(\.wireAccentColor) private var accentColor
 
     let onOpenRecycleBin: () -> Void
     let onDismissContainer: () -> Void
@@ -100,6 +97,69 @@ package struct FilesView: View {
                 EditFileView(viewModel: viewModel.editFileViewModel(item: item))
             }
         )
+        .deletionConfirmationDialog(
+            isPresented: $viewModel.isPresentingDeleteConfirmation,
+            title: deleteConfirmationTitle,
+            buttonText: deleteConfirmationButtonText,
+            confirm: { Task { await viewModel.deleteSelectedItems() } }
+        )
+        .deletionConfirmationDialog(
+            isPresented: $viewModel.isPresentingEmptyRecycleBinConfirmation,
+            title: Strings.RecycleBin.EmptyConfirmation.title,
+            buttonText: Strings.RecycleBin.EmptyConfirmation.button,
+            confirm: { Task { await viewModel.emptyRecycleBin() } }
+        )
+        .restorationConfirmationDialog(
+            isPresented: $viewModel.isPresentingRestoreConfirmation,
+            title: restoreConfirmationTitle,
+            buttonText: Strings.Files.Restore.confirmation,
+            confirm: { Task { await viewModel.restoreSelectedItems() } }
+        )
+    }
+
+    private var restoreConfirmationTitle: String {
+        if let topmostFolderName = viewModel.nameOfTopmostFolderInRecycleBin {
+            return Strings.RecycleBin.Item.RestoreParentConfirmation.title(topmostFolderName)
+        } else if viewModel.selectedItems.count == 1 {
+            let item = viewModel.selectedItems.first!
+            if item.kind == .folder {
+                return Strings.RecycleBin.Item.RestoreFolderConfirmation.title(item.name)
+            } else {
+                return Strings.RecycleBin.Item.RestoreFileConfirmation.title(item.name)
+            }
+
+        } else {
+            return Strings.Files.Restore.title("\(viewModel.selectedItems.count)")
+        }
+    }
+
+    private var deleteConfirmationTitle: String {
+        if viewModel.selectedItems.count == 1 {
+            let item = viewModel.selectedItems.first!
+            if viewModel.isRecycleBin {
+                if item.kind == .folder {
+                    return Strings.RecycleBin.Item.DeleteFolderConfirmation.title(item.name)
+                } else {
+                    return Strings.RecycleBin.Item.DeleteFileConfirmation.title(item.name)
+                }
+            } else {
+                if item.kind == .folder {
+                    return Strings.Files.Item.DeleteFolderConfirmation.title(item.name)
+                } else {
+                    return Strings.Files.Item.DeleteFileConfirmation.title(item.name)
+                }
+            }
+
+        } else {
+            return viewModel.isRecycleBin ? Strings.Files.DeletePermanently
+                .title("\(viewModel.selectedItems.count)") : Strings
+                .Files.DeleteToRecycleBin.title("\(viewModel.selectedItems.count)")
+        }
+    }
+
+    private var deleteConfirmationButtonText: String {
+        viewModel.isRecycleBin ? Strings.Files.DeletePermanently.confirmation : Strings.Files.DeleteToRecycleBin
+            .confirmation
     }
 }
 
@@ -128,21 +188,25 @@ private extension FilesView {
             }
         }
 
-        if !viewModel.isRecycleBin, !viewModel.isOffline {
-            ToolbarItem(placement: .navigationBarTrailing) {
-                if viewModel.multipleSelection == .active {
-                    doneActionButton
-                } else {
-                    moreActionsButton
+        FilesTrailingToolbar(
+            viewModel: viewModel,
+            actionHandlers: toolbarTrailingActionHandlers
+        )
+    }
+
+    var toolbarTrailingActionHandlers: FilesTrailingToolbar.ActionHandlers {
+        .init(
+            onOpenRecycleBin: onOpenRecycleBin,
+            onDismissContainer: onDismissContainer,
+            onUploadFiles: { isFileImporterPresented = true },
+            onUploadMedia: {
+                Task {
+                    pickedMedia = []
+                    guard await viewModel.requestPhotosPermissions() else { return }
+                    isMediaPickerPresented = true
                 }
             }
-        }
-
-        if viewModel.multipleSelection != .active {
-            ToolbarItem(placement: .navigationBarTrailing) {
-                closeButton
-            }
-        }
+        )
     }
 
     func toolBarTitleMenuContent() -> some View {
@@ -153,127 +217,6 @@ private extension FilesView {
             ) {
                 viewModel.selectFolderMenuOption(option)
             }
-        }
-    }
-
-    var closeButton: some View {
-        Button(
-            action: { onDismissContainer() },
-            label: {
-                Image(systemName: "xmark")
-            }
-        )
-        .accessibilityLabel(Accessibility.Files.close)
-        .accessibilityIdentifier(Locators.WireDrive.FilesPage.close.rawValue)
-        .tint(ColorTheme.Base.primary(accentColor).color)
-    }
-
-    var doneActionButton: some View {
-        Button {
-            viewModel.enableMultipleSelection(false)
-        } label: {
-            Text(L10n.Localizable.General.done)
-        }
-        .accessibilityIdentifier(Locators.WireDrive.FilesPage.done)
-    }
-
-    var moreActionsButton: some View {
-        Menu {
-            switch viewModel.selfUserRole {
-            case .editor:
-                editorActions
-            case .viewer:
-                viewerActions
-            }
-        } label: {
-            Image(systemName: "ellipsis.circle")
-        }
-        .tint(ColorTheme.Base.primary(accentColor).color)
-        .accessibilityIdentifier(Locators.WireDrive.FilesPage.moreOptions.rawValue)
-    }
-
-    private var viewerActions: some View {
-        Button {
-            onOpenRecycleBin()
-        } label: {
-            Label {
-                Text(Strings.Files.openRecycleBin)
-            } icon: {
-                Image(systemName: "trash")
-                    .tint(ColorTheme.Backgrounds.onBackground.color)
-            }
-        }
-        .accessibilityIdentifier(Locators.WireDrive.FilesPage.recycleBin.rawValue)
-    }
-
-    private var editorActions: some View {
-        Group {
-            if viewModel.isBulkActionsEnabled {
-                Button {
-                    viewModel.enableMultipleSelection(true)
-                } label: {
-                    Label {
-                        Text(Strings.Files.List.selectItems)
-                    } icon: {
-                        Image(systemName: "checkmark.circle")
-                            .tint(ColorTheme.Backgrounds.onBackground.color)
-                    }
-                }
-                .accessibilityIdentifier(Locators.WireDrive.FilesPage.selectItems.rawValue)
-            }
-
-            Button {
-                viewModel.onCreate(target: .folder)
-            } label: {
-                Label {
-                    Text(Strings.Files.List.createFolder)
-                } icon: {
-                    Image(systemName: "folder.badge.plus")
-                        .tint(ColorTheme.Backgrounds.onBackground.color)
-                }
-            }
-            .accessibilityIdentifier(Locators.WireDrive.FilesPage.createFolder.rawValue)
-
-            Menu {
-                ForEach(viewModel.templates, id: \.self) { template in
-                    Button {
-                        viewModel.onCreate(target: .file(template))
-                    } label: {
-                        Label {
-                            Text(template.kind.title)
-                        } icon: {
-                            Image(systemName: template.kind.systemImage)
-                                .tint(ColorTheme.Backgrounds.onBackground.color)
-                        }
-                    }
-                    .accessibilityIdentifier(Locators.WireDrive.FilesPage.createFileTemplate(template.kind.identifier))
-                }
-
-            } label: {
-                Label {
-                    Text(Strings.Files.List.createFile)
-                } icon: {
-                    Image(systemName: "document.badge.plus")
-                        .tint(ColorTheme.Backgrounds.onBackground.color)
-                }
-            }
-            .accessibilityIdentifier(Locators.WireDrive.FilesPage.createFile.rawValue)
-
-            if viewModel.canUpload {
-                uploadActions
-            }
-
-            Button {
-                onOpenRecycleBin()
-            } label: {
-                Label {
-                    Text(Strings.Files.openRecycleBin)
-                } icon: {
-                    Image(systemName: "trash")
-                        .tint(ColorTheme.Backgrounds.onBackground.color)
-                }
-            }
-            .accessibilityIdentifier(Locators.WireDrive.FilesPage.recycleBin.rawValue)
         }
     }
 }
@@ -309,52 +252,9 @@ private extension FilesView {
     }
 }
 
-// MARK: - folder menu title
-
 // MARK: - Uploads
 
 private extension FilesView {
-
-    @ViewBuilder var uploadActions: some View {
-        Menu {
-            Button {
-                isFileImporterPresented = true
-            } label: {
-                Label {
-                    Text(Strings.Files.Upload.Menu.file)
-                } icon: {
-                    Image(systemName: "document.badge.arrow.up")
-                        .tint(ColorTheme.Backgrounds.onBackground.color)
-                }
-            }
-            .accessibilityIdentifier(Locators.WireDrive.UploadsPage.uploadFile.rawValue)
-
-            Button {
-                Task {
-                    pickedMedia = []
-                    guard await viewModel.requestPhotosPermissions() else { return }
-                    isMediaPickerPresented = true
-                }
-            } label: {
-                Label {
-                    Text(Strings.Files.Upload.Menu.media)
-                } icon: {
-                    Image(systemName: "photo.badge.plus")
-                        .tint(ColorTheme.Backgrounds.onBackground.color)
-                }
-            }
-            .accessibilityIdentifier(Locators.WireDrive.UploadsPage.uploadMedia.rawValue)
-
-        } label: {
-            Label {
-                Text(Strings.Files.Upload.Menu.upload)
-            } icon: {
-                Image(systemName: "arrow.up.folder")
-                    .tint(ColorTheme.Backgrounds.onBackground.color)
-            }
-        }
-        .accessibilityIdentifier(Locators.WireDrive.FilesPage.upload.rawValue)
-    }
 
     func handleFileImport(_ result: Result<[URL], any Error>) async {
         switch result {
@@ -389,43 +289,6 @@ private extension FilesViewModel.FolderMenuOption {
             title
         case .root:
             Strings.Files.navigationTitle
-        }
-    }
-}
-
-// MARK: - template / create file
-
-private extension WireDriveFileTemplate.Kind {
-    var title: String {
-        switch self {
-        case .document:
-            Strings.Files.List.CreateFile.document
-        case .spreadsheet:
-            Strings.Files.List.CreateFile.spreadsheet
-        case .presentation:
-            Strings.Files.List.CreateFile.presentation
-        }
-    }
-
-    var identifier: String {
-        switch self {
-        case .document:
-            "document"
-        case .spreadsheet:
-            "spreadsheet"
-        case .presentation:
-            "presentation"
-        }
-    }
-
-    var systemImage: String {
-        switch self {
-        case .document:
-            "text.document"
-        case .spreadsheet:
-            "tablecells"
-        case .presentation:
-            "sparkles.tv"
         }
     }
 }
