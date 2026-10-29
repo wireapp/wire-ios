@@ -176,10 +176,6 @@ class AdminPromotionTests: WireUITestCase {
         let (teamMember, guestUser) = try await userHelper.connectDriveEnabledTeamUserWithGuestUser()
 
         let domain = BackendTarget.staging.domainInfo
-        let teamMemberQualifiedID = WireFoundation.QualifiedID(
-            id: try XCTUnwrap(UUID(uuidString: teamMember.id)),
-            domain: domain
-        )
         let guestUserQualifiedID = WireFoundation.QualifiedID(
             id: try XCTUnwrap(UUID(uuidString: guestUser.id)),
             domain: domain
@@ -205,8 +201,8 @@ class AdminPromotionTests: WireUITestCase {
             conversationID: conversationQualifiedID
         )
 
-        try await userHelper.removeParticipant(
-            userID: teamMemberQualifiedID,
+        try await userHelper.leaveConversation(
+            user: teamMember,
             conversationID: conversationQualifiedID
         )
 

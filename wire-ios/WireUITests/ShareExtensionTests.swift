@@ -196,25 +196,6 @@ final class ShareExtensionTests: WireUITestCase {
     }
 
     @MainActor
-    private func addMemberToConversation(
-        named conversationName: String,
-        memberName: String
-    ) throws -> ConversationsPage {
-        let conversationDetailsPage = try openConversation(
-            named: conversationName,
-            on: try ConversationsPage()
-        )
-        .openConversationDetails()
-
-        return try conversationDetailsPage
-            .appParticipantToConversation()
-            .tapMemberCells(withLabelPrefixes: [memberName])
-            .addSelectedParticipant()
-            .closeConversationDetails()
-            .goBackToConversationPage()
-    }
-
-    @MainActor
     func testShareImageOnetoOne_TC_8915() async throws {
         // GIVEN
         let scenario = try await createTeamAndLoginAsOwner()
@@ -443,11 +424,6 @@ final class ShareExtensionTests: WireUITestCase {
             email: member.email,
             password: member.password,
             switchBackToUserName: teamOwner.name
-        )
-
-        _ = try addMemberToConversation(
-            named: conversationName,
-            memberName: member.name
         )
 
         // WHEN

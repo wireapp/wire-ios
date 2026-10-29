@@ -18,26 +18,37 @@
 
 import Foundation
 import ImageIO
+import WireNetwork
 
 class TestServicesClient {
+
+    enum Service {
+        case standard
+        case membership
+    }
 
     let testServiceURL: String
     let CONNECT_TIMEOUT: TimeInterval = 120
     let RESPONSE_TIMEOUT: TimeInterval = 120
     private var instanceCache: [String: String] = [:]
 
-    init() {
-        self.testServiceURL = Self.testServiceURL()
+    init(service: Service = .standard) {
+        testServiceURL = Self.testServiceURL(service: service)
     }
 
-    private static func testServiceURL() -> String {
+    private static func testServiceURL(service: Service) -> String {
         let environment = ProcessInfo.processInfo.environment
         let flag = environment["USE_IN_HOUSE_SERVICES"]?.lowercased()
         let flagUnset = flag?.isEmpty ?? true
         let useInHouseServices = flag == "true" || (flagUnset && environment["CI"]?.lowercased() != "true")
-        let hostname = useInHouseServices ? "kalium.qa.zinfra.io" : "localhost:8080"
+        guard useInHouseServices else { return "http://localhost:8080" }
 
-        return "http://\(hostname)"
+        switch service {
+        case .standard:
+            return "http://kalium.qa.zinfra.io"
+        case .membership:
+            return "http://192.168.2.18:8082"
+        }
     }
 
     // MARK: - Created instances log
@@ -89,23 +100,48 @@ class TestServicesClient {
         name: String,
         verificationCode: String?,
         deviceName: String = "device\(Int.random(in: 10_000 ... 99_999))",
-        useCache: Bool = true
+        useCache: Bool = true,
+        backend: BackendTarget? = nil
     ) async throws -> String {
 
-        if useCache, let cachedInstanceId = instanceCache[email] {
+        let cacheKey = "\(backend?.domainInfo ?? "default"):\(email)"
+        if useCache, let cachedInstanceId = instanceCache[cacheKey] {
             return cachedInstanceId
         }
 
         let url = URL(string: "\(testServiceURL)/api/v1/instance")
         guard let requestUrl = url else { fatalError() }
 
-        let body: [String: Any] = [
+        var body: [String: Any] = [
             "email": email,
             "password": password,
             "name": name,
             "developmentApiEnabled": true,
             "deviceName": deviceName
         ]
+
+        switch backend {
+        case .none:
+            break
+        case .staging?:
+            body["backend"] = "staging"
+        case let backend?:
+            let key = backend == .qaFederationA ? "QA_FEDERATION_A_DEEPLINK_URL" : "QA_FEDERATION_B_DEEPLINK_URL"
+            guard let value = ProcessInfo.processInfo.environment[key], let configURL = URL(string: value) else {
+                throw RuntimeError("Missing backend configuration: \(key)")
+            }
+            let (data, response) = try await URLSession.shared.data(from: configURL)
+            guard let response = response as? HTTPURLResponse, response.statusCode == 200 else {
+                throw RuntimeError("Could not fetch backend configuration: \(key)")
+            }
+            let environment = try BackendEnvironment2.fromJSON(data, environmentType: .custom(url: configURL))
+            body["customBackend"] = [
+                "name": environment.title,
+                "rest": environment.config.endpoints.restAPIURL.absoluteString,
+                "ws": environment.config.endpoints.websocketURL.absoluteString
+            ]
+            body["federationDomain"] = backend.domainInfo
+        }
 
         let (responseData, response) = try await sendHttpRequest(
             url: requestUrl.absoluteString,
@@ -125,7 +161,7 @@ class TestServicesClient {
             from: responseData
         )
         if useCache {
-            instanceCache[email] = instanceResponse.instanceId
+            instanceCache[cacheKey] = instanceResponse.instanceId
         }
         await createdInstances.add(instanceResponse.instanceId)
         return instanceResponse.instanceId
@@ -206,6 +242,52 @@ class TestServicesClient {
             from: responseData
         )
         return conversationResponse.conversationId
+    }
+
+    func addMembers(instanceId: String, conversationID: QualifiedID, users: [QualifiedID]) async throws {
+        guard !users.isEmpty else { return }
+        try await updateMembership(
+            instanceId: instanceId,
+            conversationID: conversationID,
+            path: "members/add",
+            parameters: ["users": users.map { ["id": $0.id.uuidString.lowercased(), "domain": $0.domain] }]
+        )
+    }
+
+    func removeMember(instanceId: String, conversationID: QualifiedID, userID: QualifiedID) async throws {
+        try await updateMembership(
+            instanceId: instanceId,
+            conversationID: conversationID,
+            path: "members/remove",
+            parameters: ["user": ["id": userID.id.uuidString.lowercased(), "domain": userID.domain]]
+        )
+    }
+
+    func leaveConversation(instanceId: String, conversationID: QualifiedID) async throws {
+        try await updateMembership(instanceId: instanceId, conversationID: conversationID, path: "leave")
+    }
+
+    private func updateMembership(
+        instanceId: String,
+        conversationID: QualifiedID,
+        path: String,
+        parameters: [String: Any] = [:]
+    ) async throws {
+        var body = parameters
+        body["conversationId"] = conversationID.id.uuidString.lowercased()
+        body["conversationDomain"] = conversationID.domain
+        let (data, response) = try await sendHttpRequest(
+            url: "\(testServiceURL)/api/v1/instance/\(instanceId)/conversation/\(path)",
+            body: body,
+            requestType: "POST"
+        )
+        guard let response = response as? HTTPURLResponse else {
+            throw RuntimeError("Invalid membership response")
+        }
+        guard response.statusCode == 204 else {
+            let detail = String(data: data, encoding: .utf8) ?? ""
+            throw RuntimeError("Conversation \(path) failed: HTTP \(response.statusCode). \(detail)")
+        }
     }
 
     @discardableResult

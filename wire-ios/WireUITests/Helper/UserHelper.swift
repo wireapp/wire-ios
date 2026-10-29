@@ -52,6 +52,7 @@ final class UserHelper {
     let accountsAPI: AccountsAPI
     let userClientsAPI: UserClientsAPI
     let featureConfigsAPI: FeatureConfigsAPI
+    private let membershipClient = TestServicesClient(service: .membership)
 
     private let cookieStorage = MockCookieStorage()
     private let authenticationManager = MockAuthManager()
@@ -84,6 +85,7 @@ final class UserHelper {
         let instances = instances.withLock { $0 }.values
 
         for instance in instances {
+            await instance.membershipClient.deleteInstances()
             await instance.deleteCreatedUsers()
         }
     }
@@ -294,6 +296,7 @@ final class UserHelper {
         )
 
         teamOwner.teamID = teamID
+        teamOwner.id = qualifiedId.id.uuidString
 
         let (activationCode, activationKey) = try await authenticationAPI.getActivationCode(
             forEmail: teamOwner.email,
@@ -432,6 +435,9 @@ final class UserHelper {
             invitationCode: invitationCode
         )
 
+        teamMember.id = qualifiedID.id.uuidString
+        createdUsers.append(teamMember)
+
         return (qualifiedID, teamMember)
     }
 
@@ -493,6 +499,7 @@ final class UserHelper {
         // Set handle
         try await selfUserAPI.updateHandle(handle: teamMember.username)
 
+        teamMember.id = qualifiedID.id.uuidString
         createdUsers.append(teamMember)
 
         return (qualifiedID, teamMember)
@@ -544,16 +551,50 @@ final class UserHelper {
         qualifiedIds: [QualifiedID],
         owner: UserInfo,
         groupName: String,
-        driveEnabled: Bool = false
+        driveEnabled: Bool = false,
+        messageProtocol: ConversationMessageProtocol = .mls
     ) async throws -> Conversation {
+        try await createConversation(
+            groupType: .group,
+            qualifiedIds: qualifiedIds,
+            owner: owner,
+            name: groupName,
+            driveEnabled: driveEnabled,
+            messageProtocol: messageProtocol
+        )
+    }
+
+    private func createConversation(
+        groupType: ConversationGroupType,
+        qualifiedIds: [QualifiedID],
+        owner: UserInfo,
+        name: String,
+        driveEnabled: Bool = false,
+        messageProtocol: ConversationMessageProtocol = .mls
+    ) async throws -> Conversation {
+        guard messageProtocol == .mls || messageProtocol == .proteus else {
+            throw RuntimeError("Conversation setup supports MLS or Proteus")
+        }
+        if messageProtocol == .mls {
+            for id in qualifiedIds {
+                let (user, backend) = try registeredUser(with: id)
+                _ = try await membershipClient.getInstanceId(
+                    email: user.email,
+                    password: user.password,
+                    name: user.name,
+                    verificationCode: nil,
+                    backend: backend
+                )
+            }
+        }
 
         let params = CreateGroupConversationParameters(
-            groupType: .group,
-            messageProtocol: .proteus,
+            groupType: groupType,
+            messageProtocol: messageProtocol,
             creatorClientID: "deprecated",
-            qualifiedUserIDs: qualifiedIds,
+            qualifiedUserIDs: messageProtocol == .proteus ? qualifiedIds : [],
             unqualifiedUserIDs: [],
-            name: groupName,
+            name: name,
             accessMode: [.invite, .code],
             accessRoles: [.teamMember, .guest, .app, .nonTeamMember],
             legacyAccessRole: nil,
@@ -570,7 +611,54 @@ final class UserHelper {
         )
         authenticationManager.accessToken = accessToken
 
-        return try await conversationsAPI.createGroupConversation(parameters: params)
+        let conversation = try await conversationsAPI.createGroupConversation(parameters: params)
+        guard messageProtocol == .mls else { return conversation }
+        guard let conversationID = conversation.qualifiedID,
+              conversation.messageProtocol == .mls,
+              conversation.mlsGroupID != nil else {
+            throw RuntimeError("Created conversation is missing MLS metadata")
+        }
+
+        // Initial Kalium sync establishes the API-created group before members are added.
+        let instanceId = try await membershipClient.getInstanceId(
+            email: owner.email,
+            password: owner.password,
+            name: owner.name,
+            verificationCode: nil,
+            backend: backend
+        )
+        try await waitForMLSGroup(conversationID)
+        try await membershipClient.addMembers(
+            instanceId: instanceId,
+            conversationID: conversationID,
+            users: qualifiedIds
+        )
+        let conversations = try await conversationsAPI.getConversations(for: [conversationID])
+        guard let updated = conversations.found.first else {
+            throw RuntimeError("MLS conversation not found after membership setup")
+        }
+        return updated
+    }
+
+    private func registeredUser(with id: QualifiedID) throws -> (UserInfo, BackendTarget) {
+        let helpers = Self.instances.withLock { Array($0.values) }
+        for helper in helpers where helper.backend.domainInfo == id.domain {
+            if let user = helper.createdUsers.first(where: { UUID(uuidString: $0.id) == id.id }) {
+                return (user, helper.backend)
+            }
+        }
+        throw RuntimeError("No test credentials registered for MLS member \(id.id)@\(id.domain)")
+    }
+
+    private func waitForMLSGroup(_ conversationID: ConversationID) async throws {
+        for _ in 0 ..< 30 {
+            let conversations = try await conversationsAPI.getConversations(for: [conversationID])
+            if let epoch = conversations.found.first?.epoch, epoch > 0 {
+                return
+            }
+            try await Task.sleep(for: .seconds(1))
+        }
+        throw RuntimeError("Kalium did not establish MLS group \(conversationID.id) within 30 seconds")
     }
 
     /// Create channel conversation
@@ -578,35 +666,19 @@ final class UserHelper {
     ///   - qualifiedIds: qualifiedIds for members of the channel
     ///   - owner: group owner
     ///   - groupName: groupName
+    @discardableResult
     func createChannelConversations(
         qualifiedIds: [QualifiedID],
         owner: UserInfo,
         channelName: String
-    ) async throws {
-
-        let params = CreateGroupConversationParameters(
+    ) async throws -> Conversation {
+        try await createConversation(
             groupType: .channel,
-            messageProtocol: .mls,
-            creatorClientID: "deprecated",
-            qualifiedUserIDs: qualifiedIds,
-            unqualifiedUserIDs: [],
+            qualifiedIds: qualifiedIds,
+            owner: owner,
             name: channelName,
-            accessMode: [.invite, .code],
-            accessRoles: [.teamMember, .guest, .app, .nonTeamMember],
-            legacyAccessRole: nil,
-            teamID: owner.teamID,
-            isReadReceiptsEnabled: true
+            messageProtocol: .mls
         )
-
-        let (_, accessToken) = try await authenticationAPI.login(
-            email: owner.email,
-            password: owner.password,
-            verificationCode: nil,
-            label: nil
-        )
-        authenticationManager.accessToken = accessToken
-
-        _ = try await conversationsAPI.createGroupConversation(parameters: params)
     }
 
     /// Registers a set of teams for a specific owner.
@@ -645,7 +717,8 @@ final class UserHelper {
         withMemberCount memberCount: Int = 0,
         conversation: CreateConversationOption? = nil,
         driveEnabled: Bool = false,
-        names: [String] = []
+        names: [String] = [],
+        messageProtocol: ConversationMessageProtocol = .mls
     ) async throws
         -> (teamOwner: UserInfo, teamMembers: [UserInfo], qualifiedIDs: [QualifiedID], conversationId: UUID?) {
 
@@ -692,7 +765,8 @@ final class UserHelper {
                     qualifiedIds: qualifiedIDs,
                     owner: teamOwner,
                     groupName: name,
-                    driveEnabled: driveEnabled
+                    driveEnabled: driveEnabled,
+                    messageProtocol: messageProtocol
                 )
 
                 let (resolvedConversationId, _) = try await getConversationId(matching: .conversationName(name))
@@ -954,8 +1028,20 @@ final class UserHelper {
         try await conversationsAPI.updateRole(role, userID: userID, conversationID: conversationID)
     }
 
-    func removeParticipant(userID: UserID, conversationID: ConversationID) async throws {
-        try await conversationsAPI.removeParticipant(userID: userID, conversationID: conversationID)
+    func removeParticipant(userID: UserID, conversationID: ConversationID, as user: UserInfo) async throws {
+        let instanceId = try await membershipClient.getInstanceId(
+            email: user.email, password: user.password, name: user.name, verificationCode: nil, backend: backend
+        )
+        try await membershipClient.removeMember(
+            instanceId: instanceId, conversationID: conversationID, userID: userID
+        )
+    }
+
+    func leaveConversation(user: UserInfo, conversationID: ConversationID) async throws {
+        let instanceId = try await membershipClient.getInstanceId(
+            email: user.email, password: user.password, name: user.name, verificationCode: nil, backend: backend
+        )
+        try await membershipClient.leaveConversation(instanceId: instanceId, conversationID: conversationID)
     }
 }
 
