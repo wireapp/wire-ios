@@ -56,6 +56,64 @@ final class MessageToolboxViewTests: CoreDataSnapshotTestCase {
         super.tearDown()
     }
 
+    // MARK: - Timestamp Accessibility
+
+    func testTimestampAccessibilityIncludesDateWithoutChangingVisibleTime() {
+        let timestamp = Date(timeIntervalSince1970: 1_729_600_740)
+        message.serverTimestamp = timestamp
+        message.updatedAt = timestamp.addingTimeInterval(60)
+
+        sut.configureForMessage(message)
+
+        XCTAssertEqual(sut.detailsLabel.text, message.formattedReceivedTime())
+        XCTAssertEqual(
+            sut.detailsLabel.accessibilityLabel,
+            L10n.Localizable.MessageDetails.subtitleSendDate(
+                Message.spellOutDateTimeFormatter.string(from: timestamp)
+            )
+        )
+        XCTAssertFalse(sut.detailsLabel.isHidden)
+    }
+
+    func testTimestampAccessibilityIsClearedWhenReusedForMessageWithoutDate() {
+        message.serverTimestamp = Date(timeIntervalSince1970: 1_729_600_740)
+        sut.configureForMessage(message)
+        XCTAssertNotNil(sut.detailsLabel.accessibilityLabel)
+
+        let nextMessage: MockMessage = MockMessageFactory.textMessage(withText: "No timestamp")
+        nextMessage.serverTimestamp = nil
+        nextMessage.deliveryState = .sent
+        nextMessage.senderUser = MockUserType.createUser(name: "Bruno")
+        sut.configureForMessage(nextMessage)
+
+        XCTAssertTrue(sut.detailsLabel.isHidden)
+        XCTAssertEqual(sut.detailsLabel.accessibilityLabel ?? "", "")
+    }
+
+    func testTimestampAccessibilityIsClearedWhenMessageIsPending() {
+        message.serverTimestamp = Date(timeIntervalSince1970: 1_729_600_740)
+        sut.configureForMessage(message)
+        XCTAssertNotNil(sut.detailsLabel.accessibilityLabel)
+
+        message.deliveryState = .pending
+        sut.configureForMessage(message)
+
+        XCTAssertTrue(sut.detailsLabel.isHidden)
+        XCTAssertEqual(sut.detailsLabel.accessibilityLabel ?? "", "")
+    }
+
+    func testTimestampAccessibilityIsClearedWhenShowingCallList() {
+        message.serverTimestamp = Date(timeIntervalSince1970: 1_729_600_740)
+        sut.configureForMessage(message)
+        XCTAssertNotNil(sut.detailsLabel.accessibilityLabel)
+
+        let systemMessageData = MockSystemMessageData(systemMessageType: .missedCall, reason: .none)
+        message.backingSystemMessageData = systemMessageData
+        sut.configureForMessage(message)
+
+        XCTAssertEqual(sut.detailsLabel.accessibilityLabel, sut.detailsLabel.text)
+    }
+
     // MARK: - Snapshot Tests
 
     func testThatItConfiguresWithFailedToSend() {

@@ -30,7 +30,12 @@ enum MessageToolboxContent: Equatable {
     case callList(String)
 
     /// Display the message details (timestamp and/or status and/or countdown).
-    case details(timestamp: String, status: MessageToolboxState?, countdown: String)
+    case details(
+        timestamp: String,
+        accessibleTimestamp: String?,
+        status: MessageToolboxState?,
+        countdown: String
+    )
 }
 
 extension MessageToolboxContent: Comparable {
@@ -90,7 +95,7 @@ final class MessageToolboxDataSource {
     /// Creates a toolbox data source for the given message.
     init(message: ConversationMessage) {
         self.message = message
-        self.content = .details(timestamp: "", status: nil, countdown: "")
+        self.content = .details(timestamp: "", accessibleTimestamp: nil, status: nil, countdown: "")
     }
 
     // MARK: - Content
@@ -120,7 +125,16 @@ final class MessageToolboxDataSource {
         // 3) Timestamp
         else {
             let (timestamp, status, countdown) = makeDetailsString()
-            content = .details(timestamp: timestamp, status: status, countdown: countdown)
+            let accessibleTimestamp = timestamp.isEmpty ? nil : message.serverTimestamp.map {
+                let dateTime = Message.spellOutDateTimeFormatter.string(from: $0)
+                return L10n.Localizable.MessageDetails.subtitleSendDate(dateTime)
+            }
+            content = .details(
+                timestamp: timestamp,
+                accessibleTimestamp: accessibleTimestamp,
+                status: status,
+                countdown: countdown
+            )
         }
 
         // Only perform the changes if the content did change.
