@@ -6,6 +6,10 @@ on:
       mac_runner:
         type: string
         default: in-house
+      test_service_url:
+        type: string
+        required: false
+        default: ''
       all:
         type: boolean
         default: false
@@ -198,6 +202,7 @@ jobs:
         shell: bash
         env:
           IN_HOUSE_RUNNER: ${{ inputs.mac_runner == 'in-house' }}
+          TEST_SERVICE_URL: ${{ inputs.test_service_url }}
         run: |
           set -euo pipefail
 
@@ -206,6 +211,17 @@ jobs:
 
           if [[ "$IN_HOUSE_RUNNER" == "true" ]]; then
             echo "USE_IN_HOUSE_SERVICES=true" >> "$ENV_FILE"
+            if [[ -n "$TEST_SERVICE_URL" ]]; then
+              # Avoid xcconfig's // comment syntax; Xcode expands $() to empty before launching tests.
+              ruby -e '
+                url = ENV.fetch("TEST_SERVICE_URL").gsub("//", "/$()/")
+                File.open(ARGV.fetch(0), "a") { |file| file.puts("TEST_SERVICE_URL=#{url}") }
+              ' "$ENV_FILE"
+              echo "Test service URL: $TEST_SERVICE_URL"
+              if [[ "$TEST_SERVICE_URL" == "http://192.168.2.18:8080" ]]; then
+                echo "::warning::Old service (http://192.168.2.18:8080) lacks MLS membership endpoints; affected tests will fail."
+              fi
+            fi
           fi
 
           echo "Runner name: ${RUNNER_NAME:-unknown}"

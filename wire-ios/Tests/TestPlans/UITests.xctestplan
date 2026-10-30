@@ -26,6 +26,10 @@
             "value" : "$(USE_IN_HOUSE_SERVICES)"
           },
           {
+            "key" : "TEST_SERVICE_URL",
+            "value" : "$(TEST_SERVICE_URL)"
+          },
+          {
             "key" : "SSO_CLAIMED_USER_PASSWORD",
             "value" : "$(SSO_CLAIMED_USER_PASSWORD)"
           },

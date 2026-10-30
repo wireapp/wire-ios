@@ -225,7 +225,9 @@ final class SettingsTests: WireUITestCase {
         let groupName = UserGenerator.generateRandomConversationName()
         let (team, _, _, _) = try await UserHelper.default.registerTeam(
             withMemberCount: 1,
-            conversation: .group(groupName)
+            conversation: .group(groupName),
+            // The read-receipt toggle is hidden for MLS conversations.
+            messageProtocol: .proteus
         )
 
         let activeConversationPage = try app.loginUser(email: team.email, password: team.password)
