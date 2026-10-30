@@ -52,7 +52,7 @@ final class UserHelper {
     let accountsAPI: AccountsAPI
     let userClientsAPI: UserClientsAPI
     let featureConfigsAPI: FeatureConfigsAPI
-    private let membershipClient = TestServicesClient(service: .membership)
+    private let membershipClient = TestServicesClient()
 
     private let cookieStorage = MockCookieStorage()
     private let authenticationManager = MockAuthManager()
@@ -387,11 +387,15 @@ final class UserHelper {
         defer { authenticationManager.accessToken = previousAccessToken }
         authenticationManager.accessToken = try await fetchAccessToken(email: user.email, password: user.password)
 
-        let clients = try await userClientsAPI.getSelfClients().filter {
+        let allClients = try await userClientsAPI.getSelfClients()
+        let clients = allClients.filter {
             $0.deviceClass == .phone || $0.deviceClass == .tablet
         }
         guard let client = clients.first, clients.count == 1 else {
-            throw RuntimeError("Expected one iOS client for \(user.email), found \(clients.count)")
+            throw RuntimeError(
+                "Expected one iOS client for \(user.email), found \(clients.count) "
+                    + "among \(allClients.count) total clients"
+            )
         }
 
         return client.id
@@ -575,10 +579,16 @@ final class UserHelper {
         messageProtocol: ConversationMessageProtocol = .mls
     ) async throws -> Conversation {
         guard messageProtocol == .mls || messageProtocol == .proteus else {
-            throw RuntimeError("Conversation setup supports MLS or Proteus")
+            throw RuntimeError("Unsupported conversation setup protocol: \(messageProtocol)")
         }
+        var memberIDs = qualifiedIds
         if messageProtocol == .mls {
-            for id in qualifiedIds {
+            guard let ownerID = UUID(uuidString: owner.id) else {
+                throw RuntimeError("MLS conversation owner is missing a valid user ID")
+            }
+
+            memberIDs.removeAll { $0.id == ownerID && $0.domain == backend.domainInfo }
+            for id in memberIDs {
                 let (user, backend) = try registeredUser(with: id)
                 _ = try await membershipClient.getInstanceId(
                     email: user.email,
@@ -633,7 +643,7 @@ final class UserHelper {
         try await membershipClient.addMembers(
             instanceId: instanceId,
             conversationID: conversationID,
-            users: qualifiedIds
+            users: memberIDs
         )
         let conversations = try await conversationsAPI.getConversations(for: [conversationID])
         guard let updated = conversations.found.first else {
@@ -655,6 +665,7 @@ final class UserHelper {
     private func waitForMLSGroup(_ conversationID: ConversationID) async throws {
         for _ in 0 ..< 30 {
             let conversations = try await conversationsAPI.getConversations(for: [conversationID])
+            // Epoch zero means no MLS commit has reached the backend yet.
             if let epoch = conversations.found.first?.epoch, epoch > 0 {
                 return
             }
@@ -1028,15 +1039,6 @@ final class UserHelper {
 
     func updateRole(_ role: String, userID: UserID, conversationID: ConversationID) async throws {
         try await conversationsAPI.updateRole(role, userID: userID, conversationID: conversationID)
-    }
-
-    func removeParticipant(userID: UserID, conversationID: ConversationID, as user: UserInfo) async throws {
-        let instanceId = try await membershipClient.getInstanceId(
-            email: user.email, password: user.password, name: user.name, verificationCode: nil, backend: backend
-        )
-        try await membershipClient.removeMember(
-            instanceId: instanceId, conversationID: conversationID, userID: userID
-        )
     }
 
     func leaveConversation(user: UserInfo, conversationID: ConversationID) async throws {

@@ -22,33 +22,27 @@ import WireNetwork
 
 class TestServicesClient {
 
-    enum Service {
-        case standard
-        case membership
-    }
-
     let testServiceURL: String
     let CONNECT_TIMEOUT: TimeInterval = 120
     let RESPONSE_TIMEOUT: TimeInterval = 120
     private var instanceCache: [String: String] = [:]
 
-    init(service: Service = .standard) {
-        self.testServiceURL = Self.testServiceURL(service: service)
+    init() {
+        self.testServiceURL = Self.testServiceURL()
     }
 
-    private static func testServiceURL(service: Service) -> String {
+    private static func testServiceURL() -> String {
         let environment = ProcessInfo.processInfo.environment
         let flag = environment["USE_IN_HOUSE_SERVICES"]?.lowercased()
         let flagUnset = flag?.isEmpty ?? true
         let useInHouseServices = flag == "true" || (flagUnset && environment["CI"]?.lowercased() != "true")
         guard useInHouseServices else { return "http://localhost:8080" }
 
-        switch service {
-        case .standard:
-            return "http://kalium.qa.zinfra.io"
-        case .membership:
-            return "http://192.168.2.18:8082"
+        // The updated in-house service supports existing operations and MLS membership.
+        if let url = environment["TEST_SERVICE_URL"]?.trimmingCharacters(in: .whitespacesAndNewlines), !url.isEmpty {
+            return url
         }
+        return "http://192.168.2.18:8082"
     }
 
     // MARK: - Created instances log
@@ -120,14 +114,20 @@ class TestServicesClient {
             "deviceName": deviceName
         ]
 
+        let backendConfigVariable: String?
         switch backend {
         case .none:
-            break
+            backendConfigVariable = nil
         case .staging?:
             body["backend"] = "staging"
-        case let backend?:
-            let backendConfigVariable = backend == .qaFederationA
-                ? "QA_FEDERATION_A_DEEPLINK_URL" : "QA_FEDERATION_B_DEEPLINK_URL"
+            backendConfigVariable = nil
+        case .qaFederationA?:
+            backendConfigVariable = "QA_FEDERATION_A_DEEPLINK_URL"
+        case .qaFederationB?:
+            backendConfigVariable = "QA_FEDERATION_B_DEEPLINK_URL"
+        }
+
+        if let backend, let backendConfigVariable {
             guard let value = ProcessInfo.processInfo.environment[backendConfigVariable],
                   let configURL = URL(string: "https://\(value)") else {
                 throw RuntimeError("Missing backend configuration: \(backendConfigVariable)")
