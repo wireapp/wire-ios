@@ -57,6 +57,10 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         environment.environmentType != .default
     }
 
+    var isDeveloperCredentialLoginEnabled: Bool {
+        PendingDeveloperCredentialsStore.isEnabled && isOnPremiseBackend && !environment.isCloudEnvironment
+    }
+
     let overrideAllowEmailLoginOnly: Bool
 
     // MARK: - Dependencies
@@ -119,6 +123,10 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
     // MARK: - Actions
 
     func submitEmailOrSSOCode() async {
+        if isDeveloperCredentialLoginEnabled {
+            PendingDeveloperCredentialsStore.clear()
+        }
+
         isLoading = true
         defer {
             isLoading = false
@@ -167,6 +175,22 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
                 router.presentAlert(for: error)
             }
         }
+    }
+
+    func submitDeveloperCredentialQRCode(_ scannedCode: String) {
+        guard isDeveloperCredentialLoginEnabled else { return }
+
+        guard let credentials = DeveloperCredentialQRCode(scannedCode: scannedCode) else {
+            alert = Alert(title: "QR login failed", message: "The credential QR code is invalid.")
+            return
+        }
+
+        PendingDeveloperCredentialsStore.save(credentials)
+        router.navigate(to: DetermineAuthMethodDestination.login(
+            email: credentials.email,
+            didDetectDomainConflict: false,
+            environment: environment
+        ))
     }
 
     func onAlertDismiss() {
@@ -393,4 +417,59 @@ package final class DetermineAuthMethodViewModel: ObservableObject {
         return try useCase.invoke(input: emailOrSSOCode.trimmingCharacters(in: .whitespaces))
     }
 
+}
+
+struct DeveloperCredentialQRCode {
+    let email: String
+    let password: String
+
+    init?(scannedCode: String) {
+        let fields = scannedCode
+            .components(separatedBy: .newlines)
+            .reduce(into: [String: String]()) { fields, line in
+                let parts = line.split(separator: ":", maxSplits: 1)
+                guard parts.count == 2 else { return }
+
+                let key = parts[0]
+                    .trimmingCharacters(in: .whitespacesAndNewlines)
+                    .lowercased()
+                let value = parts[1]
+                    .trimmingCharacters(in: .whitespacesAndNewlines)
+
+                fields[key] = value
+            }
+
+        guard
+            let email = fields["email"] ?? fields["owner email"] ?? fields["member email"],
+            let password = fields["password"] ?? fields["owner password"] ?? fields["member password"],
+            !email.isEmpty,
+            !password.isEmpty
+        else {
+            return nil
+        }
+
+        self.email = email
+        self.password = password
+    }
+}
+
+@MainActor
+enum PendingDeveloperCredentialsStore {
+    private static var credentialsByEmail = [String: DeveloperCredentialQRCode]()
+
+    static var isEnabled: Bool {
+        Bundle.main.object(forInfoDictionaryKey: "EnableDeveloperMenu") as? String == "1"
+    }
+
+    static func save(_ credentials: DeveloperCredentialQRCode) {
+        credentialsByEmail[credentials.email] = credentials
+    }
+
+    static func consume(email: String) -> DeveloperCredentialQRCode? {
+        credentialsByEmail.removeValue(forKey: email)
+    }
+
+    static func clear() {
+        credentialsByEmail.removeAll()
+    }
 }
