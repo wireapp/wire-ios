@@ -193,6 +193,17 @@
 "conversation.wireCells.files.downloadingFile" = "Загрузка файла...";
 "conversation.wireCells.files.offlineModeHint" = "Вы по-прежнему можете получить доступ к своим файлам в режиме оффлайн.";
 "conversation.wireCells.files.time.just_now" = "Только что";
+"conversation.wireCells.files.deletePermanently.title" = "This will permanently delete %@ items for all participants. Everyone will lose access and there is no way to recover them.";
+"conversation.wireCells.files.deletePermanently.confirmation" = "Удалить навсегда";
+"conversation.wireCells.files.deleteToRecycleBin.title" = "%@ items will move to the recycle bin.";
+"conversation.wireCells.files.deleteToRecycleBin.confirmation" = "Удалить";
+"conversation.wireCells.files.restore.title" = "%@элементов будут восстановлены и снова доступны для всех в этой беседе.";
+"conversation.wireCells.files.restore.confirmation" = "Восстановить";
+"conversation.wireCells.files.selection.selectItems" = "Select items";
+"conversation.wireCells.files.selection.oneItem" = "1 item";
+"conversation.wireCells.files.selection.items" = "%@ items";
+"conversation.wireCells.files.selection.selectAll" = "Select all";
+"conversation.wireCells.files.selection.deselectAll" = "Deselect all";
 
 
 // MARK: - Shared Drive uploads
@@ -250,6 +261,8 @@
 "conversation.wireCells.recycleBin.item.restoreParentConfirmation.title" = "Вы не можете восстановить папки или файлы из удаленной папки. Чтобы восстановить нужный элемент, вы должны восстановить его родительскую папку.\n\n Папка \"%@\" будет восстановлена со всеми файлами и подпапками и станет доступной всем участникам этой беседы.";
 "conversation.wireCells.recycleBin.emptyFolder.title" = "Пустая папка";
 "conversation.wireCells.recycleBin.emptyFolder.message" = "Эта папка не содержит файлов или папок.";
+"conversation.wireCells.recycleBin.emptyConfirmation.title" = "This will permanently delete all items, including all files and folders. Everyone will lose access and there is no way to recover them.";
+"conversation.wireCells.recycleBin.emptyConfirmation.button" = "Очистить корзину";
 
 // MARK: - File Tags View
 "conversation.wireCells.tags.title" = "Добавить или удалить теги";

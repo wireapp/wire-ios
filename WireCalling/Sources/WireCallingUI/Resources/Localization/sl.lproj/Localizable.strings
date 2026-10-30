@@ -46,6 +46,9 @@
 "wireMeetings.list.header.yesterday" = "Yesterday";
 "wireMeetings.list.header.ongoing" = "Ongoing";
 "wireMeetings.list.attending" = "Attending";
+"wireMeetings.list.emailInvitees.count" = "%d email invitees";
+"wireMeetings.list.emailInvitees.expanded" = "Expanded";
+"wireMeetings.list.emailInvitees.collapsed" = "Collapsed";
 "wireMeetings.list.actions.edit" = "Edit meeting";
 "wireMeetings.list.actions.delete" = "Delete meeting for all";
 "wireMeetings.list.actions.deleteForMe" = "Delete meeting for me";
@@ -69,6 +72,10 @@
 "wireMeetings.link.passwordProtected" = "The link is password protected. To set a new password, generate a new link.";
 "wireMeetings.link.notPasswordProtected" = "This link is not password protected. Make sure to share it only with the right people. To add a password, generate a new link.";
 "wireMeetings.link.copy" = "Copy link";
+"wireMeetings.link.confirmation.description" = "We sent this link by email to your participants. Share this link if you want to invite more participants.";
+"wireMeetings.link.confirmation.sharingDescription" = "Share this link to invite participants.";
+"wireMeetings.link.confirmation.instantTitle" = "Invite guests via link";
+"wireMeetings.link.confirmation.close" = "Zapri";
 "wireMeetings.link.copied" = "Link copied to clipboard";
 "wireMeetings.link.unavailable" = "The meeting link is unavailable.";
 "wireMeetings.link.loadError" = "Could not load the meeting link. Please try again.";
