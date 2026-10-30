@@ -35,10 +35,6 @@ package extension FilesViewModel {
 
     private static var pickedMediaDirectoryName: String { "drive-upload-picked" }
 
-    var canUpload: Bool {
-        uploadDestinationPath != nil && selfUserRole == .editor
-    }
-
     func requestPhotosPermissions() async -> Bool {
         let result = await PHPhotoLibrary.requestAuthorization(for: .readWrite)
         switch result {

@@ -199,6 +199,34 @@ class OTREntityTests_Dependency: MessagingTestBase {
         }
     }
 
+    func testThatItReturnsAPreviousUploadingAssetOlderThanThreeMinutesAsDependency_OfflinePendingMessages() {
+        DeveloperFlag.storage = .temporary()
+        DeveloperFlag.offlinePendingMessages.enable(true)
+        defer { DeveloperFlag.storage = .standard }
+
+        let fileURL = FileManager.default.temporaryDirectory.appendingPathComponent("\(UUID()).txt")
+        try! Data("file".utf8).write(to: fileURL)
+        defer { try? FileManager.default.removeItem(at: fileURL) }
+
+        syncMOC.performGroupedAndWait {
+
+            // GIVEN
+            let timeZero = Date(timeIntervalSince1970: 10_000)
+            let assetMessage = try! self.groupConversation
+                .appendFile(with: ZMFileMetadata(fileURL: fileURL)) as! ZMAssetClientMessage
+            assetMessage.serverTimestamp = timeZero
+            XCTAssertEqual(assetMessage.transferState, .uploading)
+
+            // WHEN
+            let lastMessage = try! self.groupConversation.appendText(content: "zoo") as! ZMClientMessage
+            lastMessage.serverTimestamp = timeZero.addingTimeInterval(4 * 60)
+
+            // THEN
+            let dependency = lastMessage.dependentObjectNeedingUpdateBeforeProcessing
+            XCTAssertEqual(dependency as? ZMAssetClientMessage, assetMessage)
+        }
+    }
+
     func testThatItDoesNotReturnAPreviousSentMessageAsDependency() {
         syncMOC.performGroupedAndWait {
 

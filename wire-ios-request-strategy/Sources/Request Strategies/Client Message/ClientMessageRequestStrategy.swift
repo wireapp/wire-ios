@@ -321,7 +321,13 @@ extension ClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
         default:
             nil
         }
-        return networkError?.response?.result == .tryAgainLater
+        return switch networkError?.response?.result {
+        case .tryAgainLater, .expired:
+            // A request queued offline can expire before reconnection lets the transport complete it.
+            true
+        default:
+            false
+        }
     }
 
     private func deleteMessageIfNecessary(_ message: ZMClientMessage) {
@@ -426,8 +432,8 @@ private final class ReachabilityWaiter: @unchecked Sendable {
             return
         }
         isFinished = true
-        let continuation = self.continuation
-        let token = self.token
+        let continuation = continuation
+        let token = token
         self.continuation = nil
         self.token = nil
         lock.unlock()
