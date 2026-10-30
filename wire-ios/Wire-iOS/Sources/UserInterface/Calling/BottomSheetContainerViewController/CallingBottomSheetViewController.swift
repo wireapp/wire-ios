@@ -146,6 +146,7 @@ final class CallingBottomSheetViewController: BottomSheetContainerViewController
             onClose: { [weak self] in self?.dismissMeetingInvitation() }
         )
         controller.view.backgroundColor = .clear
+        controller.view.accessibilityElementsHidden = state == .full
         meetingInvitationViewController = controller
         addChild(controller)
         view.insertSubview(controller.view, belowSubview: overlay)
@@ -157,9 +158,9 @@ final class CallingBottomSheetViewController: BottomSheetContainerViewController
             controller.view.bottomAnchor.constraint(
                 lessThanOrEqualTo: bottomSheetViewController.view.topAnchor,
                 constant: -8
-            ),
+            ).withPriority(.defaultHigh),
             controller.view.heightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.heightAnchor, multiplier: 0.4)
-                .withPriority(.defaultHigh)
+                .withPriority(.defaultLow)
         ])
         controller.didMove(toParent: self)
     }
@@ -220,6 +221,7 @@ final class CallingBottomSheetViewController: BottomSheetContainerViewController
     }
 
     override func didChangeState() {
+        meetingInvitationViewController?.view.accessibilityElementsHidden = state == .full
         switch state {
         case .initial:
             visibleVoiceChannelViewController.view.accessibilityElementsHidden = false
