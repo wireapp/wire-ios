@@ -76,6 +76,7 @@ package final class FilesViewModel: ObservableObject {
     let triggerReload: PassthroughSubject<Void, Never>
     let title: String?
     var failedItemActions: [FilesViewItem.ID: FilesItemViewModel.ItemAction] = [:]
+    var availableOfflineAssets: [WireDriveLocalAsset] = []
 
     var selfUserRole: WireDriveConversation.Participant.Role {
         selfUser?.role ?? .viewer
@@ -157,9 +158,10 @@ package final class FilesViewModel: ObservableObject {
     // MARK: setup
 
     func setup() async {
+        await pullAvailableOfflineItems()
         setupFilesStateController()
-        await fetchConversations(then: fetchSelfUser)
-        await fetchTemplates()
+        await pullConversations(then: pullSelfUser)
+        await pullTemplates()
         bindSearch()
     }
 
@@ -197,15 +199,9 @@ package final class FilesViewModel: ObservableObject {
         filesController.onFetchOfflineFiles = { [weak self] in
             guard let self else { return [] }
 
-            let conversationName = cellName != nil ? conversations.first?.name : nil
-            let assetsPath = navigationPath.last?.filePath
+            await pullAvailableOfflineItems()
 
-            let offlineAssets = try await useCases.getOfflineAvailableAssets.invoke(
-                conversationName: conversationName,
-                assetsPath: assetsPath
-            )
-
-            let items: [FilesViewItem] = offlineAssets.map { asset in
+            let items: [FilesViewItem] = availableOfflineAssets.map { asset in
                 // TODO: [WPB-26057] When backend ready, remove this code, the self user role (editor/viewer) will come from the BE and will have to be stored locally in `WireDriveLocalAsset`
                 let selfUserRole = conversations
                     .first(where: { $0.name == asset.conversationName })?
@@ -215,9 +211,9 @@ package final class FilesViewModel: ObservableObject {
 
                 return .fromLocalAsset(
                     asset,
-                    conversationName: conversationName,
+                    conversationName: cellName != nil ? conversations.first?.name : nil,
                     isReadOnly: (selfUserRole ?? .viewer) == .viewer,
-                    assetsPath: assetsPath
+                    assetsPath: navigationPath.last?.filePath
                 )
             }
 
@@ -258,7 +254,7 @@ package final class FilesViewModel: ObservableObject {
 
     // MARK: fetch general data
 
-    private func fetchTemplates() async {
+    private func pullTemplates() async {
         do {
             templates = try await useCases.getFileTemplates.invoke()
         } catch {
@@ -266,7 +262,7 @@ package final class FilesViewModel: ObservableObject {
         }
     }
 
-    private func fetchConversations(then handler: () -> Void) async {
+    private func pullConversations(then handler: () -> Void) async {
         let allDriveConversations = await useCases.getDriveConversations.invoke()
 
         if let cellName {
@@ -278,7 +274,7 @@ package final class FilesViewModel: ObservableObject {
         handler()
     }
 
-    private func fetchSelfUser() {
+    private func pullSelfUser() {
         selfUser = conversations.flatMap(\.participants).first(where: \.isSelfUser)
 
         if let selfUser {
@@ -512,14 +508,28 @@ package final class FilesViewModel: ObservableObject {
         isBrowsing || (selfUserRole == .editor && !isRecycleBin)
     }
 
+    func pullAvailableOfflineItems() async {
+        let conversationName = cellName != nil ? conversations.first?.name : nil
+        let assetsPath = navigationPath.last?.filePath
+
+        do {
+            availableOfflineAssets = try await useCases.getOfflineAvailableAssets.invoke(
+                conversationName: conversationName,
+                assetsPath: assetsPath
+            )
+        } catch {
+            WireLogger.wireDrive.error("Failed to pull available offline assets: \(String(describing: error))")
+        }
+    }
+
     func makeAssetAvailableOffline(items: Set<FilesViewItem>) {
-        // only files are supported
+        // only files are supported for this action
         let filesItems = items.filter { $0.kind == .file }
         selectedItems = Set(filesItems)
-        
+        multipleSelection = .inactive
+
         Task {
             let results = await useCases.makeAssetAvailableOffline.invoke(nodeIDs: filesItems.map(\.id))
-            multipleSelection = .inactive
             for (nodeID, result) in results {
                 switch result {
                 case .success:
@@ -531,20 +541,30 @@ package final class FilesViewModel: ObservableObject {
                     WireLogger.wireDrive.error("Failed to make asset available offline: \(String(describing: error))")
                 }
             }
+
+            await pullAvailableOfflineItems()
         }
     }
 
-    func removeAssetAvailableOffline(item: FilesViewItem) {
-        Task {
-            do {
-                try await useCases.removeAssetAvailableOffline.invoke(nodeID: item.id)
+    func removeAssetAvailableOffline(items: Set<FilesViewItem>) {
+        // only files are supported for this action
+        let fileItems = items.filter { $0.kind == .file }
+        selectedItems = Set(fileItems)
+        multipleSelection = .inactive
 
-                if isOffline {
-                    await reload()
+        Task {
+            for item in fileItems {
+                do {
+                    try await useCases.removeAssetAvailableOffline.invoke(nodeID: item.id)
+                } catch {
+                    WireLogger.wireDrive
+                        .error("Failed to remove asset from available offline: \(String(describing: error))")
                 }
-            } catch {
-                WireLogger.wireDrive
-                    .error("Failed to remove asset from available offline: \(String(describing: error))")
+            }
+            await pullAvailableOfflineItems()
+
+            if isOffline {
+                await reload()
             }
         }
     }

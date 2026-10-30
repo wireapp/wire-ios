@@ -191,51 +191,80 @@ private extension FilesContentView {
     var floatingBarActions: [FilesFloatingActionBar.Action] {
         var actions: [FilesFloatingActionBar.Action] = []
 
-        if viewModel.isRecycleBin {
-            // restore
+        if viewModel.isOffline {
+            // remove offline access
             actions.append(
                 .init(
-                    id: Locators.WireDrive.FilesPage.restoreFloatingButton.rawValue,
-                    title: Strings.RecycleBin.Item.Menu.restore,
-                    systemImage: "arrow.uturn.backward",
+                    id: Locators.WireDrive.FilesPage.removeAvailableOfflineFloatingButton.rawValue,
+                    title: Strings.Files.Item.Menu.removeAvailableOffline,
+                    systemImage: "arrow.down.circle",
                     isEnabled: !viewModel.selectedItems.isEmpty,
-                    perform: { viewModel.isPresentingRestoreConfirmation = true }
+                    perform: { viewModel.removeAssetAvailableOffline(items: viewModel.selectedItems) }
                 )
             )
         } else {
-            // move to folder
-            actions.append(
-                .init(
-                    id: Locators.WireDrive.FilesPage.moveToFolderFloatingButton.rawValue,
-                    title: Strings.Files.Item.Menu.moveToFolder,
-                    systemImage: "folder",
-                    isEnabled: !viewModel.selectedItems.isEmpty,
-                    perform: viewModel.moveSelectedItemsToFolder
+            if viewModel.isRecycleBin {
+                // restore
+                actions.append(
+                    .init(
+                        id: Locators.WireDrive.FilesPage.restoreFloatingButton.rawValue,
+                        title: Strings.RecycleBin.Item.Menu.restore,
+                        systemImage: "arrow.uturn.backward",
+                        isEnabled: !viewModel.selectedItems.isEmpty,
+                        perform: { viewModel.isPresentingRestoreConfirmation = true }
+                    )
                 )
-            )
-        }
-        // delete
-        actions.append(
-            .init(
-                id: Locators.WireDrive.FilesPage.deleteFloatingButton.rawValue,
-                title: Strings.Files.Item.Menu.delete,
-                systemImage: "trash",
-                isEnabled: !viewModel.selectedItems.isEmpty,
-                perform: { viewModel.isPresentingDeleteConfirmation = true }
-            )
-        )
+            } else {
+                // move to folder
+                actions.append(
+                    .init(
+                        id: Locators.WireDrive.FilesPage.moveToFolderFloatingButton.rawValue,
+                        title: Strings.Files.Item.Menu.moveToFolder,
+                        systemImage: "folder",
+                        isEnabled: !viewModel.selectedItems.isEmpty,
+                        perform: viewModel.moveSelectedItemsToFolder
+                    )
+                )
 
-        // offline access
-        if !viewModel.isOffline {
-            actions.append(
-                .init(
-                    id: Locators.WireDrive.FilesPage.makeAvailableOfflineFloatingButton.rawValue,
-                    title: Strings.Files.Item.Menu.makeAvailableOffline,
-                    systemImage: "arrow.down.circle",
-                    isEnabled: !viewModel.selectedItems.isEmpty,
-                    perform: { viewModel.makeAssetAvailableOffline(items: viewModel.selectedItems) }
+                // delete
+                actions.append(
+                    .init(
+                        id: Locators.WireDrive.FilesPage.deleteFloatingButton.rawValue,
+                        title: Strings.Files.Item.Menu.delete,
+                        systemImage: "trash",
+                        isEnabled: !viewModel.selectedItems.isEmpty,
+                        perform: { viewModel.isPresentingDeleteConfirmation = true }
+                    )
                 )
-            )
+
+                let selectedIDs = Set(viewModel.selectedItems.filter { $0.kind == .file }.map(\.id))
+                let availableOfflineIDs = Set(viewModel.availableOfflineAssets.map(\.nodeID))
+                let onlyContainsFolders = viewModel.selectedItems.allSatisfy { $0.kind == .folder }
+
+                if !selectedIDs.isDisjoint(with: availableOfflineIDs), !onlyContainsFolders {
+                    actions.append(
+                        .init(
+                            id: Locators.WireDrive.FilesPage.removeAvailableOfflineFloatingButton.rawValue,
+                            title: Strings.Files.Item.Menu.removeAvailableOffline,
+                            systemImage: "xmark.circle",
+                            isEnabled: !viewModel.selectedItems.isEmpty,
+                            perform: { viewModel.removeAssetAvailableOffline(items: viewModel.selectedItems) }
+                        )
+                    )
+                }
+
+                if !selectedIDs.isSubset(of: availableOfflineIDs), !onlyContainsFolders {
+                    actions.append(
+                        .init(
+                            id: Locators.WireDrive.FilesPage.makeAvailableOfflineFloatingButton.rawValue,
+                            title: Strings.Files.Item.Menu.makeAvailableOffline,
+                            systemImage: "arrow.down.circle",
+                            isEnabled: !viewModel.selectedItems.isEmpty,
+                            perform: { viewModel.makeAssetAvailableOffline(items: viewModel.selectedItems) }
+                        )
+                    )
+                }
+            }
         }
 
         return actions

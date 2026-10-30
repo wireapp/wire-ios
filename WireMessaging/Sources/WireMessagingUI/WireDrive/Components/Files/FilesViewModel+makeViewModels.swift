@@ -53,7 +53,7 @@ extension FilesViewModel {
                 case .makeAvailableOffline:
                     makeAssetAvailableOffline(items: [item])
                 case .removeAvailableOffline:
-                    removeAssetAvailableOffline(item: item)
+                    removeAssetAvailableOffline(items: [item])
                 }
             },
             isBrowsing: isBrowsing,
