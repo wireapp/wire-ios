@@ -58,6 +58,73 @@ final class ConversationReplyWithTextCellSnapshotTests: ConversationMessageSnaps
         XCTAssertNil(cell.accessibilityHint)
     }
 
+    func testReplyParentActionsComposeLinksAndRefreshOnReconfiguration() throws {
+        let previousProvider = SelfUser.provider
+        SelfUser.provider = SelfProvider(providedSelfUser: mockSelfUser)
+        defer { SelfUser.provider = previousProvider }
+        let tableView = UITableView()
+        let message = MockMessageFactory.textMessage(withText: "details")
+        message.senderUser = mockOtherUser
+        let text = NSAttributedString(
+            string: "details", attributes: [.link: URL(string: "https://example.com")!]
+        )
+        let description = ConversationReplyWithTextCellDescription(
+            quotedMessage: nil,
+            accentColor: .blue,
+            messageReplyAttachmentsViewModel: nil,
+            attributedText: text,
+            isObfuscated: false,
+            userSession: nil
+        )
+        description.message = message
+        let controller = ConversationMessageActionController(
+            responder: nil, message: message, context: .content, view: tableView
+        )
+        description.actionController = controller
+        description.register(in: tableView)
+
+        let cell = description.makeCell(for: tableView, at: IndexPath(row: 0, section: 0))
+        let menuNames = controller.makeAccessibilityActions().map(\.name)
+        let actions = try XCTUnwrap(cell.accessibilityCustomActions)
+        XCTAssertFalse(menuNames.isEmpty)
+        XCTAssertEqual(Array(actions.prefix(menuNames.count)).map(\.name), menuNames)
+        XCTAssertEqual(actions.count, menuNames.count + 1)
+
+        description.configuration = .init(
+            quotedMessage: nil, accentColor: .blue, messageReplyAttachmentsViewModel: nil,
+            attributedText: text, isObfuscated: true, userSession: nil
+        )
+        description.configureCell(cell)
+        XCTAssertEqual(cell.accessibilityCustomActions?.map(\.name), menuNames)
+
+        description.configuration = .init(
+            quotedMessage: nil, accentColor: .blue, messageReplyAttachmentsViewModel: nil,
+            attributedText: NSAttributedString(string: "No links"), isObfuscated: false, userSession: nil
+        )
+        description.configureCell(cell)
+        XCTAssertEqual(cell.accessibilityCustomActions?.map(\.name), menuNames)
+    }
+
+    func testReplyMentionActionsRequireMatchingMessageMetadataAndClearOnReuse() {
+        let cell = ConversationReplyWithTextCell(frame: .zero)
+        let message = MockMessageFactory.textMessage(withText: "Alice")
+        let mention = Mention(range: NSRange(location: 0, length: 5), user: mockOtherUser)
+        cell.configure(with: .init(
+            quotedMessage: nil, accentColor: .blue, messageReplyAttachmentsViewModel: nil,
+            attributedText: NSAttributedString(string: "Alice", attributes: [.link: mention.link]),
+            isObfuscated: false, userSession: nil
+        ), animated: false)
+        cell.message = message
+        XCTAssertTrue(cell.inlineLinkAccessibilityActions.isEmpty)
+
+        message.backingTextMessageData.mentions = [mention]
+        XCTAssertEqual(cell.inlineLinkAccessibilityActions.count, 1)
+        XCTAssertTrue(cell.inlineLinkAccessibilityActions[0].name.contains("Alice"))
+
+        cell.prepareForReuse()
+        XCTAssertTrue(cell.inlineLinkAccessibilityActions.isEmpty)
+    }
+
     // MARK: - Text quote variations
 
     /// Other user replies to another user's text message (default blue accent color).

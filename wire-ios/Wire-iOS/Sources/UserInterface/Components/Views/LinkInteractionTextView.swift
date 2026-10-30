@@ -26,6 +26,71 @@ protocol TextViewInteractionDelegate: AnyObject {
 
 final class LinkInteractionTextView: UITextView {
     weak var interactionDelegate: TextViewInteractionDelegate?
+    private var accessibilityLinkGeneration = UUID()
+
+    func invalidateAccessibilityLinkActions() {
+        accessibilityLinkGeneration = UUID()
+    }
+
+    /// Only attributed links can use the app's normal link interaction route.
+    /// System data detectors require UITextView's native interaction instead.
+    func makeAccessibilityLinkActions(
+        isAvailable: @escaping (URL) -> Bool
+    ) -> [UIAccessibilityCustomAction] {
+        guard let attributedText, interactionDelegate != nil else { return [] }
+        let generation = accessibilityLinkGeneration
+        var actions: [UIAccessibilityCustomAction] = []
+        var destinations: Set<String> = []
+        var names: [String: Int] = [:]
+
+        attributedText.enumerateAttribute(.link, in: NSRange(location: 0, length: attributedText.length)) {
+            value, range, _ in
+            guard let url = value as? URL,
+                  !self.dataDetectedURLSchemes.contains(url.scheme ?? ""),
+                  isAvailable(url)
+            else { return }
+
+            let text = attributedText.attributedSubstring(from: range).string
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+            guard !text.isEmpty,
+                  destinations.insert("\(url.absoluteString)\n\(text)").inserted
+            else { return }
+
+            let title = url.isMention
+                ? L10n.Localizable.Meta.Menu.openSelfProfile
+                : L10n.Localizable.Content.Message.OpenLinkAlert.title
+            let baseName = "\(title): \(text)"
+            let count = (names[baseName] ?? 0) + 1
+            names[baseName] = count
+            let name = count == 1 ? baseName : "\(baseName) (\(count.formatted()))"
+
+            actions.append(UIAccessibilityCustomAction(name: name) { [weak self] _ in
+                guard let self,
+                      generation == accessibilityLinkGeneration,
+                      let currentText = self.attributedText,
+                      NSMaxRange(range) <= currentText.length,
+                      currentText.attributedSubstring(from: range).string
+                      .trimmingCharacters(in: .whitespacesAndNewlines) == text,
+                      isAvailable(url)
+                else { return false }
+
+                var currentRange = NSRange()
+                let currentURL = currentText.attribute(
+                    .link,
+                    at: range.location,
+                    longestEffectiveRange: &currentRange,
+                    in: NSRange(location: 0, length: currentText.length)
+                ) as? URL
+                guard currentURL == url, currentRange == range else { return false }
+
+                switch performDefaultLinkInteraction(for: url, in: range) {
+                case .handled, .confirmationPresented: return true
+                case .blocked, .systemDefault: return false
+                }
+            })
+        }
+        return actions
+    }
 
     override var selectedTextRange: UITextRange? {
         get { nil }
@@ -130,6 +195,20 @@ final class LinkInteractionTextView: UITextView {
         confirmationAlert(for: url).presentOverAll(animated: true)
         return true
     }
+
+    private enum LinkInteractionResult {
+        case blocked
+        case confirmationPresented
+        case handled
+        case systemDefault
+    }
+
+    private func performDefaultLinkInteraction(for url: URL, in range: NSRange) -> LinkInteractionResult {
+        guard !UIMenuController.shared.isMenuVisible else { return .blocked }
+        if showAlertIfNeeded(for: url, in: range) { return .confirmationPresented }
+        if dataDetectedURLSchemes.contains(url.scheme ?? "") { return .systemDefault }
+        return interactionDelegate?.textView(self, open: url) == true ? .handled : .systemDefault
+    }
 }
 
 extension LinkInteractionTextView: UITextViewDelegate {
@@ -161,21 +240,7 @@ extension LinkInteractionTextView: UITextViewDelegate {
 
         switch interaction {
         case .invokeDefaultAction:
-
-            guard !UIMenuController.shared.isMenuVisible else {
-                return false // Don't open link/show alert if menu controller is visible
-            }
-
-            let performLinkInteraction: () -> Bool = {
-                // if alert shown, link opening is handled in alert actions
-                if self.showAlertIfNeeded(for: URL, in: characterRange) { return false }
-
-                // data detector links should be handle by the system
-                return self.dataDetectedURLSchemes
-                    .contains(URL.scheme ?? "") || !(self.interactionDelegate?.textView(self, open: URL) ?? false)
-            }
-
-            return performLinkInteraction()
+            return performDefaultLinkInteraction(for: URL, in: characterRange) == .systemDefault
 
         case .presentActions,
              .preview:
