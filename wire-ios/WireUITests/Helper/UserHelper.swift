@@ -1069,7 +1069,9 @@ final class UserHelper {
             }
             try await Task.sleep(for: .seconds(1))
         }
-        throw RuntimeError("Guest group was not deleted within \(timeout) seconds; received \(reminders.count) reminders")
+        throw RuntimeError(
+            "Guest group was not deleted within \(timeout) seconds; received \(reminders.count) reminders"
+        )
     }
 
 }
