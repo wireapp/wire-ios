@@ -22,13 +22,16 @@ public struct TimeDividerModel: ConversationCellModelProtocol {
     public var id: AnyHashable { self }
 
     var text: String
+    var accessibilityLabel: String
     var isUnreadIndicatorVisible: Bool
 
     public init(
         text: String,
-        isUnreadIndicatorVisible: Bool
+        isUnreadIndicatorVisible: Bool,
+        accessibilityLabel: String? = nil
     ) {
         self.text = text
+        self.accessibilityLabel = accessibilityLabel ?? text
         self.isUnreadIndicatorVisible = isUnreadIndicatorVisible
     }
 
