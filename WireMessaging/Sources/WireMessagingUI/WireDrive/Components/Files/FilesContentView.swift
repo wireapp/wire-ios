@@ -32,6 +32,7 @@ private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
 ///   - toolbarContent: toolbar content builder.
 ///   - sheetContent: sheet builder for navigation items.
 package struct FilesContentView<Toolbar: ToolbarContent, Sheet: View>: View {
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @ObservedObject package var viewModel: FilesViewModel
     package let isBrowsing: Bool
     package let backgroundColor: Color
@@ -140,6 +141,10 @@ package struct FilesContentView<Toolbar: ToolbarContent, Sheet: View>: View {
                 await viewModel.reload(refreshing: true)
             }
         }
+        .onChange(of: isSearchFocused) { _, newValue in
+            guard newValue else { return }
+            viewModel.enableMultipleSelection(false)
+        }
         .task {
             await viewModel.setup()
             await viewModel.reload()
@@ -169,16 +174,21 @@ private extension FilesContentView {
             .listRowBackground(ColorTheme.Backgrounds.surface.color)
         }
         .environment(\.editMode, $viewModel.multipleSelection)
+        .animation(reduceMotion ? nil : .smooth(duration: 0.25), value: viewModel.multipleSelection)
         .listStyle(.plain)
         .refreshable { reloadTask(refreshing: true) }
         .overlay(listBackgroundView)
         .safeAreaInset(edge: .bottom, alignment: .leading, spacing: 0) {
-            if viewModel.multipleSelection == .active {
-                FilesFloatingActionBar(actions: floatingBarActions)
-                    .disabled(viewModel.selectedItems.isEmpty)
-                    .padding(.horizontal, 16)
-                    .padding(.bottom, 12)
+            VStack(spacing: 0) {
+                if viewModel.multipleSelection == .active {
+                    FilesFloatingActionBar(actions: floatingBarActions)
+                        .disabled(viewModel.selectedItems.isEmpty)
+                        .padding(.horizontal, 16)
+                        .padding(.bottom, 12)
+                        .transition(reduceMotion ? .identity : .move(edge: .bottom).combined(with: .opacity))
+                }
             }
+            .animation(reduceMotion ? nil : .smooth(duration: 0.25), value: viewModel.multipleSelection)
         }
         .animation(.default, value: viewModel.state)
         .safeAreaInset(edge: .bottom, spacing: 0) {
@@ -293,6 +303,10 @@ private extension FilesContentView {
     @ViewBuilder
     func itemRow(index: Int) -> some View {
         FilesItemView(viewModel: viewModel.itemViewModel(index: index))
+            .transaction { transaction in
+                // Keep row content still while the list animates its native selection controls.
+                transaction.animation = nil
+            }
     }
 
     var loadMoreRow: some View {
