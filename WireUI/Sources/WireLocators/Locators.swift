@@ -851,6 +851,10 @@ public enum Locators {
         }
 
         public enum MeetingLink: String {
+            case generate = "meetingLinkGenerate"
+            case create = "meetingLinkCreate"
+            case close = "meetingLinkClose"
+            case consequence = "meetingLinkConsequence"
             case url = "meetingLinkURL"
             case passwordState = "meetingLinkPasswordState"
             case copy = "meetingLinkCopy"
