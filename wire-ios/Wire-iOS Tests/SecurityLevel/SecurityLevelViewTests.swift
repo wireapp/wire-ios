@@ -49,6 +49,28 @@ final class SecurityLevelViewTests: XCTestCase {
         super.tearDown()
     }
 
+    func testClassificationRemainsReadableWithoutInteractiveKeyboardFocus() throws {
+        sut.configure(with: .classified)
+        let classifiedLabel = try XCTUnwrap(sut.accessibilityLabel)
+
+        XCTAssertFalse(classifiedLabel.isEmpty)
+        XCTAssertTrue(sut.isAccessibilityElement)
+        XCTAssertFalse(sut.accessibilityRespondsToUserInteraction)
+
+        sut.configure(with: .notClassified)
+        let unclassifiedLabel = try XCTUnwrap(sut.accessibilityLabel)
+
+        XCTAssertFalse(unclassifiedLabel.isEmpty)
+        XCTAssertNotEqual(unclassifiedLabel, classifiedLabel)
+        XCTAssertTrue(sut.isAccessibilityElement)
+        XCTAssertFalse(sut.accessibilityRespondsToUserInteraction)
+
+        sut.configure(with: nil)
+
+        XCTAssertTrue(sut.isHidden)
+        XCTAssertFalse(sut.accessibilityRespondsToUserInteraction)
+    }
+
     // MARK: - SnapshotTests
 
     func testThatItRendersWithNotClassified() {

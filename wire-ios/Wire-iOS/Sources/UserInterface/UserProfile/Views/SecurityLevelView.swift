@@ -50,6 +50,7 @@ final class SecurityLevelView: UIView {
         createConstraints()
 
         isAccessibilityElement = true
+        accessibilityRespondsToUserInteraction = false
     }
 
     @available(*, unavailable)
