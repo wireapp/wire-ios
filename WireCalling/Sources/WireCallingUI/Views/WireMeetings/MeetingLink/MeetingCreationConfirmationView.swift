@@ -104,7 +104,7 @@ package struct MeetingCreationConfirmationView: View {
                 copyConfirmation = UUID()
                 UIAccessibility.post(notification: .announcement, argument: Strings.copied)
             }
-            .wireButtonStyle(.primary)
+            .buttonStyle(MeetingCreationCopyButtonStyle())
             .disabled(!isClipboardEnabled)
             .accessibilityIdentifier(Locators.WireMeetings.MeetingLink.copy)
             .padding([.horizontal, .bottom], 16)
@@ -127,5 +127,28 @@ package struct MeetingCreationConfirmationView: View {
         Button(Strings.Confirmation.close, action: onClose)
             .font(for: .body1)
             .accessibilityIdentifier("meetingCreationConfirmationClose")
+    }
+}
+
+private struct MeetingCreationCopyButtonStyle: ButtonStyle {
+
+    @Environment(\.isEnabled) private var isEnabled
+    @Environment(\.colorScheme) private var colorScheme
+
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .lineLimit(1)
+            .padding()
+            .frame(maxWidth: .infinity)
+            .background {
+                if isEnabled {
+                    Rectangle().fill(.tint)
+                } else {
+                    (colorScheme == .dark ? BaseColorPalette.Grays.gray80 : BaseColorPalette.Grays.gray50).color
+                }
+            }
+            .foregroundStyle(isEnabled ? ColorTheme.Base.onPrimary.color : ColorTheme.Base.onDisabled.color)
+            .font(for: .buttonBig)
+            .clipShape(.rect(cornerRadius: 16))
     }
 }
