@@ -112,8 +112,9 @@ package struct MeetingCreationConfirmationView: View {
             if copyConfirmation != nil {
                 Text(Strings.copied)
                     .font(for: .body2)
+                    .foregroundStyle(ColorTheme.Backgrounds.onInverted.color)
                     .padding(12)
-                    .background(ColorTheme.Backgrounds.surface.color, in: RoundedRectangle(cornerRadius: 12))
+                    .background(ColorTheme.Backgrounds.inverted.color, in: RoundedRectangle(cornerRadius: 12))
                     .accessibilityIdentifier(Locators.WireMeetings.MeetingLink.copied)
                     .allowsHitTesting(false)
             }
