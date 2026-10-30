@@ -456,6 +456,74 @@ extension ClientMessageRequestStrategyTests {
         }
     }
 
+    func testThatItRetriesExpiredRequestAfterReconnecting_OfflinePendingMessages() {
+        assertRetriesExpiredRequestAfterReconnecting(wrapped: false)
+    }
+
+    func testThatItRetriesWrappedExpiredRequestAfterReconnecting_OfflinePendingMessages() {
+        assertRetriesExpiredRequestAfterReconnecting(wrapped: true)
+    }
+
+    private func assertRetriesExpiredRequestAfterReconnecting(wrapped: Bool) {
+        // GIVEN
+        enableOfflinePendingMessages()
+        let didQueueOffline = XCTestExpectation(description: "request queued offline")
+        var reconnect: CheckedContinuation<Void, Never>!
+        var message: ZMClientMessage!
+        var nonce: UUID?
+        var didComplete: XCTestExpectation!
+        syncMOC.performAndWait {
+            self.mockMessageSender.sendMessageMessage_MockMethod = { [mockReachability] _ in
+                if self.mockMessageSender.sendMessageMessage_Invocations.count == 1 {
+                    // Connectivity disappears after the strategy's initial reachability check.
+                    mockReachability?.mayBeReachable = false
+                    await withCheckedContinuation {
+                        reconnect = $0
+                        didQueueOffline.fulfill()
+                    }
+                    // Simulate the queued request having passed its deadline while offline.
+                    // The transport reports expiration only after connectivity has returned.
+                    let response = ZMTransportResponse(
+                        transportSessionError: NSError.requestExpiredError(),
+                        apiVersion: APIVersion.v0.rawValue
+                    )
+                    XCTAssertEqual(response.result, .expired)
+                    XCTAssertTrue(mockReachability?.mayBeReachable == true)
+                    let error = NetworkError.errorDecodingResponse(response)
+                    if wrapped {
+                        throw MessageSendError.failed(error)
+                    }
+                    throw error
+                }
+            }
+            message = try! self.groupConversation.appendText(content: "Lorem ipsum") as? ZMClientMessage
+            nonce = message.nonce
+            self.syncMOC.saveOrRollback()
+
+            // WHEN
+            didComplete = self.insert(message, isFresh: true)
+        }
+        wait(for: [didQueueOffline], timeout: 5)
+        syncMOC.performAndWait {
+            XCTAssertFalse(message.isExpired)
+            XCTAssertFalse(message.delivered)
+        }
+        mockReachability.setMayBeReachable(true)
+        reconnect.resume()
+        wait(for: [didComplete], timeout: 5)
+
+        // THEN
+        syncMOC.performAndWait {
+            XCTAssertEqual(self.mockMessageSender.sendMessageMessage_Invocations.count, 2)
+            XCTAssertEqual(message.nonce, nonce)
+            XCTAssertEqual(message.textMessageData?.messageText, "Lorem ipsum")
+            XCTAssertFalse(message.isExpired)
+            XCTAssertNil(message.expirationDate)
+            XCTAssertTrue(message.delivered)
+            XCTAssertTrue(self.localNotificationDispatcher.failedToSend.isEmpty)
+        }
+    }
+
     func testThatItExpiresMessageAfterPermanentFailureWhileOnline_OfflinePendingMessages() {
         // GIVEN
         enableOfflinePendingMessages()
