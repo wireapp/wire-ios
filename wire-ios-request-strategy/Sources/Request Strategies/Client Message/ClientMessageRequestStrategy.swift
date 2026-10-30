@@ -426,8 +426,8 @@ private final class ReachabilityWaiter: @unchecked Sendable {
             return
         }
         isFinished = true
-        let continuation = self.continuation
-        let token = self.token
+        let continuation = continuation
+        let token = token
         self.continuation = nil
         self.token = nil
         lock.unlock()
