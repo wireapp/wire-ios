@@ -2586,6 +2586,12 @@ internal enum L10n {
             }
           }
         }
+        internal enum OfflineNotice {
+          /// Your messages will be sent once you are online again.
+          internal static let message = L10n.tr("Localizable", "content.system.offline_notice.message", fallback: "Your messages will be sent once you are online again.")
+          /// You are offline.
+          internal static let title = L10n.tr("Localizable", "content.system.offline_notice.title", fallback: "You are offline.")
+        }
         internal enum RenamedConv {
           /// %@ renamed the conversation
           internal static func title(_ p1: Any) -> String {

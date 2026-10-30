@@ -98,6 +98,16 @@ final class ConversationTableViewDataSource: NSObject {
         }
     }
 
+    /// Whether the notice that the device is offline and messages are sent later is shown.
+    var showsOfflineNotice = false {
+        didSet {
+            guard showsOfflineNotice != oldValue else { return }
+            calculateSections { [weak self] sections in
+                self?.reloadSections(newSections: sections, animated: true)
+            }
+        }
+    }
+
     var allMessages: [ZMMessage] {
         // NOTE: We limit the number of messages to the `lastFetchedObjectCount` since the
         // NSFetchResultsController will add objects to `fetchObjects` if they are modified after
@@ -837,8 +847,24 @@ extension ConversationTableViewDataSource {
             isFirstUnreadMessage: message.nonce == firstUnreadMessageNonce,
             isLastMessage: isLastMessage,
             searchQueries: searchQueries,
-            previousMessageIsKnock: previousMessage?.isKnock == true
+            previousMessageIsKnock: previousMessage?.isKnock == true,
+            offlineNotice: offlineNoticePosition(at: index, messages: messages)
         )
+    }
+
+    /// The offline notice goes above the messages the self user sent while offline, which are the newest ones
+    /// and still pending, or below the newest message if there are none.
+    private func offlineNoticePosition(at index: Int, messages: [ZMMessage]) -> OfflineNoticePosition? {
+        guard showsOfflineNotice, !hasNewerMessagesToLoad else { return nil }
+
+        let pendingMessageCount = messages.prefix { message in
+            Message.isNormal(message) && message.deliveryState == .pending && message.sender?.isSelfUser == true
+        }.count
+
+        if pendingMessageCount == 0 {
+            return index == 0 ? .below : nil
+        }
+        return index == pendingMessageCount - 1 ? .above : nil
     }
 
     private func isFirstMessageOfTheDay(
