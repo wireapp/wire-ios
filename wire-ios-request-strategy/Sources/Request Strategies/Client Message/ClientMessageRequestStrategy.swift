@@ -18,6 +18,8 @@
 
 import Foundation
 import WireLogging
+import WireTransport
+import WireUtilities
 
 public class ClientMessageRequestStrategy: NSObject, ZMContextChangeTrackerSource {
 
@@ -36,13 +38,26 @@ public class ClientMessageRequestStrategy: NSObject, ZMContextChangeTrackerSourc
     let messageExpirationTimer: MessageExpirationTimer
     let linkAttachmentsPreprocessor: LinkAttachmentsPreprocessor
     let localNotificationDispatcher: PushMessageHandler
+    let reachability: any ReachabilityProvider
+
+    /// Attempts that fail with a transient error while the network seems reachable. Waiting while
+    /// offline doesn't count.
+    private let maxOnlineRetries = 3
+
+    /// Delay before retrying an attempt that was cancelled, e.g. because the app is in the background.
+    private let cancelledRetryDelay = 10
+
+    /// Sends that are still running, so they can be cancelled when the session closes.
+    private var sendTasks: [UUID: Task<Void, Never>] = [:]
+    private let sendTasksLock = NSLock()
 
     // MARK: - Life cycle
 
     public init(
         context: NSManagedObjectContext,
         localNotificationDispatcher: PushMessageHandler,
-        messageSender: MessageSenderInterface
+        messageSender: MessageSenderInterface,
+        reachability: any ReachabilityProvider
     ) {
         self.insertedObjectSync = InsertedObjectSync(
             insertPredicate: Self.shouldBeSentPredicate(context: context)
@@ -51,6 +66,7 @@ public class ClientMessageRequestStrategy: NSObject, ZMContextChangeTrackerSourc
         self.context = context
         self.messageSender = messageSender
         self.localNotificationDispatcher = localNotificationDispatcher
+        self.reachability = reachability
 
         self.messageExpirationTimer = MessageExpirationTimer(
             moc: context,
@@ -114,7 +130,8 @@ extension ClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
             return
         }
 
-        if !isFresh {
+        let staysPendingWhileOffline = object.staysPendingWhileOffline
+        if !isFresh, !staysPendingWhileOffline {
             // This message was not added in this runtime. Rather than send it
             // which may no longer make sense after such as delay, we will
             // expire it so the user can retry.
@@ -134,12 +151,18 @@ extension ClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
 
         // Enter groups to enable waiting for message sending to complete in tests
         let groups = context.enterAllGroupsExceptSecondary()
-        Task {
+        let taskID = UUID()
+        // The task removes itself under the same lock, so it can't do that before it's stored.
+        sendTasksLock.lock()
+        defer { sendTasksLock.unlock() }
+        sendTasks[taskID] = Task {
+            var heldGroups = groups
             defer {
-                context.leaveAllGroups(groups)
+                context.leaveAllGroups(heldGroups)
+                self.sendTasksLock.withLock { _ = self.sendTasks.removeValue(forKey: taskID) }
             }
             do {
-                try await messageSender.sendMessage(message: object)
+                try await send(object, staysPendingWhileOffline: staysPendingWhileOffline, groups: &heldGroups)
 
                 let logAttributes = await logAttributesBuilder.logAttributes(object)
                 WireLogger.messaging.debug("successfully sent message", attributes: logAttributes)
@@ -148,6 +171,13 @@ extension ClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
                     object.markAsSent()
                     self.deleteMessageIfNecessary(object)
                 }
+            } catch PendingMessageError.noLongerNeeded {
+                let logAttributes = await logAttributesBuilder.logAttributes(object)
+                WireLogger.messaging.info("pending message no longer needs to be sent", attributes: logAttributes)
+            } catch PendingMessageError.sessionClosed {
+                // The context is being torn down, so leave the message as it is. It's sent after the next login.
+                WireLogger.messaging.info("stopped waiting to send pending message because the session closed")
+                return
             } catch {
                 let logAttributes = await logAttributesBuilder.logAttributes(object)
                 WireLogger.messaging.error("failed to send message: \(error)", attributes: logAttributes)
@@ -176,6 +206,130 @@ extension ClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
         }
     }
 
+    // MARK: - Pending messages
+
+    private enum PendingMessageError: Error {
+        /// The message was deleted, expired or otherwise changed while it was waiting.
+        case noLongerNeeded
+        /// The session closed while the message was waiting.
+        case sessionClosed
+    }
+
+    /// Sends the message. If it stays pending while offline, transient network failures don't fail it:
+    /// it waits until the network may be reachable again and is resent with the same nonce and content.
+    ///
+    /// - Parameter groups: The context's groups held for this send. They're released while waiting.
+    private func send(
+        _ message: ZMClientMessage,
+        staysPendingWhileOffline: Bool,
+        groups: inout [ZMSDispatchGroup]
+    ) async throws {
+        guard staysPendingWhileOffline else {
+            try await messageSender.sendMessage(message: message)
+            return
+        }
+
+        var onlineRetries = 0
+        while true {
+            if !reachability.mayBeReachable {
+                await waitWithoutHoldingGroups(&groups) {
+                    await self.reachability.waitUntilMayBeReachable()
+                }
+            }
+            // The task is only cancelled when the session closes.
+            guard !Task.isCancelled else { throw PendingMessageError.sessionClosed }
+
+            let shouldStillBeSent = await context.perform {
+                guard
+                    !message.isZombieObject,
+                    message.underlyingMessage != nil,
+                    Self.shouldBeSentPredicate(context: self.context).evaluate(with: message)
+                else {
+                    return false
+                }
+
+                // From now on the text may reach recipients, so it must no longer be replaced in place.
+                // Both happen on this context, so an in-place edit can't interleave with the send.
+                if !message.sendAttemptStarted {
+                    message.sendAttemptStarted = true
+                    self.context.saveOrRollback()
+                }
+                return true
+            }
+            guard shouldStillBeSent else { throw PendingMessageError.noLongerNeeded }
+
+            do {
+                try await messageSender.sendMessage(message: message)
+                return
+            } catch {
+                guard !Task.isCancelled else { throw PendingMessageError.sessionClosed }
+
+                let isOffline = !reachability.mayBeReachable
+                // The background task ran out of time, e.g. because the app went to the background.
+                let isCancelled = error is CancellationError
+                guard
+                    isOffline || isCancelled || (Self.isTransientFailure(error) && onlineRetries < maxOnlineRetries)
+                else {
+                    throw error
+                }
+
+                let logAttributes = await MessageLogAttributesBuilder(context: context).logAttributes(message)
+                WireLogger.messaging.info(
+                    "keeping message pending after transient failure: \(error)",
+                    attributes: logAttributes
+                )
+
+                // The attempt armed the expiration timer, which must not fire while the message waits.
+                await context.perform {
+                    self.messageExpirationTimer.stop(for: message)
+                    message.removeExpirationDate()
+                }
+
+                if isCancelled {
+                    await waitWithoutHoldingGroups(&groups) {
+                        try? await Task.sleep(for: .seconds(self.cancelledRetryDelay))
+                    }
+                } else if !isOffline {
+                    onlineRetries += 1
+                    let delay = 1 << onlineRetries
+                    await waitWithoutHoldingGroups(&groups) {
+                        try? await Task.sleep(for: .seconds(delay))
+                    }
+                }
+            }
+        }
+    }
+
+    /// Runs `wait` without holding the context's groups, since tearing down the session waits until they're
+    /// empty and a pending message can wait for a long time.
+    private func waitWithoutHoldingGroups(
+        _ groups: inout [ZMSDispatchGroup],
+        _ wait: () async -> Void
+    ) async {
+        context.leaveAllGroups(groups)
+        await wait()
+        // If the session closed in the meantime, the context must no longer be used.
+        groups = Task.isCancelled ? [] : context.enterAllGroupsExceptSecondary()
+    }
+
+    private static func isTransientFailure(_ error: any Error) -> Bool {
+        let networkError: NetworkError? = switch error {
+        case let error as NetworkError:
+            error
+        case let MessageSendError.failed(error as NetworkError):
+            error
+        default:
+            nil
+        }
+        return switch networkError?.response?.result {
+        case .tryAgainLater, .expired:
+            // A request queued offline can expire before reconnection lets the transport complete it.
+            true
+        default:
+            false
+        }
+    }
+
     private func deleteMessageIfNecessary(_ message: ZMClientMessage) {
         guard let underlyingMessage = message.underlyingMessage else { return }
 
@@ -192,4 +346,100 @@ extension ClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
         }
     }
 
+}
+
+// MARK: - Tear down
+
+extension ClientMessageRequestStrategy: TearDownCapable {
+
+    public func tearDown() {
+        cancelSends()
+    }
+
+    /// Cancels the sends that are still running, e.g. pending messages waiting for the network, so they
+    /// don't use the context after the session has closed.
+    public func cancelSends() {
+        let tasks = sendTasksLock.withLock {
+            defer { sendTasks.removeAll() }
+            return Array(sendTasks.values)
+        }
+        tasks.forEach { $0.cancel() }
+    }
+}
+
+// MARK: - Reachability
+
+private extension ReachabilityProvider {
+
+    /// Returns once the network may be reachable, immediately if it already is, or once the task is
+    /// cancelled.
+    func waitUntilMayBeReachable() async {
+        guard !mayBeReachable else { return }
+
+        let waiter = ReachabilityWaiter()
+        await withTaskCancellationHandler {
+            await withCheckedContinuation { continuation in
+                waiter.start(continuation, observing: self)
+            }
+        } onCancel: {
+            waiter.finish()
+        }
+    }
+}
+
+/// Resumes a continuation exactly once, when the network may be reachable or the wait is cancelled,
+/// and then removes its reachability observer.
+private final class ReachabilityWaiter: @unchecked Sendable {
+
+    private let lock = NSLock()
+    private var continuation: CheckedContinuation<Void, Never>?
+    private var token: Any?
+    private var isFinished = false
+
+    func start(_ continuation: CheckedContinuation<Void, Never>, observing reachability: any ReachabilityProvider) {
+        lock.lock()
+        guard !isFinished else {
+            // Cancelled before the wait started.
+            lock.unlock()
+            continuation.resume()
+            return
+        }
+        self.continuation = continuation
+        lock.unlock()
+
+        let token = reachability.addReachabilityObserver(on: nil) { [weak self] provider in
+            if provider.mayBeReachable {
+                self?.finish()
+            }
+        }
+        lock.withLock {
+            // Dropping the token right away removes the observer if the wait already finished.
+            if !isFinished {
+                self.token = token
+            }
+        }
+
+        // Reachability may have changed before the observer was registered.
+        if reachability.mayBeReachable {
+            finish()
+        }
+    }
+
+    func finish() {
+        lock.lock()
+        guard !isFinished else {
+            lock.unlock()
+            return
+        }
+        isFinished = true
+        let continuation = continuation
+        let token = token
+        self.continuation = nil
+        self.token = nil
+        lock.unlock()
+
+        continuation?.resume()
+        // Releasing the token removes the observer.
+        withExtendedLifetime(token) {}
+    }
 }

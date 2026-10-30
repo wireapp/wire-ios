@@ -18,6 +18,7 @@
 
 import Foundation
 import WireDataModel
+import WireUtilities
 
 private let zmLog = ZMSLog(tag: "Dependencies")
 
@@ -121,7 +122,28 @@ public extension ZMMessage {
                 break
             }
         }
+        if blockingMessage == nil, DeveloperFlag.offlinePendingMessages.isOn {
+            blockingMessage = earlierPendingMessageOfSelfUser(in: conversation)
+        }
         return blockingMessage
+    }
+
+    /// The latest earlier message of the self user in the conversation that is still waiting to be sent.
+    ///
+    /// Pending messages can wait for the network far longer than the cap above, and sync can bring in more
+    /// messages than the last messages cover, so they're fetched separately to keep them in order.
+    private func earlierPendingMessageOfSelfUser(in conversation: ZMConversation) -> ZMMessage? {
+        guard let context = managedObjectContext, let serverTimestamp else { return nil }
+
+        let request = NSFetchRequest<ZMClientMessage>(entityName: ZMClientMessage.entityName())
+        request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+            ClientMessageRequestStrategy.shouldBeSentPredicate(context: context),
+            NSPredicate(format: "%K == %@", #keyPath(ZMMessage.visibleInConversation), conversation),
+            NSPredicate(format: "%K < %@", #keyPath(ZMMessage.serverTimestamp), serverTimestamp as NSDate)
+        ])
+        request.sortDescriptors = [NSSortDescriptor(key: #keyPath(ZMMessage.serverTimestamp), ascending: false)]
+        request.fetchLimit = 1
+        return context.fetchOrAssert(request: request).first
     }
 
 }

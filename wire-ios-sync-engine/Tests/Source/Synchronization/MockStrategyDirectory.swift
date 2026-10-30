@@ -26,4 +26,10 @@ public class MockStrategyDirectory: NSObject, StrategyDirectoryProtocol {
 
     public var contextChangeTrackers: [ZMContextChangeTracker] = []
 
+    public private(set) var cancelPendingSendsCallCount = 0
+
+    public func cancelPendingSends() {
+        cancelPendingSendsCallCount += 1
+    }
+
 }

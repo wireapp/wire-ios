@@ -695,3 +695,204 @@ extension ZMClientMessageTests_Editing {
         XCTAssertEqual(editedMessage, newMessage)
     }
 }
+
+// MARK: - Pending text
+
+class ZMClientMessageTests_PendingText: BaseZMClientMessageTests {
+
+    override func setUp() {
+        super.setUp()
+        DeveloperFlag.storage = .temporary()
+        DeveloperFlag.offlinePendingMessages.enable(true)
+    }
+
+    override func tearDown() {
+        DeveloperFlag.storage = .standard
+        super.tearDown()
+    }
+
+    private func makePendingMessage(_ text: String = "hello") -> ZMClientMessage {
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
+        conversation.remoteIdentifier = UUID.create()
+        return try! conversation.appendText(content: text) as! ZMClientMessage
+    }
+
+    func testThatPendingMessageIsEditableInPlace() {
+        XCTAssertTrue(makePendingMessage().isEditableInPlace)
+    }
+
+    func testThatPendingMessageIsNotEditableInPlace_WhenFlagIsDisabled() {
+        DeveloperFlag.offlinePendingMessages.enable(false)
+        XCTAssertFalse(makePendingMessage().isEditableInPlace)
+    }
+
+    func testThatPendingMessageIsNotEditableInPlace_AfterSendAttemptStarted() {
+        let message = makePendingMessage()
+        message.sendAttemptStarted = true
+        XCTAssertFalse(message.isEditableInPlace)
+    }
+
+    func testThatSentMessageIsNotEditableInPlace() {
+        let message = makePendingMessage()
+        message.markAsSent()
+        XCTAssertFalse(message.isEditableInPlace)
+    }
+
+    func testThatEphemeralMessageIsNotEditableInPlace() {
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
+        conversation.remoteIdentifier = UUID.create()
+        conversation.setMessageDestructionTimeoutValue(.tenSeconds, for: .selfUser)
+        let message = try! conversation.appendText(content: "hello") as! ZMClientMessage
+        XCTAssertTrue(message.isEphemeral)
+
+        XCTAssertFalse(message.isEditableInPlace)
+    }
+
+    func testThatItReplacesPendingTextKeepingNonceWithoutEditedMarker() {
+        // GIVEN
+        let message = makePendingMessage()
+        let nonce = message.nonce
+
+        // WHEN
+        let didReplace = message.replacePendingText(
+            with: message.makePendingText("good bye", mentions: []),
+            fetchLinkPreview: false
+        )
+
+        // THEN
+        XCTAssertTrue(didReplace)
+        XCTAssertEqual(message.textMessageData?.messageText, "good bye")
+        XCTAssertEqual(message.nonce, nonce)
+        XCTAssertEqual(message.underlyingMessage?.messageID, nonce?.transportString())
+        XCTAssertNil(message.updatedTimestamp)
+        guard case .text = message.underlyingMessage?.content else {
+            return XCTFail("expected text content")
+        }
+    }
+
+    func testThatItKeepsQuote_WhenReplacingPendingText() {
+        // GIVEN
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
+        conversation.remoteIdentifier = UUID.create()
+        let quotedMessage = try! conversation.appendText(content: "Let's grab some lunch") as! ZMClientMessage
+        let message = try! conversation.appendText(content: "Yes!", replyingTo: quotedMessage) as! ZMClientMessage
+
+        // WHEN
+        message.replacePendingText(with: message.makePendingText("Sure!", mentions: []), fetchLinkPreview: false)
+
+        // THEN
+        XCTAssertTrue(message.hasQuote)
+    }
+
+    func testThatItReplacesPendingEditKeepingEditNonceAndOriginalMessage() {
+        // GIVEN
+        let message = makePendingMessage()
+        let originalNonce = message.nonce
+        message.markAsSent()
+        message.textMessageData?.editText("hi", mentions: [], fetchLinkPreview: false)
+        let editNonce = message.nonce
+        XCTAssertNotEqual(editNonce, originalNonce)
+        XCTAssertTrue(message.isEditableInPlace)
+
+        // WHEN
+        let didReplace = message.replacePendingText(
+            with: message.makePendingText("good bye", mentions: []),
+            fetchLinkPreview: false
+        )
+
+        // THEN
+        XCTAssertTrue(didReplace)
+        XCTAssertEqual(message.textMessageData?.messageText, "good bye")
+        XCTAssertEqual(message.nonce, editNonce)
+        guard case let .edited(messageEdit) = message.underlyingMessage?.content else {
+            return XCTFail("expected edit content")
+        }
+        XCTAssertEqual(messageEdit.replacingMessageID, originalNonce?.transportString())
+    }
+
+    func testThatItDoesNotReplacePendingText_AfterSendAttemptStarted() {
+        // GIVEN
+        let message = makePendingMessage()
+        message.sendAttemptStarted = true
+
+        // WHEN
+        let didReplace = message.replacePendingText(
+            with: message.makePendingText("good bye", mentions: []),
+            fetchLinkPreview: false
+        )
+
+        // THEN
+        XCTAssertFalse(didReplace)
+        XCTAssertEqual(message.textMessageData?.messageText, "hello")
+    }
+
+    func testThatEditingResetsSendAttemptStarted() {
+        // GIVEN
+        let message = makePendingMessage()
+        message.sendAttemptStarted = true
+        message.markAsSent()
+
+        // WHEN
+        message.textMessageData?.editText("good bye", mentions: [], fetchLinkPreview: false)
+
+        // THEN
+        XCTAssertFalse(message.sendAttemptStarted)
+    }
+
+    // MARK: - Deleting
+
+    func testThatPendingMessageCanBeDeleted() {
+        let message = makePendingMessage()
+        XCTAssertEqual(message.deliveryState, .pending)
+        XCTAssertTrue(message.isDeletableWhilePending)
+        XCTAssertTrue(message.canBeDeleted)
+    }
+
+    func testThatPendingMessageCanNotBeDeleted_WhenFlagIsDisabled() {
+        DeveloperFlag.offlinePendingMessages.enable(false)
+        let message = makePendingMessage()
+        XCTAssertFalse(message.isDeletableWhilePending)
+        XCTAssertFalse(message.canBeDeleted)
+    }
+
+    func testThatPendingMessageCanNotBeDeleted_AfterSendAttemptStarted() {
+        // GIVEN
+        let message = makePendingMessage()
+        message.sendAttemptStarted = true
+
+        // THEN
+        XCTAssertFalse(message.canBeDeleted)
+        XCTAssertFalse(message.deletePendingMessage())
+        XCTAssertFalse(message.isDeleted)
+    }
+
+    func testThatPendingEditCanNotBeDeletedWithoutSendingADelete() {
+        // GIVEN
+        let message = makePendingMessage()
+        message.markAsSent()
+        message.textMessageData?.editText("hi", mentions: [], fetchLinkPreview: false)
+
+        // THEN
+        XCTAssertTrue(message.isEditableInPlace)
+        XCTAssertFalse(message.isDeletableWhilePending)
+        XCTAssertFalse(message.deletePendingMessage())
+    }
+
+    func testThatItDeletesPendingMessageWithoutSendingADelete() {
+        // GIVEN
+        let message = makePendingMessage()
+        let conversation = message.conversation!
+        uiMOC.saveOrRollback()
+        let messageCount = conversation.allMessages.count
+
+        // WHEN
+        let didDelete = message.deletePendingMessage()
+        uiMOC.saveOrRollback()
+
+        // THEN
+        XCTAssertTrue(didDelete)
+        XCTAssertTrue(message.isZombieObject)
+        XCTAssertEqual(conversation.allMessages.count, messageCount - 1)
+        XCTAssertEqual(conversation.hiddenMessages.count, 0)
+    }
+}

@@ -35,6 +35,10 @@ public class ZMClientMessage: ZMOTRMessage {
     /// Link Preview state
     @NSManaged public var updatedTimestamp: Date?
 
+    /// Whether a request with the current nonce may have reached the backend. Set before a pending
+    /// message is first sent, so its text is only replaced in place while recipients can't have it.
+    @NSManaged public var sendAttemptStarted: Bool
+
     /// In memory cache
     var cachedUnderlyingMessage: GenericMessage?
 
@@ -44,7 +48,7 @@ public class ZMClientMessage: ZMOTRMessage {
 
     open override var ignoredKeys: Set<AnyHashable>? {
         (super.ignoredKeys ?? Set())
-            .union([#keyPath(updatedTimestamp)])
+            .union([#keyPath(updatedTimestamp), #keyPath(sendAttemptStarted)])
     }
 
     public override var updatedAt: Date? {
