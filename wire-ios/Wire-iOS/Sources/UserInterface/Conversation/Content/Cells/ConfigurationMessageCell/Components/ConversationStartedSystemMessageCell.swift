@@ -28,6 +28,11 @@ final class ConversationStartedSystemMessageCell<
         let message: NSAttributedString?
         var selectedUsers: [UserType]
         let icon: UIImage?
+
+        var accessibilityLabel: String? {
+            let parts = [title?.string, message?.string].compactMap(\.self).filter { !$0.isEmpty }
+            return parts.isEmpty ? nil : parts.joined(separator: "\n")
+        }
     }
 
     private let titleLabel = UILabel()
@@ -36,7 +41,9 @@ final class ConversationStartedSystemMessageCell<
 
     override func configureSubviews() {
         super.configureSubviews()
+        isAccessibilityElement = true
 
+        titleLabel.isAccessibilityElement = false
         titleLabel.numberOfLines = 0
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
 
@@ -54,7 +61,7 @@ final class ConversationStartedSystemMessageCell<
         imageView.image = object.icon
         imageView.isAccessibilityElement = false
         selectedUsers = object.selectedUsers
-        accessibilityLabel = object.title?.string
+        accessibilityLabel = object.accessibilityLabel
 
         let hasMessage = object.message != nil
         imageContainer.isHidden = !hasMessage
