@@ -32,6 +32,8 @@
 "conversation.titleViewForOneToOne.hint" = "Double tap to open profile";
 "conversation.legalHoldIcon.description" = "Legal hold";
 "conversation.verifiedIcon.description" = "Verified";
+"conversation.linkPreviewImage.description" = "Preview image for link to %@";
+"conversation.linkPreviewImage.fallbackDescription" = "Link preview image";
 
 "conversation.sendButton.description" = "Send this message";
 "conversation.openFormattingButton.description" = "Open formatting options";

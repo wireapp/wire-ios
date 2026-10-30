@@ -32,6 +32,8 @@
 "conversation.titleViewForOneToOne.hint" = "Doppeltippen, um Profil zu öffnen";
 "conversation.legalHoldIcon.description" = "Gesetzliche Aufbewahrung";
 "conversation.verifiedIcon.description" = "Überprüft";
+"conversation.linkPreviewImage.description" = "Vorschau-Bild zum Link-Ziel %@";
+"conversation.linkPreviewImage.fallbackDescription" = "Link-Vorschaubild";
 
 "conversation.sendButton.description" = "Diese Nachricht senden";
 "conversation.openFormattingButton.description" = "Formatierungsoptionen öffnen";
