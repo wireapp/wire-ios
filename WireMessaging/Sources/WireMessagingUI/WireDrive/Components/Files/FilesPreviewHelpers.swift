@@ -424,6 +424,19 @@ private final class PreviewLocalAssetRepository: WireDriveLocalAssetRepositoryPr
         publishers[nodeID]?.send(nil)
     }
 
+    func downloadAssets(nodeIDs: [UUID], isAvailableOffline: Bool) async -> [UUID: Result<Void, any Error>] {
+        var results: [UUID: Result<Void, any Error>] = [:]
+        for nodeID in Set(nodeIDs) {
+            do {
+                try await downloadAsset(nodeID: nodeID, isAvailableOffline: isAvailableOffline)
+                results[nodeID] = .success(())
+            } catch {
+                results[nodeID] = .failure(error)
+            }
+        }
+        return results
+    }
+
     func downloadAsset(nodeID: UUID, isAvailableOffline: Bool) async throws {
         failIndex += 1
         // Fail every 3rd download
@@ -448,14 +461,14 @@ private final class PreviewLocalAssetRepository: WireDriveLocalAssetRepositoryPr
                 conversationName: "Conversation 1",
                 ownerName: "User 1",
                 modified: nil,
-                isAvailableOffline: false,
+                isAvailableOffline: isAvailableOffline && !shouldFail,
                 downloadState: downloadState
             )
 
             publishers[nodeID]?.send(update)
 
             if shouldFail, progress > 0.1 {
-                break
+                throw URLError(.notConnectedToInternet)
             }
         }
     }

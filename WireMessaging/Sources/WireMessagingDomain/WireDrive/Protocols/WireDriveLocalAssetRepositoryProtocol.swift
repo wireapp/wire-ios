@@ -49,6 +49,11 @@ package protocol WireDriveLocalAssetRepositoryProtocol: Sendable {
     @MainActor
     func downloadAsset(nodeID: UUID, isAvailableOffline: Bool) async throws
 
+    /// Downloads the assets concurrently, sharing any downloads already in progress for the same nodes.
+    /// Returns an individual result for every unique node after all downloads finish.
+    @MainActor
+    func downloadAssets(nodeIDs: [UUID], isAvailableOffline: Bool) async -> [UUID: Result<Void, any Error>]
+
     /// Observes the asset for the given `nodeID`. A value of `nil` is emitted if the asset has never been fetched.
     @MainActor
     func observeAsset(nodeID: UUID) -> AnyPublisher<WireDriveLocalAsset?, Never>

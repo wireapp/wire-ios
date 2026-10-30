@@ -648,6 +648,7 @@ public enum Locators {
             case moveToFolderFloatingButton
             case deleteFloatingButton
             case restoreFloatingButton
+            case makeAvailableOfflineFloatingButton
             case done
             case deleteAll
 

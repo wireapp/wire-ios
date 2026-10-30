@@ -225,6 +225,19 @@ private extension FilesContentView {
             )
         )
 
+        // offline access
+        if !viewModel.isOffline {
+            actions.append(
+                .init(
+                    id: Locators.WireDrive.FilesPage.makeAvailableOfflineFloatingButton.rawValue,
+                    title: Strings.Files.Item.Menu.makeAvailableOffline,
+                    systemImage: "arrow.down.circle",
+                    isEnabled: !viewModel.selectedItems.isEmpty,
+                    perform: { viewModel.makeAssetAvailableOffline(items: viewModel.selectedItems) }
+                )
+            )
+        }
+
         return actions
     }
 

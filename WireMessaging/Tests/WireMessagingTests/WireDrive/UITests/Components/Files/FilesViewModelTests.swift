@@ -620,6 +620,38 @@ final class FilesViewModelTests {
     // MARK: - openItem
 
     @Test
+    func makeAvailableOffline_whenPartialFailure_marksOnlyFailedItemsAndAllowsRetry() async {
+        let successfulItem = FilesViewItem.fixture(id: UUID())
+        let failedItem = FilesViewItem.fixture(id: UUID())
+        let unrelatedID = UUID()
+        sut.failedItemActions[successfulItem.id] = .makeAvailableOffline
+        sut.failedItemActions[unrelatedID] = .makeAvailableOffline
+        localAssetRepository.assetNodeID_MockMethod = { _ in nil }
+        localAssetRepository.downloadAssetsNodeIDsIsAvailableOffline_MockMethod = { _, _ in
+            [
+                successfulItem.id: .success(()),
+                failedItem.id: .failure(URLError(.networkConnectionLost))
+            ]
+        }
+
+        await sut.makeAssetAvailableOffline(items: [successfulItem, failedItem]).value
+
+        #expect(sut.failedItemActions[successfulItem.id] == nil)
+        #expect(sut.failedItemActions[failedItem.id] == .makeAvailableOffline)
+        #expect(sut.failedItemActions[unrelatedID] == .makeAvailableOffline)
+
+        localAssetRepository.downloadAssetsNodeIDsIsAvailableOffline_MockMethod = { nodeIDs, _ in
+            #expect(nodeIDs == [failedItem.id])
+            return [failedItem.id: .success(())]
+        }
+
+        await sut.makeAssetAvailableOffline(items: [failedItem]).value
+
+        #expect(sut.failedItemActions[failedItem.id] == nil)
+        #expect(sut.failedItemActions[unrelatedID] == .makeAvailableOffline)
+    }
+
+    @Test
     func openItem_whenFileAlreadyDownloaded() async throws {
         // given
         let nodeID = UUID()

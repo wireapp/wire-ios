@@ -51,7 +51,7 @@ extension FilesViewModel {
                 case .edit:
                     isEditing = item
                 case .makeAvailableOffline:
-                    makeAssetAvailableOffline(item: item)
+                    makeAssetAvailableOffline(items: [item])
                 case .removeAvailableOffline:
                     removeAssetAvailableOffline(item: item)
                 }

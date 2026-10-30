@@ -99,6 +99,27 @@ package final class WireDriveLocalAssetRepository: WireDriveLocalAssetRepository
         }
     }
 
+    @MainActor
+    package func downloadAssets(nodeIDs: [UUID], isAvailableOffline: Bool) async -> [UUID: Result<Void, any Error>] {
+        await withTaskGroup(of: (UUID, Result<Void, any Error>).self) { group in
+            for nodeID in Set(nodeIDs) {
+                group.addTask {
+                    do {
+                        try await self.downloadAsset(nodeID: nodeID, isAvailableOffline: isAvailableOffline)
+                        return (nodeID, .success(()))
+                    } catch {
+                        return (nodeID, .failure(error))
+                    }
+                }
+            }
+            var results: [UUID: Result<Void, any Error>] = [:]
+            for await (nodeID, result) in group {
+                results[nodeID] = result
+            }
+            return results
+        }
+    }
+
     /// Observes the asset for the given `nodeID`. A value of `nil` is emitted if the asset has never been fetched.
     @MainActor
     package func observeAsset(nodeID: UUID) -> AnyPublisher<WireMessagingDomain.WireDriveLocalAsset?, Never> {
@@ -184,7 +205,7 @@ package final class WireDriveLocalAssetRepository: WireDriveLocalAssetRepository
 
             var asset = try verifyAsset(nodeID: nodeID, eTag: eTag)
             asset.downloadState = .downloaded(cacheKey: key)
-
+            
             try updateAsset(asset)
         } catch {
             // We don't care about the eTag when setting download state to failed.

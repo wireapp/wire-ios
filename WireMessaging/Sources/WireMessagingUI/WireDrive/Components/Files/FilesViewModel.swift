@@ -348,7 +348,7 @@ package final class FilesViewModel: ObservableObject {
         switch item.kind {
         case .file:
             if failedItemActions[item.id] == .makeAvailableOffline {
-                makeAssetAvailableOffline(item: item)
+                makeAssetAvailableOffline(items: [item])
             } else {
                 await viewAsset(item: item)
             }
@@ -512,16 +512,22 @@ package final class FilesViewModel: ObservableObject {
         isBrowsing || (selfUserRole == .editor && !isRecycleBin)
     }
 
-    func makeAssetAvailableOffline(item: FilesViewItem) {
+    func makeAssetAvailableOffline(items: Set<FilesViewItem>) {
+        // only files are supported
+        let filesItems = items.filter { $0.kind == .file }
+        selectedItems = Set(filesItems)
+        
         Task {
-            do {
-                try await useCases.makeAssetAvailableOffline.invoke(nodeID: item.id)
-                failedItemActions[item.id] = nil
-            } catch {
-                if error is CancellationError {
+            let results = await useCases.makeAssetAvailableOffline.invoke(nodeIDs: filesItems.map(\.id))
+            multipleSelection = .inactive
+            for (nodeID, result) in results {
+                switch result {
+                case .success:
+                    failedItemActions[nodeID] = nil
+                case let .failure(error) where error is CancellationError:
                     WireLogger.wireDrive.error("Cancelled make asset available offline")
-                } else {
-                    failedItemActions[item.id] = .makeAvailableOffline
+                case let .failure(error):
+                    failedItemActions[nodeID] = .makeAvailableOffline
                     WireLogger.wireDrive.error("Failed to make asset available offline: \(String(describing: error))")
                 }
             }
