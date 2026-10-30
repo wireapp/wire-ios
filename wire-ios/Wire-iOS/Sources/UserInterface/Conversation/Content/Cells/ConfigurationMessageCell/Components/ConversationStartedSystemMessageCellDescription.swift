@@ -53,7 +53,7 @@ final class ConversationStartedSystemMessageCellDescription: NSObject, Conversat
 
         super.init()
 
-        accessibilityLabel = configuration.message?.string
+        accessibilityLabel = configuration.accessibilityLabel
     }
 
     init(conversation: ZMConversation) {
@@ -62,7 +62,7 @@ final class ConversationStartedSystemMessageCellDescription: NSObject, Conversat
 
         super.init()
 
-        accessibilityLabel = configuration.message?.string
+        accessibilityLabel = configuration.accessibilityLabel
     }
 
     private static func makeModel(message: ZMConversationMessage) -> ParticipantsCellViewModel {

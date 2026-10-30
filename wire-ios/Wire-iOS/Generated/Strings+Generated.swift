@@ -1037,6 +1037,12 @@ internal enum L10n {
         internal static let description = L10n.tr("Accessibility", "profile.shareProfileButton.description", fallback: "Share your profile via QR code or link")
       }
     }
+    internal enum Reaction {
+      /// Adds this reaction to the message.
+      internal static let addHint = L10n.tr("Accessibility", "reaction.add_hint", fallback: "Adds this reaction to the message.")
+      /// Removes your reaction from the message.
+      internal static let removeHint = L10n.tr("Accessibility", "reaction.remove_hint", fallback: "Removes your reaction from the message.")
+    }
     internal enum ReactionPicker {
       internal enum DismissButton {
         /// Dismiss emoji keyboard

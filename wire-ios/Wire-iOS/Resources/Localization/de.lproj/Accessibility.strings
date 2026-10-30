@@ -359,3 +359,6 @@
 "adminSelection.searchBar.clearButton.description" = "Suche löschen";
 "adminSelection.candidateRow.hint" = "Doppeltippen, um als neuen Admin auszuwählen";
 "adminSelection.deleteGroupButton.hint" = "Löscht die Gruppe dauerhaft";
+
+"reaction.add_hint" = "Fügt diese Reaktion zur Nachricht hinzu.";
+"reaction.remove_hint" = "Entfernt deine Reaktion von der Nachricht.";
