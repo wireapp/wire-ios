@@ -40,6 +40,7 @@
 "conversation.hideFormattingButton.description" = "Formatierungsoptionen ausblenden";
 "conversation.timerButton.description" = "Timer für selbstlöschende Nachrichten festlegen";
 "conversation.mentionButton.description" = "Jemanden erwähnen";
+"conversation.mentionSuggestion.hint" = "Doppeltippen, um diese Person zu erwähnen";
 "conversation.cameraButton.description" = "Foto aufnehmen oder auswählen";
 "conversation.camera.maximizeButton.description" = "Ansicht maximieren";
 "conversation.sketchButton.description" = "Skizze zum Zeichnen oder Schreiben öffnen";

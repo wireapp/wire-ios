@@ -40,6 +40,7 @@
 "conversation.hideFormattingButton.description" = "Hide formatting options";
 "conversation.timerButton.description" = "Set a timer for self-deleting messages";
 "conversation.mentionButton.description" = "Mention someone";
+"conversation.mentionSuggestion.hint" = "Double tap to mention";
 "conversation.cameraButton.description" = "Take or select a photo";
 "conversation.camera.maximizeButton.description" = "Maximize view";
 "conversation.sketchButton.description" = "Open sketch to draw or write";
