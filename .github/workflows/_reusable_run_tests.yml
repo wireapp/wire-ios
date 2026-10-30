@@ -28,6 +28,11 @@ on:
         required: false
         default: ''
         description: 'Testiny case ID(s), class(es), or function(s), comma separated'
+      uitest_parallel_workers:
+        type: string
+        required: false
+        default: '1'
+        description: 'Number of parallel simulator workers for UITests'
       rerun_failed_from_previous:
         type: boolean
         required: false
@@ -91,6 +96,24 @@ jobs:
       KALIUM_TEST_SERVICE_ENABLED: ${{ inputs.run_critical_flows && inputs.mac_runner != 'in-house' }}
 
     steps:
+      - name: Validate UITest workers
+        if: ${{ inputs.run_critical_flows }}
+        shell: bash
+        env:
+          UITEST_PARALLEL_WORKERS: ${{ inputs.uitest_parallel_workers }}
+        run: |
+          case "$UITEST_PARALLEL_WORKERS" in
+            1|2|3|4|5|6) ;;
+            *) echo "::error::uitest_parallel_workers must be 1, 2, 3, 4, 5, or 6"; exit 1 ;;
+          esac
+          echo "UITest workers: $UITEST_PARALLEL_WORKERS"
+          CPUS=$(sysctl -n hw.logicalcpu)
+          MEM_GB=$(( $(sysctl -n hw.memsize) / 1073741824 ))
+          FREE_PCT=$(memory_pressure 2>/dev/null | sed -n 's/.*free percentage: *\([0-9]*\)%.*/\1/p' || true)
+          LOAD1=$(sysctl -n vm.loadavg | awk '{print $2}')
+          BOOTED=$(( $(xcrun simctl list devices booted 2>/dev/null | grep -c "(Booted)" || true) + $(xcrun simctl --set "$HOME/Library/Developer/XCTestDevices" list devices booted 2>/dev/null | grep -c "(Booted)" || true) ))
+          echo "Host: ${CPUS} CPUs, ${MEM_GB} GB RAM, ${FREE_PCT:-?}% memory free, load ${LOAD1}, ${BOOTED} simulators already booted"
+
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ inputs.branch }}
@@ -188,10 +211,22 @@ jobs:
 
       - name: Generate env file
         if: ${{ inputs.run_critical_flows }}
+        shell: bash
         env:
           OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
         run: |
           bundle exec fastlane generate_env
+
+          while IFS= read -r line; do
+            if [[ "$line" =~ ^[[:space:]]*([A-Z0-9_]+)[[:space:]]*=[[:space:]]*(.+)$ ]]; then
+              key="${BASH_REMATCH[1]}"
+              value="${BASH_REMATCH[2]%"${BASH_REMATCH[2]##*[![:space:]]}"}"
+              if [[ "$key" =~ (PASSWORD|AUTH|TOKEN|SECRET|USERNAME|EMAIL) && ${#value} -ge 4 ]]; then
+                value="${value//%/%25}"
+                echo "::add-mask::$value"
+              fi
+            fi
+          done < wire-ios/WireUITests/env.xcconfig
 
       - name: Configure test services
         if: ${{ inputs.run_critical_flows }}
@@ -216,20 +251,22 @@ jobs:
         uses: ./.github/actions/kalium-testservice/setup
 
       - name: "Test new critical flows"
+        id: critical_flows
         if: ${{ inputs.run_critical_flows }}
         env:
           UI_TEST_TAGS: ${{ inputs.ui_test_tags }}
           UI_TEST_CASES: ${{ inputs.ui_test_cases }}
           PREVIOUS_FAILED_UI_TEST_CASES: ${{ steps.previous-failed-ui-tests.outputs.ui_test_cases }}
+          UITEST_PARALLEL_WORKERS: ${{ inputs.uitest_parallel_workers }}
         run: |
           if [ -n "$UI_TEST_CASES" ]; then
-            bundle exec fastlane run_uitests testiny_cases:"$UI_TEST_CASES"
+            bundle exec fastlane run_uitests testiny_cases:"$UI_TEST_CASES" parallel_workers:"$UITEST_PARALLEL_WORKERS"
           elif [ -n "$PREVIOUS_FAILED_UI_TEST_CASES" ]; then
-            bundle exec fastlane run_uitests testiny_cases:"$PREVIOUS_FAILED_UI_TEST_CASES"
+            bundle exec fastlane run_uitests testiny_cases:"$PREVIOUS_FAILED_UI_TEST_CASES" parallel_workers:"$UITEST_PARALLEL_WORKERS"
           elif [ -n "$UI_TEST_TAGS" ]; then
-            bundle exec fastlane run_uitests tags:"$UI_TEST_TAGS"
+            bundle exec fastlane run_uitests tags:"$UI_TEST_TAGS" parallel_workers:"$UITEST_PARALLEL_WORKERS"
           else
-            bundle exec fastlane run_uitests
+            bundle exec fastlane run_uitests parallel_workers:"$UITEST_PARALLEL_WORKERS"
           fi
 
       - name: Stop Kalium Testservice
@@ -243,6 +280,7 @@ jobs:
         shell: bash
         env:
           TESTINY_RUN_NAME: ${{ inputs.testiny_run_name }}
+          XCRESULT_DIRECTORY: ${{ steps.critical_flows.outputs.xcresult_directory }}
           OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
         run: |
           set -euo pipefail
@@ -250,17 +288,23 @@ jobs:
           echo "::add-mask::$TESTINY_API_KEY"
           export TESTINY_API_KEY
 
-          # Find a xcresult bundle produced by the run
-          XCRESULT="$(find artifacts -type d -name '*.xcresult' | head -n 1)"
-          if [ -z "$XCRESULT" ]; then
-            echo "[ERROR] No .xcresult found under artifacts/"
+          if [ -z "$XCRESULT_DIRECTORY" ] || [ ! -d "$XCRESULT_DIRECTORY" ]; then
+            echo "[ERROR] No UITest result directory from this invocation"
             exit 1
           fi
 
-          echo "[INFO] Using xcresult: $XCRESULT"
+          XCRESULTS=()
+          while IFS= read -r -d '' XCRESULT; do
+            XCRESULTS+=("$XCRESULT")
+          done < <(find "$XCRESULT_DIRECTORY" -type d -name '*.xcresult' -prune -print0)
+
+          if [ "${#XCRESULTS[@]}" -eq 0 ]; then
+            echo "[ERROR] No .xcresult found for this UITest invocation: $XCRESULT_DIRECTORY"
+            exit 1
+          fi
 
           python3 ./scripts/send_xcresult_to_testiny.py \
-            --xcresult "$XCRESULT" \
+            --xcresult "${XCRESULTS[@]}" \
             --run-name "$TESTINY_RUN_NAME" \
             --require-existing-run
 
@@ -289,12 +333,41 @@ jobs:
         continue-on-error: true
         run: ./scripts/check_duplicate_classes.sh .
 
+      - name: Select test report paths
+        id: report-paths
+        if: always()
+        shell: bash
+        env:
+          UITEST_ONLY: ${{ inputs.run_critical_flows && !inputs.all && !inputs.test_dependencies && inputs.folders == '' }}
+          UITEST_RESULT_DIRECTORY: ${{ steps.critical_flows.outputs.xcresult_directory }}
+        run: |
+          set -euo pipefail
+          if [ "$UITEST_ONLY" == "true" ]; then
+            RESULT_DIRECTORY="$UITEST_RESULT_DIRECTORY"
+            if [ -z "$RESULT_DIRECTORY" ]; then
+              # Preparation may fail before Fastlane publishes a directory. Never report old results instead.
+              RESULT_DIRECTORY="$(mktemp -d "$RUNNER_TEMP/uitest-results.XXXXXX")"
+            fi
+            echo "xcresult_search_path=$RESULT_DIRECTORY" >> "$GITHUB_OUTPUT"
+            echo "junit_files=$RESULT_DIRECTORY/**/*.junit" >> "$GITHUB_OUTPUT"
+          else
+            echo "xcresult_search_path=artifacts" >> "$GITHUB_OUTPUT"
+            {
+              echo "junit_files<<EOF"
+              echo "build/reports/*.junit"
+              echo "artifacts/**/*.junit"
+              echo "EOF"
+            } >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Find all .xcresult files
-        if: ${{ always() && github.event_name == 'pull_request' }}
+        if: ${{ always() && steps.report-paths.outcome == 'success' && github.event_name == 'pull_request' }}
         id: find-xcresults
+        env:
+          XCRESULT_SEARCH_PATH: ${{ steps.report-paths.outputs.xcresult_search_path }}
         run: |
           # Find all .xcresult directories and convert them to a JSON array
-          files=`find artifacts -type d -name "*.xcresult" | jq -R . | jq -s .`
+          files=`find "$XCRESULT_SEARCH_PATH" -type d -name "*.xcresult" -prune | jq -R . | jq -s .`
           echo xcresult_files=${files} >> $GITHUB_OUTPUT
       - name: Debug Print xcresult files
         run: |
@@ -318,11 +391,11 @@ jobs:
         run: ruby scripts/annotate_test_failures.rb
 
       - name: Extract test summary
-        if: ${{ always() }}
+        if: ${{ always() && steps.report-paths.outcome == 'success' }}
         id: test-summary
         uses: ./.github/actions/generate-test-summary
         with:
-          xcresult_search_path: artifacts
+          xcresult_search_path: ${{ steps.report-paths.outputs.xcresult_search_path }}
 
       - name: Upload .xcresult files as artifact
         if: always()
@@ -358,26 +431,25 @@ jobs:
             build/compiler-warnings.json
             build/reports/*.junit
             artifacts/**/*.junit
-            app-group.zip
-            fastlane/app-group.zip
+            app-group*.zip
+            fastlane/app-group*.zip
+            build/uitest-shard-logs/*.log
 
       - name: Publish Test Results Summary
-        if: always()
+        if: ${{ always() && steps.report-paths.outcome == 'success' }}
         uses: EnricoMi/publish-unit-test-result-action/macos@c950f6fb443cb5af20a377fd0dfaa78838901040 # v2.23.0
         with:
-          files: |
-            build/reports/*.junit
-            artifacts/**/*.junit
+          files: ${{ steps.report-paths.outputs.junit_files }}
           compare_to_earlier_commit: false
           comment_title: "Test Results"
 
       - name: Publish test results + Allure report
         id: allure-report
-        if: always()
+        if: ${{ always() && steps.report-paths.outcome == 'success' }}
         uses: ./.github/actions/allure-reporting
         with:
           allure_artifact_name: "html-report-${{ github.run_number }}-${{ env.SANITIZED_BRANCH }}"
-          xcresult_search_path: "artifacts"
+          xcresult_search_path: ${{ steps.report-paths.outputs.xcresult_search_path }}
 
       - name: Resolve HTML report link
         id: html-report-link
@@ -425,7 +497,7 @@ jobs:
           {
             echo "## 📊 Allure Report";
             echo "";
-            echo "⚠️ No \`.xcresult\` found under \`artifacts\`. Allure report was not generated.";
+            echo "⚠️ Allure report unavailable: ${ALLURE_REPORT_REASON:-Report-generation step did not complete.}";
           } >> "$GITHUB_STEP_SUMMARY"
 
 
