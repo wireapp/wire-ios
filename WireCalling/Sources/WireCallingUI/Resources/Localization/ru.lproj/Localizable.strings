@@ -46,6 +46,9 @@
 "wireMeetings.list.header.yesterday" = "Вчера";
 "wireMeetings.list.header.ongoing" = "В настоящее время";
 "wireMeetings.list.attending" = "Участвует";
+"wireMeetings.list.emailInvitees.count" = "%d получателей приглашения по email";
+"wireMeetings.list.emailInvitees.expanded" = "Развернуто";
+"wireMeetings.list.emailInvitees.collapsed" = "Свернуто";
 "wireMeetings.list.actions.edit" = "Изменить встречу";
 "wireMeetings.list.actions.delete" = "Удалить встречу для всех";
 "wireMeetings.list.actions.deleteForMe" = "Удалить встречу для меня";
@@ -69,6 +72,10 @@
 "wireMeetings.link.passwordProtected" = "Ссылка защищена паролем. Чтобы установить новый пароль, сгенерируйте новую ссылку.";
 "wireMeetings.link.notPasswordProtected" = "Эта ссылка не защищена паролем. Убедитесь, что делитесь ею только с нужными людьми. Чтобы установить пароль, сгенерируйте новую ссылку.";
 "wireMeetings.link.copy" = "Скопировать ссылку";
+"wireMeetings.link.confirmation.description" = "We sent this link by email to your participants. Share this link if you want to invite more participants.";
+"wireMeetings.link.confirmation.sharingDescription" = "Share this link to invite participants.";
+"wireMeetings.link.confirmation.instantTitle" = "Invite guests via link";
+"wireMeetings.link.confirmation.close" = "Закрыть";
 "wireMeetings.link.copied" = "Ссылка скопирована в буфер обмена";
 "wireMeetings.link.unavailable" = "Ссылка на встречу недоступна.";
 "wireMeetings.link.loadError" = "Не удалось загрузить ссылку на встречу. Попробуйте еще раз.";

@@ -46,6 +46,9 @@
 "wireMeetings.list.header.yesterday" = "Gestern";
 "wireMeetings.list.header.ongoing" = "Aktuell";
 "wireMeetings.list.attending" = "Anwesend";
+"wireMeetings.list.emailInvitees.count" = "%d E-Mail-Empfänger";
+"wireMeetings.list.emailInvitees.expanded" = "Erweitert";
+"wireMeetings.list.emailInvitees.collapsed" = "Ausgeblendet";
 "wireMeetings.list.actions.edit" = "Meeting bearbeiten";
 "wireMeetings.list.actions.delete" = "Meeting für alle löschen";
 "wireMeetings.list.actions.deleteForMe" = "Meeting für mich löschen";
@@ -69,6 +72,10 @@
 "wireMeetings.link.passwordProtected" = "Der Link ist passwortgeschützt. Um ein neues Passwort zu verwenden, erstellen Sie einen neuen Link.";
 "wireMeetings.link.notPasswordProtected" = "Dieser Link ist nicht passwortgeschützt. Stellen Sie sicher, dass Sie ihn nur mit den richtigen Personen teilen. Um ein Passwort hinzuzufügen, erstellen Sie einen neuen Link.";
 "wireMeetings.link.copy" = "Link kopieren";
+"wireMeetings.link.confirmation.description" = "We sent this link by email to your participants. Share this link if you want to invite more participants.";
+"wireMeetings.link.confirmation.sharingDescription" = "Share this link to invite participants.";
+"wireMeetings.link.confirmation.instantTitle" = "Invite guests via link";
+"wireMeetings.link.confirmation.close" = "Schließen";
 "wireMeetings.link.copied" = "Link in Zwischenablage kopiert";
 "wireMeetings.link.unavailable" = "Der Meeting-Link ist nicht verfügbar.";
 "wireMeetings.link.loadError" = "Der Meeting-Link konnte nicht geladen werden. Bitte versuchen Sie es erneut.";
@@ -109,7 +116,7 @@
 "wireMeetings.schedule.setupTitle.header" = "Titel";
 "wireMeetings.schedule.setupTitle.placeholder" = "Meeting-Titel eingeben";
 "wireMeetings.schedule.setupTitle.error.tooLong" = "Zu viele Zeichen";
-"wireMeetings.schedule.password.title" = "Set a password for the meeting link (optional)";
+"wireMeetings.schedule.password.title" = "Legen Sie ein Passwort für den Meeting-Link fest (optional)";
 "wireMeetings.schedule.password.placeholder" = "Passwort eingeben";
 "wireMeetings.schedule.password.requirements" = "Verwenden Sie mindestens %d Zeichen mit einem Kleinbuchstaben, einem Großbuchstaben, einer Zahl und einem Sonderzeichen.";
 "wireMeetings.schedule.password.copy" = "Passwort kopieren";
@@ -173,7 +180,7 @@
 "wireMeetings.schedule.members.email.placeholder" = "E-Mail-Adresse eingeben";
 "wireMeetings.schedule.members.email.add" = "Hinzufügen";
 "wireMeetings.schedule.members.email.invalidAddress" = "Geben Sie eine gültige E-Mail-Adresse ein.";
-"wireMeetings.schedule.members.email.duplicateAddress" = "This email address has already been added.";
+"wireMeetings.schedule.members.email.duplicateAddress" = "Die E-Mail-Adresse wurde bereits hinzugefügt.";
 "wireMeetings.schedule.members.email.remove" = "%@ entfernen";
-"wireMeetings.schedule.email.loadFailed" = "Could not load list of invitation emails.";
-"wireMeetings.schedule.email.saveFailed" = "The meeting has been saved, but some invitation changes could not be completed. Open Edit to confirm the participants.";
+"wireMeetings.schedule.email.loadFailed" = "Liste der Einladungen per E-Mail konnte nicht geladen werden.";
+"wireMeetings.schedule.email.saveFailed" = "Das Meeting wurde gespeichert, einige Änderungen an den Einladungen konnten jedoch nicht abgeschlossen werden. Öffnen Sie „Bearbeiten“, um die Teilnehmer zu bestätigen.";

@@ -193,6 +193,17 @@
 "conversation.wireCells.files.downloadingFile" = "Downloading file...";
 "conversation.wireCells.files.offlineModeHint" = "You can still access your offline files.";
 "conversation.wireCells.files.time.just_now" = "刚刚";
+"conversation.wireCells.files.deletePermanently.title" = "This will permanently delete %@ items for all participants. Everyone will lose access and there is no way to recover them.";
+"conversation.wireCells.files.deletePermanently.confirmation" = "Delete Permanently";
+"conversation.wireCells.files.deleteToRecycleBin.title" = "%@ items will move to the recycle bin.";
+"conversation.wireCells.files.deleteToRecycleBin.confirmation" = "删除";
+"conversation.wireCells.files.restore.title" = "%@ items will be restored and available again to everyone in this conversation.";
+"conversation.wireCells.files.restore.confirmation" = "Restore";
+"conversation.wireCells.files.selection.selectItems" = "Select items";
+"conversation.wireCells.files.selection.oneItem" = "1 item";
+"conversation.wireCells.files.selection.items" = "%@ items";
+"conversation.wireCells.files.selection.selectAll" = "Select all";
+"conversation.wireCells.files.selection.deselectAll" = "Deselect all";
 
 
 // MARK: - Shared Drive uploads
@@ -250,6 +261,8 @@
 "conversation.wireCells.recycleBin.item.restoreParentConfirmation.title" = "You can’t restore folders or files from a deleted folder. To restore the desired item, you must restore its parent folder.\n\nThe folder \"%@\" with all files and subfolders will be restored and available to everyone in this conversation.";
 "conversation.wireCells.recycleBin.emptyFolder.title" = "Empty folder";
 "conversation.wireCells.recycleBin.emptyFolder.message" = "This folder doesn't contain any files or folders.";
+"conversation.wireCells.recycleBin.emptyConfirmation.title" = "This will permanently delete all items, including all files and folders. Everyone will lose access and there is no way to recover them.";
+"conversation.wireCells.recycleBin.emptyConfirmation.button" = "Empty Recycle Bin";
 
 // MARK: - File Tags View
 "conversation.wireCells.tags.title" = "Add or remove tags";
