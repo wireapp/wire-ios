@@ -86,11 +86,8 @@ package struct MeetingCreationConfirmationView: View {
                         Text(confirmationDescription)
                             .font(for: .body1)
                     }
-                    Text(verbatim: link.absoluteString)
-                        .font(.system(.body, design: .monospaced))
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(12)
-                        .background(ColorTheme.Backgrounds.surface.color, in: RoundedRectangle(cornerRadius: 8))
+                    linkView
+                        .accessibilityElement(children: .ignore)
                         .accessibilityLabel(Strings.title)
                         .accessibilityValue(link.absoluteString)
                         .accessibilityIdentifier(Locators.WireMeetings.MeetingLink.url)
@@ -120,6 +117,28 @@ package struct MeetingCreationConfirmationView: View {
                     .accessibilityIdentifier(Locators.WireMeetings.MeetingLink.copied)
                     .allowsHitTesting(false)
             }
+        }
+    }
+
+    @ViewBuilder private var linkView: some View {
+        if isInstant {
+            Label {
+                Text(verbatim: link.absoluteString)
+                    .lineLimit(1)
+                    .truncationMode(.tail)
+            } icon: {
+                Image(systemName: "link")
+                    .accessibilityHidden(true)
+            }
+            .font(for: .body1)
+            .foregroundStyle(ColorTheme.Base.secondaryText.color)
+            .frame(maxWidth: .infinity, alignment: .leading)
+        } else {
+            Text(verbatim: link.absoluteString)
+                .font(.system(.body, design: .monospaced))
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(12)
+                .background(ColorTheme.Backgrounds.surface.color, in: RoundedRectangle(cornerRadius: 8))
         }
     }
 
