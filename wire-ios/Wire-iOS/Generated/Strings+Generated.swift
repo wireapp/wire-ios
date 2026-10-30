@@ -390,6 +390,14 @@ internal enum L10n {
         /// Legal hold
         internal static let description = L10n.tr("Accessibility", "conversation.legalHoldIcon.description", fallback: "Legal hold")
       }
+      internal enum LinkPreviewImage {
+        /// Preview image for link to %@
+        internal static func description(_ p1: Any) -> String {
+          return L10n.tr("Accessibility", "conversation.linkPreviewImage.description", String(describing: p1), fallback: "Preview image for link to %@")
+        }
+        /// Link preview image
+        internal static let fallbackDescription = L10n.tr("Accessibility", "conversation.linkPreviewImage.fallbackDescription", fallback: "Link preview image")
+      }
       internal enum LocationButton {
         /// Share your location
         internal static let description = L10n.tr("Accessibility", "conversation.locationButton.description", fallback: "Share your location")
