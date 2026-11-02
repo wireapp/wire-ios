@@ -21,43 +21,36 @@ import XCTest
 
 final class UIAlertControllerFeatureConfigSnapshotTests: XCTestCase {
 
-    private func createSut(for featureChange: LegacyFeatureRepository.FeatureChange) -> UIAlertController? {
-        let result = UIAlertController.fromFeatureChange(
-            featureChange,
-            acknowledger: MockFeatureChangeAcknowledger()
-        )
-        result?.view.backgroundColor = .white
+    private typealias Strings = L10n.Localizable.FeatureConfig
+
+    private func createSut(message: String) -> UIAlertController {
+        let result = UIAlertController.alertForFeatureChange(message: message, onOK: {})
+        result.view.backgroundColor = .white
         return result
     }
 
     // MARK: - Tests
 
     func testSelfDeletingMessagesIsDisabled() throws {
-        try verify(matching: createSut(for: .selfDeletingMessagesIsDisabled)!)
+        try verify(matching: createSut(message: Strings.Alert.SelfDeletingMessages.Message.disabled))
     }
 
     func testSelfDeletingMessagsIsEnabled() throws {
-        try verify(matching: createSut(for: .selfDeletingMessagesIsEnabled(enforcedTimeout: nil))!)
+        try verify(matching: createSut(message: Strings.Alert.SelfDeletingMessages.Message.enabled))
     }
 
     func testSelfDeletingMessagesIsForcedOn() throws {
-        try verify(matching: createSut(for: .selfDeletingMessagesIsEnabled(enforcedTimeout: 300))!)
+        let timeout = MessageDestructionTimeoutValue(rawValue: 300)
+        let timeoutString = try XCTUnwrap(timeout.displayString)
+        try verify(matching: createSut(message: Strings.Alert.SelfDeletingMessages.Message.forcedOn(timeoutString)))
     }
 
     func testFileSharingEnabled() throws {
-        try verify(matching: createSut(for: .fileSharingEnabled)!)
+        try verify(matching: createSut(message: Strings.Update.FileSharing.Alert.Message.enabled))
     }
 
     func testFileSharingDisabled() throws {
-        try verify(matching: createSut(for: .fileSharingDisabled)!)
-    }
-
-}
-
-private final class MockFeatureChangeAcknowledger: FeatureChangeAcknowledger {
-
-    func acknowledgeChange(for featureName: Feature.Name) {
-        // no op
+        try verify(matching: createSut(message: Strings.Update.FileSharing.Alert.Message.disabled))
     }
 
 }
