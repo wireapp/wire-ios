@@ -69,6 +69,7 @@ final class ZClientViewController: UIViewController {
     private(set) var cachedAccountInfo = SidebarAccountInfo() {
         didSet {
             sidebarViewController.accountInfo = cachedAccountInfo
+            meetingsAccountImageView?.availability = cachedAccountInfo.availability?.mapToAccountImageAvailability()
             meetingsAccountImageView?.accessibilityLabel = L10n.Localizable.ConversationList.Header.SelfTeam
                 .accessibilityValue(userSession.selfUser.name ?? "")
         }
@@ -376,8 +377,14 @@ final class ZClientViewController: UIViewController {
 
         let accountImageView = AccountImageView()
         accountImageView.source = cachedAccountImage.mapToAccountImageSource()
+        accountImageView.availability = cachedAccountInfo.availability?.mapToAccountImageAvailability()
         accountImageView.hideProfileNotificationsBadge = true
-        accountImageView.imageBorderColor = AccountImageViewDesign().borderColor
+        let design = AccountImageViewDesign()
+        accountImageView.imageBorderColor = design.borderColor
+        accountImageView.availableColor = design.availabilityIndicator.availableColor
+        accountImageView.busyColor = design.availabilityIndicator.busyColor
+        accountImageView.awayColor = design.availabilityIndicator.awayColor
+        accountImageView.availabilityIndicatorBackgroundColor = design.availabilityIndicator.backgroundViewColor
         accountImageView.isAccessibilityElement = true
         accountImageView.accessibilityIdentifier = "meetingsAccountProfileImageView"
         accountImageView.accessibilityLabel = L10n.Localizable.ConversationList.Header.SelfTeam
