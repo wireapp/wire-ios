@@ -33,20 +33,77 @@ final class MeetingLinkViewModel: Identifiable {
 
     private(set) var state: State = .loading
     var copyConfirmation: UUID?
+    var isGeneratingLink = false
+    var password = ""
+    var confirmPassword = ""
+    var hasRotationError = false
+    private(set) var isCreating = false
+    private(set) var didCreateLink = false
     private let fetchLink: @Sendable () async throws -> MeetingLink?
+    private let refreshLink: (@Sendable (String?) async throws -> MeetingLink?)?
 
-    init(fetchLink: @escaping @Sendable () async throws -> MeetingLink?) {
+    init(
+        fetchLink: @escaping @Sendable () async throws -> MeetingLink?,
+        refreshLink: (@Sendable (String?) async throws -> MeetingLink?)? = nil
+    ) {
         self.fetchLink = fetchLink
+        self.refreshLink = refreshLink
+    }
+
+    var canRotate: Bool { refreshLink != nil }
+    var isPasswordValid: Bool { MeetingFormViewModel.isPasswordValid(password) }
+
+    var passwordsMatch: Bool {
+        password.unicodeScalars.elementsEqual(confirmPassword.unicodeScalars)
+    }
+
+    func beginRotation() {
+        password = ""
+        confirmPassword = ""
+        didCreateLink = false
+        hasRotationError = false
+        copyConfirmation = nil
+        isGeneratingLink = true
+    }
+
+    func generatePassword() {
+        password = MeetingFormViewModel.makePassword()
+        confirmPassword = password
+    }
+
+    func copyPassword(isClipboardEnabled: Bool, to pasteboard: UIPasteboard = .general) {
+        guard isClipboardEnabled, !isCreating, !didCreateLink, !password.isEmpty, isPasswordValid else { return }
+        pasteboard.string = password
+    }
+
+    func createLink() async {
+        guard let refreshLink, !isCreating, !didCreateLink, isPasswordValid, passwordsMatch else { return }
+        isCreating = true
+        hasRotationError = false
+        defer { isCreating = false }
+        do {
+            guard let link = try await refreshLink(password.isEmpty ? nil : password) else {
+                throw URLError(.badServerResponse)
+            }
+            password = ""
+            confirmPassword = ""
+            state = .loaded(link)
+            copyConfirmation = nil
+            didCreateLink = true
+        } catch {
+            hasRotationError = true
+        }
     }
 
     func load() async {
+        guard !isGeneratingLink else { return }
         state = .loading
         do {
             let link = try await fetchLink()
-            guard !Task.isCancelled else { return }
+            guard !Task.isCancelled, !isGeneratingLink else { return }
             state = link.map(State.loaded) ?? .unavailable
         } catch {
-            guard !Task.isCancelled else { return }
+            guard !Task.isCancelled, !isGeneratingLink else { return }
             state = .failed
         }
     }

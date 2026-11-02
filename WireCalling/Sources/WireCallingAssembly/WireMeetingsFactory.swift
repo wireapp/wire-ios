@@ -83,6 +83,9 @@ public struct WireMeetingsFactory {
         let fetchMeetingLink: @Sendable (QualifiedID) async throws -> MeetingLink? = {
             try await meetingRepository.fetchMeetingLink(id: $0)
         }
+        let refreshMeetingLink: @Sendable (QualifiedID, String?) async throws -> MeetingLink? = {
+            try await meetingRepository.refreshMeetingLink(id: $0, password: $1)
+        }
         let meetingsViewModel = AllMeetingsViewModel(
             currentDateProvider: currentDateProvider,
             upcomingMeetingsUseCase: fetchUpcomingMeetingsUseCase,
@@ -92,6 +95,7 @@ public struct WireMeetingsFactory {
             observeAttendedMeetingsUseCase: observeAttendedMeetingsUseCase,
             joinMeetingCallUseCase: joinMeetingCallUseCase,
             fetchMeetingLink: supportsMeetingLinks ? fetchMeetingLink : nil,
+            refreshMeetingLink: supportsMeetingLinks ? refreshMeetingLink : nil,
             onInstantMeetingCreated: onInstantMeetingCreated,
             makeFormViewModel: { mode, onSuccess in
                 MeetingFormViewModel(
@@ -101,6 +105,8 @@ public struct WireMeetingsFactory {
                     updateMeetingUseCase: updateMeetingUseCase,
                     currentDateProvider: currentDateProvider,
                     supportsMeetingLinks: supportsMeetingLinks,
+                    fetchMeetingLink: supportsMeetingLinks ? fetchMeetingLink : nil,
+                    refreshMeetingLink: supportsMeetingLinks ? refreshMeetingLink : nil,
                     onSuccess: onSuccess
                 )
             }
