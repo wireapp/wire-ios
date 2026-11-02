@@ -125,6 +125,7 @@ final class ActiveCallRouter<TopOverlayPresenter>
         isPresentingActiveCall = false
         isActiveCallShown = false
         presentedActiveCallViewController = nil
+        isCallTopOverlayShown = false
     }
 }
 
