@@ -18,8 +18,20 @@
 
 public import Foundation
 
+public struct DeletableNodes: Sendable {
+    let id: UUID
+    let path: String
+    let isFolder: Bool
+    
+    public init(id: UUID, path: String, isFolder: Bool) {
+        self.id = id
+        self.path = path
+        self.isFolder = isFolder
+    }
+}
+
 public protocol WireDriveDeleteNodesUseCaseProtocol: Sendable {
 
-    func invoke(nodeIDs: [UUID], deletePermanently: Bool) async throws
+    func invoke(nodes: [DeletableNodes], deletePermanently: Bool) async throws
 
 }

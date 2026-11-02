@@ -420,7 +420,8 @@ package final class FilesViewModel: ObservableObject {
         }
 
         await filesController.removeItems(assets) { [weak self] in
-            try await self?.useCases.deleteNodes.invoke(nodeIDs: assets.map(\.id), deletePermanently: permanently)
+            let nodes: [DeletableNodes] = assets.map { .init(id: $0.id, path: $0.filePath, isFolder: $0.kind == .folder) }
+            try await self?.useCases.deleteNodes.invoke(nodes: nodes, deletePermanently: permanently)
         }
     }
 

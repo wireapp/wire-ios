@@ -39,26 +39,36 @@ package struct WireDriveDeleteNodesUseCase: WireDriveDeleteNodesUseCaseProtocol 
         self.localAssetStore = localAssetStore
     }
 
-    package func invoke(nodeIDs: [UUID], deletePermanently: Bool) async throws {
+    package func invoke(nodes: [DeletableNodes], deletePermanently: Bool) async throws {
+        var assets: [WireDriveLocalAsset] = []
         // First delete local assets as this is less likely to fail then deleting nodes on server and local assets can
         // be re-downloaded if needed.
-        for nodeID in nodeIDs {
-            guard let localAsset = try await localAssetStore.asset(nodeID: nodeID) else { continue }
+        for node in nodes {
+            if node.isFolder {
+                await assets.append(contentsOf: try localAssetStore.assets(path: node.path))
+            } else if let asset = try await localAssetStore.asset(nodeID: node.id) {
+                assets.append(asset)
+            } else {
+                continue
+            }
+        }
 
+        for asset in assets {
             // If the file is just moved to the recycle bin, the download cache still needs to be cleared because the
             // cache key changes.
-            switch localAsset.downloadState {
+            switch asset.downloadState {
             case let .downloaded(cacheKey):
                 try await fileCache.deleteFile(forKey: cacheKey)
             default:
                 break
             }
         }
-        try await localAssetStore.deleteAssets(nodeIDs: nodeIDs)
+
+        try await localAssetStore.deleteAssets(nodeIDs: assets.map(\.nodeID))
 
         // Then delete nodes from server.
         if try await repository
-            .deleteNodes(locators: nodeIDs.map { .id($0) }, permanently: deletePermanently) == false {
+            .deleteNodes(locators: nodes.map { .id($0.id) }, permanently: deletePermanently) == false {
             throw WireDriveDeleteNodesError.serverFailedToDeleteNodes
         }
     }
