@@ -139,6 +139,22 @@ final class ActiveCallRouterTests: ZMSnapshotTestCase {
         XCTAssertEqual(rootViewController.presentCallCount, 0)
     }
 
+    func testThat_ItShowsCallTopOverlayAgain_AfterRootReplacement() {
+        // given
+        let conversation = createOneOnOneConversation()
+        mockTopOverlayPresenter.presentTopOverlayAnimated_MockMethod = { _, _ in }
+        sut.showCallTopOverlay(for: conversation)
+        sut.showCallTopOverlay(for: conversation)
+        XCTAssertEqual(mockTopOverlayPresenter.presentTopOverlayAnimated_Invocations.count, 1)
+
+        // when
+        sut.prepareForRootReplacement()
+        sut.showCallTopOverlay(for: conversation)
+
+        // then
+        XCTAssertEqual(mockTopOverlayPresenter.presentTopOverlayAnimated_Invocations.count, 2)
+    }
+
     private func createOneOnOneConversation() -> ZMConversation {
 
         let selfUser = ZMUser.selfUser(in: uiMOC)
