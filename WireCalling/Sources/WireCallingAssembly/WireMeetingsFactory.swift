@@ -31,12 +31,19 @@ public struct WireMeetingsFactory {
     private let selfUserID: UUID
     private let supportsMeetingLinks: Bool
     private let isClipboardEnabled: Bool
+    private let onInstantMeetingCreated: @MainActor (MeetingCreationResult) -> Void
 
     @MainActor
-    public init(selfUserID: UUID, supportsMeetingLinks: Bool = false, isClipboardEnabled: Bool = true) {
+    public init(
+        selfUserID: UUID,
+        supportsMeetingLinks: Bool = false,
+        isClipboardEnabled: Bool = true,
+        onInstantMeetingCreated: @escaping @MainActor (MeetingCreationResult) -> Void = { _ in }
+    ) {
         self.selfUserID = selfUserID
         self.supportsMeetingLinks = supportsMeetingLinks
         self.isClipboardEnabled = isClipboardEnabled
+        self.onInstantMeetingCreated = onInstantMeetingCreated
     }
 
     @MainActor
@@ -89,6 +96,7 @@ public struct WireMeetingsFactory {
             joinMeetingCallUseCase: joinMeetingCallUseCase,
             fetchMeetingLink: supportsMeetingLinks ? fetchMeetingLink : nil,
             refreshMeetingLink: supportsMeetingLinks ? refreshMeetingLink : nil,
+            onInstantMeetingCreated: onInstantMeetingCreated,
             makeFormViewModel: { mode, onSuccess in
                 MeetingFormViewModel(
                     mode: mode,
@@ -112,6 +120,18 @@ public struct WireMeetingsFactory {
                 .environment(\.isClipboardEnabled, isClipboardEnabled)
                 .environment(\.supportsMeetingEmailInvitations, supportsMeetingLinks)
             )
+        )
+    }
+
+    @MainActor
+    public static func makeMeetingInvitationView(
+        link: URL,
+        isClipboardEnabled: Bool,
+        onClose: @escaping () -> Void
+    ) -> UIViewController {
+        UIHostingController(
+            rootView: MeetingCreationConfirmationView(link: link, isInstant: true, onClose: onClose)
+                .environment(\.isClipboardEnabled, isClipboardEnabled)
         )
     }
 

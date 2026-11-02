@@ -650,6 +650,8 @@ public enum Locators {
             case restoreFloatingButton
             case done
             case deleteAll
+            case selectAll
+            case deselectAll
 
             public static func createFileTemplate(_ kind: String) -> String {
                 "createFileTemplate.\(kind)"

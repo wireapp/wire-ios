@@ -18,6 +18,7 @@
 
 import avs
 import UIKit
+import WireCallingAssembly
 import WireDataModel
 import WireDesign
 import WireLogging
@@ -43,6 +44,8 @@ final class CallingBottomSheetViewController: BottomSheetContainerViewController
     private let headerBar = CallHeaderBar()
     private let overlay = PassThroughOpaqueView()
     private var callStateObserverToken: Any?
+    private var meetingInvitationViewController: UIViewController?
+    private let takeMeetingInvitation: (QualifiedID) -> URL?
     private weak var callDurationTimer: Timer?
     private var callInfoConfiguration: CallInfoConfiguration?
     private let callDegradationController = CallDegradationController()
@@ -60,9 +63,14 @@ final class CallingBottomSheetViewController: BottomSheetContainerViewController
         }
     }
 
-    init(voiceChannel: VoiceChannel, userSession: UserSession) {
+    init(
+        voiceChannel: VoiceChannel,
+        userSession: UserSession,
+        takeMeetingInvitation: @escaping (QualifiedID) -> URL? = { _ in nil }
+    ) {
         self.voiceChannel = voiceChannel
         self.userSession = userSession
+        self.takeMeetingInvitation = takeMeetingInvitation
 
         self.visibleVoiceChannelViewController = CallViewController(
             voiceChannel: voiceChannel,
@@ -122,6 +130,46 @@ final class CallingBottomSheetViewController: BottomSheetContainerViewController
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         visibleVoiceChannelViewController.reloadGrid()
+        showPendingMeetingInvitation()
+    }
+
+    private func showPendingMeetingInvitation() {
+        guard let conversationID = voiceChannel.conversation?.qualifiedID,
+              let link = takeMeetingInvitation(conversationID) else { return }
+        showMeetingInvitation(link: link)
+    }
+
+    private func showMeetingInvitation(link: URL) {
+        let controller = WireMeetingsFactory.makeMeetingInvitationView(
+            link: link,
+            isClipboardEnabled: Settings.isClipboardEnabled,
+            onClose: { [weak self] in self?.dismissMeetingInvitation() }
+        )
+        controller.view.backgroundColor = .clear
+        controller.view.accessibilityElementsHidden = state == .full
+        meetingInvitationViewController = controller
+        addChild(controller)
+        view.insertSubview(controller.view, belowSubview: overlay)
+        controller.view.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            controller.view.topAnchor.constraint(equalTo: headerBar.bottomAnchor, constant: 8),
+            controller.view.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
+            controller.view.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
+            controller.view.bottomAnchor.constraint(
+                lessThanOrEqualTo: bottomSheetViewController.view.topAnchor,
+                constant: -8
+            ).withPriority(.defaultHigh),
+            controller.view.heightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.heightAnchor, multiplier: 0.4)
+                .withPriority(.defaultLow)
+        ])
+        controller.didMove(toParent: self)
+    }
+
+    private func dismissMeetingInvitation() {
+        meetingInvitationViewController?.willMove(toParent: nil)
+        meetingInvitationViewController?.view.removeFromSuperview()
+        meetingInvitationViewController?.removeFromParent()
+        meetingInvitationViewController = nil
     }
 
     private func setupViews() {
@@ -173,6 +221,7 @@ final class CallingBottomSheetViewController: BottomSheetContainerViewController
     }
 
     override func didChangeState() {
+        meetingInvitationViewController?.view.accessibilityElementsHidden = state == .full
         switch state {
         case .initial:
             visibleVoiceChannelViewController.view.accessibilityElementsHidden = false
@@ -216,6 +265,7 @@ final class CallingBottomSheetViewController: BottomSheetContainerViewController
             return
         }
 
+        dismissMeetingInvitation()
         self.voiceChannel = voiceChannel
         visibleVoiceChannelViewController = CallViewController(
             voiceChannel: voiceChannel,
@@ -229,6 +279,7 @@ final class CallingBottomSheetViewController: BottomSheetContainerViewController
             .setCallingActionsViewDelegate(actionsDelegate: visibleVoiceChannelViewController)
         callingActionsInfoViewController.participants = voiceChannel.getParticipantsList()
         participantsObserverToken = voiceChannel.addParticipantObserver(self)
+        showPendingMeetingInvitation()
     }
 
     override func bottomSheetChangedOffset(fullHeightPercentage: CGFloat) {
