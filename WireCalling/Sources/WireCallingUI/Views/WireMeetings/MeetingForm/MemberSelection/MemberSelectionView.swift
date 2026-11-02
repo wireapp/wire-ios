@@ -19,7 +19,7 @@
 package import SwiftUI
 package import WireCallingDomain
 import WireDesign
-package import WireFoundation
+import WireFoundation
 import WireLocators
 
 package final class MeetingMemberAvatarProvider {
@@ -31,7 +31,7 @@ package final class MeetingMemberAvatarProvider {
 }
 
 package extension EnvironmentValues {
-    @Entry var meetingMemberAvatarProvider: MeetingMemberAvatarProvider? = nil
+    @Entry var meetingMemberAvatarProvider: MeetingMemberAvatarProvider?
 }
 
 struct MemberSelectionView: View {
