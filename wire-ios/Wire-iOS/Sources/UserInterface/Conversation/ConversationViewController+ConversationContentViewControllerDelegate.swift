@@ -206,7 +206,7 @@ extension ConversationViewController: ConversationContentViewControllerDelegate 
                 let deleteNodesUseCase = wireMessagingFactory.makeDeleteNodesUseCase()
                 do {
                     try await deleteNodesUseCase.invoke(
-                        nodes: attachments.map { .init(id: $0.nodeID, path: .init(), isFolder: false)},
+                        nodes: attachments.map { .init(id: $0.nodeID, path: .init(), isFolder: false) },
                         deletePermanently: false
                     )
                     WireLogger.conversation.info(

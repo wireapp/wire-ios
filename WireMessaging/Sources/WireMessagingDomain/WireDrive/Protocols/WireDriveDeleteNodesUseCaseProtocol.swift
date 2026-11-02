@@ -22,7 +22,7 @@ public struct DeletableNodes: Sendable {
     let id: UUID
     let path: String
     let isFolder: Bool
-    
+
     public init(id: UUID, path: String, isFolder: Bool) {
         self.id = id
         self.path = path
