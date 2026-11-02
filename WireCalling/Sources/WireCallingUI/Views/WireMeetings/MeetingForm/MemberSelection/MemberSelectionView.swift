@@ -16,11 +16,23 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
-import WireCallingDomain
+package import SwiftUI
+package import WireCallingDomain
 import WireDesign
-import WireFoundation
+package import WireFoundation
 import WireLocators
+
+package final class MeetingMemberAvatarProvider {
+    package let makeAvatar: @MainActor (QualifiedID) -> AnyView?
+
+    package init(_ makeAvatar: @escaping @MainActor (QualifiedID) -> AnyView?) {
+        self.makeAvatar = makeAvatar
+    }
+}
+
+package extension EnvironmentValues {
+    @Entry var meetingMemberAvatarProvider: MeetingMemberAvatarProvider? = nil
+}
 
 struct MemberSelectionView: View {
     private typealias Strings = L10n.Localizable.WireMeetings.Schedule.Members
@@ -28,6 +40,7 @@ struct MemberSelectionView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.isClipboardEnabled) private var isClipboardEnabled
     @Environment(\.wireAccentColor) private var wireAccentColor
+    @Environment(\.meetingMemberAvatarProvider) private var avatarProvider
     @State private(set) var viewModel: MemberSelectionViewModel
     @State private var isEmailExpanded = true
 
@@ -252,15 +265,22 @@ struct MemberSelectionView: View {
             viewModel.toggleSelection(member)
         } label: {
             HStack(spacing: 12) {
-                Image(systemName: "checkmark.circle.fill")
-                    .font(.title)
-                    .hidden()
-                    .overlay {
-                        Image(systemName: "person.crop.circle.fill")
-                            .resizable()
-                            .scaledToFit()
-                            .foregroundStyle(.tertiary)
+                Group {
+                    if let avatar = avatarProvider?.makeAvatar(member.qualifiedID) {
+                        avatar.frame(width: 32, height: 32)
+                    } else {
+                        Image(systemName: "checkmark.circle.fill")
+                            .font(.title)
+                            .hidden()
+                            .overlay {
+                                Image(systemName: "person.crop.circle.fill")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .foregroundStyle(.tertiary)
+                            }
                     }
+                }
+                .accessibilityHidden(true)
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(member.name)
