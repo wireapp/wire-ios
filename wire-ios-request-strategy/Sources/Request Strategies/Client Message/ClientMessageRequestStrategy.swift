@@ -225,6 +225,10 @@ extension ClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
         groups: inout [ZMSDispatchGroup]
     ) async throws {
         guard staysPendingWhileOffline else {
+            await context.perform {
+                message.sendAttemptStarted = true
+                self.context.saveOrRollback()
+            }
             try await messageSender.sendMessage(message: message)
             return
         }

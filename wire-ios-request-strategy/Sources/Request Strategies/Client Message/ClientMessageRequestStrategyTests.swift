@@ -117,28 +117,30 @@ class ClientMessageRequestStrategyTests: MessagingTestBase {
 extension ClientMessageRequestStrategyTests {
 
     func testThatItDoesSendProteusMessageInVisibleConversation() {
+        let didSend = XCTestExpectation(description: "message sent")
 
         syncMOC.performGroupedAndWait {
 
             // GIVEN
-            self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
+            self.mockMessageSender.sendMessageMessage_MockMethod = { _ in didSend.fulfill() }
             let text = "Lorem ipsum"
             let message = try! self.groupConversation.appendText(content: text) as! ZMClientMessage
             self.syncMOC.saveOrRollback()
 
             // WHEN
             self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([message])) }
-
-            XCTAssertEqual(1, self.mockMessageSender.sendMessageMessage_Invocations.count)
         }
+        wait(for: [didSend], timeout: 5)
+        XCTAssertEqual(1, mockMessageSender.sendMessageMessage_Invocations.count)
     }
 
     func testThatItDoesSendProteusMessageInHiddenConversation() {
+        let didSend = XCTestExpectation(description: "message sent")
 
         syncMOC.performGroupedAndWait {
 
             // GIVEN
-            self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
+            self.mockMessageSender.sendMessageMessage_MockMethod = { _ in didSend.fulfill() }
             let text = "Lorem ipsum"
             let message = try! self.groupConversation.appendText(content: text) as! ZMClientMessage
             message.visibleInConversation = nil
@@ -147,9 +149,9 @@ extension ClientMessageRequestStrategyTests {
 
             // WHEN
             self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([message])) }
-
-            XCTAssertEqual(1, self.mockMessageSender.sendMessageMessage_Invocations.count)
         }
+        wait(for: [didSend], timeout: 5)
+        XCTAssertEqual(1, mockMessageSender.sendMessageMessage_Invocations.count)
     }
 
     func testThatItDoesNotSendMLSMessageWhenMLSFeatureDisabled() {
@@ -171,13 +173,14 @@ extension ClientMessageRequestStrategyTests {
     }
 
     func testThatItDoesSendMLSMessageWhenMLSFeatureEnabled() {
+        let didSend = XCTestExpectation(description: "message sent")
 
         syncMOC.performGroupedAndWait {
 
             // GIVEN
 
             makeSut(hasMLSClient: true)
-            self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
+            self.mockMessageSender.sendMessageMessage_MockMethod = { _ in didSend.fulfill() }
             let text = "Lorem ipsum"
             let message = try! self.groupConversation.appendText(content: text) as! ZMClientMessage
             message.conversation?.messageProtocol = .mls
@@ -185,9 +188,9 @@ extension ClientMessageRequestStrategyTests {
 
             // WHEN
             self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([message])) }
-
-            XCTAssertEqual(1, self.mockMessageSender.sendMessageMessage_Invocations.count)
         }
+        wait(for: [didSend], timeout: 5)
+        XCTAssertEqual(1, mockMessageSender.sendMessageMessage_Invocations.count)
     }
 
     func testThatItDoesNotSendMessageIfSenderIsNotSelfUser() {
@@ -417,6 +420,64 @@ extension ClientMessageRequestStrategyTests {
 
         // THEN
         XCTAssertEqual(wasMarkedWhenSending, true)
+    }
+
+    func testThatRetryAfterEnablingOfflinePendingMessagesCannotReplacePreviouslySentText() {
+        // GIVEN: the recipient may receive the message while the feature is disabled,
+        // but the acknowledgement is lost.
+        DeveloperFlag.storage = .temporary()
+        DeveloperFlag.offlinePendingMessages.enable(false)
+        let failure = makeTryAgainLaterError()
+        var message: ZMClientMessage!
+        var nonce: UUID?
+        var didComplete: XCTestExpectation!
+        syncMOC.performAndWait {
+            self.mockMessageSender.sendMessageMessage_MockMethod = { _ in
+                await self.syncMOC.perform {
+                    XCTAssertTrue(message.sendAttemptStarted)
+                    XCTAssertEqual(
+                        message.committedValues(forKeys: ["sendAttemptStarted"])["sendAttemptStarted"] as? Bool,
+                        true
+                    )
+                }
+                throw failure
+            }
+            message = try! self.groupConversation.appendText(content: "Original text") as? ZMClientMessage
+            nonce = message.nonce
+            self.syncMOC.saveOrRollback()
+            didComplete = self.insert(message, isFresh: true)
+        }
+        wait(for: [didComplete], timeout: 5)
+
+        // WHEN: enable the feature and retry while offline.
+        DeveloperFlag.offlinePendingMessages.enable(true)
+        mockReachability.mayBeReachable = false
+        syncMOC.performAndWait {
+            XCTAssertTrue(message.isExpired)
+            message.resend()
+            self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
+            didComplete = self.insert(message, isFresh: true)
+        }
+        XCTAssertTrue(mockReachability.waitForObserver())
+
+        // THEN: the existing nonce must keep its original content.
+        syncMOC.performAndWait {
+            XCTAssertFalse(message.isEditableInPlace)
+            XCTAssertFalse(message.replacePendingText(
+                with: message.makePendingText("Changed text", mentions: []),
+                fetchLinkPreview: false
+            ))
+            XCTAssertEqual(message.textMessageData?.messageText, "Original text")
+            XCTAssertEqual(message.nonce, nonce)
+        }
+        mockReachability.setMayBeReachable(true)
+        wait(for: [didComplete], timeout: 5)
+        syncMOC.performAndWait {
+            XCTAssertEqual(self.mockMessageSender.sendMessageMessage_Invocations.count, 2)
+            XCTAssertTrue(message.delivered)
+            XCTAssertEqual(message.nonce, nonce)
+            XCTAssertEqual(message.textMessageData?.messageText, "Original text")
+        }
     }
 
     func testThatItResendsWithSameNonceAfterGoingOffline_OfflinePendingMessages() {

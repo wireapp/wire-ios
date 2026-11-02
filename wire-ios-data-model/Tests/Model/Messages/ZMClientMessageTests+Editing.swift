@@ -721,6 +721,20 @@ class ZMClientMessageTests_PendingText: BaseZMClientMessageTests {
         XCTAssertTrue(makePendingMessage().isEditableInPlace)
     }
 
+    func testThatMessageWithUnknownSendHistoryCannotBeEditedInPlace() throws {
+        let message = ZMClientMessage(nonce: UUID(), managedObjectContext: uiMOC)
+        message.sender = selfUser
+        try message.setUnderlyingMessage(GenericMessage(content: Text(content: "hello"), nonce: message.nonce!))
+
+        XCTAssertTrue(message.sendAttemptStarted)
+        XCTAssertFalse(message.isEditableInPlace)
+        XCTAssertFalse(message.replacePendingText(
+            with: message.makePendingText("changed", mentions: []),
+            fetchLinkPreview: false
+        ))
+        XCTAssertEqual(message.textMessageData?.messageText, "hello")
+    }
+
     func testThatPendingMessageIsNotEditableInPlace_WhenFlagIsDisabled() {
         DeveloperFlag.offlinePendingMessages.enable(false)
         XCTAssertFalse(makePendingMessage().isEditableInPlace)
