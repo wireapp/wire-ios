@@ -492,6 +492,15 @@ public class MockUserSession: UserSession {
 
     public var underlyingE2eiFeature: Feature.E2EI!
 
+    // MARK: - selfDeletingMessagesFeature
+
+    public var selfDeletingMessagesFeature: Feature.SelfDeletingMessages {
+        get { return underlyingSelfDeletingMessagesFeature }
+        set(value) { underlyingSelfDeletingMessagesFeature = value }
+    }
+
+    public var underlyingSelfDeletingMessagesFeature: Feature.SelfDeletingMessages!
+
     // MARK: - mlsFeature
 
     public var mlsFeature: Feature.MLS {
@@ -1335,24 +1344,6 @@ public class MockUserSession: UserSession {
             return mock
         } else {
             fatalError("no mock for `fetchSelfConversationMLSGroupID`")
-        }
-    }
-
-    // MARK: - e2eIdentityUpdateCertificateUpdateStatus
-
-    public var e2eIdentityUpdateCertificateUpdateStatus_Invocations: [Void] = []
-    public var e2eIdentityUpdateCertificateUpdateStatus_MockMethod: (() -> E2EIdentityCertificateUpdateStatusUseCaseProtocol?)?
-    public var e2eIdentityUpdateCertificateUpdateStatus_MockValue: E2EIdentityCertificateUpdateStatusUseCaseProtocol??
-
-    public func e2eIdentityUpdateCertificateUpdateStatus() -> E2EIdentityCertificateUpdateStatusUseCaseProtocol? {
-        e2eIdentityUpdateCertificateUpdateStatus_Invocations.append(())
-
-        if let mock = e2eIdentityUpdateCertificateUpdateStatus_MockMethod {
-            return mock()
-        } else if let mock = e2eIdentityUpdateCertificateUpdateStatus_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `e2eIdentityUpdateCertificateUpdateStatus`")
         }
     }
 
