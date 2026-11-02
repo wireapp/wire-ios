@@ -39,7 +39,7 @@
     </entity>
     <entity name="ClientMessage" representedClassName="WireDataModel.ZMClientMessage" parentEntity="Message" syncable="YES">
         <attribute name="linkPreviewState" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO"/>
-        <attribute name="sendAttemptStarted" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="sendAttemptStarted" attributeType="Boolean" defaultValueString="YES" usesScalarValueType="YES"/>
         <attribute name="updatedTimestamp" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <relationship name="dataSet" toMany="YES" deletionRule="Cascade" ordered="YES" destinationEntity="GenericMessageData" inverseName="message" inverseEntity="GenericMessageData"/>
     </entity>

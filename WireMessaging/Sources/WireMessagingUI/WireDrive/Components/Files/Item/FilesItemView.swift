@@ -458,7 +458,7 @@ extension FilesItemView {
     }
 }
 
-private extension View {
+extension View {
     @ViewBuilder
     func deletionConfirmationDialog(
         isPresented: Binding<Bool>,

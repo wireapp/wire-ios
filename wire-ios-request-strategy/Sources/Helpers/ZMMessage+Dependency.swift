@@ -135,12 +135,40 @@ public extension ZMMessage {
     private func earlierPendingMessageOfSelfUser(in conversation: ZMConversation) -> ZMMessage? {
         guard let context = managedObjectContext, let serverTimestamp else { return nil }
 
-        let request = NSFetchRequest<ZMClientMessage>(entityName: ZMClientMessage.entityName())
-        request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+        let isEarlierPendingMessage = NSCompoundPredicate(andPredicateWithSubpredicates: [
             ClientMessageRequestStrategy.shouldBeSentPredicate(context: context),
             NSPredicate(format: "%K == %@", #keyPath(ZMMessage.visibleInConversation), conversation),
             NSPredicate(format: "%K < %@", #keyPath(ZMMessage.serverTimestamp), serverTimestamp as NSDate)
         ])
+        // An asset is pending while its upload waits for the network, and only sent once it's uploaded.
+        let isUploadingOrUploadedAsset = NSPredicate(
+            format: "version >= 3 AND transferState IN %@",
+            [AssetTransferState.uploading.rawValue, AssetTransferState.uploaded.rawValue]
+        )
+
+        let candidates: [ZMMessage?] = [
+            latestMessage(ZMClientMessage.self, matching: isEarlierPendingMessage, in: context),
+            latestMessage(
+                ZMAssetClientMessage.self,
+                matching: NSCompoundPredicate(andPredicateWithSubpredicates: [
+                    isEarlierPendingMessage,
+                    isUploadingOrUploadedAsset
+                ]),
+                in: context
+            )
+        ]
+        return candidates.compactMap(\.self).max {
+            ($0.serverTimestamp ?? .distantPast) < ($1.serverTimestamp ?? .distantPast)
+        }
+    }
+
+    private func latestMessage<Message: ZMMessage>(
+        _ type: Message.Type,
+        matching predicate: NSPredicate,
+        in context: NSManagedObjectContext
+    ) -> Message? {
+        let request = NSFetchRequest<Message>(entityName: type.entityName())
+        request.predicate = predicate
         request.sortDescriptors = [NSSortDescriptor(key: #keyPath(ZMMessage.serverTimestamp), ascending: false)]
         request.fetchLimit = 1
         return context.fetchOrAssert(request: request).first

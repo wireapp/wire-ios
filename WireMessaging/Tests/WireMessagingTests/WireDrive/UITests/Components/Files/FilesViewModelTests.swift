@@ -63,6 +63,11 @@ final class FilesViewModelTests {
                     fileCache: fileCache,
                     localAssetStore: localAssetStore
                 ),
+                emptyRecycleBin: WireDriveEmptyRecycleBinUseCase(
+                    repository: nodesRepository,
+                    fileCache: fileCache,
+                    localAssetStore: localAssetStore
+                ),
                 restoreNodes: WireDriveRestoreNodesUseCase(
                     repository: nodesRepository,
                     fileCache: fileCache,

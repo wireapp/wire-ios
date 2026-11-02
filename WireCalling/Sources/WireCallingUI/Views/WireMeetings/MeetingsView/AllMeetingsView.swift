@@ -72,6 +72,20 @@ package struct AllMeetingsView: View {
         .sheet(item: $viewModel.presentedFormMode) { mode in
             MeetingFormView(viewModel: viewModel.makeMeetingFormViewModel(mode: mode))
         }
+        .sheet(isPresented: Binding(
+            get: { viewModel.createdMeetingLink != nil },
+            set: { if !$0 { viewModel.createdMeetingLink = nil } }
+        )) {
+            if let link = viewModel.createdMeetingLink {
+                MeetingCreationConfirmationView(
+                    link: link,
+                    isInstant: false,
+                    hasEmailInvitees: viewModel.createdMeetingHasEmailInvitees
+                ) {
+                    viewModel.createdMeetingLink = nil
+                }
+            }
+        }
         .sheet(item: $viewModel.presentedLink) { linkViewModel in
             MeetingLinkView(viewModel: linkViewModel)
         }

@@ -25,6 +25,57 @@ public extension Notification.Name {
     static let deleteAssetNotification = Notification.Name("deleteAssetNotification")
 }
 
+/// A pending message that can be deleted locally while nobody else has it yet.
+public protocol PendingMessageDeletable: ZMOTRMessage {
+
+    /// Whether the message can be deleted without sending a delete.
+    var isDeletableWhilePending: Bool { get }
+
+    /// Deletes the message without sending a delete. Call it on the sync context.
+    ///
+    /// - Returns: `false` if the message can no longer be deleted this way, e.g. because sending started.
+    @discardableResult
+    func deletePendingMessage() -> Bool
+}
+
+extension ZMClientMessage: PendingMessageDeletable {}
+
+extension ZMAssetClientMessage: PendingMessageDeletable {
+
+    /// Whether the asset can be deleted without sending a delete, because it's still uploading. The asset
+    /// message is only sent once the upload has succeeded, so nobody else has it.
+    public var isDeletableWhilePending: Bool {
+        guard
+            DeveloperFlag.offlinePendingMessages.isOn,
+            !isEphemeral,
+            !isExpired,
+            !delivered,
+            transferState == .uploading,
+            let sender, sender.isSelfUser
+        else {
+            return false
+        }
+        return true
+    }
+
+    /// Deletes an asset that is still uploading, without sending a delete.
+    ///
+    /// Call it on the sync context, where the asset message is sent once the upload has succeeded, so it
+    /// can't be deleted while it's being sent.
+    @discardableResult
+    public func deletePendingMessage() -> Bool {
+        guard isDeletableWhilePending, let managedObjectContext else { return false }
+
+        // Cancel and save first, so the upload strategy also cancels a running upload request.
+        cancelTransfer()
+        managedObjectContext.saveOrRollback()
+
+        removeClearingSender(true)
+        managedObjectContext.delete(self)
+        return true
+    }
+}
+
 extension ZMAssetClientMessage {
 
     func deleteContent() {

@@ -295,6 +295,16 @@ class SharedDriveFilesPage: PageModel {
         XCTAssertTrue(moveHereButton.waitForNonExistence(timeout: 10), "Move sheet wasn't dismissed")
     }
 
+    func tapDeleteFloatingButton() {
+        let deleteButton = app.buttons[Locators.WireDrive.FilesPage.deleteFloatingButton.rawValue]
+        XCTAssertTrue(deleteButton.waitAndTap(timeout: 3), "Delete button wasn't tappable")
+    }
+
+    func confirmDeleteOnBottomSheet() {
+        XCTAssertTrue(deleteOptionOnBottomSheet.waitAndTap(timeout: 3), "Delete confirmation wasn't tappable")
+        XCTAssertTrue(deleteOptionOnBottomSheet.waitForNonExistence(timeout: 10), "Delete sheet wasn't dismissed")
+    }
+
     // MARK: - Direct uploads
 
     private var uploadMenuButton: XCUIElement {
