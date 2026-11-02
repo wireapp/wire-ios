@@ -40,21 +40,6 @@ struct MeetingLinkView: View {
         NavigationStack {
             VStack(spacing: 0) {
                 formContent
-                    .overlay(alignment: .bottom) {
-                        if viewModel.copyConfirmation != nil {
-                            Text(Strings.copied)
-                                .font(for: .body2)
-                                .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
-                                .padding(12)
-                                .background(
-                                    ColorTheme.Backgrounds.surface.color,
-                                    in: RoundedRectangle(cornerRadius: 12)
-                                )
-                                .overlay(RoundedRectangle(cornerRadius: 12).stroke(ColorTheme.Strokes.outline.color))
-                                .padding(16)
-                                .accessibilityIdentifier(Locators.WireMeetings.MeetingLink.copied)
-                        }
-                    }
 
                 actionArea
                     .fixedSize(horizontal: false, vertical: true)
@@ -64,13 +49,27 @@ struct MeetingLinkView: View {
                         actionAreaHeight = height
                     }
             }
+            .overlay(alignment: .bottom) {
+                if viewModel.copyConfirmation != nil {
+                    Label(Strings.copied, systemImage: "checkmark.circle.fill")
+                        .font(for: .body2)
+                        .foregroundStyle(ColorTheme.Backgrounds.onInverted.color)
+                        .padding(16)
+                        .frame(maxWidth: .infinity)
+                        .background(ColorTheme.Backgrounds.inverted.color, in: RoundedRectangle(cornerRadius: 12))
+                        .padding(.horizontal, 16)
+                        .padding(.bottom, actionAreaHeight + 16)
+                        .allowsHitTesting(false)
+                        .accessibilityIdentifier(Locators.WireMeetings.MeetingLink.copied)
+                }
+            }
             .onGeometryChange(for: CGFloat.self) { proxy in
                 proxy.safeAreaInsets.top
             } action: { inset in
                 navigationTopInset = inset
             }
             .background(ColorTheme.Backgrounds.background.color)
-            .navigationTitle(viewModel.isGeneratingLink ? Strings.generate : Strings.title)
+            .navigationTitle(isEditingPassword ? Strings.generate : Strings.title)
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
@@ -124,7 +123,7 @@ struct MeetingLinkView: View {
                         .multilineTextAlignment(.center)
                         .fixedSize(horizontal: false, vertical: true)
                 }
-                .wireButtonStyle(.secondary)
+                .wireButtonStyle(.secondary, useAccentColor: true)
                 .accessibilityIdentifier(Locators.WireMeetings.MeetingLink.generate)
                 .padding(.horizontal, 16)
             }
@@ -142,7 +141,7 @@ struct MeetingLinkView: View {
                     .multilineTextAlignment(.center)
                     .fixedSize(horizontal: false, vertical: true)
             }
-            .wireButtonStyle(.primary)
+            .wireButtonStyle(.primary, useAccentColor: true)
             .disabled(isEditingPassword ?
                 viewModel.isCreating || !viewModel.isPasswordValid || !viewModel.passwordsMatch : !canCopy)
             .accessibilityIdentifier(isEditingPassword ? Locators.WireMeetings.MeetingLink.create : .copy)
@@ -175,7 +174,7 @@ struct MeetingLinkView: View {
         } else {
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
-                    Text(Strings.description)
+                    Text(viewModel.didCreateLink ? Strings.created : Strings.description)
                         .font(for: .body1)
                         .accessibilityIdentifier(Locators.WireMeetings.MeetingLink.consequence)
                     content
@@ -210,9 +209,11 @@ struct MeetingLinkView: View {
                 .accessibilityValue(link.url.absoluteString)
                 .accessibilityIdentifier(Locators.WireMeetings.MeetingLink.url)
 
-            Text(link.hasPassword ? Strings.passwordProtected : Strings.notPasswordProtected)
-                .font(for: .body2)
-                .accessibilityIdentifier(Locators.WireMeetings.MeetingLink.passwordState)
+            if !viewModel.didCreateLink {
+                Text(link.hasPassword ? Strings.passwordProtected : Strings.notPasswordProtected)
+                    .font(for: .body2)
+                    .accessibilityIdentifier(Locators.WireMeetings.MeetingLink.passwordState)
+            }
         case .unavailable, .failed:
             Text(viewModel.state == .unavailable ? Strings.unavailable : Strings.loadError)
                 .font(for: .body1)
