@@ -352,6 +352,7 @@ final class InputBar: UIView {
     }
 
     fileprivate func setupViews() {
+        textView.accessibilityLabel = L10n.Localizable.Compose.Message.title
         textView.accessibilityIdentifier = Locators.ActiveConversationPage.inputField.rawValue
 
         updatePlaceholder()
@@ -566,6 +567,7 @@ final class InputBar: UIView {
 
             case .markingDown:
                 self.secondaryButtonsView.setMarkdownBarView()
+                self.markdownView.updateIcons(for: self.textView.activeMarkdown)
             }
         }
 
