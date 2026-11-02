@@ -22,6 +22,9 @@
 
 #import <WireTransport/WireTransport-Swift.h>
 #import <libkern/OSAtomic.h>
+#if DEBUG
+#import <notify.h>
+#endif
 
 #import "ZMTransportSession+internal.h"
 #import "ZMTransportCodec.h"
@@ -72,6 +75,10 @@ static NSInteger const DefaultMaximumRequests = 6;
 @property (nonatomic) RequestLoopDetection *requestLoopDetection;
 @property (nonatomic, readwrite) id<ReachabilityProvider, TearDownCapable> reachability;
 @property (nonatomic) id reachabilityObserverToken;
+#if DEBUG
+@property (atomic) BOOL uiTestIsOffline;
+@property (nonatomic) int uiTestOfflineToken;
+#endif
 @property (nonatomic) ZMAtomicInteger *numberOfRequestsInProgress;
 
 @property (nonatomic) NSString *minTLSVersion;
@@ -239,12 +246,21 @@ static NSInteger const DefaultMaximumRequests = 6;
                                                  selector:@selector(renewReachabilityObserverToken)
                                                      name:ZMTransportSessionReachabilityIsEnabled
                                                    object:self.reachability];
+#if DEBUG
+        [self observeUITestOfflineState];
+#endif
     }
     return self;
 }
 
 - (void)tearDown
 {
+#if DEBUG
+    if (self.uiTestOfflineToken != NOTIFY_TOKEN_INVALID) {
+        notify_cancel(self.uiTestOfflineToken);
+        self.uiTestOfflineToken = NOTIFY_TOKEN_INVALID;
+    }
+#endif
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 
     self.tornDown = YES;
@@ -312,6 +328,11 @@ static NSInteger const DefaultMaximumRequests = 6;
     //
     // N.B.: This method needs to be thread safe!
     //
+#if DEBUG
+    if (self.uiTestIsOffline) {
+        return [ZMTransportEnqueueResult resultDidHaveLessRequestsThanMax:NO didGenerateNonNullRequest:NO];
+    }
+#endif
     if (self.tornDown) {
         return [ZMTransportEnqueueResult resultDidHaveLessRequestsThanMax:NO didGenerateNonNullRequest:NO];
     }
@@ -354,6 +375,12 @@ static NSInteger const DefaultMaximumRequests = 6;
 
 - (void)sendTransportRequest:(ZMTransportRequest *)request;
 {
+#if DEBUG
+    if (self.uiTestIsOffline) {
+        [self temporarilyRejectSchedulerItem:request];
+        return;
+    }
+#endif
     NSDate * const expirationDate = request.expirationDate;
     
     // Immediately fail request if it has already expired at this point in time
@@ -585,6 +612,12 @@ static NSInteger const DefaultMaximumRequests = 6;
 - (void)setNetworkStateDelegate:(id<ZMNetworkStateDelegate>)networkStateDelegate
 {
     self.weakNetworkStateDelegate = networkStateDelegate;
+#if DEBUG
+    if (self.uiTestIsOffline) {
+        [networkStateDelegate didGoOffline];
+        return;
+    }
+#endif
     if (self.reachability.mayBeReachable) {
         [networkStateDelegate didReceiveData];
     }
@@ -597,6 +630,45 @@ static NSInteger const DefaultMaximumRequests = 6;
 {
     self.reachabilityObserverToken = [self.reachability addReachabilityObserver:self queue:self.workQueue];
 }
+
+#if DEBUG
+// A test-unique Darwin notification controls only this process's legacy transport.
+// State 1 holds outgoing messages; state 0 resumes the normal request scheduler.
+- (void)observeUITestOfflineState
+{
+    self.uiTestOfflineToken = NOTIFY_TOKEN_INVALID;
+    NSString *name = NSProcessInfo.processInfo.environment[@"UITEST_TRANSPORT_OFFLINE_NOTIFICATION"];
+    if (name.length == 0) {
+        return;
+    }
+
+    __weak typeof(self) weakSelf = self;
+    uint32_t status = notify_register_dispatch(name.UTF8String, &_uiTestOfflineToken, dispatch_get_main_queue(), ^(int token) {
+        uint64_t state = 0;
+        if (notify_get_state(token, &state) != NOTIFY_STATUS_OK) {
+            return;
+        }
+        ZMTransportSession *session = weakSelf;
+        [session.requestScheduler performGroupedBlock:^{
+            if (session.tornDown) {
+                return;
+            }
+            session.uiTestIsOffline = state == 1;
+            // Flush holds requests without scheduling the normal offline retry timer.
+            session.requestScheduler.schedulerState = session.uiTestIsOffline
+                ? ZMTransportRequestSchedulerStateFlush : ZMTransportRequestSchedulerStateNormal;
+            if (session.uiTestIsOffline) {
+                [session.weakNetworkStateDelegate didGoOffline];
+            } else {
+                [session reachabilityDidChange:session.reachability];
+            }
+        }];
+    });
+    if (status != NOTIFY_STATUS_OK) {
+        self.uiTestOfflineToken = NOTIFY_TOKEN_INVALID;
+    }
+}
+#endif
 
 @end
 
@@ -727,6 +799,11 @@ static NSInteger const DefaultMaximumRequests = 6;
 
 - (void)reachabilityDidChange:(id<ReachabilityProvider, TearDownCapable>)reachability;
 {
+#if DEBUG
+    if (self.uiTestIsOffline) {
+        return;
+    }
+#endif
     ZMLogInfo(@"reachabilityDidChange -> mayBeReachable = %@", reachability.mayBeReachable ? @"YES" : @"NO");
     [self.requestScheduler reachabilityDidChange:reachability];
 
@@ -745,6 +822,11 @@ static NSInteger const DefaultMaximumRequests = 6;
 
 - (void)updateNetworkStatusFromDidReadDataFromNetwork;
 {
+#if DEBUG
+    if (self.uiTestIsOffline) {
+        return;
+    }
+#endif
     [self.weakNetworkStateDelegate didReceiveData];
 }
 

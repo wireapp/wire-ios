@@ -88,6 +88,32 @@ runs tests that are tagged `critical` and also tagged with at least one of `call
 
 Quote selectors that contain `|` or `!` so the shell does not treat them as special characters.
 
+### Offline one-to-one messaging (TC-12191)
+
+`OfflineMessagingTests` enables `offlinePendingMessages`, establishes a one-to-one
+conversation, and checks delivery to an independent Kalium Testservice recipient
+before holding the sender offline. It queues multiple texts, checks that a single
+offline notice separates them from sent messages, verifies that the recipient
+receives none while offline, and checks automatic delivery after reconnection.
+It also verifies the received text in the recipient's conversation UI and the
+removal of the offline notice and sending indicators.
+
+The test uses a unique `UITEST_TRANSPORT_OFFLINE_NOTIFICATION` launch environment
+value. In Debug builds only, Darwin notification state `1` pauses the legacy
+transport and reports it offline; state `0` resumes normal scheduling. The control
+affects the app process, leaving the Testservice recipient and host network online.
+It exercises queued text delivery, not physical network loss or asset uploads.
+
+Load `env.xcconfig` and make Kalium Testservice available as described above, then run:
+
+```bash
+bundle exec fastlane ios run_uitests testiny_cases:12191
+```
+
+For the local Testservice, set `USE_IN_HOUSE_SERVICES=false` in `env.xcconfig`.
+
+TC-12191 passed locally against staging with the local Testservice on 2026-11-02
+(1 test, 0 failures; about 108 seconds).
 
 ### Pending teammate onboarding UI tests (TC-12185–TC-12190)
 

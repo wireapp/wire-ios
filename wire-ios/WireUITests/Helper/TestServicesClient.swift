@@ -326,6 +326,23 @@ class TestServicesClient {
         conversationId: UUID,
         domain: String
     ) async throws -> String {
+        let messages = try await getMessages(user: user, conversationId: conversationId, domain: domain)
+        guard let message = messages.reversed().first(where: { $0.content?.textValue == text }) else {
+            throw RuntimeError("Message id not found for text \(text)")
+        }
+        return message.id
+    }
+
+    func receivedTexts(user: UserInfo, conversationId: UUID, domain: String) async throws -> [String] {
+        try await getMessages(user: user, conversationId: conversationId, domain: domain)
+            .compactMap { $0.content?.textValue }
+    }
+
+    private func getMessages(
+        user: UserInfo,
+        conversationId: UUID,
+        domain: String
+    ) async throws -> [TestServiceMessage] {
         let instanceId = try await getInstanceId(
             email: user.email,
             password: user.password,
@@ -357,12 +374,7 @@ class TestServicesClient {
             throw RuntimeError("Error \(pureResponse.description)")
         }
 
-        let messages = try JSONDecoder().decode([TestServiceMessage].self, from: responseData)
-        guard let message = messages.reversed().first(where: { $0.content?.textValue == text }) else {
-            throw RuntimeError("Message id not found for text \(text)")
-        }
-
-        return message.id
+        return try JSONDecoder().decode([TestServiceMessage].self, from: responseData)
     }
 
     func fileToBase64String(fileURL: URL) throws -> String {

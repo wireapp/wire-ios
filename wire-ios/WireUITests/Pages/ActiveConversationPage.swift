@@ -52,6 +52,18 @@ class ActiveConversationPage: PageModel {
         app.descendants(matching: .textView).matching(identifier: Locators.ActiveConversationPage.message.rawValue)
     }
 
+    var offlineNotices: XCUIElementQuery {
+        app.cells.matching(identifier: "offline_notice")
+    }
+
+    var offlineNoticeText: XCUIElement {
+        app.otherElements.matching(identifier: "offline_notice").firstMatch
+    }
+
+    var sendingIndicators: XCUIElementQuery {
+        app.otherElements.matching(NSPredicate(format: "label == %@", "sending"))
+    }
+
     var mentionButton: XCUIElement {
         app.buttons[Locators.ActiveConversationPage.mentionButton.rawValue]
     }
