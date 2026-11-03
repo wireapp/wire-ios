@@ -1069,7 +1069,7 @@ extension ZClientViewController: UserObserving {
                 appDelegate.mainWindow?.tintColor = UIColor.accent()
             }
 
-            if changeInfo.imageMediumDataChanged || changeInfo.imageSmallProfileDataChanged {
+            if changeInfo.nameChanged || changeInfo.imageMediumDataChanged || changeInfo.imageSmallProfileDataChanged {
                 sidebarUpdateNeeded = true
                 await updateCachedAccountImage()
             }
