@@ -210,6 +210,7 @@ private extension FilesContentView {
                     )
                     .transition(.opacity)
                     .task(id: warningID) {
+                        AccessibilityNotification.Announcement(viewModel.offlineActionWarningMessage).post()
                         try? await Task.sleep(for: .seconds(4))
                         guard viewModel.offlineActionWarningID == warningID else { return }
                         viewModel.offlineActionWarningID = nil
