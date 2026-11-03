@@ -207,7 +207,7 @@ private extension FilesContentView {
                 .init(
                     id: Locators.WireDrive.FilesPage.removeAvailableOfflineFloatingButton.rawValue,
                     title: Strings.Files.Item.Menu.removeAvailableOffline,
-                    systemImage: "arrow.down.circle",
+                    systemImage: "xmark.circle",
                     isEnabled: !viewModel.selectedItems.isEmpty,
                     perform: { viewModel.removeAssetAvailableOffline(items: viewModel.selectedItems) }
                 )
