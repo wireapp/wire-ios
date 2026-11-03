@@ -235,18 +235,20 @@ private extension FilesContentView {
                         perform: viewModel.moveSelectedItemsToFolder
                     )
                 )
+            }
 
-                // delete
-                actions.append(
-                    .init(
-                        id: Locators.WireDrive.FilesPage.deleteFloatingButton.rawValue,
-                        title: Strings.Files.Item.Menu.delete,
-                        systemImage: "trash",
-                        isEnabled: !viewModel.selectedItems.isEmpty,
-                        perform: { viewModel.isPresentingDeleteConfirmation = true }
-                    )
+            // delete
+            actions.append(
+                .init(
+                    id: Locators.WireDrive.FilesPage.deleteFloatingButton.rawValue,
+                    title: Strings.Files.Item.Menu.delete,
+                    systemImage: "trash",
+                    isEnabled: !viewModel.selectedItems.isEmpty,
+                    perform: { viewModel.isPresentingDeleteConfirmation = true }
                 )
+            )
 
+            if !viewModel.isRecycleBin {
                 let selectedIDs = Set(viewModel.selectedItems.filter { $0.kind == .file }.map(\.id))
                 let availableOfflineIDs = Set(viewModel.availableOfflineAssets.map(\.nodeID))
                 let onlyContainsFolders = viewModel.selectedItems.allSatisfy { $0.kind == .folder }
