@@ -405,6 +405,18 @@ final class FilesViewTests: XCTestCase {
     }
 
     @MainActor
+    func testFilesView_FolderOfflineWarning() async {
+        let view = await makeFilesView(state: .received(items: []), showFolderOfflineWarning: true)
+
+        snapshotHelper
+            .withUserInterfaceStyle(.light)
+            .verify(matching: view, named: "light", record: record)
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: view, named: "dark", record: record)
+    }
+
+    @MainActor
     func testFilesView_ErrorState() async {
         let view = await makeFilesView(state: .error(isConnectionError: false))
 
@@ -466,7 +478,8 @@ final class FilesViewTests: XCTestCase {
     private func makeFilesView(
         state: FilesListStateController.State,
         isBrowsing: Bool = false,
-        isReadOnly: Bool = false
+        isReadOnly: Bool = false,
+        showFolderOfflineWarning: Bool = false
     ) async -> some View {
         let useCases = FilesViewModel.UseCases(
             fetchNodesPage: fetchNodesPageUseCase,
@@ -524,6 +537,7 @@ final class FilesViewTests: XCTestCase {
         filesViewModel.filesController.state = state
         filesViewModel.filesController.hasMore = false
         filesViewModel.showReadOnlyBanner = isReadOnly
+        filesViewModel.offlineActionWarningID = showFolderOfflineWarning ? UUID() : nil
 
         return NavigationStack {
             FilesView(viewModel: filesViewModel)

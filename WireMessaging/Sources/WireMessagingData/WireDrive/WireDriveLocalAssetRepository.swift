@@ -205,7 +205,7 @@ package final class WireDriveLocalAssetRepository: WireDriveLocalAssetRepository
 
             var asset = try verifyAsset(nodeID: nodeID, eTag: eTag)
             asset.downloadState = .downloaded(cacheKey: key)
-            
+
             try updateAsset(asset)
         } catch {
             // We don't care about the eTag when setting download state to failed.

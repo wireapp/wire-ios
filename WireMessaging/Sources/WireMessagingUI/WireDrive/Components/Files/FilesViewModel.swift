@@ -109,6 +109,13 @@ package final class FilesViewModel: ObservableObject {
 
     var state: FilesListStateController.State { filesController.state }
 
+    var offlineActionWarningMessage: String {
+        let folderCount = selectedItems.filter { $0.kind == .folder }.count
+        return folderCount > 1
+            ? Strings.Files.Offline.folderSelectionWarningMultiple(folderCount)
+            : Strings.Files.Offline.folderSelectionWarning
+    }
+
     @Published var searchText = ""
     @Published var alert: AlertModel?
     @Published var quickPreviewItem: QuickPreviewItem?
@@ -117,6 +124,7 @@ package final class FilesViewModel: ObservableObject {
     @Published var templates: [WireDriveFileTemplate] = []
     @Published var conversations: [WireDriveConversation] = []
     @Published var availableOfflineAssets: [WireDriveLocalAsset] = []
+    @Published var offlineActionWarningID: UUID?
     @Published var filtersSelection: FilesFilteringViewModel.FiltersSelection = .empty
     @Published var networkMonitor: NetworkMonitor
     @Published var filesController: FilesListStateController
@@ -523,13 +531,17 @@ package final class FilesViewModel: ObservableObject {
     }
 
     func makeAssetsAvailableOffline(items: Set<FilesViewItem>) {
-        // only files are supported for this action
-        let filesItems = items.filter { $0.kind == .file }
-        selectedItems = Set(filesItems)
+        // folders offline access not supported
+        guard !items.contains(where: { $0.kind == .folder }) else {
+            offlineActionWarningID = UUID()
+            return
+        }
+
+        selectedItems = items
         multipleSelection = .inactive
 
         Task {
-            let results = await useCases.makeAssetAvailableOffline.invoke(nodeIDs: filesItems.map(\.id))
+            let results = await useCases.makeAssetAvailableOffline.invoke(nodeIDs: items.map(\.id))
             for (nodeID, result) in results {
                 switch result {
                 case .success:
@@ -547,13 +559,12 @@ package final class FilesViewModel: ObservableObject {
     }
 
     func removeAssetAvailableOffline(items: Set<FilesViewItem>) {
-        // only files are supported for this action
-        let fileItems = items.filter { $0.kind == .file }
-        selectedItems = Set(fileItems)
+        let files = items.filter { $0.kind == .file }
+        selectedItems = files
         multipleSelection = .inactive
 
         Task {
-            for item in fileItems {
+            for item in files {
                 do {
                     try await useCases.removeAssetAvailableOffline.invoke(nodeID: item.id)
                 } catch {

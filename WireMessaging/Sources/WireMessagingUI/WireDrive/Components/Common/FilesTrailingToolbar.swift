@@ -80,13 +80,21 @@ private extension FilesTrailingToolbar {
         viewModel.selfUserRole == .editor && !viewModel.isRecycleBin && !viewModel.isOffline
     }
 
+    var canOpenRecycleBin: Bool {
+        !viewModel.isRecycleBin && !viewModel.isOffline
+    }
+
     var canUploadItems: Bool {
         viewModel.uploadDestinationPath != nil && viewModel.selfUserRole == .editor && !viewModel
             .isRecycleBin && !viewModel.isOffline
     }
 
     var showMoreButton: Bool {
-        !viewModel.isRecycleBin || (viewModel.isRecycleBin && canSelectItems)
+        if viewModel.isOffline, viewModel.state.items.allSatisfy({ $0.kind == .folder }) {
+            return false
+        }
+
+        return !viewModel.isRecycleBin || (viewModel.isRecycleBin && canSelectItems)
     }
 
     var deleteAllButton: some View {
@@ -140,7 +148,7 @@ private extension FilesTrailingToolbar {
                 uploadActions
             }
 
-            if !viewModel.isRecycleBin && !viewModel.isOffline {
+            if canOpenRecycleBin {
                 recycleBinButton
             }
         } label: {

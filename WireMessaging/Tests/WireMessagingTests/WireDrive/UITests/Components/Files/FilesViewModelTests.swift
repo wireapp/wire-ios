@@ -619,6 +619,75 @@ final class FilesViewModelTests {
 
     // MARK: - openItem
 
+    @Test(arguments: [false, true])
+    func makeAvailableOffline_whenSelectionContainsFolder_keepsSelectionAndShowsWarning(includeFile: Bool) {
+        var items: Set<FilesViewItem> = [.fixture(kind: .folder)]
+        if includeFile {
+            items.insert(.fixture())
+        }
+        sut.selectedItems = items
+        sut.multipleSelection = .active
+        let refreshCount = localAssetRepository.offlineAssetsConversationNameAssetsPath_Invocations.count
+
+        sut.makeAssetsAvailableOffline(items: items)
+
+        #expect(sut.offlineActionWarningID != nil)
+        #expect(sut.selectedItems == items)
+        #expect(sut.multipleSelection == .active)
+        #expect(localAssetRepository.assetNodeID_Invocations.isEmpty)
+        #expect(localAssetRepository.downloadAssetsNodeIDsIsAvailableOffline_Invocations.isEmpty)
+        #expect(localAssetRepository.offlineAssetsConversationNameAssetsPath_Invocations.count == refreshCount)
+    }
+
+    @Test(arguments: [false, true])
+    func removeOfflineAccess_whenSelectionContainsFolder_removesOnlySelectedFiles(includeFile: Bool) async {
+        var items: Set<FilesViewItem> = [.fixture(kind: .folder)]
+        if includeFile {
+            items.insert(.fixture())
+        }
+        let (refreshes, continuation) = AsyncStream.makeStream(of: Void.self)
+        defer { continuation.finish() }
+        var iterator = refreshes.makeAsyncIterator()
+        localAssetRepository.deleteAssetNodeID_MockMethod = { _ in }
+        localAssetRepository.offlineAssetsConversationNameAssetsPath_MockMethod = { _, _ in
+            continuation.yield(())
+            return []
+        }
+        sut.selectedItems = items
+        sut.multipleSelection = .active
+
+        sut.removeAssetAvailableOffline(items: items)
+        _ = await iterator.next()
+
+        let files = items.filter { $0.kind == .file }
+        #expect(Set(localAssetRepository.deleteAssetNodeID_Invocations) == Set(files.map(\.id)))
+        #expect(sut.offlineActionWarningID == nil)
+        #expect(sut.selectedItems == files)
+        #expect(sut.multipleSelection == .inactive)
+    }
+
+    @Test
+    func removeOfflineAccess_whenSelectionContainsOnlyFiles_removesEveryFile() async {
+        let items: Set<FilesViewItem> = [.fixture(), .fixture()]
+        let (refreshes, continuation) = AsyncStream.makeStream(of: Void.self)
+        defer { continuation.finish() }
+        var iterator = refreshes.makeAsyncIterator()
+        localAssetRepository.deleteAssetNodeID_MockMethod = { _ in }
+        localAssetRepository.offlineAssetsConversationNameAssetsPath_MockMethod = { _, _ in
+            continuation.yield(())
+            return []
+        }
+        sut.selectedItems = items
+        sut.multipleSelection = .active
+
+        sut.removeAssetAvailableOffline(items: items)
+        _ = await iterator.next()
+
+        #expect(Set(localAssetRepository.deleteAssetNodeID_Invocations) == Set(items.map(\.id)))
+        #expect(sut.offlineActionWarningID == nil)
+        #expect(sut.multipleSelection == .inactive)
+    }
+
     @Test
     func makeAvailableOffline_whenPartialFailure_marksOnlyFailedItemsAndAllowsRetry() async {
         let (offlineRefreshes, continuation) = AsyncStream.makeStream(of: Void.self)

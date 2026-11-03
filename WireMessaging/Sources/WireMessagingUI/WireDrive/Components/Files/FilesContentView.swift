@@ -42,6 +42,7 @@ package struct FilesContentView<Toolbar: ToolbarContent, Sheet: View>: View {
     @ViewBuilder let sheetContent: (FilesViewModel.SheetNavigation) -> Sheet
 
     @State private var isSearchFocused = false
+    @State private var floatingBarHeight: CGFloat = 0
 
     package var body: some View {
         ZStack {
@@ -183,6 +184,9 @@ private extension FilesContentView {
                 if viewModel.multipleSelection == .active {
                     FilesFloatingActionBar(actions: floatingBarActions)
                         .disabled(viewModel.selectedItems.isEmpty)
+                        .onGeometryChange(for: CGFloat.self) { $0.size.height } action: {
+                            floatingBarHeight = $0
+                        }
                         .padding(.horizontal, 16)
                         .padding(.bottom, 12)
                         .transition(reduceMotion ? .identity : .move(edge: .bottom).combined(with: .opacity))
@@ -195,7 +199,46 @@ private extension FilesContentView {
             Color.clear
                 .frame(height: trackerHeight)
         }
+        .overlay(alignment: .bottom) {
+            if let warningID = viewModel.offlineActionWarningID {
+                folderOfflineWarning
+                    .padding(.horizontal, 16)
+                    .padding(
+                        .bottom,
+                        trackerHeight + 12 + (viewModel.multipleSelection == .active ? floatingBarHeight + 12 : 0)
+                    )
+                    .transition(.opacity)
+                    .task(id: warningID) {
+                        try? await Task.sleep(for: .seconds(4))
+                        guard viewModel.offlineActionWarningID == warningID else { return }
+                        viewModel.offlineActionWarningID = nil
+                    }
+            }
+        }
+        .animation(reduceMotion ? nil : .easeInOut(duration: 0.2), value: viewModel.offlineActionWarningID)
 
+    }
+
+    var folderOfflineWarning: some View {
+        HStack(alignment: .center, spacing: 10) {
+            Image(systemName: "info.circle")
+                .foregroundStyle(ColorTheme.Base.secondaryText.color)
+                .accessibilityHidden(true)
+            Text(viewModel.offlineActionWarningMessage)
+                .foregroundStyle(ColorTheme.Backgrounds.onBackground.color)
+                .fixedSize(horizontal: false, vertical: true)
+                .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .font(for: .subline1)
+        .padding(16)
+        .background(ColorTheme.Backgrounds.background.color, in: RoundedRectangle(cornerRadius: 16))
+        .overlay {
+            RoundedRectangle(cornerRadius: 16)
+                .stroke(ColorTheme.Backgrounds.onSurface.color.opacity(0.15), lineWidth: 1)
+        }
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(viewModel.offlineActionWarningMessage)
+        .accessibilityIdentifier(Locators.WireDrive.FilesPage.folderOfflineWarning.rawValue)
     }
 
     var floatingBarActions: [FilesFloatingActionBar.Action] {
@@ -248,12 +291,11 @@ private extension FilesContentView {
                 )
             )
 
-            if !viewModel.isRecycleBin {
+            if !viewModel.isRecycleBin, viewModel.state.items.contains(where: { $0.kind == .file }) {
                 let selectedIDs = Set(viewModel.selectedItems.filter { $0.kind == .file }.map(\.id))
                 let availableOfflineIDs = Set(viewModel.availableOfflineAssets.map(\.nodeID))
-                let onlyContainsFolders = viewModel.selectedItems.allSatisfy { $0.kind == .folder }
 
-                if !selectedIDs.isDisjoint(with: availableOfflineIDs), !onlyContainsFolders {
+                if !selectedIDs.isDisjoint(with: availableOfflineIDs) {
                     actions.append(
                         .init(
                             id: Locators.WireDrive.FilesPage.removeAvailableOfflineFloatingButton.rawValue,
@@ -265,7 +307,7 @@ private extension FilesContentView {
                     )
                 }
 
-                if !selectedIDs.isSubset(of: availableOfflineIDs), !onlyContainsFolders {
+                if !selectedIDs.isSubset(of: availableOfflineIDs) {
                     actions.append(
                         .init(
                             id: Locators.WireDrive.FilesPage.makeAvailableOfflineFloatingButton.rawValue,
