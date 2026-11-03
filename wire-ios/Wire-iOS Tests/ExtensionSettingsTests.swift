@@ -28,7 +28,7 @@ final class ExtensionSettingsTests: XCTestCase {
     override func setUp() {
         super.setUp()
         defaults = UserDefaults(suiteName: name)
-        settings = ExtensionSettings(defaults: defaults)
+        settings = ExtensionSettings(defaults: defaults, isLinkPreviewGenerationEnabled: { true })
     }
 
     override func tearDown() {
@@ -40,6 +40,41 @@ final class ExtensionSettingsTests: XCTestCase {
 
     func testThatItEnablesLinkPreviewsByDefault() {
         XCTAssertFalse(settings.disableLinkPreviews)
+    }
+
+    func testThatItDisablesLinkPreviewsBeforeTheAppLaunchesWhenTheFlagIsDisabled() {
+        settings = ExtensionSettings(defaults: defaults, isLinkPreviewGenerationEnabled: { false })
+
+        XCTAssertTrue(settings.disableLinkPreviews)
+    }
+
+    func testThatTheDisabledFlagOverridesBothStoredPreferences() {
+        settings = ExtensionSettings(defaults: defaults, isLinkPreviewGenerationEnabled: { false })
+
+        for preference in [false, true] {
+            settings.disableLinkPreviews = preference
+
+            XCTAssertTrue(settings.disableLinkPreviews)
+        }
+    }
+
+    func testThatTheFlagDoesNotOverwriteTheStoredPreference() {
+        var isEnabled = true
+        settings = ExtensionSettings(defaults: defaults, isLinkPreviewGenerationEnabled: { isEnabled })
+
+        for preference in [false, true] {
+            settings.disableLinkPreviews = preference
+            isEnabled = false
+
+            XCTAssertTrue(settings.disableLinkPreviews)
+            XCTAssertEqual(defaults.bool(forKey: "disableLinkPreviews"), preference)
+
+            isEnabled = true
+
+            XCTAssertEqual(settings.disableLinkPreviews, preference)
+            let reloadedSettings = ExtensionSettings(defaults: defaults, isLinkPreviewGenerationEnabled: { true })
+            XCTAssertEqual(reloadedSettings.disableLinkPreviews, preference)
+        }
     }
 
     func testThatItHandlesLinkPreviewPreferenceChange() {

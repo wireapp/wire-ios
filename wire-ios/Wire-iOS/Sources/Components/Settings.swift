@@ -143,7 +143,6 @@ class Settings {
     static var shared: Settings = .init()
 
     init() {
-        ExtensionSettings.shared.disableLinkPreviews = !SecurityFlags.generateLinkPreviews.isEnabled
         restoreLastUsedAVSSettings()
 
         NotificationCenter.default.addObserver(
@@ -166,9 +165,7 @@ class Settings {
 
     static var disableLinkPreviews: Bool {
         get {
-            !SecurityFlags.generateLinkPreviews.isEnabled
-                ? true
-                : ExtensionSettings.shared.disableLinkPreviews
+            ExtensionSettings.shared.disableLinkPreviews
         }
         set {
             ExtensionSettings.shared.disableLinkPreviews = newValue

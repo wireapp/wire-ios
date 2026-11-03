@@ -111,7 +111,6 @@ final class InputBarButtonsView: UIView {
 
         buttonInnerContainer.clipsToBounds = true
         expandRowButton.accessibilityIdentifier = Locators.ActiveConversationPage.showOtherRowButton.rawValue
-        expandRowButton.accessibilityLabel = L10n.Accessibility.Conversation.MoreButton.description
         expandRowButton.hitAreaPadding = .zero
         expandRowButton.setIcon(.ellipsis, size: .tiny, for: [])
 
@@ -126,6 +125,7 @@ final class InputBarButtonsView: UIView {
         addSubview(buttonOuterContainer)
         addSubview(expandRowButton)
         backgroundColor = SemanticColors.SearchBar.backgroundInputView
+        setupAccessibility()
     }
 
     private func createConstraints() {
@@ -171,6 +171,10 @@ final class InputBarButtonsView: UIView {
     }
 
     private func setupAccessibility() {
+        expandRowButton.accessibilityLabel = currentRow == 0
+            ? L10n.Accessibility.Conversation.MoreButton.description
+            : L10n.Accessibility.Conversation.MoreButton.closeDescription
+
         if multilineLayout {
             let firstRowButtons = [UIButton](buttons.prefix(customButtonCount))
             let secondRowButtons = [UIButton](buttons.suffix(buttons.count - customButtonCount))

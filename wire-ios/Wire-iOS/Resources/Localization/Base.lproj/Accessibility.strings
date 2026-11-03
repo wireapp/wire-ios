@@ -39,6 +39,7 @@
 "conversation.timerButton.description" = "Set a timer for self-deleting messages";
 "conversation.mentionButton.description" = "Mention someone";
 "conversation.cameraButton.description" = "Take or select a photo";
+"conversation.camera.maximizeButton.description" = "Maximize view";
 "conversation.sketchButton.description" = "Open sketch to draw or write";
 "conversation.gifButton.description" = "Select a GIF";
 "conversation.audioButton.description" = "Record an audio message";
@@ -47,6 +48,8 @@
 "conversation.locationButton.description" = "Share your location";
 "conversation.videoButton.description" = "Record a video";
 "conversation.moreButton.description" = "Open more messaging options";
+"conversation.moreButton.closeDescription" = "Close more messaging options";
+"conversation.applyChangesButton.description" = "Apply changes";
 "conversation.emphemeralButton.description" = "Set a timer for self-deleting messages";
 "conversation.timerForSelfDeletingMessagesSeconds.value" = "%@ seconds";
 "conversation.timerForSelfDeletingMessagesMinutes.value" = "%@ minutes";
