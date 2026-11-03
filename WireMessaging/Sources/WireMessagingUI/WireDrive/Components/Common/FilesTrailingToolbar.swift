@@ -140,7 +140,7 @@ private extension FilesTrailingToolbar {
                 uploadActions
             }
 
-            if !viewModel.isRecycleBin {
+            if !viewModel.isRecycleBin && !viewModel.isOffline {
                 recycleBinButton
             }
         } label: {
