@@ -61,6 +61,56 @@ final class ConversationTypingUsersTimeoutTests: XCTestCase {
 
     // MARK: - Adding / Removing Users
 
+    func testTimerCallbackCanUpdateTheTracker() async throws {
+        let tracker = try XCTUnwrap(sut)
+        let userID = try XCTUnwrap(userAObjectID)
+        let conversationID = try XCTUnwrap(conversationAObjectID)
+        let fired = expectation(description: "Timer callback can remove the typing user")
+        tracker.timerFiredCallback = {
+            tracker.remove(userID, for: conversationID)
+            fired.fulfill()
+        }
+        defer { tracker.timerFiredCallback = nil }
+        tracker.add(userID, for: conversationID, withTimeout: Date(timeIntervalSinceNow: 0.05))
+
+        tracker.updateExpirationIfNeeded()
+        await fulfillment(of: [fired], timeout: 3)
+
+        XCTAssertNil(tracker.firstTimeout)
+    }
+
+    func testConcurrentUpdatesAndPruningPreserveAllUsers() async throws {
+        let syncContext = context
+        let existingConversationID = try XCTUnwrap(conversationAObjectID)
+        let (conversationID, userIDs) = try await syncContext.perform {
+            let conversation = syncContext.object(with: existingConversationID)
+            let helper = ModelHelper()
+            let users = (0 ..< 32).map { _ in helper.createUser(in: syncContext) }
+            try syncContext.obtainPermanentIDs(for: users)
+            try syncContext.obtainPermanentIDs(for: [conversation])
+            return (conversation.objectID, users.map(\.objectID))
+        }
+        let timeout = Date(timeIntervalSinceNow: 3600)
+        let pruneDate = Date(timeIntervalSinceReferenceDate: 0)
+        let tracker = try XCTUnwrap(sut)
+
+        DispatchQueue.concurrentPerform(iterations: userIDs.count) { index in
+            let userID = userIDs[index]
+            for _ in 0 ..< 100 {
+                tracker.add(userID, for: conversationID, withTimeout: timeout)
+                _ = tracker.contains(userID, for: conversationID)
+                _ = tracker.userIds(in: conversationID)
+                _ = tracker.firstTimeout
+                tracker.remove(userID, for: conversationID)
+                _ = tracker.pruneConversationsThatHaveTimoutBefore(date: pruneDate)
+            }
+            tracker.add(userID, for: conversationID, withTimeout: timeout)
+        }
+
+        XCTAssertEqual(tracker.userIds(in: conversationID), Set(userIDs))
+        XCTAssertEqual(tracker.firstTimeout, timeout)
+    }
+
     func testContains_It_Does_Not_Contain_Users_That_We_Have_Not_Added() {
 
         // Given, then

@@ -64,6 +64,14 @@ class ActiveConversationPage: PageModel {
         app.otherElements.matching(NSPredicate(format: "label == %@", "sending"))
     }
 
+    var deliveredIndicators: XCUIElementQuery {
+        app.otherElements.matching(NSPredicate(format: "label == %@", "delivered"))
+    }
+
+    var editedIndicators: XCUIElementQuery {
+        app.staticTexts.matching(identifier: "Edited")
+    }
+
     var mentionButton: XCUIElement {
         app.buttons[Locators.ActiveConversationPage.mentionButton.rawValue]
     }
@@ -480,6 +488,54 @@ class ActiveConversationPage: PageModel {
     /// Locates the message bubble by its exact content, for replying to it.
     func message(withText text: String) -> XCUIElement {
         messageLabels.matching(NSPredicate(format: "value == %@", text)).firstMatch
+    }
+
+    func beginEditingMessage(_ text: String) throws {
+        try openMessageAction("Edit", for: text)
+        XCTAssertTrue(app.buttons["confirmButton"].waitForExistence(timeout: 5))
+        XCTAssertEqual(inputMessageField.value as? String, text)
+    }
+
+    func replaceEditingText(with text: String) {
+        inputMessageField.tap()
+        let current = inputMessageField.value as? String ?? ""
+        inputMessageField.typeText(String(repeating: XCUIKeyboardKey.delete.rawValue, count: current.count) + text)
+        XCTAssertEqual(inputMessageField.value as? String, text)
+    }
+
+    func editMessage(_ original: String, to replacement: String) throws {
+        try beginEditingMessage(original)
+        replaceEditingText(with: replacement)
+        XCTAssertTrue(app.buttons["confirmButton"].waitAndTap())
+        XCTAssertTrue(message(withText: replacement).waitForExistence(timeout: 5))
+        XCTAssertTrue(message(withText: original).waitForNonExistence(timeout: 5))
+    }
+
+    func cancelMessageEdit() {
+        XCTAssertTrue(app.buttons["cancelButton"].waitAndTap())
+        let cleared = XCTNSPredicateExpectation(
+            predicate: NSPredicate(format: "value == %@", "Type a message"),
+            object: inputMessageField
+        )
+        XCTAssertEqual(XCTWaiter().wait(for: [cleared], timeout: 5), .completed)
+        XCTAssertTrue(sendButton.exists)
+    }
+
+    func deletePendingMessage(_ text: String) throws {
+        let bubble = message(withText: text)
+        try openMessageAction("Delete", for: text)
+        try XCTUnwrap(app.buttons["Delete for Me"].firstMatch.waitAndTap() ? true : nil)
+        XCTAssertTrue(bubble.waitForNonExistence(timeout: 5))
+    }
+
+    private func openMessageAction(_ title: String, for text: String) throws {
+        let bubble = message(withText: text)
+        try XCTUnwrap(bubble.waitForExistence(timeout: 5) ? true : nil)
+        bubble.press(forDuration: 1)
+        try XCTUnwrap(
+            app.buttons[title].firstMatch.waitAndTap() ? true : nil,
+            "Message action '\(title)' was unavailable.\n\(app.debugDescription)"
+        )
     }
 
     /// Long-presses the given message element, taps Reply, then types and sends the reply text.

@@ -16,10 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Foundation
 import WireDataModel
 
 /// Keeping track of typing users timeouts
-final class ConversationTypingUsersTimeout: NSObject, ZMTimerClient {
+final class ConversationTypingUsersTimeout: NSObject, ZMTimerClient, @unchecked Sendable {
 
     struct Key: Hashable {
         let userObjectID: NSManagedObjectID
@@ -28,15 +29,22 @@ final class ConversationTypingUsersTimeout: NSObject, ZMTimerClient {
 
     static let defaultTimeout: TimeInterval = 60
 
+    // Live events, incremental sync and timer callbacks can access the tracker concurrently.
+    private let lock = NSLock()
     private var timeouts = [Key: Date]()
     private var nextPruneDate: Date?
     private var expirationTimer: ZMTimer?
 
     typealias VoidClosure = () async -> Void
-    var timerFiredCallback: VoidClosure?
+    private var storedTimerFiredCallback: VoidClosure?
+
+    var timerFiredCallback: VoidClosure? {
+        get { lock.withLock { storedTimerFiredCallback } }
+        set { lock.withLock { storedTimerFiredCallback = newValue } }
+    }
 
     var firstTimeout: Date? {
-        timeouts.values.min()
+        lock.withLock { timeouts.values.min() }
     }
 
     func add(
@@ -45,7 +53,7 @@ final class ConversationTypingUsersTimeout: NSObject, ZMTimerClient {
         withTimeout timeout: Date
     ) {
         let key = Key(userObjectID: user, conversationObjectID: conversation)
-        timeouts[key] = timeout
+        lock.withLock { timeouts[key] = timeout }
     }
 
     func remove(
@@ -53,7 +61,7 @@ final class ConversationTypingUsersTimeout: NSObject, ZMTimerClient {
         for conversation: NSManagedObjectID
     ) {
         let key = Key(userObjectID: user, conversationObjectID: conversation)
-        timeouts.removeValue(forKey: key)
+        lock.withLock { _ = timeouts.removeValue(forKey: key) }
     }
 
     func contains(
@@ -61,56 +69,62 @@ final class ConversationTypingUsersTimeout: NSObject, ZMTimerClient {
         for conversation: NSManagedObjectID
     ) -> Bool {
         let key = Key(userObjectID: user, conversationObjectID: conversation)
-        return timeouts[key] != nil
+        return lock.withLock { timeouts[key] != nil }
     }
 
     func userIds(
         in conversation: NSManagedObjectID
     ) -> Set<NSManagedObjectID> {
-        let userIds = timeouts.keys
-            .filter { $0.conversationObjectID == conversation }
-            .map(\.userObjectID)
+        lock.withLock {
+            let userIds = timeouts.keys
+                .filter { $0.conversationObjectID == conversation }
+                .map(\.userObjectID)
 
-        return Set(userIds)
+            return Set(userIds)
+        }
     }
 
     func pruneConversationsThatHaveTimoutBefore(
         date pruneDate: Date
     ) -> Set<NSManagedObjectID> {
-        let keysToRemove = timeouts
-            .filter { $0.value < pruneDate }
-            .keys
+        lock.withLock {
+            let keysToRemove = timeouts
+                .filter { $0.value < pruneDate }
+                .keys
 
-        keysToRemove.forEach {
-            timeouts.removeValue(forKey: $0)
+            keysToRemove.forEach {
+                timeouts.removeValue(forKey: $0)
+            }
+
+            return Set(keysToRemove.map(\.conversationObjectID))
         }
-
-        return Set(keysToRemove.map(\.conversationObjectID))
     }
 
     /// Updates next prune date and fire a timer at that specific date.
     /// When timer fires, the provided callback will be called - see `timerDidFire`
 
     func updateExpirationIfNeeded() {
-        guard
-            let date = firstTimeout,
-            date != nextPruneDate
-        else {
-            return
-        }
+        lock.withLock {
+            guard
+                let date = timeouts.values.min(),
+                date != nextPruneDate
+            else {
+                return
+            }
 
-        expirationTimer?.cancel()
-        expirationTimer = ZMTimer(target: self)
-        expirationTimer?.fire(at: date)
-        nextPruneDate = date
+            expirationTimer?.cancel()
+            expirationTimer = ZMTimer(target: self)
+            expirationTimer?.fire(at: date)
+            nextPruneDate = date
+        }
     }
 
     func timerDidFire(_ timer: ZMTimer!) {
-        guard timer === expirationTimer else {
+        guard lock.withLock({ timer === expirationTimer }) else {
             return
         }
 
-        Task { [timerFiredCallback] in
+        Task { [self] in
             await timerFiredCallback?()
         }
     }

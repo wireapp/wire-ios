@@ -24,6 +24,9 @@
 #import <libkern/OSAtomic.h>
 #import <WireTransport/WireTransport-Swift.h>
 #import "ZMTLogging.h"
+#if DEBUG
+#import <notify.h>
+#endif
 
 static NSString* ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_NETWORK;
 
@@ -40,6 +43,10 @@ NSString * const ZMReachabilityChangedNotificationName = @"ZMReachabilityChanged
 @property (atomic) BOOL mayBeReachable;
 @property (atomic) BOOL oldMayBeReachable;
 @property (nonatomic) ZMAtomicInteger *tornDownFlag;
+#if DEBUG
+@property (nonatomic) int uiTestOfflineToken;
+@property (nonatomic) BOOL uiTestIsOffline;
+#endif
 
 @end
 
@@ -58,6 +65,9 @@ NSString * const ZMReachabilityChangedNotificationName = @"ZMReachabilityChanged
         self.referenceToName = [NSMapTable strongToStrongObjectsMapTable];
         self.tornDownFlag = [[ZMAtomicInteger alloc] initWithInteger:0];
         [self setupReachability];
+#if DEBUG
+        [self observeUITestOfflineState];
+#endif
     }
     return self;
 }
@@ -69,6 +79,12 @@ NSString * const ZMReachabilityChangedNotificationName = @"ZMReachabilityChanged
 
         // Disable callbacks synchronously on the same queue they run on
         dispatch_sync(self.workQueue, ^{
+#if DEBUG
+            if (self.uiTestOfflineToken != NOTIFY_TOKEN_INVALID) {
+                notify_cancel(self.uiTestOfflineToken);
+                self.uiTestOfflineToken = NOTIFY_TOKEN_INVALID;
+            }
+#endif
             for (id obj in refs) {
                 SCNetworkReachabilityRef ref = (__bridge SCNetworkReachabilityRef)obj;
                 // Clear the dispatch queue first to stop any further callbacks
@@ -174,6 +190,33 @@ static CFStringRef copyDescription(const void *info)
     [self updateStatus];
 }
 
+#if DEBUG
+// The async message sender also consults reachability before marking a send as started.
+// Keep it in step with the UI test's transport control so pending text stays editable.
+- (void)observeUITestOfflineState
+{
+    self.uiTestOfflineToken = NOTIFY_TOKEN_INVALID;
+    NSString *name = NSProcessInfo.processInfo.environment[@"UITEST_TRANSPORT_OFFLINE_NOTIFICATION"];
+    if (name.length == 0) {
+        return;
+    }
+    __weak typeof(self) weakSelf = self;
+    uint32_t status = notify_register_dispatch(name.UTF8String, &_uiTestOfflineToken, self.workQueue, ^(int token) {
+        ZMReachability *reachability = weakSelf;
+        uint64_t state = 0;
+        if (reachability == nil || reachability.tornDownFlag.rawValue != 0 ||
+            notify_get_state(token, &state) != NOTIFY_STATUS_OK) {
+            return;
+        }
+        reachability.uiTestIsOffline = state == 1;
+        [reachability updateStatus];
+    });
+    if (status != NOTIFY_STATUS_OK) {
+        self.uiTestOfflineToken = NOTIFY_TOKEN_INVALID;
+    }
+}
+#endif
+
 - (void)updateStatus;
 {
     ZMLogDebug(@"UpdateStatus: %@", self);
@@ -207,6 +250,9 @@ static CFStringRef copyDescription(const void *info)
         ZMLogInfo(@"FINAL REACHABILITY: %d", globalReachable);
     }
     
+#if DEBUG
+    globalReachable = globalReachable && !self.uiTestIsOffline;
+#endif
     self.oldMayBeReachable = self.mayBeReachable;
     self.mayBeReachable = globalReachable;
     [self notifyReachabilityDidChange];

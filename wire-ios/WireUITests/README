@@ -88,32 +88,46 @@ runs tests that are tagged `critical` and also tagged with at least one of `call
 
 Quote selectors that contain `|` or `!` so the shell does not treat them as special characters.
 
-### Offline one-to-one messaging (TC-12191)
+### Offline messaging — TCF-1753 (TC-12191–TC-12199)
 
-`OfflineMessagingTests` enables `offlinePendingMessages`, establishes a one-to-one
-conversation, and checks delivery to an independent Kalium Testservice recipient
-before holding the sender offline. It queues multiple texts, checks that a single
-offline notice separates them from sent messages, verifies that the recipient
-receives none while offline, and checks automatic delivery after reconnection.
-It also verifies the received text in the recipient's conversation UI and the
-removal of the offline notice and sending indicators.
+`OfflineMessagingTests` covers every case in the Pending Messages folder.
+Each test starts with an online message received by an independent Kalium client,
+then controls the sender's transport while the recipient clients remain online.
+Group cases check delivery to two other members. After reconnection, tests check
+exactly one copy of each expected text and verify the recipient's conversation UI.
 
-The test uses a unique `UITEST_TRANSPORT_OFFLINE_NOTIFICATION` launch environment
-value. In Debug builds only, Darwin notification state `1` pauses the legacy
-transport and reports it offline; state `0` resumes normal scheduling. The control
-affects the app process, leaving the Testservice recipient and host network online.
-It exercises queued text delivery, not physical network loss or asset uploads.
+| Case | Coverage |
+| --- | --- |
+| TC-12191 | Multiple pending texts in a one-to-one chat deliver automatically after reconnection. |
+| TC-12192 | Multiple pending texts in a group deliver to both other members after reconnection. |
+| TC-12193 | Pending group messages survive opening another conversation and returning. |
+| TC-12194 | Delivered and pending texts appear on opposite sides of one offline notice with distinct statuses. |
+| TC-12195 | Two edits of pending one-to-one texts deliver only the final versions, without an Edited marker. |
+| TC-12196 | Two edits of pending group texts deliver only the final versions, without an Edited marker. |
+| TC-12197 | Canceling two edit attempts preserves the original pending text. |
+| TC-12198 | Editing the second of three pending texts twice leaves the first and third unchanged. |
+| TC-12199 | Deleting pending texts removes them locally and prevents delivery after reconnection. |
 
-Load `env.xcconfig` and make Kalium Testservice available as described above, then run:
+The tests enable `offlinePendingMessages` and use a unique
+`UITEST_TRANSPORT_OFFLINE_NOTIFICATION` launch environment value. In Debug builds
+only, Darwin notification state `1` reports reachability offline and pauses the
+legacy transport; state `0` resumes normal scheduling. This exercises queued text delivery;
+it does not simulate physical network loss or asset uploads.
+
+Load `env.xcconfig` and make Kalium Testservice available as described above.
+For the local Testservice, set `USE_IN_HOUSE_SERVICES=false` in `env.xcconfig`.
+Run the complete folder coverage with:
 
 ```bash
-bundle exec fastlane ios run_uitests testiny_cases:12191
+bundle exec fastlane ios run_uitests testiny_cases:"12191,12192,12193,12194,12195,12196,12197,12198,12199"
 ```
 
-For the local Testservice, set `USE_IN_HOUSE_SERVICES=false` in `env.xcconfig`.
+To run an individual case, pass its ID, for example `testiny_cases:12195`.
 
-TC-12191 passed locally against staging with the local Testservice on 2026-11-02
-(1 test, 0 failures; about 108 seconds).
+All nine cases passed locally on 2026-11-02 using the local Kalium Testservice
+and an iPhone 17 simulator running iOS 26.5 (9 tests, 0 failures; about 19 minutes).
+The typing timeout concurrency fix also passed all 18 selected WireDomain tests,
+including concurrent updates and a timer callback that re-enters the tracker.
 
 ### Pending teammate onboarding UI tests (TC-12185–TC-12190)
 
