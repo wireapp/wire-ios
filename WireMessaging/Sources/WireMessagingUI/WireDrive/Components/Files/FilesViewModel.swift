@@ -76,7 +76,6 @@ package final class FilesViewModel: ObservableObject {
     let triggerReload: PassthroughSubject<Void, Never>
     let title: String?
     var failedItemActions: [FilesViewItem.ID: FilesItemViewModel.ItemAction] = [:]
-    var availableOfflineAssets: [WireDriveLocalAsset] = []
 
     var selfUserRole: WireDriveConversation.Participant.Role {
         selfUser?.role ?? .viewer
@@ -117,6 +116,7 @@ package final class FilesViewModel: ObservableObject {
     @Published var isEditing: FilesViewItem?
     @Published var templates: [WireDriveFileTemplate] = []
     @Published var conversations: [WireDriveConversation] = []
+    @Published var availableOfflineAssets: [WireDriveLocalAsset] = []
     @Published var filtersSelection: FilesFilteringViewModel.FiltersSelection = .empty
     @Published var networkMonitor: NetworkMonitor
     @Published var filesController: FilesListStateController
