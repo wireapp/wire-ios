@@ -55,4 +55,21 @@ public protocol FeatureConfigLocalStoreProtocol {
         feature: Feature
     ) async -> Bool
 
+    /// Checks whether the user still needs to be notified about a feature's state.
+    /// - parameter name: The name of the feature.
+
+    func needsToNotifyUser(
+        for name: Feature.Name
+    ) async -> Bool
+
+    /// Sets whether the user still needs to be notified about a feature's state.
+    /// - parameters:
+    ///     - needsToNotify: Whether the user needs to be notified.
+    ///     - name: The name of the feature.
+
+    func setNeedsToNotifyUser(
+        _ needsToNotify: Bool,
+        for name: Feature.Name
+    ) async
+
 }
