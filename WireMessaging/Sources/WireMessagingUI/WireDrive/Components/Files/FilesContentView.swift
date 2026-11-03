@@ -270,7 +270,7 @@ private extension FilesContentView {
                             title: Strings.Files.Item.Menu.makeAvailableOffline,
                             systemImage: "arrow.down.circle",
                             isEnabled: !viewModel.selectedItems.isEmpty,
-                            perform: { viewModel.makeAssetAvailableOffline(items: viewModel.selectedItems) }
+                            perform: { viewModel.makeAssetsAvailableOffline(items: viewModel.selectedItems) }
                         )
                     )
                 }

@@ -68,6 +68,7 @@ final class FilesViewTests: XCTestCase {
         nodesApi.getAllTags_MockMethod = { ["tag1", "tag2", "abcdef"] }
 
         let localAssetsRepository = MockWireDriveLocalAssetRepositoryProtocol()
+        localAssetsRepository.offlineAssetsConversationNameAssetsPath_MockValue = []
 
         fetchNodesPageUseCase = WireDriveFetchNodesPageUseCase(
             repository: nodesRepository

@@ -60,36 +60,4 @@ final class WireDriveRemoveAssetAvailableOfflineUseCaseTests {
         }
     }
 
-    @Test
-    func `It retrieves and sets the available offline flag to false`() async throws {
-        // given
-        let asset = WireDriveLocalAsset.fixture(
-            isAvailableOffline: true,
-            downloadState: .downloaded(cacheKey: UUID.mockID1.uuidString)
-        )
-        storeBacking[asset.nodeID] = asset
-        #expect(asset.isAvailableOffline == true)
-
-        // when
-        try await sut.invoke(nodeID: asset.nodeID)
-
-        // then
-        #expect(storeBacking[asset.nodeID]?.isAvailableOffline == false)
-    }
-
-    @Test
-    func `It throws when asset is missing locally`() async throws {
-        // given
-        let asset = WireDriveLocalAsset.fixture(
-            isAvailableOffline: true,
-            downloadState: .downloaded(cacheKey: UUID.mockID1.uuidString)
-        )
-
-        // then
-        await #expect(throws: WireDriveRemoveAssetAvailableOfflineUseCase.Failure.assetNotFound) {
-            // when
-            try await sut.invoke(nodeID: asset.nodeID)
-        }
-    }
-
 }

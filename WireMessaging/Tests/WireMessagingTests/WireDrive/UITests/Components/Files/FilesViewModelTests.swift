@@ -621,6 +621,13 @@ final class FilesViewModelTests {
 
     @Test
     func makeAvailableOffline_whenPartialFailure_marksOnlyFailedItemsAndAllowsRetry() async {
+        let (offlineRefreshes, continuation) = AsyncStream.makeStream(of: Void.self)
+        defer { continuation.finish() }
+        var refreshIterator = offlineRefreshes.makeAsyncIterator()
+        localAssetRepository.offlineAssetsConversationNameAssetsPath_MockMethod = { _, _ in
+            continuation.yield(())
+            return []
+        }
         let successfulItem = FilesViewItem.fixture(id: UUID())
         let failedItem = FilesViewItem.fixture(id: UUID())
         let unrelatedID = UUID()
@@ -634,7 +641,9 @@ final class FilesViewModelTests {
             ]
         }
 
-        await sut.makeAssetAvailableOffline(items: [successfulItem, failedItem]).value
+        sut.makeAssetsAvailableOffline(items: [successfulItem, failedItem])
+        // Offline assets are refreshed after the individual results have been processed.
+        _ = await refreshIterator.next()
 
         #expect(sut.failedItemActions[successfulItem.id] == nil)
         #expect(sut.failedItemActions[failedItem.id] == .makeAvailableOffline)
@@ -645,7 +654,8 @@ final class FilesViewModelTests {
             return [failedItem.id: .success(())]
         }
 
-        await sut.makeAssetAvailableOffline(items: [failedItem]).value
+        sut.makeAssetsAvailableOffline(items: [failedItem])
+        _ = await refreshIterator.next()
 
         #expect(sut.failedItemActions[failedItem.id] == nil)
         #expect(sut.failedItemActions[unrelatedID] == .makeAvailableOffline)

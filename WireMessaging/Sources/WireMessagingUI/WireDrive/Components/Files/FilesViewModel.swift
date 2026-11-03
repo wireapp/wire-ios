@@ -344,7 +344,7 @@ package final class FilesViewModel: ObservableObject {
         switch item.kind {
         case .file:
             if failedItemActions[item.id] == .makeAvailableOffline {
-                makeAssetAvailableOffline(items: [item])
+                makeAssetsAvailableOffline(items: [item])
             } else {
                 await viewAsset(item: item)
             }
@@ -522,7 +522,7 @@ package final class FilesViewModel: ObservableObject {
         }
     }
 
-    func makeAssetAvailableOffline(items: Set<FilesViewItem>) {
+    func makeAssetsAvailableOffline(items: Set<FilesViewItem>) {
         // only files are supported for this action
         let filesItems = items.filter { $0.kind == .file }
         selectedItems = Set(filesItems)

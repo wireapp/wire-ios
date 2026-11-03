@@ -37,6 +37,7 @@ extension FilesViewModel {
         localAssetStore.assetNodeID_MockValue = nil
         localAssetStore.deleteAssetsNodeIDs_MockMethod = { _ in }
         let localAssetRepository = MockWireDriveLocalAssetRepositoryProtocol()
+        localAssetRepository.offlineAssetsConversationNameAssetsPath_MockValue = []
 
         return FilesViewModel(
             useCases: .init(
