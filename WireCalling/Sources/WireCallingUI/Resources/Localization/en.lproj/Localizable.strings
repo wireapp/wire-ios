@@ -123,6 +123,7 @@
 "wireMeetings.schedule.setupTitle.placeholder" = "Enter meeting title";
 "wireMeetings.schedule.setupTitle.error.tooLong" = "Too many characters";
 "wireMeetings.schedule.password.title" = "Set a password for the meeting link (optional)";
+"wireMeetings.schedule.password.reminder" = "Copy this password before creating the link. You won’t be able to view it again.";
 "wireMeetings.schedule.password.placeholder" = "Enter a password";
 "wireMeetings.schedule.password.requirements" = "Use at least %d characters, with one lowercase letter, one capital letter, a number, and a special character.";
 "wireMeetings.schedule.password.copy" = "Copy password";
