@@ -403,8 +403,8 @@ internal enum L10n {
         internal static let noSuggestions = L10n.tr("Accessibility", "conversation.mentions.no_suggestions", fallback: "No matching mention suggestions.")
         /// At sign inserted. Type a name to mention someone.
         internal static let started = L10n.tr("Accessibility", "conversation.mentions.started", fallback: "At sign inserted. Type a name to mention someone.")
-        /// Mention suggestions are available.
-        internal static let suggestionsAvailable = L10n.tr("Accessibility", "conversation.mentions.suggestions_available", fallback: "Mention suggestions are available.")
+        /// To select a participant, swipe backwards.
+        internal static let suggestionsAvailable = L10n.tr("Accessibility", "conversation.mentions.suggestions_available", fallback: "To select a participant, swipe backwards.")
       }
       internal enum MessageInfo {
         /// Double tap to hide or show message info
