@@ -33,6 +33,7 @@ private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
 ///   - sheetContent: sheet builder for navigation items.
 package struct FilesContentView<Toolbar: ToolbarContent, Sheet: View>: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.wireAccentColor) private var accentColor
     @ObservedObject package var viewModel: FilesViewModel
     package let isBrowsing: Bool
     package let backgroundColor: Color
@@ -220,21 +221,25 @@ private extension FilesContentView {
     }
 
     var folderOfflineWarning: some View {
-        HStack(alignment: .center, spacing: 10) {
-            Image(systemName: "info.circle")
-                .foregroundStyle(ColorTheme.Base.secondaryText.color)
+        HStack(alignment: .center, spacing: 12) {
+            Image(systemName: "info.circle.fill")
+                .font(.title3)
+                .foregroundStyle(ColorTheme.Base.primary(accentColor).color)
                 .accessibilityHidden(true)
             Text(viewModel.offlineActionWarningMessage)
-                .foregroundStyle(ColorTheme.Backgrounds.onBackground.color)
+                .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
                 .fixedSize(horizontal: false, vertical: true)
                 .frame(maxWidth: .infinity, alignment: .leading)
         }
         .font(for: .subline1)
         .padding(16)
-        .background(ColorTheme.Backgrounds.background.color, in: RoundedRectangle(cornerRadius: 16))
+        .background(
+            ColorTheme.Backgrounds.background.color,
+            in: RoundedRectangle(cornerRadius: 12, style: .continuous)
+        )
         .overlay {
-            RoundedRectangle(cornerRadius: 16)
-                .stroke(ColorTheme.Backgrounds.onSurface.color.opacity(0.15), lineWidth: 1)
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .stroke(ColorTheme.Base.primary(accentColor).color.opacity(0.4), lineWidth: 1)
         }
         .accessibilityElement(children: .combine)
         .accessibilityLabel(viewModel.offlineActionWarningMessage)
