@@ -26,7 +26,6 @@ final class WireDriveTests: WireUITestCase {
     override func additionalDeveloperFlags() -> [DeveloperFlag: Bool] {
         [
             .simulateDriveOffline: false,
-            .enableDriveDirectUploads: true,
             .enableDriveBulkActions: true
         ]
     }
