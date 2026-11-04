@@ -17,20 +17,21 @@
 //
 
 public import Foundation
+public import SwiftUI
 public import UIKit
 public import WireCallingDomain
+public import WireFoundation
 
-import SwiftUI
 import WireCallingData
 import WireCallingUI
 import WireDesign
-import WireFoundation
 
 public struct WireMeetingsFactory {
 
     private let selfUserID: UUID
     private let supportsMeetingLinks: Bool
     private let isClipboardEnabled: Bool
+    private let makeMemberAvatar: @MainActor (QualifiedID) -> AnyView?
     private let onInstantMeetingCreated: @MainActor (MeetingCreationResult) -> Void
 
     @MainActor
@@ -38,11 +39,13 @@ public struct WireMeetingsFactory {
         selfUserID: UUID,
         supportsMeetingLinks: Bool = false,
         isClipboardEnabled: Bool = true,
+        makeMemberAvatar: @escaping @MainActor (QualifiedID) -> AnyView? = { _ in nil },
         onInstantMeetingCreated: @escaping @MainActor (MeetingCreationResult) -> Void = { _ in }
     ) {
         self.selfUserID = selfUserID
         self.supportsMeetingLinks = supportsMeetingLinks
         self.isClipboardEnabled = isClipboardEnabled
+        self.makeMemberAvatar = makeMemberAvatar
         self.onInstantMeetingCreated = onInstantMeetingCreated
     }
 
@@ -83,6 +86,9 @@ public struct WireMeetingsFactory {
         let fetchMeetingLink: @Sendable (QualifiedID) async throws -> MeetingLink? = {
             try await meetingRepository.fetchMeetingLink(id: $0)
         }
+        let refreshMeetingLink: @Sendable (QualifiedID, String?) async throws -> MeetingLink? = {
+            try await meetingRepository.refreshMeetingLink(id: $0, password: $1)
+        }
         let meetingsViewModel = AllMeetingsViewModel(
             currentDateProvider: currentDateProvider,
             upcomingMeetingsUseCase: fetchUpcomingMeetingsUseCase,
@@ -92,6 +98,7 @@ public struct WireMeetingsFactory {
             observeAttendedMeetingsUseCase: observeAttendedMeetingsUseCase,
             joinMeetingCallUseCase: joinMeetingCallUseCase,
             fetchMeetingLink: supportsMeetingLinks ? fetchMeetingLink : nil,
+            refreshMeetingLink: supportsMeetingLinks ? refreshMeetingLink : nil,
             onInstantMeetingCreated: onInstantMeetingCreated,
             makeFormViewModel: { mode, onSuccess in
                 MeetingFormViewModel(
@@ -101,6 +108,8 @@ public struct WireMeetingsFactory {
                     updateMeetingUseCase: updateMeetingUseCase,
                     currentDateProvider: currentDateProvider,
                     supportsMeetingLinks: supportsMeetingLinks,
+                    fetchMeetingLink: supportsMeetingLinks ? fetchMeetingLink : nil,
+                    refreshMeetingLink: supportsMeetingLinks ? refreshMeetingLink : nil,
                     onSuccess: onSuccess
                 )
             }
@@ -113,6 +122,7 @@ public struct WireMeetingsFactory {
                 )
                 .environment(\.isClipboardEnabled, isClipboardEnabled)
                 .environment(\.supportsMeetingEmailInvitations, supportsMeetingLinks)
+                .environment(\.meetingMemberAvatarProvider, MeetingMemberAvatarProvider(makeMemberAvatar))
             )
         )
     }
