@@ -39,8 +39,12 @@ for FIXTURE_PATH in "$VIDEO_PATH" "$VIDEO_PATH_2" "$VIDEO_PATH_3" "$FILE_PATH"; 
   fi
 done
 
-echo "Booting simulator $IOS_SIM_ID"
-xcrun simctl boot "$IOS_SIM_ID" || true
+if xcrun simctl list devices booted | grep -q "$IOS_SIM_ID"; then
+  echo "Simulator $IOS_SIM_ID is already booted"
+else
+  echo "Booting simulator $IOS_SIM_ID"
+  xcrun simctl boot "$IOS_SIM_ID" || true
+fi
 BOOTED_SIMULATORS=$(xcrun simctl list devices booted)
 if ! echo "$BOOTED_SIMULATORS" | grep -q "$IOS_SIM_ID"; then
   echo "::warning::Simulator $IOS_SIM_ID is not booted yet. Skipping simulator media seeding."
@@ -48,14 +52,16 @@ if ! echo "$BOOTED_SIMULATORS" | grep -q "$IOS_SIM_ID"; then
 fi
 
 echo "Seeding simulator media"
+SECONDS=0
 if xcrun simctl addmedia "$IOS_SIM_ID" "$VIDEO_PATH" "$VIDEO_PATH_2" "$VIDEO_PATH_3"; then
-  echo "Simulator media seeded successfully"
+  echo "Simulator media seeded successfully in ${SECONDS}s"
 else
   echo "::error::Failed to seed simulator media with $VIDEO_PATH, $VIDEO_PATH_2, $VIDEO_PATH_3" >&2
   exit 1
 fi
 
 echo "Seeding Files app fixtures"
+SECONDS=0
 if ! FILES_CONTAINER="$(xcrun simctl get_app_container "$IOS_SIM_ID" com.apple.DocumentsApp data 2>/dev/null)"; then
   echo "::error::Unable to locate Files app container for simulator $IOS_SIM_ID" >&2
   exit 1
@@ -81,7 +87,7 @@ fi
 mkdir -p "$LOCAL_STORAGE_DIR"
 
 if cp "$FILE_PATH" "$VIDEO_PATH" "$LOCAL_STORAGE_DIR/"; then
-  echo "Files app fixtures seeded successfully"
+  echo "Files app fixtures seeded successfully in ${SECONDS}s"
 else
   echo "::error::Failed to copy $FILE_PATH and $VIDEO_PATH into $LOCAL_STORAGE_DIR" >&2
   exit 1

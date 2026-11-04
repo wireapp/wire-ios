@@ -58,6 +58,8 @@ platform :ios do
     def delete_test_simulator_if_needed
         return unless is_running_on_ci
 
+        delete_ui_test_shard_simulators
+
         simulator_id = ENV['IOS_SIM_ID'].to_s.strip
         return if simulator_id.empty?
 
@@ -138,6 +140,7 @@ platform :ios do
 
     desc "Run UITests"
     lane :run_uitests do |options|
+        options[:parallel_workers] = ui_test_parallel_workers(options[:parallel_workers])
         schemes = ["WireUITests"]
         options[:testplan] = "UITests"
         options[:number_of_retries] = 1
@@ -159,9 +162,25 @@ platform :ios do
         begin
             run_tests_frameworks(schemes, options)
         rescue => e
-            device_id = ENV['IOS_SIM_ID']
-            sh "../scripts/zip_logs.sh 'com.wearezeta.zclient.alpha' 'group.com.wearezeta.zclient.alpha' 'app-group.zip' '#{device_id}'"
+            collect_ui_test_logs
             UI.test_failure!("Failing running tests #{e.to_s}")
+        ensure
+            delete_ui_test_shard_simulators
+        end
+    end
+
+    def collect_ui_test_logs
+        simulator_id = ENV['IOS_SIM_ID'].to_s.strip
+        return if simulator_id.empty?
+
+        device_ids = [simulator_id] + ui_test_shard_simulator_ids
+        device_ids.uniq.each do |device_id|
+            archive = device_id == simulator_id ? "app-group.zip" : "app-group-#{device_id}.zip"
+            begin
+                sh("../scripts/zip_logs.sh", "com.wearezeta.zclient.alpha", "group.com.wearezeta.zclient.alpha", archive, device_id)
+            rescue => error
+                UI.important("Could not collect app logs for simulator #{device_id}: #{error}")
+            end
         end
     end
 
@@ -676,11 +695,24 @@ platform :ios do
 
         ENV['TEST_RUNNER_CI'] = ENV['CI']
 
-        # Disable verbose diagnostics, which can cause 600 second delays per test scheme.
+        # Disable verbose diagnostics as these are generally not useful and collecting them can cause 600 second delays per test scheme.
         xcargs = ["-collect-test-diagnostics never"]
         if scheme == "WireUITests"
             # Keep Debug builds, but use release assertion behavior for UI tests.
             xcargs << "OTHER_SWIFT_FLAGS='$(inherited) -assert-config Release'"
+
+            result_dir = File.join(File.expand_path("..", __dir__), build.artifact_path(with_filename: false), "tests", scheme)
+            clear_ui_test_results(result_dir)
+            unless ENV['GITHUB_OUTPUT'].to_s.empty?
+                File.open(ENV['GITHUB_OUTPUT'], "a") { |file| file.puts("xcresult_directory=#{result_dir}") }
+            end
+
+            parallel_workers = ui_test_parallel_workers(options[:parallel_workers])
+            if parallel_workers > 1
+                run_ui_test_shards(build, scheme, testplan, options, parallel_workers)
+                return
+            end
+            xcargs << "-parallel-testing-enabled NO"
         end
 
         run_tests_options = {
@@ -711,6 +743,116 @@ platform :ios do
         run_tests_options[:skip_testing] = skip_testing if skip_testing.any?
 
         run_tests(run_tests_options)
+    end
+
+    def run_ui_test_shards(build, scheme, testplan, options, workers)
+        tests = selected_ui_test_identifiers(options)
+        UI.user_error!("No UI tests selected") if tests.empty?
+
+        root = File.expand_path("..", __dir__)
+        result_dir = File.join(root, build.artifact_path(with_filename: false), "tests", scheme)
+        tests_file = File.join(root, build.build_path, "uitest_shard_tests.txt")
+        published_log_dir = File.join(root, build.build_path, "uitest-shard-logs")
+
+        FileUtils.rm_rf(published_log_dir)
+        FileUtils.mkdir_p(File.dirname(tests_file))
+        File.write(tests_file, tests.join("\n") + "\n")
+
+        UI.message("Running #{tests.count} UITests in up to #{workers} simulator shards")
+        command = [
+            "ruby", File.join(root, "scripts/run_sharded_uitests.rb"),
+            "--workers", workers.to_s,
+            "--tests-file", tests_file,
+            "--base-simulator", ENV['IOS_SIM_ID'],
+            "--device-type", iPhoneNameForTesting,
+            "--runtime", "iOS#{ios_version}",
+            "--os-version", ios_version,
+            "--scheme", scheme,
+            "--test-plan", testplan,
+            "--derived-data", File.join(root, "DerivedData"),
+            "--build-setting", "OTHER_SWIFT_FLAGS=$(inherited) -assert-config Release",
+            "--result-dir", result_dir,
+            "--log-dir", File.join(root, build.build_path),
+            "--published-log-dir", published_log_dir,
+            "--redact-env-file", File.join(root, "wire-ios/WireUITests/env.xcconfig"),
+            "--test-iterations", (build.number_of_retries + 1).to_s,
+            "--simulators-file", ui_test_shard_simulators_file
+        ]
+        command += ["--packages-dir", ENV['PACKAGES_DIR']] unless ENV['PACKAGES_DIR'].to_s.empty?
+
+        failed = false
+        sh(*command, error_callback: ->(_) { failed = true })
+
+        Dir.glob(File.join(result_dir, "shard-*")).sort.each do |shard_dir|
+            next if Dir.glob(File.join(shard_dir, "*.xcresult")).empty?
+
+            trainer(
+                path: shard_dir,
+                output_directory: shard_dir,
+                extension: ".junit",
+                output_remove_retry_attempts: options[:output_remove_retry_attempts].to_s == "true",
+                fail_build: false
+            )
+        end
+
+        UI.test_failure!("UITest shards failed, see the shard summary above") if failed
+    end
+
+    # Both serial and sharded runs must start without results from an earlier invocation.
+    def clear_ui_test_results(result_dir)
+        FileUtils.rm_rf(Dir.glob(File.join(result_dir, "shard-*")))
+        FileUtils.rm_rf(Dir.glob(File.join(result_dir, "*.{xcresult,junit}")))
+    end
+
+    def selected_ui_test_identifiers(options)
+        only = normalize_test_identifiers(options[:only_testing])
+        only = normalize_test_identifiers(ENV["SCAN_ONLY_TESTING"]) if only.empty?
+        skip = normalize_test_identifiers(options[:skip_testing])
+        skip = normalize_test_identifiers(ENV["SCAN_SKIP_TESTING"]) if skip.empty?
+
+        ui_test_metadata.map { |test| test[:identifier] }.select do |identifier|
+            (only.empty? || only.any? { |selector| ui_test_identifier_matches?(identifier, selector) }) &&
+                skip.none? { |selector| ui_test_identifier_matches?(identifier, selector) }
+        end
+    end
+
+    def ui_test_identifier_matches?(identifier, selector)
+        selector = "WireUITests/#{selector}" unless selector.start_with?("WireUITests")
+        identifier == selector || identifier.start_with?("#{selector}/")
+    end
+
+    def ui_test_shard_simulators_file
+        File.expand_path("../build/uitest_shard_simulators.txt", __dir__)
+    end
+
+    def ui_test_shard_simulator_ids
+        return [] unless File.exist?(ui_test_shard_simulators_file)
+
+        File.readlines(ui_test_shard_simulators_file).map(&:strip).reject(&:empty?).uniq
+    end
+
+    def delete_ui_test_shard_simulators
+        ui_test_shard_simulator_ids.each do |simulator_id|
+            ["shutdown", "delete"].each do |action|
+                begin
+                    sh("xcrun", "simctl", action, simulator_id, log: false)
+                rescue => error
+                    UI.important("Failed to #{action} shard simulator #{simulator_id}: #{error}")
+                end
+            end
+        end
+        FileUtils.rm_f(ui_test_shard_simulators_file)
+    end
+
+    def ui_test_parallel_workers(value)
+        return 1 if value.to_s.strip.empty?
+
+        count = value.to_i
+        unless count.between?(1, 6) && count.to_s == value.to_s.strip
+            UI.user_error!("parallel_workers must be 1, 2, 3, 4, 5, or 6")
+        end
+
+        count
     end
 
     def normalize_test_identifiers(value)
