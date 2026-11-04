@@ -36,6 +36,11 @@ private extension ZMConversationMessage {
             return .delete
         }
 
+        // A pending message that hasn't been sent yet is only deleted locally, since nobody else has it.
+        if (self as? ZMClientMessage)?.isDeletableWhilePending == true {
+            return .hide
+        }
+
         return canBeDeletedForEveryone ? .hideAndDelete : .hide
     }
 
@@ -65,7 +70,16 @@ final class DeletionDialogPresenter: NSObject {
         userSession: UserSession,
         completion: @escaping (_ succeeded: Bool, DeletionType?) -> Void
     ) -> UIAlertController {
+        // Decided when the sheet is shown, since sending may start before the user taps. The sync context
+        // then rejects the deletion instead of hiding a message that is being sent.
+        let pendingMessage = (message as? ZMClientMessage).flatMap { $0.isDeletableWhilePending ? $0 : nil }
+
         let alert = UIAlertController.forMessageDeletion(with: message.deletionConfiguration) { action, _ in
+
+            if case .delete = action, let pendingMessage {
+                self.deletePendingMessage(pendingMessage, userSession: userSession, completion: completion)
+                return
+            }
 
             // Tracking needs to be called before performing the action, since the content of the message is cleared
             if case let .delete(type) = action {
@@ -97,6 +111,42 @@ final class DeletionDialogPresenter: NSObject {
         }
 
         return alert
+    }
+
+    /// Deletes a message that hasn't been sent yet. This happens on the sync context, which also marks the
+    /// message before sending it, so it can't race with a send.
+    private func deletePendingMessage(
+        _ message: ZMClientMessage,
+        userSession: UserSession,
+        completion: @escaping (_ succeeded: Bool, DeletionType?) -> Void
+    ) {
+        let objectID = message.objectID
+        let syncContext = userSession.contextProvider.syncContext
+
+        syncContext.perform {
+            let syncMessage = try? syncContext.existingObject(with: objectID) as? ZMClientMessage
+            let didDelete = syncMessage?.deletePendingMessage() == true
+            if didDelete {
+                syncContext.saveOrRollback()
+            }
+
+            DispatchQueue.main.async { [weak self] in
+                if !didDelete {
+                    self?.presentPendingDeletionFailedAlert()
+                }
+                completion(didDelete, didDelete ? .local : nil)
+            }
+        }
+    }
+
+    private func presentPendingDeletionFailedAlert() {
+        let alert = UIAlertController(
+            title: L10n.Localizable.Message.DeletePendingFailed.title,
+            message: L10n.Localizable.Message.DeletePendingFailed.message,
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(title: L10n.Localizable.General.ok, style: .default))
+        sourceViewController?.present(alert, animated: true)
     }
 
     init(sourceViewController: UIViewController) {
