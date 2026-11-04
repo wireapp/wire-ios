@@ -411,7 +411,12 @@ final class BackOffice {
         }
     }
 
-    func enablePreventAdminlessGroupsFeature(teamId: String, basicAuth: String) async throws {
+    func enablePreventAdminlessGroupsFeature(
+        teamId: String,
+        basicAuth: String,
+        deletionTimeout: String = "7d",
+        reminderTimeouts: [String] = ["2d", "4d", "6d"]
+    ) async throws {
 
         let trimmed = basicAuth.trimmingCharacters(in: .whitespacesAndNewlines)
 
@@ -430,13 +435,9 @@ final class BackOffice {
 
         let payload: [String: Any] = [
             "config": [
-                "deletionTimeoutDuration": "7d",
+                "deletionTimeoutDuration": deletionTimeout,
                 "promotionStrategy": "alphabetical",
-                "reminderTimeoutDurations": [
-                    "2d",
-                    "4d",
-                    "6d"
-                ]
+                "reminderTimeoutDurations": reminderTimeouts
             ],
             "status": "enabled"
         ]
