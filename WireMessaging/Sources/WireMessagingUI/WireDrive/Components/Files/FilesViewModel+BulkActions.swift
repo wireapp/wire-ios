@@ -106,6 +106,7 @@ extension FilesViewModel {
             for item in files {
                 do {
                     try await useCases.removeAssetAvailableOffline.invoke(nodeID: item.id)
+                    failedItemActions[item.id] = nil
                 } catch {
                     WireLogger.wireDrive
                         .error("Failed to remove asset from available offline: \(String(describing: error))")
