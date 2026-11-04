@@ -21,6 +21,7 @@ import NeedleFoundation
 import WireCallingData
 import WireCallingDomain
 import WireDataModel
+import WireFoundation
 import WireLogging
 import WireNetwork
 
@@ -775,7 +776,8 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
             conversationLocalStore: conversationLocalStore,
             selectedAccount: dependency.account,
             accountManager: dependency.accountManager,
-            databaseSaver: databaseSaver
+            databaseSaver: databaseSaver,
+            notificationSoundPreference: .stored(in: dependency.sharedUserDefaults)
         )
     }
 
