@@ -75,10 +75,19 @@ extension LinkPreviewUpdateRequestStrategy: ModifiedKeyObjectSyncTranscoder {
             return
         }
 
+        // The message may not have been delivered yet, so from now on its text may reach recipients through
+        // this send and must no longer be replaced in place. In-place edits also happen on this context.
+        managedObjectContext.performAndWait {
+            object.sendAttemptStarted = true
+        }
+
         // Enter groups to enable waiting for message sending to complete in tests
         let groups = managedObjectContext.enterAllGroupsExceptSecondary()
         Task {
             do {
+                await managedObjectContext.perform {
+                    self.managedObjectContext.saveOrRollback()
+                }
                 try await messageSender.sendMessage(message: object)
             } catch {
                 WireLogger.calling.error("failed to send message: \(String(reflecting: error))")
