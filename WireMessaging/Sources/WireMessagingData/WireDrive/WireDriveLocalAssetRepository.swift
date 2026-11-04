@@ -90,6 +90,14 @@ package final class WireDriveLocalAssetRepository: WireDriveLocalAssetRepository
     package func downloadAsset(nodeID: UUID, isAvailableOffline: Bool) async throws {
         if let existingTask = downloadTasks[nodeID] {
             try await existingTask.value
+            
+            if isAvailableOffline,
+               var asset = try store.asset(nodeID: nodeID),
+               !asset.isAvailableOffline {
+                asset.isAvailableOffline = true
+                try await updateAssetAsync(asset)
+            }
+            
         } else {
             defer { downloadTasks[nodeID] = nil }
 
