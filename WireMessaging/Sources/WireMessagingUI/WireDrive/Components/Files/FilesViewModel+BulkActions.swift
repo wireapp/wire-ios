@@ -45,7 +45,10 @@ extension FilesViewModel {
 
     var canMakeSelectedItemsAvailableOffline: Bool {
         let selectedIDs = Set(selectedItems.filter { $0.kind == .file }.map(\.id))
-        return !selectedIDs.isSubset(of: offlineOrDownloadingAssetIDs)
+        let offlineIDs = Set(availableOfflineAssets.map(\.nodeID)).union(
+            selectedAssets.values.filter(\.isAvailableOffline).map(\.nodeID)
+        )
+        return !selectedIDs.isSubset(of: offlineIDs)
     }
 
     private var offlineOrDownloadingAssetIDs: Set<UUID> {

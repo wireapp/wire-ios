@@ -634,6 +634,13 @@ final class FilesViewModelTests {
         #expect(sut.canMakeSelectedItemsAvailableOffline)
 
         updates.send(.fixture(nodeID: downloadingFile.id, downloadState: .downloading(progress: 0.2)))
+        #expect(sut.canMakeSelectedItemsAvailableOffline)
+
+        updates.send(.fixture(
+            nodeID: downloadingFile.id,
+            isAvailableOffline: true,
+            downloadState: .downloading(progress: 0.2)
+        ))
         #expect(!sut.canMakeSelectedItemsAvailableOffline)
 
         sut.selectedItems.insert(.fixture())
@@ -673,6 +680,22 @@ final class FilesViewModelTests {
         sut.selectedItems = [.fixture(kind: .folder)]
         updates.send(.fixture(nodeID: file.id, downloadState: .downloading(progress: 0.5)))
         #expect(!sut.canRemoveSelectedItemsOfflineAccess)
+    }
+
+    @Test(arguments: [false, true])
+    func offlineActionAvailability_whenOnlySelectedFileIsDownloading(isAvailableOffline: Bool) {
+        let file = FilesViewItem.fixture()
+        let asset = WireDriveLocalAsset.fixture(
+            nodeID: file.id,
+            isAvailableOffline: isAvailableOffline,
+            downloadState: .downloading(progress: 0.2)
+        )
+        localAssetRepository.observeAssetNodeID_MockValue = Just(asset).eraseToAnyPublisher()
+
+        sut.selectedItems = [file]
+
+        #expect(sut.canMakeSelectedItemsAvailableOffline == !isAvailableOffline)
+        #expect(sut.canRemoveSelectedItemsOfflineAccess)
     }
 
     @Test
