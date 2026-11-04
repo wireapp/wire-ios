@@ -17,13 +17,15 @@
 //
 
 import Foundation
+import UserNotifications
+import WireUtilities
 
 /// Represents the sound for types of notifications.
 public enum NotificationSound {
 
     /// Storage of the user's preferred notification sounds.
 
-    public static var storage: UserDefaults = .standard
+    public static var storage: UserDefaults = .shared()
 
     case call
     case ping
@@ -34,22 +36,23 @@ public enum NotificationSound {
         defaultFileName
     }
 
+    /// The sound to use when displaying the notification.
+    public var userNotificationSound: UNNotificationSound {
+        switch self {
+        case .newMessage:
+            UNNotificationSound(named: .init(MessageNotificationSound.selected(in: Self.storage).fileName))
+        default:
+            UNNotificationSound(named: .init(defaultFileName))
+        }
+    }
+
     // MARK: - Utilities
 
     private var defaultFileName: String {
         switch self {
         case .call: "ringing_from_them_long.caf"
         case .ping: "ping_from_them.caf"
-        case .newMessage: "default"
-        }
-    }
-
-    // Unused - leaving this here in case we need to support custom sounds again in the future.
-    private var preferenceKey: String {
-        switch self {
-        case .call: "ZMCallSoundName"
-        case .ping: "ZMPingSoundName"
-        case .newMessage: "ZMMessageSoundName"
+        case .newMessage: MessageNotificationSound.wire.fileName
         }
     }
 }

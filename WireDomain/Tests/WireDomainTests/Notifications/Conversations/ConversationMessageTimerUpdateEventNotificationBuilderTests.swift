@@ -201,7 +201,7 @@ final class ConversationMessageTimerUpdateEventNotificationBuilderTests: XCTestC
         // Sound
         XCTAssertEqual(
             notificationContent.sound,
-            UNNotificationSound(named: .init("default"))
+            UNNotificationSound(named: .init("new_message.caf"))
         )
 
         // Thread ID

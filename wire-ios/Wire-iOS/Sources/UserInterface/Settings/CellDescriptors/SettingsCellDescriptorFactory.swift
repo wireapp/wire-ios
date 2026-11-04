@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import avs
 import Foundation
 import SafariServices
 import WireMainNavigationUI
@@ -185,69 +184,6 @@ struct SettingsCellDescriptorFactory {
             icon: .devices,
             copiableText: nil,
             settingsTopLevelMenuItem: .devices
-        )
-    }
-
-    func soundGroupForSetting(
-        _ settingsProperty: SettingsProperty,
-        title: String,
-        customSounds: [ZMSound],
-        defaultSound: ZMSound
-    ) -> any SettingsCellDescriptorType {
-        let items: [ZMSound] = [ZMSound.None, defaultSound] + customSounds
-        let previewPlayer = SoundPreviewPlayer(mediaManager: AVSMediaManager.sharedInstance())
-
-        let cells: [SettingsPropertySelectValueCellDescriptor] = items.map { item in
-            let playSoundAction: SettingsPropertySelectValueCellDescriptor.SelectActionType = { _ in
-
-                switch settingsProperty.propertyName {
-                case .callSoundName:
-                    previewPlayer.playPreview(.ringingFromThemSound)
-                case .pingSoundName:
-                    previewPlayer.playPreview(.incomingKnockSound)
-                case .messageSoundName:
-                    previewPlayer.playPreview(.messageReceivedSound)
-                default:
-                    break
-                }
-            }
-
-            let propertyValue = item == defaultSound ? SettingsPropertyValue.none : SettingsPropertyValue
-                .string(value: item.rawValue)
-            return SettingsPropertySelectValueCellDescriptor(
-                settingsProperty: settingsProperty,
-                value: propertyValue,
-                title: item.descriptionLocalizationKey.localized,
-                identifier: .none,
-                selectAction: playSoundAction
-            )
-        }
-
-        let section = SettingsSectionDescriptor(
-            cellDescriptors: cells.map { $0 as any SettingsCellDescriptorType },
-            header: L10n.Localizable.Self.Settings.SoundMenu.Ringtones.title
-        )
-
-        let previewGenerator: PreviewGeneratorType = { _ in
-            let value = settingsProperty.value()
-
-            if let stringValue = value.value() as? String,
-               let enumValue = ZMSound(rawValue: stringValue) {
-                return .text(enumValue.descriptionLocalizationKey.localized)
-            } else {
-                return .text(defaultSound.descriptionLocalizationKey.localized)
-            }
-        }
-
-        return SettingsGroupCellDescriptor(
-            items: [section],
-            title: title,
-            identifier: .none,
-            previewGenerator: previewGenerator,
-            accessibilityBackButtonText: L10n.Accessibility.OptionsSettings.BackButton.description,
-            settingsTopLevelMenuItem: nil,
-            settingsCoordinator: settingsCoordinator,
-            userSession: userSession
         )
     }
 

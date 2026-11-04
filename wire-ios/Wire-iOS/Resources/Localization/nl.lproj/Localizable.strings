@@ -1368,13 +1368,6 @@
 "self.settings.notifications.chat_alerts.toggle" = "Berichtstroken";
 "self.settings.notifications.chat_alerts.footer" = "Nieuw bericht in andere gesprekken.";
 
-"self.settings.sound_menu.sounds.title" = "Geluiden";
-"self.settings.sound_menu.ringtone.title" = "Beltoon";
-"self.settings.sound_menu.message.title" = "Berichtmelding";
-"self.settings.sound_menu.ping.title" = "Ping";
-"self.settings.sound_menu.ringtones.title" = "Beltonen";
-"self.settings.sound_menu.sounds.wire_sound" = "Wire";
-"self.settings.sound_menu.sounds.none" = "Geen";
 
 "self.settings.callkit.title" = "Oproepen";
 "self.settings.callkit.caption" = "Deel met iOS";
@@ -1386,9 +1379,6 @@
 "self.settings.vbr.title" = "Variable Bit Rate codering";
 "self.settings.vbr.description" = "This makes audio calls use less data and work better on slower networks. Turn off to use constant bitrate encoding (CBR). This setting only affects 1:1 calls; conference calls always use CBR encoding.";
 
-"self.settings.sound_menu.sounds.wire_call" = "Wire oproep";
-"self.settings.sound_menu.sounds.wire_message" = "Wire bericht";
-"self.settings.sound_menu.sounds.wire_ping" = "Wire ping";
 
 // By popular demand
 "self.settings.popular_demand.title" = "Op veler verzoek";

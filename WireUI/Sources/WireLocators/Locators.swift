@@ -431,6 +431,7 @@ public enum Locators {
 
         case theme = "Theme"
         case themeCell
+        case notificationSoundCell
         case lockWithPasscode = "Lock With Passcode"
         case createLinkPreviews = "Create Link Previews"
         case browserCell
@@ -441,6 +442,12 @@ public enum Locators {
         case googleMapsOption
         case mockedGoogleMapsAlert
         case mockedGoogleMapsAlertTitle = "Opening in Google Maps"
+    }
+
+    public enum NotificationSoundSettingsPage: AutoPrefixedEnum {
+
+        case wireOption
+        case wireOldOption
     }
 
     public enum SaveBackupFileBottomSheetPage: String {

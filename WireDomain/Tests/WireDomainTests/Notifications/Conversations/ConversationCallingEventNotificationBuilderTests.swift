@@ -1015,7 +1015,7 @@ final class ConversationCallingEventNotificationBuilderTests: XCTestCase {
         case .missedCall:
             XCTAssertEqual(
                 notificationContent.sound,
-                UNNotificationSound(named: .init("default"))
+                UNNotificationSound(named: .init("new_message.caf"))
             )
         }
 

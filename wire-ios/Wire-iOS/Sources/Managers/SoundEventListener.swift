@@ -114,7 +114,6 @@ extension SoundEventListener: ZMNewUnreadMessagesObserver, ZMNewUnreadKnocksObse
             // Rules:
             // * Not silenced
             // * Only play regular message sound if it's not from the self user
-            // * If this is the first message in the conversation, don't play the sound
             // * Message is new (recently sent)
 
             let isSilenced = message.isSilenced
@@ -128,13 +127,7 @@ extension SoundEventListener: ZMNewUnreadMessagesObserver, ZMNewUnreadKnocksObse
                 continue
             }
 
-            let isFirstUnreadMessage = message.isEqual(message.conversationLike?.firstUnreadMessage)
-
-            if isFirstUnreadMessage {
-                playSoundIfAllowed(.firstMessageReceivedSound)
-            } else {
-                playSoundIfAllowed(.messageReceivedSound)
-            }
+            playSoundIfAllowed(.messageReceivedSound)
         }
     }
 

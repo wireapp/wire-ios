@@ -92,7 +92,7 @@ struct MeetingUpdateEventNotificationBuilder: MeetingUpdateEventNotificationBuil
             timeFormatter.string(from: meeting.end)
         )
         content.categoryIdentifier = NotificationCategory.meetingUpdate.rawValue
-        content.sound = .default
+        content.sound = NotificationSound.newMessage.userNotificationSound
         content.userInfo = [NotificationUserInfoKey.selfUserID: accountID.uuidString]
         return .text(content)
     }
