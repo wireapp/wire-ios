@@ -250,6 +250,29 @@ class LinkPreviewUpdateRequestStrategyTests: MessagingTestBase {
         XCTAssertEqual(1, mockMessageSender.sendMessageMessage_Invocations.count)
     }
 
+    func testThatItDoesNotSendLinkPreviewOfMessageDeletedBeforeSending() {
+        // GIVEN
+        DeveloperFlag.storage = .temporary()
+        DeveloperFlag.offlinePendingMessages.enable(true)
+        let didComplete = XCTestExpectation(description: "didComplete")
+        didComplete.assertForOverFulfill = true
+        syncMOC.performGroupedAndWait {
+            self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
+            let message = self.insertMessage(with: .uploaded)
+
+            // WHEN: the message is deleted on this context before the send task runs.
+            self.sut.synchronize(key: ZMClientMessage.linkPreviewStateKey, for: message) {
+                didComplete.fulfill()
+            }
+            XCTAssertTrue(message.deletePendingMessage())
+        }
+        wait(for: [didComplete], timeout: 5)
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 5))
+
+        // THEN
+        XCTAssertEqual(0, mockMessageSender.sendMessageMessage_Invocations.count)
+    }
+
     func testThatItDoesNotSendLinkPreviewWhenSendAttemptCannotBePersisted() {
         // GIVEN: a saved, undelivered pending message and a context that fails to save.
         DeveloperFlag.storage = .temporary()

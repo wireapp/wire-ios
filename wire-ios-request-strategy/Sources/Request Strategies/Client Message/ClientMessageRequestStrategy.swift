@@ -257,10 +257,10 @@ extension ClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
 
                 // From now on the text may reach recipients, so it must no longer be replaced in place.
                 // Both happen on this context, so an in-place edit can't interleave with the send.
-                if !message.sendAttemptStarted {
-                    message.sendAttemptStarted = true
-                    guard self.context.saveOrRollback() else { throw PendingMessageError.sendAttemptNotPersisted }
-                }
+                // Save even if the marker is already set: it may not be saved yet, and a later failed save
+                // would roll it back while this send may deliver the text.
+                message.sendAttemptStarted = true
+                guard self.context.saveOrRollback() else { throw PendingMessageError.sendAttemptNotPersisted }
                 return true
             }
             guard shouldStillBeSent else { throw PendingMessageError.noLongerNeeded }

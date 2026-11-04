@@ -75,22 +75,20 @@ extension LinkPreviewUpdateRequestStrategy: ModifiedKeyObjectSyncTranscoder {
             return
         }
 
-        // The message may not have been delivered yet, so from now on its text may reach recipients through
-        // this send and must no longer be replaced in place. In-place edits also happen on this context.
-        managedObjectContext.performAndWait {
-            object.sendAttemptStarted = true
-        }
-
         // Enter groups to enable waiting for message sending to complete in tests
         let groups = managedObjectContext.enterAllGroupsExceptSecondary()
         Task {
-            // A failed save rolls the marker back, which would allow replacing the text in place while this
-            // send may deliver it. So only send once the marker is persisted.
-            let didPersistSendAttempt = await managedObjectContext.perform {
-                self.managedObjectContext.saveOrRollback()
+            // The message may not have been delivered yet, so from now on its text may reach recipients through
+            // this send and must no longer be replaced in place. In-place edits and deletes also happen on this
+            // context, so the check, the marker and its persistence happen together. A failed save rolls the
+            // marker back, so only send once it's persisted.
+            let shouldSend = await managedObjectContext.perform {
+                guard !object.isZombieObject, object.linkPreviewState == .uploaded else { return false }
+                object.sendAttemptStarted = true
+                return self.managedObjectContext.saveOrRollback()
             }
-            guard didPersistSendAttempt else {
-                WireLogger.messaging.error("failed to persist send attempt, not sending link preview")
+            guard shouldSend else {
+                WireLogger.messaging.info("not sending link preview: message changed or send attempt not persisted")
                 await managedObjectContext.perform {
                     completion()
                 }

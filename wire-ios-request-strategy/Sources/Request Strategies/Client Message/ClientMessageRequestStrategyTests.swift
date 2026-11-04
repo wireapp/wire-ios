@@ -433,6 +433,38 @@ extension ClientMessageRequestStrategyTests {
         verifyThatItDoesNotSendWhenSendAttemptCannotBePersisted()
     }
 
+    func testThatItDoesNotSendWhenUnsavedSendAttemptCannotBePersisted_OfflinePendingMessages() {
+        // GIVEN: a saved message whose marker is false on disk but true in memory, e.g. because the link preview
+        // strategy set it and hasn't saved it yet, and a context that fails to save.
+        enableOfflinePendingMessages()
+        var message: ZMClientMessage!
+        var didComplete: XCTestExpectation!
+        syncMOC.performAndWait {
+            self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
+            message = try! self.groupConversation.appendText(content: "Lorem ipsum") as? ZMClientMessage
+            self.syncMOC.saveOrRollback()
+            message.sendAttemptStarted = true
+            XCTAssertEqual(
+                message.committedValues(forKeys: ["sendAttemptStarted"])["sendAttemptStarted"] as? Bool,
+                false
+            )
+            self.syncMOC.enableForceRollback()
+
+            // WHEN
+            didComplete = self.insert(message, isFresh: true)
+        }
+        wait(for: [didComplete], timeout: 5)
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 5))
+
+        // THEN
+        syncMOC.performAndWait {
+            self.syncMOC.disableForceRollback()
+            XCTAssertEqual(self.mockMessageSender.sendMessageMessage_Invocations.count, 0)
+            XCTAssertFalse(message.delivered)
+            XCTAssertEqual(self.localNotificationDispatcher.failedToSend.map(\.objectID), [message.objectID])
+        }
+    }
+
     func verifyThatItDoesNotSendWhenSendAttemptCannotBePersisted(
         file: StaticString = #filePath,
         line: UInt = #line
