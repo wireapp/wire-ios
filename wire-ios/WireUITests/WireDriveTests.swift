@@ -585,7 +585,7 @@ final class WireDriveTests: WireUITestCase {
     }
 
     @MainActor
-    func testMakeMultipleItemsAvailableOffline() async throws {
+    func testMakeMultipleItemsAvailableOffline_TC_12333() async throws {
 
         // GIVEN
         let teamOwner = try await createDriveEnabledConversation(
@@ -614,7 +614,7 @@ final class WireDriveTests: WireUITestCase {
     }
 
     @MainActor
-    func testRemoveOfflineAccessOnMultipleItems() async throws {
+    func testRemoveOfflineAccessOnMultipleItems_TC_12334() async throws {
 
         // GIVEN
         let teamOwner = try await createDriveEnabledConversation(
