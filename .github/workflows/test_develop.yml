@@ -29,6 +29,26 @@ jobs:
       mac_runner: ${{ github.event_name == 'workflow_dispatch' && inputs.mac_runner || vars.DEFAULT_MAC_RUNNER }}
       run_critical_flows: true
       ui_test_tags: "!critical"
+      ui_test_skip_cases: "WireUITests/MeetingsTests,WireUITests/ScheduleMeetingTests"
+      notify: always
+      timeout_minutes: 180
+    secrets:
+      ZENKINS_USERNAME: ${{ secrets.ZENKINS_USERNAME }}
+      DD_API_KEY: ${{ secrets.DD_API_KEY }}
+      OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
+      WIRE_WEBHOOK_URL: ${{ secrets.WIRE_IOS_NIGHTLY_URL }}
+      WIRE_WEBHOOK_TOKEN: ${{ secrets.WIRE_IOS_NIGHTLY_TOKEN }}
+
+  trigger_meeting_tests:
+    if: ${{ github.ref == 'refs/heads/develop' }}
+    uses: ./.github/workflows/_reusable_run_tests.yml
+    with:
+      all: false
+      branch: develop
+      mac_runner: ${{ github.event_name == 'workflow_dispatch' && inputs.mac_runner || vars.DEFAULT_MAC_RUNNER }}
+      run_critical_flows: true
+      ui_test_cases: "MeetingsTests,ScheduleMeetingTests"
+      test_name: Meeting-tests
       notify: always
       timeout_minutes: 180
     secrets:
