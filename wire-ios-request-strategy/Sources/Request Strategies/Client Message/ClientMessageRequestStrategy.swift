@@ -213,6 +213,9 @@ extension ClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
         case noLongerNeeded
         /// The session closed while the message was waiting.
         case sessionClosed
+        /// Saving the send attempt failed and rolled it back. Sending anyway would allow replacing the text
+        /// in place while recipients may receive it, so the message fails instead.
+        case sendAttemptNotPersisted
     }
 
     /// Sends the message. If it stays pending while offline, transient network failures don't fail it:
@@ -225,9 +228,9 @@ extension ClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
         groups: inout [ZMSDispatchGroup]
     ) async throws {
         guard staysPendingWhileOffline else {
-            await context.perform {
+            try await context.perform {
                 message.sendAttemptStarted = true
-                self.context.saveOrRollback()
+                guard self.context.saveOrRollback() else { throw PendingMessageError.sendAttemptNotPersisted }
             }
             try await messageSender.sendMessage(message: message)
             return
@@ -243,7 +246,7 @@ extension ClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
             // The task is only cancelled when the session closes.
             guard !Task.isCancelled else { throw PendingMessageError.sessionClosed }
 
-            let shouldStillBeSent = await context.perform {
+            let shouldStillBeSent = try await context.perform {
                 guard
                     !message.isZombieObject,
                     message.underlyingMessage != nil,
@@ -254,10 +257,10 @@ extension ClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
 
                 // From now on the text may reach recipients, so it must no longer be replaced in place.
                 // Both happen on this context, so an in-place edit can't interleave with the send.
-                if !message.sendAttemptStarted {
-                    message.sendAttemptStarted = true
-                    self.context.saveOrRollback()
-                }
+                // Save even if the marker is already set: it may not be saved yet, and a later failed save
+                // would roll it back while this send may deliver the text.
+                message.sendAttemptStarted = true
+                guard self.context.saveOrRollback() else { throw PendingMessageError.sendAttemptNotPersisted }
                 return true
             }
             guard shouldStillBeSent else { throw PendingMessageError.noLongerNeeded }
