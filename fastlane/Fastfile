@@ -154,7 +154,12 @@ platform :ios do
             UI.message("Running #{explicit_tests.count} explicit UI test(s)")
             options[:only_testing] = explicit_tests
         else
-            ui_test_filter_options(options).each { |key, value| options[key] = value }
+            ui_test_filter_options(options).each do |key, value|
+                if key == :skip_testing
+                    value = (normalize_test_identifiers(options[:skip_testing]) + value).uniq
+                end
+                options[key] = value
+            end
         end
         begin
             run_tests_frameworks(schemes, options)

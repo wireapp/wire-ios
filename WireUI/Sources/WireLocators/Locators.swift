@@ -194,6 +194,7 @@ public enum Locators {
         case labelSelfDeletingMessagesOFF = "Self-deleting messages are off"
         case selfDeletedMessage
         case ephemeralCountdown
+        case scheduledForDeletionSystemMessage
         case sharedFileLabel = "FileTransferTopLabel"
         case sharedFileDetailsLabel = "FileTransferBottomLabel"
         case fileTypeIcon = "FileTransferFileTypeIcon"
@@ -802,6 +803,7 @@ public enum Locators {
             case copyPassword = "meetingFormCopyPassword"
             case generatePassword = "meetingFormGeneratePassword"
             case passwordRequirements = "meetingFormPasswordRequirements"
+            case passwordReminder = "meetingFormPasswordReminder"
             case clearTitle = "meetingFormClearTitle"
             case participants = "meetingFormParticipants"
             case membersSelect = "meetingMembersSelect"
