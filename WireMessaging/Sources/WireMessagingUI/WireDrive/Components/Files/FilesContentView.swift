@@ -298,10 +298,7 @@ private extension FilesContentView {
             )
 
             if !viewModel.isRecycleBin, viewModel.state.items.contains(where: { $0.kind == .file }) {
-                let selectedIDs = Set(viewModel.selectedItems.filter { $0.kind == .file }.map(\.id))
-                let availableOfflineIDs = Set(viewModel.availableOfflineAssets.map(\.nodeID))
-
-                if !selectedIDs.isDisjoint(with: availableOfflineIDs) {
+                if viewModel.canRemoveSelectedItemsOfflineAccess {
                     actions.append(
                         .init(
                             id: Locators.WireDrive.FilesPage.removeAvailableOfflineFloatingButton.rawValue,
@@ -313,7 +310,7 @@ private extension FilesContentView {
                     )
                 }
 
-                if !selectedIDs.isSubset(of: availableOfflineIDs) {
+                if viewModel.canMakeSelectedItemsAvailableOffline {
                     actions.append(
                         .init(
                             id: Locators.WireDrive.FilesPage.makeAvailableOfflineFloatingButton.rawValue,

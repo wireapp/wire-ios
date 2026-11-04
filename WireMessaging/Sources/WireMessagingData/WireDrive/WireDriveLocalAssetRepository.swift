@@ -144,13 +144,19 @@ package final class WireDriveLocalAssetRepository: WireDriveLocalAssetRepository
 
     @MainActor
     package func deleteAsset(nodeID: UUID) async throws {
-        guard let asset = try store.asset(nodeID: nodeID),
-              let cacheKey = asset.downloadState.cacheKey else {
+        if let downloadTask = downloadTasks[nodeID] {
+            downloadTask.cancel()
+            _ = await downloadTask.result
+        }
+
+        guard let asset = try store.asset(nodeID: nodeID) else {
             return
         }
 
         try await store.deleteAssets(nodeIDs: [nodeID])
-        try await fileCache.deleteFile(forKey: cacheKey)
+        if let cacheKey = asset.downloadState.cacheKey {
+            try await fileCache.deleteFile(forKey: cacheKey)
+        }
     }
 
     // MARK: - Private
@@ -159,6 +165,7 @@ package final class WireDriveLocalAssetRepository: WireDriveLocalAssetRepository
     private func _downloadAsset(nodeID: UUID, isAvailableOffline: Bool) async throws {
         do {
             let node = try await getNode(nodeID: nodeID)
+            try Task.checkCancellation()
             let (downloadURL, eTag) = try node.downloadInfo
 
             try updateAsset(
@@ -199,7 +206,12 @@ package final class WireDriveLocalAssetRepository: WireDriveLocalAssetRepository
                 try Task.checkCancellation()
             }
 
-            let (tempURL, _) = try await urlDownloadTask.value
+            let (tempURL, _) = try await withTaskCancellationHandler {
+                try await urlDownloadTask.value
+            } onCancel: {
+                urlDownloadTask.cancel()
+            }
+            try Task.checkCancellation()
             let key = WireDriveLocalAsset.cacheKey(nodeID: nodeID, eTag: eTag, path: node.path)
             try await fileCache.saveFile(at: tempURL, key: key)
 

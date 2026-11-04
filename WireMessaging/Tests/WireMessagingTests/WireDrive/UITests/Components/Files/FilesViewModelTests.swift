@@ -48,6 +48,7 @@ final class FilesViewModelTests {
 
         networkMonitor.currentStatus = .connected
         localAssetRepository.offlineAssetsConversationNameAssetsPath_MockValue = []
+        localAssetRepository.observeAssetNodeID_MockValue = Just(nil).eraseToAnyPublisher()
 
         self.sut = FilesViewModel(
             useCases: .init(
@@ -618,6 +619,69 @@ final class FilesViewModelTests {
     }
 
     // MARK: - openItem
+
+    @Test
+    func makeOfflineAvailability_tracksMixedOfflineAndDownloadingSelection() {
+        let offlineFile = FilesViewItem.fixture()
+        let downloadingFile = FilesViewItem.fixture()
+        let updates = CurrentValueSubject<WireDriveLocalAsset?, Never>(nil)
+        localAssetRepository.observeAssetNodeID_MockMethod = { nodeID in
+            if nodeID == downloadingFile.id { return updates.eraseToAnyPublisher() }
+            return Just(nil).eraseToAnyPublisher()
+        }
+        sut.availableOfflineAssets = [.fixture(nodeID: offlineFile.id, isAvailableOffline: true)]
+        sut.selectedItems = [offlineFile, downloadingFile, .fixture(kind: .folder)]
+        #expect(sut.canMakeSelectedItemsAvailableOffline)
+
+        updates.send(.fixture(nodeID: downloadingFile.id, downloadState: .downloading(progress: 0.2)))
+        #expect(!sut.canMakeSelectedItemsAvailableOffline)
+
+        sut.selectedItems.insert(.fixture())
+        #expect(sut.canMakeSelectedItemsAvailableOffline)
+
+        sut.selectedItems = [offlineFile, downloadingFile]
+        #expect(!sut.canMakeSelectedItemsAvailableOffline)
+        updates.send(nil)
+        #expect(sut.canMakeSelectedItemsAvailableOffline)
+
+        sut.selectedItems = [offlineFile]
+        #expect(!sut.canMakeSelectedItemsAvailableOffline)
+        sut.selectedItems = [.fixture(kind: .folder)]
+        #expect(!sut.canMakeSelectedItemsAvailableOffline)
+        sut.selectedItems = []
+        #expect(!sut.canMakeSelectedItemsAvailableOffline)
+    }
+
+    @Test
+    func removeOfflineAccessAvailability_tracksSelectedDownloads() {
+        let file = FilesViewItem.fixture()
+        let updates = CurrentValueSubject<WireDriveLocalAsset?, Never>(nil)
+        localAssetRepository.observeAssetNodeID_MockValue = updates.eraseToAnyPublisher()
+        sut.selectedItems = [file]
+        #expect(!sut.canRemoveSelectedItemsOfflineAccess)
+
+        updates.send(.fixture(nodeID: file.id, downloadState: .downloading(progress: 0.2)))
+        #expect(sut.canRemoveSelectedItemsOfflineAccess)
+
+        updates.send(.fixture(
+            nodeID: file.id,
+            isAvailableOffline: true,
+            downloadState: .downloaded(cacheKey: "offline-file")
+        ))
+        #expect(sut.canRemoveSelectedItemsOfflineAccess)
+
+        sut.selectedItems = [.fixture(kind: .folder)]
+        updates.send(.fixture(nodeID: file.id, downloadState: .downloading(progress: 0.5)))
+        #expect(!sut.canRemoveSelectedItemsOfflineAccess)
+    }
+
+    @Test
+    func removeOfflineAccessAvailability_includesCompletedOfflineFilesInMixedSelection() {
+        let file = FilesViewItem.fixture()
+        sut.availableOfflineAssets = [.fixture(nodeID: file.id, isAvailableOffline: true)]
+        sut.selectedItems = [file, .fixture(kind: .folder)]
+        #expect(sut.canRemoveSelectedItemsOfflineAccess)
+    }
 
     @Test(arguments: [false, true])
     func makeAvailableOffline_whenSelectionContainsFolder_keepsSelectionAndShowsWarning(includeFile: Bool) {

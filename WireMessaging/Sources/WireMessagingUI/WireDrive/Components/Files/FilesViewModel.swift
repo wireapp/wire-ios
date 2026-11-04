@@ -62,28 +62,35 @@ package final class FilesViewModel: ObservableObject {
         case root
     }
 
+    // MARK: Configuration and dependencies
+
     private let setNavigation: ([FilesViewItem]) -> Void
     private var subscriptions = Set<AnyCancellable>()
-    private var selfUser: WireDriveConversation.Participant?
-    private var selfUserID: String? { selfUser?.id }
 
     let cellName: String? // nil when browsing all files
     let navigationPath: [FilesViewItem]
-    var sortingSelection: FilesSortingViewModel.SortingSelection
     let useCases: UseCases
     let isBrowsing: Bool
     let isRecycleBin: Bool
     let triggerReload: PassthroughSubject<Void, Never>
     let title: String?
-    var failedItemActions: [FilesViewItem.ID: FilesItemViewModel.ItemAction] = [:]
+
+    // MARK: User permissions
+
+    private var selfUser: WireDriveConversation.Participant?
+    private var selfUserID: String? { selfUser?.id }
+    @Published var showReadOnlyBanner: Bool = false
 
     var selfUserRole: WireDriveConversation.Participant.Role {
         selfUser?.role ?? .viewer
     }
 
-    var isBulkActionsEnabled: Bool {
-        UserDefaults.standard.bool(forKey: "enableDriveBulkActions")
-    }
+    // MARK: Navigation and presentation
+
+    @Published var alert: AlertModel?
+    @Published var quickPreviewItem: QuickPreviewItem?
+    @Published var sheetNavigation: SheetNavigation?
+    @Published var isEditing: FilesViewItem?
 
     var navigationTitle: String {
         if let title {
@@ -107,33 +114,35 @@ package final class FilesViewModel: ObservableObject {
         }
     }
 
+    // MARK: List and filters
+
     var state: FilesListStateController.State { filesController.state }
-
-    var offlineActionWarningMessage: String {
-        let folderCount = selectedItems.filter { $0.kind == .folder }.count
-        return folderCount > 1
-            ? Strings.Files.Offline.folderSelectionWarningMultiple(folderCount)
-            : Strings.Files.Offline.folderSelectionWarning
-    }
-
+    var sortingSelection: FilesSortingViewModel.SortingSelection
+    var failedItemActions: [FilesViewItem.ID: FilesItemViewModel.ItemAction] = [:]
     @Published var searchText = ""
-    @Published var alert: AlertModel?
-    @Published var quickPreviewItem: QuickPreviewItem?
-    @Published var sheetNavigation: SheetNavigation?
-    @Published var isEditing: FilesViewItem?
     @Published var templates: [WireDriveFileTemplate] = []
     @Published var conversations: [WireDriveConversation] = []
+    @Published var filtersSelection: FilesFilteringViewModel.FiltersSelection = .empty
+    @Published var filesController: FilesListStateController
+
+    // MARK: Offline access
+
+    @Published var networkMonitor: NetworkMonitor
     @Published var availableOfflineAssets: [WireDriveLocalAsset] = []
     @Published var offlineActionWarningID: UUID?
-    @Published var filtersSelection: FilesFilteringViewModel.FiltersSelection = .empty
-    @Published var networkMonitor: NetworkMonitor
-    @Published var filesController: FilesListStateController
-    @Published var showReadOnlyBanner: Bool = false
-    @Published var selectedItems: Set<FilesViewItem> = []
+
+    // MARK: Bulk actions
+
     @Published var multipleSelection: EditMode = .inactive
     @Published var isPresentingDeleteConfirmation = false
     @Published var isPresentingEmptyRecycleBinConfirmation = false
     @Published var isPresentingRestoreConfirmation = false
+    @Published var selectedItems: Set<FilesViewItem> = [] {
+        didSet { observeSelectedAssets() }
+    }
+
+    @Published var selectedAssets: [UUID: WireDriveLocalAsset] = [:]
+    var selectedAssetSubscriptions = Set<AnyCancellable>()
 
     // MARK: init
 
@@ -528,89 +537,6 @@ package final class FilesViewModel: ObservableObject {
         } catch {
             WireLogger.wireDrive.error("Failed to pull available offline assets: \(String(describing: error))")
         }
-    }
-
-    func makeAssetsAvailableOffline(items: Set<FilesViewItem>) {
-        // folders offline access not supported
-        guard !items.contains(where: { $0.kind == .folder }) else {
-            offlineActionWarningID = UUID()
-            return
-        }
-
-        selectedItems = items
-        multipleSelection = .inactive
-
-        Task {
-            let results = await useCases.makeAssetAvailableOffline.invoke(nodeIDs: items.map(\.id))
-            for (nodeID, result) in results {
-                switch result {
-                case .success:
-                    failedItemActions[nodeID] = nil
-                case let .failure(error) where error is CancellationError:
-                    WireLogger.wireDrive.error("Cancelled make asset available offline")
-                case let .failure(error):
-                    failedItemActions[nodeID] = .makeAvailableOffline
-                    WireLogger.wireDrive.error("Failed to make asset available offline: \(String(describing: error))")
-                }
-            }
-
-            await pullAvailableOfflineItems()
-        }
-    }
-
-    func removeAssetAvailableOffline(items: Set<FilesViewItem>) {
-        let files = items.filter { $0.kind == .file }
-        selectedItems = files
-        multipleSelection = .inactive
-
-        Task {
-            for item in files {
-                do {
-                    try await useCases.removeAssetAvailableOffline.invoke(nodeID: item.id)
-                } catch {
-                    WireLogger.wireDrive
-                        .error("Failed to remove asset from available offline: \(String(describing: error))")
-                }
-            }
-            await pullAvailableOfflineItems()
-
-            if isOffline {
-                await reload()
-            }
-        }
-    }
-
-    // MARK: Bulk actions
-
-    func enableMultipleSelection(_ enabled: Bool) {
-        multipleSelection = enabled ? .active : .inactive
-        deselectAllItems()
-    }
-
-    func selectAllItems() {
-        selectedItems = Set(state.items)
-    }
-
-    func deselectAllItems() {
-        selectedItems.removeAll()
-    }
-
-    func moveSelectedItemsToFolder() {
-        sheetNavigation = .moveToFolder(fileItems: Array(selectedItems))
-    }
-
-    func deleteSelectedItems() async {
-        multipleSelection = .inactive
-        await deleteItems(Array(selectedItems), permanently: isRecycleBin)
-    }
-
-    func restoreSelectedItems() async {
-        multipleSelection = .inactive
-        await restoreItems(Array(selectedItems))
-    }
-
-    func moveToFolder() {
-        sheetNavigation = .moveToFolder(fileItems: Array(selectedItems))
     }
 }
 
