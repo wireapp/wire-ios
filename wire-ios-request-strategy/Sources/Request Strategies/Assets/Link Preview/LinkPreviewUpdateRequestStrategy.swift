@@ -84,10 +84,21 @@ extension LinkPreviewUpdateRequestStrategy: ModifiedKeyObjectSyncTranscoder {
         // Enter groups to enable waiting for message sending to complete in tests
         let groups = managedObjectContext.enterAllGroupsExceptSecondary()
         Task {
-            do {
+            // A failed save rolls the marker back, which would allow replacing the text in place while this
+            // send may deliver it. So only send once the marker is persisted.
+            let didPersistSendAttempt = await managedObjectContext.perform {
+                self.managedObjectContext.saveOrRollback()
+            }
+            guard didPersistSendAttempt else {
+                WireLogger.messaging.error("failed to persist send attempt, not sending link preview")
                 await managedObjectContext.perform {
-                    self.managedObjectContext.saveOrRollback()
+                    completion()
                 }
+                managedObjectContext.leaveAllGroups(groups)
+                return
+            }
+
+            do {
                 try await messageSender.sendMessage(message: object)
             } catch {
                 WireLogger.calling.error("failed to send message: \(String(reflecting: error))")

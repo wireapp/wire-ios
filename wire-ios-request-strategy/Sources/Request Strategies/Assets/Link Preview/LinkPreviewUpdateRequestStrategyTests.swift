@@ -250,6 +250,36 @@ class LinkPreviewUpdateRequestStrategyTests: MessagingTestBase {
         XCTAssertEqual(1, mockMessageSender.sendMessageMessage_Invocations.count)
     }
 
+    func testThatItDoesNotSendLinkPreviewWhenSendAttemptCannotBePersisted() {
+        // GIVEN: a saved, undelivered pending message and a context that fails to save.
+        DeveloperFlag.storage = .temporary()
+        DeveloperFlag.offlinePendingMessages.enable(true)
+        let didComplete = XCTestExpectation(description: "didComplete")
+        didComplete.assertForOverFulfill = true
+        var message: ZMClientMessage!
+        syncMOC.performGroupedAndWait {
+            self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
+            message = self.insertMessage(with: .uploaded)
+            self.syncMOC.enableForceRollback()
+
+            // WHEN
+            self.sut.synchronize(key: ZMClientMessage.linkPreviewStateKey, for: message) {
+                didComplete.fulfill()
+            }
+        }
+        wait(for: [didComplete], timeout: 5)
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 5))
+
+        // THEN
+        syncMOC.performAndWait {
+            self.syncMOC.disableForceRollback()
+            XCTAssertEqual(0, self.mockMessageSender.sendMessageMessage_Invocations.count)
+            XCTAssertFalse(message.delivered)
+            XCTAssertFalse(message.sendAttemptStarted)
+            XCTAssertEqual(message.linkPreviewState, .uploaded)
+        }
+    }
+
     // MARK: - Helper
 
     func insertMessage(
