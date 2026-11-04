@@ -63,6 +63,12 @@ struct ConversationCallingEventNotificationBuilder: ConversationCallingEventNoti
             accountID: accountID,
             isCallerSelf: selfUser == sender
         )
+        let originalCallerID = CallNotificationCallerTracker(userDefaults: validator.userDefaults).track(
+            callContent: callContent,
+            conversationID: resolvedConversationID.id,
+            accountID: accountID,
+            senderID: senderID
+        )
         let displayCallKitNotification = await validator.validateCallKitNotification(
             conversationID: resolvedConversationID,
             senderID: senderID,
@@ -93,7 +99,8 @@ struct ConversationCallingEventNotificationBuilder: ConversationCallingEventNoti
             return await buildCallNotification(
                 callContent: callContent,
                 senderID: senderID,
-                conversationID: resolvedConversationID
+                conversationID: resolvedConversationID,
+                originalCallerID: originalCallerID
             )
         } else {
             // Else, this is not a call, return nil.
@@ -129,13 +136,14 @@ struct ConversationCallingEventNotificationBuilder: ConversationCallingEventNoti
     private func buildCallNotification(
         callContent: CallContent,
         senderID: UserID,
-        conversationID: ConversationID
+        conversationID: ConversationID,
+        originalCallerID: UserID?
     ) async -> UserNotification {
         let conversation = await context.getConversation(conversationID: conversationID)
-        let caller = await context.getCaller(senderID: senderID)
+        let caller = await context.getCaller(senderID: originalCallerID ?? senderID)
         let selfUser = await context.getSelfUser()
         let selfUserID = await context.selfUserID(selfUser: selfUser)
-        let callerID = context.callerID(callContent: callContent)
+        let callerID = originalCallerID?.id ?? context.callerID(callContent: callContent)
         let senderName = await context.callerName(caller: caller)
         let conversationName = await context.conversationName(conversation: conversation)
         let teamName = await context.teamName(selfUser: selfUser)
