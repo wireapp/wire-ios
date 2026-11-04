@@ -86,14 +86,26 @@ package final actor NodesAPI: NodesAPIProtocol, WireDriveNodesRepositoryProtocol
         await awsClient.upload(path: path, node: node.toDTO(), versionID: versionID)
     }
 
-    /// Deletes nodes by their `UUID`s.
+    package func presignedUploadURL(
+        node: WireDriveNode,
+        versionID: UUID,
+        expiration: TimeInterval
+    ) async throws -> URL {
+        try await awsClient.presignedPutURL(
+            node: node.toDTO(),
+            versionID: versionID,
+            expiration: expiration
+        )
+    }
+
+    /// Deletes nodes by their `UUID`s or `path`s.
     ///
     /// - Parameters:
-    ///  - nodeIDs: The `UUID`s of the nodes to delete.
+    ///  - locators: The `UUID`s or `path`s of the nodes to delete.
     ///  - permanently: Whether to permanently delete the nodes or move them to the recycle bin.
     /// - Returns: Whether the deletion was successful.
-    package func deleteNodes(nodeIDs: [UUID], permanently: Bool) async throws -> Bool {
-        try await restAPI.deleteNodes(nodeIDs: nodeIDs, permanently: permanently)
+    package func deleteNodes(locators: [WireDriveNodeLocator], permanently: Bool) async throws -> Bool {
+        try await restAPI.deleteNodes(locators: locators, permanently: permanently)
     }
 
     package func restoreNodes(nodeIDs: [UUID]) async throws -> Bool {
@@ -101,11 +113,11 @@ package final actor NodesAPI: NodesAPIProtocol, WireDriveNodesRepositoryProtocol
     }
 
     package func renameNode(nodeID: UUID, targetPath: String) async throws -> Bool {
-        try await restAPI.renameNode(nodeID: nodeID, targetPath: targetPath, targetIsParent: false)
+        try await restAPI.renameNodes(nodeIDs: [nodeID], targetPath: targetPath, targetIsParent: false)
     }
 
-    package func moveNode(nodeID: UUID, newContainerPath: String) async throws {
-        guard try await restAPI.renameNode(nodeID: nodeID, targetPath: newContainerPath, targetIsParent: true) else {
+    package func moveNodes(nodeIDs: [UUID], newContainerPath: String) async throws {
+        guard try await restAPI.renameNodes(nodeIDs: nodeIDs, targetPath: newContainerPath, targetIsParent: true) else {
             throw NodesAPIError.moveFailed
         }
     }

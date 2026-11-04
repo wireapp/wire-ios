@@ -18,6 +18,11 @@
 
 import Foundation
 
+public enum MeetingType: String, Encodable, Sendable {
+    case immediate
+    case scheduled
+}
+
 /// Parameters for creating a new meeting via `POST /meetings`.
 public struct CreateMeetingParameters: Encodable, Sendable {
 
@@ -25,6 +30,8 @@ public struct CreateMeetingParameters: Encodable, Sendable {
     public let startTime: Date
     public let endTime: Date
     public let timeZoneIdentifier: String
+    public let type: MeetingType
+    public let password: String?
     public let invitedEmails: [String]?
     public let recurrence: MeetingRecurrence?
 
@@ -33,6 +40,8 @@ public struct CreateMeetingParameters: Encodable, Sendable {
         startTime: Date,
         endTime: Date,
         timeZoneIdentifier: String,
+        type: MeetingType = .scheduled,
+        password: String? = nil,
         invitedEmails: [String]? = nil,
         recurrence: MeetingRecurrence? = nil
     ) {
@@ -40,6 +49,8 @@ public struct CreateMeetingParameters: Encodable, Sendable {
         self.startTime = startTime
         self.endTime = endTime
         self.timeZoneIdentifier = timeZoneIdentifier
+        self.type = type
+        self.password = password
         self.invitedEmails = invitedEmails
         self.recurrence = recurrence
     }

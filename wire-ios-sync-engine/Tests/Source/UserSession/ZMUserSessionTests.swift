@@ -425,28 +425,14 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
 
     func test_itRecoversPendingConversationsAfterQuickSyncWhileActive() async throws {
         // GIVEN
-        sut.journal[.isBackendMLSEnabled] = true
-        mockMLSService.updateKeyMaterialForAllStaleGroupsIfNeeded_MockMethod = {}
         mockMLSService.recoverPendingConversationBatchIfNeeded_MockMethod = {
             self.mockMLSService.recoverPendingConversationBatchIfNeeded_Invocations.count == 1
         }
-        mockCoreCryptoProvider.registerMlsTransport_MockMethod = { _ in }
-        await syncMOC.perform { [self, syncMOC] in
-            LegacyFeatureRepository(context: syncMOC).storeMLS(.init(status: .enabled))
-            let domain = "anta.com"
-            ZMUser.selfUser(in: syncMOC).domain = domain
-            let selfUserClient = createSelfClient()
-            // MLS client has been registered
-            selfUserClient.mlsPublicKeys = UserClient.MLSPublicKeys(ed25519: "somekey")
-            selfUserClient.needsToUploadMLSPublicKeys = false
-            ZMUser.selfUser(in: self.syncMOC).domain = domain
-            sut.didRegisterSelfUserClient(selfUserClient)
-            syncMOC.saveOrRollback()
+        await setUpSessionForPendingConversationRecovery()
 
-            sut.setUpSyncAgent(clientID: selfUserClient.remoteIdentifier!, isNewClient: false)
-
-            // WHEN
-            sut.didFinishIncrementalSync(isRecovering: false)
+        // WHEN
+        await syncMOC.perform {
+            self.sut.didFinishIncrementalSync(isRecovering: false)
         }
 
         // THEN
@@ -463,6 +449,110 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         // Then
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         XCTAssertEqual(mockMLSService.recoverPendingConversationBatchIfNeeded_Invocations.count, 2)
+    }
+
+    func test_itRecoversPendingConversationsWhenBecomingActiveAfterQuickSyncWhileInactive() async throws {
+        // GIVEN
+        mockMLSService.recoverPendingConversationBatchIfNeeded_MockMethod = {
+            self.mockMLSService.recoverPendingConversationBatchIfNeeded_Invocations.count == 1
+        }
+        await setUpSessionForPendingConversationRecovery()
+
+        // the app is still inactive while foregrounding when the quick sync finishes
+        application.applicationState = .inactive
+        await syncMOC.perform {
+            self.sut.didFinishIncrementalSync(isRecovering: false)
+        }
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertEqual(mockMLSService.uploadKeyPackagesIfNeeded_Invocations.count, 1)
+        XCTAssertEqual(mockMLSService.recoverPendingConversationBatchIfNeeded_Invocations.count, 0)
+
+        // WHEN
+        await simulateApplicationDidBecomeActive()
+
+        // THEN
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertEqual(mockMLSService.uploadKeyPackagesIfNeeded_Invocations.count, 1)
+        XCTAssertEqual(mockMLSService.recoverPendingConversationBatchIfNeeded_Invocations.count, 2)
+
+        // When becoming active again without a deferred recovery
+        await simulateApplicationDidBecomeActive()
+
+        // Then
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertEqual(mockMLSService.recoverPendingConversationBatchIfNeeded_Invocations.count, 2)
+    }
+
+    func test_itResumesPendingConversationRecoveryWhenBecomingActiveAfterBackgroundingBetweenBatches() async throws {
+        // GIVEN
+        mockMLSService.recoverPendingConversationBatchIfNeeded_MockMethod = {
+            let invocationCount = self.mockMLSService.recoverPendingConversationBatchIfNeeded_Invocations.count
+            if invocationCount == 1 {
+                // the app is backgrounded while the first batch is recovered
+                self.application.applicationState = .background
+            }
+            return invocationCount < 3
+        }
+        await setUpSessionForPendingConversationRecovery()
+
+        await syncMOC.perform {
+            self.sut.didFinishIncrementalSync(isRecovering: false)
+        }
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertEqual(mockMLSService.recoverPendingConversationBatchIfNeeded_Invocations.count, 1)
+
+        // WHEN
+        await simulateApplicationDidBecomeActive()
+
+        // THEN
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertEqual(mockMLSService.recoverPendingConversationBatchIfNeeded_Invocations.count, 3)
+    }
+
+    func test_itDoesNotDeferPendingConversationRecoveryWhenBackendMLSIsDisabled() async throws {
+        // GIVEN
+        mockMLSService.recoverPendingConversationBatchIfNeeded_MockMethod = { false }
+        await setUpSessionForPendingConversationRecovery()
+        sut.journal[.isBackendMLSEnabled] = false
+
+        application.applicationState = .inactive
+        await syncMOC.perform {
+            self.sut.didFinishIncrementalSync(isRecovering: false)
+        }
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // WHEN
+        await simulateApplicationDidBecomeActive()
+
+        // THEN
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertEqual(mockMLSService.recoverPendingConversationBatchIfNeeded_Invocations.count, 0)
+    }
+
+    private func setUpSessionForPendingConversationRecovery() async {
+        sut.journal[.isBackendMLSEnabled] = true
+        mockMLSService.updateKeyMaterialForAllStaleGroupsIfNeeded_MockMethod = {}
+        mockCoreCryptoProvider.registerMlsTransport_MockMethod = { _ in }
+        await syncMOC.perform { [self, syncMOC] in
+            LegacyFeatureRepository(context: syncMOC).storeMLS(.init(status: .enabled))
+            let domain = "anta.com"
+            ZMUser.selfUser(in: syncMOC).domain = domain
+            let selfUserClient = createSelfClient()
+            // MLS client has been registered
+            selfUserClient.mlsPublicKeys = UserClient.MLSPublicKeys(ed25519: "somekey")
+            selfUserClient.needsToUploadMLSPublicKeys = false
+            ZMUser.selfUser(in: self.syncMOC).domain = domain
+            sut.didRegisterSelfUserClient(selfUserClient)
+            syncMOC.saveOrRollback()
+
+            sut.setUpSyncAgent(clientID: selfUserClient.remoteIdentifier!, isNewClient: false)
+        }
+    }
+
+    @MainActor
+    private func simulateApplicationDidBecomeActive() {
+        application.applicationState = .active
+        application.simulateApplicationDidBecomeActive()
     }
 
     func test_OnSelfClientInvalidated() async throws {

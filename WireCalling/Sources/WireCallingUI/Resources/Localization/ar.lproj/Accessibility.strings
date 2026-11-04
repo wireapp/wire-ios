@@ -18,3 +18,4 @@
 
 "wireMeetings.videoButton.description" = "Start or schedule a meeting";
 "wireMeetings.joinButton.description" = "Join the meeting";
+"wireMeetings.email.clearButton.description" = "Clear email address";

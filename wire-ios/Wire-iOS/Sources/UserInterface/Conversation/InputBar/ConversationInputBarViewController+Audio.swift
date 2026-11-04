@@ -253,7 +253,8 @@ extension ConversationInputBarViewController: WireCallCenterCallStateObserver {
         conversation: ZMConversation,
         caller: UserType,
         timestamp: Date?,
-        previousCallState: CallState?
+        previousCallState: CallState?,
+        callEndReason: CallClosedReason?
     ) {
         let isRecording = audioRecordKeyboardViewController?.isRecording
 

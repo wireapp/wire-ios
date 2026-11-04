@@ -30,6 +30,13 @@ package protocol NodesAPIProtocol: Sendable {
 
     func uploadFile(path: URL, node: WireDriveNode, versionID: UUID) async throws -> AsyncThrowingStream<Int, any Error>
 
+    /// Returns a presigned `PUT` URL that uploads a new draft version of `node`.
+    ///
+    /// Used by background uploads, which cannot go through `uploadFile`: a background
+    /// `URLSession` only accepts a file body, not a stream.
+
+    func presignedUploadURL(node: WireDriveNode, versionID: UUID, expiration: TimeInterval) async throws -> URL
+
     func deleteFile(nodeID: UUID) async throws
 
     func deleteVersion(nodeID: UUID, versionID: UUID) async throws
@@ -40,7 +47,7 @@ package protocol NodesAPIProtocol: Sendable {
 
     func getNode(nodeID: UUID) async throws -> WireDriveNode
 
-    func deleteNodes(nodeIDs: [UUID], permanently: Bool) async throws -> Bool
+    func deleteNodes(locators: [WireDriveNodeLocator], permanently: Bool) async throws -> Bool
 
     func createPublicLink(nodeID: UUID, label: String) async throws
         -> WireDrivePublicLink

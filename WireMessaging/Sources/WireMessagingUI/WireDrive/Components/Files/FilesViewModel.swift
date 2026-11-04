@@ -19,6 +19,8 @@
 package import Combine
 import Foundation
 import WireLogging
+package import SwiftUI
+import WireLocators
 package import WireMessagingDomain
 
 private typealias Strings = L10n.Localizable.Conversation.WireCells
@@ -32,7 +34,7 @@ package final class FilesViewModel: ObservableObject {
         case create(target: WireDriveCreateFileUseCase.Target)
         case editTags(fileItem: FilesViewItem)
         case shareLink(fileItem: FilesViewItem)
-        case moveToFolder(fileItem: FilesViewItem)
+        case moveToFolder(fileItems: [FilesViewItem])
         case renameFile(fileItem: FilesViewItem)
         case versionHistory(fileItem: FilesViewItem)
 
@@ -44,8 +46,8 @@ package final class FilesViewModel: ObservableObject {
                 "editTags(\(item.id))"
             case let .shareLink(item):
                 "shareLink(\(item.id))"
-            case let .moveToFolder(item):
-                "moveToFolder(\(item.id))"
+            case let .moveToFolder(items):
+                "moveToFolder(\(items.compactMap(\.id)))"
             case let .renameFile(item):
                 "renameFile(\(item.id))"
             case let .versionHistory(item):
@@ -77,6 +79,10 @@ package final class FilesViewModel: ObservableObject {
 
     var selfUserRole: WireDriveConversation.Participant.Role {
         selfUser?.role ?? .viewer
+    }
+
+    var isBulkActionsEnabled: Bool {
+        UserDefaults.standard.bool(forKey: "enableDriveBulkActions")
     }
 
     var navigationTitle: String {
@@ -114,6 +120,11 @@ package final class FilesViewModel: ObservableObject {
     @Published var networkMonitor: NetworkMonitor
     @Published var filesController: FilesListStateController
     @Published var showReadOnlyBanner: Bool = false
+    @Published var selectedItems: Set<FilesViewItem> = []
+    @Published var multipleSelection: EditMode = .inactive
+    @Published var isPresentingDeleteConfirmation = false
+    @Published var isPresentingEmptyRecycleBinConfirmation = false
+    @Published var isPresentingRestoreConfirmation = false
 
     // MARK: init
 
@@ -332,6 +343,8 @@ package final class FilesViewModel: ObservableObject {
     /// If item is a folder, navigates into it. If it's a file, downloads the related asset if necessary or views it or
     /// cancels the download.
     func performPrimaryAction(item: FilesViewItem) async {
+        guard multipleSelection != .active else { return }
+
         switch item.kind {
         case .file:
             if failedItemActions[item.id] == .makeAvailableOffline {
@@ -400,29 +413,53 @@ package final class FilesViewModel: ObservableObject {
 
     // MARK: recycle bin
 
-    func deleteItem(_ asset: FilesViewItem, permanently: Bool) async {
+    func deleteItems(_ assets: [FilesViewItem], permanently: Bool) async {
         guard state.isLoaded else {
             WireLogger.wireDrive.error("Attempt to delete asset while not visible", attributes: .safePublic)
             return
         }
 
-        await filesController.removeItem(asset) { [weak self] in
-            try await self?.useCases.deleteNodes.invoke(nodeIDs: [asset.id], deletePermanently: permanently)
+        await filesController.removeItems(assets) { [weak self] in
+            try await self?.useCases.deleteNodes.invoke(nodeIDs: assets.map(\.id), deletePermanently: permanently)
         }
     }
 
-    func restoreItem(_ asset: FilesViewItem) async {
+    func emptyRecycleBin() async {
+        guard state.isLoaded else {
+            WireLogger.wireDrive.error("Attempt to delete asset while not visible", attributes: .safePublic)
+            return
+        }
+
+        await filesController.removeItems(state.items) { [weak self] in
+            guard let self, let cellName else { return }
+            try await useCases.emptyRecycleBin.invoke(cellName: cellName)
+        }
+    }
+
+    func restoreItems(_ assets: [FilesViewItem]) async {
         guard state.isLoaded else {
             WireLogger.wireDrive.error("Attempt to restore asset while not visible", attributes: .safePublic)
             return
         }
 
-        await filesController.removeItem(asset) { [weak self] in
+        await filesController.removeItems(assets) { [weak self] in
             guard let self else { return }
-            let nodeIdToRestore = navigationPath.last?.recycleBinTopFolderId ?? asset.id
-            try await useCases.restoreNodes.invoke(nodeIDs: [nodeIdToRestore])
+            let nodeIdsToRestore = if let recycleBinTopFolderId = navigationPath.last?.recycleBinTopFolderId {
+                [recycleBinTopFolderId]
+            } else {
+                assets.map(\.id)
+            }
+            try await useCases.restoreNodes.invoke(nodeIDs: nodeIdsToRestore)
             setNavigation([])
         }
+    }
+
+    var nameOfTopmostFolderInRecycleBin: String? {
+        guard let folder = navigationPath.last, folder.recycleBinTopFolderId != nil else {
+            return nil
+        }
+
+        return folder.filePath.split(separator: "/").dropFirst(2).first.map(String.init) ?? folder.name
     }
 
     // MARK: search
@@ -504,6 +541,39 @@ package final class FilesViewModel: ObservableObject {
                     .error("Failed to remove asset from available offline: \(String(describing: error))")
             }
         }
+    }
+
+    // MARK: Bulk actions
+
+    func enableMultipleSelection(_ enabled: Bool) {
+        multipleSelection = enabled ? .active : .inactive
+        deselectAllItems()
+    }
+
+    func selectAllItems() {
+        selectedItems = Set(state.items)
+    }
+
+    func deselectAllItems() {
+        selectedItems.removeAll()
+    }
+
+    func moveSelectedItemsToFolder() {
+        sheetNavigation = .moveToFolder(fileItems: Array(selectedItems))
+    }
+
+    func deleteSelectedItems() async {
+        multipleSelection = .inactive
+        await deleteItems(Array(selectedItems), permanently: isRecycleBin)
+    }
+
+    func restoreSelectedItems() async {
+        multipleSelection = .inactive
+        await restoreItems(Array(selectedItems))
+    }
+
+    func moveToFolder() {
+        sheetNavigation = .moveToFolder(fileItems: Array(selectedItems))
     }
 }
 

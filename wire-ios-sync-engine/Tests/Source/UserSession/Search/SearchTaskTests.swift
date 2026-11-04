@@ -44,7 +44,7 @@ final class SearchTaskTests: DatabaseTest {
         teamsAPIMock = .init()
         usersAPIMock = .init()
         // Safe default for the asset-keys enrichment path; tests that exercise it override this.
-        usersAPIMock.getUsersUserIDs_MockValue = UserList(found: [], failed: [])
+        usersAPIMock.getUsersUserIDsIncludeContactStatus_MockValue = UserList(found: [], failed: [])
 
         performPretendingUIMocIsSyncMoc { [unowned self] in
             let selfUser = ZMUser.selfUser(in: uiMOC)
@@ -1134,7 +1134,8 @@ final class SearchTaskTests: DatabaseTest {
             app: .init(category: "cat0", description: "desc0"),
             service: nil,
             supportedProtocols: [.mls],
-            legalholdStatus: .noConsent
+            legalholdStatus: .noConsent,
+            contactStatus: nil
         )
         let qualifiedID1 = QualifiedID(uuid: UUID(), domain: "")
         let otherTeamID = UUID()
@@ -1154,7 +1155,8 @@ final class SearchTaskTests: DatabaseTest {
             app: .init(category: "cat1", description: "desc1"),
             service: nil,
             supportedProtocols: [.mls],
-            legalholdStatus: .noConsent
+            legalholdStatus: .noConsent,
+            contactStatus: nil
         )
         // A collaborator whose resolved profile is NOT app-typed (a human with team permissions). It must never
         // surface via the apps result - only via the (separate) collaborators result, see
@@ -1174,7 +1176,8 @@ final class SearchTaskTests: DatabaseTest {
             app: nil,
             service: nil,
             supportedProtocols: [.mls],
-            legalholdStatus: .noConsent
+            legalholdStatus: .noConsent,
+            contactStatus: nil
         )
 
         let expectation = XCTestExpectation()
@@ -1202,7 +1205,7 @@ final class SearchTaskTests: DatabaseTest {
                 )
             ]
         }
-        usersAPIMock.getUsersUserIDs_MockMethod = { userIDs in
+        usersAPIMock.getUsersUserIDsIncludeContactStatus_MockMethod = { userIDs, _ in
             XCTAssertEqual(userIDs, [UserID(qualifiedID1), UserID(qualifiedID2)])
             expectation.fulfill()
             return UserList(found: [collaboratorAppResult, humanCollaboratorResult], failed: [])
@@ -1267,7 +1270,8 @@ final class SearchTaskTests: DatabaseTest {
             app: nil,
             service: nil,
             supportedProtocols: [.proteus],
-            legalholdStatus: .noConsent
+            legalholdStatus: .noConsent,
+            contactStatus: nil
         )
 
         teamsAPIMock.getAppsFor_MockMethod = { _ in [] }
@@ -1281,7 +1285,7 @@ final class SearchTaskTests: DatabaseTest {
                 )
             ]
         }
-        usersAPIMock.getUsersUserIDs_MockMethod = { userIDs in
+        usersAPIMock.getUsersUserIDsIncludeContactStatus_MockMethod = { userIDs, _ in
             XCTAssertEqual(userIDs, [UserID(qualifiedID)])
             return UserList(found: [collaboratorBotResult], failed: [])
         }
@@ -1325,7 +1329,8 @@ final class SearchTaskTests: DatabaseTest {
             app: nil,
             service: nil,
             supportedProtocols: [.mls],
-            legalholdStatus: .noConsent
+            legalholdStatus: .noConsent,
+            contactStatus: nil
         )
 
         teamsAPIMock.getAppsFor_MockMethod = { _ in [] }
@@ -1339,7 +1344,7 @@ final class SearchTaskTests: DatabaseTest {
                 )
             ]
         }
-        usersAPIMock.getUsersUserIDs_MockMethod = { userIDs in
+        usersAPIMock.getUsersUserIDsIncludeContactStatus_MockMethod = { userIDs, _ in
             XCTAssertEqual(userIDs, [UserID(qualifiedID)])
             return UserList(found: [humanCollaboratorResult], failed: [])
         }
@@ -1381,7 +1386,8 @@ final class SearchTaskTests: DatabaseTest {
             app: nil,
             service: nil,
             supportedProtocols: [.mls],
-            legalholdStatus: .noConsent
+            legalholdStatus: .noConsent,
+            contactStatus: nil
         )
 
         teamsAPIMock.getAppsFor_MockMethod = { _ in [] }
@@ -1394,7 +1400,7 @@ final class SearchTaskTests: DatabaseTest {
                 )
             ]
         }
-        usersAPIMock.getUsersUserIDs_MockMethod = { _ in
+        usersAPIMock.getUsersUserIDsIncludeContactStatus_MockMethod = { _, _ in
             UserList(found: [humanCollaboratorResult], failed: [])
         }
 
@@ -1560,7 +1566,8 @@ final class SearchTaskTests: DatabaseTest {
                 app: nil,
                 service: nil,
                 supportedProtocols: nil,
-                legalholdStatus: .disabled
+                legalholdStatus: .disabled,
+                contactStatus: nil
             )
         }
 
@@ -1595,7 +1602,8 @@ final class SearchTaskTests: DatabaseTest {
                 app: nil,
                 service: nil,
                 supportedProtocols: nil,
-                legalholdStatus: .disabled
+                legalholdStatus: .disabled,
+                contactStatus: nil
             )
         }
 
@@ -1623,7 +1631,8 @@ final class SearchTaskTests: DatabaseTest {
             app: nil,
             service: nil,
             supportedProtocols: nil,
-            legalholdStatus: .disabled
+            legalholdStatus: .disabled,
+            contactStatus: nil
         )
         let task = makeSearchTask(lookupUserID: userID.id, domain: userID.domain)
 
@@ -1722,7 +1731,7 @@ final class SearchTaskTests: DatabaseTest {
             )
         ])
         let getUsersExpectation = XCTestExpectation(description: "getUsers is called for enrichment")
-        usersAPIMock.getUsersUserIDs_MockMethod = { userIDs in
+        usersAPIMock.getUsersUserIDsIncludeContactStatus_MockMethod = { userIDs, _ in
             XCTAssertEqual(userIDs.map(\.id), [userID])
             getUsersExpectation.fulfill()
             return UserList(
@@ -1744,7 +1753,8 @@ final class SearchTaskTests: DatabaseTest {
                         app: nil,
                         service: nil,
                         supportedProtocols: nil,
-                        legalholdStatus: .disabled
+                        legalholdStatus: .disabled,
+                        contactStatus: nil
                     )
                 ],
                 failed: []
@@ -1769,7 +1779,7 @@ final class SearchTaskTests: DatabaseTest {
     func testThatRemoteSearch_DoesNotCallGetUsers_WhenNoDirectoryHitsRequireEnrichment() async throws {
         // given
         searchAPIMock.searchContactsQueryDomainType_MockValue = .init(documents: [])
-        usersAPIMock.getUsersUserIDs_MockMethod = { _ in
+        usersAPIMock.getUsersUserIDsIncludeContactStatus_MockMethod = { _, _ in
             XCTFail("getUsers should not be called when there are no hits to enrich")
             return UserList(found: [], failed: [])
         }
@@ -1806,7 +1816,8 @@ final class SearchTaskTests: DatabaseTest {
             app: nil,
             service: nil,
             supportedProtocols: nil,
-            legalholdStatus: .disabled
+            legalholdStatus: .disabled,
+            contactStatus: nil
         )
         let task = makeSearchTask(lookupUserID: userID.id, domain: userID.domain)
 

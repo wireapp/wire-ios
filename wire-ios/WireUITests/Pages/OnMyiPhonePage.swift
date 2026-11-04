@@ -26,7 +26,13 @@ class OnMyiPhonePage: PageModel {
     }
 
     var onMyiPhonePageLabel: XCUIElement {
-        app.staticTexts[Locators.OnMyiPhonePage.onMyiPhoneLabel.rawValue]
+        app.descendants(matching: .any).matching(NSPredicate(
+            format: "label IN %@",
+            [
+                Locators.OnMyiPhonePage.onMyiPhoneLabel.rawValue,
+                Locators.OnMyiPhonePage.onMyiPhoneActionsMenu.rawValue
+            ]
+        )).firstMatch
     }
 
     var saveButton: XCUIElement {
@@ -54,11 +60,19 @@ class OnMyiPhonePage: PageModel {
     }
 
     func selectBackupFileWithPassword(withName name: String) throws -> SetPasswordPage {
+        XCTAssertTrue(
+            backupFile(name).waitForExistence(timeout: 15),
+            "Backup file \(name) not listed in the Files picker"
+        )
         backupFile(name).tap()
         return try SetPasswordPage()
     }
 
     func selectBackupFileWithoutPassword(withName name: String) throws -> BackupOrRestorePage {
+        XCTAssertTrue(
+            backupFile(name).waitForExistence(timeout: 15),
+            "Backup file \(name) not listed in the Files picker"
+        )
         backupFile(name).tap()
         return try BackupOrRestorePage()
     }

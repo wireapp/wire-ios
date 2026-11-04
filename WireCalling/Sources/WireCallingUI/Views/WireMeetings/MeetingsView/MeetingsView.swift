@@ -34,15 +34,18 @@ struct MeetingsView: View {
     /// Presenting the edit UI is up to the owner of this view.
     private let onEditMeeting: (Meeting) -> Void
     private let onJoinMeeting: (MeetingOccurrence) -> Void
+    private let onMeetingLink: ((Meeting) -> Void)?
 
     init(
         viewModel: MeetingsViewModel,
         onEditMeeting: @escaping (Meeting) -> Void = { _ in },
-        onJoinMeeting: @escaping (MeetingOccurrence) -> Void = { _ in }
+        onJoinMeeting: @escaping (MeetingOccurrence) -> Void = { _ in },
+        onMeetingLink: ((Meeting) -> Void)? = nil
     ) {
         self.viewModel = viewModel
         self.onEditMeeting = onEditMeeting
         self.onJoinMeeting = onJoinMeeting
+        self.onMeetingLink = onMeetingLink
     }
 
     var body: some View {
@@ -159,10 +162,16 @@ struct MeetingsView: View {
                 formatTime: viewModel.formatTime(for:),
                 isAttending: viewModel.isAttending(_:),
                 isHappeningNow: viewModel.isHappeningNow(_:),
+                hasEnded: viewModel.hasEnded(_:),
                 isOrganizer: viewModel.isOrganizer(_:),
-                onEdit: { onEditMeeting($0) },
+                onEdit: {
+                    viewModel.refreshCurrentDate()
+                    guard !viewModel.hasEnded($0) else { return }
+                    onEditMeeting($0.meeting)
+                },
                 onDelete: { viewModel.meetingToDelete = $0 },
-                onJoin: { onJoinMeeting($0) }
+                onJoin: { onJoinMeeting($0) },
+                onMeetingLink: onMeetingLink
             )
 
             if viewModel.hasMore {
@@ -216,10 +225,12 @@ private struct GroupedSections: View {
     let formatTime: (MeetingOccurrence) -> String
     let isAttending: (MeetingOccurrence) -> Bool
     let isHappeningNow: (MeetingOccurrence) -> Bool
+    let hasEnded: (MeetingOccurrence) -> Bool
     let isOrganizer: (Meeting) -> Bool
-    let onEdit: (Meeting) -> Void
+    let onEdit: (MeetingOccurrence) -> Void
     let onDelete: (Meeting) -> Void
     let onJoin: (MeetingOccurrence) -> Void
+    let onMeetingLink: ((Meeting) -> Void)?
 
     @Environment(\.wireAccentColor) private var wireAccentColor
 
@@ -235,9 +246,11 @@ private struct GroupedSections: View {
                         isOrganizer: isOrganizer(occurrence.meeting),
                         isAttending: isAttending(occurrence),
                         isLive: isLive,
-                        onEdit: { onEdit(occurrence.meeting) },
+                        hasEnded: hasEnded(occurrence),
+                        onEdit: { onEdit(occurrence) },
                         onDelete: { onDelete(occurrence.meeting) },
-                        onJoin: { onJoin(occurrence) }
+                        onJoin: { onJoin(occurrence) },
+                        onMeetingLink: onMeetingLink.map { action in { action(occurrence.meeting) } }
                     )
                     .listRowBackground(
                         isLive ? Color(wireAccentColor.secondaryUIColor) : Color.clear

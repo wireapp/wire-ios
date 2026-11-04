@@ -32,9 +32,11 @@ private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
 ///   - toolbarContent: toolbar content builder.
 ///   - sheetContent: sheet builder for navigation items.
 package struct FilesContentView<Toolbar: ToolbarContent, Sheet: View>: View {
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @ObservedObject package var viewModel: FilesViewModel
     package let isBrowsing: Bool
     package let backgroundColor: Color
+    package let trackerHeight: CGFloat
 
     @ToolbarContentBuilder package let toolbarContent: () -> Toolbar
     @ViewBuilder let sheetContent: (FilesViewModel.SheetNavigation) -> Sheet
@@ -108,6 +110,9 @@ package struct FilesContentView<Toolbar: ToolbarContent, Sheet: View>: View {
             .toolbarBackground(backgroundColor, for: .navigationBar)
             .toolbar { toolbarContent() }
             .if(viewModel.showSearchBar, transform: searchView(content:))
+            .onAppear {
+                viewModel.enableMultipleSelection(false)
+            }
             .onDisappear {
                 isSearchFocused = false
                 viewModel.resetFilters()
@@ -126,11 +131,19 @@ package struct FilesContentView<Toolbar: ToolbarContent, Sheet: View>: View {
             )
         }
         .onChange(of: viewModel.networkStatus) { _, newValue in
-            if newValue != nil {
-                Task {
-                    await viewModel.reload(refreshing: true)
-                }
+            guard let newValue else { return }
+
+            if newValue == .disconnected {
+                viewModel.enableMultipleSelection(false)
             }
+
+            Task {
+                await viewModel.reload(refreshing: true)
+            }
+        }
+        .onChange(of: isSearchFocused) { _, newValue in
+            guard newValue else { return }
+            viewModel.enableMultipleSelection(false)
         }
         .task {
             await viewModel.setup()
@@ -148,7 +161,7 @@ package struct FilesContentView<Toolbar: ToolbarContent, Sheet: View>: View {
 private extension FilesContentView {
 
     @ViewBuilder var filesList: some View {
-        List {
+        List(selection: $viewModel.selectedItems) {
             Group {
                 itemsSection
 
@@ -160,17 +173,80 @@ private extension FilesContentView {
             .listRowSeparator(.hidden)
             .listRowBackground(ColorTheme.Backgrounds.surface.color)
         }
+        .environment(\.editMode, $viewModel.multipleSelection)
+        .animation(reduceMotion ? nil : .smooth(duration: 0.25), value: viewModel.multipleSelection)
         .listStyle(.plain)
         .refreshable { reloadTask(refreshing: true) }
         .overlay(listBackgroundView)
+        .safeAreaInset(edge: .bottom, alignment: .leading, spacing: 0) {
+            VStack(spacing: 0) {
+                if viewModel.multipleSelection == .active {
+                    FilesFloatingActionBar(actions: floatingBarActions)
+                        .disabled(viewModel.selectedItems.isEmpty)
+                        .padding(.horizontal, 16)
+                        .padding(.bottom, 12)
+                        .transition(reduceMotion ? .identity : .move(edge: .bottom).combined(with: .opacity))
+                }
+            }
+            .animation(reduceMotion ? nil : .smooth(duration: 0.25), value: viewModel.multipleSelection)
+        }
         .animation(.default, value: viewModel.state)
+        .safeAreaInset(edge: .bottom, spacing: 0) {
+            Color.clear
+                .frame(height: trackerHeight)
+        }
+
+    }
+
+    var floatingBarActions: [FilesFloatingActionBar.Action] {
+        var actions: [FilesFloatingActionBar.Action] = []
+
+        if viewModel.isRecycleBin {
+            // restore
+            actions.append(
+                .init(
+                    id: Locators.WireDrive.FilesPage.restoreFloatingButton.rawValue,
+                    title: Strings.RecycleBin.Item.Menu.restore,
+                    systemImage: "arrow.uturn.backward",
+                    isEnabled: !viewModel.selectedItems.isEmpty,
+                    perform: { viewModel.isPresentingRestoreConfirmation = true }
+                )
+            )
+        } else {
+            // move to folder
+            actions.append(
+                .init(
+                    id: Locators.WireDrive.FilesPage.moveToFolderFloatingButton.rawValue,
+                    title: Strings.Files.Item.Menu.moveToFolder,
+                    systemImage: "folder",
+                    isEnabled: !viewModel.selectedItems.isEmpty,
+                    perform: viewModel.moveSelectedItemsToFolder
+                )
+            )
+        }
+        // delete
+        actions.append(
+            .init(
+                id: Locators.WireDrive.FilesPage.deleteFloatingButton.rawValue,
+                title: Strings.Files.Item.Menu.delete,
+                systemImage: "trash",
+                isEnabled: !viewModel.selectedItems.isEmpty,
+                perform: { viewModel.isPresentingDeleteConfirmation = true }
+            )
+        )
+
+        return actions
     }
 
     @ViewBuilder var itemsSection: some View {
         ForEach(Array(viewModel.state.items.enumerated()), id: \.element) { index, item in
             itemRow(index: index)
                 .onAppear { loadMoreIfNeededTask(index: index) }
-                .onTapGesture { Task { await viewModel.performPrimaryAction(item: item) } }
+                // otherwise interferes with the tappable area
+                .if(viewModel.multipleSelection != .active) { view in
+                    view.onTapGesture { Task { await viewModel.performPrimaryAction(item: item) } }
+
+                }
                 .accessibilityIdentifier(Locators.WireDrive.FilesContentPage.fileItem(index))
         }
     }
@@ -227,6 +303,10 @@ private extension FilesContentView {
     @ViewBuilder
     func itemRow(index: Int) -> some View {
         FilesItemView(viewModel: viewModel.itemViewModel(index: index))
+            .transaction { transaction in
+                // Keep row content still while the list animates its native selection controls.
+                transaction.animation = nil
+            }
     }
 
     var loadMoreRow: some View {
@@ -288,7 +368,6 @@ private extension FilesContentView {
             placement: .navigationBarDrawer(displayMode: .always),
             prompt: Strings.Files.Search.title
         )
-        .accessibilityIdentifier(Locators.WireDrive.FilesContentPage.search)
     }
 }
 

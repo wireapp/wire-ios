@@ -39,6 +39,7 @@
 "conversation.timerButton.description" = "Establecer un temporizador para los mensajes autoborrados";
 "conversation.mentionButton.description" = "Mencionar a alguien";
 "conversation.cameraButton.description" = "Take or select a photo";
+"conversation.camera.maximizeButton.description" = "Maximize view";
 "conversation.sketchButton.description" = "Open sketch to draw or write";
 "conversation.gifButton.description" = "Seleccione un GIF";
 "conversation.audioButton.description" = "Grabar un mensaje de audio";
@@ -47,6 +48,8 @@
 "conversation.locationButton.description" = "Comparte tu ubicación";
 "conversation.videoButton.description" = "Graba un vídeo";
 "conversation.moreButton.description" = "Abrir más opciones de mensajería";
+"conversation.moreButton.closeDescription" = "Close more messaging options";
+"conversation.applyChangesButton.description" = "Apply changes";
 "conversation.emphemeralButton.description" = "Establecer un temporizador para los mensajes autoborrados";
 "conversation.timerForSelfDeletingMessagesSeconds.value" = "%@ segundos";
 "conversation.timerForSelfDeletingMessagesMinutes.value" = "%@ minutos";

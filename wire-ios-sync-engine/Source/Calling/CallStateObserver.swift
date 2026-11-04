@@ -75,7 +75,8 @@ extension CallStateObserver: WireCallCenterCallStateObserver, WireCallCenterMiss
         conversation: ZMConversation,
         caller: UserType,
         timestamp: Date?,
-        previousCallState: CallState?
+        previousCallState: CallState?,
+        callEndReason: CallClosedReason?
     ) {
         let callerId = caller.remoteIdentifier
         let callerDomain = caller.domain

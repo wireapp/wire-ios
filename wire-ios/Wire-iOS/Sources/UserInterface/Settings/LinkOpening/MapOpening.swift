@@ -17,6 +17,8 @@
 //
 
 import UIKit
+import WireFoundation
+import WireLocators
 import WireLogging
 import WireSystem
 
@@ -57,6 +59,20 @@ extension URL {
         switch saved {
         case .apple: return false
         case .google:
+            #if DEBUG
+                // No Google Maps on the simulator to receive the location, so show where it would have been opened.
+                if UITestConfig.environment?.mockGoogleMapsInstalled == true {
+                    let alert = UIAlertController(
+                        title: Locators.OptionsOnSettingsPage.mockedGoogleMapsAlertTitle.rawValue,
+                        message: absoluteString,
+                        preferredStyle: .alert
+                    )
+                    alert.view.accessibilityIdentifier = Locators.OptionsOnSettingsPage.mockedGoogleMapsAlert.rawValue
+                    alert.addAction(UIAlertAction(title: "OK", style: .default))
+                    UIApplication.shared.topmostViewController(onlyFullScreen: false)?.present(alert, animated: true)
+                    return true
+                }
+            #endif
             guard UIApplication.shared.canOpenURL(self) else { return false }
             UIApplication.shared.open(self)
             return true
@@ -70,7 +86,10 @@ extension URL {
 private extension UIApplication {
 
     var googleMapsInstalled: Bool {
-        canHandleScheme("comgooglemaps://")
+        #if DEBUG
+            if UITestConfig.environment?.mockGoogleMapsInstalled == true { return true }
+        #endif
+        return canHandleScheme("comgooglemaps://")
     }
 
 }

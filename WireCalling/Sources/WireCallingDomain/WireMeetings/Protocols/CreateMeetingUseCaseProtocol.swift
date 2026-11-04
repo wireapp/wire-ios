@@ -22,8 +22,7 @@ package import Foundation
 /// Creates a new meeting via the backend API, syncs the conversation the
 /// backend created for it and adds the selected participants.
 ///
-/// Instant and scheduled meetings share this use case; an instant meeting
-/// is simply one that starts now.
+/// Immediate and scheduled meetings send their type explicitly.
 package protocol CreateMeetingUseCaseProtocol: Sendable {
 
     func invoke(
@@ -31,7 +30,10 @@ package protocol CreateMeetingUseCaseProtocol: Sendable {
         startTime: Date,
         endTime: Date,
         recurrence: MeetingRecurrence?,
-        participants: [MeetingMember]
-    ) async throws -> Meeting
+        type: MeetingType,
+        password: String?,
+        participants: [MeetingMember],
+        invitedEmails: [String]
+    ) async throws -> MeetingCreationResult
 
 }

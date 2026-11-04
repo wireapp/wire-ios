@@ -17,16 +17,18 @@
 //
 
 import Combine
+import Photos
+import PhotosUI
 import QuickLook
 package import SwiftUI
 import WireDesign
 import WireFoundation
 import WireLocators
+import WireLogging
 import WireMessagingDomain
 import WireReusableUIComponents
 
 private typealias Strings = L10n.Localizable.Conversation.WireCells
-private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
 
 package struct FilesView: View {
     package var isBrowsing: Bool { false }
@@ -36,13 +38,20 @@ package struct FilesView: View {
 
     let onOpenRecycleBin: () -> Void
     let onDismissContainer: () -> Void
+    let trackerHeight: CGFloat
+
+    @State private var isFileImporterPresented = false
+    @State private var isMediaPickerPresented = false
+    @State private var pickedMedia: [PhotosPickerItem] = []
 
     package init(
         viewModel: @autoclosure @escaping () -> FilesViewModel,
+        trackerHeight: CGFloat = 0,
         onOpenRecycleBin: @escaping () -> Void = {},
         onDismissContainer: @escaping () -> Void = {}
     ) {
         self._viewModel = StateObject(wrappedValue: viewModel())
+        self.trackerHeight = trackerHeight
         self.onOpenRecycleBin = onOpenRecycleBin
         self.onDismissContainer = onDismissContainer
     }
@@ -52,13 +61,33 @@ package struct FilesView: View {
             viewModel: viewModel,
             isBrowsing: isBrowsing,
             backgroundColor: ColorTheme.Backgrounds.background.color,
+            trackerHeight: trackerHeight,
             toolbarContent: { toolbarContent },
             sheetContent: { sheetContent($0) }
         )
         // FilesView-specific extras
+        .fileImporter(
+            isPresented: $isFileImporterPresented,
+            allowedContentTypes: [.data],
+            allowsMultipleSelection: true,
+            onCompletion: { result in
+                Task { await handleFileImport(result) }
+            }
+        )
+        .photosPicker(
+            isPresented: $isMediaPickerPresented,
+            selection: $pickedMedia,
+            maxSelectionCount: WireDriveDirectUploadLimits.maxFilesPerBatch,
+            matching: .any(of: [.images, .videos]),
+            photoLibrary: .shared()
+        )
+        .onChange(of: pickedMedia) { _, newValue in
+            guard !newValue.isEmpty else { return }
+            Task { await handleMediaPick(newValue) }
+        }
         .onReceive(viewModel.triggerReload) { _ in
             Task {
-                await viewModel.reload()
+                await viewModel.reload(refreshing: true)
             }
         }
         .fullScreenCover(
@@ -70,6 +99,69 @@ package struct FilesView: View {
                 EditFileView(viewModel: viewModel.editFileViewModel(item: item))
             }
         )
+        .deletionConfirmationDialog(
+            isPresented: $viewModel.isPresentingDeleteConfirmation,
+            title: deleteConfirmationTitle,
+            buttonText: deleteConfirmationButtonText,
+            confirm: { Task { await viewModel.deleteSelectedItems() } }
+        )
+        .deletionConfirmationDialog(
+            isPresented: $viewModel.isPresentingEmptyRecycleBinConfirmation,
+            title: Strings.RecycleBin.EmptyConfirmation.title,
+            buttonText: Strings.RecycleBin.EmptyConfirmation.button,
+            confirm: { Task { await viewModel.emptyRecycleBin() } }
+        )
+        .restorationConfirmationDialog(
+            isPresented: $viewModel.isPresentingRestoreConfirmation,
+            title: restoreConfirmationTitle,
+            buttonText: Strings.Files.Restore.confirmation,
+            confirm: { Task { await viewModel.restoreSelectedItems() } }
+        )
+    }
+
+    private var restoreConfirmationTitle: String {
+        if let topmostFolderName = viewModel.nameOfTopmostFolderInRecycleBin {
+            return Strings.RecycleBin.Item.RestoreParentConfirmation.title(topmostFolderName)
+        } else if viewModel.selectedItems.count == 1 {
+            let item = viewModel.selectedItems.first!
+            if item.kind == .folder {
+                return Strings.RecycleBin.Item.RestoreFolderConfirmation.title(item.name)
+            } else {
+                return Strings.RecycleBin.Item.RestoreFileConfirmation.title(item.name)
+            }
+
+        } else {
+            return Strings.Files.Restore.title("\(viewModel.selectedItems.count)")
+        }
+    }
+
+    private var deleteConfirmationTitle: String {
+        if viewModel.selectedItems.count == 1 {
+            let item = viewModel.selectedItems.first!
+            if viewModel.isRecycleBin {
+                if item.kind == .folder {
+                    return Strings.RecycleBin.Item.DeleteFolderConfirmation.title(item.name)
+                } else {
+                    return Strings.RecycleBin.Item.DeleteFileConfirmation.title(item.name)
+                }
+            } else {
+                if item.kind == .folder {
+                    return Strings.Files.Item.DeleteFolderConfirmation.title(item.name)
+                } else {
+                    return Strings.Files.Item.DeleteFileConfirmation.title(item.name)
+                }
+            }
+
+        } else {
+            return viewModel.isRecycleBin ? Strings.Files.DeletePermanently
+                .title("\(viewModel.selectedItems.count)") : Strings
+                .Files.DeleteToRecycleBin.title("\(viewModel.selectedItems.count)")
+        }
+    }
+
+    private var deleteConfirmationButtonText: String {
+        viewModel.isRecycleBin ? Strings.Files.DeletePermanently.confirmation : Strings.Files.DeleteToRecycleBin
+            .confirmation
     }
 }
 
@@ -77,14 +169,55 @@ package struct FilesView: View {
 
 private extension FilesView {
 
+    var isSelecting: Bool {
+        viewModel.multipleSelection == .active
+    }
+
+    var areAllItemsSelected: Bool {
+        let items = viewModel.state.items
+        return !items.isEmpty && items.allSatisfy { viewModel.selectedItems.contains($0) }
+    }
+
+    var toolbarTitle: String {
+        guard isSelecting else { return viewModel.navigationTitle }
+
+        let count = viewModel.selectedItems.count
+        if count == 0 {
+            return Strings.Files.Selection.selectItems
+        } else if count == 1 {
+            return Strings.Files.Selection.oneItem
+        } else {
+            return Strings.Files.Selection.items("\(count)")
+        }
+    }
+
     @ToolbarContentBuilder var toolbarContent: some ToolbarContent {
+        if isSelecting {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button(areAllItemsSelected ? Strings.Files.Selection.deselectAll : Strings.Files.Selection.selectAll) {
+                    if areAllItemsSelected {
+                        viewModel.deselectAllItems()
+                    } else {
+                        viewModel.selectAllItems()
+                    }
+                }
+                .accessibilityIdentifier(areAllItemsSelected ? Locators.WireDrive.FilesPage.deselectAll : Locators
+                    .WireDrive.FilesPage.selectAll)
+                .tint(ColorTheme.Base.primary(accentColor).color)
+                .transaction { transaction in
+                    transaction.animation = nil
+                    transaction.disablesAnimations = true
+                }
+            }
+        }
+
         ToolbarItem(placement: .principal) {
             VStack(spacing: 0) {
-                Text(viewModel.navigationTitle)
+                Text(toolbarTitle)
                     .font(for: .h3)
                     .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
 
-                if let navigationSubtitle = viewModel.navigationSubtitle {
+                if !isSelecting, let navigationSubtitle = viewModel.navigationSubtitle {
                     Text(navigationSubtitle)
                         .font(for: .subline1)
                         .foregroundStyle(ColorTheme.Base.secondaryText.color)
@@ -92,21 +225,31 @@ private extension FilesView {
             }
         }
 
-        if !viewModel.folderMenuOptions.isEmpty {
+        if !isSelecting, !viewModel.folderMenuOptions.isEmpty {
             ToolbarTitleMenu {
                 toolBarTitleMenuContent()
             }
         }
 
-        if !viewModel.isRecycleBin, !viewModel.isOffline {
-            ToolbarItem(placement: .navigationBarTrailing) {
-                moreActionsButton
-            }
-        }
+        FilesTrailingToolbar(
+            viewModel: viewModel,
+            actionHandlers: toolbarTrailingActionHandlers
+        )
+    }
 
-        ToolbarItem(placement: .navigationBarTrailing) {
-            closeButton
-        }
+    var toolbarTrailingActionHandlers: FilesTrailingToolbar.ActionHandlers {
+        .init(
+            onOpenRecycleBin: onOpenRecycleBin,
+            onDismissContainer: onDismissContainer,
+            onUploadFiles: { isFileImporterPresented = true },
+            onUploadMedia: {
+                Task {
+                    pickedMedia = []
+                    guard await viewModel.requestPhotosPermissions() else { return }
+                    isMediaPickerPresented = true
+                }
+            }
+        )
     }
 
     func toolBarTitleMenuContent() -> some View {
@@ -117,98 +260,6 @@ private extension FilesView {
             ) {
                 viewModel.selectFolderMenuOption(option)
             }
-        }
-    }
-
-    var closeButton: some View {
-        Button(
-            action: { onDismissContainer() },
-            label: {
-                Image(systemName: "xmark")
-            }
-        )
-        .accessibilityLabel(Accessibility.Files.close)
-        .accessibilityIdentifier(Locators.WireDrive.FilesPage.close.rawValue)
-        .tint(ColorTheme.Base.primary(accentColor).color)
-    }
-
-    var moreActionsButton: some View {
-        Menu {
-            switch viewModel.selfUserRole {
-            case .editor:
-                editorActions
-            case .viewer:
-                viewerActions
-            }
-        } label: {
-            Image(systemName: "ellipsis.circle")
-        }
-        .tint(ColorTheme.Base.primary(accentColor).color)
-    }
-
-    private var viewerActions: some View {
-        Button {
-            onOpenRecycleBin()
-        } label: {
-            Label {
-                Text(Strings.Files.openRecycleBin)
-            } icon: {
-                Image(systemName: "trash")
-                    .tint(ColorTheme.Backgrounds.onBackground.color)
-            }
-        }
-        .accessibilityIdentifier(Locators.WireDrive.FilesPage.recycleBin.rawValue)
-    }
-
-    private var editorActions: some View {
-        Group {
-            Button {
-                viewModel.onCreate(target: .folder)
-            } label: {
-                Label {
-                    Text(Strings.Files.List.createFolder)
-                } icon: {
-                    Image(systemName: "folder.badge.plus")
-                        .tint(ColorTheme.Backgrounds.onBackground.color)
-                }
-            }
-            .accessibilityIdentifier(Locators.WireDrive.FilesPage.createFolder.rawValue)
-
-            Menu {
-                ForEach(viewModel.templates, id: \.self) { template in
-                    Button {
-                        viewModel.onCreate(target: .file(template))
-                    } label: {
-                        Label {
-                            Text(template.kind.title)
-                        } icon: {
-                            Image(systemName: template.kind.systemImage)
-                                .tint(ColorTheme.Backgrounds.onBackground.color)
-                        }
-                    }
-                }
-
-            } label: {
-                Label {
-                    Text(Strings.Files.List.createFile)
-                } icon: {
-                    Image(systemName: "document.badge.plus")
-                        .tint(ColorTheme.Backgrounds.onBackground.color)
-                }
-            }
-            .accessibilityIdentifier(Locators.WireDrive.FilesPage.createFile.rawValue)
-
-            Button {
-                onOpenRecycleBin()
-            } label: {
-                Label {
-                    Text(Strings.Files.openRecycleBin)
-                } icon: {
-                    Image(systemName: "trash")
-                        .tint(ColorTheme.Backgrounds.onBackground.color)
-                }
-            }
-            .accessibilityIdentifier(Locators.WireDrive.FilesPage.recycleBin.rawValue)
         }
     }
 }
@@ -238,13 +289,41 @@ private extension FilesView {
             FileRenameView(viewModel: viewModel.fileRenameViewModel(item: item))
         case let .versionHistory(item):
             FileVersioningView(viewModel: viewModel.fileVersioningViewModel(item: item))
-        case let .moveToFolder(item):
-            MoveToFolderView(viewModel: viewModel.moveToFolderViewModel(item: item))
+        case let .moveToFolder(items):
+            MoveToFolderView(viewModel: viewModel.moveToFolderViewModel(items: items))
         }
     }
 }
 
-// MARK: - folder menu title
+// MARK: - Uploads
+
+private extension FilesView {
+
+    func handleFileImport(_ result: Result<[URL], any Error>) async {
+        switch result {
+        case let .success(urls):
+            // Document picker URLs are security scoped, so the uploader must be told to open access
+            // before reading them.
+            let sources = urls.map { url in
+                WireDriveDirectUploadSource(
+                    url: url,
+                    fileName: url.lastPathComponent,
+                    fileType: UTType(filenameExtension: url.pathExtension),
+                    isSecurityScoped: true
+                )
+            }
+            await viewModel.enqueueUploads(sources: sources)
+
+        case let .failure(error):
+            WireLogger.wireDrive.error("drive upload file import failed: \(error)")
+            viewModel.showImportFailedAlert()
+        }
+    }
+
+    func handleMediaPick(_ items: [PhotosPickerItem]) async {
+        await viewModel.enqueueUploads(mediaItems: items)
+    }
+}
 
 private extension FilesViewModel.FolderMenuOption {
     var title: String {
@@ -253,32 +332,6 @@ private extension FilesViewModel.FolderMenuOption {
             title
         case .root:
             Strings.Files.navigationTitle
-        }
-    }
-}
-
-// MARK: - template / create file
-
-private extension WireDriveFileTemplate.Kind {
-    var title: String {
-        switch self {
-        case .document:
-            Strings.Files.List.CreateFile.document
-        case .spreadsheet:
-            Strings.Files.List.CreateFile.spreadsheet
-        case .presentation:
-            Strings.Files.List.CreateFile.presentation
-        }
-    }
-
-    var systemImage: String {
-        switch self {
-        case .document:
-            "text.document"
-        case .spreadsheet:
-            "tablecells"
-        case .presentation:
-            "sparkles.tv"
         }
     }
 }

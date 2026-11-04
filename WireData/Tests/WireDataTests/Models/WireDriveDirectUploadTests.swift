@@ -57,11 +57,8 @@ struct WireDriveDirectUploadTests {
         upload.createdAt = createdAt
         upload.updatedAt = updatedAt
         upload.attemptCount = 1
-        upload.sessionIdentifier = "com.wire.drive.upload-\(UUID().uuidString)"
-        upload.taskIdentifier = 7
         upload.presignedURL = "https://example.com/io/cell-1/Documents/report.pdf?X-Amz-Signature=abc"
         upload.presignedURLExpiresAt = expiresAt
-        upload.presignedRequestHeaders = nil
         upload.failureReasonCode = 0
         upload.failureMessage = nil
 
@@ -86,9 +83,7 @@ struct WireDriveDirectUploadTests {
         #expect(persisted.createdAt == createdAt)
         #expect(persisted.updatedAt == updatedAt)
         #expect(persisted.attemptCount == 1)
-        #expect(persisted.taskIdentifier == 7)
         #expect(persisted.presignedURLExpiresAt == expiresAt)
-        #expect(persisted.presignedRequestHeaders == nil)
         #expect(persisted.failureReasonCode == 0)
         #expect(persisted.failureMessage == nil)
     }
@@ -117,7 +112,6 @@ struct WireDriveDirectUploadTests {
         #expect(upload.state == 0)
         #expect(upload.fileSize == 0)
         #expect(upload.attemptCount == 0)
-        #expect(upload.taskIdentifier == -1)
         #expect(upload.failureReasonCode == 0)
         #expect(upload.mimeType == nil)
         #expect(upload.presignedURL == nil)

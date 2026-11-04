@@ -53,6 +53,49 @@ class UserDetailsPage: PageModel {
         app.buttons[Locators.UserDetailsPage.removeUserFromConversationConfirmation.rawValue].firstMatch
     }
 
+    var contactStatusHint: XCUIElement {
+        app.staticTexts["profile.contact_status.hint"].firstMatch
+    }
+
+    @discardableResult
+    func verifyStartConversationEnabled(_ enabled: Bool) -> Self {
+        XCTAssertTrue(connectButton.waitForExistence(timeout: 15), "Start conversation button did not appear")
+        XCTAssertEqual(connectButton.label, "Start conversation")
+        let state = XCTNSPredicateExpectation(
+            predicate: NSPredicate(format: "enabled == %@", NSNumber(value: enabled)),
+            object: connectButton
+        )
+        XCTAssertEqual(
+            XCTWaiter.wait(for: [state], timeout: 15),
+            .completed,
+            "Start conversation did not become \(enabled ? "enabled" : "disabled")"
+        )
+        return self
+    }
+
+    @discardableResult
+    func verifyPendingOnboardingHint(name: String) -> Self {
+        XCTAssertTrue(contactStatusHint.waitForExistence(timeout: 15), "Pending onboarding hint did not appear")
+        XCTAssertEqual(contactStatusHint.label, "You can communicate with \(name) once they are set up.")
+        return self
+    }
+
+    @discardableResult
+    func verifyNoPendingOnboardingHint() -> Self {
+        XCTAssertFalse(contactStatusHint.exists, "A fully onboarded teammate must not show the setup hint")
+        XCTAssertFalse(app.staticTexts["Onboarding pending"].exists)
+        return self
+    }
+
+    /// Reproduce a physical tap without requiring the disabled control to be enabled.
+    @discardableResult
+    func attemptDisabledStartConversation() -> Self {
+        verifyStartConversationEnabled(false)
+        connectButton.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
+        XCTAssertTrue(pageMainElement.exists, "A tap on the disabled action must leave the profile open")
+        return self
+    }
+
     func getUserName() -> String? {
         userNameInfo.value as? String
     }

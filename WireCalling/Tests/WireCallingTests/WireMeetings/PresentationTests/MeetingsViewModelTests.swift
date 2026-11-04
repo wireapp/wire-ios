@@ -636,16 +636,27 @@ struct MeetingsViewModelTests {
     func refreshCurrentDate_updatesTimeBasedMeetingState() {
         let start = mockDateProvider.now.addingTimeInterval(60)
         let meeting = Meeting.fixture(title: "Soon", start: start, duration: 60)
+        let occurrence = MeetingOccurrence(meeting: meeting)
 
         #expect(viewModel.isHappeningNow(meeting) == false)
+        #expect(viewModel.hasEnded(occurrence) == false)
 
         mockDateProvider.now = start
         viewModel.refreshCurrentDate()
         #expect(viewModel.isHappeningNow(meeting) == true)
+        #expect(viewModel.hasEnded(occurrence) == false)
 
         mockDateProvider.now = start.addingTimeInterval(60)
         viewModel.refreshCurrentDate()
         #expect(viewModel.isHappeningNow(meeting) == false)
+        #expect(viewModel.hasEnded(occurrence) == true)
+
+        let nextOccurrence = MeetingOccurrence(
+            meeting: meeting,
+            start: start.addingTimeInterval(86_400),
+            end: meeting.end.addingTimeInterval(86_400)
+        )
+        #expect(viewModel.hasEnded(nextOccurrence) == false)
     }
 
     @Test("system date and time changes refresh currentDate")

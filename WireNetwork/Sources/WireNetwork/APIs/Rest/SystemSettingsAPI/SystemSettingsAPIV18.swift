@@ -18,7 +18,7 @@
 
 import Foundation
 
-final class SystemSettingsAPIV18: SystemSettingsAPIV17 {
+class SystemSettingsAPIV18: SystemSettingsAPIV17 {
 
     override var apiVersion: APIVersion {
         .v18

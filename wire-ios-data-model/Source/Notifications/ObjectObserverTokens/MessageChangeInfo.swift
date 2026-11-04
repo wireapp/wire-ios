@@ -182,6 +182,15 @@ public final class MessageChangeInfo: ObjectChangeInfo {
         changedKeysContain(keys: #keyPath(ZMAssetClientMessage.hasDownloadedFile))
     }
 
+    /// Whether the file's download concluded, either by becoming available or by the
+    /// download attempt ending without success (failure or cancellation).
+    public var fileDownloadStateChanged: Bool {
+        changedKeysContain(
+            keys: #keyPath(ZMAssetClientMessage.hasDownloadedFile),
+            #keyPath(ZMAssetClientMessage.isDownloading)
+        )
+    }
+
     public var usersChanged: Bool {
         userChangeInfo != nil
     }

@@ -89,7 +89,22 @@ final class ColorKnobView: UIView {
 
     // MARK: - Helpers
 
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        guard previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle else { return }
+
+        let borderColor = knobBorderColor?.cgColor
+        innerCircleLayer.borderColor = borderColor
+        borderCircleLayer.borderColor = borderColor
+    }
+
     var knobBorderColor: UIColor? {
-        knobColor == SemanticColors.DrawingColors.white ? .black : knobColor
+        typealias Color = SemanticColors.DrawingColors
+
+        if knobColor == Color.white || knobColor == Color.black {
+            return traitCollection.userInterfaceStyle == .dark ? .white : .black
+        } else {
+            return knobColor
+        }
     }
 }

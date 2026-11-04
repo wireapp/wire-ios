@@ -17,6 +17,7 @@
 //
 
 public import WireCallingDomain
+public import WireFoundation
 
 import Foundation
 

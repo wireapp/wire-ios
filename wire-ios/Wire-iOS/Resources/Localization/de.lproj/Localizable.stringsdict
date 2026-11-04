@@ -424,7 +424,7 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>%2$@ aktives Konto</string>
+        <string>Ein aktives Konto</string>
         <key>other</key>
         <string>%2$@ aktive Konten</string>
       </dict>
@@ -440,7 +440,7 @@
         <key>NSStringFormatValueTypeKey</key>
         <string>d</string>
         <key>one</key>
-        <string>Sie können nur mit %2$@ Konto angemeldet sein. Melden Sie sich ab, um ein anderes hinzuzufügen.</string>
+        <string>Sie können nur mit einem Konto angemeldet sein. Melden Sie sich ab, um ein anderes hinzuzufügen.</string>
         <key>other</key>
         <string>Sie können nur mit %2$@ Konten gleichzeitig angemeldet sein. Melden Sie sich von einem ab, um ein anderes hinzuzufügen.</string>
       </dict>

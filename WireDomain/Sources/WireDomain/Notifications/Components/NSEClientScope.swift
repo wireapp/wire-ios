@@ -487,6 +487,8 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
 
             return ConversationEventNotificationBuilder(
                 validator: validator,
+                answeredElsewhereCallTracker: .init(userDefaults: dependency.sharedUserDefaults),
+                accountID: dependency.accountID,
                 conversationMessageAddEventNotificationBuilder: conversationMessageAddEventNotificationBuilder,
                 conversationMemberLeaveEventNotificationBuilder: conversationMemberLeaveEventNotificationBuilder,
                 conversationMemberJoinEventNotificationBuilder: conversationMemberJoinEventNotificationBuilder,

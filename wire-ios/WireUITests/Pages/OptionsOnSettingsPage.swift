@@ -45,6 +45,14 @@ class OptionsOnSettingsPage: PageModel {
         app.descendants(matching: .any)[Locators.OptionsOnSettingsPage.themeCell.rawValue].firstMatch
     }
 
+    var browserCell: XCUIElement {
+        app.descendants(matching: .any)[Locators.OptionsOnSettingsPage.browserCell.rawValue].firstMatch
+    }
+
+    var mapsCell: XCUIElement {
+        app.descendants(matching: .any)[Locators.OptionsOnSettingsPage.mapsCell.rawValue].firstMatch
+    }
+
     var conversationsButton: XCUIElement {
         app.buttons[Locators.ConversationsPage.bottomBarRecentListButton.rawValue]
     }
@@ -57,6 +65,25 @@ class OptionsOnSettingsPage: PageModel {
     func openThemeSettings() throws -> ThemeSettingsPage {
         themeButton.tap()
         return try ThemeSettingsPage()
+    }
+
+    func selectChromeAsDefaultBrowser() -> OptionsOnSettingsPage {
+        browserCell.tap()
+        app.descendants(matching: .any)[Locators.OptionsOnSettingsPage.chromeBrowserOption.rawValue].firstMatch.tap()
+        backToPreviousPage.tap()
+        XCTAssertTrue(browserCell.staticTexts["Chrome"].waitForExistence(timeout: 3), "Chrome should be selected")
+        return self
+    }
+
+    func selectGoogleMapsAsDefaultMaps() -> OptionsOnSettingsPage {
+        mapsCell.tap()
+        app.descendants(matching: .any)[Locators.OptionsOnSettingsPage.googleMapsOption.rawValue].firstMatch.tap()
+        backToPreviousPage.tap()
+        XCTAssertTrue(
+            mapsCell.staticTexts["Google Maps"].waitForExistence(timeout: 3),
+            "Google Maps should be selected"
+        )
+        return self
     }
 
     @discardableResult

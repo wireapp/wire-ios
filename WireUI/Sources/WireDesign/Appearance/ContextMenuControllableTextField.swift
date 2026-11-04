@@ -150,7 +150,7 @@ public struct ContextMenuControllableTextField: UIViewRepresentable {
         // Only assign when the value actually changed: setting `text` makes UIKit fire
         // `textFieldDidChangeSelection`, whose write-back to the binding would publish
         // a change from within this view update (undefined behavior in SwiftUI).
-        if uiView.text != text {
+        if !(uiView.text ?? "").unicodeScalars.elementsEqual(text.unicodeScalars) {
             uiView.text = text
         }
         uiView.keyboardType = keyboardType
@@ -175,7 +175,7 @@ public struct ContextMenuControllableTextField: UIViewRepresentable {
             // changes and as a side effect of `updateUIView` setting the text, in which
             // case publishing to the binding would happen during a SwiftUI view update.
             let newText = textField.text ?? ""
-            guard parent.text != newText else { return }
+            guard !parent.text.unicodeScalars.elementsEqual(newText.unicodeScalars) else { return }
             parent.text = newText
         }
     }

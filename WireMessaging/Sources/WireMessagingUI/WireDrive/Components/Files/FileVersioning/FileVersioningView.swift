@@ -132,7 +132,7 @@ private extension FileVersioningView {
             action: { dismiss() },
             label: {
                 Image(.close)
-                    .foregroundStyle(SemanticColors.Icon.foregroundDefaultBlack.color)
+                    .foregroundStyle(ColorTheme.Backgrounds.onBackground.color)
                     .frame(width: 44, height: 44, alignment: .trailing)
             }
         )

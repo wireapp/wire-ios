@@ -116,7 +116,7 @@ final class WireMeetingsMemberRepositoryTests: XCTestCase {
             notFound: [],
             failed: []
         )
-        usersAPI.getUsersUserIDs_MockValue = .init(
+        usersAPI.getUsersUserIDsIncludeContactStatus_MockValue = .init(
             found: [
                 makeProfile(id: selfID, teamID: teamID),
                 makeProfile(id: guestID, teamID: teamID, name: "Updated member", handle: "updated-member"),
@@ -171,13 +171,13 @@ final class WireMeetingsMemberRepositoryTests: XCTestCase {
                 notFound: [],
                 failed: []
             )
-            usersAPI.getUsersUserIDs_MockValue = .init(found: [host, guest, teammate], failed: [])
+            usersAPI.getUsersUserIDsIncludeContactStatus_MockValue = .init(found: [host, guest, teammate], failed: [])
             let members = try await sut.members(in: groupID)
             XCTAssertEqual(Set(members.map(\.qualifiedID)), [selfID, teammate.id])
         }
 
         for failedIDs in [[], [federatedID]] {
-            usersAPI.getUsersUserIDs_MockValue = .init(found: [host], failed: failedIDs)
+            usersAPI.getUsersUserIDsIncludeContactStatus_MockValue = .init(found: [host], failed: failedIDs)
             do {
                 _ = try await sut.members(in: groupID)
                 XCTFail("Import must fail when a current member's profile cannot be checked")
@@ -244,7 +244,7 @@ final class WireMeetingsMemberRepositoryTests: XCTestCase {
         .init(
             id: id, name: name, handle: handle, teamID: teamID, type: .regular, accentID: 0,
             assets: [], deleted: false, email: nil, expiresAt: nil, app: nil, service: nil,
-            supportedProtocols: [.mls], legalholdStatus: .disabled
+            supportedProtocols: [.mls], legalholdStatus: .disabled, contactStatus: nil
         )
     }
 }

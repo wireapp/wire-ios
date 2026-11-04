@@ -42,9 +42,15 @@ public final class ExtensionSettings: NSObject {
     public static let shared = ExtensionSettings(defaults: .shared()!)
 
     private let defaults: UserDefaults
+    private let isLinkPreviewGenerationEnabled: () -> Bool
 
-    public init(defaults: UserDefaults) {
+    public convenience init(defaults: UserDefaults) {
+        self.init(defaults: defaults, isLinkPreviewGenerationEnabled: { SecurityFlags.generateLinkPreviews.isEnabled })
+    }
+
+    init(defaults: UserDefaults, isLinkPreviewGenerationEnabled: @escaping () -> Bool) {
         self.defaults = defaults
+        self.isLinkPreviewGenerationEnabled = isLinkPreviewGenerationEnabled
         super.init()
         setupDefaultValues()
     }
@@ -60,7 +66,11 @@ public final class ExtensionSettings: NSObject {
     }
 
     public var disableLinkPreviews: Bool {
-        get { defaults.bool(forKey: ExtensionSettingsKey.disableLinkPreviews.rawValue) }
+        get {
+            // Enforce the flag in both the app and share extension without overwriting the user's preference.
+            !isLinkPreviewGenerationEnabled() || defaults
+                .bool(forKey: ExtensionSettingsKey.disableLinkPreviews.rawValue)
+        }
         set { defaults.set(newValue, forKey: ExtensionSettingsKey.disableLinkPreviews.rawValue) }
     }
 }

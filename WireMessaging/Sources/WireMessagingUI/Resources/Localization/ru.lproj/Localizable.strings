@@ -160,6 +160,7 @@
 "conversation.wireCells.files.error.noConnection.message" = "Не удалось загрузить список ваших файлов. Пожалуйста, проверьте подключение к интернету и повторите попытку.";
 "conversation.wireCells.files.error.noConnection.retry" = "Повторить";
 "conversation.wireCells.files.search.title" = "Поиск файлов";
+"conversation.wireCells.files.list.selectItems" = "Выбрать";
 "conversation.wireCells.files.list.createFolder" = "Создать папку";
 "conversation.wireCells.files.list.createFile" = "Создать файл";
 "conversation.wireCells.files.list.createFile.presentation" = "Презентация";
@@ -191,6 +192,46 @@
 "conversation.wireCells.files.downloadFailed" = "Не удалось загрузить, повторите попытку";
 "conversation.wireCells.files.downloadingFile" = "Загрузка файла...";
 "conversation.wireCells.files.offlineModeHint" = "Вы по-прежнему можете получить доступ к своим файлам в режиме оффлайн.";
+"conversation.wireCells.files.time.just_now" = "Только что";
+
+
+// MARK: - Shared Drive uploads
+
+"conversation.wireCells.files.upload.menu.upload" = "Загрузить";
+"conversation.wireCells.files.upload.menu.file" = "Загрузить файл";
+"conversation.wireCells.files.upload.menu.media" = "Загрузить фото или видео";
+
+"conversation.wireCells.files.upload.destination" = "в %@";
+
+"conversation.wireCells.files.upload.uploadingFile" = "Загрузка файла...";
+"conversation.wireCells.files.upload.uploadedFile" = "Загружено";
+"conversation.wireCells.files.upload.failedFile" = "Не удалось загрузить файл";
+
+"conversation.wireCells.files.upload.uploadingOne" = "Загрузка 1 файла";
+"conversation.wireCells.files.upload.uploadingMany" = "Загрузка %d файлов";
+"conversation.wireCells.files.upload.completeOne" = "Загрузка завершена";
+"conversation.wireCells.files.upload.completeMany" = "%d из %d загружено";
+"conversation.wireCells.files.upload.progress" = "%d из %d загружено";
+"conversation.wireCells.files.upload.failedOne" = "Не удалось загрузить файл";
+"conversation.wireCells.files.upload.failedMany" = "Не удалось загрузить %d файлов";
+"conversation.wireCells.files.upload.someFailedOne" = "Не удалось загрузить 1";
+"conversation.wireCells.files.upload.someFailedMany" = "Не удалось загрузить %d";
+"conversation.wireCells.files.upload.tapToReview" = "Выбрать для проверки";
+
+"conversation.wireCells.files.upload.cancel" = "Отмена";
+"conversation.wireCells.files.upload.cancelAll" = "Отменить все";
+"conversation.wireCells.files.upload.retry" = "Повторить";
+"conversation.wireCells.files.upload.retryAll" = "Повторить все";
+
+"conversation.wireCells.files.upload.tooManyFiles.title" = "Слишком много файлов";
+"conversation.wireCells.files.upload.tooManyFiles.message" = "Вы можете одновременно загрузить до %d файлов.";
+"conversation.wireCells.files.upload.prepareFailed.title" = "Не удалось начать загрузку";
+"conversation.wireCells.files.upload.prepareFailed.message" = "%@ не удалось подготовить к загрузке. Убедитесь, что файл доступен и на вашем устройстве достаточно свободного места.";
+"conversation.wireCells.files.upload.importFailed.title" = "Не удалось импортировать файлы";
+"conversation.wireCells.files.upload.importFailed.message" = "Некоторые из выбранных файлов не могут быть загружены.";
+"conversation.wireCells.files.upload.permissionWarning.title" = "Wire необходим доступ к вашим фото";
+"conversation.wireCells.files.upload.permissionWarning.restrictions.message" = "Wire не может получить доступ к библиотеке, поскольку включены ограничения.";
+"conversation.wireCells.files.upload.permissionWarning.denied.message" = "Перейдите в Настройки и разрешите Wire доступ к вашим фото.";
 
 // MARK: - Recycle Bin
 "conversation.wireCells.recycleBin.navigationTitle" = "Корзина";

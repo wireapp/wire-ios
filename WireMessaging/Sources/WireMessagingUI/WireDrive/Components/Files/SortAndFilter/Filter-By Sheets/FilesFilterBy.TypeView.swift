@@ -19,6 +19,7 @@
 import SwiftUI
 import WireDesign
 import WireFoundation
+import WireLocators
 import WireMessagingDomain
 
 private typealias Strings = L10n.Localizable.Conversation.WireCells
@@ -67,7 +68,8 @@ extension FilesFilterBy {
                 FormStyledSelectionList(
                     items: viewModel.presentedItems,
                     onSelected: viewModel.toggleItemSelection,
-                    itemView: itemView
+                    itemView: itemView,
+                    itemIdentifier: { Locators.WireDrive.FilesFilterPage.typeItem("\($0)") }
                 )
 
                 Buttons.RemoveFilter {

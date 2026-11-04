@@ -24,14 +24,15 @@ public struct UpdateMeetingParameters: Encodable, Sendable {
     public let title: String?
     public let startTime: Date?
     public let endTime: Date?
-    public let recurrence: MeetingRecurrence?
+    /// `nil` leaves recurrence unchanged; `.some(nil)` clears it; a value replaces it.
+    public let recurrence: MeetingRecurrence??
     public let timeZoneIdentifier: String?
 
     public init(
         title: String? = nil,
         startTime: Date? = nil,
         endTime: Date? = nil,
-        recurrence: MeetingRecurrence? = nil,
+        recurrence: MeetingRecurrence?? = nil,
         timeZoneIdentifier: String? = nil
     ) {
         self.title = title
@@ -58,9 +59,6 @@ public struct UpdateMeetingParameters: Encodable, Sendable {
         if let endTime {
             try container.encode(ISO8601DateFormatter.internetDateTime.string(from: endTime), forKey: .endTime)
         }
-        // A `nil` recurrence is omitted rather than encoded as `null`:
-        // the backend's Recurrence parser rejects explicit `null` with a
-        // 400 bad-request (verified 2026-07-22).
         try container.encodeIfPresent(recurrence, forKey: .recurrence)
         try container.encodeIfPresent(timeZoneIdentifier, forKey: .timeZoneIdentifier)
     }

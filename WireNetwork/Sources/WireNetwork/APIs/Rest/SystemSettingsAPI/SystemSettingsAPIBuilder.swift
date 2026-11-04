@@ -77,6 +77,8 @@ public struct SystemSettingsAPIBuilder {
             SystemSettingsAPIV17(networkService: networkService)
         case .v18:
             SystemSettingsAPIV18(networkService: networkService)
+        case .v19:
+            SystemSettingsAPIV19(networkService: networkService)
         }
     }
 

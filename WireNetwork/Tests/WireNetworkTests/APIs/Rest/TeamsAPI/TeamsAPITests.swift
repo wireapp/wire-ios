@@ -703,7 +703,8 @@ final class TeamsAPITests: XCTestCase {
                         app: .init(category: "cat", description: "desc"),
                         service: nil,
                         supportedProtocols: [.mls],
-                        legalholdStatus: .noConsent
+                        legalholdStatus: .noConsent,
+                        contactStatus: nil
                     )
                 ]
                 XCTAssertEqual(apps, expectedApps, "failed for apiVersion \(apiVersion)")

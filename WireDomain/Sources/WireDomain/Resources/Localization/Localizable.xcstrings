@@ -7005,6 +7005,18 @@
         }
       }
     },
+    "push.notification.title.ongoingMeeting" : {
+      "comment" : "Meeting invitation title during the meeting's time window: the meeting's title.",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ongoing: %@"
+          }
+        }
+      }
+    },
     "push.notification.title.updatedMeeting" : {
       "comment" : "Meeting update notification title: the meeting's title.",
       "extractionState" : "manual",

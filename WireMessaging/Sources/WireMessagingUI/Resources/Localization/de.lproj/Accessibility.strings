@@ -79,3 +79,12 @@
 
 // MARK: - Conversation details shared drive options
 "conversation.details.sharedDrive.closeButton" = "Unterhaltungsdetails schließen";
+
+// MARK: - Shared Drive uploads
+
+"conversation.wireCells.files.upload.expand" = "Upload-Details anzeigen";
+"conversation.wireCells.files.upload.collapse" = "Upload-Details ausblenden";
+"conversation.wireCells.files.upload.cancelFile" = "Upload von {0} abbrechen";
+"conversation.wireCells.files.upload.retryFile" = "Hochladen von {0} wiederholen";
+"conversation.wireCells.files.upload.cancelAll" = "Alle Uploads abbrechen";
+"conversation.wireCells.files.upload.retryAll" = "Alle fehlgeschlagenen Uploads wiederholen";

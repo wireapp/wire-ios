@@ -33,11 +33,11 @@ extension FilesViewModel {
                 case .primaryAction:
                     await performPrimaryAction(item: item)
                 case .deleteToRecycleBin:
-                    await deleteItem(item, permanently: false)
+                    await deleteItems([item], permanently: false)
                 case .deletePermanently:
-                    await deleteItem(item, permanently: true)
+                    await deleteItems([item], permanently: true)
                 case .restore:
-                    await restoreItem(item)
+                    await restoreItems([item])
                 case .rename:
                     sheetNavigation = .renameFile(fileItem: item)
                 case .editTags:
@@ -45,7 +45,7 @@ extension FilesViewModel {
                 case .shareLink:
                     sheetNavigation = .shareLink(fileItem: item)
                 case .moveToFolder:
-                    sheetNavigation = .moveToFolder(fileItem: item)
+                    sheetNavigation = .moveToFolder(fileItems: [item])
                 case .showVersionHistory:
                     sheetNavigation = .versionHistory(fileItem: item)
                 case .edit:
@@ -81,17 +81,18 @@ extension FilesViewModel {
         )
     }
 
-    func moveToFolderViewModel(item: FilesViewItem) -> MoveToFolderViewModel {
-        let containerPath = item.filePath.components(separatedBy: "/").dropLast().joined(separator: "/")
+    func moveToFolderViewModel(items: [FilesViewItem]) -> MoveToFolderViewModel {
+        // All selected items share the same parent folder, so derive the container path from the first item.
+        let containerPath = items[0].filePath.components(separatedBy: "/").dropLast().joined(separator: "/")
         return .init(
             containerPath: containerPath,
-            nodeID: item.id,
-            nodeName: item.name,
+            nodeIDs: items.map(\.id),
             onFinish: { [weak self] in
                 self?.sheetNavigation = nil
+                self?.enableMultipleSelection(false)
                 Task { await self?.reload(refreshing: true) }
             },
-            moveNodeUseCase: useCases.moveNode,
+            moveNodesUseCase: useCases.moveNodes,
             createFileUseCase: useCases.createFile,
             fetchNodesUseCase: useCases.fetchNodes
         )

@@ -731,7 +731,8 @@ extension CameraKeyboardViewController: WireCallCenterCallStateObserver {
         conversation: ZMConversation,
         caller: UserType,
         timestamp: Date?,
-        previousCallState: CallState?
+        previousCallState: CallState?,
+        callEndReason: CallClosedReason?
     ) {
         // swiftlint:disable:next todo_requires_jira_link
         // TODO: fix undesired camera keyboard openings here

@@ -32,6 +32,7 @@ final class GetMeetingAPITests: XCTestCase {
 
         XCTAssertEqual(response.id, meetingID)
         XCTAssertNil(response.timeZoneIdentifier)
+        XCTAssertNil(response.hasPassword)
         XCTAssertEqual(apiService.executeRequestRequiringAccessToken_Invocations.count, 1)
 
         let invocation = try XCTUnwrap(
@@ -66,6 +67,29 @@ final class GetMeetingAPITests: XCTestCase {
         XCTAssertEqual(response.id, meetingID)
         XCTAssertFalse(response.isTrial)
         XCTAssertEqual(response.timeZoneIdentifier, "America/New_York")
+    }
+
+    func testGetMeeting_V19_DecodesLinkAndPasswordState() async throws {
+        let resource = try MockJSONPayloadResource(name: "MeetingResponse")
+        var json = try XCTUnwrap(JSONSerialization.jsonObject(with: resource.jsonData) as? [String: Any])
+        let link = "https://wire.example/meeting-join/?key=server&code=link"
+        json["link"] = link
+
+        for hasPassword in [true, false] {
+            json["has_password"] = hasPassword
+            let responseData = try JSONSerialization.data(withJSONObject: json)
+            let apiService = MockAPIServiceProtocol()
+            apiService.executeRequestRequiringAccessToken_MockMethod = { request, _ in
+                let (_, response) = try request.mockResponse(statusCode: .ok)
+                return (responseData, response)
+            }
+            let sut = makeAPI(version: .v19, apiService: apiService)
+
+            let response = try await sut.getMeeting(id: meetingID)
+
+            XCTAssertEqual(response.link?.absoluteString, link)
+            XCTAssertEqual(response.hasPassword, hasPassword)
+        }
     }
 
     func testGetMeeting_ThrowsUnsupportedEndpoint_V0_To_V15() async {

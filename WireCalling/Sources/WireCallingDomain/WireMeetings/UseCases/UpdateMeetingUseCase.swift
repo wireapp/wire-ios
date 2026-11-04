@@ -40,7 +40,9 @@ package struct UpdateMeetingUseCase: UpdateMeetingUseCaseProtocol {
         startTime: Date,
         endTime: Date,
         recurrence: MeetingRecurrence?,
-        participants: [MeetingMember]
+        participants: [MeetingMember],
+        emailsToAdd: [String] = [],
+        emailsToRemove: [String] = []
     ) async throws -> Meeting {
         // The participant diff below needs the conversation's current members
         // as its baseline; without it, every existing participant would look
@@ -52,13 +54,26 @@ package struct UpdateMeetingUseCase: UpdateMeetingUseCaseProtocol {
         // Update the meeting itself first: it can fail with a permission
         // error (only the creator may edit), in which case the participants
         // should stay untouched.
-        let updatedMeeting = try await meetingRepository.updateMeeting(
+        var updatedMeeting = try await meetingRepository.updateMeeting(
             id: meeting.id,
             title: title,
             startTime: startTime,
             endTime: endTime,
             recurrence: recurrence
         )
+
+        if !emailsToAdd.isEmpty || !emailsToRemove.isEmpty {
+            do {
+                try await meetingRepository.updateInvitedEmails(
+                    id: meeting.id,
+                    adding: emailsToAdd,
+                    removing: emailsToRemove
+                )
+                updatedMeeting.invitedEmails = try await meetingRepository.fetchInvitedEmails(id: meeting.id)
+            } catch {
+                throw UpdateMeetingUseCaseError.emailInvitationsFailed(updatedMeeting: updatedMeeting)
+            }
+        }
 
         // The creator is implicit in the form's participant selection, so it
         // is excluded from the baseline too — otherwise every update would
@@ -130,6 +145,10 @@ package struct UpdateMeetingUseCase: UpdateMeetingUseCaseProtocol {
         return updatedMeeting
     }
 
+    package func fetchInvitedEmails(for meeting: Meeting) async throws -> [String] {
+        try await meetingRepository.fetchInvitedEmails(id: meeting.id)
+    }
+
     package func updateConversationName(for meeting: Meeting) async throws {
         try await conversationRepository.updateConversationName(
             meeting.title,
@@ -144,6 +163,8 @@ package enum UpdateMeetingUseCaseError: Error, Equatable {
     /// The meeting's conversation has not been resolved from the local store,
     /// so there is no baseline to diff the selected participants against.
     case conversationNotResolved
+
+    case emailInvitationsFailed(updatedMeeting: Meeting)
 
     /// The meeting update succeeded, but its dedicated conversation could not be renamed.
     case conversationNameUpdateFailed(updatedMeeting: Meeting, participantsNotAdded: [MeetingMember] = [])

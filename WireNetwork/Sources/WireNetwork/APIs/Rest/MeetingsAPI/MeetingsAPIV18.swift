@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-final class MeetingsAPIV18: MeetingsAPIV17 {
+class MeetingsAPIV18: MeetingsAPIV17 {
 
     override var apiVersion: APIVersion {
         .v18

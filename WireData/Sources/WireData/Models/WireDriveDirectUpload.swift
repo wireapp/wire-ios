@@ -109,17 +109,6 @@ public final class WireDriveDirectUpload: NSManagedObject {
 
     @NSManaged public var attemptCount: Int16
 
-    /// The identifier of the background `URLSession` carrying the transfer.
-
-    @NSManaged public var sessionIdentifier: String?
-
-    /// The `URLSessionTask.taskIdentifier` of the transfer, or `-1` if no task exists.
-    ///
-    /// Diagnostics only. Task identifiers are unique only within a session and are reused, so they
-    /// are never used to correlate a task back to its record — `uploadID` is.
-
-    @NSManaged public var taskIdentifier: Int64
-
     /// The presigned PUT URL the transfer uploads to.
 
     @NSManaged public var presignedURL: String?
@@ -128,23 +117,15 @@ public final class WireDriveDirectUpload: NSManagedObject {
 
     @NSManaged public var presignedURLExpiresAt: Date?
 
-    /// Additional signed headers the presigned request requires, as a JSON object.
-    ///
-    /// Normally `nil`: a presigned PUT carries its metadata in the query string, so the request
-    /// needs no application headers. This exists so that a backend requiring extra signed headers
-    /// can be supported without another model version.
-
-    @NSManaged public var presignedRequestHeaders: String?
-
     /// The raw value of the reason the upload failed, or `0` if it has not failed.
     ///
     /// Mirrors `WireDriveUploadError` in `WireMessagingDomain`.
 
     @NSManaged public var failureReasonCode: Int16
 
-    /// A human readable description of the failure, for logging only.
+    /// The detail needed to rebuild the failure together with `failureReasonCode`, e.g. an HTTP status code.
     ///
-    /// Never surfaced to the user: it can contain raw backend error payloads.
+    /// Never surfaced to the user as text.
 
     @NSManaged public var failureMessage: String?
 

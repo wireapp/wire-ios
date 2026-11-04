@@ -271,7 +271,8 @@ public class WireCallCenterV3Mock: WireCallCenterV3 {
             conversationId: conversationId,
             callerId: callerId,
             messageTime: nil,
-            previousCallState: nil
+            previousCallState: nil,
+            callEndReason: nil
         ).post(in: uiMOC!.notificationContext)
     }
 

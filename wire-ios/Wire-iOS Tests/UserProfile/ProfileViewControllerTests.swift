@@ -63,6 +63,7 @@ final class ProfileViewControllerTests: XCTestCase {
         mockViewModel.incomingRequestFooterHidden = true
         mockViewModel.hasLegalHoldItem = false
         mockViewModel.updateActionsList_MockMethod = {}
+        mockViewModel.refreshContactStatus_MockMethod = {}
         mockViewModel.context = .profileViewer
         mockViewModel.setDelegate_MockMethod = { _ in }
         mockViewModel.setConversationTransitionClosure_MockMethod = { _ in }

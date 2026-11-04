@@ -30,6 +30,8 @@ protocol ConversationEventNotificationBuilderProtocol {
 struct ConversationEventNotificationBuilder: ConversationEventNotificationBuilderProtocol {
 
     let validator: ConversationEventNotificationBuilder.Validator
+    let answeredElsewhereCallTracker: AnsweredElsewhereCallTracker
+    let accountID: UUID
     let conversationMessageAddEventNotificationBuilder: ConversationMessageAddEventNotificationBuilder
     let conversationMemberLeaveEventNotificationBuilder: ConversationMemberLeaveEventNotificationBuilder
     let conversationMemberJoinEventNotificationBuilder: ConversationMemberJoinEventNotificationBuilder
@@ -57,6 +59,11 @@ struct ConversationEventNotificationBuilder: ConversationEventNotificationBuilde
         )
 
         guard canDisplayNotification else {
+            let isCallerSelf = (try? await validator.userLocalStore.isSelfUser(
+                id: event.senderID.id,
+                domain: event.senderID.domain
+            ).isSelfUser) ?? false
+            answeredElsewhereCallTracker.track(event: event, accountID: accountID, isCallerSelf: isCallerSelf)
             return nil
         }
 

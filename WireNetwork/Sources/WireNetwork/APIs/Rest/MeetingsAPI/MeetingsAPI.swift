@@ -49,10 +49,35 @@ public protocol MeetingsAPI: Sendable {
 
     func updateMeeting(id: QualifiedID, parameters: UpdateMeetingParameters) async throws -> MeetingResponse
 
+    /// Add email invitees to a meeting.
+    ///
+    /// - Parameters:
+    ///   - id: The meeting ID.
+    ///   - emails: The email addresses to add.
+
+    func addMeetingInvitations(id: QualifiedID, emails: [String]) async throws
+
+    /// Remove email invitees from a meeting.
+    ///
+    /// - Parameters:
+    ///   - id: The meeting ID.
+    ///   - emails: The email addresses to remove.
+
+    func removeMeetingInvitations(id: QualifiedID, emails: [String]) async throws
+
     /// Delete a meeting.
     ///
     /// - Parameter id: The id of the meeting to delete.
 
     func deleteMeeting(id: QualifiedID) async throws
+
+    /// Refreshes the link for an existing meeting.
+    ///
+    /// - Parameters:
+    ///   - id: The meeting ID.
+    ///   - password: The optional meeting password.
+    /// - Returns: The updated meeting.
+
+    func refreshMeetingLink(id: QualifiedID, password: String?) async throws -> MeetingResponse
 
 }

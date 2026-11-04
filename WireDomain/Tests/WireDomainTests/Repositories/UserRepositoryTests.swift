@@ -85,7 +85,7 @@ final class UserRepositoryTests: XCTestCase {
 
         // Mock
 
-        usersAPI.getUsersUserIDs_MockValue = WireNetwork.UserList(
+        usersAPI.getUsersUserIDsIncludeContactStatus_MockValue = WireNetwork.UserList(
             found: [Scaffolding.user1],
             failed: []
         )
@@ -111,7 +111,7 @@ final class UserRepositoryTests: XCTestCase {
 
         // Mock
 
-        usersAPI.getUsersUserIDs_MockValue = WireNetwork.UserList(
+        usersAPI.getUsersUserIDsIncludeContactStatus_MockValue = WireNetwork.UserList(
             found: [Scaffolding.user1],
             failed: []
         )
@@ -473,7 +473,8 @@ final class UserRepositoryTests: XCTestCase {
             app: nil,
             service: nil,
             supportedProtocols: [.mls],
-            legalholdStatus: .disabled
+            legalholdStatus: .disabled,
+            contactStatus: nil
         )
 
         static let selfUser = SelfUser(

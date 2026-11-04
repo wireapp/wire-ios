@@ -22,6 +22,7 @@ import Foundation
 import WireDataModelSupport
 import XCTest
 
+@testable import WireDomain
 @testable import WireSyncEngine
 
 final class WireCallCenterTransportMock: WireCallCenterTransport {
@@ -147,6 +148,7 @@ final class WireCallCenterV3Tests: MessagingTest {
         expectedCallState: CallState,
         expectedCallerId: AVSIdentifier,
         expectedConversationId: AVSIdentifier,
+        expectedCallEndReason: CallClosedReason? = nil,
         line: UInt = #line,
         file: StaticString = #filePath,
         actionBlock: () throws -> Void
@@ -168,6 +170,7 @@ final class WireCallCenterV3Tests: MessagingTest {
             )
             XCTAssertEqual(note.callerId, expectedCallerId, "callerIds are not the same", file: file, line: line)
             XCTAssertEqual(note.callState, expectedCallState, "callStates are not the same", file: file, line: line)
+            XCTAssertEqual(note.callEndReason, expectedCallEndReason, file: file, line: line)
 
             return true
         }
@@ -438,6 +441,202 @@ final class WireCallCenterV3Tests: MessagingTest {
                 conversationId: oneOnOneConversationID.serialized,
                 messageTime: Date(),
                 userId: otherUserID.serialized
+            )
+        }
+    }
+
+    func testThatGroupCallAnsweredElsewhereStaysOngoingAndDoesNotEndAsMissed() {
+        sut.handleIncomingCall(
+            conversationId: groupConversationID.serialized,
+            messageTime: Date(),
+            userId: otherUserID.serialized,
+            clientId: otherUserClientID,
+            isVideoCall: false,
+            shouldRing: true,
+            conversationType: .group
+        )
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        checkThatItPostsNotification(
+            expectedCallState: .incoming(isVideo: false, shouldRing: false, degraded: false),
+            expectedCallerId: otherUserID,
+            expectedConversationId: groupConversationID,
+            expectedCallEndReason: .answeredElsewhere
+        ) {
+            sut.handleCallEnd(
+                reason: .answeredElsewhere,
+                conversationId: groupConversationID.serialized,
+                messageTime: nil,
+                userId: selfUserID.serialized
+            )
+        }
+
+        XCTAssertNotNil(sut.callSnapshots[groupConversationID])
+        XCTAssertTrue(sut.callsAnsweredElsewhere.contains(groupConversationID))
+
+        checkThatItPostsNotification(
+            expectedCallState: .terminating(reason: .answeredElsewhere),
+            expectedCallerId: otherUserID,
+            expectedConversationId: groupConversationID
+        ) {
+            sut.handleCallEnd(
+                reason: .normal,
+                conversationId: groupConversationID.serialized,
+                messageTime: Date(),
+                userId: selfUserID.serialized
+            )
+        }
+
+        XCTAssertNil(sut.callSnapshots[groupConversationID])
+        XCTAssertFalse(sut.callsAnsweredElsewhere.contains(groupConversationID))
+    }
+
+    func testThatOwnGroupCallStartedElsewhereDoesNotEndAsMissed() {
+        sut.handleIncomingCall(
+            conversationId: groupConversationID.serialized,
+            messageTime: Date(),
+            userId: selfUserID.serialized,
+            clientId: otherUserClientID,
+            isVideoCall: false,
+            shouldRing: false,
+            conversationType: .group
+        )
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        sut.handleCallEnd(
+            reason: .answeredElsewhere,
+            conversationId: groupConversationID.serialized,
+            messageTime: nil,
+            userId: selfUserID.serialized
+        )
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        checkThatItPostsNotification(
+            expectedCallState: .terminating(reason: .answeredElsewhere),
+            expectedCallerId: selfUserID,
+            expectedConversationId: groupConversationID
+        ) {
+            sut.handleCallEnd(
+                reason: .normal,
+                conversationId: groupConversationID.serialized,
+                messageTime: Date(),
+                userId: otherUserID.serialized
+            )
+        }
+    }
+
+    func testThatJoiningLocallyClearsAnsweredElsewhereForTheFinalCallEnd() {
+        sut.handleIncomingCall(
+            conversationId: groupConversationID.serialized,
+            messageTime: Date(),
+            userId: otherUserID.serialized,
+            clientId: otherUserClientID,
+            isVideoCall: false,
+            shouldRing: true,
+            conversationType: .group
+        )
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        sut.handleCallEnd(
+            reason: .answeredElsewhere,
+            conversationId: groupConversationID.serialized,
+            messageTime: nil,
+            userId: selfUserID.serialized
+        )
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(sut.callsAnsweredElsewhere.contains(groupConversationID))
+
+        sut.handleAnsweredCall(conversationId: groupConversationID.serialized)
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertFalse(sut.callsAnsweredElsewhere.contains(groupConversationID))
+
+        checkThatItPostsNotification(
+            expectedCallState: .terminating(reason: .normal),
+            expectedCallerId: otherUserID,
+            expectedConversationId: groupConversationID
+        ) {
+            sut.handleCallEnd(
+                reason: .normal,
+                conversationId: groupConversationID.serialized,
+                messageTime: Date(),
+                userId: selfUserID.serialized
+            )
+        }
+    }
+
+    func testThatAnsweredElsewhereSurvivesSnapshotCleanupUntilTheFinalCallEnd() {
+        sut.handleIncomingCall(
+            conversationId: groupConversationID.serialized,
+            messageTime: Date(),
+            userId: otherUserID.serialized,
+            clientId: otherUserClientID,
+            isVideoCall: false,
+            shouldRing: true,
+            conversationType: .group
+        )
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        sut.handleCallEnd(
+            reason: .answeredElsewhere,
+            conversationId: groupConversationID.serialized,
+            messageTime: nil,
+            userId: selfUserID.serialized
+        )
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        sut.handle(callState: .terminating(reason: .securityDegraded), conversationId: groupConversationID)
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertNil(sut.callSnapshots[groupConversationID])
+        XCTAssertTrue(sut.callsAnsweredElsewhere.contains(groupConversationID))
+
+        checkThatItPostsNotification(
+            expectedCallState: .terminating(reason: .answeredElsewhere),
+            expectedCallerId: selfUserID,
+            expectedConversationId: groupConversationID
+        ) {
+            sut.handleCallEnd(
+                reason: .normal,
+                conversationId: groupConversationID.serialized,
+                messageTime: Date(),
+                userId: selfUserID.serialized
+            )
+        }
+        XCTAssertFalse(sut.callsAnsweredElsewhere.contains(groupConversationID))
+    }
+
+    func testThatUnansweredGroupCallStillEndsNormally() {
+        sut.callsAnsweredElsewhere.insert(groupConversationID)
+
+        sut.handleIncomingCall(
+            conversationId: groupConversationID.serialized,
+            messageTime: Date(),
+            userId: otherUserID.serialized,
+            clientId: otherUserClientID,
+            isVideoCall: false,
+            shouldRing: true,
+            conversationType: .group
+        )
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertFalse(sut.callsAnsweredElsewhere.contains(groupConversationID))
+
+        sut.handleCallEnd(
+            reason: .stillOngoing,
+            conversationId: groupConversationID.serialized,
+            messageTime: nil,
+            userId: otherUserID.serialized
+        )
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        checkThatItPostsNotification(
+            expectedCallState: .terminating(reason: .normal),
+            expectedCallerId: otherUserID,
+            expectedConversationId: groupConversationID
+        ) {
+            sut.handleCallEnd(
+                reason: .normal,
+                conversationId: groupConversationID.serialized,
+                messageTime: Date(),
+                userId: selfUserID.serialized
             )
         }
     }
@@ -1147,6 +1346,24 @@ final class WireCallCenterV3Tests: MessagingTest {
         }
     }
 
+    func testMLSMeetingStartsWithMeetingFlag_TC_11979() throws {
+        groupConversation.groupType = .meeting
+
+        try assertMLSConference(
+            expectedCallState: .outgoing(isVideo: false, degraded: false),
+            expectedCallerID: selfUserID,
+            expectedConversationID: groupConversationID
+        ) {
+            try sut.startCall(in: groupConversation, isVideo: false)
+            XCTAssertNil(mockAVSWrapper.startCallArguments)
+            XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
+
+            let arguments = try XCTUnwrap(mockAVSWrapper.startCallArguments)
+            XCTAssertEqual(arguments.conversationType, .mlsConference)
+            XCTAssertTrue(arguments.isMeeting)
+        }
+    }
+
     func assertMLSConference(
         expectedCallState: CallState,
         expectedCallerID: AVSIdentifier,
@@ -1344,6 +1561,73 @@ final class WireCallCenterV3Tests: MessagingTest {
         XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
     }
 
+    func testThatAppParticipationIsAvailableToTheNotificationExtension() throws {
+        let suiteName = UUID().uuidString
+        let previousStorage = VoIPPushHelper.storage
+        VoIPPushHelper.storage = try XCTUnwrap(UserDefaults(suiteName: suiteName))
+        defer {
+            VoIPPushHelper.storage.removePersistentDomain(forName: suiteName)
+            VoIPPushHelper.storage = previousStorage
+        }
+        let extensionTracker = AnsweredElsewhereCallTracker(
+            userDefaults: try XCTUnwrap(UserDefaults(suiteName: suiteName))
+        )
+        let end = try JSONDecoder().decode(
+            CallContent.self,
+            from: Data(#"{"type":"CONFEND","src_clientid":"other","resp":false}"#.utf8)
+        )
+
+        func processStart(sender: AVSIdentifier, responded: Bool, timestamp: String) {
+            let data = Data("""
+            {"type":"CONFSTART","src_clientid":"other","resp":\(responded),"timestamp":"\(timestamp)"}
+            """.utf8)
+            sut.processCallEvent(CallEvent(
+                data: data,
+                currentTimestamp: .now,
+                serverTimestamp: .now,
+                conversationId: groupConversationID,
+                userId: sender,
+                clientId: otherUserClientID
+            ))
+        }
+
+        for isReady in [false, true] {
+            if isReady {
+                sut.setCallReady(version: 3)
+                XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+            }
+            for responded in [false, true] {
+                processStart(sender: selfUserID, responded: responded, timestamp: "1000")
+                sut.handleIncomingCall(
+                    conversationId: groupConversationID.serialized,
+                    messageTime: .now,
+                    userId: otherUserID.serialized,
+                    clientId: otherUserClientID,
+                    isVideoCall: false,
+                    shouldRing: true,
+                    conversationType: .group
+                )
+                XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+                XCTAssertTrue(extensionTracker.track(
+                    callContent: end,
+                    conversationID: groupConversationID.identifier,
+                    accountID: selfUserID.identifier,
+                    isCallerSelf: false
+                ))
+
+                processStart(sender: selfUserID, responded: responded, timestamp: "1000")
+                processStart(sender: otherUserID, responded: false, timestamp: "2000")
+                XCTAssertFalse(extensionTracker.track(
+                    callContent: end,
+                    conversationID: groupConversationID.identifier,
+                    accountID: selfUserID.identifier,
+                    isCallerSelf: false
+                ), "A later unanswered conference must still be reported as missed")
+            }
+        }
+    }
+
     func testThatItBuffersEventsUntilAVSIsReady() {
         // given
         let userId = AVSIdentifier.stub
@@ -1375,6 +1659,32 @@ final class WireCallCenterV3Tests: MessagingTest {
             XCTAssertEqual(event.data, data)
             XCTAssertEqual(conversationType, .oneToOne)
             XCTAssertFalse(isMeeting)
+        }
+    }
+
+    func testReceivedMLSCallPreservesMeetingFlag_TC_11979() throws {
+        groupConversation.messageProtocol = .mls
+        groupConversation.mlsGroupID = .random()
+        try uiMOC.save()
+        sut.setCallReady(version: 3)
+
+        for isMeeting in [true, false] {
+            groupConversation.groupType = isMeeting ? .meeting : .group
+            let previousCount = mockAVSWrapper.receivedCallEvents.count
+            sut.processCallEvent(CallEvent(
+                data: verySmallJPEGData(),
+                currentTimestamp: .now,
+                serverTimestamp: .now,
+                conversationId: groupConversationID,
+                userId: otherUserID,
+                clientId: otherUserClientID
+            ))
+            XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+            XCTAssertEqual(mockAVSWrapper.receivedCallEvents.count, previousCount + 1)
+            let (_, conversationType, receivedIsMeeting) = try XCTUnwrap(mockAVSWrapper.receivedCallEvents.last)
+            XCTAssertEqual(conversationType, .mlsConference)
+            XCTAssertEqual(receivedIsMeeting, isMeeting)
         }
     }
 

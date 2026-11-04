@@ -91,7 +91,7 @@ jobs:
       rerun_failed_from_previous: ${{ inputs.rerun_failed_from_previous }}
       testiny_run_name: ${{ inputs.testiny_run_name }}
       notify: always
-      timeout_minutes: 150
+      timeout_minutes: 180
     secrets:
       ZENKINS_USERNAME: ${{ secrets.ZENKINS_USERNAME }}
       DD_API_KEY: ${{ secrets.DD_API_KEY }}

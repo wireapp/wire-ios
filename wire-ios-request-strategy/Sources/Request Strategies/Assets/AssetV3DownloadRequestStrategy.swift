@@ -18,6 +18,7 @@
 
 import GenericMessageProtocol
 import WireImages
+import WireLogging
 import WireTransport
 
 private let zmLog = ZMSLog(tag: "Asset V3")
@@ -132,6 +133,11 @@ public final class AssetV3DownloadRequestStrategy: AbstractRequestStrategy, ZMDo
             managedObjectContext.delete(assetClientMessage)
         } else {
             zmLog.debug("error downloading asset (\(response.httpStatus))")
+            // Flush immediately: otherwise this change rides along with whatever the sync
+            // engine's next scheduled save happens to be, which during a large batch of
+            // other work (e.g. rejoining many MLS conversations after a backup restore)
+            // can leave the UI showing a stale "downloading" state for a long time.
+            managedObjectContext.saveOrRollback()
             return
         }
 
@@ -150,6 +156,11 @@ public final class AssetV3DownloadRequestStrategy: AbstractRequestStrategy, ZMDo
                 uiContext: managedObjectContext.zm_userInterface!
             )
         }
+
+        // Same reasoning as above: save right away so the sync -> UI context merge (and the
+        // resulting download-finished notification to the conversation cell / MessagePresenter)
+        // isn't left waiting behind whatever else the sync engine happens to save next.
+        managedObjectContext.saveOrRollback()
     }
 
     private func storeAndDecrypt(data: Data, for message: ZMAssetClientMessage) -> Bool {
@@ -157,6 +168,7 @@ public final class AssetV3DownloadRequestStrategy: AbstractRequestStrategy, ZMDo
             let genericMessage = message.underlyingMessage,
             let asset = genericMessage.assetData
         else {
+            WireLogger.assets.warn("asset download: missing asset metadata")
             return false
         }
 
@@ -263,6 +275,11 @@ public final class AssetV3DownloadRequestStrategy: AbstractRequestStrategy, ZMDo
                     request.add(progressHandler)
                     return request
                 }
+                WireLogger.assets.error(
+                    "asset download: request could not be created (missing domain?), apiVersion=\(apiVersion)"
+                )
+            } else {
+                WireLogger.assets.error("asset download: message has no asset data")
             }
         }
 

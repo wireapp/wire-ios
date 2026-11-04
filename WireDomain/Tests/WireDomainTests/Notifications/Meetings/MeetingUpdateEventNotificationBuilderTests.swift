@@ -209,7 +209,19 @@ private final class UpdateMeetingsAPI: MeetingsAPI, @unchecked Sendable {
         throw UpdateTestError.unavailable
     }
 
+    func addMeetingInvitations(id: WireNetwork.QualifiedID, emails: [String]) async throws {
+        throw UpdateTestError.unavailable
+    }
+
+    func removeMeetingInvitations(id: WireNetwork.QualifiedID, emails: [String]) async throws {
+        throw UpdateTestError.unavailable
+    }
+
     func deleteMeeting(id: WireNetwork.QualifiedID) async throws { throw UpdateTestError.unavailable }
+
+    func refreshMeetingLink(id: WireNetwork.QualifiedID, password: String?) async throws -> MeetingResponse {
+        throw UpdateTestError.unavailable
+    }
 }
 
 private final class UpdateUsersAPI: UsersAPI {
@@ -234,11 +246,15 @@ private final class UpdateUsersAPI: UsersAPI {
             app: nil,
             service: nil,
             supportedProtocols: nil,
-            legalholdStatus: .disabled
+            legalholdStatus: .disabled,
+            contactStatus: nil
         )
     }
 
-    func getUsers(userIDs: [UserID]) async throws -> UserList { throw UpdateTestError.unavailable }
+    func getUsers(
+        userIDs: [UserID],
+        includeContactStatus: Bool
+    ) async throws -> UserList { throw UpdateTestError.unavailable }
 }
 
 private struct UnusedDeleteBuilder: MeetingDeleteEventNotificationBuilderProtocol {

@@ -34,12 +34,12 @@ package protocol WireDriveNodesRepositoryProtocol: Sendable {
     /// - Returns: A tuple containing an array of `WireDriveNode` objects and an optional next offset for pagination.
     func getNodes(_ request: WireDriveGetNodesRequest) async throws -> (nodes: [WireDriveNode], nextOffset: Int?)
 
-    /// Deletes nodes with the specified IDs.
+    /// Deletes nodes with the specified IDs or paths.
     ///
     /// - Parameters:
-    ///  - nodeIDs: An array of UUIDs representing the IDs of the nodes to delete.
+    ///  - locators: An array of UUIDs or paths representing the location of the nodes to delete.
     ///  - permanently: A boolean indicating whether to delete the nodes permanently or move them to the recycle bin.
-    func deleteNodes(nodeIDs: [UUID], permanently: Bool) async throws -> Bool
+    func deleteNodes(locators: [WireDriveNodeLocator], permanently: Bool) async throws -> Bool
 
     /// Restores nodes with the specified IDs from the recycle bin.
     ///
@@ -68,12 +68,12 @@ package protocol WireDriveNodesRepositoryProtocol: Sendable {
     /// - Returns: Whether the renaming was successful.
     func renameNode(nodeID: UUID, targetPath: String) async throws -> Bool
 
-    /// Moves a node to a new container path.
+    /// Moves nodes to a new container path.
     ///
     /// - Parameters:
-    ///  - nodeID: The `UUID` of the node to move.
-    ///  - newContainerPath: The new container path for the node.
-    func moveNode(nodeID: UUID, newContainerPath: String) async throws
+    ///  - nodeID: The `UUID` of the nodes to move.
+    ///  - newContainerPath: The new container path for the nodes.
+    func moveNodes(nodeIDs: [UUID], newContainerPath: String) async throws
 
     /// Apply some pre-validation checks on node name before sending an upload
     ///
@@ -111,7 +111,8 @@ package struct WireDriveGetNodesRequest: Equatable, Sendable {
         case conversationFileView(root: WireDriveNodeLocator)
 
         /// A `Configuration` suitable for the recycle bin, where deleted files are stored.
-        case recycleBinView(root: WireDriveNodeLocator)
+        /// Includes items in nested folders when recursive is `true`.
+        case recycleBinView(root: WireDriveNodeLocator, recursive: Bool = false)
 
         /// A `Configuration` suitable for the files browser view.
         case filesBrowserView

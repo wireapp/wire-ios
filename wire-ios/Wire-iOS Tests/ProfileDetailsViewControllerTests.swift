@@ -53,6 +53,30 @@ final class ProfileDetailsViewControllerTests: XCTestCase {
         super.tearDown()
     }
 
+    func testNonContactableHintAppearsBelowHeaderAndDisappearsWhenContactable() throws {
+        let user = MockUserType.createConnectedUser(name: "Catherine Jackson", inTeam: selfUserTeam)
+        let controller = ProfileDetailsContentController(
+            user: user,
+            viewer: selfUser,
+            conversation: nil,
+            userSession: userSession
+        )
+        let originalContents = controller.contents
+        controller.isUserNonContactable = true
+
+        XCTAssertEqual(controller.contents, [.nonContactable] + originalContents)
+        let footer = try XCTUnwrap(controller.tableView(
+            UITableView(),
+            viewForFooterInSection: 0
+        ) as? SectionTableFooter)
+        XCTAssertEqual(footer.titleLabel.text, "You can communicate with Catherine Jackson once they are set up.")
+        XCTAssertEqual(footer.titleLabel.accessibilityIdentifier, "profile.contact_status.hint")
+        XCTAssertTrue(footer.titleLabel.adjustsFontForContentSizeCategory)
+
+        controller.isUserNonContactable = false
+        XCTAssertEqual(controller.contents, originalContents)
+    }
+
     // MARK: - 1:1 Conversation
 
     // MARK: Viewer is a team member

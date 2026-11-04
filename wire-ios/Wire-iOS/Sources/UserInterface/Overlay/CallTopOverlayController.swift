@@ -265,7 +265,8 @@ extension CallTopOverlayController: WireCallCenterCallStateObserver {
         conversation: ZMConversation,
         caller: UserType,
         timestamp: Date?,
-        previousCallState: CallState?
+        previousCallState: CallState?,
+        callEndReason: CallClosedReason?
     ) {
         updateCallDurationTimer(for: callState)
     }

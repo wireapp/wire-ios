@@ -57,6 +57,12 @@ class MeetingsPage: PageModel {
         app.buttons[Locators.WireMeetings.MeetingsPage.scheduleMeeting.rawValue]
     }
 
+    func schedule() throws -> MeetingFormPage {
+        createMeetingButton.tap()
+        XCTAssertTrue(scheduleMeetingOption.waitAndTap(), "Schedule a Meeting option did not appear")
+        return try MeetingFormPage()
+    }
+
     func row(_ meeting: WireNetwork.MeetingResponse, start: Date? = nil) -> XCUIElement {
         app.otherElements[rowIdentifier(meeting, start: start ?? meeting.startTime)]
     }

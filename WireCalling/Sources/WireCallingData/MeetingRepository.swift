@@ -69,14 +69,20 @@ public final class MeetingRepository: MeetingRepositoryProtocol {
         title: String,
         startTime: Date,
         endTime: Date,
-        recurrence: WireCallingDomain.MeetingRecurrence?
-    ) async throws -> Meeting {
+        recurrence: WireCallingDomain.MeetingRecurrence?,
+        type: WireCallingDomain.MeetingType,
+        password: String?,
+        invitedEmails: [String] = []
+    ) async throws -> MeetingCreationResult {
         let response = try await meetingsAPI.createMeeting(
             parameters: CreateMeetingParameters(
                 title: title,
                 startTime: startTime,
                 endTime: endTime,
                 timeZoneIdentifier: TimeZone.current.identifier,
+                type: type == .immediate ? .immediate : .scheduled,
+                password: password,
+                invitedEmails: invitedEmails.isEmpty ? nil : invitedEmails,
                 recurrence: recurrence?.toNetworkRecurrence()
             )
         )
@@ -90,7 +96,28 @@ public final class MeetingRepository: MeetingRepositoryProtocol {
         } catch {
             WireLogger.meetings.error("Failed to schedule created meeting reminder: \(error)")
         }
-        return storedMeeting
+        return MeetingCreationResult(meeting: storedMeeting, link: response.link)
+    }
+
+    public func fetchInvitedEmails(id: QualifiedID) async throws -> [String] {
+        let meeting = try await meetingsAPI.getMeeting(id: id).toDomainMeeting()
+        await storeMeeting(meeting)
+        return meeting.invitedEmails
+    }
+
+    public func updateInvitedEmails(id: QualifiedID, adding: [String], removing: [String]) async throws {
+        guard !adding.isEmpty || !removing.isEmpty else { return }
+        let current = try await fetchInvitedEmails(id: id)
+        let currentKeys = Set(current.map { $0.lowercased() })
+        let removedKeys = Set(removing.map { $0.lowercased() })
+        let additions = adding.filter { !currentKeys.contains($0.lowercased()) }
+        let removals = current.filter { removedKeys.contains($0.lowercased()) }
+        if !additions.isEmpty {
+            try await meetingsAPI.addMeetingInvitations(id: id, emails: additions)
+        }
+        if !removals.isEmpty {
+            try await meetingsAPI.removeMeetingInvitations(id: id, emails: removals)
+        }
     }
 
     public func updateMeeting(
@@ -106,7 +133,9 @@ public final class MeetingRepository: MeetingRepositoryProtocol {
                 title: title,
                 startTime: startTime,
                 endTime: endTime,
-                recurrence: recurrence?.toNetworkRecurrence(),
+                // The form supplies the desired recurrence: .some(nil) sends null to clear it.
+                // Outer nil would omit the field and leave the saved rule unchanged.
+                recurrence: .some(recurrence?.toNetworkRecurrence()),
                 timeZoneIdentifier: TimeZone.current.identifier
             )
         )
@@ -138,6 +167,18 @@ public final class MeetingRepository: MeetingRepositoryProtocol {
             try await deleteLocalMeeting(id: id)
             return nil
         }
+    }
+
+    public func fetchMeetingLink(id: QualifiedID) async throws -> MeetingLink? {
+        let response = try await meetingsAPI.getMeeting(id: id)
+        guard let url = response.link, let hasPassword = response.hasPassword else { return nil }
+        return MeetingLink(url: url, hasPassword: hasPassword)
+    }
+
+    public func refreshMeetingLink(id: QualifiedID, password: String?) async throws -> MeetingLink? {
+        let response = try await meetingsAPI.refreshMeetingLink(id: id, password: password)
+        guard let url = response.link, let hasPassword = response.hasPassword else { return nil }
+        return MeetingLink(url: url, hasPassword: hasPassword)
     }
 
     public func pullMeetings() async throws {
@@ -244,7 +285,7 @@ public final class MeetingRepository: MeetingRepositoryProtocol {
 
 private extension MeetingResponse {
 
-    /// The backend's meeting responses carry no participant data, so
+    /// The backend's meeting responses carry no conversation members, so
     /// `conversation` stays `nil` here. The local store resolves it from the
     /// linked conversation, the source of truth, whenever a meeting is read.
     func toDomainMeeting() -> Meeting {
@@ -255,6 +296,7 @@ private extension MeetingResponse {
             end: endTime,
             recurrence: recurrence?.toDomainRecurrence(),
             timeZoneIdentifier: timeZoneIdentifier,
+            invitedEmails: invitedEmails,
             conversationID: conversationID,
             creatorID: creatorID
         )
