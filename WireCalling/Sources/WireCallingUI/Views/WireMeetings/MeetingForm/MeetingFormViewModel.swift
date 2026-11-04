@@ -65,6 +65,19 @@ package final class MeetingFormViewModel {
     private var createdMeetingLink: URL?
     private var createdMeetingHasEmailInvitees = false
     private let onSuccess: (Meeting, URL?, Bool) -> Void
+    private let fetchMeetingLink: (@Sendable (QualifiedID) async throws -> MeetingLink?)?
+    private let refreshMeetingLink: (@Sendable (QualifiedID, String?) async throws -> MeetingLink?)?
+    var presentedLink: MeetingLinkViewModel?
+
+    var canChangeMeetingLink: Bool { mode.isEdit && fetchMeetingLink != nil && refreshMeetingLink != nil }
+
+    func meetingLinkTapped() {
+        guard case let .edit(meeting) = mode, let fetchMeetingLink, let refreshMeetingLink else { return }
+        presentedLink = MeetingLinkViewModel(
+            fetchLink: { try await fetchMeetingLink(meeting.id) },
+            refreshLink: { try await refreshMeetingLink(meeting.id, $0) }
+        )
+    }
 
     private static let timePickerMinuteInterval = 15
     // Match the limits enforced by SimpleTextFieldValidator for conversation names.
@@ -93,7 +106,11 @@ package final class MeetingFormViewModel {
     }
 
     var isPasswordValid: Bool {
-        guard canSetPassword, !password.isEmpty else { return true }
+        !canSetPassword || Self.isPasswordValid(password)
+    }
+
+    static func isPasswordValid(_ password: String) -> Bool {
+        guard !password.isEmpty else { return true }
         let characterSets: [CharacterSet] = [
             .lowercaseLetters,
             .uppercaseLetters,
@@ -105,14 +122,18 @@ package final class MeetingFormViewModel {
     }
 
     func generatePassword() {
+        password = Self.makePassword()
+        confirmPassword = password
+    }
+
+    static func makePassword() -> String {
         let groups = Self.passwordCharacterGroups
         let allCharacters = groups.joined()
         var characters = groups.map { $0.randomElement()! }
         while characters.count < Self.minimumPasswordLength {
             characters.append(allCharacters.randomElement()!)
         }
-        password = String(characters.shuffled())
-        confirmPassword = password
+        return String(characters.shuffled())
     }
 
     func copyPassword(to pasteboard: UIPasteboard = .general) {
@@ -307,6 +328,8 @@ package final class MeetingFormViewModel {
         updateMeetingUseCase: any UpdateMeetingUseCaseProtocol,
         currentDateProvider: any CurrentDateProviding,
         supportsMeetingLinks: Bool = false,
+        fetchMeetingLink: (@Sendable (QualifiedID) async throws -> MeetingLink?)? = nil,
+        refreshMeetingLink: (@Sendable (QualifiedID, String?) async throws -> MeetingLink?)? = nil,
         onSuccess: @escaping (Meeting, URL?, Bool) -> Void = { _, _, _ in }
     ) {
         self.mode = mode
@@ -316,6 +339,8 @@ package final class MeetingFormViewModel {
         self.updateMeetingUseCase = updateMeetingUseCase
         self.currentDateProvider = currentDateProvider
         self.onSuccess = onSuccess
+        self.fetchMeetingLink = fetchMeetingLink
+        self.refreshMeetingLink = refreshMeetingLink
 
         switch mode {
         case .instant, .scheduled:

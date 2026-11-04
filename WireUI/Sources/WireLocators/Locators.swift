@@ -799,6 +799,7 @@ public enum Locators {
             case copyPassword = "meetingFormCopyPassword"
             case generatePassword = "meetingFormGeneratePassword"
             case passwordRequirements = "meetingFormPasswordRequirements"
+            case passwordReminder = "meetingFormPasswordReminder"
             case clearTitle = "meetingFormClearTitle"
             case participants = "meetingFormParticipants"
             case membersSelect = "meetingMembersSelect"
@@ -853,6 +854,10 @@ public enum Locators {
         }
 
         public enum MeetingLink: String {
+            case generate = "meetingLinkGenerate"
+            case create = "meetingLinkCreate"
+            case close = "meetingLinkClose"
+            case consequence = "meetingLinkConsequence"
             case url = "meetingLinkURL"
             case passwordState = "meetingLinkPasswordState"
             case copy = "meetingLinkCopy"
