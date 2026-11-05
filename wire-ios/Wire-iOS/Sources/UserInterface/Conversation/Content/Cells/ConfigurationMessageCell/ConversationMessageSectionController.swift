@@ -28,6 +28,15 @@ struct ConversationMessageContext: Equatable {
     var isLastMessage: Bool = false
     var searchQueries: [String] = []
     var previousMessageIsKnock: Bool = false
+    /// Whether the offline notice is shown with this message, and where.
+    var offlineNotice: OfflineNoticePosition?
+}
+
+enum OfflineNoticePosition: Equatable {
+    /// Above the message, which is the first one the self user sent while offline.
+    case above
+    /// Below the message, which is the newest one.
+    case below
 }
 
 protocol ConversationMessageSectionControllerDelegate: AnyObject {
@@ -461,6 +470,10 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
             cellDescriptions.append(AnyConversationMessageCellDescription(description))
         }
 
+        if context.offlineNotice == .above {
+            cellDescriptions.append(AnyConversationMessageCellDescription(ConversationOfflineNoticeCellDescription()))
+        }
+
         if isBurstTimestampVisible {
             let description = BurstTimestampSenderMessageCellDescription(
                 message: message,
@@ -511,6 +524,10 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
                 buttonAction: { self.buttonAction() }
             )
             cellDescriptions.append(AnyConversationMessageCellDescription(description))
+        }
+
+        if context.offlineNotice == .below {
+            cellDescriptions.append(AnyConversationMessageCellDescription(ConversationOfflineNoticeCellDescription()))
         }
 
         self.cellDescriptions = cellDescriptions
@@ -588,6 +605,11 @@ final class ConversationMessageSectionController: NSObject, ZMMessageObserver {
 
         // A time divider / unread indicator is shown before the actual message.
         if isBurstTimestampVisible(in: context) {
+            return true
+        }
+
+        // The offline notice is shown before the actual message.
+        if context.offlineNotice == .above {
             return true
         }
 

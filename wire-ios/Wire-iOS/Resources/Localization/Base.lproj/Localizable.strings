@@ -675,6 +675,8 @@
 
 "content.system.message_conversation_scheduled_for_deletion.text" = "This group will be automatically deleted on %@, as there are no eligible group admins.";
 "content.system.message_conversation_scheduled_for_deletion.read_more.text" = "Read more";
+"content.system.offline_notice.title" = "You are offline.";
+"content.system.offline_notice.message" = "Your messages will be sent once you are online again.";
 
 //
 "content.system.is_verified" = "All fingerprints are verified";
