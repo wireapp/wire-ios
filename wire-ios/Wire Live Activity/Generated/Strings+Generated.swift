@@ -12,10 +12,6 @@ import Foundation
 internal enum L10n {
   internal enum LiveActivity {
     internal enum Uploads {
-      /// Account: %@
-      internal static func account(_ p1: Any) -> String {
-        return L10n.tr("Localizable", "live_activity.uploads.account", String(describing: p1), fallback: "Account: %@")
-      }
       internal enum Completed {
         /// %lld files to Shared Drive
         internal static func subtitleMany(_ p1: Int) -> String {

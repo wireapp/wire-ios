@@ -76,11 +76,22 @@ public struct WireDriveUploadsActivityState: Codable, Hashable, Sendable {
     /// The fraction of the bytes sent, from 0 to 1.
     public var progress: Double
 
-    public init(phase: Phase, totalCount: Int, uploadedCount: Int, failedCount: Int, progress: Double) {
+    /// Optional so content saved before account labels were conditional still decodes.
+    public var showAccountName: Bool?
+
+    public init(
+        phase: Phase,
+        totalCount: Int,
+        uploadedCount: Int,
+        failedCount: Int,
+        progress: Double,
+        showAccountName: Bool = false
+    ) {
         self.phase = phase
         self.totalCount = totalCount
         self.uploadedCount = uploadedCount
         self.failedCount = failedCount
         self.progress = progress
+        self.showAccountName = showAccountName
     }
 }

@@ -30,7 +30,7 @@ struct WireDriveUploadsLiveActivity: Widget {
         ActivityConfiguration(for: WireDriveUploadsActivityAttributes.self) { context in
             WireDriveUploadsBannerView(
                 state: context.state,
-                accountName: context.attributes.accountName,
+                accountName: context.state.showAccountName == true ? context.attributes.accountName : nil,
                 isStale: context.isStale
             )
             .activityBackgroundTint(ColorTheme.Backgrounds.background.onDarkSurface)
@@ -40,7 +40,7 @@ struct WireDriveUploadsLiveActivity: Widget {
                 DynamicIslandExpandedRegion(.center) {
                     WireDriveUploadsBannerView(
                         state: context.state,
-                        accountName: context.attributes.accountName,
+                        accountName: context.state.showAccountName == true ? context.attributes.accountName : nil,
                         isStale: context.isStale,
                         contentInsets: .init(top: 0, leading: 4, bottom: 14, trailing: 4)
                     )
@@ -65,16 +65,38 @@ struct WireDriveUploadsLiveActivity: Widget {
 #if DEBUG
     private extension WireDriveUploadsActivityState {
 
-        static let uploading = Self(phase: .uploading, totalCount: 8, uploadedCount: 6, failedCount: 0, progress: 0.75)
+        static let uploading = Self(
+            phase: .uploading,
+            totalCount: 8,
+            uploadedCount: 6,
+            failedCount: 0,
+            progress: 0.75,
+            showAccountName: true
+        )
         static let uploadingWithFailure = Self(
             phase: .uploadingWithFailures,
             totalCount: 8,
             uploadedCount: 6,
             failedCount: 1,
-            progress: 0.75
+            progress: 0.75,
+            showAccountName: true
         )
-        static let completed = Self(phase: .completed, totalCount: 8, uploadedCount: 8, failedCount: 0, progress: 1)
-        static let failed = Self(phase: .failed, totalCount: 8, uploadedCount: 0, failedCount: 8, progress: 0)
+        static let completed = Self(
+            phase: .completed,
+            totalCount: 8,
+            uploadedCount: 8,
+            failedCount: 0,
+            progress: 1,
+            showAccountName: true
+        )
+        static let failed = Self(
+            phase: .failed,
+            totalCount: 8,
+            uploadedCount: 0,
+            failedCount: 8,
+            progress: 0,
+            showAccountName: true
+        )
     }
 
     #Preview(

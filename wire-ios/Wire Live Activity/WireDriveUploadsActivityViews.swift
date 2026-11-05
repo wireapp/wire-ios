@@ -78,11 +78,11 @@ struct WireDriveUploadsTexts: View {
                 .foregroundStyle(ColorTheme.Backgrounds.onBackground.onDarkSurface)
 
             if let accountName {
-                Text(L10n.LiveActivity.Uploads.account(accountName))
+                Text(accountName)
                     .font(.subheadline.weight(.medium))
                     .foregroundStyle(ColorTheme.Backgrounds.onBackground.onDarkSurface.opacity(0.85))
                     .lineLimit(1)
-                    .accessibilityLabel(Text(L10n.LiveActivity.Uploads.account(accountName)))
+                    .accessibilityLabel(Text(accountName))
                     .accessibilityIdentifier("uploadsLiveActivityAccount")
             }
 
