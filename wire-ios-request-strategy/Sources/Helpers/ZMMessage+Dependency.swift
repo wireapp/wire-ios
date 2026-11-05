@@ -147,31 +147,37 @@ public extension ZMMessage {
         )
 
         let candidates: [ZMMessage?] = [
-            latestMessage(ZMClientMessage.self, matching: isEarlierPendingMessage, in: context),
-            latestMessage(
+            latestMessages(ZMClientMessage.self, matching: isEarlierPendingMessage, fetchLimit: 1, in: context)
+                .first,
+            // The processing state depends on the asset cache, so it's checked after fetching.
+            latestMessages(
                 ZMAssetClientMessage.self,
                 matching: NSCompoundPredicate(andPredicateWithSubpredicates: [
                     isEarlierPendingMessage,
                     isUploadingOrUploadedAsset
                 ]),
+                fetchLimit: 0, // no limit
                 in: context
             )
+            .first(where: \.isAdvancedByAssetStrategies)
         ]
         return candidates.compactMap(\.self).max {
             ($0.serverTimestamp ?? .distantPast) < ($1.serverTimestamp ?? .distantPast)
         }
     }
 
-    private func latestMessage<Message: ZMMessage>(
+    /// Fetches the messages matching the predicate, latest first.
+    private func latestMessages<Message: ZMMessage>(
         _ type: Message.Type,
         matching predicate: NSPredicate,
+        fetchLimit: Int,
         in context: NSManagedObjectContext
-    ) -> Message? {
+    ) -> [Message] {
         let request = NSFetchRequest<Message>(entityName: type.entityName())
         request.predicate = predicate
         request.sortDescriptors = [NSSortDescriptor(key: #keyPath(ZMMessage.serverTimestamp), ascending: false)]
-        request.fetchLimit = 1
-        return context.fetchOrAssert(request: request).first
+        request.fetchLimit = fetchLimit
+        return context.fetchOrAssert(request: request)
     }
 
 }
@@ -180,5 +186,14 @@ extension ZMMessage: BlockingMessage {
 
     var shouldBlockFurtherMessages: Bool {
         deliveryState == .pending && !isExpired
+    }
+}
+
+private extension ZMAssetClientMessage {
+
+    /// Whether the asset strategies will still upload or send the asset. An uploading asset whose data is
+    /// missing from the cache has nothing left to upload, so it's never uploaded or sent.
+    var isAdvancedByAssetStrategies: Bool {
+        transferState == .uploaded || processingState != .done
     }
 }
