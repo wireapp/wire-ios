@@ -89,6 +89,19 @@ public final class WireDriveDirectUploadSessionHolder: Sendable {
     @MainActor
     func retainLiveActivityController(_ controller: WireDriveUploadsLiveActivityController, userID: UUID) {
         lock.withLock { $0.liveActivityControllers[Identifier.make(userID: userID)] = controller }
+        controller.onActivityChange = { [weak self] in
+            self?.refreshAccountNameVisibility()
+        }
+        refreshAccountNameVisibility()
+    }
+
+    @MainActor
+    private func refreshAccountNameVisibility() {
+        let controllers = lock.withLock { Array($0.liveActivityControllers.values) }
+        let showAccountName = controllers.filter(\.hasActivity).count > 1
+        for controller in controllers {
+            controller.setShowAccountName(showAccountName)
+        }
     }
 
     private func session(identifier: String) -> any WireDriveDirectUploadSessionProtocol {

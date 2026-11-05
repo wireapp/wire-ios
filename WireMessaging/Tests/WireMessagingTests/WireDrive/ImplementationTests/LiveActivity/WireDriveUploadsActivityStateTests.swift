@@ -26,9 +26,9 @@ struct WireDriveUploadsActivityStateTests {
     @Test
     func mapsUploadsInProgressWithNoFailures() {
         let summary = WireDriveDirectUploadsSummary(items: [
-            makeUploadItem(.uploaded),
-            makeUploadItem(.uploading(progress: 0.5)),
-            makeUploadItem(.queued)
+            .fixture(.uploaded),
+            .fixture(.uploading(progress: 0.5)),
+            .fixture(.queued)
         ])
 
         let state = WireDriveUploadsActivityState(summary: summary)
@@ -42,8 +42,8 @@ struct WireDriveUploadsActivityStateTests {
     @Test
     func mapsUploadsInProgressWithAFailure() {
         let summary = WireDriveDirectUploadsSummary(items: [
-            makeUploadItem(.failed(error: .unauthorized)),
-            makeUploadItem(.uploading(progress: 0.5))
+            .fixture(.failed(error: .unauthorized)),
+            .fixture(.uploading(progress: 0.5))
         ])
 
         let state = WireDriveUploadsActivityState(summary: summary)
@@ -54,7 +54,10 @@ struct WireDriveUploadsActivityStateTests {
 
     @Test
     func mapsFinishedUploads() {
-        let summary = WireDriveDirectUploadsSummary(items: [makeUploadItem(.uploaded), makeUploadItem(.uploaded)])
+        let summary = WireDriveDirectUploadsSummary(items: [
+            .fixture(.uploaded),
+            .fixture(.uploaded)
+        ])
 
         let state = WireDriveUploadsActivityState(summary: summary)
 
@@ -66,8 +69,8 @@ struct WireDriveUploadsActivityStateTests {
     @Test
     func mapsFinishedUploadsWithAFailure() {
         let summary = WireDriveDirectUploadsSummary(items: [
-            makeUploadItem(.uploaded),
-            makeUploadItem(.failed(error: .unauthorized))
+            .fixture(.uploaded),
+            .fixture(.failed(error: .unauthorized))
         ])
 
         let state = WireDriveUploadsActivityState(summary: summary)
@@ -78,7 +81,10 @@ struct WireDriveUploadsActivityStateTests {
 
     @Test
     func doesNotCountCancelledUploads() {
-        let summary = WireDriveDirectUploadsSummary(items: [makeUploadItem(.uploaded), makeUploadItem(.cancelled)])
+        let summary = WireDriveDirectUploadsSummary(items: [
+            .fixture(.uploaded),
+            .fixture(.cancelled)
+        ])
 
         #expect(WireDriveUploadsActivityState(summary: summary).totalCount == 1)
     }

@@ -20,40 +20,6 @@ import Foundation
 
 @testable import WireMessagingDomain
 
-func makeUploadItem(
-    _ status: WireDriveDirectUploadItem.Status,
-    size: UInt64 = 1000,
-    createdAt: TimeInterval = 0
-) -> WireDriveDirectUploadItem {
-    WireDriveDirectUploadItem(
-        id: UUID(),
-        batchID: UUID(),
-        nodeID: UUID(),
-        fileName: "file.pdf",
-        fileSize: size,
-        destinationFolderPath: "cell-1",
-        status: status,
-        createdAt: Date(timeIntervalSince1970: createdAt),
-        isRetryable: true
-    )
-}
-
-func makeState(
-    _ phase: WireDriveUploadsActivityState.Phase = .uploading,
-    total: Int = 8,
-    uploaded: Int = 0,
-    failed: Int = 0,
-    progress: Double = 0
-) -> WireDriveUploadsActivityState {
-    WireDriveUploadsActivityState(
-        phase: phase,
-        totalCount: total,
-        uploadedCount: uploaded,
-        failedCount: failed,
-        progress: progress
-    )
-}
-
 /// Holds a delay until the test lets it pass.
 actor UploadsDelayGate {
 

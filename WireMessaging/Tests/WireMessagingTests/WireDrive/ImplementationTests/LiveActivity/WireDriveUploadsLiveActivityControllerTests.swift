@@ -54,7 +54,7 @@ final class WireDriveUploadsLiveActivityControllerTests {
         publish([.queued])
         await settle()
 
-        #expect(client.calls == [.start(makeState(total: 1))])
+        #expect(client.calls == [.start(.fixture(total: 1))])
     }
 
     @Test
@@ -100,9 +100,16 @@ final class WireDriveUploadsLiveActivityControllerTests {
         client.hasActivity = true
         sut.start()
 
-        publishItems([makeUploadItem(.uploaded), makeUploadItem(.uploading(progress: 0.5))])
+        publishItems([
+            .fixture(.uploaded),
+            .fixture(.uploading(progress: 0.5))
+        ])
         await settle()
-        publishItems([makeUploadItem(.uploaded), makeUploadItem(.uploaded), makeUploadItem(.queued)])
+        publishItems([
+            .fixture(.uploaded),
+            .fixture(.uploaded),
+            .fixture(.queued)
+        ])
         await settle()
 
         #expect(client.calls.count == 2)
@@ -113,11 +120,11 @@ final class WireDriveUploadsLiveActivityControllerTests {
         client.hasActivity = true
         sut.start()
 
-        let items = [makeUploadItem(.uploading(progress: 0.10), size: 1000)]
+        let items: [WireDriveDirectUploadItem] = [.fixture(.uploading(progress: 0.10), size: 1000)]
         publishItems(items)
         await settle()
         // Same text, only the progress moved, and not enough time has passed.
-        publishItems([makeUploadItem(.uploading(progress: 0.11), size: 1000)])
+        publishItems([.fixture(.uploading(progress: 0.11), size: 1000)])
         await settle()
 
         #expect(client.calls.count == 1)
@@ -131,10 +138,10 @@ final class WireDriveUploadsLiveActivityControllerTests {
         client.hasActivity = true
         sut.start()
 
-        publishItems([makeUploadItem(.uploaded), makeUploadItem(.uploaded)])
+        publishItems([.fixture(.uploaded), .fixture(.uploaded)])
         await settle()
 
-        let final = makeState(.completed, total: 2, uploaded: 2, progress: 1)
+        let final = WireDriveUploadsActivityState.fixture(.completed, total: 2, uploaded: 2, progress: 1)
         #expect(client.calls == [.update(final)])
 
         await delayGate.open()
@@ -148,9 +155,9 @@ final class WireDriveUploadsLiveActivityControllerTests {
         client.hasActivity = true
         sut.start()
 
-        publishItems([makeUploadItem(.uploaded)])
+        publishItems([.fixture(.uploaded)])
         await settle()
-        publishItems([makeUploadItem(.uploaded), makeUploadItem(.queued)])
+        publishItems([.fixture(.uploaded), .fixture(.queued)])
         await settle()
 
         await delayGate.open()
@@ -165,7 +172,7 @@ final class WireDriveUploadsLiveActivityControllerTests {
         client.hasActivity = true
         sut.start()
 
-        publishItems([makeUploadItem(.uploaded)])
+        publishItems([.fixture(.uploaded)])
         await settle()
         await sut.stop()
         await delayGate.open()
@@ -185,10 +192,13 @@ final class WireDriveUploadsLiveActivityControllerTests {
         client.hasActivity = true
         sut.start()
 
-        publishItems([makeUploadItem(.uploaded), makeUploadItem(.failed(error: .unauthorized))])
+        publishItems([
+            .fixture(.uploaded),
+            .fixture(.failed(error: .unauthorized))
+        ])
         await settle()
 
-        let final = makeState(.failed, total: 2, uploaded: 1, failed: 1, progress: 0.5)
+        let final = WireDriveUploadsActivityState.fixture(.failed, total: 2, uploaded: 1, failed: 1, progress: 0.5)
         #expect(client.calls == [.update(final)])
 
         await delayGate.open()
@@ -202,9 +212,9 @@ final class WireDriveUploadsLiveActivityControllerTests {
         client.hasActivity = true
         sut.start()
 
-        publishItems([makeUploadItem(.failed(error: .unauthorized))])
+        publishItems([.fixture(.failed(error: .unauthorized))])
         await settle()
-        publishItems([makeUploadItem(.queued)])
+        publishItems([.fixture(.queued)])
         await settle()
 
         await delayGate.open()
@@ -229,9 +239,9 @@ final class WireDriveUploadsLiveActivityControllerTests {
         await settle()
 
         #expect(client.calls == [
-            .update(makeState(.failed, total: 1, failed: 1)),
-            .end(makeState(.failed, total: 1, failed: 1), .systemDefault),
-            .start(makeState(total: 1, progress: 0.5))
+            .update(.fixture(.failed, total: 1, failed: 1)),
+            .end(.fixture(.failed, total: 1, failed: 1), .systemDefault),
+            .start(.fixture(total: 1, progress: 0.5))
         ])
     }
 
@@ -257,7 +267,7 @@ final class WireDriveUploadsLiveActivityControllerTests {
         await settle()
 
         #expect(!client.hasActivity)
-        let final = makeState(.failed, total: 2, failed: 2)
+        let final = WireDriveUploadsActivityState.fixture(.failed, total: 2, failed: 2)
         #expect(client.calls.last == .end(final, .systemDefault))
 
         publishItems([])
@@ -288,7 +298,7 @@ final class WireDriveUploadsLiveActivityControllerTests {
         await delayGate.open()
         await settle()
 
-        #expect(client.calls == [.update(makeState(.failed, total: 1, failed: 1)), .endAll])
+        #expect(client.calls == [.update(.fixture(.failed, total: 1, failed: 1)), .endAll])
     }
 
     @Test
@@ -341,7 +351,7 @@ final class WireDriveUploadsLiveActivityControllerTests {
     func doesNotStartAnActivityForUploadsThatAlreadyFinished() async {
         sut.start()
 
-        publishItems([makeUploadItem(.uploaded)])
+        publishItems([.fixture(.uploaded)])
         await settle()
 
         #expect(client.calls.isEmpty)
@@ -362,7 +372,7 @@ final class WireDriveUploadsLiveActivityControllerTests {
     // MARK: - Helpers
 
     private func publish(_ statuses: [WireDriveDirectUploadItem.Status]) {
-        publishItems(statuses.map { makeUploadItem($0) })
+        publishItems(statuses.map { .fixture($0) })
     }
 
     private func publishItems(_ items: [WireDriveDirectUploadItem]) {

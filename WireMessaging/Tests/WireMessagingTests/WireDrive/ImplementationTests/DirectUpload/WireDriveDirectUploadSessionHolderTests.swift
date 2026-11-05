@@ -205,8 +205,8 @@ struct WireDriveDirectUploadSessionHolderTests {
         firstController?.start()
         secondController?.start()
 
-        firstTracker.replaceAll(with: [makeUploadItem(.uploading(progress: 0))])
-        secondTracker.replaceAll(with: [makeUploadItem(.queued)])
+        firstTracker.replaceAll(with: [.fixture(.uploading(progress: 0))])
+        secondTracker.replaceAll(with: [.fixture(.queued)])
         await firstController?.endActivityIfNoUploads()
         await secondController?.endActivityIfNoUploads()
 
@@ -216,13 +216,19 @@ struct WireDriveDirectUploadSessionHolderTests {
         #expect(retainedFirst != nil)
         #expect(retainedSecond != nil)
 
-        firstTracker.replaceAll(with: [makeUploadItem(.uploading(progress: 0.5))])
+        firstTracker.replaceAll(with: [.fixture(.uploading(progress: 0.5))])
         await retainedFirst?.endActivityIfNoUploads()
-        #expect(firstClient.calls.last == .update(makeState(total: 1, progress: 0.5)))
+        #expect(firstClient.calls.last == .update(.fixture(total: 1, progress: 0.5, showAccountName: true)))
 
-        firstTracker.replaceAll(with: [makeUploadItem(.uploaded)])
+        firstTracker.replaceAll(with: [.fixture(.uploaded)])
         await retainedFirst?.endActivityIfNoUploads()
-        #expect(firstClient.calls.last == .update(makeState(.completed, total: 1, uploaded: 1, progress: 1)))
+        #expect(firstClient.calls.last == .update(.fixture(
+            .completed,
+            total: 1,
+            uploaded: 1,
+            progress: 1,
+            showAccountName: true
+        )))
 
         await sut.tearDown(userID: firstUserID)
         #expect(firstClient.calls.last == .endAll)
@@ -233,6 +239,51 @@ struct WireDriveDirectUploadSessionHolderTests {
         await sut.tearDown(userID: secondUserID)
         #expect(secondClient.calls.last == .endAll)
         #expect(retainedSecond == nil)
+    }
+
+    @Test
+    @MainActor
+    func showsAccountNamesOnlyWhileMultipleAccountsHaveActivities() async {
+        let sut = makeSut()
+        let firstTracker = WireDriveObserveDirectUploadsUseCase()
+        let secondTracker = WireDriveObserveDirectUploadsUseCase()
+        let firstClient = FakeUploadsActivityClient()
+        let secondClient = FakeUploadsActivityClient()
+        let delay = UploadsDelayGate()
+        let first = WireDriveUploadsLiveActivityController(observeUploads: firstTracker, client: firstClient)
+        let second = WireDriveUploadsLiveActivityController(
+            observeUploads: secondTracker,
+            client: secondClient,
+            delay: { _ in await delay.wait() }
+        )
+        sut.retainLiveActivityController(first, userID: UUID())
+        sut.retainLiveActivityController(second, userID: UUID())
+        first.start()
+        second.start()
+
+        firstTracker.replaceAll(with: [.fixture(.queued)])
+        await first.endActivityIfNoUploads()
+        #expect(firstClient.calls.last == .start(.fixture(total: 1)))
+
+        secondTracker.replaceAll(with: [.fixture(.queued)])
+        await second.endActivityIfNoUploads()
+        await first.endActivityIfNoUploads()
+        await second.endActivityIfNoUploads()
+        #expect(firstClient.calls.last == .update(.fixture(total: 1, showAccountName: true)))
+        #expect(secondClient.calls.last == .update(.fixture(total: 1, showAccountName: true)))
+
+        secondTracker.replaceAll(with: [.fixture(.uploaded)])
+        await second.endActivityIfNoUploads()
+        await delay.open()
+        for _ in 0 ..< 20 {
+            await Task.yield()
+        }
+        await first.endActivityIfNoUploads()
+        #expect(!secondClient.hasActivity)
+        #expect(firstClient.calls.last == .update(.fixture(total: 1)))
+
+        await first.stop()
+        await second.stop()
     }
 
     // MARK: - Tear down

@@ -39,6 +39,11 @@ package final class WireDriveUploadsLiveActivityController {
     /// Ends the activity of finished uploads once it has been up long enough.
     private var pendingEnd: Task<Void, Never>?
     private var latestSummary: WireDriveDirectUploadsSummary?
+    private var latestState: WireDriveUploadsActivityState?
+    private var showAccountName = false
+
+    package var onActivityChange: (() -> Void)?
+    package var hasActivity: Bool { client.hasActivity }
 
     /// Whether uploads have been seen by this process. The tracker starts out empty and only learns about
     /// persisted uploads once the manager has started, so an empty summary means nothing before that.
@@ -64,6 +69,20 @@ package final class WireDriveUploadsLiveActivityController {
         WireLogger.wireDrive.info("uploads live activity: following the uploads")
         subscription = observeUploads.invoke().sink { [weak self] summary in
             self?.handle(summary)
+        }
+    }
+
+    /// Label changes bypass progress throttling and follow already queued upload updates.
+    package func setShowAccountName(_ show: Bool) {
+        guard showAccountName != show else { return }
+        showAccountName = show
+        let previous = pendingWork
+        pendingWork = Task { [weak self] in
+            await previous?.value
+            guard let self, client.hasActivity, var state = latestState else { return }
+            state.showAccountName = showAccountName
+            latestState = state
+            await client.update(with: state)
         }
     }
 
@@ -119,7 +138,9 @@ package final class WireDriveUploadsLiveActivityController {
 
         hasSeenUploads = true
 
-        let state = WireDriveUploadsActivityState(summary: summary)
+        var state = WireDriveUploadsActivityState(summary: summary)
+        state.showAccountName = showAccountName
+        latestState = state
         WireLogger.wireDrive.info(
             "uploads live activity: \(state.phase), \(state.uploadedCount) of \(state.totalCount) uploaded, "
                 + "\(state.failedCount) failed, activity showing: \(client.hasActivity)"
@@ -149,6 +170,7 @@ package final class WireDriveUploadsLiveActivityController {
 
         do {
             try await client.start(with: state)
+            onActivityChange?()
             WireLogger.wireDrive.info("uploads live activity: started")
         } catch {
             WireLogger.wireDrive.error("could not start the uploads live activity: \(error)")
@@ -178,6 +200,8 @@ package final class WireDriveUploadsLiveActivityController {
         cancelPendingEnd()
         throttle.reset()
         await client.endAll()
+        latestState = nil
+        onActivityChange?()
     }
 
     private func endActivity(
@@ -186,7 +210,11 @@ package final class WireDriveUploadsLiveActivityController {
     ) async {
         throttle.reset()
         guard client.hasActivity else { return }
+        var state = state
+        state?.showAccountName = showAccountName
         await client.end(with: state, dismissal: dismissal)
+        latestState = nil
+        onActivityChange?()
     }
 }
 

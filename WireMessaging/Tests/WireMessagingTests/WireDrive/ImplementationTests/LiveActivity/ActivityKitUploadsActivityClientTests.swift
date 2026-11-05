@@ -53,7 +53,7 @@ struct ActivityKitUploadsActivityClientTests {
             accountInfo: .init(userID: userID),
             activities: { [otherActivity, ownActivity] }
         )
-        let state = makeState(total: 2, progress: 0.5)
+        let state = WireDriveUploadsActivityState.fixture(total: 2, progress: 0.5)
 
         #expect(client.hasActivity)
         await client.update(with: state)
@@ -76,7 +76,7 @@ struct ActivityKitUploadsActivityClientTests {
         let otherActivity = FakeUploadsActivity(userID: UUID())
         let previousResult = FakeUploadsActivity(userID: userID, activityState: .ended)
         var requestedActivity: FakeUploadsActivity?
-        let state = makeState(total: 1)
+        let state = WireDriveUploadsActivityState.fixture(total: 1)
         let client = ActivityKitUploadsActivityClient(
             accountInfo: .init(userID: userID, name: "Alice"),
             activities: { [otherActivity, previousResult] },
@@ -111,7 +111,7 @@ struct ActivityKitUploadsActivityClientTests {
         var activities = [ownActivity, otherActivity]
         let client = ActivityKitUploadsActivityClient(accountInfo: .init(userID: userID), activities: { activities })
 
-        await client.end(with: makeState(.failed), dismissal: .systemDefault)
+        await client.end(with: .fixture(.failed), dismissal: .systemDefault)
         // ActivityKit may stop returning an ended activity while its result remains on the lock screen.
         activities = [otherActivity]
         await client.endAll()
