@@ -842,7 +842,7 @@ extension ConversationTableViewDataSource {
         firstUnreadMessageNonce: UUID?,
         searchQueries: [String],
         messages: [ZMMessage],
-        offlineNotice: OfflineNoticePosition? = nil
+        offlineNotice: OfflineNoticePosition?
     ) -> ConversationMessageContext {
 
         let isTimestampInSameMinuteAsPreviousMessage: Bool
