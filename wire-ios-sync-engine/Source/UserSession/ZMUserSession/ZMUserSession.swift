@@ -829,6 +829,8 @@ public final class ZMUserSession: NSObject {
         appLockController.delegate = nil
         applicationStatusDirectory.clientRegistrationStatus.registrationStatusDelegate = nil
 
+        // Pending messages waiting for the network must stop before the contexts are closed below.
+        strategyDirectory?.cancelPendingSends()
         syncAgent?.tearDown()
         syncAgent = nil
         syncStrategy?.tearDown()
