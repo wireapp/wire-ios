@@ -31,9 +31,13 @@ final class ConversationOfflineNoticeCell:
         let iconTintColor: UIColor
     }
 
+    private var unscaledAttributedText: NSAttributedString?
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         lineView.isHidden = true
+        isAccessibilityElement = true
+        accessibilityTraits = .staticText
     }
 
     @available(*, unavailable)
@@ -42,9 +46,35 @@ final class ConversationOfflineNoticeCell:
     }
 
     func configure(with object: Configuration, animated: Bool) {
-        attributedText = object.attributedText
+        unscaledAttributedText = object.attributedText
+        updateAttributedText()
         imageView.image = object.icon
         imageView.tintColor = object.iconTintColor
+    }
+
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        if previousTraitCollection?.preferredContentSizeCategory != traitCollection.preferredContentSizeCategory {
+            updateAttributedText()
+        }
+    }
+
+    private func updateAttributedText() {
+        guard let unscaledAttributedText else { return }
+        let scaledText = NSMutableAttributedString(attributedString: unscaledAttributedText)
+        let metrics = UIFontMetrics(forTextStyle: .subheadline)
+        unscaledAttributedText.enumerateAttribute(
+            .font,
+            in: NSRange(location: 0, length: unscaledAttributedText.length)
+        ) { value, range, _ in
+            guard let font = value as? UIFont else { return }
+            scaledText.addAttribute(
+                .font,
+                value: metrics.scaledFont(for: font, compatibleWith: self.traitCollection),
+                range: range
+            )
+        }
+        attributedText = scaledText
     }
 }
 

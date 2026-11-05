@@ -72,7 +72,7 @@ class ConversationIconBasedCell<CellDescription: ConversationMessageCellDescript
 
             let font = attributedText?.attributes(at: 0, effectiveRange: nil)[.font] as? UIFont
             if let lineHeight = font?.lineHeight {
-                textLabelTopConstraint.constant = (32 - lineHeight) / 2
+                textLabelTopConstraint.constant = max(0, (32 - lineHeight) / 2)
             } else {
                 textLabelTopConstraint.constant = 0
             }

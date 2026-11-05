@@ -32,7 +32,8 @@ extension AnyConversationMessageCellDescription: Differentiable {
     typealias DifferenceIdentifier = String
 
     var differenceIdentifier: String {
-        String(describing: (message as! ZMMessage).objectID) + String(describing: baseType)
+        let messageIdentifier = (message as? ZMMessage).map { String(describing: $0.objectID) } ?? "conversation"
+        return messageIdentifier + String(describing: baseType)
     }
 
     override var debugDescription: String {
@@ -122,6 +123,7 @@ final class ConversationTableViewDataSource: NSObject {
     }
 
     private(set) var currentSections: [Section] = []
+    private let emptyOfflineNoticeSectionIdentifier = UUID()
 
     private let wireMessagingFactory: any WireMessagingFactoryProtocol
 
@@ -137,6 +139,16 @@ final class ConversationTableViewDataSource: NSObject {
     ) {
         let mainThreadContext = userSession.contextProvider.viewContext
         let messagesOnMainThread = allMessages
+        if messagesOnMainThread.isEmpty {
+            let sections: [Section] = showsOfflineNotice && !hasNewerMessagesToLoad ? [
+                Section(
+                    model: emptyOfflineNoticeSectionIdentifier,
+                    elements: [AnyConversationMessageCellDescription(ConversationOfflineNoticeCellDescription())]
+                )
+            ] : []
+            completion(sections)
+            return
+        }
         let messageIds = messagesOnMainThread.map(\.objectID)
         let selfUserOnMainThread = userSession.selfUser
         let selfUserObjectID = selfUserOnMainThread.objectId
@@ -167,6 +179,8 @@ final class ConversationTableViewDataSource: NSObject {
                 return
             }
 
+            let offlineNotice = offlineNoticePlacement(messages: messages)
+
             // Go through messages and calculate sections
             let result: [(
                 MessageCacheIdentifier,
@@ -184,7 +198,8 @@ final class ConversationTableViewDataSource: NSObject {
                     at: offset,
                     firstUnreadMessageNonce: firstUnreadMessageNonce,
                     searchQueries: self.searchQueries,
-                    messages: messages
+                    messages: messages,
+                    offlineNotice: offlineNotice?.index == offset ? offlineNotice?.position : nil
                 )
 
                 let sectionController = if let cachedSectionController = self.sectionControllers.get(for: identifier) {
@@ -194,10 +209,8 @@ final class ConversationTableViewDataSource: NSObject {
                     // Cache miss - create new section controller with fresh cell descriptions
                     self.makeSectionController(
                         message: element,
-                        index: offset,
-                        messages: messages,
-                        selfUser: selfUserOnBackgroundThread,
-                        firstUnreadMessageNonce: firstUnreadMessageNonce
+                        context: context,
+                        selfUser: selfUserOnBackgroundThread
                     )
                 }
 
@@ -269,13 +282,15 @@ final class ConversationTableViewDataSource: NSObject {
         else { return currentSections }
 
         let messages = allMessages
+        let offlineNotice = offlineNoticePlacement(messages: messages)
 
         let context = context(
             for: sectionController.message,
             at: section,
             firstUnreadMessageNonce: firstUnreadMessage?.nonce,
             searchQueries: searchQueries,
-            messages: messages
+            messages: messages,
+            offlineNotice: offlineNotice?.index == section ? offlineNotice?.position : nil
         )
 
         sectionController.recreateCellDescriptions(in: context)
@@ -378,18 +393,9 @@ final class ConversationTableViewDataSource: NSObject {
 
     private func makeSectionController(
         message: ZMMessage,
-        index: Int,
-        messages: [ZMMessage],
-        selfUser: any UserType,
-        firstUnreadMessageNonce: UUID?
+        context: ConversationMessageContext,
+        selfUser: any UserType
     ) -> ConversationMessageSectionController {
-        let context = context(
-            for: message,
-            at: index,
-            firstUnreadMessageNonce: firstUnreadMessageNonce,
-            searchQueries: searchQueries,
-            messages: messages
-        )
         let sectionController = ConversationMessageSectionController(
             message: message,
             context: context,
@@ -424,12 +430,19 @@ final class ConversationTableViewDataSource: NSObject {
             return cachedEntry
         }
 
+        let offlineNotice = offlineNoticePlacement(messages: messages)
+        let context = context(
+            for: message,
+            at: index,
+            firstUnreadMessageNonce: firstUnreadMessage?.nonce,
+            searchQueries: searchQueries,
+            messages: messages,
+            offlineNotice: offlineNotice?.index == index ? offlineNotice?.position : nil
+        )
         let sectionController = makeSectionController(
             message: message,
-            index: index,
-            messages: messages,
-            selfUser: selfUser,
-            firstUnreadMessageNonce: firstUnreadMessage?.nonce
+            context: context,
+            selfUser: selfUser
         )
 
         if let identifier {
@@ -679,6 +692,7 @@ extension ConversationTableViewDataSource: UITableViewDataSource {
     }
 
     func select(indexPath: IndexPath) {
+        guard allMessages.indices.contains(indexPath.section) else { return }
         let sectionController = sectionController(
             at: indexPath.section,
             selfUser: userSession.selfUser,
@@ -689,6 +703,7 @@ extension ConversationTableViewDataSource: UITableViewDataSource {
     }
 
     func deselect(indexPath: IndexPath) {
+        guard allMessages.indices.contains(indexPath.section) else { return }
         let sectionController = sectionController(
             at: indexPath.section,
             selfUser: userSession.selfUser,
@@ -826,7 +841,8 @@ extension ConversationTableViewDataSource {
         at index: Int,
         firstUnreadMessageNonce: UUID?,
         searchQueries: [String],
-        messages: [ZMMessage]
+        messages: [ZMMessage],
+        offlineNotice: OfflineNoticePosition? = nil
     ) -> ConversationMessageContext {
 
         let isTimestampInSameMinuteAsPreviousMessage: Bool
@@ -848,13 +864,13 @@ extension ConversationTableViewDataSource {
             isLastMessage: isLastMessage,
             searchQueries: searchQueries,
             previousMessageIsKnock: previousMessage?.isKnock == true,
-            offlineNotice: offlineNoticePosition(at: index, messages: messages)
+            offlineNotice: offlineNotice
         )
     }
 
     /// The offline notice goes above the messages the self user sent while offline, which are the newest ones
     /// and still pending, or below the newest message if there are none.
-    private func offlineNoticePosition(at index: Int, messages: [ZMMessage]) -> OfflineNoticePosition? {
+    private func offlineNoticePlacement(messages: [ZMMessage]) -> (index: Int, position: OfflineNoticePosition)? {
         guard showsOfflineNotice, !hasNewerMessagesToLoad else { return nil }
 
         let pendingMessageCount = messages.prefix { message in
@@ -862,9 +878,9 @@ extension ConversationTableViewDataSource {
         }.count
 
         if pendingMessageCount == 0 {
-            return index == 0 ? .below : nil
+            return (0, .below)
         }
-        return index == pendingMessageCount - 1 ? .above : nil
+        return (pendingMessageCount - 1, .above)
     }
 
     private func isFirstMessageOfTheDay(
