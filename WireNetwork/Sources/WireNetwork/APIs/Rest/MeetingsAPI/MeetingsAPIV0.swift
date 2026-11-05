@@ -40,6 +40,10 @@ class MeetingsAPIV0: MeetingsAPI, VersionedAPI {
         throw MeetingsAPIError.unsupportedEndpointForAPIVersion
     }
 
+    func joinMeeting(domain: String, key: String, code: String, password: String?) async throws -> MeetingJoinResponse {
+        throw MeetingsAPIError.unsupportedEndpointForAPIVersion
+    }
+
     // MARK: - Create meeting
 
     func createMeeting(parameters: CreateMeetingParameters) async throws -> MeetingResponse {

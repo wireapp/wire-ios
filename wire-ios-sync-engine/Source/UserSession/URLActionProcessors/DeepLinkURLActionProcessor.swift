@@ -18,6 +18,7 @@
 
 import Foundation
 import WireLogging
+import enum WireNetwork.MeetingsAPIError
 import WireRequestStrategy
 
 class DeepLinkURLActionProcessor: URLActionProcessor {
@@ -26,23 +27,33 @@ class DeepLinkURLActionProcessor: URLActionProcessor {
     var transportSession: TransportSessionType
     var eventProcessor: LegacyConversationEventProcessorProtocol
     let metadata: BackendMetadataProvider
+    private let joinMeeting: (String, String, String, String?) async throws -> QualifiedID
 
     init(
         contextProvider: ContextProvider,
         transportSession: TransportSessionType,
         eventProcessor: LegacyConversationEventProcessorProtocol,
-        metadata: BackendMetadataProvider
+        metadata: BackendMetadataProvider,
+        joinMeeting: @escaping (String, String, String, String?) async throws -> QualifiedID = { _, _, _, _ in
+            throw ConversationJoinError.unknown
+        }
     ) {
         self.contextProvider = contextProvider
         self.transportSession = transportSession
         self.eventProcessor = eventProcessor
         self.metadata = metadata
+        self.joinMeeting = joinMeeting
     }
 
     func process(urlAction: URLAction, delegate: PresentationDelegate?) {
         switch urlAction {
         case let .joinConversation(key: key, code: code):
             handleJoinConversation(key: key, code: code, urlAction: urlAction, delegate: delegate)
+
+        case .joinMeeting:
+            if let delegate {
+                handleJoinMeeting(urlAction, delegate: delegate)
+            }
 
         case let .openConversation(id):
             handleOpenConversation(id: id, delegate: delegate)
@@ -78,7 +89,7 @@ class DeepLinkURLActionProcessor: URLActionProcessor {
             case let .success((conversationId, conversationName, hasPassword)):
                 if let conversation = ZMConversation.fetch(with: conversationId, in: viewContext),
                    conversation.isSelfAnActiveMember {
-                    delegate.showConversation(conversation, at: nil)
+                    showJoinedConversation(conversation, delegate: delegate)
                     delegate.completedURLAction(urlAction)
                 } else if hasPassword {
                     handlePasswordPrompt(for: conversationName, key: key, code: code, delegate: delegate)
@@ -94,6 +105,34 @@ class DeepLinkURLActionProcessor: URLActionProcessor {
 
             case let .failure(error):
                 handleJoinConversationFailure(error: error, urlAction: urlAction, delegate: delegate)
+            }
+        }
+    }
+
+    private func handleJoinMeeting(
+        _ action: URLAction,
+        password: String? = nil,
+        delegate: PresentationDelegate
+    ) {
+        guard case let .joinMeeting(domain, key, code) = action else { return }
+
+        Task { @MainActor in
+            do {
+                let id = try await joinMeeting(domain, key, code, password)
+                guard let conversation = ZMConversation.fetch(with: id, in: contextProvider.viewContext) else {
+                    throw ConversationJoinError.unknown
+                }
+                handleConversationSynchronization(conversation: conversation, action: action, delegate: delegate)
+            } catch MeetingsAPIError.invalidMeetingPassword where password == nil {
+                delegate.showPasswordPrompt(for: nil) { [weak self] password in
+                    guard let password, !password.isEmpty else {
+                        delegate.completedURLAction(action)
+                        return
+                    }
+                    self?.handleJoinMeeting(action, password: password, delegate: delegate)
+                }
+            } catch {
+                handleJoinConversationFailure(error: error, urlAction: action, delegate: delegate)
             }
         }
     }
@@ -162,30 +201,46 @@ class DeepLinkURLActionProcessor: URLActionProcessor {
 
             switch response {
             case let .success(conversation):
-                handleConversationSynchronization(conversation: conversation, key: key, code: code, delegate: delegate)
+                handleConversationSynchronization(
+                    conversation: conversation,
+                    action: .joinConversation(key: key, code: code),
+                    delegate: delegate
+                )
             case let .failure(error):
                 delegate.failedToPerformAction(.joinConversation(key: key, code: code), error: error)
+                delegate.completedURLAction(.joinConversation(key: key, code: code))
             }
-
-            delegate.completedURLAction(.joinConversation(key: key, code: code))
         }
     }
 
     private func handleConversationSynchronization(
         conversation: ZMConversation,
-        key: String,
-        code: String,
+        action: URLAction,
         delegate: PresentationDelegate
     ) {
-        synchronise(conversation) { result in
+        let completion: (Result<ZMConversation, Error>) -> Void = { result in
             DispatchQueue.main.async {
                 switch result {
                 case let .success(syncConversation):
-                    delegate.showConversation(syncConversation, at: nil)
+                    self.showJoinedConversation(syncConversation, delegate: delegate)
                 case let .failure(error):
-                    delegate.failedToPerformAction(.joinConversation(key: key, code: code), error: error)
+                    delegate.failedToPerformAction(action, error: error)
                 }
+                delegate.completedURLAction(action)
             }
+        }
+        if case .joinMeeting = action {
+            joinMLSGroupIfNeeded(conversation, completion: completion)
+        } else {
+            synchronise(conversation, completion: completion)
+        }
+    }
+
+    private func showJoinedConversation(_ conversation: ZMConversation, delegate: PresentationDelegate) {
+        if conversation.isMeeting {
+            delegate.showMeetings()
+        } else {
+            delegate.showConversation(conversation, at: nil)
         }
     }
 
@@ -239,21 +294,27 @@ class DeepLinkURLActionProcessor: URLActionProcessor {
                 return
             }
 
-            guard
-                let groupId = upToDateConversation.mlsGroupID,
-                upToDateConversation.messageProtocol.isOne(of: .mls, .mixed)
-            else {
-                completion(.success(upToDateConversation))
-                return
-            }
+            self.joinMLSGroupIfNeeded(upToDateConversation, completion: completion)
+        }
+    }
 
-            upToDateConversation.joinNewMLSGroup(id: groupId) { error in
-                if let error {
-                    WireLogger.mls.debug("failed to join MLS group: \(error)")
-                    completion(.failure(error))
-                } else {
-                    completion(.success(upToDateConversation))
-                }
+    private func joinMLSGroupIfNeeded(
+        _ conversation: ZMConversation,
+        completion: @escaping (Result<ZMConversation, Error>) -> Void
+    ) {
+        guard let groupID = conversation.mlsGroupID,
+              conversation.messageProtocol.isOne(of: .mls, .mixed),
+              !conversation.isMeeting || conversation.mlsStatus != .ready else {
+            completion(.success(conversation))
+            return
+        }
+
+        conversation.joinNewMLSGroup(id: groupID) { error in
+            if let error {
+                WireLogger.mls.debug("failed to join MLS group: \(error)")
+                completion(.failure(error))
+            } else {
+                completion(.success(conversation))
             }
         }
     }

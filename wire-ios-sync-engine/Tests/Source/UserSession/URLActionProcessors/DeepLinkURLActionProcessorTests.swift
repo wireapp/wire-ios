@@ -20,6 +20,8 @@ import XCTest
 
 import WireDataModelSupport
 import WireMockTransport
+import enum WireNetwork.MeetingsAPIError
+import WireRequestStrategy
 @testable import WireSyncEngine
 
 final class DeepLinkURLActionProcessorTests: DatabaseTest {
@@ -156,6 +158,83 @@ final class DeepLinkURLActionProcessorTests: DatabaseTest {
             presentationDelegate.failedToPerformActionCalls.first?.1 as? ConversationFetchError,
             ConversationFetchError.invalidCode
         )
+    }
+
+    func testThatMeetingJoinOpensMeetingsIncludingRepeatedJoin() throws {
+        let id = QualifiedID(uuid: UUID(), domain: "wire.com")
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
+        conversation.remoteIdentifier = id.uuid
+        conversation.domain = id.domain
+        conversation.conversationType = .group
+        conversation.groupType = .meeting
+        conversation.messageProtocol = .mls
+        conversation.mlsGroupID = .random()
+        let mlsService = MockMLSServiceInterface()
+        mlsService.joinNewGroupWith_MockMethod = { _ in }
+        syncMOC.performAndWait { syncMOC.mlsService = mlsService }
+        let syncHandler = MockActionHandler<SyncConversationAction>(
+            context: syncMOC.notificationContext,
+            results: { _ in .success(()) }
+        )
+        var passwords: [String?] = []
+        sut = DeepLinkURLActionProcessor(
+            contextProvider: coreDataStack!,
+            transportSession: mockTransportSession,
+            eventProcessor: mockEventProcessor,
+            metadata: .mock(),
+            joinMeeting: { domain, key, code, password in
+                XCTAssertEqual(domain, id.domain)
+                XCTAssertEqual(key, "key")
+                XCTAssertEqual(code, "code")
+                passwords.append(password)
+                if passwords.count == 1 { throw MeetingsAPIError.invalidMeetingPassword }
+                return id
+            }
+        )
+        let action = URLAction.joinMeeting(domain: id.domain, key: "key", code: "code")
+
+        for status in [MLSGroupStatus.pendingJoin, .ready] {
+            conversation.mlsStatus = status
+            let completed = expectation(description: "meeting link completed")
+            presentationDelegate.completedURLActionCallsCompletion = { completed.fulfill() }
+            sut.process(urlAction: action, delegate: presentationDelegate)
+            wait(for: [completed], timeout: 5)
+        }
+
+        XCTAssertEqual(passwords, [nil, "mockPassword12345678!3", nil])
+        XCTAssertTrue(syncHandler.performedActions.isEmpty)
+        XCTAssertEqual(mlsService.joinNewGroupWith_Invocations.count, 1)
+        XCTAssertEqual(presentationDelegate.showMeetingsCalls, 2)
+        XCTAssertTrue(presentationDelegate.showConversationCalls.isEmpty)
+        XCTAssertTrue(presentationDelegate.failedToPerformActionCalls.isEmpty)
+    }
+
+    func testThatAlreadyJoinedConversationUsesItsGroupType() {
+        let conversationID = UUID()
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
+        conversation.remoteIdentifier = conversationID
+        conversation.conversationType = .group
+        conversation.addParticipantAndUpdateConversationState(user: ZMUser.selfUser(in: uiMOC), role: nil)
+        mockTransportSession.responseGeneratorBlock = { _ in
+            ZMTransportResponse(
+                payload: ["id": conversationID.transportString(), "name": "Test"] as ZMTransportData,
+                httpStatus: 200,
+                transportSessionError: nil,
+                apiVersion: 0
+            )
+        }
+
+        for type in [ConversationGroupType.group, .meeting] {
+            conversation.groupType = type
+            let completed = expectation(description: "existing member link completed")
+            presentationDelegate.completedURLActionCallsCompletion = { completed.fulfill() }
+            sut.process(urlAction: .joinConversation(key: "key", code: "code"), delegate: presentationDelegate)
+            wait(for: [completed], timeout: 5)
+        }
+
+        XCTAssertEqual(presentationDelegate.showConversationCalls, [conversation])
+        XCTAssertEqual(presentationDelegate.showMeetingsCalls, 1)
+        XCTAssertTrue(mockEventProcessor.processConversationEvents_Invocations.isEmpty)
     }
 
 }

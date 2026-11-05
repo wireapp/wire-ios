@@ -36,6 +36,9 @@ public enum URLAction: Equatable {
     /// Join a public conversation
     case joinConversation(key: String, code: String)
 
+    /// Join a meeting through its reusable link.
+    case joinMeeting(domain: String, key: String, code: String)
+
     /// Navigate to a conversation
     case openConversation(id: UUID)
 
@@ -58,6 +61,7 @@ public enum URLAction: Equatable {
     public var requiresAuthentication: Bool {
         switch self {
         case .joinConversation,
+             .joinMeeting,
              .openConversation,
              .openUserProfile,
              .connectBot,
@@ -70,6 +74,7 @@ public enum URLAction: Equatable {
     public var opensDeepLink: Bool {
         switch self {
         case .joinConversation,
+             .joinMeeting,
              .openConversation,
              .openUserProfile:
             true
@@ -143,6 +148,15 @@ extension URLAction {
             }
 
             self = .joinConversation(key: key, code: code)
+
+        case URL.DeepLink.meetingJoin:
+            guard let domain = components.query(for: "domain"), !domain.isEmpty,
+                  let key = components.query(for: URLQueryItem.Key.conversationKey), !key.isEmpty,
+                  let code = components.query(for: URLQueryItem.Key.conversationCode), !code.isEmpty else {
+                throw DeepLinkRequestError.malformedLink
+            }
+
+            self = .joinMeeting(domain: domain, key: key, code: code)
 
         case URL.DeepLink.conversation:
             if let lastComponent = url.pathComponents.last,
