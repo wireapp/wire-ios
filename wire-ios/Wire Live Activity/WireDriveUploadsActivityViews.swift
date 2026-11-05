@@ -18,14 +18,15 @@
 
 import SwiftUI
 import WireDesign
-import WireDriveUploadsLiveActivity
 import WireFoundation
+import WireMessagingDomain
 
 // MARK: - Lock screen and banner
 
 struct WireDriveUploadsBannerView: View {
 
     let state: WireDriveUploadsActivityState
+    var accountName: String?
     var isStale = false
     var contentInsets = EdgeInsets(top: 29, leading: 20, bottom: 29, trailing: 20)
 
@@ -38,7 +39,7 @@ struct WireDriveUploadsBannerView: View {
             Spacer()
 
             HStack(spacing: 14) {
-                WireDriveUploadsTexts(presentation: presentation)
+                WireDriveUploadsTexts(presentation: presentation, accountName: accountName)
 
                 Spacer(minLength: 0)
 
@@ -68,12 +69,22 @@ struct WireDriveUploadsBannerView: View {
 struct WireDriveUploadsTexts: View {
 
     let presentation: WireDriveUploadsActivityPresentation
+    var accountName: String?
 
     var body: some View {
         VStack(alignment: .leading, spacing: 3) {
             Text(presentation.title)
                 .font(.callout.weight(.semibold))
                 .foregroundStyle(ColorTheme.Backgrounds.onBackground.onDarkSurface)
+
+            if let accountName {
+                Text(L10n.LiveActivity.Uploads.account(accountName))
+                    .font(.subheadline.weight(.medium))
+                    .foregroundStyle(ColorTheme.Backgrounds.onBackground.onDarkSurface.opacity(0.85))
+                    .lineLimit(1)
+                    .accessibilityLabel(Text(L10n.LiveActivity.Uploads.account(accountName)))
+                    .accessibilityIdentifier("uploadsLiveActivityAccount")
+            }
 
             Text(subtitle)
                 .font(.subheadline.weight(.medium))

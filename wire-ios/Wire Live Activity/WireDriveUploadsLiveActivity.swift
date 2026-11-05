@@ -20,22 +20,27 @@ import ActivityKit
 import SwiftUI
 import WidgetKit
 import WireDesign
-import WireDriveUploadsLiveActivity
 import WireFoundation
+import WireMessagingDomain
 
 /// Shows the ongoing Wire Drive uploads on the lock screen and in the Dynamic Island.
 struct WireDriveUploadsLiveActivity: Widget {
 
     var body: some WidgetConfiguration {
         ActivityConfiguration(for: WireDriveUploadsActivityAttributes.self) { context in
-            WireDriveUploadsBannerView(state: context.state, isStale: context.isStale)
-                .activityBackgroundTint(ColorTheme.Backgrounds.background.onDarkSurface)
-                .activitySystemActionForegroundColor(ColorTheme.Backgrounds.onBackground.onDarkSurface)
+            WireDriveUploadsBannerView(
+                state: context.state,
+                accountName: context.attributes.accountName,
+                isStale: context.isStale
+            )
+            .activityBackgroundTint(ColorTheme.Backgrounds.background.onDarkSurface)
+            .activitySystemActionForegroundColor(ColorTheme.Backgrounds.onBackground.onDarkSurface)
         } dynamicIsland: { context in
             DynamicIsland {
                 DynamicIslandExpandedRegion(.center) {
                     WireDriveUploadsBannerView(
                         state: context.state,
+                        accountName: context.attributes.accountName,
                         isStale: context.isStale,
                         contentInsets: .init(top: 0, leading: 4, bottom: 14, trailing: 4)
                     )
@@ -72,13 +77,27 @@ struct WireDriveUploadsLiveActivity: Widget {
         static let failed = Self(phase: .failed, totalCount: 8, uploadedCount: 0, failedCount: 8, progress: 0)
     }
 
-    #Preview("Banner", as: .content, using: WireDriveUploadsActivityAttributes()) {
+    #Preview(
+        "Banner",
+        as: .content,
+        using: WireDriveUploadsActivityAttributes(accountInfo: .init(userID: UUID(), name: "Walter White"))
+    ) {
         WireDriveUploadsLiveActivity()
     } contentStates: {
         WireDriveUploadsActivityState.uploading
         WireDriveUploadsActivityState.uploadingWithFailure
         WireDriveUploadsActivityState.completed
         WireDriveUploadsActivityState.failed
+    }
+
+    #Preview("Stale banner") {
+        WireDriveUploadsBannerView(
+            state: .uploading,
+            accountName: "Saul Goodman",
+            isStale: true
+        )
+        .frame(height: 160)
+        .background(ColorTheme.Backgrounds.background.onDarkSurface)
     }
 
     #Preview("Compact", as: .dynamicIsland(.compact), using: WireDriveUploadsActivityAttributes()) {
@@ -96,7 +115,11 @@ struct WireDriveUploadsLiveActivity: Widget {
         WireDriveUploadsActivityState.failed
     }
 
-    #Preview("Expanded", as: .dynamicIsland(.expanded), using: WireDriveUploadsActivityAttributes()) {
+    #Preview(
+        "Expanded",
+        as: .dynamicIsland(.expanded),
+        using: WireDriveUploadsActivityAttributes(accountInfo: .init(userID: UUID(), name: "Saul Goodman"))
+    ) {
         WireDriveUploadsLiveActivity()
     } contentStates: {
         WireDriveUploadsActivityState.uploading

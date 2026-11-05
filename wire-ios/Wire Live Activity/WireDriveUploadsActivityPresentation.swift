@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import WireDriveUploadsLiveActivity
+import WireMessagingDomain
 
 private typealias Strings = L10n.LiveActivity.Uploads
 

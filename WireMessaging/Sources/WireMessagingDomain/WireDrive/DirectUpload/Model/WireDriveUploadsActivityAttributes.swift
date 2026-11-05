@@ -17,18 +17,34 @@
 //
 
 public import ActivityKit
-import Foundation
+public import Foundation
 
 /// The Live Activity showing ongoing Wire Drive direct uploads.
 ///
 /// Shared by the app, which updates the activity, and the widget extension, which renders it. It
-/// deliberately depends on nothing else so that the extension does not have to link the rest of the package.
+/// uses account information from the messaging domain without depending on the assembly or UI layers.
 public struct WireDriveUploadsActivityAttributes: ActivityAttributes {
 
     public typealias ContentState = WireDriveUploadsActivityState
 
-    public init() {}
+    /// The upload account. Older activities have no owner and must not be adopted by another account.
+    public let userID: UUID?
+    public let accountName: String?
+
+    public init(accountInfo: WireDriveAccountInfo? = nil) {
+        self.userID = accountInfo?.userID
+        let name = accountInfo?.name?.trimmingCharacters(in: .whitespacesAndNewlines)
+        let handle = accountInfo?.handle?.trimmingCharacters(in: .whitespacesAndNewlines)
+        if let name, !name.isEmpty {
+            self.accountName = name
+        } else if let handle, !handle.isEmpty {
+            self.accountName = handle.hasPrefix("@") ? handle : "@\(handle)"
+        } else {
+            self.accountName = nil
+        }
+    }
 }
+
 
 /// What the activity shows at a point in time.
 public struct WireDriveUploadsActivityState: Codable, Hashable, Sendable {

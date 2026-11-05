@@ -1,3 +1,5 @@
+"live_activity.uploads.account" = "Account: %@";
+
 "live_activity.uploads.uploading.title" = "Uploading to Shared Drive";
 "live_activity.uploads.uploading.subtitle" = "%1$lld of %2$lld uploaded";
 "live_activity.uploads.uploading.failed" = "%lld failed";
