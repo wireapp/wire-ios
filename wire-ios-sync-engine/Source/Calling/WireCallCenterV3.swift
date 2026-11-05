@@ -20,6 +20,7 @@ import avs
 import Combine
 import Foundation
 import struct WireDomain.AnsweredElsewhereCallTracker
+import struct WireDomain.CallNotificationCallerTracker
 import enum WireFoundation.AnsweredElsewhereCallKey
 import WireLogging
 
@@ -1117,6 +1118,13 @@ extension WireCallCenterV3 {
             conversationID: callEvent.conversationId.identifier,
             accountID: selfUserId.identifier,
             isCallerSelf: callEvent.userId == selfUserId
+        )
+        CallNotificationCallerTracker(userDefaults: VoIPPushHelper.storage).markEnded(
+            data: callEvent.data,
+            conversationID: callEvent.conversationId.identifier,
+            accountID: selfUserId.identifier,
+            eventTimestamp: callEvent.serverTimestamp,
+            now: .now
         )
         if isReady {
             Self.logger

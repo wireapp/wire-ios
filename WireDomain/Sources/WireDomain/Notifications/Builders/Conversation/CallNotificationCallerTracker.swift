@@ -20,13 +20,14 @@ import Foundation
 import WireNetwork
 
 /// Keeps the first sender of a conference start for a later missed-call notification.
-struct CallNotificationCallerTracker {
+public struct CallNotificationCallerTracker {
 
     private struct Entry: Codable {
         let callerID: UUID
         let callerDomain: String
         let conferenceTimestamp: String?
         let recordedAt: Date
+        var endedEventTimestamp: Date?
 
         var caller: UserID {
             UserID(id: callerID, domain: callerDomain)
@@ -39,46 +40,77 @@ struct CallNotificationCallerTracker {
 
     let userDefaults: UserDefaults
 
+    public init(userDefaults: UserDefaults) {
+        self.userDefaults = userDefaults
+        userDefaults.removeObject(forKey: Self.storageKey)
+    }
+
+    public func markEnded(data: Data, conversationID: UUID, accountID: UUID, eventTimestamp: Date, now: Date) {
+        guard let content = try? JSONDecoder().decode(CallContent.self, from: data),
+              content.type == CallContent.CallType.confEnd else { return }
+
+        Self.lock.lock()
+        defer { Self.lock.unlock() }
+        let key = key(conversationID: conversationID, accountID: accountID)
+        guard var entry = readEntry(forKey: key, now: now) else { return }
+        // Keep attribution available if the NSE handles the same end event concurrently.
+        entry.endedEventTimestamp = eventTimestamp
+        userDefaults.set(try? JSONEncoder().encode(entry), forKey: key)
+    }
+
     func track(
         callContent: CallContent,
         conversationID: UUID,
         accountID: UUID,
         senderID: UserID,
-        now: Date = .now
+        isCallerSelf: Bool,
+        eventTimestamp: Date?,
+        now: Date
     ) -> UserID? {
         guard callContent.type == CallContent.CallType.confStart ||
             callContent.type == CallContent.CallType.confEnd else { return nil }
 
         Self.lock.lock()
         defer { Self.lock.unlock() }
-        var entries = userDefaults.data(forKey: Self.storageKey).flatMap {
-            try? JSONDecoder().decode([String: Entry].self, from: $0)
-        } ?? [:]
-        entries = entries.filter { (0 ... Self.maximumAge).contains(now.timeIntervalSince($0.value.recordedAt)) }
-        defer {
-            if entries.isEmpty {
-                userDefaults.removeObject(forKey: Self.storageKey)
-            } else if let data = try? JSONEncoder().encode(entries) {
-                userDefaults.set(data, forKey: Self.storageKey)
-            }
-        }
-
-        let key = "\(accountID.uuidString).\(conversationID.uuidString)"
+        let key = key(conversationID: conversationID, accountID: accountID)
+        let existing = readEntry(forKey: key, now: now)
         if callContent.type == CallContent.CallType.confEnd {
-            return entries.removeValue(forKey: key)?.caller
+            userDefaults.removeObject(forKey: key)
+            guard existing?.endedEventTimestamp == nil || existing?.endedEventTimestamp == eventTimestamp else {
+                return nil
+            }
+            return existing?.caller
         }
-        guard callContent.isIncomingCall else { return nil }
-        if let existing = entries[key],
-           existing.conferenceTimestamp == callContent.conferenceTimestamp ||
-           existing.conferenceTimestamp == nil || callContent.conferenceTimestamp == nil {
+        guard !isCallerSelf else {
+            userDefaults.removeObject(forKey: key)
             return nil
         }
-        entries[key] = Entry(
+        guard callContent.isIncomingCall else { return nil }
+        if let existing, existing.endedEventTimestamp == nil,
+           let timestamp = callContent.conferenceTimestamp, existing.conferenceTimestamp == timestamp {
+            return nil
+        }
+        let entry = Entry(
             callerID: senderID.id,
             callerDomain: senderID.domain,
             conferenceTimestamp: callContent.conferenceTimestamp,
             recordedAt: now
         )
+        userDefaults.set(try? JSONEncoder().encode(entry), forKey: key)
         return nil
+    }
+
+    private func key(conversationID: UUID, accountID: UUID) -> String {
+        "\(Self.storageKey).\(accountID.uuidString).\(conversationID.uuidString)"
+    }
+
+    private func readEntry(forKey key: String, now: Date) -> Entry? {
+        guard let data = userDefaults.data(forKey: key),
+              let entry = try? JSONDecoder().decode(Entry.self, from: data),
+              (0 ... Self.maximumAge).contains(now.timeIntervalSince(entry.recordedAt)) else {
+            userDefaults.removeObject(forKey: key)
+            return nil
+        }
+        return entry
     }
 }

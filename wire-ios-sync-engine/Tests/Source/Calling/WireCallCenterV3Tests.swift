@@ -1624,6 +1624,36 @@ final class WireCallCenterV3Tests: MessagingTest {
                     accountID: selfUserID.identifier,
                     isCallerSelf: false
                 ), "A later unanswered conference must still be reported as missed")
+
+                let callerTracker = CallNotificationCallerTracker(userDefaults: VoIPPushHelper.storage)
+                _ = callerTracker.track(
+                    callContent: try JSONDecoder().decode(CallContent.self, from: Data(
+                        #"{"type":"CONFSTART","src_clientid":"other","resp":false}"#.utf8
+                    )),
+                    conversationID: groupConversationID.identifier,
+                    accountID: selfUserID.identifier,
+                    senderID: .init(id: otherUserID.identifier, domain: otherUserID.domain ?? ""),
+                    isCallerSelf: false,
+                    eventTimestamp: .now,
+                    now: .now
+                )
+                sut.processCallEvent(CallEvent(
+                    data: Data(#"{"type":"CONFEND","src_clientid":"other","resp":false}"#.utf8),
+                    currentTimestamp: .now,
+                    serverTimestamp: Date(timeIntervalSince1970: 1000),
+                    conversationId: groupConversationID,
+                    userId: otherUserID,
+                    clientId: otherUserClientID
+                ))
+                XCTAssertNil(callerTracker.track(
+                    callContent: end,
+                    conversationID: groupConversationID.identifier,
+                    accountID: selfUserID.identifier,
+                    senderID: .init(id: otherUserID.identifier, domain: otherUserID.domain ?? ""),
+                    isCallerSelf: false,
+                    eventTimestamp: .now,
+                    now: .now
+                ))
             }
         }
     }

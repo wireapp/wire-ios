@@ -76,7 +76,10 @@ public struct AnsweredElsewhereCallTracker {
                 callContent: callContent,
                 conversationID: conversationID,
                 accountID: accountID,
-                senderID: event.senderID
+                senderID: event.senderID,
+                isCallerSelf: isCallerSelf,
+                eventTimestamp: event.timestamp,
+                now: .now
             )
             _ = track(
                 callContent: callContent,

@@ -29,23 +29,24 @@ final class CallNotificationCallerTrackerTests: XCTestCase {
     private let conversationID = UUID.mockID2
     private let caller = UserID(id: .mockID3, domain: "a.example")
     private let responder = UserID(id: .mockID4, domain: "b.example")
+    private var suiteName: String!
     private var defaults: UserDefaults!
 
     override func setUp() {
-        defaults = UserDefaults(suiteName: UUID.mockID5.uuidString)!
-        defaults.removePersistentDomain(forName: UUID.mockID5.uuidString)
+        suiteName = UUID().uuidString
+        defaults = UserDefaults(suiteName: suiteName)!
     }
 
     override func tearDown() {
-        defaults.removePersistentDomain(forName: UUID.mockID5.uuidString)
+        defaults.removePersistentDomain(forName: suiteName)
         defaults = nil
+        suiteName = nil
     }
 
     func testSameConferenceResponseKeepsFirstCallerAndEndConsumesItOnce() throws {
         let start = try callContent(type: "CONFSTART", timestamp: "1000")
         let response = try callContent(type: "CONFSTART", responded: true, timestamp: "1000")
         let repeatedStart = try callContent(type: "CONFSTART", timestamp: "1000")
-        let startWithoutTimestamp = try callContent(type: "CONFSTART")
         let end = try callContent(type: "CONFEND")
         let startTime = Date(timeIntervalSince1970: 1000)
         let tracker = CallNotificationCallerTracker(userDefaults: defaults)
@@ -53,9 +54,7 @@ final class CallNotificationCallerTrackerTests: XCTestCase {
         XCTAssertNil(track(tracker, start, caller, at: startTime))
         XCTAssertNil(track(tracker, response, responder, at: startTime.addingTimeInterval(1)))
         XCTAssertNil(track(tracker, repeatedStart, responder, at: startTime.addingTimeInterval(2)))
-        XCTAssertNil(track(tracker, startWithoutTimestamp, responder, at: startTime.addingTimeInterval(3)))
-
-        let extensionDefaults = UserDefaults(suiteName: UUID.mockID5.uuidString)!
+        let extensionDefaults = UserDefaults(suiteName: suiteName)!
         let extensionTracker = CallNotificationCallerTracker(userDefaults: extensionDefaults)
         XCTAssertEqual(
             track(extensionTracker, end, responder, at: startTime.addingTimeInterval(4)),
@@ -65,17 +64,54 @@ final class CallNotificationCallerTrackerTests: XCTestCase {
     }
 
     func testNewConferenceReplacesCallerAndKeysAreScoped() throws {
-        let firstStart = try callContent(type: "CONFSTART", timestamp: "1000")
-        let secondStart = try callContent(type: "CONFSTART", timestamp: "2000")
         let end = try callContent(type: "CONFEND")
         let tracker = CallNotificationCallerTracker(userDefaults: defaults)
 
-        _ = track(tracker, firstStart, caller)
-        _ = track(tracker, secondStart, responder)
+        for (old, new) in [("1000", "2000"), ("1000", nil), (nil, "2000"), (nil, nil)] as [(String?, String?)] {
+            _ = track(tracker, try callContent(type: "CONFSTART", timestamp: old), caller)
+            _ = track(tracker, try callContent(type: "CONFSTART", timestamp: new), responder)
 
-        XCTAssertNil(track(tracker, end, responder, accountID: UUID.mockID6))
-        XCTAssertNil(track(tracker, end, responder, conversationID: UUID.mockID7))
-        XCTAssertEqual(track(tracker, end, caller), responder)
+            XCTAssertNil(track(tracker, end, responder, accountID: UUID.mockID6))
+            XCTAssertNil(track(tracker, end, responder, conversationID: UUID.mockID7))
+            XCTAssertEqual(track(tracker, end, caller), responder)
+        }
+    }
+
+    func testSelfStartClearsCallerWithoutStoringSelf() throws {
+        let start = try callContent(type: "CONFSTART", timestamp: "1000")
+        let end = try callContent(type: "CONFEND")
+        let tracker = CallNotificationCallerTracker(userDefaults: defaults)
+        for responded in [false, true] {
+            _ = track(tracker, start, caller)
+            let selfStart = try callContent(type: "CONFSTART", responded: responded, timestamp: "1000")
+            _ = track(tracker, selfStart, responder, isCallerSelf: true)
+            XCTAssertNil(track(tracker, end, caller))
+        }
+    }
+
+    func testAppEndAllowsOnlyTheSameNotificationEvent() throws {
+        let start = try callContent(type: "CONFSTART", timestamp: "1000")
+        let end = try callContent(type: "CONFEND")
+        let data = Data(#"{"type":"CONFEND","src_clientid":"client","resp":false}"#.utf8)
+        let tracker = CallNotificationCallerTracker(userDefaults: defaults)
+        let time = Date.now
+
+        for notificationTime in [time, time.addingTimeInterval(1)] {
+            _ = track(tracker, start, caller, at: time)
+            tracker.markEnded(
+                data: data, conversationID: conversationID, accountID: accountID, eventTimestamp: time, now: time
+            )
+            XCTAssertEqual(
+                track(tracker, end, responder, at: notificationTime),
+                notificationTime == time ? caller : nil
+            )
+        }
+        _ = track(tracker, start, caller, at: time)
+        _ = track(tracker, end, responder, at: time)
+        tracker.markEnded(
+            data: data, conversationID: conversationID, accountID: accountID, eventTimestamp: time, now: time
+        )
+        XCTAssertNil(track(tracker, end, responder, at: time))
     }
 
     func testExpiredCallerFallsBackToNoCachedIdentity() throws {
@@ -95,6 +131,7 @@ final class CallNotificationCallerTrackerTests: XCTestCase {
         _ sender: UserID,
         accountID: UUID? = nil,
         conversationID: UUID? = nil,
+        isCallerSelf: Bool = false,
         at time: Date = .now
     ) -> UserID? {
         tracker.track(
@@ -102,6 +139,8 @@ final class CallNotificationCallerTrackerTests: XCTestCase {
             conversationID: conversationID ?? self.conversationID,
             accountID: accountID ?? self.accountID,
             senderID: sender,
+            isCallerSelf: isCallerSelf,
+            eventTimestamp: time,
             now: time
         )
     }

@@ -369,15 +369,10 @@ final class ConversationCallingEventNotificationBuilderTests: XCTestCase {
                 let notifications = try await eventBuilder.buildContent(event: makeMessageEvent(
                     GenericMessage(content: end), senderID: Scaffolding.userID, isMLS: isMLS
                 ))
-                guard case let .text(content) = try XCTUnwrap(notifications?.first) else { return XCTFail() }
-                let payload = try JSONSerialization.data(withJSONObject: [
-                    "aps": ["alert": ["title": content.title, "body": content.body]],
-                    "userInfo": content.userInfo
-                ], options: [.prettyPrinted, .sortedKeys])
-                let attachment = XCTAttachment(data: payload, uniformTypeIdentifier: "public.json")
-                attachment.name = "missed-call-\(isMLS ? "mls" : "proteus")-\(suppressStart ? "muted" : "visible")"
-                attachment.lifetime = .keepAlways
-                add(attachment)
+                guard let notification = notifications?.first, case let .text(content) = notification else {
+                    XCTFail("Expected a missed-call notification (MLS: \(isMLS), muted: \(suppressStart))")
+                    continue
+                }
                 XCTAssertEqual(content.body, "User A called")
                 XCTAssertEqual(content.userInfo["senderIDString"] as? String, callerID.id.uuidString)
             }

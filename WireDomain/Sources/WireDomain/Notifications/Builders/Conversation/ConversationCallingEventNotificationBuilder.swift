@@ -67,7 +67,10 @@ struct ConversationCallingEventNotificationBuilder: ConversationCallingEventNoti
             callContent: callContent,
             conversationID: resolvedConversationID.id,
             accountID: accountID,
-            senderID: senderID
+            senderID: senderID,
+            isCallerSelf: selfUser == sender,
+            eventTimestamp: time,
+            now: .now
         )
         let displayCallKitNotification = await validator.validateCallKitNotification(
             conversationID: resolvedConversationID,
