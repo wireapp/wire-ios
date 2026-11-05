@@ -17,14 +17,12 @@
 //
 
 import Combine
-import Foundation
-import WireDriveUploadsLiveActivity
+package import Foundation
 import WireLogging
-import WireMessagingDomain
 
 /// Keeps a Live Activity in step with the ongoing Wire Drive direct uploads.
 @MainActor
-final class WireDriveUploadsLiveActivityController {
+package final class WireDriveUploadsLiveActivityController {
 
     enum Constants {
         /// How long an activity of finished uploads stays up when nothing went wrong.
@@ -46,7 +44,7 @@ final class WireDriveUploadsLiveActivityController {
     /// persisted uploads once the manager has started, so an empty summary means nothing before that.
     private var hasSeenUploads = false
 
-    init(
+    package init(
         observeUploads: any WireDriveObserveDirectUploadsUseCaseProtocol,
         client: any WireDriveUploadsActivityClient,
         throttle: WireDriveUploadsActivityThrottle = .init(),
@@ -60,7 +58,7 @@ final class WireDriveUploadsLiveActivityController {
         self.delay = delay
     }
 
-    func start() {
+    package func start() {
         guard subscription == nil else { return }
 
         WireLogger.wireDrive.info("uploads live activity: following the uploads")
@@ -69,7 +67,7 @@ final class WireDriveUploadsLiveActivityController {
         }
     }
 
-    func endActivityIfNoUploads() async {
+    package func endActivityIfNoUploads() async {
         let previous = pendingWork
         await previous?.value
 
@@ -77,7 +75,7 @@ final class WireDriveUploadsLiveActivityController {
         await endAllActivities()
     }
 
-    func stop() async {
+    package func stop() async {
         cancelPendingEnd()
         subscription = nil
         latestSummary = nil
@@ -191,3 +189,55 @@ final class WireDriveUploadsLiveActivityController {
         await client.end(with: state, dismissal: dismissal)
     }
 }
+
+/// Decides which states are worth sending to the activity.
+///
+/// The tracker reports progress about a hundred times per file, which is far more than ActivityKit
+/// accepts. Anything that changes what the text says goes through at once, while progress alone is
+/// limited to one update per interval.
+package struct WireDriveUploadsActivityThrottle {
+
+    package static let defaultMinimumProgressInterval: TimeInterval = 1
+
+    private let minimumProgressInterval: TimeInterval
+    private var lastSent: WireDriveUploadsActivityState?
+    private var lastSentDate: Date?
+
+    package init(minimumProgressInterval: TimeInterval = Self.defaultMinimumProgressInterval) {
+        self.minimumProgressInterval = minimumProgressInterval
+    }
+
+    /// Whether `state` should be sent now. Recording that it was sent is part of the decision.
+    mutating func shouldSend(_ state: WireDriveUploadsActivityState, at date: Date) -> Bool {
+        guard let lastSent, let lastSentDate else {
+            record(state, at: date)
+            return true
+        }
+
+        guard state != lastSent else { return false }
+
+        var withoutProgress = state
+        withoutProgress.progress = lastSent.progress
+
+        if withoutProgress != lastSent || state.isFinished {
+            record(state, at: date)
+            return true
+        }
+
+        guard date.timeIntervalSince(lastSentDate) >= minimumProgressInterval else { return false }
+
+        record(state, at: date)
+        return true
+    }
+
+    mutating func reset() {
+        lastSent = nil
+        lastSentDate = nil
+    }
+
+    private mutating func record(_ state: WireDriveUploadsActivityState, at date: Date) {
+        lastSent = state
+        lastSentDate = date
+    }
+}
+

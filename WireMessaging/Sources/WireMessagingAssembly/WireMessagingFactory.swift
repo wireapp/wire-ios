@@ -62,7 +62,7 @@ public struct WireMessagingFactory {
         fileCache: any FileCache,
         contextProvider: any ManagedObjectContextProvider,
         analyticsProvider: @escaping DriveAnalyticsProvider,
-        selfUserID: UUID,
+        accountInfo: WireDriveAccountInfo,
         uploadSessions: WireDriveDirectUploadSessionHolder,
         uploadStagingDirectory: URL
     ) {
@@ -85,7 +85,7 @@ public struct WireMessagingFactory {
         self.nodeRenameNotifier = WireDriveNodeRenameNotifier()
         self.analyticsProvider = analyticsProvider
 
-        self.selfUserID = selfUserID
+        self.selfUserID = accountInfo.userID
         self.directUploadSessions = uploadSessions
         self.directUploadStore = WireDriveDirectUploadStore(contextProvider: contextProvider)
         self.directUploadFileCache = WireDriveDirectUploadFileCache(directory: uploadStagingDirectory)
@@ -96,14 +96,15 @@ public struct WireMessagingFactory {
             fileCache: directUploadFileCache,
             // The session is created and owned by the holder, never here: this factory is rebuilt
             // on account switch, and a second session for a live identifier is undefined behaviour.
-            session: uploadSessions.session(userID: selfUserID),
+            session: uploadSessions.session(userID: accountInfo.userID),
             accessTokenProvider: accessToken,
             tracker: directUploadTracker
         )
         self.directUploadsLiveActivity = WireDriveUploadsLiveActivityController(
             observeUploads: directUploadTracker,
-            client: ActivityKitUploadsActivityClient()
+            client: ActivityKitUploadsActivityClient(accountInfo: accountInfo)
         )
+        uploadSessions.retainLiveActivityController(directUploadsLiveActivity, userID: accountInfo.userID)
     }
 
     // MARK: - Direct uploads
@@ -126,7 +127,6 @@ public struct WireMessagingFactory {
     /// Cancels every transfer and removes all upload state. For logout or account deletion.
 
     public func tearDownDirectUploads() async {
-        await directUploadsLiveActivity.stop()
         await directUploadManager.tearDown()
         await directUploadSessions.tearDown(userID: selfUserID)
     }

@@ -17,8 +17,6 @@
 //
 
 import Foundation
-import WireDriveUploadsLiveActivity
-import WireMessagingDomain
 
 extension WireDriveUploadsActivityState {
 

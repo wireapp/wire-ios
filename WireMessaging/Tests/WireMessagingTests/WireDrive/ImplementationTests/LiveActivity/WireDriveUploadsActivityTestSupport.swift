@@ -17,9 +17,7 @@
 //
 
 import Foundation
-import WireDriveUploadsLiveActivity
 
-@testable import WireMessagingAssembly
 @testable import WireMessagingDomain
 
 func makeUploadItem(

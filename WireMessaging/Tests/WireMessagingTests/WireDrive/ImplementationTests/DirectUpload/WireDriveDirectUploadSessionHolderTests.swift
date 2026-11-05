@@ -21,6 +21,7 @@ import Testing
 
 @testable import WireMessagingAssembly
 @testable import WireMessagingData
+@testable import WireMessagingDomain
 @testable import WireMessagingDomainSupport
 
 struct WireDriveDirectUploadSessionHolderTests {
@@ -176,6 +177,62 @@ struct WireDriveDirectUploadSessionHolderTests {
         // When / Then — must not trap.
         sut.didFinishEvents(identifier: "never-claimed")
         await Task.yield()
+    }
+
+    @Test
+    @MainActor
+    func keepsInactiveAccountActivitiesUpdatingUntilTearDown() async {
+        let sut = makeSut()
+        let firstUserID = UUID()
+        let secondUserID = UUID()
+        let firstTracker = WireDriveObserveDirectUploadsUseCase()
+        let secondTracker = WireDriveObserveDirectUploadsUseCase()
+        let firstClient = FakeUploadsActivityClient()
+        let secondClient = FakeUploadsActivityClient()
+        var firstController: WireDriveUploadsLiveActivityController? = .init(
+            observeUploads: firstTracker,
+            client: firstClient,
+            throttle: .init(minimumProgressInterval: 0)
+        )
+        var secondController: WireDriveUploadsLiveActivityController? = .init(
+            observeUploads: secondTracker,
+            client: secondClient
+        )
+        weak var retainedFirst = firstController
+        weak var retainedSecond = secondController
+        sut.retainLiveActivityController(firstController!, userID: firstUserID)
+        sut.retainLiveActivityController(secondController!, userID: secondUserID)
+        firstController?.start()
+        secondController?.start()
+
+        firstTracker.replaceAll(with: [makeUploadItem(.uploading(progress: 0))])
+        secondTracker.replaceAll(with: [makeUploadItem(.queued)])
+        await firstController?.endActivityIfNoUploads()
+        await secondController?.endActivityIfNoUploads()
+
+        // Releasing the UI's references must not stop either account's observation.
+        firstController = nil
+        secondController = nil
+        #expect(retainedFirst != nil)
+        #expect(retainedSecond != nil)
+
+        firstTracker.replaceAll(with: [makeUploadItem(.uploading(progress: 0.5))])
+        await retainedFirst?.endActivityIfNoUploads()
+        #expect(firstClient.calls.last == .update(makeState(total: 1, progress: 0.5)))
+
+        firstTracker.replaceAll(with: [makeUploadItem(.uploaded)])
+        await retainedFirst?.endActivityIfNoUploads()
+        #expect(firstClient.calls.last == .update(makeState(.completed, total: 1, uploaded: 1, progress: 1)))
+
+        await sut.tearDown(userID: firstUserID)
+        #expect(firstClient.calls.last == .endAll)
+        #expect(retainedFirst == nil)
+        #expect(retainedSecond != nil)
+        #expect(secondClient.hasActivity)
+
+        await sut.tearDown(userID: secondUserID)
+        #expect(secondClient.calls.last == .endAll)
+        #expect(retainedSecond == nil)
     }
 
     // MARK: - Tear down

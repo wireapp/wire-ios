@@ -109,7 +109,11 @@ final class ZClientControllerBuilder {
             fileCache: userSession.fileAssetCache,
             contextProvider: DefaultManagedObjectContextProvider(contextProvider: userSession.contextProvider),
             analyticsProvider: { [self] in userSession.analyticsEventTracker },
-            selfUserID: account.userIdentifier,
+            accountInfo: WireDriveAccountInfo(
+                userID: account.userIdentifier,
+                name: account.userName,
+                handle: account.handle
+            ),
             uploadSessions: AppDependencies.wireDriveUploadSessions,
             uploadStagingDirectory: driveUploadStagingURL
         )

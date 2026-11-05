@@ -18,9 +18,7 @@
 
 import Foundation
 import Testing
-import WireDriveUploadsLiveActivity
 
-@testable import WireMessagingAssembly
 @testable import WireMessagingDomain
 
 @MainActor
