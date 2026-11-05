@@ -379,6 +379,12 @@ final class ConversationContentViewController: UIViewController {
     }
 
     func setupMentionsResultsView() {
+        mentionsSearchResultsViewController.onVisibilityChanged = { [weak self] isVisible in
+            // The overlay covers these views; keep the separate composer accessible for filtering.
+            self?.tableView.accessibilityElementsHidden = isVisible
+            self?.bottomContainer.accessibilityElementsHidden = isVisible
+            self?.scrollToBottomButton.accessibilityElementsHidden = isVisible
+        }
         mentionsSearchResultsViewController.view.translatesAutoresizingMaskIntoConstraints = false
 
         addChild(mentionsSearchResultsViewController)

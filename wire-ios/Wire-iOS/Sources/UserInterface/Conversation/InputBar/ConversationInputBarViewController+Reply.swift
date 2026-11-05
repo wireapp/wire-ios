@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+import UIKit
 import WireDataModel
 
 extension ConversationInputBarViewController: ReplyComposingViewDelegate {
@@ -27,6 +27,60 @@ extension ConversationInputBarViewController: ReplyComposingViewDelegate {
         }
 
         addReplyComposingView(composingView)
+
+        // Draft restoration uses addReplyComposingView directly and must not move reading focus.
+        guard UIAccessibility.isVoiceOverRunning, inputBar.textView.window != nil else { return }
+        pendingReplyAccessibilityFocus = composingView
+        mode = .textInput
+        inputBar.textView.becomeFirstResponder()
+        scheduleReplyAccessibilityFocus()
+    }
+
+    func configureReplyAccessibilityFocus() {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(replyKeyboardWillChangeFrame),
+            name: UIResponder.keyboardWillChangeFrameNotification,
+            object: nil
+        )
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(replyKeyboardDidChangeFrame),
+            name: UIResponder.keyboardDidChangeFrameNotification,
+            object: nil
+        )
+    }
+
+    @objc
+    private func replyKeyboardWillChangeFrame(_ notification: Notification) {
+        isReplyKeyboardTransitioning = true
+    }
+
+    @objc
+    private func replyKeyboardDidChangeFrame(_ notification: Notification) {
+        isReplyKeyboardTransitioning = false
+        scheduleReplyAccessibilityFocus()
+    }
+
+    private func scheduleReplyAccessibilityFocus() {
+        guard pendingReplyAccessibilityFocus != nil else { return }
+
+        // Let the initiating action and keyboard callbacks finish before changing VoiceOver focus.
+        // An already open keyboard (or hardware keyboard) needs no new frame notification.
+        DispatchQueue.main.async { [weak self] in
+            guard let self, !isReplyKeyboardTransitioning else { return }
+            guard let composingView = pendingReplyAccessibilityFocus else { return }
+            pendingReplyAccessibilityFocus = nil
+
+            let textView = inputBar.textView
+            guard replyComposingView === composingView,
+                  UIAccessibility.isVoiceOverRunning,
+                  textView.isFirstResponder,
+                  let window = textView.window else { return }
+
+            window.layoutIfNeeded()
+            UIAccessibility.post(notification: .screenChanged, argument: textView)
+        }
     }
 
     func addReplyComposingView(_ composingView: ReplyComposingView) {
@@ -36,6 +90,7 @@ extension ConversationInputBarViewController: ReplyComposingViewDelegate {
     }
 
     func removeReplyComposingView() {
+        pendingReplyAccessibilityFocus = nil
         quotedMessage = nil
         replyComposingView?.removeFromSuperview()
         replyComposingView = nil
