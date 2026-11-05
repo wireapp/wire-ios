@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireCommonComponents
 import XCTest
 
 @testable import Wire
@@ -24,6 +25,18 @@ final class SettingsTests: XCTestCase {
 
     override static func tearDown() {
         Settings.shared.reset()
+    }
+
+    func testThatInitializationPreservesDisabledLinkPreviews() throws {
+        try XCTSkipUnless(SecurityFlags.generateLinkPreviews.isEnabled)
+        let previousPreference = ExtensionSettings.shared.disableLinkPreviews
+        defer { ExtensionSettings.shared.disableLinkPreviews = previousPreference }
+        ExtensionSettings.shared.disableLinkPreviews = true
+
+        _ = Settings()
+
+        XCTAssertTrue(ExtensionSettings.shared.disableLinkPreviews)
+        XCTAssertTrue(Settings.disableLinkPreviews)
     }
 
     func testThatEnumCanBeWrittenAndReturnAnEnum() {
