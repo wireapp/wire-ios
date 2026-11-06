@@ -370,12 +370,12 @@ final class MessageToolboxView: UIView {
             statusContainerView.accessibilityLabel = L10n.Accessibility.Conversation.MessageStatus.delivered
         case .seen:
             statusImageView.image = UIImage(resource: .seen)
-            statusContainerView.accessibilityLabel = L10n.Localizable.MessageDetails.receiptsTitle
+            statusContainerView.accessibilityLabel = L10n.Accessibility.Conversation.MessageStatus.seen
         case let .seenByMultiple(count):
             statusImageView.image = UIImage(resource: .seen)
             statusLabel.isHidden = false
             statusLabel.text = "\(count)"
-            statusContainerView.accessibilityLabel = L10n.Localizable.MessageDetails.Tabs.seen(count)
+            statusContainerView.accessibilityLabel = L10n.Accessibility.Conversation.MessageStatus.seenByMultiple(count)
         case nil:
             statusContainerView.isHidden = true
         }

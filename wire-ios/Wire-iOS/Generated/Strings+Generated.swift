@@ -417,6 +417,12 @@ internal enum L10n {
       internal enum MessageStatus {
         /// Delivered
         internal static let delivered = L10n.tr("Accessibility", "conversation.messageStatus.delivered", fallback: "Delivered")
+        /// Read
+        internal static let seen = L10n.tr("Accessibility", "conversation.messageStatus.seen", fallback: "Read")
+        /// Read by %d
+        internal static func seenByMultiple(_ p1: Int) -> String {
+          return L10n.tr("Accessibility", "conversation.messageStatus.seenByMultiple", p1, fallback: "Read by %d")
+        }
         /// Sending
         internal static let sending = L10n.tr("Accessibility", "conversation.messageStatus.sending", fallback: "Sending")
         /// Sent
