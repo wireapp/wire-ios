@@ -120,6 +120,8 @@
 		C90EFB7A307E274200818217 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C90EFB79307E274200818217 /* WidgetKit.framework */; };
 		C90EFB7C307E274200818217 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C90EFB7B307E274200818217 /* SwiftUI.framework */; };
 		C90EFB89307E274300818217 /* Wire Live Activity Extension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = C90EFB78307E274200818217 /* Wire Live Activity Extension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		C90EFB98307E27A000818217 /* WireDesign in Frameworks */ = {isa = PBXBuildFile; productRef = C90EFB97307E27A000818217 /* WireDesign */; };
+		C90EFB9A307E27A000818217 /* WireLocators in Frameworks */ = {isa = PBXBuildFile; productRef = C90EFB9B307E27A000818217 /* WireLocators */; };
 		C90EFB8F307E276800818217 /* WireMessagingDomain in Frameworks */ = {isa = PBXBuildFile; productRef = C90EFB8E307E276800818217 /* WireMessagingDomain */; };
 		C90EFB98307E27A000818217 /* WireDesign in Frameworks */ = {isa = PBXBuildFile; productRef = C90EFB97307E27A000818217 /* WireDesign */; };
 		C9954F8E2E38D08D00A5EB01 /* WireMessagingDomain in Frameworks */ = {isa = PBXBuildFile; productRef = C9954F8D2E38D08D00A5EB01 /* WireMessagingDomain */; };
@@ -1063,6 +1065,7 @@
 				C90EFB7A307E274200818217 /* WidgetKit.framework in Frameworks */,
 				C90EFB8F307E276800818217 /* WireMessagingDomain in Frameworks */,
 				C90EFB98307E27A000818217 /* WireDesign in Frameworks */,
+				C90EFB9A307E27A000818217 /* WireLocators in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1527,6 +1530,7 @@
 			packageProductDependencies = (
 				C90EFB8E307E276800818217 /* WireMessagingDomain */,
 				C90EFB97307E27A000818217 /* WireDesign */,
+				C90EFB9B307E27A000818217 /* WireLocators */,
 			);
 			productName = "Wire Live ActivityExtension";
 			productReference = C90EFB78307E274200818217 /* Wire Live Activity Extension.appex */;
@@ -3346,6 +3350,10 @@
 		C90EFB97307E27A000818217 /* WireDesign */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = WireDesign;
+		};
+		C90EFB9B307E27A000818217 /* WireLocators */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = WireLocators;
 		};
 		C9954F8D2E38D08D00A5EB01 /* WireMessagingDomain */ = {
 			isa = XCSwiftPackageProductDependency;

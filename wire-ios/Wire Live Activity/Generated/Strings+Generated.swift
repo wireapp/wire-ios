@@ -45,6 +45,10 @@ internal enum L10n {
         internal static let title = L10n.tr("Localizable", "live_activity.uploads.stale.title", fallback: "Shared Drive uploads")
       }
       internal enum Uploading {
+        /// VoiceOver upload progress: uploaded/failed file counts followed by a localized percentage.
+        internal static func accessibilityValue(_ p1: Any, _ p2: Any) -> String {
+          return L10n.tr("Localizable", "live_activity.uploads.uploading.accessibility_value", String(describing: p1), String(describing: p2), fallback: "%1$@, %2$@")
+        }
         /// %lld failed
         internal static func failed(_ p1: Int) -> String {
           return L10n.tr("Localizable", "live_activity.uploads.uploading.failed", p1, fallback: "%lld failed")

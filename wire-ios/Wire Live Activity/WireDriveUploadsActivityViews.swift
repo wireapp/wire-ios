@@ -19,6 +19,7 @@
 import SwiftUI
 import WireDesign
 import WireFoundation
+import WireLocators
 import WireMessagingDomain
 
 // MARK: - Lock screen and banner
@@ -83,7 +84,7 @@ struct WireDriveUploadsTexts: View {
                     .foregroundStyle(ColorTheme.Backgrounds.onBackground.onDarkSurface.opacity(0.85))
                     .lineLimit(1)
                     .accessibilityLabel(Text(accountName))
-                    .accessibilityIdentifier("uploadsLiveActivityAccount")
+                    .accessibilityIdentifier(Locators.LiveActivity.accountName)
             }
 
             Text(subtitle)
@@ -166,19 +167,29 @@ struct WireDriveUploadsIslandIndicator: View {
     var isStale = false
 
     var body: some View {
-        if WireDriveUploadsActivityPresentation(state, isStale: isStale).needsStatusCheck {
+        let presentation = WireDriveUploadsActivityPresentation(state, isStale: isStale)
+        if presentation.needsStatusCheck {
             Image(systemName: "clock")
                 .resizable()
                 .scaledToFit()
                 .frame(width: Self.size, height: Self.size)
                 .foregroundStyle(ColorTheme.Base.secondaryText.onDarkSurface)
                 .accessibilityLabel(L10n.LiveActivity.Uploads.Stale.subtitle)
-                .accessibilityIdentifier("uploadsLiveActivityStatusCheck")
+                .accessibilityIdentifier(Locators.LiveActivity.statusCheck)
         } else {
             switch state.phase {
             case .uploading, .uploadingWithFailures:
-                WireDriveUploadsProgressRing(progress: state.progress)
-                    .frame(width: Self.size, height: Self.size)
+                ZStack {
+                    WireDriveUploadsProgressRing(progress: state.progress)
+                }
+                .frame(width: Self.size, height: Self.size)
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel(presentation.title)
+                .accessibilityValue(L10n.LiveActivity.Uploads.Uploading.accessibilityValue(
+                    presentation.subtitle,
+                    min(max(state.progress, 0), 1).formatted(.percent.precision(.fractionLength(0)))
+                ))
+                .accessibilityIdentifier(Locators.LiveActivity.progress)
             case .completed, .failed:
                 WireDriveUploadsStatusIcon(phase: state.phase, size: Self.size)
             }
