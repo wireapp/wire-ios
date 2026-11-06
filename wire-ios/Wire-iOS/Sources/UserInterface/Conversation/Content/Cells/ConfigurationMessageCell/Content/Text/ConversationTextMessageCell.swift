@@ -43,6 +43,7 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
 
         view.isEditable = false
         view.isSelectable = true
+        view.isCopyAllowed = { [weak self] in self?.message?.canBeCopied ?? false }
         view.backgroundColor = .clear
         view.isScrollEnabled = false
         view.textContainerInset = UIEdgeInsets.zero
@@ -136,6 +137,13 @@ final class ConversationTextMessageCell: UIView, ConversationMessageCell, TextVi
 
         messageTextView.textColor = textForegroundColor
         messageTextView.linkTextAttributes = linkTextAttributes
+
+        if ProcessInfo.processInfo.isiOSAppOnMac {
+            // On macOS the cursor and selection use tintColor, which inherits the app accent color.
+            // For own messages the bubble background IS the accent color, making the cursor invisible.
+            // Use the text foreground color instead so the cursor always contrasts with the bubble.
+            messageTextView.tintColor = textForegroundColor
+        }
         messageTextView.applyMarkdownColors(textForegroundColor)
     }
 
