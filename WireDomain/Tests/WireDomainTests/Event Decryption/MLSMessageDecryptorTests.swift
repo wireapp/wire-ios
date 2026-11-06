@@ -218,6 +218,128 @@ final class MLSMessageDecryptorTests: XCTestCase {
         XCTAssertEqual(mlsDecryptionService.decryptMessageForSubconversationTypeContext_Invocations.count, 0)
     }
 
+    // MARK: - Buffered messages recovery
+
+    func testBufferedMessages_WithinThreshold_ReturnsEventWithoutDecryptedMessages() async throws {
+        // Given
+        try await mockMLSConversation()
+        let groupID = try XCTUnwrap(Scaffolding.mlsGroupID)
+        mockDecryptionThrowing(.bufferedMessage(groupID: groupID))
+
+        // When
+        let firstEvent = try await sut.decryptedMessageAddEventData(
+            from: Scaffolding.makeAddMessageEvent(content: "", timestamp: Scaffolding.timestamp),
+            context: nil
+        )
+        let secondEvent = try await sut.decryptedMessageAddEventData(
+            from: Scaffolding.makeAddMessageEvent(content: "", timestamp: Scaffolding.timestamp + 60),
+            context: nil
+        )
+
+        // Then
+        XCTAssertTrue(firstEvent.decryptedMessages.isEmpty)
+        XCTAssertTrue(secondEvent.decryptedMessages.isEmpty)
+    }
+
+    func testBufferedMessages_BeyondThreshold_ThrowsRecoveryRequiredForBufferedGroup() async throws {
+        // Given
+        try await mockMLSConversation()
+        let subgroupID = MLSGroupID.random()
+        mockDecryptionThrowing(.bufferedMessage(groupID: subgroupID))
+
+        _ = try await sut.decryptedMessageAddEventData(
+            from: Scaffolding.makeAddMessageEvent(content: "", timestamp: Scaffolding.timestamp),
+            context: nil
+        )
+
+        // When / Then
+        do {
+            _ = try await sut.decryptedMessageAddEventData(
+                from: Scaffolding.makeAddMessageEvent(content: "", timestamp: Scaffolding.timestamp + 61),
+                context: nil
+            )
+            XCTFail("Expected recovery to be required")
+        } catch let MLSMessageDecryptorError.bufferedMessageRecoveryRequired(mlsGroupID) {
+            XCTAssertEqual(mlsGroupID, subgroupID)
+        }
+    }
+
+    func testBufferedMessages_SuccessfulDecryptionInBetween_StartsNewWindow() async throws {
+        // Given
+        try await mockMLSConversation()
+        let groupID = try XCTUnwrap(Scaffolding.mlsGroupID)
+        var results: [Result<[MLSDecryptResult], any Error>] = [
+            .failure(MLSDecryptionService.MLSMessageDecryptionError.bufferedMessage(groupID: groupID)),
+            .success([]),
+            .failure(MLSDecryptionService.MLSMessageDecryptionError.bufferedMessage(groupID: groupID))
+        ]
+        mlsDecryptionService.decryptMessageForSubconversationTypeContext_MockMethod = { _, _, _, _ in
+            try results.removeFirst().get()
+        }
+
+        // When / Then
+        for offset: TimeInterval in [0, 120, 240] {
+            _ = try await sut.decryptedMessageAddEventData(
+                from: Scaffolding.makeAddMessageEvent(content: "", timestamp: Scaffolding.timestamp + offset),
+                context: nil
+            )
+        }
+    }
+
+    func testBufferedMessages_WrongEpochInBetween_StartsNewWindow() async throws {
+        // Given
+        try await mockMLSConversation()
+        let groupID = try XCTUnwrap(Scaffolding.mlsGroupID)
+        var errors: [MLSDecryptionService.MLSMessageDecryptionError] = [
+            .bufferedMessage(groupID: groupID),
+            .wrongEpoch,
+            .bufferedMessage(groupID: groupID)
+        ]
+        mlsDecryptionService.decryptMessageForSubconversationTypeContext_MockMethod = { _, _, _, _ in
+            throw errors.removeFirst()
+        }
+
+        // When
+        _ = try await sut.decryptedMessageAddEventData(
+            from: Scaffolding.makeAddMessageEvent(content: "", timestamp: Scaffolding.timestamp),
+            context: nil
+        )
+        do {
+            _ = try await sut.decryptedMessageAddEventData(
+                from: Scaffolding.makeAddMessageEvent(content: "", timestamp: Scaffolding.timestamp + 120),
+                context: nil
+            )
+            XCTFail("Expected wrong epoch error")
+        } catch MLSMessageDecryptorError.wrongEpoch {
+            // Expected
+        }
+        let event = try await sut.decryptedMessageAddEventData(
+            from: Scaffolding.makeAddMessageEvent(content: "", timestamp: Scaffolding.timestamp + 240),
+            context: nil
+        )
+
+        // Then
+        XCTAssertTrue(event.decryptedMessages.isEmpty)
+    }
+
+    private func mockMLSConversation() async throws {
+        let conversation = await context.perform { [self] in
+            modelHelper.createMLSConversation(
+                id: Scaffolding.conversationID.id,
+                mlsGroupID: Scaffolding.mlsGroupID,
+                in: context
+            )
+        }
+        conversationLocalStore.fetchConversationIdDomain_MockValue = conversation
+        conversationLocalStore.mlsConversationInfoConversation_MockValue = (try XCTUnwrap(Scaffolding.mlsGroupID), true)
+    }
+
+    private func mockDecryptionThrowing(_ error: MLSDecryptionService.MLSMessageDecryptionError) {
+        mlsDecryptionService.decryptMessageForSubconversationTypeContext_MockMethod = { _, _, _, _ in
+            throw error
+        }
+    }
+
     private enum Scaffolding {
 
         static let localDomain = "local.com"
@@ -237,7 +359,10 @@ final class MLSMessageDecryptorTests: XCTestCase {
 
         static let mlsGroupID = MLSGroupID(base64Encoded: base64EncodedString)
 
-        static func makeAddMessageEvent(content: String) -> ConversationMLSMessageAddEvent {
+        static func makeAddMessageEvent(
+            content: String,
+            timestamp: Date = timestamp
+        ) -> ConversationMLSMessageAddEvent {
             ConversationMLSMessageAddEvent(
                 conversationID: conversationID,
                 senderID: aliceID,
