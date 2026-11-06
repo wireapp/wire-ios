@@ -28,8 +28,6 @@ final class DeveloperE2eiViewModel: ObservableObject {
 
     @Published var certificateExpirationTime = minimumCertificateExpirationTime
 
-    @Published var storedCRLExpirationDatesByURL = [String: String]()
-
     @Published var certificateValidFrom = ""
 
     @Published var certificateValidTo = ""
