@@ -29,7 +29,6 @@ public enum DeveloperFlag: String, CaseIterable {
     case debugDuplicateObjects
     case decryptAndStoreEventsSleep
     case disablePushChannelBatching
-    case forceCRLExpiryAfterOneMinute
     case forceDatabaseLoadingFailure
     case ignoreIncomingEvents
     case newRegistration
@@ -69,9 +68,6 @@ public enum DeveloperFlag: String, CaseIterable {
 
         case .decryptAndStoreEventsSleep:
             "Adds a delay when decrypting and storing events"
-
-        case .forceCRLExpiryAfterOneMinute:
-            "Turn on to force CRLs to expire after 1 minute"
 
         case .useWireAuthentication:
             "Use the new WireAuthentication feature module"

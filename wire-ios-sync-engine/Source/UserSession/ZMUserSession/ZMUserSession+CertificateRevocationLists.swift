@@ -22,24 +22,9 @@ import WireLogging
 extension ZMUserSession {
 
     func setupCertificateRevocationLists() {
-        guard let mlsGroupVerification else {
-            WireLogger.e2ei.error("requires 'mlsGroupVerification' to setup 'cRLsChecker'!", attributes: .safePublic)
-            assertionFailure("requires 'mlsGroupVerification' to setup 'cRLsChecker'!")
-            return
-        }
-
         let cRLsChecker = CertificateRevocationListsChecker(
-            userID: userId,
-            mlsGroupVerification: mlsGroupVerification,
             selfClientCertificateProvider: selfClientCertificateProvider,
-            fetchE2EIFeatureConfig: { [weak self] in
-                guard let self else { return nil }
-
-                let featureRepository = LegacyFeatureRepository(context: coreDataStack.syncContext)
-                return featureRepository.fetchE2EI().config
-            },
-            coreCryptoProvider: coreCryptoProvider,
-            context: coreDataStack.syncContext
+            coreCryptoProvider: coreCryptoProvider
         )
         self.cRLsChecker = cRLsChecker
     }

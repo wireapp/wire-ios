@@ -29,50 +29,19 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
 
     // MARK: - Properties
 
-    private let mlsGroupVerification: any MLSGroupVerificationProtocol
     private let selfClientCertificateProvider: SelfClientCertificateProviderProtocol
-    private let fetchE2EIFeatureConfig: () -> Feature.E2EI.Config?
-    private let context: NSManagedObjectContext
     private let coreCryptoProvider: CoreCryptoProviderProtocol
-    private var coreCrypto: SafeCoreCrypto {
-        get async throws {
-            try await coreCryptoProvider.coreCrypto()
-        }
-    }
 
     private let logger = WireLogger.e2ei
 
     // MARK: - Life cycle
 
-    public convenience init(
-        userID: UUID,
-        mlsGroupVerification: any MLSGroupVerificationProtocol,
+    public init(
         selfClientCertificateProvider: SelfClientCertificateProviderProtocol,
-        fetchE2EIFeatureConfig: @escaping (() -> Feature.E2EI.Config?),
-        coreCryptoProvider: CoreCryptoProviderProtocol,
-        context: NSManagedObjectContext
+        coreCryptoProvider: CoreCryptoProviderProtocol
     ) {
-        self.init(
-            mlsGroupVerification: mlsGroupVerification,
-            selfClientCertificateProvider: selfClientCertificateProvider,
-            fetchE2EIFeatureConfig: fetchE2EIFeatureConfig,
-            coreCryptoProvider: coreCryptoProvider,
-            context: context
-        )
-    }
-
-    init(
-        mlsGroupVerification: any MLSGroupVerificationProtocol,
-        selfClientCertificateProvider: SelfClientCertificateProviderProtocol,
-        fetchE2EIFeatureConfig: @escaping (() -> Feature.E2EI.Config?),
-        coreCryptoProvider: CoreCryptoProviderProtocol,
-        context: NSManagedObjectContext
-    ) {
-        self.mlsGroupVerification = mlsGroupVerification
         self.selfClientCertificateProvider = selfClientCertificateProvider
-        self.fetchE2EIFeatureConfig = fetchE2EIFeatureConfig
         self.coreCryptoProvider = coreCryptoProvider
-        self.context = context
     }
 
     // MARK: - Public interface
