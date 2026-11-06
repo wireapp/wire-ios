@@ -268,4 +268,3 @@ package struct WireDriveUploadsActivityThrottle {
         lastSentDate = date
     }
 }
-

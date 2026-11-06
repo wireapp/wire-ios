@@ -45,7 +45,6 @@ public struct WireDriveUploadsActivityAttributes: ActivityAttributes {
     }
 }
 
-
 /// What the activity shows at a point in time.
 public struct WireDriveUploadsActivityState: Codable, Hashable, Sendable {
 
