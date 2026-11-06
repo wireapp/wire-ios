@@ -127,6 +127,7 @@ final class DeveloperToolsViewModel: ObservableObject {
         setupContextualItems()
         setupActions()
         setupAppInfo()
+        setupMemoryStatus()
         setupBackenInfo()
         setupSelfUser()
         setupPushToken()
@@ -149,6 +150,19 @@ final class DeveloperToolsViewModel: ObservableObject {
                 }))
             ]
         ))
+    }
+
+    private func setupMemoryStatus() {
+        #if DEBUG
+        guard DebugMemoryStatus.isEnabled else { return }
+
+        sections.append(Section(
+            header: "Memory status (UI tests)",
+            items: [
+                .text(TextItem(title: "UserSession", value: DebugMemoryStatus.shared.userSessionStatus))
+            ]
+        ))
+        #endif
     }
 
     private func setupSelfUser() {

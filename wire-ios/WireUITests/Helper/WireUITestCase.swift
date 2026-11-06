@@ -45,10 +45,7 @@ class WireUITestCase: XCTestCase {
         uiTestConfig.useTripleTapForShakeGesture = true
         uiTestConfig.useMockAudioRecorder = true
 
-        let launchArguments = [
-            "-resetData",
-            "--useEnvStaging"
-        ]
+        let launchArguments = ["-resetData", "--useEnvStaging"] + additionalLaunchArguments()
 
         ssoHelper = SSOHelper()
         app = XCUIApplication()
@@ -144,6 +141,8 @@ class WireUITestCase: XCTestCase {
                 return true
             }
     }
+
+    func additionalLaunchArguments() -> [String] { [] }
 
     func additionalDeveloperFlags() -> [DeveloperFlag: Bool] { [:] }
 
