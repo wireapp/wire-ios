@@ -3688,21 +3688,6 @@ public class MockMLSGroupVerificationProtocol: MLSGroupVerificationProtocol {
         await mock(conversation, groupID)
     }
 
-    // MARK: - updateAllConversations
-
-    public var updateAllConversations_Invocations: [Void] = []
-    public var updateAllConversations_MockMethod: (() async -> Void)?
-
-    public func updateAllConversations() async {
-        updateAllConversations_Invocations.append(())
-
-        guard let mock = updateAllConversations_MockMethod else {
-            fatalError("no mock for `updateAllConversations`")
-        }
-
-        await mock()
-    }
-
 }
 
 public class MockMLSServiceInterface: MLSServiceInterface {
