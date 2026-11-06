@@ -192,6 +192,9 @@ struct WireDriveUploadsIslandIndicator: View {
                 .accessibilityIdentifier(Locators.LiveActivity.progress)
             case .completed, .failed:
                 WireDriveUploadsStatusIcon(phase: state.phase, size: Self.size)
+                    .accessibilityElement(children: .ignore)
+                    .accessibilityLabel(presentation.title)
+                    .accessibilityValue(presentation.subtitle)
             }
         }
     }
