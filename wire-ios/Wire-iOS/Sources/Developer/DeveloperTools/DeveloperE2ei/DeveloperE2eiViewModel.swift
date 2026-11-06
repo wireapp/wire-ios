@@ -32,6 +32,8 @@ final class DeveloperE2eiViewModel: ObservableObject {
 
     @Published var certificateValidTo = ""
 
+    @Published var isRefreshingCRLs = false
+
     init(userSession: UserSession?) {
         self.userSession = userSession as? ZMUserSession
         Task {
@@ -109,6 +111,18 @@ final class DeveloperE2eiViewModel: ObservableObject {
             }
 
             presentingViewController.present(alert, animated: true)
+        }
+    }
+
+    @MainActor
+    func refreshCRLs() {
+        guard let session = userSession, !isRefreshingCRLs else { return }
+
+        isRefreshingCRLs = true
+        Task { @MainActor in
+            defer { isRefreshingCRLs = false }
+            await session.cRLsChecker?.checkExpiredCRLs()
+            await fetchSelfClientCertificate()
         }
     }
 
