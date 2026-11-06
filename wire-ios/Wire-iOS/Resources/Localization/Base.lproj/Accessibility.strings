@@ -35,6 +35,10 @@
 "conversation.linkPreviewImage.description" = "Preview image for link to %@";
 "conversation.linkPreviewImage.fallbackDescription" = "Link preview image";
 
+"conversation.messageStatus.sending" = "Sending";
+"conversation.messageStatus.sent" = "Sent";
+"conversation.messageStatus.delivered" = "Delivered";
+
 "conversation.sendButton.description" = "Send this message";
 "conversation.openFormattingButton.description" = "Open formatting options";
 "conversation.hideFormattingButton.description" = "Hide formatting options";

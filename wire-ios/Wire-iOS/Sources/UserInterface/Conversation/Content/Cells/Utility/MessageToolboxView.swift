@@ -361,21 +361,21 @@ final class MessageToolboxView: UIView {
         switch state {
         case .sending:
             statusImageView.image = UIImage(resource: .sending)
-            statusContainerView.accessibilityLabel = "sending"
+            statusContainerView.accessibilityLabel = L10n.Accessibility.Conversation.MessageStatus.sending
         case .sent:
             statusImageView.image = UIImage(resource: .sent)
-            statusContainerView.accessibilityLabel = "sent"
+            statusContainerView.accessibilityLabel = L10n.Accessibility.Conversation.MessageStatus.sent
         case .delivered:
             statusImageView.image = UIImage(resource: .delivered)
-            statusContainerView.accessibilityLabel = "delivered"
+            statusContainerView.accessibilityLabel = L10n.Accessibility.Conversation.MessageStatus.delivered
         case .seen:
             statusImageView.image = UIImage(resource: .seen)
-            statusContainerView.accessibilityLabel = "seen"
+            statusContainerView.accessibilityLabel = L10n.Localizable.MessageDetails.receiptsTitle
         case let .seenByMultiple(count):
             statusImageView.image = UIImage(resource: .seen)
             statusLabel.isHidden = false
             statusLabel.text = "\(count)"
-            statusContainerView.accessibilityLabel = "seen \(count)"
+            statusContainerView.accessibilityLabel = L10n.Localizable.MessageDetails.Tabs.seen(count)
         case nil:
             statusContainerView.isHidden = true
         }
