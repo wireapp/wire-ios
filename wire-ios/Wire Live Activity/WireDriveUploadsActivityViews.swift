@@ -62,6 +62,11 @@ struct WireDriveUploadsBannerView: View {
         }
         .padding(contentInsets)
         .accessibilityElement(children: .combine)
+        .accessibilityValue(
+            !presentation.isFinished && !presentation.needsStatusCheck
+                ? min(max(state.progress, 0), 1).formatted(.percent.precision(.fractionLength(0)))
+                : ""
+        )
     }
 }
 
