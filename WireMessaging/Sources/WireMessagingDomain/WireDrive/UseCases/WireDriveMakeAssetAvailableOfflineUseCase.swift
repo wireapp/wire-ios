@@ -27,13 +27,32 @@ package struct WireDriveMakeAssetAvailableOfflineUseCase {
         self.localAssetRepository = localAssetRepository
     }
 
-    package func invoke(nodeID: UUID) async throws {
-        if var asset = try localAssetRepository.asset(nodeID: nodeID), asset.downloadState.cacheKey != nil,
-           asset.conversationName != nil {
-            asset.isAvailableOffline = true
-            try localAssetRepository.updateAsset(asset)
-        } else {
-            try await localAssetRepository.downloadAsset(nodeID: nodeID, isAvailableOffline: true)
+    /// Processes each unique node independently so one failure does not prevent the remaining assets becoming offline.
+    package func invoke(nodeIDs: [UUID]) async -> [UUID: Result<Void, any Error>] {
+        var results: [UUID: Result<Void, any Error>] = [:]
+        var nodeIDsToDownload: [UUID] = []
+
+        for nodeID in nodeIDs {
+            do {
+                if var asset = try localAssetRepository.asset(nodeID: nodeID), asset.downloadState.cacheKey != nil,
+                   asset.conversationName != nil {
+                    asset.isAvailableOffline = true
+                    try localAssetRepository.updateAsset(asset)
+                    results[nodeID] = .success(())
+                } else {
+                    nodeIDsToDownload.append(nodeID)
+                }
+            } catch {
+                results[nodeID] = .failure(error)
+            }
         }
+        if !nodeIDsToDownload.isEmpty {
+            let downloadResults = await localAssetRepository.downloadAssets(
+                nodeIDs: nodeIDsToDownload,
+                isAvailableOffline: true
+            )
+            results.merge(downloadResults) { _, result in result }
+        }
+        return results
     }
 }

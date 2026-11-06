@@ -33,6 +33,7 @@ private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
 ///   - sheetContent: sheet builder for navigation items.
 package struct FilesContentView<Toolbar: ToolbarContent, Sheet: View>: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.wireAccentColor) private var accentColor
     @ObservedObject package var viewModel: FilesViewModel
     package let isBrowsing: Bool
     package let backgroundColor: Color
@@ -42,6 +43,7 @@ package struct FilesContentView<Toolbar: ToolbarContent, Sheet: View>: View {
     @ViewBuilder let sheetContent: (FilesViewModel.SheetNavigation) -> Sheet
 
     @State private var isSearchFocused = false
+    @State private var floatingBarHeight: CGFloat = 0
 
     package var body: some View {
         ZStack {
@@ -183,6 +185,9 @@ private extension FilesContentView {
                 if viewModel.multipleSelection == .active {
                     FilesFloatingActionBar(actions: floatingBarActions)
                         .disabled(viewModel.selectedItems.isEmpty)
+                        .onGeometryChange(for: CGFloat.self) { $0.size.height } action: {
+                            floatingBarHeight = $0
+                        }
                         .padding(.horizontal, 16)
                         .padding(.bottom, 12)
                         .transition(reduceMotion ? .identity : .move(edge: .bottom).combined(with: .opacity))
@@ -195,45 +200,129 @@ private extension FilesContentView {
             Color.clear
                 .frame(height: trackerHeight)
         }
+        .overlay(alignment: .bottom) {
+            if let warningID = viewModel.offlineActionWarningID {
+                folderOfflineWarning
+                    .padding(.horizontal, 16)
+                    .padding(
+                        .bottom,
+                        trackerHeight + 12 + (viewModel.multipleSelection == .active ? floatingBarHeight + 12 : 0)
+                    )
+                    .transition(.opacity)
+                    .task(id: warningID) {
+                        AccessibilityNotification.Announcement(viewModel.offlineActionWarningMessage).post()
+                        try? await Task.sleep(for: .seconds(4))
+                        guard viewModel.offlineActionWarningID == warningID else { return }
+                        viewModel.offlineActionWarningID = nil
+                    }
+            }
+        }
+        .animation(reduceMotion ? nil : .easeInOut(duration: 0.2), value: viewModel.offlineActionWarningID)
 
+    }
+
+    var folderOfflineWarning: some View {
+        HStack(alignment: .center, spacing: 12) {
+            Image(systemName: "info.circle.fill")
+                .font(.title3)
+                .foregroundStyle(ColorTheme.Base.primary(accentColor).color)
+                .accessibilityHidden(true)
+            Text(viewModel.offlineActionWarningMessage)
+                .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
+                .fixedSize(horizontal: false, vertical: true)
+                .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .font(for: .subline1)
+        .padding(16)
+        .background(
+            ColorTheme.Backgrounds.background.color,
+            in: RoundedRectangle(cornerRadius: 12, style: .continuous)
+        )
+        .overlay {
+            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                .stroke(ColorTheme.Base.primary(accentColor).color.opacity(0.4), lineWidth: 1)
+        }
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(viewModel.offlineActionWarningMessage)
+        .accessibilityIdentifier(Locators.WireDrive.FilesPage.folderOfflineWarning.rawValue)
     }
 
     var floatingBarActions: [FilesFloatingActionBar.Action] {
         var actions: [FilesFloatingActionBar.Action] = []
 
-        if viewModel.isRecycleBin {
-            // restore
+        if viewModel.isOffline {
+            // remove offline access
             actions.append(
                 .init(
-                    id: Locators.WireDrive.FilesPage.restoreFloatingButton.rawValue,
-                    title: Strings.RecycleBin.Item.Menu.restore,
-                    systemImage: "arrow.uturn.backward",
+                    id: Locators.WireDrive.FilesPage.removeAvailableOfflineFloatingButton.rawValue,
+                    title: Strings.Files.Item.Menu.removeAvailableOffline,
+                    systemImage: "xmark.circle",
                     isEnabled: !viewModel.selectedItems.isEmpty,
-                    perform: { viewModel.isPresentingRestoreConfirmation = true }
+                    perform: { viewModel.removeAssetAvailableOffline(items: viewModel.selectedItems) }
                 )
             )
         } else {
-            // move to folder
+            if viewModel.isRecycleBin {
+                // restore
+                actions.append(
+                    .init(
+                        id: Locators.WireDrive.FilesPage.restoreFloatingButton.rawValue,
+                        title: Strings.RecycleBin.Item.Menu.restore,
+                        systemImage: "arrow.uturn.backward",
+                        isEnabled: !viewModel.selectedItems.isEmpty,
+                        perform: { viewModel.isPresentingRestoreConfirmation = true }
+                    )
+                )
+            } else {
+                // move to folder
+                actions.append(
+                    .init(
+                        id: Locators.WireDrive.FilesPage.moveToFolderFloatingButton.rawValue,
+                        title: Strings.Files.Item.Menu.moveToFolder,
+                        systemImage: "folder",
+                        isEnabled: !viewModel.selectedItems.isEmpty,
+                        perform: viewModel.moveSelectedItemsToFolder
+                    )
+                )
+            }
+
+            // delete
             actions.append(
                 .init(
-                    id: Locators.WireDrive.FilesPage.moveToFolderFloatingButton.rawValue,
-                    title: Strings.Files.Item.Menu.moveToFolder,
-                    systemImage: "folder",
+                    id: Locators.WireDrive.FilesPage.deleteFloatingButton.rawValue,
+                    title: Strings.Files.Item.Menu.delete,
+                    systemImage: "trash",
                     isEnabled: !viewModel.selectedItems.isEmpty,
-                    perform: viewModel.moveSelectedItemsToFolder
+                    perform: { viewModel.isPresentingDeleteConfirmation = true }
                 )
             )
+
+            if !viewModel.isRecycleBin, viewModel.state.items.contains(where: { $0.kind == .file }) {
+                if viewModel.canRemoveSelectedItemsOfflineAccess {
+                    actions.append(
+                        .init(
+                            id: Locators.WireDrive.FilesPage.removeAvailableOfflineFloatingButton.rawValue,
+                            title: Strings.Files.Item.Menu.removeAvailableOffline,
+                            systemImage: "xmark.circle",
+                            isEnabled: !viewModel.selectedItems.isEmpty,
+                            perform: { viewModel.removeAssetAvailableOffline(items: viewModel.selectedItems) }
+                        )
+                    )
+                }
+
+                if viewModel.canMakeSelectedItemsAvailableOffline {
+                    actions.append(
+                        .init(
+                            id: Locators.WireDrive.FilesPage.makeAvailableOfflineFloatingButton.rawValue,
+                            title: Strings.Files.Item.Menu.makeAvailableOffline,
+                            systemImage: "arrow.down.circle",
+                            isEnabled: !viewModel.selectedItems.isEmpty,
+                            perform: { viewModel.makeAssetsAvailableOffline(items: viewModel.selectedItems) }
+                        )
+                    )
+                }
+            }
         }
-        // delete
-        actions.append(
-            .init(
-                id: Locators.WireDrive.FilesPage.deleteFloatingButton.rawValue,
-                title: Strings.Files.Item.Menu.delete,
-                systemImage: "trash",
-                isEnabled: !viewModel.selectedItems.isEmpty,
-                perform: { viewModel.isPresentingDeleteConfirmation = true }
-            )
-        )
 
         return actions
     }

@@ -48,6 +48,7 @@ final class FilesViewModelTests {
 
         networkMonitor.currentStatus = .connected
         localAssetRepository.offlineAssetsConversationNameAssetsPath_MockValue = []
+        localAssetRepository.observeAssetNodeID_MockValue = Just(nil).eraseToAnyPublisher()
 
         self.sut = FilesViewModel(
             useCases: .init(
@@ -187,6 +188,24 @@ final class FilesViewModelTests {
 
         // then
         #expect(sut.filesController.isLoading == false)
+    }
+
+    @Test(arguments: [false, true])
+    func reload_clearsSelectionAndExitsSelectionModeBeforeFetching(refreshing: Bool) async {
+        let items: Set<FilesViewItem> = [.fixture(), .fixture()]
+        sut.filesController.state = .received(items: Array(items))
+        sut.multipleSelection = .active
+        sut.selectedItems = items
+        nodesRepository.getNodes_MockMethod = { [sut] _ in
+            #expect(sut.selectedItems.isEmpty)
+            #expect(sut.multipleSelection == .inactive)
+            return ([], nil)
+        }
+
+        await sut.reload(refreshing: refreshing)
+
+        #expect(sut.selectedItems.isEmpty)
+        #expect(sut.multipleSelection == .inactive)
     }
 
     @Test
@@ -618,6 +637,203 @@ final class FilesViewModelTests {
     }
 
     // MARK: - openItem
+
+    @Test
+    func makeOfflineAvailability_tracksMixedOfflineAndDownloadingSelection() {
+        let offlineFile = FilesViewItem.fixture()
+        let downloadingFile = FilesViewItem.fixture()
+        let updates = CurrentValueSubject<WireDriveLocalAsset?, Never>(nil)
+        localAssetRepository.observeAssetNodeID_MockMethod = { nodeID in
+            if nodeID == downloadingFile.id { return updates.eraseToAnyPublisher() }
+            return Just(nil).eraseToAnyPublisher()
+        }
+        sut.availableOfflineAssets = [.fixture(nodeID: offlineFile.id, isAvailableOffline: true)]
+        sut.selectedItems = [offlineFile, downloadingFile, .fixture(kind: .folder)]
+        #expect(sut.canMakeSelectedItemsAvailableOffline)
+
+        updates.send(.fixture(nodeID: downloadingFile.id, downloadState: .downloading(progress: 0.2)))
+        #expect(sut.canMakeSelectedItemsAvailableOffline)
+
+        updates.send(.fixture(
+            nodeID: downloadingFile.id,
+            isAvailableOffline: true,
+            downloadState: .downloading(progress: 0.2)
+        ))
+        #expect(!sut.canMakeSelectedItemsAvailableOffline)
+
+        sut.selectedItems.insert(.fixture())
+        #expect(sut.canMakeSelectedItemsAvailableOffline)
+
+        sut.selectedItems = [offlineFile, downloadingFile]
+        #expect(!sut.canMakeSelectedItemsAvailableOffline)
+        updates.send(nil)
+        #expect(sut.canMakeSelectedItemsAvailableOffline)
+
+        sut.selectedItems = [offlineFile]
+        #expect(!sut.canMakeSelectedItemsAvailableOffline)
+        sut.selectedItems = [.fixture(kind: .folder)]
+        #expect(!sut.canMakeSelectedItemsAvailableOffline)
+        sut.selectedItems = []
+        #expect(!sut.canMakeSelectedItemsAvailableOffline)
+    }
+
+    @Test
+    func removeOfflineAccessAvailability_tracksSelectedDownloads() {
+        let file = FilesViewItem.fixture()
+        let updates = CurrentValueSubject<WireDriveLocalAsset?, Never>(nil)
+        localAssetRepository.observeAssetNodeID_MockValue = updates.eraseToAnyPublisher()
+        sut.selectedItems = [file]
+        #expect(!sut.canRemoveSelectedItemsOfflineAccess)
+
+        updates.send(.fixture(nodeID: file.id, downloadState: .downloading(progress: 0.2)))
+        #expect(sut.canRemoveSelectedItemsOfflineAccess)
+
+        updates.send(.fixture(
+            nodeID: file.id,
+            isAvailableOffline: true,
+            downloadState: .downloaded(cacheKey: "offline-file")
+        ))
+        #expect(sut.canRemoveSelectedItemsOfflineAccess)
+
+        sut.selectedItems = [.fixture(kind: .folder)]
+        updates.send(.fixture(nodeID: file.id, downloadState: .downloading(progress: 0.5)))
+        #expect(!sut.canRemoveSelectedItemsOfflineAccess)
+    }
+
+    @Test(arguments: [false, true])
+    func offlineActionAvailability_whenOnlySelectedFileIsDownloading(isAvailableOffline: Bool) {
+        let file = FilesViewItem.fixture()
+        let asset = WireDriveLocalAsset.fixture(
+            nodeID: file.id,
+            isAvailableOffline: isAvailableOffline,
+            downloadState: .downloading(progress: 0.2)
+        )
+        localAssetRepository.observeAssetNodeID_MockValue = Just(asset).eraseToAnyPublisher()
+
+        sut.selectedItems = [file]
+
+        #expect(sut.canMakeSelectedItemsAvailableOffline == !isAvailableOffline)
+        #expect(sut.canRemoveSelectedItemsOfflineAccess)
+    }
+
+    @Test
+    func removeOfflineAccessAvailability_includesCompletedOfflineFilesInMixedSelection() {
+        let file = FilesViewItem.fixture()
+        sut.availableOfflineAssets = [.fixture(nodeID: file.id, isAvailableOffline: true)]
+        sut.selectedItems = [file, .fixture(kind: .folder)]
+        #expect(sut.canRemoveSelectedItemsOfflineAccess)
+    }
+
+    @Test(arguments: [false, true])
+    func makeAvailableOffline_whenSelectionContainsFolder_keepsSelectionAndShowsWarning(includeFile: Bool) {
+        var items: Set<FilesViewItem> = [.fixture(kind: .folder)]
+        if includeFile {
+            items.insert(.fixture())
+        }
+        sut.selectedItems = items
+        sut.multipleSelection = .active
+        let refreshCount = localAssetRepository.offlineAssetsConversationNameAssetsPath_Invocations.count
+
+        sut.makeAssetsAvailableOffline(items: items)
+
+        #expect(sut.offlineActionWarningID != nil)
+        #expect(sut.selectedItems == items)
+        #expect(sut.multipleSelection == .active)
+        #expect(localAssetRepository.assetNodeID_Invocations.isEmpty)
+        #expect(localAssetRepository.downloadAssetsNodeIDsIsAvailableOffline_Invocations.isEmpty)
+        #expect(localAssetRepository.offlineAssetsConversationNameAssetsPath_Invocations.count == refreshCount)
+    }
+
+    @Test(arguments: [false, true])
+    func removeOfflineAccess_whenSelectionContainsFolder_removesOnlySelectedFiles(includeFile: Bool) async {
+        var items: Set<FilesViewItem> = [.fixture(kind: .folder)]
+        if includeFile {
+            items.insert(.fixture())
+        }
+        let (refreshes, continuation) = AsyncStream.makeStream(of: Void.self)
+        defer { continuation.finish() }
+        var iterator = refreshes.makeAsyncIterator()
+        localAssetRepository.deleteAssetNodeID_MockMethod = { _ in }
+        localAssetRepository.offlineAssetsConversationNameAssetsPath_MockMethod = { _, _ in
+            continuation.yield(())
+            return []
+        }
+        sut.selectedItems = items
+        sut.multipleSelection = .active
+
+        sut.removeAssetAvailableOffline(items: items)
+        _ = await iterator.next()
+
+        let files = items.filter { $0.kind == .file }
+        #expect(Set(localAssetRepository.deleteAssetNodeID_Invocations) == Set(files.map(\.id)))
+        #expect(sut.offlineActionWarningID == nil)
+        #expect(sut.selectedItems == files)
+        #expect(sut.multipleSelection == .inactive)
+    }
+
+    @Test
+    func removeOfflineAccess_whenSelectionContainsOnlyFiles_removesEveryFile() async {
+        let items: Set<FilesViewItem> = [.fixture(), .fixture()]
+        let (refreshes, continuation) = AsyncStream.makeStream(of: Void.self)
+        defer { continuation.finish() }
+        var iterator = refreshes.makeAsyncIterator()
+        localAssetRepository.deleteAssetNodeID_MockMethod = { _ in }
+        localAssetRepository.offlineAssetsConversationNameAssetsPath_MockMethod = { _, _ in
+            continuation.yield(())
+            return []
+        }
+        sut.selectedItems = items
+        sut.multipleSelection = .active
+
+        sut.removeAssetAvailableOffline(items: items)
+        _ = await iterator.next()
+
+        #expect(Set(localAssetRepository.deleteAssetNodeID_Invocations) == Set(items.map(\.id)))
+        #expect(sut.offlineActionWarningID == nil)
+        #expect(sut.multipleSelection == .inactive)
+    }
+
+    @Test
+    func makeAvailableOffline_whenPartialFailure_marksOnlyFailedItemsAndAllowsRetry() async {
+        let (offlineRefreshes, continuation) = AsyncStream.makeStream(of: Void.self)
+        defer { continuation.finish() }
+        var refreshIterator = offlineRefreshes.makeAsyncIterator()
+        localAssetRepository.offlineAssetsConversationNameAssetsPath_MockMethod = { _, _ in
+            continuation.yield(())
+            return []
+        }
+        let successfulItem = FilesViewItem.fixture(id: UUID())
+        let failedItem = FilesViewItem.fixture(id: UUID())
+        let unrelatedID = UUID()
+        sut.failedItemActions[successfulItem.id] = .makeAvailableOffline
+        sut.failedItemActions[unrelatedID] = .makeAvailableOffline
+        localAssetRepository.assetNodeID_MockMethod = { _ in nil }
+        localAssetRepository.downloadAssetsNodeIDsIsAvailableOffline_MockMethod = { _, _ in
+            [
+                successfulItem.id: .success(()),
+                failedItem.id: .failure(URLError(.networkConnectionLost))
+            ]
+        }
+
+        sut.makeAssetsAvailableOffline(items: [successfulItem, failedItem])
+        // Offline assets are refreshed after the individual results have been processed.
+        _ = await refreshIterator.next()
+
+        #expect(sut.failedItemActions[successfulItem.id] == nil)
+        #expect(sut.failedItemActions[failedItem.id] == .makeAvailableOffline)
+        #expect(sut.failedItemActions[unrelatedID] == .makeAvailableOffline)
+
+        localAssetRepository.downloadAssetsNodeIDsIsAvailableOffline_MockMethod = { nodeIDs, _ in
+            #expect(nodeIDs == [failedItem.id])
+            return [failedItem.id: .success(())]
+        }
+
+        sut.makeAssetsAvailableOffline(items: [failedItem])
+        _ = await refreshIterator.next()
+
+        #expect(sut.failedItemActions[failedItem.id] == nil)
+        #expect(sut.failedItemActions[unrelatedID] == .makeAvailableOffline)
+    }
 
     @Test
     func openItem_whenFileAlreadyDownloaded() async throws {
