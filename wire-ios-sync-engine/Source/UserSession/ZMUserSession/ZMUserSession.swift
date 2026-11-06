@@ -1723,7 +1723,7 @@ extension ZMUserSession {
                 clientId: callEventInfo.clientID
             )
 
-            callCenter.processCallEvent(callEvent)
+            callCenter.processCallEvent(callEvent, senderDomain: callEventInfo.userDomain)
         }
 
     }
