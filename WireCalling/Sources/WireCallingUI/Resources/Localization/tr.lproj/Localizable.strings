@@ -109,7 +109,7 @@
 "wireMeetings.schedule.setupTitle.header" = "Title";
 "wireMeetings.schedule.setupTitle.placeholder" = "Enter meeting title";
 "wireMeetings.schedule.setupTitle.error.tooLong" = "Çok fazla karakter";
-"wireMeetings.schedule.password.title" = "Optional: set a password on the meeting link";
+"wireMeetings.schedule.password.title" = "Set a password for the meeting link (optional)";
 "wireMeetings.schedule.password.placeholder" = "Enter a password";
 "wireMeetings.schedule.password.requirements" = "Use at least %d characters, with one lowercase letter, one capital letter, a number, and a special character.";
 "wireMeetings.schedule.password.copy" = "Copy password";
@@ -173,7 +173,7 @@
 "wireMeetings.schedule.members.email.placeholder" = "Enter an email address";
 "wireMeetings.schedule.members.email.add" = "Ekle";
 "wireMeetings.schedule.members.email.invalidAddress" = "Enter a valid email address.";
-"wireMeetings.schedule.members.email.duplicateAddress" = "This email address is already added.";
+"wireMeetings.schedule.members.email.duplicateAddress" = "This email address has already been added.";
 "wireMeetings.schedule.members.email.remove" = "Remove %@";
-"wireMeetings.schedule.email.loadFailed" = "Could not load email invitees.";
-"wireMeetings.schedule.email.saveFailed" = "The meeting was saved, but some invitation changes could not be completed. Open Edit to check the participants.";
+"wireMeetings.schedule.email.loadFailed" = "Could not load list of invitation emails.";
+"wireMeetings.schedule.email.saveFailed" = "The meeting has been saved, but some invitation changes could not be completed. Open Edit to confirm the participants.";

@@ -94,4 +94,38 @@ class RecycleBinPage: PageModel {
         return !file.waitForExistence(timeout: 3)
     }
 
+    // MARK: - Multiple selection
+
+    func fileRow(named name: String) -> XCUIElement {
+        app.staticTexts
+            .matching(NSPredicate(format: "label BEGINSWITH %@", name))
+            .firstMatch
+    }
+
+    func selectItems(named names: [String], isRecycleBin: Bool = false) {
+        let moreButton = app
+            .buttons[isRecycleBin ? Locators.WireDrive.FilesPage.moreOptionRecycleBin.rawValue : Locators.WireDrive
+                .FilesPage.moreOptions.rawValue]
+        XCTAssertTrue(moreButton.waitAndTap(timeout: 3))
+        XCTAssertTrue(app.buttons[Locators.WireDrive.FilesPage.selectItems.rawValue].waitAndTap(timeout: 3))
+
+        for name in names {
+            XCTAssertTrue(fileRow(named: name).waitAndTap(timeout: 5), "Item '\(name)' couldn't be selected")
+        }
+    }
+
+    func deleteSelectedItemsPermanently() {
+        let deleteButton = app.buttons[Locators.WireDrive.FilesPage.deleteFloatingButton.rawValue]
+        XCTAssertTrue(deleteButton.waitAndTap(timeout: 3), "Delete permanently button wasn't tappable")
+        XCTAssertTrue(deletePermanentlyOptionOnBottomSheet.waitAndTap(timeout: 3))
+        XCTAssertTrue(deletePermanentlyOptionOnBottomSheet.waitForNonExistence(timeout: 10))
+    }
+
+    func restoreSelectedItems() {
+        let restoreButton = app.buttons[Locators.WireDrive.FilesPage.restoreFloatingButton.rawValue]
+        XCTAssertTrue(restoreButton.waitAndTap(timeout: 3), "Restore button wasn't tappable")
+        XCTAssertTrue(restoreOptionOnBottomSheet.waitAndTap(timeout: 3), "Restore confirmation wasn't tappable")
+        XCTAssertTrue(restoreOptionOnBottomSheet.waitForNonExistence(timeout: 10), "Restore sheet wasn't dismissed")
+    }
+
 }

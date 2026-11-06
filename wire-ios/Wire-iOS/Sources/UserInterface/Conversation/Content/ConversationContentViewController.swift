@@ -115,6 +115,7 @@ final class ConversationContentViewController: UIViewController {
     let messagePresenter: MessagePresenter
     var deletionDialogPresenter: DeletionDialogPresenter?
     let userSession: UserSession
+    var networkAvailabilityObserverToken: Any?
     let mainCoordinator: AnyMainCoordinator
     let selfProfileUIBuilder: SelfProfileViewControllerBuilderProtocol
     let conversationCreationRepository: any ConversationCreationRepositoryProtocol
@@ -242,6 +243,8 @@ final class ConversationContentViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        observeNetworkAvailabilityForOfflineNotice()
 
         tableView.rowHeight = UITableView.automaticDimension
         tableView.estimatedRowHeight = 80

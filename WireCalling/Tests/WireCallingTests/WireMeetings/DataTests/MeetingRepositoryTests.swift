@@ -137,6 +137,62 @@ struct MeetingRepositoryTests {
         #expect(localStore.deleteMeetingIdQualifiedIDVoidReceivedInvocations.isEmpty)
     }
 
+    @Test
+    func refreshMeetingLinkMapsResponseWithoutChangingStore() async throws {
+        let source = Scaffolding.meetingResponse
+        let response = MeetingResponse(
+            id: source.id,
+            title: source.title,
+            creatorID: source.creatorID,
+            startTime: source.startTime,
+            endTime: source.endTime,
+            conversationID: source.conversationID,
+            invitedEmails: source.invitedEmails,
+            isTrial: source.isTrial,
+            createdAt: source.createdAt,
+            updatedAt: source.updatedAt,
+            timeZoneIdentifier: source.timeZoneIdentifier,
+            link: source.link,
+            hasPassword: true
+        )
+        let url = try #require(response.link)
+        meetingsAPI.refreshMeetingLinkIdPassword_MockValue = response
+
+        let link = try await sut.refreshMeetingLink(id: Scaffolding.meetingID, password: "new-password")
+
+        #expect(link == MeetingLink(url: url, hasPassword: true))
+        #expect(meetingsAPI.refreshMeetingLinkIdPassword_Invocations.count == 1)
+        #expect(meetingsAPI.refreshMeetingLinkIdPassword_Invocations.first?.id == Scaffolding.meetingID)
+        #expect(meetingsAPI.refreshMeetingLinkIdPassword_Invocations.first?.password == "new-password")
+        #expect(localStore.storeMeetingMeetingMeetingVoidReceivedInvocations.isEmpty)
+        #expect(localStore.deleteMeetingIdQualifiedIDVoidReceivedInvocations.isEmpty)
+    }
+
+    @Test
+    func refreshMeetingLinkReturnsNilWhenResponseHasNoLink() async throws {
+        let response = Scaffolding.meetingResponse
+        meetingsAPI.refreshMeetingLinkIdPassword_MockValue = MeetingResponse(
+            id: response.id,
+            title: response.title,
+            creatorID: response.creatorID,
+            startTime: response.startTime,
+            endTime: response.endTime,
+            conversationID: response.conversationID,
+            invitedEmails: response.invitedEmails,
+            isTrial: response.isTrial,
+            createdAt: response.createdAt,
+            updatedAt: response.updatedAt,
+            link: nil,
+            hasPassword: nil
+        )
+
+        let link = try await sut.refreshMeetingLink(id: Scaffolding.meetingID, password: nil)
+
+        #expect(link == nil)
+        #expect(localStore.storeMeetingMeetingMeetingVoidReceivedInvocations.isEmpty)
+        #expect(localStore.deleteMeetingIdQualifiedIDVoidReceivedInvocations.isEmpty)
+    }
+
     // MARK: - pullMeetings
 
     @Test
@@ -152,6 +208,10 @@ struct MeetingRepositoryTests {
         // Then
 
         #expect(localStore.replaceAllMeetingsWithMeetingsMeetingVoidReceivedInvocations.count == 1)
+        #expect(
+            localStore.replaceAllMeetingsWithMeetingsMeetingVoidReceivedInvocations.first?.first?.invitedEmails
+                == Scaffolding.meetingResponse.invitedEmails
+        )
         #expect(
             localStore.replaceAllMeetingsWithMeetingsMeetingVoidReceivedInvocations.first?.map(\.id)
                 == [Scaffolding.meetingID]
@@ -549,6 +609,10 @@ struct MeetingRepositoryTests {
         )
 
         #expect(meetingsAPI.getMeetingId_Invocations == [Scaffolding.meetingID, Scaffolding.meetingID])
+        #expect(
+            localStore.storeMeetingMeetingMeetingVoidReceivedInvocations.map(\.invitedEmails)
+                == [current, current + ["New@example.com"]]
+        )
         let additions = meetingsAPI.addMeetingInvitationsIdEmails_Invocations
         #expect(additions.map(\.id) == [Scaffolding.meetingID])
         #expect(additions.map(\.emails) == [["New@example.com"]])
@@ -847,7 +911,7 @@ struct MeetingRepositoryTests {
             startTime: Date(timeIntervalSince1970: 1_000_000),
             endTime: Date(timeIntervalSince1970: 1_003_600),
             conversationID: WireNetwork.QualifiedID(id: UUID(), domain: "example.com"),
-            invitedEmails: [],
+            invitedEmails: ["guest@example.com", "member@wire.com"],
             isTrial: false,
             createdAt: Date(timeIntervalSince1970: 900_000),
             updatedAt: Date(timeIntervalSince1970: 900_000),
@@ -889,6 +953,7 @@ struct MeetingRepositoryTests {
             end: meetingResponse.endTime,
             recurrence: nil,
             timeZoneIdentifier: meetingResponse.timeZoneIdentifier,
+            invitedEmails: meetingResponse.invitedEmails,
             conversation: MeetingConversation(participants: [member]),
             conversationID: meetingResponse.conversationID,
             creatorID: meetingResponse.creatorID

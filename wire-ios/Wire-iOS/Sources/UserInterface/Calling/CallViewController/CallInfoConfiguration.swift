@@ -99,6 +99,15 @@ extension VoiceChannel {
         }
     }
 
+    func orderedMeetingParticipants(_ participants: [CallParticipant]) -> [CallParticipant] {
+        guard let conversation, conversation.isMeeting else { return participants }
+        let creatorIDs = Set(conversation.meetings?.compactMap { $0.creator?.avsIdentifier } ?? [])
+        let hostID = creatorIDs.count == 1 ? creatorIDs.first : nil
+        let hosts = participants.filter { $0.userId == hostID }
+        let others = participants.filter { $0.userId != hostID }
+        return hosts + others.filter(\.user.isSelfUser) + others.filter { !$0.user.isSelfUser }
+    }
+
 }
 
 struct CallInfoConfiguration: CallInfoViewControllerInput {
@@ -247,7 +256,7 @@ private extension VoiceChannel {
     }
 
     func sortedParticipants() -> [CallParticipant] {
-        participants.sortedAscendingPrependingNil { $0.user.name?.lowercased() }
+        orderedMeetingParticipants(participants.sortedAscendingPrependingNil { $0.user.name?.lowercased() })
     }
 
     private var isIncomingVideoCall: Bool {

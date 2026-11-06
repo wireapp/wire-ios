@@ -26,7 +26,13 @@ class OnMyiPhonePage: PageModel {
     }
 
     var onMyiPhonePageLabel: XCUIElement {
-        app.staticTexts[Locators.OnMyiPhonePage.onMyiPhoneLabel.rawValue]
+        app.descendants(matching: .any).matching(NSPredicate(
+            format: "label IN %@",
+            [
+                Locators.OnMyiPhonePage.onMyiPhoneLabel.rawValue,
+                Locators.OnMyiPhonePage.onMyiPhoneActionsMenu.rawValue
+            ]
+        )).firstMatch
     }
 
     var saveButton: XCUIElement {

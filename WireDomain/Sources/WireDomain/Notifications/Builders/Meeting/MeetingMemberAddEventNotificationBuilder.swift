@@ -46,6 +46,7 @@ struct MeetingMemberAddEventNotificationBuilder: MeetingMemberAddEventNotificati
     let accountID: UUID
     var locale: Locale = .autoupdatingCurrent
     var timeZone: TimeZone = .autoupdatingCurrent
+    var currentDate: () -> Date = { .now }
 
     init(
         meetingsAPI: any MeetingsAPI,
@@ -99,7 +100,10 @@ struct MeetingMemberAddEventNotificationBuilder: MeetingMemberAddEventNotificati
         timeFormatter.timeStyle = .short
 
         let content = UNMutableNotificationContent()
-        content.title = meeting.title
+        let now = currentDate()
+        content.title = meeting.start <= now && now < meeting.end
+            ? String.formated(key: "push.notification.title.ongoingMeeting", bundle: .module, meeting.title)
+            : meeting.title
         content.body = String.formated(
             key: "push.notification.body.senderInvitedToMeeting",
             bundle: .module,
@@ -126,6 +130,7 @@ extension MeetingResponse {
             end: endTime,
             recurrence: recurrence?.toDomainRecurrence(),
             timeZoneIdentifier: timeZoneIdentifier,
+            invitedEmails: invitedEmails,
             conversationID: conversationID,
             creatorID: creatorID
         )
