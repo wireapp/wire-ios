@@ -110,7 +110,11 @@ final class ZClientControllerBuilder {
             fileCache: userSession.fileAssetCache,
             contextProvider: DefaultManagedObjectContextProvider(contextProvider: userSession.contextProvider),
             analyticsProvider: { [self] in userSession.analyticsEventTracker },
-            selfUserID: account.userIdentifier,
+            accountInfo: WireDriveAccountInfo(
+                userID: account.userIdentifier,
+                name: account.userName,
+                handle: account.handle
+            ),
             uploadSessions: AppDependencies.wireDriveUploadSessions,
             uploadStagingDirectory: driveUploadStagingURL
         )
@@ -118,6 +122,7 @@ final class ZClientControllerBuilder {
         // The database exists by this point, so persisted uploads can be reconciled against the
         // background session. Until this runs, the session buffers its events rather than losing
         // them, which is what makes a background relaunch safe.
+        factory.startDirectUploadsLiveActivity()
         Task { await factory.startDirectUploads() }
 
         return factory

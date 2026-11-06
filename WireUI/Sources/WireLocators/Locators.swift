@@ -125,6 +125,13 @@ public enum Locators {
         case saveToFiles = "Save to Files"
     }
 
+    public enum LiveActivity: String {
+
+        case accountName = "UploadsLiveActivityAccount"
+        case statusCheck = "UploadsLiveActivityStatusCheck"
+        case progress = "UploadsLiveActivityProgress"
+    }
+
     public enum AccountSettingsPage: String {
 
         // TODO: [WPB-21952] Improve these identifiers later.

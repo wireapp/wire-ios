@@ -533,6 +533,12 @@ platform :ios do
             api_key_path: appstoreconnect_api_key_file_path,
             app_identifier: "#{app_bundle_id}.extension-notification"
         )
+        sigh(
+            adhoc: build.should_sigh_adhoc,
+            readonly: true,
+            api_key_path: appstoreconnect_api_key_file_path,
+            app_identifier: "#{app_bundle_id}.extension-live-activity"
+        )
     end
 
     def generate_build_number
