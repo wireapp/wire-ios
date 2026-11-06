@@ -1052,10 +1052,8 @@
 				067215AC2B10DCA300CF4AD4 /* E2EIRepository.swift */,
 				161CF9CD2FD15A5F000FDCD0 /* PKIEnvironmentTransport.swift */,
 				161CF9CF2FD16286000FDCD0 /* CRLURLBuilder.swift */,
-				161CF9D12FD1AE6D000FDCD0 /* CRLURLBuilderTests.swift */,
 				064824972B10E32C00115329 /* EnrollE2EICertificateUseCase.swift */,
 				639971B32B2779A9009DD5CF /* E2EIKeyPackageRotator.swift */,
-				63457C072B2CA8E300AFFEF3 /* E2EIKeyPackageRotatorTests.swift */,
 			);
 			path = E2EIdentity;
 			sourceTree = "<group>";
@@ -1370,6 +1368,8 @@
 		633722BD2B7E2C0400BE4E45 /* E2EIdentity */ = {
 			isa = PBXGroup;
 			children = (
+				161CF9D12FD1AE6D000FDCD0 /* CRLURLBuilderTests.swift */,
+				63457C072B2CA8E300AFFEF3 /* E2EIKeyPackageRotatorTests.swift */,
 				882897CA308A0C130027ADAC /* E2EIRepositoryTests.swift */,
 			);
 			path = E2EIdentity;
