@@ -20,8 +20,26 @@
 // Custom
 LIVE_ACTIVITY_EXTENSION_BUNDLE_SUFFIX = extension-live-activity
 
+// Build Options
+APPLICATION_EXTENSION_API_ONLY = YES
+
+// Deployment
+SKIP_INSTALL = YES
+
+// Linking
+LD_RUNPATH_SEARCH_PATHS = $(inherited) @executable_path/Frameworks @executable_path/../../Frameworks
+
 // Packaging
+DEFINES_MODULE = NO
+INFOPLIST_FILE = Wire Live Activity/Info.plist
+PRODUCT_NAME = $(TARGET_NAME)
 PRODUCT_BUNDLE_IDENTIFIER = $(WIRE_BUNDLE_ID).$(LIVE_ACTIVITY_EXTENSION_BUNDLE_SUFFIX)
+// Generated Info.plist values must use the app's shared version and build number.
+MARKETING_VERSION = $(WIRE_SHORT_VERSION)
+CURRENT_PROJECT_VERSION = $(WIRE_BUILD_NUMBER)
+
+// Signing
+PROVISIONING_PROFILE_SPECIFIER = $(PROVISIONING_PROFILE_SPECIFIER_LIVE_ACTIVITY_EXT)
 
 // Assets
 // The project-wide app icon name belongs to the app. This extension only has its own placeholder icon set.
