@@ -41,6 +41,11 @@ protocol WireMessagingFactoryProtocol {
 
     func startDirectUploads() async
 
+    /// Starts showing the ongoing Drive direct uploads in a Live Activity.
+
+    @MainActor
+    func startDirectUploadsLiveActivity()
+
     /// Cancels every Drive direct upload and removes its state. For logout or account deletion.
 
     func tearDownDirectUploads() async

@@ -1986,6 +1986,22 @@ class MockWireMessagingFactoryProtocol: WireMessagingFactoryProtocol {
         await mock()
     }
 
+    // MARK: - startDirectUploadsLiveActivity
+
+    var startDirectUploadsLiveActivity_Invocations: [Void] = []
+    var startDirectUploadsLiveActivity_MockMethod: (() -> Void)?
+
+    @MainActor
+    func startDirectUploadsLiveActivity() {
+        startDirectUploadsLiveActivity_Invocations.append(())
+
+        guard let mock = startDirectUploadsLiveActivity_MockMethod else {
+            fatalError("no mock for `startDirectUploadsLiveActivity`")
+        }
+
+        mock()
+    }
+
     // MARK: - tearDownDirectUploads
 
     var tearDownDirectUploads_Invocations: [Void] = []
