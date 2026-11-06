@@ -341,6 +341,44 @@ final class ConversationCallingEventNotificationBuilderTests: XCTestCase {
 
     // MARK: - "Regular" notification call tests
 
+    func testMissedGroupCallKeepsIncomingCaller() async throws {
+        let callerID = UserID(id: .mockID4, domain: "caller.example.com")
+        for isMLS in [false, true] {
+            for suppressStart in [false, true] {
+                let eventBuilder = try await makeConversationEventBuilder()
+                let caller = await context.perform { [self] in modelHelper.createUser(in: context) }
+                let sender = try XCTUnwrap(userLocalStore.fetchOrCreateUserIdDomain_MockValue)
+                userLocalStore.fetchOrCreateUserIdDomain_MockMethod = { id, domain in
+                    id == callerID.id && domain == callerID.domain ? caller : sender
+                }
+                userLocalStore.nameFor_MockMethod = { $0 === caller ? "User A" : "User B" }
+
+                var start = Calling()
+                start.content = setupCallingContentMock(type: "CONFSTART")
+                conversationLocalStore.conversationMutedMessageTypesIncludingAvailability_MockValue =
+                    .some(suppressStart ? .all : .none)
+                _ = try await eventBuilder.buildContent(event: makeMessageEvent(
+                    GenericMessage(content: start), senderID: callerID, isMLS: isMLS
+                ))
+
+                conversationLocalStore.conversationMutedMessageTypesIncludingAvailability_MockValue = .some(.none)
+                var end = Calling()
+                end.content = """
+                {"type":"CONFEND","src_userid":"\(Scaffolding.userID.id)","src_clientid":"client","resp":false}
+                """
+                let notifications = try await eventBuilder.buildContent(event: makeMessageEvent(
+                    GenericMessage(content: end), senderID: Scaffolding.userID, isMLS: isMLS
+                ))
+                guard let notification = notifications?.first, case let .text(content) = notification else {
+                    XCTFail("Expected a missed-call notification (MLS: \(isMLS), muted: \(suppressStart))")
+                    continue
+                }
+                XCTAssertEqual(content.body, "User A called")
+                XCTAssertEqual(content.userInfo["senderIDString"] as? String, callerID.id.uuidString)
+            }
+        }
+    }
+
     func testGroupCallEndedAfterSelfStartedOrAnsweredElsewhereDoesNotShowMissedCall() async throws {
         let eventBuilder = try await makeConversationEventBuilder()
 
