@@ -137,7 +137,8 @@ package final class ActivityKitUploadsActivityClient: WireDriveUploadsActivityCl
     }
 
     package var hasActivity: Bool {
-        activity != nil
+        guard let activity else { return false }
+        return activity.activityState == .active || activity.activityState == .stale
     }
 
     package func start(with state: WireDriveUploadsActivityState) async throws {
