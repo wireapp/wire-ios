@@ -19,7 +19,7 @@
 package import WireCallingDomain
 package import WireFoundation
 
-import Foundation
+package import Foundation
 import UIKit
 import WireLogging
 
@@ -62,11 +62,26 @@ package final class MeetingFormViewModel {
     private let createMeetingUseCase: any CreateMeetingUseCaseProtocol
     private let updateMeetingUseCase: any UpdateMeetingUseCaseProtocol
     private let currentDateProvider: any CurrentDateProviding
-    private let onSuccess: (Meeting) -> Void
+    private var createdMeetingLink: URL?
+    private var createdMeetingHasEmailInvitees = false
+    private let onSuccess: (Meeting, URL?, Bool) -> Void
+    private let fetchMeetingLink: (@Sendable (QualifiedID) async throws -> MeetingLink?)?
+    private let refreshMeetingLink: (@Sendable (QualifiedID, String?) async throws -> MeetingLink?)?
+    var presentedLink: MeetingLinkViewModel?
+
+    var canChangeMeetingLink: Bool { mode.isEdit && fetchMeetingLink != nil && refreshMeetingLink != nil }
+
+    func meetingLinkTapped() {
+        guard case let .edit(meeting) = mode, let fetchMeetingLink, let refreshMeetingLink else { return }
+        presentedLink = MeetingLinkViewModel(
+            fetchLink: { try await fetchMeetingLink(meeting.id) },
+            refreshLink: { try await refreshMeetingLink(meeting.id, $0) }
+        )
+    }
 
     private static let timePickerMinuteInterval = 15
     // Match the limits enforced by SimpleTextFieldValidator for conversation names.
-    private static let maximumConversationNameLength = 64
+    static let maximumConversationNameLength = 64
     private static let maximumConversationNameByteLength = 256
 
     /// The smallest selectable interval between start and end time.
@@ -91,7 +106,11 @@ package final class MeetingFormViewModel {
     }
 
     var isPasswordValid: Bool {
-        guard canSetPassword, !password.isEmpty else { return true }
+        !canSetPassword || Self.isPasswordValid(password)
+    }
+
+    static func isPasswordValid(_ password: String) -> Bool {
+        guard !password.isEmpty else { return true }
         let characterSets: [CharacterSet] = [
             .lowercaseLetters,
             .uppercaseLetters,
@@ -103,14 +122,18 @@ package final class MeetingFormViewModel {
     }
 
     func generatePassword() {
+        password = Self.makePassword()
+        confirmPassword = password
+    }
+
+    static func makePassword() -> String {
         let groups = Self.passwordCharacterGroups
         let allCharacters = groups.joined()
         var characters = groups.map { $0.randomElement()! }
         while characters.count < Self.minimumPasswordLength {
             characters.append(allCharacters.randomElement()!)
         }
-        password = String(characters.shuffled())
-        confirmPassword = password
+        return String(characters.shuffled())
     }
 
     func copyPassword(to pasteboard: UIPasteboard = .general) {
@@ -305,7 +328,9 @@ package final class MeetingFormViewModel {
         updateMeetingUseCase: any UpdateMeetingUseCaseProtocol,
         currentDateProvider: any CurrentDateProviding,
         supportsMeetingLinks: Bool = false,
-        onSuccess: @escaping (Meeting) -> Void = { _ in }
+        fetchMeetingLink: (@Sendable (QualifiedID) async throws -> MeetingLink?)? = nil,
+        refreshMeetingLink: (@Sendable (QualifiedID, String?) async throws -> MeetingLink?)? = nil,
+        onSuccess: @escaping (Meeting, URL?, Bool) -> Void = { _, _, _ in }
     ) {
         self.mode = mode
         self.supportsMeetingLinks = supportsMeetingLinks
@@ -314,6 +339,8 @@ package final class MeetingFormViewModel {
         self.updateMeetingUseCase = updateMeetingUseCase
         self.currentDateProvider = currentDateProvider
         self.onSuccess = onSuccess
+        self.fetchMeetingLink = fetchMeetingLink
+        self.refreshMeetingLink = refreshMeetingLink
 
         switch mode {
         case .instant, .scheduled:
@@ -391,10 +418,11 @@ package final class MeetingFormViewModel {
         defer { isLoading = false }
         do {
             let meeting = try await saveMeeting()
-            onSuccess(meeting)
+            onSuccess(meeting, createdMeetingLink, createdMeetingHasEmailInvitees)
         } catch let CreateMeetingUseCaseError.participantsNotAdded(result, participants) {
             password = ""
             confirmPassword = ""
+            createdMeetingLink = result.link
             participantMeetingHasLink = result.link != nil
             meetingWithParticipantsNotAdded = result.meeting
             participantsNotAdded = participants
@@ -437,7 +465,7 @@ package final class MeetingFormViewModel {
             guard !didCompleteSavedMeeting else { return }
             didCompleteSavedMeeting = true
             hasError = false
-            onSuccess(meeting)
+            onSuccess(meeting, createdMeetingLink, createdMeetingHasEmailInvitees)
         } else if dismissAfterError {
             dismiss()
         }
@@ -447,7 +475,7 @@ package final class MeetingFormViewModel {
         guard !didCompleteSavedMeeting, let meeting = meetingWithParticipantsNotAdded else { return }
         didCompleteSavedMeeting = true
         hasParticipantsNotAddedAlert = false
-        onSuccess(meeting)
+        onSuccess(meeting, createdMeetingLink, createdMeetingHasEmailInvitees)
     }
 
     func retryConversationNameUpdate() async {
@@ -462,7 +490,7 @@ package final class MeetingFormViewModel {
             if dismissAfterError {
                 hasError = true
             } else if participantsNotAdded.isEmpty {
-                onSuccess(meeting)
+                onSuccess(meeting, createdMeetingLink, createdMeetingHasEmailInvitees)
             } else {
                 meetingWithParticipantsNotAdded = meeting
                 hasParticipantsNotAddedAlert = true
@@ -494,6 +522,8 @@ package final class MeetingFormViewModel {
             )
             return try completeCreation(result)
         case .scheduled:
+            let emails = allowsEmailInvitations ? invitedEmails : []
+            createdMeetingHasEmailInvitees = !emails.isEmpty
             let result = try await createMeetingUseCase.invoke(
                 title: meetingTitle,
                 startTime: startDate,
@@ -502,7 +532,7 @@ package final class MeetingFormViewModel {
                 type: .scheduled,
                 password: canSetPassword && !password.isEmpty ? password : nil,
                 participants: selectedMembers,
-                invitedEmails: allowsEmailInvitations ? invitedEmails : []
+                invitedEmails: emails
             )
             return try completeCreation(result)
         case let .edit(meeting):
@@ -524,6 +554,7 @@ package final class MeetingFormViewModel {
     }
 
     private func completeCreation(_ result: MeetingCreationResult) throws -> Meeting {
+        createdMeetingLink = result.link
         password = ""
         confirmPassword = ""
         guard !supportsMeetingLinks || result.link != nil else {

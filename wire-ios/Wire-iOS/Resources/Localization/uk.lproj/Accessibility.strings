@@ -39,6 +39,7 @@
 "conversation.timerButton.description" = "Встановіть таймер для тимчасових повідомлень";
 "conversation.mentionButton.description" = "Згадати когось";
 "conversation.cameraButton.description" = "Take or select a photo";
+"conversation.camera.maximizeButton.description" = "Maximize view";
 "conversation.sketchButton.description" = "Open sketch to draw or write";
 "conversation.gifButton.description" = "Вибрати GIF";
 "conversation.audioButton.description" = "Записати аудіоповідомлення";

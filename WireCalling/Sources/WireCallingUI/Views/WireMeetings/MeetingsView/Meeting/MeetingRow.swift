@@ -16,11 +16,16 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SwiftUI
+package import SwiftUI
+
 import WireCallingDomain
 import WireDesign
 import WireFoundation
 import WireLocators
+
+package extension EnvironmentValues {
+    @Entry var supportsMeetingEmailInvitations: Bool = false
+}
 
 struct MeetingRow: View {
     private typealias Strings = L10n.Localizable.WireMeetings.List
@@ -37,9 +42,12 @@ struct MeetingRow: View {
     var onMeetingLink: (() -> Void)?
 
     @Environment(\.wireAccentColor) private var wireAccentColor
+    @Environment(\.supportsMeetingEmailInvitations) private var supportsMeetingEmailInvitations
 
     @ScaledMetric private var iconBoxSize: CGFloat = 31
     @ScaledMetric private var iconFontSize: CGFloat = 15
+
+    @State private var isEmailListExpanded = false
 
     private var meeting: Meeting {
         occurrence.meeting
@@ -124,6 +132,7 @@ struct MeetingRow: View {
                             .padding(.vertical, 20)
                             .contentShape(Rectangle())
                     }
+                    .tint(ColorTheme.Backgrounds.onSurface.color)
                     .menuOrder(.fixed)
                     .accessibilityIdentifier(Locators.WireMeetings.MeetingRow.menu)
                     .padding(.vertical, -12)
@@ -142,8 +151,44 @@ struct MeetingRow: View {
                 }
 
                 if let conversation = meeting.conversation, !conversation.participants.isEmpty {
-                    MemberAvatarsView(members: Array(conversation.participants))
+                    MemberAvatarsView(members: Array(conversation.participants), creatorID: meeting.creatorID)
                         .padding(.top, 2)
+                }
+                if supportsMeetingEmailInvitations {
+                    if meeting.invitedEmails.count > 1 {
+                        Button {
+                            withAnimation { isEmailListExpanded.toggle() }
+                        } label: {
+                            HStack(alignment: .firstTextBaseline, spacing: 6) {
+                                emailInviteeLabel(Strings.EmailInvitees.count(meeting.invitedEmails.count))
+                                Image(systemName: isEmailListExpanded ? "chevron.up" : "chevron.down")
+                                    .accessibilityHidden(true)
+                            }
+                            .font(for: .subline1)
+                            .foregroundStyle(ColorTheme.Base.secondaryText.color)
+                            .contentShape(Rectangle())
+                        }
+                        .buttonStyle(.plain)
+                        .accessibilityIdentifier("meetingEmailInvitees")
+                        .accessibilityValue(
+                            isEmailListExpanded ? Strings.EmailInvitees.expanded : Strings.EmailInvitees.collapsed
+                        )
+                    }
+                    if meeting.invitedEmails.count == 1, let email = meeting.invitedEmails.first {
+                        emailInviteeLabel(email)
+                            .accessibilityIdentifier("meetingEmailInvitee_\(email)")
+                    } else if isEmailListExpanded, meeting.invitedEmails.count > 1 {
+                        VStack(alignment: .leading, spacing: 4) {
+                            ForEach(meeting.invitedEmails, id: \.self) { email in
+                                Text(email)
+                                    .fixedSize(horizontal: false, vertical: true)
+                                    .accessibilityIdentifier("meetingEmailInvitee_\(email)")
+                            }
+                        }
+                        .font(for: .subline1)
+                        .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
+                        .padding(.leading, 30)
+                    }
                 }
                 if isAttending {
                     attendingLabel
@@ -162,6 +207,21 @@ struct MeetingRow: View {
                 start: occurrence.start
             )
         )
+    }
+
+    private func emailInviteeLabel(_ text: String) -> some View {
+        HStack(alignment: .firstTextBaseline, spacing: 6) {
+            Image(systemName: "envelope")
+                .font(.system(size: 14))
+                .frame(width: 24)
+                .accessibilityHidden(true)
+            Text(text)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .font(for: .subline1)
+        .foregroundStyle(ColorTheme.Base.secondaryText.color)
+        .frame(minHeight: 44)
+        .accessibilityElement(children: .combine)
     }
 
     private var joinButton: some View {

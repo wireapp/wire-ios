@@ -68,6 +68,7 @@ final class FilesViewTests: XCTestCase {
         nodesApi.getAllTags_MockMethod = { ["tag1", "tag2", "abcdef"] }
 
         let localAssetsRepository = MockWireDriveLocalAssetRepositoryProtocol()
+        localAssetsRepository.offlineAssetsConversationNameAssetsPath_MockValue = []
 
         fetchNodesPageUseCase = WireDriveFetchNodesPageUseCase(
             repository: nodesRepository
@@ -404,6 +405,18 @@ final class FilesViewTests: XCTestCase {
     }
 
     @MainActor
+    func testFilesView_FolderOfflineWarning() async {
+        let view = await makeFilesView(state: .received(items: []), showFolderOfflineWarning: true)
+
+        snapshotHelper
+            .withUserInterfaceStyle(.light)
+            .verify(matching: view, named: "light", record: record)
+        snapshotHelper
+            .withUserInterfaceStyle(.dark)
+            .verify(matching: view, named: "dark", record: record)
+    }
+
+    @MainActor
     func testFilesView_ErrorState() async {
         let view = await makeFilesView(state: .error(isConnectionError: false))
 
@@ -465,12 +478,18 @@ final class FilesViewTests: XCTestCase {
     private func makeFilesView(
         state: FilesListStateController.State,
         isBrowsing: Bool = false,
-        isReadOnly: Bool = false
+        isReadOnly: Bool = false,
+        showFolderOfflineWarning: Bool = false
     ) async -> some View {
         let useCases = FilesViewModel.UseCases(
             fetchNodesPage: fetchNodesPageUseCase,
             fetchNodes: fetchNodesUseCase,
             deleteNodes: deleteNodeUseCase,
+            emptyRecycleBin: WireDriveEmptyRecycleBinUseCase(
+                repository: nodesRepository,
+                fileCache: MockFileCache(),
+                localAssetStore: MockWireDriveLocalAssetStoreProtocol()
+            ),
             restoreNodes: restoreNodeUseCase,
             renameNode: renameNodeUseCase,
             updateTags: updateTagsUseCase,
@@ -518,6 +537,7 @@ final class FilesViewTests: XCTestCase {
         filesViewModel.filesController.state = state
         filesViewModel.filesController.hasMore = false
         filesViewModel.showReadOnlyBanner = isReadOnly
+        filesViewModel.offlineActionWarningID = showFolderOfflineWarning ? UUID() : nil
 
         return NavigationStack {
             FilesView(viewModel: filesViewModel)

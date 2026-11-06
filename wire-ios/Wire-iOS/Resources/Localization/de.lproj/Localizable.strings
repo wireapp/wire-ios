@@ -2270,4 +2270,4 @@
 "account_blocked.generic_error.alert.retry" = "Wiederholen";
 
 /* Shown in a user profile while their account is not ready to receive connections. */
-"profile.details.non_contactable" = "You can communicate with %@ once they are set up.";
+"profile.details.non_contactable" = "Sobald alles eingerichtet ist, können Sie mit %@ kommunizieren.";

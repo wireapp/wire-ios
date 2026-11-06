@@ -10,9 +10,17 @@ As it is hard to spot changes from version to version of database models (.xcdat
 
 ## zmessaging
 
-### 2.145.0 (TODO, not created yet)
+### Future changes (not scheduled)
 
 * remove `Conversation.commitPendingProposalDate`, superseded by the `PendingProposalTimer` entity (values are moved by `PendingProposalTimerMigrationAction` when migrating to 2.143.0). Also remove the `@NSManaged` property in `ZMConversation` and its remaining usages.
+
+### 2.146.0
+
+* added `ClientMessage.sendAttemptStarted`, set before a pending message is first sent, so it is only edited in place while it cannot have reached the backend
+
+### 2.145.0
+
+* added optional `Meeting.invitedEmails` to preserve email invitees in the Meetings list.
 
 ### 2.144.0
 

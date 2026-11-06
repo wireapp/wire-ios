@@ -54,7 +54,7 @@ package struct UpdateMeetingUseCase: UpdateMeetingUseCaseProtocol {
         // Update the meeting itself first: it can fail with a permission
         // error (only the creator may edit), in which case the participants
         // should stay untouched.
-        let updatedMeeting = try await meetingRepository.updateMeeting(
+        var updatedMeeting = try await meetingRepository.updateMeeting(
             id: meeting.id,
             title: title,
             startTime: startTime,
@@ -69,6 +69,7 @@ package struct UpdateMeetingUseCase: UpdateMeetingUseCaseProtocol {
                     adding: emailsToAdd,
                     removing: emailsToRemove
                 )
+                updatedMeeting.invitedEmails = try await meetingRepository.fetchInvitedEmails(id: meeting.id)
             } catch {
                 throw UpdateMeetingUseCaseError.emailInvitationsFailed(updatedMeeting: updatedMeeting)
             }

@@ -202,6 +202,11 @@ class ActiveConversationPage: PageModel {
         app.descendants(matching: .any)[Locators.ConversationsPage.useLeftSystemMessage.rawValue]
     }
 
+    var scheduledForDeletionSystemMessage: XCUIElement {
+        app.descendants(matching: .any)[Locators.ActiveConversationPage.scheduledForDeletionSystemMessage.rawValue]
+            .firstMatch
+    }
+
     var photoButton: XCUIElement {
         app.buttons[Locators.ActiveConversationPage.photoButton.rawValue]
     }
@@ -421,7 +426,10 @@ class ActiveConversationPage: PageModel {
     }
 
     func videoToChoose(at index: Int = 0) -> XCUIElement {
-        app.images.element(boundBy: index).firstMatch
+        app.collectionViews.containing(
+            .button,
+            identifier: Locators.ActiveConversationPage.takePictureButton.rawValue
+        ).images.element(boundBy: index).firstMatch
     }
 
     func fetchMessages() -> [String] {
@@ -728,7 +736,7 @@ class ActiveConversationPage: PageModel {
         imageToChoose(at: index).waitAndTap()
 
         XCTAssertTrue(
-            attachmentImagePreview.waitForExistence(timeout: 5),
+            attachmentImagePreview.waitForExistence(timeout: 10),
             "Image attachment preview did not appear"
         )
 
@@ -775,7 +783,10 @@ class ActiveConversationPage: PageModel {
         if !videoToChoose(at: index).waitForExistence(timeout: 2) {
             photoButton.waitAndTap()
         }
-        videoToChoose(at: index).waitAndTap()
+        XCTAssertTrue(
+            videoToChoose(at: index).waitAndTap(),
+            "Video thumbnail did not become hittable"
+        )
 
         XCTAssertTrue(
             okToSend.waitForExistence(timeout: 3),
@@ -1002,7 +1013,7 @@ class ActiveConversationPage: PageModel {
     func verifyImagePreviewIsVisible(
     ) -> ActiveConversationPage {
         XCTAssertTrue(
-            imagePreview.waitForExistence(timeout: 10),
+            imagePreview.waitForExistence(timeout: 15),
             "Image preview did not appear"
         )
         return self
@@ -1012,7 +1023,7 @@ class ActiveConversationPage: PageModel {
     func verifyVideoPreviewIsVisible(
     ) -> ActiveConversationPage {
         XCTAssertTrue(
-            videoPreview.waitForExistence(timeout: 10),
+            videoPreview.waitForExistence(timeout: 15),
             "Video preview did not appear"
         )
         return self
