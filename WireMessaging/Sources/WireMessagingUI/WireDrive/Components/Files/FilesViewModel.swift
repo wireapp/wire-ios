@@ -316,6 +316,7 @@ package final class FilesViewModel: ObservableObject {
     func reload(refreshing: Bool = false) async {
         guard networkMonitor.currentStatus != nil else { return }
 
+        enableMultipleSelection(false)
         await filesController.reload(refreshing: refreshing)
     }
 

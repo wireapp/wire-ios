@@ -190,6 +190,24 @@ final class FilesViewModelTests {
         #expect(sut.filesController.isLoading == false)
     }
 
+    @Test(arguments: [false, true])
+    func reload_clearsSelectionAndExitsSelectionModeBeforeFetching(refreshing: Bool) async {
+        let items: Set<FilesViewItem> = [.fixture(), .fixture()]
+        sut.filesController.state = .received(items: Array(items))
+        sut.multipleSelection = .active
+        sut.selectedItems = items
+        nodesRepository.getNodes_MockMethod = { [sut] _ in
+            #expect(sut.selectedItems.isEmpty)
+            #expect(sut.multipleSelection == .inactive)
+            return ([], nil)
+        }
+
+        await sut.reload(refreshing: refreshing)
+
+        #expect(sut.selectedItems.isEmpty)
+        #expect(sut.multipleSelection == .inactive)
+    }
+
     @Test
     func reload_clearsItemsBeforeLoading() async throws {
         // given
