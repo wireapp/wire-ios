@@ -1111,7 +1111,7 @@ extension WireCallCenterV3 {
     /// Handles incoming calling messages, and transmist them to AVS when it is ready to process events, or adds it
     /// to the `bufferedEvents`.
     /// - parameter callEvent: calling event to process.
-    func processCallEvent(_ callEvent: CallEvent) {
+    func processCallEvent(_ callEvent: CallEvent, senderDomain: String? = nil) {
         Self.logger.info("process call event")
         AnsweredElsewhereCallTracker(userDefaults: VoIPPushHelper.storage).trackStart(
             data: callEvent.data,
@@ -1119,7 +1119,19 @@ extension WireCallCenterV3 {
             accountID: selfUserId.identifier,
             isCallerSelf: callEvent.userId == selfUserId
         )
-        CallNotificationCallerTracker(userDefaults: VoIPPushHelper.storage).markEnded(
+        let callerTracker = CallNotificationCallerTracker(userDefaults: VoIPPushHelper.storage)
+        if let domain = senderDomain ?? callEvent.userId.domain {
+            callerTracker.trackStart(
+                data: callEvent.data,
+                conversationID: callEvent.conversationId.identifier,
+                accountID: selfUserId.identifier,
+                senderID: .init(id: callEvent.userId.identifier, domain: domain),
+                isCallerSelf: callEvent.userId == selfUserId,
+                eventTimestamp: callEvent.serverTimestamp,
+                now: .now
+            )
+        }
+        callerTracker.markEnded(
             data: callEvent.data,
             conversationID: callEvent.conversationId.identifier,
             accountID: selfUserId.identifier,

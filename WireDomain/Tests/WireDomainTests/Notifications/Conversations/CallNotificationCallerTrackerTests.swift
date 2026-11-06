@@ -125,6 +125,33 @@ final class CallNotificationCallerTrackerTests: XCTestCase {
         XCTAssertNil(track(tracker, end, responder, at: startTime.addingTimeInterval(24 * 60 * 60 + 1)))
     }
 
+    func testOlderEventsPreserveTheNewerCaller() throws {
+        let firstStart = try callContent(type: "CONFSTART", timestamp: "1000")
+        let secondStart = try callContent(type: "CONFSTART", timestamp: "2000")
+        let end = try callContent(type: "CONFEND")
+        let endData = Data(#"{"type":"CONFEND","src_clientid":"client","resp":false}"#.utf8)
+        let tracker = CallNotificationCallerTracker(userDefaults: defaults)
+        let now = Date(timeIntervalSince1970: 10_000)
+        let firstTime = Date(timeIntervalSince1970: 1000)
+        let secondTime = Date(timeIntervalSince1970: 2000)
+        let oldEndTime = Date(timeIntervalSince1970: 1500)
+
+        for handledByApp in [false, true] {
+            _ = track(tracker, firstStart, caller, eventTimestamp: firstTime, at: now)
+            _ = track(tracker, secondStart, responder, eventTimestamp: secondTime, at: now)
+            if handledByApp {
+                tracker.markEnded(
+                    data: endData, conversationID: conversationID, accountID: accountID,
+                    eventTimestamp: oldEndTime, now: now
+                )
+            } else {
+                XCTAssertNil(track(tracker, end, caller, eventTimestamp: oldEndTime, at: now))
+            }
+            _ = track(tracker, firstStart, caller, eventTimestamp: firstTime, at: now)
+            XCTAssertEqual(track(tracker, end, caller, eventTimestamp: secondTime, at: now), responder)
+        }
+    }
+
     private func track(
         _ tracker: CallNotificationCallerTracker,
         _ content: CallContent,
@@ -132,6 +159,7 @@ final class CallNotificationCallerTrackerTests: XCTestCase {
         accountID: UUID? = nil,
         conversationID: UUID? = nil,
         isCallerSelf: Bool = false,
+        eventTimestamp: Date? = nil,
         at time: Date = .now
     ) -> UserID? {
         tracker.track(
@@ -140,7 +168,7 @@ final class CallNotificationCallerTrackerTests: XCTestCase {
             accountID: accountID ?? self.accountID,
             senderID: sender,
             isCallerSelf: isCallerSelf,
-            eventTimestamp: time,
+            eventTimestamp: eventTimestamp ?? time,
             now: time
         )
     }

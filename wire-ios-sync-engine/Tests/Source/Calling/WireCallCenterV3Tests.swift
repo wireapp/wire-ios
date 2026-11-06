@@ -1588,7 +1588,7 @@ final class WireCallCenterV3Tests: MessagingTest {
                 conversationId: groupConversationID,
                 userId: sender,
                 clientId: otherUserClientID
-            ))
+            ), senderDomain: "caller.example")
         }
 
         for isReady in [false, true] {
@@ -1625,22 +1625,25 @@ final class WireCallCenterV3Tests: MessagingTest {
                     isCallerSelf: false
                 ), "A later unanswered conference must still be reported as missed")
 
-                let callerTracker = CallNotificationCallerTracker(userDefaults: VoIPPushHelper.storage)
-                _ = callerTracker.track(
-                    callContent: try JSONDecoder().decode(CallContent.self, from: Data(
-                        #"{"type":"CONFSTART","src_clientid":"other","resp":false}"#.utf8
-                    )),
+                let callerTracker = CallNotificationCallerTracker(
+                    userDefaults: try XCTUnwrap(UserDefaults(suiteName: suiteName))
+                )
+                XCTAssertEqual(callerTracker.track(
+                    callContent: end,
                     conversationID: groupConversationID.identifier,
                     accountID: selfUserID.identifier,
-                    senderID: .init(id: otherUserID.identifier, domain: otherUserID.domain ?? ""),
+                    senderID: .init(id: .mockID4, domain: "ending.example"),
                     isCallerSelf: false,
                     eventTimestamp: .now,
                     now: .now
-                )
+                ), .init(id: otherUserID.identifier, domain: "caller.example"))
+
+                processStart(sender: otherUserID, responded: false, timestamp: "3000")
+                let endTime = Date.now
                 sut.processCallEvent(CallEvent(
                     data: Data(#"{"type":"CONFEND","src_clientid":"other","resp":false}"#.utf8),
                     currentTimestamp: .now,
-                    serverTimestamp: Date(timeIntervalSince1970: 1000),
+                    serverTimestamp: endTime,
                     conversationId: groupConversationID,
                     userId: otherUserID,
                     clientId: otherUserClientID
@@ -1651,7 +1654,7 @@ final class WireCallCenterV3Tests: MessagingTest {
                     accountID: selfUserID.identifier,
                     senderID: .init(id: otherUserID.identifier, domain: otherUserID.domain ?? ""),
                     isCallerSelf: false,
-                    eventTimestamp: .now,
+                    eventTimestamp: endTime.addingTimeInterval(1),
                     now: .now
                 ))
             }

@@ -26,6 +26,7 @@ public struct CallNotificationCallerTracker {
         let callerID: UUID
         let callerDomain: String
         let conferenceTimestamp: String?
+        let startEventTimestamp: Date?
         let recordedAt: Date
         var endedEventTimestamp: Date?
 
@@ -53,9 +54,32 @@ public struct CallNotificationCallerTracker {
         defer { Self.lock.unlock() }
         let key = key(conversationID: conversationID, accountID: accountID)
         guard var entry = readEntry(forKey: key, now: now) else { return }
+        if let start = entry.startEventTimestamp, eventTimestamp < start { return }
         // Keep attribution available if the NSE handles the same end event concurrently.
         entry.endedEventTimestamp = eventTimestamp
         userDefaults.set(try? JSONEncoder().encode(entry), forKey: key)
+    }
+
+    public func trackStart(
+        data: Data,
+        conversationID: UUID,
+        accountID: UUID,
+        senderID: UserID,
+        isCallerSelf: Bool,
+        eventTimestamp: Date,
+        now: Date
+    ) {
+        guard let content = try? JSONDecoder().decode(CallContent.self, from: data),
+              content.type == CallContent.CallType.confStart else { return }
+        _ = track(
+            callContent: content,
+            conversationID: conversationID,
+            accountID: accountID,
+            senderID: senderID,
+            isCallerSelf: isCallerSelf,
+            eventTimestamp: eventTimestamp,
+            now: now
+        )
     }
 
     func track(
@@ -74,6 +98,7 @@ public struct CallNotificationCallerTracker {
         defer { Self.lock.unlock() }
         let key = key(conversationID: conversationID, accountID: accountID)
         let existing = readEntry(forKey: key, now: now)
+        if let start = existing?.startEventTimestamp, let eventTimestamp, eventTimestamp < start { return nil }
         if callContent.type == CallContent.CallType.confEnd {
             userDefaults.removeObject(forKey: key)
             guard existing?.endedEventTimestamp == nil || existing?.endedEventTimestamp == eventTimestamp else {
@@ -94,6 +119,7 @@ public struct CallNotificationCallerTracker {
             callerID: senderID.id,
             callerDomain: senderID.domain,
             conferenceTimestamp: callContent.conferenceTimestamp,
+            startEventTimestamp: eventTimestamp,
             recordedAt: now
         )
         userDefaults.set(try? JSONEncoder().encode(entry), forKey: key)
