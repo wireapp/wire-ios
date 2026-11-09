@@ -91,7 +91,7 @@ private enum FlagSection: String, CaseIterable {
             self = .conversations
         case .shakeToReport, .unSafeLogsForPublic:
             self = .diagnostics
-        case .enableDriveBulkActions, .simulateDriveOffline, .simulateAppTerminationInBackground:
+        case .simulateDriveOffline, .simulateAppTerminationInBackground:
             self = .drive
         case .enabledCCDebugLogs, .forceCRLExpiryAfterOneMinute, .lowKeyPackageCount,
              .showCreateMLSGroupToggle, .simulateUnestablishedMLSGroup, .skipMLSMessagesDecryption:

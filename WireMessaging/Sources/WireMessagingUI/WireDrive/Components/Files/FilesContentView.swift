@@ -163,7 +163,7 @@ package struct FilesContentView<Toolbar: ToolbarContent, Sheet: View>: View {
 private extension FilesContentView {
 
     @ViewBuilder var filesList: some View {
-        List(selection: $viewModel.selectedItems) {
+        List(selection: !viewModel.isBrowsing ? $viewModel.selectedItems : nil) {
             Group {
                 itemsSection
 
