@@ -94,13 +94,23 @@ package struct DetermineAuthMethodView: View {
                 .presentationBackground(Color.black.opacity(0.7))
         }
         .sheet(isPresented: $isQRCodeScannerPresented, onDismiss: handleQRCodeScannerDismissal) {
-            DeveloperCredentialQRCodeScannerView(
-                onQRCodeScanned: { scannedCode in
-                    pendingScannedCode = scannedCode
-                    isQRCodeScannerPresented = false
-                },
-                onClose: { isQRCodeScannerPresented = false }
-            )
+            NavigationStack {
+                DeveloperCredentialQRCodeScannerView(
+                    onQRCodeScanned: { scannedCode in
+                        pendingScannedCode = scannedCode
+                        isQRCodeScannerPresented = false
+                    },
+                    onClose: { isQRCodeScannerPresented = false }
+                )
+                .toolbar {
+                    ToolbarItem(placement: .cancellationAction) {
+                        Button(L10n.Localizable.SwitchBackendConfirmation.cancel, role: .cancel) {
+                            isQRCodeScannerPresented = false
+                        }
+                        .accessibilityIdentifier("developerCredentialQRCodeCancelButton")
+                    }
+                }
+            }
         }
         .interactiveDismissDisabled()
         .background(ColorTheme.Backgrounds.surface.color)
