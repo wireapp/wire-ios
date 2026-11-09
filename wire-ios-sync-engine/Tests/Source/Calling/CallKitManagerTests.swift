@@ -173,6 +173,11 @@ class MockProvider: CXProvider {
 class MockCallKitManagerDelegate: WireSyncEngine.CallKitManagerDelegate {
 
     var mockConversations: [WireSyncEngine.CallHandle: ZMConversation] = [:]
+
+    func voiceChannelForVideoUpgrade(by handle: WireSyncEngine.CallHandle) -> VoiceChannel? {
+        mockConversations[handle]?.voiceChannel
+    }
+
     func lookupConversation(
         by handle: WireSyncEngine.CallHandle,
         completionHandler: @escaping (Result<ZMConversation, Error>) -> Void
@@ -215,6 +220,7 @@ class CallKitManagerTest: DatabaseTest {
     var mockWireCallCenterV3: WireCallCenterV3Mock!
     var mockTransportSession: MockTransportSession!
     var mockCallKitManagerDelegate: MockCallKitManagerDelegate!
+    var application: ApplicationMock!
 
     func otherUser(moc: NSManagedObjectContext) -> ZMUser {
         let otherUser = ZMUser(context: moc)
@@ -272,10 +278,11 @@ class CallKitManagerTest: DatabaseTest {
         )
         mockCallKitManagerDelegate = MockCallKitManagerDelegate()
         mockTransportSession = MockTransportSession(dispatchGroup: dispatchGroup)
+        application = ApplicationMock()
 
         sut = CallKitManager(
             isEnabled: true,
-            application: ApplicationMock(),
+            application: application,
             provider: callKitProvider,
             callController: callKitController,
             mediaManager: nil,
@@ -832,6 +839,66 @@ class CallKitManagerTest: DatabaseTest {
         let action = callKitController.requestedTransactions.first!.actions.first! as! CXStartCallAction
         XCTAssertEqual(action.callUUID, sut.callRegister.lookupCall(by: conversation)?.id)
         XCTAssertFalse(action.isVideo)
+    }
+
+    func testVideoUpgradeWaitsForAppActivation() throws {
+        let (activity, handle) = try prepareVideoUpgrade()
+        application.applicationState = .inactive
+
+        XCTAssertTrue(sut.continueUserActivity(activity))
+        XCTAssertNil(mockWireCallCenterV3.mockAVSWrapper.setVideoStateArguments)
+
+        application.applicationState = .active
+        application.simulateApplicationDidBecomeActive()
+
+        XCTAssertEqual(mockCallKitManagerDelegate.mockConversations[handle]?.voiceChannel?.videoState, .started)
+        XCTAssertEqual(mockWireCallCenterV3.mockAVSWrapper.setVideoStateArguments?.videoState, .started)
+        XCTAssertEqual(callKitController.timesRequestTransactionCalled, 0)
+    }
+
+    func testVideoUpgradeDoesNotAffectReplacementCall() throws {
+        let (activity, handle) = try prepareVideoUpgrade()
+        application.applicationState = .inactive
+        XCTAssertTrue(sut.continueUserActivity(activity))
+
+        let original = try XCTUnwrap(sut.callRegister.lookupCall(by: handle))
+        sut.callRegister.unregisterCall(original)
+        let replacement = sut.callRegister.registerNewCall(with: handle)
+        callKitController.mockCallObserver
+            .mockCalls = [CallKitDelegateTestsMocking.mockConnectedCall(with: replacement.id)]
+
+        application.applicationState = .active
+        application.simulateApplicationDidBecomeActive()
+
+        XCTAssertNil(mockWireCallCenterV3.mockAVSWrapper.setVideoStateArguments)
+        XCTAssertEqual(callKitController.timesRequestTransactionCalled, 0)
+    }
+
+    private func prepareVideoUpgrade() throws -> (NSUserActivity, WireSyncEngine.CallHandle) {
+        let conversation = conversation(type: .group)
+        let handle = try XCTUnwrap(conversation.callHandle)
+        let call = sut.callRegister.registerNewCall(with: handle)
+        callKitController.mockCallObserver.mockCalls = [CallKitDelegateTestsMocking.mockConnectedCall(with: call.id)]
+        mockCallKitManagerDelegate.mockConversations[handle] = conversation
+        mockWireCallCenterV3.setMockCallState(
+            .established,
+            conversationId: try XCTUnwrap(conversation.avsIdentifier),
+            callerId: ZMUser.selfUser(in: uiMOC).avsIdentifier,
+            isVideo: false
+        )
+
+        let person = INPerson(
+            personHandle: INPersonHandle(value: handle.encodedString, type: .unknown),
+            nameComponents: nil,
+            displayName: nil,
+            image: nil,
+            contactIdentifier: nil,
+            customIdentifier: nil
+        )
+        let intent = INStartVideoCallIntent(contacts: [person])
+        let activity = NSUserActivity(activityType: "INStartVideoCallIntent")
+        activity.setValue(INInteraction(intent: intent, response: nil), forKey: "interaction")
+        return (activity, handle)
     }
 
     func testThatItIgnoresUnknownActivity() {

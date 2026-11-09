@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import AVFoundation
 import CallKit
 import Foundation
 import WireLogging
@@ -28,6 +29,19 @@ enum ConversationLookupError: Error {
 }
 
 extension SessionManager: CallKitManagerDelegate {
+
+    func voiceChannelForVideoUpgrade(by handle: CallHandle) -> VoiceChannel? {
+        guard
+            delegate?.isInAuthenticatedAppState == true,
+            let session = activeUserSession,
+            session.account.userIdentifier == handle.accountID,
+            session.isLoggedIn,
+            !session.isLocked,
+            AVCaptureDevice.authorizationStatus(for: .video) == .authorized
+        else { return nil }
+
+        return ZMConversation.fetch(with: handle.conversationID, in: session.managedObjectContext)?.voiceChannel
+    }
 
     func lookupConversation(
         by handle: CallHandle,

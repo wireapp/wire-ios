@@ -37,6 +37,8 @@ protocol CallKitManagerDelegate: AnyObject {
         completionHandler: @escaping (Result<ZMConversation, Error>) -> Void
     )
 
+    func voiceChannelForVideoUpgrade(by handle: CallHandle) -> VoiceChannel?
+
     /// End all active calls in all user sessions
 
     func endAllCalls()
@@ -85,6 +87,7 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
 
     let callRegister = CallKitCallRegister()
     private var connectedCallConversation: ZMConversation?
+    private var pendingVideoUpgrade: CallKitCall?
 
     private let logger = WireLogger.callkit
 
@@ -133,12 +136,15 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
         super.init()
 
         provider.setDelegate(self, queue: delegateQueue)
+        application.registerObserverForDidBecomeActive(self, selector: #selector(applyPendingVideoUpgrade))
+        application.registerObserverForDidEnterBackground(self, selector: #selector(clearPendingVideoUpgrade))
 
         self.callStateObserverToken = WireCallCenterV3.addGlobalCallStateObserver(observer: self)
         self.missedCallObserverToken = WireCallCenterV3.addGlobalMissedCallObserver(observer: self)
     }
 
     deinit {
+        application.unregisterObserverForStateChange(self)
         provider.invalidate()
     }
 
@@ -189,14 +195,7 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
         with contacts: [INPerson],
         completion: @escaping (ZMConversation) -> Void
     ) {
-        guard
-            contacts.count == 1,
-            let contact = contacts.first,
-            let customIdentifier = contact.personHandle?.value,
-            let callHandle = CallHandle(encodedString: customIdentifier)
-        else {
-            return
-        }
+        guard let callHandle = callHandle(for: contacts) else { return }
 
         delegate?.lookupConversation(by: callHandle) { [logger] result in
             do {
@@ -216,11 +215,14 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
         guard let interaction = userActivity.interaction else { return false }
 
         let intent = interaction.intent
+        // CallKit still sends this deprecated intent for the system Video button.
+        if let videoIntent = intent as? INStartVideoCallIntent {
+            return requestVideoUpgrade(contacts: videoIntent.contacts)
+        }
+
         var contacts: [INPerson]?
         var video = false
 
-        // swiftlint:disable:next todo_requires_jira_link
-        // TODO: handle INStartVideoCallIntent for when CallKit video is toggled.
         if let startCallIntent = intent as? INStartCallIntent {
             contacts = startCallIntent.contacts
             video = startCallIntent.callCapability == .videoCall
@@ -236,6 +238,51 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
         } else {
             return false
         }
+    }
+
+    private func callHandle(for contacts: [INPerson]?) -> CallHandle? {
+        guard let contacts, contacts.count == 1, let value = contacts.first?.personHandle?.value else { return nil }
+        return CallHandle(encodedString: value)
+    }
+
+    private func requestVideoUpgrade(contacts: [INPerson]?) -> Bool {
+        guard isEnabled, let handle = callHandle(for: contacts), let call = connectedCall(for: handle) else {
+            return false
+        }
+
+        // The system can deliver the Video action before the app becomes active.
+        pendingVideoUpgrade = call
+        applyPendingVideoUpgrade()
+        return true
+    }
+
+    private func connectedCall(for handle: CallHandle) -> CallKitCall? {
+        let calls = callRegister.lookupCalls(by: handle).filter { call in
+            guard let systemCall = callController.existingCall(for: call) else { return false }
+            return systemCall.hasConnected && !systemCall.hasEnded && !systemCall.isOnHold
+        }
+        return calls.count == 1 ? calls.first : nil
+    }
+
+    @objc
+    private func applyPendingVideoUpgrade() {
+        guard application.applicationState == .active, let call = pendingVideoUpgrade else { return }
+        pendingVideoUpgrade = nil
+
+        guard
+            isEnabled,
+            connectedCall(for: call.handle)?.id == call.id,
+            let voiceChannel = delegate?.voiceChannelForVideoUpgrade(by: call.handle),
+            voiceChannel.state == .established,
+            voiceChannel.videoState == .stopped
+        else { return }
+
+        voiceChannel.videoState = .started
+    }
+
+    @objc
+    private func clearPendingVideoUpgrade() {
+        pendingVideoUpgrade = nil
     }
 
     // MARK: - Requesting actions
