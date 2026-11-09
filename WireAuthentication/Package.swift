@@ -31,6 +31,7 @@ let package = Package(
                 "WireAuthenticationUI",
                 "WireAuthenticationLogic",
                 "WireFoundation",
+                "WireLogging",
                 .product(name: "NeedleFoundation", package: "needle")
             ]
         ),

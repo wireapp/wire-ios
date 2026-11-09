@@ -16,6 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+"twoFactorAuthentication.title" = "Two-factor authentication";
+"twoFactorAuthentication.description" = "Ask for a code from your authenticator app when you log in with email and password.";
+"twoFactorAuthentication.status.off" = "OFF";
+"twoFactorAuthentication.status.on" = "ON";
+"twoFactorAuthentication.setUp" = "Set up";
+"twoFactorAuthentication.loading" = "Loading two-factor authentication status";
+
 "authentication.identity.input.body" = "Simply enter your email address to start!";
 "authentication.identity.input.field.placeholder" = "Email or SSO code";
 "authentication.identity.input.field.title" = "Email or SSO code";

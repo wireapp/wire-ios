@@ -17,23 +17,20 @@
 //
 
 import SwiftUI
-import WireDesign
+import WireLogging
+internal import WireAuthenticationUI
+internal import WireAuthenticationLogic
 
-public struct TwoFactorAuthenticationView: View {
+public struct TwoFactorAuthenticationAssembly {
 
     public init() {}
 
-    public var body: some View {
-        Color(ColorTheme.Backgrounds.background)
-            .ignoresSafeArea()
-            .accessibilityIdentifier("twoFactorAuthenticationView")
-            .navigationTitle(String(localized: "twoFactorAuthentication.title", bundle: .module))
-            .navigationBarTitleDisplayMode(.inline)
-    }
-}
-
-#Preview {
-    NavigationStack {
-        TwoFactorAuthenticationView()
+    @MainActor
+    public func assemble() -> some View {
+        let viewModel = TwoFactorAuthenticationViewModel(
+            isTwoFactorAuthenticationEnabledUseCase: MockIsTwoFactorAuthenticationEnabledUseCase(),
+            logger: WireLogger.authentication
+        )
+        return TwoFactorAuthenticationView(viewModel: viewModel)
     }
 }

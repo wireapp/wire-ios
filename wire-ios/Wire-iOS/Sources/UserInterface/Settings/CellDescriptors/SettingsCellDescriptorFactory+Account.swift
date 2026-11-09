@@ -17,6 +17,7 @@
 //
 
 import SwiftUI
+import WireAuthentication
 import WireBackup
 import WireCommonComponents
 import WireDataModel
@@ -498,7 +499,7 @@ extension SettingsCellDescriptorFactory {
             presentationStyle: .navigation,
             identifier: "twoFactorAuthenticationCell",
             presentationAction: {
-                UIHostingController(rootView: TwoFactorAuthenticationView())
+                UIHostingController(rootView: TwoFactorAuthenticationAssembly().assemble())
             },
             copiableText: nil,
             settingsTopLevelMenuItem: nil
