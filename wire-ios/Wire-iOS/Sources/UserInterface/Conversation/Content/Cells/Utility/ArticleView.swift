@@ -50,14 +50,15 @@ final class ArticleView: UIView {
     private let obfuscationView = ObfuscationView(icon: .link)
     private let ephemeralColor = UIColor.accent()
     private var imageHeightConstraint: NSLayoutConstraint!
+    private let hasImagePlaceholder: Bool
     weak var delegate: ContextMenuLinkViewDelegate?
 
     init(withImagePlaceholder imagePlaceholder: Bool) {
+        self.hasImagePlaceholder = imagePlaceholder
         super.init(frame: .zero)
         [messageLabel, authorLabel, imageView, obfuscationView].forEach(addSubview)
 
         if imagePlaceholder {
-            imageView.isAccessibilityElement = true
             imageView.accessibilityIdentifier = "linkPreviewImage"
         }
 
@@ -71,7 +72,7 @@ final class ArticleView: UIView {
     }
 
     private func setupViews() {
-        accessibilityElements = [imageView, messageLabel, authorLabel]
+        accessibilityElements = [messageLabel, authorLabel]
         backgroundColor = containerColor
         layer.cornerRadius = ConversationMessageContainerView.bubbleCornerRadius
         clipsToBounds = true
@@ -151,11 +152,24 @@ final class ArticleView: UIView {
         withTextMessageData textMessageData: TextMessageData,
         obfuscated: Bool
     ) {
-        guard let linkPreview = textMessageData.linkPreview else {
+        linkPreview = textMessageData.linkPreview
+        messageLabel.text = nil
+        authorLabel.text = nil
+        imageView.accessibilityLabel = nil
+        imageView.isAccessibilityElement = false
+        accessibilityElements = [messageLabel, authorLabel]
+        accessibilityElementsHidden = obfuscated || linkPreview == nil
+
+        guard let linkPreview else {
+            imageView.setImageResource(nil)
             return
         }
 
-        self.linkPreview = linkPreview
+        if hasImagePlaceholder, textMessageData.linkPreviewHasImage, !obfuscated {
+            imageView.isAccessibilityElement = true
+            accessibilityElements = [imageView, messageLabel, authorLabel]
+            imageView.accessibilityLabel = linkPreview.accessibilityImageLabel
+        }
         updateLabels(obfuscated: obfuscated)
 
         if let article = linkPreview as? ArticleMetadata {
@@ -247,6 +261,23 @@ extension ArticleView: UIContextMenuInteractionDelegate {
 }
 
 extension LinkMetadata {
+
+    fileprivate var accessibilityImageLabel: String {
+        let targets = [
+            (self as? ArticleMetadata)?.title,
+            originalURLString,
+            permanentURL?.absoluteString,
+            resolvedURL?.absoluteString
+        ]
+        let target = targets.compactMap { $0?.trimmingCharacters(in: .whitespacesAndNewlines) }
+            .first { !$0.isEmpty }
+
+        if let target {
+            return L10n.Accessibility.Conversation.LinkPreviewImage.description(target)
+        }
+
+        return L10n.Accessibility.Conversation.LinkPreviewImage.fallbackDescription
+    }
 
     /// Returns a `URL` that can be opened using `openURL()` on `UIApplication` or `nil` if no openable `URL` could be
     /// created.

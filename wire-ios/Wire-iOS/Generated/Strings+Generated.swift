@@ -390,6 +390,14 @@ internal enum L10n {
         /// Legal hold
         internal static let description = L10n.tr("Accessibility", "conversation.legalHoldIcon.description", fallback: "Legal hold")
       }
+      internal enum LinkPreviewImage {
+        /// Preview image for link to %@
+        internal static func description(_ p1: Any) -> String {
+          return L10n.tr("Accessibility", "conversation.linkPreviewImage.description", String(describing: p1), fallback: "Preview image for link to %@")
+        }
+        /// Link preview image
+        internal static let fallbackDescription = L10n.tr("Accessibility", "conversation.linkPreviewImage.fallbackDescription", fallback: "Link preview image")
+      }
       internal enum LocationButton {
         /// Share your location
         internal static let description = L10n.tr("Accessibility", "conversation.locationButton.description", fallback: "Share your location")
@@ -405,6 +413,20 @@ internal enum L10n {
       internal enum MessageOptions {
         /// Triple tap to open messaging options
         internal static let hint = L10n.tr("Accessibility", "conversation.messageOptions.hint", fallback: "Triple tap to open messaging options")
+      }
+      internal enum MessageStatus {
+        /// Delivered
+        internal static let delivered = L10n.tr("Accessibility", "conversation.messageStatus.delivered", fallback: "Delivered")
+        /// Read
+        internal static let seen = L10n.tr("Accessibility", "conversation.messageStatus.seen", fallback: "Read")
+        /// Read by %d
+        internal static func seenByMultiple(_ p1: Int) -> String {
+          return L10n.tr("Accessibility", "conversation.messageStatus.seenByMultiple", p1, fallback: "Read by %d")
+        }
+        /// Sending
+        internal static let sending = L10n.tr("Accessibility", "conversation.messageStatus.sending", fallback: "Sending")
+        /// Sent
+        internal static let sent = L10n.tr("Accessibility", "conversation.messageStatus.sent", fallback: "Sent")
       }
       internal enum MoreButton {
         /// Close more messaging options

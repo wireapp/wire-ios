@@ -56,6 +56,72 @@ final class MessageToolboxViewTests: CoreDataSnapshotTestCase {
         super.tearDown()
     }
 
+    // MARK: - Accessibility
+
+    func testMessageStatusAccessibilityLabelsUpdateWithDeliveryState() {
+        message.senderUser = MockUserType.createSelfUser(name: "Alice")
+        message.conversationLike = otherUserConversation
+
+        let cases: [(ZMDeliveryState, String)] = [
+            (.pending, L10n.Accessibility.Conversation.MessageStatus.sending),
+            (.sent, L10n.Accessibility.Conversation.MessageStatus.sent),
+            (.delivered, L10n.Accessibility.Conversation.MessageStatus.delivered),
+            (.read, L10n.Accessibility.Conversation.MessageStatus.seen)
+        ]
+
+        for (state, expectedLabel) in cases {
+            message.deliveryState = state
+
+            sut.configureForMessage(message, animated: false)
+
+            XCTAssertFalse(sut.statusContainerView.isHidden)
+            XCTAssertTrue(sut.statusContainerView.isAccessibilityElement)
+            XCTAssertEqual(sut.statusContainerView.accessibilityLabel, expectedLabel)
+        }
+    }
+
+    func testGroupReadCountAccessibilityLabelUpdatesWithReceipts() {
+        message.senderUser = MockUserType.createSelfUser(name: "Alice")
+        message.conversation = createGroupConversation()
+        message.conversationLike = message.conversation
+        message.deliveryState = .read
+
+        for count in [1, 2, 12] {
+            message.readReceipts = (0 ..< count).map { _ in MockReadReceipt(user: otherUser) }
+
+            sut.configureForMessage(message, animated: false)
+
+            XCTAssertFalse(sut.statusContainerView.isHidden)
+            XCTAssertEqual(
+                sut.statusContainerView.accessibilityLabel,
+                L10n.Accessibility.Conversation.MessageStatus.seenByMultiple(count)
+            )
+        }
+    }
+
+    func testMessageStatusHasEnglishAndGermanTranslations() throws {
+        let cases: [(String, [String])] = [
+            ("Base", ["Sending", "Sent", "Delivered", "Read", "Read by 12"]),
+            ("de", ["Wird gesendet", "Gesendet", "Zugestellt", "Gelesen", "Gelesen von 12"])
+        ]
+        let statuses = ["sending", "sent", "delivered", "seen", "seenByMultiple"]
+
+        for (language, expectedLabels) in cases {
+            let path = try XCTUnwrap(Bundle.main.path(forResource: language, ofType: "lproj"))
+            let bundle = try XCTUnwrap(Bundle(path: path))
+
+            for (status, expectedLabel) in zip(statuses, expectedLabels) {
+                let format = bundle.localizedString(
+                    forKey: "conversation.messageStatus.\(status)",
+                    value: nil,
+                    table: "Accessibility"
+                )
+                let label = status == "seenByMultiple" ? String(format: format, 12) : format
+                XCTAssertEqual(label, expectedLabel, "\(language): \(status)")
+            }
+        }
+    }
+
     // MARK: - Snapshot Tests
 
     func testThatItConfiguresWithFailedToSend() {
