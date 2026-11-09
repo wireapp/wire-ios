@@ -111,7 +111,7 @@ final class MessageToolboxViewTests: CoreDataSnapshotTestCase {
         message.backingSystemMessageData = systemMessageData
         sut.configureForMessage(message)
 
-        XCTAssertEqual(sut.detailsLabel.accessibilityLabel, sut.detailsLabel.text)
+        XCTAssertEqual(sut.detailsLabel.accessibilityLabel ?? "", sut.detailsLabel.text ?? "")
     }
 
     // MARK: - Message Status Accessibility
