@@ -32,6 +32,15 @@
 "conversation.titleViewForOneToOne.hint" = "Double tap to open profile";
 "conversation.legalHoldIcon.description" = "Legal hold";
 "conversation.verifiedIcon.description" = "Verified";
+"conversation.linkPreviewImage.description" = "Preview image for link to %@";
+"conversation.linkPreviewImage.fallbackDescription" = "Link preview image";
+
+"conversation.messageStatus.sending" = "Sending";
+"conversation.messageStatus.sent" = "Sent";
+"conversation.messageStatus.delivered" = "Delivered";
+"conversation.messageStatus.seen" = "Read";
+// Accessibility announcement for the number of recipients who have read a message. %d is the recipient count.
+"conversation.messageStatus.seenByMultiple" = "Read by %d";
 
 "conversation.sendButton.description" = "Send this message";
 "conversation.openFormattingButton.description" = "Open formatting options";
