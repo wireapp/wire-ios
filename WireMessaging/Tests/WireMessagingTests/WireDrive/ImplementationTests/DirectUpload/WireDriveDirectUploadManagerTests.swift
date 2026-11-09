@@ -87,7 +87,7 @@ final class WireDriveDirectUploadManagerTests {
 
         nodesAPI.preCheckNodePathFindAvailablePath_MockValue = .success
         nodesAPI.presignedUploadURLNodeVersionIDExpiration_MockValue = URL(string: "https://example.com/put")!
-        nodesAPI.deleteNodesNodeIDsPermanently_MockValue = true
+        nodesAPI.deleteNodesLocatorsPermanently_MockValue = true
     }
 
     // MARK: - Enqueuing

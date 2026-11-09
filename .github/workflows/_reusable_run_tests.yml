@@ -33,6 +33,16 @@ on:
         required: false
         default: '1'
         description: 'Number of parallel simulator workers for UITests'
+      ui_test_skip_cases:
+        type: string
+        required: false
+        default: ''
+        description: 'UI test identifiers to skip, comma separated (e.g. WireUITests/MeetingsTests)'
+      test_name:
+        type: string
+        required: false
+        default: 'XCTest'
+        description: 'Test name used in notifications and artifact names'
       rerun_failed_from_previous:
         type: boolean
         required: false
@@ -63,6 +73,7 @@ on:
         required: true
 
 env: # https://docs.fastlane.tools/getting-started/ios/setup/
+  TEST_NAME: ${{ inputs.test_name }}
   LC_ALL: en_US.UTF-8
   LANG: en_US.UTF-8
   REPO_ROOT: ${{ github.workspace }}
@@ -118,6 +129,8 @@ jobs:
         with:
           ref: ${{ inputs.branch }}
           lfs: 'true'
+          # Include the merge parents to map warning locations and list PR files.
+          fetch-depth: ${{ github.event_name == 'pull_request' && 2 || 1 }}
 
       - name: Materialize Git LFS files
         run: git lfs checkout
@@ -254,17 +267,18 @@ jobs:
         env:
           UI_TEST_TAGS: ${{ inputs.ui_test_tags }}
           UI_TEST_CASES: ${{ inputs.ui_test_cases }}
+          UI_TEST_SKIP_CASES: ${{ inputs.ui_test_skip_cases }}
           PREVIOUS_FAILED_UI_TEST_CASES: ${{ steps.previous-failed-ui-tests.outputs.ui_test_cases }}
           UITEST_PARALLEL_WORKERS: ${{ inputs.uitest_parallel_workers }}
         run: |
           if [ -n "$UI_TEST_CASES" ]; then
-            bundle exec fastlane run_uitests testiny_cases:"$UI_TEST_CASES" parallel_workers:"$UITEST_PARALLEL_WORKERS"
+            bundle exec fastlane run_uitests testiny_cases:"$UI_TEST_CASES" skip_testing:"$UI_TEST_SKIP_CASES" parallel_workers:"$UITEST_PARALLEL_WORKERS"
           elif [ -n "$PREVIOUS_FAILED_UI_TEST_CASES" ]; then
-            bundle exec fastlane run_uitests testiny_cases:"$PREVIOUS_FAILED_UI_TEST_CASES" parallel_workers:"$UITEST_PARALLEL_WORKERS"
+            bundle exec fastlane run_uitests testiny_cases:"$PREVIOUS_FAILED_UI_TEST_CASES" skip_testing:"$UI_TEST_SKIP_CASES" parallel_workers:"$UITEST_PARALLEL_WORKERS"
           elif [ -n "$UI_TEST_TAGS" ]; then
-            bundle exec fastlane run_uitests tags:"$UI_TEST_TAGS" parallel_workers:"$UITEST_PARALLEL_WORKERS"
+            bundle exec fastlane run_uitests tags:"$UI_TEST_TAGS" skip_testing:"$UI_TEST_SKIP_CASES" parallel_workers:"$UITEST_PARALLEL_WORKERS"
           else
-            bundle exec fastlane run_uitests parallel_workers:"$UITEST_PARALLEL_WORKERS"
+            bundle exec fastlane run_uitests skip_testing:"$UI_TEST_SKIP_CASES" parallel_workers:"$UITEST_PARALLEL_WORKERS"
           fi
 
       - name: Stop Kalium Testservice
@@ -371,6 +385,18 @@ jobs:
         run: |
           echo "xcresult files: ${{ steps.find-xcresults.outputs.xcresult_files }}"
 
+      # Not done in _reusable_run_tests_parallel.yml: batches rebuild shared
+      # dependencies, so publishing once would require merging per-batch reports
+      # in a follow-up job. That adds maintenance cost for little benefit.
+      - name: Publish compiler warnings
+        if: ${{ always() && github.event_name == 'pull_request' }}
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+          COMPILER_WARNINGS_CHECK_NAME: Compiler warnings (${{ github.workflow }})
+          JOB_STATUS: ${{ job.status }}
+        run: ruby scripts/annotate_compiler_warnings.rb --publish
+
       - name: Annotate test failures
         if: ${{ always() && github.event_name == 'pull_request' }}
         continue-on-error: true
@@ -387,7 +413,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         with:
-          name: XCResults for ${{ env.SANITIZED_BRANCH }} (${{ github.run_id }} - ${{ github.run_attempt}})
+          name: XCResults for ${{ env.SANITIZED_BRANCH }} (${{ github.run_id }} - ${{ github.run_attempt}}) - ${{ inputs.test_name }}
           path: artifacts/**/*.xcresult
 
       # Scripts
@@ -396,13 +422,14 @@ jobs:
         run: |
           echo "Scripts has changes"
           echo "Testing Scripts..."
+          ruby scripts/tests/annotate_compiler_warnings_test.rb
           xcrun swift test --package-path ./scripts
 
       - name: Upload Failed snapshots
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         if: failure()
         with:
-          name: Failed Snapshots and log for ${{ env.SANITIZED_BRANCH }} (${{ github.run_id }} - ${{ github.run_attempt}})
+          name: ${{ inputs.test_name }} - Failed Snapshots and log for ${{ env.SANITIZED_BRANCH }} (${{ github.run_id }} - ${{ github.run_attempt}})
           path: |
             **/SnapshotResults/
             xcodebuild*.log
@@ -411,8 +438,9 @@ jobs:
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         if: always()
         with:
-          name: Test reports for ${{ env.SANITIZED_BRANCH }} (${{ github.run_id }} - ${{ github.run_attempt}})
+          name: ${{ inputs.test_name }} - Test reports for ${{ env.SANITIZED_BRANCH }} (${{ github.run_id }} - ${{ github.run_attempt}})
           path: |
+            build/compiler-warnings.json
             build/reports/*.junit
             artifacts/**/*.junit
             app-group*.zip
@@ -432,7 +460,7 @@ jobs:
         if: ${{ always() && steps.report-paths.outcome == 'success' }}
         uses: ./.github/actions/allure-reporting
         with:
-          allure_artifact_name: "html-report-${{ github.run_number }}-${{ env.SANITIZED_BRANCH }}"
+          allure_artifact_name: "html-report-${{ inputs.test_name }}-${{ github.run_number }}-${{ env.SANITIZED_BRANCH }}"
           xcresult_search_path: ${{ steps.report-paths.outputs.xcresult_search_path }}
 
       - name: Resolve HTML report link
@@ -441,7 +469,7 @@ jobs:
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
-          ALLURE_ARTIFACT_NAME: html-report-${{ github.run_number }}-${{ env.SANITIZED_BRANCH }}
+          ALLURE_ARTIFACT_NAME: html-report-${{ inputs.test_name }}-${{ github.run_number }}-${{ env.SANITIZED_BRANCH }}
         run: |
           set -euo pipefail
 
@@ -462,7 +490,7 @@ jobs:
           {
             echo "## 📊 Allure Report Generated Successfully";
             echo "";
-            echo "**Artifact Name:** \`html-report-${GITHUB_RUN_NUMBER}-${SANITIZED_BRANCH}\`";
+            echo "**Artifact Name:** \`html-report-${TEST_NAME}-${GITHUB_RUN_NUMBER}-${SANITIZED_BRANCH}\`";
             echo "";
             echo "### 📥 How to View the Report";
             echo "";
@@ -489,7 +517,7 @@ jobs:
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
         if: failure()
         with:
-          name: Derived Data Xcode for ${{env.SANITIZED_BRANCH }} (${{ github.run_id }} - ${{ github.run_attempt}})
+          name: ${{ inputs.test_name }} - Derived Data Xcode for ${{env.SANITIZED_BRANCH }} (${{ github.run_id }} - ${{ github.run_attempt}})
           path: |
             /Users/runner/Library/Developer/Xcode/DerivedData/**/Logs/**
             ~/Library/Logs/DiagnosticReports/**
@@ -513,7 +541,7 @@ jobs:
         with:
           notify: custom
           text: |
-            📋 **XCTest Run Summary for ${{ env.SANITIZED_BRANCH }}**
+            📋 **${{ inputs.test_name }} Run Summary for ${{ env.SANITIZED_BRANCH }}**
 
             **Branch:** ${{ env.SANITIZED_BRANCH }}
             **Title:** ${{ env.commit_message }}
@@ -534,7 +562,7 @@ jobs:
         with:
           notify: custom
           text: |
-            📋 **🚨 XCTest Run Summary for ${{ env.SANITIZED_BRANCH }} failed 🆘**
+            📋 **🚨 ${{ inputs.test_name }} Run Summary for ${{ env.SANITIZED_BRANCH }} failed 🆘**
 
             **Branch:** ${{ env.SANITIZED_BRANCH }}
             **Title:** ${{ env.commit_message }}
@@ -577,7 +605,7 @@ jobs:
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         continue-on-error: true
         with:
-          name: Test reports for ${{ env.SANITIZED_BRANCH }} (${{ github.run_id }} - ${{ github.run_attempt}})
+          name: ${{ inputs.test_name }} - Test reports for ${{ env.SANITIZED_BRANCH }} (${{ github.run_id }} - ${{ github.run_attempt}})
 
       - name: Upload JUnit results to Datadog
         if: steps.download-test-results.outcome == 'success'

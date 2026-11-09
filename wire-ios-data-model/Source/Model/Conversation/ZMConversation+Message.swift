@@ -430,6 +430,8 @@ public extension ZMConversation {
         }
 
         let message = ZMClientMessage(nonce: nonce, managedObjectContext: moc)
+        // Only newly composed outgoing messages are known to have no previous send attempt.
+        message.sendAttemptStarted = false
         configure?(message)
 
         do {

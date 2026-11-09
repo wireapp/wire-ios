@@ -134,14 +134,21 @@ final class RestAPI: Sendable {
         }
     }
 
-    /// Deletes nodes by their `UUID`s.
+    /// Deletes nodes by their `UUID`s or `path`s.
     ///
     /// - Parameters:
-    ///  - nodeIDs: The `UUID`s of the nodes to delete.
+    ///  - locators: The `UUID`s or `path`s of the nodes to delete.
     ///  - permanently: Whether to permanently delete the nodes or move them to the recycle bin.
     /// - Returns: Whether the deletion was successful.
-    func deleteNodes(nodeIDs: [UUID], permanently: Bool) async throws -> Bool {
-        let nodes = nodeIDs.map { RestNodeLocator(uuid: $0.transportString()) }
+    func deleteNodes(locators: [WireDriveNodeLocator], permanently: Bool) async throws -> Bool {
+        let nodes = locators.map {
+            switch $0 {
+            case let .id(id):
+                RestNodeLocator(uuid: id.transportString())
+            case let .path(path):
+                RestNodeLocator(path: path)
+            }
+        }
         let parameters = RestActionParameters(
             awaitStatus: .finished,
             awaitTimeout: "60s",
@@ -523,7 +530,7 @@ private extension WireDriveGetNodesRequest {
                 recursive: isRecursive,
                 root: RestNodeLocator(root)
             )
-        case let .recycleBinView(root: root):
+        case let .recycleBinView(root: root, recursive):
             let lookupFilterTextSearch: LookupFilterTextSearch? = if let searchTerm {
                 LookupFilterTextSearch(searchIn: .baseName, term: searchTerm)
             } else {
@@ -543,8 +550,11 @@ private extension WireDriveGetNodesRequest {
                 text: lookupFilterTextSearch,
                 type: .unknown // .unknown includes files (leafs) & folders (collections)
             )
+
+            let isRecursive = recursive || searchTerm?.isEmpty == false
+
             request.scope = RestLookupScope(
-                recursive: searchTerm?.isEmpty == false,
+                recursive: isRecursive,
                 root: RestNodeLocator(root)
             )
         case .filesBrowserView:

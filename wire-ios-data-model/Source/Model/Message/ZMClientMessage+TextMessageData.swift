@@ -111,6 +111,104 @@ extension ZMClientMessage: TextMessageData {
         linkPreviewState = fetchLinkPreview ? .waitingToBeProcessed : .done
         linkAttachments = nil
         delivered = false
+        sendAttemptStarted = false
+    }
+
+    // MARK: - Pending messages
+
+    /// Whether the message waits for the network instead of failing when the device is offline.
+    public var staysPendingWhileOffline: Bool {
+        DeveloperFlag.offlinePendingMessages.isOn && !isEphemeral
+    }
+
+    /// Whether the text can be replaced without sending an edit, because the message is pending and
+    /// hasn't been sent yet. Recipients then only ever see the new text, without an edited marker.
+    public var isEditableInPlace: Bool {
+        guard
+            DeveloperFlag.offlinePendingMessages.isOn,
+            !isEphemeral,
+            !isExpired,
+            !delivered,
+            !sendAttemptStarted,
+            let sender, sender.isSelfUser
+        else {
+            return false
+        }
+
+        switch underlyingMessage?.content {
+        case .text:
+            return true
+        case let .edited(messageEdit):
+            if case .text = messageEdit.content {
+                return true
+            }
+            return false
+        default:
+            return false
+        }
+    }
+
+    /// Creates the text for `replacePendingText(with:fetchLinkPreview:)`. Call it on the context of the
+    /// mentioned users.
+    public func makePendingText(_ text: String, mentions: [Mention]) -> Text {
+        Text(content: text, mentions: mentions, linkPreviews: [], replyingTo: quote as? ZMOTRMessage)
+    }
+
+    /// Replaces the text of a pending message that hasn't been sent yet, keeping its nonce.
+    ///
+    /// Call it on the sync context, which also marks the message before sending it, so the text can't
+    /// change while a send reads it.
+    ///
+    /// - Returns: `false` if the message is no longer editable in place, e.g. because sending started.
+    @discardableResult
+    public func replacePendingText(with text: Text, fetchLinkPreview: Bool) -> Bool {
+        guard isEditableInPlace, let nonce, let content = underlyingMessage?.content else { return false }
+
+        let updatedMessage: GenericMessage
+        switch content {
+        case let .edited(messageEdit):
+            guard let originalNonce = UUID(uuidString: messageEdit.replacingMessageID) else { return false }
+            updatedMessage = GenericMessage(
+                content: MessageEdit(replacingMessageID: originalNonce, text: text),
+                nonce: nonce
+            )
+        default:
+            updatedMessage = GenericMessage(content: text, nonce: nonce)
+        }
+
+        do {
+            try setUnderlyingMessage(updatedMessage)
+        } catch {
+            Logging.messageProcessing.warn("Failed to replace pending text. Reason: \(error.localizedDescription)")
+            return false
+        }
+
+        updateNormalizedText()
+        linkPreviewState = fetchLinkPreview ? .waitingToBeProcessed : .done
+        linkAttachments = nil
+        return true
+    }
+
+    /// Whether the message can be deleted without sending a delete, because it's a new pending message
+    /// that hasn't been sent yet, so nobody else has it.
+    public var isDeletableWhilePending: Bool {
+        guard isEditableInPlace, case .text = underlyingMessage?.content else { return false }
+        return true
+    }
+
+    /// Deletes a pending message that hasn't been sent yet, without sending a delete.
+    ///
+    /// Call it on the sync context, which also marks the message before sending it, so it can't be
+    /// deleted while a send reads it.
+    ///
+    /// - Returns: `false` if the message can no longer be deleted this way, e.g. because sending started.
+    @discardableResult
+    public func deletePendingMessage() -> Bool {
+        guard isDeletableWhilePending, let managedObjectContext else { return false }
+
+        removeClearingSender(true)
+        managedObjectContext.delete(self)
+        return true
     }
 
     var multipartAttachments: [GenericMessageProtocol.Attachment]? {
