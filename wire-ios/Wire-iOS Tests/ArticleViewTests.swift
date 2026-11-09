@@ -208,6 +208,106 @@ final class ArticleViewTests: XCTestCase {
 
     // MARK: - Unit Test
 
+    func testPreviewImageDescribesArticleTarget() {
+        sut = ArticleView(withImagePlaceholder: true)
+        let data = articleWithoutPicture()
+        data.linkPreviewHasImage = true
+
+        sut.configure(withTextMessageData: data, obfuscated: false)
+
+        XCTAssertEqual(
+            sut.imageView.accessibilityLabel,
+            L10n.Accessibility.Conversation.LinkPreviewImage.description("Title with some words in it")
+        )
+        XCTAssertTrue(sut.imageView.isAccessibilityElement)
+        XCTAssertTrue((sut.accessibilityElements?.first as? UIView) === sut.imageView)
+        XCTAssertFalse(sut.isAccessibilityElement)
+    }
+
+    func testPreviewImageFallsBackToURLForMissingTitleAndOtherMetadata() {
+        sut = ArticleView(withImagePlaceholder: true)
+        let data = articleWithoutPicture()
+        (data.backingLinkPreview as? ArticleMetadata)?.title = " \n "
+        data.linkPreviewHasImage = true
+
+        sut.configure(withTextMessageData: data, obfuscated: false)
+
+        XCTAssertEqual(
+            sut.imageView.accessibilityLabel,
+            L10n.Accessibility.Conversation.LinkPreviewImage.description("https://www.example.com/article/1")
+        )
+
+        let twitterData = twitterStatusWithoutPicture()
+        twitterData.linkPreviewHasImage = true
+        sut.configure(withTextMessageData: twitterData, obfuscated: false)
+
+        XCTAssertEqual(
+            sut.imageView.accessibilityLabel,
+            L10n.Accessibility.Conversation.LinkPreviewImage.description("https://www.example.com/twitter/status/12345")
+        )
+    }
+
+    func testPreviewImageAccessibilityResetsOnReuseAndObfuscation() {
+        sut = ArticleView(withImagePlaceholder: true)
+        let data = articleWithoutPicture()
+        data.linkPreviewHasImage = true
+        sut.configure(withTextMessageData: data, obfuscated: false)
+
+        sut.configure(withTextMessageData: data, obfuscated: true)
+
+        XCTAssertNil(sut.imageView.accessibilityLabel)
+        XCTAssertFalse(sut.imageView.isAccessibilityElement)
+        XCTAssertTrue(sut.accessibilityElementsHidden)
+
+        sut.configure(withTextMessageData: data, obfuscated: false)
+
+        XCTAssertNotNil(sut.imageView.accessibilityLabel)
+        XCTAssertFalse(sut.accessibilityElementsHidden)
+
+        data.linkPreviewHasImage = false
+        sut.configure(withTextMessageData: data, obfuscated: false)
+
+        XCTAssertNil(sut.imageView.accessibilityLabel)
+        XCTAssertFalse(sut.imageView.isAccessibilityElement)
+        XCTAssertEqual(sut.accessibilityElements?.count, 2)
+
+        data.backingLinkPreview = nil
+        sut.configure(withTextMessageData: data, obfuscated: false)
+
+        XCTAssertNil(sut.linkPreview)
+        XCTAssertNil(sut.messageLabel.text)
+        XCTAssertNil(sut.authorLabel.text)
+        XCTAssertTrue(sut.accessibilityElementsHidden)
+    }
+
+    func testPreviewWithoutImagePlaceholderExcludesImageAccessibility() {
+        sut = ArticleView(withImagePlaceholder: false)
+        let data = articleWithoutPicture()
+        data.linkPreviewHasImage = true
+
+        sut.configure(withTextMessageData: data, obfuscated: false)
+
+        XCTAssertFalse(sut.imageView.isAccessibilityElement)
+        XCTAssertNil(sut.imageView.accessibilityLabel)
+        XCTAssertEqual(sut.accessibilityElements?.count, 2)
+    }
+
+    func testPreviewImageHasEnglishAndGermanDescriptions() throws {
+        for (language, expected) in [
+            ("Base", "Preview image for link to Example"),
+            ("de", "Vorschau-Bild zum Link-Ziel Example")
+        ] {
+            let path = try XCTUnwrap(Bundle.main.path(forResource: language, ofType: "lproj"))
+            let bundle = try XCTUnwrap(Bundle(path: path))
+            let format = bundle.localizedString(
+                forKey: "conversation.linkPreviewImage.description",
+                value: nil,
+                table: "Accessibility"
+            )
+            XCTAssertEqual(String(format: format, "Example"), expected)
+        }
+    }
+
     func testContextMenuIsCreatedWithDeleteItem() {
         SelfUser.setupMockSelfUser()
 
