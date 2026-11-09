@@ -103,6 +103,8 @@ private enum FlagSection: String, CaseIterable {
         case .decryptAndStoreEventsSleep, .disablePushChannelBatching, .ignoreIncomingEvents,
              .useBackgroundActivityFactoryInAppBackgroundTaskExecuter:
             self = .synchronization
+        case .twoFactorAuthentication:
+            self = .authentication
         }
     }
 }
