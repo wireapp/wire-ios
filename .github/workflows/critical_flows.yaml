@@ -11,6 +11,14 @@ on:
           - cirrus
           - github
         default: in-house
+      test_service_url:
+        description: "testServiceUrl (Leave blank to use default http://192.168.2.18:8082)"
+        type: choice
+        required: false
+        default: ""
+        options:
+          - ""
+          - "http://192.168.2.18:8080"
       testiny_run_name:
         description: "Testiny test run name: paste the exact run name from Testiny"
         required: false
@@ -79,6 +87,7 @@ jobs:
     with:
       all: false
       mac_runner: ${{ inputs.mac_runner }}
+      test_service_url: ${{ inputs.test_service_url }}
       test_dependencies: false
       run_critical_flows: true
       # Logic:

@@ -51,19 +51,6 @@ final class ChannelMessagingTests: WireUITestCase {
             .acceptPopup()
     }
 
-    @MainActor
-    private func addTeamMemberToChannel(
-        _ teamWithChannelConversation: ReturnedTeam
-    ) throws -> ActiveConversationPage {
-        try ConversationsPage()
-            .openConversation()
-            .openConversationDetails()
-            .appParticipantToConversation()
-            .tapMemberCells(withLabelPrefixes: [teamWithChannelConversation.teamMember.name])
-            .addSelectedParticipant()
-            .closeConversationDetails()
-    }
-
     /// [critical]
     @MainActor
     func testSendTextImageAudioAndPingInChannelConversation_TC_8847_8848_8849_8852() async throws {
@@ -121,7 +108,7 @@ final class ChannelMessagingTests: WireUITestCase {
         .openUserProfilePage()
         .switchUserAccountForUser(withName: teamWithChannelConversation.teamOwner.name)
 
-        let activeConversationPage = try addTeamMemberToChannel(teamWithChannelConversation)
+        let activeConversationPage = try ConversationsPage().openConversation()
 
         // WHEN
         let sentConversationPage = try activeConversationPage
@@ -161,19 +148,8 @@ final class ChannelMessagingTests: WireUITestCase {
         let teamWithChannelConversation = try await registerTeamWithChannelConversation()
         let mediaURLs = TestServiceMediaFixtures.mediaURLs(relativeTo: #filePath)
 
-        _ = try login(user: teamWithChannelConversation.teamOwner)
-            .openUserProfilePage()
-            .tapAddAccountOrTeamButton()
-
-        _ = try app.loginUser(
-            email: teamWithChannelConversation.teamMember.email,
-            password: teamWithChannelConversation.teamMember.password
-        )
-        .acceptPopup()
-        .openUserProfilePage()
-        .switchUserAccountForUser(withName: teamWithChannelConversation.teamOwner.name)
-
-        let activeConversationPage = try addTeamMemberToChannel(teamWithChannelConversation)
+        let activeConversationPage = try login(user: teamWithChannelConversation.teamOwner)
+            .openConversation()
 
         // WHEN member sends text, image, audio and ping
         try await testServicesClient.sendText(
@@ -260,7 +236,7 @@ final class ChannelMessagingTests: WireUITestCase {
         .openUserProfilePage()
         .switchUserAccountForUser(withName: teamWithChannelConversation.teamOwner.name)
 
-        let activeConversationPage = try addTeamMemberToChannel(teamWithChannelConversation)
+        let activeConversationPage = try ConversationsPage().openConversation()
 
         // WHEN
         activeConversationPage.uploadFile()
@@ -285,19 +261,8 @@ final class ChannelMessagingTests: WireUITestCase {
         let teamWithChannelConversation = try await registerTeamWithChannelConversation()
         let mediaURLs = TestServiceMediaFixtures.mediaURLs(relativeTo: #filePath)
 
-        _ = try login(user: teamWithChannelConversation.teamOwner)
-            .openUserProfilePage()
-            .tapAddAccountOrTeamButton()
-
-        _ = try app.loginUser(
-            email: teamWithChannelConversation.teamMember.email,
-            password: teamWithChannelConversation.teamMember.password
-        )
-        .acceptPopup()
-        .openUserProfilePage()
-        .switchUserAccountForUser(withName: teamWithChannelConversation.teamOwner.name)
-
-        let activeConversationPage = try addTeamMemberToChannel(teamWithChannelConversation)
+        let activeConversationPage = try login(user: teamWithChannelConversation.teamOwner)
+            .openConversation()
 
         // WHEN
         try await testServicesClient.sendImage(
