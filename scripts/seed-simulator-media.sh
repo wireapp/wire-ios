@@ -39,14 +39,14 @@ for FIXTURE_PATH in "$VIDEO_PATH" "$VIDEO_PATH_2" "$VIDEO_PATH_3" "$FILE_PATH"; 
   fi
 done
 
-if xcrun simctl list devices booted | grep -q "$IOS_SIM_ID"; then
+if xcrun simctl list devices booted | grep -qF "($IOS_SIM_ID)"; then
   echo "Simulator $IOS_SIM_ID is already booted"
 else
   echo "Booting simulator $IOS_SIM_ID"
   xcrun simctl boot "$IOS_SIM_ID" || true
 fi
 BOOTED_SIMULATORS=$(xcrun simctl list devices booted)
-if ! echo "$BOOTED_SIMULATORS" | grep -q "$IOS_SIM_ID"; then
+if ! echo "$BOOTED_SIMULATORS" | grep -qF "($IOS_SIM_ID)"; then
   echo "::warning::Simulator $IOS_SIM_ID is not booted yet. Skipping simulator media seeding."
   exit 0
 fi

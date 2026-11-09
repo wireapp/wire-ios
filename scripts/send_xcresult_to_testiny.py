@@ -206,7 +206,7 @@ def parse_xcresult(path: str) -> List[FlatTest]:
     )
 
     if probe.returncode == 0:
-        # Legacy parsing does not preserve retry ordering. Surface modern API failures.
+        # Legacy parsing cannot preserve retry order. Do not upload potentially incorrect results.
         return parse_xcresult_new_api(path)
 
     return parse_xcresult_legacy(path)
@@ -448,7 +448,8 @@ def main():
                 key = result.test_case_id
                 previous = combined.get(key)
                 # Separate bundles have no reliable retry order. Never erase a failure.
-                if previous is None or priority[result.status] > priority[previous.status]:
+                # A JUnit report keeps its attempts in order, so the last one wins.
+                if previous is None or not args.xcresult or priority[result.status] > priority[previous.status]:
                     combined[key] = result
 
             changed = [result for key, result in combined.items() if uploaded.get(key) != result.status]

@@ -190,16 +190,19 @@ def wait_until_launchable(udid, timeout: 180)
     end
 end
 
-def prepare_simulator(udid)
+def prepare_simulator(udid, stopped: -> { false })
     started = Time.now
     run("xcrun", "simctl", "boot", udid, timeout: 120) # fails harmlessly when already booted
+    return if stopped.call
     run!("xcrun", "simctl", "bootstatus", udid, "-b", timeout: 600)
+    return if stopped.call
     booted = Time.now
     output, seeded = run("bash", File.join(ROOT, "scripts/seed-simulator-media.sh"), env: { "IOS_SIM_ID" => udid }, timeout: 120)
     unless seeded
         load_average = `uptime`.strip[/load averages?: .*/]
         raise "seeding #{udid} failed after #{(Time.now - booted).round}s (#{load_average}):\n#{output.lines.last(10).join}"
     end
+    return if stopped.call
     wait_until_launchable(udid)
     say("shards", "simulator #{udid} ready: boot #{(booted - started).round}s, seed #{(Time.now - booted).round}s")
 end
@@ -241,15 +244,19 @@ base_ready = Thread.new do
     end
     ready_simulators << [1, simulator]
 end
+# Set when the run is over before any test, so the extras thread stops preparing simulators nobody will use.
+stop_extras = false
 extras_ready = Thread.new do
     (2..planned).each do |index|
+        break if stop_extras
+
         udid = nil
         attempts = 0
         simulator = begin
             attempts += 1
             udid = run!("xcrun", "simctl", "create", "#{options[:base_simulator]}-shard-#{index}", options[:device_type], options[:runtime]).strip
             File.open(options[:simulators_file], "a") { |file| file.puts(udid) }
-            prepare_simulator(udid)
+            prepare_simulator(udid, stopped: -> { stop_extras })
             udid
         rescue => error
             if udid
@@ -261,7 +268,7 @@ extras_ready = Thread.new do
                     end
                 end
             end
-            if attempts < 2
+            if attempts < 2 && !stop_extras
                 say("shards", "simulator for shard #{index} failed: #{error.message.strip}\n  trying a new one")
                 retry
             end
@@ -294,6 +301,7 @@ built = stream("build", build_command, build_log)
 publish_log(build_log, options[:published_log_dir], secrets)
 
 unless built
+    stop_extras = true
     [base_ready, extras_ready].each(&:value)
     say("shards", "build-for-testing failed, no tests were run")
     exit(1)
@@ -301,6 +309,7 @@ end
 
 xctestrun = Dir.glob(File.join(options[:derived_data], "Build/Products", "#{options[:scheme]}_#{options[:test_plan]}_*.xctestrun")).max_by { |path| File.mtime(path) }
 if xctestrun.nil?
+    stop_extras = true
     [base_ready, extras_ready].each(&:value)
     abort("[shards] no .xctestrun for #{options[:scheme]}/#{options[:test_plan]} in #{options[:derived_data]}")
 end
@@ -359,7 +368,12 @@ def merge_bundles(bundles, target)
     end
 
     _, merged = run("xcrun", "xcresulttool", "merge", *bundles, "--output-path", target, timeout: 900)
+    # A failed or timed out merge can leave a partial bundle behind, which reports would then parse.
+    FileUtils.rm_rf(target) unless merged
     merged
+rescue StandardError
+    FileUtils.rm_rf(target)
+    raise
 end
 
 worker_threads = []
@@ -375,6 +389,11 @@ planned.times do
     end
 
     worker_threads << Thread.new do
+        done = []
+        retired = false
+        worker_released = false
+        batch = nil
+        started = Time.now
         label = "shard #{number}"
         say(label, "simulator #{simulator} ready, joining the shared test queue")
         shard_dir = File.join(options[:result_dir], "shard-#{number}")
@@ -382,9 +401,6 @@ planned.times do
         FileUtils.rm_rf([shard_dir, batches_dir])
         FileUtils.mkdir_p(batches_dir)
 
-        done = []
-        retired = false
-        started = Time.now
         while (batch = take_batch.call)
             batch_label = "#{label} batch #{batch[:number]}"
             result_bundle = File.join(batches_dir, "batch-#{batch[:number]}.xcresult")
@@ -433,6 +449,7 @@ planned.times do
                 queue_lock.synchronize do
                     if alive > 1 || pending_simulators.positive?
                         alive -= 1
+                        worker_released = true
                         true
                     else
                         false
@@ -443,17 +460,20 @@ planned.times do
                 FileUtils.rm_rf(result_bundle)
                 batch[:launch_failures] += 1
                 finish_batch.call(batch, requeue: true)
+                batch = nil
                 retired = true
                 break
             end
 
-            finish_batch.call(batch)
             done << { number: batch[:number], tests: batch[:tests].size, passed: passed, relaunched: relaunched,
                       outcomes: test_outcomes(log),
                       bundle: (result_bundle if File.exist?(result_bundle)),
                       minutes: ((Time.now - batch_started) / 60).round(1) }
+            finish_batch.call(batch)
+            batch = nil
         end
-        queue_lock.synchronize { alive -= 1 } unless retired
+        queue_lock.synchronize { alive -= 1 } unless worker_released
+        worker_released = true
         say(label, "no batches left to run") if done.empty? && !retired
 
         bundles = done.filter_map { |entry| entry[:bundle] }
@@ -475,6 +495,27 @@ planned.times do
             relaunched: done.count { |entry| entry[:relaunched] }, merged: merged, retired: retired,
             minutes: ((Time.now - started) / 60).round(1)
         }
+    rescue StandardError => error
+        # Keep other workers running and include this failure in the final summary.
+        say(label, "worker failed: #{error.class}: #{error.message}")
+        begin
+            FileUtils.mkdir_p(shard_dir)
+            Dir.glob(File.join(batches_dir, "*.xcresult")).each do |bundle|
+                FileUtils.cp_r(bundle, File.join(shard_dir, File.basename(bundle)))
+            end
+        rescue StandardError => copy_error
+            say(label, "could not preserve batch results: #{copy_error.message}")
+        end
+        {
+            number: number, tests: done.sum { |entry| entry[:tests] } + (batch ? batch[:tests].size : 0),
+            outcomes: done.map { |entry| entry[:outcomes] }.reduce({}, :merge),
+            passed: false, relaunched: done.count { |entry| entry[:relaunched] },
+            merged: false, retired: retired, error: "#{error.class}: #{error.message}",
+            minutes: ((Time.now - started) / 60).round(1)
+        }
+    ensure
+        finish_batch.call(batch) if batch
+        queue_lock.synchronize { alive -= 1 } unless worker_released
     end
 end
 [base_ready, extras_ready].each(&:value)
@@ -499,7 +540,8 @@ summary = results.map do |result|
         (missing.positive? ? ", #{missing} without a result" : "") + ", #{result[:minutes]} min" +
         (result[:relaunched].positive? ? " (runner relaunched #{result[:relaunched]}x)" : "") +
         (result[:retired] ? " (simulator retired, kept refusing the runner)" : "") +
-        (result[:merged] ? "" : " (result bundles not merged)")
+        (result[:merged] ? "" : " (result bundles not merged)") +
+        (result[:error] ? " (worker error: #{result[:error]})" : "")
 end
 all_outcomes = results.map { |result| result[:outcomes] }.reduce({}, :merge)
 missing_tests = tests - all_outcomes.keys

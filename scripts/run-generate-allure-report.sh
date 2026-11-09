@@ -55,25 +55,28 @@ if [[ "${#XCRESULTS[@]}" -gt 1 ]]; then
   XCRESULT="$MERGE_DIR/combined.xcresult"
   # Keep the merged bundle outside artifacts so other reporters only see originals.
   if ! xcrun xcresulttool merge --output-path "$XCRESULT" "${XCRESULTS[@]}"; then
-    report_unavailable "xcresulttool could not merge the result bundles."
-    exit 0
+    echo "::warning::Result bundles could not be merged. Generating separate reports."
+    XCRESULT=""
   fi
 fi
 
-if ! npx --yes allure awesome "$XCRESULT" --single-file -o allure-reports >/dev/null; then
-  report_unavailable "Allure report generation failed. See the report-generation log."
-  exit 0
-fi
+generate_report() {
+  local bundle="$1" output="$2"
+  if ! npx --yes allure awesome "$bundle" --single-file -o "$output" >/dev/null; then
+    rm -f "$output/index.html"
+    echo "::warning::Allure report generation failed for $bundle. See the report-generation log."
+    return 1
+  fi
 
-if [[ ! -f allure-reports/index.html ]]; then
-  report_unavailable "Allure did not produce allure-reports/index.html."
-  exit 0
-fi
+  if [[ ! -f "$output/index.html" ]]; then
+    echo "::warning::Allure did not produce $output/index.html."
+    return 1
+  fi
 
-# The single-file report embeds every screen recording as base64 and can reach several hundred MB, which browsers
-# struggle to open. Drop the recordings of attempts that were retried (the latest attempt of each test is kept) and
-# re-encode the rest at 540p. The XCResult keeps the originals.
-if ! ruby - allure-reports/index.html <<'RUBY'
+  # The single-file report embeds every screen recording as base64 and can reach several hundred MB, which browsers
+  # struggle to open. Drop the recordings of attempts that were retried (the latest attempt of each test is kept) and
+  # re-encode the rest at 540p. The XCResult keeps the originals.
+  if ! ruby - "$output/index.html" <<'RUBY'
 require "base64"
 require "fileutils"
 require "json"
@@ -157,7 +160,8 @@ dropped = results.select { |entry| entry[:json]["isRetry"] }
 
 started = Time.now
 edits = results.filter_map do |entry|
-    next unless dropped.any? { |id| entry[:json].to_s.include?(id) }
+    text = entry[:json].to_s
+    next unless dropped.any? { |id| text.include?(id) }
 
     entry.slice(:from, :to).merge(value: Base64.strict_encode64(JSON.generate(without_attachments(entry[:json], dropped))))
 end
@@ -194,8 +198,46 @@ File.rename("#{path}.tmp", path)
 puts "[report videos] #{videos.size} recordings (#{dropped.size} from retried attempts dropped), " \
      "HTML #{html.bytesize / 1048576} -> #{File.size(path) / 1048576} MiB in #{(Time.now - started).round}s"
 RUBY
-then
-  echo "::warning::Video optimization failed. Keeping the original report and recordings."
+  then
+    echo "::warning::Video optimization failed. Keeping the original report and recordings."
+  fi
+}
+
+if [[ -n "$XCRESULT" ]]; then
+  if ! generate_report "$XCRESULT" allure-reports; then
+    report_unavailable "Allure report generation failed. See the report-generation log."
+    exit 0
+  fi
+else
+  # Each report remains a standalone HTML file, linked from an index that opens locally.
+  generated=0
+  for index in "${!XCRESULTS[@]}"; do
+    output="allure-reports/bundle-$((index + 1))"
+    if generate_report "${XCRESULTS[$index]}" "$output"; then
+      generated=$((generated + 1))
+    fi
+  done
+  if [[ "$generated" -eq 0 ]]; then
+    report_unavailable "None of the result bundles could be reported."
+    exit 0
+  fi
+  ruby - "${XCRESULTS[@]}" <<'RUBY'
+require "cgi"
+File.open("allure-reports/index.html", "w") do |file|
+    file.puts '<!doctype html><html lang="en"><meta charset="utf-8"><title>Test reports</title><h1>Test reports</h1>'
+    file.puts '<p>The combined report could not be generated. Open each available report below. Unavailable bundles are marked.</p><ul>'
+    ARGV.each_with_index do |bundle, index|
+        report = "bundle-#{index + 1}/index.html"
+        label = CGI.escapeHTML(bundle)
+        file.puts File.file?("allure-reports/#{report}") ?
+            %(<li><a href="#{report}">#{label}</a></li>) : %(<li>#{label} — report unavailable</li>)
+    end
+    file.puts '</ul></html>'
+end
+RUBY
+  if [[ -n "${GITHUB_STEP_SUMMARY:-}" ]]; then
+    echo "⚠️ Combined Allure report unavailable. The downloaded index links to $generated of ${#XCRESULTS[@]} bundle reports; unavailable bundles are marked." >> "$GITHUB_STEP_SUMMARY"
+  fi
 fi
 
 if [[ -n "${GITHUB_ENV:-}" ]]; then

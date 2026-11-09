@@ -714,7 +714,7 @@ platform :ios do
 
             parallel_workers = ui_test_parallel_workers(options[:parallel_workers])
             if parallel_workers > 1
-                run_ui_test_shards(build, scheme, testplan, options, parallel_workers)
+                run_ui_test_shards(build, scheme, testplan, options, parallel_workers, result_dir)
                 return
             end
             xcargs << "-parallel-testing-enabled NO"
@@ -750,12 +750,13 @@ platform :ios do
         run_tests(run_tests_options)
     end
 
-    def run_ui_test_shards(build, scheme, testplan, options, workers)
+    def run_ui_test_shards(build, scheme, testplan, options, workers, result_dir)
         tests = selected_ui_test_identifiers(options)
         UI.user_error!("No UI tests selected") if tests.empty?
 
+        UI.user_error!("IOS_SIM_ID is not set, sharded UITests need the base simulator") if ENV['IOS_SIM_ID'].to_s.empty?
+
         root = File.expand_path("..", __dir__)
-        result_dir = File.join(root, build.artifact_path(with_filename: false), "tests", scheme)
         tests_file = File.join(root, build.build_path, "uitest_shard_tests.txt")
         published_log_dir = File.join(root, build.build_path, "uitest-shard-logs")
 
@@ -983,9 +984,24 @@ platform :ios do
     def ui_test_metadata
         test_root = File.expand_path("../wire-ios/WireUITests", __dir__)
 
-        Dir.glob(File.join(test_root, "**/*.swift")).sort.flat_map do |file|
-            ui_test_metadata_for_file(file)
+        files = Dir.glob(File.join(test_root, "**/*.swift")).sort
+        parents = files.flat_map do |file|
+            File.readlines(file).reject { |line| line.strip.start_with?("//") }
+                .flat_map { |line| line.scan(/\bclass\s+(\w+)\s*:\s*(\w+)/) }
+        end.to_h
+        parents.each do |name, parent|
+            seen = []
+            ancestor = parent
+            while ancestor && !seen.include?(ancestor)
+                if ancestor == "WireUITestCase" && parent != ancestor
+                    UI.user_error!("#{name} inherits UITests through #{parent}. Test selection only supports direct WireUITestCase subclasses; inherited tests cannot be safely selected.")
+                end
+                seen << ancestor
+                ancestor = parents[ancestor]
+            end
         end
+
+        files.flat_map { |file| ui_test_metadata_for_file(file) }
     end
 
     def ui_test_metadata_for_file(file)
@@ -1007,7 +1023,8 @@ platform :ios do
                 next
             end
 
-            next if stripped_line.start_with?("@")
+            # Attributes sit on their own line, but `@MainActor func testX()` or `@MainActor final class X` carry a declaration.
+            next if stripped_line.start_with?("@") && !stripped_line.match?(/\b(func|class)\b/)
 
             if (class_match = line.match(/\b(?:final\s+)?class\s+(\w+)\s*:\s*WireUITestCase\b/))
                 current_class = class_match[1]
