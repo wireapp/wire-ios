@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import os
 import WireCoreCrypto
 import WireLogging
 
@@ -29,17 +30,23 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
 
     // MARK: - Properties
 
+    private let mlsGroupVerification: any MLSGroupVerificationProtocol
     private let selfClientCertificateProvider: SelfClientCertificateProviderProtocol
     private let coreCryptoProvider: CoreCryptoProviderProtocol
 
     private let logger = WireLogger.e2ei
 
+    /// Whether the verification status of all conversations is currently being updated.
+    private let isUpdatingVerificationStatus = OSAllocatedUnfairLock(initialState: false)
+
     // MARK: - Life cycle
 
     public init(
+        mlsGroupVerification: any MLSGroupVerificationProtocol,
         selfClientCertificateProvider: SelfClientCertificateProviderProtocol,
         coreCryptoProvider: CoreCryptoProviderProtocol
     ) {
+        self.mlsGroupVerification = mlsGroupVerification
         self.selfClientCertificateProvider = selfClientCertificateProvider
         self.coreCryptoProvider = coreCryptoProvider
     }
@@ -54,10 +61,39 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
             try await context.checkCredentials()
         }
 
+        // Re-evaluate the verification status in the background, regardless of whether notifying
+        // about a revoked certificate below fails.
+        defer {
+            Task { [self] in
+                await updateVerificationStatusOfAllConversations()
+            }
+        }
+
         try await notifyAboutRevokedCertificateIfNeeded()
     }
 
     // MARK: - Private methods
+
+    /// CoreCrypto doesn't report which certificates changed, and epoch changes (which normally trigger a
+    /// verification update) are not emitted for credential checks, so re-evaluate the verification status
+    /// of all MLS conversations.
+    ///
+    /// Checks can run frequently (e.g. after every quick sync), so a run is skipped if a previous one is
+    /// still in progress.
+    private func updateVerificationStatusOfAllConversations() async {
+        let didStart = isUpdatingVerificationStatus.withLock { isUpdating in
+            guard !isUpdating else { return false }
+            isUpdating = true
+            return true
+        }
+
+        guard didStart else {
+            return logger.info("skipping verification status update, already in progress")
+        }
+
+        await mlsGroupVerification.updateAllConversations()
+        isUpdatingVerificationStatus.withLock { $0 = false }
+    }
 
     private func notifyAboutRevokedCertificateIfNeeded() async throws {
         guard let certificate = try await selfClientCertificateProvider.getCertificate(),

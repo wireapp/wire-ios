@@ -21,8 +21,9 @@ import WireLogging
 
 extension ZMUserSession {
 
-    func setupCertificateRevocationLists() {
+    func setupCertificateRevocationLists(mlsGroupVerification: any MLSGroupVerificationProtocol) {
         let cRLsChecker = CertificateRevocationListsChecker(
+            mlsGroupVerification: mlsGroupVerification,
             selfClientCertificateProvider: selfClientCertificateProvider,
             coreCryptoProvider: coreCryptoProvider
         )

@@ -25,6 +25,7 @@ public protocol MLSGroupVerificationProtocol {
     func startObserving()
     func updateConversation(by groupID: MLSGroupID) async
     func updateConversation(_ conversation: ZMConversation, with groupID: MLSGroupID) async
+    func updateAllConversations() async
 
 }
 
@@ -88,6 +89,24 @@ public final class MLSGroupVerification: MLSGroupVerificationProtocol {
                 .warn(
                     "failed to update MLS group: \(groupID.safeForLoggingDescription) verification status: \(String(describing: error))"
                 )
+        }
+    }
+
+    public func updateAllConversations() async {
+        WireLogger.e2ei.info("updating all MLS conversations verification status")
+
+        let groupIDConversationTuples: [(MLSGroupID, ZMConversation)] = await syncContext.perform { [self] in
+            let conversations = ZMConversation.fetchMLSConversations(in: syncContext)
+            return conversations.compactMap {
+                guard let groupID = $0.mlsGroupID else {
+                    return nil
+                }
+                return (groupID, $0)
+            }
+        }
+
+        for (groupID, conversation) in groupIDConversationTuples {
+            await updateConversation(conversation, with: groupID)
         }
     }
 }

@@ -152,6 +152,25 @@ final class MLSGroupVerificationTests: XCTestCase {
         XCTAssertEqual(mlsGroupIDs, [mlsGroupID])
     }
 
+    func testUpdateAllConversations_givenMLSGroupID() async throws {
+        // given
+        mockUpdateVerificationStatus.invokeForGroupID_MockMethod = { _, _ in }
+
+        let mlsGroupID: MLSGroupID = .random()
+        await syncContext.perform { [self] in
+            _ = modelHelper.createMLSConversation(mlsGroupID: mlsGroupID, in: syncContext)
+        }
+
+        let mlsGroupVerification = makeMLSGroupVerification()
+
+        // when
+        await mlsGroupVerification.updateAllConversations()
+
+        // then
+        let mlsGroupIDs = mockUpdateVerificationStatus.invokeForGroupID_Invocations.map(\.groupID)
+        XCTAssertEqual(mlsGroupIDs, [mlsGroupID])
+    }
+
     // MARK: Helpers
 
     private func makeMLSGroupVerification() -> MLSGroupVerification {

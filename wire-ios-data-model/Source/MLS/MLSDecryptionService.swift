@@ -71,7 +71,7 @@ public enum MLSDecryptResult: Equatable {
 
 /// A class responsible for decrypting messages for MLS groups.
 /// It is also responsible for processing welcome messages and publishing events
-/// when the epoch changes
+/// when the epoch changes.
 
 public final class MLSDecryptionService: MLSDecryptionServiceInterface {
 

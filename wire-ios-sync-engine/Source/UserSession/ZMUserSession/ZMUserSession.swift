@@ -587,8 +587,8 @@ public final class ZMUserSession: NSObject {
             syncManagedObjectContext.mlsService = mlsService
         }
 
-        setupMLSGroupVerification()
-        setupCertificateRevocationLists()
+        let mlsGroupVerification = setupMLSGroupVerification()
+        setupCertificateRevocationLists(mlsGroupVerification: mlsGroupVerification)
 
         registerForCalculateBadgeCountNotification()
         registerForBackgroundNotifications()
