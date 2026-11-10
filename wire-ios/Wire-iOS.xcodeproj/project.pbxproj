@@ -123,7 +123,6 @@
 		C90EFB98307E27A000818217 /* WireDesign in Frameworks */ = {isa = PBXBuildFile; productRef = C90EFB97307E27A000818217 /* WireDesign */; };
 		C90EFB9A307E27A000818217 /* WireLocators in Frameworks */ = {isa = PBXBuildFile; productRef = C90EFB9B307E27A000818217 /* WireLocators */; };
 		C90EFB8F307E276800818217 /* WireMessagingDomain in Frameworks */ = {isa = PBXBuildFile; productRef = C90EFB8E307E276800818217 /* WireMessagingDomain */; };
-		C90EFB98307E27A000818217 /* WireDesign in Frameworks */ = {isa = PBXBuildFile; productRef = C90EFB97307E27A000818217 /* WireDesign */; };
 		C9954F8E2E38D08D00A5EB01 /* WireMessagingDomain in Frameworks */ = {isa = PBXBuildFile; productRef = C9954F8D2E38D08D00A5EB01 /* WireMessagingDomain */; };
 		CB43D9BD2CDBBBB900BF5AEB /* WireFolderPickerUI in Frameworks */ = {isa = PBXBuildFile; productRef = CB43D9BC2CDBBBB900BF5AEB /* WireFolderPickerUI */; };
 		CB4870F22C7F4FE5001E9151 /* WireTransportSupport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CB4870F12C7F4FE5001E9151 /* WireTransportSupport.framework */; };
