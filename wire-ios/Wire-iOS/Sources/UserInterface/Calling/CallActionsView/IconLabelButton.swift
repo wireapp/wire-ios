@@ -64,6 +64,7 @@ class IconLabelButton: ButtonWithLargerHitArea {
         iconButton
             .translatesAutoresizingMaskIntoConstraints = false
         iconButton.isUserInteractionEnabled = false
+        iconButton.isAccessibilityElement = false
         iconButton.borderWidth = 0
         iconButton.circular = true
         blurView.translatesAutoresizingMaskIntoConstraints = false
@@ -71,6 +72,7 @@ class IconLabelButton: ButtonWithLargerHitArea {
         blurView.layer.cornerRadius = IconLabelButton.width / 2
         blurView.isUserInteractionEnabled = false
         subtitleTransformLabel.translatesAutoresizingMaskIntoConstraints = false
+        subtitleTransformLabel.isAccessibilityElement = false
         subtitleTransformLabel.textTransform = .upper
         subtitleTransformLabel.textAlignment = .center
         subtitleTransformLabel.setContentCompressionResistancePriority(.defaultLow, for: .vertical)
