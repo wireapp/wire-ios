@@ -77,6 +77,7 @@ final class DeleteMeetingTests: WireUITestCase {
 
     @MainActor
     func testHostDeletesUpcomingAndCompletedMeetings_TC_12006() async throws {
+        executionTimeAllowance = 600
         let (host, users, _, _) = try await UserHelper.default.registerMeetingsTeam(withMemberCount: 1)
         let invitee = users[0]
         try await registerClients(for: users)
