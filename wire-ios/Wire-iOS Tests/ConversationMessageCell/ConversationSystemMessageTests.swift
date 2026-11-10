@@ -31,6 +31,26 @@ final class ConversationSystemMessageTests: ConversationMessageSnapshotTestCase 
         super.tearDown()
     }
 
+    func testNewConversationMessageAccessibilityIncludesHeadingAndParticipants() throws {
+        let message = try XCTUnwrap(MockMessageFactory.systemMessage(
+            with: .newConversation,
+            users: 1,
+            sender: MockUserType.createSelfUser(name: "Alice"),
+            text: "Message Group Test"
+        ))
+        let description = ConversationStartedSystemMessageCellDescription(message: message)
+        let heading = try XCTUnwrap(description.configuration.title?.string)
+        let participants = try XCTUnwrap(description.configuration.message?.string)
+        let expected = heading + "\n" + participants
+        XCTAssertTrue(heading.contains("Message Group Test"))
+        XCTAssertEqual(description.accessibilityLabel, expected)
+        let cell = ConversationStartedSystemMessageCellDescription.View()
+        cell.configure(with: description.configuration, animated: false)
+        XCTAssertEqual(cell.accessibilityLabel, expected)
+        description.configureContentView(cell)
+        XCTAssertEqual(cell.accessibilityLabel, expected)
+    }
+
     func testConversationIsSecure() {
         let message = MockMessageFactory.systemMessage(with: .conversationIsSecure)!
 

@@ -49,6 +49,7 @@ final class ReactionToggle: UIControl {
         didSet {
             guard oldValue != isToggled else { return }
             updateAppearance(accentColor: accentColor)
+            updateAccessibilityState()
         }
     }
 
@@ -149,6 +150,27 @@ final class ReactionToggle: UIControl {
     ) {
         isAccessibilityElement = true
         accessibilityIdentifier = "value: \(value), count: \(count)"
+        accessibilityLabel = value
+        accessibilityValue = String(count)
+        updateAccessibilityState()
+    }
+
+    private func updateAccessibilityState() {
+        accessibilityTraits.insert(.button)
+        if isToggled {
+            accessibilityTraits.insert(.selected)
+        } else {
+            accessibilityTraits.remove(.selected)
+        }
+        accessibilityHint = isToggled
+            ? L10n.Accessibility.Reaction.removeHint
+            : L10n.Accessibility.Reaction.addHint
+    }
+
+    override func accessibilityActivate() -> Bool {
+        guard isEnabled else { return false }
+        sendActions(for: .touchUpInside)
+        return true
     }
 
 }

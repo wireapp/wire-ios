@@ -115,7 +115,80 @@ final class GroupConversationHeaderViewSnapshotTests: ZMSnapshotTestCase {
             .verify(matching: makeView(conversation: conversation))
     }
 
+    func testNamedGroupStartAccessibilityIncludesHeadingAndParticipants() throws {
+        let conversation = makeConversation(displayName: "Group Test", participantNames: ["Alice", "Bob"])
+        let description = ConversationStartedSystemMessageCellDescription(conversation: conversation)
+        let heading = try XCTUnwrap(description.configuration.title?.string)
+        let participants = try XCTUnwrap(description.configuration.message?.string)
+        let expected = heading + "\n" + participants
+
+        XCTAssertTrue(heading.contains("Group Test"))
+        XCTAssertTrue(participants.contains("Alice"))
+        XCTAssertTrue(participants.contains("Bob"))
+        XCTAssertEqual(description.accessibilityLabel, expected)
+        let cell = ConversationStartedSystemMessageCellDescription.View()
+        description.configureContentView(cell)
+        XCTAssertEqual(cell.accessibilityLabel, expected)
+        try assertGroupHeaderAccessibility(conversation: conversation, expectedLabel: expected)
+    }
+
+    func testNamedGroupStartWithoutParticipantsRetainsAccessibleHeading() throws {
+        let conversation = makeConversation(displayName: "Solo Group Test")
+        let description = ConversationStartedSystemMessageCellDescription(conversation: conversation)
+        let heading = try XCTUnwrap(description.configuration.title?.string)
+
+        XCTAssertNil(description.configuration.message)
+        XCTAssertTrue(heading.contains("Solo Group Test"))
+        XCTAssertEqual(description.accessibilityLabel, heading)
+        let tableView = UITableView()
+        description.register(in: tableView)
+        let adapter = try XCTUnwrap(description.makeCell(for: tableView, at: IndexPath(row: 0, section: 0))
+            as? ConversationMessageCellTableViewAdapter<ConversationStartedSystemMessageCellDescription>)
+        description.configureCell(adapter)
+        XCTAssertEqual(adapter.cellView.accessibilityLabel, heading)
+        try assertGroupHeaderAccessibility(conversation: conversation, expectedLabel: heading)
+    }
+
+    func testGroupStartMessageWithoutNameDoesNotDuplicateMessage() throws {
+        let systemMessage = try XCTUnwrap(MockMessageFactory.systemMessage(
+            with: .newConversation,
+            users: 1,
+            sender: MockUserType.createSelfUser(name: "Creator")
+        ))
+        let description = ConversationStartedSystemMessageCellDescription(message: systemMessage)
+        let message = try XCTUnwrap(description.configuration.message?.string)
+
+        XCTAssertNil(systemMessage.systemMessageData?.text)
+        XCTAssertNil(description.configuration.title)
+        XCTAssertFalse(message.isEmpty)
+        XCTAssertEqual(description.accessibilityLabel, message)
+        let cell = ConversationStartedSystemMessageCellDescription.View()
+        description.configureContentView(cell)
+        XCTAssertTrue(cell.isAccessibilityElement)
+        XCTAssertEqual(cell.accessibilityLabel, message)
+    }
+
     // MARK: - Helpers
+
+    private func assertGroupHeaderAccessibility(
+        conversation: ZMConversation,
+        expectedLabel: String,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) throws {
+        func startedCell(in view: UIView) -> ConversationStartedSystemMessageCellDescription.View? {
+            if let cell = view as? ConversationStartedSystemMessageCellDescription.View { return cell }
+            return view.subviews.lazy.compactMap { startedCell(in: $0) }.first
+        }
+
+        let header = makeView(conversation: conversation)
+        let cell = try XCTUnwrap(startedCell(in: header), file: file, line: line)
+        XCTAssertTrue(cell.isAccessibilityElement, file: file, line: line)
+        XCTAssertEqual(cell.accessibilityLabel, expectedLabel, file: file, line: line)
+        XCTAssertTrue(cell.topContentView.subviews.allSatisfy { !$0.isAccessibilityElement }, file: file, line: line)
+        XCTAssertFalse(cell.textLabel.isAccessibilityElement, file: file, line: line)
+        XCTAssertFalse(cell.imageView.isAccessibilityElement, file: file, line: line)
+    }
 
     private func makeSelfUser(isTeamMember: Bool = false, canAddUsers: Bool = false) -> MockUserType {
         let selfUser = MockUserType.createDefaultSelfUser()
