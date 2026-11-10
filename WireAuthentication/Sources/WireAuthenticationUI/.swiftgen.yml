@@ -9,6 +9,7 @@ strings:
   inputs:
     - Resources/Localization/en.lproj/Accessibility.strings
     - Resources/Localization/en.lproj/Localizable.strings
+    - Resources/Localization/en.lproj/Localizable.stringsdict
   filter:
   outputs:
     - templateName: structured-swift5

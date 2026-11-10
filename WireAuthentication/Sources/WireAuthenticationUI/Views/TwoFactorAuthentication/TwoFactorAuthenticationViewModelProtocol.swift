@@ -16,13 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireAuthenticationAPI
+
 @MainActor
 package protocol TwoFactorAuthenticationViewModelProtocol {
 
     var isTwoFactorAuthenticationEnabled: Bool? { get }
     var isLoading: Bool { get }
+    var registeredAuthenticatorApps: [RegisteredAuthenticatorApp]? { get }
+    var recoveryCodesStatus: RecoveryCodesStatus? { get }
 
     func loadStatus() async
     func setUp()
+    func turnOff()
+    func showAuthenticatorApps()
+    func showRecoveryCodes()
 
 }

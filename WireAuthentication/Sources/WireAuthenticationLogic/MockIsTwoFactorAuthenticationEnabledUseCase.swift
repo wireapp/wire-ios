@@ -21,11 +21,15 @@ import WireAuthenticationAPI
 
 package struct MockIsTwoFactorAuthenticationEnabledUseCase: IsTwoFactorAuthenticationEnabledUseCaseProtocol {
 
-    package init() {}
+    private let isEnabled: Bool
+
+    package init(isEnabled: Bool = false) {
+        self.isEnabled = isEnabled
+    }
 
     package func invoke() async throws -> Bool {
         // TODO: [WPB-29475] Replace the mock status with the backend implementation when available.
         try await Task.sleep(for: .milliseconds(500))
-        return false
+        return isEnabled
     }
 }

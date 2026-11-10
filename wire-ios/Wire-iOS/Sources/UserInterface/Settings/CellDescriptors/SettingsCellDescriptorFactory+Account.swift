@@ -499,7 +499,7 @@ extension SettingsCellDescriptorFactory {
             presentationStyle: .navigation,
             identifier: "twoFactorAuthenticationCell",
             presentationAction: {
-                UIHostingController(rootView: TwoFactorAuthenticationAssembly().assemble())
+                TwoFactorAuthenticationAssembly().assemble()
             },
             copiableText: nil,
             settingsTopLevelMenuItem: nil

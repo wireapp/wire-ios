@@ -17,6 +17,7 @@
 //
 
 import SwiftUI
+import WireAuthenticationAPI
 import WireDesign
 
 @MainActor
@@ -40,17 +41,19 @@ package struct TwoFactorAuthenticationView<ViewModel: TwoFactorAuthenticationVie
                 Text(Strings.description)
                     .font(.body)
                     .foregroundStyle(Color(ColorTheme.Base.secondaryText))
+
+                if viewModel.isTwoFactorAuthenticationEnabled == true {
+                    enabledDetails
+                        .padding(.top, 16)
+                }
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
             .padding()
         }
         .scrollBounceBehavior(.basedOnSize)
         .safeAreaInset(edge: .bottom, spacing: 0) {
-            Button(Strings.setUp, action: viewModel.setUp)
-                .bold()
-                .wireButtonStyle(.primary)
-                .disabled(viewModel.isLoading || viewModel.isTwoFactorAuthenticationEnabled != false)
-                .accessibilityLabel(Strings.setUp)
-                .accessibilityIdentifier("twoFactorAuthenticationSetUpButton")
+            actionButton
+                .disabled(viewModel.isLoading || viewModel.isTwoFactorAuthenticationEnabled == nil)
                 .padding()
                 .background(Color(ColorTheme.Backgrounds.background))
         }
@@ -61,6 +64,94 @@ package struct TwoFactorAuthenticationView<ViewModel: TwoFactorAuthenticationVie
         .task {
             await viewModel.loadStatus()
         }
+    }
+
+    @ViewBuilder
+    private var actionButton: some View {
+        if viewModel.isTwoFactorAuthenticationEnabled == true {
+            Button(role: .destructive, action: viewModel.turnOff) {
+                Text(Strings.turnOff)
+                    .font(.body.weight(.semibold))
+                    .frame(maxWidth: .infinity)
+            }
+            .buttonStyle(.borderedProminent)
+            .controlSize(.large)
+            .tint(Color(ColorTheme.Base.error))
+            .foregroundStyle(Color(ColorTheme.Base.onError))
+            .accessibilityLabel(Strings.turnOff)
+            .accessibilityIdentifier("twoFactorAuthenticationTurnOffButton")
+        } else {
+            Button(Strings.setUp, action: viewModel.setUp)
+                .bold()
+                .wireButtonStyle(.primary)
+                .accessibilityLabel(Strings.setUp)
+                .accessibilityIdentifier("twoFactorAuthenticationSetUpButton")
+        }
+    }
+
+    private var enabledDetails: some View {
+        VStack(spacing: 0) {
+            detailRow(
+                title: Strings.AuthenticatorApps.title,
+                summary: viewModel.registeredAuthenticatorApps.map { Strings.AuthenticatorApps.count($0.count) },
+                identifier: "twoFactorAuthenticationAuthenticatorAppsCell",
+                action: viewModel.showAuthenticatorApps
+            )
+
+            Divider()
+
+            detailRow(
+                title: Strings.RecoveryCodes.title,
+                summary: viewModel.recoveryCodesStatus.map {
+                    Strings.RecoveryCodes.remaining($0.remainingCount, $0.originalCount)
+                },
+                identifier: "twoFactorAuthenticationRecoveryCodesCell",
+                action: viewModel.showRecoveryCodes
+            )
+
+            Divider()
+        }
+    }
+
+    private func detailRow(
+        title: String,
+        summary: String?,
+        identifier: String,
+        action: @escaping () -> Void
+    ) -> some View {
+        Button(action: action) {
+            HStack(spacing: 16) {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(title)
+                        .font(.headline)
+                        .foregroundStyle(Color(ColorTheme.Backgrounds.onBackground))
+
+                    if let summary {
+                        Text(summary)
+                            .font(.subheadline)
+                            .foregroundStyle(Color(ColorTheme.Base.secondaryText))
+                    } else if viewModel.isLoading {
+                        ProgressView()
+                    }
+                }
+
+                Spacer(minLength: 0)
+
+                Image(systemName: "chevron.forward")
+                    .font(.body.weight(.semibold))
+                    .foregroundStyle(Color(ColorTheme.Base.secondaryText))
+                    .accessibilityHidden(true)
+            }
+            .padding(.vertical, 16)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .disabled(viewModel.isLoading || summary == nil)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(title)
+        .accessibilityValue(summary ?? (viewModel.isLoading ? Strings.loading : ""))
+        .accessibilityIdentifier(identifier)
     }
 
     private var statusRow: some View {
@@ -113,6 +204,28 @@ package struct TwoFactorAuthenticationView<ViewModel: TwoFactorAuthenticationVie
     }
 }
 
+#Preview("On") {
+    NavigationStack {
+        TwoFactorAuthenticationView(viewModel: PreviewTwoFactorAuthenticationViewModel.enabled)
+    }
+}
+
+#Preview("On, Large Text") {
+    NavigationStack {
+        TwoFactorAuthenticationView(viewModel: PreviewTwoFactorAuthenticationViewModel.enabled)
+    }
+    .environment(\.dynamicTypeSize, .accessibility3)
+}
+
+#Preview("Loading Details") {
+    NavigationStack {
+        TwoFactorAuthenticationView(viewModel: PreviewTwoFactorAuthenticationViewModel(
+            isTwoFactorAuthenticationEnabled: true,
+            isLoading: true
+        ))
+    }
+}
+
 #Preview("Loading") {
     NavigationStack {
         TwoFactorAuthenticationView(viewModel: PreviewTwoFactorAuthenticationViewModel(
@@ -126,8 +239,30 @@ private struct PreviewTwoFactorAuthenticationViewModel: TwoFactorAuthenticationV
 
     var isTwoFactorAuthenticationEnabled: Bool? = false
     var isLoading = false
+    var registeredAuthenticatorApps: [RegisteredAuthenticatorApp]?
+    var recoveryCodesStatus: RecoveryCodesStatus?
+
+    static var enabled: Self {
+        Self(
+            isTwoFactorAuthenticationEnabled: true,
+            registeredAuthenticatorApps: [
+                RegisteredAuthenticatorApp(
+                    name: "Google Authenticator",
+                    registrationDate: Date(timeIntervalSince1970: 1_790_000_000)
+                ),
+                RegisteredAuthenticatorApp(
+                    name: "1Password",
+                    registrationDate: Date(timeIntervalSince1970: 1_790_086_400)
+                )
+            ],
+            recoveryCodesStatus: RecoveryCodesStatus(originalCount: 10, remainingCount: 10)
+        )
+    }
 
     func loadStatus() async {}
     func setUp() {}
+    func turnOff() {}
+    func showAuthenticatorApps() {}
+    func showRecoveryCodes() {}
 
 }

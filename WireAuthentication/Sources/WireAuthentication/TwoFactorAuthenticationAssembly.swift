@@ -26,11 +26,30 @@ public struct TwoFactorAuthenticationAssembly {
     public init() {}
 
     @MainActor
-    public func assemble() -> some View {
+    public func assemble() -> UIViewController {
         let viewModel = TwoFactorAuthenticationViewModel(
-            isTwoFactorAuthenticationEnabledUseCase: MockIsTwoFactorAuthenticationEnabledUseCase(),
+            isTwoFactorAuthenticationEnabledUseCase: MockIsTwoFactorAuthenticationEnabledUseCase(isEnabled: true),
+            getRegisteredAuthenticatorAppsUseCase: MockGetRegisteredAuthenticatorAppsUseCase(),
+            getRecoveryCodesStatusUseCase: MockGetRecoveryCodesStatusUseCase(),
             logger: WireLogger.authentication
         )
-        return TwoFactorAuthenticationView(viewModel: viewModel)
+        let controller = UIHostingController(rootView: TwoFactorAuthenticationView(viewModel: viewModel))
+
+        viewModel.onShowAuthenticatorApps = { [weak controller] in
+            let destination = UIHostingController(rootView: TwoFactorAuthenticationPlaceholderView(
+                destination: .authenticatorApps
+            ))
+            destination.hidesBottomBarWhenPushed = true
+            controller?.navigationController?.pushViewController(destination, animated: true)
+        }
+        viewModel.onShowRecoveryCodes = { [weak controller] in
+            let destination = UIHostingController(rootView: TwoFactorAuthenticationPlaceholderView(
+                destination: .recoveryCodes
+            ))
+            destination.hidesBottomBarWhenPushed = true
+            controller?.navigationController?.pushViewController(destination, animated: true)
+        }
+
+        return controller
     }
 }

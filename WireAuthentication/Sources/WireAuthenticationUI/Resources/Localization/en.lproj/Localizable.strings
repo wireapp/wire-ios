@@ -21,6 +21,10 @@
 "twoFactorAuthentication.status.off" = "OFF";
 "twoFactorAuthentication.status.on" = "ON";
 "twoFactorAuthentication.setUp" = "Set up";
+"twoFactorAuthentication.turnOff" = "Turn off";
+"twoFactorAuthentication.authenticatorApps.title" = "Authenticator apps";
+"twoFactorAuthentication.recoveryCodes.title" = "Recovery codes";
+"twoFactorAuthentication.recoveryCodes.remaining" = "%d of %d left";
 "twoFactorAuthentication.loading" = "Loading two-factor authentication status";
 
 "authentication.identity.input.body" = "Simply enter your email address to start!";
