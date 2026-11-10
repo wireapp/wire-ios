@@ -73,6 +73,31 @@ final class DeleteMeetingTests: WireUITestCase {
         try await assertConversationAccess(meeting, for: inviteeFixtures, true)
     }
 
+    @MainActor
+    func testHostDeletesUpcomingAndCompletedMeetings_TC_12006() async throws {
+        let (host, users, _, _) = try await UserHelper.default.registerMeetingsTeam(withMemberCount: 1)
+        let invitee = users[0]
+        try await registerClients(for: users)
+        let hostFixtures = try await MeetingsTestHelper(user: host)
+        let inviteeFixtures = try await MeetingsTestHelper(user: invitee)
+        let meetings = try await scheduleNonActiveMeetings(for: host, using: hostFixtures, inviting: users)
+        let now = date(hour: 12)
+        let page = try launchMeetings(for: host, now: now)
+
+        // Delete the upcoming meeting and the completed meeting from Today without a refresh.
+        for meeting in meetings {
+            try await assertVisible(meeting, to: inviteeFixtures, true)
+            try confirmDelete(requestDelete(meeting, on: page, as: .host))
+            try assertRemoved(meeting, on: page)
+            try await assertVisible(meeting, to: hostFixtures, false)
+            try await assertVisible(meeting, to: inviteeFixtures, false)
+        }
+
+        // Check the invitee's list after sign-in and sync.
+        let inviteePage = try launchMeetings(for: invitee, now: now)
+        XCTAssertTrue(inviteePage.noUpcomingMeetingsText.waitForExistence(timeout: 15))
+    }
+
     private func date(hour: Int = 10, minute: Int = 0, dayOffset: Int = 0) -> Date {
         let calendar = Calendar.current
         let day = calendar.date(byAdding: .day, value: 2 + dayOffset, to: calendar.startOfDay(for: fixtureDate))!
@@ -126,6 +151,38 @@ final class DeleteMeetingTests: WireUITestCase {
         let matches = meetings.filter { $0.title == title }
         XCTAssertEqual(matches.count, 1, "Expected one meeting named '\(title)'")
         return try XCTUnwrap(matches.first)
+    }
+
+    @MainActor
+    private func scheduleNonActiveMeetings(
+        for host: UserInfo,
+        using fixtures: MeetingsTestHelper,
+        inviting users: [UserInfo]
+    ) async throws -> [MeetingResponse] {
+        let page = try launchMeetings(for: host, now: date(hour: 8))
+        let upcoming = try await schedule(
+            on: page, using: fixtures, title: "Upcoming meeting", inviting: users, startHour: 14
+        )
+        let completed = try await schedule(
+            on: page, using: fixtures, title: "Completed meeting", inviting: users, startHour: 10
+        )
+        let now = date(hour: 12)
+        XCTAssertGreaterThan(upcoming.startTime, now)
+        XCTAssertLessThan(completed.endTime, now)
+        XCTAssertTrue(Calendar.current.isDate(completed.startTime, inSameDayAs: now))
+        return [upcoming, completed]
+    }
+
+    private func confirmDelete(_ alert: XCUIElement) throws {
+        guard alert.buttons["Delete"].waitAndTap(), alert.waitToDisappear() else {
+            throw RuntimeError("The confirmation did not close after Delete")
+        }
+    }
+
+    private func assertRemoved(_ meeting: MeetingResponse, on page: MeetingsPage, start: Date? = nil) throws {
+        guard page.row(meeting, start: start).waitToDisappear(timeout: 20) else {
+            throw RuntimeError("The row for '\(meeting.title)' remained after deletion")
+        }
     }
 
     private func requestDelete(
