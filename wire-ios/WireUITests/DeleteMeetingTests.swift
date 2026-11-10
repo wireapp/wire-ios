@@ -100,6 +100,37 @@ final class DeleteMeetingTests: WireUITestCase {
     }
 
     @MainActor
+    func testHostDeletesEntireRecurringSeries_TC_12009() async throws {
+        let (host, users, _, _) = try await UserHelper.default.registerMeetingsTeam(withMemberCount: 1)
+        try await registerClients(for: users)
+        let hostFixtures = try await MeetingsTestHelper(user: host)
+        let inviteeFixtures = try await MeetingsTestHelper(user: users[0])
+        let page = try launchMeetings(for: host, now: date())
+        let meeting = try await schedule(
+            on: page, using: hostFixtures, title: "TC12009", inviting: users, recurrence: .daily
+        )
+        let laterStart = try nextDailyOccurrence(of: meeting)
+        try await assertVisible(meeting, to: inviteeFixtures, true)
+
+        // Open a later occurrence and confirm the alert describes the full series.
+        _ = try page.showRow(meeting)
+        let alert = try requestDelete(meeting, on: page, as: .host, start: laterStart)
+        assertMessage(
+            "This is a recurring meeting. Deleting it removes every occurrence for you and everybody else. " +
+                "All participants will be notified.",
+            in: alert
+        )
+        attachScreenshot("TC-12009 recurring host confirmation")
+        try confirmDelete(alert)
+
+        // Both occurrences and the series record must be gone.
+        try assertRemoved(meeting, on: page, start: laterStart)
+        XCTAssertTrue(page.noUpcomingMeetingsText.waitForExistence(timeout: 15))
+        try await assertVisible(meeting, to: hostFixtures, false)
+        try await assertVisible(meeting, to: inviteeFixtures, false)
+    }
+
+    @MainActor
     func testHostDeletesOngoingScheduledMeetings_TC_12007() async throws {
         let (host, users, _, _) = try await UserHelper.default.registerMeetingsTeam(withMemberCount: 1)
         try await registerClients(for: users)
@@ -197,6 +228,11 @@ final class DeleteMeetingTests: WireUITestCase {
         XCTAssertLessThan(completed.endTime, now)
         XCTAssertTrue(Calendar.current.isDate(completed.startTime, inSameDayAs: now))
         return [upcoming, completed]
+    }
+
+    private func nextDailyOccurrence(of meeting: MeetingResponse) throws -> Date {
+        XCTAssertEqual(meeting.recurrence?.frequency, .daily)
+        return try XCTUnwrap(Calendar.current.date(byAdding: .day, value: 1, to: meeting.startTime))
     }
 
     private func confirmDelete(_ alert: XCUIElement) throws {
