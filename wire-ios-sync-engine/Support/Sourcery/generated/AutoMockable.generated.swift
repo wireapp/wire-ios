@@ -54,35 +54,6 @@ import WireNetwork
 
 
 
-public class MockE2EICredentialsChecking: E2EICredentialsChecking {
-
-    // MARK: - Life cycle
-
-    public init() {}
-
-
-    // MARK: - checkCredentials
-
-    public var checkCredentials_Invocations: [Void] = []
-    public var checkCredentials_MockError: Error?
-    public var checkCredentials_MockMethod: (() async throws -> Void)?
-
-    public func checkCredentials() async throws {
-        checkCredentials_Invocations.append(())
-
-        if let error = checkCredentials_MockError {
-            throw error
-        }
-
-        guard let mock = checkCredentials_MockMethod else {
-            fatalError("no mock for `checkCredentials`")
-        }
-
-        try await mock()
-    }
-
-}
-
 public class MockCheckOneOnOneConversationIsReadyUseCaseProtocol: CheckOneOnOneConversationIsReadyUseCaseProtocol {
 
     // MARK: - Life cycle
@@ -164,6 +135,35 @@ public class MockDisableAnalyticsUseCaseProtocol: DisableAnalyticsUseCaseProtoco
         }
 
         try mock()
+    }
+
+}
+
+public class MockE2EICredentialsChecking: E2EICredentialsChecking {
+
+    // MARK: - Life cycle
+
+    public init() {}
+
+
+    // MARK: - checkCredentials
+
+    public var checkCredentials_Invocations: [Void] = []
+    public var checkCredentials_MockError: Error?
+    public var checkCredentials_MockMethod: (() async throws -> Void)?
+
+    public func checkCredentials() async throws {
+        checkCredentials_Invocations.append(())
+
+        if let error = checkCredentials_MockError {
+            throw error
+        }
+
+        guard let mock = checkCredentials_MockMethod else {
+            fatalError("no mock for `checkCredentials`")
+        }
+
+        try await mock()
     }
 
 }
