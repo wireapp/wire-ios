@@ -183,6 +183,35 @@ final class DeleteMeetingTests: WireUITestCase {
         }
     }
 
+    @MainActor
+    func testInviteeDeletesOngoingScheduledMeetingsForSelf_TC_12012() async throws {
+        let (host, users, _, _) = try await UserHelper.default.registerMeetingsTeam(withMemberCount: 2)
+        let (invitee, otherInvitee) = (users[0], users[1])
+        try await registerClients(for: users)
+        try await requireConferenceCalling()
+        let hostFixtures = try await MeetingsTestHelper(user: host)
+        let inviteeFixtures = try await MeetingsTestHelper(user: invitee)
+        let otherFixtures = try await MeetingsTestHelper(user: otherInvitee)
+        let meetings = try await scheduleOngoingMeetings(for: host, using: hostFixtures, inviting: users)
+        let page = try launchMeetings(for: invitee, now: date(minute: 30))
+
+        // Leave once without joining, and once from the list with the call minimized.
+        for (meeting, join) in zip(meetings, [false, true]) {
+            try await assertConversationAccess(meeting, for: inviteeFixtures, true)
+            try showOngoing(meeting, on: page)
+            if join { try joinAndMinimize(meeting, on: page) }
+            try confirmDelete(requestDelete(meeting, on: page, as: .invitee))
+            try assertRemoved(meeting, on: page)
+            if join { assertCallEnded() }
+
+            // The other users must retain the meeting and its conversation.
+            try await assertConversationAccess(meeting, for: inviteeFixtures, false)
+            try await assertVisible(meeting, to: hostFixtures, true)
+            try await assertVisible(meeting, to: otherFixtures, true)
+            try await assertConversationAccess(meeting, for: otherFixtures, true)
+        }
+    }
+
     private func date(hour: Int = 10, minute: Int = 0, dayOffset: Int = 0) -> Date {
         let calendar = Calendar.current
         let day = calendar.date(byAdding: .day, value: 2 + dayOffset, to: calendar.startOfDay(for: fixtureDate))!
