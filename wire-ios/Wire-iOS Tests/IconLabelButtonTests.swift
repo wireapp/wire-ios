@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import UIKit
 import WireCommonComponents
 import WireTestingPackage
 import XCTest
@@ -46,6 +47,42 @@ final class IconLabelButtonTests: XCTestCase {
         IconLabelButtonTestCase.Appearance.allCases.forEach {
             verify(appearance: $0)
         }
+    }
+
+    func testCallControlsExposeOnlyOuterButtonToAccessibility() {
+        let buttons: [IconLabelButton] = [
+            .camera(), .microphone(), .speaker(),
+            CallingActionButton.cameraButton(),
+            CallingActionButton.microphoneButton(),
+            CallingActionButton.speakerButton()
+        ]
+
+        for button in buttons {
+            for isSelected in [false, true] {
+                for isEnabled in [false, true] {
+                    button.accessibilityLabel = isSelected ? "Turn off" : "Turn on"
+                    button.isSelected = isSelected
+                    button.isEnabled = isEnabled
+
+                    XCTAssertTrue(button.isAccessibilityElement)
+                    XCTAssertTrue(button.accessibilityTraits.contains(.button))
+                    XCTAssertEqual(button.accessibilityLabel, isSelected ? "Turn off" : "Turn on")
+                    XCTAssertFalse(button.iconButton.isAccessibilityElement)
+                    XCTAssertFalse(button.subtitleTransformLabel.isAccessibilityElement)
+                }
+            }
+        }
+    }
+
+    func testCallControlActionRemainsOnOuterButton() {
+        var actionCount = 0
+        button.addAction(UIAction { _ in actionCount += 1 }, for: .touchUpInside)
+
+        button.sendActions(for: .touchUpInside)
+
+        XCTAssertEqual(actionCount, 1)
+        XCTAssertTrue(button.iconButton.allTargets.isEmpty)
+        XCTAssertFalse(button.iconButton.isUserInteractionEnabled)
     }
 
     func verify(appearance: IconLabelButtonTestCase.Appearance, file: StaticString = #filePath, line: UInt = #line) {
