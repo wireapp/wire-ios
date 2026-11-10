@@ -263,17 +263,19 @@ private extension FilesContentView {
             )
         } else {
             if viewModel.isRecycleBin {
-                // TODO: [WPB-29933] Restore action not handled properly on BE side, when fixed, uncomment that code.
-//                // restore
-//                actions.append(
-//                    .init(
-//                        id: Locators.WireDrive.FilesPage.restoreFloatingButton.rawValue,
-//                        title: Strings.RecycleBin.Item.Menu.restore,
-//                        systemImage: "arrow.uturn.backward",
-//                        isEnabled: !viewModel.selectedItems.isEmpty,
-//                        perform: { viewModel.isPresentingRestoreConfirmation = true }
-//                    )
-//                )
+                // TODO: [WPB-29933] Remove this conditional once the backend restore action is fixed.
+                #if false
+                    // restore
+                    actions.append(
+                        .init(
+                            id: Locators.WireDrive.FilesPage.restoreFloatingButton.rawValue,
+                            title: Strings.RecycleBin.Item.Menu.restore,
+                            systemImage: "arrow.uturn.backward",
+                            isEnabled: !viewModel.selectedItems.isEmpty,
+                            perform: { viewModel.isPresentingRestoreConfirmation = true }
+                        )
+                    )
+                #endif
             } else {
                 // move to folder
                 actions.append(
