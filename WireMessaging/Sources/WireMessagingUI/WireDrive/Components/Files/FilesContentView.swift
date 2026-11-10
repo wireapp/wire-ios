@@ -263,16 +263,17 @@ private extension FilesContentView {
             )
         } else {
             if viewModel.isRecycleBin {
-                // restore
-                actions.append(
-                    .init(
-                        id: Locators.WireDrive.FilesPage.restoreFloatingButton.rawValue,
-                        title: Strings.RecycleBin.Item.Menu.restore,
-                        systemImage: "arrow.uturn.backward",
-                        isEnabled: !viewModel.selectedItems.isEmpty,
-                        perform: { viewModel.isPresentingRestoreConfirmation = true }
-                    )
-                )
+                // TODO: [WPB-29933] Restore action not handled properly on BE side, when fixed, uncomment that code.
+//                // restore
+//                actions.append(
+//                    .init(
+//                        id: Locators.WireDrive.FilesPage.restoreFloatingButton.rawValue,
+//                        title: Strings.RecycleBin.Item.Menu.restore,
+//                        systemImage: "arrow.uturn.backward",
+//                        isEnabled: !viewModel.selectedItems.isEmpty,
+//                        perform: { viewModel.isPresentingRestoreConfirmation = true }
+//                    )
+//                )
             } else {
                 // move to folder
                 actions.append(
