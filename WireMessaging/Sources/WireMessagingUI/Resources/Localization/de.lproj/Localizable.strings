@@ -135,8 +135,8 @@
 "conversation.wireCells.files.item.menu.versionHistory" = "Versionsverlauf";
 "conversation.wireCells.files.item.menu.makeAvailableOffline" = "Offline bereitstellen";
 "conversation.wireCells.files.item.menu.removeAvailableOffline" = "Offlinezugriff entfernen";
-"conversation.wireCells.files.offline.folderSelectionWarning" = "You can’t make folders available offline.\nDeselect the folder to continue.";
-"conversation.wireCells.files.offline.folderSelectionWarningMultiple" = "You can’t make folders available offline.\nDeselect the %d folders to continue.";
+"conversation.wireCells.files.offline.folderSelectionWarning" = "Sie können Ordner nicht offline verfügbar machen.\nEntfernen Sie den Ordner, um fortzufahren.";
+"conversation.wireCells.files.offline.folderSelectionWarningMultiple" = "Sie können Ordner nicht offline verfügbar machen.\nEntfernen Sie die %d Ordner, um fortzufahren.";
 "conversation.wireCells.files.item.deleteConfirmation.title" = "Dies wird die Datei %@ für alle Teilnehmer endgültig löschen. Alle verlieren den Zugriff und es gibt keine Möglichkeit, die Datei wiederherzustellen.";
 "conversation.wireCells.files.item.deleteConfirmation.deletePermanently" = "Endgültig löschen";
 "conversation.wireCells.files.item.menu.delete" = "Löschen";
