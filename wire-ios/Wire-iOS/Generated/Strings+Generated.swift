@@ -418,6 +418,20 @@ internal enum L10n {
         /// Triple tap to open messaging options
         internal static let hint = L10n.tr("Accessibility", "conversation.messageOptions.hint", fallback: "Triple tap to open messaging options")
       }
+      internal enum MessageStatus {
+        /// Delivered
+        internal static let delivered = L10n.tr("Accessibility", "conversation.messageStatus.delivered", fallback: "Delivered")
+        /// Read
+        internal static let seen = L10n.tr("Accessibility", "conversation.messageStatus.seen", fallback: "Read")
+        /// Read by %d
+        internal static func seenByMultiple(_ p1: Int) -> String {
+          return L10n.tr("Accessibility", "conversation.messageStatus.seenByMultiple", p1, fallback: "Read by %d")
+        }
+        /// Sending
+        internal static let sending = L10n.tr("Accessibility", "conversation.messageStatus.sending", fallback: "Sending")
+        /// Sent
+        internal static let sent = L10n.tr("Accessibility", "conversation.messageStatus.sent", fallback: "Sent")
+      }
       internal enum MoreButton {
         /// Close more messaging options
         internal static let closeDescription = L10n.tr("Accessibility", "conversation.moreButton.closeDescription", fallback: "Close more messaging options")

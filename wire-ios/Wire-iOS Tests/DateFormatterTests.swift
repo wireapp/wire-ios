@@ -27,6 +27,24 @@ final class DateFormatterTests: XCTestCase {
         super.tearDown()
     }
 
+    func testAccessibilityDateFormattingDoesNotChangeVisibleDates() {
+        let date = Date()
+        let visibleFormatter = Message.longDateFormatter
+        let expectedFormatter = DateFormatter()
+        expectedFormatter.dateStyle = .long
+        expectedFormatter.timeStyle = .short
+
+        let accessibleFormatter = Message.spellOutDateTimeFormatter
+        _ = accessibleFormatter.string(from: date)
+
+        XCTAssertFalse(visibleFormatter === accessibleFormatter)
+        XCTAssertFalse(visibleFormatter.doesRelativeDateFormatting)
+        XCTAssertTrue(accessibleFormatter.doesRelativeDateFormatting)
+        XCTAssertEqual(accessibleFormatter.dateStyle, .long)
+        XCTAssertEqual(accessibleFormatter.timeStyle, .short)
+        XCTAssertEqual(visibleFormatter.string(from: date), expectedFormatter.string(from: date))
+    }
+
     func testThatDateStringDoesNotContainYearIfDateIsToday() {
         // GIVEN
         let date = Date()
