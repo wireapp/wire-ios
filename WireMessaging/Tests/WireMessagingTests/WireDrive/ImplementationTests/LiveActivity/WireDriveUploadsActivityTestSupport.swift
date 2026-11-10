@@ -51,6 +51,8 @@ final class FakeUploadsActivityClient: WireDriveUploadsActivityClient {
     var areActivitiesEnabled = true
     var hasActivity = false
     var startError: (any Error)?
+    var updateGate: UploadsDelayGate?
+    var endGate: UploadsDelayGate?
     private(set) var calls: [Call] = []
 
     func start(with state: WireDriveUploadsActivityState) async throws {
@@ -61,10 +63,12 @@ final class FakeUploadsActivityClient: WireDriveUploadsActivityClient {
 
     func update(with state: WireDriveUploadsActivityState) async {
         calls.append(.update(state))
+        await updateGate?.wait()
     }
 
     func end(with state: WireDriveUploadsActivityState?, dismissal: WireDriveUploadsActivityDismissal) async {
         calls.append(.end(state, dismissal))
+        await endGate?.wait()
         hasActivity = false
     }
 

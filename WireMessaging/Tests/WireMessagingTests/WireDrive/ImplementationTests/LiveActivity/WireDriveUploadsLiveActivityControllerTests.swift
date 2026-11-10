@@ -245,6 +245,57 @@ final class WireDriveUploadsLiveActivityControllerTests {
         ])
     }
 
+    @Test(arguments: [WireDriveDirectUploadItem.Status.uploaded, .failed(error: .unauthorized)])
+    func startsAReplacementWhenUploadsArriveDuringAnEnd(_ status: WireDriveDirectUploadItem.Status) async {
+        let endGate = UploadsDelayGate()
+        client.endGate = endGate
+        client.hasActivity = true
+        sut.start()
+        publish([status])
+        await settle()
+
+        await delayGate.open()
+        await settle()
+        #expect(client.calls.count == 2)
+
+        publish([.queued])
+        await settle()
+        // The new upload must wait for the in-flight end, then start a replacement activity.
+        #expect(client.calls.count == 2)
+
+        await endGate.open()
+        await settle()
+
+        #expect(client.calls.count == 3)
+        #expect(client.calls.last == .start(.fixture(total: 1)))
+        #expect(client.hasActivity)
+    }
+
+    @Test(arguments: [WireDriveDirectUploadItem.Status.uploaded, .failed(error: .unauthorized)])
+    func rechecksUploadsBeforeExecutingAQueuedEnd(_ status: WireDriveDirectUploadItem.Status) async {
+        client.hasActivity = true
+        sut.start()
+        publish([status])
+        await settle()
+
+        // Hold a label update so the timer expires while client work is still queued.
+        let updateGate = UploadsDelayGate()
+        client.updateGate = updateGate
+        sut.setShowAccountName(true)
+        await settle()
+        await delayGate.open()
+        await settle()
+
+        // This summary is observed immediately, but its update is queued after the delayed end.
+        publish([.queued])
+        await updateGate.open()
+        await settle()
+
+        #expect(client.hasActivity)
+        #expect(client.calls.count == 3)
+        #expect(client.calls.allSatisfy { if case .end = $0 { false } else { true } })
+    }
+
     @Test
     func endsAtOnceWhenThereIsNothingLeftToShow() async {
         sut.start()

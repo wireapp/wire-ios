@@ -186,8 +186,24 @@ package final class WireDriveUploadsLiveActivityController {
 
         pendingEnd = Task { [weak self, delay] in
             await delay(Constants.completedDismissalDelay)
-            guard !Task.isCancelled else { return }
-            await self?.endActivity(with: state, dismissal: dismissal)
+            guard !Task.isCancelled, let self else { return }
+
+            // Only queue the end after the delay, so new uploads can still update the activity meanwhile.
+            let previous = pendingWork
+            let end = Task { [weak self] in
+                await previous?.value
+                guard
+                    !Task.isCancelled,
+                    let self,
+                    let summary = latestSummary,
+                    summary.trackedCount > 0,
+                    summary.isFinished
+                else { return }
+
+                await endActivity(with: state, dismissal: dismissal)
+            }
+            pendingWork = end
+            pendingEnd = end
         }
     }
 
