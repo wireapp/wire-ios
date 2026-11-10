@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import notify
 import WireFoundation
 import WireLocators
 import WireNetwork
@@ -278,6 +279,79 @@ final class DeleteMeetingTests: WireUITestCase {
         try await assertConversationAccess(inviteeMeeting, for: hostFixtures, true)
         try await assertVisible(inviteeMeeting, to: otherFixtures, true)
         try await assertConversationAccess(inviteeMeeting, for: otherFixtures, true)
+    }
+
+    @MainActor
+    func testRetryDeleteAfterControlledConnectionFailure_TC_12016() async throws {
+        let failureID = UUID().uuidString
+        let notification = "\(UITestConfig.meetingsDeleteFailureNotificationPrefix).\(failureID)"
+        var token: Int32 = NOTIFY_TOKEN_INVALID
+        guard notify_register_check(notification, &token) == UInt32(NOTIFY_STATUS_OK) else {
+            throw RuntimeError("The delete failure control did not register")
+        }
+        defer { notify_cancel(token) }
+        uiTestConfig.meetingsDeleteFailureID = failureID
+
+        let (host, users, _, _) = try await UserHelper.default.registerMeetingsTeam(withMemberCount: 1)
+        let invitee = users[0]
+        try await registerClients(for: users)
+        let hostFixtures = try await MeetingsTestHelper(user: host)
+        let inviteeFixtures = try await MeetingsTestHelper(user: invitee)
+        let page = try launchMeetings(for: host, now: date())
+        let hostMeeting = try await schedule(on: page, using: hostFixtures, title: "TC12016 host", inviting: users)
+        let inviteeMeeting = try await schedule(
+            on: page,
+            using: hostFixtures,
+            title: "TC12016 invitee",
+            inviting: users
+        )
+        let attempts: [(DeleteRole, UserInfo, MeetingResponse)] = [
+            (.host, host, hostMeeting), (.invitee, invitee, inviteeMeeting)
+        ]
+
+        for (role, user, meeting) in attempts {
+            let activePage = role == .host ? page : try launchMeetings(for: user, now: date())
+            try setDeleteFailureState(0, token: token)
+            try confirmDelete(requestDelete(meeting, on: activePage, as: role))
+
+            // Hold the request long enough to check loading, then fail before it reaches the server.
+            let progress = app.descendants(matching: .any)["meetingDeleteProgress"].firstMatch
+            guard progress.waitForExistence(timeout: 10) else {
+                throw RuntimeError("Delete did not show a loading indicator")
+            }
+            XCTAssertTrue(activePage.row(meeting).exists)
+            try setDeleteFailureState(1, token: token)
+
+            // Check the role-specific error and confirm neither user lost the meeting.
+            let title = role == .host ? "Could not delete meeting" : "Could not leave meeting"
+            let error = app.alerts[title]
+            guard error.waitForExistence(timeout: 10) else {
+                throw RuntimeError("The alert '\(title)' did not appear")
+            }
+            try await assertVisible(meeting, to: hostFixtures, true)
+            try await assertVisible(meeting, to: inviteeFixtures, true)
+            try await assertConversationAccess(meeting, for: inviteeFixtures, true)
+            attachScreenshot("TC-12016 \(role) retry alert")
+
+            // Restore the request and retry from the alert without reopening the menu.
+            try setDeleteFailureState(2, token: token)
+            let retry = error.buttons["meetingDeleteRetryButton"].firstMatch
+            guard retry.waitAndTap() else { throw RuntimeError("Retry did not appear") }
+            try assertRemoved(meeting, on: activePage)
+            XCTAssertFalse(error.exists)
+            try await assertVisible(meeting, to: hostFixtures, role == .invitee)
+            if role == .host {
+                try await assertVisible(meeting, to: inviteeFixtures, false)
+            } else {
+                try await assertConversationAccess(meeting, for: inviteeFixtures, false)
+            }
+        }
+    }
+
+    private func setDeleteFailureState(_ state: UInt64, token: Int32) throws {
+        guard notify_set_state(token, state) == UInt32(NOTIFY_STATUS_OK) else {
+            throw RuntimeError("The delete failure control could not set state \(state)")
+        }
     }
 
     private func date(hour: Int = 10, minute: Int = 0, dayOffset: Int = 0) -> Date {
