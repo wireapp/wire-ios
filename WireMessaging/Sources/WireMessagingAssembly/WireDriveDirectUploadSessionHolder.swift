@@ -155,6 +155,8 @@ public final class WireDriveDirectUploadSessionHolder: Sendable {
 
         // iOS requires this on the main queue.
         Task { @MainActor in
+            let controller = lock.withLock { $0.liveActivityControllers[identifier] }
+            await controller?.waitForPendingActivityUpdates()
             handler()
         }
     }

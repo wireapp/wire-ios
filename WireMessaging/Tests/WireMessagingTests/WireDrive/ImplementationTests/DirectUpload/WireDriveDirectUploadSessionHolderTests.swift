@@ -170,6 +170,41 @@ struct WireDriveDirectUploadSessionHolderTests {
 
     @Test
     @MainActor
+    func waitsForTheDelayedActivityEndBeforeCompleting() async {
+        let sut = makeSut()
+        let userID = UUID()
+        let identifier = WireDriveDirectUploadSessionHolder.Identifier.make(userID: userID)
+        let tracker = WireDriveObserveDirectUploadsUseCase()
+        let client = FakeUploadsActivityClient()
+        let delayGate = UploadsDelayGate()
+        client.hasActivity = true
+        let controller = WireDriveUploadsLiveActivityController(
+            observeUploads: tracker,
+            client: client,
+            delay: { _ in await delayGate.wait() }
+        )
+        sut.retainLiveActivityController(controller, userID: userID)
+        controller.start()
+        let called = Counter()
+        _ = sut.handleEventsForBackgroundURLSession(identifier: identifier) { called.increment() }
+
+        tracker.replaceAll(with: [.fixture(.uploaded)])
+        sut.didFinishEvents(identifier: identifier)
+        for _ in 0 ..< 20 {
+            await Task.yield()
+        }
+        #expect(called.value == 0)
+
+        await delayGate.open()
+        for _ in 0 ..< 20 {
+            await Task.yield()
+        }
+        #expect(called.value == 1)
+        #expect(!client.hasActivity)
+    }
+
+    @Test
+    @MainActor
     func ignoresDrainingForAnUnclaimedIdentifier() async {
         // Given
         let sut = makeSut()

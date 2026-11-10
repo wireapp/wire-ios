@@ -94,6 +94,19 @@ package final class WireDriveUploadsLiveActivityController {
         await endAllActivities()
     }
 
+    /// Lets the background session's completion wait until the activity updates and the delayed final end are done,
+    /// since a sleeping task does not keep the app running.
+    package func waitForPendingActivityUpdates() async {
+        while true {
+            let work = pendingWork
+            let end = pendingEnd
+            await work?.value
+            await end?.value
+            // The delayed end is only queued once its timer fires, which replaces both tasks.
+            guard pendingWork != work || pendingEnd != end else { return }
+        }
+    }
+
     package func stop() async {
         cancelPendingEnd()
         subscription = nil
