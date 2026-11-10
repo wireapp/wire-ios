@@ -21,21 +21,21 @@ import WireLogging
 
 extension ZMUserSession {
 
-    func setupCertificateRevocationLists(mlsGroupVerification: any MLSGroupVerificationProtocol) {
-        let cRLsChecker = CertificateRevocationListsChecker(
+    func setupE2EICredentialsChecker(mlsGroupVerification: any MLSGroupVerificationProtocol) {
+        let credentialsChecker = E2EICredentialsChecker(
             mlsGroupVerification: mlsGroupVerification,
             selfClientCertificateProvider: selfClientCertificateProvider,
             coreCryptoProvider: coreCryptoProvider
         )
-        self.cRLsChecker = cRLsChecker
+        self.credentialsChecker = credentialsChecker
     }
 
-    func checkExpiredCertificateRevocationLists() {
+    func checkE2EICredentialsInBackground() {
         Task {
             do {
-                try await refreshCertificateRevocationLists()
+                try await checkE2EICredentials()
             } catch {
-                WireLogger.e2ei.warn("failed to check expired CRLs: \(error)")
+                WireLogger.e2ei.warn("failed to check E2EI credentials: \(error)")
             }
         }
     }
@@ -43,15 +43,15 @@ extension ZMUserSession {
     /// Asks the CRL checker to re-check all credentials, if the E2EI feature is enabled.
     ///
     /// - Throws: Any error raised while checking the credentials.
-    public func refreshCertificateRevocationLists() async throws {
-        guard let cRLsChecker else {
-            WireLogger.e2ei.error("requires 'cRLsChecker' to refresh CRLs!", attributes: .safePublic)
+    public func checkE2EICredentials() async throws {
+        guard let credentialsChecker else {
+            WireLogger.e2ei.error("requires 'credentialsChecker' to check E2EI credentials!", attributes: .safePublic)
             return
         }
 
         let isE2EIFeatureEnabled = await managedObjectContext.perform { self.e2eiFeature.isEnabled }
         guard isE2EIFeatureEnabled else { return }
 
-        try await cRLsChecker.checkExpiredCRLs()
+        try await credentialsChecker.checkCredentials()
     }
 }

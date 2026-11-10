@@ -22,11 +22,11 @@ import WireCoreCrypto
 import WireLogging
 
 // sourcery: AutoMockable
-public protocol CertificateRevocationListsChecking {
-    func checkExpiredCRLs() async throws
+public protocol E2EICredentialsChecking {
+    func checkCredentials() async throws
 }
 
-public class CertificateRevocationListsChecker: CertificateRevocationListsChecking {
+public class E2EICredentialsChecker: E2EICredentialsChecking {
 
     // MARK: - Properties
 
@@ -53,9 +53,9 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
 
     // MARK: - Public interface
 
-    public func checkExpiredCRLs() async throws {
+    public func checkCredentials() async throws {
 
-        WireLogger.e2ei.info("checking expired CRLs")
+        WireLogger.e2ei.info("checking credentials")
 
         try await coreCryptoProvider.coreCrypto().transaction { context in
             try await context.checkCredentials()

@@ -32,9 +32,9 @@ final class DeveloperE2eiViewModel: ObservableObject {
 
     @Published var certificateValidTo = ""
 
-    @Published var isRefreshingCRLs = false
+    @Published var isCheckingCredentials = false
 
-    @Published var crlRefreshStatus = ""
+    @Published var credentialsCheckStatus = ""
 
     init(userSession: UserSession?) {
         self.userSession = userSession as? ZMUserSession
@@ -117,19 +117,19 @@ final class DeveloperE2eiViewModel: ObservableObject {
     }
 
     @MainActor
-    func refreshCRLs() {
-        guard let session = userSession, !isRefreshingCRLs else { return }
+    func checkCredentials() {
+        guard let session = userSession, !isCheckingCredentials else { return }
 
-        isRefreshingCRLs = true
-        crlRefreshStatus = ""
+        isCheckingCredentials = true
+        credentialsCheckStatus = ""
         Task { @MainActor in
-            defer { isRefreshingCRLs = false }
+            defer { isCheckingCredentials = false }
             do {
-                try await session.refreshCertificateRevocationLists()
-                crlRefreshStatus = "Last refresh: ok"
+                try await session.checkE2EICredentials()
+                credentialsCheckStatus = "Last check: ok"
             } catch {
-                WireLogger.e2ei.error("failed to refresh CRLs: \(error)")
-                crlRefreshStatus = "Last refresh: failed: \(error)"
+                WireLogger.e2ei.error("failed to check credentials: \(error)")
+                credentialsCheckStatus = "Last check: failed: \(error)"
             }
             await fetchSelfClientCertificate()
         }

@@ -77,25 +77,25 @@ struct DeveloperE2eiView: View {
                 }
             }
 
-            Section("Certificate Revocation Lists") {
+            Section("Credentials") {
                 VStack(alignment: .leading) {
                     HStack {
-                        Button(String("Refresh CRLs")) {
-                            viewModel.refreshCRLs()
+                        Button(String("Check credentials")) {
+                            viewModel.checkCredentials()
                         }
-                        .disabled(viewModel.isRefreshingCRLs)
+                        .disabled(viewModel.isCheckingCredentials)
 
-                        if viewModel.isRefreshingCRLs {
+                        if viewModel.isCheckingCredentials {
                             Spacer()
                             ProgressView()
                         }
                     }
-                    if !viewModel.crlRefreshStatus.isEmpty {
-                        Text(viewModel.crlRefreshStatus)
+                    if !viewModel.credentialsCheckStatus.isEmpty {
+                        Text(viewModel.credentialsCheckStatus)
                             .font(.footnote)
                     }
                     footNote(
-                        "Asks CoreCrypto to check all credentials, which refetches every relevant certificate revocation list. If your own certificate has been revoked, the revoked certificate alert is shown."
+                        "Asks CoreCrypto to check all credentials, which refetches every relevant certificate revocation list. If your own certificate has been revoked, the revoked certificate alert is shown. The verification status of all MLS conversations is then updated in the background."
                     )
                 }
             }
