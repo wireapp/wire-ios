@@ -161,6 +161,12 @@ final class LoginViaEmailViewModelTests: XCTestCase, LoginViaEmailViewModel.Fact
         // given
         sut.email = " mika@example.com "
         sut.password = " password  "
+        mockLoginViaEmailUseCase.invokeEmailPasswordVerificationCode_MockError = LoginViaEmailUseCaseFailure
+            .invalidCredentials
+        await sut.submitCredentials()
+        XCTAssertTrue(sut.hasInvalidCredentials)
+        sut.alert = nil
+        mockLoginViaEmailUseCase.invokeEmailPasswordVerificationCode_MockError = nil
 
         let authenticationResult = AuthenticationResult(
             userID: Fixture.someAccessToken.userID,
@@ -189,7 +195,8 @@ final class LoginViaEmailViewModelTests: XCTestCase, LoginViaEmailViewModel.Fact
 
         // then
         XCTAssertNil(sut.alert)
-        XCTAssertEqual(isLoadingCalls, [true, false])
+        XCTAssertFalse(sut.hasInvalidCredentials)
+        XCTAssertEqual(isLoadingCalls, [true, false, true, false])
 
         try XCTAssertCount(router.navigate_Invocations, count: 1)
         let actualDestination = try XCTUnwrap(router.navigate_Invocations[0] as? LoginViaEmailDestination)
@@ -211,7 +218,110 @@ final class LoginViaEmailViewModelTests: XCTestCase, LoginViaEmailViewModel.Fact
 
         // then
         XCTAssertEqual(sut.alert, .invalidCredentials)
+        XCTAssertTrue(sut.hasInvalidCredentials)
         XCTAssertEqual(isLoadingCalls, [true, false])
+    }
+
+    @MainActor
+    func testInvalidCredentials_remainAfterDismissingAlert() async {
+        mockLoginViaEmailUseCase.invokeEmailPasswordVerificationCode_MockError = LoginViaEmailUseCaseFailure
+            .invalidCredentials
+        await sut.submitCredentials()
+
+        sut.alert = nil
+
+        XCTAssertTrue(sut.hasInvalidCredentials)
+    }
+
+    @MainActor
+    func testInvalidCredentials_clearWhenEmailChanges() async {
+        mockLoginViaEmailUseCase.invokeEmailPasswordVerificationCode_MockError = LoginViaEmailUseCaseFailure
+            .invalidCredentials
+        await sut.submitCredentials()
+        XCTAssertTrue(sut.hasInvalidCredentials)
+
+        sut.email = "other@example.com"
+
+        XCTAssertFalse(sut.hasInvalidCredentials)
+    }
+
+    @MainActor
+    func testInvalidCredentials_clearWhenPasswordChanges() async {
+        mockLoginViaEmailUseCase.invokeEmailPasswordVerificationCode_MockError = LoginViaEmailUseCaseFailure
+            .invalidCredentials
+        await sut.submitCredentials()
+        XCTAssertTrue(sut.hasInvalidCredentials)
+
+        sut.password = "corrected password"
+
+        XCTAssertFalse(sut.hasInvalidCredentials)
+    }
+
+    @MainActor
+    func testInvalidCredentials_remainWhenCredentialsAreUnchanged() async {
+        mockLoginViaEmailUseCase.invokeEmailPasswordVerificationCode_MockError = LoginViaEmailUseCaseFailure
+            .invalidCredentials
+        await sut.submitCredentials()
+
+        let email = sut.email
+        let password = sut.password
+        sut.email = email
+        sut.password = password
+
+        XCTAssertTrue(sut.hasInvalidCredentials)
+    }
+
+    @MainActor
+    func testInvalidCredentials_clearWhenResubmitting() async {
+        mockLoginViaEmailUseCase.invokeEmailPasswordVerificationCode_MockError = LoginViaEmailUseCaseFailure
+            .invalidCredentials
+        await sut.submitCredentials()
+        XCTAssertTrue(sut.hasInvalidCredentials)
+        sut.alert = nil
+        mockLoginViaEmailUseCase.invokeEmailPasswordVerificationCode_MockError = nil
+        mockLoginViaEmailUseCase.invokeEmailPasswordVerificationCode_MockMethod = { [self] _, _, _ in
+            await MainActor.run {
+                XCTAssertFalse(sut.hasInvalidCredentials)
+            }
+            throw LoginViaEmailUseCaseFailure.accountSuspended
+        }
+
+        await sut.submitCredentials()
+
+        XCTAssertFalse(sut.hasInvalidCredentials)
+        XCTAssertEqual(sut.alert, .accountSuspended)
+    }
+
+    @MainActor
+    func testInvalidCredentials_doNotReappearWhenEmailChangesDuringLogin() async {
+        mockLoginViaEmailUseCase.invokeEmailPasswordVerificationCode_MockMethod = { [self] _, _, _ in
+            await MainActor.run {
+                sut.email = "corrected@example.com"
+            }
+            throw LoginViaEmailUseCaseFailure.invalidCredentials
+        }
+
+        await sut.submitCredentials()
+
+        XCTAssertFalse(sut.hasInvalidCredentials)
+        XCTAssertEqual(sut.alert, .invalidCredentials)
+    }
+
+    @MainActor
+    func testInvalidCredentials_doNotReappearWhenPasswordIsEditedAndRestoredDuringLogin() async {
+        sut.password = "original password"
+        mockLoginViaEmailUseCase.invokeEmailPasswordVerificationCode_MockMethod = { [self] _, _, _ in
+            await MainActor.run {
+                sut.password = "edited password"
+                sut.password = "original password"
+            }
+            throw LoginViaEmailUseCaseFailure.invalidCredentials
+        }
+
+        await sut.submitCredentials()
+
+        XCTAssertFalse(sut.hasInvalidCredentials)
+        XCTAssertEqual(sut.alert, .invalidCredentials)
     }
 
     @MainActor
@@ -228,6 +338,7 @@ final class LoginViaEmailViewModelTests: XCTestCase, LoginViaEmailViewModel.Fact
 
         // then
         XCTAssertNil(sut.alert)
+        XCTAssertFalse(sut.hasInvalidCredentials)
         XCTAssertEqual(isLoadingCalls, [true, false])
         try XCTAssertCount(router.navigate_Invocations, count: 1)
         let actualDestination = try XCTUnwrap(router.navigate_Invocations[0] as? LoginViaEmailDestination)
@@ -257,6 +368,7 @@ final class LoginViaEmailViewModelTests: XCTestCase, LoginViaEmailViewModel.Fact
 
         // then
         XCTAssertEqual(sut.alert, .accountPendingActivation)
+        XCTAssertFalse(sut.hasInvalidCredentials)
         XCTAssertEqual(isLoadingCalls, [true, false])
     }
 
@@ -275,6 +387,7 @@ final class LoginViaEmailViewModelTests: XCTestCase, LoginViaEmailViewModel.Fact
 
         // then
         XCTAssertEqual(sut.alert, .accountSuspended)
+        XCTAssertFalse(sut.hasInvalidCredentials)
         XCTAssertEqual(isLoadingCalls, [true, false])
     }
 
@@ -291,6 +404,7 @@ final class LoginViaEmailViewModelTests: XCTestCase, LoginViaEmailViewModel.Fact
         await sut.submitCredentials()
         // then
         XCTAssertEqual(router.alert_Invocations, [.unknownError])
+        XCTAssertFalse(sut.hasInvalidCredentials)
         XCTAssertEqual(isLoadingCalls, [true, false])
     }
 
