@@ -246,6 +246,7 @@ final class DeleteMeetingTests: WireUITestCase {
 
     @MainActor
     func testDeleteActiveMeetNowByHostAndInvitee_TC_12015() async throws {
+        executionTimeAllowance = 600
         let (host, users, _, _) = try await UserHelper.default.registerMeetingsTeam(withMemberCount: 2)
         let (invitee, otherInvitee) = (users[0], users[1])
         try await registerClients(for: users)
@@ -266,6 +267,14 @@ final class DeleteMeetingTests: WireUITestCase {
         try await assertVisible(hostMeeting, to: hostFixtures, false)
         try await assertVisible(hostMeeting, to: inviteeFixtures, false)
         try await assertVisible(hostMeeting, to: otherFixtures, false)
+
+        // Dismiss the optional call survey before opening the next meeting form.
+        let skipFeedback = app.buttons["score_close"]
+        if skipFeedback.waitForExistence(timeout: 5) {
+            guard skipFeedback.waitAndTap(), skipFeedback.waitToDisappear() else {
+                throw RuntimeError("Call Quality Feedback did not close")
+            }
+        }
 
         // Start a separate Meet Now. Sign in as an invitee, join, then delete it for self.
         let inviteeMeeting = try await startMeetNow(
