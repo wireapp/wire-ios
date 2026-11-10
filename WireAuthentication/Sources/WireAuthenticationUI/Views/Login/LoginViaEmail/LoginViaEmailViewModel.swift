@@ -35,27 +35,13 @@ package final class LoginViaEmailViewModel: ObservableObject {
 
     // MARK: - View state
 
-    @Published var email: String {
-        didSet {
-            if email != oldValue {
-                accountCredentialsDidChange()
-            }
-        }
-    }
-
-    @Published var password: String = "" {
-        didSet {
-            if password != oldValue {
-                accountCredentialsDidChange()
-            }
-        }
-    }
+    @Published var email: String
+    @Published var password: String = ""
 
     @Published var proxyUsername: String = ""
     @Published var proxyPassword: String = ""
 
     @Published private(set) var isLoading = false
-    @Published private(set) var hasInvalidCredentials = false
     @Published var alert: Alert?
     @Published var modalDestination: LoginViaEmailSheet?
     @Published var onSheetDismissAction: (() -> Void)?
@@ -111,7 +97,6 @@ package final class LoginViaEmailViewModel: ObservableObject {
     package let factory: any Factory
     private let router: any Router
     private let didDetectDomainConflict: Bool
-    private var credentialsErrorRevision = 0
 
     // MARK: - Life cycle
 
@@ -135,9 +120,6 @@ package final class LoginViaEmailViewModel: ObservableObject {
     // MARK: - Actions
 
     func submitCredentials() async {
-        hasInvalidCredentials = false
-        credentialsErrorRevision += 1
-        let submittedCredentialsRevision = credentialsErrorRevision
         isLoading = true
 
         let sanitizedEmail = email.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -176,9 +158,6 @@ package final class LoginViaEmailViewModel: ObservableObject {
 
             switch error {
             case LoginViaEmailUseCaseFailure.invalidCredentials:
-                if submittedCredentialsRevision == credentialsErrorRevision {
-                    hasInvalidCredentials = true
-                }
                 alert = .invalidCredentials
             case LoginViaEmailUseCaseFailure.twoFactorAuthenticationRequired:
                 router.navigate(
@@ -236,11 +215,6 @@ package final class LoginViaEmailViewModel: ObservableObject {
     }
 
     // MARK: - Private
-
-    private func accountCredentialsDidChange() {
-        credentialsErrorRevision += 1
-        hasInvalidCredentials = false
-    }
 
     private var proxyCredentials: ProxyCredentials? {
         guard areProxyCredentialsRequired else {
