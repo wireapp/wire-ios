@@ -476,72 +476,72 @@ final class WireDriveTests: WireUITestCase {
         }
     }
 
-    // TODO: [WPB-29933] Restore action not handled properly on BE side, when fixed, uncomment that code.
-//    @MainActor
-//    func testRestoreMultipleItems_TC_12310() async throws {
-//
-//        // GIVEN
-//        let teamOwner = try await createDriveEnabledConversation(
-//            .group(UserGenerator.generateRandomConversationName())
-//        )
-//
-//        var sharedDrivePage = try loginAndOpenConversation(for: teamOwner)
-//            .openSharedDrive()
-//
-//        let files: [(name: String, template: CreateFilePage.Template)] = [
-//            ("First", .document),
-//            ("Second", .spreadsheet)
-//        ]
-//        for file in files {
-//            sharedDrivePage = try sharedDrivePage
-//                .createFile(template: file.template)
-//                .enterFileNameAndCreate(name: file.name)
-//            XCTAssertTrue(sharedDrivePage.verifyFileIsCreated(
-//                fileName: file.name,
-//                fileExtension: file.template.fileExtension
-//            ))
-//        }
-//        let fileNames = files.map { "\($0.name).\($0.template.fileExtension)" }
-//
-//        sharedDrivePage.selectItems(named: fileNames)
-//        sharedDrivePage.tapDeleteFloatingButton()
-//        sharedDrivePage.confirmDeleteOnBottomSheet()
-//        for fileName in fileNames {
-//            XCTAssertTrue(
-//                sharedDrivePage.fileRow(named: fileName).waitForNonExistence(timeout: 10),
-//                "Deleted file '\(fileName)' should leave the shared drive"
-//            )
-//        }
-//
-//        let recycleBinPage = try sharedDrivePage.openRecycleBin()
-//        for fileName in fileNames {
-//            XCTAssertTrue(
-//                recycleBinPage.fileRow(named: fileName).waitForExistence(timeout: 10),
-//                "Deleted file '\(fileName)' should appear in the recycle bin"
-//            )
-//        }
-//
-//        // WHEN
-//        recycleBinPage.selectItems(named: fileNames, isRecycleBin: true)
-//        recycleBinPage.restoreSelectedItems()
-//
-//        // THEN
-//        for fileName in fileNames {
-//            XCTAssertTrue(
-//                recycleBinPage.fileRow(named: fileName).waitForNonExistence(timeout: 10),
-//                "Restored file '\(fileName)' should leave the recycle bin"
-//            )
-//        }
-//        XCTAssertTrue(recycleBinPage.verifyRecycleBinIsEmpty())
-//
-//        sharedDrivePage = try recycleBinPage.closeRecycleBin()
-//        for fileName in fileNames {
-//            XCTAssertTrue(
-//                sharedDrivePage.fileRow(named: fileName).waitForExistence(timeout: 10),
-//                "Restored file '\(fileName)' should reappear in the shared drive"
-//            )
-//        }
-//    }
+    @MainActor
+    func testRestoreMultipleItems_TC_12310() async throws {
+        throw XCTSkip("WPB-29933: Bulk restore is disabled pending a backend fix.")
+
+        // GIVEN
+        let teamOwner = try await createDriveEnabledConversation(
+            .group(UserGenerator.generateRandomConversationName())
+        )
+
+        var sharedDrivePage = try loginAndOpenConversation(for: teamOwner)
+            .openSharedDrive()
+
+        let files: [(name: String, template: CreateFilePage.Template)] = [
+            ("First", .document),
+            ("Second", .spreadsheet)
+        ]
+        for file in files {
+            sharedDrivePage = try sharedDrivePage
+                .createFile(template: file.template)
+                .enterFileNameAndCreate(name: file.name)
+            XCTAssertTrue(sharedDrivePage.verifyFileIsCreated(
+                fileName: file.name,
+                fileExtension: file.template.fileExtension
+            ))
+        }
+        let fileNames = files.map { "\($0.name).\($0.template.fileExtension)" }
+
+        sharedDrivePage.selectItems(named: fileNames)
+        sharedDrivePage.tapDeleteFloatingButton()
+        sharedDrivePage.confirmDeleteOnBottomSheet()
+        for fileName in fileNames {
+            XCTAssertTrue(
+                sharedDrivePage.fileRow(named: fileName).waitForNonExistence(timeout: 10),
+                "Deleted file '\(fileName)' should leave the shared drive"
+            )
+        }
+
+        let recycleBinPage = try sharedDrivePage.openRecycleBin()
+        for fileName in fileNames {
+            XCTAssertTrue(
+                recycleBinPage.fileRow(named: fileName).waitForExistence(timeout: 10),
+                "Deleted file '\(fileName)' should appear in the recycle bin"
+            )
+        }
+
+        // WHEN
+        recycleBinPage.selectItems(named: fileNames, isRecycleBin: true)
+        recycleBinPage.restoreSelectedItems()
+
+        // THEN
+        for fileName in fileNames {
+            XCTAssertTrue(
+                recycleBinPage.fileRow(named: fileName).waitForNonExistence(timeout: 10),
+                "Restored file '\(fileName)' should leave the recycle bin"
+            )
+        }
+        XCTAssertTrue(recycleBinPage.verifyRecycleBinIsEmpty())
+
+        sharedDrivePage = try recycleBinPage.closeRecycleBin()
+        for fileName in fileNames {
+            XCTAssertTrue(
+                sharedDrivePage.fileRow(named: fileName).waitForExistence(timeout: 10),
+                "Restored file '\(fileName)' should reappear in the shared drive"
+            )
+        }
+    }
 
     @MainActor
     func testMakeFileAvailableOffline_TC_12153() async throws {
