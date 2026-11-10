@@ -25,8 +25,7 @@ final class WireDriveTests: WireUITestCase {
 
     override func additionalDeveloperFlags() -> [DeveloperFlag: Bool] {
         [
-            .simulateDriveOffline: false,
-            .enableDriveBulkActions: true
+            .simulateDriveOffline: false
         ]
     }
 
@@ -145,8 +144,7 @@ final class WireDriveTests: WireUITestCase {
         app.launchArguments = ["--useEnvStaging"]
         app.setDeveloperFlags([
             .useWireAuthentication: true,
-            .simulateDriveOffline: isOffline,
-            .enableDriveBulkActions: true
+            .simulateDriveOffline: isOffline
         ])
         app.launch()
 

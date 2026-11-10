@@ -69,11 +69,11 @@ private extension FilesTrailingToolbar {
 
     var canEmptyRecycleBin: Bool {
         viewModel.selfUserRole == .editor && viewModel.isRecycleBin && !isSelecting && !viewModel.state.items
-            .isEmpty && !viewModel.isOffline && viewModel.navigationPath.isEmpty && viewModel.isBulkActionsEnabled
+            .isEmpty && !viewModel.isOffline && viewModel.navigationPath.isEmpty
     }
 
     var canSelectItems: Bool {
-        viewModel.selfUserRole == .editor && !viewModel.state.items.isEmpty && viewModel.isBulkActionsEnabled
+        viewModel.selfUserRole == .editor && !viewModel.state.items.isEmpty
     }
 
     var canCreateItems: Bool {

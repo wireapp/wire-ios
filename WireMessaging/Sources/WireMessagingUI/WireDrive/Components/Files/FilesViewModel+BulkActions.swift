@@ -27,10 +27,6 @@ private typealias Strings = L10n.Localizable.Conversation.WireCells
 /// Also determines offline action availability and folder warnings. Some methods are shared with per-item actions.
 extension FilesViewModel {
 
-    var isBulkActionsEnabled: Bool {
-        UserDefaults.standard.bool(forKey: "enableDriveBulkActions")
-    }
-
     var offlineActionWarningMessage: String {
         let folderCount = selectedItems.filter { $0.kind == .folder }.count
         return folderCount > 1

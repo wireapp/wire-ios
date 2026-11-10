@@ -135,6 +135,8 @@
 "conversation.wireCells.files.item.menu.versionHistory" = "История версий";
 "conversation.wireCells.files.item.menu.makeAvailableOffline" = "Сделать доступным оффлайн";
 "conversation.wireCells.files.item.menu.removeAvailableOffline" = "Удалить оффлайн доступ";
+"conversation.wireCells.files.offline.folderSelectionWarning" = "You can’t make folders available offline.\nDeselect the folder to continue.";
+"conversation.wireCells.files.offline.folderSelectionWarningMultiple" = "You can’t make folders available offline.\nDeselect the %d folders to continue.";
 "conversation.wireCells.files.item.deleteConfirmation.title" = "Это приведет к необратимому удалению файла %@ для всех участников. Все потеряют доступ и восстановить файл будет невозможно.";
 "conversation.wireCells.files.item.deleteConfirmation.deletePermanently" = "Удалить навсегда";
 "conversation.wireCells.files.item.menu.delete" = "Удалить";
@@ -193,6 +195,17 @@
 "conversation.wireCells.files.downloadingFile" = "Загрузка файла...";
 "conversation.wireCells.files.offlineModeHint" = "Вы по-прежнему можете получить доступ к своим файлам в режиме оффлайн.";
 "conversation.wireCells.files.time.just_now" = "Только что";
+"conversation.wireCells.files.deletePermanently.title" = "Это приведет к необратимому удалению %@ элементов для всех участников. Все потеряют к ним доступ и восстановить их будет невозможно.";
+"conversation.wireCells.files.deletePermanently.confirmation" = "Удалить навсегда";
+"conversation.wireCells.files.deleteToRecycleBin.title" = "%@ элементов будет перемещено в корзину.";
+"conversation.wireCells.files.deleteToRecycleBin.confirmation" = "Удалить";
+"conversation.wireCells.files.restore.title" = "%@ элементов будут восстановлены и снова доступны для всех в этой беседе.";
+"conversation.wireCells.files.restore.confirmation" = "Восстановить";
+"conversation.wireCells.files.selection.selectItems" = "Выберите элементы";
+"conversation.wireCells.files.selection.oneItem" = "1 элемент";
+"conversation.wireCells.files.selection.items" = "%@ элемента";
+"conversation.wireCells.files.selection.selectAll" = "Выбрать все";
+"conversation.wireCells.files.selection.deselectAll" = "Отменить выбор";
 
 
 // MARK: - Shared Drive uploads
@@ -250,6 +263,8 @@
 "conversation.wireCells.recycleBin.item.restoreParentConfirmation.title" = "Вы не можете восстановить папки или файлы из удаленной папки. Чтобы восстановить нужный элемент, вы должны восстановить его родительскую папку.\n\n Папка \"%@\" будет восстановлена со всеми файлами и подпапками и станет доступной всем участникам этой беседы.";
 "conversation.wireCells.recycleBin.emptyFolder.title" = "Пустая папка";
 "conversation.wireCells.recycleBin.emptyFolder.message" = "Эта папка не содержит файлов или папок.";
+"conversation.wireCells.recycleBin.emptyConfirmation.title" = "Это приведет к окончательному удалению всех элементов, включая все файлы и папки. Все пользователи потеряют к ним доступ и восстановить их будет невозможно.";
+"conversation.wireCells.recycleBin.emptyConfirmation.button" = "Очистить корзину";
 
 // MARK: - File Tags View
 "conversation.wireCells.tags.title" = "Добавить или удалить теги";
