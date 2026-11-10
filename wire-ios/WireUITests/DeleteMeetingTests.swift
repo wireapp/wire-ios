@@ -18,6 +18,7 @@
 
 import Foundation
 import WireFoundation
+import WireLocators
 import WireNetwork
 import XCTest
 
@@ -96,6 +97,31 @@ final class DeleteMeetingTests: WireUITestCase {
         // Check the invitee's list after sign-in and sync.
         let inviteePage = try launchMeetings(for: invitee, now: now)
         XCTAssertTrue(inviteePage.noUpcomingMeetingsText.waitForExistence(timeout: 15))
+    }
+
+    @MainActor
+    func testHostDeletesOngoingScheduledMeetings_TC_12007() async throws {
+        let (host, users, _, _) = try await UserHelper.default.registerMeetingsTeam(withMemberCount: 1)
+        try await registerClients(for: users)
+        try await requireConferenceCalling()
+        let hostFixtures = try await MeetingsTestHelper(user: host)
+        let inviteeFixtures = try await MeetingsTestHelper(user: users[0])
+        let meetings = try await scheduleOngoingMeetings(for: host, using: hostFixtures, inviting: users)
+        let page = try launchMeetings(for: host, now: date(minute: 30))
+
+        // Delete once without joining, and once from the list with the call minimized.
+        for (meeting, join) in zip(meetings, [false, true]) {
+            try await assertVisible(meeting, to: inviteeFixtures, true)
+            try showOngoing(meeting, on: page)
+            if join { try joinAndMinimize(meeting, on: page) }
+            try confirmDelete(requestDelete(meeting, on: page, as: .host))
+            try assertRemoved(meeting, on: page)
+            if join { assertCallEnded() }
+
+            // Check that neither account can see the record after the host deletes it.
+            try await assertVisible(meeting, to: hostFixtures, false)
+            try await assertVisible(meeting, to: inviteeFixtures, false)
+        }
     }
 
     private func date(hour: Int = 10, minute: Int = 0, dayOffset: Int = 0) -> Date {
@@ -240,6 +266,74 @@ final class DeleteMeetingTests: WireUITestCase {
         let expectedNotFound = hasAccess ? [] : [meeting.conversationID]
         XCTAssertEqual(response.found.compactMap(\.qualifiedID), expectedFound)
         XCTAssertEqual(response.notFound, expectedNotFound)
+    }
+
+    @MainActor
+    private func scheduleOngoingMeetings(
+        for host: UserInfo,
+        using fixtures: MeetingsTestHelper,
+        inviting users: [UserInfo]
+    ) async throws -> [MeetingResponse] {
+        let page = try launchMeetings(for: host, now: date(hour: 8))
+        var meetings: [MeetingResponse] = []
+        for title in ["Outside the call", "Inside the call"] {
+            try await meetings.append(schedule(on: page, using: fixtures, title: title, inviting: users, startHour: 10))
+        }
+        return meetings
+    }
+
+    private func showOngoing(_ meeting: MeetingResponse, on page: MeetingsPage) throws {
+        let join = try page.showRow(meeting).buttons[Locators.WireMeetings.MeetingRow.joinButton.rawValue]
+        guard join.waitForExistence(timeout: 10), join.isEnabled else {
+            throw RuntimeError("The meeting did not show the ongoing Join action")
+        }
+    }
+
+    private var restoreCallButton: XCUIElement {
+        app.buttons[Locators.ActiveConversationPage.openOngoingCallButton.rawValue]
+    }
+
+    private func requireConferenceCalling() async throws {
+        let configs = try await UserHelper.default.featureConfigsAPI.getFeatureConfigs()
+        guard configs.contains(where: {
+            guard case let .conferenceCalling(config) = $0 else { return false }
+            return config.status == .enabled
+        }) else { throw RuntimeError("The call test requires conference calling to be enabled") }
+    }
+
+    @MainActor
+    private func joinAndMinimize(_ meeting: MeetingResponse, on page: MeetingsPage) throws {
+        try page.openMenu(for: meeting)
+        guard app.buttons["Join now"].waitAndTap() else { throw RuntimeError("Join now did not appear") }
+        try minimizeConnectedCall()
+    }
+
+    @MainActor
+    private func minimizeConnectedCall() throws {
+        let timer = app.staticTexts[Locators.OngoingCallPage.timeLabel.rawValue]
+        let permission = springboard.alerts.buttons["Allow"].firstMatch
+        let pattern = "^[0-9]+:[0-5][0-9]$"
+        let ready = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
+            permission.exists || (timer.exists && timer.label.range(of: pattern, options: .regularExpression) != nil)
+        }, object: nil)
+        guard XCTWaiter().wait(for: [ready], timeout: 30) == .completed else {
+            throw RuntimeError("The call or microphone permission did not appear")
+        }
+        if permission.exists { permission.tap() }
+        let established = XCTNSPredicateExpectation(
+            predicate: NSPredicate(format: "exists == true AND label MATCHES %@", pattern), object: timer
+        )
+        guard XCTWaiter().wait(for: [established], timeout: 30) == .completed else {
+            throw RuntimeError("The call did not connect")
+        }
+        let call = try OngoingCallPage()
+        guard call.minimizeCallButton.waitAndTap(), restoreCallButton.waitForExistence(timeout: 10) else {
+            throw RuntimeError("The minimized call did not stay open")
+        }
+    }
+
+    private func assertCallEnded() {
+        XCTAssertTrue(restoreCallButton.waitToDisappear(timeout: 20), "The active call did not close")
     }
 
     private func attachScreenshot(_ name: String) {
