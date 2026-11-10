@@ -240,6 +240,46 @@ final class DeleteMeetingTests: WireUITestCase {
         }
     }
 
+    @MainActor
+    func testDeleteActiveMeetNowByHostAndInvitee_TC_12015() async throws {
+        let (host, users, _, _) = try await UserHelper.default.registerMeetingsTeam(withMemberCount: 2)
+        let (invitee, otherInvitee) = (users[0], users[1])
+        try await registerClients(for: users)
+        try await requireConferenceCalling()
+        let hostFixtures = try await MeetingsTestHelper(user: host)
+        let inviteeFixtures = try await MeetingsTestHelper(user: invitee)
+        let otherFixtures = try await MeetingsTestHelper(user: otherInvitee)
+        let page = try launchMeetings(for: host, now: nil)
+
+        // Start Meet Now, minimize its call, then delete it as the host.
+        let hostMeeting = try await startMeetNow(
+            on: page, using: hostFixtures, title: "TC12015 host Meet Now", inviting: users
+        )
+        try await assertVisible(hostMeeting, to: inviteeFixtures, true)
+        try confirmDelete(requestDelete(hostMeeting, on: page, as: .host))
+        try assertRemoved(hostMeeting, on: page)
+        assertCallEnded()
+        try await assertVisible(hostMeeting, to: hostFixtures, false)
+        try await assertVisible(hostMeeting, to: inviteeFixtures, false)
+        try await assertVisible(hostMeeting, to: otherFixtures, false)
+
+        // Start a separate Meet Now. Sign in as an invitee, join, then delete it for self.
+        let inviteeMeeting = try await startMeetNow(
+            on: page, using: hostFixtures, title: "TC12015 invitee Meet Now", inviting: users
+        )
+        let inviteePage = try launchMeetings(for: invitee, now: nil)
+        try await assertConversationAccess(inviteeMeeting, for: inviteeFixtures, true)
+        try joinAndMinimize(inviteeMeeting, on: inviteePage)
+        try confirmDelete(requestDelete(inviteeMeeting, on: inviteePage, as: .invitee))
+        try assertRemoved(inviteeMeeting, on: inviteePage)
+        assertCallEnded()
+        try await assertConversationAccess(inviteeMeeting, for: inviteeFixtures, false)
+        try await assertVisible(inviteeMeeting, to: hostFixtures, true)
+        try await assertConversationAccess(inviteeMeeting, for: hostFixtures, true)
+        try await assertVisible(inviteeMeeting, to: otherFixtures, true)
+        try await assertConversationAccess(inviteeMeeting, for: otherFixtures, true)
+    }
+
     private func date(hour: Int = 10, minute: Int = 0, dayOffset: Int = 0) -> Date {
         let calendar = Calendar.current
         let day = calendar.date(byAdding: .day, value: 2 + dayOffset, to: calendar.startOfDay(for: fixtureDate))!
@@ -455,6 +495,24 @@ final class DeleteMeetingTests: WireUITestCase {
 
     private func assertCallEnded() {
         XCTAssertTrue(restoreCallButton.waitToDisappear(timeout: 20), "The active call did not close")
+    }
+
+    @MainActor
+    private func startMeetNow(
+        on page: MeetingsPage,
+        using fixtures: MeetingsTestHelper,
+        title: String,
+        inviting users: [UserInfo]
+    ) async throws -> MeetingResponse {
+        guard page.createMeetingButton.waitAndTap(), page.meetNowOption.waitAndTap() else {
+            throw RuntimeError("Meet Now did not open")
+        }
+        let form = try MeetingFormPage()
+        form.replaceTitle(with: title)
+        try form.addParticipants(users)
+        guard form.saveButton.waitAndTap() else { throw RuntimeError("Meet Now did not start") }
+        try minimizeConnectedCall()
+        return try await meeting(titled: title, from: fixtures)
     }
 
     private func attachScreenshot(_ name: String) {
