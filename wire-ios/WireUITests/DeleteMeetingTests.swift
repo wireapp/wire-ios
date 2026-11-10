@@ -131,6 +131,34 @@ final class DeleteMeetingTests: WireUITestCase {
     }
 
     @MainActor
+    func testInviteeDeletesUpcomingAndCompletedMeetingsForSelf_TC_12011() async throws {
+        let (host, users, _, _) = try await UserHelper.default.registerMeetingsTeam(withMemberCount: 2)
+        let (invitee, otherInvitee) = (users[0], users[1])
+        try await registerClients(for: users)
+        let hostFixtures = try await MeetingsTestHelper(user: host)
+        let inviteeFixtures = try await MeetingsTestHelper(user: invitee)
+        let otherFixtures = try await MeetingsTestHelper(user: otherInvitee)
+        let meetings = try await scheduleNonActiveMeetings(for: host, using: hostFixtures, inviting: users)
+        let now = date(hour: 12)
+        let page = try launchMeetings(for: invitee, now: now)
+
+        // Leave each meeting conversation and verify access for the two other users.
+        for meeting in meetings {
+            try await assertConversationAccess(meeting, for: inviteeFixtures, true)
+            try confirmDelete(requestDelete(meeting, on: page, as: .invitee))
+            try assertRemoved(meeting, on: page)
+            try await assertConversationAccess(meeting, for: inviteeFixtures, false)
+            try await assertVisible(meeting, to: hostFixtures, true)
+            try await assertVisible(meeting, to: otherFixtures, true)
+            try await assertConversationAccess(meeting, for: otherFixtures, true)
+        }
+
+        // Open a fresh list to make sure the completed meeting does not return after sync.
+        let syncedPage = try launchMeetings(for: invitee, now: now)
+        XCTAssertTrue(syncedPage.noUpcomingMeetingsText.waitForExistence(timeout: 15))
+    }
+
+    @MainActor
     func testHostDeletesOngoingScheduledMeetings_TC_12007() async throws {
         let (host, users, _, _) = try await UserHelper.default.registerMeetingsTeam(withMemberCount: 1)
         try await registerClients(for: users)
