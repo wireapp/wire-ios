@@ -100,6 +100,22 @@ final class ConversationReplyWithTextCell: UIView, ConversationMessageCell, Text
     weak var delegate: ConversationMessageCellDelegate?
     weak var actionController: ConversationMessageActionController?
     private var accentColorChangeHandler: AccentColorChangeHandler?
+    private var isObfuscated = true
+
+    var inlineLinkAccessibilityActions: [UIAccessibilityCustomAction] {
+        guard !isObfuscated else { return [] }
+        return messageTextView.makeAccessibilityLinkActions { [weak self] url in
+            guard let self, !isObfuscated else { return false }
+            return !url.isMention || message?.textMessageData?.mentions.contains {
+                $0.location == url.mentionLocation
+            } == true
+        }
+    }
+
+    func prepareForReuse() {
+        isObfuscated = true
+        messageTextView.invalidateAccessibilityLinkActions()
+    }
 
     var selectionView: UIView? { self }
 
@@ -154,6 +170,8 @@ final class ConversationReplyWithTextCell: UIView, ConversationMessageCell, Text
     // MARK: - ConversationMessageCell
 
     func configure(with object: Configuration, animated: Bool) {
+        isObfuscated = object.isObfuscated
+        messageTextView.invalidateAccessibilityLinkActions()
         var replyConfig = ConversationReplyContentView.Configuration(
             quotedMessage: object.quotedMessage,
             accentColor: object.accentColor,

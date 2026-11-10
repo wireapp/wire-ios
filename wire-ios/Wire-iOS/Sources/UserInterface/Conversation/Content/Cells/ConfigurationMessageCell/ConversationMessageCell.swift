@@ -84,6 +84,8 @@ protocol ConversationMessageCell: UIView {
 
     var actionController: ConversationMessageActionController? { get set }
 
+    var inlineLinkAccessibilityActions: [UIAccessibilityCustomAction] { get }
+
     /// Creates an alert controller for available message actions.
     var menuPresenter: ConversationMessageCellMenuPresenter? { get }
 
@@ -103,6 +105,8 @@ protocol ConversationMessageCell: UIView {
 }
 
 extension ConversationMessageCell {
+
+    var inlineLinkAccessibilityActions: [UIAccessibilityCustomAction] { [] }
 
     var selectionView: UIView? {
         nil
@@ -258,13 +262,18 @@ extension ConversationMessageCellDescription {
             actionController?.message = message
         }
         cell.accessibilityIdentifier = accessibilityIdentifier
-        cell.accessibilityCustomActions = actionController?.makeAccessibilityActions()
+        let messageActions = actionController?.makeAccessibilityActions()
+        let linkActions = cell.cellView.inlineLinkAccessibilityActions
+        cell.accessibilityCustomActions = linkActions.isEmpty ? messageActions : (messageActions ?? []) + linkActions
         return cell
     }
 
     func configureCell(_ cell: UITableViewCell, animated: Bool = false) {
         guard let adapterCell = cell as? ConversationMessageCellTableViewAdapter<Self> else { return }
         configureContentView(adapterCell.cellView)
+        let messageActions = actionController?.makeAccessibilityActions()
+        let linkActions = adapterCell.cellView.inlineLinkAccessibilityActions
+        cell.accessibilityCustomActions = linkActions.isEmpty ? messageActions : (messageActions ?? []) + linkActions
     }
 
     func configureContentView(_ cellView: any UIView & ConversationMessageCell, animated: Bool = false) {

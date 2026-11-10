@@ -58,6 +58,68 @@ final class ConversationTextMessageTests: ConversationMessageSnapshotTestCase {
         XCTAssertNil(container.accessibilityHint)
     }
 
+    func testTextMessageParentActionsComposeLinksAndRefreshOnReconfiguration() throws {
+        let previousProvider = SelfUser.provider
+        SelfUser.provider = SelfProvider(providedSelfUser: MockUserType.createSelfUser(name: "Me"))
+        defer { SelfUser.provider = previousProvider }
+        let tableView = UITableView()
+        let text = NSMutableAttributedString(string: "first second")
+        text.addAttribute(
+            .link,
+            value: URL(string: "https://example.com/first")!,
+            range: NSRange(location: 0, length: 5)
+        )
+        text.addAttribute(
+            .link,
+            value: URL(string: "https://example.com/second")!,
+            range: NSRange(location: 6, length: 6)
+        )
+        let description = ConversationTextMessageCellDescription(
+            attributedString: text,
+            isObfuscated: false,
+            userSession: nil
+        )
+        description.message = message
+        let controller = ConversationMessageActionController(
+            responder: nil, message: message, context: .content, view: tableView
+        )
+        description.actionController = controller
+        description.register(in: tableView)
+
+        let cell = description.makeCell(for: tableView, at: IndexPath(row: 0, section: 0))
+        let menuNames = controller.makeAccessibilityActions().map(\.name)
+        let actions = try XCTUnwrap(cell.accessibilityCustomActions)
+        XCTAssertFalse(menuNames.isEmpty)
+        XCTAssertEqual(Array(actions.prefix(menuNames.count)).map(\.name), menuNames)
+        XCTAssertEqual(actions.count, menuNames.count + 2)
+
+        description.configuration = .init(attributedText: text, isObfuscated: true, userSession: nil)
+        description.configureCell(cell)
+        XCTAssertEqual(cell.accessibilityCustomActions?.map(\.name), menuNames)
+
+        description.configuration = .init(
+            attributedText: NSAttributedString(string: "No links"), isObfuscated: false, userSession: nil
+        )
+        description.configureCell(cell)
+        XCTAssertEqual(cell.accessibilityCustomActions?.map(\.name), menuNames)
+    }
+
+    func testTextMessageMentionActionsRequireMatchingMessageMetadataAndClearOnReuse() {
+        let cell = ConversationTextMessageCell(frame: .zero)
+        let mention = Mention(range: NSRange(location: 0, length: 5), user: mockOtherUser)
+        let text = NSAttributedString(string: "Bruno", attributes: [.link: mention.link])
+        cell.configure(with: .init(attributedText: text, isObfuscated: false, userSession: nil), animated: false)
+        cell.message = message
+        XCTAssertTrue(cell.inlineLinkAccessibilityActions.isEmpty)
+
+        message.backingTextMessageData.mentions = [mention]
+        XCTAssertEqual(cell.inlineLinkAccessibilityActions.count, 1)
+        XCTAssertTrue(cell.inlineLinkAccessibilityActions[0].name.contains("Bruno"))
+
+        cell.prepareForReuse()
+        XCTAssertTrue(cell.inlineLinkAccessibilityActions.isEmpty)
+    }
+
     // MARK: - Snapshot Tests
 
     func testPlainText_WithALongUsernameAndShowingTheDateOfTheMessage() {

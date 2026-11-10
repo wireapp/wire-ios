@@ -34,6 +34,108 @@ final class LinkInteractionTextViewTests: XCTestCase {
         super.tearDown()
     }
 
+    func testAccessibilityActionsUseAttributedLinksAndDistinctNames() throws {
+        let recorder = InteractionRecorder()
+        sut.interactionDelegate = recorder
+        let text = NSMutableAttributedString(string: "🔗 details details details 12345")
+        let firstURL = URL(string: "https://example.com/first")!
+        let secondURL = URL(string: "https://example.com/second")!
+        text.addAttribute(.link, value: firstURL, range: NSRange(location: 3, length: 7))
+        text.addAttribute(.link, value: secondURL, range: NSRange(location: 11, length: 7))
+        text.addAttribute(.link, value: firstURL, range: NSRange(location: 19, length: 7))
+        text.addAttribute(.link, value: URL(string: "tel:12345")!, range: NSRange(location: 27, length: 5))
+        sut.attributedText = text
+
+        let actions = sut.makeAccessibilityLinkActions { _ in true }
+
+        XCTAssertEqual(actions.count, 2)
+        XCTAssertEqual(Set(actions.map(\.name)).count, 2)
+        for action in actions {
+            XCTAssertTrue(try XCTUnwrap(action.actionHandler)(action))
+        }
+        XCTAssertEqual(recorder.openedURLs, [firstURL, secondURL])
+    }
+
+    func testAccessibilityActionsRejectChangedLinksAndInvalidatedConfigurations() throws {
+        let recorder = InteractionRecorder()
+        sut.interactionDelegate = recorder
+        let url = URL(string: "https://example.com/first")!
+        sut.attributedText = NSAttributedString(string: "details", attributes: [.link: url])
+        let oldAction = try XCTUnwrap(sut.makeAccessibilityLinkActions { _ in true }.first)
+        sut.attributedText = NSAttributedString(
+            string: "details",
+            attributes: [.link: URL(string: "https://example.com/second")!]
+        )
+        XCTAssertFalse(try XCTUnwrap(oldAction.actionHandler)(oldAction))
+
+        let reusedAction = try XCTUnwrap(sut.makeAccessibilityLinkActions { _ in true }.first)
+        sut.invalidateAccessibilityLinkActions()
+        XCTAssertFalse(try XCTUnwrap(reusedAction.actionHandler)(reusedAction))
+        XCTAssertTrue(recorder.openedURLs.isEmpty)
+    }
+
+    func testAccessibilityActionsRecheckAvailabilityAndHandledResult() throws {
+        let recorder = InteractionRecorder()
+        sut.interactionDelegate = recorder
+        sut.attributedText = NSAttributedString(
+            string: "details",
+            attributes: [.link: URL(string: "https://example.com")!]
+        )
+        var isAvailable = true
+        let action = try XCTUnwrap(sut.makeAccessibilityLinkActions { _ in isAvailable }.first)
+        isAvailable = false
+        XCTAssertFalse(try XCTUnwrap(action.actionHandler)(action))
+        XCTAssertTrue(recorder.openedURLs.isEmpty)
+
+        isAvailable = true
+        recorder.handlesLinks = false
+        XCTAssertFalse(try XCTUnwrap(action.actionHandler)(action))
+        XCTAssertEqual(recorder.openedURLs.count, 1)
+    }
+
+    func testAccessibilityActionsDoNotRetainTextView() throws {
+        let recorder = InteractionRecorder()
+        weak var textView: LinkInteractionTextView?
+        let action = try autoreleasepool {
+            let view = LinkInteractionTextView(frame: .zero, textContainer: nil)
+            view.interactionDelegate = recorder
+            view.attributedText = NSAttributedString(
+                string: "details",
+                attributes: [.link: URL(string: "https://example.com")!]
+            )
+            textView = view
+            return try XCTUnwrap(view.makeAccessibilityLinkActions { _ in true }.first)
+        }
+
+        XCTAssertNil(textView)
+        XCTAssertFalse(try XCTUnwrap(action.actionHandler)(action))
+        XCTAssertTrue(recorder.openedURLs.isEmpty)
+    }
+
+    func testAccessibilityMarkdownActionUsesConfirmationInsteadOfOpeningURL() throws {
+        let recorder = InteractionRecorder()
+        sut.interactionDelegate = recorder
+        let url = URL(string: "https://example.com/destination")!
+        sut.attributedText = NSAttributedString(
+            string: "details",
+            attributes: [.markdownID: Markdown.link, .link: url]
+        )
+        let previousPresenter = UIApplication.shared.topmostViewController(onlyFullScreen: false)
+        defer {
+            if let alert = previousPresenter?.presentedViewController as? UIAlertController {
+                alert.dismiss(animated: false)
+            }
+        }
+        let action = try XCTUnwrap(sut.makeAccessibilityLinkActions { _ in true }.first)
+
+        XCTAssertTrue(try XCTUnwrap(action.actionHandler)(action))
+        XCTAssertTrue(recorder.openedURLs.isEmpty)
+        if let alert = previousPresenter?.presentedViewController as? UIAlertController {
+            XCTAssertEqual(alert.title, L10n.Localizable.Content.Message.OpenLinkAlert.title)
+            XCTAssertTrue(alert.message?.contains(url.absoluteString) == true)
+        }
+    }
+
     func testThatItOpensNormalLinks() {
         ["http://www.wire.com", "x-apple-data-detectors:some-detected-data", "tel:12345678", "mailto:bob@example.com"]
             .forEach {
@@ -135,4 +237,16 @@ final class LinkInteractionTextViewTests: XCTestCase {
                 XCTAssertFalse(shouldOpenURL)
             }
     }
+}
+
+private final class InteractionRecorder: TextViewInteractionDelegate {
+    var openedURLs: [URL] = []
+    var handlesLinks = true
+
+    func textView(_ textView: LinkInteractionTextView, open url: URL) -> Bool {
+        openedURLs.append(url)
+        return handlesLinks
+    }
+
+    func textViewDidLongPress(_ textView: LinkInteractionTextView) {}
 }
