@@ -121,6 +121,7 @@ final class DeveloperE2eiViewModel: ObservableObject {
         guard let session = userSession, !isRefreshingCRLs else { return }
 
         isRefreshingCRLs = true
+        crlRefreshStatus = ""
         Task { @MainActor in
             defer { isRefreshingCRLs = false }
             do {
