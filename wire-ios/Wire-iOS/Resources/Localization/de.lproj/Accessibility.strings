@@ -35,6 +35,13 @@
 "conversation.linkPreviewImage.description" = "Vorschau-Bild zum Link-Ziel %@";
 "conversation.linkPreviewImage.fallbackDescription" = "Link-Vorschaubild";
 
+"conversation.messageStatus.sending" = "Wird gesendet";
+"conversation.messageStatus.sent" = "Gesendet";
+"conversation.messageStatus.delivered" = "Zugestellt";
+"conversation.messageStatus.seen" = "Gelesen";
+// Accessibility announcement for the number of recipients who have read a message. %d is the recipient count.
+"conversation.messageStatus.seenByMultiple" = "Gelesen von %d";
+
 "conversation.sendButton.description" = "Diese Nachricht senden";
 "conversation.openFormattingButton.description" = "Formatierungsoptionen öffnen";
 "conversation.hideFormattingButton.description" = "Formatierungsoptionen ausblenden";

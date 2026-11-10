@@ -97,4 +97,24 @@ class MockFeatureConfigLocalStoreProtocol: FeatureConfigLocalStoreProtocol {
         return mock
     }
 
+    // MARK: - needsToNotifyUser
+
+    var needsToNotifyUserFor_Invocations: [Feature.Name] = []
+    var needsToNotifyUserFor_MockValue = false
+
+    func needsToNotifyUser(for name: Feature.Name) async -> Bool {
+        needsToNotifyUserFor_Invocations.append(name)
+        return needsToNotifyUserFor_MockValue
+    }
+
+    // MARK: - setNeedsToNotifyUser
+
+    var setNeedsToNotifyUserFor_Invocations: [(needsToNotify: Bool, name: Feature.Name)] = []
+    var setNeedsToNotifyUserFor_MockMethod: ((Bool, Feature.Name) async -> Void)?
+
+    func setNeedsToNotifyUser(_ needsToNotify: Bool, for name: Feature.Name) async {
+        setNeedsToNotifyUserFor_Invocations.append((needsToNotify: needsToNotify, name: name))
+        await setNeedsToNotifyUserFor_MockMethod?(needsToNotify, name)
+    }
+
 }
