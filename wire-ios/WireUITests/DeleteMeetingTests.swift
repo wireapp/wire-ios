@@ -159,6 +159,34 @@ final class DeleteMeetingTests: WireUITestCase {
     }
 
     @MainActor
+    func testInviteeDeletesEntireRecurringSeriesForSelf_TC_12014() async throws {
+        let (host, users, _, _) = try await UserHelper.default.registerMeetingsTeam(withMemberCount: 2)
+        let hostFixtures = try await MeetingsTestHelper(user: host)
+        let inviteeFixtures = try await MeetingsTestHelper(user: users[0])
+        let otherFixtures = try await MeetingsTestHelper(user: users[1])
+        try await registerClients(for: users)
+        let hostPage = try launchMeetings(for: host, now: date())
+        let meeting = try await schedule(
+            on: hostPage, using: hostFixtures, title: "TC12014", inviting: users, recurrence: .daily
+        )
+        let laterStart = try nextDailyOccurrence(of: meeting)
+        let inviteePage = try launchMeetings(for: users[0], now: date())
+
+        // Delete from a later occurrence. The only confirmation is the self-delete alert.
+        _ = try inviteePage.showRow(meeting)
+        let alert = try requestDelete(meeting, on: inviteePage, as: .invitee, start: laterStart)
+        try confirmDelete(alert)
+        try assertRemoved(meeting, on: inviteePage, start: laterStart)
+        XCTAssertTrue(inviteePage.noUpcomingMeetingsText.waitForExistence(timeout: 15))
+
+        // Verify that only the acting invitee lost access to the series conversation.
+        try await assertConversationAccess(meeting, for: inviteeFixtures, false)
+        try await assertVisible(meeting, to: hostFixtures, true)
+        try await assertVisible(meeting, to: otherFixtures, true)
+        try await assertConversationAccess(meeting, for: otherFixtures, true)
+    }
+
+    @MainActor
     func testHostDeletesOngoingScheduledMeetings_TC_12007() async throws {
         let (host, users, _, _) = try await UserHelper.default.registerMeetingsTeam(withMemberCount: 1)
         try await registerClients(for: users)
