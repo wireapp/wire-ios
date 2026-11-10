@@ -126,7 +126,11 @@ final class AuthenticatedRouter {
             sessionManager.logoutCurrentSession()
         }
 
-        present(alert)
+        // Present from the topmost controller: `_zClientViewController` may already be
+        // presenting something modally (e.g. the developer tools), which would make
+        // UIKit silently drop the alert.
+        let presenter = UIApplication.shared.topmostViewController(onlyFullScreen: false) ?? _zClientViewController
+        presenter?.present(alert, animated: true)
     }
 }
 
