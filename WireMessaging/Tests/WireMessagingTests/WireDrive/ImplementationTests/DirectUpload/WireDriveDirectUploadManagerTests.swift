@@ -777,9 +777,10 @@ final class WireDriveDirectUploadManagerTests {
         store.fetchAll_MockValue = [record]
 
         // When
-        await sut.start()
+        let didLoadUploads = await sut.start()
 
         // Then
+        #expect(didLoadUploads)
         #expect(session.setEventSink_Invocations.count == 1)
 
         let summary = tracker.summary
@@ -790,11 +791,32 @@ final class WireDriveDirectUploadManagerTests {
     @Test
     func start_isIdempotent() async {
         // When
-        await sut.start()
-        await sut.start()
+        let firstLoadSucceeded = await sut.start()
+        let repeatedLoadSucceeded = await sut.start()
 
         // Then
+        #expect(firstLoadSucceeded)
+        #expect(repeatedLoadSucceeded)
         #expect(session.setEventSink_Invocations.count == 1)
+    }
+
+    @Test
+    func start_reportsFailedLoadingAndAllowsRetry() async {
+        struct StoreError: Error {}
+        store.fetchAll_MockError = StoreError()
+
+        let failedLoadSucceeded = await sut.start()
+
+        #expect(!failedLoadSucceeded)
+        #expect(session.setEventSink_Invocations.count == 1)
+        #expect(fileCache.sweepOrphansReferencedFileNamesGracePeriod_Invocations.isEmpty)
+
+        store.fetchAll_MockError = nil
+        let retryLoadSucceeded = await sut.start()
+
+        #expect(retryLoadSucceeded)
+        #expect(session.setEventSink_Invocations.count == 2)
+        #expect(!fileCache.sweepOrphansReferencedFileNamesGracePeriod_Invocations.isEmpty)
     }
 
     @Test

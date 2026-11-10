@@ -112,8 +112,9 @@ public struct WireMessagingFactory {
     /// Reconciles persisted uploads against the background session and starts receiving its events.
 
     public func startDirectUploads() async {
-        await directUploadManager.start()
-        await directUploadsLiveActivity.endActivityIfNoUploads()
+        if await directUploadManager.start() {
+            await directUploadsLiveActivity.endActivityIfNoUploads()
+        }
     }
 
     /// Starts showing the ongoing uploads in a Live Activity. Call it as early as possible, so that the
