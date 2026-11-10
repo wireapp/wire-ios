@@ -40,7 +40,6 @@ public enum Locators {
 
         case emailTextField
         case passwordSecureTextField
-        case invalidCredentialsError
         case nextButton
         case createAccountLink
     }

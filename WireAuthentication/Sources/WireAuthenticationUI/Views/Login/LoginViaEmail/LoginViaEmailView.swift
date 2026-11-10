@@ -63,7 +63,6 @@ package struct LoginViaEmailView: View {
                     }
                     emailField
                     passwordField
-                    credentialsError
                     forgotPasswordButton
                     proxyCredentials
                     submitButton
@@ -73,7 +72,6 @@ package struct LoginViaEmailView: View {
                     }
                     emailField
                     passwordField
-                    credentialsError
                     submitButton
                     forgotPasswordButton
                     if viewModel.canCreateAccount {
@@ -148,19 +146,6 @@ package struct LoginViaEmailView: View {
             isValidPassword: viewModel.isPasswordValid
         )
         .accessibilityIdentifier(Locators.LoginPage.passwordSecureTextField.rawValue)
-    }
-
-    @ViewBuilder private var credentialsError: some View {
-        if viewModel.hasInvalidCredentials {
-            Text(Alert.invalidCredentials.message)
-                .font(for: .body1)
-                .foregroundStyle(ColorTheme.Base.error.color)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .lineLimit(nil)
-                .fixedSize(horizontal: false, vertical: true)
-                .accessibilityLabel(Alert.invalidCredentials.message)
-                .accessibilityIdentifier(Locators.LoginPage.invalidCredentialsError.rawValue)
-        }
     }
 
     @ViewBuilder private var submitButton: some View {
