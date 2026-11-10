@@ -30,16 +30,27 @@ extension ZMUserSession {
     }
 
     func checkExpiredCertificateRevocationLists() {
+        Task {
+            do {
+                try await refreshCertificateRevocationLists()
+            } catch {
+                WireLogger.e2ei.warn("failed to check expired CRLs: \(error)")
+            }
+        }
+    }
+
+    /// Asks the CRL checker to re-check all credentials, if the E2EI feature is enabled.
+    ///
+    /// - Throws: Any error raised while checking the credentials.
+    public func refreshCertificateRevocationLists() async throws {
         guard let cRLsChecker else {
-            WireLogger.e2ei.error("requires 'cRLsChecker' to check expired CRLs!", attributes: .safePublic)
+            WireLogger.e2ei.error("requires 'cRLsChecker' to refresh CRLs!", attributes: .safePublic)
             return
         }
 
-        Task {
-            let isE2EIFeatureEnabled = await managedObjectContext.perform { self.e2eiFeature.isEnabled }
-            if isE2EIFeatureEnabled {
-                await cRLsChecker.checkExpiredCRLs()
-            }
-        }
+        let isE2EIFeatureEnabled = await managedObjectContext.perform { self.e2eiFeature.isEnabled }
+        guard isE2EIFeatureEnabled else { return }
+
+        try await cRLsChecker.checkExpiredCRLs()
     }
 }

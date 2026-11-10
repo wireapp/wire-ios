@@ -22,7 +22,7 @@ import WireLogging
 
 // sourcery: AutoMockable
 public protocol CertificateRevocationListsChecking {
-    func checkExpiredCRLs() async
+    func checkExpiredCRLs() async throws
 }
 
 public class CertificateRevocationListsChecker: CertificateRevocationListsChecking {
@@ -46,36 +46,27 @@ public class CertificateRevocationListsChecker: CertificateRevocationListsChecki
 
     // MARK: - Public interface
 
-    public func checkExpiredCRLs() async {
+    public func checkExpiredCRLs() async throws {
 
         WireLogger.e2ei.info("checking expired CRLs")
 
-        do {
-            try await coreCryptoProvider.coreCrypto().transaction { context in
-                try await context.checkCredentials()
-            }
-
-            await notifyAboutRevokedCertificateIfNeeded()
-        } catch {
-            logger.warn("failed to check credentials: \(error)")
+        try await coreCryptoProvider.coreCrypto().transaction { context in
+            try await context.checkCredentials()
         }
+
+        try await notifyAboutRevokedCertificateIfNeeded()
     }
 
     // MARK: - Private methods
 
-    private func notifyAboutRevokedCertificateIfNeeded() async {
-        do {
-            guard let certificate = try await selfClientCertificateProvider.getCertificate(),
-                  certificate.status == .revoked else {
-                return
-            }
-
-            NotificationCenter.default.post(name: .presentRevokedCertificateWarningAlert, object: nil)
-            NotificationCenter.default.post(name: .e2eiCertificateChanged, object: self)
-        } catch {
-            logger.warn("failed to fetch certificate for self client: \(error)")
+    private func notifyAboutRevokedCertificateIfNeeded() async throws {
+        guard let certificate = try await selfClientCertificateProvider.getCertificate(),
+              certificate.status == .revoked else {
+            return
         }
 
+        NotificationCenter.default.post(name: .presentRevokedCertificateWarningAlert, object: nil)
+        NotificationCenter.default.post(name: .e2eiCertificateChanged, object: self)
     }
 
 }

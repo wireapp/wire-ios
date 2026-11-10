@@ -90,8 +90,12 @@ struct DeveloperE2eiView: View {
                             ProgressView()
                         }
                     }
+                    if !viewModel.crlRefreshStatus.isEmpty {
+                        Text(viewModel.crlRefreshStatus)
+                            .font(.footnote)
+                    }
                     footNote(
-                        "Asks CoreCrypto to check all credentials, which refetches every relevant certificate revocation list. If your own certificate has been revoked, the revoked certificate alert is shown. Check the logs for errors."
+                        "Asks CoreCrypto to check all credentials, which refetches every relevant certificate revocation list. If your own certificate has been revoked, the revoked certificate alert is shown."
                     )
                 }
             }

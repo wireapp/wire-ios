@@ -220,7 +220,7 @@ public final class ZMUserSession: NSObject {
             accountId: account.userIdentifier
         )
 
-    public var cRLsChecker: CertificateRevocationListsChecker?
+    var cRLsChecker: CertificateRevocationListsChecker?
 
     // swiftlint:disable:next todo_requires_jira_link
     public var managedObjectContext: NSManagedObjectContext { // TODO: jacob we don't want this to be public

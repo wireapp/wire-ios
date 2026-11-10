@@ -34,6 +34,8 @@ final class DeveloperE2eiViewModel: ObservableObject {
 
     @Published var isRefreshingCRLs = false
 
+    @Published var crlRefreshStatus = ""
+
     init(userSession: UserSession?) {
         self.userSession = userSession as? ZMUserSession
         Task {
@@ -121,7 +123,13 @@ final class DeveloperE2eiViewModel: ObservableObject {
         isRefreshingCRLs = true
         Task { @MainActor in
             defer { isRefreshingCRLs = false }
-            await session.cRLsChecker?.checkExpiredCRLs()
+            do {
+                try await session.refreshCertificateRevocationLists()
+                crlRefreshStatus = "Last refresh: ok"
+            } catch {
+                WireLogger.e2ei.error("failed to refresh CRLs: \(error)")
+                crlRefreshStatus = "Last refresh: failed: \(error)"
+            }
             await fetchSelfClientCertificate()
         }
     }
