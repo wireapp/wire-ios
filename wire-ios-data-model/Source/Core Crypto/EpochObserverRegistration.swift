@@ -48,6 +48,12 @@ final class EpochObserverRegistration {
         isMLSInitialised = true
     }
 
+    /// Registers the retained observer with a new instance after MLS initialization.
+    func register(with registrar: some EpochObserverRegistrar) async throws {
+        guard let observer else { return }
+        try await registrar.registerEpochObserver(epochObserver: observer)
+    }
+
     /// Registers the observer with `registrar` if it's ready to be and hasn't been yet.
     func registerIfNecessary(with registrar: some EpochObserverRegistrar) async throws {
         guard let observer, isMLSInitialised, !hasRegistered else {
