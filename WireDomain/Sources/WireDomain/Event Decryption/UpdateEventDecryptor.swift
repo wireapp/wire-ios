@@ -36,7 +36,8 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
         userClientsLocalStore: any UserClientsLocalStoreProtocol,
         messageLocalStore: any MessageLocalStoreProtocol,
         userLocalStore: any UserLocalStoreProtocol,
-        conversationLocalStore: any ConversationLocalStoreProtocol
+        conversationLocalStore: any ConversationLocalStoreProtocol,
+        bufferedMessageRecoveryTracker: BufferedMLSMessageRecoveryTracker = BufferedMLSMessageRecoveryTracker()
     ) {
         self.proteusMessageDecryptor = ProteusMessageDecryptor(
             proteusService: proteusService,
@@ -46,7 +47,8 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
 
         self.mlsMessageDecryptor = MLSMessageDecryptor(
             mlsDecryptionService: mlsDecryptionService,
-            conversationLocalStore: conversationLocalStore
+            conversationLocalStore: conversationLocalStore,
+            bufferedMessageRecoveryTracker: bufferedMessageRecoveryTracker
         )
 
         self.mlsService = mlsService
@@ -135,8 +137,16 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
                 } catch let error as MLSMessageDecryptorError {
                     switch error {
                     case let .wrongEpoch(mlsGroupID):
+                        logAttributes[.mlsGroupID] = mlsGroupID.safeForLoggingDescription
                         WireLogger.updateEvent.error(
-                            "failed to decrypt MLS due to `WrongEpoch` for group \(mlsGroupID)",
+                            "failed to decrypt MLS due to `WrongEpoch`",
+                            attributes: logAttributes
+                        )
+                        brokenMLSGroupIDs.insert(mlsGroupID.description)
+                    case let .bufferedMessageRecoveryRequired(mlsGroupID):
+                        logAttributes[.mlsGroupID] = mlsGroupID.safeForLoggingDescription
+                        WireLogger.updateEvent.warn(
+                            "MLS messages buffered for too long, requesting recovery",
                             attributes: logAttributes
                         )
                         brokenMLSGroupIDs.insert(mlsGroupID.description)

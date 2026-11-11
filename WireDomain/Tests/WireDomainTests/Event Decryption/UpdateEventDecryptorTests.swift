@@ -225,6 +225,30 @@ final class UpdateEventDecryptorTests: XCTestCase {
         XCTAssertEqual(decryptEvents.brokenMLSGroupIDs.first, Scaffolding.mlsGroupID.description)
     }
 
+    func testWhenBufferedMessageRecoveryRequiredErrorIsThrown() async throws {
+        // Given some events.
+        let envelope = UpdateEventEnvelope(
+            id: UUID(),
+            events: [
+                .conversation(.mlsMessageAdd(Scaffolding.mlsMessage)),
+                .user(.pushRemove)
+            ],
+            isTransient: false
+        )
+
+        // Mock
+        mlsMessageDecryptor.decryptedMessageAddEventDataFromContext_MockMethod = { _, _ in
+            throw MLSMessageDecryptorError.bufferedMessageRecoveryRequired(mlsGroupID: Scaffolding.mlsGroupID)
+        }
+
+        // When
+        let decryptEvents = await sut.decryptEvents(in: envelope, context: nil)
+
+        // Then the group is flagged for repair.
+        XCTAssertEqual(decryptEvents.events, [.user(.pushRemove)])
+        XCTAssertEqual(decryptEvents.brokenMLSGroupIDs, [Scaffolding.mlsGroupID.description])
+    }
+
 }
 
 private enum Scaffolding {
