@@ -186,7 +186,7 @@ final class MockMLSActionExecutor: MLSActionExecutorProtocol {
         in groupID: WireDataModel.MLSGroupID,
         context: CoreCryptoContextProtocol?
     ) async throws -> WireCoreCrypto
-        .DecryptedMessage? {
+        .DecryptedMessage {
         guard let mock = mockDecryptMessage else {
             fatalError("no mock for `decryptMessage`")
         }

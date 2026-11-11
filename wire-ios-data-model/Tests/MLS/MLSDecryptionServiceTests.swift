@@ -260,6 +260,29 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
         )
     }
 
+    func test_Decrypt_ThrowsBufferedMessage_WhenCoreCryptoBuffersMessage() async {
+        for mlsError in [MlsError.BufferedFutureMessage, .BufferedCommit] {
+            // Given
+            let groupID = MLSGroupID.random()
+            let message = Data.random().base64EncodedString()
+
+            mockMLSActionExecutor.mockDecryptMessage = { _, _ in
+                throw CoreCryptoError.Mls(mlsError: mlsError)
+            }
+
+            // Then
+            await assertItThrows(error: DecryptionError.bufferedMessage(groupID: groupID)) {
+                // When
+                try _ = await sut.decrypt(
+                    message: message,
+                    for: groupID,
+                    subconversationType: nil,
+                    context: nil
+                )
+            }
+        }
+    }
+
     func test_Decrypt_ReturnsAnEmptyMessageForBufferedDecryptedMessageError() async throws {
         // Given
         let parentGroupID = MLSGroupID.random()
