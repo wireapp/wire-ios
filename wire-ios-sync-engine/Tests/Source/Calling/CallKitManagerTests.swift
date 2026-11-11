@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import AVFoundation
 import CallKit
 import Foundation
 import Intents
@@ -224,6 +225,9 @@ class CallKitManagerTest: DatabaseTest {
     var mockTransportSession: MockTransportSession!
     var mockCallKitManagerDelegate: MockCallKitManagerDelegate!
     var application: ApplicationMock!
+    var cameraAuthorizationStatus: AVAuthorizationStatus = .authorized
+    var cameraAccessRequestCount = 0
+    var cameraAccessCompletion: ((Bool) -> Void)?
 
     func otherUser(moc: NSManagedObjectContext) -> ZMUser {
         let otherUser = ZMUser(context: moc)
@@ -289,7 +293,12 @@ class CallKitManagerTest: DatabaseTest {
             provider: callKitProvider,
             callController: callKitController,
             mediaManager: nil,
-            delegate: mockCallKitManagerDelegate
+            delegate: mockCallKitManagerDelegate,
+            cameraAuthorizationStatus: { [unowned self] in cameraAuthorizationStatus },
+            requestCameraAccess: { [unowned self] completion in
+                cameraAccessRequestCount += 1
+                cameraAccessCompletion = completion
+            }
         )
 
         uiMOC.zm_callCenter = mockWireCallCenterV3
@@ -298,6 +307,7 @@ class CallKitManagerTest: DatabaseTest {
     override func tearDown() {
         _ = waitForAllGroupsToBeEmpty(withTimeout: 0.5)
 
+        cameraAccessCompletion = nil
         sut = nil
         mockWireCallCenterV3 = nil
         mockCallKitManagerDelegate = nil
@@ -945,6 +955,165 @@ class CallKitManagerTest: DatabaseTest {
         sut.applyPendingVideoUpgrade()
 
         XCTAssertNil(mockWireCallCenterV3.mockAVSWrapper.setVideoStateArguments)
+    }
+
+    func testVideoUpgradeRequestsCameraAccessOnlyAfterUnlockAndResumesAfterActivation() throws {
+        let (activity, _) = try prepareVideoUpgrade()
+        cameraAuthorizationStatus = .notDetermined
+        application.applicationState = .inactive
+        mockCallKitManagerDelegate.isVideoUpgradeReady = false
+        XCTAssertTrue(sut.continueUserActivity(activity))
+        XCTAssertEqual(cameraAccessRequestCount, 0)
+
+        application.applicationState = .active
+        application.simulateApplicationDidBecomeActive()
+        XCTAssertEqual(cameraAccessRequestCount, 0)
+
+        mockCallKitManagerDelegate.isVideoUpgradeReady = true
+        sut.applyPendingVideoUpgrade()
+        sut.applyPendingVideoUpgrade()
+        XCTAssertEqual(cameraAccessRequestCount, 1)
+        XCTAssertNil(mockWireCallCenterV3.mockAVSWrapper.setVideoStateArguments)
+
+        application.applicationState = .inactive
+        try respondToCameraPermission(granted: true)
+        XCTAssertNil(mockWireCallCenterV3.mockAVSWrapper.setVideoStateArguments)
+
+        application.applicationState = .active
+        application.simulateApplicationDidBecomeActive()
+        XCTAssertEqual(mockWireCallCenterV3.mockAVSWrapper.setVideoStateArguments?.videoState, .started)
+        XCTAssertEqual(cameraAccessRequestCount, 1)
+        XCTAssertEqual(callKitController.timesRequestTransactionCalled, 0)
+    }
+
+    func testVideoUpgradeDoesNotRequestCameraAccessWhenAlreadyAuthorized() throws {
+        let (activity, _) = try prepareVideoUpgrade()
+        application.applicationState = .active
+
+        XCTAssertTrue(sut.continueUserActivity(activity))
+
+        XCTAssertEqual(cameraAccessRequestCount, 0)
+        XCTAssertEqual(mockWireCallCenterV3.mockAVSWrapper.setVideoStateArguments?.videoState, .started)
+    }
+
+    func testVideoUpgradeDoesNotRequestCameraAccessWhenDeniedOrRestricted() throws {
+        application.applicationState = .active
+        for status: AVAuthorizationStatus in [.denied, .restricted] {
+            let (activity, _) = try prepareVideoUpgrade()
+            cameraAuthorizationStatus = status
+
+            XCTAssertTrue(sut.continueUserActivity(activity))
+
+            XCTAssertEqual(cameraAccessRequestCount, 0)
+            XCTAssertNil(mockWireCallCenterV3.mockAVSWrapper.setVideoStateArguments)
+        }
+    }
+
+    func testVideoUpgradeIsCancelledWhenCameraAccessIsDenied() throws {
+        let (activity, _) = try prepareVideoUpgrade()
+        application.applicationState = .active
+        cameraAuthorizationStatus = .notDetermined
+        XCTAssertTrue(sut.continueUserActivity(activity))
+
+        try respondToCameraPermission(granted: false)
+        cameraAuthorizationStatus = .authorized
+        sut.applyPendingVideoUpgrade()
+
+        XCTAssertNil(mockWireCallCenterV3.mockAVSWrapper.setVideoStateArguments)
+    }
+
+    func testVideoUpgradeIsCancelledWhenBackgroundedDuringCameraPermission() throws {
+        let (activity, _) = try prepareVideoUpgrade()
+        application.applicationState = .active
+        cameraAuthorizationStatus = .notDetermined
+        XCTAssertTrue(sut.continueUserActivity(activity))
+
+        application.applicationState = .background
+        application.simulateApplicationDidEnterBackground()
+        try respondToCameraPermission(granted: true)
+        application.applicationState = .active
+        application.simulateApplicationDidBecomeActive()
+
+        XCTAssertNil(mockWireCallCenterV3.mockAVSWrapper.setVideoStateArguments)
+    }
+
+    func testVideoUpgradeIsCancelledWhenCallEndsDuringCameraPermission() throws {
+        let (activity, handle) = try prepareVideoUpgrade()
+        application.applicationState = .active
+        cameraAuthorizationStatus = .notDetermined
+        XCTAssertTrue(sut.continueUserActivity(activity))
+
+        sut.reportCallEnded(
+            in: try XCTUnwrap(mockCallKitManagerDelegate.mockConversations[handle]),
+            atTime: nil,
+            reason: .remoteEnded
+        )
+        try respondToCameraPermission(granted: true)
+
+        XCTAssertNil(mockWireCallCenterV3.mockAVSWrapper.setVideoStateArguments)
+    }
+
+    func testVideoUpgradeDoesNotAffectReplacementCallAfterCameraPermission() throws {
+        let (activity, handle) = try prepareVideoUpgrade()
+        application.applicationState = .active
+        cameraAuthorizationStatus = .notDetermined
+        XCTAssertTrue(sut.continueUserActivity(activity))
+
+        sut.callRegister.unregisterCall(try XCTUnwrap(sut.callRegister.lookupCall(by: handle)))
+        let replacement = sut.callRegister.registerNewCall(with: handle)
+        callKitController.mockCallObserver
+            .mockCalls = [CallKitDelegateTestsMocking.mockConnectedCall(with: replacement.id)]
+        try respondToCameraPermission(granted: true)
+
+        XCTAssertNil(mockWireCallCenterV3.mockAVSWrapper.setVideoStateArguments)
+    }
+
+    func testVideoUpgradeRechecksSessionUnlockAfterCameraPermission() throws {
+        let (activity, _) = try prepareVideoUpgrade()
+        application.applicationState = .active
+        cameraAuthorizationStatus = .notDetermined
+        XCTAssertTrue(sut.continueUserActivity(activity))
+
+        mockCallKitManagerDelegate.isVideoUpgradeReady = false
+        try respondToCameraPermission(granted: true)
+        XCTAssertNil(mockWireCallCenterV3.mockAVSWrapper.setVideoStateArguments)
+
+        mockCallKitManagerDelegate.isVideoUpgradeReady = true
+        sut.applyPendingVideoUpgrade()
+        XCTAssertEqual(mockWireCallCenterV3.mockAVSWrapper.setVideoStateArguments?.videoState, .started)
+    }
+
+    func testNewVideoUpgradeResumesWhenEarlierCameraPermissionCompletes() throws {
+        let (firstActivity, firstHandle) = try prepareVideoUpgrade()
+        application.applicationState = .active
+        cameraAuthorizationStatus = .notDetermined
+        XCTAssertTrue(sut.continueUserActivity(firstActivity))
+
+        sut.reportCallEnded(
+            in: try XCTUnwrap(mockCallKitManagerDelegate.mockConversations[firstHandle]),
+            atTime: nil,
+            reason: .remoteEnded
+        )
+        let (nextActivity, nextHandle) = try prepareVideoUpgrade()
+        XCTAssertTrue(sut.continueUserActivity(nextActivity))
+        application.simulateApplicationDidBecomeActive()
+        XCTAssertEqual(cameraAccessRequestCount, 1)
+        XCTAssertNil(mockWireCallCenterV3.mockAVSWrapper.setVideoStateArguments)
+
+        try respondToCameraPermission(granted: true)
+
+        XCTAssertEqual(mockCallKitManagerDelegate.mockConversations[nextHandle]?.voiceChannel?.videoState, .started)
+        XCTAssertEqual(cameraAccessRequestCount, 1)
+    }
+
+    private func respondToCameraPermission(granted: Bool) throws {
+        cameraAuthorizationStatus = granted ? .authorized : .denied
+        let completion = try XCTUnwrap(cameraAccessCompletion)
+        cameraAccessCompletion = nil
+        completion(granted)
+        let processed = expectation(description: "Camera permission response processed")
+        DispatchQueue.main.async { processed.fulfill() }
+        wait(for: [processed], timeout: 0.5)
     }
 
     private func prepareVideoUpgrade() throws -> (NSUserActivity, WireSyncEngine.CallHandle) {

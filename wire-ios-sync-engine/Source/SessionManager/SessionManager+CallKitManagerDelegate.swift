@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import AVFoundation
 import CallKit
 import Foundation
 import WireLogging
@@ -34,24 +33,21 @@ extension SessionManager: CallKitManagerDelegate {
         Self.voiceChannelForVideoUpgrade(
             by: handle,
             sessions: backgroundUserSessions,
-            isAuthenticated: delegate?.isInAuthenticatedAppState == true,
-            cameraAuthorization: AVCaptureDevice.authorizationStatus(for: .video)
+            isAuthenticated: delegate?.isInAuthenticatedAppState == true
         )
     }
 
     static func voiceChannelForVideoUpgrade(
         by handle: CallHandle,
         sessions: [UUID: ZMUserSession],
-        isAuthenticated: Bool,
-        cameraAuthorization: AVAuthorizationStatus
+        isAuthenticated: Bool
     ) -> VoiceChannel? {
         guard
             isAuthenticated,
             let session = sessions[handle.accountID],
             session.isLoggedIn,
             !session.isBuildBlacklisted,
-            !session.isLocked,
-            cameraAuthorization == .authorized
+            !session.isLocked
         else { return nil }
 
         return ZMConversation.fetch(with: handle.conversationID, in: session.managedObjectContext)?.voiceChannel

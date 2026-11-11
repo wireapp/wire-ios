@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import AVFoundation
 import avs
 import CallKit
 import Foundation
@@ -79,6 +80,8 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
     private let delegateQueue = DispatchQueue(label: "CallkitProviderDelegateQueue")
     private let provider: CXProvider
     private let callController: CXCallController
+    private let cameraAuthorizationStatus: () -> AVAuthorizationStatus
+    private let requestCameraAccess: (@escaping (Bool) -> Void) -> Void
     private weak var mediaManager: MediaManagerType?
 
     weak var delegate: CallKitManagerDelegate?
@@ -89,6 +92,7 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
     let callRegister = CallKitCallRegister()
     private var connectedCallConversation: ZMConversation?
     private var pendingVideoUpgrade: CallKitCall?
+    private var isRequestingCameraAccess = false
 
     private let logger = WireLogger.callkit
 
@@ -125,7 +129,13 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
         provider: CXProvider,
         callController: CXCallController,
         mediaManager: MediaManagerType?,
-        delegate: CallKitManagerDelegate? = nil
+        delegate: CallKitManagerDelegate? = nil,
+        cameraAuthorizationStatus: @escaping () -> AVAuthorizationStatus = {
+            AVCaptureDevice.authorizationStatus(for: .video)
+        },
+        requestCameraAccess: @escaping (@escaping (Bool) -> Void) -> Void = { completion in
+            AVCaptureDevice.requestAccess(for: .video, completionHandler: completion)
+        }
     ) {
         self.isEnabled = isEnabled
         self.application = application
@@ -133,6 +143,8 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
         self.callController = callController
         self.mediaManager = mediaManager
         self.delegate = delegate
+        self.cameraAuthorizationStatus = cameraAuthorizationStatus
+        self.requestCameraAccess = requestCameraAccess
 
         super.init()
 
@@ -276,14 +288,38 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
 
         // App activation can precede Wire unlock or account activation.
         guard let voiceChannel = delegate?.voiceChannelForVideoUpgrade(by: call.handle) else { return }
-        clearPendingVideoUpgrade()
 
         guard
             voiceChannel.state == .established,
             voiceChannel.videoState == .stopped
-        else { return }
+        else {
+            clearPendingVideoUpgrade()
+            return
+        }
 
-        voiceChannel.videoState = .started
+        guard !isRequestingCameraAccess else { return }
+
+        switch cameraAuthorizationStatus() {
+        case .authorized:
+            clearPendingVideoUpgrade()
+            voiceChannel.videoState = .started
+        case .notDetermined:
+            isRequestingCameraAccess = true
+            requestCameraAccess { [weak self] granted in
+                DispatchQueue.main.async {
+                    guard let self else { return }
+                    self.isRequestingCameraAccess = false
+
+                    if granted {
+                        self.applyPendingVideoUpgrade()
+                    } else {
+                        self.clearPendingVideoUpgrade()
+                    }
+                }
+            }
+        default:
+            clearPendingVideoUpgrade()
+        }
     }
 
     @objc

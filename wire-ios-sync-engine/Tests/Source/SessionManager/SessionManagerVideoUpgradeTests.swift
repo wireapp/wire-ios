@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import AVFoundation
 import WireDataModelSupport
 
 @testable import WireDataModel
@@ -68,8 +67,7 @@ final class SessionManagerVideoUpgradeTests: ZMUserSessionTestsBase {
         let channel = SessionManager.voiceChannelForVideoUpgrade(
             by: handle,
             sessions: mockSessionManager.backgroundUserSessions,
-            isAuthenticated: true,
-            cameraAuthorization: .authorized
+            isAuthenticated: true
         )
 
         XCTAssertTrue(channel?.conversation === conversation)
@@ -97,21 +95,13 @@ final class SessionManagerVideoUpgradeTests: ZMUserSessionTestsBase {
         XCTAssertNil(resolveVoiceChannel())
     }
 
-    func testVideoUpgradeRequiresCameraPermission() {
-        for status: AVAuthorizationStatus in [.notDetermined, .denied, .restricted] {
-            XCTAssertNil(resolveVoiceChannel(cameraAuthorization: status))
-        }
-    }
-
     private func resolveVoiceChannel(
-        isAuthenticated: Bool = true,
-        cameraAuthorization: AVAuthorizationStatus = .authorized
+        isAuthenticated: Bool = true
     ) -> VoiceChannel? {
         SessionManager.voiceChannelForVideoUpgrade(
             by: handle,
             sessions: [sut.account.userIdentifier: sut],
-            isAuthenticated: isAuthenticated,
-            cameraAuthorization: cameraAuthorization
+            isAuthenticated: isAuthenticated
         )
     }
 }
