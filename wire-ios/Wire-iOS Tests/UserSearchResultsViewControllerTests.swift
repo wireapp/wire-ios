@@ -84,6 +84,28 @@ final class UserSearchResultsViewControllerTests: XCTestCase {
         return allUsers.searchForMentions(withQuery: "")
     }
 
+    func testMentionSuggestionAccessibilityHintDescribesMentioning() throws {
+        createSUT()
+        sut.view.frame = CGRect(x: 0, y: 0, width: 320, height: 200)
+        sut.users = [otherUser]
+        sut.view.layoutIfNeeded()
+        let collectionView = try XCTUnwrap(sut.view.subviews.compactMap { $0 as? UICollectionView }.first)
+        let cell = try XCTUnwrap(collectionView.cellForItem(at: IndexPath(item: 0, section: 0)) as? UserCell)
+
+        XCTAssertEqual(cell.accessibilityHint, L10n.Accessibility.Conversation.MentionSuggestion.hint)
+        XCTAssertNotEqual(cell.accessibilityHint, L10n.Accessibility.ContactsList.UserCell.hint)
+
+        cell.isSelected = true
+        XCTAssertEqual(cell.accessibilityHint, L10n.Accessibility.Conversation.MentionSuggestion.hint)
+        cell.isSelected = false
+        XCTAssertEqual(cell.accessibilityHint, L10n.Accessibility.Conversation.MentionSuggestion.hint)
+
+        cell.prepareForReuse()
+        cell.configure(user: otherUser, isSelfUserPartOfATeam: true)
+        XCTAssertNil(cell.accessibilityHintOverride)
+        XCTAssertEqual(cell.accessibilityHint, L10n.Accessibility.ContactsList.UserCell.hint)
+    }
+
     // MARK: - Snapshot Tests
 
     func testThatShowsResultsInConversationWithQuery() {
