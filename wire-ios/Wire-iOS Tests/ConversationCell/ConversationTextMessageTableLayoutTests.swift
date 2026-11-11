@@ -163,6 +163,13 @@ final class ConversationTextMessageTableLayoutTests: ConversationMessageSnapshot
             initialMessagePosition: position
         )
         tableView.layoutIfNeeded()
+        XCTAssertGreaterThan(
+            tableView.contentOffset.y,
+            0,
+            "Expected the table to open below the top",
+            file: file,
+            line: line
+        )
         assertTextIsFullyLaidOut(in: tableView, step: "opened at \(position)", file: file, line: line)
         snapshotHelper.verify(
             matching: snapshot(of: tableView),
@@ -284,14 +291,15 @@ final class ConversationTextMessageTableLayoutTests: ConversationMessageSnapshot
         window.frame = tableView.frame
         window.rootViewController = UIViewController()
         window.rootViewController?.view.addSubview(tableView)
+        window.makeKeyAndVisible()
         if let initialMessagePosition {
-            // Restore the viewing position before the first visible frame. A newly created table
-            // must render correctly here without first displaying the top or scrolling there.
+            // Restore the viewing position before the first frame is rendered (at the end of this run loop
+            // turn). A newly created table must render correctly there without first displaying the top.
+            // Doing this before the window is visible does not work: the position is reset to the top.
             tableView.reloadData()
             tableView.layoutIfNeeded()
             scrollToFirstMessage(in: tableView, dataSource: dataSource, position: initialMessagePosition)
         }
-        window.makeKeyAndVisible()
         self.window?.isHidden = true
         self.window = window
         // `UITableView.dataSource` is weak.
@@ -335,10 +343,15 @@ final class ConversationTextMessageTableLayoutTests: ConversationMessageSnapshot
                 file: file,
                 line: line
             )
-            XCTAssertLessThanOrEqual(
-                layoutManager.usedRect(for: textContainer).maxY,
-                textView.bounds.height + 1,
-                "\(step): text is taller than its view \(textView.bounds.size)",
+            // The view must be neither shorter (clipped text) nor taller (blank space, WPB-29736) than its
+            // text. The tolerance covers rounding the view height to pixels.
+            let textHeight = layoutManager.usedRect(for: textContainer).maxY
+                + textView.textContainerInset.top + textView.textContainerInset.bottom
+            XCTAssertEqual(
+                textView.bounds.height,
+                textHeight,
+                accuracy: 1,
+                "\(step): view height \(textView.bounds.height) does not match text height \(textHeight)",
                 file: file,
                 line: line
             )
