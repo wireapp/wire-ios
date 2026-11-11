@@ -311,9 +311,9 @@ struct MeetingFormViewModelTests {
     // MARK: - submit Tests
 
     @Test("Meet Now starts at submission time and lasts one hour", arguments: [
-        (12, 7, 23), (23, 20, 23), (23, 45, 0), (23, 59, 59)
-    ])
-    func submit_InstantMode_Success_TC_11981(hour: Int, minute: Int, second: Int) async throws {
+        (12, 7, 23, nil), (23, 20, 23, "Abcdef1!"), (23, 45, 0, nil), (23, 59, 59, nil)
+    ] as [(Int, Int, Int, String?)])
+    func submit_InstantMode_Success_TC_11981(hour: Int, minute: Int, second: Int, password: String?) async throws {
         // Given
         var receivedMeeting: Meeting?
         var receivedLink: URL?
@@ -326,8 +326,7 @@ struct MeetingFormViewModelTests {
         dateProviderMock.now = try makeDate(year: 2026, month: 7, day: 7, hour: hour, minute: minute)
             .addingTimeInterval(TimeInterval(second))
         viewModel.meetingTitle = "Team Standup"
-        #expect(!viewModel.canSetPassword)
-        viewModel.password = "ignored"
+        #expect(viewModel.canSetPassword)
         viewModel.invitedEmails = ["ignored@example.com"]
         viewModel.selectedMembers = [member]
         createMeetingUseCaseMock
@@ -335,6 +334,16 @@ struct MeetingFormViewModelTests {
             MeetingCreationResult(meeting: meeting, link: URL(string: "https://wire.example/meeting-join/"))
 
         // When
+        viewModel.password = "invalid"
+        viewModel.confirmPassword = viewModel.password
+        #expect(!viewModel.isNextButtonEnabled)
+        await viewModel.submit()
+
+        viewModel.password = password ?? ""
+        if password != nil {
+            viewModel.confirmPassword = viewModel.password
+        }
+        #expect(viewModel.isNextButtonEnabled)
         await viewModel.submit()
 
         // Then
@@ -348,8 +357,9 @@ struct MeetingFormViewModelTests {
         #expect(arguments?.invitedEmails.isEmpty == true)
         #expect(!viewModel.makeMemberSelectionViewModel().allowsEmailInvitations)
         #expect(arguments?.type == .immediate)
-        #expect(arguments?.password == nil)
+        #expect(arguments?.password == password)
         #expect(viewModel.password.isEmpty)
+        #expect(viewModel.confirmPassword.isEmpty)
         #expect(arguments?.title == "Team Standup")
         #expect(arguments?.startTime == dateProviderMock.now)
         #expect(arguments?.endTime == dateProviderMock.now.addingTimeInterval(TimeInterval.oneHour))
@@ -510,7 +520,7 @@ struct MeetingFormViewModelTests {
         let viewModel = makeViewModel(mode: .scheduled, supportsMeetingLinks: true)
         viewModel.meetingTitle = "Meeting"
         for unavailableModel in [
-            makeViewModel(mode: .instant, supportsMeetingLinks: true),
+            makeViewModel(mode: .instant),
             makeViewModel(mode: .edit(makeEditableMeeting()), supportsMeetingLinks: true),
             makeViewModel(mode: .scheduled)
         ] {
@@ -581,7 +591,8 @@ struct MeetingFormViewModelTests {
             completedMeetings.append(meeting)
         }
         viewModel.meetingTitle = "Meeting"
-        viewModel.password = "password"
+        viewModel.password = "Abcdef1!"
+        viewModel.confirmPassword = viewModel.password
         createMeetingUseCaseMock
             .invokeTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceTypeMeetingTypePasswordStringParticipantsMeetingMemberInvitedEmailsStringMeetingCreationResultReturnValue =
             MeetingCreationResult(meeting: meeting, link: nil)
@@ -591,7 +602,7 @@ struct MeetingFormViewModelTests {
         #expect(viewModel.password.isEmpty)
         #expect(createMeetingUseCaseMock
             .invokeTitleStringStartTimeDateEndTimeDateRecurrenceMeetingRecurrenceTypeMeetingTypePasswordStringParticipantsMeetingMemberInvitedEmailsStringMeetingCreationResultReceivedArguments?
-            .password == nil)
+            .password == "Abcdef1!")
         #expect(viewModel.hasError)
         #expect(viewModel.errorMessage.contains(L10n.Localizable.Meetings.Error.missingLink))
 
