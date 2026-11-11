@@ -407,8 +407,8 @@ internal enum L10n {
         internal static let description = L10n.tr("Accessibility", "conversation.mentionButton.description", fallback: "Mention someone")
       }
       internal enum MentionSuggestion {
-        /// Double tap to mention
-        internal static let hint = L10n.tr("Accessibility", "conversation.mentionSuggestion.hint", fallback: "Double tap to mention")
+        /// Double tap to mention this person
+        internal static let hint = L10n.tr("Accessibility", "conversation.mentionSuggestion.hint", fallback: "Double tap to mention this person")
       }
       internal enum MessageInfo {
         /// Double tap to hide or show message info
