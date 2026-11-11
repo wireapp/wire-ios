@@ -20,6 +20,7 @@ import WireFoundationSupport
 import WireMessagingDomainSupport
 import WireTestingPackage
 import XCTest
+
 @testable import Wire
 
 /// Lays out text message cells in a real `UITableView` with self-sizing rows, like the conversation does.
@@ -99,7 +100,15 @@ final class ConversationTextMessageTableLayoutTests: ConversationMessageSnapshot
         assertTextIsFullyLaidOut(in: tableView, step: "first display")
         snapshotHelper.verify(matching: snapshot(of: tableView), named: "top")
 
+        for (name, position) in [("middle", UITableView.ScrollPosition.middle), ("bottom", .bottom)] {
+            scrollToFirstMessage(in: tableView, dataSource: dataSource, position: position)
+            assertTextIsFullyLaidOut(in: tableView, step: "scrolled to message \(name)")
+            snapshotHelper.verify(matching: snapshot(of: tableView), named: name)
+        }
+
         // WHEN
+        tableView.setContentOffset(.zero, animated: false)
+        tableView.layoutIfNeeded()
         var offset: CGFloat = 0
         while offset < tableView.contentSize.height - tableView.bounds.height {
             offset = min(offset + 250, tableView.contentSize.height - tableView.bounds.height)
@@ -132,7 +141,59 @@ final class ConversationTextMessageTableLayoutTests: ConversationMessageSnapshot
         snapshotHelper.verify(matching: snapshot(of: tableView), named: "top")
     }
 
+    func testThatLongMessageIsVisibleWhenOpenedInTheMiddle() {
+        verifyLongMessageOnOpening(at: .middle)
+    }
+
+    func testThatLongMessageIsVisibleWhenOpenedAtTheBottom() {
+        verifyLongMessageOnOpening(at: .bottom)
+    }
+
     // MARK: - Helpers
+
+    private func verifyLongMessageOnOpening(
+        at position: UITableView.ScrollPosition,
+        file: StaticString = #filePath,
+        testName: String = #function,
+        line: UInt = #line
+    ) {
+        let (tableView, _) = makeTableView(
+            messages: [textMessage(Self.releaseNotes, sender: otherUser)],
+            size: CGSize(width: 375, height: 667),
+            initialMessagePosition: position
+        )
+        tableView.layoutIfNeeded()
+        assertTextIsFullyLaidOut(in: tableView, step: "opened at \(position)", file: file, line: line)
+        snapshotHelper.verify(
+            matching: snapshot(of: tableView),
+            file: file,
+            testName: testName,
+            line: line
+        )
+    }
+
+    private func scrollToFirstMessage(
+        in tableView: UITableView,
+        dataSource: TableDataSource,
+        position: UITableView.ScrollPosition
+    ) {
+        guard let row = dataSource.sections.first?.firstIndex(where: {
+            $0.instance is ConversationTextMessageCellDescription
+        }) else {
+            XCTFail("Expected a text message row")
+            return
+        }
+        let indexPath = IndexPath(row: row, section: 0)
+        let messageRect = tableView.rectForRow(at: indexPath)
+        XCTAssertGreaterThan(messageRect.height, tableView.bounds.height)
+        // Explicit offsets also work for rows taller than the viewport, where scrollToRow
+        // may choose to expose the top of the row instead of its requested portion.
+        let offset = position == .middle
+            ? messageRect.midY - tableView.bounds.height / 2
+            : messageRect.maxY - tableView.bounds.height
+        tableView.setContentOffset(CGPoint(x: 0, y: max(0, offset)), animated: false)
+        tableView.layoutIfNeeded()
+    }
 
     private func verifyFullyVisible(
         text: String,
@@ -172,7 +233,8 @@ final class ConversationTextMessageTableLayoutTests: ConversationMessageSnapshot
 
     private func makeTableView(
         messages: [ConversationMessage],
-        size: CGSize
+        size: CGSize,
+        initialMessagePosition: UITableView.ScrollPosition? = nil
     ) -> (UITableView, TableDataSource) {
         let factory = MockWireMessagingFactoryProtocol()
         factory.makeFetchCachedNodeUseCase_MockValue = MockWireDriveFetchCachedNodeUseCaseProtocol()
@@ -221,8 +283,15 @@ final class ConversationTextMessageTableLayoutTests: ConversationMessageSnapshot
         let window = windowScene.map { UIWindow(windowScene: $0) } ?? UIWindow()
         window.frame = tableView.frame
         window.rootViewController = UIViewController()
-        window.makeKeyAndVisible()
         window.rootViewController?.view.addSubview(tableView)
+        if let initialMessagePosition {
+            // Restore the viewing position before the first visible frame. A newly created table
+            // must render correctly here without first displaying the top or scrolling there.
+            tableView.reloadData()
+            tableView.layoutIfNeeded()
+            scrollToFirstMessage(in: tableView, dataSource: dataSource, position: initialMessagePosition)
+        }
+        window.makeKeyAndVisible()
         self.window?.isHidden = true
         self.window = window
         // `UITableView.dataSource` is weak.
