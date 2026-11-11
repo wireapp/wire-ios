@@ -31,7 +31,7 @@ class LoginPage: PageModel {
     }
 
     var nextButton: XCUIElement {
-        app.descendants(matching: .any)[Locators.LoginPage.nextButton.rawValue].firstMatch
+        app.buttons[Locators.LoginPage.nextButton.rawValue].firstMatch
     }
 
     var emailField: XCUIElement {
@@ -49,7 +49,9 @@ class LoginPage: PageModel {
 
     func enterPassword(_ password: String) throws -> FirstTimePage {
         try passwordField.tapIfKeyboardNotFocused().typeText(password)
-        nextButton.waitAndTap()
+        guard nextButton.waitAndTap(timeout: 15) else {
+            throw RuntimeError("The password Next button did not become available")
+        }
         return try FirstTimePage()
     }
 }
