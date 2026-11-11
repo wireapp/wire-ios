@@ -124,6 +124,25 @@ final class UserCellTests: XCTestCase {
         XCTAssertNil(sut.accessibilityHint)
     }
 
+    func testMentionSuggestionReusedAsCallingParticipantClearsAccessibilityHint() throws {
+        let selfUser = try XCTUnwrap(SelfUser.provider?.providedSelfUser)
+        sut = UserCell(frame: .zero)
+        sut.configure(user: mockUser, isSelfUserPartOfATeam: true)
+        sut.accessibilityHintOverride = L10n.Accessibility.Conversation.MentionSuggestion.hint
+        XCTAssertEqual(sut.accessibilityHint, L10n.Accessibility.Conversation.MentionSuggestion.hint)
+
+        sut.prepareForReuse()
+        sut.configure(with: CallParticipantsListCellConfiguration.callParticipant(
+            user: HashBox(value: mockUser),
+            callParticipantState: .connected(videoState: .started, microphoneState: .unmuted),
+            activeSpeakerState: .inactive
+        ), selfUser: selfUser)
+
+        XCTAssertNil(sut.accessibilityHintOverride)
+        XCTAssertEqual(sut.accessibilityTraits, .staticText)
+        XCTAssertNil(sut.accessibilityHint)
+    }
+
     // MARK: - Snapshot Tests
 
     func testExternalUser() {
