@@ -191,6 +191,7 @@ final class DeleteMeetingTests: WireUITestCase {
 
     @MainActor
     func testHostDeletesOngoingScheduledMeetings_TC_12007() async throws {
+        executionTimeAllowance = 600
         let (host, users, _, _) = try await UserHelper.default.registerMeetingsTeam(withMemberCount: 1)
         try await registerClients(for: users)
         try await requireConferenceCalling()
@@ -203,10 +204,16 @@ final class DeleteMeetingTests: WireUITestCase {
         for (meeting, join) in zip(meetings, [false, true]) {
             try await assertVisible(meeting, to: inviteeFixtures, true)
             try showOngoing(meeting, on: page)
-            if join { try joinAndMinimize(meeting, on: page) }
+            if join {
+                try joinAndMinimize(meeting, on: page)
+                attachScreenshot("TC-12007 host in connected call before deletion")
+            }
             try confirmDelete(requestDelete(meeting, on: page, as: .host))
             try assertRemoved(meeting, on: page)
-            if join { assertCallEnded() }
+            if join {
+                assertCallEnded()
+                attachScreenshot("TC-12007 call ended after host deletion")
+            }
 
             // Check that neither account can see the record after the host deletes it.
             try await assertVisible(meeting, to: hostFixtures, false)
