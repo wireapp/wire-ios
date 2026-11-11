@@ -130,6 +130,7 @@ extension MeetingResponse {
             end: endTime,
             recurrence: recurrence?.toDomainRecurrence(),
             timeZoneIdentifier: timeZoneIdentifier,
+            invitedEmails: invitedEmails,
             conversationID: conversationID,
             creatorID: creatorID
         )

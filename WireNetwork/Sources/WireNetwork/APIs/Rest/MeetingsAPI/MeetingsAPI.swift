@@ -71,4 +71,13 @@ public protocol MeetingsAPI: Sendable {
 
     func deleteMeeting(id: QualifiedID) async throws
 
+    /// Refreshes the link for an existing meeting.
+    ///
+    /// - Parameters:
+    ///   - id: The meeting ID.
+    ///   - password: The optional meeting password.
+    /// - Returns: The updated meeting.
+
+    func refreshMeetingLink(id: QualifiedID, password: String?) async throws -> MeetingResponse
+
 }

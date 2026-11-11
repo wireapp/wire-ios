@@ -100,7 +100,9 @@ public final class MeetingRepository: MeetingRepositoryProtocol {
     }
 
     public func fetchInvitedEmails(id: QualifiedID) async throws -> [String] {
-        try await meetingsAPI.getMeeting(id: id).invitedEmails
+        let meeting = try await meetingsAPI.getMeeting(id: id).toDomainMeeting()
+        await storeMeeting(meeting)
+        return meeting.invitedEmails
     }
 
     public func updateInvitedEmails(id: QualifiedID, adding: [String], removing: [String]) async throws {
@@ -169,6 +171,12 @@ public final class MeetingRepository: MeetingRepositoryProtocol {
 
     public func fetchMeetingLink(id: QualifiedID) async throws -> MeetingLink? {
         let response = try await meetingsAPI.getMeeting(id: id)
+        guard let url = response.link, let hasPassword = response.hasPassword else { return nil }
+        return MeetingLink(url: url, hasPassword: hasPassword)
+    }
+
+    public func refreshMeetingLink(id: QualifiedID, password: String?) async throws -> MeetingLink? {
+        let response = try await meetingsAPI.refreshMeetingLink(id: id, password: password)
         guard let url = response.link, let hasPassword = response.hasPassword else { return nil }
         return MeetingLink(url: url, hasPassword: hasPassword)
     }
@@ -277,7 +285,7 @@ public final class MeetingRepository: MeetingRepositoryProtocol {
 
 private extension MeetingResponse {
 
-    /// The backend's meeting responses carry no participant data, so
+    /// The backend's meeting responses carry no conversation members, so
     /// `conversation` stays `nil` here. The local store resolves it from the
     /// linked conversation, the source of truth, whenever a meeting is read.
     func toDomainMeeting() -> Meeting {
@@ -288,6 +296,7 @@ private extension MeetingResponse {
             end: endTime,
             recurrence: recurrence?.toDomainRecurrence(),
             timeZoneIdentifier: timeZoneIdentifier,
+            invitedEmails: invitedEmails,
             conversationID: conversationID,
             creatorID: creatorID
         )

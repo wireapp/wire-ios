@@ -275,6 +275,26 @@ class SharedDriveFilesPage: PageModel {
 
     // MARK: - Multiple selection
 
+    var listedFileNames: [String] {
+        listedItems.allElementsBoundByIndex.compactMap { $0.label.components(separatedBy: ",").first }
+    }
+
+    func waitForOfflineAvailability(ofFileNamed name: String, timeout: TimeInterval = 15) -> Bool {
+        let predicate = NSPredicate(format: "label CONTAINS %@", "Available offline")
+        let expectation = XCTNSPredicateExpectation(predicate: predicate, object: fileRow(named: name))
+        return XCTWaiter().wait(for: [expectation], timeout: timeout) == .completed
+    }
+
+    func makeSelectedItemsAvailableOffline() {
+        let button = app.buttons[Locators.WireDrive.FilesPage.makeAvailableOfflineFloatingButton.rawValue]
+        XCTAssertTrue(button.waitAndTap(timeout: 3), "Make available offline button wasn't tappable")
+    }
+
+    func removeOfflineAccessOnSelectedItems() {
+        let button = app.buttons[Locators.WireDrive.FilesPage.removeAvailableOfflineFloatingButton.rawValue]
+        XCTAssertTrue(button.waitAndTap(timeout: 3), "Remove offline access button wasn't tappable")
+    }
+
     func selectItems(named names: [String]) {
         XCTAssertTrue(moreOptionOnSharedDrive.waitAndTap(timeout: 3))
         XCTAssertTrue(app.buttons[Locators.WireDrive.FilesPage.selectItems.rawValue].waitAndTap(timeout: 3))
@@ -293,6 +313,16 @@ class SharedDriveFilesPage: PageModel {
         let moveHereButton = app.buttons[Locators.WireDrive.MoveToFolderPage.moveHere.rawValue]
         XCTAssertTrue(moveHereButton.waitAndTap(timeout: 5), "Move confirmation button wasn't tappable")
         XCTAssertTrue(moveHereButton.waitForNonExistence(timeout: 10), "Move sheet wasn't dismissed")
+    }
+
+    func tapDeleteFloatingButton() {
+        let deleteButton = app.buttons[Locators.WireDrive.FilesPage.deleteFloatingButton.rawValue]
+        XCTAssertTrue(deleteButton.waitAndTap(timeout: 3), "Delete button wasn't tappable")
+    }
+
+    func confirmDeleteOnBottomSheet() {
+        XCTAssertTrue(deleteOptionOnBottomSheet.waitAndTap(timeout: 3), "Delete confirmation wasn't tappable")
+        XCTAssertTrue(deleteOptionOnBottomSheet.waitForNonExistence(timeout: 10), "Delete sheet wasn't dismissed")
     }
 
     // MARK: - Direct uploads

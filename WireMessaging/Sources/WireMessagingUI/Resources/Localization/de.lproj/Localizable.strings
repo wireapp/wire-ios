@@ -135,6 +135,8 @@
 "conversation.wireCells.files.item.menu.versionHistory" = "Versionsverlauf";
 "conversation.wireCells.files.item.menu.makeAvailableOffline" = "Offline bereitstellen";
 "conversation.wireCells.files.item.menu.removeAvailableOffline" = "Offlinezugriff entfernen";
+"conversation.wireCells.files.offline.folderSelectionWarning" = "Sie können Ordner nicht offline verfügbar machen.\nEntfernen Sie den Ordner, um fortzufahren.";
+"conversation.wireCells.files.offline.folderSelectionWarningMultiple" = "Sie können Ordner nicht offline verfügbar machen.\nEntfernen Sie die %d Ordner, um fortzufahren.";
 "conversation.wireCells.files.item.deleteConfirmation.title" = "Dies wird die Datei %@ für alle Teilnehmer endgültig löschen. Alle verlieren den Zugriff und es gibt keine Möglichkeit, die Datei wiederherzustellen.";
 "conversation.wireCells.files.item.deleteConfirmation.deletePermanently" = "Endgültig löschen";
 "conversation.wireCells.files.item.menu.delete" = "Löschen";
@@ -193,6 +195,17 @@
 "conversation.wireCells.files.downloadingFile" = "Datei wird heruntergeladen...";
 "conversation.wireCells.files.offlineModeHint" = "Sie können weiterhin auf Ihre Offline-Dateien zugreifen.";
 "conversation.wireCells.files.time.just_now" = "Gerade eben";
+"conversation.wireCells.files.deletePermanently.title" = "Dies wird die %@ Objekte für alle Teilnehmer endgültig löschen. Alle verlieren den Zugriff und es gibt keine Möglichkeit, sie wiederherzustellen.";
+"conversation.wireCells.files.deletePermanently.confirmation" = "Endgültig löschen";
+"conversation.wireCells.files.deleteToRecycleBin.title" = "%@ Objekte werden in den Papierkorb verschoben.";
+"conversation.wireCells.files.deleteToRecycleBin.confirmation" = "Löschen";
+"conversation.wireCells.files.restore.title" = "%@ Objekte werden wiederhergestellt und sind für alle Teilnehmer dieser Unterhaltung wieder verfügbar.";
+"conversation.wireCells.files.restore.confirmation" = "Wiederherstellen";
+"conversation.wireCells.files.selection.selectItems" = "Objekte auswählen";
+"conversation.wireCells.files.selection.oneItem" = "1 Objekt";
+"conversation.wireCells.files.selection.items" = "%@ Objekte";
+"conversation.wireCells.files.selection.selectAll" = "Alles auswählen";
+"conversation.wireCells.files.selection.deselectAll" = "Alle abwählen";
 
 
 // MARK: - Shared Drive uploads
@@ -250,6 +263,8 @@
 "conversation.wireCells.recycleBin.item.restoreParentConfirmation.title" = "Sie können keine Ordner oder Dateien aus einem gelöschten Ordner wiederherstellen. Um das gewünschte Objekt wiederzuverwenden, müssen Sie den übergeordneten Ordner wiederherstellen.\n\nDer Ordner \"%@\" mit allen Dateien und Unterordnern wird wiederhergestellt und steht allen Teilnehmern dieser Unterhaltung zur Verfügung.";
 "conversation.wireCells.recycleBin.emptyFolder.title" = "Leerer Ordner";
 "conversation.wireCells.recycleBin.emptyFolder.message" = "Dieser Ordner enthält keine Dateien oder Ordner.";
+"conversation.wireCells.recycleBin.emptyConfirmation.title" = "Dies wird alle Objekte endgültig löschen, einschließlich aller Dateien und Ordner. Alle verlieren den Zugriff und es gibt keine Möglichkeit, sie wiederherzustellen.";
+"conversation.wireCells.recycleBin.emptyConfirmation.button" = "Papierkorb leeren";
 
 // MARK: - File Tags View
 "conversation.wireCells.tags.title" = "Tags hinzufügen oder entfernen";

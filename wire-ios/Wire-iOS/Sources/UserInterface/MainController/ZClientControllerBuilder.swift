@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import SwiftUI
 import WireCallingAssembly
 import WireCommonComponents
 import WireData
@@ -67,7 +68,7 @@ final class ZClientControllerBuilder {
             selfProfileViewsMonitor: SelfProfileViewsMonitorImplementation(),
             userSession: userSession,
             trackingManager: trackingManager,
-            wireMeetingsFactory: buildWireMeetingsFactory(),
+            wireMeetingsFactory: buildWireMeetingsFactory(router: router),
             wireMessagingFactory: buildWireMessagingFactory()
         )
         viewController.router = router
@@ -147,11 +148,26 @@ final class ZClientControllerBuilder {
     }
 
     @MainActor
-    private func buildWireMeetingsFactory() -> any WireMeetingsFactoryProtocol {
+    private func buildWireMeetingsFactory(router: AuthenticatedRouterProtocol) -> any WireMeetingsFactoryProtocol {
         WireMeetingsFactory(
             selfUserID: account.userIdentifier,
             supportsMeetingLinks: userSession.resolvedBackendMetadata.apiVersion.map { $0 >= .v19 } ?? false,
-            isClipboardEnabled: Settings.isClipboardEnabled
+            isClipboardEnabled: Settings.isClipboardEnabled,
+            makeMemberAvatar: { [userSession] id in
+                let user: (any WireDataModel.UserType)? = if let searchUser = userSession.searchUsersCache
+                    .object(forKey: id.id as NSUUID),
+                    searchUser.domain == id.domain {
+                    searchUser
+                } else {
+                    ZMUser.fetch(with: id.id, domain: id.domain, in: userSession.contextProvider.viewContext)
+                }
+                guard let user else { return nil }
+                return AnyView(UserImageViewRepresentable(user: user, userSession: userSession, size: .small))
+            },
+            onInstantMeetingCreated: { [weak router] result in
+                let id = result.meeting.conversationID
+                router?.navigate(to: .meetingInvitation(.init(uuid: id.id, domain: id.domain), result.link))
+            }
         )
     }
 
