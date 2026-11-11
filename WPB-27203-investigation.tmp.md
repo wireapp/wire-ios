@@ -114,6 +114,63 @@ a snapshot. Despite its description, it did not populate a table view and exerci
 initial conversation display, scrolling, or cell reuse. It therefore did not cover
 the lifecycle implicated by WPB-29736. Those tests were removed by the revert.
 
+## Findings (2026-11-11, diagnostic test on iPhone SE 3rd gen, iOS 26.5 simulator)
+
+Temporary, uncommitted diagnostic: `Wire-iOS Tests/ConversationCell/WPB27203DiagnosticTests.swift`
+(registered in `project.pbxproj` membership exceptions for `Wire-iOS-Tests`; run with
+`-testPlan AllTests -only-testing:Wire-iOS-Tests/WPB27203DiagnosticTests`; the
+`UnitTests` plan targets `Wire-iOS UnitTests` instead). It hosts real cells in a
+`UITableView` with automatic row heights and logs frame, line fragments, and styles.
+The snapshot base class fails on 2x simulators, but the logs are still produced.
+
+**Root cause (measured):** UITextView's intrinsic width is `usedRect.width` and ignores
+`usedRect.minX`. When *every* line fragment is indented, the frame is too narrow by
+that indent; the text rewraps at the narrower width while the height stays as measured,
+so the last line is clipped.
+
+- `1. One two` → `"1.\tOne two"`, firstLineHeadIndent 10.17, headIndent/tab 32.83.
+  Needed width 96.39; frame 86.5 (= 96.39 − 10.17, rounded to pixel). Line 1 holds
+  `"1.\tOne "`, `two` falls out. Same at 320/375/414.
+- Two-item lists work because the 1pt blank `\n` between items has indent 0, which
+  pulls `usedRect.minX` to 0. Same for a paragraph before the list.
+- Also affected: single-paragraph blockquote `> One two` (indent 10) and a long
+  wrapping single list item at 320 (last word `labore` lost).
+- The 1pt trailing newline appended by `markdown(from:)` for lists is removed by
+  `removeTrailingWhitespace()` in message formatting, so that workaround is inert.
+- Tabs themselves are not the cause; the old fix's explanation was approximately right
+  but the mechanism is the leading indent.
+
+**Experiments (temporary code in `LinkInteractionTextView`):**
+
+- Overriding `sizeThatFits` with the correction has *no* effect on Auto Layout.
+- Overriding `intrinsicContentSize` as `super` + minimum paragraph indent (pixel ceil),
+  skipped when any paragraph has indent 0, fixes all affected cases (single-item ordered and
+  unordered lists, blockquote, long single item at 320/375), and leaves unaffected cases
+  unchanged. It does not read `bounds` and does not invalidate in `layoutSubviews`.
+- `super.intrinsicContentSize` alternates between the real measurement and a
+  `(65536, 20.5)` placeholder; the correction just adds to the placeholder (harmless).
+
+## Implementation status (2026-11-11, uncommitted)
+
+- Fix: `LinkInteractionTextView.intrinsicContentSize` = `super` + smallest paragraph indent
+  (pixel ceil); unchanged when any paragraph has indent 0. No `bounds` dependency, no
+  `layoutSubviews` override. The dead 1pt trailing newline in `markdown(from:)` was kept:
+  labels (system messages) also use that function, so removing it is out of scope.
+- Tests: `Wire-iOS Tests/ConversationCell/ConversationTextMessageTableLayoutTests.swift`
+  (+ pbxproj membership line, 16 reference images). Real self-sizing `UITableView` in a
+  scene-attached window; asserts all characters fit, plus snapshots. Cases: single-item
+  ordered/unordered list, blockquote, RTL single item, long wrapping item (320/375/414,
+  received + sent), and a reconstructed Android 4.39.0 beta changelog (first display, scroll
+  steps, reuse, scroll back, reload; same "top" reference each time).
+- Run on iPhone 17 / iOS 26.5 (3x). With fix: 6/6 new tests pass; the existing text
+  snapshot suites (67 tests) pass without reference changes. Without fix: all 6 new tests
+  fail (e.g. `only "1.\tOne " of "1.\tOne two" fits into (86.3, 22)`), including RTL.
+- Harness pitfalls found: reference PNGs are LFS pointers until `git lfs checkout`;
+  descriptions/cells hold messages weakly (keep them alive, call `updateMessage`);
+  sceneless windows drop tall UITextView content from snapshots.
+- Known trade-off: RTL single-item lists get ~10pt extra trailing space in the bubble.
+- Not yet done: manual check in the simulator app; PR.
+
 ## Agreed direction and next steps
 
 Start from current develop with the revert in place. Use the old fix as a reference
