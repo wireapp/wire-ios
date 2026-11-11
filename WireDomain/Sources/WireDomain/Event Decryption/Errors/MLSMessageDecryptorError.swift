@@ -28,4 +28,9 @@ enum MLSMessageDecryptorError: Error {
 
     case wrongEpoch(mlsGroupID: MLSGroupID)
 
+    /// Messages for the group have been buffered by CoreCrypto for too long, a commit was likely missed.
+    ///
+    /// - Parameter mlsGroupID: the id of the group (or subgroup) that should be verified and repaired.
+    case bufferedMessageRecoveryRequired(mlsGroupID: MLSGroupID)
+
 }
