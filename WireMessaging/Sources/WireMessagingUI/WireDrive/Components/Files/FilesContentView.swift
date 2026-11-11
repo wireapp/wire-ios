@@ -163,7 +163,7 @@ package struct FilesContentView<Toolbar: ToolbarContent, Sheet: View>: View {
 private extension FilesContentView {
 
     @ViewBuilder var filesList: some View {
-        List(selection: $viewModel.selectedItems) {
+        List(selection: !viewModel.isBrowsing ? $viewModel.selectedItems : nil) {
             Group {
                 itemsSection
 
@@ -263,16 +263,19 @@ private extension FilesContentView {
             )
         } else {
             if viewModel.isRecycleBin {
-                // restore
-                actions.append(
-                    .init(
-                        id: Locators.WireDrive.FilesPage.restoreFloatingButton.rawValue,
-                        title: Strings.RecycleBin.Item.Menu.restore,
-                        systemImage: "arrow.uturn.backward",
-                        isEnabled: !viewModel.selectedItems.isEmpty,
-                        perform: { viewModel.isPresentingRestoreConfirmation = true }
+                // TODO: [WPB-29933] Remove this conditional once the backend restore action is fixed.
+                #if false
+                    // restore
+                    actions.append(
+                        .init(
+                            id: Locators.WireDrive.FilesPage.restoreFloatingButton.rawValue,
+                            title: Strings.RecycleBin.Item.Menu.restore,
+                            systemImage: "arrow.uturn.backward",
+                            isEnabled: !viewModel.selectedItems.isEmpty,
+                            perform: { viewModel.isPresentingRestoreConfirmation = true }
+                        )
                     )
-                )
+                #endif
             } else {
                 // move to folder
                 actions.append(

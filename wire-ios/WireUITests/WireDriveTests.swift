@@ -25,8 +25,7 @@ final class WireDriveTests: WireUITestCase {
 
     override func additionalDeveloperFlags() -> [DeveloperFlag: Bool] {
         [
-            .simulateDriveOffline: false,
-            .enableDriveBulkActions: true
+            .simulateDriveOffline: false
         ]
     }
 
@@ -145,8 +144,7 @@ final class WireDriveTests: WireUITestCase {
         app.launchArguments = ["--useEnvStaging"]
         app.setDeveloperFlags([
             .useWireAuthentication: true,
-            .simulateDriveOffline: isOffline,
-            .enableDriveBulkActions: true
+            .simulateDriveOffline: isOffline
         ])
         app.launch()
 
@@ -480,6 +478,7 @@ final class WireDriveTests: WireUITestCase {
 
     @MainActor
     func testRestoreMultipleItems_TC_12310() async throws {
+        throw XCTSkip("WPB-29933: Bulk restore is disabled pending a backend fix.")
 
         // GIVEN
         let teamOwner = try await createDriveEnabledConversation(
