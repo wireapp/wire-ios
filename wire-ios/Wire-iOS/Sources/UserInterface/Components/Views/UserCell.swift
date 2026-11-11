@@ -90,6 +90,13 @@ final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
     var cellIdentifier: String?
     let iconColor = IconColors.foregroundDefault
 
+    var accessibilityHintOverride: String? {
+        didSet {
+            guard oldValue != accessibilityHintOverride else { return }
+            setupAccessibilityHint()
+        }
+    }
+
     // MARK: - Override properties
 
     override var isSelected: Bool {
@@ -114,6 +121,7 @@ final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
 
     override func prepareForReuse() {
         super.prepareForReuse()
+        accessibilityHintOverride = nil
 
         UIView.performWithoutAnimation {
             hidesSubtitle = false
@@ -324,6 +332,7 @@ final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
 
         if !microphoneIconView.isHidden {
             accessibilityTraits = .staticText
+            accessibilityHint = nil
             if let microphoneStyle = microphoneIconView.style as? MicrophoneIconStyle {
                 switch microphoneStyle {
                 case .unmuted, .unmutedPulsing:
@@ -351,7 +360,9 @@ final class UserCell: SeparatorCollectionViewCell, SectionListCellType {
 
         accessibilityIdentifier = Locators.NewConversationPage.userCellInContactList.rawValue
 
-        if !checkmarkIconView.isHidden {
+        if let accessibilityHintOverride {
+            accessibilityHint = accessibilityHintOverride
+        } else if !checkmarkIconView.isHidden {
             accessibilityHint = isSelected ? CreateConversation.SelectedUser.hint : CreateConversation.UnselectedUser
                 .hint
         } else if userIsAppOrBot {
