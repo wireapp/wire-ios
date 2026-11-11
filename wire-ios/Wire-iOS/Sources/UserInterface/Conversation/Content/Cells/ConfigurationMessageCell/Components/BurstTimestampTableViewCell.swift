@@ -91,7 +91,16 @@ final class BurstTimestampSenderMessageCellDescription: ConversationMessageCellD
 
         }
 
-        let model = TimeDividerModel(text: text, isUnreadIndicatorVisible: configuration.showUnreadDot)
+        let usesRelativeText = isToday || (
+            configuration.showUnreadDot && !configuration.isFirstMessageOfTheDay &&
+                (now.timeIntervalSince(configuration.date) <= 30 * 60 || isYesterday)
+        )
+        let accessibilityLabel = usesRelativeText ? text : spokenDateFormatter.string(from: configuration.date)
+        let model = TimeDividerModel(
+            text: text,
+            isUnreadIndicatorVisible: configuration.showUnreadDot,
+            accessibilityLabel: accessibilityLabel
+        )
         return .timeDivider(model)
 
     }
@@ -200,5 +209,12 @@ final class BurstTimestampSenderMessageCell: UIView, ConversationMessageCell {
         options: 0,
         locale: .current
     )
+    return dateFormatter
+}()
+
+@MainActor private let spokenDateFormatter = {
+    let dateFormatter = DateFormatter()
+    dateFormatter.dateStyle = .full
+    dateFormatter.timeStyle = .none
     return dateFormatter
 }()

@@ -42,6 +42,7 @@ final class BurstTimestampSenderMessageCellDescriptionTests: XCTestCase {
 
         // Then
         XCTAssertEqual(model?.text, "Just now")
+        XCTAssertEqual(model?.accessibilityLabel, "Just now")
     }
 
     func testUnreadIndicator25minAgo() async {
@@ -58,6 +59,7 @@ final class BurstTimestampSenderMessageCellDescriptionTests: XCTestCase {
 
         // Then
         XCTAssertEqual(model?.text, "25 minutes ago")
+        XCTAssertEqual(model?.accessibilityLabel, "25 minutes ago")
     }
 
     func testUnreadIndicatorToday() async {
@@ -74,6 +76,7 @@ final class BurstTimestampSenderMessageCellDescriptionTests: XCTestCase {
 
         // Then
         XCTAssertEqual(model?.text, "Today")
+        XCTAssertEqual(model?.accessibilityLabel, "Today")
     }
 
     func testUnreadIndicatorYesterday() async {
@@ -90,6 +93,7 @@ final class BurstTimestampSenderMessageCellDescriptionTests: XCTestCase {
 
         // Then
         XCTAssertEqual(model?.text, "Yesterday")
+        XCTAssertEqual(model?.accessibilityLabel, "Yesterday")
     }
 
     func testUnreadIndicatorThreeDaysAgo() async {
@@ -122,6 +126,7 @@ final class BurstTimestampSenderMessageCellDescriptionTests: XCTestCase {
 
         // Then
         XCTAssertEqual(model?.text, "Jan 3")
+        XCTAssertEqual(model?.accessibilityLabel, "Friday, January 3, 2025")
     }
 
     func testUnreadIndicatorLastYear() async {
@@ -159,6 +164,7 @@ final class BurstTimestampSenderMessageCellDescriptionTests: XCTestCase {
 
             // Then
             XCTAssertEqual(model?.text, "Today")
+            XCTAssertEqual(model?.accessibilityLabel, "Today")
         }
     }
 
@@ -177,6 +183,7 @@ final class BurstTimestampSenderMessageCellDescriptionTests: XCTestCase {
 
             // Then
             XCTAssertEqual(model?.text, "Sunday, Jan 19")
+            XCTAssertEqual(model?.accessibilityLabel, "Sunday, January 19, 2025")
         }
     }
 
@@ -195,7 +202,14 @@ final class BurstTimestampSenderMessageCellDescriptionTests: XCTestCase {
 
             // Then
             XCTAssertEqual(model?.text, "Thursday, Dec 19, 2024")
+            XCTAssertEqual(model?.accessibilityLabel, "Thursday, December 19, 2024")
         }
+    }
+
+    func testTimeDividerDefaultsAccessibilityLabelToVisibleText() {
+        let model = TimeDividerModel(text: "Today", isUnreadIndicatorVisible: false)
+
+        XCTAssertEqual(model.accessibilityLabel, "Today")
     }
 
     // MARK: - Helpers
