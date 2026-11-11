@@ -31,13 +31,27 @@ enum ConversationLookupError: Error {
 extension SessionManager: CallKitManagerDelegate {
 
     func voiceChannelForVideoUpgrade(by handle: CallHandle) -> VoiceChannel? {
+        Self.voiceChannelForVideoUpgrade(
+            by: handle,
+            sessions: backgroundUserSessions,
+            isAuthenticated: delegate?.isInAuthenticatedAppState == true,
+            cameraAuthorization: AVCaptureDevice.authorizationStatus(for: .video)
+        )
+    }
+
+    static func voiceChannelForVideoUpgrade(
+        by handle: CallHandle,
+        sessions: [UUID: ZMUserSession],
+        isAuthenticated: Bool,
+        cameraAuthorization: AVAuthorizationStatus
+    ) -> VoiceChannel? {
         guard
-            delegate?.isInAuthenticatedAppState == true,
-            let session = activeUserSession,
-            session.account.userIdentifier == handle.accountID,
+            isAuthenticated,
+            let session = sessions[handle.accountID],
             session.isLoggedIn,
+            !session.isBuildBlacklisted,
             !session.isLocked,
-            AVCaptureDevice.authorizationStatus(for: .video) == .authorized
+            cameraAuthorization == .authorized
         else { return nil }
 
         return ZMConversation.fetch(with: handle.conversationID, in: session.managedObjectContext)?.voiceChannel

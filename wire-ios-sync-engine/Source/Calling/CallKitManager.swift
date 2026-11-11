@@ -57,6 +57,7 @@ public protocol CallKitManagerInterface {
     func setDelegate(_ delegate: Any)
     func updateConfiguration()
     func continueUserActivity(_ userActivity: NSUserActivity) -> Bool
+    func applyPendingVideoUpgrade()
     func requestMuteCall(in conversation: ZMConversation, muted: Bool)
     func requestJoinCall(in conversation: ZMConversation, video: Bool)
     func requestEndCall(in conversation: ZMConversation, completion: (() -> Void)?)
@@ -265,14 +266,19 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
     }
 
     @objc
-    private func applyPendingVideoUpgrade() {
+    public func applyPendingVideoUpgrade() {
         guard application.applicationState == .active, let call = pendingVideoUpgrade else { return }
-        pendingVideoUpgrade = nil
+
+        guard isEnabled, connectedCall(for: call.handle)?.id == call.id else {
+            clearPendingVideoUpgrade()
+            return
+        }
+
+        // App activation can precede Wire unlock or account activation.
+        guard let voiceChannel = delegate?.voiceChannelForVideoUpgrade(by: call.handle) else { return }
+        clearPendingVideoUpgrade()
 
         guard
-            isEnabled,
-            connectedCall(for: call.handle)?.id == call.id,
-            let voiceChannel = delegate?.voiceChannelForVideoUpgrade(by: call.handle),
             voiceChannel.state == .established,
             voiceChannel.videoState == .stopped
         else { return }
@@ -554,6 +560,10 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
     ) {
         logger.info("report call ended")
 
+        if pendingVideoUpgrade?.handle == conversation.callHandle {
+            clearPendingVideoUpgrade()
+        }
+
         guard isEnabled else {
             logger.warn("fail: report incoming call: CallKit not enabled")
             return
@@ -583,6 +593,7 @@ extension CallKitManager: CXProviderDelegate {
 
     public func providerDidReset(_ provider: CXProvider) {
         logger.info("provider did reset")
+        clearPendingVideoUpgrade()
         mediaManager?.resetAudioDevice()
         callRegister.reset()
         delegate?.endAllCalls()

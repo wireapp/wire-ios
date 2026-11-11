@@ -173,9 +173,12 @@ class MockProvider: CXProvider {
 class MockCallKitManagerDelegate: WireSyncEngine.CallKitManagerDelegate {
 
     var mockConversations: [WireSyncEngine.CallHandle: ZMConversation] = [:]
+    var isVideoUpgradeReady = true
+    var videoUpgradeLookupCount = 0
 
     func voiceChannelForVideoUpgrade(by handle: WireSyncEngine.CallHandle) -> VoiceChannel? {
-        mockConversations[handle]?.voiceChannel
+        videoUpgradeLookupCount += 1
+        return isVideoUpgradeReady ? mockConversations[handle]?.voiceChannel : nil
     }
 
     func lookupConversation(
@@ -872,6 +875,76 @@ class CallKitManagerTest: DatabaseTest {
 
         XCTAssertNil(mockWireCallCenterV3.mockAVSWrapper.setVideoStateArguments)
         XCTAssertEqual(callKitController.timesRequestTransactionCalled, 0)
+    }
+
+    func testVideoUpgradeWaitsForSessionUnlockAfterAppActivation() throws {
+        let (activity, _) = try prepareVideoUpgrade()
+        application.applicationState = .inactive
+        mockCallKitManagerDelegate.isVideoUpgradeReady = false
+        XCTAssertTrue(sut.continueUserActivity(activity))
+
+        application.applicationState = .active
+        application.simulateApplicationDidBecomeActive()
+        sut.applyPendingVideoUpgrade()
+        XCTAssertNil(mockWireCallCenterV3.mockAVSWrapper.setVideoStateArguments)
+
+        mockCallKitManagerDelegate.isVideoUpgradeReady = true
+        sut.applyPendingVideoUpgrade()
+
+        XCTAssertEqual(mockWireCallCenterV3.mockAVSWrapper.setVideoStateArguments?.videoState, .started)
+        let lookupCount = mockCallKitManagerDelegate.videoUpgradeLookupCount
+        sut.applyPendingVideoUpgrade()
+        XCTAssertEqual(mockCallKitManagerDelegate.videoUpgradeLookupCount, lookupCount)
+        XCTAssertEqual(callKitController.timesRequestTransactionCalled, 0)
+    }
+
+    func testVideoUpgradeIsCancelledWhenBackgroundedBeforeUnlock() throws {
+        let (activity, _) = try prepareVideoUpgrade()
+        application.applicationState = .active
+        mockCallKitManagerDelegate.isVideoUpgradeReady = false
+        XCTAssertTrue(sut.continueUserActivity(activity))
+
+        application.applicationState = .background
+        application.simulateApplicationDidEnterBackground()
+        mockCallKitManagerDelegate.isVideoUpgradeReady = true
+        application.applicationState = .active
+        application.simulateApplicationDidBecomeActive()
+        sut.applyPendingVideoUpgrade()
+
+        XCTAssertNil(mockWireCallCenterV3.mockAVSWrapper.setVideoStateArguments)
+    }
+
+    func testVideoUpgradeIsCancelledWhenCallEndsBeforeUnlock() throws {
+        let (activity, handle) = try prepareVideoUpgrade()
+        application.applicationState = .active
+        mockCallKitManagerDelegate.isVideoUpgradeReady = false
+        XCTAssertTrue(sut.continueUserActivity(activity))
+
+        sut.reportCallEnded(
+            in: try XCTUnwrap(mockCallKitManagerDelegate.mockConversations[handle]),
+            atTime: nil,
+            reason: .remoteEnded
+        )
+        mockCallKitManagerDelegate.isVideoUpgradeReady = true
+        sut.applyPendingVideoUpgrade()
+
+        XCTAssertNil(mockWireCallCenterV3.mockAVSWrapper.setVideoStateArguments)
+    }
+
+    func testVideoUpgradeRechecksCallIdentityAfterUnlock() throws {
+        let (activity, handle) = try prepareVideoUpgrade()
+        application.applicationState = .active
+        mockCallKitManagerDelegate.isVideoUpgradeReady = false
+        XCTAssertTrue(sut.continueUserActivity(activity))
+
+        sut.callRegister.unregisterCall(try XCTUnwrap(sut.callRegister.lookupCall(by: handle)))
+        let replacement = sut.callRegister.registerNewCall(with: handle)
+        callKitController.mockCallObserver
+            .mockCalls = [CallKitDelegateTestsMocking.mockConnectedCall(with: replacement.id)]
+        mockCallKitManagerDelegate.isVideoUpgradeReady = true
+        sut.applyPendingVideoUpgrade()
+
+        XCTAssertNil(mockWireCallCenterV3.mockAVSWrapper.setVideoStateArguments)
     }
 
     private func prepareVideoUpgrade() throws -> (NSUserActivity, WireSyncEngine.CallHandle) {
