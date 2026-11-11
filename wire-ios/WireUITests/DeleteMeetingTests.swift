@@ -387,7 +387,10 @@ final class DeleteMeetingTests: WireUITestCase {
         app.launchArguments = ["-resetData", "--useEnvStaging", "-AppleLanguages", "(en)", "-AppleLocale", "en_GB"]
         app.setDeveloperFlags([.useWireAuthentication: true])
         app.launch()
-        return try app.loginUser(email: user.email, password: user.password).acceptPopup(timeout: 60).openMeetings()
+        let conversations = try app.loginUser(email: user.email, password: user.password).acceptPopup(timeout: 60)
+        // The notification permission alert can appear after initial sync.
+        app.dismissAllowIfPresent(timeout: 5)
+        return try conversations.openMeetings()
     }
 
     private func registerClients(for users: [UserInfo]) async throws {
