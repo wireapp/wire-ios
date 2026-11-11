@@ -21,7 +21,7 @@ on:
           - '4'
           - '5'
           - '6'
-        default: '2'
+        default: '6'
   schedule:
     - cron: "0 21 * * MON-FRI"
   
@@ -40,8 +40,7 @@ jobs:
       mac_runner: ${{ github.event_name == 'workflow_dispatch' && inputs.mac_runner || vars.DEFAULT_MAC_RUNNER }}
       run_critical_flows: true
       ui_test_tags: "!critical"
-      uitest_parallel_workers: ${{ github.event_name == 'workflow_dispatch' && inputs.uitest_parallel_workers || vars.UITEST_PARALLEL_WORKERS || '2' }}
-      ui_test_skip_cases: "WireUITests/MeetingsTests,WireUITests/ScheduleMeetingTests"
+      uitest_parallel_workers: ${{ github.event_name == 'workflow_dispatch' && inputs.uitest_parallel_workers || '6' }}
       notify: always
       timeout_minutes: 180
     secrets:
@@ -51,21 +50,3 @@ jobs:
       WIRE_WEBHOOK_URL: ${{ secrets.WIRE_IOS_NIGHTLY_URL }}
       WIRE_WEBHOOK_TOKEN: ${{ secrets.WIRE_IOS_NIGHTLY_TOKEN }}
 
-  trigger_meeting_tests:
-    if: ${{ github.ref == 'refs/heads/develop' || github.event_name == 'workflow_dispatch' }}
-    uses: ./.github/workflows/_reusable_run_tests.yml
-    with:
-      all: false
-      branch: ${{ github.event_name == 'workflow_dispatch' && github.ref_name || 'develop' }}
-      mac_runner: ${{ github.event_name == 'workflow_dispatch' && inputs.mac_runner || vars.DEFAULT_MAC_RUNNER }}
-      run_critical_flows: true
-      ui_test_cases: "MeetingsTests,ScheduleMeetingTests"
-      test_name: Meeting-tests
-      notify: always
-      timeout_minutes: 180
-    secrets:
-      ZENKINS_USERNAME: ${{ secrets.ZENKINS_USERNAME }}
-      DD_API_KEY: ${{ secrets.DD_API_KEY }}
-      OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
-      WIRE_WEBHOOK_URL: ${{ secrets.WIRE_IOS_NIGHTLY_URL }}
-      WIRE_WEBHOOK_TOKEN: ${{ secrets.WIRE_IOS_NIGHTLY_TOKEN }}

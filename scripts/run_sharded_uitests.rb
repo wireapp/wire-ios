@@ -76,14 +76,26 @@ def say(label, message)
     OUTPUT_LOCK.synchronize { puts("[#{label}] #{message}") }
 end
 
+SimulatorPreparationStopped = Class.new(StandardError)
+
 # Runs a command, returns [output, success]. Stops it, and everything it started, after `timeout` seconds.
-def run(*command, env: {}, timeout: 300)
+def run(*command, env: {}, timeout: 300, stopped: nil)
     output = +""
     Open3.popen2e(env, *command, pgroup: true) do |_stdin, out, wait_thread|
         reader = Thread.new { out.each_line { |line| output << line } }
-        unless wait_thread.join(timeout)
+        deadline = Time.now + timeout
+        cancelled = false
+        completed = if stopped
+            wait_thread.join(1) until !wait_thread.alive? || (cancelled = stopped.call) || Time.now >= deadline
+            !wait_thread.alive?
+        else
+            wait_thread.join(timeout)
+        end
+        unless completed
             terminate_process_group(wait_thread)
             reader.join(5)
+            raise SimulatorPreparationStopped if cancelled
+
             return ["#{output}\ntimed out after #{timeout}s", false]
         end
         reader.join
@@ -138,8 +150,8 @@ def write_job_summary(lines)
     File.open(ENV["GITHUB_STEP_SUMMARY"], "a") { |file| file.puts(lines) }
 end
 
-def run!(*command, env: {}, timeout: 300)
-    output, success = run(*command, env: env, timeout: timeout)
+def run!(*command, env: {}, timeout: 300, stopped: nil)
+    output, success = run(*command, env: env, timeout: timeout, stopped: stopped)
     raise "#{command.first(3).join(' ')} failed: #{output.lines.last(3).join.strip}" unless success
 
     output
@@ -176,13 +188,15 @@ end
 
 # A booted simulator can refuse app launches while SpringBoard finishes starting up. Launching a system app checks
 # for that, so wait until it works.
-def wait_until_launchable(udid, timeout: 180)
+def wait_until_launchable(udid, timeout: 180, stopped: nil)
     deadline = Time.now + timeout
     loop do
-        _, launched = run("xcrun", "simctl", "launch", udid, "com.apple.Preferences", timeout: 60)
+        return false if stopped&.call
+
+        _, launched = run("xcrun", "simctl", "launch", udid, "com.apple.Preferences", timeout: 60, stopped: stopped)
         if launched
             run("xcrun", "simctl", "terminate", udid, "com.apple.Preferences", timeout: 30)
-            return
+            return true
         end
         raise "simulator #{udid} did not accept an app launch within #{timeout}s" if Time.now >= deadline
 
@@ -192,27 +206,43 @@ end
 
 def prepare_simulator(udid, stopped: -> { false })
     started = Time.now
-    run("xcrun", "simctl", "boot", udid, timeout: 120) # fails harmlessly when already booted
-    return if stopped.call
-    run!("xcrun", "simctl", "bootstatus", udid, "-b", timeout: 600)
-    return if stopped.call
+    run("xcrun", "simctl", "boot", udid, timeout: 120, stopped: stopped) # fails harmlessly when already booted
+    return false if stopped.call
+    run!("xcrun", "simctl", "bootstatus", udid, "-b", timeout: 600, stopped: stopped)
+    return false if stopped.call
     booted = Time.now
-    output, seeded = run("bash", File.join(ROOT, "scripts/seed-simulator-media.sh"), env: { "IOS_SIM_ID" => udid }, timeout: 120)
+    output, seeded = run("bash", File.join(ROOT, "scripts/seed-simulator-media.sh"), env: { "IOS_SIM_ID" => udid }, timeout: 120, stopped: stopped)
     unless seeded
         load_average = `uptime`.strip[/load averages?: .*/]
         raise "seeding #{udid} failed after #{(Time.now - booted).round}s (#{load_average}):\n#{output.lines.last(10).join}"
     end
-    return if stopped.call
-    wait_until_launchable(udid)
+    return false if stopped.call
+    return false unless wait_until_launchable(udid, stopped: stopped)
+    return false if stopped.call
+
     say("shards", "simulator #{udid} ready: boot #{(booted - started).round}s, seed #{(Time.now - booted).round}s")
+    true
+end
+
+# Only used for unused preparation attempts; simulators with running tests are never discarded here.
+def discard_simulator(udid)
+    %w[shutdown delete].each do |action|
+        begin
+            run("xcrun", "simctl", action, udid, timeout: 60)
+        rescue => error
+            say("shards", "could not #{action} simulator #{udid}: #{error.message}")
+        end
+    end
 end
 
 # Wait for slow preparation, but surface a dead producer instead of waiting on an empty queue forever.
-def next_ready_simulator(ready_simulators, preparation_threads)
+def next_ready_simulator(ready_simulators, preparation_threads, stopped: -> { false })
     loop do
         begin
             return ready_simulators.pop(true)
         rescue ThreadError
+            return if stopped.call
+
             preparation_threads.each { |thread| thread.value unless thread.alive? }
             if preparation_threads.none?(&:alive?)
                 preparation_threads.each(&:value)
@@ -232,6 +262,15 @@ planned = [options[:workers], batches.size].min
 say("shards", "#{tests.size} tests, #{planned} shards, #{batches.size} batches of up to #{MAX_TESTS_PER_BATCH} tests taken from a shared queue")
 FileUtils.mkdir_p([options[:log_dir], options[:result_dir], File.dirname(options[:simulators_file])])
 
+queue_lock = Mutex.new
+queue = batches.each_with_index.map { |batch_tests, index| { number: index + 1, tests: batch_tests, launch_failures: 0 } }
+in_flight = 0
+alive = 0
+pending_simulators = planned
+build_failed = false
+preparation_finished = -> { build_failed || queue_lock.synchronize { queue.empty? && in_flight.zero? } }
+preparation_failures = []
+
 # Prepare extras one at a time alongside the build. Publish each simulator as it becomes ready,
 # so it can join the test queue without waiting for the others.
 ready_simulators = Queue.new
@@ -244,37 +283,49 @@ base_ready = Thread.new do
     end
     ready_simulators << [1, simulator]
 end
-# Set when the run is over before any test, so the extras thread stops preparing simulators nobody will use.
+# Stop unused preparation after build failure or once every batch has a worker.
 stop_extras = false
 extras_ready = Thread.new do
     (2..planned).each do |index|
-        break if stop_extras
-
         udid = nil
         attempts = 0
-        simulator = begin
-            attempts += 1
-            udid = run!("xcrun", "simctl", "create", "#{options[:base_simulator]}-shard-#{index}", options[:device_type], options[:runtime]).strip
-            File.open(options[:simulators_file], "a") { |file| file.puts(udid) }
-            prepare_simulator(udid, stopped: -> { stop_extras })
-            udid
-        rescue => error
-            if udid
-                %w[shutdown delete].each do |action|
-                    begin
-                        run("xcrun", "simctl", action, udid, timeout: 60)
-                    rescue => cleanup_error
-                        say("shards", "could not #{action} simulator #{udid}: #{cleanup_error.message}")
-                    end
+        loop do
+            # Pause without preparing anything. A refused batch can still request a replacement.
+            sleep(0.5) while stop_extras && !preparation_finished.call
+            break if preparation_finished.call
+
+            simulator = begin
+                attempts += 1
+                discard_simulator(udid) if udid
+                udid = run!("xcrun", "simctl", "create", "#{options[:base_simulator]}-shard-#{index}", options[:device_type], options[:runtime]).strip
+                File.open(options[:simulators_file], "a") { |file| file.puts(udid) }
+                unless prepare_simulator(udid, stopped: -> { stop_extras })
+                    attempts -= 1
+                    next
                 end
+                udid
+            rescue SimulatorPreparationStopped
+                attempts -= 1
+                next
+            rescue => error
+                discard_simulator(udid) if udid
+                udid = nil
+                if attempts < 2
+                    say("shards", "simulator for shard #{index} failed: #{error.message.strip}\n  trying a new one")
+                    next
+                end
+                preparation_failures << index
+                error
             end
-            if attempts < 2 && !stop_extras
-                say("shards", "simulator for shard #{index} failed: #{error.message.strip}\n  trying a new one")
-                retry
+            if stop_extras && !simulator.is_a?(Exception)
+                attempts -= 1
+                next
             end
-            error
+
+            ready_simulators << [index, simulator]
+            break
         end
-        ready_simulators << [index, simulator]
+        break if preparation_finished.call
     end
 end
 [base_ready, extras_ready].each { |thread| thread.report_on_exception = false }
@@ -301,6 +352,7 @@ built = stream("build", build_command, build_log)
 publish_log(build_log, options[:published_log_dir], secrets)
 
 unless built
+    build_failed = true
     stop_extras = true
     [base_ready, extras_ready].each(&:value)
     say("shards", "build-for-testing failed, no tests were run")
@@ -309,6 +361,7 @@ end
 
 xctestrun = Dir.glob(File.join(options[:derived_data], "Build/Products", "#{options[:scheme]}_#{options[:test_plan]}_*.xctestrun")).max_by { |path| File.mtime(path) }
 if xctestrun.nil?
+    build_failed = true
     stop_extras = true
     [base_ready, extras_ready].each(&:value)
     abort("[shards] no .xctestrun for #{options[:scheme]}/#{options[:test_plan]} in #{options[:derived_data]}")
@@ -323,17 +376,12 @@ launch_refused = ->(text) { text.match?(RUNNER_LAUNCH_FAILURE) && !text.match?(T
 
 # Every shard takes the next batch from this queue when it is free, so a shard that got short batches simply
 # takes more of them. `in_flight` keeps shards waiting while a batch could still come back to the queue.
-queue_lock = Mutex.new
-queue = batches.each_with_index.map { |batch_tests, index| { number: index + 1, tests: batch_tests, launch_failures: 0 } }
-in_flight = 0
-alive = 0
-pending_simulators = planned
-
 take_batch = lambda do
     loop do
         batch, busy = queue_lock.synchronize do
             taken = queue.shift
             in_flight += 1 if taken
+            stop_extras = true if taken && queue.empty?
             [taken, in_flight]
         end
         return batch if batch
@@ -346,7 +394,10 @@ end
 finish_batch = ->(batch, requeue: false) do
     queue_lock.synchronize do
         in_flight -= 1
-        queue.unshift(batch) if requeue
+        if requeue
+            queue.unshift(batch)
+            stop_extras = false
+        end
     end
 end
 
@@ -378,12 +429,16 @@ end
 
 worker_threads = []
 planned.times do
-    number, simulator = next_ready_simulator(ready_simulators, [base_ready, extras_ready])
+    ready = next_ready_simulator(ready_simulators, [base_ready, extras_ready], stopped: preparation_finished)
+    break unless ready
+
+    number, simulator = ready
     queue_lock.synchronize do
         pending_simulators -= 1
         alive += 1 unless simulator.is_a?(Exception)
     end
     if simulator.is_a?(Exception)
+        preparation_failures << number unless preparation_failures.include?(number)
         say("shards", "simulator for shard #{number} is not usable, continuing without it: #{simulator.message}")
         next
     end
@@ -520,7 +575,14 @@ planned.times do
 end
 [base_ready, extras_ready].each(&:value)
 
-if worker_threads.size < planned
+unless preparation_failures.empty?
+    message = "Simulator preparation failed for shard(s): #{preparation_failures.join(', ')}"
+    say("shards", message)
+    write_job_summary("> [!WARNING]\n> #{message}")
+end
+if stop_extras && worker_threads.size < planned
+    say("shards", "no batches left to assign; unused preparation stopped, #{worker_threads.size} of #{planned} workers joined")
+elsif worker_threads.size < planned
     message = "Only #{worker_threads.size} of #{planned} simulators became ready"
     say("shards", message)
     write_job_summary("> [!WARNING]\n> UITest shards: #{message}")
