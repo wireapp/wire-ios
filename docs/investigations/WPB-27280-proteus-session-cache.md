@@ -81,32 +81,59 @@ cannot be tied to that overlap with certainty. The evidence is consistent with t
    the protocol from that conversation, so for MLS no Proteus message is sent and the deleted session is
    not rebuilt. Failed-decryption notices are still marked as resolved after a successful send.
 3. **App and share extension can both send the same message.** Send strategies have no notion of which
-   process owns an outgoing message. With fresh session state this wastes uploads and creates duplicate
-   copies. Recipients deduplicate by nonce, so it does not corrupt sessions.
+   process owns an outgoing message. With outdated session state, both copies can be encrypted with the
+   same message key, so the two ciphertexts share a keystream. Once session state is always fresh, it
+   only wastes uploads and creates duplicate copies, which recipients deduplicate by nonce.
 
-## Proposed approach
+## Upstream CoreCrypto fix
 
-Release mitigation (iOS):
-- In `SafeCoreCrypto.transaction`, call `context.proteusInit()` at the start of every transaction, before
-  running the caller's block. This rebuilds the Proteus cache from the database once the transaction holds
-  the write lock. Every Proteus operation found goes through this wrapper, including batch decryption with
-  a supplied context. It does not delete sessions or change identity. If no identity exists,
-  `proteusInit` would create one; the app already calls it when CoreCrypto starts up.
-- In `ProteusService.establishSession`, skip creating the session if one already exists, checked in the
-  same transaction.
-- Update the shared transaction mocks so `proteusInit` is allowed.
-- Confirm with CoreCrypto maintainers that repeated `proteusInit` calls are supported, and measure NSE
-  batch-decrypt latency on a device.
+CoreCrypto PR [wireapp/core-crypto#2844](https://github.com/wireapp/core-crypto/pull/2844)
+("fix: cross-connection database state staleness [WPB-27280]") fixes the root cause. It was open and
+under review as of November 2026, and targets CoreCrypto 12. A backport to CoreCrypto 11 is planned.
 
-Regression tests (real on-disk CoreCrypto, two instances on one database): session replacement (202),
-ratchet advance (406), stale write followed by a fresh reader, app/NSE interleaving, rollback and retry,
-batch decryption with a supplied context, and session creation when a session already exists.
+- When a transaction starts, after the SQLite write lock is taken, CoreCrypto reads
+  `PRAGMA data_version`. This value changes whenever another connection has committed to the database. If
+  it changed, CoreCrypto clears the Proteus session cache **and** the MLS conversation cache, so state is
+  reloaded from the database.
+- Aborted transactions and failed commits now clear the Proteus cache as well.
+- Its tests cover: ratchet advance and session replacement by another instance; an outdated instance
+  overwriting newer state; two instances reusing the same message key; aborted decryption; and the MLS
+  equivalents (another instance processed a commit; an outdated instance rolls a conversation back to an
+  older epoch).
 
-Still needed:
-- **Repair of already-broken sessions.** The fix above only prevents new damage. Session reset must
-  actually rebuild Proteus for users whose one-to-one conversation uses MLS. Automatic reset after
-  repeated 406s from the same client is worth considering.
-- **Upstream CoreCrypto fix:** clear or scope the Proteus cache per transaction, and clear it on abort. The
-  iOS workaround can then be removed.
-- **Separate follow-ups:** decide which process owns an outgoing message; log the sender client/session
-  ID (no content) on decryption failures so future reports can be attributed.
+Compared with an iOS-side `proteusInit()` per transaction, the upstream fix only reloads when another
+process actually wrote. It doesn't touch identity or prekeys, and it also protects MLS conversations,
+which have the same cross-process problem.
+
+Limitation: the check works per connection. Two CoreCrypto instances sharing one `Database` connection
+would not see each other's writes. iOS opens a separate connection for every CoreCrypto instance and a
+separate database per account (`CoreCryptoProvider.createCoreCrypto`), so this does not apply,
+including with multiple accounts.
+
+The PR does not cover the iOS issues listed above, and cannot repair sessions that are already corrupted.
+
+## Plan
+
+1. **Upgrade iOS to CoreCrypto 11 with the backported fix.** This replaces the iOS workaround below. The
+   upgrade from 10.5 involves API changes and needs its own review and testing.
+2. **iOS: check for an existing session before creating one after a 412.** In
+   `ProteusService.establishSession`, check and skip in the same transaction.
+3. **iOS: make session reset actually rebuild Proteus**, including for users whose one-to-one
+   conversation uses MLS, so that already-broken sessions can be repaired. Consider automatic reset after
+   repeated 406s from the same client.
+4. **Follow-ups:** decide which process owns an outgoing message; log the sender client/session ID (no
+   content) on decryption failures so future reports can be attributed.
+
+Regression tests on iOS (real on-disk CoreCrypto, two instances on one database): session replacement
+(202), ratchet advance (406), stale write followed by a fresh reader, app/NSE interleaving, rollback and
+retry, batch decryption with a supplied context, and session creation when a session already exists.
+
+### Fallback if the CoreCrypto upgrade can't make the release
+
+In `SafeCoreCrypto.transaction`, call `context.proteusInit()` at the start of every transaction, before the
+caller's block. This rebuilds the Proteus cache from the database once the write lock is held. Every
+Proteus operation found goes through this wrapper, including batch decryption with a supplied context.
+It does not delete sessions or change identity. If no identity exists, `proteusInit` would create one; the
+app already calls it when CoreCrypto starts up. This covers Proteus only, not MLS. It would also need the
+shared transaction mocks updated, confirmation from CoreCrypto maintainers that repeated `proteusInit` is
+supported, and a device measurement of NSE batch-decrypt latency. Remove it once the upstream fix ships.
