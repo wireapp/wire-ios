@@ -46,6 +46,43 @@ final class JoinMeetingVisibilityTests: WireUITestCase, MeetingJoinTesting {
     }
 
     @MainActor
+    func testJoinVisibilityRefreshesAfterBackgroundResume_TC_12024() async throws {
+        executionTimeAllowance = 600
+        let fixture = try await makeMeeting(
+            title: "TC12024 resume join",
+            start: Date().addingTimeInterval(86_400),
+            duration: 60,
+            asHost: false
+        )
+        let start = nextMinute(after: Date().addingTimeInterval(90))
+        let meeting = try await fixture.fixtures.update(meeting: fixture.meeting, start: start, duration: 60)
+        let row = fixture.page.row(meeting, start: start)
+        let join = joinButton(meeting, on: fixture.page, start: start)
+
+        // Check before the live window.
+        guard row.waitForExistence(timeout: 20) else { throw RuntimeError("The rescheduled meeting did not appear") }
+        XCTAssertFalse(join.exists, "Join appeared before the meeting start")
+        capture("TC12024 before start")
+
+        XCUIDevice.shared.press(.home)
+        XCTAssertTrue(app.wait(for: .runningBackground, timeout: 5))
+        try await wait(until: start)
+        app.activate()
+        XCTAssertTrue(app.wait(for: .runningForeground, timeout: 5))
+        XCTAssertTrue(join.waitForExistence(timeout: 15), "Join did not appear after resume at the start")
+        capture("TC12024 after start resume")
+
+        XCUIDevice.shared.press(.home)
+        XCTAssertTrue(app.wait(for: .runningBackground, timeout: 5))
+        try await wait(until: meeting.endTime)
+        app.activate()
+        XCTAssertTrue(app.wait(for: .runningForeground, timeout: 5))
+        XCTAssertTrue(join.waitToDisappear(timeout: 15), "Join remained after resume past the meeting end")
+        try assertJoinNow(meeting, on: fixture.page, start: start)
+        capture("TC12024 after end resume")
+    }
+
+    @MainActor
     func testJoinAppearsOnlyForLiveRecurringOccurrence_TC_12022() async throws {
         executionTimeAllowance = 600
         let calendar = Calendar.current
