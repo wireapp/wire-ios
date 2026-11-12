@@ -51,4 +51,33 @@ final class JoinMeetingCallTests: WireUITestCase, MeetingJoinTesting {
         try await callingManager.stopCurrentCall(instanceId: peerID)
     }
 
+    @MainActor
+    func testHostAndInviteeJoinFutureMeetingWithJoinNow_TC_12026() async throws {
+        executionTimeAllowance = 900
+        for isHost in [false, true] {
+            let start = Date().addingTimeInterval(3600)
+            let fixture = try await makeMeeting(
+                title: isHost ? "TC12026 host early join" : "TC12026 invitee early join",
+                start: start,
+                asHost: isHost,
+                withPeer: true
+            )
+            let peerID = try XCTUnwrap(fixture.peerID)
+
+            // Join now starts the future meeting before its scheduled time.
+            async let accepting: Void = armPeer(peerID)
+            let call = try join(fixture.meeting, on: fixture.page, start: start, fromMenu: true)
+            try await accepting
+            let callID = try await assertPeer(peerID, user: fixture.user, meeting: fixture.meeting)
+            capture(isHost ? "TC12026 host joined early" : "TC12026 invitee joined early")
+
+            // Leave, then rejoin the existing call through Join now.
+            let page = try leaveCall(call)
+            let rejoinedCall = try join(fixture.meeting, on: page, start: start, fromMenu: true)
+            _ = try await assertPeer(peerID, user: fixture.user, meeting: fixture.meeting, callID: callID)
+            _ = try leaveCall(rejoinedCall)
+            try await callingManager.stopCurrentCall(instanceId: peerID)
+        }
+    }
+
 }
