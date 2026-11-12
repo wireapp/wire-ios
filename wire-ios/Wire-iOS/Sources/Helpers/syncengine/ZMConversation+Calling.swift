@@ -21,6 +21,11 @@ import class WireCommonComponents.NetworkStatus
 import WireDataModel
 import WireSyncEngine
 
+#if DEBUG
+    import notify
+    import WireFoundation
+#endif
+
 // TODO: [WPB-9864]: Most of this code shouldn't be nested within `ZMConversation`.
 extension ZMConversation {
 
@@ -75,9 +80,20 @@ extension ZMConversation {
 
     func warnAboutNoInternetConnection() -> Bool {
         typealias VoiceNetworkErrorLocale = L10n.Localizable.Voice.NetworkError
-        guard case .unreachable = NetworkStatus.shared.reachability else {
-            return false
-        }
+        var isOffline = false
+        if case .unreachable = NetworkStatus.shared.reachability { isOffline = true }
+        #if DEBUG
+            if let id = UITestConfig.environment?.meetingsCallControlID {
+                let name = "\(UITestConfig.meetingsCallControlNotificationPrefix).\(id).offline"
+                var token: Int32 = NOTIFY_TOKEN_INVALID
+                precondition(notify_register_check(name, &token) == NOTIFY_STATUS_OK)
+                defer { notify_cancel(token) }
+                var offline: UInt64 = 0
+                precondition(notify_get_state(token, &offline) == NOTIFY_STATUS_OK)
+                isOffline = isOffline || offline == 1
+            }
+        #endif
+        guard isOffline else { return false }
 
         let alert = UIAlertController(
             title: VoiceNetworkErrorLocale.title,
