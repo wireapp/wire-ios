@@ -28,16 +28,6 @@ struct MLSMessageDecryptor: MLSMessageDecryptorProtocol {
     let conversationLocalStore: any ConversationLocalStoreProtocol
     let bufferedMessageRecoveryTracker: BufferedMLSMessageRecoveryTracker
 
-    init(
-        mlsDecryptionService: any MLSDecryptionServiceInterface,
-        conversationLocalStore: any ConversationLocalStoreProtocol,
-        bufferedMessageRecoveryTracker: BufferedMLSMessageRecoveryTracker
-    ) {
-        self.mlsDecryptionService = mlsDecryptionService
-        self.conversationLocalStore = conversationLocalStore
-        self.bufferedMessageRecoveryTracker = bufferedMessageRecoveryTracker
-    }
-
     func decryptedWelcomeMessageEventData(
         from eventData: ConversationMLSWelcomeEvent,
         context: CoreCryptoContextProtocol?
