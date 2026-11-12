@@ -21,6 +21,9 @@ The order is:
 
 Step 2 needs the same exclusion as step 3. The per-provider Swift actor does not coordinate different processes.
 
+The salt-file migration race is specific to the 11 upgrade. The busy failure also reproduces with the released
+**10.5.4** binary: it is a pre-existing database-open locking defect, rather than a new Swift object-lifetime regression.
+
 ## Confirmed salt-loss interleaving
 
 The test saves the original legacy keychain salt before opening a 10.5.4 database with 11.0.0. A diagnostic library
@@ -67,6 +70,11 @@ SQLite's busy timeout while the other connection owns `BEGIN IMMEDIATE`.
 Idle surviving database handles also allow repeated opens. Destroying every old Swift object is therefore not the
 fix for this failure. These are database-level probes; physical-device account switching, logout and re-login still
 need end-to-end validation.
+
+The same baseline experiment with 10.5.4 passed the 3-second case and returned primary/extended code `5` in the
+8-second case. Its failing statement is `PRAGMA user_version=2`; see the
+[10.5.4 compatibility code](https://github.com/wireapp/core-crypto/blob/v10.5.4/keystore/src/connection/ios_wal_compat.rs).
+The proposed 11.x exclusion repairs this existing contention window as well as the new salt-migration race.
 
 ## Smallest proposed fix
 
