@@ -121,4 +121,45 @@ final class JoinMeetingCallTests: WireUITestCase, MeetingJoinTesting {
         try await callingManager.stopCurrentCall(instanceId: peerID)
     }
 
+    @MainActor
+    func testHostAndInviteeJoinRecurringMeetingWithJoinNow_TC_12028() async throws {
+        executionTimeAllowance = 900
+        let calendar = Calendar.current
+        let tomorrow = try XCTUnwrap(calendar.date(byAdding: .day, value: 1, to: Date()))
+        let start = try XCTUnwrap(calendar.date(bySettingHour: 12, minute: 0, second: 0, of: tomorrow))
+        let futureStart = try XCTUnwrap(calendar.date(byAdding: .weekOfYear, value: 1, to: start))
+        let until = try XCTUnwrap(calendar.date(byAdding: .weekOfYear, value: 2, to: start))
+
+        for isHost in [false, true] {
+            let fixture = try await makeMeeting(
+                title: isHost ? "TC12028 host recurring join" : "TC12028 invitee recurring join",
+                start: start,
+                recurrence: MeetingRecurrence(frequency: .weekly, interval: 1, until: until),
+                asHost: isHost,
+                withPeer: true
+            )
+            let peerID = try XCTUnwrap(fixture.peerID)
+            let row = try fixture.page.showRow(fixture.meeting, start: futureStart)
+            XCTAssertEqual(
+                row.staticTexts[Locators.WireMeetings.MeetingRow.recurrence.rawValue].label,
+                "Weekly"
+            )
+
+            // Join now must use this future occurrence of the recurring meeting.
+            async let accepting: Void = armPeer(peerID)
+            let call = try join(fixture.meeting, on: fixture.page, start: futureStart, fromMenu: true)
+            try await accepting
+            _ = try await assertPeer(peerID, user: fixture.user, meeting: fixture.meeting)
+
+            let stored = try await fixture.fixtures.list()
+            let persisted = try XCTUnwrap(stored.first { $0.id == fixture.meeting.id })
+            XCTAssertEqual(persisted.conversationID, fixture.meeting.conversationID)
+            XCTAssertEqual(persisted.recurrence?.frequency, .weekly)
+            XCTAssertEqual(persisted.recurrence?.interval, 1)
+            XCTAssertEqual(persisted.recurrence?.until, until)
+            capture(isHost ? "TC12028 host joined recurring meeting" : "TC12028 invitee joined recurring meeting")
+            _ = try leaveCall(call)
+            try await callingManager.stopCurrentCall(instanceId: peerID)
+        }
+    }
 }
