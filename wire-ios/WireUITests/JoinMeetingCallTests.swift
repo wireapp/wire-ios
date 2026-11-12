@@ -80,4 +80,45 @@ final class JoinMeetingCallTests: WireUITestCase, MeetingJoinTesting {
         }
     }
 
+    @MainActor
+    func testInviteeRejoinsRescheduledMeetingWithJoinNow_TC_12027() async throws {
+        executionTimeAllowance = 900
+        let start = Date().addingTimeInterval(3600)
+        let fixture = try await makeMeeting(
+            title: "TC12027 rejoin rescheduled meeting",
+            start: start,
+            asHost: false,
+            withPeer: true,
+            now: start.addingTimeInterval(30)
+        )
+        let peerID = try XCTUnwrap(fixture.peerID)
+
+        // Join, leave, and rejoin before the host reschedules the meeting.
+        async let accepting: Void = armPeer(peerID)
+        var page = fixture.page
+        let firstCall = try join(fixture.meeting, on: page, start: start)
+        try await accepting
+        let callID = try await assertPeer(peerID, user: fixture.invitee, meeting: fixture.meeting)
+        page = try leaveCall(firstCall)
+
+        let secondCall = try join(fixture.meeting, on: page, start: start, fromMenu: true)
+        _ = try await assertPeer(peerID, user: fixture.invitee, meeting: fixture.meeting, callID: callID)
+        page = try leaveCall(secondCall)
+
+        let rescheduledStart = Date().addingTimeInterval(86_400)
+        let updated = try await fixture.fixtures.update(meeting: fixture.meeting, start: rescheduledStart)
+        let row = try page.showRow(updated, start: rescheduledStart)
+        let joinButton = row.descendants(matching: .any)[Locators.WireMeetings.MeetingRow.joinButton.rawValue]
+        XCTAssertFalse(joinButton.exists, "Normal Join appeared outside the scheduled window")
+
+        // Join now must reconnect to the same active call after the schedule change.
+        let rejoinedCall = try join(updated, on: page, start: rescheduledStart, fromMenu: true)
+        _ = try await assertPeer(peerID, user: fixture.invitee, meeting: updated, callID: callID)
+        XCTAssertEqual(updated.id, fixture.meeting.id)
+        XCTAssertEqual(updated.conversationID, fixture.meeting.conversationID)
+        capture("TC12027 rejoined the rescheduled meeting")
+        _ = try leaveCall(rejoinedCall)
+        try await callingManager.stopCurrentCall(instanceId: peerID)
+    }
+
 }
