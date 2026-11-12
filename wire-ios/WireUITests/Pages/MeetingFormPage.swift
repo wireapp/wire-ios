@@ -246,16 +246,17 @@ class MeetingFormPage: PageModel {
         guard selectedMembersButton.waitForExistence(timeout: 5) else {
             throw RuntimeError("Selected members section did not appear")
         }
-        if selectedMembersButton.identifier == Locators.WireMeetings.MeetingForm.selectedMembersIdentifier(
-            isExpanded: true
-        ) {
+        if selectedMembersButton.value as? String != "0",
+           selectedMembersButton.identifier == Locators.WireMeetings.MeetingForm.selectedMembersIdentifier(
+               isExpanded: true
+           ) {
             guard selectedMembersButton.waitAndTap() else {
                 throw RuntimeError("Selected members section was not tappable")
             }
         }
         let collapsed = XCTNSPredicateExpectation(
             predicate: NSPredicate(
-                format: "exists == true AND identifier == %@",
+                format: "exists == true AND (value == '0' OR identifier == %@)",
                 Locators.WireMeetings.MeetingForm.selectedMembersIdentifier(isExpanded: false)
             ),
             object: selectedMembersButton

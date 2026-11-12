@@ -72,9 +72,10 @@ final class MeetingsTestHelper {
     func update(
         meeting: MeetingResponse,
         title: String? = nil,
-        start: Date? = nil
+        start: Date? = nil,
+        duration: TimeInterval? = nil
     ) async throws -> MeetingResponse {
-        let duration = meeting.endTime.timeIntervalSince(meeting.startTime)
+        let duration = duration ?? meeting.endTime.timeIntervalSince(meeting.startTime)
         return try await api.updateMeeting(
             id: meeting.id,
             parameters: UpdateMeetingParameters(
