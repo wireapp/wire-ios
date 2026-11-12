@@ -45,6 +45,48 @@ final class JoinMeetingVisibilityTests: WireUITestCase, MeetingJoinTesting {
         try await assertJoinWindow(inviteeFixture)
     }
 
+    @MainActor
+    func testJoinAppearsOnlyForLiveRecurringOccurrence_TC_12022() async throws {
+        executionTimeAllowance = 600
+        let calendar = Calendar.current
+        let tomorrow = try XCTUnwrap(calendar.date(byAdding: .day, value: 1, to: Date()))
+        let start = try XCTUnwrap(calendar.date(bySettingHour: 12, minute: 0, second: 0, of: tomorrow))
+        let now = start.addingTimeInterval(30 * 60)
+        let end = try XCTUnwrap(calendar.date(byAdding: .weekOfYear, value: 2, to: start))
+        let fixture = try await makeMeeting(
+            title: "TC12022 recurring join",
+            start: start,
+            duration: 3600,
+            recurrence: MeetingRecurrence(frequency: .weekly, interval: 1, until: end),
+            asHost: false,
+            now: now
+        )
+        let futureStart = try XCTUnwrap(calendar.date(byAdding: .weekOfYear, value: 1, to: start))
+        // Check the live occurrence.
+        let liveRow = try fixture.page.showRow(fixture.meeting, start: start)
+        capture("TC12022 live occurrence")
+        // Check the next occurrence.
+        let futureRow = try fixture.page.showRow(fixture.meeting, start: futureStart)
+        capture("TC12022 future occurrence")
+
+        XCTAssertTrue(
+            joinButton(fixture.meeting, on: fixture.page, start: start).exists,
+            "The live occurrence did not show Join"
+        )
+        XCTAssertFalse(
+            joinButton(fixture.meeting, on: fixture.page, start: futureStart).exists,
+            "A future occurrence showed Join"
+        )
+        XCTAssertEqual(
+            liveRow.staticTexts[Locators.WireMeetings.MeetingRow.recurrence.rawValue].label,
+            "Weekly"
+        )
+        XCTAssertEqual(
+            futureRow.staticTexts[Locators.WireMeetings.MeetingRow.recurrence.rawValue].label,
+            "Weekly"
+        )
+    }
+
     private func nextMinute(after date: Date) -> Date {
         Calendar.current.nextDate(
             after: date,
