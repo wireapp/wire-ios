@@ -67,16 +67,19 @@ final class JoinMeetingRetryTests: WireUITestCase, MeetingJoinTesting {
         for fromMenu in [false, true] {
             let id = UUID().uuidString
             let offline = try callControl(id, state: "offline")
-            defer { notify_cancel(offline) }
+            let starts = try callControl(id, state: "starts")
+            let conversation = try callControl(id, state: "conversation")
+            defer { notify_cancel(offline); notify_cancel(starts); notify_cancel(conversation) }
             XCTAssertEqual(notify_set_state(offline, 0), UInt32(NOTIFY_STATUS_OK))
+            XCTAssertEqual(notify_set_state(starts, 0), UInt32(NOTIFY_STATUS_OK))
+            XCTAssertEqual(notify_set_state(conversation, 0), UInt32(NOTIFY_STATUS_OK))
             uiTestConfig.meetingsCallControlID = id
             let start = Date().addingTimeInterval(3600)
             let fixture = try await makeMeeting(
                 title: fromMenu ? "TC12031 Join now" : "TC12031 Join", start: start,
-                withPeer: true, now: start.addingTimeInterval(60)
+                now: start.addingTimeInterval(60)
             )
-            let peerID = try XCTUnwrap(fixture.peerID)
-            async let accepting: Void = armPeer(peerID)
+            try await requireConferenceCalling()
 
             // Force the existing offline guard and check its alert before any call starts.
             XCTAssertEqual(notify_set_state(offline, 1), UInt32(NOTIFY_STATUS_OK))
@@ -88,20 +91,15 @@ final class JoinMeetingRetryTests: WireUITestCase, MeetingJoinTesting {
             else { throw RuntimeError("The offline call alert did not appear") }
             XCTAssertTrue(alert.staticTexts["You must be online to call. Check your connection and try again."].exists)
             XCTAssertFalse(app.buttons[Locators.OngoingCallPage.endOngoingCallButton.rawValue].exists)
-            let status = try await callingServiceClient.getInstanceStatus(instanceIds: [peerID])
-            let peer = try XCTUnwrap(status.first)
-            XCTAssertTrue(peer.currentCall?.conversationId?.isEmpty ?? true)
-            XCTAssertNotEqual(peer.currentCall?.status?.uppercased(), "ACTIVE")
+            try assertCallStarts(0, starts: starts, conversation: conversation)
             capture("TC12031 offline alert")
             guard alert.buttons["OK"].waitAndTap() else { throw RuntimeError("The offline alert did not close") }
 
             // Restore the guard, then repeat the same action through the real call path.
             XCTAssertEqual(notify_set_state(offline, 0), UInt32(NOTIFY_STATUS_OK))
             let call = try join(fixture.meeting, on: fixture.page, fromMenu: fromMenu)
-            try await accepting
-            _ = try await assertPeer(peerID, user: fixture.user, meeting: fixture.meeting)
+            try assertCallStarts(1, starts: starts, conversation: conversation)
             _ = try leaveCall(call)
-            try await callingManager.stopCurrentCall(instanceId: peerID)
         }
     }
 
