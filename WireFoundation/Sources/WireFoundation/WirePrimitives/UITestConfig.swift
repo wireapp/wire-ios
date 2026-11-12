@@ -49,6 +49,13 @@ public struct UITestConfig: Codable {
     /// A fixed current date for Meetings UI tests.
     public var meetingsDate: Date?
 
+    /// Delay the Meetings call bridge to test repeated taps before a call starts.
+    public var meetingsJoinDelay: TimeInterval?
+
+    /// Unique Darwin state names for the Meetings offline flag and join request count.
+    public var meetingsCallControlID: String?
+    public static let meetingsCallControlNotificationPrefix = "com.wire.ios.uitests.meetings.call"
+
     /// A unique Darwin state name suffix for a controlled Meetings create failure.
     public var meetingsCreateFailureID: String?
     public static let meetingsCreateFailureNotificationPrefix = "com.wire.ios.uitests.meetings.create-failure"
