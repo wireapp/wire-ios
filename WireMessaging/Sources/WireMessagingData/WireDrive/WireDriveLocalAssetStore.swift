@@ -46,6 +46,10 @@ package final class WireDriveLocalAssetStore: WireDriveLocalAssetStoreProtocol {
         }
     }
 
+    package func assets(path: String) throws -> [WireMessagingDomain.WireDriveLocalAsset] {
+        try storedAssets(path: path)
+    }
+
     package func offlineAssets(
         conversationName: String?,
         assetsPath: String?
@@ -180,6 +184,31 @@ package final class WireDriveLocalAssetStore: WireDriveLocalAssetStoreProtocol {
         }
     }
 
+    private func storedAssets(path: String) throws -> [WireMessagingDomain.WireDriveLocalAsset] {
+        let context = contextProvider.viewContext
+        return try context.performAndWait {
+            try context.fetchLocalAssets(path: path).map { managed in
+                let cacheKey = WireDriveLocalAsset.cacheKey(
+                    nodeID: managed.nodeID,
+                    eTag: managed.eTag,
+                    path: managed.path
+                )
+                return WireDriveLocalAsset(
+                    nodeID: managed.nodeID,
+                    eTag: managed.eTag,
+                    path: managed.path,
+                    contentType: managed.contentType,
+                    size: managed.size >= 0 ? UInt64(managed.size) : nil,
+                    conversationName: managed.conversationName,
+                    ownerName: managed.ownerName,
+                    modified: managed.modified,
+                    isAvailableOffline: managed.isAvailableOffline,
+                    downloadState: managed.isDownloaded ? .downloaded(cacheKey: cacheKey) : .pending
+                )
+            }
+        }
+    }
+
 }
 
 // MARK: Private helpers
@@ -216,6 +245,21 @@ private extension NSManagedObjectContext {
         request.predicate = NSPredicate(format: "nodeID == %@", nodeID as any CVarArg)
         request.fetchLimit = 1
         return try fetch(request).first
+    }
+
+    func fetchLocalAssets(path: String) throws -> [ManagedLocalAsset] {
+        var folderPath = path
+        while folderPath.hasSuffix("/") {
+            folderPath.removeLast()
+        }
+
+        let request = ManagedLocalAsset.fetchRequest() as! NSFetchRequest<ManagedLocalAsset>
+        request.predicate = NSPredicate(
+            format: "path == %@ OR path BEGINSWITH %@",
+            folderPath,
+            "\(folderPath)/"
+        )
+        return try fetch(request)
     }
 
     func fetchLocalOfflineAssets(conversationName: String?, assetsPath: String?) throws -> [ManagedLocalAsset] {
