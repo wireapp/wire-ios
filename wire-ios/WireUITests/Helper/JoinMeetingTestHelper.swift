@@ -87,11 +87,7 @@ extension MeetingJoinTesting {
         let invitee = try XCTUnwrap(members.first)
         var peerID: String?
         if withPeer {
-            let features = try await UserHelper.default.featureConfigsAPI.getFeatureConfigs()
-            guard features.contains(where: {
-                guard case let .conferenceCalling(config) = $0 else { return false }
-                return config.status == .enabled
-            }) else { throw RuntimeError("The call test requires conference calling to be enabled") }
+            try await requireConferenceCalling()
             let environment = try EnvironmentVariables()
             let instances = try await callingServiceClient.createInstances(
                 users: [try XCTUnwrap(members.last)], backend: environment.callingBackend, beta: true,
@@ -192,6 +188,14 @@ extension MeetingJoinTesting {
                 conversationId: "", timeout: CallingServiceClient.Constants.callTimeoutMilliseconds
             )
         )
+    }
+
+    func requireConferenceCalling() async throws {
+        let features = try await UserHelper.default.featureConfigsAPI.getFeatureConfigs()
+        guard features.contains(where: {
+            guard case let .conferenceCalling(config) = $0 else { return false }
+            return config.status == .enabled
+        }) else { throw RuntimeError("The call test requires conference calling to be enabled") }
     }
 
     @discardableResult

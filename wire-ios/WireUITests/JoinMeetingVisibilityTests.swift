@@ -137,7 +137,7 @@ final class JoinMeetingVisibilityTests: WireUITestCase, MeetingJoinTesting {
         _ fixture: MeetingJoinFixture
     ) async throws {
         let start = nextMinute(after: Date().addingTimeInterval(90))
-        let meeting = try await fixture.fixtures.update(meeting: fixture.meeting, start: start)
+        let meeting = try await fixture.fixtures.update(meeting: fixture.meeting, start: start, duration: 60)
         let row = fixture.page.row(meeting, start: start)
         let join = joinButton(meeting, on: fixture.page, start: start)
 
@@ -154,7 +154,7 @@ final class JoinMeetingVisibilityTests: WireUITestCase, MeetingJoinTesting {
         capture("\(meeting.title) live")
 
         // Check when the meeting ends.
-        try await wait(until: start.addingTimeInterval(60))
+        try await wait(until: meeting.endTime)
         XCTAssertTrue(join.waitToDisappear(timeout: 10), "Join remained after the meeting ended")
         try assertJoinNow(meeting, on: fixture.page, start: start)
         capture("\(meeting.title) ended")
