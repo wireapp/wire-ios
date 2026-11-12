@@ -326,6 +326,14 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
             location: configuration.path,
             key: DatabaseKey(bytes: configuration.key)
         )
+        let saltURL = URL(fileURLWithPath: configuration.path + ".salt")
+        if FileManager.default.fileExists(atPath: saltURL.path) {
+            do {
+                try FileManager.default.setProtectionUntilFirstUserAuthentication(saltURL)
+            } catch {
+                WireLogger.coreCrypto.error("Failed to set database salt file protection: \(error)")
+            }
+        }
         self.database = database
         let coreCrypto = try CoreCrypto(database: database)
 
