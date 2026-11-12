@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import notify
 import WireFoundation
 import WireLocators
 import WireNetwork
@@ -100,6 +101,7 @@ extension MeetingJoinTesting {
         let original = try await fixtures.create(
             title: "\(title) setup", start: start, duration: duration, recurrence: recurrence
         )
+        uiTestConfig.meetingsExpectedConversationID = original.conversationID.id
         let hostPage = try launchMeetings(for: host, now: now)
         let form = try hostPage.edit(original)
         form.replaceTitle(with: title)
@@ -196,6 +198,28 @@ extension MeetingJoinTesting {
             guard case let .conferenceCalling(config) = $0 else { return false }
             return config.status == .enabled
         }) else { throw RuntimeError("The call test requires conference calling to be enabled") }
+    }
+
+    func callControl(_ id: String, state: String) throws -> Int32 {
+        let name = "\(UITestConfig.meetingsCallControlNotificationPrefix).\(id).\(state)"
+        var token: Int32 = NOTIFY_TOKEN_INVALID
+        guard notify_register_check(name, &token) == NOTIFY_STATUS_OK else {
+            throw RuntimeError("The Meetings call control could not be registered")
+        }
+        return token
+    }
+
+    func assertCallStarts(_ expected: UInt64, starts: Int32, conversation: Int32) throws {
+        var count: UInt64 = 0
+        guard notify_get_state(starts, &count) == NOTIFY_STATUS_OK, count == expected else {
+            throw RuntimeError("Expected \(expected) native call starts, received \(count)")
+        }
+        if expected > 0 {
+            var matches: UInt64 = 0
+            guard notify_get_state(conversation, &matches) == NOTIFY_STATUS_OK, matches == 1 else {
+                throw RuntimeError("The native call did not start in the meeting conversation")
+            }
+        }
     }
 
     @discardableResult
