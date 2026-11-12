@@ -96,8 +96,8 @@ jobs:
         inputs.mac_runner == 'github' && 'macos-26' ||
         'ghcr.io/cirruslabs/macos-runner:tahoe'
       }}
-    # GitHub-hosted jobs use the default six-hour limit; other runners keep the configured timeout.
-    timeout-minutes: ${{ inputs.mac_runner == 'github' && 360 || inputs.timeout_minutes }}
+    # Leave time for setup and artifact upload around the bounded Critical Flows command.
+    timeout-minutes: ${{ inputs.mac_runner == 'github' && (inputs.run_critical_flows && 180 || 360) || inputs.timeout_minutes }}
     permissions:
       contents: read
       actions: read
@@ -280,6 +280,7 @@ jobs:
       - name: "Test new critical flows"
         id: critical_flows
         if: ${{ inputs.run_critical_flows }}
+        timeout-minutes: 125
         env:
           UI_TEST_TAGS: ${{ inputs.ui_test_tags }}
           UI_TEST_CASES: ${{ inputs.ui_test_cases }}
@@ -287,14 +288,20 @@ jobs:
           PREVIOUS_FAILED_UI_TEST_CASES: ${{ steps.previous-failed-ui-tests.outputs.ui_test_cases }}
           UITEST_PARALLEL_WORKERS: ${{ inputs.uitest_parallel_workers }}
         run: |
+          run_uitests() {
+            ruby scripts/run_ui_tests_with_timeout.rb --timeout-seconds 7200 \
+              --log build/uitest-command.log \
+              --redact-env-file wire-ios/WireUITests/env.xcconfig \
+              -- bundle exec fastlane run_uitests "$@"
+          }
           if [ -n "$UI_TEST_CASES" ]; then
-            bundle exec fastlane run_uitests testiny_cases:"$UI_TEST_CASES" skip_testing:"$UI_TEST_SKIP_CASES" parallel_workers:"$UITEST_PARALLEL_WORKERS"
+            run_uitests testiny_cases:"$UI_TEST_CASES" skip_testing:"$UI_TEST_SKIP_CASES" parallel_workers:"$UITEST_PARALLEL_WORKERS"
           elif [ -n "$PREVIOUS_FAILED_UI_TEST_CASES" ]; then
-            bundle exec fastlane run_uitests testiny_cases:"$PREVIOUS_FAILED_UI_TEST_CASES" skip_testing:"$UI_TEST_SKIP_CASES" parallel_workers:"$UITEST_PARALLEL_WORKERS"
+            run_uitests testiny_cases:"$PREVIOUS_FAILED_UI_TEST_CASES" skip_testing:"$UI_TEST_SKIP_CASES" parallel_workers:"$UITEST_PARALLEL_WORKERS"
           elif [ -n "$UI_TEST_TAGS" ]; then
-            bundle exec fastlane run_uitests tags:"$UI_TEST_TAGS" skip_testing:"$UI_TEST_SKIP_CASES" parallel_workers:"$UITEST_PARALLEL_WORKERS"
+            run_uitests tags:"$UI_TEST_TAGS" skip_testing:"$UI_TEST_SKIP_CASES" parallel_workers:"$UITEST_PARALLEL_WORKERS"
           else
-            bundle exec fastlane run_uitests skip_testing:"$UI_TEST_SKIP_CASES" parallel_workers:"$UITEST_PARALLEL_WORKERS"
+            run_uitests skip_testing:"$UI_TEST_SKIP_CASES" parallel_workers:"$UITEST_PARALLEL_WORKERS"
           fi
 
       - name: Stop Kalium Testservice
@@ -439,6 +446,7 @@ jobs:
           echo "Scripts has changes"
           echo "Testing Scripts..."
           ruby scripts/tests/annotate_compiler_warnings_test.rb
+          ruby scripts/tests/run_ui_tests_with_timeout_test.rb
           xcrun swift test --package-path ./scripts
 
       - name: Upload Failed snapshots
@@ -457,6 +465,7 @@ jobs:
           name: ${{ inputs.test_name }} - Test reports for ${{ env.SANITIZED_BRANCH }} (${{ github.run_id }} - ${{ github.run_attempt}})
           path: |
             build/compiler-warnings.json
+            build/uitest-command.log
             build/reports/*.junit
             artifacts/**/*.junit
             app-group*.zip
