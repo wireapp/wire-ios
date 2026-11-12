@@ -16,5 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+<<<<<<< HEAD
 WIRE_SHORT_VERSION = 4.32.0
+=======
+WIRE_SHORT_VERSION = 4.31.1
+>>>>>>> 840e299ec2 (chore: bumps app version 4.31.1 - WPB-29988 (#5533))
 MAJOR_VERSION = 4
