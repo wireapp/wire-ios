@@ -55,7 +55,7 @@ final class JoinMeetingVisibilityTests: WireUITestCase, MeetingJoinTesting {
             asHost: false
         )
         let start = nextMinute(after: Date().addingTimeInterval(90))
-        let meeting = try await fixture.fixtures.update(meeting: fixture.meeting, start: start)
+        let meeting = try await fixture.fixtures.update(meeting: fixture.meeting, start: start, duration: 60)
         let row = fixture.page.row(meeting, start: start)
         let join = joinButton(meeting, on: fixture.page, start: start)
 
@@ -74,7 +74,7 @@ final class JoinMeetingVisibilityTests: WireUITestCase, MeetingJoinTesting {
 
         XCUIDevice.shared.press(.home)
         XCTAssertTrue(app.wait(for: .runningBackground, timeout: 5))
-        try await wait(until: start.addingTimeInterval(60))
+        try await wait(until: meeting.endTime)
         app.activate()
         XCTAssertTrue(app.wait(for: .runningForeground, timeout: 5))
         XCTAssertTrue(join.waitToDisappear(timeout: 15), "Join remained after resume past the meeting end")
