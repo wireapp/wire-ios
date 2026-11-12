@@ -1,0 +1,126 @@
+# WPB-27280: CoreCrypto 11 database initialization races
+
+Status: confirmed against the released CoreCrypto **11.0.0** iOS simulator binary on 2026-11-12.
+The iOS API migration is preparation only and must remain unmerged until a suitable 11.x release is available.
+All experiments used synthetic keys, checkpoints and databases. No customer data is included here.
+
+## Findings
+
+Both failures originate in the iOS database-open path running outside CoreCrypto's cross-process transaction lock.
+The concurrent migration can lose the correct encryption salt. Opening alongside an active transaction can fail
+with `SQLITE_BUSY` before the opener attempts to acquire that lock.
+
+The relevant released source is
+[`connection/mod.rs`](https://github.com/wireapp/core-crypto/blob/v11.0.0/keystore/src/connection/mod.rs)
+and [`ios_wal_compat.rs`](https://github.com/wireapp/core-crypto/blob/v11.0.0/keystore/src/connection/ios_wal_compat.rs).
+The order is:
+
+1. `Database.open_internal` opens the connection and sets its encryption key.
+2. `handle_ios_wal_compat` reads or migrates the salt, then reads and rewrites `PRAGMA user_version`.
+3. `Database.init` acquires `TransactionLock` and performs schema initialization and migrations.
+
+Step 2 needs the same exclusion as step 3. The per-provider Swift actor does not coordinate different processes.
+
+## Confirmed salt-loss interleaving
+
+The test saves the original legacy keychain salt before opening a 10.5.4 database with 11.0.0. A diagnostic library
+pauses one opener immediately before its legacy `SecItemCopyMatching` call, after its salt-file read returned
+`NotFound`. Another process then completes migration using the unmodified released binary.
+
+| Process | Operation |
+| --- | --- |
+| B | Finds no `.salt` file, then pauses before looking in the keychain. |
+| A | Reads the original keychain salt, writes `.salt`, deletes the keychain item, and opens successfully. |
+| B | Resumes; the keychain query returns `errSecItemNotFound` (`-25300`). |
+| B | Falls back to `persist_current_salt` without rechecking the file and overwrites A's valid salt. |
+| B | Fails to read `PRAGMA user_version` with `SQLITE_NOTADB` (`26`). |
+
+The incorrect salt in this forced schedule was exactly the database's 16-byte plaintext SQLite header,
+`SQLite format 3\0`. The fallback queries `cipher_salt` before configuring `cipher_plaintext_header_size`, so it
+treats the existing plaintext header as a salt. It must not take the new-database fallback for this existing database.
+
+The database file's SHA-256 stayed unchanged during the failed second open. Reopening continued to fail until the
+test restored **only the saved original salt**; all 20 checkpoint reads then passed. This confirms loss of the correct
+salt, with intact encrypted database contents in this controlled case. That saved salt is a test control, not a general
+recovery mechanism for a user whose original salt is already gone.
+
+An ungated three-process stress run independently failed on its third fixture. All three readers returned
+`SQLITE_READONLY` (`8`) at `PRAGMA user_version=0`, the salt no longer matched the saved original, and reopening
+returned `file is not a database`. Restoring only the original salt recovered that fixture too. The readonly message
+in this experiment does not indicate a filesystem permission change.
+
+## Confirmed busy failure
+
+One process opens a valid database and holds a real CoreCrypto transaction. A second process opens a separate
+connection to the same database. SQLite statement tracing and `flock` tracing show:
+
+| Holder duration | Opener result |
+| --- | --- |
+| 3 seconds | `PRAGMA user_version=48` waits about 3 seconds; open succeeds. |
+| 8 seconds | The same statement fails after about 5.27 seconds with `SQLITE_BUSY`, primary and extended code `5`. |
+| Holder finished | Twenty subsequent opens and checkpoint reads succeed. |
+
+The failing opener never attempts the transaction-file lock. The compatibility path unconditionally rewrites
+`user_version` to persist the plaintext header configuration, even on an already migrated database. Its write reaches
+SQLite's busy timeout while the other connection owns `BEGIN IMMEDIATE`.
+
+Idle surviving database handles also allow repeated opens. Destroying every old Swift object is therefore not the
+fix for this failure. These are database-level probes; physical-device account switching, logout and re-login still
+need end-to-end validation.
+
+## Smallest proposed fix
+
+Fix this in **CoreCrypto**, using the existing asynchronous `TransactionLock` around iOS compatibility setup:
+
+```rust
+#[cfg(target_os = "ios")]
+if !path.is_empty() {
+    let transaction_lock = TransactionLock::new(conn.path().unwrap_or_default())?;
+    let _guard = transaction_lock.acquire().await?;
+    ios_wal_compat::handle_ios_wal_compat(&conn, path)?;
+}
+```
+
+This adds two statements before the existing compatibility call. Adjust the `clippy::unused_async` expectation on
+`open_internal` to exclude iOS, which now awaits the lock. No public API changes are needed.
+
+Use the connection's path for the existing lock-file identity, while retaining the **original caller-provided path**
+for salt migration: that exact path determines the old keychain item name. The guard ends after compatibility setup;
+the existing schema-initialization guard is subsequently acquired as before. The locks are not nested.
+
+The separate string-to-bytes key migration already holds this same lock before calling compatibility setup in
+[`migrations/mod.rs`](https://github.com/wireapp/core-crypto/blob/v11.0.0/keystore/src/connection/migrations/mod.rs).
+Keep the compatibility function itself synchronous and do not add another lock inside it.
+
+A separate startup-only lock would serialize new openers but would still allow them to collide with transactions
+on existing handles. Increasing SQLite's timeout would leave the salt-loss race intact. The shared transaction lock
+addresses both confirmed failures without changing `SafeCoreCrypto.transaction` or the Proteus 412/reset flows.
+
+For a production-safe migration, make salt publication atomic in the same upstream change: write and flush a
+same-directory temporary file, rename it into place, and only then remove the legacy keychain item. Validate the
+16-byte salt length on read. The existing `fs::write` can leave an empty or partial authoritative sidecar if an NSE is
+terminated during the write; locking alone does not close that interruption window. Do not regenerate a salt for an
+existing database whose correct salt is unavailable.
+
+## Validation of the proposed exclusion
+
+A reference diagnostic guard acquired the **same** `<database>-cc-tx.lock` before compatibility setup and released it
+before the existing schema-lock acquisition. It changed no database keys, salt values, transaction contents or SQLite
+timeouts. With that exclusion added to the released binary:
+
+- The forced race made the competing opener wait before inspecting the salt. Both processes completed all 40
+  checkpoint reads, and the original salt was preserved.
+- Twenty independent three-process first migrations passed all **1,200 checkpoint reads**, preserving every original
+  salt. The unguarded comparison failed on its third fixture.
+- The 8-second transaction case waited about **8.39 seconds** and opened successfully.
+
+The reference guard validates the critical section. The proposed Rust patch and atomic-file implementation still
+require an upstream build and regression tests; they have not been applied to the published iOS dependency.
+
+Required upstream regressions: the forced missing-file/keychain interleaving; concurrent migrated and fresh database
+opens; opening during a transaction longer than SQLite's busy timeout; and termination before/after salt publication.
+Keep the separate cross-connection stale-session regression for the #2844 backport as well.
+
+Before merging the iOS upgrade, use the released 11.x backport containing #2844 and the initialization fix, rerun the
+framework and batch-sync suites against that exact release, and verify locked-device NSE access plus account lifecycle
+flows on a physical device.
