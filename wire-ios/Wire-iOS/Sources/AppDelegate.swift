@@ -240,6 +240,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
             AccountManager.delete(at: rootURL)
             let fileManager = FileManager.default
+            // CoreCrypto stores must be removed with their reset keychain keys.
+            try? fileManager.removeItem(at: rootURL.appendingPathComponent("AccountData"))
             let directories: [FileManager.SearchPathDirectory] = [
                 .documentDirectory,
                 .cachesDirectory,
