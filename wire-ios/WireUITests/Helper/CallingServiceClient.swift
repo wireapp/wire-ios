@@ -431,6 +431,7 @@ struct CallingServiceEmptyBody: Encodable {}
 struct CallResponse: Decodable {
     let id: String?
     let status: String?
+    let conversationId: String?
 }
 
 struct CallFlow: Decodable, Equatable {
