@@ -546,7 +546,8 @@ public final class ClientSessionComponent {
         userClientsLocalStore: userClientsLocalStore,
         messageLocalStore: messageLocalStore,
         userLocalStore: userLocalStore,
-        conversationLocalStore: conversationLocalStore
+        conversationLocalStore: conversationLocalStore,
+        bufferedMessageRecoveryTracker: BufferedMLSMessageRecoveryTracker(journal: journal)
     )
 
     private lazy var conversationAccessUpdateEventProcessor = ConversationAccessUpdateEventProcessor(
