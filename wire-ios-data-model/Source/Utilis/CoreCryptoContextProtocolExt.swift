@@ -28,12 +28,6 @@ public protocol CoreCryptoContextProtocol: AnyObject, Sendable {
     ) async throws
 
     /// Adds a `Credential` to this client.
-    ///
-    /// Note that while an arbitrary number of credentials can be generated,
-    /// those which are added to a CoreCrypto instance must be distinct in credential type,
-    /// signature scheme, and the timestamp of creation. This timestamp has only
-    /// 1 second of resolution, limiting the number of credentials which
-    /// can be added. This is a known limitation and will be relaxed in the future.
     func addCredential(credential: WireCoreCryptoUniffi.Credential) async throws -> WireCoreCryptoUniffi.CredentialRef
 
     /// Check all X509 credentials for expiration and revocation
@@ -77,9 +71,6 @@ public protocol CoreCryptoContextProtocol: AnyObject, Sendable {
     /// Returns the end-to-end identity verification state of the given conversation.
     func e2eiConversationState(conversationId: WireCoreCryptoUniffi.ConversationId) async throws -> WireCoreCryptoUniffi
         .E2eiConversationState
-
-    /// Returns true if end-to-end identity is enabled for the given cipher_suite.
-    func e2eiIsEnabled(cipherSuite: WireCoreCryptoUniffi.CipherSuite) async throws -> Bool
 
     /// Enables history sharing for the given conversation.
     func enableHistorySharing(conversationId: WireCoreCryptoUniffi.ConversationId) async throws
@@ -228,10 +219,10 @@ public protocol CoreCryptoContextProtocol: AnyObject, Sendable {
     func removeCredential(credentialRef: WireCoreCryptoUniffi.CredentialRef) async throws
 
     /// Remove a `KeyPackage` from the database.
-    func removeKeyPackage(kpRef: WireCoreCryptoUniffi.KeyPackageRef) async throws
+    func removeKeyPackage(kpRef: WireCoreCryptoUniffi.KeyPackageRef) throws
 
     /// Remove all `KeyPackage`s associated with this credential ref.
-    func removeKeyPackagesFor(credentialRef: WireCoreCryptoUniffi.CredentialRef) async throws
+    func removeKeyPackagesFor(credentialRef: WireCoreCryptoUniffi.CredentialRef) throws
 
     /// Set the credential ref for the given conversation.
     func setConversationCredential(
@@ -243,7 +234,7 @@ public protocol CoreCryptoContextProtocol: AnyObject, Sendable {
     ///
     /// The stored data can be retrieved via `get_data`. Keep the data size reasonable;
     /// this is not a general-purpose key-value store.
-    func setData(data: Data) async throws
+    func setData(data: Data) throws
 
     /// Updates this client's key material in the conversation by sending an update commit.
     func updateKeyingMaterial(conversationId: WireCoreCryptoUniffi.ConversationId) async throws
@@ -263,4 +254,8 @@ public protocol CoreCryptoContextProtocol: AnyObject, Sendable {
         policy: WireCoreCryptoUniffi.TargetedMessagePolicy,
         message: Data
     ) async throws -> Data
+
+    /// Encrypts a message for online group members without advancing the group's cryptographic state.
+    func encryptTransientMessage(conversationId: WireCoreCryptoUniffi.ConversationId, message: Data) async throws
+        -> Data
 }

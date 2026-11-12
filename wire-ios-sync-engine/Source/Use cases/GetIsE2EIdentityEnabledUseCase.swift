@@ -39,8 +39,15 @@ public final class GetIsE2EIdentityEnabledUseCase: GetIsE2EIdentityEnabledUseCas
     public func invoke() async throws -> Bool {
         let ciphersuite = await featureRepository.fetchMLS().config.defaultCipherSuite.coreCryptoCipherSuite
         let coreCrypto = try await coreCryptoProvider.coreCrypto()
-        return try await coreCrypto.transaction {
-            try await $0.e2eiIsEnabled(cipherSuite: ciphersuite)
+        return try await coreCrypto.transaction { _ in
+            let credentials = try await coreCrypto.coreCrypto.findCredentials(
+                clientId: nil,
+                publicKey: nil,
+                cipherSuite: ciphersuite,
+                credentialType: .x509,
+                earliestValidity: nil
+            )
+            return !credentials.isEmpty
         }
     }
 }

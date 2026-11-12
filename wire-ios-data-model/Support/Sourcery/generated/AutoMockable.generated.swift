@@ -644,29 +644,6 @@ public class MockCoreCryptoContextProtocol: CoreCryptoContextProtocol, @unchecke
         }
     }
 
-    // MARK: - e2eiIsEnabled
-
-    public var e2eiIsEnabledCipherSuite_Invocations: [WireCoreCryptoUniffi.CipherSuite] = []
-    public var e2eiIsEnabledCipherSuite_MockError: Error?
-    public var e2eiIsEnabledCipherSuite_MockMethod: ((WireCoreCryptoUniffi.CipherSuite) async throws -> Bool)?
-    public var e2eiIsEnabledCipherSuite_MockValue: Bool?
-
-    public func e2eiIsEnabled(cipherSuite: WireCoreCryptoUniffi.CipherSuite) async throws -> Bool {
-        e2eiIsEnabledCipherSuite_Invocations.append(cipherSuite)
-
-        if let error = e2eiIsEnabledCipherSuite_MockError {
-            throw error
-        }
-
-        if let mock = e2eiIsEnabledCipherSuite_MockMethod {
-            return try await mock(cipherSuite)
-        } else if let mock = e2eiIsEnabledCipherSuite_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `e2eiIsEnabledCipherSuite`")
-        }
-    }
-
     // MARK: - enableHistorySharing
 
     public var enableHistorySharingConversationId_Invocations: [WireCoreCryptoUniffi.ConversationId] = []
@@ -1383,9 +1360,9 @@ public class MockCoreCryptoContextProtocol: CoreCryptoContextProtocol, @unchecke
 
     public var removeKeyPackageKpRef_Invocations: [WireCoreCryptoUniffi.KeyPackageRef] = []
     public var removeKeyPackageKpRef_MockError: Error?
-    public var removeKeyPackageKpRef_MockMethod: ((WireCoreCryptoUniffi.KeyPackageRef) async throws -> Void)?
+    public var removeKeyPackageKpRef_MockMethod: ((WireCoreCryptoUniffi.KeyPackageRef) throws -> Void)?
 
-    public func removeKeyPackage(kpRef: WireCoreCryptoUniffi.KeyPackageRef) async throws {
+    public func removeKeyPackage(kpRef: WireCoreCryptoUniffi.KeyPackageRef) throws {
         removeKeyPackageKpRef_Invocations.append(kpRef)
 
         if let error = removeKeyPackageKpRef_MockError {
@@ -1396,16 +1373,16 @@ public class MockCoreCryptoContextProtocol: CoreCryptoContextProtocol, @unchecke
             fatalError("no mock for `removeKeyPackageKpRef`")
         }
 
-        try await mock(kpRef)
+        try mock(kpRef)
     }
 
     // MARK: - removeKeyPackagesFor
 
     public var removeKeyPackagesForCredentialRef_Invocations: [WireCoreCryptoUniffi.CredentialRef] = []
     public var removeKeyPackagesForCredentialRef_MockError: Error?
-    public var removeKeyPackagesForCredentialRef_MockMethod: ((WireCoreCryptoUniffi.CredentialRef) async throws -> Void)?
+    public var removeKeyPackagesForCredentialRef_MockMethod: ((WireCoreCryptoUniffi.CredentialRef) throws -> Void)?
 
-    public func removeKeyPackagesFor(credentialRef: WireCoreCryptoUniffi.CredentialRef) async throws {
+    public func removeKeyPackagesFor(credentialRef: WireCoreCryptoUniffi.CredentialRef) throws {
         removeKeyPackagesForCredentialRef_Invocations.append(credentialRef)
 
         if let error = removeKeyPackagesForCredentialRef_MockError {
@@ -1416,7 +1393,7 @@ public class MockCoreCryptoContextProtocol: CoreCryptoContextProtocol, @unchecke
             fatalError("no mock for `removeKeyPackagesForCredentialRef`")
         }
 
-        try await mock(credentialRef)
+        try mock(credentialRef)
     }
 
     // MARK: - setConversationCredential
@@ -1443,9 +1420,9 @@ public class MockCoreCryptoContextProtocol: CoreCryptoContextProtocol, @unchecke
 
     public var setDataData_Invocations: [Data] = []
     public var setDataData_MockError: Error?
-    public var setDataData_MockMethod: ((Data) async throws -> Void)?
+    public var setDataData_MockMethod: ((Data) throws -> Void)?
 
-    public func setData(data: Data) async throws {
+    public func setData(data: Data) throws {
         setDataData_Invocations.append(data)
 
         if let error = setDataData_MockError {
@@ -1456,7 +1433,7 @@ public class MockCoreCryptoContextProtocol: CoreCryptoContextProtocol, @unchecke
             fatalError("no mock for `setDataData`")
         }
 
-        try await mock(data)
+        try mock(data)
     }
 
     // MARK: - updateKeyingMaterial
@@ -1519,6 +1496,29 @@ public class MockCoreCryptoContextProtocol: CoreCryptoContextProtocol, @unchecke
             return mock
         } else {
             fatalError("no mock for `encryptTargetedMessageConversationIdRecipientPolicyMessage`")
+        }
+    }
+
+    // MARK: - encryptTransientMessage
+
+    public var encryptTransientMessageConversationIdMessage_Invocations: [(conversationId: WireCoreCryptoUniffi.ConversationId, message: Data)] = []
+    public var encryptTransientMessageConversationIdMessage_MockError: Error?
+    public var encryptTransientMessageConversationIdMessage_MockMethod: ((WireCoreCryptoUniffi.ConversationId, Data) async throws -> Data)?
+    public var encryptTransientMessageConversationIdMessage_MockValue: Data?
+
+    public func encryptTransientMessage(conversationId: WireCoreCryptoUniffi.ConversationId, message: Data) async throws -> Data {
+        encryptTransientMessageConversationIdMessage_Invocations.append((conversationId: conversationId, message: message))
+
+        if let error = encryptTransientMessageConversationIdMessage_MockError {
+            throw error
+        }
+
+        if let mock = encryptTransientMessageConversationIdMessage_MockMethod {
+            return try await mock(conversationId, message)
+        } else if let mock = encryptTransientMessageConversationIdMessage_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `encryptTransientMessageConversationIdMessage`")
         }
     }
 

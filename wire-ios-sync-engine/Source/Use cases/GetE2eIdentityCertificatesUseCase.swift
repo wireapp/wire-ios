@@ -101,7 +101,7 @@ public final class GetE2eIdentityCertificatesUseCase: GetE2eIdentityCertificates
             }
 
             guard
-                let deserializedClientId = identity.clientId?.deserialize()
+                let deserializedClientId = try? identity.clientId?.deserialize()
             else {
                 validatedIdentities.append((identity, .invalid))
                 continue

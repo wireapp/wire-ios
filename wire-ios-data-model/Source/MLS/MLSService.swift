@@ -913,12 +913,18 @@ public final class MLSService: MLSServiceInterface {
         do {
             let ciphersuite = await featureRepository.fetchMLS().config.defaultCipherSuite.coreCryptoCipherSuite
             keyPackages = try await coreCrypto.transaction { [self] in
-                let e2eiIsEnabled = try await $0.e2eiIsEnabled(cipherSuite: ciphersuite)
+                let x509Credentials = try await coreCrypto.coreCrypto.findCredentials(
+                    clientId: nil,
+                    publicKey: nil,
+                    cipherSuite: ciphersuite,
+                    credentialType: .x509,
+                    earliestValidity: nil
+                )
                 guard let credentialRef = try await coreCrypto.coreCrypto.findCredentials(
                     clientId: nil,
                     publicKey: nil,
                     cipherSuite: ciphersuite,
-                    credentialType: e2eiIsEnabled ? .x509 : .basic,
+                    credentialType: x509Credentials.isEmpty ? .basic : .x509,
                     earliestValidity: nil
                 ).first else {
                     throw MLSKeyPackagesError.failedToGenerateKeyPackages

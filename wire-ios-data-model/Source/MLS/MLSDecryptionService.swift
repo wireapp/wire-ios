@@ -226,7 +226,7 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
 
     private func decryptResults(from decryptedMessage: DecryptedMessage) throws -> [MLSDecryptResult] {
         switch decryptedMessage {
-        case let .text(plaintext, senderClientID, _):
+        case let .applicationMessage(plaintext, senderClientID, _):
             let cliendID = try senderClientId(from: senderClientID).clientID
             return [.message(plaintext, cliendID)]
         case let .commit(_, bufferedMessages, _):
@@ -237,6 +237,9 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
             }
         case let .proposal(delay, _):
             return [.proposal(delay ?? 0)]
+        case .transient, .transientTargeted, .persistedTargeted:
+            WireLogger.mls.info("ignoring unsupported transient or targeted message", attributes: .safePublic)
+            return []
         @unknown default:
             WireLogger.mls.warn("encountered unknown decrypted message type", attributes: .safePublic)
             return []
@@ -245,13 +248,16 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
 
     private func decryptResult(from decryptedMessage: BufferedDecryptedMessage) throws -> MLSDecryptResult? {
         switch decryptedMessage {
-        case let .text(plaintext, senderClientID, _):
+        case let .applicationMessage(plaintext, senderClientID, _):
             let cliendID = try senderClientId(from: senderClientID).clientID
             return .message(plaintext, cliendID)
         case .commit:
             return nil
         case let .proposal(delay, _):
             return .proposal(delay ?? 0)
+        case .transient, .transientTargeted, .persistedTargeted:
+            WireLogger.mls.info("ignoring unsupported buffered transient or targeted message", attributes: .safePublic)
+            return nil
         @unknown default:
             WireLogger.mls.warn("encountered unknown buffered decrypted message type", attributes: .safePublic)
             return nil

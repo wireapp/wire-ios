@@ -325,14 +325,6 @@ public final class MockCoreCryptoProtocol: CoreCryptoProtocol {
         fatalError("not implemented")
     }
 
-    public func e2eiIsEnabled(cipherSuite: WireCoreCryptoUniffi.CipherSuite) async throws -> Bool {
-        fatalError("not implemented")
-    }
-
-    public func e2eiIsPkiEnvSetup() async -> Bool {
-        fatalError("not implemented")
-    }
-
     public func exportSecretKey(
         conversationId: WireCoreCryptoUniffi.ConversationId,
         keyLength: UInt32

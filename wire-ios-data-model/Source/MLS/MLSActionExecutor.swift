@@ -310,11 +310,17 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
                 WireLogger.mls.info("joining group via external commit", attributes: groupID.safeAttributes)
                 let ciphersuite = await featureRepository.fetchMLS().config.defaultCipherSuite.coreCryptoCipherSuite
                 let conversationID = try await coreCrypto.transaction { [self] in
-                    let e2eiIsEnabled = try await $0.e2eiIsEnabled(cipherSuite: ciphersuite)
+                    let x509Credentials = try await coreCrypto.coreCrypto.findCredentials(
+                        clientId: nil,
+                        publicKey: nil,
+                        cipherSuite: ciphersuite,
+                        credentialType: .x509,
+                        earliestValidity: nil
+                    )
                     let credentialRef = try await credentialRef(
                         coreCrypto: coreCrypto.coreCrypto,
                         ciphersuite: ciphersuite,
-                        credentialType: e2eiIsEnabled ? .x509 : .basic
+                        credentialType: x509Credentials.isEmpty ? .basic : .x509
                     )
                     return try await $0.joinByExternalCommit(
                         groupInfo: try GroupInfo(bytes: groupInfo),

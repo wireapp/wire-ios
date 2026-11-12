@@ -133,13 +133,19 @@ extension CreateMLSGroupUseCase {
             let externalSender = externalSenders.first
 
             try await coreCrypto.transaction {
-                let e2eiIsEnabled = try await $0.e2eiIsEnabled(cipherSuite: ciphersuite.coreCryptoCipherSuite)
+                let x509Credentials = try await coreCrypto.coreCrypto.findCredentials(
+                    clientId: nil,
+                    publicKey: nil,
+                    cipherSuite: ciphersuite.coreCryptoCipherSuite,
+                    credentialType: .x509,
+                    earliestValidity: nil
+                )
 
                 guard let credentialRef = try await coreCrypto.coreCrypto.findCredentials(
                     clientId: nil,
                     publicKey: nil,
                     cipherSuite: ciphersuite.coreCryptoCipherSuite,
-                    credentialType: e2eiIsEnabled ? .x509 : .basic,
+                    credentialType: x509Credentials.isEmpty ? .basic : .x509,
                     earliestValidity: nil
                 ).first else {
                     throw MLSService.MLSGroupCreationError.invalidCiphersuite
