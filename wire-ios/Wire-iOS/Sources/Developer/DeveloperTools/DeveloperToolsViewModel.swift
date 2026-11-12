@@ -277,47 +277,50 @@ final class DeveloperToolsViewModel: ObservableObject {
     }
 
     private func setupActions() {
-        sections.append(
-            Section(
-                header: "Actions",
-                items: [
-                    .destination(DestinationItem(title: "E2E Identity", makeView: { [weak self] in
-                        AnyView(DeveloperE2eiView(viewModel: DeveloperE2eiViewModel(userSession: self?.userSession)))
-                    })),
-                    .destination(DestinationItem(title: "Debug actions", makeView: { [weak self] in
-                        AnyView(DeveloperDebugActionsView(viewModel: DeveloperDebugActionsViewModel(
-                            userSession: self?.userSession,
-                            selfClient: self?.selfClient,
-                            onDismiss: { self?.onDismiss {} }
-                        )))
-                    })),
-                    .destination(DestinationItem(title: "Configure feature flags", makeView: {
-                        AnyView(DeveloperFlagsView(viewModel: DeveloperFlagsViewModel()))
-                    })),
-                    .destination(
-                        DestinationItem(title: "Overrides", makeView: {
-                            AnyView(DeveloperOverridesForm())
-                        })
-                    ),
-                    .destination(DestinationItem(title: "Deep links", makeView: { [weak self] in
-                        AnyView(DeepLinksView(viewModel: DeepLinksViewModel(
-                            router: self?.router,
-                            onDismiss: self?.onDismiss ?? { $0() }
-                        )))
-                    })),
-                    .destination(DestinationItem(title: "Keychain items", makeView: {
-                        AnyView(DeveloperKeychainItemsView(
-                            viewModel: DeveloperKeychainItemsViewModel()
-                        ))
-                    })),
-                    .destination(DestinationItem(title: "Core Crypto Keys", makeView: {
-                        AnyView(DeveloperCoreCryptoKeysView(
-                            viewModel: DeveloperCoreCryptoKeysViewModel()
-                        ))
-                    }))
-                ]
-            )
-        )
+        var items: [Item] = []
+
+        // The E2EI tools are only usable when the feature is enabled.
+        if userSession?.e2eiFeature.isEnabled == true {
+            items.append(.destination(DestinationItem(title: "E2E Identity", makeView: { [weak self] in
+                AnyView(DeveloperE2eiView(viewModel: DeveloperE2eiViewModel(userSession: self?.userSession)))
+            })))
+        }
+
+        items += [
+            .destination(DestinationItem(title: "Debug actions", makeView: { [weak self] in
+                AnyView(DeveloperDebugActionsView(viewModel: DeveloperDebugActionsViewModel(
+                    userSession: self?.userSession,
+                    selfClient: self?.selfClient,
+                    onDismiss: { self?.onDismiss {} }
+                )))
+            })),
+            .destination(DestinationItem(title: "Configure feature flags", makeView: {
+                AnyView(DeveloperFlagsView(viewModel: DeveloperFlagsViewModel()))
+            })),
+            .destination(
+                DestinationItem(title: "Overrides", makeView: {
+                    AnyView(DeveloperOverridesForm())
+                })
+            ),
+            .destination(DestinationItem(title: "Deep links", makeView: { [weak self] in
+                AnyView(DeepLinksView(viewModel: DeepLinksViewModel(
+                    router: self?.router,
+                    onDismiss: self?.onDismiss ?? { $0() }
+                )))
+            })),
+            .destination(DestinationItem(title: "Keychain items", makeView: {
+                AnyView(DeveloperKeychainItemsView(
+                    viewModel: DeveloperKeychainItemsViewModel()
+                ))
+            })),
+            .destination(DestinationItem(title: "Core Crypto Keys", makeView: {
+                AnyView(DeveloperCoreCryptoKeysView(
+                    viewModel: DeveloperCoreCryptoKeysViewModel()
+                ))
+            }))
+        ]
+
+        sections.append(Section(header: "Actions", items: items))
     }
 
     private func setupBackenInfo() {

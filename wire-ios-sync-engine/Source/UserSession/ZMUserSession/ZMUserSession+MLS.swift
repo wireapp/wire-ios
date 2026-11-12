@@ -20,7 +20,7 @@ import Foundation
 
 extension ZMUserSession {
 
-    func setupMLSGroupVerification() {
+    func setupMLSGroupVerification() -> any MLSGroupVerificationProtocol {
         let e2eiVerificationStatusService = E2EIVerificationStatusService(coreCryptoProvider: coreCryptoProvider)
         let updateVerificationStatus = UpdateMLSGroupVerificationStatusUseCase(
             e2eIVerificationStatusService: e2eiVerificationStatusService,
@@ -28,12 +28,14 @@ extension ZMUserSession {
             featureRepository: featureRepository
         )
 
-        mlsGroupVerification = MLSGroupVerification(
+        let mlsGroupVerification = MLSGroupVerification(
             updateVerificationStatus: updateVerificationStatus,
             mlsService: mlsService,
             syncContext: coreDataStack.syncContext
         )
-        mlsGroupVerification?.startObserving()
+        self.mlsGroupVerification = mlsGroupVerification
+        mlsGroupVerification.startObserving()
+        return mlsGroupVerification
     }
 
     func tearDownMLSGroupVerification() {

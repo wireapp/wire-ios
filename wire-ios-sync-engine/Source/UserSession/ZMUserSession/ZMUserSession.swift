@@ -220,7 +220,7 @@ public final class ZMUserSession: NSObject {
             accountId: account.userIdentifier
         )
 
-    var cRLsChecker: CertificateRevocationListsChecker?
+    var credentialsChecker: E2EICredentialsChecker?
 
     // swiftlint:disable:next todo_requires_jira_link
     public var managedObjectContext: NSManagedObjectContext { // TODO: jacob we don't want this to be public
@@ -587,8 +587,8 @@ public final class ZMUserSession: NSObject {
             syncManagedObjectContext.mlsService = mlsService
         }
 
-        setupMLSGroupVerification()
-        setupCertificateRevocationLists()
+        let mlsGroupVerification = setupMLSGroupVerification()
+        setupE2EICredentialsChecker(mlsGroupVerification: mlsGroupVerification)
 
         registerForCalculateBadgeCountNotification()
         registerForBackgroundNotifications()
@@ -1426,7 +1426,7 @@ extension ZMUserSession: SyncAgentDelegate {
     private func performPostQuickSyncE2EIActions() {
         guard mlsFeature.isEnabled else { return }
 
-        checkExpiredCertificateRevocationLists()
+        checkE2EICredentialsInBackground()
         checkE2EICertificateExpiryStatus()
     }
 

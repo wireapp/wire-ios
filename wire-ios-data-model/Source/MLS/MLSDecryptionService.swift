@@ -39,7 +39,7 @@ public protocol MLSDecryptionServiceInterface {
     ///   May be nil if the message was a handshake message, in which case it is safe to ignore.
     ///
     /// In addition to decrypting the message and returning a result, this method will also publish events
-    /// if the epoch has changed or if new CRL distribution points have been found.
+    /// if the epoch has changed.
 
     func decrypt(
         message: String,
@@ -71,7 +71,7 @@ public enum MLSDecryptResult: Equatable {
 
 /// A class responsible for decrypting messages for MLS groups.
 /// It is also responsible for processing welcome messages and publishing events
-/// when the epoch changes or new CRL distribution points are found.
+/// when the epoch changes.
 
 public final class MLSDecryptionService: MLSDecryptionServiceInterface {
 
