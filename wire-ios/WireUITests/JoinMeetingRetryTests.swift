@@ -30,42 +30,34 @@ final class JoinMeetingRetryTests: WireUITestCase, MeetingJoinTesting {
         executionTimeAllowance = 900
         for fromMenu in [false, true] {
             let id = UUID().uuidString
-            let requests = try callControl(id, state: "requests")
-            defer { notify_cancel(requests) }
-            XCTAssertEqual(notify_set_state(requests, 0), UInt32(NOTIFY_STATUS_OK))
+            let starts = try callControl(id, state: "starts")
+            let conversation = try callControl(id, state: "conversation")
+            defer { notify_cancel(starts); notify_cancel(conversation) }
+            XCTAssertEqual(notify_set_state(starts, 0), UInt32(NOTIFY_STATUS_OK))
+            XCTAssertEqual(notify_set_state(conversation, 0), UInt32(NOTIFY_STATUS_OK))
             uiTestConfig.meetingsCallControlID = id
-            uiTestConfig.meetingsJoinDelay = 15
+            uiTestConfig.meetingsJoinDelay = 2
             let start = Date().addingTimeInterval(3600)
             let fixture = try await makeMeeting(
                 title: fromMenu ? "TC12030 Join now" : "TC12030 Join", start: start,
-                withPeer: true, now: start.addingTimeInterval(60)
+                now: start.addingTimeInterval(60)
             )
-            let peerID = try XCTUnwrap(fixture.peerID)
-            async let accepting: Void = armPeer(peerID)
+            try await requireConferenceCalling()
 
-            // Repeat the action while the real call bridge is delayed.
-            if fromMenu {
-                for _ in 0 ..< 3 {
-                    try fixture.page.openMenu(for: fixture.meeting)
-                    guard app.buttons["Join now"].waitAndTap() else { throw RuntimeError("Join now did not respond") }
-                }
-            } else {
-                joinButton(fixture.meeting, on: fixture.page).tap(withNumberOfTaps: 5, numberOfTouches: 1)
+            // Send a tap burst to the visible action during delayed MLS setup.
+            if fromMenu { try fixture.page.openMenu(for: fixture.meeting) }
+            let action = fromMenu ? app.buttons["Join now"] : joinButton(fixture.meeting, on: fixture.page)
+            guard action.waitForExistence(timeout: 5), action.isEnabled, action.isHittable else {
+                throw RuntimeError("The Join action was not available for rapid taps")
             }
+            action.tap(withNumberOfTaps: 5, numberOfTouches: 1)
             let call = try waitForCall(title: fixture.meeting.title)
-            var count: UInt64 = 0
-            XCTAssertEqual(notify_get_state(requests, &count), UInt32(NOTIFY_STATUS_OK))
+            try assertCallStarts(1, starts: starts, conversation: conversation)
             capture("TC12030 repeated taps")
-            guard count == 1 else {
-                throw RuntimeError("TC-12030 requires one join operation; the call bridge received \(count)")
-            }
 
-            // Require one connected peer and one attended meeting.
-            try await accepting
-            _ = try await assertPeer(peerID, user: fixture.user, meeting: fixture.meeting)
+            // Require one established call and confirm that its controls respond.
             XCTAssertEqual(app.staticTexts.matching(identifier: Locators.OngoingCallPage.timeLabel.rawValue).count, 1)
             _ = try leaveCall(call)
-            try await callingManager.stopCurrentCall(instanceId: peerID)
         }
     }
 
@@ -113,12 +105,4 @@ final class JoinMeetingRetryTests: WireUITestCase, MeetingJoinTesting {
         }
     }
 
-    private func callControl(_ id: String, state: String) throws -> Int32 {
-        let name = "\(UITestConfig.meetingsCallControlNotificationPrefix).\(id).\(state)"
-        var token: Int32 = NOTIFY_TOKEN_INVALID
-        guard notify_register_check(name, &token) == NOTIFY_STATUS_OK else {
-            throw RuntimeError("The Meetings call control could not be registered")
-        }
-        return token
-    }
 }

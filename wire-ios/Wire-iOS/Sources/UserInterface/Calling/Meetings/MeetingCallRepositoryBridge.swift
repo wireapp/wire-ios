@@ -22,10 +22,6 @@ import WireDataModel
 import WireFoundation
 import WireSyncEngine
 
-#if DEBUG
-    import notify
-#endif
-
 /// Bridges `WireSyncEngine`'s call state into `WireCallingDomain`'s
 /// `MeetingCallRepositoryProtocol`, so the meetings feature can tell which
 /// meetings the self user is currently attending (in a call in), and enter a
@@ -55,23 +51,6 @@ final class MeetingCallRepositoryBridge: MeetingCallRepositoryProtocol, @uncheck
         }
 
         let viewContext = session.contextProvider.viewContext
-
-        #if DEBUG
-            if let id = UITestConfig.environment?.meetingsCallControlID {
-                await MainActor.run {
-                    let name = "\(UITestConfig.meetingsCallControlNotificationPrefix).\(id).requests"
-                    var token: Int32 = NOTIFY_TOKEN_INVALID
-                    precondition(notify_register_check(name, &token) == NOTIFY_STATUS_OK)
-                    defer { notify_cancel(token) }
-                    var requests: UInt64 = 0
-                    precondition(notify_get_state(token, &requests) == NOTIFY_STATUS_OK)
-                    precondition(notify_set_state(token, requests + 1) == NOTIFY_STATUS_OK)
-                }
-            }
-            if let delay = UITestConfig.environment?.meetingsJoinDelay {
-                try await Task.sleep(for: .seconds(delay))
-            }
-        #endif
 
         try await MainActor.run {
             guard let conversation = ZMConversation.fetch(
