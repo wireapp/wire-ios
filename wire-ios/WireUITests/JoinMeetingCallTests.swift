@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import notify
 import WireLocators
 import WireNetwork
 import XCTest
@@ -131,14 +132,20 @@ final class JoinMeetingCallTests: WireUITestCase, MeetingJoinTesting {
         let until = try XCTUnwrap(calendar.date(byAdding: .weekOfYear, value: 2, to: start))
 
         for isHost in [false, true] {
+            let id = UUID().uuidString
+            let starts = try callControl(id, state: "starts")
+            let conversation = try callControl(id, state: "conversation")
+            defer { notify_cancel(starts); notify_cancel(conversation) }
+            XCTAssertEqual(notify_set_state(starts, 0), UInt32(NOTIFY_STATUS_OK))
+            XCTAssertEqual(notify_set_state(conversation, 0), UInt32(NOTIFY_STATUS_OK))
+            uiTestConfig.meetingsCallControlID = id
             let fixture = try await makeMeeting(
                 title: isHost ? "TC12028 host recurring join" : "TC12028 invitee recurring join",
                 start: start,
                 recurrence: MeetingRecurrence(frequency: .weekly, interval: 1, until: until),
-                asHost: isHost,
-                withPeer: true
+                asHost: isHost
             )
-            let peerID = try XCTUnwrap(fixture.peerID)
+            try await requireConferenceCalling()
             let row = try fixture.page.showRow(fixture.meeting, start: futureStart)
             XCTAssertEqual(
                 row.staticTexts[Locators.WireMeetings.MeetingRow.recurrence.rawValue].label,
@@ -146,10 +153,8 @@ final class JoinMeetingCallTests: WireUITestCase, MeetingJoinTesting {
             )
 
             // Join now must use this future occurrence of the recurring meeting.
-            async let accepting: Void = armPeer(peerID)
             let call = try join(fixture.meeting, on: fixture.page, start: futureStart, fromMenu: true)
-            try await accepting
-            _ = try await assertPeer(peerID, user: fixture.user, meeting: fixture.meeting)
+            try assertCallStarts(1, starts: starts, conversation: conversation)
 
             let stored = try await fixture.fixtures.list()
             let persisted = try XCTUnwrap(stored.first { $0.id == fixture.meeting.id })
@@ -159,7 +164,6 @@ final class JoinMeetingCallTests: WireUITestCase, MeetingJoinTesting {
             XCTAssertEqual(persisted.recurrence?.until, until)
             capture(isHost ? "TC12028 host joined recurring meeting" : "TC12028 invitee joined recurring meeting")
             _ = try leaveCall(call)
-            try await callingManager.stopCurrentCall(instanceId: peerID)
         }
     }
 }
