@@ -36,7 +36,7 @@ import WireLogging
 /// Timestamps are server event timestamps, so they are comparable across processes.
 ///
 /// Updates are a read-modify-write of the journal value and are not synchronized. This is acceptable since
-/// events are decrypted sequentially and a lost update only delays recovery.
+/// events are decrypted sequentially and a lost update only delays recovery or causes a redundant one.
 
 struct BufferedMLSMessageRecoveryTracker {
 
