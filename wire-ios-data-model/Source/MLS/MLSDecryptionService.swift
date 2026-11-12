@@ -32,11 +32,13 @@ public protocol MLSDecryptionServiceInterface {
     ///   - groupID: the id of the MLS group
     ///   - subconversationType: the type of subconversation (if it exists) to which this message belongs
     ///
-    /// - Throws: `MLSMessageDecryptionError` if the message could not be decrypted.
+    /// - Throws: `MLSMessageDecryptionError` if the message could not be decrypted, or
+    ///   `MLSMessageDecryptionError.bufferedMessage` if CoreCrypto buffered the message because it targets a
+    ///   future epoch.
     ///
     /// - Returns:
     ///   The data representing the decrypted message bytes.
-    ///   May be nil if the message was a handshake message, in which case it is safe to ignore.
+    ///   May be empty if the message was a handshake message, in which case it is safe to ignore.
     ///
     /// In addition to decrypting the message and returning a result, this method will also publish events
     /// if the epoch has changed or if new CRL distribution points have been found.
@@ -101,6 +103,12 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
         case failedToDecodeSenderClientID
         case wrongEpoch
 
+        /// The message targets a future epoch (application message or commit) and was buffered by CoreCrypto.
+        /// It will be consumed once the missing commit is received.
+        ///
+        /// - Parameter groupID: the id of the group (or subgroup) in which the message was buffered.
+        case bufferedMessage(groupID: MLSGroupID)
+
         public static func == (
             lhs: MLSDecryptionService.MLSMessageDecryptionError,
             rhs: MLSDecryptionService.MLSMessageDecryptionError
@@ -109,6 +117,7 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
             case (.failedToConvertMessageToBytes, .failedToConvertMessageToBytes): true
             case (.failedToDecryptMessage, .failedToDecryptMessage): true
             case (.failedToDecodeSenderClientID, .failedToDecodeSenderClientID): true
+            case let (.bufferedMessage(lhsGroupID), .bufferedMessage(rhsGroupID)): lhsGroupID == rhsGroupID
             default: false
             }
         }
@@ -160,11 +169,7 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
                 context: context
             )
 
-            if let decryptedMessage {
-                return try decryptResults(from: decryptedMessage)
-            } else {
-                return []
-            }
+            return try decryptResults(from: decryptedMessage)
         } catch let CoreCryptoError.Mls(error) {
             WireLogger.mls
                 .error(
@@ -177,11 +182,9 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
             // Received messages targeting a future epoch, we might have lost messages.
             case .WrongEpoch: throw MLSMessageDecryptionError.wrongEpoch
 
-            // Message arrive in future epoch, it has been buffered and will be consumed later.
-            case .BufferedFutureMessage: return []
-
-            // Commit arrive in future epoch, it has been buffered and will be consumed later.
-            case .BufferedCommit: return []
+            // Message or commit arrived in a future epoch, it has been buffered and will be consumed later.
+            case .BufferedFutureMessage, .BufferedCommit:
+                throw MLSMessageDecryptionError.bufferedMessage(groupID: groupID)
 
             // Received already sent or received message, can safely be ignored.
             case .DuplicateMessage: return []
