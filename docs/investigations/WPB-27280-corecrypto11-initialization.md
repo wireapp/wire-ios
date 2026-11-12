@@ -78,7 +78,15 @@ The proposed 11.x exclusion repairs this existing contention window as well as t
 
 ## Smallest proposed fix
 
-Fix this in **CoreCrypto**, using the existing asynchronous `TransactionLock` around iOS compatibility setup:
+The proposed upstream fix has three parts:
+
+1. Use the existing asynchronous `TransactionLock` around iOS salt and header compatibility setup.
+2. Atomically publish and flush the salt before deleting its legacy keychain item; validate its 16-byte length on read.
+3. Allow `persist_current_salt` only when the database was just created (`!exists`). For an existing database with
+   neither a salt file nor a legacy keychain item, fail without generating a replacement salt or modifying the database.
+   Use the existence flag captured **before** `Connection::open`, which can itself create the database file.
+
+The locking change belongs in **CoreCrypto**, around iOS compatibility setup:
 
 ```rust
 #[cfg(target_os = "ios")]
@@ -126,7 +134,8 @@ The reference guard validates the critical section. The proposed Rust patch and 
 require an upstream build and regression tests; they have not been applied to the published iOS dependency.
 
 Required upstream regressions: the forced missing-file/keychain interleaving; concurrent migrated and fresh database
-opens; opening during a transaction longer than SQLite's busy timeout; and termination before/after salt publication.
+opens; opening during a transaction longer than SQLite's busy timeout; termination before/after salt publication;
+and an existing database with neither salt source, which must fail without changing its files.
 Keep the separate cross-connection stale-session regression for the #2844 backport as well.
 
 Before merging the iOS upgrade, use the released 11.x backport containing #2844 and the initialization fix, rerun the
