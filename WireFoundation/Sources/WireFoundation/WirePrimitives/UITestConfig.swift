@@ -49,6 +49,9 @@ public struct UITestConfig: Codable {
     /// A fixed current date for Meetings UI tests.
     public var meetingsDate: Date?
 
+    /// Delay MLS setup after the outgoing call state is set.
+    public var meetingsJoinDelay: TimeInterval?
+
     /// Unique Darwin state names for the Meetings offline flag and native call-start state.
     public var meetingsCallControlID: String?
     public var meetingsExpectedConversationID: UUID?

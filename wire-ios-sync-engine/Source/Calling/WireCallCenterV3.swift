@@ -900,7 +900,12 @@ public extension WireCallCenterV3 {
     ) async throws -> MLSGroupID {
         try await withThrowingTaskGroup(of: MLSGroupID.self) { group in
             group.addTask {
-                try await mlsService.createOrJoinSubgroup(
+                #if DEBUG
+                    if let delay = UITestConfig.environment?.meetingsJoinDelay {
+                        try await Task.sleep(for: .seconds(delay))
+                    }
+                #endif
+                return try await mlsService.createOrJoinSubgroup(
                     parentQualifiedID: parentQualifiedID,
                     parentID: parentID
                 )
