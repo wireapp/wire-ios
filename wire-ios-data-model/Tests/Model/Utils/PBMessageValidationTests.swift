@@ -376,6 +376,63 @@ final class PBMessageValidationTests: XCTestCase {
 
 }
 
+extension PBMessageValidationTests {
+
+    func testThatItCreatesGenericMessageWithEveryoneMention() throws {
+        let message = messageWithMentions([try everyoneMention()])
+
+        let decoded = GenericMessage(from: try message.serializedData(), validate: true)
+
+        XCTAssertEqual(decoded, message)
+        XCTAssertEqual(decoded?.text.content, "@all hello")
+    }
+
+    func testThatItCreatesGenericMessageWithEveryoneAndUserMentions() throws {
+        let userMention = GenericMessageProtocol.Mention.with {
+            $0.start = 5
+            $0.length = 5
+            $0.userID = "8783C4BD-A5D3-4F6B-8C41-A6E75F12926F"
+        }
+        let message = messageWithMentions([try everyoneMention(), userMention], content: "@all @john hello")
+
+        let decoded = GenericMessage(from: try message.serializedData(), validate: true)
+
+        XCTAssertEqual(decoded, message)
+        XCTAssertEqual(decoded?.text.mentions.count, 2)
+    }
+
+    func testThatItRejectsInvalidUserMentionAlongsideEveryoneMention() throws {
+        let invalidMention = GenericMessageProtocol.Mention.with {
+            $0.start = 5
+            $0.length = 5
+            $0.userID = "invalid"
+        }
+        let message = messageWithMentions([try everyoneMention(), invalidMention], content: "@all @john hello")
+
+        XCTAssertFalse(message.validateFields())
+        XCTAssertNil(GenericMessage(from: try message.serializedData(), validate: true))
+    }
+
+    private func everyoneMention() throws -> GenericMessageProtocol.Mention {
+        // Prism sends start = 0, length = 4, everyone = true (field 5), without either user ID.
+        // The pinned iOS schema preserves everyone as an unknown field.
+        try GenericMessageProtocol.Mention(serializedBytes: [0x08, 0x00, 0x10, 0x04, 0x28, 0x01])
+    }
+
+    private func messageWithMentions(
+        _ mentions: [GenericMessageProtocol.Mention],
+        content: String = "@all hello"
+    ) -> GenericMessage {
+        GenericMessage.with {
+            $0.messageID = "8B496992-E74D-41D2-A2C4-C92EEE777DCE"
+            $0.text = Text.with {
+                $0.content = content
+                $0.mentions = mentions
+            }
+        }
+    }
+}
+
 final class ModelValidationTests: XCTestCase {
 
     // MARK: Generic Message

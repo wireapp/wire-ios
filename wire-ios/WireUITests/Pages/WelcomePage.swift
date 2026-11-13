@@ -26,7 +26,7 @@ class WelcomePage: PageModel {
     }
 
     var nextButton: XCUIElement {
-        app.descendants(matching: .any)[Locators.WelcomePage.nextButton.rawValue].firstMatch
+        app.buttons[Locators.WelcomePage.nextButton.rawValue].firstMatch
     }
 
     var emailTextField: XCUIElement {
@@ -39,7 +39,9 @@ class WelcomePage: PageModel {
 
     func enterEmailOrSSO(_ input: String) throws -> LoginPage {
         try typeEmailOrSSO(input)
-        nextButton.waitAndTap()
+        guard nextButton.waitAndTap(timeout: 15) else {
+            throw RuntimeError("The email Next button did not become available")
+        }
         return try LoginPage()
     }
 

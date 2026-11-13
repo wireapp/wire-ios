@@ -115,6 +115,10 @@ class MockCallKitManager: CallKitManagerInterface {
         false
     }
 
+    func applyPendingVideoUpgrade() {
+        // no-op
+    }
+
     func requestMuteCall(in conversation: ZMConversation, muted: Bool) {
         // no-op
     }

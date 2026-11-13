@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import AVFoundation
 import avs
 import CallKit
 import Foundation
@@ -37,6 +38,8 @@ protocol CallKitManagerDelegate: AnyObject {
         completionHandler: @escaping (Result<ZMConversation, Error>) -> Void
     )
 
+    func voiceChannelForVideoUpgrade(by handle: CallHandle) -> VoiceChannel?
+
     /// End all active calls in all user sessions
 
     func endAllCalls()
@@ -55,6 +58,7 @@ public protocol CallKitManagerInterface {
     func setDelegate(_ delegate: Any)
     func updateConfiguration()
     func continueUserActivity(_ userActivity: NSUserActivity) -> Bool
+    func applyPendingVideoUpgrade()
     func requestMuteCall(in conversation: ZMConversation, muted: Bool)
     func requestJoinCall(in conversation: ZMConversation, video: Bool)
     func requestEndCall(in conversation: ZMConversation, completion: (() -> Void)?)
@@ -76,6 +80,8 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
     private let delegateQueue = DispatchQueue(label: "CallkitProviderDelegateQueue")
     private let provider: CXProvider
     private let callController: CXCallController
+    private let cameraAuthorizationStatus: () -> AVAuthorizationStatus
+    private let requestCameraAccess: (@escaping (Bool) -> Void) -> Void
     private weak var mediaManager: MediaManagerType?
 
     weak var delegate: CallKitManagerDelegate?
@@ -85,6 +91,8 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
 
     let callRegister = CallKitCallRegister()
     private var connectedCallConversation: ZMConversation?
+    private var pendingVideoUpgrade: CallKitCall?
+    private var isRequestingCameraAccess = false
 
     private let logger = WireLogger.callkit
 
@@ -121,7 +129,13 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
         provider: CXProvider,
         callController: CXCallController,
         mediaManager: MediaManagerType?,
-        delegate: CallKitManagerDelegate? = nil
+        delegate: CallKitManagerDelegate? = nil,
+        cameraAuthorizationStatus: @escaping () -> AVAuthorizationStatus = {
+            AVCaptureDevice.authorizationStatus(for: .video)
+        },
+        requestCameraAccess: @escaping (@escaping (Bool) -> Void) -> Void = { completion in
+            AVCaptureDevice.requestAccess(for: .video, completionHandler: completion)
+        }
     ) {
         self.isEnabled = isEnabled
         self.application = application
@@ -129,16 +143,21 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
         self.callController = callController
         self.mediaManager = mediaManager
         self.delegate = delegate
+        self.cameraAuthorizationStatus = cameraAuthorizationStatus
+        self.requestCameraAccess = requestCameraAccess
 
         super.init()
 
         provider.setDelegate(self, queue: delegateQueue)
+        application.registerObserverForDidBecomeActive(self, selector: #selector(applyPendingVideoUpgrade))
+        application.registerObserverForDidEnterBackground(self, selector: #selector(clearPendingVideoUpgrade))
 
         self.callStateObserverToken = WireCallCenterV3.addGlobalCallStateObserver(observer: self)
         self.missedCallObserverToken = WireCallCenterV3.addGlobalMissedCallObserver(observer: self)
     }
 
     deinit {
+        application.unregisterObserverForStateChange(self)
         provider.invalidate()
     }
 
@@ -189,14 +208,7 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
         with contacts: [INPerson],
         completion: @escaping (ZMConversation) -> Void
     ) {
-        guard
-            contacts.count == 1,
-            let contact = contacts.first,
-            let customIdentifier = contact.personHandle?.value,
-            let callHandle = CallHandle(encodedString: customIdentifier)
-        else {
-            return
-        }
+        guard let callHandle = callHandle(for: contacts) else { return }
 
         delegate?.lookupConversation(by: callHandle) { [logger] result in
             do {
@@ -216,11 +228,14 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
         guard let interaction = userActivity.interaction else { return false }
 
         let intent = interaction.intent
+        // CallKit still sends this deprecated intent for the system Video button.
+        if let videoIntent = intent as? INStartVideoCallIntent {
+            return requestVideoUpgrade(contacts: videoIntent.contacts)
+        }
+
         var contacts: [INPerson]?
         var video = false
 
-        // swiftlint:disable:next todo_requires_jira_link
-        // TODO: handle INStartVideoCallIntent for when CallKit video is toggled.
         if let startCallIntent = intent as? INStartCallIntent {
             contacts = startCallIntent.contacts
             video = startCallIntent.callCapability == .videoCall
@@ -236,6 +251,80 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
         } else {
             return false
         }
+    }
+
+    private func callHandle(for contacts: [INPerson]?) -> CallHandle? {
+        guard let contacts, contacts.count == 1, let value = contacts.first?.personHandle?.value else { return nil }
+        return CallHandle(encodedString: value)
+    }
+
+    private func requestVideoUpgrade(contacts: [INPerson]?) -> Bool {
+        guard isEnabled, let handle = callHandle(for: contacts), let call = connectedCall(for: handle) else {
+            return false
+        }
+
+        // The system can deliver the Video action before the app becomes active.
+        pendingVideoUpgrade = call
+        applyPendingVideoUpgrade()
+        return true
+    }
+
+    private func connectedCall(for handle: CallHandle) -> CallKitCall? {
+        let calls = callRegister.lookupCalls(by: handle).filter { call in
+            guard let systemCall = callController.existingCall(for: call) else { return false }
+            return systemCall.hasConnected && !systemCall.hasEnded && !systemCall.isOnHold
+        }
+        return calls.count == 1 ? calls.first : nil
+    }
+
+    @objc
+    public func applyPendingVideoUpgrade() {
+        guard application.applicationState == .active, let call = pendingVideoUpgrade else { return }
+
+        guard isEnabled, connectedCall(for: call.handle)?.id == call.id else {
+            clearPendingVideoUpgrade()
+            return
+        }
+
+        // App activation can precede Wire unlock or account activation.
+        guard let voiceChannel = delegate?.voiceChannelForVideoUpgrade(by: call.handle) else { return }
+
+        guard
+            voiceChannel.state == .established,
+            voiceChannel.videoState == .stopped
+        else {
+            clearPendingVideoUpgrade()
+            return
+        }
+
+        guard !isRequestingCameraAccess else { return }
+
+        switch cameraAuthorizationStatus() {
+        case .authorized:
+            clearPendingVideoUpgrade()
+            voiceChannel.videoState = .started
+        case .notDetermined:
+            isRequestingCameraAccess = true
+            requestCameraAccess { [weak self] granted in
+                DispatchQueue.main.async {
+                    guard let self else { return }
+                    self.isRequestingCameraAccess = false
+
+                    if granted {
+                        self.applyPendingVideoUpgrade()
+                    } else {
+                        self.clearPendingVideoUpgrade()
+                    }
+                }
+            }
+        default:
+            clearPendingVideoUpgrade()
+        }
+    }
+
+    @objc
+    private func clearPendingVideoUpgrade() {
+        pendingVideoUpgrade = nil
     }
 
     // MARK: - Requesting actions
@@ -507,6 +596,10 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
     ) {
         logger.info("report call ended")
 
+        if pendingVideoUpgrade?.handle == conversation.callHandle {
+            clearPendingVideoUpgrade()
+        }
+
         guard isEnabled else {
             logger.warn("fail: report incoming call: CallKit not enabled")
             return
@@ -536,6 +629,7 @@ extension CallKitManager: CXProviderDelegate {
 
     public func providerDidReset(_ provider: CXProvider) {
         logger.info("provider did reset")
+        clearPendingVideoUpgrade()
         mediaManager?.resetAudioDevice()
         callRegister.reset()
         delegate?.endAllCalls()

@@ -25,6 +25,7 @@ extension SessionManager: UserSessionAppLockDelegate {
 
         DispatchQueue.main.async {
             self.delegate?.sessionManagerDidReportLockChange(forSession: session)
+            self.callKitManager.applyPendingVideoUpgrade()
         }
     }
 

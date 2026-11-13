@@ -240,8 +240,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
             AccountManager.delete(at: rootURL)
             let fileManager = FileManager.default
-            // CoreCrypto stores must be removed with their reset keychain keys.
-            try? fileManager.removeItem(at: rootURL.appendingPathComponent("AccountData"))
+            // Remove encrypted stores before resetKeychain removes their keys.
+            do {
+                try fileManager.removeItem(at: AccountURLs(root: rootURL).accountData)
+            } catch CocoaError.fileNoSuchFile {
+                // No account data exists on the first launch.
+            } catch {
+                preconditionFailure("Unable to reset account data")
+            }
             let directories: [FileManager.SearchPathDirectory] = [
                 .documentDirectory,
                 .cachesDirectory,

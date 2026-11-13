@@ -35,9 +35,12 @@ class TestServicesClient {
         let flag = environment["USE_IN_HOUSE_SERVICES"]?.lowercased()
         let flagUnset = flag?.isEmpty ?? true
         let useInHouseServices = flag == "true" || (flagUnset && environment["CI"]?.lowercased() != "true")
-        let hostname = useInHouseServices ? "kalium.qa.zinfra.io" : "localhost:8080"
+        guard useInHouseServices else { return "http://localhost:8080" }
 
-        return "http://\(hostname)"
+        if let url = environment["TEST_SERVICE_URL"]?.trimmingCharacters(in: .whitespacesAndNewlines), !url.isEmpty {
+            return url
+        }
+        return "http://192.168.2.18:8082"
     }
 
     // MARK: - Created instances log

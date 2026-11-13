@@ -29,6 +29,30 @@ enum ConversationLookupError: Error {
 
 extension SessionManager: CallKitManagerDelegate {
 
+    func voiceChannelForVideoUpgrade(by handle: CallHandle) -> VoiceChannel? {
+        Self.voiceChannelForVideoUpgrade(
+            by: handle,
+            sessions: backgroundUserSessions,
+            isAuthenticated: delegate?.isInAuthenticatedAppState == true
+        )
+    }
+
+    static func voiceChannelForVideoUpgrade(
+        by handle: CallHandle,
+        sessions: [UUID: ZMUserSession],
+        isAuthenticated: Bool
+    ) -> VoiceChannel? {
+        guard
+            isAuthenticated,
+            let session = sessions[handle.accountID],
+            session.isLoggedIn,
+            !session.isBuildBlacklisted,
+            !session.isLocked
+        else { return nil }
+
+        return ZMConversation.fetch(with: handle.conversationID, in: session.managedObjectContext)?.voiceChannel
+    }
+
     func lookupConversation(
         by handle: CallHandle,
         completionHandler: @escaping (Result<ZMConversation, Error>) -> Void
