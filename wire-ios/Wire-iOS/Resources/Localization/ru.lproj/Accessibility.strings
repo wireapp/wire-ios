@@ -32,12 +32,22 @@
 "conversation.titleViewForOneToOne.hint" = "Нажмите дважды для открытия профиля";
 "conversation.legalHoldIcon.description" = "Юридические ограничения";
 "conversation.verifiedIcon.description" = "Верифицировано";
+"conversation.linkPreviewImage.description" = "Предпросмотр изображения для ссылки на %@";
+"conversation.linkPreviewImage.fallbackDescription" = "Ссылка на изображение предпросмотра";
+
+"conversation.messageStatus.sending" = "Отправка";
+"conversation.messageStatus.sent" = "Отправлено";
+"conversation.messageStatus.delivered" = "Доставлено";
+"conversation.messageStatus.seen" = "Прочитано";
+// Accessibility announcement for the number of recipients who have read a message. %d is the recipient count.
+"conversation.messageStatus.seenByMultiple" = "Прочитано %d";
 
 "conversation.sendButton.description" = "Отправить это сообщение";
 "conversation.openFormattingButton.description" = "Открыть параметры форматирования";
 "conversation.hideFormattingButton.description" = "Скрыть параметры форматирования";
 "conversation.timerButton.description" = "Установите таймер для самоудаления сообщений";
 "conversation.mentionButton.description" = "Упомянуть кого-нибудь";
+"conversation.mentionSuggestion.hint" = "Double tap to mention this person";
 "conversation.cameraButton.description" = "Сделать или выбрать фото";
 "conversation.camera.maximizeButton.description" = "Развернуть";
 "conversation.sketchButton.description" = "Открыть скетч для рисования или записи";

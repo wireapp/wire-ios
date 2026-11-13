@@ -32,7 +32,7 @@
 "conversation.titleViewForOneToOne.hint" = "Doppeltippen, um Profil zu öffnen";
 "conversation.legalHoldIcon.description" = "Gesetzliche Aufbewahrung";
 "conversation.verifiedIcon.description" = "Überprüft";
-"conversation.linkPreviewImage.description" = "Vorschau-Bild zum Link-Ziel %@";
+"conversation.linkPreviewImage.description" = "Vorschaubild für den Link zu %@";
 "conversation.linkPreviewImage.fallbackDescription" = "Link-Vorschaubild";
 
 "conversation.messageStatus.sending" = "Wird gesendet";
@@ -47,7 +47,7 @@
 "conversation.hideFormattingButton.description" = "Formatierungsoptionen ausblenden";
 "conversation.timerButton.description" = "Timer für selbstlöschende Nachrichten festlegen";
 "conversation.mentionButton.description" = "Jemanden erwähnen";
-"conversation.mentionSuggestion.hint" = "Doppeltippen, um diese Person zu erwähnen";
+"conversation.mentionSuggestion.hint" = "Double tap to mention this person";
 "conversation.cameraButton.description" = "Foto aufnehmen oder auswählen";
 "conversation.camera.maximizeButton.description" = "Ansicht maximieren";
 "conversation.sketchButton.description" = "Skizze zum Zeichnen oder Schreiben öffnen";

@@ -1055,12 +1055,12 @@
 "message.delete_dialog.action.cancel" = "Отмена";
 "message.delete_dialog.action.hide" = "Удалить у меня";
 "message.delete_dialog.action.delete" = "Удалить у всех";
-"message.delete_pending_failed.title" = "Сообщение отправляется";
+"message.delete_pending_failed.title" = "Отправка сообщения";
 "message.delete_pending_failed.message" = "Вы можете удалить это сообщение после его отправки.";
 
 // Edit message
 "message.menu.edit.title" = "Правка";
-"message.edit_pending_failed.title" = "Сообщение отправляется";
+"message.edit_pending_failed.title" = "Отправка сообщения";
 "message.edit_pending_failed.message" = "Вы можете изменить это сообщение после его отправки.";
 
 // Accept connection request

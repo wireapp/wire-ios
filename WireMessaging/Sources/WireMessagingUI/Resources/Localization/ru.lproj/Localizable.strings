@@ -135,8 +135,8 @@
 "conversation.wireCells.files.item.menu.versionHistory" = "История версий";
 "conversation.wireCells.files.item.menu.makeAvailableOffline" = "Сделать доступным оффлайн";
 "conversation.wireCells.files.item.menu.removeAvailableOffline" = "Удалить оффлайн доступ";
-"conversation.wireCells.files.offline.folderSelectionWarning" = "You can’t make folders available offline.\nDeselect the folder to continue.";
-"conversation.wireCells.files.offline.folderSelectionWarningMultiple" = "You can’t make folders available offline.\nDeselect the %d folders to continue.";
+"conversation.wireCells.files.offline.folderSelectionWarning" = "Невозможно сделать папки доступными в оффлайн.\nСнимите отметку с папки, чтобы продолжить.";
+"conversation.wireCells.files.offline.folderSelectionWarningMultiple" = "Невозможно сделать папки доступными в оффлайн.\nСнимите отметку с %d папок, чтобы продолжить.";
 "conversation.wireCells.files.item.deleteConfirmation.title" = "Это приведет к необратимому удалению файла %@ для всех участников. Все потеряют доступ и восстановить файл будет невозможно.";
 "conversation.wireCells.files.item.deleteConfirmation.deletePermanently" = "Удалить навсегда";
 "conversation.wireCells.files.item.menu.delete" = "Удалить";

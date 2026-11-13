@@ -1055,12 +1055,12 @@
 "message.delete_dialog.action.cancel" = "取消";
 "message.delete_dialog.action.hide" = "仅在我的设备中删除";
 "message.delete_dialog.action.delete" = "在所有地方删除";
-"message.delete_pending_failed.title" = "Message Is Being Sent";
+"message.delete_pending_failed.title" = "Sending Message";
 "message.delete_pending_failed.message" = "You can delete this message once it has been sent.";
 
 // Edit message
 "message.menu.edit.title" = "修改";
-"message.edit_pending_failed.title" = "Message Is Being Sent";
+"message.edit_pending_failed.title" = "Sending Message";
 "message.edit_pending_failed.message" = "You can edit this message once it has been sent.";
 
 // Accept connection request
