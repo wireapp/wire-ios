@@ -745,6 +745,27 @@ public final class ClientSessionComponent {
         }
     )
 
+    public func joinMeeting(
+        domain: String,
+        key: String,
+        code: String,
+        password: String?
+    ) async throws -> WireDataModel.QualifiedID {
+        let response = try await meetingsAPI.joinMeeting(
+            domain: domain,
+            key: key,
+            code: code,
+            password: password
+        )
+
+        await conversationRepository.storeConversation(response.conversation.toDomainModel(), timestamp: .now)
+        await syncContext.perform { [syncContext] in _ = syncContext.saveOrRollback() }
+        await meetingRepository.storeMeeting(response.meeting)
+
+        return response.conversation.qualifiedID?.toDomainModel()
+            ?? response.meeting.conversationID.toDomainModel()
+    }
+
     private func reconcileRefreshedMeetingReminders(_ meetings: [Meeting]) async {
         let scheduler = MeetingReminderScheduler()
         guard await featureConfigRepository.isFeatureEnabled(.meetings) else {

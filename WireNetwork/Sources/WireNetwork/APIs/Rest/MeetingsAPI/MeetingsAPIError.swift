@@ -28,6 +28,10 @@ public enum MeetingsAPIError: Error, Equatable {
 
     case meetingNotFound
 
+    /// The meeting link password is missing or incorrect.
+
+    case invalidMeetingPassword
+
     /// A request could not be generated.
 
     case failedToGenerateRequest
@@ -39,6 +43,10 @@ public enum MeetingsAPIError: Error, Equatable {
     /// The authenticated user does not have permission to perform this action.
 
     case accessDenied
+
+    /// The conversation cannot accept more members.
+
+    case tooManyMembers
 
     /// The operation is not valid in the current state.
 

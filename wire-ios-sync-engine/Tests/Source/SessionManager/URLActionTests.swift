@@ -86,6 +86,17 @@ final class URLActionTests: ZMTBaseTest {
         XCTAssertEqual(action, URLAction.openConversation(id: uuid))
     }
 
+    func testThatItParsesMeetingJoinLink() throws {
+        let action = try URLAction(url: XCTUnwrap(URL(
+            string: "wire://meeting-join/?key=key&code=code&domain=wire.com"
+        )))
+
+        XCTAssertEqual(action, .joinMeeting(domain: "wire.com", key: "key", code: "code"))
+        XCTAssertEqual(action?.requiresAuthentication, true)
+        XCTAssertEqual(action?.opensDeepLink, true)
+        XCTAssertThrowsError(try URLAction(url: XCTUnwrap(URL(string: "wire://meeting-join/?key=key&code=code"))))
+    }
+
     func testThatItParsesOpenUserProfileLink() throws {
         // given
         let uuidString = "fc43d637-6cc2-4d03-9185-2563c73d6ef2"
