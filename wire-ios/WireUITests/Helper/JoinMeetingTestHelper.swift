@@ -38,6 +38,14 @@ extension MeetingJoinTesting {
 
     @MainActor
     func launchMeetings(for user: UserInfo, now: Date? = nil) throws -> MeetingsPage {
+        let passwordMonitor = addUIInterruptionMonitor(withDescription: "Sign-in password sheet") { alert in
+            let title = Locators.FirstTimePage.savePasswordSheet.rawValue
+            let notNow = alert.buttons[Locators.FirstTimePage.notNowOption.rawValue].firstMatch
+            guard notNow.exists, alert.label == title || alert.staticTexts[title].exists else { return false }
+            XCTContext.runActivity(named: "Dismiss interrupted password sheet") { _ in notNow.tap() }
+            return true
+        }
+        defer { removeUIInterruptionMonitor(passwordMonitor) }
         app.terminate()
         uiTestConfig.meetingsDate = now
         app.launchEnvironment[UITestConfig.environmentKey] = uiTestConfig.encode()
@@ -66,7 +74,7 @@ extension MeetingJoinTesting {
         while deadline.timeIntervalSinceNow > 0 {
             let ready = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
                 passwordSheet.exists || allow.exists ||
-                    (!submittedOnboarding && ok.exists && ok.isEnabled && ok.isHittable) ||
+                    (!submittedOnboarding && ok.exists && ok.isEnabled) ||
                     (meetings.exists && meetings.isHittable)
             }, object: nil)
             guard XCTWaiter().wait(for: [ready], timeout: max(0, deadline.timeIntervalSinceNow)) == .completed else {
@@ -87,14 +95,10 @@ extension MeetingJoinTesting {
                     throw RuntimeError("The save-password sheet did not close")
                 }
                 capture("Sign-in password sheet dismissed")
-            } else if !submittedOnboarding, ok.exists, ok.isEnabled, ok.isHittable {
-                // A system prompt can appear while OK waits to become tappable.
-                if ok.waitAndTap(timeout: promptTimeout()) {
-                    submittedOnboarding = true
-                } else if !passwordSheet.exists, !allow.exists {
-                    capture("Sign-in onboarding blocked")
-                    throw RuntimeError("The first-time alert did not submit")
-                }
+            } else if !submittedOnboarding, ok.exists, ok.isEnabled {
+                // Let XCTest handle a system prompt that appears before this tap.
+                ok.tap()
+                submittedOnboarding = true
             } else if meetings.exists, meetings.isHittable {
                 return try ConversationsPage().openMeetings()
             }
