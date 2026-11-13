@@ -140,6 +140,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
     private var coreCrypto: CoreCrypto?
     private var pkiEnvironment: PkiEnvironment?
     private var database: Database?
+    private var mlsClientID: MLSClientID?
     private var loadingCoreCrypto = false
     private var coreCryptoContinuations: [CheckedContinuation<CoreCrypto, Error>] = []
     private nonisolated(unsafe) var mlsTransport: MlsTransport?
@@ -186,7 +187,8 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         let coreCrypto = try await getCoreCrypto()
         return SafeCoreCrypto(
             backgroundTaskExecuter: backgroundTaskExecuter,
-            coreCrypto: coreCrypto
+            coreCrypto: coreCrypto,
+            transactionCoreCryptoFactory: { try await self.createTransactionCoreCrypto() }
         )
     }
 
@@ -203,6 +205,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
             let credential = try Credential.basic(cipherSuite: defaultCiphersuite, clientId: mlsClientID.cryptoId())
             _ = try await context.addCredential(credential: credential)
         }
+        self.mlsClientID = mlsClientID
         try await generateClientPublicKeys(with: coreCrypto, credentialType: .basic)
         await didInitialiseMLS(with: coreCrypto)
     }
@@ -219,6 +222,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
             return try await context.addCredential(credential: credential)
         }
 
+        self.mlsClientID = mlsClientID
         try await generateClientPublicKeys(with: coreCrypto, credentialType: .x509)
         await didInitialiseMLS(with: coreCrypto)
         return credentialRef
@@ -341,6 +345,27 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
         return coreCrypto
     }
 
+    private func createTransactionCoreCrypto() async throws -> CoreCrypto {
+        guard let database else {
+            throw CoreCryptoProviderError.missingDatabase
+        }
+
+        // Use a fresh session cache because another process can update MLS groups in the shared database.
+        let coreCrypto = try CoreCrypto(database: database)
+        await coreCrypto.setPkiEnvironment(pkiEnvironment: pkiEnvironment)
+        let mlsClientID = mlsClientID
+        try await coreCrypto.transaction { context in
+            try await context.proteusInit()
+            if let mlsClientID {
+                try await context.mlsInit(clientId: mlsClientID.cryptoId(), transport: self.mlsTransportProxy)
+            }
+        }
+        if mlsClientID != nil {
+            try await epochObserverRegistration.register(with: coreCrypto)
+        }
+        return coreCrypto
+    }
+
     private func configureProteusClient(coreCrypto: CoreCrypto) async throws {
         WireLogger.coreCrypto.info(
             "configuring proteus client",
@@ -398,6 +423,7 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
 
                 try await $0.mlsInit(clientId: mlsClientID.cryptoId(), transport: self.mlsTransportProxy)
             }
+            self.mlsClientID = mlsClientID
             epochObserverRegistration.markMLSInitialised()
         } else {
             WireLogger.coreCrypto.info(

@@ -46,6 +46,7 @@ public class MockAVSWrapper: AVSWrapperType {
     public var mockMembers: [AVSCallMember] = []
 
     var receivedCallEvents: [(CallEvent, AVSConversationType, Bool)] = []
+    var notificationProcessingStates: [Bool] = []
 
     public required init(
         userId: AVSIdentifier,
@@ -114,7 +115,7 @@ public class MockAVSWrapper: AVSWrapperType {
     }
 
     public func notify(isProcessingNotifications isProcessing: Bool) {
-        // do nothing
+        notificationProcessingStates.append(isProcessing)
     }
 
     public func networkInterfaceChanged() {

@@ -1236,6 +1236,11 @@ extension ZMUserSession: ZMNetworkStateDelegate {
 
     private func observeSyncStateForAVS(syncStateSubject: CurrentValueSubject<SyncState, Never>) {
         syncStateCancellable = syncStateSubject
+            .handleEvents(receiveOutput: { [weak self] state in
+                if state == .suspended {
+                    self?.notifyAVSDidProcessEvents()
+                }
+            })
             .map { $0 == .liveSyncing(.ongoing) }
             .removeDuplicates()
             .sink { [weak self] isOngoing in
