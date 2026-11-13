@@ -88,10 +88,13 @@ extension MeetingJoinTesting {
                 }
                 capture("Sign-in password sheet dismissed")
             } else if !submittedOnboarding, ok.exists, ok.isEnabled, ok.isHittable {
-                guard ok.waitAndTap(timeout: promptTimeout()) else {
+                // A system prompt can appear while OK waits to become tappable.
+                if ok.waitAndTap(timeout: promptTimeout()) {
+                    submittedOnboarding = true
+                } else if !passwordSheet.exists, !allow.exists {
+                    capture("Sign-in onboarding blocked")
                     throw RuntimeError("The first-time alert did not submit")
                 }
-                submittedOnboarding = true
             } else if meetings.exists, meetings.isHittable {
                 return try ConversationsPage().openMeetings()
             }
@@ -146,14 +149,6 @@ extension MeetingJoinTesting {
         _ = try form.save()
         let stored = try await fixtures.list()
         let meeting = try XCTUnwrap(stored.first { $0.id == original.id })
-        if let peerID {
-            let service = XCTAttachment(string: await callingServiceClient.logDiagnostics(
-                instanceId: peerID, conversationId: meeting.conversationID.id.uuidString.lowercased()
-            ))
-            service.name = "CallingService log diagnostics"
-            service.lifetime = .keepAlways
-            add(service)
-        }
         let user = asHost ? host : invitee
         let page = asHost ? hostPage : try launchMeetings(for: user, now: now)
         _ = try page.showRow(meeting)
@@ -266,20 +261,8 @@ extension MeetingJoinTesting {
         }
     }
 
-    @MainActor
     func requireConferenceCalling() async throws {
         let features = try await UserHelper.default.featureConfigsAPI.getFeatureConfigs()
-        let mls = features.compactMap { feature -> MLSFeatureConfig? in
-            guard case let .mls(config) = feature else { return nil }
-            return config
-        }.first
-        let policy = XCTAttachment(string: mls.map { config in
-            "MLS status: \(config.status); default: \(config.defaultProtocol); " +
-                "supported: \(config.supportedProtocols.map { String(describing: $0) }.sorted())"
-        } ?? "MLS policy is missing")
-        policy.name = "Meeting call MLS policy"
-        policy.lifetime = .keepAlways
-        add(policy)
         guard features.contains(where: {
             guard case let .conferenceCalling(config) = $0 else { return false }
             return config.status == .enabled

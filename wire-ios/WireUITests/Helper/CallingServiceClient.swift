@@ -78,62 +78,6 @@ final class CallingServiceClient {
 
     private lazy var httpClient = HttpClient(urlSession: session)
 
-    private final class DiagnosticsDelegate: NSObject, URLSessionTaskDelegate {
-        func urlSession(
-            _ session: URLSession,
-            task: URLSessionTask,
-            willPerformHTTPRedirection response: HTTPURLResponse,
-            newRequest request: URLRequest,
-            completionHandler: @escaping (URLRequest?) -> Void
-        ) {
-            completionHandler(nil)
-        }
-    }
-
-    func logDiagnostics(instanceId: String, conversationId: String) async -> String {
-        let config = URLSessionConfiguration.ephemeral
-        config.timeoutIntervalForRequest = 10
-        config.timeoutIntervalForResource = 10
-        config.httpCookieStorage = session.configuration.httpCookieStorage
-        let diagnostics = URLSession(configuration: config, delegate: DiagnosticsDelegate(), delegateQueue: nil)
-        defer { diagnostics.finishTasksAndInvalidate() }
-        let endpoint = instanceEndpoint(instanceId: instanceId, path: "log")
-        var request = URLRequest(url: endpoint)
-        request.setValue(basicAuthHeader(), forHTTPHeaderField: "Authorization")
-        // This bodyless endpoint rejects explicit media-type headers.
-        do {
-            let (data, response) = try await diagnostics.data(for: request)
-            guard let response = response as? HTTPURLResponse else { return "Instance log response is not HTTP" }
-            var lines = ["Instance log: HTTP \(response.statusCode), MIME \(response.mimeType ?? "unknown")"]
-            guard response.statusCode == 200 else { return lines.joined(separator: "\n") }
-            let log = String(decoding: data, as: UTF8.self)
-            let pattern = #"(?i)(api[ _-]?version|web(?:app)?[ _-]?version|wire web)[^\d\n]{0,20}(\d{1,4}(?:\.\d{1,6}){0,3})"#
-            if let regex = try? NSRegularExpression(pattern: pattern) {
-                let matches = regex.matches(in: log, range: NSRange(log.startIndex..., in: log)).prefix(10)
-                lines += matches.compactMap { match in
-                    guard let kind = Range(match.range(at: 1), in: log),
-                          let version = Range(match.range(at: 2), in: log) else { return nil }
-                    return "Version marker (\(log[kind])): \(log[version])"
-                }
-            }
-            for phrase in [
-                "Unable to process incoming call",
-                "Initialising MLS group conversation",
-                "Joining MLS group by external commit",
-                "Finished initializing MLS group conversations"
-            ] {
-                lines.append("\(phrase): \(log.contains(phrase))")
-            }
-            lines
-                .append(
-                    "Expected conversation present: \(!conversationId.isEmpty && log.localizedCaseInsensitiveContains(conversationId))"
-                )
-            return lines.joined(separator: "\n")
-        } catch {
-            return "Instance log request failed"
-        }
-    }
-
     private func basicAuthHeader() -> String? {
         guard !callingServiceUsername.isEmpty,
               !callingServicePassword.isEmpty
