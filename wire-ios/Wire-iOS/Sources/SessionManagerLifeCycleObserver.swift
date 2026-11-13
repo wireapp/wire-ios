@@ -57,6 +57,9 @@ extension SessionManagerLifeCycleObserver: SessionManagerCreatedSessionObserver,
 
     func sessionManagerCreated(userSession: ZMUserSession) {
         setSoundEventListener(for: userSession)
+        #if DEBUG
+        DebugMemoryStatus.shared.trackUserSession(userSession)
+        #endif
     }
 
     func sessionManagerCreated(unauthenticatedSession: UnauthenticatedSession) {}
