@@ -60,6 +60,15 @@ extension MeetingJoinTesting {
             throw RuntimeError("Initial sign-in did not complete")
         }
         app.dismissAllowIfPresent(timeout: 5)
+        // The password sheet can appear after the first-time alert has closed.
+        if firstTime.savePasswordSheet.exists {
+            capture("Sign-in password sheet")
+            guard firstTime.notNowOptionOnSavePasswordSheet.waitAndTap(),
+                  firstTime.savePasswordSheet.waitToDisappear() else {
+                throw RuntimeError("The save-password sheet did not close")
+            }
+            capture("Sign-in password sheet dismissed")
+        }
         return try ConversationsPage().openMeetings()
     }
 
