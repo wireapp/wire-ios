@@ -27,7 +27,7 @@ final class JoinMeetingCallTests: WireUITestCase, MeetingJoinTesting {
     @MainActor
     func testHostAndInviteeJoinExistingMeetingCall_TC_12021() async throws {
         executionTimeAllowance = 900
-        let start = Date().addingTimeInterval(3600)
+        let start = try tomorrowAtNoon()
         let fixture = try await makeMeeting(
             title: "TC12021 shared call",
             start: start,
@@ -166,4 +166,11 @@ final class JoinMeetingCallTests: WireUITestCase, MeetingJoinTesting {
             _ = try leaveCall(call)
         }
     }
+    private func tomorrowAtNoon() throws -> Date {
+        // Keep both fixture times on one day when the form edits the meeting.
+        let calendar = Calendar.current
+        let tomorrow = try XCTUnwrap(calendar.date(byAdding: .day, value: 1, to: Date()))
+        return try XCTUnwrap(calendar.date(bySettingHour: 12, minute: 0, second: 0, of: tomorrow))
+    }
+
 }

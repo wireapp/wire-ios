@@ -311,8 +311,17 @@ class MeetingFormPage: PageModel {
 
     @discardableResult
     func save(timeout: TimeInterval = 30) throws -> MeetingsPage {
-        XCTAssertTrue(saveButton.waitAndTap(timeout: 10), "Meeting form save button was not available")
-        XCTAssertTrue(titleField.waitToDisappear(timeout: timeout), "Meeting form did not close after save")
+        guard saveButton.waitAndTap(timeout: 10) else {
+            throw RuntimeError("Meeting form save button was not available")
+        }
+        guard titleField.waitToDisappear(timeout: timeout) else {
+            XCTContext.runActivity(named: "Meeting form save failed") { activity in
+                let screenshot = XCTAttachment(screenshot: app.screenshot())
+                screenshot.lifetime = .keepAlways
+                activity.add(screenshot)
+            }
+            throw RuntimeError("Meeting form did not close after save")
+        }
         return try MeetingsPage()
     }
 }
