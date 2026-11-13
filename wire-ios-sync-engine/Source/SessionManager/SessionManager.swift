@@ -1014,6 +1014,7 @@ public final class SessionManager: NSObject, SessionManagerType {
         if session.isLoggedIn {
             await session.triggerSync()
             delegate?.sessionManagerDidReportLockChange(forSession: session)
+            callKitManager.applyPendingVideoUpgrade()
             performPostUnlockActionsIfPossible(for: session)
             await configureAnalytics(for: session)
             await requestCertificateEnrollmentIfNeeded()
