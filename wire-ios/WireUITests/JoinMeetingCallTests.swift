@@ -56,7 +56,7 @@ final class JoinMeetingCallTests: WireUITestCase, MeetingJoinTesting {
     func testHostAndInviteeJoinFutureMeetingWithJoinNow_TC_12026() async throws {
         executionTimeAllowance = 900
         for isHost in [false, true] {
-            let start = Date().addingTimeInterval(3600)
+            let start = try tomorrowAtNoon()
             let fixture = try await makeMeeting(
                 title: isHost ? "TC12026 host early join" : "TC12026 invitee early join",
                 start: start,
