@@ -156,21 +156,22 @@ final class JoinMeetingCallTests: WireUITestCase, MeetingJoinTesting {
             let call = try join(fixture.meeting, on: fixture.page, start: futureStart, fromMenu: true)
             try assertCallStarts(1, starts: starts, conversation: conversation)
 
+            // Joining must preserve the series saved during setup.
             let stored = try await fixture.fixtures.list()
             let persisted = try XCTUnwrap(stored.first { $0.id == fixture.meeting.id })
             XCTAssertEqual(persisted.conversationID, fixture.meeting.conversationID)
             XCTAssertEqual(persisted.recurrence?.frequency, .weekly)
             XCTAssertEqual(persisted.recurrence?.interval, 1)
-            XCTAssertEqual(persisted.recurrence?.until, until)
+            XCTAssertEqual(persisted.recurrence?.until, fixture.meeting.recurrence?.until)
             capture(isHost ? "TC12028 host joined recurring meeting" : "TC12028 invitee joined recurring meeting")
             _ = try leaveCall(call)
         }
     }
+
     private func tomorrowAtNoon() throws -> Date {
         // Keep both fixture times on one day when the form edits the meeting.
         let calendar = Calendar.current
         let tomorrow = try XCTUnwrap(calendar.date(byAdding: .day, value: 1, to: Date()))
         return try XCTUnwrap(calendar.date(bySettingHour: 12, minute: 0, second: 0, of: tomorrow))
     }
-
 }
