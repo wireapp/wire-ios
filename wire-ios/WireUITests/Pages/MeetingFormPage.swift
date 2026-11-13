@@ -260,11 +260,17 @@ class MeetingFormPage: PageModel {
         guard member(user).waitAndTap(timeout: 10) else {
             throw RuntimeError("Meeting member '\(user.name)' was not tappable")
         }
-        let selected = XCTNSPredicateExpectation(
-            predicate: NSPredicate(format: "value == %@", String(selectedCount + 1)),
-            object: selectedMembersButton
-        )
-        guard XCTWaiter().wait(for: [selected], timeout: 5) == .completed else {
+        let selected = app.buttons.matching(NSPredicate(
+            format: "identifier BEGINSWITH %@ AND value == %@",
+            Locators.WireMeetings.MeetingForm.membersSelected.rawValue + ".",
+            String(selectedCount + 1)
+        )).firstMatch
+        guard selected.waitForExistence(timeout: 5) else {
+            XCTContext.runActivity(named: "Meeting member selection failed") { activity in
+                let hierarchy = XCTAttachment(string: app.debugDescription)
+                hierarchy.lifetime = .keepAlways
+                activity.add(hierarchy)
+            }
             throw RuntimeError("Meeting member '\(user.name)' was not selected")
         }
     }
