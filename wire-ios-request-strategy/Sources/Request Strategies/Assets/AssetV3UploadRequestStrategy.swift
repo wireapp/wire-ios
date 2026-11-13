@@ -31,7 +31,8 @@ public final class AssetV3UploadRequestStrategy: AbstractRequestStrategy, ZMCont
 
     private let featureRepository: LegacyFeatureRepository
 
-    public var shouldUseBackgroundSession = true
+    // shortcut: background uploads loop on macOS (iPad design), use foreground there, remove once root cause is fixed
+    public var shouldUseBackgroundSession = !ProcessInfo.processInfo.isiOSAppOnMac
     let localDomain: String?
     private let isCloudDomain: Bool
 

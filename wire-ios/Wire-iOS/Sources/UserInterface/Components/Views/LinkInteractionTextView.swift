@@ -27,9 +27,26 @@ protocol TextViewInteractionDelegate: AnyObject {
 final class LinkInteractionTextView: UITextView {
     weak var interactionDelegate: TextViewInteractionDelegate?
 
+    /// Whether the text may be copied or dragged out (ephemeral messages and clipboard restrictions).
+    var isCopyAllowed: () -> Bool = { true }
+
+    override func canPerformAction(_ action: Selector, withSender sender: Any?) -> Bool {
+        if action == #selector(copy(_:)) || action == #selector(cut(_:)), !isCopyAllowed() { return false }
+        return super.canPerformAction(action, withSender: sender)
+    }
+
     override var selectedTextRange: UITextRange? {
-        get { nil }
-        set { /* no-op */ }
+        get {
+            guard !ProcessInfo.processInfo.isiOSAppOnMac else { return super.selectedTextRange }
+            return nil
+        }
+        set {
+            guard !ProcessInfo.processInfo.isiOSAppOnMac else {
+                super.selectedTextRange = newValue
+                return
+            }
+            // no-op on iOS: prevents accidental text selection when tapping a message
+        }
     }
 
     // URLs with these schemes should be handled by the os.
@@ -104,6 +121,8 @@ final class LinkInteractionTextView: UITextView {
     }
 
     override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
+        // On macOS let the text view receive all hits so text can be selected with cursor.
+        guard !ProcessInfo.processInfo.isiOSAppOnMac else { return super.point(inside: point, with: event) }
         let isInside = super.point(inside: point, with: event)
         guard !UIMenuController.shared.isMenuVisible else { return false }
         guard let position = characterRange(at: point), isInside else { return false }
@@ -222,6 +241,8 @@ extension LinkInteractionTextView: UITextDragDelegate {
             attributeTuple.0 == NSAttributedString.Key.link && (attributeTuple.1 as? NSURL)?.scheme == Mention
                 .mentionScheme
         }
+
+        guard isCopyAllowed() else { return [] }
 
         if let attributes = textStyling(at: dragRequest.dragRange.start, in: .forward) {
             if attributes.contains(where: isMentionLink) {
