@@ -50,6 +50,7 @@ public struct WireMessagingFactory {
     private let directUploadFileCache: WireDriveDirectUploadFileCache
     private let directUploadTracker: WireDriveObserveDirectUploadsUseCase
     private let directUploadManager: WireDriveDirectUploadManager
+    private let directUploadsLiveActivity: WireDriveUploadsLiveActivityController
 
     @MainActor var lastOpenRequestNodeID: UUID?
 
@@ -61,7 +62,7 @@ public struct WireMessagingFactory {
         fileCache: any FileCache,
         contextProvider: any ManagedObjectContextProvider,
         analyticsProvider: @escaping DriveAnalyticsProvider,
-        selfUserID: UUID,
+        accountInfo: WireDriveAccountInfo,
         uploadSessions: WireDriveDirectUploadSessionHolder,
         uploadStagingDirectory: URL
     ) {
@@ -84,7 +85,7 @@ public struct WireMessagingFactory {
         self.nodeRenameNotifier = WireDriveNodeRenameNotifier()
         self.analyticsProvider = analyticsProvider
 
-        self.selfUserID = selfUserID
+        self.selfUserID = accountInfo.userID
         self.directUploadSessions = uploadSessions
         self.directUploadStore = WireDriveDirectUploadStore(contextProvider: contextProvider)
         self.directUploadFileCache = WireDriveDirectUploadFileCache(directory: uploadStagingDirectory)
@@ -95,10 +96,15 @@ public struct WireMessagingFactory {
             fileCache: directUploadFileCache,
             // The session is created and owned by the holder, never here: this factory is rebuilt
             // on account switch, and a second session for a live identifier is undefined behaviour.
-            session: uploadSessions.session(userID: selfUserID),
+            session: uploadSessions.session(userID: accountInfo.userID),
             accessTokenProvider: accessToken,
             tracker: directUploadTracker
         )
+        self.directUploadsLiveActivity = WireDriveUploadsLiveActivityController(
+            observeUploads: directUploadTracker,
+            client: ActivityKitUploadsActivityClient(accountInfo: accountInfo)
+        )
+        uploadSessions.retainLiveActivityController(directUploadsLiveActivity, userID: accountInfo.userID)
     }
 
     // MARK: - Direct uploads
@@ -106,7 +112,17 @@ public struct WireMessagingFactory {
     /// Reconciles persisted uploads against the background session and starts receiving its events.
 
     public func startDirectUploads() async {
-        await directUploadManager.start()
+        if await directUploadManager.start() {
+            await directUploadsLiveActivity.endActivityIfNoUploads()
+        }
+    }
+
+    /// Starts showing the ongoing uploads in a Live Activity. Call it as early as possible, so that the
+    /// activity can also be brought up to date when the app is relaunched in the background.
+
+    @MainActor
+    public func startDirectUploadsLiveActivity() {
+        directUploadsLiveActivity.start()
     }
 
     /// Cancels every transfer and removes all upload state. For logout or account deletion.
