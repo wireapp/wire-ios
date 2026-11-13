@@ -120,8 +120,11 @@ public extension GenericMessage {
 
 public extension Text {
     func validatingFields() -> Text? {
-        let validMentions = mentions.compactMap { $0.validatingFields() }
-        guard validMentions.count == mentions.count else { return nil }
+        // Newer clients can send mention types without a user target, such as @all.
+        // Ignore their metadata during validation so the text can still be displayed.
+        let userMentions = mentions.filter { $0.mentionType != nil || $0.hasQualifiedUserID }
+        let validMentions = userMentions.compactMap { $0.validatingFields() }
+        guard validMentions.count == userMentions.count else { return nil }
         return self
     }
 }
