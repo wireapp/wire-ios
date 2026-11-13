@@ -156,3 +156,18 @@ public extension JournalKey where Value == Date? {
     )
 
 }
+
+public extension JournalKey where Value == Data? {
+
+    /// The timestamp ranges of MLS messages buffered by CoreCrypto, encoded by
+    /// `BufferedMLSMessageRecoveryTracker`.
+    ///
+    /// Persisted so that buffering is tracked across notification service extension
+    /// payloads and processes, as well as between the extension and the main app.
+
+    static let bufferedMLSMessageTimestampRanges = Self(
+        "bufferedMLSMessageTimestampRanges",
+        defaultValue: Data?.none
+    )
+
+}

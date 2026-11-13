@@ -36,7 +36,12 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
         userClientsLocalStore: any UserClientsLocalStoreProtocol,
         messageLocalStore: any MessageLocalStoreProtocol,
         userLocalStore: any UserLocalStoreProtocol,
+<<<<<<< HEAD
         conversationLocalStore: any ConversationLocalStoreProtocol
+=======
+        conversationLocalStore: any ConversationLocalStoreProtocol,
+        bufferedMessageRecoveryTracker: BufferedMLSMessageRecoveryTracker
+>>>>>>> aff93ff216 (fix: persist buffered mls message recovery tracking across NSE payloads - WPB-29810 (#5536))
     ) {
         self.proteusMessageDecryptor = ProteusMessageDecryptor(
             proteusService: proteusService,
