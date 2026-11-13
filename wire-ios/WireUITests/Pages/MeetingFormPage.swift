@@ -246,7 +246,10 @@ class MeetingFormPage: PageModel {
         guard selectedMembersButton.waitForExistence(timeout: 5) else {
             throw RuntimeError("Selected members section did not appear")
         }
-        if selectedMembersButton.value as? String != "0",
+        guard let selectedCount = Int(selectedMembersButton.value as? String ?? "") else {
+            throw RuntimeError("Selected member count was not available")
+        }
+        if selectedCount > 0,
            selectedMembersButton.identifier == Locators.WireMeetings.MeetingForm.selectedMembersIdentifier(
                isExpanded: true
            ) {
@@ -254,18 +257,15 @@ class MeetingFormPage: PageModel {
                 throw RuntimeError("Selected members section was not tappable")
             }
         }
-        let collapsed = XCTNSPredicateExpectation(
-            predicate: NSPredicate(
-                format: "exists == true AND (value == '0' OR identifier == %@)",
-                Locators.WireMeetings.MeetingForm.selectedMembersIdentifier(isExpanded: false)
-            ),
-            object: selectedMembersButton
-        )
-        guard XCTWaiter().wait(for: [collapsed], timeout: 5) == .completed else {
-            throw RuntimeError("Selected members section did not collapse")
-        }
         guard member(user).waitAndTap(timeout: 10) else {
             throw RuntimeError("Meeting member '\(user.name)' was not tappable")
+        }
+        let selected = XCTNSPredicateExpectation(
+            predicate: NSPredicate(format: "value == %@", String(selectedCount + 1)),
+            object: selectedMembersButton
+        )
+        guard XCTWaiter().wait(for: [selected], timeout: 5) == .completed else {
+            throw RuntimeError("Meeting member '\(user.name)' was not selected")
         }
     }
 

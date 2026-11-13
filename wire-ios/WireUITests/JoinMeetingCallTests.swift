@@ -84,7 +84,7 @@ final class JoinMeetingCallTests: WireUITestCase, MeetingJoinTesting {
     @MainActor
     func testInviteeRejoinsRescheduledMeetingWithJoinNow_TC_12027() async throws {
         executionTimeAllowance = 900
-        let start = Date().addingTimeInterval(3600)
+        let start = try tomorrowAtNoon()
         let fixture = try await makeMeeting(
             title: "TC12027 rejoin rescheduled meeting",
             start: start,
@@ -106,7 +106,7 @@ final class JoinMeetingCallTests: WireUITestCase, MeetingJoinTesting {
         _ = try await assertPeer(peerID, user: fixture.invitee, meeting: fixture.meeting, callID: callID)
         page = try leaveCall(secondCall)
 
-        let rescheduledStart = Date().addingTimeInterval(86_400)
+        let rescheduledStart = try XCTUnwrap(Calendar.current.date(byAdding: .day, value: 1, to: start))
         let updated = try await fixture.fixtures.update(meeting: fixture.meeting, start: rescheduledStart)
         let row = try page.showRow(updated, start: rescheduledStart)
         let joinButton = row.descendants(matching: .any)[Locators.WireMeetings.MeetingRow.joinButton.rawValue]
