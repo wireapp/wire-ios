@@ -86,7 +86,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
         }
 
         return await context.perform {
-            text.mentions.any { $0.userID.uppercased() == selfUser.remoteIdentifier.uuidString }
+            text.isMentioningSelf(selfUser)
         }
     }
 

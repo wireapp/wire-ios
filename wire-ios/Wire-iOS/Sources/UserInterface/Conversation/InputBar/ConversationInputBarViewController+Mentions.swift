@@ -18,6 +18,7 @@
 
 import UIKit
 import WireDataModel
+import WireUtilities
 
 extension ConversationInputBarViewController {
     var isInMentionsFlow: Bool {
@@ -25,7 +26,7 @@ extension ConversationInputBarViewController {
     }
 
     var canInsertMention: Bool {
-        guard isInMentionsFlow, let mentionsView, !mentionsView.users.isEmpty else {
+        guard isInMentionsFlow, let mentionsView, !mentionsView.suggestions.isEmpty else {
             return false
         }
         return true
@@ -36,8 +37,17 @@ extension ConversationInputBarViewController {
             fatal("Cannot insert best mention")
         }
 
-        if let bestSuggestion = mentionsView.selectedUser {
-            insertMention(for: bestSuggestion)
+        if let bestSuggestion = mentionsView.selectedSuggestion {
+            insertMention(bestSuggestion)
+        }
+    }
+
+    private func insertMention(_ suggestion: MentionSuggestion) {
+        switch suggestion {
+        case .everyone:
+            insertEveryoneMention()
+        case let .user(user):
+            insertMention(for: user)
         }
     }
 
@@ -48,6 +58,16 @@ extension ConversationInputBarViewController {
 
         let (range, attributedText) = handler.replacement(forMention: user, in: text)
 
+        inputBar.textView.replace(range, withAttributedText: attributedText && inputBar.textView.typingAttributes)
+        playInputHapticFeedback()
+        dismissMentionsIfNeeded()
+    }
+
+    func insertEveryoneMention() {
+        guard let handler = mentionsHandler else { return }
+
+        let text = inputBar.textView.attributedText ?? NSAttributedString(string: inputBar.textView.text)
+        let (range, attributedText) = handler.replacementForEveryone(in: text)
         inputBar.textView.replace(range, withAttributedText: attributedText && inputBar.textView.typingAttributes)
         playInputHapticFeedback()
         dismissMentionsIfNeeded()
@@ -75,8 +95,8 @@ extension ConversationInputBarViewController {
 }
 
 extension ConversationInputBarViewController: UserSearchResultsViewControllerDelegate {
-    func didSelect(user: UserType) {
-        insertMention(for: user)
+    func didSelect(suggestion: MentionSuggestion) {
+        insertMention(suggestion)
     }
 }
 
@@ -96,10 +116,26 @@ extension ConversationInputBarViewController {
 
         if let handler = mentionsHandler, let searchString = handler.searchString(in: textView.text) {
             let participants = conversation.sortedActiveParticipants
-            mentionsView?.users = participants.searchForMentions(withQuery: searchString)
+            var suggestions = participants.searchForMentions(withQuery: searchString).map(MentionSuggestion.user)
+            if Self.shouldSuggestEveryone(
+                for: searchString,
+                conversationType: conversation.conversationType,
+                flagEnabled: DeveloperFlag.mentionAll.isOn
+            ) {
+                suggestions.insert(.everyone, at: 0)
+            }
+            mentionsView?.suggestions = suggestions
         } else {
             dismissMentionsIfNeeded()
         }
+    }
+
+    static func shouldSuggestEveryone(
+        for query: String,
+        conversationType: ZMConversationType,
+        flagEnabled: Bool
+    ) -> Bool {
+        flagEnabled && conversationType == .group && (query.isEmpty || "all".hasPrefix(query.lowercased()))
     }
 
     func registerForTextFieldSelectionChange() {

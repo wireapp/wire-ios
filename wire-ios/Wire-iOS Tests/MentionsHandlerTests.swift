@@ -106,7 +106,7 @@ final class MentionsHandlerTests: XCTestCase {
         XCTAssertEqual(attachments.count, 1)
         guard let mention = attachments.first as? MentionTextAttachment
         else { XCTFail("Failed to create a mention"); return }
-        XCTAssertEqual(mention.user.name, mockUser.name)
+        XCTAssertEqual(mention.user?.name, mockUser.name)
         XCTAssertEqual(range, (query as NSString).range(of: "@bill"))
 
         let expected = NSAttributedString(attachment: mention)
@@ -125,12 +125,26 @@ final class MentionsHandlerTests: XCTestCase {
         XCTAssertEqual(attachments.count, 1)
         guard let mention = attachments.first as? MentionTextAttachment
         else { XCTFail("Failed to create a mention"); return }
-        XCTAssertEqual(mention.user.name, mockUser.name)
+        XCTAssertEqual(mention.user?.name, mockUser.name)
         XCTAssertEqual(range, (query as NSString).range(of: "@bill"))
 
         let expected = NSAttributedString(attachment: mention) + " "
 
         XCTAssertEqual(replacement, expected)
+    }
+
+    func testThatItReplacesEveryoneMention() throws {
+        let query = "Hi @all"
+        let handler = try XCTUnwrap(MentionsHandler(text: query, cursorPosition: query.utf16.count))
+
+        let (range, replacement) = handler.replacementForEveryone(in: query.attributedString)
+
+        let attachment = try XCTUnwrap(replacement.allAttachments.first as? MentionTextAttachment)
+        XCTAssertTrue(attachment.isEveryone)
+        XCTAssertNil(attachment.user)
+        XCTAssertEqual(attachment.attributedText.string, "@all")
+        XCTAssertEqual(range, (query as NSString).range(of: "@all"))
+        XCTAssertEqual(replacement.string, "\u{fffc} ")
     }
 
 }

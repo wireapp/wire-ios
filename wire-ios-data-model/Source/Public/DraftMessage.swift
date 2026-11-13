@@ -83,12 +83,15 @@ private struct StorableMention: Codable {
     /// The range of the mention.
     let range: NSRange
     /// The user identifier of the user being mentioned.
-    let userIdentifier: UUID
+    let userIdentifier: UUID?
+    let isEveryone: Bool?
 
     /// Converts the storable mention into a regular `Mention` object.
     /// The passed in `context` is needed to fetch the user object.
     func mention(in context: NSManagedObjectContext) -> Mention? {
-        ZMUser.fetch(with: userIdentifier, domain: nil, in: context)
+        if isEveryone == true { return Mention(range: range, isEveryone: true) }
+        guard let userIdentifier else { return nil }
+        return ZMUser.fetch(with: userIdentifier, domain: nil, in: context)
             .map { Mention(range: range, user: $0) }
     }
 
@@ -190,9 +193,8 @@ private extension Mention {
 
     /// The storable version of the object.
     var storable: StorableMention? {
-        user.remoteIdentifier.map {
-            StorableMention(range: range, userIdentifier: $0)
-        }
+        if isEveryone { return StorableMention(range: range, userIdentifier: nil, isEveryone: true) }
+        return user?.remoteIdentifier.map { StorableMention(range: range, userIdentifier: $0, isEveryone: nil) }
     }
 
 }

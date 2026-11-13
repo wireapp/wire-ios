@@ -35,8 +35,10 @@ final class MentionTextAttachment: NSTextAttachment {
     /// Fitting size used when the mention was rendered the last time
     var lastFittingSize: CGSize = .zero
 
-    /// The user being mentioned.
-    let user: UserType
+    /// The user being mentioned, or `nil` for an everyone mention.
+    let user: UserType?
+
+    let isEveryone: Bool
 
     static var paragraphStyle: NSParagraphStyle = {
         let paragraphStyle = NSParagraphStyle.default.mutableCopy() as! NSMutableParagraphStyle
@@ -48,7 +50,18 @@ final class MentionTextAttachment: NSTextAttachment {
         self.font = .normalLightFont
         self.color = color
         self.user = user
-        self.attributedText = type(of: self).attributedMentionString(user: user, font: font, color: color)
+        self.isEveryone = false
+        self.attributedText = type(of: self).attributedMentionString(name: user.name, font: font, color: color)
+
+        super.init(data: nil, ofType: nil)
+    }
+
+    init(everyoneWithColor color: UIColor = .accent()) {
+        self.font = .normalLightFont
+        self.color = color
+        self.user = nil
+        self.isEveryone = true
+        self.attributedText = type(of: self).attributedMentionString(name: "all", font: font, color: color)
 
         super.init(data: nil, ofType: nil)
     }
@@ -70,7 +83,7 @@ final class MentionTextAttachment: NSTextAttachment {
 
         self.font = font
         lastFittingSize = textContainerSize
-        attributedText = type(of: self).attributedMentionString(user: user, font: font, color: color)
+        attributedText = type(of: self).attributedMentionString(name: user?.name ?? "all", font: font, color: color)
 
         image = mentionImage(fittingIntoSize: textContainerSize)
     }
@@ -85,9 +98,9 @@ final class MentionTextAttachment: NSTextAttachment {
         return image
     }
 
-    private static func attributedMentionString(user: UserType, font: UIFont, color: UIColor) -> NSAttributedString {
+    private static func attributedMentionString(name: String?, font: UIFont, color: UIColor) -> NSAttributedString {
         // Replace all spaces with non-breaking space to avoid wrapping when displaying mention
-        let nameWithNonBreakingSpaces = user.name?.replacingOccurrences(
+        let nameWithNonBreakingSpaces = name?.replacingOccurrences(
             of: String.breakingSpace,
             with: String.nonBreakingSpace
         )

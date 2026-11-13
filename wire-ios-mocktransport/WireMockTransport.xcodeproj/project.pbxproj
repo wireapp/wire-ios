@@ -395,8 +395,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/wireapp/generic-message-proto.git";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.54.0;
+				kind = exactVersion;
+				version = 1.64.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */

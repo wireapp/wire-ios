@@ -87,7 +87,7 @@ private enum FlagSection: String, CaseIterable {
         switch flag {
         case .newRegistration, .useWireAuthentication:
             self = .authentication
-        case .channelsHistory, .chatBubbles, .offlinePendingMessages, .showUnreadConversationsFilter:
+        case .channelsHistory, .chatBubbles, .mentionAll, .offlinePendingMessages, .showUnreadConversationsFilter:
             self = .conversations
         case .shakeToReport, .unSafeLogsForPublic:
             self = .diagnostics

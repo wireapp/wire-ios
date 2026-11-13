@@ -238,6 +238,9 @@ public struct ConversationProtobufMessageProcessor: ConversationProtobufMessageP
 
         case .inCallHandRaise:
             break // Not handled yet, TODO: [WPB-11769] implement here
+
+        case .historyClientAvailable, .historyClientRequest, .historyClientResponse, .poll, .pollVote:
+            break
         }
     }
 

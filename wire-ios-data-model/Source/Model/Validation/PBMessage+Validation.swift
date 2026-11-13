@@ -141,7 +141,7 @@ public extension Quote {
 
 public extension GenericMessageProtocol.Mention {
     func validatingFields() -> GenericMessageProtocol.Mention? {
-        UUID.isValid(object: userID) ? self : nil
+        everyone || UUID.isValid(object: userID) ? self : nil
     }
 }
 

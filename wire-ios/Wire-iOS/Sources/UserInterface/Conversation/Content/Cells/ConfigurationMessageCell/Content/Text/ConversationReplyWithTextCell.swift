@@ -288,9 +288,10 @@ final class ConversationReplyWithTextCell: UIView, ConversationMessageCell, Text
     }
 
     func openMention(_ mention: Mention) -> Bool {
+        guard let user = mention.user else { return false }
         delegate?.conversationMessageWantsToOpenUserDetails(
             self,
-            user: mention.user,
+            user: user,
             sourceView: messageTextView,
             frame: selectionRect
         )

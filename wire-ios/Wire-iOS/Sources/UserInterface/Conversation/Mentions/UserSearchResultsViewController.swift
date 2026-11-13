@@ -22,7 +22,12 @@ import WireDesign
 import WireLocators
 
 protocol UserSearchResultsViewControllerDelegate: AnyObject {
-    func didSelect(user: UserType)
+    func didSelect(suggestion: MentionSuggestion)
+}
+
+enum MentionSuggestion {
+    case everyone
+    case user(UserType)
 }
 
 protocol Dismissable: AnyObject {
@@ -34,8 +39,8 @@ protocol KeyboardCollapseObserver: AnyObject {
 }
 
 protocol UserList: AnyObject {
-    var users: [UserType] { get set }
-    var selectedUser: UserType? { get }
+    var suggestions: [MentionSuggestion] { get set }
+    var selectedSuggestion: MentionSuggestion? { get }
 
     func selectPreviousUser()
     func selectNextUser()
@@ -43,8 +48,20 @@ protocol UserList: AnyObject {
 
 final class UserSearchResultsViewController: UIViewController, KeyboardCollapseObserver {
 
+    var users: [UserType] {
+        get {
+            suggestions.compactMap {
+                guard case let .user(user) = $0 else { return nil }
+                return user
+            }
+        }
+        set {
+            suggestions = newValue.map(MentionSuggestion.user)
+        }
+    }
+
     private let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewLayout())
-    private var searchResults: [UserType] = [] {
+    private var searchResults: [MentionSuggestion] = [] {
         didSet {
             if !searchResults.isEmpty {
                 collectionViewSelectedIndex = searchResults.count - 1
@@ -123,7 +140,14 @@ final class UserSearchResultsViewController: UIViewController, KeyboardCollapseO
 
         collectionView.dataSource = self
         collectionView.delegate = self
-        collectionView.register(UserCell.self, forCellWithReuseIdentifier: UserCell.reuseIdentifier)
+        collectionView.register(
+            UserCell.self,
+            forCellWithReuseIdentifier: UserCell.reuseIdentifier
+        )
+        collectionView.register(
+            EveryoneMentionCell.self,
+            forCellWithReuseIdentifier: EveryoneMentionCell.reuseIdentifier
+        )
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         collectionView.backgroundColor = SemanticColors.View.backgroundDefault
 
@@ -151,8 +175,7 @@ final class UserSearchResultsViewController: UIViewController, KeyboardCollapseO
         ])
     }
 
-    @objc
-    func reloadTable(with results: [UserType]) {
+    func reloadTable(with results: [MentionSuggestion]) {
         searchResults = results
         resizeTable()
 
@@ -220,7 +243,7 @@ extension UserSearchResultsViewController: Dismissable {
 }
 
 extension UserSearchResultsViewController: UserList {
-    var selectedUser: UserType? {
+    var selectedSuggestion: MentionSuggestion? {
 
         guard let collectionViewSelectedIndex else {
             return .none
@@ -257,7 +280,7 @@ extension UserSearchResultsViewController: UserList {
         )
     }
 
-    var users: [UserType] {
+    var suggestions: [MentionSuggestion] {
         get {
             searchResults.reversed()
         }
@@ -295,7 +318,18 @@ extension UserSearchResultsViewController: UICollectionViewDataSource {
         _ collectionView: UICollectionView,
         cellForItemAt indexPath: IndexPath
     ) -> UICollectionViewCell {
-        let user = searchResults[indexPath.item]
+        let suggestion = searchResults[indexPath.item]
+        if case .everyone = suggestion {
+            let cell = collectionView.dequeueReusableCell(
+                withReuseIdentifier: EveryoneMentionCell.reuseIdentifier,
+                for: indexPath
+            ) as! EveryoneMentionCell
+            cell.configure()
+            configureBackground(for: cell, at: indexPath)
+            return cell
+        }
+
+        guard case let .user(user) = suggestion else { fatal("Unsupported mention suggestion") }
         let cell = collectionView.dequeueReusableCell(
             withReuseIdentifier: UserCell.reuseIdentifier,
             for: indexPath
@@ -311,6 +345,13 @@ extension UserSearchResultsViewController: UICollectionViewDataSource {
         cell.showSeparator = false
         cell.avatarSpacing = conversationHorizontalMargins.left
 
+        configureBackground(for: cell, at: indexPath)
+
+        cell.accessibilityIdentifier = Locators.ActiveConversationPage.userCellName.rawValue
+        return cell
+    }
+
+    private func configureBackground(for cell: UICollectionViewCell, at indexPath: IndexPath) {
         // hightlight the lowest cell if keyboard is collapsed
         if isKeyboardCollapsed || UIDevice.current.userInterfaceIdiom == .pad {
             if indexPath.item == collectionViewSelectedIndex {
@@ -321,13 +362,63 @@ extension UserSearchResultsViewController: UICollectionViewDataSource {
         } else {
             cell.backgroundColor = SemanticColors.View.backgroundUserCell
         }
-
-        cell.accessibilityIdentifier = Locators.ActiveConversationPage.userCellName.rawValue
-        return cell
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        delegate?.didSelect(user: searchResults[indexPath.item])
+        delegate?.didSelect(suggestion: searchResults[indexPath.item])
         dismiss()
     }
+}
+
+private final class EveryoneMentionCell: UICollectionViewCell {
+    static let reuseIdentifier = "EveryoneMentionCell"
+
+    private let iconView = UIImageView(image: UIImage(systemName: "person.3.fill"))
+    private let titleLabel = DynamicFontLabel(
+        fontSpec: .normalSemiboldFont,
+        color: SemanticColors.Label.textDefault
+    )
+    private let subtitleLabel = DynamicFontLabel(
+        fontSpec: .smallFont,
+        color: SemanticColors.Label.textDefault
+    )
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+
+        iconView.tintColor = SemanticColors.Icon.foregroundDefaultBlack
+        iconView.contentMode = .center
+        iconView.translatesAutoresizingMaskIntoConstraints = false
+
+        titleLabel.text = "@all"
+        subtitleLabel.text = L10n.Localizable.Conversation.InputBar.MentionAll.subtitle
+
+        let labels = UIStackView(arrangedSubviews: [titleLabel, subtitleLabel])
+        labels.axis = .vertical
+        labels.spacing = 2
+        labels.translatesAutoresizingMaskIntoConstraints = false
+        contentView.addSubview(iconView)
+        contentView.addSubview(labels)
+
+        NSLayoutConstraint.activate([
+            iconView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            iconView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+            iconView.widthAnchor.constraint(equalToConstant: 40),
+            iconView.heightAnchor.constraint(equalToConstant: 40),
+            labels.leadingAnchor.constraint(equalTo: iconView.trailingAnchor, constant: 12),
+            labels.trailingAnchor.constraint(lessThanOrEqualTo: contentView.trailingAnchor, constant: -16),
+            labels.centerYAnchor.constraint(equalTo: contentView.centerYAnchor)
+        ])
+
+        isAccessibilityElement = true
+        accessibilityLabel = "@all, \(L10n.Localizable.Conversation.InputBar.MentionAll.subtitle)"
+        accessibilityIdentifier = "conversation.mention.everyone"
+    }
+
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    func configure() {}
 }
