@@ -1,6 +1,6 @@
 {
     "type": "feature-config.update",
-    "name": "e2ei",
+    "name": "mlsE2EId",
     "data": {
         "config": {
             "acmeDiscoveryUrl": "www.example.com",
