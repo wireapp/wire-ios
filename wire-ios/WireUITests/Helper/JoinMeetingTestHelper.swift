@@ -55,32 +55,49 @@ extension MeetingJoinTesting {
         guard app.buttons[Locators.LoginPage.nextButton.rawValue].waitAndTap(timeout: 15) else {
             throw RuntimeError("The password step did not submit")
         }
-        // Wait for sign-in without requiring the optional first-time alert.
+        // Handle the known prompts before waiting for the Meetings destination.
         let deadline = Date().addingTimeInterval(60)
         let ok = app.buttons[Locators.FirstTimePage.okButton.rawValue].firstMatch
-        let conversations = app.buttons[Locators.ConversationsPage.bottomBarRecentListButton.rawValue]
-        let signedIn = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
-            ok.exists || conversations.exists
-        }, object: nil)
-        guard XCTWaiter().wait(for: [signedIn], timeout: 60) == .completed else {
-            throw RuntimeError("Initial sign-in did not complete")
-        }
-        if ok.exists { _ = try FirstTimePage().acceptFirstTimeAlert() }
-        guard conversations.waitForExistence(timeout: max(0, deadline.timeIntervalSinceNow)) else {
-            throw RuntimeError("Initial sign-in did not complete")
-        }
-        app.dismissAllowIfPresent(timeout: 5)
-        // The password sheet can appear after the first-time alert has closed.
         let passwordSheet = app.staticTexts[Locators.FirstTimePage.savePasswordSheet.rawValue]
-        if passwordSheet.exists {
-            capture("Sign-in password sheet")
-            guard app.buttons[Locators.FirstTimePage.notNowOption.rawValue].waitAndTap(),
-                  passwordSheet.waitToDisappear() else {
-                throw RuntimeError("The save-password sheet did not close")
+        let allow = springboard.alerts.buttons["Allow"].firstMatch
+        let meetings = app.tabBars.buttons[Locators.ConversationsPage.bottomBarMeetingsButton.rawValue]
+        let promptTimeout = { max(0, min(5, deadline.timeIntervalSinceNow)) }
+        var submittedOnboarding = false
+        while deadline.timeIntervalSinceNow > 0 {
+            let ready = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
+                passwordSheet.exists || allow.exists ||
+                    (!submittedOnboarding && ok.exists && ok.isEnabled && ok.isHittable) ||
+                    (meetings.exists && meetings.isHittable)
+            }, object: nil)
+            guard XCTWaiter().wait(for: [ready], timeout: max(0, deadline.timeIntervalSinceNow)) == .completed else {
+                break
             }
-            capture("Sign-in password sheet dismissed")
+            if allow.exists {
+                capture("Sign-in permission prompt")
+                guard allow.waitAndTap(timeout: promptTimeout()),
+                      allow.waitToDisappear(timeout: promptTimeout()) else {
+                    throw RuntimeError("The sign-in permission prompt did not close")
+                }
+                capture("Sign-in permission prompt dismissed")
+            } else if passwordSheet.exists {
+                capture("Sign-in password sheet")
+                guard app.buttons[Locators.FirstTimePage.notNowOption.rawValue]
+                    .waitAndTap(timeout: promptTimeout()),
+                    passwordSheet.waitToDisappear(timeout: promptTimeout()) else {
+                    throw RuntimeError("The save-password sheet did not close")
+                }
+                capture("Sign-in password sheet dismissed")
+            } else if !submittedOnboarding, ok.exists, ok.isEnabled, ok.isHittable {
+                guard ok.waitAndTap(timeout: promptTimeout()) else {
+                    throw RuntimeError("The first-time alert did not submit")
+                }
+                submittedOnboarding = true
+            } else if meetings.exists, meetings.isHittable {
+                return try ConversationsPage().openMeetings()
+            }
         }
-        return try ConversationsPage().openMeetings()
+        capture("Sign-in did not complete")
+        throw RuntimeError("Initial sign-in did not complete")
     }
 
     func registerClients(for users: [UserInfo]) async throws {
@@ -130,10 +147,10 @@ extension MeetingJoinTesting {
         let stored = try await fixtures.list()
         let meeting = try XCTUnwrap(stored.first { $0.id == original.id })
         if let peerID {
-            let service = XCTAttachment(string: await callingServiceClient.serviceDiagnostics(
+            let service = XCTAttachment(string: await callingServiceClient.logDiagnostics(
                 instanceId: peerID, conversationId: meeting.conversationID.id.uuidString.lowercased()
             ))
-            service.name = "CallingService API diagnostics"
+            service.name = "CallingService log diagnostics"
             service.lifetime = .keepAlways
             add(service)
         }
@@ -249,8 +266,20 @@ extension MeetingJoinTesting {
         }
     }
 
+    @MainActor
     func requireConferenceCalling() async throws {
         let features = try await UserHelper.default.featureConfigsAPI.getFeatureConfigs()
+        let mls = features.compactMap { feature -> MLSFeatureConfig? in
+            guard case let .mls(config) = feature else { return nil }
+            return config
+        }.first
+        let policy = XCTAttachment(string: mls.map { config in
+            "MLS status: \(config.status); default: \(config.defaultProtocol); " +
+                "supported: \(config.supportedProtocols.map { String(describing: $0) }.sorted())"
+        } ?? "MLS policy is missing")
+        policy.name = "Meeting call MLS policy"
+        policy.lifetime = .keepAlways
+        add(policy)
         guard features.contains(where: {
             guard case let .conferenceCalling(config) = $0 else { return false }
             return config.status == .enabled
@@ -310,7 +339,7 @@ extension MeetingJoinTesting {
 
     @MainActor
     func capture(_ name: String) {
-        let attachment = XCTAttachment(screenshot: app.screenshot())
+        let attachment = XCTAttachment(screenshot: XCUIScreen.main.screenshot())
         attachment.name = name
         attachment.lifetime = .keepAlways
         add(attachment)
