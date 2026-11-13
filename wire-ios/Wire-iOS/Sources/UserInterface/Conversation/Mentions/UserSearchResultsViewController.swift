@@ -377,7 +377,7 @@ private final class EveryoneMentionCell: UICollectionViewCell {
 
     private let iconView = UIImageView(image: UIImage(systemName: "person.3.fill"))
     private let titleLabel = DynamicFontLabel(
-        fontSpec: .normalFont,
+        fontSpec: .normalSemiboldFont,
         color: SemanticColors.Label.textDefault
     )
     private let subtitleLabel = DynamicFontLabel(

@@ -2932,8 +2932,8 @@ internal enum L10n {
           }
         }
         internal enum MentionAll {
-          /// Notify everyone
-          internal static let subtitle = L10n.tr("Localizable", "conversation.input_bar.mention_all.subtitle", fallback: "Notify everyone")
+          /// Notify everyone in this conversation
+          internal static let subtitle = L10n.tr("Localizable", "conversation.input_bar.mention_all.subtitle", fallback: "Notify everyone in this conversation")
         }
         internal enum MessagePreview {
           /// Replying to message: %@
