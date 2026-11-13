@@ -325,7 +325,6 @@ extension UserSearchResultsViewController: UICollectionViewDataSource {
                 for: indexPath
             ) as! EveryoneMentionCell
             cell.configure()
-            cell.accessibilityHint = L10n.Accessibility.Conversation.MentionSuggestion.hint
             configureBackground(for: cell, at: indexPath)
             return cell
         }
@@ -345,7 +344,6 @@ extension UserSearchResultsViewController: UICollectionViewDataSource {
         }
         cell.showSeparator = false
         cell.avatarSpacing = conversationHorizontalMargins.left
-        cell.accessibilityHintOverride = L10n.Accessibility.Conversation.MentionSuggestion.hint
 
         configureBackground(for: cell, at: indexPath)
 
