@@ -2931,6 +2931,10 @@ internal enum L10n {
             internal static let tapSend = L10n.tr("Localizable", "conversation.input_bar.audio_message.tooltip.tap_send", fallback: "Tap to send")
           }
         }
+        internal enum MentionAll {
+          /// Notify everyone
+          internal static let subtitle = L10n.tr("Localizable", "conversation.input_bar.mention_all.subtitle", fallback: "Notify everyone")
+        }
         internal enum MessagePreview {
           /// Replying to message: %@
           internal static func accessibilityDescription(_ p1: Any) -> String {

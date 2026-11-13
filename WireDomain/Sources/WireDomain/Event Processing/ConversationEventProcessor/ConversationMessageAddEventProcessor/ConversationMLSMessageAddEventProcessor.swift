@@ -111,7 +111,7 @@ struct ConversationMLSMessageAddEventProcessor: ConversationMLSMessageAddEventPr
 
         // If `content` is `nil` it probably means that the message content types have been extended and another client
         // or user sent a message which this version doesn't understand yet.
-        if genericMessage.content == nil {
+        if genericMessage.content == nil || genericMessage.hasUnsupportedContent {
             return await handleMessageContentNil(
                 messageID: genericMessage.messageID,
                 payload: payload,

@@ -193,4 +193,13 @@ final class UserSearchResultsViewControllerTests: XCTestCase {
         sut.users = users.searchForMentions(withQuery: "362D00AE-B606-4680-BD47-F17749229E64")
     }
 
+    func testThatEveryoneSuggestionIsSelectedFirst() {
+        createSUT()
+        sut.suggestions = [.everyone, .user(otherUser)]
+
+        guard case .everyone = sut.selectedSuggestion else {
+            return XCTFail("Expected everyone to be the default suggestion")
+        }
+    }
+
 }

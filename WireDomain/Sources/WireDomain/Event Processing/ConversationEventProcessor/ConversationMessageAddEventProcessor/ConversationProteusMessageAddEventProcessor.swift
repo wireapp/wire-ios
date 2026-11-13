@@ -103,7 +103,7 @@ struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAd
             )
         }
 
-        if genericMessage.content == nil {
+        if genericMessage.content == nil || genericMessage.hasUnsupportedContent {
             return await handleMessageContentNil(
                 messageID: genericMessage.messageID,
                 payload: payload,

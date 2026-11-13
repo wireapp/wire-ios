@@ -21,6 +21,15 @@ import Foundation
 
 class ConversationTests_DraftMessage: ZMConversationTestsBase {
 
+    func testEveryoneMentionSurvivesDraftStorage() throws {
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
+        let mention = Mention(range: NSRange(location: 0, length: 4), isEveryone: true)
+        conversation.draftMessage = DraftMessage(text: "@all", mentions: [mention], quote: nil)
+
+        let restored = try XCTUnwrap(conversation.draftMessage)
+        XCTAssertEqual(restored.mentions, [mention])
+    }
+
     private var earMessageEncryptionService: EARMessageEncryptionService!
     private var earStorage: EARStorage!
 

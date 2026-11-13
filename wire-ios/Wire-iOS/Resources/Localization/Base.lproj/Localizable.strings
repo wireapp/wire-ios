@@ -356,6 +356,7 @@
 "conversation.input_bar.shortcut.cancel_editing_message" = "Cancel";
 "conversation.input_bar.shortcut.choose_previous_mention" = "Choose previous mention";
 "conversation.input_bar.shortcut.choose_next_mention" = "Choose next mention";
+"conversation.input_bar.mention_all.subtitle" = "Notify everyone";
 
 "conversation.input_bar.message_too_long.title" = "Message too long";
 "conversation.input_bar.message_too_long.message" = "You can send messages up to %d characters long.";

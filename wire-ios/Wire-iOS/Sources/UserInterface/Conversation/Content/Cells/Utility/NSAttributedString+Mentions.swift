@@ -74,14 +74,14 @@ extension URL {
 extension NSMutableAttributedString {
 
     private static func mention(
-        for user: UserType,
+        for user: UserType?,
         name: String,
         link: URL,
         accentColor: AccentColor,
         suggestedAttributes: [NSAttributedString.Key: Any] = [:]
     ) -> NSAttributedString {
         let color: UIColor = accentColor.uiColor
-        let backgroundColor: UIColor = if user.isSelfUser {
+        let backgroundColor: UIColor = if user == nil || user?.isSelfUser == true {
             .lowAccentColorForUsernameMention(accentColor: accentColor)
         } else {
             .clear
@@ -99,7 +99,7 @@ extension NSMutableAttributedString {
             .paragraphStyle: paragraphStyle
         ]
 
-        if !user.isSelfUser {
+        if user?.isSelfUser == false {
             atAttributes[NSAttributedString.Key.link] = link as NSObject
         }
 
@@ -112,7 +112,7 @@ extension NSMutableAttributedString {
             .paragraphStyle: paragraphStyle
         ]
 
-        if !user.isSelfUser {
+        if user?.isSelfUser == false {
             mentionAttributes[NSAttributedString.Key.link] = link as NSObject
         }
 

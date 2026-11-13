@@ -33,6 +33,7 @@ public enum DeveloperFlag: String, CaseIterable {
     case forceDatabaseLoadingFailure
     case ignoreIncomingEvents
     case newRegistration
+    case mentionAll
     case noAPNSTokenCache
     case offlinePendingMessages
     case showCreateMLSGroupToggle
@@ -105,6 +106,9 @@ public enum DeveloperFlag: String, CaseIterable {
 
         case .lowKeyPackageCount:
             "Turn on to set the minimum number of packages to 1"
+
+        case .mentionAll:
+            "Turn on to enable @all mentions in group conversations"
 
         case .enabledCCDebugLogs:
             "Turn on to enable Core Crypto debug logs"

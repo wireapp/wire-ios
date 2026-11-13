@@ -299,6 +299,29 @@ final class ConversationInputBarViewControllerTests: XCTestCase {
 
     // MARK: Helpers
 
+    func testEveryoneMentionSuggestionGating() {
+        XCTAssertTrue(ConversationInputBarViewController.shouldSuggestEveryone(
+            for: "Al",
+            conversationType: .group,
+            flagEnabled: true
+        ))
+        XCTAssertFalse(ConversationInputBarViewController.shouldSuggestEveryone(
+            for: "all",
+            conversationType: .oneOnOne,
+            flagEnabled: true
+        ))
+        XCTAssertFalse(ConversationInputBarViewController.shouldSuggestEveryone(
+            for: "all",
+            conversationType: .group,
+            flagEnabled: false
+        ))
+        XCTAssertFalse(ConversationInputBarViewController.shouldSuggestEveryone(
+            for: "other",
+            conversationType: .group,
+            flagEnabled: true
+        ))
+    }
+
     private func makeViewController(conversation: MockInputBarConversationType? = nil)
         -> ConversationInputBarViewController {
         ConversationInputBarViewController(

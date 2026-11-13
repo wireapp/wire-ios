@@ -89,6 +89,15 @@ public extension GenericMessage {
 }
 
 public extension GenericMessage {
+    var hasUnsupportedContent: Bool {
+        switch content {
+        case .historyClientAvailable, .historyClientRequest, .historyClientResponse, .poll, .pollVote:
+            true
+        default:
+            false
+        }
+    }
+
     var messageData: MessageCapable? {
         guard let content else { return nil }
         switch content {
@@ -140,6 +149,8 @@ public extension GenericMessage {
             return data
         case let .inCallHandRaise(data):
             return data
+        case .historyClientAvailable, .historyClientRequest, .historyClientResponse, .poll, .pollVote:
+            return nil
         }
     }
 
@@ -254,7 +265,7 @@ public extension GenericMessage {
 
 public extension Text {
     func isMentioningSelf(_ selfUser: ZMUser) -> Bool {
-        mentions.any { $0.userID.uppercased() == selfUser.remoteIdentifier.uuidString }
+        mentions.any { $0.everyone || $0.userID.uppercased() == selfUser.remoteIdentifier.uuidString }
     }
 
     func isQuotingSelf(_ quotedMessage: ZMOTRMessage?) -> Bool {
@@ -762,6 +773,13 @@ public extension GenericMessageProtocol.Mention {
 
 public extension WireDataModel.Mention {
     func convertToProtosMention() -> GenericMessageProtocol.Mention? {
+        if isEveryone {
+            return GenericMessageProtocol.Mention.with {
+                $0.start = Int32(range.location)
+                $0.length = Int32(range.length)
+                $0.everyone = true
+            }
+        }
         guard let userID = (user as? ZMUser)?.remoteIdentifier.transportString() else { return nil }
 
         return GenericMessageProtocol.Mention.with {
@@ -769,7 +787,7 @@ public extension WireDataModel.Mention {
             $0.length = Int32(range.length)
             $0.userID = userID
 
-            guard let domain = user.domain else { return }
+            guard let domain = user?.domain else { return }
 
             $0.qualifiedUserID = GenericMessageProtocol.QualifiedUserId.with {
                 $0.id = userID
