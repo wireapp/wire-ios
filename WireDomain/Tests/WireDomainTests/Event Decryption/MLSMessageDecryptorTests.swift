@@ -18,6 +18,7 @@
 
 import WireDataModel
 import WireDataModelSupport
+import WireSystem
 import XCTest
 
 @testable import WireDomain
@@ -30,6 +31,7 @@ final class MLSMessageDecryptorTests: XCTestCase {
     private var mlsService: MockMLSServiceInterface!
     private var mlsDecryptionService: MockMLSDecryptionServiceInterface!
     private var conversationLocalStore: MockConversationLocalStoreProtocol!
+    private var journal: Journal!
 
     private var stack: CoreDataStack!
     private var coreDataStackHelper: CoreDataStackHelper!
@@ -46,11 +48,9 @@ final class MLSMessageDecryptorTests: XCTestCase {
         mlsService = MockMLSServiceInterface()
         mlsDecryptionService = MockMLSDecryptionServiceInterface()
         conversationLocalStore = MockConversationLocalStoreProtocol()
+        journal = Journal(userID: UUID(), storage: UserDefaults.temporary())
 
-        sut = MLSMessageDecryptor(
-            mlsDecryptionService: mlsDecryptionService,
-            conversationLocalStore: conversationLocalStore
-        )
+        sut = makeSUT()
     }
 
     override func tearDown() async throws {
@@ -58,6 +58,7 @@ final class MLSMessageDecryptorTests: XCTestCase {
         mlsService = nil
         mlsDecryptionService = nil
         conversationLocalStore = nil
+        journal = nil
         modelHelper = nil
         sut = nil
         try coreDataStackHelper.cleanupDirectory()
@@ -320,6 +321,40 @@ final class MLSMessageDecryptorTests: XCTestCase {
 
         // Then
         XCTAssertTrue(event.decryptedMessages.isEmpty)
+    }
+
+    func testBufferedMessages_BeyondThresholdAcrossDecryptorInstances_ThrowsRecoveryRequired() async throws {
+        // Given
+        // Simulates the notification service extension, which creates a new decryptor for each payload.
+        try await mockMLSConversation()
+        let groupID = try XCTUnwrap(Scaffolding.mlsGroupID)
+        mockDecryptionThrowing(.bufferedMessage(groupID: groupID))
+
+        _ = try await makeSUT().decryptedMessageAddEventData(
+            from: Scaffolding.makeAddMessageEvent(content: "", timestamp: Scaffolding.timestamp),
+            context: nil
+        )
+
+        // When / Then
+        do {
+            _ = try await makeSUT().decryptedMessageAddEventData(
+                from: Scaffolding.makeAddMessageEvent(content: "", timestamp: Scaffolding.timestamp + 61),
+                context: nil
+            )
+            XCTFail("Expected recovery to be required")
+        } catch let MLSMessageDecryptorError.bufferedMessageRecoveryRequired(mlsGroupID) {
+            XCTAssertEqual(mlsGroupID, groupID)
+        }
+    }
+
+    // MARK: - Helpers
+
+    private func makeSUT() -> MLSMessageDecryptor {
+        MLSMessageDecryptor(
+            mlsDecryptionService: mlsDecryptionService,
+            conversationLocalStore: conversationLocalStore,
+            bufferedMessageRecoveryTracker: BufferedMLSMessageRecoveryTracker(journal: journal)
+        )
     }
 
     private func mockMLSConversation() async throws {

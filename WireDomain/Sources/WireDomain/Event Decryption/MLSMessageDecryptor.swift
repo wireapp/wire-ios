@@ -28,16 +28,6 @@ struct MLSMessageDecryptor: MLSMessageDecryptorProtocol {
     let conversationLocalStore: any ConversationLocalStoreProtocol
     let bufferedMessageRecoveryTracker: BufferedMLSMessageRecoveryTracker
 
-    init(
-        mlsDecryptionService: any MLSDecryptionServiceInterface,
-        conversationLocalStore: any ConversationLocalStoreProtocol,
-        bufferedMessageRecoveryTracker: BufferedMLSMessageRecoveryTracker = BufferedMLSMessageRecoveryTracker()
-    ) {
-        self.mlsDecryptionService = mlsDecryptionService
-        self.conversationLocalStore = conversationLocalStore
-        self.bufferedMessageRecoveryTracker = bufferedMessageRecoveryTracker
-    }
-
     func decryptedWelcomeMessageEventData(
         from eventData: ConversationMLSWelcomeEvent,
         context: CoreCryptoContextProtocol?
@@ -95,7 +85,7 @@ struct MLSMessageDecryptor: MLSMessageDecryptorProtocol {
                 context: context
             )
 
-            await bufferedMessageRecoveryTracker.clear(
+            bufferedMessageRecoveryTracker.clear(
                 groupID: mlsGroupID,
                 subconversation: eventData.subconversation
             )
@@ -115,7 +105,7 @@ struct MLSMessageDecryptor: MLSMessageDecryptorProtocol {
         } catch let error as WireDataModel.MLSDecryptionService.MLSMessageDecryptionError {
             switch error {
             case .wrongEpoch:
-                await bufferedMessageRecoveryTracker.clear(
+                bufferedMessageRecoveryTracker.clear(
                     groupID: mlsGroupID,
                     subconversation: eventData.subconversation
                 )
@@ -150,7 +140,7 @@ struct MLSMessageDecryptor: MLSMessageDecryptorProtocol {
         )
 
         if let timestamp = eventData.timestamp {
-            let shouldRecover = await bufferedMessageRecoveryTracker.observeBufferedMessage(
+            let shouldRecover = bufferedMessageRecoveryTracker.observeBufferedMessage(
                 groupID: mlsGroupID,
                 subconversation: eventData.subconversation,
                 timestamp: timestamp

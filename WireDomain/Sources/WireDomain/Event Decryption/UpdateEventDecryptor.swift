@@ -37,7 +37,7 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
         messageLocalStore: any MessageLocalStoreProtocol,
         userLocalStore: any UserLocalStoreProtocol,
         conversationLocalStore: any ConversationLocalStoreProtocol,
-        bufferedMessageRecoveryTracker: BufferedMLSMessageRecoveryTracker = BufferedMLSMessageRecoveryTracker()
+        bufferedMessageRecoveryTracker: BufferedMLSMessageRecoveryTracker
     ) {
         self.proteusMessageDecryptor = ProteusMessageDecryptor(
             proteusService: proteusService,
