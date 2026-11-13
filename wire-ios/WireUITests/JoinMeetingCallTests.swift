@@ -38,8 +38,10 @@ final class JoinMeetingCallTests: WireUITestCase, MeetingJoinTesting {
         let peerID = try XCTUnwrap(fixture.peerID)
 
         // The invitee starts the call. A second participant joins and keeps it active for the host.
+        async let accepting: Void = armPeer(peerID)
         let inviteeCall = try join(fixture.meeting, on: fixture.page, start: start)
-        let callID = try await joinPeer(peerID, user: fixture.invitee, meeting: fixture.meeting)
+        try await accepting
+        let callID = try await assertPeer(peerID, user: fixture.invitee, meeting: fixture.meeting)
         _ = try leaveCall(inviteeCall)
 
         let hostPage = try launchMeetings(for: fixture.host, now: start.addingTimeInterval(45))

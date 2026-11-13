@@ -106,6 +106,17 @@ extension MeetingJoinTesting {
         )
         try await registerClients(for: members)
         let invitee = try XCTUnwrap(members.first)
+        var peerID: String?
+        if withPeer {
+            try await requireConferenceCalling()
+            let environment = try EnvironmentVariables()
+            let instances = try await callingServiceClient.createInstances(
+                users: [try XCTUnwrap(members.last)], backend: environment.callingBackend, beta: true,
+                instanceTypeName: environment.callingInstanceTypeName,
+                instanceTypeVersion: environment.callingInstanceTypeVersion
+            )
+            peerID = try XCTUnwrap(instances.first?.id)
+        }
         let fixtures = try await MeetingsTestHelper(user: host)
         let original = try await fixtures.create(
             title: "\(title) setup", start: start, duration: duration, recurrence: recurrence
@@ -118,17 +129,13 @@ extension MeetingJoinTesting {
         _ = try form.save()
         let stored = try await fixtures.list()
         let meeting = try XCTUnwrap(stored.first { $0.id == original.id })
-        var peerID: String?
-        if withPeer {
-            // Web loads the existing meeting and its MLS group during sign-in.
-            try await requireConferenceCalling()
-            let environment = try EnvironmentVariables()
-            let instances = try await callingServiceClient.createInstances(
-                users: [try XCTUnwrap(members.last)], backend: environment.callingBackend, beta: true,
-                instanceTypeName: environment.callingInstanceTypeName,
-                instanceTypeVersion: environment.callingInstanceTypeVersion
-            )
-            peerID = try XCTUnwrap(instances.first?.id)
+        if let peerID {
+            let service = XCTAttachment(string: await callingServiceClient.serviceDiagnostics(
+                instanceId: peerID, conversationId: meeting.conversationID.id.uuidString.lowercased()
+            ))
+            service.name = "CallingService API diagnostics"
+            service.lifetime = .keepAlways
+            add(service)
         }
         let user = asHost ? host : invitee
         let page = asHost ? hostPage : try launchMeetings(for: user, now: now)
@@ -219,34 +226,26 @@ extension MeetingJoinTesting {
     }
 
     @MainActor
-    func joinPeer(_ id: String, user: UserInfo, meeting: MeetingResponse) async throws -> String {
-        do {
-            _ = try await callingServiceClient.startCall(
-                instanceId: id, conversationId: meeting.conversationID.id.uuidString.lowercased()
-            )
-            return try await assertPeer(id, user: user, meeting: meeting)
-        } catch {
-            let state = try? await callingServiceClient.getInstanceStatus(instanceIds: [id]).first
-            let details = XCTAttachment(string: """
-            Instance: \(state?.instanceStatus ?? "unknown")
-            Call: \(state?.currentCall?.id ?? "none")
-            Status: \(state?.currentCall?.status ?? "none")
-            Conversation: \(state?.currentCall?.conversationId ?? "none")
-            Expected conversation: \(meeting.conversationID.id.uuidString.lowercased())
-            """)
-            details.name = "Meeting peer status"
-            details.lifetime = .keepAlways
-            add(details)
-            if let (data, response) = try? await callingServiceClient.sendHttpRequest(
-                endpoint: callingServiceClient.instanceEndpoint(instanceId: id, path: "screenshot"),
-                body: CallingServiceEmptyBody?.none, method: .get, contentType: nil, accept: nil
-            ), response.statusCode == 200, response.mimeType == "image/png" {
-                let screenshot = XCTAttachment(data: data, uniformTypeIdentifier: "public.png")
-                screenshot.name = "Meeting peer screenshot"
-                screenshot.lifetime = .keepAlways
-                add(screenshot)
-            }
-            throw error
+    func capturePeer(_ id: String, meeting: MeetingResponse) async {
+        let state = try? await callingServiceClient.getInstanceStatus(instanceIds: [id]).first
+        let details = XCTAttachment(string: """
+        Instance: \(state?.instanceStatus ?? "unknown")
+        Call: \(state?.currentCall?.id ?? "none")
+        Status: \(state?.currentCall?.status ?? "none")
+        Conversation: \(state?.currentCall?.conversationId ?? "none")
+        Expected conversation: \(meeting.conversationID.id.uuidString.lowercased())
+        """)
+        details.name = "Meeting peer status"
+        details.lifetime = .keepAlways
+        add(details)
+        if let (data, response) = try? await callingServiceClient.sendHttpRequest(
+            endpoint: callingServiceClient.instanceEndpoint(instanceId: id, path: "screenshot"),
+            body: CallingServiceEmptyBody?.none, method: .get, contentType: nil, accept: nil
+        ), response.statusCode == 200, response.mimeType == "image/png" {
+            let screenshot = XCTAttachment(data: data, uniformTypeIdentifier: "public.png")
+            screenshot.name = "Meeting peer screenshot"
+            screenshot.lifetime = .keepAlways
+            add(screenshot)
         }
     }
 
@@ -281,13 +280,19 @@ extension MeetingJoinTesting {
     }
 
     @discardableResult
+    @MainActor
     func assertPeer(
         _ id: String,
         user: UserInfo,
         meeting: MeetingResponse,
         callID: String? = nil
     ) async throws -> String {
-        try await callingManager.waitForCurrentCallStatus(instanceId: id, expectedStatuses: ["ACTIVE"], timeout: 30)
+        do {
+            try await callingManager.waitForCurrentCallStatus(instanceId: id, expectedStatuses: ["ACTIVE"], timeout: 30)
+        } catch {
+            await capturePeer(id, meeting: meeting)
+            throw error
+        }
         try await callingManager.verifyPeerConnections(instanceIds: [id], expectedCount: 1, timeout: 30)
         let flows = try await callingServiceClient.getFlows(instanceId: id)
         guard flows.map({ $0.remoteUserId.lowercased() }) == [user.id.lowercased()] else {

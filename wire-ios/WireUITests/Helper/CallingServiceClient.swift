@@ -78,6 +78,118 @@ final class CallingServiceClient {
 
     private lazy var httpClient = HttpClient(urlSession: session)
 
+    private final class DiagnosticsDelegate: NSObject, URLSessionTaskDelegate {
+        func urlSession(
+            _ session: URLSession,
+            task: URLSessionTask,
+            willPerformHTTPRedirection response: HTTPURLResponse,
+            newRequest request: URLRequest,
+            completionHandler: @escaping (URLRequest?) -> Void
+        ) {
+            completionHandler(nil)
+        }
+    }
+
+    func serviceDiagnostics(instanceId: String, conversationId: String) async -> String {
+        let config = URLSessionConfiguration.ephemeral
+        config.timeoutIntervalForRequest = 10
+        config.timeoutIntervalForResource = 10
+        config.httpCookieStorage = session.configuration.httpCookieStorage
+        let diagnostics = URLSession(configuration: config, delegate: DiagnosticsDelegate(), delegateQueue: nil)
+        defer { diagnostics.finishTasksAndInvalidate() }
+        func schema(_ value: Any) -> Any {
+            if let array = value as? [Any] { return array.map(schema) }
+            guard let object = value as? [String: Any] else { return value }
+            return object.reduce(into: [String: Any]()) { result, entry in
+                if ["properties", "content"].contains(entry.key), let fields = entry.value as? [String: Any] {
+                    result[entry.key] = fields.mapValues(schema)
+                } else if [
+                    "name",
+                    "in",
+                    "type",
+                    "enum",
+                    "$ref",
+                    "items",
+                    "schema",
+                    "parameters",
+                    "requestBody",
+                    "required",
+                    "allOf",
+                    "oneOf",
+                    "anyOf"
+                ]
+                .contains(entry.key) {
+                    result[entry.key] = schema(entry.value)
+                }
+            }
+        }
+        let logURL = instanceEndpoint(instanceId: instanceId, path: "log")
+        let endpoints = ["openapi.json", "swagger.json", "api-docs", "v3/api-docs"]
+            .map { callingServiceURL.appendingPathComponent($0) } + [logURL]
+        var lines: [String] = []
+        for endpoint in endpoints {
+            var request = URLRequest(url: endpoint)
+            request.setValue(basicAuthHeader(), forHTTPHeaderField: "Authorization")
+            request.setValue(endpoint == logURL ? "text/plain" : "application/json", forHTTPHeaderField: "Accept")
+            if endpoint == logURL { request.setValue("text/plain", forHTTPHeaderField: "Content-Type") }
+            do {
+                let (data, response) = try await diagnostics.data(for: request)
+                guard let response = response as? HTTPURLResponse else { continue }
+                lines.append("\(endpoint.path): HTTP \(response.statusCode), MIME \(response.mimeType ?? "unknown")")
+                guard response.statusCode == 200 else { continue }
+                if endpoint == logURL {
+                    let log = String(decoding: data, as: UTF8.self)
+                    let pattern = #"(?i)(api[ _-]?version|web(?:app)?[ _-]?version|wire web)[^\d\n]{0,20}(\d{1,4}(?:\.\d{1,6}){0,3})"#
+                    if let regex = try? NSRegularExpression(pattern: pattern) {
+                        let matches = regex.matches(in: log, range: NSRange(log.startIndex..., in: log)).prefix(10)
+                        lines += matches.compactMap { match in
+                            guard let kind = Range(match.range(at: 1), in: log),
+                                  let version = Range(match.range(at: 2), in: log) else { return nil }
+                            return "Version marker (\(log[kind])): \(log[version])"
+                        }
+                    }
+                    for phrase in [
+                        "Unable to process incoming call",
+                        "Initialising MLS group conversation",
+                        "Joining MLS group by external commit",
+                        "Finished initializing MLS group conversations"
+                    ] {
+                        lines.append("\(phrase): \(log.contains(phrase))")
+                    }
+                    lines
+                        .append(
+                            "Expected conversation present: \(!conversationId.isEmpty && log.localizedCaseInsensitiveContains(conversationId))"
+                        )
+                } else if let document = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any],
+                          document["openapi"] != nil || document["swagger"] != nil,
+                          let paths = document["paths"] as? [String: Any] {
+                    let components = document["components"] as? [String: Any]
+                    let definitions = components?["schemas"] as? [String: Any] ??
+                        document["definitions"] as? [String: Any] ?? [:]
+                    if let json = try? JSONSerialization.data(
+                        withJSONObject: definitions.mapValues(schema),
+                        options: [.sortedKeys]
+                    ) {
+                        lines.append("Schemas: \(String(decoding: json, as: UTF8.self))")
+                    }
+                    for path in paths.keys.sorted() {
+                        guard let operations = paths[path] as? [String: Any] else { continue }
+                        for method in ["get", "post", "put", "patch", "delete", "options", "head"] {
+                            guard let operation = operations[method] as? [String: Any] else { continue }
+                            let fields = schema(operation)
+                            if let json = try? JSONSerialization.data(withJSONObject: fields, options: [.sortedKeys]) {
+                                lines.append("\(method.uppercased()) \(path): \(String(decoding: json, as: UTF8.self))")
+                            }
+                        }
+                    }
+                }
+            } catch {
+                lines.append("\(endpoint.path): request failed")
+            }
+        }
+        return lines.joined(separator: "\n")
+    }
+
     private func basicAuthHeader() -> String? {
         guard !callingServiceUsername.isEmpty,
               !callingServicePassword.isEmpty
