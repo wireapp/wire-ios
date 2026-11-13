@@ -107,12 +107,13 @@ final class CallingServiceClient {
     func sendHttpRequest(
         endpoint: URL,
         body: (some Encodable)?,
-        method: HttpClient.Method
+        method: HttpClient.Method,
+        contentType: String? = HttpClient.ContentType.jsonUtf8,
+        accept: String? = HttpClient.ContentType.json
     ) async throws -> (Data, HTTPURLResponse) {
-        var headers: [String: String] = [
-            HttpClient.HeaderKey.contentType: HttpClient.ContentType.jsonUtf8,
-            HttpClient.HeaderKey.accept: HttpClient.ContentType.json
-        ]
+        var headers: [String: String] = [:]
+        headers[HttpClient.HeaderKey.contentType] = contentType
+        headers[HttpClient.HeaderKey.accept] = accept
 
         if let auth = basicAuthHeader() {
             headers[HttpClient.HeaderKey.authorization] = auth

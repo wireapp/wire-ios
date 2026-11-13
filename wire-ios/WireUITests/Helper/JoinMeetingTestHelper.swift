@@ -192,6 +192,38 @@ extension MeetingJoinTesting {
         )
     }
 
+    @MainActor
+    func joinPeer(_ id: String, user: UserInfo, meeting: MeetingResponse) async throws -> String {
+        do {
+            _ = try await callingServiceClient.startCall(
+                instanceId: id, conversationId: meeting.conversationID.id.uuidString.lowercased()
+            )
+            return try await assertPeer(id, user: user, meeting: meeting)
+        } catch {
+            let state = try? await callingServiceClient.getInstanceStatus(instanceIds: [id]).first
+            let details = XCTAttachment(string: """
+            Instance: \(state?.instanceStatus ?? "unknown")
+            Call: \(state?.currentCall?.id ?? "none")
+            Status: \(state?.currentCall?.status ?? "none")
+            Conversation: \(state?.currentCall?.conversationId ?? "none")
+            Expected conversation: \(meeting.conversationID.id.uuidString.lowercased())
+            """)
+            details.name = "Meeting peer status"
+            details.lifetime = .keepAlways
+            add(details)
+            if let (data, response) = try? await callingServiceClient.sendHttpRequest(
+                endpoint: callingServiceClient.instanceEndpoint(instanceId: id, path: "screenshot"),
+                body: CallingServiceEmptyBody?.none, method: .get, contentType: nil, accept: nil
+            ), response.statusCode == 200, response.mimeType == "image/png" {
+                let screenshot = XCTAttachment(data: data, uniformTypeIdentifier: "public.png")
+                screenshot.name = "Meeting peer screenshot"
+                screenshot.lifetime = .keepAlways
+                add(screenshot)
+            }
+            throw error
+        }
+    }
+
     func requireConferenceCalling() async throws {
         let features = try await UserHelper.default.featureConfigsAPI.getFeatureConfigs()
         guard features.contains(where: {
