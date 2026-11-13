@@ -334,7 +334,8 @@ public extension ZMConversation {
             ]
         )
 
-        return try context.fetch(request)
+        // The stored group type also includes legacy team 1:1s; use the computed type to exclude them.
+        return try context.fetch(request).filter { $0.conversationType == .group }
     }
 
     static func fetchAllFakeOneOnOneGroupConversations(
