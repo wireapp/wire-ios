@@ -55,16 +55,27 @@ extension MeetingJoinTesting {
         guard app.buttons[Locators.LoginPage.nextButton.rawValue].waitAndTap(timeout: 15) else {
             throw RuntimeError("The password step did not submit")
         }
-        let firstTime = try FirstTimePage().acceptFirstTimeAlert()
-        guard firstTime.conversationsButton.waitForExistence(timeout: 60) else {
+        // Wait for sign-in without requiring the optional first-time alert.
+        let deadline = Date().addingTimeInterval(60)
+        let ok = app.buttons[Locators.FirstTimePage.okButton.rawValue].firstMatch
+        let conversations = app.buttons[Locators.ConversationsPage.bottomBarRecentListButton.rawValue]
+        let signedIn = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
+            ok.exists || conversations.exists
+        }, object: nil)
+        guard XCTWaiter().wait(for: [signedIn], timeout: 60) == .completed else {
+            throw RuntimeError("Initial sign-in did not complete")
+        }
+        if ok.exists { _ = try FirstTimePage().acceptFirstTimeAlert() }
+        guard conversations.waitForExistence(timeout: max(0, deadline.timeIntervalSinceNow)) else {
             throw RuntimeError("Initial sign-in did not complete")
         }
         app.dismissAllowIfPresent(timeout: 5)
         // The password sheet can appear after the first-time alert has closed.
-        if firstTime.savePasswordSheet.exists {
+        let passwordSheet = app.staticTexts[Locators.FirstTimePage.savePasswordSheet.rawValue]
+        if passwordSheet.exists {
             capture("Sign-in password sheet")
-            guard firstTime.notNowOptionOnSavePasswordSheet.waitAndTap(),
-                  firstTime.savePasswordSheet.waitToDisappear() else {
+            guard app.buttons[Locators.FirstTimePage.notNowOption.rawValue].waitAndTap(),
+                  passwordSheet.waitToDisappear() else {
                 throw RuntimeError("The save-password sheet did not close")
             }
             capture("Sign-in password sheet dismissed")
@@ -176,6 +187,11 @@ extension MeetingJoinTesting {
             predicate: NSPredicate(format: "exists == true AND label MATCHES %@", pattern), object: timer
         )
         guard XCTWaiter().wait(for: [connected], timeout: 30) == .completed else {
+            capture("Meeting call did not connect")
+            let hierarchy = XCTAttachment(string: app.debugDescription)
+            hierarchy.name = "Meeting call UI hierarchy"
+            hierarchy.lifetime = .keepAlways
+            add(hierarchy)
             throw RuntimeError("The meeting call did not connect directly")
         }
         let call = try OngoingCallPage()
