@@ -86,17 +86,6 @@ extension MeetingJoinTesting {
         )
         try await registerClients(for: members)
         let invitee = try XCTUnwrap(members.first)
-        var peerID: String?
-        if withPeer {
-            try await requireConferenceCalling()
-            let environment = try EnvironmentVariables()
-            let instances = try await callingServiceClient.createInstances(
-                users: [try XCTUnwrap(members.last)], backend: environment.callingBackend, beta: true,
-                instanceTypeName: environment.callingInstanceTypeName,
-                instanceTypeVersion: environment.callingInstanceTypeVersion
-            )
-            peerID = try XCTUnwrap(instances.first?.id)
-        }
         let fixtures = try await MeetingsTestHelper(user: host)
         let original = try await fixtures.create(
             title: "\(title) setup", start: start, duration: duration, recurrence: recurrence
@@ -109,6 +98,18 @@ extension MeetingJoinTesting {
         _ = try form.save()
         let stored = try await fixtures.list()
         let meeting = try XCTUnwrap(stored.first { $0.id == original.id })
+        var peerID: String?
+        if withPeer {
+            // Web loads the existing meeting and its MLS group during sign-in.
+            try await requireConferenceCalling()
+            let environment = try EnvironmentVariables()
+            let instances = try await callingServiceClient.createInstances(
+                users: [try XCTUnwrap(members.last)], backend: environment.callingBackend, beta: true,
+                instanceTypeName: environment.callingInstanceTypeName,
+                instanceTypeVersion: environment.callingInstanceTypeVersion
+            )
+            peerID = try XCTUnwrap(instances.first?.id)
+        }
         let user = asHost ? host : invitee
         let page = asHost ? hostPage : try launchMeetings(for: user, now: now)
         _ = try page.showRow(meeting)
