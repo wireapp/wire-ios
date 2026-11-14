@@ -1,8 +1,17 @@
 # WPB-27280: CoreCrypto 11 database initialization races
 
 Status: confirmed against the released CoreCrypto **11.0.0** iOS simulator binary on 2026-11-12.
-The iOS API migration is preparation only and must remain unmerged until a suitable 11.x release is available.
 All experiments used synthetic keys, checkpoints and databases. No customer data is included here.
+
+**Resolution:** fixed upstream in CoreCrypto **11.0.1** (2026-11-13), which iOS now pins.
+[core-crypto#2852](https://github.com/wireapp/core-crypto/pull/2852) makes `Database::open` acquire the cross-process
+`TransactionLock` before opening the connection, so salt migration, the `user_version` rewrite and schema migrations
+all run under the same lock as transactions. This closes the salt-migration race (part 1 of the proposal below). It
+should also replace the open-time `SQLITE_BUSY` with waiting for the lock, which has not been verified. 11.0.1 also
+contains the #2844 cross-connection staleness fix. Parts 2 and 3 (atomic salt write with length check; fail closed for an
+existing database without any salt source) are **not** in 11.0.1. With the lock in place they only matter for rarer
+cases (termination during the salt write, a keychain item missing for other reasons) and are tracked as follow-up
+hardening in WPB-29993. The sections below describe the original 11.0.0 analysis.
 
 ## Findings
 
@@ -138,6 +147,5 @@ opens; opening during a transaction longer than SQLite's busy timeout; terminati
 and an existing database with neither salt source, which must fail without changing its files.
 Keep the separate cross-connection stale-session regression for the #2844 backport as well.
 
-Before merging the iOS upgrade, use the released 11.x backport containing #2844 and the initialization fix, rerun the
-framework and batch-sync suites against that exact release, and verify locked-device NSE access plus account lifecycle
-flows on a physical device.
+Before releasing the iOS upgrade, verify on a physical device: an in-place update from a used 10.5.4 installation with
+app, NSE and share extension opening the keystore concurrently; locked-device NSE access; and account lifecycle flows.
