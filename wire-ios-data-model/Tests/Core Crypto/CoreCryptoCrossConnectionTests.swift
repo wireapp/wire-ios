@@ -32,15 +32,10 @@ final class CoreCryptoCrossConnectionTests: XCTestCase {
 
         let failedReaders = try await Self.readersFailingAfterStaleWrite(in: directory)
 
-        XCTExpectFailure(
-            "WPB-27280: remove this marker when the released CoreCrypto 11.x backport fixes cross-connection staleness",
-            strict: true
-        ) {
-            XCTAssertTrue(
-                failedReaders.isEmpty,
-                "Proteus 406 after a stale write for readers: \(failedReaders.joined(separator: ", "))"
-            )
-        }
+        XCTAssertTrue(
+            failedReaders.isEmpty,
+            "Proteus 406 after a stale write for readers: \(failedReaders.joined(separator: ", "))"
+        )
     }
 
     private static func readersFailingAfterStaleWrite(in directory: URL) async throws -> [String] {
