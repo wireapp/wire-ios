@@ -147,4 +147,25 @@ final class MentionsHandlerTests: XCTestCase {
         XCTAssertEqual(replacement.string, "\u{fffc} ")
     }
 
+    func testThatRelayoutDoesNotRenderUnnamedUserAsEveryone() throws {
+        let user = SwiftMockLoader.mockUsers()[0]
+        user.name = nil
+        let attachment = MentionTextAttachment(user: user)
+        let storage = NSTextStorage(attachment: attachment)
+        storage.addAttribute(.font, value: UIFont.normalFont, range: storage.wholeRange)
+        let layoutManager = NSLayoutManager()
+        let textContainer = NSTextContainer(size: CGSize(width: 200, height: 100))
+        storage.addLayoutManager(layoutManager)
+        layoutManager.addTextContainer(textContainer)
+
+        _ = attachment.attachmentBounds(
+            for: textContainer,
+            proposedLineFragment: .zero,
+            glyphPosition: .zero,
+            characterIndex: 0
+        )
+
+        XCTAssertEqual(attachment.attributedText.string, "@")
+    }
+
 }

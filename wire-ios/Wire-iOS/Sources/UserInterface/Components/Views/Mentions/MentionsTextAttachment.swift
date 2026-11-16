@@ -83,7 +83,8 @@ final class MentionTextAttachment: NSTextAttachment {
 
         self.font = font
         lastFittingSize = textContainerSize
-        attributedText = type(of: self).attributedMentionString(name: user?.name ?? "all", font: font, color: color)
+        let name = isEveryone ? "all" : user?.name
+        attributedText = type(of: self).attributedMentionString(name: name, font: font, color: color)
 
         image = mentionImage(fittingIntoSize: textContainerSize)
     }
