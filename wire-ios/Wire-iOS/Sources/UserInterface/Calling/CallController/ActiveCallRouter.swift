@@ -125,6 +125,7 @@ final class ActiveCallRouter<TopOverlayPresenter>
         isPresentingActiveCall = false
         isActiveCallShown = false
         presentedActiveCallViewController = nil
+        topOverlayPresenter.dismissTopOverlay(animated: false)
         isCallTopOverlayShown = false
     }
 }
@@ -183,21 +184,31 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
     }
 
     func dismissActiveCall(animated: Bool = true, completion: Completion? = nil) {
-        if let presented = presentedActiveCallViewController {
-            presented.dismiss(animated: animated) { [weak self] in
-                guard let self else { completion?(); return }
+        guard let presented = presentedActiveCallViewController else {
+            activeCallDidDismiss(nil, completion: completion)
+            return
+        }
 
-                presentedActiveCallViewController = nil
-                isActiveCallShown = false
-                isPresentingActiveCall = false
+        presented.dismiss(animated: animated) { [weak self] in
+            guard let self else { completion?(); return }
+            activeCallDidDismiss(presented, completion: completion)
+        }
+    }
 
-                if let action = scheduledPostCallAction {
-                    action { completion?() }
-                } else {
-                    completion?()
-                }
-                scheduledPostCallAction = nil
-            }
+    func activeCallDidDismiss(_ dismissed: UIViewController?, completion: Completion?) {
+        guard presentedActiveCallViewController === dismissed else {
+            completion?()
+            return
+        }
+
+        presentedActiveCallViewController = nil
+        isActiveCallShown = false
+        isPresentingActiveCall = false
+
+        let action = scheduledPostCallAction
+        scheduledPostCallAction = nil
+        if let action {
+            action { completion?() }
         } else {
             completion?()
         }
