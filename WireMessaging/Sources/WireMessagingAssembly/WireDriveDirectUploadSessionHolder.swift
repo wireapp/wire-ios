@@ -56,6 +56,7 @@ public final class WireDriveDirectUploadSessionHolder: Sendable {
     private let lock = OSAllocatedUnfairLock<State>(initialState: .init())
     private let sharedContainerIdentifier: String?
     private let makeSession: @Sendable (String, String?) -> any WireDriveDirectUploadSessionProtocol
+    private let endActivities: @MainActor @Sendable (UUID) async -> Void
 
     /// - Parameter sharedContainerIdentifier: The app group container identifier. Required so that
     ///   `nsurlsessiond` can read staged files from outside the app, and so transfers survive
@@ -70,10 +71,14 @@ public final class WireDriveDirectUploadSessionHolder: Sendable {
 
     init(
         sharedContainerIdentifier: String?,
-        makeSession: @escaping @Sendable (String, String?) -> any WireDriveDirectUploadSessionProtocol
+        makeSession: @escaping @Sendable (String, String?) -> any WireDriveDirectUploadSessionProtocol,
+        endActivities: @escaping @MainActor @Sendable (UUID) async -> Void = {
+            await ActivityKitUploadsActivityClient(accountInfo: .init(userID: $0)).endAll()
+        }
     ) {
         self.sharedContainerIdentifier = sharedContainerIdentifier
         self.makeSession = makeSession
+        self.endActivities = endActivities
     }
 
     // MARK: - Sessions
@@ -173,7 +178,12 @@ public final class WireDriveDirectUploadSessionHolder: Sendable {
             )
         }
 
-        await controller?.stop()
+        if let controller {
+            await controller.stop()
+        } else {
+            // A remote removal can precede factory creation, leaving only an activity from a previous process.
+            await endActivities(userID)
+        }
 
         guard let session else { return }
 

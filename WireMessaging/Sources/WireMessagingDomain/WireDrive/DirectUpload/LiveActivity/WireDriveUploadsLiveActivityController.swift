@@ -161,6 +161,7 @@ package final class WireDriveUploadsLiveActivityController {
 
         if state.isFinished {
             guard client.hasActivity else { return }
+            _ = throttle.shouldSend(state, at: date)
             await client.update(with: state)
             endAfterDelay(with: state, dismissal: state.phase == .completed ? .immediately : .systemDefault)
             return

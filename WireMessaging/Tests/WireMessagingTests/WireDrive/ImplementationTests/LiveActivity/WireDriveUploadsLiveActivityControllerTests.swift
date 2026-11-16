@@ -225,6 +225,30 @@ final class WireDriveUploadsLiveActivityControllerTests {
     }
 
     @Test
+    func sendsTheRetryWhenAnUploadFailedBeforeMakingProgress() async {
+        sut.start()
+        let item = WireDriveDirectUploadItem.fixture(.queued)
+        tracker.replaceAll(with: [item])
+        await settle()
+
+        tracker.replaceAll(with: [.fixture(.failed(error: .unauthorized))])
+        await settle()
+
+        tracker.replaceAll(with: [item])
+        await settle()
+
+        #expect(client.calls == [
+            .start(.fixture(total: 1)),
+            .update(.fixture(.failed, total: 1, failed: 1)),
+            .update(.fixture(total: 1))
+        ])
+        await delayGate.open()
+        await settle()
+        #expect(client.hasActivity)
+        #expect(client.calls.count == 3)
+    }
+
+    @Test
     func startsAReplacementWhenAFailedUploadIsRetriedAfterTheActivityEnded() async {
         client.hasActivity = true
         sut.start()

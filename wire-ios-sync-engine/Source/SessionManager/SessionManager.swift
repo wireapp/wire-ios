@@ -278,6 +278,8 @@ public final class SessionManager: NSObject, SessionManagerType {
     public let currentBuildNumber: String
     public weak var delegate: SessionManagerDelegate?
     public let accountManager: AccountManager
+    /// Account-scoped cleanup owned by the app, including when a client is removed remotely.
+    public var onAccountDeletion: ((UUID) -> Void)?
     public let environmentStore: BackendEnvironmentStore
     public weak var loginDelegate: LoginDelegate?
 
@@ -828,6 +830,7 @@ public final class SessionManager: NSObject, SessionManagerType {
 
     func delete(account: Account, reason: ZMAccountDeletedReason, eraseData: Bool = true) {
         WireLogger.sessionManager.debug("Deleting account \(account.userIdentifier)...")
+        onAccountDeletion?(account.userIdentifier)
         if let secondAccount = accountManager.inactiveAccounts.first {
             // Deleted an account but we can switch to another account
             select(secondAccount, tearDownCompletion: { [weak self] in

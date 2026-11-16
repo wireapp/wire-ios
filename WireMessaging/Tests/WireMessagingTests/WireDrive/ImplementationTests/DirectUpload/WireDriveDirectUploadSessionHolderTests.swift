@@ -205,6 +205,75 @@ struct WireDriveDirectUploadSessionHolderTests {
 
     @Test
     @MainActor
+    func waitsForBufferedEventsThenTheFinalActivityEnd() async {
+        let userID = UUID()
+        let identifier = WireDriveDirectUploadSessionHolder.Identifier.make(userID: userID)
+        let session = WireDriveDirectUploadSession(identifier: identifier, sharedContainerIdentifier: nil)
+        let sut = WireDriveDirectUploadSessionHolder(
+            sharedContainerIdentifier: nil,
+            makeSession: { _, _ in session }
+        )
+        let tracker = WireDriveObserveDirectUploadsUseCase()
+        let client = FakeUploadsActivityClient()
+        let delay = UploadsDelayGate()
+        let controller = WireDriveUploadsLiveActivityController(
+            observeUploads: tracker,
+            client: client,
+            delay: { _ in await delay.wait() }
+        )
+        sut.retainLiveActivityController(controller, userID: userID)
+        controller.start()
+        tracker.replaceAll(with: [.fixture(.queued)])
+        await controller.endActivityIfNoUploads()
+
+        let called = Counter()
+        let completed = UploadsDelayGate()
+        _ = sut.handleEventsForBackgroundURLSession(identifier: identifier) {
+            called.increment()
+            Task { await completed.open() }
+        }
+
+        // Simulate relaunch: the final delegate event arrives before the manager attaches its sink.
+        let task = URLSession.shared.dataTask(with: URL(string: "https://example.com/upload")!)
+        task.taskDescription = UUID().uuidString
+        session.urlSession(.shared, task: task, didCompleteWithError: nil)
+        session.urlSessionDidFinishEvents(forBackgroundURLSession: .shared)
+        for _ in 0 ..< 20 {
+            await Task.yield()
+        }
+        #expect(called.value == 0)
+
+        let processing = UploadsDelayGate()
+        let release = UploadsDelayGate()
+        let sink = GatedSink(tracker: tracker, processing: processing, release: release)
+        await session.setEventSink(sink)
+        await processing.wait()
+        #expect(called.value == 0)
+
+        // Finishing URLSession delivery a second time must also wait for the in-flight batch.
+        session.urlSessionDidFinishEvents(forBackgroundURLSession: .shared)
+        for _ in 0 ..< 20 {
+            await Task.yield()
+        }
+        #expect(called.value == 0)
+
+        await release.open()
+        await sink.finished.wait()
+        for _ in 0 ..< 20 {
+            await Task.yield()
+        }
+        #expect(called.value == 0)
+
+        await delay.open()
+        await completed.wait()
+        #expect(called.value == 1)
+        #expect(client.calls.contains(.update(.fixture(.completed, total: 1, uploaded: 1, progress: 1))))
+        #expect(!client.hasActivity)
+        await sut.tearDown(userID: userID)
+    }
+
+    @Test
+    @MainActor
     func ignoresDrainingForAnUnclaimedIdentifier() async {
         // Given
         let sut = makeSut()
@@ -324,6 +393,22 @@ struct WireDriveDirectUploadSessionHolderTests {
     // MARK: - Tear down
 
     @Test
+    @MainActor
+    func tearDownEndsActivitiesByAccountIDWithoutARetainedControllerOrSession() async {
+        let userID = UUID()
+        var endedUserIDs: [UUID] = []
+        let sut = WireDriveDirectUploadSessionHolder(
+            sharedContainerIdentifier: nil,
+            makeSession: { _, _ in MockWireDriveDirectUploadSessionProtocol() },
+            endActivities: { endedUserIDs.append($0) }
+        )
+
+        await sut.tearDown(userID: userID)
+
+        #expect(endedUserIDs == [userID])
+    }
+
+    @Test
     func tearDownCancelsAndInvalidatesTheSession() async {
         // Given
         let session = MockWireDriveDirectUploadSessionProtocol()
@@ -407,5 +492,25 @@ struct WireDriveDirectUploadSessionHolderTests {
 
     private final class SpySink: WireDriveDirectUploadEventSink {
         func handle(_ events: [WireDriveDirectUploadSessionEvent]) async {}
+    }
+
+    private actor GatedSink: WireDriveDirectUploadEventSink {
+        let tracker: WireDriveObserveDirectUploadsUseCase
+        let processing: UploadsDelayGate
+        let release: UploadsDelayGate
+        let finished = UploadsDelayGate()
+
+        init(tracker: WireDriveObserveDirectUploadsUseCase, processing: UploadsDelayGate, release: UploadsDelayGate) {
+            self.tracker = tracker
+            self.processing = processing
+            self.release = release
+        }
+
+        func handle(_ events: [WireDriveDirectUploadSessionEvent]) async {
+            await processing.open()
+            await release.wait()
+            await tracker.replaceAll(with: [.fixture(.uploaded)])
+            await finished.open()
+        }
     }
 }
