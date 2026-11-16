@@ -219,8 +219,7 @@ final class MLSMessageDecryptorTests: XCTestCase {
         XCTAssertEqual(mlsDecryptionService.decryptMessageForSubconversationTypeContext_Invocations.count, 0)
     }
 
-<<<<<<< HEAD
-=======
+
     // MARK: - Buffered messages recovery
 
     func testBufferedMessages_WithinThreshold_ReturnsEventWithoutDecryptedMessages() async throws {
@@ -377,7 +376,6 @@ final class MLSMessageDecryptorTests: XCTestCase {
         }
     }
 
->>>>>>> aff93ff216 (fix: persist buffered mls message recovery tracking across NSE payloads - WPB-29810 (#5536))
     private enum Scaffolding {
 
         static let localDomain = "local.com"
@@ -397,7 +395,10 @@ final class MLSMessageDecryptorTests: XCTestCase {
 
         static let mlsGroupID = MLSGroupID(base64Encoded: base64EncodedString)
 
-        static func makeAddMessageEvent(content: String) -> ConversationMLSMessageAddEvent {
+        static func makeAddMessageEvent(
+            content: String,
+            timestamp: Date = timestamp
+        ) -> ConversationMLSMessageAddEvent {
             ConversationMLSMessageAddEvent(
                 conversationID: conversationID,
                 senderID: aliceID,

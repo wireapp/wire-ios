@@ -26,10 +26,7 @@ struct MLSMessageDecryptor: MLSMessageDecryptorProtocol {
 
     let mlsDecryptionService: any MLSDecryptionServiceInterface
     let conversationLocalStore: any ConversationLocalStoreProtocol
-<<<<<<< HEAD
-=======
     let bufferedMessageRecoveryTracker: BufferedMLSMessageRecoveryTracker
->>>>>>> aff93ff216 (fix: persist buffered mls message recovery tracking across NSE payloads - WPB-29810 (#5536))
 
     func decryptedWelcomeMessageEventData(
         from eventData: ConversationMLSWelcomeEvent,
@@ -88,14 +85,11 @@ struct MLSMessageDecryptor: MLSMessageDecryptorProtocol {
                 context: context
             )
 
-<<<<<<< HEAD
-=======
             bufferedMessageRecoveryTracker.clear(
                 groupID: mlsGroupID,
                 subconversation: eventData.subconversation
             )
 
->>>>>>> aff93ff216 (fix: persist buffered mls message recovery tracking across NSE payloads - WPB-29810 (#5536))
             let decryptedMessages = await processMLSMessageDecryptionResults(
                 decryptionResults,
                 mlsConversation: mlsConversation,
@@ -111,23 +105,57 @@ struct MLSMessageDecryptor: MLSMessageDecryptorProtocol {
         } catch let error as WireDataModel.MLSDecryptionService.MLSMessageDecryptionError {
             switch error {
             case .wrongEpoch:
-<<<<<<< HEAD
-=======
                 bufferedMessageRecoveryTracker.clear(
                     groupID: mlsGroupID,
                     subconversation: eventData.subconversation
                 )
->>>>>>> aff93ff216 (fix: persist buffered mls message recovery tracking across NSE payloads - WPB-29810 (#5536))
                 throw MLSMessageDecryptorError.wrongEpoch(mlsGroupID: mlsGroupID)
+
+            case let .bufferedMessage(bufferedGroupID):
+                return try await handleBufferedMessage(
+                    eventData,
+                    mlsGroupID: mlsGroupID,
+                    bufferedGroupID: bufferedGroupID
+                )
+
             default:
                 throw error
             }
-
         }
     }
 
-<<<<<<< HEAD
-=======
+    /// Tracks the buffered message and requests stale epoch recovery if messages have been buffered for too long.
+    ///
+    /// - Throws: `MLSMessageDecryptorError.bufferedMessageRecoveryRequired` if recovery should be initiated.
+    /// - Returns: The event without any decrypted messages, since the message has been buffered by CoreCrypto.
+
+    private func handleBufferedMessage(
+        _ eventData: ConversationMLSMessageAddEvent,
+        mlsGroupID: MLSGroupID,
+        bufferedGroupID: MLSGroupID
+    ) async throws -> ConversationMLSMessageAddEvent {
+        WireLogger.mls.info(
+            "MLS message was buffered by CoreCrypto",
+            attributes: [.mlsGroupID: bufferedGroupID.safeForLoggingDescription, .public: true]
+        )
+
+        if let timestamp = eventData.timestamp {
+            let shouldRecover = await bufferedMessageRecoveryTracker.observeBufferedMessage(
+                groupID: mlsGroupID,
+                subconversation: eventData.subconversation,
+                timestamp: timestamp
+            )
+
+            if shouldRecover {
+                throw MLSMessageDecryptorError.bufferedMessageRecoveryRequired(mlsGroupID: bufferedGroupID)
+            }
+        }
+
+        var bufferedEvent = eventData
+        bufferedEvent.decryptedMessages = []
+        return bufferedEvent
+    }
+
     /// Tracks the buffered message and requests stale epoch recovery if messages have been buffered for too long.
     ///
     /// - Throws: `MLSMessageDecryptorError.bufferedMessageRecoveryRequired` if recovery should be initiated.
@@ -160,7 +188,6 @@ struct MLSMessageDecryptor: MLSMessageDecryptorProtocol {
         return bufferedEvent
     }
 
->>>>>>> aff93ff216 (fix: persist buffered mls message recovery tracking across NSE payloads - WPB-29810 (#5536))
     private func decryptMLSMessage(
         message: String,
         mlsGroupID: MLSGroupID,
