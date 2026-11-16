@@ -183,6 +183,25 @@ final class ZMUserSessionTests_Syncing: ZMUserSessionTestsBase {
         XCTAssertEqual(callCenter.mockAVSWrapper.notificationProcessingStates, [true, false])
     }
 
+    @MainActor
+    func testLateAVSNotificationsAfterTearDownAreIgnored() async throws {
+        mockCoreCryptoProvider.registerPkiEnvironmentHooks_MockMethod = { _ in }
+        mockCoreCryptoProvider.registerMlsTransport_MockMethod = { _ in }
+        sut.setUpSyncAgent(clientID: "client", isNewClient: false)
+        let syncState = try XCTUnwrap(sut.clientSessionComponent?.syncStateSubject)
+
+        sut.notifyAVSDidProcessEvents()
+        sut.tearDown()
+        XCTAssertFalse(uiMOC.zm_isUserInterfaceContext)
+
+        syncState.send(.suspended)
+        sut.notifyAVSWillProcessEvents()
+        sut.notifyAVSDidProcessEvents()
+        sut.notifyAVSOfNetworkInterfaceChanged()
+        sut.notifyAVSOfLiveSyncState(isLiveSyncOngoing: false)
+        await uiMOC.perform(schedule: .enqueued) {}
+    }
+
     func testThatPerformingSyncIsFinishedAfterQuickSync() {
 
         // given
