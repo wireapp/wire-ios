@@ -478,6 +478,7 @@ final class WireDriveTests: WireUITestCase {
 
     @MainActor
     func testRestoreMultipleItems_TC_12310() async throws {
+        throw XCTSkip("WPB-29933: Bulk restore is disabled pending a backend fix.")
 
         // GIVEN
         let teamOwner = try await createDriveEnabledConversation(

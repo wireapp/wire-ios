@@ -66,7 +66,10 @@ class ZMClientMessageTests_Mentions: BaseZMClientMessageTests {
         try message.setUnderlyingMessage(decoded)
 
         XCTAssertEqual(message.textMessageData?.messageText, "@all hello")
-        XCTAssertTrue(message.mentions.isEmpty)
+        let mention = try XCTUnwrap(message.mentions.first)
+        XCTAssertEqual(message.mentions.count, 1)
+        XCTAssertEqual(mention.range, NSRange(location: 0, length: 4))
+        XCTAssertTrue(mention.isEveryone)
     }
 
     func testMentionsWithMultiplePartCharactersAreReturned() {

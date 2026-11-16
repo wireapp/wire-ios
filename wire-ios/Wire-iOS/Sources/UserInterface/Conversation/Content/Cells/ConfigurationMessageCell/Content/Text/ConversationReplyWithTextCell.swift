@@ -261,10 +261,9 @@ final class ConversationReplyWithTextCell: UIView, ConversationMessageCell, Text
     }
 
     private func setupAccessibility(accessibilityLabel: String) {
-        typealias Conversation = L10n.Accessibility.Conversation
         isAccessibilityElement = false
         self.accessibilityLabel = accessibilityLabel
-        accessibilityHint = "\(Conversation.MessageInfo.hint), \(Conversation.MessageOptions.hint)"
+        accessibilityHint = nil
     }
 
     // MARK: - Reply tap

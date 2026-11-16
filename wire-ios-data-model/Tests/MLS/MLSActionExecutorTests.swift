@@ -395,32 +395,92 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
 
     // MARK: - Decrypt Message
 
-    func test_decryptMessage_throwsBufferedDecryptedMessage_withCC_BufferedFutureMessageError() async throws {
-        try await internalTest_decryptMessage_swallowsError(
-            CoreCryptoError.Mls(mlsError: .BufferedFutureMessage)
-        )
+    func test_decryptMessage_withoutContext_commitsTransactionAndThrows_forBufferedErrors() async throws {
+        for bufferedError in [MlsError.BufferedFutureMessage, .BufferedCommit] {
+            // Given
+            let groupID = MLSGroupID.random()
+            let encryptedMessage = Data.random(byteCount: 1)
+
+            mockCoreCryptoContext.decryptMessageConversationIdPayload_MockError = CoreCryptoError
+                .Mls(mlsError: bufferedError)
+
+            var didTransactionBlockThrow: Bool?
+            mockCoreCrypto.transaction_MockMethod = { [mockCoreCryptoContext] block in
+                do {
+                    let result = try await block(mockCoreCryptoContext!)
+                    didTransactionBlockThrow = false
+                    return result
+                } catch {
+                    didTransactionBlockThrow = true
+                    throw error
+                }
+            }
+
+            // When
+            do {
+                _ = try await sut.decryptMessage(encryptedMessage, in: groupID, context: nil)
+                XCTFail("expected \(bufferedError) to be thrown")
+            } catch let CoreCryptoError.Mls(error) {
+                // Then the error is thrown after the transaction was committed
+                XCTAssertEqual(String(describing: error), String(describing: bufferedError))
+            }
+
+            XCTAssertEqual(didTransactionBlockThrow, false)
+        }
     }
 
-    func test_decryptMessage_throwsBufferedDecryptedMessage_withBufferedCommit() async throws {
-        try await internalTest_decryptMessage_swallowsError(
-            CoreCryptoError.Mls(mlsError: .BufferedCommit)
-        )
+    func test_decryptMessage_withContext_throws_forBufferedErrors() async throws {
+        for bufferedError in [MlsError.BufferedFutureMessage, .BufferedCommit] {
+            // Given
+            let groupID = MLSGroupID.random()
+            let encryptedMessage = Data.random(byteCount: 1)
+
+            mockCoreCryptoContext.decryptMessageConversationIdPayload_MockError = CoreCryptoError
+                .Mls(mlsError: bufferedError)
+
+            // When
+            do {
+                _ = try await sut.decryptMessage(encryptedMessage, in: groupID, context: mockCoreCryptoContext)
+                XCTFail("expected \(bufferedError) to be thrown")
+            } catch let CoreCryptoError.Mls(error) {
+                // Then
+                XCTAssertEqual(String(describing: error), String(describing: bufferedError))
+            }
+
+            XCTAssertEqual(mockCoreCrypto.transaction_Invocations.count, 0)
+        }
     }
 
-    func internalTest_decryptMessage_swallowsError(_ error: Error) async throws {
-
+    func test_decryptMessage_withoutContext_throwsOtherErrorsInsideTransaction() async throws {
         // Given
         let groupID = MLSGroupID.random()
         let encryptedMessage = Data.random(byteCount: 1)
 
-        mockCoreCryptoContext.decryptMessageConversationIdPayload_MockError = error
+        mockCoreCryptoContext.decryptMessageConversationIdPayload_MockError = CoreCryptoError
+            .Mls(mlsError: .WrongEpoch)
+
+        var didTransactionBlockThrow: Bool?
+        mockCoreCrypto.transaction_MockMethod = { [mockCoreCryptoContext] block in
+            do {
+                let result = try await block(mockCoreCryptoContext!)
+                didTransactionBlockThrow = false
+                return result
+            } catch {
+                didTransactionBlockThrow = true
+                throw error
+            }
+        }
 
         // When
-        let result = try await sut.decryptMessage(encryptedMessage, in: groupID, context: nil)
+        do {
+            _ = try await sut.decryptMessage(encryptedMessage, in: groupID, context: nil)
+            XCTFail("expected WrongEpoch to be thrown")
+        } catch let CoreCryptoError.Mls(error) {
+            // Then
+            XCTAssertEqual(String(describing: error), String(describing: MlsError.WrongEpoch))
+        }
 
-        // Then
-        XCTAssertEqual(mockCoreCryptoContext.decryptMessageConversationIdPayload_Invocations.count, 1)
-        XCTAssertNil(result)
+        XCTAssertEqual(didTransactionBlockThrow, true)
     }
 
     func test_decryptMessage_successfully() async throws {
