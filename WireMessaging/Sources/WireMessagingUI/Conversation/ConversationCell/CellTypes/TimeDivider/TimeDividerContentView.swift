@@ -46,6 +46,7 @@ struct TimeDividerContentView: ConversationCellContentViewProtocol {
 
     @ViewBuilder private var text: some View {
         Text(model.text)
+            .accessibilityLabel(model.accessibilityLabel)
             .multilineTextAlignment(.center)
             .font(.footnote)
             .fontWeight(.semibold)

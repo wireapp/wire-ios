@@ -284,12 +284,14 @@ final class MessageToolboxView: UIView {
         _ message: ZMConversationMessage,
         animated: Bool = false
     ) {
+        var isNewMessage = false
         if let message = message as? ConversationMessage,
            dataSource?.message.nonce != message.nonce {
             dataSource = MessageToolboxDataSource(message: message)
+            isNewMessage = true
         }
 
-        reloadContent(animated: animated)
+        reloadContent(animated: animated, forceUpdate: isNewMessage)
     }
 
     func setAllContentHidden() {
@@ -302,13 +304,12 @@ final class MessageToolboxView: UIView {
         statusLabel.attributedText = nil
     }
 
-    private func reloadContent(animated: Bool) {
+    private func reloadContent(animated: Bool, forceUpdate: Bool = false) {
         guard let dataSource else { return }
 
-        // Do not reload the content if it didn't change.
-        guard dataSource.shouldUpdateContent(
-            widthConstraint: contentWidth
-        ) else {
+        // A newly selected message must also clear content left by the previous message.
+        let didUpdateContent = dataSource.shouldUpdateContent(widthConstraint: contentWidth)
+        guard didUpdateContent || forceUpdate else {
             return
         }
 
@@ -316,6 +317,7 @@ final class MessageToolboxView: UIView {
 
         case let .callList(callListString):
             detailsLabel.text = callListString
+            detailsLabel.accessibilityLabel = nil
             detailsLabel.isHidden = false
             detailsLabel.numberOfLines = 0
             hideAndCleanStatusLabel()
@@ -328,13 +330,15 @@ final class MessageToolboxView: UIView {
             statusImageView.isHidden = true
 
         case let .sendFailure(detailsString):
+            detailsLabel.accessibilityLabel = nil
             hideAndCleanStatusLabel()
             setAllContentHidden()
             messageFailureView.isHidden = false
             messageFailureView.setTitle(detailsString)
 
-        case let .details(timestamp, state, countdown):
+        case let .details(timestamp, accessibleTimestamp, state, countdown):
             detailsLabel.text = timestamp
+            detailsLabel.accessibilityLabel = accessibleTimestamp
             detailsLabel.isHidden = timestamp.isEmpty
             detailsLabel.numberOfLines = 1
 
