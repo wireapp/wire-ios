@@ -78,6 +78,8 @@ public protocol MeetingRepositoryProtocol: Sendable {
 
     func fetchMeetingLink(id: QualifiedID) async throws -> MeetingLink?
 
+    func refreshMeetingLink(id: QualifiedID, password: String?) async throws -> MeetingLink?
+
     /// Pulls all meetings from the server, replacing the locally stored
     /// meetings, e.g. as part of a sync.
     ///

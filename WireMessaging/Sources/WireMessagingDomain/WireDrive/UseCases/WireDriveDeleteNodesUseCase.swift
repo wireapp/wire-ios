@@ -57,7 +57,8 @@ package struct WireDriveDeleteNodesUseCase: WireDriveDeleteNodesUseCaseProtocol 
         try await localAssetStore.deleteAssets(nodeIDs: nodeIDs)
 
         // Then delete nodes from server.
-        if try await repository.deleteNodes(nodeIDs: nodeIDs, permanently: deletePermanently) == false {
+        if try await repository
+            .deleteNodes(locators: nodeIDs.map { .id($0) }, permanently: deletePermanently) == false {
             throw WireDriveDeleteNodesError.serverFailedToDeleteNodes
         }
     }

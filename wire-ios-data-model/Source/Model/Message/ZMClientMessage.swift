@@ -35,6 +35,11 @@ public class ZMClientMessage: ZMOTRMessage {
     /// Link Preview state
     @NSManaged public var updatedTimestamp: Date?
 
+    /// Whether a request with the current nonce may have reached the backend. Defaults to true for
+    /// stored messages with unknown send history. New outgoing messages explicitly start with false,
+    /// and every send attempt sets it to true regardless of the offline-pending feature flag.
+    @NSManaged public var sendAttemptStarted: Bool
+
     /// In memory cache
     var cachedUnderlyingMessage: GenericMessage?
 
@@ -44,7 +49,7 @@ public class ZMClientMessage: ZMOTRMessage {
 
     open override var ignoredKeys: Set<AnyHashable>? {
         (super.ignoredKeys ?? Set())
-            .union([#keyPath(updatedTimestamp)])
+            .union([#keyPath(updatedTimestamp), #keyPath(sendAttemptStarted)])
     }
 
     public override var updatedAt: Date? {

@@ -33,6 +33,44 @@ final class CoreDataMessagingMigrationVersionTests: XCTestCase {
         )
     }
 
+    func testMigrationFrom145To146TreatsPreviousSendHistoryAsUnknown() throws {
+        let helper = DatabaseMigrationHelper()
+        let sourceModel = try helper.createObjectModel(version: "2.145.0")
+        let destinationModel = try helper.createObjectModel(version: "2.146.0")
+        let mapping = try NSMappingModel.inferredMappingModel(
+            forSourceModel: sourceModel,
+            destinationModel: destinationModel
+        )
+        let storeDirectory = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        try FileManager.default.createDirectory(at: storeDirectory, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: storeDirectory) }
+        let nonce = UUID()
+
+        try helper.migrateStore(
+            sourceVersion: "2.145.0",
+            destinationVersion: "2.146.0",
+            mappingModel: mapping,
+            storeDirectory: storeDirectory,
+            preMigrationAction: { context in
+                try context.performAndWait {
+                    let entity = try XCTUnwrap(NSEntityDescription.entity(forEntityName: "ClientMessage", in: context))
+                    let message = NSManagedObject(entity: entity, insertInto: context)
+                    message.setValue(nonce, forKey: "nonce")
+                    try context.save()
+                }
+            },
+            postMigrationAction: { context in
+                try context.performAndWait {
+                    let messages = try context.fetch(NSFetchRequest<NSManagedObject>(entityName: "ClientMessage"))
+                    XCTAssertEqual(messages.count, 1)
+                    let message = try XCTUnwrap(messages.first)
+                    XCTAssertEqual(message.value(forKey: "nonce") as? UUID, nonce)
+                    XCTAssertEqual(message.value(forKey: "sendAttemptStarted") as? Bool, true)
+                }
+            }
+        )
+    }
+
     func testMigrationFrom144To145PreservesMeetingAndDefaultsInvitedEmails() throws {
         let helper = DatabaseMigrationHelper()
         let sourceModel = try helper.createObjectModel(version: "2.144.0")

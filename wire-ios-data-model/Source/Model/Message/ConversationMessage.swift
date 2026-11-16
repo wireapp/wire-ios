@@ -379,7 +379,7 @@ public extension ZMMessage {
     }
 
     @objc var canBeDeleted: Bool {
-        deliveryState != .pending
+        deliveryState != .pending || (self as? any PendingMessageDeletable)?.isDeletableWhilePending == true
     }
 
     @objc var hasBeenDeleted: Bool {

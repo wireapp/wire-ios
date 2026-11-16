@@ -19,6 +19,7 @@
 import UIKit
 import WireDataModel
 import WireDesign
+import WireLocators
 
 final class ConversationScheduledForDeletionSystemMessageCell:
     ConversationIconBasedCell<ConversationScheduledForDeletionCellDescription>,
@@ -51,6 +52,7 @@ final class ConversationScheduledForDeletionSystemMessageCell:
         // VoiceOver announces the content twice.
         isAccessibilityElement = false
         textLabel.isAccessibilityElement = true
+        textLabel.accessibilityIdentifier = Locators.ActiveConversationPage.scheduledForDeletionSystemMessage.rawValue
     }
 
     func configure(with object: Configuration, animated: Bool) {

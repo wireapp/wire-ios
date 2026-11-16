@@ -18,6 +18,7 @@
 
 import UIKit
 import WireCommonComponents
+import WireDataModel
 import WireSyncEngine
 
 enum AlertChoice {
@@ -85,6 +86,7 @@ final class ActiveCallRouter<TopOverlayPresenter>
     private let callQualityController: CallQualityController
     private var transitioningDelegate: CallQualityAnimator
 
+    private var pendingMeetingInvitation: (conversationID: QualifiedID, link: URL)?
     private var isCallQualityShown = false
     private var isCallTopOverlayShown = false
     private(set) var scheduledPostCallAction: PostCallAction?
@@ -116,11 +118,22 @@ final class ActiveCallRouter<TopOverlayPresenter>
 
     // MARK: - Public Implementation
 
+    private func takeMeetingInvitation(for conversationID: QualifiedID) -> URL? {
+        guard pendingMeetingInvitation?.conversationID == conversationID else { return nil }
+        defer { pendingMeetingInvitation = nil }
+        return pendingMeetingInvitation?.link
+    }
+
+    func prepareMeetingInvitation(conversationID: QualifiedID, link: URL?) {
+        pendingMeetingInvitation = link.map { (conversationID, $0) }
+    }
+
     func updateActiveCallPresentationState() {
         callController.updateActiveCallPresentationState()
     }
 
     func prepareForRootReplacement() {
+        pendingMeetingInvitation = nil
         // Do not rely on dismiss completion during root swap
         presentedActiveCallViewController?.dismiss(animated: false)
         isPresentingActiveCall = false
@@ -165,7 +178,10 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
         var activeCallViewController: UIViewController!
         let bottomSheetActiveCallViewController = CallingBottomSheetViewController(
             voiceChannel: voiceChannel,
-            userSession: userSession
+            userSession: userSession,
+            takeMeetingInvitation: { [weak self] conversationID in
+                self?.takeMeetingInvitation(for: conversationID)
+            }
         )
         bottomSheetActiveCallViewController.delegate = callController
         activeCallViewController = bottomSheetActiveCallViewController

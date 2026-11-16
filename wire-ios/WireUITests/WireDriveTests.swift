@@ -25,8 +25,7 @@ final class WireDriveTests: WireUITestCase {
 
     override func additionalDeveloperFlags() -> [DeveloperFlag: Bool] {
         [
-            .simulateDriveOffline: false,
-            .enableDriveBulkActions: true
+            .simulateDriveOffline: false
         ]
     }
 
@@ -118,6 +117,39 @@ final class WireDriveTests: WireUITestCase {
         for user: UserInfo
     ) throws -> SharedDriveFilesPage {
         try uploadSketchAttachment(message: message, for: user)
+            .openSharedDrive()
+    }
+
+    @MainActor
+    private func uploadTwoSketchesAndOpenSharedDrive(for user: UserInfo) throws -> SharedDriveFilesPage {
+        let conversationPage = try loginAndOpenConversation(for: user)
+        for index in 1 ... 2 {
+            try conversationPage.typeMessageAndAttachSketch("Offline attachment \(index)")
+            conversationPage.waitToUploadToFinishAndSend()
+        }
+
+        let sharedDrivePage = try conversationPage.openSharedDrive()
+        let expectation = XCTNSPredicateExpectation(
+            predicate: NSPredicate { _, _ in sharedDrivePage.numberOfListedItems == 2 },
+            object: nil
+        )
+        XCTAssertEqual(XCTWaiter().wait(for: [expectation], timeout: 15), .completed)
+        XCTAssertEqual(Set(sharedDrivePage.listedFileNames).count, 2, "Expected two distinct uploaded files")
+        return sharedDrivePage
+    }
+
+    @MainActor
+    private func relaunchAndOpenSharedDrive(isOffline: Bool) throws -> SharedDriveFilesPage {
+        app.terminate()
+        app.launchArguments = ["--useEnvStaging"]
+        app.setDeveloperFlags([
+            .useWireAuthentication: true,
+            .simulateDriveOffline: isOffline
+        ])
+        app.launch()
+
+        return try ConversationsPage()
+            .openConversation()
             .openSharedDrive()
     }
 
@@ -376,6 +408,142 @@ final class WireDriveTests: WireUITestCase {
     }
 
     @MainActor
+    func testDeleteMultipleItems_TC_12309() async throws {
+
+        // GIVEN
+        let teamOwner = try await createDriveEnabledConversation(
+            .group(UserGenerator.generateRandomConversationName())
+        )
+
+        var sharedDrivePage = try loginAndOpenConversation(for: teamOwner)
+            .openSharedDrive()
+
+        let files: [(name: String, template: CreateFilePage.Template)] = [
+            ("First", .document),
+            ("Second", .spreadsheet)
+        ]
+        for file in files {
+            sharedDrivePage = try sharedDrivePage
+                .createFile(template: file.template)
+                .enterFileNameAndCreate(name: file.name)
+            XCTAssertTrue(sharedDrivePage.verifyFileIsCreated(
+                fileName: file.name,
+                fileExtension: file.template.fileExtension
+            ))
+        }
+        let fileNames = files.map { "\($0.name).\($0.template.fileExtension)" }
+
+        // WHEN
+        sharedDrivePage.selectItems(named: fileNames)
+        sharedDrivePage.tapDeleteFloatingButton()
+        sharedDrivePage.confirmDeleteOnBottomSheet()
+
+        // THEN
+        for fileName in fileNames {
+            XCTAssertTrue(
+                sharedDrivePage.fileRow(named: fileName).waitForNonExistence(timeout: 10),
+                "Deleted file '\(fileName)' should leave the shared drive"
+            )
+        }
+
+        let recycleBinPage = try sharedDrivePage.openRecycleBin()
+        for fileName in fileNames {
+            XCTAssertTrue(
+                recycleBinPage.fileRow(named: fileName).waitForExistence(timeout: 10),
+                "Deleted file '\(fileName)' should appear in the recycle bin"
+            )
+        }
+
+        // WHEN
+        recycleBinPage.selectItems(named: fileNames, isRecycleBin: true)
+        recycleBinPage.deleteSelectedItemsPermanently()
+
+        // THEN
+        for fileName in fileNames {
+            XCTAssertTrue(
+                recycleBinPage.fileRow(named: fileName).waitForNonExistence(timeout: 10),
+                "Permanently deleted file '\(fileName)' should leave the recycle bin"
+            )
+        }
+        XCTAssertTrue(recycleBinPage.verifyRecycleBinIsEmpty())
+
+        sharedDrivePage = try recycleBinPage.closeRecycleBin()
+        for fileName in fileNames {
+            XCTAssertTrue(
+                sharedDrivePage.fileRow(named: fileName).waitForNonExistence(timeout: 10),
+                "Permanently deleted file '\(fileName)' should remain absent from the shared drive"
+            )
+        }
+    }
+
+    @MainActor
+    func testRestoreMultipleItems_TC_12310() async throws {
+        throw XCTSkip("WPB-29933: Bulk restore is disabled pending a backend fix.")
+
+        // GIVEN
+        let teamOwner = try await createDriveEnabledConversation(
+            .group(UserGenerator.generateRandomConversationName())
+        )
+
+        var sharedDrivePage = try loginAndOpenConversation(for: teamOwner)
+            .openSharedDrive()
+
+        let files: [(name: String, template: CreateFilePage.Template)] = [
+            ("First", .document),
+            ("Second", .spreadsheet)
+        ]
+        for file in files {
+            sharedDrivePage = try sharedDrivePage
+                .createFile(template: file.template)
+                .enterFileNameAndCreate(name: file.name)
+            XCTAssertTrue(sharedDrivePage.verifyFileIsCreated(
+                fileName: file.name,
+                fileExtension: file.template.fileExtension
+            ))
+        }
+        let fileNames = files.map { "\($0.name).\($0.template.fileExtension)" }
+
+        sharedDrivePage.selectItems(named: fileNames)
+        sharedDrivePage.tapDeleteFloatingButton()
+        sharedDrivePage.confirmDeleteOnBottomSheet()
+        for fileName in fileNames {
+            XCTAssertTrue(
+                sharedDrivePage.fileRow(named: fileName).waitForNonExistence(timeout: 10),
+                "Deleted file '\(fileName)' should leave the shared drive"
+            )
+        }
+
+        let recycleBinPage = try sharedDrivePage.openRecycleBin()
+        for fileName in fileNames {
+            XCTAssertTrue(
+                recycleBinPage.fileRow(named: fileName).waitForExistence(timeout: 10),
+                "Deleted file '\(fileName)' should appear in the recycle bin"
+            )
+        }
+
+        // WHEN
+        recycleBinPage.selectItems(named: fileNames, isRecycleBin: true)
+        recycleBinPage.restoreSelectedItems()
+
+        // THEN
+        for fileName in fileNames {
+            XCTAssertTrue(
+                recycleBinPage.fileRow(named: fileName).waitForNonExistence(timeout: 10),
+                "Restored file '\(fileName)' should leave the recycle bin"
+            )
+        }
+        XCTAssertTrue(recycleBinPage.verifyRecycleBinIsEmpty())
+
+        sharedDrivePage = try recycleBinPage.closeRecycleBin()
+        for fileName in fileNames {
+            XCTAssertTrue(
+                sharedDrivePage.fileRow(named: fileName).waitForExistence(timeout: 10),
+                "Restored file '\(fileName)' should reappear in the shared drive"
+            )
+        }
+    }
+
+    @MainActor
     func testMakeFileAvailableOffline_TC_12153() async throws {
 
         // GIVEN
@@ -413,6 +581,76 @@ final class WireDriveTests: WireUITestCase {
         offlineSharedDrivePage.tapFilePreview()
         offlineSharedDrivePage.closeFilePreview()
         XCTAssertTrue(offlineSharedDrivePage.fileIcon.waitForExistence(timeout: 5))
+    }
+
+    @MainActor
+    func testMakeMultipleItemsAvailableOffline_TC_12333() async throws {
+
+        // GIVEN
+        let teamOwner = try await createDriveEnabledConversation(
+            .group(UserGenerator.generateRandomConversationName())
+        )
+        let sharedDrivePage = try uploadTwoSketchesAndOpenSharedDrive(for: teamOwner)
+        let fileNames = sharedDrivePage.listedFileNames
+
+        // WHEN
+        sharedDrivePage.selectItems(named: fileNames)
+        sharedDrivePage.makeSelectedItemsAvailableOffline()
+
+        // THEN
+        for fileName in fileNames {
+            XCTAssertTrue(
+                sharedDrivePage.waitForOfflineAvailability(ofFileNamed: fileName),
+                "File '\(fileName)' should become available offline"
+            )
+        }
+
+        let offlinePage = try relaunchAndOpenSharedDrive(isOffline: true)
+        XCTAssertTrue(offlinePage.offlineBar.waitForExistence(timeout: 10))
+        for fileName in fileNames {
+            XCTAssertTrue(offlinePage.fileRow(named: fileName).waitForExistence(timeout: 5))
+        }
+    }
+
+    @MainActor
+    func testRemoveOfflineAccessOnMultipleItems_TC_12334() async throws {
+
+        // GIVEN
+        let teamOwner = try await createDriveEnabledConversation(
+            .group(UserGenerator.generateRandomConversationName())
+        )
+        let sharedDrivePage = try uploadTwoSketchesAndOpenSharedDrive(for: teamOwner)
+        let fileNames = sharedDrivePage.listedFileNames
+        sharedDrivePage.selectItems(named: fileNames)
+        sharedDrivePage.makeSelectedItemsAvailableOffline()
+        for fileName in fileNames {
+            XCTAssertTrue(sharedDrivePage.waitForOfflineAvailability(ofFileNamed: fileName))
+        }
+
+        let offlinePage = try relaunchAndOpenSharedDrive(isOffline: true)
+        XCTAssertTrue(offlinePage.offlineBar.waitForExistence(timeout: 10))
+        for fileName in fileNames {
+            XCTAssertTrue(offlinePage.waitForOfflineAvailability(ofFileNamed: fileName))
+        }
+
+        // WHEN
+        offlinePage.selectItems(named: fileNames)
+        offlinePage.removeOfflineAccessOnSelectedItems()
+
+        // THEN
+        for fileName in fileNames {
+            XCTAssertTrue(
+                offlinePage.fileRow(named: fileName).waitForNonExistence(timeout: 10),
+                "File '\(fileName)' should leave the offline list"
+            )
+        }
+
+        let onlinePage = try relaunchAndOpenSharedDrive(isOffline: false)
+        for fileName in fileNames {
+            let row = onlinePage.fileRow(named: fileName)
+            XCTAssertTrue(row.waitForExistence(timeout: 10), "File '\(fileName)' should still exist online")
+            XCTAssertFalse(row.label.contains("Available offline"), "File '\(fileName)' should have no offline copy")
+        }
     }
 
     @MainActor

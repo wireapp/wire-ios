@@ -43,6 +43,21 @@ final class ConversationReplyWithTextCellSnapshotTests: ConversationMessageSnaps
         super.tearDown()
     }
 
+    func testReplyAccessibilityDoesNotPromiseUnsupportedGestures() {
+        let cell = ConversationReplyWithTextCell(frame: .zero)
+        cell.configure(with: .init(
+            quotedMessage: nil,
+            accentColor: .blue,
+            messageReplyAttachmentsViewModel: nil,
+            attributedText: NSAttributedString(string: "My reply"),
+            isObfuscated: false,
+            userSession: nil
+        ), animated: false)
+
+        XCTAssertEqual(cell.accessibilityLabel, "My reply")
+        XCTAssertNil(cell.accessibilityHint)
+    }
+
     // MARK: - Text quote variations
 
     /// Other user replies to another user's text message (default blue accent color).

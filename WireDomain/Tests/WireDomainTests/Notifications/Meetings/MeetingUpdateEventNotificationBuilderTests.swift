@@ -222,6 +222,10 @@ private final class UpdateMeetingsAPI: MeetingsAPI, @unchecked Sendable {
     }
 
     func deleteMeeting(id: WireNetwork.QualifiedID) async throws { throw UpdateTestError.unavailable }
+
+    func refreshMeetingLink(id: WireNetwork.QualifiedID, password: String?) async throws -> MeetingResponse {
+        throw UpdateTestError.unavailable
+    }
 }
 
 private final class UpdateUsersAPI: UsersAPI {

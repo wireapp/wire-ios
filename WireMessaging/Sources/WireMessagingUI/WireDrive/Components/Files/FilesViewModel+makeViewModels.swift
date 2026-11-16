@@ -33,11 +33,11 @@ extension FilesViewModel {
                 case .primaryAction:
                     await performPrimaryAction(item: item)
                 case .deleteToRecycleBin:
-                    await deleteItem(item, permanently: false)
+                    await deleteItems([item], permanently: false)
                 case .deletePermanently:
-                    await deleteItem(item, permanently: true)
+                    await deleteItems([item], permanently: true)
                 case .restore:
-                    await restoreItem(item)
+                    await restoreItems([item])
                 case .rename:
                     sheetNavigation = .renameFile(fileItem: item)
                 case .editTags:
@@ -51,9 +51,9 @@ extension FilesViewModel {
                 case .edit:
                     isEditing = item
                 case .makeAvailableOffline:
-                    makeAssetAvailableOffline(item: item)
+                    makeAssetsAvailableOffline(items: [item])
                 case .removeAvailableOffline:
-                    removeAssetAvailableOffline(item: item)
+                    removeAssetAvailableOffline(items: [item])
                 }
             },
             isBrowsing: isBrowsing,

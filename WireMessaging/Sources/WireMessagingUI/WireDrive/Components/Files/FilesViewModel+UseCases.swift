@@ -23,6 +23,7 @@ package extension FilesViewModel {
         let fetchNodesPage: WireDriveFetchNodesPageUseCase
         let fetchNodes: WireDriveFetchNodesUseCase
         let deleteNodes: WireDriveDeleteNodesUseCase
+        let emptyRecycleBin: WireDriveEmptyRecycleBinUseCase
         let restoreNodes: WireDriveRestoreNodesUseCase
         let renameNode: any WireDriveRenameNodeUseCaseProtocol
         let updateTags: any WireDriveUpdateTagsUseCaseProtocol
@@ -50,6 +51,7 @@ package extension FilesViewModel {
             fetchNodesPage: WireDriveFetchNodesPageUseCase,
             fetchNodes: WireDriveFetchNodesUseCase,
             deleteNodes: WireDriveDeleteNodesUseCase,
+            emptyRecycleBin: WireDriveEmptyRecycleBinUseCase,
             restoreNodes: WireDriveRestoreNodesUseCase,
             renameNode: any WireDriveRenameNodeUseCaseProtocol,
             updateTags: any WireDriveUpdateTagsUseCaseProtocol,
@@ -76,6 +78,7 @@ package extension FilesViewModel {
             self.fetchNodesPage = fetchNodesPage
             self.fetchNodes = fetchNodes
             self.deleteNodes = deleteNodes
+            self.emptyRecycleBin = emptyRecycleBin
             self.restoreNodes = restoreNodes
             self.renameNode = renameNode
             self.updateTags = updateTags

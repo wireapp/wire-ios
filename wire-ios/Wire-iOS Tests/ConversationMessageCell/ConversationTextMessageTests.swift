@@ -44,6 +44,20 @@ final class ConversationTextMessageTests: ConversationMessageSnapshotTestCase {
         super.tearDown()
     }
 
+    func testTextMessageAccessibilityDoesNotPromiseUnsupportedGestures() throws {
+        let cell = ConversationTextMessageCell(frame: .zero)
+        cell.configure(with: .init(
+            attributedText: NSAttributedString(string: "Hello"),
+            isObfuscated: false,
+            userSession: nil
+        ), animated: false)
+        let container = try XCTUnwrap(cell.subviews.first { $0 is ConversationMessageContainerView })
+
+        XCTAssertTrue(container.isAccessibilityElement)
+        XCTAssertEqual(container.accessibilityLabel, "Hello")
+        XCTAssertNil(container.accessibilityHint)
+    }
+
     // MARK: - Snapshot Tests
 
     func testPlainText_WithALongUsernameAndShowingTheDateOfTheMessage() {

@@ -33,6 +33,13 @@
     return mockCall;
 }
 
++ (CXCall *)mockConnectedCallWithUUID:(NSUUID *)uuid
+{
+    id mockCall = [self mockCallWithUUID:uuid outgoing:NO];
+    [(CXCall *)[[mockCall stub] andReturnValue:@YES] hasConnected];
+    return mockCall;
+}
+
 + (void)stopMockingMock:(NSObject *)mock
 {
     [(OCMockObject* )mock stopMocking];

@@ -24,6 +24,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface CallKitDelegateTestsMocking: NSObject
 + (CXCall *)mockCallWithUUID:(NSUUID *)uuid outgoing:(BOOL)outgoing;
++ (CXCall *)mockConnectedCallWithUUID:(NSUUID *)uuid;
 + (void)stopMockingMock:(NSObject *)Mock;
 
 @end

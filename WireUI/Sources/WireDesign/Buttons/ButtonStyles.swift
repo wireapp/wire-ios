@@ -32,14 +32,15 @@ enum ButtonState: CaseIterable {
 
 struct WireButtonStyleModifier: ViewModifier {
     let wireButtonStyle: WireButtonStyle
+    let useAccentColor: Bool
 
     @ViewBuilder
     private func applyStyle(_ wireButtonStyle: WireButtonStyle, content: () -> some View) -> some View {
         switch wireButtonStyle {
         case .primary:
-            content().buttonStyle(PrimaryButtonStyle())
+            content().buttonStyle(PrimaryButtonStyle(useAccentColor: useAccentColor))
         case .secondary:
-            content().buttonStyle(SecondaryButtonStyle())
+            content().buttonStyle(SecondaryButtonStyle(useAccentColor: useAccentColor))
         case .tertiary:
             content().buttonStyle(TertiaryButtonStyle())
         case .link:
@@ -53,8 +54,8 @@ struct WireButtonStyleModifier: ViewModifier {
 }
 
 public extension View {
-    func wireButtonStyle(_ wireButtonStyle: WireButtonStyle) -> some View {
-        modifier(WireButtonStyleModifier(wireButtonStyle: wireButtonStyle))
+    func wireButtonStyle(_ wireButtonStyle: WireButtonStyle, useAccentColor: Bool = false) -> some View {
+        modifier(WireButtonStyleModifier(wireButtonStyle: wireButtonStyle, useAccentColor: useAccentColor))
     }
 }
 

@@ -60,11 +60,19 @@ final class ZClientViewController: UIViewController {
     private(set) var cachedAccountImage = SidebarAccountInfo.AccountImageSource() {
         didSet {
             sidebarViewController.accountInfo.accountImageSource = cachedAccountImage
+            meetingsAccountImageView?.source = cachedAccountImage.mapToAccountImageSource()
         }
     }
 
+    private weak var meetingsAccountImageView: AccountImageView?
+
     private(set) var cachedAccountInfo = SidebarAccountInfo() {
-        didSet { sidebarViewController.accountInfo = cachedAccountInfo }
+        didSet {
+            sidebarViewController.accountInfo = cachedAccountInfo
+            meetingsAccountImageView?.availability = cachedAccountInfo.availability?.mapToAccountImageAvailability()
+            meetingsAccountImageView?.accessibilityLabel = L10n.Localizable.ConversationList.Header.SelfTeam
+                .accessibilityValue(userSession.selfUser.name ?? "")
+        }
     }
 
     private(set) var conversationRootViewController: UIViewController?
@@ -348,7 +356,7 @@ final class ZClientViewController: UIViewController {
         )
         let conversationRepository = clientSessionComponent.conversationRepository
 
-        return wireMeetingsFactory.makeMeetingsView(
+        let meetingsUI = wireMeetingsFactory.makeMeetingsView(
             meetingRepository: clientSessionComponent.meetingRepository,
             memberRepository: memberRepository,
             conversationRepository: MeetingConversationRepositoryBridge(
@@ -366,6 +374,48 @@ final class ZClientViewController: UIViewController {
             ),
             accentColorState: meetingsAccentColorState
         )
+
+        let accountImageView = AccountImageView()
+        accountImageView.source = cachedAccountImage.mapToAccountImageSource()
+        accountImageView.availability = cachedAccountInfo.availability?.mapToAccountImageAvailability()
+        accountImageView.hideProfileNotificationsBadge = true
+        let design = AccountImageViewDesign()
+        accountImageView.imageBorderColor = design.borderColor
+        accountImageView.availableColor = design.availabilityIndicator.availableColor
+        accountImageView.busyColor = design.availabilityIndicator.busyColor
+        accountImageView.awayColor = design.availabilityIndicator.awayColor
+        accountImageView.availabilityIndicatorBackgroundColor = design.availabilityIndicator.backgroundViewColor
+        accountImageView.isAccessibilityElement = true
+        accountImageView.accessibilityIdentifier = "meetingsAccountProfileImageView"
+        accountImageView.accessibilityLabel = L10n.Localizable.ConversationList.Header.SelfTeam
+            .accessibilityValue(userSession.selfUser.name ?? "")
+        accountImageView.accessibilityTraits = .button
+        accountImageView.accessibilityHint = L10n.Accessibility.ConversationsList.AccountButton.hint
+        accountImageView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            accountImageView.widthAnchor.constraint(equalToConstant: 28),
+            accountImageView.heightAnchor.constraint(equalToConstant: 28)
+        ])
+        accountImageView.addGestureRecognizer(UITapGestureRecognizer(
+            target: self,
+            action: #selector(presentSelfProfile)
+        ))
+
+        meetingsUI.navigationItem.leftBarButtonItem = UIBarButtonItem(customView: accountImageView)
+        meetingsAccountImageView = accountImageView
+        return meetingsUI
+    }
+
+    @objc
+    private func presentSelfProfile() {
+        Task {
+            let coordinator = AnyMainCoordinator(mainCoordinator: mainCoordinator)
+            let rootViewController = selfProfileViewControllerBuilder.build(mainCoordinator: coordinator)
+            let selfProfileUI = UINavigationController(rootViewController: rootViewController)
+            selfProfileUI.modalPresentationStyle = .formSheet
+            selfProfileUI.presentationController?.delegate = rootViewController
+            await mainCoordinator.presentViewController(selfProfileUI)
+        }
     }
 
     private func setupMeetingsTab() {
@@ -1019,7 +1069,7 @@ extension ZClientViewController: UserObserving {
                 appDelegate.mainWindow?.tintColor = UIColor.accent()
             }
 
-            if changeInfo.imageMediumDataChanged || changeInfo.imageSmallProfileDataChanged {
+            if changeInfo.nameChanged || changeInfo.imageMediumDataChanged || changeInfo.imageSmallProfileDataChanged {
                 sidebarUpdateNeeded = true
                 await updateCachedAccountImage()
             }
