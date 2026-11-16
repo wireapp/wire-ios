@@ -72,13 +72,9 @@ public struct WireMeetingsFactory {
             currentDateProvider: currentDateProvider
         )
         let observeMeetingChangesUseCase = ObserveMeetingChangesUseCase(repository: meetingRepository)
-        let deleteMeetingUseCase = DeleteMeetingUseCase(
+        let deleteMeetingUseCase = makeDeleteMeetingUseCase(
             meetingRepository: meetingRepository,
-            conversationRepository: conversationRepository,
-            cancelReminders: { accountID, meetingID in
-                await MeetingReminderScheduler().cancelAll(accountID: accountID, meetingID: meetingID)
-            },
-            selfUserID: selfUserID
+            conversationRepository: conversationRepository
         )
         let observeAttendedMeetingsUseCase = ObserveAttendedMeetingsUseCase(repository: callRepository)
         let joinMeetingCallUseCase = JoinMeetingCallUseCase(repository: callRepository)
@@ -178,6 +174,26 @@ public struct WireMeetingsFactory {
             }
         #endif
         return updateUseCase
+    }
+
+    private func makeDeleteMeetingUseCase(
+        meetingRepository: any MeetingRepositoryProtocol,
+        conversationRepository: any MeetingConversationRepositoryProtocol
+    ) -> any DeleteMeetingUseCaseProtocol {
+        let deleteUseCase = DeleteMeetingUseCase(
+            meetingRepository: meetingRepository,
+            conversationRepository: conversationRepository,
+            cancelReminders: { accountID, meetingID in
+                await MeetingReminderScheduler().cancelAll(accountID: accountID, meetingID: meetingID)
+            },
+            selfUserID: selfUserID
+        )
+        #if DEBUG
+            if let failureID = UITestConfig.environment?.meetingsDeleteFailureID {
+                return MeetingsUITestDeleteUseCase(wrapping: deleteUseCase, failureID: failureID)
+            }
+        #endif
+        return deleteUseCase
     }
 
     private func makeFetchUpcomingMeetingsUseCase(

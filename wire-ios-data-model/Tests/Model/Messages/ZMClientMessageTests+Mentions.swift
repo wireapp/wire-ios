@@ -49,6 +49,26 @@ class ZMClientMessageTests_Mentions: BaseZMClientMessageTests {
         XCTAssertEqual(mentions, [mention])
     }
 
+    func testEveryoneMentionPreservesMessageText() throws {
+        let everyoneMention = try GenericMessageProtocol.Mention(
+            serializedBytes: [0x08, 0x00, 0x10, 0x04, 0x28, 0x01]
+        )
+        let genericMessage = GenericMessage.with {
+            $0.messageID = UUID().uuidString
+            $0.text = Text.with {
+                $0.content = "@all hello"
+                $0.mentions = [everyoneMention]
+            }
+        }
+        let decoded = try XCTUnwrap(GenericMessage(from: try genericMessage.serializedData(), validate: true))
+        let message = ZMClientMessage(nonce: UUID(), managedObjectContext: uiMOC)
+
+        try message.setUnderlyingMessage(decoded)
+
+        XCTAssertEqual(message.textMessageData?.messageText, "@all hello")
+        XCTAssertTrue(message.mentions.isEmpty)
+    }
+
     func testMentionsWithMultiplePartCharactersAreReturned() {
         // given
         let text = "@🙅‍♂️"

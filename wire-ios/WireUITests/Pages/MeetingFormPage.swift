@@ -246,25 +246,32 @@ class MeetingFormPage: PageModel {
         guard selectedMembersButton.waitForExistence(timeout: 5) else {
             throw RuntimeError("Selected members section did not appear")
         }
-        if selectedMembersButton.identifier == Locators.WireMeetings.MeetingForm.selectedMembersIdentifier(
-            isExpanded: true
-        ) {
+        guard let selectedCount = Int(selectedMembersButton.value as? String ?? "") else {
+            throw RuntimeError("Selected member count was not available")
+        }
+        if selectedCount > 0,
+           selectedMembersButton.identifier == Locators.WireMeetings.MeetingForm.selectedMembersIdentifier(
+               isExpanded: true
+           ) {
             guard selectedMembersButton.waitAndTap() else {
                 throw RuntimeError("Selected members section was not tappable")
             }
         }
-        let collapsed = XCTNSPredicateExpectation(
-            predicate: NSPredicate(
-                format: "exists == true AND identifier == %@",
-                Locators.WireMeetings.MeetingForm.selectedMembersIdentifier(isExpanded: false)
-            ),
-            object: selectedMembersButton
-        )
-        guard XCTWaiter().wait(for: [collapsed], timeout: 5) == .completed else {
-            throw RuntimeError("Selected members section did not collapse")
-        }
         guard member(user).waitAndTap(timeout: 10) else {
             throw RuntimeError("Meeting member '\(user.name)' was not tappable")
+        }
+        let selected = app.buttons.matching(NSPredicate(
+            format: "identifier BEGINSWITH %@ AND value == %@",
+            Locators.WireMeetings.MeetingForm.membersSelected.rawValue + ".",
+            String(selectedCount + 1)
+        )).firstMatch
+        guard selected.waitForExistence(timeout: 5) else {
+            XCTContext.runActivity(named: "Meeting member selection failed") { activity in
+                let hierarchy = XCTAttachment(string: app.debugDescription)
+                hierarchy.lifetime = .keepAlways
+                activity.add(hierarchy)
+            }
+            throw RuntimeError("Meeting member '\(user.name)' was not selected")
         }
     }
 
@@ -310,8 +317,17 @@ class MeetingFormPage: PageModel {
 
     @discardableResult
     func save(timeout: TimeInterval = 30) throws -> MeetingsPage {
-        XCTAssertTrue(saveButton.waitAndTap(timeout: 10), "Meeting form save button was not available")
-        XCTAssertTrue(titleField.waitToDisappear(timeout: timeout), "Meeting form did not close after save")
+        guard saveButton.waitAndTap(timeout: 10) else {
+            throw RuntimeError("Meeting form save button was not available")
+        }
+        guard titleField.waitToDisappear(timeout: timeout) else {
+            XCTContext.runActivity(named: "Meeting form save failed") { activity in
+                let screenshot = XCTAttachment(screenshot: app.screenshot())
+                screenshot.lifetime = .keepAlways
+                activity.add(screenshot)
+            }
+            throw RuntimeError("Meeting form did not close after save")
+        }
         return try MeetingsPage()
     }
 }

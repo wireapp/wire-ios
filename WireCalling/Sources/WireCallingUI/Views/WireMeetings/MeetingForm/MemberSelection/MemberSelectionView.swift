@@ -299,6 +299,7 @@ struct MemberSelectionView: View {
                     .font(.title)
                     .foregroundStyle(isSelected ? accentColor : Color.secondary.opacity(0.5))
             }
+            .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
         .accessibilityIdentifier(Locators.WireMeetings.MeetingForm.memberIdentifier(member.qualifiedID.id.uuidString))
