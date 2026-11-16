@@ -84,6 +84,25 @@ final class LinkInteractionTextView: UITextView {
         fatalError("init(coder:) has not been implemented")
     }
 
+    /// Corrects the intrinsic width for text where every line is indented.
+    ///
+    /// UITextView sizes itself to the width of the laid-out text (`usedRect.width`) and ignores where
+    /// that text starts (`usedRect.minX`). That is fine as long as at least one line starts at the leading
+    /// edge. Single-item markdown lists and single-paragraph blockquotes indent every line, though, so the
+    /// view would be narrower than its text by exactly that indent: the text then wraps at the narrower
+    /// width while the height stays as measured, and the last line is clipped (WPB-27203).
+    ///
+    /// Adding the smallest paragraph indent restores the width the text needs. Text with any unindented
+    /// paragraph is returned unchanged, and the correction does not depend on `bounds`.
+    override var intrinsicContentSize: CGSize {
+        let size = super.intrinsicContentSize
+        let indent = attributedText?.minimumLeadingIndent ?? 0
+        guard indent > 0, size.width != UIView.noIntrinsicMetric else { return size }
+
+        let scale = traitCollection.displayScale > 0 ? traitCollection.displayScale : UIScreen.main.scale
+        return CGSize(width: ceil((size.width + indent) * scale) / scale, height: size.height)
+    }
+
     override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
         let isInside = super.point(inside: point, with: event)
         guard !UIMenuController.shared.isMenuVisible else { return false }
@@ -213,4 +232,22 @@ extension LinkInteractionTextView: UITextDragDelegate {
         return dragRequest.suggestedItems
     }
 
+}
+
+// MARK: - Leading indent
+
+private extension NSAttributedString {
+
+    /// The smallest leading indent of any line, or `0` if any paragraph starts at the leading edge.
+    var minimumLeadingIndent: CGFloat {
+        guard length > 0 else { return 0 }
+
+        var indent = CGFloat.greatestFiniteMagnitude
+        enumerateAttribute(.paragraphStyle, in: NSRange(location: 0, length: length)) { value, _, stop in
+            let style = value as? NSParagraphStyle
+            indent = min(indent, style?.firstLineHeadIndent ?? 0, style?.headIndent ?? 0)
+            if indent <= 0 { stop.pointee = true }
+        }
+        return max(indent, 0)
+    }
 }
