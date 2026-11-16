@@ -22,6 +22,7 @@ import WireDataModelSupport
 import WireTesting
 import WireTestingPackage
 
+@testable import WireDomain
 @testable import WireSyncEngine
 @testable import WireSyncEngineSupport
 
@@ -87,6 +88,86 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         XCTAssertNotNil(sut.managedObjectContext)
         // WHEN & THEN
         XCTAssertEqual(sut.managedObjectContext.zm_sync, sut.syncManagedObjectContext)
+    }
+
+    func testRemoteMuteRequiresSelfClientActiveCallAndAdmin() throws {
+        let domain = "example.com"
+        let (selfUserID, clientID) = syncMOC.performAndWait {
+            let selfUser = ZMUser.selfUser(in: syncMOC)
+            selfUser.domain = domain
+            let selfClient = createSelfClient()
+            syncMOC.saveOrRollback()
+            return (selfUser.remoteIdentifier!.transportString(), selfClient.remoteIdentifier!)
+        }
+        uiMOC.refreshAllObjects()
+
+        let callCenter = syncMOC.performAndWait {
+            createCallCenter(localDomain: domain, isFederationEnabled: true)
+        }
+
+        let selfUser = ZMUser.selfUser(in: uiMOC)
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
+        conversation.remoteIdentifier = UUID()
+        conversation.domain = domain
+        conversation.conversationType = .group
+        let admin = ZMUser.insertNewObject(in: uiMOC)
+        admin.remoteIdentifier = UUID()
+        admin.domain = domain
+        let adminRole = Role.create(
+            managedObjectContext: uiMOC,
+            name: ZMConversation.defaultAdminRoleName,
+            conversation: conversation
+        )
+        conversation.addParticipantAndUpdateConversationState(user: selfUser)
+        conversation.addParticipantAndUpdateConversationState(user: admin, role: adminRole)
+        uiMOC.saveOrRollback()
+        callCenter.setMockCallState(
+            .established,
+            conversationId: conversation.avsIdentifier!,
+            callerId: admin.avsIdentifier,
+            isVideo: false
+        )
+
+        let conversationID = try XCTUnwrap(conversation.remoteIdentifier)
+        let adminID = try XCTUnwrap(admin.remoteIdentifier)
+        let adminParticipant = try XCTUnwrap(admin.participantRoles.first)
+        let matchingTargets = [domain: [selfUserID: [clientID]]]
+
+        func assertMute(
+            _ targets: [String: [String: [String]]],
+            conversationID: UUID,
+            expected: Bool
+        ) {
+            callCenter.isMuted = false
+            sut.onProcessedCallEvent(callEventInfo: CallEventInfo(
+                data: Data(),
+                conversationID: conversationID,
+                conversationDomain: domain,
+                userID: adminID,
+                userDomain: domain,
+                eventTimestamp: .now,
+                clientID: "sender-client",
+                remoteMuteTargets: targets
+            ))
+            let muteCheck = expectation(description: "check remote mute result")
+            uiMOC.perform {
+                XCTAssertEqual(callCenter.isMuted, expected)
+                muteCheck.fulfill()
+            }
+            wait(for: [muteCheck], timeout: 1)
+        }
+
+        assertMute(matchingTargets, conversationID: conversationID, expected: true)
+        assertMute([domain: [selfUserID: ["other-client"]]], conversationID: conversationID, expected: false)
+        assertMute(["other.example": [selfUserID: [clientID]]], conversationID: conversationID, expected: false)
+        assertMute([domain: [UUID().transportString(): [clientID]]], conversationID: conversationID, expected: false)
+        adminParticipant.role = nil
+        assertMute(matchingTargets, conversationID: conversationID, expected: false)
+        adminParticipant.role = adminRole
+        assertMute(matchingTargets, conversationID: UUID(), expected: false)
+
+        callCenter.removeMockActiveCalls()
+        assertMute(matchingTargets, conversationID: conversationID, expected: false)
     }
 
     func testThatTearDownCancelsPendingSends() throws {

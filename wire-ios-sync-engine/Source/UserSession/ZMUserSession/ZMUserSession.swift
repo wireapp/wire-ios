@@ -1690,23 +1690,43 @@ extension ZMUserSession {
         }
     }
 
-    private func onProcessedCallEvent(callEventInfo: CallEventInfo) {
+    func onProcessedCallEvent(callEventInfo: CallEventInfo) {
         let serverTimeDelta = syncContext.performAndWait {
             syncContext.serverTimeDelta // serverTimeDelta can only be accessed on the sync context
         }
 
         viewContext.perform { [weak self] in // callCenter can only be accessed on the ui context
             guard let self, let callCenter else { return }
-            guard !callEventInfo.isMuted else {
-                callCenter.isMuted = true
-                return
-            }
-
             let conversationId = AVSIdentifier(
                 identifier: callEventInfo.conversationID,
                 domain: callEventInfo.conversationDomain,
                 isFederationEnabled: resolvedBackendMetadata.isFederationEnabled
             )
+
+            if let targets = callEventInfo.remoteMuteTargets {
+                let selfUser = ZMUser.selfUser(in: viewContext)
+                guard
+                    let domain = selfUser.domain ?? callCenter.localDomain,
+                    let userID = selfUser.remoteIdentifier?.transportString(),
+                    let clientID = selfUser.selfClient()?.remoteIdentifier,
+                    targets[domain]?[userID]?.contains(clientID) == true,
+                    callCenter.isActive(conversationId: conversationId),
+                    let conversation = ZMConversation.fetch(
+                        with: callEventInfo.conversationID,
+                        domain: callEventInfo.conversationDomain,
+                        in: viewContext
+                    ),
+                    let sender = ZMUser.fetch(
+                        with: callEventInfo.userID,
+                        domain: callEventInfo.userDomain,
+                        in: viewContext
+                    ),
+                    sender.isGroupAdmin(in: conversation)
+                else { return }
+
+                callCenter.isMuted = true
+                return
+            }
 
             let userId = AVSIdentifier(
                 identifier: callEventInfo.userID,
