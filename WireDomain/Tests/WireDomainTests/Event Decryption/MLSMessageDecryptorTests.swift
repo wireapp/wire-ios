@@ -219,7 +219,6 @@ final class MLSMessageDecryptorTests: XCTestCase {
         XCTAssertEqual(mlsDecryptionService.decryptMessageForSubconversationTypeContext_Invocations.count, 0)
     }
 
-
     // MARK: - Buffered messages recovery
 
     func testBufferedMessages_WithinThreshold_ReturnsEventWithoutDecryptedMessages() async throws {
