@@ -118,6 +118,16 @@ final class ActiveCallRouter<TopOverlayPresenter>
     func updateActiveCallPresentationState() {
         callController.updateActiveCallPresentationState()
     }
+
+    func prepareForRootReplacement() {
+        // Do not rely on dismiss completion during root swap
+        presentedActiveCallViewController?.dismiss(animated: false)
+        isPresentingActiveCall = false
+        isActiveCallShown = false
+        presentedActiveCallViewController = nil
+        topOverlayPresenter.dismissTopOverlay(animated: false)
+        isCallTopOverlayShown = false
+    }
 }
 
 // MARK: - ActiveCallRouterProtocol
@@ -126,7 +136,23 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
 
     // MARK: - ActiveCall
 
+    private func isCallUIActuallyPresented() -> Bool {
+        guard let presentedActiveCallViewController else { return false }
+        if mainWindow.rootViewController?.presentedViewController === presentedActiveCallViewController {
+            return true
+        }
+        return presentedActiveCallViewController.presentingViewController != nil
+    }
+
     func presentActiveCall(for voiceChannel: VoiceChannel, animated: Bool) {
+        // During account/rootViewController switches, the call screen can be dismissed by UIKit
+        // while these flags still say it's shown/presenting. Reconcile with UIKit truth and reset
+        // stale state so this presentation attempt is not blocked by outdated bookkeeping.
+        if isActiveCallShown, !isCallUIActuallyPresented() {
+            isActiveCallShown = false
+            isPresentingActiveCall = false
+            presentedActiveCallViewController = nil
+        }
         guard
             !isPresentingActiveCall,
             !isActiveCallShown
@@ -158,21 +184,31 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
     }
 
     func dismissActiveCall(animated: Bool = true, completion: Completion? = nil) {
-        if let presented = presentedActiveCallViewController {
-            presented.dismiss(animated: animated) { [weak self] in
-                guard let self else { completion?(); return }
+        guard let presented = presentedActiveCallViewController else {
+            activeCallDidDismiss(nil, completion: completion)
+            return
+        }
 
-                presentedActiveCallViewController = nil
-                isActiveCallShown = false
-                isPresentingActiveCall = false
+        presented.dismiss(animated: animated) { [weak self] in
+            guard let self else { completion?(); return }
+            activeCallDidDismiss(presented, completion: completion)
+        }
+    }
 
-                if let action = scheduledPostCallAction {
-                    action { completion?() }
-                } else {
-                    completion?()
-                }
-                scheduledPostCallAction = nil
-            }
+    func activeCallDidDismiss(_ dismissed: UIViewController?, completion: Completion?) {
+        guard presentedActiveCallViewController === dismissed else {
+            completion?()
+            return
+        }
+
+        presentedActiveCallViewController = nil
+        isActiveCallShown = false
+        isPresentingActiveCall = false
+
+        let action = scheduledPostCallAction
+        scheduledPostCallAction = nil
+        if let action {
+            action { completion?() }
         } else {
             completion?()
         }

@@ -25,20 +25,28 @@ final class ActiveCallRouterTests: ZMSnapshotTestCase {
     var mockTopOverlayPresenter: MockTopOverlayPresenting!
     var sut: ActiveCallRouter<MockTopOverlayPresenting>!
     var userSession: UserSessionMock!
+    var mainWindow: UIWindow!
+    var rootViewController: RootPresentSpyViewController!
 
     override func setUp() {
         super.setUp()
 
         mockTopOverlayPresenter = .init()
+        mockTopOverlayPresenter.dismissTopOverlayAnimated_MockMethod = { _ in }
         userSession = UserSessionMock()
+        mainWindow = UIWindow()
+        rootViewController = RootPresentSpyViewController()
+        mainWindow.rootViewController = rootViewController
         sut = ActiveCallRouter(
-            mainWindow: .init(),
+            mainWindow: mainWindow,
             userSession: userSession,
             topOverlayPresenter: mockTopOverlayPresenter
         )
     }
 
     override func tearDown() {
+        rootViewController = nil
+        mainWindow = nil
         userSession = nil
         sut = nil
         mockTopOverlayPresenter = nil
@@ -78,7 +86,7 @@ final class ActiveCallRouterTests: ZMSnapshotTestCase {
         XCTAssertTrue(executed)
     }
 
-    func testThat_ItSetIsActiveCallShown_ToFalse_When_RestoringCallFromTopOverlay() {
+    func testThat_ItSetIsActiveCallShown_ToTrue_When_RestoringCallFromTopOverlay() {
         // given
         let conversation = createOneOnOneConversation()
         let voiceChannel = MockVoiceChannel(conversation: conversation)
@@ -86,13 +94,124 @@ final class ActiveCallRouterTests: ZMSnapshotTestCase {
         mockSelfClient.remoteIdentifier = "selfClient123"
         MockUser.mockSelf().clients = Set([mockSelfClient])
 
-        sut.isActiveCallShown = true
+        sut.isActiveCallShown = false
 
         // when
         sut.voiceChannelTopOverlayWantsToRestoreCall(voiceChannel: voiceChannel)
 
         // then
+        XCTAssertTrue(sut.isActiveCallShown)
+    }
+
+    func testThat_ItRepresentsCall_WhenStateSaysShown_ButNoPresentedCallVCExists() {
+        // given (stale state)
+        let conversation = createOneOnOneConversation()
+        let voiceChannel = MockVoiceChannel(conversation: conversation)
+        let selfClient = MockUserClient()
+        selfClient.remoteIdentifier = "selfClient123"
+        MockUser.mockSelf().clients = Set([selfClient])
+
+        sut.isActiveCallShown = true
+        sut.isPresentingActiveCall = true
+        XCTAssertNil(mainWindow.rootViewController?.presentedViewController)
+
+        // when
+        sut.presentActiveCall(for: voiceChannel, animated: false)
+
+        // then
+        XCTAssertEqual(rootViewController.presentCallCount, 1)
+    }
+
+    func testThat_ItDoesNotPresentAgain_WhenAlreadyPresentingAndNotStale() {
+        // given
+        let conversation = createOneOnOneConversation()
+        let voiceChannel = MockVoiceChannel(conversation: conversation)
+        let selfClient = MockUserClient()
+        selfClient.remoteIdentifier = "selfClient123"
+        MockUser.mockSelf().clients = Set([selfClient])
+
+        sut.isPresentingActiveCall = true
+        sut.isActiveCallShown = false
+
+        // when
+        sut.presentActiveCall(for: voiceChannel, animated: false)
+
+        // then
+        XCTAssertEqual(rootViewController.presentCallCount, 0)
+    }
+
+    func testThat_ItShowsCallTopOverlayAgain_AfterRootReplacement() {
+        // given
+        let conversation = createOneOnOneConversation()
+        var events: [String] = []
+        mockTopOverlayPresenter.presentTopOverlayAnimated_MockMethod = { _, _ in events.append("present") }
+        mockTopOverlayPresenter.dismissTopOverlayAnimated_MockMethod = { animated in
+            XCTAssertFalse(animated)
+            events.append("dismiss")
+        }
+        sut.showCallTopOverlay(for: conversation)
+        sut.showCallTopOverlay(for: conversation)
+
+        // when
+        sut.prepareForRootReplacement()
+        sut.showCallTopOverlay(for: conversation)
+
+        // then
+        XCTAssertEqual(events, ["present", "dismiss", "present"])
+    }
+
+    func testThat_ItKeepsRestoredCall_WhenEarlierDismissalCompletes() throws {
+        // given
+        let voiceChannel = MockVoiceChannel(conversation: createOneOnOneConversation())
+        let selfClient = MockUserClient()
+        selfClient.remoteIdentifier = "selfClient123"
+        MockUser.mockSelf().clients = Set([selfClient])
+        sut.presentActiveCall(for: voiceChannel, animated: false)
+        let dismissed = try XCTUnwrap(rootViewController.presentedCallViewController)
+        sut.prepareForRootReplacement()
+        sut.presentActiveCall(for: voiceChannel, animated: false)
+        let restored = try XCTUnwrap(rootViewController.presentedCallViewController)
+        var actionCount = 0
+        var completionCount = 0
+        sut.executeOrSchedulePostCallAction { completion in
+            actionCount += 1
+            completion()
+        }
+
+        // when
+        sut.activeCallDidDismiss(dismissed) { completionCount += 1 }
+
+        // then
+        XCTAssertTrue(sut.isActiveCallShown)
+        XCTAssertNotNil(sut.scheduledPostCallAction)
+        XCTAssertEqual(actionCount, 0)
+        XCTAssertEqual(completionCount, 1)
+
+        sut.activeCallDidDismiss(restored, completion: nil)
         XCTAssertFalse(sut.isActiveCallShown)
+        XCTAssertNil(sut.scheduledPostCallAction)
+        XCTAssertEqual(actionCount, 1)
+    }
+
+    func testThat_ItDeliversPostCallAction_AfterRootResetWithNoController() {
+        // given
+        sut.isActiveCallShown = true
+        var actionCount = 0
+        var completionCount = 0
+        sut.executeOrSchedulePostCallAction { completion in
+            actionCount += 1
+            completion()
+        }
+        sut.prepareForRootReplacement()
+
+        // when
+        sut.dismissActiveCall(animated: false) { completionCount += 1 }
+        sut.dismissActiveCall(animated: false, completion: nil)
+
+        // then
+        XCTAssertEqual(actionCount, 1)
+        XCTAssertEqual(completionCount, 1)
+        XCTAssertNil(sut.scheduledPostCallAction)
     }
 
     private func createOneOnOneConversation() -> ZMConversation {
@@ -114,5 +233,21 @@ final class ActiveCallRouterTests: ZMSnapshotTestCase {
         connection.status = .accepted
 
         return mockConversation
+    }
+}
+
+final class RootPresentSpyViewController: UIViewController {
+
+    var presentCallCount = 0
+    var presentedCallViewController: UIViewController?
+
+    override func present(
+        _ viewControllerToPresent: UIViewController,
+        animated flag: Bool,
+        completion: (() -> Void)? = nil
+    ) {
+        presentCallCount += 1
+        presentedCallViewController = viewControllerToPresent
+        completion?()
     }
 }
