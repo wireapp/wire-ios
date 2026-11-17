@@ -17,14 +17,18 @@
 //
 
 package import Combine
-import Foundation
+public import Foundation
 import WireLogging
-package import SwiftUI
+import SwiftUI
 import WireLocators
-package import WireMessagingDomain
+import WireMessagingDomain
 
 private typealias Strings = L10n.Localizable.Conversation.WireCells
 private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
+
+public extension Notification.Name {
+    static let wireDriveFeatureDidChange = Notification.Name("WireDriveFeatureDidChange")
+}
 
 /// View model for the `FilesView`.
 @MainActor
@@ -72,7 +76,6 @@ package final class FilesViewModel: ObservableObject {
     let useCases: UseCases
     let isBrowsing: Bool
     let isRecycleBin: Bool
-    let isGracePeriod: Bool
     let triggerReload: PassthroughSubject<Void, Never>
     let title: String?
 
@@ -83,7 +86,7 @@ package final class FilesViewModel: ObservableObject {
     @Published var showReadOnlyBanner: Bool = false
 
     var selfUserRole: WireDriveConversation.Participant.Role {
-        isGracePeriod ? .viewer : (selfUser?.role ?? .viewer)
+        selfUser?.role ?? .viewer
     }
 
     // MARK: Navigation and presentation
@@ -156,7 +159,6 @@ package final class FilesViewModel: ObservableObject {
         cellName: String? = nil,
         isBrowsing: Bool,
         isRecycleBin: Bool = false,
-        isGracePeriod: Bool = false,
         triggerReload: PassthroughSubject<Void, Never> = .init(),
         networkMonitor: NetworkMonitor = .shared
     ) {
@@ -168,7 +170,6 @@ package final class FilesViewModel: ObservableObject {
         self.cellName = cellName
         self.isBrowsing = isBrowsing
         self.isRecycleBin = isRecycleBin
-        self.isGracePeriod = isGracePeriod
         self.triggerReload = triggerReload
         self.networkMonitor = networkMonitor
         self.filesController = .init(networkMonitor: networkMonitor)
@@ -297,11 +298,13 @@ package final class FilesViewModel: ObservableObject {
     private func pullSelfUser() {
         selfUser = conversations.flatMap(\.participants).first(where: \.isSelfUser)
 
-        if let selfUser {
+        if selfUser != nil {
             let isDismissed = cellName
                 .map(ConversationViewerAccessBannerDismissalStore.shared.isDismissed(forCellName:)) ?? false
             showReadOnlyBanner = !isBrowsing && selfUserRole == .viewer && !isDismissed &&
                 !isRecycleBin
+        } else {
+            showReadOnlyBanner = false
         }
     }
 
@@ -316,9 +319,9 @@ package final class FilesViewModel: ObservableObject {
     // MARK: load files
 
     func reload(refreshing: Bool = false) async {
-        guard networkMonitor.currentStatus != nil else { return }
-
         enableMultipleSelection(false)
+        await pullConversations(then: pullSelfUser)
+        guard networkMonitor.currentStatus != nil else { return }
         await filesController.reload(refreshing: refreshing)
     }
 

@@ -330,6 +330,9 @@ final class ZClientViewController: UIViewController {
     }
 
     private func setupWireDriveFilesTab() {
+        // Refresh open conversation Files screens from the latest locally stored permissions.
+        NotificationCenter.default.post(name: .wireDriveFeatureDidChange, object: nil)
+
         guard userSession.isWireDriveEnabled else {
             sidebarViewController.showFiles = false
             mainTabBarController.filesUI = nil

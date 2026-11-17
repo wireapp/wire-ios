@@ -30,7 +30,6 @@ package struct RecycleBinContainer: View {
     private let nodesAPI: NodesAPI
     private let nodesRepository: any WireDriveNodesRepositoryProtocol
     private let isCellsStatePending: Bool
-    private let isGracePeriod: Bool
     private let localAssetStore: any WireDriveLocalAssetStoreProtocol
     private let localAssetRepository: any WireDriveLocalAssetRepositoryProtocol
     private let nodeCache: any WireDriveNodeCacheProtocol
@@ -43,7 +42,6 @@ package struct RecycleBinContainer: View {
         nodesAPI: NodesAPI,
         nodesRepository: any WireDriveNodesRepositoryProtocol,
         isCellsStatePending: Bool,
-        isGracePeriod: Bool = false,
         localAssetStore: any WireDriveLocalAssetStoreProtocol,
         localAssetRepository: any WireDriveLocalAssetRepositoryProtocol,
         nodeCache: any WireDriveNodeCacheProtocol,
@@ -55,7 +53,6 @@ package struct RecycleBinContainer: View {
         self.nodesAPI = nodesAPI
         self.nodesRepository = nodesRepository
         self.isCellsStatePending = isCellsStatePending
-        self.isGracePeriod = isGracePeriod
         self.localAssetStore = localAssetStore
         self.localAssetRepository = localAssetRepository
         self.nodeCache = nodeCache
@@ -97,8 +94,7 @@ package struct RecycleBinContainer: View {
             isCellsStatePending: isCellsStatePending,
             cellName: cellName,
             isBrowsing: false,
-            isRecycleBin: true,
-            isGracePeriod: isGracePeriod
+            isRecycleBin: true
         )
     }
 }

@@ -33,7 +33,6 @@ package struct FilesViewContainer: View {
     private let nodesAPI: NodesAPI
     private let nodesRepository: any WireDriveNodesRepositoryProtocol
     private let isCellsStatePending: Bool
-    private let isGracePeriod: Bool
     private let localAssetStore: any WireDriveLocalAssetStoreProtocol
     private let localAssetRepository: any WireDriveLocalAssetRepositoryProtocol
     private let nodeCache: any WireDriveNodeCacheProtocol
@@ -61,7 +60,6 @@ package struct FilesViewContainer: View {
         nodesAPI: NodesAPI,
         nodesRepository: any WireDriveNodesRepositoryProtocol,
         isCellsStatePending: Bool,
-        isGracePeriod: Bool,
         localAssetStore: any WireDriveLocalAssetStoreProtocol,
         localAssetRepository: any WireDriveLocalAssetRepositoryProtocol,
         nodeCache: any WireDriveNodeCacheProtocol,
@@ -74,7 +72,6 @@ package struct FilesViewContainer: View {
         self.nodesAPI = nodesAPI
         self.nodesRepository = nodesRepository
         self.isCellsStatePending = isCellsStatePending
-        self.isGracePeriod = isGracePeriod
         self.localAssetStore = localAssetStore
         self.localAssetRepository = localAssetRepository
         self.nodeCache = nodeCache
@@ -137,7 +134,6 @@ package struct FilesViewContainer: View {
                         nodesAPI: nodesAPI,
                         nodesRepository: nodesRepository,
                         isCellsStatePending: isCellsStatePending,
-                        isGracePeriod: isGracePeriod,
                         localAssetStore: localAssetStore,
                         localAssetRepository: localAssetRepository,
                         nodeCache: nodeCache,
@@ -173,7 +169,6 @@ package struct FilesViewContainer: View {
             cellName: cellName,
             isBrowsing: false,
             isRecycleBin: false,
-            isGracePeriod: isGracePeriod,
             triggerReload: triggerReloadFiles
         )
     }
