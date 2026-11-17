@@ -65,6 +65,53 @@ final class MeetingTimeZoneTests: WireUITestCase, MeetingJoinTesting {
     }
 
     @MainActor
+    func testTimeZoneAndRecurrenceAfterRestartAndFreshSync_TC_12034() async throws {
+        executionTimeAllowance = 600
+        let (host, _, _, _) = try await UserHelper.default.registerMeetingsTeam()
+        let fixtures = try await MeetingsTestHelper(user: host, apiVersion: .v18)
+        // Load the stored Berlin series before restarting the app.
+        let original = try await fixtures.create(
+            title: "TC12034 Berlin series",
+            start: instant(dayOffset: -28),
+            recurrence: MeetingRecurrence(frequency: .weekly, interval: 4, until: nil),
+            timeZoneIdentifier: berlin
+        )
+        XCTAssertEqual(original.timeZoneIdentifier, berlin)
+        XCTAssertEqual(original.recurrence?.frequency, .weekly)
+        XCTAssertEqual(original.recurrence?.interval, 4)
+        let nextStart = instant(hour: 10)
+        let initialPage = try launchMeetings(for: host, now: instant(dayOffset: -29), timeZone: berlin, apiVersion: 18)
+        try assertTime(original, on: initialPage, start: original.startTime, equals: "11:00 - 11:30")
+        let form = try initialPage.edit(original)
+        try form.assertRepeat(.everyFourWeeks)
+        _ = try form.cancel()
+
+        let afterRestart = try restartMeetings(now: instant(hour: 0), timeZone: newYork, apiVersion: 18)
+        try assertTime(original, on: afterRestart, start: nextStart, equals: "06:00 - 06:30")
+        let restartedForm = try afterRestart.edit(original, start: nextStart)
+        try restartedForm.assertRepeat(.everyFourWeeks)
+        _ = try restartedForm.cancel()
+
+        // A changed title confirms that the next launch fetches server changes.
+        app.terminate()
+        let title = "TC12034 fresh sync"
+        _ = try await fixtures.update(meeting: original, title: title)
+        let refreshedPage = try launchMeetings(for: host, now: instant(hour: 0), timeZone: newYork, apiVersion: 18)
+        let refreshed = try await storedMeeting(fixtures, id: original.id)
+        XCTAssertEqual(refreshed.title, title)
+        XCTAssertEqual(refreshed.timeZoneIdentifier, berlin)
+        XCTAssertEqual(refreshed.recurrence?.frequency, .weekly)
+        XCTAssertEqual(refreshed.recurrence?.interval, 4)
+        XCTAssertEqual(refreshed.startTime, original.startTime)
+        let row = try refreshedPage.showRow(refreshed, start: nextStart)
+        XCTAssertEqual(row.staticTexts[Locators.WireMeetings.MeetingRow.title.rawValue].label, title)
+        try assertTime(refreshed, on: refreshedPage, start: nextStart, equals: "06:00 - 06:30")
+        let refreshedForm = try refreshedPage.edit(refreshed, start: nextStart)
+        try refreshedForm.assertRepeat(.everyFourWeeks)
+        _ = try refreshedForm.cancel()
+    }
+
+    @MainActor
     private func restartMeetings(now: Date?, timeZone: String, apiVersion: Int = 18) throws -> MeetingsPage {
         app.terminate()
         uiTestConfig.meetingsDate = now

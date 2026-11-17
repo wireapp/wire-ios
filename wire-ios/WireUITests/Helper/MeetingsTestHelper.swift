@@ -58,13 +58,14 @@ final class MeetingsTestHelper {
         title: String,
         start: Date,
         duration: TimeInterval = 1800,
-        recurrence: MeetingRecurrence? = nil
+        recurrence: MeetingRecurrence? = nil,
+        timeZoneIdentifier: String = TimeZone.current.identifier
     ) async throws -> MeetingResponse {
         try await api.createMeeting(parameters: CreateMeetingParameters(
             title: title,
             startTime: start,
             endTime: start.addingTimeInterval(duration),
-            timeZoneIdentifier: TimeZone.current.identifier,
+            timeZoneIdentifier: timeZoneIdentifier,
             recurrence: recurrence
         ))
     }

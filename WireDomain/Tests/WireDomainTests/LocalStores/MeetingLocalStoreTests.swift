@@ -103,7 +103,7 @@ final class MeetingLocalStoreTests: XCTestCase {
         }
     }
 
-    func testMeetingTimezoneAndRecurrence_PersistAcrossStackReloadAndMeetingSync_TC_12034() async throws {
+    func testMeetingTimezoneAndRecurrence_PersistAcrossStackReloadAndMeetingSync() async throws {
         // Verify the stored Berlin time zone through reload and full sync.
         try await assertMeetingTimezoneAndRecurrencePersistAcrossReloadAndSync(timeZoneIdentifier: "Europe/Berlin")
     }
