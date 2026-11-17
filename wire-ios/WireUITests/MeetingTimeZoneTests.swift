@@ -355,6 +355,59 @@ final class MeetingTimeZoneTests: WireUITestCase, MeetingJoinTesting {
     }
 
     @MainActor
+    func testPreviousLocalDateAndFormControls_TC_12040() async throws {
+        executionTimeAllowance = 600
+        let (host, _, _, _) = try await UserHelper.default.registerMeetingsTeam()
+        let fixtures = try await MeetingsTestHelper(user: host, apiVersion: .v18)
+        let start = instant(dayOffset: 7, hour: 0, minute: 30)
+        let original = try await fixtures.create(
+            title: "TC12040 previous date", start: start, duration: 3600, timeZoneIdentifier: berlin
+        )
+        // The same UTC instant falls on the previous local date in New York.
+        let page = try launchMeetings(
+            for: host, now: start.addingTimeInterval(-900), timeZone: newYork, apiVersion: 18
+        )
+        try assertTime(original, on: page, equals: "20:30 - 21:30")
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "en_GB")
+        formatter.timeZone = TimeZone(identifier: newYork)!
+        formatter.setLocalizedDateFormatFromTemplate("EEEE MMMM d")
+        XCTAssertEqual(page.dayHeaders.firstMatch.label, "Today (\(formatter.string(from: start)))")
+        // Edit and Schedule show local controls without time-zone UI.
+        let edit = try page.edit(original)
+        edit.assertDateTimes(
+            start: start,
+            end: start.addingTimeInterval(3600),
+            timeZone: TimeZone(identifier: newYork)!
+        )
+        XCTAssertTrue(edit.startDateButton.exists)
+        XCTAssertTrue(edit.startTimeButton.exists)
+        XCTAssertTrue(edit.endTimeButton.exists)
+        XCTAssertTrue(edit.repeatButton.exists)
+        XCTAssertFalse(app.buttons.matching(NSPredicate(format: "label CONTAINS[cd] %@", "time zone")).firstMatch
+            .exists)
+        XCTAssertFalse(app.staticTexts.matching(NSPredicate(format: "label CONTAINS[cd] %@", "time zone")).firstMatch
+            .exists)
+        _ = try edit.cancel()
+
+        let schedule = try page.schedule()
+        schedule.assertDateTimes(
+            start: start,
+            end: start.addingTimeInterval(3600),
+            timeZone: TimeZone(identifier: newYork)!
+        )
+        XCTAssertTrue(schedule.startDateButton.exists)
+        XCTAssertTrue(schedule.startTimeButton.exists)
+        XCTAssertTrue(schedule.endTimeButton.exists)
+        XCTAssertTrue(schedule.repeatButton.exists)
+        XCTAssertFalse(app.buttons.matching(NSPredicate(format: "label CONTAINS[cd] %@", "time zone")).firstMatch
+            .exists)
+        XCTAssertFalse(app.staticTexts.matching(NSPredicate(format: "label CONTAINS[cd] %@", "time zone")).firstMatch
+            .exists)
+        _ = try schedule.cancel()
+    }
+
+    @MainActor
     private func restartMeetings(now: Date?, timeZone: String, apiVersion: Int = 18) throws -> MeetingsPage {
         app.terminate()
         uiTestConfig.meetingsDate = now

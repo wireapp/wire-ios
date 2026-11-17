@@ -957,7 +957,7 @@ struct MeetingsViewModelTests {
     }
 
     @Test("Meeting dates and times use the device calendar across a local date boundary")
-    func localMeetingDisplay_TC_12040() throws {
+    func localMeetingDisplay() throws {
         // Display a Berlin meeting in New York, where it is still the previous day.
         let start = try Date.ISO8601FormatStyle().parse("2026-10-26T00:30:00Z")
         let meeting = Meeting.fixture(
