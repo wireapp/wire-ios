@@ -564,7 +564,7 @@ struct MeetingRepositoryTests {
     // MARK: - updateMeeting
 
     @Test
-    func updateMeetingTitleOnlySendsCurrentTimeZone_TC_12038() async throws {
+    func updateMeetingTitleOnlySendsCurrentTimeZone() async throws {
         // Submit the existing dates and recurrence with a new title.
         meetingsAPI.updateMeetingIdParameters_MockValue = Scaffolding.meetingResponse
         _ = try await sut.updateMeeting(

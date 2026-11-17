@@ -281,6 +281,40 @@ final class MeetingTimeZoneTests: WireUITestCase, MeetingJoinTesting {
     }
 
     @MainActor
+    func testTitleEditUsesEditorsTimeZone_TC_12038() async throws {
+        executionTimeAllowance = 600
+        let (host, _, _, _) = try await UserHelper.default.registerMeetingsTeam()
+        let fixtures = try await MeetingsTestHelper(user: host, apiVersion: .v18)
+        let original = try await fixtures.create(
+            title: "TC12038 Berlin",
+            start: instant(dayOffset: -28),
+            duration: 3600,
+            recurrence: MeetingRecurrence(frequency: .weekly, interval: 4, until: nil),
+            timeZoneIdentifier: berlin
+        )
+        let page = try launchMeetings(for: host, now: instant(dayOffset: -29), timeZone: newYork, apiVersion: 18)
+        // Before the edit, Berlin's DST transition moves this occurrence to 10:00 UTC.
+        try assertTime(original, on: page, start: instant(hour: 10), equals: "06:00 - 07:00")
+        try page.scrollToTop(first: original)
+        let form = try page.edit(original)
+        // WPB-28918 also sends the device zone for a title-only Save.
+        form.replaceTitle(with: "TC12038 New York")
+        _ = try form.save()
+
+        let updated = try await storedMeeting(fixtures, id: original.id)
+        XCTAssertEqual(updated.id, original.id)
+        XCTAssertEqual(updated.title, "TC12038 New York")
+        XCTAssertEqual(updated.startTime, original.startTime)
+        XCTAssertEqual(updated.endTime, original.endTime)
+        XCTAssertEqual(updated.timeZoneIdentifier, newYork)
+        XCTAssertEqual(updated.recurrence?.frequency, .weekly)
+        XCTAssertEqual(updated.recurrence?.interval, 4)
+        XCTAssertNil(updated.recurrence?.until)
+        // The same future occurrence now follows New York's calendar.
+        try assertTime(updated, on: page, start: instant(), equals: "05:00 - 06:00")
+    }
+
+    @MainActor
     private func restartMeetings(now: Date?, timeZone: String, apiVersion: Int = 18) throws -> MeetingsPage {
         app.terminate()
         uiTestConfig.meetingsDate = now
