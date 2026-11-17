@@ -128,6 +128,57 @@ struct FetchUpcomingMeetingsUseCaseTests {
         #expect(result.meetings.count == 10)
     }
 
+    @Test("daily and weekly recurrence options keep 11:00 Berlin time across DST")
+    func recurrenceOptionsKeepBerlinLocalTimeAcrossDST_TC_12035() throws {
+        // Expand each recurrence option across the Berlin DST transition.
+        let options: [(frequency: MeetingRecurrence.Frequency, interval: Int, start: String, expected: [String])] = [
+            (.daily, 1, "2026-10-24T09:00:00Z", [
+                "2026-10-24T09:00:00Z", "2026-10-25T10:00:00Z", "2026-10-26T10:00:00Z"
+            ]),
+            (.weekly, 1, "2026-10-18T09:00:00Z", [
+                "2026-10-18T09:00:00Z", "2026-10-25T10:00:00Z", "2026-11-01T10:00:00Z"
+            ]),
+            (.weekly, 2, "2026-10-11T09:00:00Z", [
+                "2026-10-11T09:00:00Z", "2026-10-25T10:00:00Z", "2026-11-08T10:00:00Z"
+            ]),
+            (.weekly, 4, "2026-09-27T09:00:00Z", [
+                "2026-09-27T09:00:00Z", "2026-10-25T10:00:00Z", "2026-11-22T10:00:00Z"
+            ])
+        ]
+        let berlin = try #require(TimeZone(identifier: "Europe/Berlin"))
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = berlin
+        let lowerBound = try date("2026-10-25T09:00:00Z")
+
+        for option in options {
+            let meeting = Meeting.fixture(
+                title: "\(option.frequency) interval \(option.interval)",
+                start: try date(option.start),
+                recurrence: MeetingRecurrence(frequency: option.frequency, interval: option.interval),
+                timeZoneIdentifier: berlin.identifier
+            )
+            let expectedStarts = try option.expected.map(date)
+
+            let occurrences = MeetingOccurrencePaginator().occurrences(
+                for: [meeting],
+                startingAt: try date("2026-09-27T00:00:00Z"),
+                offset: 0,
+                limit: expectedStarts.count
+            )
+            #expect(occurrences.map(\.start) == expectedStarts)
+            #expect(occurrences.allSatisfy { calendar.component(.hour, from: $0.start) == 11 })
+
+            // Query after the DST transition to also check the fast-forward path.
+            let afterTransition = MeetingOccurrencePaginator().occurrences(
+                for: [meeting],
+                startingAt: lowerBound,
+                offset: 0,
+                limit: 2
+            )
+            #expect(afterTransition.map(\.start) == Array(expectedStarts.filter { $0 >= lowerBound }.prefix(2)))
+        }
+    }
+
     @Test("invoke returns meetings from the start of today, including meetings earlier today")
     func invoke_ReturnsMeetingsFromToday() async throws {
         // Given
@@ -414,6 +465,10 @@ struct FetchUpcomingMeetingsUseCaseTests {
         #expect(result.hasMore)
     }
 
+    private func date(_ string: String) throws -> Date {
+        try Date.ISO8601FormatStyle().parse(string)
+    }
+
 }
 
 private extension Meeting {
@@ -423,7 +478,8 @@ private extension Meeting {
         title: String,
         start: Date,
         duration: TimeInterval = 3600,
-        recurrence: MeetingRecurrence? = nil
+        recurrence: MeetingRecurrence? = nil,
+        timeZoneIdentifier: String? = TimeZone.current.identifier
     ) -> Meeting {
         Meeting(
             id: id,
@@ -431,7 +487,7 @@ private extension Meeting {
             start: start,
             end: start.addingTimeInterval(duration),
             recurrence: recurrence,
-            timeZoneIdentifier: TimeZone.current.identifier,
+            timeZoneIdentifier: timeZoneIdentifier,
             conversationID: QualifiedID(id: UUID(), domain: ""),
             creatorID: QualifiedID(id: UUID(), domain: "")
         )
