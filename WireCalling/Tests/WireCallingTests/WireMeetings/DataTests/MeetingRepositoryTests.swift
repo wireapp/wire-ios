@@ -695,7 +695,7 @@ struct MeetingRepositoryTests {
         "createMeeting sends the current time zone",
         arguments: [WireCallingDomain.MeetingType.scheduled, .immediate]
     )
-    func createMeetingSendsCurrentTimeZone_TC_12033(type: WireCallingDomain.MeetingType) async throws {
+    func createMeetingSendsCurrentTimeZone(type: WireCallingDomain.MeetingType) async throws {
         // Mock
 
         let expectedTimeZone = TimeZone.current.identifier

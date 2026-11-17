@@ -37,7 +37,9 @@ protocol MeetingJoinTesting where Self: WireUITestCase {}
 extension MeetingJoinTesting {
 
     @MainActor
-    func launchMeetings(for user: UserInfo, now: Date? = nil) throws -> MeetingsPage {
+    func launchMeetings(
+        for user: UserInfo, now: Date? = nil, timeZone: String? = nil, apiVersion: Int? = nil
+    ) throws -> MeetingsPage {
         let passwordMonitor = addUIInterruptionMonitor(withDescription: "Sign-in password sheet") { alert in
             let title = Locators.FirstTimePage.savePasswordSheet.rawValue
             let notNow = alert.buttons[Locators.FirstTimePage.notNowOption.rawValue].firstMatch
@@ -49,7 +51,9 @@ extension MeetingJoinTesting {
         app.terminate()
         uiTestConfig.meetingsDate = now
         app.launchEnvironment[UITestConfig.environmentKey] = uiTestConfig.encode()
+        app.launchEnvironment["TZ"] = timeZone
         app.launchArguments = ["-resetData", "--useEnvStaging", "-AppleLanguages", "(en)", "-AppleLocale", "en_GB"]
+        if let apiVersion { app.launchArguments.append("--preferred-api-version=\(apiVersion)") }
         app.setDeveloperFlags([.useWireAuthentication: true])
         app.launch()
 

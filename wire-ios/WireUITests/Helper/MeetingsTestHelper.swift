@@ -25,7 +25,7 @@ final class MeetingsTestHelper {
     let api: any MeetingsAPI
     let conversationsAPI: any ConversationsAPI
 
-    init(user: UserInfo) async throws {
+    init(user: UserInfo, apiVersion: APIVersion? = nil) async throws {
         let userHelper = UserHelper.default
         let authenticationManager = MockAuthManager()
         authenticationManager.accessToken = try await userHelper.fetchAccessToken(
@@ -41,7 +41,7 @@ final class MeetingsTestHelper {
         )
         self.networkStack = networkStack
         self.api = MeetingsAPIBuilder(apiService: self.networkStack.apiService)
-            .makeAPI(for: userHelper.apiVersion)
+            .makeAPI(for: apiVersion ?? userHelper.apiVersion)
         self.conversationsAPI = ConversationsAPIBuilder(apiService: self.networkStack.apiService)
             .makeAPI(for: userHelper.apiVersion)
     }
