@@ -129,7 +129,7 @@ struct FetchUpcomingMeetingsUseCaseTests {
     }
 
     @Test("daily and weekly recurrence options keep 11:00 Berlin time across DST")
-    func recurrenceOptionsKeepBerlinLocalTimeAcrossDST_TC_12035() throws {
+    func recurrenceOptionsKeepBerlinLocalTimeAcrossDST() throws {
         // Expand each recurrence option across the Berlin DST transition.
         let options: [(frequency: MeetingRecurrence.Frequency, interval: Int, start: String, expected: [String])] = [
             (.daily, 1, "2026-10-24T09:00:00Z", [

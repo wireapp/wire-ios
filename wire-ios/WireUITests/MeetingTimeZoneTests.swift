@@ -112,6 +112,48 @@ final class MeetingTimeZoneTests: WireUITestCase, MeetingJoinTesting {
     }
 
     @MainActor
+    func testRecurrencesKeepBerlinTimeAcrossDST_TC_12035() async throws {
+        executionTimeAllowance = 1200
+        let (host, _, _, _) = try await UserHelper.default.registerMeetingsTeam()
+        let fixtures = try await MeetingsTestHelper(user: host, apiVersion: .v18)
+        let now = instant(dayOffset: -28, hour: 8)
+        let page = try launchMeetings(for: host, now: now, timeZone: berlin, apiVersion: 18)
+        var series: [MeetingResponse] = []
+        let options: [(MeetingFormPage.RepeatOption, MeetingFrequency, Int)] = [
+            (.daily, .daily, 1),
+            (.weekly, .weekly, 1),
+            (.everyTwoWeeks, .weekly, 2),
+            (.everyFourWeeks, .weekly, 4)
+        ]
+        // Save all four recurrence options at 11:00 through the Schedule form.
+        for (choice, frequency, interval) in options {
+            let title = "TC12035 \(frequency) \(interval)"
+            let form = try page.schedule()
+            form.replaceTitle(with: title)
+            try form.selectTime(start: true, hour: 11, minute: 0)
+            try form.selectTime(start: false, hour: 12, minute: 0)
+            try form.selectRepeat(choice)
+            _ = try form.save()
+
+            let meetings = try await fixtures.list()
+            let meeting = try XCTUnwrap(meetings.first { $0.title == title })
+            XCTAssertEqual(meetings.filter { $0.title == title }.count, 1)
+            XCTAssertEqual(meeting.timeZoneIdentifier, berlin)
+            XCTAssertEqual(meeting.startTime, instant(dayOffset: -28, hour: 9))
+            XCTAssertEqual(meeting.endTime, instant(dayOffset: -28, hour: 10))
+            XCTAssertEqual(meeting.recurrence?.frequency, frequency)
+            XCTAssertEqual(meeting.recurrence?.interval, interval)
+            try assertTime(meeting, on: page, start: meeting.startTime, equals: "11:00 - 12:00")
+            series.append(meeting)
+        }
+        // Reload after Berlin leaves DST and check each UTC-shifted occurrence.
+        let afterDST = try restartMeetings(now: instant(hour: 0), timeZone: berlin)
+        for meeting in series {
+            try assertTime(meeting, on: afterDST, start: instant(hour: 10), equals: "11:00 - 12:00")
+        }
+    }
+
+    @MainActor
     private func restartMeetings(now: Date?, timeZone: String, apiVersion: Int = 18) throws -> MeetingsPage {
         app.terminate()
         uiTestConfig.meetingsDate = now
