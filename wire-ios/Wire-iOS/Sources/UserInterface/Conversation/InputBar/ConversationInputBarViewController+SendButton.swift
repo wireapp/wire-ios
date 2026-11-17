@@ -45,7 +45,7 @@ extension ConversationInputBarViewController {
             editingMessage = nil
             updateWritingState(animated: true)
         } else {
-            if !attachments.isEmpty {
+            if !attachments.isEmpty, canUploadAttachments {
                 do {
                     try await publishDraftsUseCase.invoke(containsText: !text.isEmpty)
                     await clearPublishedDraftsUseCase.invoke()

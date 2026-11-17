@@ -202,15 +202,20 @@ extension ConversationLocalStore: @retroactive WireDriveConversationsLocalStoreP
         let driveEnabledConversations: [ZMConversation] = await fetchDriveConversations()
         let isDriveFeatureEnabled = await isDriveEnabled
 
-        return await context.perform {
-            driveEnabledConversations.reduce(into: [WireDriveConversation]()) { result, conversation in
+        return await context.perform { [self] in
+            let selfUserTeamID = ZMUser.selfUser(in: context).teamIdentifier
+            return driveEnabledConversations.reduce(into: [WireDriveConversation]()) { result, conversation in
                 let isGracePeriod = !isDriveFeatureEnabled && conversation.isWireDriveEnabled
 
                 if let name = conversation.name {
                     let participants: [WireDriveParticipant] = conversation.participants
                         .compactMap { item -> WireDriveParticipant? in
                             guard let id = item.remoteIdentifier, let domain = item.domain else { return nil }
-                            let role: WireDriveParticipant.Role = !isGracePeriod && conversation.matchesTeam(with: item)
+                            let isAffectedByGracePeriod = isGracePeriod && (
+                                item.isSelfUser || (selfUserTeamID != nil && item.teamIdentifier == selfUserTeamID)
+                            )
+                            let role: WireDriveParticipant.Role = !isAffectedByGracePeriod && conversation
+                                .matchesTeam(with: item)
                                 ? .editor : .viewer
 
                             let userType: WireDriveParticipant.UserType = if item.isFederated {

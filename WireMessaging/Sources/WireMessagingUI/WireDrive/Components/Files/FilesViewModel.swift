@@ -318,9 +318,13 @@ package final class FilesViewModel: ObservableObject {
 
     // MARK: load files
 
+    func refreshPermissions() async {
+        await pullConversations(then: pullSelfUser)
+    }
+
     func reload(refreshing: Bool = false) async {
         enableMultipleSelection(false)
-        await pullConversations(then: pullSelfUser)
+        await refreshPermissions()
         guard networkMonitor.currentStatus != nil else { return }
         await filesController.reload(refreshing: refreshing)
     }

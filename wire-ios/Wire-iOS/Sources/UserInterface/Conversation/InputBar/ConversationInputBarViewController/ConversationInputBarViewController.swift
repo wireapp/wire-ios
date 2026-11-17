@@ -50,7 +50,6 @@ final class ConversationInputBarViewController: UIViewController,
 
     private let classificationProvider: (any SecurityClassificationProviding)?
     private let networkStatusObservable: any NetworkStatusObservable
-    private var driveFeatureSubscription: AnyCancellable?
 
     private(set) var inputController: UIViewController? {
         willSet {
@@ -175,6 +174,10 @@ final class ConversationInputBarViewController: UIViewController,
 
     let videoButton: IconButton = .init()
 
+    // MARK: - Drive properties
+
+    private var driveFeatureSubscription: AnyCancellable?
+
     private var showDriveViewerBanner: Bool {
         isDriveViewer
     }
@@ -190,6 +193,12 @@ final class ConversationInputBarViewController: UIViewController,
         let isGuest = conversation.isWireDriveEnabled && !conversation.isTeamConversation
 
         return isGracePeriod || isGuest
+    }
+
+    var canUploadAttachments: Bool { !isDriveViewer }
+
+    func useWireDrive() -> Bool {
+        userSession.isWireDriveEnabled && conversation.isWireDriveEnabled
     }
 
     // MARK: subviews
@@ -1347,12 +1356,9 @@ extension ConversationInputBarViewController: UIGestureRecognizerDelegate {
         ])
     }
 
-    func useWireDrive() -> Bool {
-        userSession.isWireDriveEnabled && conversation.isWireDriveEnabled
-    }
-
     private func observeDraftAttachments() {
-        guard useWireDrive() else { return }
+        // Keep observing local drafts so uploads work immediately when Drive is re-enabled.
+        guard conversation.isWireDriveEnabled else { return }
 
         Task.detached { [weak self, observeDraftsUseCase, attachmentsCarouselViewModel] in
             let observed = await observeDraftsUseCase.invoke()
