@@ -232,6 +232,55 @@ final class MeetingTimeZoneTests: WireUITestCase, MeetingJoinTesting {
     }
 
     @MainActor
+    func testLegacyMeetingUsesBerlinFallbackAfterRestartAndFreshSync_TC_12037() async throws {
+        executionTimeAllowance = 600
+        let (host, _, _, _) = try await UserHelper.default.registerMeetingsTeam()
+        let legacy = try await MeetingsTestHelper(user: host, apiVersion: .v16)
+        let stable = try await MeetingsTestHelper(user: host, apiVersion: .v18)
+        // API v16 omits tzid while the server stores the legacy Berlin zone.
+        let original = try await legacy.create(
+            title: "TC12037 legacy daily",
+            start: instant(dayOffset: -1),
+            recurrence: MeetingRecurrence(frequency: .daily, interval: 1, until: nil),
+            timeZoneIdentifier: berlin
+        )
+        XCTAssertNil(original.timeZoneIdentifier)
+        XCTAssertEqual(original.recurrence?.frequency, .daily)
+        XCTAssertEqual(original.recurrence?.interval, 1)
+        let legacyReadback = try await storedMeeting(legacy, id: original.id)
+        XCTAssertNil(legacyReadback.timeZoneIdentifier)
+        let stableReadback = try await storedMeeting(stable, id: original.id)
+        XCTAssertEqual(stableReadback.timeZoneIdentifier, berlin)
+
+        let beforeDST = instant(dayOffset: -1)
+        let afterDST = instant(hour: 10)
+        let initialPage = try launchMeetings(
+            for: host, now: instant(dayOffset: -2), timeZone: newYork, apiVersion: 16
+        )
+        try assertTime(original, on: initialPage, start: beforeDST, equals: "05:00 - 05:30")
+        try assertTime(original, on: initialPage, start: afterDST, equals: "06:00 - 06:30")
+
+        let restartedPage = try restartMeetings(now: instant(hour: 0), timeZone: newYork, apiVersion: 16)
+        try assertTime(original, on: restartedPage, start: afterDST, equals: "06:00 - 06:30")
+        let restartedForm = try restartedPage.edit(original, start: afterDST)
+        try restartedForm.assertRepeat(.daily)
+        _ = try restartedForm.cancel()
+
+        let syncedPage = try launchMeetings(for: host, now: instant(hour: 0), timeZone: newYork, apiVersion: 16)
+        let syncedLegacy = try await storedMeeting(legacy, id: original.id)
+        let syncedStable = try await storedMeeting(stable, id: original.id)
+        XCTAssertNil(syncedLegacy.timeZoneIdentifier)
+        XCTAssertEqual(syncedStable.timeZoneIdentifier, berlin)
+        XCTAssertEqual(syncedLegacy.recurrence?.frequency, .daily)
+        XCTAssertEqual(syncedLegacy.recurrence?.interval, 1)
+        XCTAssertEqual(syncedLegacy.startTime, original.startTime)
+        try assertTime(syncedLegacy, on: syncedPage, start: afterDST, equals: "06:00 - 06:30")
+        let syncedForm = try syncedPage.edit(syncedLegacy, start: afterDST)
+        try syncedForm.assertRepeat(.daily)
+        _ = try syncedForm.cancel()
+    }
+
+    @MainActor
     private func restartMeetings(now: Date?, timeZone: String, apiVersion: Int = 18) throws -> MeetingsPage {
         app.terminate()
         uiTestConfig.meetingsDate = now

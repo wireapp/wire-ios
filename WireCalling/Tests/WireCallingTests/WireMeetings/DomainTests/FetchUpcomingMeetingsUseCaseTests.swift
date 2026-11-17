@@ -180,7 +180,7 @@ struct FetchUpcomingMeetingsUseCaseTests {
     }
 
     @Test("recurrence with no time zone uses the Berlin fallback across DST")
-    func recurrenceWithoutTimeZoneUsesBerlinFallbackAcrossDST_TC_12037() throws {
+    func recurrenceWithoutTimeZoneUsesBerlinFallbackAcrossDST() throws {
         let meeting = Meeting.fixture(
             title: "Legacy daily meeting",
             start: try date("2026-10-24T09:00:00Z"),
