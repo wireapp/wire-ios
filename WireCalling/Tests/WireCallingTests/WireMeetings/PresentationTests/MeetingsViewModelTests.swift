@@ -956,6 +956,32 @@ struct MeetingsViewModelTests {
         }
     }
 
+    @Test("Meeting dates and times use the device calendar across a local date boundary")
+    func localMeetingDisplay_TC_12040() throws {
+        // Display a Berlin meeting in New York, where it is still the previous day.
+        let start = try Date.ISO8601FormatStyle().parse("2026-10-26T00:30:00Z")
+        let meeting = Meeting.fixture(
+            title: "Berlin meeting", start: start, timeZoneIdentifier: "Europe/Berlin"
+        )
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = try #require(TimeZone(identifier: "America/New_York"))
+        let formatter = MeetingsFormatter(calendar: calendar, locale: Locale(identifier: "en_GB"))
+        #expect(formatter.date(meeting.start) == "25/10/2026")
+        #expect(formatter.timeRange(from: meeting.start, to: meeting.end) == "20:30 - 21:30")
+
+        // Opening Edit keeps the canonical dates in the form model.
+        let form = MeetingFormViewModel(
+            mode: .edit(meeting),
+            searchMembersUseCase: SearchMembersUseCaseProtocolMock(),
+            createMeetingUseCase: CreateMeetingUseCaseProtocolMock(),
+            updateMeetingUseCase: UpdateMeetingUseCaseProtocolMock(),
+            currentDateProvider: mockDateProvider
+        )
+        #expect(form.startDate == meeting.start)
+        #expect(form.endDate == meeting.end)
+        #expect(meeting.timeZoneIdentifier == "Europe/Berlin")
+    }
+
     @Test("formatTimeRange delegates to the formatter")
     func formatTimeRange() {
         let meeting = Meeting.fixture(title: "Meeting", start: mockDateProvider.now)
