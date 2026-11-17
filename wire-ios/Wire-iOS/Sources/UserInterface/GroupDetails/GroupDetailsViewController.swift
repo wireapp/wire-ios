@@ -693,11 +693,14 @@ extension GroupDetailsViewController: GroupDetailsSectionControllerDelegate, Gro
     }
 
     private func getWireDriveParticipants(from conversation: ZMConversation) -> [WireDriveParticipant] {
-        conversation.participants
+        let isGracePeriod = !userSession.isWireDriveEnabled && conversation.isWireDriveEnabled
+
+        return conversation.participants
             .compactMap { item -> WireDriveParticipant? in
                 guard let id = item.remoteIdentifier, let domain = item.domain else { return nil }
 
-                let role: WireDriveParticipant.Role = conversation.matchesTeam(with: item) ? .editor : .viewer
+                let role: WireDriveParticipant.Role = !isGracePeriod && conversation.matchesTeam(with: item)
+                    ? .editor : .viewer
 
                 let userStatus = userStatuses[item.remoteIdentifier] ?? UserStatus()
 
