@@ -239,6 +239,7 @@ public extension WireMessagingFactory {
     @MainActor
     func makeFilesView(
         cellName: String,
+        isGracePeriod: Bool,
         isCellsStatePending: Bool,
         accentColorProvider: @escaping () -> WireAccentColor
     ) -> UIViewController {
@@ -248,6 +249,7 @@ public extension WireMessagingFactory {
                 nodesAPI: nodesAPI,
                 nodesRepository: nodesAPI,
                 isCellsStatePending: isCellsStatePending,
+                isGracePeriod: isGracePeriod,
                 localAssetStore: localAssetStore,
                 localAssetRepository: localAssetRepository,
                 nodeCache: nodeCache,

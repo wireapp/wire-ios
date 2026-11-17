@@ -200,6 +200,7 @@ extension ConversationLocalStore: @retroactive WireDriveConversationsLocalStoreP
     @unchecked @retroactive Sendable {
     public func fetchDriveConversations() async -> [WireMessagingDomain.WireDriveConversation] {
         let driveEnabledConversations: [ZMConversation] = await fetchDriveConversations()
+        let isDriveFeatureEnabled = await isDriveEnabled
 
         return await context.perform {
             driveEnabledConversations.reduce(into: [WireDriveConversation]()) { result, conversation in
@@ -207,8 +208,13 @@ extension ConversationLocalStore: @retroactive WireDriveConversationsLocalStoreP
                     let participants: [WireDriveParticipant] = conversation.participants
                         .compactMap { item -> WireDriveParticipant? in
                             guard let id = item.remoteIdentifier, let domain = item.domain else { return nil }
-                            let role: WireDriveParticipant.Role = conversation
-                                .matchesTeam(with: item) ? .editor : .viewer
+                            let isGracePeriod = !isDriveFeatureEnabled && conversation.isWireDriveEnabled
+                            let role: WireDriveParticipant.Role = if isGracePeriod {
+                                .viewer
+                            } else {
+                                conversation
+                                    .matchesTeam(with: item) ? .editor : .viewer
+                            }
 
                             let userType: WireDriveParticipant.UserType = if item.isFederated {
                                 .federated
@@ -244,6 +250,15 @@ extension ConversationLocalStore: @retroactive WireDriveConversationsLocalStoreP
 
                     result.append(driveConversation)
                 }
+            }
+        }
+    }
+
+    private var isDriveEnabled: Bool {
+        get async {
+            await context.perform { [self] in
+                let feature = Feature.fetch(name: .cells, context: context)
+                return feature?.status == .enabled
             }
         }
     }

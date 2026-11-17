@@ -174,14 +174,20 @@ final class ConversationInputBarViewController: UIViewController,
     let videoButton: IconButton = .init()
 
     private var showDriveViewerBanner: Bool {
-        conversation.isWireDriveEnabled && userSession.selfUser
-            .isGuest(in: conversation)
+        isDriveViewer
     }
 
     private var shouldShowDriveViewerBanner: Bool {
         showDriveViewerBanner &&
             !ConversationViewerAccessBannerDismissalStore.shared
             .isDismissed(forCellName: conversation.wireDriveCellName)
+    }
+
+    private var isDriveViewer: Bool {
+        let isGracePeriod = !userSession.isWireDriveEnabled && conversation.isWireDriveEnabled
+        let isGuest = conversation.isWireDriveEnabled && !conversation.isTeamConversation
+
+        return isGracePeriod || isGuest
     }
 
     // MARK: subviews
@@ -419,7 +425,7 @@ final class ConversationInputBarViewController: UIViewController,
             self.typingObserverToken = conversation.addTypingObserver(self)
         }
 
-        if conversation.isWireDriveEnabled, !conversation.isTeamConversation {
+        if isDriveViewer {
             [photoButton, videoButton, sketchButton, uploadFileButton].forEach {
                 $0.isEnabled = false
                 $0.setBackgroundImageColor(

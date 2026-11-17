@@ -2003,20 +2003,20 @@ class MockWireMessagingFactoryProtocol: WireMessagingFactoryProtocol {
 
     // MARK: - makeFilesView
 
-    var makeFilesViewCellNameIsCellsStatePendingAccentColorProvider_Invocations: [(cellName: String, isCellsStatePending: Bool, accentColorProvider: () -> WireAccentColor)] = []
-    var makeFilesViewCellNameIsCellsStatePendingAccentColorProvider_MockMethod: ((String, Bool, @escaping () -> WireAccentColor) -> UIViewController)?
-    var makeFilesViewCellNameIsCellsStatePendingAccentColorProvider_MockValue: UIViewController?
+    var makeFilesViewCellNameIsGracePeriodIsCellsStatePendingAccentColorProvider_Invocations: [(cellName: String, isGracePeriod: Bool, isCellsStatePending: Bool, accentColorProvider: () -> WireAccentColor)] = []
+    var makeFilesViewCellNameIsGracePeriodIsCellsStatePendingAccentColorProvider_MockMethod: ((String, Bool, Bool, @escaping () -> WireAccentColor) -> UIViewController)?
+    var makeFilesViewCellNameIsGracePeriodIsCellsStatePendingAccentColorProvider_MockValue: UIViewController?
 
     @MainActor
-    func makeFilesView(cellName: String, isCellsStatePending: Bool, accentColorProvider: @escaping () -> WireAccentColor) -> UIViewController {
-        makeFilesViewCellNameIsCellsStatePendingAccentColorProvider_Invocations.append((cellName: cellName, isCellsStatePending: isCellsStatePending, accentColorProvider: accentColorProvider))
+    func makeFilesView(cellName: String, isGracePeriod: Bool, isCellsStatePending: Bool, accentColorProvider: @escaping () -> WireAccentColor) -> UIViewController {
+        makeFilesViewCellNameIsGracePeriodIsCellsStatePendingAccentColorProvider_Invocations.append((cellName: cellName, isGracePeriod: isGracePeriod, isCellsStatePending: isCellsStatePending, accentColorProvider: accentColorProvider))
 
-        if let mock = makeFilesViewCellNameIsCellsStatePendingAccentColorProvider_MockMethod {
-            return mock(cellName, isCellsStatePending, accentColorProvider)
-        } else if let mock = makeFilesViewCellNameIsCellsStatePendingAccentColorProvider_MockValue {
+        if let mock = makeFilesViewCellNameIsGracePeriodIsCellsStatePendingAccentColorProvider_MockMethod {
+            return mock(cellName, isGracePeriod, isCellsStatePending, accentColorProvider)
+        } else if let mock = makeFilesViewCellNameIsGracePeriodIsCellsStatePendingAccentColorProvider_MockValue {
             return mock
         } else {
-            fatalError("no mock for `makeFilesViewCellNameIsCellsStatePendingAccentColorProvider`")
+            fatalError("no mock for `makeFilesViewCellNameIsGracePeriodIsCellsStatePendingAccentColorProvider`")
         }
     }
 

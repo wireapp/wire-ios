@@ -72,6 +72,7 @@ package final class FilesViewModel: ObservableObject {
     let useCases: UseCases
     let isBrowsing: Bool
     let isRecycleBin: Bool
+    let isGracePeriod: Bool
     let triggerReload: PassthroughSubject<Void, Never>
     let title: String?
 
@@ -82,7 +83,7 @@ package final class FilesViewModel: ObservableObject {
     @Published var showReadOnlyBanner: Bool = false
 
     var selfUserRole: WireDriveConversation.Participant.Role {
-        selfUser?.role ?? .viewer
+        isGracePeriod ? .viewer : (selfUser?.role ?? .viewer)
     }
 
     // MARK: Navigation and presentation
@@ -155,6 +156,7 @@ package final class FilesViewModel: ObservableObject {
         cellName: String? = nil,
         isBrowsing: Bool,
         isRecycleBin: Bool = false,
+        isGracePeriod: Bool = false,
         triggerReload: PassthroughSubject<Void, Never> = .init(),
         networkMonitor: NetworkMonitor = .shared
     ) {
@@ -166,6 +168,7 @@ package final class FilesViewModel: ObservableObject {
         self.cellName = cellName
         self.isBrowsing = isBrowsing
         self.isRecycleBin = isRecycleBin
+        self.isGracePeriod = isGracePeriod
         self.triggerReload = triggerReload
         self.networkMonitor = networkMonitor
         self.filesController = .init(networkMonitor: networkMonitor)
@@ -297,8 +300,7 @@ package final class FilesViewModel: ObservableObject {
         if let selfUser {
             let isDismissed = cellName
                 .map(ConversationViewerAccessBannerDismissalStore.shared.isDismissed(forCellName:)) ?? false
-            let isViewer = selfUser.role == .viewer
-            showReadOnlyBanner = !isBrowsing && isViewer && !isDismissed &&
+            showReadOnlyBanner = !isBrowsing && selfUserRole == .viewer && !isDismissed &&
                 !isRecycleBin
         }
     }

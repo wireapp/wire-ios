@@ -320,7 +320,7 @@ final class ZClientViewController: UIViewController {
                 guard let self else { return }
                 switch featureState.name {
                 case .cells, .cellsInternal:
-                    setupWireDriveFilesTab()
+                    setupWireDriveFilesTab(isFeatureEnabled: featureState.isEnabled)
                 case .meetings:
                     setupMeetingsTab()
                 default:
@@ -329,8 +329,12 @@ final class ZClientViewController: UIViewController {
             }
     }
 
-    private func setupWireDriveFilesTab() {
-        guard userSession.isWireDriveEnabled else { return }
+    private func setupWireDriveFilesTab(isFeatureEnabled: Bool) {
+        guard isFeatureEnabled else {
+            sidebarViewController.showFiles = false
+            mainTabBarController.filesUI = nil
+            return
+        }
 
         let filesBrowserView = wireMessagingFactory.makeFilesBrowserView { [weak self] in
             guard let self else { return .default }

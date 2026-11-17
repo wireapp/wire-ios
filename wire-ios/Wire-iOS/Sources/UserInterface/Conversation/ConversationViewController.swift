@@ -961,10 +961,12 @@ extension ConversationViewController: ConversationInputBarViewControllerDelegate
     @objc
     func onSharedDriveButtonPressed(_ sender: AnyObject?) {
         let selfUserColorRawValue = userSession.selfUser.accentColorValue
+        let isGracePeriod = !userSession.isWireDriveEnabled && conversation.isWireDriveEnabled
 
         let filesView = wireMessagingFactory
             .makeFilesView(
                 cellName: conversation.wireDriveCellName,
+                isGracePeriod: isGracePeriod,
                 isCellsStatePending: wireDriveState == .pending
             ) {
                 WireAccentColor(rawValue: selfUserColorRawValue) ?? .default

@@ -110,6 +110,11 @@ extension UpdateEventDecodingProxy {
                 let event = FeatureConfigUpdateEvent(featureConfig: .simplifiedUserConnectionRequestQRCode(config))
                 updateEvent = .featureConfig(.update(event))
 
+            case "cells":
+                let config = try CellsFeatureConfigDecoder().decode(from: container)
+                let event = FeatureConfigUpdateEvent(featureConfig: .cells(config))
+                updateEvent = .featureConfig(.update(event))
+
             default:
                 WireLogger.updateEvent.warn("encountered unknown feature config: \(featureName)")
                 let event = FeatureConfigUpdateEvent(featureConfig: .unknown(featureName: featureName))
