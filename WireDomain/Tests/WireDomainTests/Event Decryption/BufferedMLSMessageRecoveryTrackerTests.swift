@@ -19,6 +19,7 @@
 import Foundation
 import Testing
 import WireDataModel
+import WireSystem
 
 @testable import WireDomain
 
@@ -27,41 +28,42 @@ struct BufferedMLSMessageRecoveryTrackerTests {
     private let groupID = MLSGroupID(Data("group-id".utf8))
     private let otherGroupID = MLSGroupID(Data("other-group-id".utf8))
     private let timestamp = Date(timeIntervalSince1970: 1_784_628_000)
+    private let journal = Journal(userID: UUID(), storage: UserDefaults.temporary())
 
     @Test
-    func `buffered messages exactly at threshold should not recover`() async {
-        let sut = BufferedMLSMessageRecoveryTracker()
+    func `buffered messages exactly at threshold should not recover`() {
+        let sut = BufferedMLSMessageRecoveryTracker(journal: journal)
 
-        #expect(await !sut.observeBufferedMessage(groupID: groupID, subconversation: nil, timestamp: timestamp))
-        #expect(await !sut.observeBufferedMessage(groupID: groupID, subconversation: nil, timestamp: timestamp + 60))
+        #expect(!sut.observeBufferedMessage(groupID: groupID, subconversation: nil, timestamp: timestamp))
+        #expect(!sut.observeBufferedMessage(groupID: groupID, subconversation: nil, timestamp: timestamp + 60))
     }
 
     @Test
-    func `buffered messages beyond threshold should recover`() async {
-        let sut = BufferedMLSMessageRecoveryTracker()
+    func `buffered messages beyond threshold should recover`() {
+        let sut = BufferedMLSMessageRecoveryTracker(journal: journal)
 
-        #expect(await !sut.observeBufferedMessage(groupID: groupID, subconversation: nil, timestamp: timestamp))
-        #expect(await sut.observeBufferedMessage(groupID: groupID, subconversation: nil, timestamp: timestamp + 61))
+        #expect(!sut.observeBufferedMessage(groupID: groupID, subconversation: nil, timestamp: timestamp))
+        #expect(sut.observeBufferedMessage(groupID: groupID, subconversation: nil, timestamp: timestamp + 61))
     }
 
     @Test
-    func `reverse ordered buffered messages beyond threshold should recover`() async {
-        let sut = BufferedMLSMessageRecoveryTracker()
+    func `reverse ordered buffered messages beyond threshold should recover`() {
+        let sut = BufferedMLSMessageRecoveryTracker(journal: journal)
 
-        #expect(await !sut.observeBufferedMessage(groupID: groupID, subconversation: nil, timestamp: timestamp + 120))
-        #expect(await sut.observeBufferedMessage(groupID: groupID, subconversation: nil, timestamp: timestamp))
+        #expect(!sut.observeBufferedMessage(groupID: groupID, subconversation: nil, timestamp: timestamp + 120))
+        #expect(sut.observeBufferedMessage(groupID: groupID, subconversation: nil, timestamp: timestamp))
     }
 
     @Test
-    func `different conversations and subconversations are tracked independently`() async {
-        let sut = BufferedMLSMessageRecoveryTracker()
+    func `different conversations and subconversations are tracked independently`() {
+        let sut = BufferedMLSMessageRecoveryTracker(journal: journal)
 
-        #expect(await !sut.observeBufferedMessage(groupID: groupID, subconversation: nil, timestamp: timestamp))
+        #expect(!sut.observeBufferedMessage(groupID: groupID, subconversation: nil, timestamp: timestamp))
         #expect(
-            await !sut.observeBufferedMessage(groupID: otherGroupID, subconversation: nil, timestamp: timestamp + 120)
+            !sut.observeBufferedMessage(groupID: otherGroupID, subconversation: nil, timestamp: timestamp + 120)
         )
         #expect(
-            await !sut.observeBufferedMessage(
+            !sut.observeBufferedMessage(
                 groupID: groupID,
                 subconversation: "conference",
                 timestamp: timestamp + 240
@@ -70,22 +72,72 @@ struct BufferedMLSMessageRecoveryTrackerTests {
     }
 
     @Test
-    func `clearing starts a new window`() async {
-        let sut = BufferedMLSMessageRecoveryTracker()
+    func `clearing starts a new window`() {
+        let sut = BufferedMLSMessageRecoveryTracker(journal: journal)
 
-        #expect(await !sut.observeBufferedMessage(groupID: groupID, subconversation: nil, timestamp: timestamp))
-        await sut.clear(groupID: groupID, subconversation: nil)
-        #expect(await !sut.observeBufferedMessage(groupID: groupID, subconversation: nil, timestamp: timestamp + 120))
+        #expect(!sut.observeBufferedMessage(groupID: groupID, subconversation: nil, timestamp: timestamp))
+        sut.clear(groupID: groupID, subconversation: nil)
+        #expect(!sut.observeBufferedMessage(groupID: groupID, subconversation: nil, timestamp: timestamp + 120))
     }
 
     @Test
-    func `triggering recovery starts a new window`() async {
-        let sut = BufferedMLSMessageRecoveryTracker()
+    func `triggering recovery starts a new window`() {
+        let sut = BufferedMLSMessageRecoveryTracker(journal: journal)
 
-        #expect(await !sut.observeBufferedMessage(groupID: groupID, subconversation: nil, timestamp: timestamp))
-        #expect(await sut.observeBufferedMessage(groupID: groupID, subconversation: nil, timestamp: timestamp + 61))
-        #expect(await !sut.observeBufferedMessage(groupID: groupID, subconversation: nil, timestamp: timestamp + 62))
-        #expect(await sut.observeBufferedMessage(groupID: groupID, subconversation: nil, timestamp: timestamp + 123))
+        #expect(!sut.observeBufferedMessage(groupID: groupID, subconversation: nil, timestamp: timestamp))
+        #expect(sut.observeBufferedMessage(groupID: groupID, subconversation: nil, timestamp: timestamp + 61))
+        #expect(!sut.observeBufferedMessage(groupID: groupID, subconversation: nil, timestamp: timestamp + 62))
+        #expect(sut.observeBufferedMessage(groupID: groupID, subconversation: nil, timestamp: timestamp + 123))
+    }
+
+    @Test
+    func `tracking is shared across instances using the same journal`() {
+        let firstPayloadTracker = BufferedMLSMessageRecoveryTracker(journal: journal)
+        let secondPayloadTracker = BufferedMLSMessageRecoveryTracker(journal: journal)
+
+        #expect(
+            !firstPayloadTracker.observeBufferedMessage(
+                groupID: groupID,
+                subconversation: nil,
+                timestamp: timestamp
+            )
+        )
+        #expect(
+            secondPayloadTracker.observeBufferedMessage(
+                groupID: groupID,
+                subconversation: nil,
+                timestamp: timestamp + 61
+            )
+        )
+    }
+
+    @Test
+    func `clearing one conversation keeps tracking of others`() {
+        let sut = BufferedMLSMessageRecoveryTracker(journal: journal)
+
+        #expect(!sut.observeBufferedMessage(groupID: groupID, subconversation: nil, timestamp: timestamp))
+        #expect(!sut.observeBufferedMessage(groupID: otherGroupID, subconversation: nil, timestamp: timestamp))
+        sut.clear(groupID: groupID, subconversation: nil)
+        #expect(sut.observeBufferedMessage(groupID: otherGroupID, subconversation: nil, timestamp: timestamp + 61))
+    }
+
+    @Test
+    func `undecodable stored tracking is reset`() {
+        journal[.bufferedMLSMessageTimestampRanges] = Data("not json".utf8)
+        let sut = BufferedMLSMessageRecoveryTracker(journal: journal)
+
+        #expect(!sut.observeBufferedMessage(groupID: groupID, subconversation: nil, timestamp: timestamp))
+        #expect(sut.observeBufferedMessage(groupID: groupID, subconversation: nil, timestamp: timestamp + 61))
+    }
+
+    @Test
+    func `journal value is removed once nothing is tracked`() {
+        let sut = BufferedMLSMessageRecoveryTracker(journal: journal)
+
+        #expect(!sut.observeBufferedMessage(groupID: groupID, subconversation: nil, timestamp: timestamp))
+        #expect(journal[.bufferedMLSMessageTimestampRanges] != nil)
+        sut.clear(groupID: groupID, subconversation: nil)
+        #expect(journal[.bufferedMLSMessageTimestampRanges] == nil)
     }
 
 }
