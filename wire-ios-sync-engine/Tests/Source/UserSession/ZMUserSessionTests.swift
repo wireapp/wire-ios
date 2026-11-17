@@ -110,9 +110,15 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         conversation.remoteIdentifier = UUID()
         conversation.domain = domain
         conversation.conversationType = .group
+        let otherConversation = ZMConversation.insertNewObject(in: uiMOC)
+        otherConversation.remoteIdentifier = UUID()
+        otherConversation.domain = domain
+        otherConversation.conversationType = .group
         let admin = ZMUser.insertNewObject(in: uiMOC)
         admin.remoteIdentifier = UUID()
         admin.domain = domain
+        let adminName = "Admin <Zoë> & Co."
+        admin.name = adminName
         let adminRole = Role.create(
             managedObjectContext: uiMOC,
             name: ZMConversation.defaultAdminRoleName,
@@ -132,13 +138,31 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         let adminID = try XCTUnwrap(admin.remoteIdentifier)
         let adminParticipant = try XCTUnwrap(admin.participantRoles.first)
         let matchingTargets = [domain: [selfUserID: [clientID]]]
+        let remoteMuteNotice = expectation(description: "remote mute notices include the sender name")
+        remoteMuteNotice.expectedFulfillmentCount = 2
+        remoteMuteNotice.assertForOverFulfill = true
+        let otherConversationNotice = expectation(description: "remote mute notices are scoped to their conversation")
+        otherConversationNotice.isInverted = true
+        let noticeObserver = CallRemoteMuteNotification.addObserver(for: conversation, context: uiMOC) { senderName in
+            XCTAssertEqual(senderName, adminName)
+            remoteMuteNotice.fulfill()
+        }
+        let otherConversationObserver = CallRemoteMuteNotification.addObserver(
+            for: otherConversation,
+            context: uiMOC
+        ) { _ in
+            otherConversationNotice.fulfill()
+        }
 
         func assertMute(
             _ targets: [String: [String: [String]]],
             conversationID: UUID,
-            expected: Bool
+            expected: Bool,
+            resetMuteState: Bool = true
         ) {
-            callCenter.isMuted = false
+            if resetMuteState {
+                callCenter.isMuted = false
+            }
             sut.onProcessedCallEvent(callEventInfo: CallEventInfo(
                 data: Data(),
                 conversationID: conversationID,
@@ -158,6 +182,7 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         }
 
         assertMute(matchingTargets, conversationID: conversationID, expected: true)
+        assertMute(matchingTargets, conversationID: conversationID, expected: true, resetMuteState: false)
         assertMute([domain: [selfUserID: ["other-client"]]], conversationID: conversationID, expected: false)
         assertMute(["other.example": [selfUserID: [clientID]]], conversationID: conversationID, expected: false)
         assertMute([domain: [UUID().transportString(): [clientID]]], conversationID: conversationID, expected: false)
@@ -168,6 +193,9 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
 
         callCenter.removeMockActiveCalls()
         assertMute(matchingTargets, conversationID: conversationID, expected: false)
+
+        wait(for: [remoteMuteNotice, otherConversationNotice], timeout: 1)
+        withExtendedLifetime((noticeObserver, otherConversationObserver)) {}
     }
 
     func testThatTearDownCancelsPendingSends() throws {

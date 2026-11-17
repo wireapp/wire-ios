@@ -1725,6 +1725,10 @@ extension ZMUserSession {
                 else { return }
 
                 callCenter.isMuted = true
+                CallRemoteMuteNotification(senderName: sender.name).post(
+                    in: viewContext.notificationContext,
+                    object: conversation
+                )
                 return
             }
 
