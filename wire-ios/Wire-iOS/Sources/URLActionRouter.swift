@@ -140,27 +140,30 @@ class URLActionRouter: URLActionRouterProtocol {
 
 extension URLActionRouter: PresentationDelegate {
 
-    func showPasswordPrompt(for conversationName: String?, completion: @escaping (String?) -> Void) {
+    func showPasswordPrompt(for conversationName: String?, isMeeting: Bool, completion: @escaping (String?) -> Void) {
         typealias ConversationAlert = L10n.Localizable.Join.Group.Conversation.Alert
+        typealias MeetingAlert = L10n.Localizable.Join.Meeting.Alert
 
         let alertController = UIAlertController(
             title: conversationName.map(ConversationAlert.title)
                 ?? L10n.Localizable.Registration.Signin.Alert.PasswordNeeded.title,
-            message: ConversationAlert.message,
+            message: isMeeting ? MeetingAlert.message : ConversationAlert.message,
             preferredStyle: .alert
         )
 
         alertController.addTextField { textField in
-            textField.placeholder = ConversationAlert.Textfield.placeholder
+            textField.placeholder = isMeeting ? MeetingAlert.Textfield.placeholder : ConversationAlert.Textfield
+                .placeholder
             textField.isSecureTextEntry = true
         }
 
-        let joinAction = UIAlertAction(title: ConversationAlert.JoinAction.title, style: .default) { _ in
+        let joinTitle = isMeeting ? MeetingAlert.JoinAction.title : ConversationAlert.JoinAction.title
+        let joinAction = UIAlertAction(title: joinTitle, style: .default) { _ in
             let password = alertController.textFields?.first?.text
             completion(password)
         }
 
-        let helpLinkURL = WireURLs.shared.guestLinksInfo
+        let helpLinkURL = isMeeting ? WireURLs.shared.meetingGuestLinksInfoURL : WireURLs.shared.guestLinksInfo
         let learnMoreAction = UIAlertAction(title: ConversationAlert.LearnMoreAction.title, style: .default) { _ in
             UIApplication.shared.open(helpLinkURL, options: [:], completionHandler: nil)
         }
@@ -184,8 +187,11 @@ extension URLActionRouter: PresentationDelegate {
     // MARK: - Public Implementation
 
     func failedToPerformAction(_ action: URLAction, error: Error) {
-        let localizedError = mapToLocalizedError(error)
-        presentLocalizedErrorAlert(localizedError)
+        if case .joinMeeting = action {
+            presentLocalizedErrorAlert(URLActionError(from: error), isMeeting: true)
+        } else {
+            presentLocalizedErrorAlert(mapToLocalizedError(error))
+        }
     }
 
     func completedURLAction(_ action: URLAction) {
@@ -416,12 +422,17 @@ private extension URLActionRouter {
         }
 
         var failureReason: String? {
-            switch self {
+            failureReason(isMeeting: false)
+        }
+
+        func failureReason(isMeeting: Bool) -> String? {
+            typealias MeetingStrings = L10n.Localizable.UrlAction.JoinMeeting.Error.Alert
+            return switch self {
             case .conversationIsFull:
-                AlertStrings.ConverationIsFull.message
+                isMeeting ? MeetingStrings.MeetingIsFull.message : AlertStrings.ConverationIsFull.message
 
             case .conversationLinkIsInvalid, .conversationLinkIsDisabled:
-                AlertStrings.LinkIsInvalid.message
+                isMeeting ? MeetingStrings.LinkIsInvalid.message : AlertStrings.LinkIsInvalid.message
 
             case .invalidConversationPassword:
                 AlertStrings.InvalidPassword.message
@@ -437,9 +448,10 @@ private extension URLActionRouter {
         (error as? LocalizedError) ?? URLActionError(from: error)
     }
 
-    private func presentLocalizedErrorAlert(_ error: LocalizedError) {
-        let title = error.errorDescription
-        let message = error.failureReason ?? L10n.Localizable.Error.User.unkownError
+    private func presentLocalizedErrorAlert(_ error: LocalizedError, isMeeting: Bool = false) {
+        let title = isMeeting ? L10n.Localizable.UrlAction.JoinMeeting.Error.Alert.title : error.errorDescription
+        let message = (error as? URLActionError)?.failureReason(isMeeting: isMeeting)
+            ?? error.failureReason ?? L10n.Localizable.Error.User.unkownError
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(
             title: L10n.Localizable.General.ok,

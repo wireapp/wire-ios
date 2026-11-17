@@ -209,6 +209,100 @@ final class DeepLinkURLActionProcessorTests: DatabaseTest {
         XCTAssertTrue(presentationDelegate.failedToPerformActionCalls.isEmpty)
     }
 
+    func testThatMeetingJoinOpensMeetingsForAllStoredGroupTypesIncludingRepeatedJoin() {
+        let id = QualifiedID(uuid: UUID(), domain: "wire.com")
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
+        conversation.remoteIdentifier = id.uuid
+        conversation.domain = id.domain
+        conversation.conversationType = .group
+        sut = DeepLinkURLActionProcessor(
+            contextProvider: coreDataStack!,
+            transportSession: mockTransportSession,
+            eventProcessor: mockEventProcessor,
+            metadata: .mock(),
+            joinMeeting: { _, _, _, _ in id }
+        )
+        let action = URLAction.joinMeeting(domain: id.domain, key: "key", code: "code")
+
+        for type in [ConversationGroupType.none, .group, .meeting] {
+            conversation.groupType = type
+            for _ in 0 ..< 2 {
+                let completed = expectation(description: "meeting link completed")
+                presentationDelegate.completedURLActionCallsCompletion = { completed.fulfill() }
+                sut.process(urlAction: action, delegate: presentationDelegate)
+                wait(for: [completed], timeout: 5)
+            }
+        }
+
+        XCTAssertEqual(presentationDelegate.showMeetingsCalls, 6)
+        XCTAssertTrue(presentationDelegate.showConversationCalls.isEmpty)
+        XCTAssertEqual(presentationDelegate.completedURLActionCalls, Array(repeating: action, count: 6))
+        XCTAssertTrue(presentationDelegate.failedToPerformActionCalls.isEmpty)
+    }
+
+    func testThatMeetingJoinReportsAnIncorrectPasswordWithoutOpeningAConversation() {
+        var passwords: [String?] = []
+        sut = DeepLinkURLActionProcessor(
+            contextProvider: coreDataStack!,
+            transportSession: mockTransportSession,
+            eventProcessor: mockEventProcessor,
+            metadata: .mock(),
+            joinMeeting: { _, _, _, password in
+                passwords.append(password)
+                throw MeetingsAPIError.invalidMeetingPassword
+            }
+        )
+        let action = URLAction.joinMeeting(domain: "wire.com", key: "key", code: "code")
+        let completed = expectation(description: "incorrect password completed")
+        presentationDelegate.completedURLActionCallsCompletion = { completed.fulfill() }
+
+        sut.process(urlAction: action, delegate: presentationDelegate)
+        wait(for: [completed], timeout: 5)
+
+        XCTAssertEqual(passwords, [nil, "mockPassword12345678!3"])
+        XCTAssertEqual(presentationDelegate.showPasswordPromptIsMeetingCalls, [true])
+        XCTAssertEqual(presentationDelegate.failedToPerformActionCalls.count, 1)
+        XCTAssertEqual(presentationDelegate.failedToPerformActionCalls.first?.0, action)
+        XCTAssertEqual(
+            presentationDelegate.failedToPerformActionCalls.first?.1 as? MeetingsAPIError,
+            .invalidMeetingPassword
+        )
+        XCTAssertEqual(presentationDelegate.completedURLActionCalls, [action])
+        XCTAssertEqual(presentationDelegate.showMeetingsCalls, 0)
+        XCTAssertTrue(presentationDelegate.showConversationCalls.isEmpty)
+    }
+
+    func testThatMeetingJoinCompletesWhenThePasswordPromptIsCancelledOrEmpty() {
+        for response in [String?.none, ""] {
+            presentationDelegate = MockPresentationDelegate()
+            presentationDelegate.passwordPromptResponse = response
+            var passwords: [String?] = []
+            sut = DeepLinkURLActionProcessor(
+                contextProvider: coreDataStack!,
+                transportSession: mockTransportSession,
+                eventProcessor: mockEventProcessor,
+                metadata: .mock(),
+                joinMeeting: { _, _, _, password in
+                    passwords.append(password)
+                    throw MeetingsAPIError.invalidMeetingPassword
+                }
+            )
+            let action = URLAction.joinMeeting(domain: "wire.com", key: "key", code: "code")
+            let completed = expectation(description: "cancelled password completed")
+            presentationDelegate.completedURLActionCallsCompletion = { completed.fulfill() }
+
+            sut.process(urlAction: action, delegate: presentationDelegate)
+            wait(for: [completed], timeout: 5)
+
+            XCTAssertEqual(passwords, [nil])
+            XCTAssertEqual(presentationDelegate.showPasswordPromptIsMeetingCalls, [true])
+            XCTAssertEqual(presentationDelegate.completedURLActionCalls, [action])
+            XCTAssertTrue(presentationDelegate.failedToPerformActionCalls.isEmpty)
+            XCTAssertEqual(presentationDelegate.showMeetingsCalls, 0)
+            XCTAssertTrue(presentationDelegate.showConversationCalls.isEmpty)
+        }
+    }
+
     func testThatAlreadyJoinedConversationUsesItsGroupType() {
         let conversationID = UUID()
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
@@ -224,7 +318,7 @@ final class DeepLinkURLActionProcessorTests: DatabaseTest {
             )
         }
 
-        for type in [ConversationGroupType.group, .meeting] {
+        for type in [ConversationGroupType.none, .group, .meeting] {
             conversation.groupType = type
             let completed = expectation(description: "existing member link completed")
             presentationDelegate.completedURLActionCallsCompletion = { completed.fulfill() }
@@ -232,7 +326,7 @@ final class DeepLinkURLActionProcessorTests: DatabaseTest {
             wait(for: [completed], timeout: 5)
         }
 
-        XCTAssertEqual(presentationDelegate.showConversationCalls, [conversation])
+        XCTAssertEqual(presentationDelegate.showConversationCalls, [conversation, conversation])
         XCTAssertEqual(presentationDelegate.showMeetingsCalls, 1)
         XCTAssertTrue(mockEventProcessor.processConversationEvents_Invocations.isEmpty)
     }
