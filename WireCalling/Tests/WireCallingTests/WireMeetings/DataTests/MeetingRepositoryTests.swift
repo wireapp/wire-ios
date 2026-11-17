@@ -585,7 +585,7 @@ struct MeetingRepositoryTests {
     }
 
     @Test
-    func updateMeetingStoresAndPullsUpdatedTimeZoneAndRecurrence_TC_12039() async throws {
+    func updateMeetingStoresAndPullsUpdatedTimeZoneAndRecurrence() async throws {
         // Given: the server updates the series to the device zone, which differs from its old zone.
         let updatedTimeZone = TimeZone.current.identifier
         let originalTimeZone = updatedTimeZone == "Europe/Berlin" ? "America/New_York" : "Europe/Berlin"
