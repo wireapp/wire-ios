@@ -112,7 +112,7 @@ struct MLSMessageDecryptor: MLSMessageDecryptorProtocol {
                 throw MLSMessageDecryptorError.wrongEpoch(mlsGroupID: mlsGroupID)
 
             case let .bufferedMessage(bufferedGroupID):
-                return try await handleBufferedMessage(
+                return try handleBufferedMessage(
                     eventData,
                     mlsGroupID: mlsGroupID,
                     bufferedGroupID: bufferedGroupID
@@ -133,39 +133,7 @@ struct MLSMessageDecryptor: MLSMessageDecryptorProtocol {
         _ eventData: ConversationMLSMessageAddEvent,
         mlsGroupID: MLSGroupID,
         bufferedGroupID: MLSGroupID
-    ) async throws -> ConversationMLSMessageAddEvent {
-        WireLogger.mls.info(
-            "MLS message was buffered by CoreCrypto",
-            attributes: [.mlsGroupID: bufferedGroupID.safeForLoggingDescription, .public: true]
-        )
-
-        if let timestamp = eventData.timestamp {
-            let shouldRecover = await bufferedMessageRecoveryTracker.observeBufferedMessage(
-                groupID: mlsGroupID,
-                subconversation: eventData.subconversation,
-                timestamp: timestamp
-            )
-
-            if shouldRecover {
-                throw MLSMessageDecryptorError.bufferedMessageRecoveryRequired(mlsGroupID: bufferedGroupID)
-            }
-        }
-
-        var bufferedEvent = eventData
-        bufferedEvent.decryptedMessages = []
-        return bufferedEvent
-    }
-
-    /// Tracks the buffered message and requests stale epoch recovery if messages have been buffered for too long.
-    ///
-    /// - Throws: `MLSMessageDecryptorError.bufferedMessageRecoveryRequired` if recovery should be initiated.
-    /// - Returns: The event without any decrypted messages, since the message has been buffered by CoreCrypto.
-
-    private func handleBufferedMessage(
-        _ eventData: ConversationMLSMessageAddEvent,
-        mlsGroupID: MLSGroupID,
-        bufferedGroupID: MLSGroupID
-    ) async throws -> ConversationMLSMessageAddEvent {
+    ) throws -> ConversationMLSMessageAddEvent {
         WireLogger.mls.info(
             "MLS message was buffered by CoreCrypto",
             attributes: [.mlsGroupID: bufferedGroupID.safeForLoggingDescription, .public: true]
