@@ -32,7 +32,6 @@ final class MeetingTimeZoneTests: WireUITestCase, MeetingJoinTesting {
         executionTimeAllowance = 900
         let (host, _, _, _) = try await UserHelper.default.registerMeetingsTeam()
         let fixtures = try await MeetingsTestHelper(user: host, apiVersion: .v18)
-        try await requireConferenceCalling()
         for (index, zone) in [berlin, newYork].enumerated() {
             let page = try index == 0
                 ? launchMeetings(for: host, timeZone: zone, apiVersion: 18)
