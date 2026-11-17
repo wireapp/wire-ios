@@ -47,18 +47,37 @@ final class MeetingTimeZoneTests: WireUITestCase, MeetingJoinTesting {
             XCTAssertTrue(try page.showRow(scheduled).exists)
             capture(title)
 
-            // Create Meet Now in the same zone, then end the call before checking the record.
+            // Check the created Meet Now record before closing the call or plan prompt.
             XCTAssertTrue(page.createMeetingButton.waitAndTap())
             XCTAssertTrue(page.meetNowOption.waitAndTap())
             let instantForm = try MeetingFormPage()
             let instantTitle = "TC12033 Meet Now \(index)"
             instantForm.replaceTitle(with: instantTitle)
             XCTAssertTrue(instantForm.saveButton.waitAndTap())
-            let call = try waitForCall(title: instantTitle)
-            _ = try leaveCall(call)
+            XCTAssertTrue(instantForm.titleField.waitToDisappear(timeout: 30))
             let saved = try await fixtures.list()
             let immediate = try XCTUnwrap(saved.first { $0.title == instantTitle })
             XCTAssertEqual(immediate.timeZoneIdentifier, zone)
+            let upgrade = app.alerts["Upgrade to Enterprise"]
+            let endCall = app.buttons[Locators.OngoingCallPage.endOngoingCallButton.rawValue]
+            app.dismissAllowIfPresent()
+            let ready = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
+                upgrade.exists || endCall.exists
+            }, object: nil)
+            XCTAssertEqual(XCTWaiter().wait(for: [ready], timeout: 30), .completed)
+            if upgrade.exists {
+                XCTAssertTrue(upgrade.buttons["Cancel"].waitAndTap())
+                XCTAssertTrue(upgrade.waitToDisappear(timeout: 5))
+            } else {
+                XCTAssertTrue(endCall.waitAndTap())
+                XCTAssertTrue(endCall.waitToDisappear(timeout: 15))
+                let feedback = app.buttons["score_close"]
+                if feedback.waitForExistence(timeout: 2) { feedback.tap() }
+            }
+            XCTAssertTrue(page.createMeetingButton.waitForExistence(timeout: 15))
+            XCTAssertFalse(endCall.exists)
+            let row = try page.showRow(immediate)
+            XCTAssertEqual(row.staticTexts[Locators.WireMeetings.MeetingRow.title.rawValue].label, instantTitle)
             capture(instantTitle)
         }
     }
