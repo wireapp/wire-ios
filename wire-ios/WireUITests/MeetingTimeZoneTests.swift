@@ -186,6 +186,52 @@ final class MeetingTimeZoneTests: WireUITestCase, MeetingJoinTesting {
     }
 
     @MainActor
+    func testInviteeJoinBoundariesInBothTimeZones_TC_12023() async throws {
+        executionTimeAllowance = 1200
+        let (host, members, _, _) = try await UserHelper.default.registerMeetingsTeam(withMemberCount: 1)
+        let invitee = try XCTUnwrap(members.first)
+        try await registerClients(for: members)
+        let fixtures = try await MeetingsTestHelper(user: host, apiVersion: .v18)
+        let start = instant(hour: 10)
+        let original = try await fixtures.create(
+            title: "TC12023 join boundaries", start: start, duration: 3600, timeZoneIdentifier: berlin
+        )
+        let hostPage = try launchMeetings(
+            for: host, now: instant(dayOffset: -28, hour: 8), timeZone: berlin, apiVersion: 18
+        )
+        let form = try hostPage.edit(original)
+        try form.addParticipants([invitee])
+        _ = try form.save()
+        let meeting = try await storedMeeting(fixtures, id: original.id)
+        XCTAssertEqual(meeting.startTime, start)
+        XCTAssertEqual(meeting.endTime, start.addingTimeInterval(3600))
+        XCTAssertEqual(meeting.timeZoneIdentifier, berlin)
+
+        let checks: [(TimeInterval, Bool)] = [(-1, false), (0, true), (3599, true), (3600, false)]
+        // Check exact absolute boundaries with the fixed clock in each viewer zone.
+        var signedIn = false
+        for zone in [berlin, newYork] {
+            for check in checks {
+                let now = start.addingTimeInterval(check.0)
+                let page: MeetingsPage
+                if !signedIn {
+                    page = try launchMeetings(for: invitee, now: now, timeZone: zone, apiVersion: 18)
+                    signedIn = true
+                } else {
+                    page = try restartMeetings(now: now, timeZone: zone, apiVersion: 18)
+                }
+                let row = try page.showRow(meeting, start: start)
+                XCTAssertTrue(row.exists, "The occurrence is missing in \(zone) at \(now)")
+                XCTAssertEqual(
+                    joinButton(meeting, on: page, start: start).exists, check.1,
+                    "Join visibility is incorrect in \(zone) at \(now)"
+                )
+                capture("TC12023 \(zone) offset \(check.0)")
+            }
+        }
+    }
+
+    @MainActor
     private func restartMeetings(now: Date?, timeZone: String, apiVersion: Int = 18) throws -> MeetingsPage {
         app.terminate()
         uiTestConfig.meetingsDate = now

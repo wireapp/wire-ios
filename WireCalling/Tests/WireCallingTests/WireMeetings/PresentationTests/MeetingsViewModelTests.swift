@@ -917,7 +917,7 @@ struct MeetingsViewModelTests {
     // MARK: - Formatting
 
     @Test("Join uses the same UTC window after a device time zone change")
-    func joinWindowAcrossTimeZones_TC_12023() async throws {
+    func joinWindowAcrossTimeZones() async throws {
         let start = try Date.ISO8601FormatStyle().parse("2026-10-25T10:00:00Z")
         let meeting = Meeting.fixture(
             title: "Berlin meeting", start: start, timeZoneIdentifier: "Europe/Berlin", isOrganizer: false
