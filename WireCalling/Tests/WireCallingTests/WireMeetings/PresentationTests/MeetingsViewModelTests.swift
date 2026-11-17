@@ -916,6 +916,46 @@ struct MeetingsViewModelTests {
 
     // MARK: - Formatting
 
+    @Test("Join uses the same UTC window after a device time zone change")
+    func joinWindowAcrossTimeZones_TC_12023() async throws {
+        let start = try Date.ISO8601FormatStyle().parse("2026-10-25T10:00:00Z")
+        let meeting = Meeting.fixture(
+            title: "Berlin meeting", start: start, timeZoneIdentifier: "Europe/Berlin", isOrganizer: false
+        )
+        let occurrence = MeetingOccurrence(meeting: meeting)
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = try #require(TimeZone(identifier: "Europe/Berlin"))
+        let formatter = MeetingsFormatter(
+            calendarProvider: { calendar },
+            localeProvider: { Locale(identifier: "en_GB") }
+        )
+        let model = MeetingsViewModel(
+            currentDateProvider: mockDateProvider,
+            formatter: formatter,
+            upcomingMeetingsUseCase: upcomingMeetingsUseCase,
+            observeMeetingChangesUseCase: observeMeetingChangesUseCase,
+            deleteMeetingUseCase: deleteMeetingUseCase,
+            selfUserID: Scaffolding.selfUserID,
+            isApplicationActiveProvider: { true }
+        )
+
+        // Check the exact start and end boundaries before and after the zone changes.
+        for (instant, canJoin) in [
+            (start.addingTimeInterval(-1), false),
+            (start, true),
+            (meeting.end.addingTimeInterval(-1), true),
+            (meeting.end, false)
+        ] {
+            mockDateProvider.now = instant
+            for (zone, display) in [("Europe/Berlin", "11:00 - 12:00"), ("America/New_York", "06:00 - 07:00")] {
+                calendar.timeZone = try #require(TimeZone(identifier: zone))
+                await model.refreshSystemDateTimeState()
+                #expect(model.isHappeningNow(occurrence) == canJoin)
+                #expect(model.formatTime(for: occurrence) == display)
+            }
+        }
+    }
+
     @Test("formatTimeRange delegates to the formatter")
     func formatTimeRange() {
         let meeting = Meeting.fixture(title: "Meeting", start: mockDateProvider.now)
@@ -969,6 +1009,7 @@ private extension Meeting {
         start: Date,
         duration: TimeInterval = 3600,
         recurrence: MeetingRecurrence? = nil,
+        timeZoneIdentifier: String? = nil,
         isOrganizer: Bool = true
     ) -> Meeting {
         Meeting(
@@ -977,6 +1018,7 @@ private extension Meeting {
             start: start,
             end: start.addingTimeInterval(duration),
             recurrence: recurrence,
+            timeZoneIdentifier: timeZoneIdentifier,
             conversationID: QualifiedID(id: UUID(), domain: ""),
             creatorID: QualifiedID(
                 id: isOrganizer ? Scaffolding.selfUserID : UUID(),
