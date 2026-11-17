@@ -327,6 +327,7 @@ platform :ios do
     lane :appstore_col_1_restricted do |options|
         options[:build_type] = "RC"
         options[:override_folder] = "BK-COLUMN1"
+        options[:artifact_label] = "c1-restricted"
         options[:s3_subfolder] = ENV['C1_S3_SUBFOLDER_RESTRICTED']
         options[:upload_testflight] = true
         options[:produce_debug_builds] = true
@@ -339,6 +340,7 @@ platform :ios do
     lane :appstore_col_2_restricted do |options|
         options[:build_type] = "RC"
         options[:override_folder] = "BK-COLUMN2"
+        options[:artifact_label] = "c2-restricted"
         options[:s3_subfolder] = ENV['C2_S3_SUBFOLDER_RESTRICTED']
         options[:upload_testflight] = true
         options[:produce_debug_builds] = true
@@ -351,6 +353,7 @@ platform :ios do
     lane :appstore_col_3_restricted do |options|
         options[:build_type] = "RC"
         options[:override_folder] = "BK-COLUMN3"
+        options[:artifact_label] = "c3-restricted"
         options[:s3_subfolder] = ENV['C3_S3_SUBFOLDER_RESTRICTED']
         options[:upload_testflight] = true
         options[:produce_debug_builds] = true
@@ -363,6 +366,7 @@ platform :ios do
     lane :appstore_col_1_prod do |options|
         options[:build_type] = "AppStore"
         options[:override_folder] = "BK-COLUMN1"
+        options[:artifact_label] = "c1-production"
         options[:s3_subfolder] = ENV['C1_S3_SUBFOLDER_PRODUCTION']
         options[:upload_app_store] = true
         options[:produce_debug_builds] = ENV['DEBUG_BUILDS'] == "1" || ENV['DEBUG_BUILDS'] == "true"
@@ -385,6 +389,7 @@ platform :ios do
     lane :appstore_col_2_prod do |options|
         options[:build_type] = "AppStore"
         options[:override_folder] = "BK-COLUMN2"
+        options[:artifact_label] = "c2-production"
         options[:s3_subfolder] = ENV['C2_S3_SUBFOLDER_PRODUCTION']
         options[:upload_app_store] = true
         options[:produce_debug_builds] = ENV['DEBUG_BUILDS'] == "1" || ENV['DEBUG_BUILDS'] == "true"
@@ -396,6 +401,7 @@ platform :ios do
     lane :appstore_col_3_prod do |options|
         options[:build_type] = "AppStore"
         options[:override_folder] = "BK-COLUMN3"
+        options[:artifact_label] = "c3-production"
         options[:s3_subfolder] = ENV['C3_S3_SUBFOLDER_PRODUCTION']
         options[:upload_app_store] = true
         options[:produce_debug_builds] = ENV['DEBUG_BUILDS'] == "1" || ENV['DEBUG_BUILDS'] == "true"
@@ -1116,6 +1122,7 @@ class Build
         @enable_datadog = ENV['ENABLE_DATADOG'] == "true" || ENV['ENABLE_DATADOG'] == "1"
         @skip_security_tests = ENV['SKIP_SECURITY_TESTS'] == "true" || ENV['SKIP_SECURITY_TESTS'] == "1"
         @build_number = build_number
+        @artifact_label = options[:artifact_label]
         @number_of_retries = options[:number_of_retries] || 2
         
         for_simulator = options[:for_simulator]
@@ -1203,6 +1210,9 @@ class Build
 
     def filename
         simulator = @for_simulator ? "-simulator" : ""
+        if @artifact_label
+            return "Wire-#{@artifact_label}-v#{version_from_xcconfig}#{simulator}-#{@build_number}"
+        end
         "Wire-#{@build_type.downcase}-#{normalized_branch_name}#{simulator}-#{@build_number}"
     end
 
