@@ -204,17 +204,14 @@ extension ConversationLocalStore: @retroactive WireDriveConversationsLocalStoreP
 
         return await context.perform {
             driveEnabledConversations.reduce(into: [WireDriveConversation]()) { result, conversation in
+                let isGracePeriod = !isDriveFeatureEnabled && conversation.isWireDriveEnabled
+
                 if let name = conversation.name {
                     let participants: [WireDriveParticipant] = conversation.participants
                         .compactMap { item -> WireDriveParticipant? in
                             guard let id = item.remoteIdentifier, let domain = item.domain else { return nil }
-                            let isGracePeriod = !isDriveFeatureEnabled && conversation.isWireDriveEnabled
-                            let role: WireDriveParticipant.Role = if isGracePeriod {
-                                .viewer
-                            } else {
-                                conversation
-                                    .matchesTeam(with: item) ? .editor : .viewer
-                            }
+                            let role: WireDriveParticipant.Role = !isGracePeriod && conversation.matchesTeam(with: item)
+                                ? .editor : .viewer
 
                             let userType: WireDriveParticipant.UserType = if item.isFederated {
                                 .federated

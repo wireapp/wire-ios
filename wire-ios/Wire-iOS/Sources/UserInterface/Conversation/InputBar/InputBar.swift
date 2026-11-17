@@ -280,7 +280,7 @@ final class InputBar: UIView {
         setupViews()
         updateRightAccessoryStackViewLayoutMargins()
         createConstraints()
-        topBorder = addBorder(for: .top, color: ColorTheme.Strokes.outline)
+        self.topBorder = addBorder(for: .top, color: ColorTheme.Strokes.outline)
         updateDriveViewerBanner(show: driveConfiguration?.showBanner == true)
 
         let notificationCenter = NotificationCenter.default

@@ -18,9 +18,9 @@
 
 package import Combine
 public import Foundation
-import WireLogging
 import SwiftUI
 import WireLocators
+import WireLogging
 import WireMessagingDomain
 
 private typealias Strings = L10n.Localizable.Conversation.WireCells

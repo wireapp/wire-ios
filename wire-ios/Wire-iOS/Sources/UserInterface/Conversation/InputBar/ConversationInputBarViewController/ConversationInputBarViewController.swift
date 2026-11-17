@@ -431,7 +431,7 @@ final class ConversationInputBarViewController: UIViewController,
         setupInputLanguageObserver()
         setupViews()
         updateDriveViewerState()
-        driveFeatureSubscription = userSession.clientSessionComponent?.featureConfigRepository
+        self.driveFeatureSubscription = userSession.clientSessionComponent?.featureConfigRepository
             .observeFeatureStates()
             .receive(on: DispatchQueue.main)
             .sink { [weak self] featureState in
