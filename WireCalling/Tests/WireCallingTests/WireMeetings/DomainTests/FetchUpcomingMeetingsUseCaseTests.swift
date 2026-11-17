@@ -179,6 +179,33 @@ struct FetchUpcomingMeetingsUseCaseTests {
         }
     }
 
+    @Test("recurrence with no time zone uses the Berlin fallback across DST")
+    func recurrenceWithoutTimeZoneUsesBerlinFallbackAcrossDST_TC_12037() throws {
+        let meeting = Meeting.fixture(
+            title: "Legacy daily meeting",
+            start: try date("2026-10-24T09:00:00Z"),
+            recurrence: MeetingRecurrence(frequency: .daily, interval: 1),
+            timeZoneIdentifier: nil
+        )
+        let expectedStarts = try [
+            date("2026-10-24T09:00:00Z"),
+            date("2026-10-25T10:00:00Z"),
+            date("2026-10-26T10:00:00Z")
+        ]
+        var berlinCalendar = Calendar(identifier: .gregorian)
+        berlinCalendar.timeZone = try #require(TimeZone(identifier: "Europe/Berlin"))
+
+        // A new paginator recalculates occurrences from the meeting's stored values.
+        let occurrences = MeetingOccurrencePaginator().occurrences(
+            for: [meeting],
+            startingAt: try date("2026-10-24T00:00:00Z"),
+            offset: 0,
+            limit: expectedStarts.count
+        )
+        #expect(occurrences.map(\.start) == expectedStarts)
+        #expect(occurrences.allSatisfy { berlinCalendar.component(.hour, from: $0.start) == 11 })
+    }
+
     @Test("invoke returns meetings from the start of today, including meetings earlier today")
     func invoke_ReturnsMeetingsFromToday() async throws {
         // Given

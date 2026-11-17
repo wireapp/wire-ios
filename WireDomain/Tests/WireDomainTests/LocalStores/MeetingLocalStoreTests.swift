@@ -108,6 +108,11 @@ final class MeetingLocalStoreTests: XCTestCase {
         try await assertMeetingTimezoneAndRecurrencePersistAcrossReloadAndSync(timeZoneIdentifier: "Europe/Berlin")
     }
 
+    func testMeetingWithoutTimezone_PersistsNilAcrossStackReloadAndMeetingSync_TC_12037() async throws {
+        // Verify a missing time zone remains nil through reload and full sync.
+        try await assertMeetingTimezoneAndRecurrencePersistAcrossReloadAndSync(timeZoneIdentifier: nil)
+    }
+
     private func assertMeetingTimezoneAndRecurrencePersistAcrossReloadAndSync(
         timeZoneIdentifier: String?
     ) async throws {
