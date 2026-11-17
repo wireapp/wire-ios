@@ -623,35 +623,47 @@ struct MeetingRepositoryTests {
 
     // MARK: - createMeeting
 
-    @Test
-    func createMeetingCreatesMeetingViaAPIAndStoresIt() async throws {
+    @Test(
+        "createMeeting sends the current time zone",
+        arguments: [WireCallingDomain.MeetingType.scheduled, .immediate]
+    )
+    func createMeetingSendsCurrentTimeZone_TC_12033(type: WireCallingDomain.MeetingType) async throws {
         // Mock
 
-        meetingsAPI.createMeetingParameters_MockValue = Scaffolding.meetingResponse
+        let expectedTimeZone = TimeZone.current.identifier
+        let response = Scaffolding.response(timeZoneIdentifier: expectedTimeZone, recurrence: nil)
+        meetingsAPI.createMeetingParameters_MockValue = response
 
         // When
 
         let result = try await sut.createMeeting(
-            title: Scaffolding.meetingResponse.title,
-            startTime: Scaffolding.meetingResponse.startTime,
-            endTime: Scaffolding.meetingResponse.endTime,
+            title: response.title,
+            startTime: response.startTime,
+            endTime: response.endTime,
             recurrence: nil,
-            type: .immediate,
-            password: " exact password "
+            type: type,
+            password: type == .immediate ? " exact password " : nil
         )
 
         // Then
 
-        #expect(meetingsAPI.createMeetingParameters_Invocations.count == 1)
-        #expect(
-            meetingsAPI.createMeetingParameters_Invocations.first?.timeZoneIdentifier == TimeZone.current.identifier
+        let parameters = try #require(meetingsAPI.createMeetingParameters_Invocations.first)
+        let payload = try #require(
+            JSONSerialization.jsonObject(with: JSONEncoder().encode(parameters)) as? [String: Any]
         )
-        #expect(meetingsAPI.createMeetingParameters_Invocations.first?.type == .immediate)
-        #expect(meetingsAPI.createMeetingParameters_Invocations.first?.password == " exact password ")
-        #expect(result.link == Scaffolding.meetingResponse.link)
+        #expect(parameters.timeZoneIdentifier == expectedTimeZone)
+        #expect(payload["tzid"] as? String == expectedTimeZone)
+        #expect(parameters.type == (type == .immediate ? .immediate : .scheduled))
+        #expect(parameters.password == (type == .immediate ? " exact password " : nil))
+        #expect(result.link == response.link)
         #expect(result.meeting.id == Scaffolding.meetingID)
+        #expect(result.meeting.timeZoneIdentifier == expectedTimeZone)
         #expect(localStore.storeMeetingMeetingMeetingVoidReceivedInvocations.count == 1)
         #expect(localStore.storeMeetingMeetingMeetingVoidReceivedInvocations.first?.id == Scaffolding.meetingID)
+        #expect(
+            localStore.storeMeetingMeetingMeetingVoidReceivedInvocations.first?.timeZoneIdentifier
+                == expectedTimeZone
+        )
     }
 
     @Test("createMeeting returns the stored copy, which has its participants populated")
@@ -918,6 +930,30 @@ struct MeetingRepositoryTests {
             timeZoneIdentifier: "Asia/Tokyo",
             link: URL(string: "https://wire.example/meeting-join/?key=server&code=link")
         )
+
+        static func response(
+            timeZoneIdentifier: String?,
+            recurrence: WireNetwork.MeetingRecurrence?,
+            startTime: Date? = nil,
+            endTime: Date? = nil
+        ) -> MeetingResponse {
+            let source = meetingResponse
+            return MeetingResponse(
+                id: source.id,
+                title: source.title,
+                creatorID: source.creatorID,
+                startTime: startTime ?? source.startTime,
+                endTime: endTime ?? source.endTime,
+                conversationID: source.conversationID,
+                invitedEmails: source.invitedEmails,
+                isTrial: source.isTrial,
+                createdAt: source.createdAt,
+                updatedAt: source.updatedAt,
+                recurrence: recurrence,
+                timeZoneIdentifier: timeZoneIdentifier,
+                link: source.link
+            )
+        }
 
         static let member = MeetingMember(
             qualifiedID: WireNetwork.QualifiedID(id: UUID(), domain: "example.com"),
