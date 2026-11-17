@@ -47,12 +47,10 @@ struct FilesTrailingToolbar: ToolbarContent {
                     deleteAllButton
                 }
 
-                if !viewModel.isOffline {
-                    if isSelecting {
-                        doneActionButton
-                    } else if showMoreButton {
-                        moreButton
-                    }
+                if isSelecting {
+                    doneActionButton
+                } else if showMoreButton {
+                    moreButton
                 }
 
                 if !isSelecting {
@@ -71,24 +69,32 @@ private extension FilesTrailingToolbar {
 
     var canEmptyRecycleBin: Bool {
         viewModel.selfUserRole == .editor && viewModel.isRecycleBin && !isSelecting && !viewModel.state.items
-            .isEmpty && !viewModel.isOffline && viewModel.navigationPath.isEmpty && viewModel.isBulkActionsEnabled
+            .isEmpty && !viewModel.isOffline && viewModel.navigationPath.isEmpty
     }
 
     var canSelectItems: Bool {
-        viewModel.selfUserRole == .editor && !viewModel.state.items.isEmpty && viewModel.isBulkActionsEnabled
+        viewModel.selfUserRole == .editor && !viewModel.state.items.isEmpty
     }
 
     var canCreateItems: Bool {
-        viewModel.selfUserRole == .editor && !viewModel.isRecycleBin
+        viewModel.selfUserRole == .editor && !viewModel.isRecycleBin && !viewModel.isOffline
+    }
+
+    var canOpenRecycleBin: Bool {
+        !viewModel.isRecycleBin && !viewModel.isOffline
     }
 
     var canUploadItems: Bool {
         viewModel.uploadDestinationPath != nil && viewModel.selfUserRole == .editor && !viewModel
-            .isRecycleBin
+            .isRecycleBin && !viewModel.isOffline
     }
 
     var showMoreButton: Bool {
-        !viewModel.isRecycleBin || (viewModel.isRecycleBin && canSelectItems)
+        if viewModel.isOffline, viewModel.state.items.allSatisfy({ $0.kind == .folder }) {
+            return false
+        }
+
+        return !viewModel.isRecycleBin || (viewModel.isRecycleBin && canSelectItems)
     }
 
     var deleteAllButton: some View {
@@ -142,7 +148,7 @@ private extension FilesTrailingToolbar {
                 uploadActions
             }
 
-            if !viewModel.isRecycleBin {
+            if canOpenRecycleBin {
                 recycleBinButton
             }
         } label: {

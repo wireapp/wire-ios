@@ -59,7 +59,7 @@ extension ZMConversationMessage {
             isText &&
             conversation.isSelfAnActiveMember &&
             sender.isSelfUser &&
-            deliveryState.isOne(of: .delivered, .sent, .read)
+            (deliveryState.isOne(of: .delivered, .sent, .read) || (self as? ZMClientMessage)?.isEditableInPlace == true)
     }
 
     /// Whether the message can be quoted.

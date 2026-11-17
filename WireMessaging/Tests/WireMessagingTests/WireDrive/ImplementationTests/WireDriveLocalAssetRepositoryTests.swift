@@ -199,6 +199,78 @@ final class WireDriveLocalAssetRepositoryTests {
     }
 
     @Test
+    func downloadAssets_whenMultipleNodes() async throws {
+        let nodeIDs = [UUID(), UUID(), UUID()]
+        nodesAPI.getNodeNodeID_MockMethod = { nodeID in
+            .fixture(
+                uuid: nodeID,
+                eTag: "eTag",
+                downloadURL: URL(string: "https://example.com/\(nodeID)")!
+            )
+        }
+        fileDownloader.downloadFrom_MockMethod = { _ in
+            let (progress, continuation) = AsyncThrowingStream.makeStream(of: Double.self)
+            continuation.yield(1)
+            continuation.finish()
+            return (progress: progress, download: Task.fixture())
+        }
+
+        let results = await sut.downloadAssets(nodeIDs: nodeIDs + nodeIDs, isAvailableOffline: true)
+
+        #expect(results.count == nodeIDs.count)
+        #expect(Set(nodesAPI.getNodeNodeID_Invocations) == Set(nodeIDs))
+        #expect(fileDownloader.downloadFrom_Invocations.count == nodeIDs.count)
+        #expect(fileCache.saveFileAtKey_Invocations.count == nodeIDs.count)
+        for nodeID in nodeIDs {
+            try #require(results[nodeID]).get()
+            let asset = try #require(storeBacking[nodeID])
+            #expect(asset.isAvailableOffline)
+            #expect(asset.downloadState.cacheKey != nil)
+        }
+    }
+
+    @Test
+    func downloadAssets_whenEmpty() async throws {
+        let results = await sut.downloadAssets(nodeIDs: [], isAvailableOffline: true)
+
+        #expect(results.isEmpty)
+        #expect(nodesAPI.getNodeNodeID_Invocations.isEmpty)
+        #expect(fileDownloader.downloadFrom_Invocations.isEmpty)
+        #expect(store.upsertAsset_Invocations.isEmpty)
+    }
+
+    @Test
+    func downloadAssets_whenOneFails() async throws {
+        let failedNodeID = UUID()
+        let successfulNodeID = UUID()
+        nodesAPI.getNodeNodeID_MockMethod = { nodeID in
+            if nodeID == failedNodeID {
+                throw WireDriveLocalAssetRepositoryError.missingDownloadURL
+            }
+            return .fixture(
+                uuid: nodeID,
+                eTag: "eTag",
+                downloadURL: URL(string: "https://example.com/file")!
+            )
+        }
+        let (progress, continuation) = AsyncThrowingStream.makeStream(of: Double.self)
+        continuation.finish()
+        fileDownloader.downloadFrom_MockValue = (progress: progress, download: Task.fixture())
+
+        let results = await sut.downloadAssets(nodeIDs: [failedNodeID, successfulNodeID], isAvailableOffline: true)
+
+        #expect(results.count == 2)
+        let failedResult = try #require(results[failedNodeID])
+        #expect(throws: WireDriveLocalAssetRepositoryError.missingDownloadURL) {
+            try failedResult.get()
+        }
+        try #require(results[successfulNodeID]).get()
+
+        #expect(storeBacking[successfulNodeID]?.isAvailableOffline == true)
+        #expect(storeBacking[successfulNodeID]?.downloadState.cacheKey != nil)
+    }
+
+    @Test
     func downloadAsset_whenSuccess() async throws {
         // given
         storeBacking[nodeID] = nil

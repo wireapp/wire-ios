@@ -23,6 +23,7 @@ import QuickLook
 package import SwiftUI
 import WireDesign
 import WireFoundation
+import WireLocators
 import WireLogging
 import WireMessagingDomain
 import WireReusableUIComponents
@@ -33,6 +34,7 @@ package struct FilesView: View {
     package var isBrowsing: Bool { false }
     @StateObject package var viewModel: FilesViewModel
     @Environment(\.dismiss) var dismiss
+    @Environment(\.wireAccentColor) private var accentColor
 
     let onOpenRecycleBin: () -> Void
     let onDismissContainer: () -> Void
@@ -167,14 +169,55 @@ package struct FilesView: View {
 
 private extension FilesView {
 
+    var isSelecting: Bool {
+        viewModel.multipleSelection == .active
+    }
+
+    var areAllItemsSelected: Bool {
+        let items = viewModel.state.items
+        return !items.isEmpty && items.allSatisfy { viewModel.selectedItems.contains($0) }
+    }
+
+    var toolbarTitle: String {
+        guard isSelecting else { return viewModel.navigationTitle }
+
+        let count = viewModel.selectedItems.count
+        if count == 0 {
+            return Strings.Files.Selection.selectItems
+        } else if count == 1 {
+            return Strings.Files.Selection.oneItem
+        } else {
+            return Strings.Files.Selection.items("\(count)")
+        }
+    }
+
     @ToolbarContentBuilder var toolbarContent: some ToolbarContent {
+        if isSelecting {
+            ToolbarItem(placement: .navigationBarLeading) {
+                Button(areAllItemsSelected ? Strings.Files.Selection.deselectAll : Strings.Files.Selection.selectAll) {
+                    if areAllItemsSelected {
+                        viewModel.deselectAllItems()
+                    } else {
+                        viewModel.selectAllItems()
+                    }
+                }
+                .accessibilityIdentifier(areAllItemsSelected ? Locators.WireDrive.FilesPage.deselectAll : Locators
+                    .WireDrive.FilesPage.selectAll)
+                .tint(ColorTheme.Base.primary(accentColor).color)
+                .transaction { transaction in
+                    transaction.animation = nil
+                    transaction.disablesAnimations = true
+                }
+            }
+        }
+
         ToolbarItem(placement: .principal) {
             VStack(spacing: 0) {
-                Text(viewModel.navigationTitle)
+                Text(toolbarTitle)
                     .font(for: .h3)
                     .foregroundStyle(ColorTheme.Backgrounds.onSurface.color)
 
-                if let navigationSubtitle = viewModel.navigationSubtitle {
+                if !isSelecting, let navigationSubtitle = viewModel.navigationSubtitle {
                     Text(navigationSubtitle)
                         .font(for: .subline1)
                         .foregroundStyle(ColorTheme.Base.secondaryText.color)
@@ -182,7 +225,7 @@ private extension FilesView {
             }
         }
 
-        if !viewModel.folderMenuOptions.isEmpty {
+        if !isSelecting, !viewModel.folderMenuOptions.isEmpty {
             ToolbarTitleMenu {
                 toolBarTitleMenuContent()
             }

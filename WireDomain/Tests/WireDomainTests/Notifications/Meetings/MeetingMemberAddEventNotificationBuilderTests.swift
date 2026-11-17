@@ -260,6 +260,10 @@ private final class InvitationMeetingsAPI: MeetingsAPI, @unchecked Sendable {
     }
 
     func deleteMeeting(id: WireNetwork.QualifiedID) async throws { throw InvitationTestError.unavailable }
+
+    func refreshMeetingLink(id: WireNetwork.QualifiedID, password: String?) async throws -> MeetingResponse {
+        throw InvitationTestError.unavailable
+    }
 }
 
 private final class InvitationUsersAPI: UsersAPI {

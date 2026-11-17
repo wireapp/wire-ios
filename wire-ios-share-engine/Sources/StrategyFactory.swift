@@ -29,6 +29,7 @@ final class StrategyFactory {
     let applicationStatus: ApplicationStatus
     let linkPreviewPreprocessor: LinkPreviewPreprocessor
     let messageSender: MessageSenderInterface
+    private let transportSession: TransportSessionType
     private(set) var strategies = [AnyObject]()
     private let apiVersion: WireTransport.APIVersion?
     private let localDomain: String?
@@ -52,6 +53,7 @@ final class StrategyFactory {
         let messageDependencyResolver = MessageDependencyResolver(context: syncContext)
         let featureRepository = LegacyFeatureRepository(context: syncContext)
         self.linkPreviewPreprocessor = linkPreviewPreprocessor
+        self.transportSession = transportSession
         self.syncContext = syncContext
         self.applicationStatus = applicationStatus
         self.messageSender = MessageSender(
@@ -83,9 +85,7 @@ final class StrategyFactory {
 
     func tearDown() {
         strategies.forEach {
-            if $0.responds(to: #selector(ZMObjectSyncStrategy.tearDown)) {
-                ($0 as? ZMObjectSyncStrategy)?.tearDown()
-            }
+            ($0 as? TearDownCapable)?.tearDown()
         }
         tornDown = true
     }
@@ -130,7 +130,8 @@ final class StrategyFactory {
         ClientMessageRequestStrategy(
             context: syncContext,
             localNotificationDispatcher: PushMessageHandlerDummy(),
-            messageSender: messageSender
+            messageSender: messageSender,
+            reachability: transportSession.reachability
         )
     }
 

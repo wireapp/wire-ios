@@ -137,6 +137,62 @@ struct MeetingRepositoryTests {
         #expect(localStore.deleteMeetingIdQualifiedIDVoidReceivedInvocations.isEmpty)
     }
 
+    @Test
+    func refreshMeetingLinkMapsResponseWithoutChangingStore() async throws {
+        let source = Scaffolding.meetingResponse
+        let response = MeetingResponse(
+            id: source.id,
+            title: source.title,
+            creatorID: source.creatorID,
+            startTime: source.startTime,
+            endTime: source.endTime,
+            conversationID: source.conversationID,
+            invitedEmails: source.invitedEmails,
+            isTrial: source.isTrial,
+            createdAt: source.createdAt,
+            updatedAt: source.updatedAt,
+            timeZoneIdentifier: source.timeZoneIdentifier,
+            link: source.link,
+            hasPassword: true
+        )
+        let url = try #require(response.link)
+        meetingsAPI.refreshMeetingLinkIdPassword_MockValue = response
+
+        let link = try await sut.refreshMeetingLink(id: Scaffolding.meetingID, password: "new-password")
+
+        #expect(link == MeetingLink(url: url, hasPassword: true))
+        #expect(meetingsAPI.refreshMeetingLinkIdPassword_Invocations.count == 1)
+        #expect(meetingsAPI.refreshMeetingLinkIdPassword_Invocations.first?.id == Scaffolding.meetingID)
+        #expect(meetingsAPI.refreshMeetingLinkIdPassword_Invocations.first?.password == "new-password")
+        #expect(localStore.storeMeetingMeetingMeetingVoidReceivedInvocations.isEmpty)
+        #expect(localStore.deleteMeetingIdQualifiedIDVoidReceivedInvocations.isEmpty)
+    }
+
+    @Test
+    func refreshMeetingLinkReturnsNilWhenResponseHasNoLink() async throws {
+        let response = Scaffolding.meetingResponse
+        meetingsAPI.refreshMeetingLinkIdPassword_MockValue = MeetingResponse(
+            id: response.id,
+            title: response.title,
+            creatorID: response.creatorID,
+            startTime: response.startTime,
+            endTime: response.endTime,
+            conversationID: response.conversationID,
+            invitedEmails: response.invitedEmails,
+            isTrial: response.isTrial,
+            createdAt: response.createdAt,
+            updatedAt: response.updatedAt,
+            link: nil,
+            hasPassword: nil
+        )
+
+        let link = try await sut.refreshMeetingLink(id: Scaffolding.meetingID, password: nil)
+
+        #expect(link == nil)
+        #expect(localStore.storeMeetingMeetingMeetingVoidReceivedInvocations.isEmpty)
+        #expect(localStore.deleteMeetingIdQualifiedIDVoidReceivedInvocations.isEmpty)
+    }
+
     // MARK: - pullMeetings
 
     @Test

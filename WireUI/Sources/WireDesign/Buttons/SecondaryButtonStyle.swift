@@ -17,12 +17,20 @@
 //
 
 import SwiftUI
+import WireFoundation
 
 struct SecondaryButtonStyle: SwiftUI.ButtonStyle {
     @Environment(\.isEnabled) private var isEnabled
+    @Environment(\.wireAccentColor) private var wireAccentColor
     @Environment(\.isFocused) var isFocused
 
     typealias Theme = ColorTheme.Buttons.Secondary
+
+    private let useAccentColor: Bool
+
+    init(useAccentColor: Bool = false) {
+        self.useAccentColor = useAccentColor
+    }
 
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
@@ -30,12 +38,20 @@ struct SecondaryButtonStyle: SwiftUI.ButtonStyle {
             .padding()
             .frame(maxWidth: .infinity)
             .background(isEnabled ? Theme.enabled.color : Theme.disabled.color)
-            .foregroundStyle(isEnabled ? Theme.onEnabled.color : Theme.onDisabled.color)
+            .foregroundStyle(isEnabled ? enabledForegroundColor : Theme.onDisabled.color)
             .font(for: .buttonBig)
             .overlay {
                 RoundedRectangle(cornerRadius: 16)
-                    .stroke(isEnabled ? Theme.enabledOutline.color : Theme.disabledOutline.color, lineWidth: 1)
+                    .stroke(isEnabled ? enabledOutlineColor : Theme.disabledOutline.color, lineWidth: 1)
             }
             .clipShape(.rect(cornerRadius: 16))
+    }
+
+    private var enabledForegroundColor: Color {
+        useAccentColor ? ColorTheme.Base.primary(wireAccentColor).color : Theme.onEnabled.color
+    }
+
+    private var enabledOutlineColor: Color {
+        useAccentColor ? ColorTheme.Base.primary(wireAccentColor).color : Theme.enabledOutline.color
     }
 }

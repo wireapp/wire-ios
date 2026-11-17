@@ -17,22 +17,34 @@
 //
 
 import SwiftUI
+import WireFoundation
 
 struct PrimaryButtonStyle: SwiftUI.ButtonStyle {
     @Environment(\.isEnabled) private var isEnabled
+    @Environment(\.wireAccentColor) private var wireAccentColor
     @Environment(\.isFocused) var isFocused
 
     typealias PrimaryTheme = ColorTheme.Buttons.Primary
+
+    private let useAccentColor: Bool
+
+    init(useAccentColor: Bool = false) {
+        self.useAccentColor = useAccentColor
+    }
 
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .lineLimit(1)
             .padding()
             .frame(maxWidth: .infinity)
-            .background(isEnabled ? PrimaryTheme.enabled.color : PrimaryTheme.disabled.color)
+            .background(isEnabled ? enabledBackgroundColor : PrimaryTheme.disabled.color)
             .foregroundStyle(isEnabled ? PrimaryTheme.onEnabled.color : PrimaryTheme.onDisabled.color)
             .font(for: .buttonBig)
             .clipShape(.rect(cornerRadius: 16))
+    }
+
+    private var enabledBackgroundColor: Color {
+        useAccentColor ? ColorTheme.Base.primary(wireAccentColor).color : PrimaryTheme.enabled.color
     }
 
 }

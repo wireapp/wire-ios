@@ -89,6 +89,11 @@ class GuestOptionsPage: PageModel {
         return self
     }
 
+    func guestLink() throws -> URL {
+        XCTAssertTrue(linkText.waitForExistence(timeout: 10), "Guest link did not appear")
+        return try XCTUnwrap(URL(string: linkText.label), "Guest link should be a valid URL")
+    }
+
     @discardableResult
     func assertLinkCreated(passwordSecured: Bool) -> Self {
         XCTAssertTrue(linkText.waitForExistence(timeout: 10), "Guest link did not appear")

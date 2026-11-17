@@ -419,6 +419,62 @@ final class MeetingsAPITests: XCTestCase {
         }
     }
 
+    func testRefreshMeetingLink_V19_SendsPasswordAndReadsMeeting() async throws {
+        let resource = try MockJSONPayloadResource(name: "MeetingResponse")
+        var responseJSON = try XCTUnwrap(JSONSerialization.jsonObject(with: resource.jsonData) as? [String: Any])
+        let link = "https://account.wire.com/meeting-join/?key=rotated-key&code=rotated-code&domain=wire.com"
+        responseJSON.removeValue(forKey: "trial")
+        responseJSON["type"] = "scheduled"
+        responseJSON["link"] = link
+        responseJSON["has_password"] = true
+        let responseData = try JSONSerialization.data(withJSONObject: responseJSON)
+        let apiService = MockAPIServiceProtocol()
+        apiService.executeRequestRequiringAccessToken_MockMethod = { request, _ in
+            let (_, response) = try request.mockResponse(statusCode: .ok)
+            return (responseData, response)
+        }
+        let sut = APIVersion.v19.buildAPI(apiService: apiService)
+
+        let result = try await sut.refreshMeetingLink(id: Scaffolding.meetingID, password: "new-password")
+
+        let invocation = try XCTUnwrap(apiService.executeRequestRequiringAccessToken_Invocations.first)
+        XCTAssertEqual(
+            invocation.request.url?.absoluteString,
+            "/v19/meetings/wire.com/9c2e5e1a-1234-5678-abcd-0123456789ab/link/refresh"
+        )
+        XCTAssertEqual(invocation.request.httpMethod, "POST")
+        XCTAssertTrue(invocation.requiringAccessToken)
+        let body = try XCTUnwrap(invocation.request.httpBody)
+        let json = try XCTUnwrap(JSONSerialization.jsonObject(with: body) as? [String: Any])
+        XCTAssertEqual(json["password"] as? String, "new-password")
+        XCTAssertEqual(Set(json.keys), ["password"])
+        XCTAssertEqual(result.link?.absoluteString, link)
+        XCTAssertEqual(result.hasPassword, true)
+    }
+
+    func testRefreshMeetingLink_OmitsNilPassword() async throws {
+        let apiService = MockAPIServiceProtocol.withResponses([(.ok, "MeetingResponse")])
+        let sut = APIVersion.v19.buildAPI(apiService: apiService)
+
+        _ = try await sut.refreshMeetingLink(id: Scaffolding.meetingID, password: nil)
+
+        let body = try XCTUnwrap(apiService.executeRequestRequiringAccessToken_Invocations.first?.request.httpBody)
+        let json = try XCTUnwrap(JSONSerialization.jsonObject(with: body) as? [String: Any])
+        XCTAssertTrue(json.isEmpty)
+    }
+
+    func testRefreshMeetingLink_UnsupportedInV0AndV18() async {
+        for version in [APIVersion.v0, .v18] {
+            let apiService = MockAPIServiceProtocol()
+            let sut = version.buildAPI(apiService: apiService)
+
+            await XCTAssertThrowsErrorAsync(MeetingsAPIError.unsupportedEndpointForAPIVersion) {
+                _ = try await sut.refreshMeetingLink(id: Scaffolding.meetingID, password: nil)
+            }
+            XCTAssertTrue(apiService.executeRequestRequiringAccessToken_Invocations.isEmpty)
+        }
+    }
+
     func testMeetingInvitations_V18_ThrowsUnsupportedEndpointWithoutRequest() async {
         let apiService = MockAPIServiceProtocol()
         let sut = APIVersion.v18.buildAPI(apiService: apiService)

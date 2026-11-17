@@ -56,6 +56,130 @@ final class MessageToolboxViewTests: CoreDataSnapshotTestCase {
         super.tearDown()
     }
 
+    // MARK: - Timestamp Accessibility
+
+    func testTimestampAccessibilityIncludesDateWithoutChangingVisibleTime() {
+        let timestamp = Date(timeIntervalSince1970: 1_729_600_740)
+        message.serverTimestamp = timestamp
+        message.updatedAt = timestamp.addingTimeInterval(60)
+
+        sut.configureForMessage(message)
+
+        XCTAssertEqual(sut.detailsLabel.text, message.formattedReceivedTime())
+        XCTAssertEqual(
+            sut.detailsLabel.accessibilityLabel,
+            L10n.Localizable.MessageDetails.subtitleSendDate(
+                Message.spellOutDateTimeFormatter.string(from: timestamp)
+            )
+        )
+        XCTAssertFalse(sut.detailsLabel.isHidden)
+    }
+
+    func testTimestampAccessibilityIsClearedWhenReusedForMessageWithoutDate() {
+        message.serverTimestamp = Date(timeIntervalSince1970: 1_729_600_740)
+        sut.configureForMessage(message)
+        XCTAssertNotNil(sut.detailsLabel.accessibilityLabel)
+
+        let nextMessage: MockMessage = MockMessageFactory.textMessage(withText: "No timestamp")
+        nextMessage.serverTimestamp = nil
+        nextMessage.deliveryState = .sent
+        nextMessage.senderUser = MockUserType.createUser(name: "Bruno")
+        sut.configureForMessage(nextMessage)
+
+        XCTAssertTrue(sut.detailsLabel.isHidden)
+        XCTAssertEqual(sut.detailsLabel.accessibilityLabel ?? "", "")
+    }
+
+    func testTimestampAccessibilityIsClearedWhenMessageIsPending() {
+        message.serverTimestamp = Date(timeIntervalSince1970: 1_729_600_740)
+        sut.configureForMessage(message)
+        XCTAssertNotNil(sut.detailsLabel.accessibilityLabel)
+
+        message.deliveryState = .pending
+        sut.configureForMessage(message)
+
+        XCTAssertTrue(sut.detailsLabel.isHidden)
+        XCTAssertEqual(sut.detailsLabel.accessibilityLabel ?? "", "")
+    }
+
+    func testTimestampAccessibilityIsClearedWhenShowingCallList() {
+        message.serverTimestamp = Date(timeIntervalSince1970: 1_729_600_740)
+        sut.configureForMessage(message)
+        XCTAssertNotNil(sut.detailsLabel.accessibilityLabel)
+
+        let systemMessageData = MockSystemMessageData(systemMessageType: .missedCall, reason: .none)
+        message.backingSystemMessageData = systemMessageData
+        sut.configureForMessage(message)
+
+        XCTAssertEqual(sut.detailsLabel.accessibilityLabel ?? "", sut.detailsLabel.text ?? "")
+    }
+
+    // MARK: - Message Status Accessibility
+
+    func testMessageStatusAccessibilityLabelsUpdateWithDeliveryState() {
+        message.senderUser = MockUserType.createSelfUser(name: "Alice")
+        message.conversationLike = otherUserConversation
+
+        let cases: [(ZMDeliveryState, String)] = [
+            (.pending, L10n.Accessibility.Conversation.MessageStatus.sending),
+            (.sent, L10n.Accessibility.Conversation.MessageStatus.sent),
+            (.delivered, L10n.Accessibility.Conversation.MessageStatus.delivered),
+            (.read, L10n.Accessibility.Conversation.MessageStatus.seen)
+        ]
+
+        for (state, expectedLabel) in cases {
+            message.deliveryState = state
+
+            sut.configureForMessage(message, animated: false)
+
+            XCTAssertFalse(sut.statusContainerView.isHidden)
+            XCTAssertTrue(sut.statusContainerView.isAccessibilityElement)
+            XCTAssertEqual(sut.statusContainerView.accessibilityLabel, expectedLabel)
+        }
+    }
+
+    func testGroupReadCountAccessibilityLabelUpdatesWithReceipts() {
+        message.senderUser = MockUserType.createSelfUser(name: "Alice")
+        message.conversation = createGroupConversation()
+        message.conversationLike = message.conversation
+        message.deliveryState = .read
+
+        for count in [1, 2, 12] {
+            message.readReceipts = (0 ..< count).map { _ in MockReadReceipt(user: otherUser) }
+
+            sut.configureForMessage(message, animated: false)
+
+            XCTAssertFalse(sut.statusContainerView.isHidden)
+            XCTAssertEqual(
+                sut.statusContainerView.accessibilityLabel,
+                L10n.Accessibility.Conversation.MessageStatus.seenByMultiple(count)
+            )
+        }
+    }
+
+    func testMessageStatusHasEnglishAndGermanTranslations() throws {
+        let cases: [(String, [String])] = [
+            ("Base", ["Sending", "Sent", "Delivered", "Read", "Read by 12"]),
+            ("de", ["Wird gesendet", "Gesendet", "Zugestellt", "Gelesen", "Gelesen von 12"])
+        ]
+        let statuses = ["sending", "sent", "delivered", "seen", "seenByMultiple"]
+
+        for (language, expectedLabels) in cases {
+            let path = try XCTUnwrap(Bundle.main.path(forResource: language, ofType: "lproj"))
+            let bundle = try XCTUnwrap(Bundle(path: path))
+
+            for (status, expectedLabel) in zip(statuses, expectedLabels) {
+                let format = bundle.localizedString(
+                    forKey: "conversation.messageStatus.\(status)",
+                    value: nil,
+                    table: "Accessibility"
+                )
+                let label = status == "seenByMultiple" ? String(format: format, 12) : format
+                XCTAssertEqual(label, expectedLabel, "\(language): \(status)")
+            }
+        }
+    }
+
     // MARK: - Snapshot Tests
 
     func testThatItConfiguresWithFailedToSend() {

@@ -72,6 +72,15 @@ public struct AnsweredElsewhereCallTracker {
             let calling = message.calling
             guard let callContent: CallContent = .decode(from: calling) else { continue }
             let conversationID = UUID(uuidString: calling.qualifiedConversationID.id) ?? event.conversationID.id
+            _ = CallNotificationCallerTracker(userDefaults: userDefaults).track(
+                callContent: callContent,
+                conversationID: conversationID,
+                accountID: accountID,
+                senderID: event.senderID,
+                isCallerSelf: isCallerSelf,
+                eventTimestamp: event.timestamp,
+                now: .now
+            )
             _ = track(
                 callContent: callContent,
                 conversationID: conversationID,

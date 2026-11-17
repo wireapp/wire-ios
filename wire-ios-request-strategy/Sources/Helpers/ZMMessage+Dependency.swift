@@ -18,6 +18,7 @@
 
 import Foundation
 import WireDataModel
+import WireUtilities
 
 private let zmLog = ZMSLog(tag: "Dependencies")
 
@@ -121,7 +122,62 @@ public extension ZMMessage {
                 break
             }
         }
+        if blockingMessage == nil, DeveloperFlag.offlinePendingMessages.isOn {
+            blockingMessage = earlierPendingMessageOfSelfUser(in: conversation)
+        }
         return blockingMessage
+    }
+
+    /// The latest earlier message of the self user in the conversation that is still waiting to be sent.
+    ///
+    /// Pending messages can wait for the network far longer than the cap above, and sync can bring in more
+    /// messages than the last messages cover, so they're fetched separately to keep them in order.
+    private func earlierPendingMessageOfSelfUser(in conversation: ZMConversation) -> ZMMessage? {
+        guard let context = managedObjectContext, let serverTimestamp else { return nil }
+
+        let isEarlierPendingMessage = NSCompoundPredicate(andPredicateWithSubpredicates: [
+            ClientMessageRequestStrategy.shouldBeSentPredicate(context: context),
+            NSPredicate(format: "%K == %@", #keyPath(ZMMessage.visibleInConversation), conversation),
+            NSPredicate(format: "%K < %@", #keyPath(ZMMessage.serverTimestamp), serverTimestamp as NSDate)
+        ])
+        // An asset is pending while its upload waits for the network, and only sent once it's uploaded.
+        let isUploadingOrUploadedAsset = NSPredicate(
+            format: "version >= 3 AND transferState IN %@",
+            [AssetTransferState.uploading.rawValue, AssetTransferState.uploaded.rawValue]
+        )
+
+        let candidates: [ZMMessage?] = [
+            latestMessages(ZMClientMessage.self, matching: isEarlierPendingMessage, fetchLimit: 1, in: context)
+                .first,
+            // The processing state depends on the asset cache, so it's checked after fetching.
+            latestMessages(
+                ZMAssetClientMessage.self,
+                matching: NSCompoundPredicate(andPredicateWithSubpredicates: [
+                    isEarlierPendingMessage,
+                    isUploadingOrUploadedAsset
+                ]),
+                fetchLimit: 0, // no limit
+                in: context
+            )
+            .first(where: \.isAdvancedByAssetStrategies)
+        ]
+        return candidates.compactMap(\.self).max {
+            ($0.serverTimestamp ?? .distantPast) < ($1.serverTimestamp ?? .distantPast)
+        }
+    }
+
+    /// Fetches the messages matching the predicate, latest first.
+    private func latestMessages<Message: ZMMessage>(
+        _ type: Message.Type,
+        matching predicate: NSPredicate,
+        fetchLimit: Int,
+        in context: NSManagedObjectContext
+    ) -> [Message] {
+        let request = NSFetchRequest<Message>(entityName: type.entityName())
+        request.predicate = predicate
+        request.sortDescriptors = [NSSortDescriptor(key: #keyPath(ZMMessage.serverTimestamp), ascending: false)]
+        request.fetchLimit = fetchLimit
+        return context.fetchOrAssert(request: request)
     }
 
 }
@@ -130,5 +186,14 @@ extension ZMMessage: BlockingMessage {
 
     var shouldBlockFurtherMessages: Bool {
         deliveryState == .pending && !isExpired
+    }
+}
+
+private extension ZMAssetClientMessage {
+
+    /// Whether the asset strategies will still upload or send the asset. An uploading asset whose data is
+    /// missing from the cache has nothing left to upload, so it's never uploaded or sent.
+    var isAdvancedByAssetStrategies: Bool {
+        transferState == .uploaded || processingState != .done
     }
 }

@@ -68,4 +68,8 @@ class MeetingsAPIV0: MeetingsAPI, VersionedAPI {
         throw MeetingsAPIError.unsupportedEndpointForAPIVersion
     }
 
+    func refreshMeetingLink(id: QualifiedID, password: String?) async throws -> MeetingResponse {
+        throw MeetingsAPIError.unsupportedEndpointForAPIVersion
+    }
+
 }

@@ -18,6 +18,7 @@
 
 import UIKit
 import WireCommonComponents
+import WireDataModel
 import WireSyncEngine
 
 enum AlertChoice {
@@ -85,6 +86,7 @@ final class ActiveCallRouter<TopOverlayPresenter>
     private let callQualityController: CallQualityController
     private var transitioningDelegate: CallQualityAnimator
 
+    private var pendingMeetingInvitation: (conversationID: QualifiedID, link: URL)?
     private var isCallQualityShown = false
     private var isCallTopOverlayShown = false
     private(set) var scheduledPostCallAction: PostCallAction?
@@ -116,16 +118,29 @@ final class ActiveCallRouter<TopOverlayPresenter>
 
     // MARK: - Public Implementation
 
+    private func takeMeetingInvitation(for conversationID: QualifiedID) -> URL? {
+        guard pendingMeetingInvitation?.conversationID == conversationID else { return nil }
+        defer { pendingMeetingInvitation = nil }
+        return pendingMeetingInvitation?.link
+    }
+
+    func prepareMeetingInvitation(conversationID: QualifiedID, link: URL?) {
+        pendingMeetingInvitation = link.map { (conversationID, $0) }
+    }
+
     func updateActiveCallPresentationState() {
         callController.updateActiveCallPresentationState()
     }
 
     func prepareForRootReplacement() {
+        pendingMeetingInvitation = nil
         // Do not rely on dismiss completion during root swap
         presentedActiveCallViewController?.dismiss(animated: false)
         isPresentingActiveCall = false
         isActiveCallShown = false
         presentedActiveCallViewController = nil
+        topOverlayPresenter.dismissTopOverlay(animated: false)
+        isCallTopOverlayShown = false
     }
 }
 
@@ -165,7 +180,10 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
         var activeCallViewController: UIViewController!
         let bottomSheetActiveCallViewController = CallingBottomSheetViewController(
             voiceChannel: voiceChannel,
-            userSession: userSession
+            userSession: userSession,
+            takeMeetingInvitation: { [weak self] conversationID in
+                self?.takeMeetingInvitation(for: conversationID)
+            }
         )
         bottomSheetActiveCallViewController.delegate = callController
         activeCallViewController = bottomSheetActiveCallViewController
@@ -183,21 +201,31 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
     }
 
     func dismissActiveCall(animated: Bool = true, completion: Completion? = nil) {
-        if let presented = presentedActiveCallViewController {
-            presented.dismiss(animated: animated) { [weak self] in
-                guard let self else { completion?(); return }
+        guard let presented = presentedActiveCallViewController else {
+            activeCallDidDismiss(nil, completion: completion)
+            return
+        }
 
-                presentedActiveCallViewController = nil
-                isActiveCallShown = false
-                isPresentingActiveCall = false
+        presented.dismiss(animated: animated) { [weak self] in
+            guard let self else { completion?(); return }
+            activeCallDidDismiss(presented, completion: completion)
+        }
+    }
 
-                if let action = scheduledPostCallAction {
-                    action { completion?() }
-                } else {
-                    completion?()
-                }
-                scheduledPostCallAction = nil
-            }
+    func activeCallDidDismiss(_ dismissed: UIViewController?, completion: Completion?) {
+        guard presentedActiveCallViewController === dismissed else {
+            completion?()
+            return
+        }
+
+        presentedActiveCallViewController = nil
+        isActiveCallShown = false
+        isPresentingActiveCall = false
+
+        let action = scheduledPostCallAction
+        scheduledPostCallAction = nil
+        if let action {
+            action { completion?() }
         } else {
             completion?()
         }

@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireDataModel
 import WireDataModelSupport
 import XCTest
 
@@ -60,5 +61,28 @@ final class ZClientViewControllerTests: XCTestCase {
 
         // Then
         XCTAssertEqual(userSession.deleteAppLockPasscodeCalls, 1)
+    }
+
+    @MainActor
+    func testThatNameOnlyChangeRefreshesAccountInitials() async {
+        let user = coreDataFixture.selfUser!
+        userSession.selfUser = user
+        sut.account.imageData = nil
+        user.name = "Bob"
+        let changeInfo = UserChangeInfo(object: user)
+        changeInfo.changedKeys = [#keyPath(UserType.previewImageData)]
+        sut.userDidChange(changeInfo)
+        let initialImage = XCTNSPredicateExpectation(predicate: NSPredicate { [self] _, _ in
+            sut.cachedAccountImage == .text("B")
+        }, object: nil)
+        await fulfillment(of: [initialImage], timeout: 2)
+
+        user.name = "Jane Doe"
+        changeInfo.changedKeys = [#keyPath(ZMUser.name)]
+        sut.userDidChange(changeInfo)
+        let renamedImage = XCTNSPredicateExpectation(predicate: NSPredicate { [self] _, _ in
+            sut.cachedAccountImage == .text("JD")
+        }, object: nil)
+        await fulfillment(of: [renamedImage], timeout: 2)
     }
 }

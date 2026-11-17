@@ -19,6 +19,7 @@
 import XCTest
 
 import WireTransport
+import WireUtilities
 @testable import WireRequestStrategy
 @testable import WireRequestStrategySupport
 
@@ -50,6 +51,7 @@ class LinkPreviewUpdateRequestStrategyTests: MessagingTestBase {
     override func tearDown() {
         applicationStatus = nil
         sut = nil
+        DeveloperFlag.storage = .standard
         super.tearDown()
     }
 
@@ -204,6 +206,101 @@ class LinkPreviewUpdateRequestStrategyTests: MessagingTestBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         XCTAssertEqual(1, mockMessageSender.sendMessageMessage_Invocations.count)
+    }
+
+    func testThatAnInFlightLinkPreviewSendPreventsInPlaceEditAndLocalDeletion() {
+        // GIVEN: an undelivered pending message whose link preview send is held in flight.
+        DeveloperFlag.storage = .temporary()
+        DeveloperFlag.offlinePendingMessages.enable(true)
+        let didStartSending = XCTestExpectation(description: "didStartSending")
+        let (sendRelease, releaseSend) = AsyncStream<Void>.makeStream()
+        var message: ZMClientMessage!
+        syncMOC.performGroupedAndWait {
+            self.mockMessageSender.sendMessageMessage_MockMethod = { _ in
+                didStartSending.fulfill()
+                for await _ in sendRelease {}
+            }
+            message = self.insertMessage(with: .uploaded)
+            XCTAssertFalse(message.delivered)
+            XCTAssertTrue(message.isEditableInPlace)
+
+            // WHEN
+            self.process(message)
+        }
+        wait(for: [didStartSending], timeout: 5)
+
+        // THEN: the text that may reach recipients can't be replaced or deleted locally.
+        syncMOC.performAndWait {
+            XCTAssertEqual(
+                message.committedValues(forKeys: ["sendAttemptStarted"])["sendAttemptStarted"] as? Bool,
+                true
+            )
+            XCTAssertFalse(message.isEditableInPlace)
+            XCTAssertFalse(message.replacePendingText(
+                with: message.makePendingText("Changed text", mentions: []),
+                fetchLinkPreview: false
+            ))
+            XCTAssertFalse(message.deletePendingMessage())
+            XCTAssertFalse(message.isDeleted)
+            XCTAssertEqual(message.textMessageData?.messageText, "Test message")
+        }
+
+        releaseSend.finish()
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 5))
+        XCTAssertEqual(1, mockMessageSender.sendMessageMessage_Invocations.count)
+    }
+
+    func testThatItDoesNotSendLinkPreviewOfMessageDeletedBeforeSending() {
+        // GIVEN
+        DeveloperFlag.storage = .temporary()
+        DeveloperFlag.offlinePendingMessages.enable(true)
+        let didComplete = XCTestExpectation(description: "didComplete")
+        didComplete.assertForOverFulfill = true
+        syncMOC.performGroupedAndWait {
+            self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
+            let message = self.insertMessage(with: .uploaded)
+
+            // WHEN: the message is deleted on this context before the send task runs.
+            self.sut.synchronize(key: ZMClientMessage.linkPreviewStateKey, for: message) {
+                didComplete.fulfill()
+            }
+            XCTAssertTrue(message.deletePendingMessage())
+        }
+        wait(for: [didComplete], timeout: 5)
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 5))
+
+        // THEN
+        XCTAssertEqual(0, mockMessageSender.sendMessageMessage_Invocations.count)
+    }
+
+    func testThatItDoesNotSendLinkPreviewWhenSendAttemptCannotBePersisted() {
+        // GIVEN: a saved, undelivered pending message and a context that fails to save.
+        DeveloperFlag.storage = .temporary()
+        DeveloperFlag.offlinePendingMessages.enable(true)
+        let didComplete = XCTestExpectation(description: "didComplete")
+        didComplete.assertForOverFulfill = true
+        var message: ZMClientMessage!
+        syncMOC.performGroupedAndWait {
+            self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
+            message = self.insertMessage(with: .uploaded)
+            self.syncMOC.enableForceRollback()
+
+            // WHEN
+            self.sut.synchronize(key: ZMClientMessage.linkPreviewStateKey, for: message) {
+                didComplete.fulfill()
+            }
+        }
+        wait(for: [didComplete], timeout: 5)
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 5))
+
+        // THEN
+        syncMOC.performAndWait {
+            self.syncMOC.disableForceRollback()
+            XCTAssertEqual(0, self.mockMessageSender.sendMessageMessage_Invocations.count)
+            XCTAssertFalse(message.delivered)
+            XCTAssertFalse(message.sendAttemptStarted)
+            XCTAssertEqual(message.linkPreviewState, .uploaded)
+        }
     }
 
     // MARK: - Helper

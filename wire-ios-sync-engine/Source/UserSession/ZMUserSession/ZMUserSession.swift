@@ -813,6 +813,9 @@ public final class ZMUserSession: NSObject {
 
     public func tearDown() {
         guard !isTornDown else { return }
+        isTornDown = true
+        syncStateCancellable?.cancel()
+        syncStateCancellable = nil
 
         Task {
             await clientSessionComponent?.workAgent.clearSchedulerQueue()
@@ -829,6 +832,8 @@ public final class ZMUserSession: NSObject {
         appLockController.delegate = nil
         applicationStatusDirectory.clientRegistrationStatus.registrationStatusDelegate = nil
 
+        // Pending messages waiting for the network must stop before the contexts are closed below.
+        strategyDirectory?.cancelPendingSends()
         syncAgent?.tearDown()
         syncAgent = nil
         syncStrategy?.tearDown()
@@ -857,7 +862,6 @@ public final class ZMUserSession: NSObject {
         NotificationCenter.default.removeObserver(self)
         WireLogger.authentication.clearClientID()
 
-        isTornDown = true
     }
 
     // MARK: - Methods
@@ -1234,6 +1238,11 @@ extension ZMUserSession: ZMNetworkStateDelegate {
 
     private func observeSyncStateForAVS(syncStateSubject: CurrentValueSubject<SyncState, Never>) {
         syncStateCancellable = syncStateSubject
+            .handleEvents(receiveOutput: { [weak self] state in
+                if state == .suspended {
+                    self?.notifyAVSDidProcessEvents()
+                }
+            })
             .map { $0 == .liveSyncing(.ongoing) }
             .removeDuplicates()
             .sink { [weak self] isOngoing in
@@ -1721,7 +1730,7 @@ extension ZMUserSession {
                 clientId: callEventInfo.clientID
             )
 
-            callCenter.processCallEvent(callEvent)
+            callCenter.processCallEvent(callEvent, senderDomain: callEventInfo.userDomain)
         }
 
     }

@@ -274,6 +274,10 @@ private final class MeetingRepositoryProtocolMock: MeetingRepositoryProtocol, @u
         nil
     }
 
+    public func refreshMeetingLink(id: QualifiedID, password: String?) async throws -> MeetingLink? {
+        nil
+    }
+
     public func fetchInvitedEmails(id: QualifiedID) async throws -> [String] {
         []
     }

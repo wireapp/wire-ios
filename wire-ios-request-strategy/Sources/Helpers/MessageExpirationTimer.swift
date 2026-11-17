@@ -70,6 +70,12 @@ public class MessageExpirationTimer: ZMMessageTimer, ZMContextChangeTracker {
     }
 
     public func addTrackedObjects(_ objects: Set<NSManagedObject>) {
+        // A pending message whose send was interrupted, e.g. because the app was killed, is sent again
+        // after the restart, so the deadline of that send no longer applies. Sending sets a new one.
+        for case let message as ZMClientMessage in objects where message.staysPendingWhileOffline {
+            message.removeExpirationDate()
+            message.managedObjectContext?.enqueueDelayedSave()
+        }
         startTimerIfNeeded(for: objects)
     }
 
@@ -84,6 +90,10 @@ public class MessageExpirationTimer: ZMMessageTimer, ZMContextChangeTracker {
             guard self.entityNames.contains(type(of: $0).entityName()) else { return }
 
             if let filter = self.filter, !filter.evaluate(with: $0) { return }
+
+            // A pending message must not fail while it waits, e.g. if the network goes away during an attempt.
+            // The send request expires at the same deadline, and the send then decides whether to fail it.
+            if ($0 as? ZMClientMessage)?.staysPendingWhileOffline == true { return }
 
             guard let expirationDate = $0.expirationDate else { return }
 
