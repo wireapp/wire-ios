@@ -584,6 +584,72 @@ struct MeetingRepositoryTests {
         #expect(payload["tzid"] as? String == TimeZone.current.identifier)
     }
 
+    @Test
+    func updateMeetingStoresAndPullsUpdatedTimeZoneAndRecurrence_TC_12039() async throws {
+        // Given: the server updates the series to the device zone, which differs from its old zone.
+        let updatedTimeZone = TimeZone.current.identifier
+        let originalTimeZone = updatedTimeZone == "Europe/Berlin" ? "America/New_York" : "Europe/Berlin"
+        var updatedCalendar = Calendar(identifier: .gregorian)
+        updatedCalendar.timeZone = TimeZone.current
+        let start = try #require(
+            updatedCalendar.date(from: DateComponents(year: 2026, month: 10, day: 25, hour: 10))
+        )
+        let end = start.addingTimeInterval(1800)
+        let recurrence = WireNetwork.MeetingRecurrence(frequency: .weekly, interval: 1, until: nil)
+        let original = Scaffolding.response(
+            timeZoneIdentifier: originalTimeZone,
+            recurrence: recurrence,
+            startTime: start,
+            endTime: end
+        )
+        let updatedResponse = Scaffolding.response(
+            timeZoneIdentifier: updatedTimeZone,
+            recurrence: recurrence,
+            startTime: original.startTime,
+            endTime: original.endTime
+        )
+        meetingsAPI.getMeetingId_MockValue = original
+        let beforeEdit = try #require(try await sut.pullMeeting(id: Scaffolding.meetingID))
+        #expect(beforeEdit.timeZoneIdentifier == originalTimeZone)
+        meetingsAPI.updateMeetingIdParameters_MockValue = updatedResponse
+
+        // When: the request and mocked server response use the current device zone.
+        let updated = try await sut.updateMeeting(
+            id: Scaffolding.meetingID,
+            title: original.title,
+            startTime: original.startTime,
+            endTime: original.endTime,
+            recurrence: WireCallingDomain.MeetingRecurrence(frequency: .weekly, interval: 1)
+        )
+
+        // Then: the response zone is stored, the weekly rule remains, and a pull keeps both.
+        let parameters = try #require(meetingsAPI.updateMeetingIdParameters_Invocations.first?.parameters)
+        #expect(parameters.timeZoneIdentifier == updatedTimeZone)
+        #expect(parameters.recurrence??.frequency == .weekly)
+        #expect(updated.timeZoneIdentifier == updatedTimeZone)
+        #expect(updated.recurrence == WireCallingDomain.MeetingRecurrence(frequency: .weekly, interval: 1))
+
+        meetingsAPI.getMeetingId_MockValue = updatedResponse
+        let pulled = try #require(try await sut.pullMeeting(id: Scaffolding.meetingID))
+        #expect(pulled.timeZoneIdentifier == updatedTimeZone)
+        #expect(pulled.recurrence == WireCallingDomain.MeetingRecurrence(frequency: .weekly, interval: 1))
+        let stored = localStore.storeMeetingMeetingMeetingVoidReceivedInvocations
+        #expect(stored.map(\.timeZoneIdentifier) == [originalTimeZone, updatedTimeZone, updatedTimeZone])
+        #expect(stored.allSatisfy { $0.recurrence == updated.recurrence })
+
+        let occurrences = MeetingOccurrencePaginator().occurrences(
+            for: [pulled],
+            startingAt: start,
+            offset: 0,
+            limit: 2
+        )
+        let expectedNextStart = try #require(
+            updatedCalendar.date(from: DateComponents(year: 2026, month: 11, day: 1, hour: 10))
+        )
+        #expect(occurrences.map(\.start) == [start, expectedNextStart])
+        #expect(occurrences.map { updatedCalendar.component(.hour, from: $0.start) } == [10, 10])
+    }
+
     // MARK: - Email invitations
 
     @Test
