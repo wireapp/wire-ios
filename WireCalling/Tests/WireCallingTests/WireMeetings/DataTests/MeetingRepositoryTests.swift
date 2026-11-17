@@ -564,21 +564,23 @@ struct MeetingRepositoryTests {
     // MARK: - updateMeeting
 
     @Test
-    func updateMeetingSendsCurrentTimeZone() async throws {
+    func updateMeetingTitleOnlySendsCurrentTimeZone_TC_12038() async throws {
+        // Submit the existing dates and recurrence with a new title.
         meetingsAPI.updateMeetingIdParameters_MockValue = Scaffolding.meetingResponse
-
         _ = try await sut.updateMeeting(
             id: Scaffolding.meetingID,
-            title: Scaffolding.meetingResponse.title,
+            title: "Renamed meeting",
             startTime: Scaffolding.meetingResponse.startTime,
             endTime: Scaffolding.meetingResponse.endTime,
             recurrence: MeetingRecurrence(frequency: .weekly, interval: 1)
         )
 
+        // A title-only Save also sends the device zone under the current iOS policy.
         let parameters = try #require(meetingsAPI.updateMeetingIdParameters_Invocations.first?.parameters)
         let payload = try #require(
             JSONSerialization.jsonObject(with: JSONEncoder().encode(parameters)) as? [String: Any]
         )
+        #expect(parameters.title == "Renamed meeting")
         #expect(payload["tzid"] as? String == TimeZone.current.identifier)
     }
 
