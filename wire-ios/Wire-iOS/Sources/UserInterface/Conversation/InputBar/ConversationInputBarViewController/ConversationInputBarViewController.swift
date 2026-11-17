@@ -18,6 +18,7 @@
 
 import AVFoundation
 import avs
+import Combine
 import MobileCoreServices
 import Photos
 import SwiftUI
@@ -49,6 +50,7 @@ final class ConversationInputBarViewController: UIViewController,
 
     private let classificationProvider: (any SecurityClassificationProviding)?
     private let networkStatusObservable: any NetworkStatusObservable
+    private var driveFeatureSubscription: AnyCancellable?
 
     private(set) var inputController: UIViewController? {
         willSet {
@@ -425,20 +427,21 @@ final class ConversationInputBarViewController: UIViewController,
             self.typingObserverToken = conversation.addTypingObserver(self)
         }
 
-        if isDriveViewer {
-            [photoButton, videoButton, sketchButton, uploadFileButton].forEach {
-                $0.isEnabled = false
-                $0.setBackgroundImageColor(
-                    ColorTheme.Buttons.Secondary.disabled,
-                    for: .disabled
-                )
-                $0.accessibilityTraits.insert(.notEnabled)
-            }
-        }
-
         setupNotificationCenter()
         setupInputLanguageObserver()
         setupViews()
+        updateDriveViewerState()
+        driveFeatureSubscription = userSession.clientSessionComponent?.featureConfigRepository
+            .observeFeatureStates()
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] featureState in
+                switch featureState.name {
+                case .cells, .cellsInternal:
+                    self?.updateDriveViewerState()
+                default:
+                    break
+                }
+            }
         observeDraftAttachments()
     }
 
@@ -518,11 +521,26 @@ final class ConversationInputBarViewController: UIViewController,
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        inputBar.hideDriveViewerBannerIfDismissed()
+        updateDriveViewerState()
         updateButtonStates()
         inputBar.updateReturnKey()
         inputBar.updateEphemeralState()
         updateMentionList()
+    }
+
+    func updateDriveViewerState() {
+        let isViewer = isDriveViewer
+        [photoButton, videoButton, sketchButton, uploadFileButton].forEach {
+            $0.isEnabled = !isViewer
+            $0.setBackgroundImageColor(ColorTheme.Buttons.Secondary.disabled, for: .disabled)
+            if isViewer {
+                $0.accessibilityTraits.insert(.notEnabled)
+            } else {
+                $0.accessibilityTraits.remove(.notEnabled)
+            }
+        }
+        inputBar.updateDriveViewerBanner(show: shouldShowDriveViewerBanner)
+        setupAccessibility()
     }
 
     override func viewWillDisappear(_ animated: Bool) {

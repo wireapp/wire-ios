@@ -117,8 +117,10 @@ final class InputBar: UIView {
 
     private let inputBarVerticalInset: CGFloat = 34
     private let driveConfiguration: DriveConfiguration?
+    private var topBorder: UIView?
     static let rightIconSize: CGFloat = 32
     private let textViewFont = FontSpec.normalRegularFont.font!
+    private(set) var isDriveViewerBannerVisible = false
 
     private lazy var driveViewerAccessBanner: UIView = {
         let banner = ConversationViewerAccessBanner(
@@ -264,17 +266,6 @@ final class InputBar: UIView {
         // Input container
         addSubview(inputContainer)
 
-        // Viewer access banner
-        if let driveConfiguration, driveConfiguration.showBanner {
-            inputContainer.addArrangedSubview(driveViewerAccessBanner)
-            [driveViewerAccessBanner, self].forEach {
-                $0.layer.cornerRadius = 12
-                $0.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
-                $0.clipsToBounds = true
-            }
-
-        }
-
         inputContainer.addArrangedSubview(upperContainer)
         [leftAccessoryView, textView, rightAccessoryStackView].forEach { upperContainer.addSubview($0) }
 
@@ -289,6 +280,8 @@ final class InputBar: UIView {
         setupViews()
         updateRightAccessoryStackViewLayoutMargins()
         createConstraints()
+        topBorder = addBorder(for: .top, color: ColorTheme.Strokes.outline)
+        updateDriveViewerBanner(show: driveConfiguration?.showBanner == true)
 
         let notificationCenter = NotificationCenter.default
 
@@ -373,9 +366,6 @@ final class InputBar: UIView {
         textView.backgroundColor = .clear
 
         markdownView.delegate = textView
-        if driveConfiguration?.showBanner != true {
-            addBorder(for: .top)
-        }
         updateReturnKey()
 
         updateInputBar(withState: inputBarState, animated: false)
@@ -463,14 +453,6 @@ final class InputBar: UIView {
             buttonInnerContainer.trailingAnchor.constraint(equalTo: buttonContainer.trailingAnchor),
             rowTopInsetConstraint
         ])
-
-        if let driveConfiguration, driveConfiguration.showBanner {
-            driveViewerAccessBanner.translatesAutoresizingMaskIntoConstraints = false
-            NSLayoutConstraint.activate([
-                driveViewerAccessBanner.leadingAnchor.constraint(equalTo: inputContainer.leadingAnchor),
-                driveViewerAccessBanner.trailingAnchor.constraint(equalTo: inputContainer.trailingAnchor)
-            ])
-        }
     }
 
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
@@ -720,22 +702,35 @@ final class InputBar: UIView {
     private func onDriveViewerAccessBannerClosed() {
         guard let driveConfiguration  else { return }
         ConversationViewerAccessBannerDismissalStore.shared.markDismissed(forCellName: driveConfiguration.cellName)
-        inputContainer.removeArrangedSubview(driveViewerAccessBanner)
-        driveViewerAccessBanner.removeFromSuperview()
-        addBorder(for: .top)
-        layer.cornerRadius = 0
-        layer.maskedCorners = []
-        clipsToBounds = false
+        updateDriveViewerBanner(show: false)
     }
 
-    /// Hides the drive viewer access banner if it was dismissed elsewhere (e.g. from the Shared
-    /// Drive screen) while this `InputBar` instance was already alive and showing it.
-    func hideDriveViewerBannerIfDismissed() {
-        guard driveViewerAccessBanner.superview != nil,
-              let driveConfiguration,
-              ConversationViewerAccessBannerDismissalStore.shared.isDismissed(forCellName: driveConfiguration.cellName)
-        else { return }
-        onDriveViewerAccessBannerClosed()
+    func updateDriveViewerBanner(show: Bool) {
+        let shouldShow = show && driveConfiguration.map {
+            !ConversationViewerAccessBannerDismissalStore.shared.isDismissed(forCellName: $0.cellName)
+        } == true
+
+        topBorder?.isHidden = shouldShow
+        guard shouldShow != isDriveViewerBannerVisible else { return }
+
+        if shouldShow {
+            inputContainer.insertArrangedSubview(driveViewerAccessBanner, at: 0)
+            driveViewerAccessBanner.translatesAutoresizingMaskIntoConstraints = false
+            NSLayoutConstraint.activate([
+                driveViewerAccessBanner.leadingAnchor.constraint(equalTo: inputContainer.leadingAnchor),
+                driveViewerAccessBanner.trailingAnchor.constraint(equalTo: inputContainer.trailingAnchor)
+            ])
+        } else {
+            inputContainer.removeArrangedSubview(driveViewerAccessBanner)
+            driveViewerAccessBanner.removeFromSuperview()
+        }
+
+        isDriveViewerBannerVisible = shouldShow
+        [driveViewerAccessBanner, self].forEach {
+            $0.layer.cornerRadius = shouldShow ? 12 : 0
+            $0.layer.maskedCorners = shouldShow ? [.layerMinXMinYCorner, .layerMaxXMinYCorner] : []
+            $0.clipsToBounds = shouldShow
+        }
     }
 }
 
