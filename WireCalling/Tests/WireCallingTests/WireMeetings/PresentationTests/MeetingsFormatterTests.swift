@@ -171,7 +171,7 @@ struct MeetingsFormatterTests {
     }
 
     @Test("recurring Berlin occurrences display in local time across Berlin and New York DST")
-    func recurringOccurrenceFormatsInParticipantTimeZoneAcrossDST_TC_12036() throws {
+    func recurringOccurrenceFormatsInParticipantTimeZoneAcrossDST() throws {
         // Generate the same Berlin series before and after both DST transitions.
         let meeting = Meeting(
             id: QualifiedID(id: UUID(), domain: "example.com"),

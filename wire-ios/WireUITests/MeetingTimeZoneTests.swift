@@ -154,6 +154,38 @@ final class MeetingTimeZoneTests: WireUITestCase, MeetingJoinTesting {
     }
 
     @MainActor
+    func testInviteeTimeAcrossDifferentDSTDates_TC_12036() async throws {
+        executionTimeAllowance = 900
+        let (host, members, _, _) = try await UserHelper.default.registerMeetingsTeam(withMemberCount: 1)
+        let invitee = try XCTUnwrap(members.first)
+        try await registerClients(for: members)
+        let fixtures = try await MeetingsTestHelper(user: host, apiVersion: .v18)
+        let now = instant(dayOffset: -28, hour: 8)
+        let original = try await fixtures.create(
+            title: "TC12036 weekly", start: instant(dayOffset: -28, hour: 9), duration: 3600,
+            recurrence: MeetingRecurrence(frequency: .weekly, interval: 1, until: instant(dayOffset: 7, hour: 10)),
+            timeZoneIdentifier: berlin
+        )
+        let hostPage = try launchMeetings(for: host, now: now, timeZone: berlin, apiVersion: 18)
+        let form = try hostPage.edit(original)
+        try form.addParticipants([invitee])
+        _ = try form.save()
+        let meeting = try await storedMeeting(fixtures, id: original.id)
+        XCTAssertEqual(meeting.timeZoneIdentifier, berlin)
+        XCTAssertEqual(meeting.recurrence?.frequency, .weekly)
+        XCTAssertEqual(meeting.recurrence?.interval, 1)
+        // The host keeps 11:00 through both transitions.
+        for start in [instant(dayOffset: -7), instant(hour: 10), instant(dayOffset: 7, hour: 10)] {
+            try assertTime(meeting, on: hostPage, start: start, equals: "11:00 - 12:00")
+        }
+        // The same occurrences convert to the invitee's New York time.
+        let page = try launchMeetings(for: invitee, now: now, timeZone: newYork, apiVersion: 18)
+        try assertTime(meeting, on: page, start: instant(dayOffset: -7, hour: 9), equals: "05:00 - 06:00")
+        try assertTime(meeting, on: page, start: instant(hour: 10), equals: "06:00 - 07:00")
+        try assertTime(meeting, on: page, start: instant(dayOffset: 7, hour: 10), equals: "05:00 - 06:00")
+    }
+
+    @MainActor
     private func restartMeetings(now: Date?, timeZone: String, apiVersion: Int = 18) throws -> MeetingsPage {
         app.terminate()
         uiTestConfig.meetingsDate = now
