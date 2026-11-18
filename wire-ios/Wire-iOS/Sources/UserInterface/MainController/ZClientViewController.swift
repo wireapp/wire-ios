@@ -335,7 +335,7 @@ final class ZClientViewController: UIViewController {
 
         guard userSession.isWireDriveEnabled else {
             sidebarViewController.showFiles = false
-            if mainSplitViewController.filesUI != nil {
+            if mainSplitViewController.filesUI != nil || mainTabBarController.selectedContent == .files {
                 // Discard Files before the coordinator can move it back into the tab bar.
                 mainSplitViewController.filesUI = nil
                 Task { [weak self] in
