@@ -550,6 +550,7 @@ final class ConversationInputBarViewController: UIViewController,
         }
         inputBar.updateDriveViewerBanner(show: shouldShowDriveViewerBanner)
         setupAccessibility()
+        updateButtonStates()
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -626,7 +627,7 @@ final class ConversationInputBarViewController: UIViewController,
             syncedMessageDestructionTimeout: conversation.hasSyncedMessageDestructionTimeout,
             isEphemeralSendingDisabled: conversation.isSelfDeletingMessageSendingDisabled,
             isEphemeralTimeoutForced: conversation.isSelfDeletingMessageTimeoutForced,
-            attachmentState: AttachmentState(attachments)
+            attachmentState: AttachmentState(attachments, canUploadAttachments: canUploadAttachments)
         )
 
         sendButton.isEnabled = inputBarButtonState.sendButtonEnabled
@@ -1386,7 +1387,7 @@ extension ConversationInputBarViewController: UIGestureRecognizerDelegate {
 
     private func setAttachments(drafts: [WireDriveDraft]) {
         attachments = drafts
-        let attachmentState = AttachmentState(drafts)
+        let attachmentState = AttachmentState(drafts, canUploadAttachments: canUploadAttachments)
         if inputBarButtonState.attachmentState != attachmentState {
             updateButtonStates()
         }
@@ -1395,9 +1396,11 @@ extension ConversationInputBarViewController: UIGestureRecognizerDelegate {
 }
 
 private extension AttachmentState {
-    init(_ drafts: [WireDriveDraft]) {
+    init(_ drafts: [WireDriveDraft], canUploadAttachments: Bool) {
         if drafts.isEmpty {
             self = .none
+        } else if !canUploadAttachments {
+            self = .suspended
         } else if drafts.allSatisfy(\.status.isUploaded) {
             self = .allUploaded
         } else {
