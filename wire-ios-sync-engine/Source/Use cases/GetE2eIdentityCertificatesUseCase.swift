@@ -19,6 +19,7 @@
 import Foundation
 import WireCoreCrypto
 import WireDataModel
+import WireLogging
 
 // sourcery: AutoMockable
 public protocol GetE2eIdentityCertificatesUseCaseProtocol {
@@ -102,9 +103,21 @@ public final class GetE2eIdentityCertificatesUseCase: GetE2eIdentityCertificates
 
             // Since CoreCrypto 11 `deserialize()` can throw (e.g. for history client IDs). An identity whose
             // client ID can't be read is treated as invalid.
-            guard
-                let deserializedClientId = try? identity.clientId?.deserialize()
-            else {
+            let deserializedClientId: WireCoreCryptoUniffi.DeserializedClientId?
+            do {
+                deserializedClientId = try identity.clientId?.deserialize()
+            } catch {
+                // The error may contain the client ID, so only its type is logged publicly. The full error is only
+                // written in builds that keep non-public logs.
+                WireLogger.e2ei.warn(
+                    "failed to deserialize client ID of device identity, treating it as invalid: \(type(of: error))",
+                    attributes: .safePublic
+                )
+                WireLogger.e2ei.warn("failed to deserialize client ID of device identity: \(error)")
+                deserializedClientId = nil
+            }
+
+            guard let deserializedClientId else {
                 validatedIdentities.append((identity, .invalid))
                 continue
             }
