@@ -133,6 +133,8 @@ extension CreateMLSGroupUseCase {
             let externalSender = externalSenders.first
 
             try await coreCrypto.transaction {
+                // CoreCrypto 11 removed `e2eiIsEnabled`. E2EI counts as enabled when an X.509 credential exists
+                // for the cipher suite; otherwise fall back to the basic credential.
                 let x509Credentials = try await coreCrypto.coreCrypto.findCredentials(
                     clientId: nil,
                     publicKey: nil,

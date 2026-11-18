@@ -40,6 +40,8 @@ public final class GetIsE2EIdentityEnabledUseCase: GetIsE2EIdentityEnabledUseCas
         let ciphersuite = await featureRepository.fetchMLS().config.defaultCipherSuite.coreCryptoCipherSuite
         let coreCrypto = try await coreCryptoProvider.coreCrypto()
         return try await coreCrypto.transaction { _ in
+            // CoreCrypto 11 removed `e2eiIsEnabled`; the replacement is checking for an X.509 credential for the
+            // cipher suite. `findCredentials` only exists on CoreCrypto itself, not on the transaction context.
             let credentials = try await coreCrypto.coreCrypto.findCredentials(
                 clientId: nil,
                 publicKey: nil,

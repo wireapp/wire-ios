@@ -19,6 +19,9 @@ let package = Package(
     ],
     dependencies: [],
     targets: [
+        // Don't go below 11.0.1. It contains the cross-process fixes the app, NSE and share extension rely on
+        // (WPB-27280): Proteus/MLS caches are cleared when another process wrote to the keystore
+        // (core-crypto#2844), and the iOS salt migration runs under the cross-process lock (core-crypto#2852).
         .binaryTarget(
             name: "WireCoreCrypto",
             url: "https://github.com/wireapp/core-crypto/releases/download/v11.0.1/WireCoreCrypto.xcframework.zip",

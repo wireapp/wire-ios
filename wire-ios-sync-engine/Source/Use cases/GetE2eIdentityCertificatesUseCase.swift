@@ -100,6 +100,8 @@ public final class GetE2eIdentityCertificatesUseCase: GetE2eIdentityCertificates
                 continue
             }
 
+            // Since CoreCrypto 11 `deserialize()` can throw (e.g. for history client IDs). An identity whose
+            // client ID can't be read is treated as invalid.
             guard
                 let deserializedClientId = try? identity.clientId?.deserialize()
             else {

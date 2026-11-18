@@ -313,6 +313,8 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
                 WireLogger.mls.info("joining group via external commit", attributes: groupID.safeAttributes)
                 let ciphersuite = await featureRepository.fetchMLS().config.defaultCipherSuite.coreCryptoCipherSuite
                 let conversationID = try await coreCrypto.transaction { [self] in
+                    // CoreCrypto 11 removed `e2eiIsEnabled`. E2EI counts as enabled when an X.509 credential
+                    // exists for the cipher suite; otherwise fall back to the basic credential.
                     let x509Credentials = try await coreCrypto.coreCrypto.findCredentials(
                         clientId: nil,
                         publicKey: nil,
