@@ -155,6 +155,53 @@ final class ZMUserSessionTests_Syncing: ZMUserSessionTestsBase {
 
     // MARK: Quick Sync
 
+    @MainActor
+    func testSuspendedSyncStateClearsAVSNotificationProcessing() async throws {
+        mockCoreCryptoProvider.registerPkiEnvironmentHooks_MockMethod = { _ in }
+        mockCoreCryptoProvider.registerMlsTransport_MockMethod = { _ in }
+        let clientID = "client"
+        let callCenter = WireCallCenterV3Mock(
+            userId: .init(identifier: sut.account.userIdentifier, domain: nil, isFederationEnabled: false),
+            clientId: clientID,
+            uiMOC: uiMOC,
+            flowManager: flowManagerMock,
+            transport: WireCallCenterTransportMock(),
+            notificationCenter: .init(),
+            localDomain: nil,
+            isFederationEnabled: false
+        )
+        uiMOC.zm_callCenter = callCenter
+        sut.setUpSyncAgent(clientID: clientID, isNewClient: false)
+        let syncState = try XCTUnwrap(sut.clientSessionComponent?.syncStateSubject)
+
+        startQuickSync()
+        await uiMOC.perform(schedule: .enqueued) {}
+        XCTAssertEqual(callCenter.mockAVSWrapper.notificationProcessingStates, [true])
+
+        syncState.send(.suspended)
+        await uiMOC.perform(schedule: .enqueued) {}
+        XCTAssertEqual(callCenter.mockAVSWrapper.notificationProcessingStates, [true, false])
+    }
+
+    @MainActor
+    func testLateAVSNotificationsAfterTearDownAreIgnored() async throws {
+        mockCoreCryptoProvider.registerPkiEnvironmentHooks_MockMethod = { _ in }
+        mockCoreCryptoProvider.registerMlsTransport_MockMethod = { _ in }
+        sut.setUpSyncAgent(clientID: "client", isNewClient: false)
+        let syncState = try XCTUnwrap(sut.clientSessionComponent?.syncStateSubject)
+
+        sut.notifyAVSDidProcessEvents()
+        sut.tearDown()
+        XCTAssertFalse(uiMOC.zm_isUserInterfaceContext)
+
+        syncState.send(.suspended)
+        sut.notifyAVSWillProcessEvents()
+        sut.notifyAVSDidProcessEvents()
+        sut.notifyAVSOfNetworkInterfaceChanged()
+        sut.notifyAVSOfLiveSyncState(isLiveSyncOngoing: false)
+        await uiMOC.perform(schedule: .enqueued) {}
+    }
+
     func testThatPerformingSyncIsFinishedAfterQuickSync() {
 
         // given
