@@ -169,7 +169,7 @@ final class ProteusSessionRepairSchedulerTests: XCTestCase {
     }
 
     func testItLimitsRepairsAcrossSchedulerInstances() async {
-        // Given: the extension scheduled a repair (scheduler instances share the journal)
+        // Given: a previous app session scheduled a repair (the limit is persisted in the journal)
         await makeSUT().scheduleRepairIfNeeded(
             for: brokenSessionError,
             senderUserID: senderUserID,
@@ -187,6 +187,28 @@ final class ProteusSessionRepairSchedulerTests: XCTestCase {
         // Then
         let isScheduled = await isRepairScheduled()
         XCTAssertFalse(isScheduled)
+    }
+
+    func testItSchedulesRepair_WhenTheLastAttemptIsInTheFuture() async {
+        // Given: an attempt recorded before the clock was set back
+        await makeSUT().scheduleRepairIfNeeded(
+            for: brokenSessionError,
+            senderUserID: senderUserID,
+            senderClientID: senderClientID
+        )
+        await clearRepairFlag()
+
+        // When
+        currentDate -= 1
+        await makeSUT().scheduleRepairIfNeeded(
+            for: brokenSessionError,
+            senderUserID: senderUserID,
+            senderClientID: senderClientID
+        )
+
+        // Then
+        let isScheduled = await isRepairScheduled()
+        XCTAssertTrue(isScheduled)
     }
 
     func testItDoesNotScheduleRepair_WhenClientBelongsToAnotherUser() async {

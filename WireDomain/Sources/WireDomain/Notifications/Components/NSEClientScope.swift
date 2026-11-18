@@ -362,10 +362,9 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
                 mlsMessageDecryptor: mlsMessageDecryptor,
                 mlsService: nil,
                 messageLocalStore: messageLocalStore,
-                proteusSessionRepairScheduler: ProteusSessionRepairScheduler(
-                    journal: dependency.journal,
-                    context: coreDataStack.syncContext
-                )
+                // Not scheduled here: a running app doesn't see the flag the extension saves, and the attempt
+                // recorded in the journal would then keep the app from scheduling the repair itself.
+                proteusSessionRepairScheduler: nil
             )
         }
     }

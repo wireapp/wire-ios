@@ -43,8 +43,8 @@ public class ResetSessionRequestStrategy: NSObject, ZMContextChangeTrackerSource
     public init(
         managedObjectContext: NSManagedObjectContext,
         messageSender: MessageSenderInterface,
-        sessionEstablisher: SessionEstablisherInterface? = nil,
-        apiVersion: APIVersion? = nil
+        sessionEstablisher: SessionEstablisherInterface?,
+        apiVersion: APIVersion?
     ) {
 
         self.managedObjectContext = managedObjectContext
@@ -73,7 +73,7 @@ extension ResetSessionRequestStrategy: KeyPathObjectSyncTranscoder {
 
     func synchronize(_ userClient: UserClient, completion: @escaping () -> Void) {
         guard let user = userClient.user else {
-            return
+            return skip(completion: completion)
         }
 
         if
@@ -94,6 +94,10 @@ extension ResetSessionRequestStrategy: KeyPathObjectSyncTranscoder {
                 // must exist before sending.
                 try await userClient.deleteSession()
                 try await sessionEstablisher.establishSession(with: [qualifiedClientID], apiVersion: apiVersion)
+                // Establishing doesn't throw when the client has no prekey or the session can't be created.
+                guard await userClient.hasSessionWithSelfClient else {
+                    throw ResetSessionError.failedToEstablishSession
+                }
                 try await messageSender.sendMessage(message: message)
             }
         } else if let conversation = user.oneToOneConversation {
@@ -107,10 +111,19 @@ extension ResetSessionRequestStrategy: KeyPathObjectSyncTranscoder {
             send(resolving: userClient, completion: completion) { [self] in
                 try await messageSender.sendMessage(message: message)
             }
+        } else {
+            skip(completion: completion)
         }
     }
 
     func cancel(_ object: UserClient) {}
+
+    /// Clears the flag when there is nowhere to send the reset message, so it doesn't stay pending forever.
+    private func skip(completion: () -> Void) {
+        WireLogger.messaging.warn("Can't send reset session message: no conversation shared with the user")
+        completion()
+        managedObjectContext.enqueueDelayedSave()
+    }
 
     private func send(
         resolving userClient: UserClient,
@@ -146,7 +159,10 @@ extension ResetSessionRequestStrategy: KeyPathObjectSyncTranscoder {
         let candidates = user.activeConversations.filter { conversation in
             [.proteus, .mixed].contains(conversation.messageProtocol) &&
                 conversation.isSelfAnActiveMember &&
-                [.oneOnOne, .group].contains(conversation.conversationType)
+                [.oneOnOne, .group].contains(conversation.conversationType) &&
+                // Sending fails in these conversations, after the local session was already replaced.
+                !conversation.isDegraded &&
+                conversation.legalHoldStatus != .pendingApproval
         }
 
         return candidates.max { lhs, rhs in
@@ -159,4 +175,8 @@ extension ResetSessionRequestStrategy: KeyPathObjectSyncTranscoder {
         }
     }
 
+}
+
+private enum ResetSessionError: Error {
+    case failedToEstablishSession
 }

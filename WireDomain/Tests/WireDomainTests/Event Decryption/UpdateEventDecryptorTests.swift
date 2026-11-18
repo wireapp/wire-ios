@@ -53,7 +53,8 @@ final class UpdateEventDecryptorTests: XCTestCase {
             proteusMessageDecryptor: proteusMessageDecryptor,
             mlsMessageDecryptor: mlsMessageDecryptor,
             mlsService: mlsService,
-            messageLocalStore: messageLocalStore
+            messageLocalStore: messageLocalStore,
+            proteusSessionRepairScheduler: nil
         )
     }
 

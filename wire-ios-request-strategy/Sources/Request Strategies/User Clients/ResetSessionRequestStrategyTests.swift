@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireDataModelSupport
 import WireRequestStrategySupport
 import XCTest
 
@@ -35,7 +36,9 @@ class ResetSessionRequestStrategyTests: MessagingTestBase {
         mockMessageSender = MockMessageSenderInterface()
         sut = ResetSessionRequestStrategy(
             managedObjectContext: syncMOC,
-            messageSender: mockMessageSender
+            messageSender: mockMessageSender,
+            sessionEstablisher: nil,
+            apiVersion: nil
         )
     }
 
@@ -97,6 +100,9 @@ class ResetSessionRequestStrategyTests: MessagingTestBase {
 
     func testThatItRebuildsTheSessionAndTargetsOnlyTheClient_WhenAProteusConversationIsShared() throws {
         // GIVEN
+        let mockProteusService = MockProteusServiceInterface()
+        mockProteusService.deleteSessionId_MockMethod = { _ in }
+        mockProteusService.sessionExistsId_MockValue = true
         let mockSessionEstablisher = MockSessionEstablisherInterface()
         mockSessionEstablisher.establishSessionWithApiVersion_MockMethod = { _, _ in }
         mockMessageSender.sendMessageMessage_MockMethod = { _ in }
@@ -111,6 +117,7 @@ class ResetSessionRequestStrategyTests: MessagingTestBase {
         var groupConversation: ZMConversation!
         var expectedClientID: QualifiedClientID?
         syncMOC.performGroupedAndWait {
+            self.syncMOC.proteusService = mockProteusService
             let otherUser = self.createUser()
             otherClient = self.createClient(user: otherUser)
             groupConversation = self.createGroupConversation(with: otherUser)
@@ -205,6 +212,83 @@ class ResetSessionRequestStrategyTests: MessagingTestBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
+        XCTAssertTrue(mockMessageSender.sendMessageMessage_Invocations.isEmpty)
+        syncMOC.performGroupedAndWait {
+            XCTAssertFalse(otherClient.needsToNotifyOtherUserAboutSessionReset)
+        }
+    }
+
+    func testThatItDoesNotSendAndClearsTheFlag_WhenNoSessionExistsAfterEstablishing() {
+        // GIVEN
+        // e.g. the client has no prekey left: establishing doesn't throw, but no session is created
+        let mockProteusService = MockProteusServiceInterface()
+        mockProteusService.deleteSessionId_MockMethod = { _ in }
+        mockProteusService.sessionExistsId_MockValue = false
+        let mockSessionEstablisher = MockSessionEstablisherInterface()
+        mockSessionEstablisher.establishSessionWithApiVersion_MockMethod = { _, _ in }
+        mockMessageSender.sendMessageMessage_MockMethod = { _ in }
+        sut = ResetSessionRequestStrategy(
+            managedObjectContext: syncMOC,
+            messageSender: mockMessageSender,
+            sessionEstablisher: mockSessionEstablisher,
+            apiVersion: .v5
+        )
+
+        var otherClient: UserClient!
+        syncMOC.performGroupedAndWait {
+            self.syncMOC.proteusService = mockProteusService
+            let otherUser = self.createUser()
+            otherClient = self.createClient(user: otherUser)
+            _ = self.createGroupConversation(with: otherUser)
+            otherClient.needsToNotifyOtherUserAboutSessionReset = true
+
+            // WHEN
+            self.sut.contextChangeTrackers.forEach {
+                $0.objectsDidChange([otherClient])
+            }
+        }
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // THEN
+        XCTAssertEqual(mockSessionEstablisher.establishSessionWithApiVersion_Invocations.count, 1)
+        XCTAssertTrue(mockMessageSender.sendMessageMessage_Invocations.isEmpty)
+        syncMOC.performGroupedAndWait {
+            XCTAssertFalse(otherClient.needsToNotifyOtherUserAboutSessionReset)
+        }
+    }
+
+    func testThatItSkipsADegradedConversationAndClearsTheFlag_WhenNoOtherConversationIsShared() {
+        // GIVEN
+        let mockSessionEstablisher = MockSessionEstablisherInterface()
+        mockMessageSender.sendMessageMessage_MockMethod = { _ in }
+        sut = ResetSessionRequestStrategy(
+            managedObjectContext: syncMOC,
+            messageSender: mockMessageSender,
+            sessionEstablisher: mockSessionEstablisher,
+            apiVersion: .v5
+        )
+
+        var otherClient: UserClient!
+        syncMOC.performGroupedAndWait {
+            let otherUser = self.createUser()
+            otherClient = self.createClient(user: otherUser)
+            let groupConversation = self.createGroupConversation(with: otherUser)
+            groupConversation.setValue(
+                NSNumber(value: ZMConversationSecurityLevel.secureWithIgnored.rawValue),
+                forKey: #keyPath(ZMConversation.securityLevel)
+            )
+            XCTAssertTrue(groupConversation.isDegraded)
+            otherClient.needsToNotifyOtherUserAboutSessionReset = true
+
+            // WHEN
+            self.sut.contextChangeTrackers.forEach {
+                $0.objectsDidChange([otherClient])
+            }
+        }
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // THEN
+        XCTAssertTrue(mockSessionEstablisher.establishSessionWithApiVersion_Invocations.isEmpty)
         XCTAssertTrue(mockMessageSender.sendMessageMessage_Invocations.isEmpty)
         syncMOC.performGroupedAndWait {
             XCTAssertFalse(otherClient.needsToNotifyOtherUserAboutSessionReset)

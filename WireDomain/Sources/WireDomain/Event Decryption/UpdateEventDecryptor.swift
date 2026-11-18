@@ -39,7 +39,7 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
         userLocalStore: any UserLocalStoreProtocol,
         conversationLocalStore: any ConversationLocalStoreProtocol,
         bufferedMessageRecoveryTracker: BufferedMLSMessageRecoveryTracker,
-        proteusSessionRepairScheduler: (any ProteusSessionRepairScheduling)? = nil
+        proteusSessionRepairScheduler: (any ProteusSessionRepairScheduling)?
     ) {
         self.proteusMessageDecryptor = ProteusMessageDecryptor(
             proteusService: proteusService,
@@ -64,7 +64,7 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
         mlsMessageDecryptor: any MLSMessageDecryptorProtocol,
         mlsService: (any MLSServiceInterface)?,
         messageLocalStore: any MessageLocalStoreProtocol,
-        proteusSessionRepairScheduler: (any ProteusSessionRepairScheduling)? = nil
+        proteusSessionRepairScheduler: (any ProteusSessionRepairScheduling)?
     ) {
         self.proteusMessageDecryptor = proteusMessageDecryptor
         self.mlsMessageDecryptor = mlsMessageDecryptor

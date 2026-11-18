@@ -39,12 +39,13 @@ protocol ProteusSessionRepairScheduling {
 /// The repair itself is performed by `ResetSessionRequestStrategy` in the main app: it rebuilds the session from the
 /// client's prekey and sends a session reset message to that client only. This type only sets
 /// `UserClient.needsToNotifyOtherUserAboutSessionReset`, which doesn't touch CoreCrypto, so it is safe to call while
-/// decrypting inside a CoreCrypto transaction, and from the notification service extension, which can't send.
+/// decrypting inside a CoreCrypto transaction.
+///
+/// It is only used in the main app: a running app doesn't see the flag saved by the notification service extension.
 ///
 /// To avoid two clients resetting each other in a loop, a repair is scheduled at most once per client within
-/// `minimumInterval`. Attempts are persisted in the `Journal`, shared between the app and the extension.
-/// Updates are a read-modify-write of the journal value and are not synchronized; events are decrypted
-/// sequentially, and a lost update only causes one redundant repair.
+/// `minimumInterval`. Attempts are persisted in the `Journal`. Updates are a read-modify-write of the journal value
+/// and are not synchronized; events are decrypted sequentially, and a lost update only causes one redundant repair.
 
 struct ProteusSessionRepairScheduler: ProteusSessionRepairScheduling {
 
@@ -80,7 +81,7 @@ struct ProteusSessionRepairScheduler: ProteusSessionRepairScheduling {
         let currentDate = now()
         var attempts = loadAttempts()
 
-        if let lastAttempt = attempts[attemptKey], currentDate.timeIntervalSince(lastAttempt) < minimumInterval {
+        if let lastAttempt = attempts[attemptKey], isRecent(lastAttempt, at: currentDate) {
             WireLogger.proteus.info(
                 "session with client \(senderClientID.redactedAndTruncated()) looks broken, repair already scheduled",
                 attributes: .safePublic
@@ -114,8 +115,15 @@ struct ProteusSessionRepairScheduler: ProteusSessionRepairScheduling {
 
         attempts[attemptKey] = currentDate
         // Drop attempts that no longer limit anything, so the journal value doesn't grow forever.
-        attempts = attempts.filter { currentDate.timeIntervalSince($0.value) < minimumInterval }
+        attempts = attempts.filter { isRecent($0.value, at: currentDate) }
         storeAttempts(attempts)
+    }
+
+    /// Whether `attempt` still limits repairs at `date`. Attempts in the future (e.g. after the clock was changed)
+    /// don't, so they can't block repairs indefinitely.
+    private func isRecent(_ attempt: Date, at date: Date) -> Bool {
+        let elapsed = date.timeIntervalSince(attempt)
+        return elapsed >= 0 && elapsed < minimumInterval
     }
 
     /// Whether decryption failed because the existing session doesn't match the sender's anymore.
