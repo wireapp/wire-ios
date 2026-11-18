@@ -188,11 +188,14 @@ final class ConversationInputBarViewController: UIViewController,
             .isDismissed(forCellName: conversation.wireDriveCellName)
     }
 
+    private var isDriveGracePeriod: Bool {
+        !userSession.isWireDriveEnabled && conversation.isWireDriveEnabled && conversation.isTeamConversation
+    }
+
     private var isDriveViewer: Bool {
-        let isGracePeriod = !userSession.isWireDriveEnabled && conversation.isWireDriveEnabled
         let isGuest = conversation.isWireDriveEnabled && !conversation.isTeamConversation
 
-        return isGracePeriod || isGuest
+        return isDriveGracePeriod || isGuest
     }
 
     var canUploadAttachments: Bool { !isDriveViewer }
@@ -548,7 +551,10 @@ final class ConversationInputBarViewController: UIViewController,
                 $0.accessibilityTraits.remove(.notEnabled)
             }
         }
-        inputBar.updateDriveViewerBanner(show: shouldShowDriveViewerBanner)
+        inputBar.updateDriveViewerBanner(
+            show: shouldShowDriveViewerBanner,
+            isGracePeriod: isDriveGracePeriod
+        )
         setupAccessibility()
         updateButtonStates()
     }

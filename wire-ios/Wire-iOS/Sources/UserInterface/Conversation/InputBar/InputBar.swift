@@ -122,14 +122,19 @@ final class InputBar: UIView {
     private let textViewFont = FontSpec.normalRegularFont.font!
     private(set) var isDriveViewerBannerVisible = false
 
-    private lazy var driveViewerAccessBanner: UIView = {
-        let banner = ConversationViewerAccessBanner(
+    private lazy var driveViewerAccessBannerController = UIHostingController(
+        rootView: makeDriveViewerAccessBanner(isGracePeriod: false)
+    )
+
+    private var driveViewerAccessBanner: UIView { driveViewerAccessBannerController.view }
+
+    private func makeDriveViewerAccessBanner(isGracePeriod: Bool) -> ConversationViewerAccessBanner {
+        ConversationViewerAccessBanner(
             backgroundColor: ColorTheme.Buttons.Secondary.disabled,
+            isGracePeriod: isGracePeriod,
             onClose: { [weak self] in self?.onDriveViewerAccessBannerClosed() }
         )
-        let hostingController = UIHostingController(rootView: banner)
-        return hostingController.view
-    }()
+    }
 
     /// Container for `textView`, `leftAccessoryView` and `rightAccessoryStackView`.
     private let upperContainer = UIView()
@@ -705,7 +710,8 @@ final class InputBar: UIView {
         updateDriveViewerBanner(show: false)
     }
 
-    func updateDriveViewerBanner(show: Bool) {
+    func updateDriveViewerBanner(show: Bool, isGracePeriod: Bool = false) {
+        driveViewerAccessBannerController.rootView = makeDriveViewerAccessBanner(isGracePeriod: isGracePeriod)
         let shouldShow = show && driveConfiguration.map {
             !ConversationViewerAccessBannerDismissalStore.shared.isDismissed(forCellName: $0.cellName)
         } == true

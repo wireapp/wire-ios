@@ -89,6 +89,10 @@ package final class FilesViewModel: ObservableObject {
         selfUser?.role ?? .viewer
     }
 
+    var isGracePeriod: Bool {
+        !isBrowsing && conversations.first?.isGracePeriod == true
+    }
+
     // MARK: Navigation and presentation
 
     @Published var alert: AlertModel?

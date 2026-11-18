@@ -203,18 +203,15 @@ extension ConversationLocalStore: @retroactive WireDriveConversationsLocalStoreP
         let isDriveFeatureEnabled = await isDriveEnabled
 
         return await context.perform { [self] in
-            let selfUserTeamID = ZMUser.selfUser(in: context).teamIdentifier
             return driveEnabledConversations.reduce(into: [WireDriveConversation]()) { result, conversation in
-                let isGracePeriod = !isDriveFeatureEnabled && conversation.isWireDriveEnabled
+                let isGracePeriod = !isDriveFeatureEnabled && conversation.isWireDriveEnabled &&
+                    conversation.isTeamConversation
 
                 if let name = conversation.name {
                     let participants: [WireDriveParticipant] = conversation.participants
                         .compactMap { item -> WireDriveParticipant? in
                             guard let id = item.remoteIdentifier, let domain = item.domain else { return nil }
-                            let isAffectedByGracePeriod = isGracePeriod && (
-                                item.isSelfUser || (selfUserTeamID != nil && item.teamIdentifier == selfUserTeamID)
-                            )
-                            let role: WireDriveParticipant.Role = !isAffectedByGracePeriod && conversation
+                            let role: WireDriveParticipant.Role = !isGracePeriod && conversation
                                 .matchesTeam(with: item)
                                 ? .editor : .viewer
 
@@ -247,7 +244,8 @@ extension ConversationLocalStore: @retroactive WireDriveConversationsLocalStoreP
                         id: conversation.wireDriveCellName,
                         name: name,
                         kind: kind,
-                        participants: Set(participants)
+                        participants: Set(participants),
+                        isGracePeriod: isGracePeriod
                     )
 
                     result.append(driveConversation)
