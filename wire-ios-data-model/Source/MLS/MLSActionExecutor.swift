@@ -313,20 +313,11 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
                 WireLogger.mls.info("joining group via external commit", attributes: groupID.safeAttributes)
                 let ciphersuite = await featureRepository.fetchMLS().config.defaultCipherSuite.coreCryptoCipherSuite
                 let conversationID = try await coreCrypto.transaction { [self] in
-                    // CoreCrypto 11 removed `e2eiIsEnabled`. E2EI counts as enabled when an X.509 credential
-                    // exists for the cipher suite; otherwise fall back to the basic credential.
-                    let x509Credentials = try await coreCrypto.coreCrypto.findCredentials(
-                        clientId: nil,
-                        publicKey: nil,
-                        cipherSuite: ciphersuite,
-                        credentialType: .x509,
-                        earliestValidity: nil
-                    )
-                    let credentialRef = try await credentialRef(
-                        coreCrypto: coreCrypto.coreCrypto,
-                        ciphersuite: ciphersuite,
-                        credentialType: x509Credentials.isEmpty ? .basic : .x509
-                    )
+                    guard let credentialRef = try await coreCrypto.coreCrypto.preferredMLSCredential(
+                        cipherSuite: ciphersuite
+                    ) else {
+                        throw MLSActionExecutorError.failedToFindCredential
+                    }
                     return try await $0.joinByExternalCommit(
                         groupInfo: try GroupInfo(bytes: groupInfo),
                         credentialRef: credentialRef
@@ -371,24 +362,6 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
         }
 
         return try result.get()
-    }
-
-    private func credentialRef(
-        coreCrypto: CoreCryptoProtocol,
-        ciphersuite: CipherSuite,
-        credentialType: CredentialType
-    ) async throws -> CredentialRef {
-        guard let credential = try await coreCrypto.findCredentials(
-            clientId: nil,
-            publicKey: nil,
-            cipherSuite: ciphersuite,
-            credentialType: credentialType,
-            earliestValidity: nil
-        ).first else {
-            throw MLSActionExecutorError.failedToFindCredential
-        }
-
-        return credential
     }
 }
 
