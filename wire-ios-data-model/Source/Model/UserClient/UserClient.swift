@@ -535,15 +535,16 @@ public extension UserClient {
 
     /// Establishes a Proteus session with `client` from `preKey`.
     ///
-    /// By default an existing session is kept: replacing a working session (e.g. one the notification extension
-    /// just established) would break decryption of messages the other client already encrypted for it.
+    /// Unless `replacingExistingSession` is set, an existing session is kept: replacing a working session (e.g. one
+    /// the notification extension just established) would break decryption of messages the other client already
+    /// encrypted for it.
     ///
     /// - Parameter replacingExistingSession: Replace an existing session instead of keeping it.
     /// - Returns: `true` if a session with `client` exists afterwards.
     func establishSessionWithClient(
         _ client: UserClient,
         usingPreKey preKey: String,
-        replacingExistingSession: Bool = false
+        replacingExistingSession: Bool
     ) async -> Bool {
         guard
             let context = managedObjectContext,
