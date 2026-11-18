@@ -27,7 +27,7 @@ final class CoreCryptoCrossConnectionTests: XCTestCase {
         let directory = FileManager.default.temporaryDirectory
             .appendingPathComponent("CoreCryptoCrossConnectionTests-\(UUID().uuidString)", isDirectory: true)
         addTeardownBlock {
-            try FileManager.default.removeItem(at: directory)
+            try? FileManager.default.removeItem(at: directory)
         }
 
         let failedReaders = try await Self.readersFailingAfterStaleWrite(in: directory)

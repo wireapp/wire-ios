@@ -243,7 +243,7 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
         case .transient, .transientTargeted, .persistedTargeted:
             // Message kinds added in CoreCrypto 11 that the app doesn't support yet. Ignore them rather than
             // treating them as regular application messages.
-            WireLogger.mls.info("ignoring unsupported transient or targeted message", attributes: .safePublic)
+            WireLogger.mls.warn("ignoring unsupported transient or targeted message", attributes: .safePublic)
             return []
         @unknown default:
             WireLogger.mls.warn("encountered unknown decrypted message type", attributes: .safePublic)
@@ -262,7 +262,7 @@ public final class MLSDecryptionService: MLSDecryptionServiceInterface {
             return .proposal(delay ?? 0)
         case .transient, .transientTargeted, .persistedTargeted:
             // See `decryptResults(from:)`: not supported yet, so don't surface them as messages.
-            WireLogger.mls.info("ignoring unsupported buffered transient or targeted message", attributes: .safePublic)
+            WireLogger.mls.warn("ignoring unsupported buffered transient or targeted message", attributes: .safePublic)
             return nil
         @unknown default:
             WireLogger.mls.warn("encountered unknown buffered decrypted message type", attributes: .safePublic)

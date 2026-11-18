@@ -39,17 +39,15 @@ public final class GetIsE2EIdentityEnabledUseCase: GetIsE2EIdentityEnabledUseCas
     public func invoke() async throws -> Bool {
         let ciphersuite = await featureRepository.fetchMLS().config.defaultCipherSuite.coreCryptoCipherSuite
         let coreCrypto = try await coreCryptoProvider.coreCrypto()
-        return try await coreCrypto.transaction { _ in
-            // CoreCrypto 11 removed `e2eiIsEnabled`; the replacement is checking for an X.509 credential for the
-            // cipher suite. `findCredentials` only exists on CoreCrypto itself, not on the transaction context.
-            let credentials = try await coreCrypto.coreCrypto.findCredentials(
-                clientId: nil,
-                publicKey: nil,
-                cipherSuite: ciphersuite,
-                credentialType: .x509,
-                earliestValidity: nil
-            )
-            return !credentials.isEmpty
-        }
+        // CoreCrypto 11 removed `e2eiIsEnabled`; the replacement is checking for an X.509 credential for the cipher
+        // suite. This is a read only, so no transaction (and no cross-process lock) is needed.
+        let credentials = try await coreCrypto.coreCrypto.findCredentials(
+            clientId: nil,
+            publicKey: nil,
+            cipherSuite: ciphersuite,
+            credentialType: .x509,
+            earliestValidity: nil
+        )
+        return !credentials.isEmpty
     }
 }
