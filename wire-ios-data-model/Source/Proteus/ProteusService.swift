@@ -72,6 +72,30 @@ public final class ProteusService: ProteusServiceInterface {
         }
     }
 
+    public func establishSessionIfNeeded(
+        id: ProteusSessionID,
+        fromPrekey prekey: String
+    ) async throws -> Bool {
+        guard let prekeyData = prekey.base64DecodedData else {
+            throw ProteusSessionError.prekeyNotBase64Encoded
+        }
+
+        do {
+            let didEstablishSession = try await coreCrypto.transaction { context in
+                if try await context.proteusSessionExists(sessionId: id.rawValue) {
+                    return false
+                }
+                try await context.proteusSessionFromPrekey(sessionId: id.rawValue, prekey: prekeyData)
+                return true
+            }
+            logger.info(didEstablishSession ? "established session from prekey" : "session already exists, keeping it")
+            return didEstablishSession
+        } catch {
+            logger.error("failed to establish session from prekey: \(String(describing: error))")
+            throw ProteusSessionError.failedToEstablishSession
+        }
+    }
+
     // MARK: - proteusSessionDelete
 
     enum DeleteSessionError: Error {
