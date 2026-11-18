@@ -863,6 +863,10 @@ public extension WireCallCenterV3 {
             snapshot?.mlsConferenceStaleParticipantsRemover?.stopSubscribing()
             snapshot?.mlsConferenceStaleParticipantsRemover = nil
 
+            guard conversationType(from: conversationId, fallbackDomain: localDomain) == .mlsConference else {
+                return
+            }
+
             leaveSubconversation(
                 parentQualifiedID: mlsParentIDs.0,
                 parentGroupID: mlsParentIDs.1
@@ -1086,7 +1090,7 @@ extension WireCallCenterV3 {
         conversationType(from: callEvent.conversationId)
     }
 
-    func conversationType(from conversationId: AVSIdentifier) -> AVSConversationType? {
+    func conversationType(from conversationId: AVSIdentifier, fallbackDomain: String? = nil) -> AVSConversationType? {
         guard let context = uiMOC else { return nil }
 
         var conversationType: AVSConversationType?
@@ -1094,7 +1098,7 @@ extension WireCallCenterV3 {
         context.performAndWait {
             if let conversation = ZMConversation.fetch(
                 with: conversationId.identifier,
-                domain: conversationId.domain,
+                domain: conversationId.domain ?? fallbackDomain,
                 in: context
             ) {
                 conversationType = getAVSConversationType(for: conversation)
