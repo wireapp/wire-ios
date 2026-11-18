@@ -31,18 +31,28 @@ import WireLogging
 /// without intervention. Once recovery is requested, tracking for that conversation restarts so that recovery
 /// is requested at most once per buffered time window.
 ///
-/// Tracking is kept in memory and does not survive process recreation.
+/// Tracking is persisted in the `Journal`, so it survives process recreation and is shared between the
+/// notification service extension (which creates new decryptors for each payload) and the main app.
+/// Timestamps are server event timestamps, so they are comparable across processes.
+///
+/// Updates are a read-modify-write of the journal value and are not synchronized. This is acceptable since
+/// events are decrypted sequentially and a lost update only delays recovery or causes a redundant one.
 
-actor BufferedMLSMessageRecoveryTracker {
+struct BufferedMLSMessageRecoveryTracker {
 
     static let defaultRecoveryThreshold: TimeInterval = 60
 
-    private struct ConversationKey: Hashable {
-        let groupID: MLSGroupID
+    private struct Entry: Codable {
+        let groupID: Data
         let subconversation: String?
+        var range: TimestampRange
+
+        func matches(groupID: MLSGroupID, subconversation: String?) -> Bool {
+            self.groupID == groupID.data && self.subconversation == subconversation
+        }
     }
 
-    private struct TimestampRange {
+    private struct TimestampRange: Codable {
         let earliest: Date
         let latest: Date
 
@@ -58,10 +68,14 @@ actor BufferedMLSMessageRecoveryTracker {
         }
     }
 
+    private let journal: Journal
     private let recoveryThreshold: TimeInterval
-    private var bufferedMessageRanges: [ConversationKey: TimestampRange] = [:]
 
-    init(recoveryThreshold: TimeInterval = BufferedMLSMessageRecoveryTracker.defaultRecoveryThreshold) {
+    init(
+        journal: Journal,
+        recoveryThreshold: TimeInterval = BufferedMLSMessageRecoveryTracker.defaultRecoveryThreshold
+    ) {
+        self.journal = journal
         self.recoveryThreshold = recoveryThreshold
     }
 
@@ -80,8 +94,9 @@ actor BufferedMLSMessageRecoveryTracker {
         subconversation: String?,
         timestamp: Date
     ) -> Bool {
-        let key = ConversationKey(groupID: groupID, subconversation: subconversation)
-        let updatedRange = bufferedMessageRanges[key]?.including(timestamp)
+        var entries = loadEntries()
+        let index = entries.firstIndex { $0.matches(groupID: groupID, subconversation: subconversation) }
+        let updatedRange = index.map { entries[$0].range.including(timestamp) }
             ?? TimestampRange(earliest: timestamp, latest: timestamp)
         let shouldRecover = updatedRange.span > recoveryThreshold
 
@@ -97,12 +112,18 @@ actor BufferedMLSMessageRecoveryTracker {
             ]
         )
 
-        if shouldRecover {
-            bufferedMessageRanges[key] = nil
-        } else {
-            bufferedMessageRanges[key] = updatedRange
+        switch (shouldRecover, index) {
+        case let (true, index?):
+            entries.remove(at: index)
+        case (true, nil):
+            break
+        case let (false, index?):
+            entries[index].range = updatedRange
+        case (false, nil):
+            entries.append(Entry(groupID: groupID.data, subconversation: subconversation, range: updatedRange))
         }
 
+        storeEntries(entries)
         return shouldRecover
     }
 
@@ -111,8 +132,13 @@ actor BufferedMLSMessageRecoveryTracker {
     /// Should be called when a message was successfully decrypted or when another recovery mechanism took over.
 
     func clear(groupID: MLSGroupID, subconversation: String?) {
-        let key = ConversationKey(groupID: groupID, subconversation: subconversation)
-        guard bufferedMessageRanges.removeValue(forKey: key) != nil else { return }
+        var entries = loadEntries()
+        guard let index = entries.firstIndex(where: {
+            $0.matches(groupID: groupID, subconversation: subconversation)
+        }) else { return }
+
+        entries.remove(at: index)
+        storeEntries(entries)
 
         WireLogger.mls.debug(
             "buffered MLS message recovery tracking cleared",
@@ -121,6 +147,34 @@ actor BufferedMLSMessageRecoveryTracker {
                 .public: true
             ]
         )
+    }
+
+    // MARK: - Persistence
+
+    private func loadEntries() -> [Entry] {
+        guard let data = journal[.bufferedMLSMessageTimestampRanges] else {
+            return []
+        }
+
+        do {
+            return try JSONDecoder().decode([Entry].self, from: data)
+        } catch {
+            WireLogger.mls.warn("failed to decode buffered MLS message tracking, resetting: \(error)")
+            return []
+        }
+    }
+
+    private func storeEntries(_ entries: [Entry]) {
+        guard !entries.isEmpty else {
+            journal[.bufferedMLSMessageTimestampRanges] = nil
+            return
+        }
+
+        do {
+            journal[.bufferedMLSMessageTimestampRanges] = try JSONEncoder().encode(entries)
+        } catch {
+            WireLogger.mls.warn("failed to encode buffered MLS message tracking: \(error)")
+        }
     }
 
 }
