@@ -96,6 +96,7 @@ public enum SystemMessageType: Sendable {
         sender: (id: UUID, domain: String?),
         senderClientID: String,
         remoteIdentityChanged: Bool,
+        errorCode: UInt16?,
         date: Date
     )
 
