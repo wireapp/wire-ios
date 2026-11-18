@@ -687,6 +687,52 @@ public class MockCoreCryptoContextProtocol: CoreCryptoContextProtocol, @unchecke
         }
     }
 
+    // MARK: - encryptTargetedMessage
+
+    public var encryptTargetedMessageConversationIdRecipientPolicyMessage_Invocations: [(conversationId: WireCoreCryptoUniffi.ConversationId, recipient: WireCoreCryptoUniffi.ClientId, policy: WireCoreCryptoUniffi.TargetedMessagePolicy, message: Data)] = []
+    public var encryptTargetedMessageConversationIdRecipientPolicyMessage_MockError: Error?
+    public var encryptTargetedMessageConversationIdRecipientPolicyMessage_MockMethod: ((WireCoreCryptoUniffi.ConversationId, WireCoreCryptoUniffi.ClientId, WireCoreCryptoUniffi.TargetedMessagePolicy, Data) async throws -> Data)?
+    public var encryptTargetedMessageConversationIdRecipientPolicyMessage_MockValue: Data?
+
+    public func encryptTargetedMessage(conversationId: WireCoreCryptoUniffi.ConversationId, recipient: WireCoreCryptoUniffi.ClientId, policy: WireCoreCryptoUniffi.TargetedMessagePolicy, message: Data) async throws -> Data {
+        encryptTargetedMessageConversationIdRecipientPolicyMessage_Invocations.append((conversationId: conversationId, recipient: recipient, policy: policy, message: message))
+
+        if let error = encryptTargetedMessageConversationIdRecipientPolicyMessage_MockError {
+            throw error
+        }
+
+        if let mock = encryptTargetedMessageConversationIdRecipientPolicyMessage_MockMethod {
+            return try await mock(conversationId, recipient, policy, message)
+        } else if let mock = encryptTargetedMessageConversationIdRecipientPolicyMessage_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `encryptTargetedMessageConversationIdRecipientPolicyMessage`")
+        }
+    }
+
+    // MARK: - encryptTransientMessage
+
+    public var encryptTransientMessageConversationIdMessage_Invocations: [(conversationId: WireCoreCryptoUniffi.ConversationId, message: Data)] = []
+    public var encryptTransientMessageConversationIdMessage_MockError: Error?
+    public var encryptTransientMessageConversationIdMessage_MockMethod: ((WireCoreCryptoUniffi.ConversationId, Data) async throws -> Data)?
+    public var encryptTransientMessageConversationIdMessage_MockValue: Data?
+
+    public func encryptTransientMessage(conversationId: WireCoreCryptoUniffi.ConversationId, message: Data) async throws -> Data {
+        encryptTransientMessageConversationIdMessage_Invocations.append((conversationId: conversationId, message: message))
+
+        if let error = encryptTransientMessageConversationIdMessage_MockError {
+            throw error
+        }
+
+        if let mock = encryptTransientMessageConversationIdMessage_MockMethod {
+            return try await mock(conversationId, message)
+        } else if let mock = encryptTransientMessageConversationIdMessage_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `encryptTransientMessageConversationIdMessage`")
+        }
+    }
+
     // MARK: - exportSecretKey
 
     public var exportSecretKeyConversationIdKeyLength_Invocations: [(conversationId: WireCoreCryptoUniffi.ConversationId, keyLength: UInt32)] = []
@@ -1474,52 +1520,6 @@ public class MockCoreCryptoContextProtocol: CoreCryptoContextProtocol, @unchecke
         }
 
         try await mock(conversationId)
-    }
-
-    // MARK: - encryptTargetedMessage
-
-    public var encryptTargetedMessageConversationIdRecipientPolicyMessage_Invocations: [(conversationId: WireCoreCryptoUniffi.ConversationId, recipient: WireCoreCryptoUniffi.ClientId, policy: WireCoreCryptoUniffi.TargetedMessagePolicy, message: Data)] = []
-    public var encryptTargetedMessageConversationIdRecipientPolicyMessage_MockError: Error?
-    public var encryptTargetedMessageConversationIdRecipientPolicyMessage_MockMethod: ((WireCoreCryptoUniffi.ConversationId, WireCoreCryptoUniffi.ClientId, WireCoreCryptoUniffi.TargetedMessagePolicy, Data) async throws -> Data)?
-    public var encryptTargetedMessageConversationIdRecipientPolicyMessage_MockValue: Data?
-
-    public func encryptTargetedMessage(conversationId: WireCoreCryptoUniffi.ConversationId, recipient: WireCoreCryptoUniffi.ClientId, policy: WireCoreCryptoUniffi.TargetedMessagePolicy, message: Data) async throws -> Data {
-        encryptTargetedMessageConversationIdRecipientPolicyMessage_Invocations.append((conversationId: conversationId, recipient: recipient, policy: policy, message: message))
-
-        if let error = encryptTargetedMessageConversationIdRecipientPolicyMessage_MockError {
-            throw error
-        }
-
-        if let mock = encryptTargetedMessageConversationIdRecipientPolicyMessage_MockMethod {
-            return try await mock(conversationId, recipient, policy, message)
-        } else if let mock = encryptTargetedMessageConversationIdRecipientPolicyMessage_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `encryptTargetedMessageConversationIdRecipientPolicyMessage`")
-        }
-    }
-
-    // MARK: - encryptTransientMessage
-
-    public var encryptTransientMessageConversationIdMessage_Invocations: [(conversationId: WireCoreCryptoUniffi.ConversationId, message: Data)] = []
-    public var encryptTransientMessageConversationIdMessage_MockError: Error?
-    public var encryptTransientMessageConversationIdMessage_MockMethod: ((WireCoreCryptoUniffi.ConversationId, Data) async throws -> Data)?
-    public var encryptTransientMessageConversationIdMessage_MockValue: Data?
-
-    public func encryptTransientMessage(conversationId: WireCoreCryptoUniffi.ConversationId, message: Data) async throws -> Data {
-        encryptTransientMessageConversationIdMessage_Invocations.append((conversationId: conversationId, message: message))
-
-        if let error = encryptTransientMessageConversationIdMessage_MockError {
-            throw error
-        }
-
-        if let mock = encryptTransientMessageConversationIdMessage_MockMethod {
-            return try await mock(conversationId, message)
-        } else if let mock = encryptTransientMessageConversationIdMessage_MockValue {
-            return mock
-        } else {
-            fatalError("no mock for `encryptTransientMessageConversationIdMessage`")
-        }
     }
 
 }
