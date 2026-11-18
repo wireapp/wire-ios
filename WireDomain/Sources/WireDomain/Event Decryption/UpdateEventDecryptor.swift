@@ -28,6 +28,7 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
     private let mlsMessageDecryptor: any MLSMessageDecryptorProtocol
     private let messageLocalStore: any MessageLocalStoreProtocol
     private let mlsService: (any MLSServiceInterface)? // optional because only necessary for live events
+    private let proteusSessionRepairScheduler: (any ProteusSessionRepairScheduling)?
 
     init(
         proteusService: any ProteusServiceInterface,
@@ -37,7 +38,8 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
         messageLocalStore: any MessageLocalStoreProtocol,
         userLocalStore: any UserLocalStoreProtocol,
         conversationLocalStore: any ConversationLocalStoreProtocol,
-        bufferedMessageRecoveryTracker: BufferedMLSMessageRecoveryTracker
+        bufferedMessageRecoveryTracker: BufferedMLSMessageRecoveryTracker,
+        proteusSessionRepairScheduler: (any ProteusSessionRepairScheduling)? = nil
     ) {
         self.proteusMessageDecryptor = ProteusMessageDecryptor(
             proteusService: proteusService,
@@ -54,18 +56,21 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
         self.mlsService = mlsService
 
         self.messageLocalStore = messageLocalStore
+        self.proteusSessionRepairScheduler = proteusSessionRepairScheduler
     }
 
     init(
         proteusMessageDecryptor: any ProteusMessageDecryptorProtocol,
         mlsMessageDecryptor: any MLSMessageDecryptorProtocol,
         mlsService: (any MLSServiceInterface)?,
-        messageLocalStore: any MessageLocalStoreProtocol
+        messageLocalStore: any MessageLocalStoreProtocol,
+        proteusSessionRepairScheduler: (any ProteusSessionRepairScheduling)? = nil
     ) {
         self.proteusMessageDecryptor = proteusMessageDecryptor
         self.mlsMessageDecryptor = mlsMessageDecryptor
         self.messageLocalStore = messageLocalStore
         self.mlsService = mlsService
+        self.proteusSessionRepairScheduler = proteusSessionRepairScheduler
     }
 
     func decryptEvents(
@@ -112,6 +117,12 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
                     await appendFailedToDecryptProteusMessage(
                         eventData: eventData,
                         error: error.proteusError
+                    )
+
+                    await proteusSessionRepairScheduler?.scheduleRepairIfNeeded(
+                        for: error,
+                        senderUserID: eventData.senderID.id,
+                        senderClientID: eventData.messageSenderClientID
                     )
                 } catch {
                     WireLogger.updateEvent.error(

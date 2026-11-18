@@ -361,7 +361,11 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
                 proteusMessageDecryptor: proteusMessageDecryptor,
                 mlsMessageDecryptor: mlsMessageDecryptor,
                 mlsService: nil,
-                messageLocalStore: messageLocalStore
+                messageLocalStore: messageLocalStore,
+                proteusSessionRepairScheduler: ProteusSessionRepairScheduler(
+                    journal: dependency.journal,
+                    context: coreDataStack.syncContext
+                )
             )
         }
     }

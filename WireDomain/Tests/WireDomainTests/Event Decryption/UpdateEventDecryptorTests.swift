@@ -172,6 +172,37 @@ final class UpdateEventDecryptorTests: XCTestCase {
         }
     }
 
+    func testWhenProteusDecryptionFailsThenRepairOfTheSenderSessionIsRequested() async throws {
+        // Given
+        let repairScheduler = ProteusSessionRepairSchedulerSpy()
+        sut = UpdateEventDecryptor(
+            proteusMessageDecryptor: proteusMessageDecryptor,
+            mlsMessageDecryptor: mlsMessageDecryptor,
+            mlsService: mlsService,
+            messageLocalStore: messageLocalStore,
+            proteusSessionRepairScheduler: repairScheduler
+        )
+        let envelope = UpdateEventEnvelope(
+            id: UUID(),
+            events: [.conversation(.proteusMessageAdd(Scaffolding.proteusMessage))],
+            isTransient: false
+        )
+
+        // Mock
+        let error = ProteusService.DecryptionError.failedToDecryptData(.Other(errorCode: 406))
+        proteusMessageDecryptor.decryptedEventDataFromContext_MockMethod = { _, _ in throw error }
+        messageLocalStore.addSystemMessageMessageTypeConversationIDConversationDomain_MockMethod = { _, _, _ in }
+
+        // When
+        _ = await sut.decryptEvents(in: envelope, context: nil)
+
+        // Then
+        let invocations = await repairScheduler.invocations
+        XCTAssertEqual(invocations.count, 1)
+        XCTAssertEqual(invocations.first?.senderUserID, Scaffolding.proteusMessage.senderID.id)
+        XCTAssertEqual(invocations.first?.senderClientID, Scaffolding.proteusMessage.messageSenderClientID)
+    }
+
     func testWhenDecryptionOfMLSMessagesIsSuccessfulThenEventsAreReturned() async throws {
         // Given some events.
         let envelope = UpdateEventEnvelope(
@@ -289,4 +320,18 @@ private enum Scaffolding {
     )
 
     static let base64EncodedString = "CiQ5ZTU2NTQwOS0xODZiLTRlN2YtYTE4NC05NzE4MGE0MDAwMDQSDAoKRXZlcnl0aGluZw=="
+}
+
+private actor ProteusSessionRepairSchedulerSpy: ProteusSessionRepairScheduling {
+
+    private(set) var invocations: [(senderUserID: UUID, senderClientID: String)] = []
+
+    func scheduleRepairIfNeeded(
+        for error: ProteusService.DecryptionError,
+        senderUserID: UUID,
+        senderClientID: String
+    ) async {
+        invocations.append((senderUserID, senderClientID))
+    }
+
 }
