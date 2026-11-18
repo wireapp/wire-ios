@@ -962,6 +962,10 @@ public extension WireCallCenterV3 {
             snapshot?.mlsConferenceStaleParticipantsRemover?.stopSubscribing()
             snapshot?.mlsConferenceStaleParticipantsRemover = nil
 
+            guard conversationInfo(from: conversationId, fallbackDomain: localDomain)?.type == .mlsConference else {
+                return
+            }
+
             leaveSubconversation(
                 parentQualifiedID: mlsParentIDs.0,
                 parentGroupID: mlsParentIDs.1
@@ -1213,7 +1217,8 @@ extension WireCallCenterV3 {
 
     /// The AVS-relevant properties of the conversation.
     private func conversationInfo(
-        from conversationId: AVSIdentifier
+        from conversationId: AVSIdentifier,
+        fallbackDomain: String? = nil
     ) -> (type: AVSConversationType, isMeeting: Bool)? {
         guard let context = uiMOC else { return nil }
 
@@ -1223,7 +1228,7 @@ extension WireCallCenterV3 {
             guard
                 let conversation = ZMConversation.fetch(
                     with: conversationId.identifier,
-                    domain: conversationId.domain,
+                    domain: conversationId.domain ?? fallbackDomain,
                     in: context
                 ),
                 let conversationType = getAVSConversationType(for: conversation)
