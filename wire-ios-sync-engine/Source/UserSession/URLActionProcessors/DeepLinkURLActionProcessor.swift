@@ -123,13 +123,18 @@ class DeepLinkURLActionProcessor: URLActionProcessor {
                     throw ConversationJoinError.unknown
                 }
                 handleConversationSynchronization(conversation: conversation, action: action, delegate: delegate)
-            } catch MeetingsAPIError.invalidMeetingPassword where password == nil {
-                delegate.showPasswordPrompt(for: nil, isMeeting: true) { [weak self] password in
-                    guard let password, !password.isEmpty else {
+            } catch MeetingsAPIError.invalidMeetingPassword {
+                delegate.showPasswordPrompt(
+                    for: nil,
+                    isMeeting: true,
+                    incorrectPassword: password != nil
+                ) { [weak self, weak delegate] password in
+                    guard let delegate else { return }
+                    guard let self, let password, !password.isEmpty else {
                         delegate.completedURLAction(action)
                         return
                     }
-                    self?.handleJoinMeeting(action, password: password, delegate: delegate)
+                    handleJoinMeeting(action, password: password, delegate: delegate)
                 }
             } catch {
                 handleJoinConversationFailure(error: error, urlAction: action, delegate: delegate)
@@ -152,7 +157,11 @@ class DeepLinkURLActionProcessor: URLActionProcessor {
         code: String,
         delegate: PresentationDelegate
     ) {
-        delegate.showPasswordPrompt(for: conversationName, isMeeting: false) { [weak self] password in
+        delegate.showPasswordPrompt(
+            for: conversationName,
+            isMeeting: false,
+            incorrectPassword: false
+        ) { [weak self] password in
             guard let self, let password, !password.isEmpty else {
                 return
             }

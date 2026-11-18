@@ -140,14 +140,24 @@ class URLActionRouter: URLActionRouterProtocol {
 
 extension URLActionRouter: PresentationDelegate {
 
-    func showPasswordPrompt(for conversationName: String?, isMeeting: Bool, completion: @escaping (String?) -> Void) {
+    func showPasswordPrompt(
+        for conversationName: String?,
+        isMeeting: Bool,
+        incorrectPassword: Bool,
+        completion: @escaping (String?) -> Void
+    ) {
         typealias ConversationAlert = L10n.Localizable.Join.Group.Conversation.Alert
         typealias MeetingAlert = L10n.Localizable.Join.Meeting.Alert
 
+        let message = if incorrectPassword {
+            L10n.Localizable.UrlAction.JoinConversation.Error.Alert.InvalidPassword.message
+        } else {
+            isMeeting ? MeetingAlert.message : ConversationAlert.message
+        }
         let alertController = UIAlertController(
             title: conversationName.map(ConversationAlert.title)
                 ?? L10n.Localizable.Registration.Signin.Alert.PasswordNeeded.title,
-            message: isMeeting ? MeetingAlert.message : ConversationAlert.message,
+            message: message,
             preferredStyle: .alert
         )
 
@@ -158,8 +168,8 @@ extension URLActionRouter: PresentationDelegate {
         }
 
         let joinTitle = isMeeting ? MeetingAlert.JoinAction.title : ConversationAlert.JoinAction.title
-        let joinAction = UIAlertAction(title: joinTitle, style: .default) { _ in
-            let password = alertController.textFields?.first?.text
+        let joinAction = UIAlertAction(title: joinTitle, style: .default) { [weak alertController] _ in
+            let password = alertController?.textFields?.first?.text
             completion(password)
         }
 

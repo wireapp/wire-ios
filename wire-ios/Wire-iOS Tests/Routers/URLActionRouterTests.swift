@@ -40,19 +40,13 @@ final class URLActionRouterTests: XCTestCase {
         XCTAssertEqual(alert.actions.first?.title, "Join conversation")
     }
 
-    func testWrongMeetingPasswordUsesMeetingError() throws {
-        let delegate = MockURLActionRouterDelegate()
-        let router = TestableURLActionRouter(viewController: UIViewController(), sessionManager: nil)
-        router.delegate = delegate
+    func testWrongMeetingPasswordShowsErrorInPasswordPrompt() throws {
+        let alert = try passwordPrompt(conversationName: nil, isMeeting: true, incorrectPassword: true)
 
-        router.failedToPerformAction(
-            .joinMeeting(domain: "example.com", key: "key", code: "code"),
-            error: ConversationJoinError.invalidConversationPassword
-        )
-
-        let alert = try XCTUnwrap(router.presentedAlert)
-        XCTAssertEqual(alert.title, "You could not join the meeting")
+        XCTAssertEqual(alert.title, "Password needed")
         XCTAssertEqual(alert.message, "Password is incorrect, please try again.")
+        XCTAssertEqual(alert.textFields?.first?.placeholder, "Enter Meeting password")
+        XCTAssertEqual(alert.actions.first?.title, "Join Meeting")
     }
 
     func testInvalidMeetingLinkUsesMeetingError() throws {
@@ -100,12 +94,22 @@ final class URLActionRouterTests: XCTestCase {
         XCTAssertEqual(alert.message, "Password is incorrect, please try again.")
     }
 
-    private func passwordPrompt(conversationName: String?, isMeeting: Bool = false) throws -> UIAlertController {
+    private func passwordPrompt(
+        conversationName: String?,
+        isMeeting: Bool = false,
+        incorrectPassword: Bool = false
+    ) throws -> UIAlertController {
         let delegate = MockURLActionRouterDelegate()
         let router = TestableURLActionRouter(viewController: UIViewController(), sessionManager: nil)
         router.delegate = delegate
         delegate.canDisplayAlerts = false
-        router.showPasswordPrompt(for: conversationName, isMeeting: isMeeting) { _ in }
+        router
+            .showPasswordPrompt(
+                for: conversationName,
+                isMeeting: isMeeting,
+                incorrectPassword: incorrectPassword
+            ) { _ in
+            }
         delegate.canDisplayAlerts = true
         router.presentPendingAlert()
         return try XCTUnwrap(router.presentedAlert)

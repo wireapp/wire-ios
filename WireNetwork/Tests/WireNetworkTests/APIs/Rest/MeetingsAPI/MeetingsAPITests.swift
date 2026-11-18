@@ -303,7 +303,8 @@ final class MeetingsAPITests: XCTestCase {
         }
         let sut = APIVersion.v19.buildAPI(apiService: apiService)
 
-        for password in [String?("päss word"), "päss word", nil] {
+        let password = "päss word+&%2B"
+        for password in [password, password, nil] {
             let result = try await sut.joinMeeting(
                 domain: "münich.example",
                 key: "key/part?x",
@@ -319,14 +320,13 @@ final class MeetingsAPITests: XCTestCase {
         XCTAssertEqual(apiService.executeRequestRequiringAccessToken_Invocations.first?.requiringAccessToken, true)
         let request = try XCTUnwrap(apiService.executeRequestRequiringAccessToken_Invocations.first?.request)
         XCTAssertEqual(request.httpMethod, "POST")
+        let components = URLComponents(url: try XCTUnwrap(request.url), resolvingAgainstBaseURL: false)
         XCTAssertEqual(
-            URLComponents(url: try XCTUnwrap(request.url), resolvingAgainstBaseURL: false)?.percentEncodedPath,
+            components?.percentEncodedPath,
             "/v19/meeting/m%C3%BCnich.example/key%2Fpart%3Fx/code%23part/join"
         )
-        XCTAssertEqual(
-            URLComponents(url: try XCTUnwrap(request.url), resolvingAgainstBaseURL: false)?.queryItems,
-            [URLQueryItem(name: "password", value: "päss word")]
-        )
+        XCTAssertEqual(components?.percentEncodedQuery, "password=p%C3%A4ss%20word%2B%26%252B")
+        XCTAssertEqual(components?.queryItems, [URLQueryItem(name: "password", value: password)])
         XCTAssertNil(request.httpBody)
         let passwordlessRequest = try XCTUnwrap(apiService.executeRequestRequiringAccessToken_Invocations.last?.request)
         XCTAssertNil(URLComponents(url: try XCTUnwrap(passwordlessRequest.url), resolvingAgainstBaseURL: false)?.query)

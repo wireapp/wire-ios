@@ -35,12 +35,17 @@ final class MeetingsAPIV19: MeetingsAPIV18 {
               let encodedCode = code.pathEncoded else {
             throw MeetingsAPIError.failedToGenerateRequest
         }
-        let path = "\(pathPrefix)/meeting/\(encodedDomain)/\(encodedKey)/\(encodedCode)/join"
-        var builder = try URLRequestBuilder(path: path).withMethod(.post)
+        var components = URLComponents()
+        components.percentEncodedPath = "\(pathPrefix)/meeting/\(encodedDomain)/\(encodedKey)/\(encodedCode)/join"
         if let password {
-            builder = builder.withQueryItem(name: "password", value: password)
+            components.queryItems = [URLQueryItem(name: "password", value: password)]
+            // The backend decodes a literal plus in the query as a space.
+            components.percentEncodedQuery = components.percentEncodedQuery?.replacingOccurrences(of: "+", with: "%2B")
         }
-        let request = builder.build()
+        guard let url = components.url else {
+            throw MeetingsAPIError.failedToGenerateRequest
+        }
+        let request = URLRequestBuilder(url: url).withMethod(.post).build()
         let (data, response) = try await apiService.executeRequest(request, requiringAccessToken: true)
 
         return try ResponseParser()
