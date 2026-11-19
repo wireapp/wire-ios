@@ -141,7 +141,7 @@ final class MeetNowTests: WireUITestCase {
     @MainActor
     func testCancelMeetNow_TC_11971() async throws {
         let (host, users, _, _) = try await UserHelper.default.registerMeetingsTeam(withMemberCount: 1)
-        let fixtures = try await MeetingsTestHelper(user: host)
+        let fixtures = try await MeetingsTestHelper(user: host, apiVersion: UserHelper.default.apiVersion)
         let page = try launchMeetings(for: host)
         let form = try openMeetNow(from: page)
         XCTAssertTrue(form.titleField.exists)
@@ -192,7 +192,7 @@ final class MeetNowTests: WireUITestCase {
             guard case let .conferenceCalling(config) = $0 else { return false }
             return config.status == .enabled
         }) else { throw RuntimeError("The title test requires conference calling to be enabled") }
-        let fixtures = try await MeetingsTestHelper(user: host)
+        let fixtures = try await MeetingsTestHelper(user: host, apiVersion: UserHelper.default.apiVersion)
         let page = try launchMeetings(for: host)
         let form = try openMeetNow(from: page)
         XCTAssertFalse(form.saveButton.isEnabled)
@@ -239,7 +239,7 @@ final class MeetNowTests: WireUITestCase {
             withMemberCount: 3, names: ["Meet Now Host", "Meet Now Alice", "Meet Now Bob", "Meet Now Carol"]
         )
         try await registerClients(for: users)
-        let fixtures = try await MeetingsTestHelper(user: host)
+        let fixtures = try await MeetingsTestHelper(user: host, apiVersion: UserHelper.default.apiVersion)
         let page = try launchMeetings(for: host)
         let form = try openMeetNow(from: page)
         let title = "TC11974 selected participants"
@@ -274,7 +274,7 @@ final class MeetNowTests: WireUITestCase {
         let call = try waitForCall(title: title)
         let meeting = try await onlyMeeting(fixtures, title: title)
         try await assertMembers(fixtures, meeting: meeting, host: host, invitees: [ids[0], ids[2]])
-        let inviteeFixtures = try await MeetingsTestHelper(user: users[0])
+        let inviteeFixtures = try await MeetingsTestHelper(user: users[0], apiVersion: UserHelper.default.apiVersion)
         let inviteeMeetings = try await inviteeFixtures.list()
         XCTAssertEqual(inviteeMeetings.map(\.id), [meeting.id])
         XCTAssertTrue(call.minimizeCallButton.waitAndTap())
@@ -295,7 +295,7 @@ final class MeetNowTests: WireUITestCase {
         defer { notify_cancel(token) }
         let (host, users, ids, _) = try await UserHelper.default.registerMeetingsTeam(withMemberCount: 1)
         try await registerClients(for: users)
-        let fixtures = try await MeetingsTestHelper(user: host)
+        let fixtures = try await MeetingsTestHelper(user: host, apiVersion: UserHelper.default.apiVersion)
         let page = try launchMeetings(for: host)
         let form = try openMeetNow(from: page)
         let title = "TC11983 repeated Start"
@@ -333,7 +333,7 @@ final class MeetNowTests: WireUITestCase {
         defer { notify_cancel(token) }
         let (host, users, ids, _) = try await UserHelper.default.registerMeetingsTeam(withMemberCount: 1)
         try await registerClients(for: users)
-        let fixtures = try await MeetingsTestHelper(user: host)
+        let fixtures = try await MeetingsTestHelper(user: host, apiVersion: UserHelper.default.apiVersion)
         let page = try launchMeetings(for: host)
         let form = try openMeetNow(from: page)
         let title = "TC11984 retry retained details"
@@ -379,7 +379,7 @@ final class MeetNowTests: WireUITestCase {
             withMemberCount: 2, names: ["Meet Now Host", "User A", "User C"]
         )
         try await registerClients(for: [users[0]])
-        let fixtures = try await MeetingsTestHelper(user: host)
+        let fixtures = try await MeetingsTestHelper(user: host, apiVersion: UserHelper.default.apiVersion)
         let page = try launchMeetings(for: host)
         let form = try openMeetNow(from: page)
         let title = "TC11985 partial participants"
@@ -411,7 +411,7 @@ final class MeetNowTests: WireUITestCase {
     func testMeetNowAfterBackgroundResume_TC_11986() async throws {
         let (host, users, ids, _) = try await UserHelper.default.registerMeetingsTeam(withMemberCount: 1)
         try await registerClients(for: users)
-        let fixtures = try await MeetingsTestHelper(user: host)
+        let fixtures = try await MeetingsTestHelper(user: host, apiVersion: UserHelper.default.apiVersion)
         let page = try launchMeetings(for: host)
         let form = try openMeetNow(from: page)
         let title = "TC11986 resume retained details"

@@ -22,10 +22,11 @@ import WireNetwork
 final class MeetingsTestHelper {
 
     private let networkStack: NetworkStack
+    private let apiVersion: APIVersion
     let api: any MeetingsAPI
     let conversationsAPI: any ConversationsAPI
 
-    init(user: UserInfo, apiVersion: APIVersion? = nil) async throws {
+    init(user: UserInfo, apiVersion: APIVersion) async throws {
         let userHelper = UserHelper.default
         let authenticationManager = MockAuthManager()
         authenticationManager.accessToken = try await userHelper.fetchAccessToken(
@@ -40,18 +41,19 @@ final class MeetingsTestHelper {
             authenticationManager: authenticationManager
         )
         self.networkStack = networkStack
+        self.apiVersion = apiVersion
         self.api = MeetingsAPIBuilder(apiService: self.networkStack.apiService)
-            .makeAPI(for: apiVersion ?? userHelper.apiVersion)
+            .makeAPI(for: apiVersion)
         self.conversationsAPI = ConversationsAPIBuilder(apiService: self.networkStack.apiService)
-            .makeAPI(for: userHelper.apiVersion)
+            .makeAPI(for: apiVersion)
     }
 
     var selfUserAPI: any SelfUserAPI {
-        SelfUserAPIBuilder(apiService: networkStack.apiService).makeAPI(for: UserHelper.default.apiVersion)
+        SelfUserAPIBuilder(apiService: networkStack.apiService).makeAPI(for: apiVersion)
     }
 
     var usersAPI: any UsersAPI {
-        UsersAPIBuilder(apiService: networkStack.apiService).makeAPI(for: UserHelper.default.apiVersion)
+        UsersAPIBuilder(apiService: networkStack.apiService).makeAPI(for: apiVersion)
     }
 
     func create(
@@ -59,7 +61,7 @@ final class MeetingsTestHelper {
         start: Date,
         duration: TimeInterval = 1800,
         recurrence: MeetingRecurrence? = nil,
-        timeZoneIdentifier: String = TimeZone.current.identifier
+        timeZoneIdentifier: String
     ) async throws -> MeetingResponse {
         try await api.createMeeting(parameters: CreateMeetingParameters(
             title: title,

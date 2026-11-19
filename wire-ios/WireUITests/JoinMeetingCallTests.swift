@@ -44,7 +44,12 @@ final class JoinMeetingCallTests: WireUITestCase, MeetingJoinTesting {
         let callID = try await assertPeer(peerID, user: fixture.invitee, meeting: fixture.meeting)
         _ = try leaveCall(inviteeCall)
 
-        let hostPage = try launchMeetings(for: fixture.host, now: start.addingTimeInterval(45))
+        let hostPage = try launchMeetings(
+            for: fixture.host,
+            now: start.addingTimeInterval(45),
+            timeZone: nil,
+            apiVersion: nil
+        )
         let hostCall = try join(fixture.meeting, on: hostPage, start: start)
         _ = try await assertPeer(peerID, user: fixture.host, meeting: fixture.meeting, callID: callID)
         capture("TC12021 host joined the invitee call")

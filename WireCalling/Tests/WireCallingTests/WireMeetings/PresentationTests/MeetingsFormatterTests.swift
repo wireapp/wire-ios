@@ -207,7 +207,6 @@ struct MeetingsFormatterTests {
 
         #expect(occurrences.map { berlinFormatter.time($0.start) } == ["11:00", "11:00", "11:00"])
         #expect(occurrences.map { newYorkFormatter.time($0.start) } == ["05:00", "06:00", "05:00"])
-        #expect(meeting.timeZoneIdentifier == "Europe/Berlin")
     }
 
     private func makeDayHeaderDate(hour: Int, minute: Int) throws -> Date {

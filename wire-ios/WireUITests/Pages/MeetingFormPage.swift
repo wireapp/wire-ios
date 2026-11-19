@@ -101,7 +101,7 @@ class MeetingFormPage: PageModel {
         return try MeetingsPage()
     }
 
-    func assertDateTimes(start: Date, end: Date, locale: String = "en_GB", timeZone: TimeZone = .current) {
+    func assertDateTimes(start: Date, end: Date, locale: String = "en_GB", timeZone: TimeZone) {
         let dateFormatter = DateFormatter()
         dateFormatter.locale = Locale(identifier: locale)
         dateFormatter.timeZone = timeZone

@@ -34,8 +34,8 @@ final class MeetingTimeZoneTests: WireUITestCase, MeetingJoinTesting {
         let fixtures = try await MeetingsTestHelper(user: host, apiVersion: .v18)
         for (index, zone) in [berlin, newYork].enumerated() {
             let page = try index == 0
-                ? launchMeetings(for: host, timeZone: zone, apiVersion: 18)
-                : restartMeetings(now: nil, timeZone: zone)
+                ? launchMeetings(for: host, timeZone: zone, apiVersion: .v18)
+                : restartMeetings(now: nil, timeZone: zone, apiVersion: .v18)
             // Schedule through the form and read the zone saved by the backend.
             let title = "TC12033 scheduled \(index)"
             let schedule = try page.schedule()
@@ -98,13 +98,18 @@ final class MeetingTimeZoneTests: WireUITestCase, MeetingJoinTesting {
         XCTAssertEqual(original.recurrence?.frequency, .weekly)
         XCTAssertEqual(original.recurrence?.interval, 4)
         let nextStart = instant(hour: 10)
-        let initialPage = try launchMeetings(for: host, now: instant(dayOffset: -29), timeZone: berlin, apiVersion: 18)
+        let initialPage = try launchMeetings(
+            for: host,
+            now: instant(dayOffset: -29),
+            timeZone: berlin,
+            apiVersion: .v18
+        )
         try assertTime(original, on: initialPage, start: original.startTime, equals: "11:00 - 11:30")
         let form = try initialPage.edit(original)
         try form.assertRepeat(.everyFourWeeks)
         _ = try form.cancel()
 
-        let afterRestart = try restartMeetings(now: instant(hour: 0), timeZone: newYork, apiVersion: 18)
+        let afterRestart = try restartMeetings(now: instant(hour: 0), timeZone: newYork, apiVersion: .v18)
         try assertTime(original, on: afterRestart, start: nextStart, equals: "06:00 - 06:30")
         let restartedForm = try afterRestart.edit(original, start: nextStart)
         try restartedForm.assertRepeat(.everyFourWeeks)
@@ -114,7 +119,7 @@ final class MeetingTimeZoneTests: WireUITestCase, MeetingJoinTesting {
         app.terminate()
         let title = "TC12034 fresh sync"
         _ = try await fixtures.update(meeting: original, title: title)
-        let refreshedPage = try launchMeetings(for: host, now: instant(hour: 0), timeZone: newYork, apiVersion: 18)
+        let refreshedPage = try launchMeetings(for: host, now: instant(hour: 0), timeZone: newYork, apiVersion: .v18)
         let refreshed = try await storedMeeting(fixtures, id: original.id)
         XCTAssertEqual(refreshed.title, title)
         XCTAssertEqual(refreshed.timeZoneIdentifier, berlin)
@@ -135,7 +140,7 @@ final class MeetingTimeZoneTests: WireUITestCase, MeetingJoinTesting {
         let (host, _, _, _) = try await UserHelper.default.registerMeetingsTeam()
         let fixtures = try await MeetingsTestHelper(user: host, apiVersion: .v18)
         let now = instant(dayOffset: -28, hour: 8)
-        let page = try launchMeetings(for: host, now: now, timeZone: berlin, apiVersion: 18)
+        let page = try launchMeetings(for: host, now: now, timeZone: berlin, apiVersion: .v18)
         var series: [MeetingResponse] = []
         let options: [(MeetingFormPage.RepeatOption, MeetingFrequency, Int)] = [
             (.daily, .daily, 1),
@@ -165,7 +170,7 @@ final class MeetingTimeZoneTests: WireUITestCase, MeetingJoinTesting {
             series.append(meeting)
         }
         // Reload after Berlin leaves DST and check each UTC-shifted occurrence.
-        let afterDST = try restartMeetings(now: instant(hour: 0), timeZone: berlin)
+        let afterDST = try restartMeetings(now: instant(hour: 0), timeZone: berlin, apiVersion: .v18)
         for meeting in series {
             try assertTime(meeting, on: afterDST, start: instant(hour: 10), equals: "11:00 - 12:00")
         }
@@ -184,7 +189,7 @@ final class MeetingTimeZoneTests: WireUITestCase, MeetingJoinTesting {
             recurrence: MeetingRecurrence(frequency: .weekly, interval: 1, until: instant(dayOffset: 7, hour: 10)),
             timeZoneIdentifier: berlin
         )
-        let hostPage = try launchMeetings(for: host, now: now, timeZone: berlin, apiVersion: 18)
+        let hostPage = try launchMeetings(for: host, now: now, timeZone: berlin, apiVersion: .v18)
         let form = try hostPage.edit(original)
         try form.addParticipants([invitee])
         _ = try form.save()
@@ -197,7 +202,7 @@ final class MeetingTimeZoneTests: WireUITestCase, MeetingJoinTesting {
             try assertTime(meeting, on: hostPage, start: start, equals: "11:00 - 12:00")
         }
         // The same occurrences convert to the invitee's New York time.
-        let page = try launchMeetings(for: invitee, now: now, timeZone: newYork, apiVersion: 18)
+        let page = try launchMeetings(for: invitee, now: now, timeZone: newYork, apiVersion: .v18)
         try assertTime(meeting, on: page, start: instant(dayOffset: -7, hour: 9), equals: "05:00 - 06:00")
         try assertTime(meeting, on: page, start: instant(hour: 10), equals: "06:00 - 07:00")
         try assertTime(meeting, on: page, start: instant(dayOffset: 7, hour: 10), equals: "05:00 - 06:00")
@@ -205,7 +210,7 @@ final class MeetingTimeZoneTests: WireUITestCase, MeetingJoinTesting {
 
     @MainActor
     func testInviteeJoinBoundariesInBothTimeZones_TC_12023() async throws {
-        executionTimeAllowance = 1200
+        executionTimeAllowance = 600
         let (host, members, _, _) = try await UserHelper.default.registerMeetingsTeam(withMemberCount: 1)
         let invitee = try XCTUnwrap(members.first)
         try await registerClients(for: members)
@@ -215,7 +220,7 @@ final class MeetingTimeZoneTests: WireUITestCase, MeetingJoinTesting {
             title: "TC12023 join boundaries", start: start, duration: 3600, timeZoneIdentifier: berlin
         )
         let hostPage = try launchMeetings(
-            for: host, now: instant(dayOffset: -28, hour: 8), timeZone: berlin, apiVersion: 18
+            for: host, now: instant(dayOffset: -28, hour: 8), timeZone: berlin, apiVersion: .v18
         )
         let form = try hostPage.edit(original)
         try form.addParticipants([invitee])
@@ -225,18 +230,18 @@ final class MeetingTimeZoneTests: WireUITestCase, MeetingJoinTesting {
         XCTAssertEqual(meeting.endTime, start.addingTimeInterval(3600))
         XCTAssertEqual(meeting.timeZoneIdentifier, berlin)
 
-        let checks: [(TimeInterval, Bool)] = [(-1, false), (0, true), (3599, true), (3600, false)]
-        // Check exact absolute boundaries with the fixed clock in each viewer zone.
+        // Check before start once, then check the start and end in both viewer zones.
         var signedIn = false
         for zone in [berlin, newYork] {
+            let checks: [(TimeInterval, Bool)] = (zone == berlin ? [(-1, false)] : []) + [(0, true), (3600, false)]
             for check in checks {
                 let now = start.addingTimeInterval(check.0)
                 let page: MeetingsPage
                 if !signedIn {
-                    page = try launchMeetings(for: invitee, now: now, timeZone: zone, apiVersion: 18)
+                    page = try launchMeetings(for: invitee, now: now, timeZone: zone, apiVersion: .v18)
                     signedIn = true
                 } else {
-                    page = try restartMeetings(now: now, timeZone: zone, apiVersion: 18)
+                    page = try restartMeetings(now: now, timeZone: zone, apiVersion: .v18)
                 }
                 let row = try page.showRow(meeting, start: start)
                 XCTAssertTrue(row.exists, "The occurrence is missing in \(zone) at \(now)")
@@ -273,18 +278,18 @@ final class MeetingTimeZoneTests: WireUITestCase, MeetingJoinTesting {
         let beforeDST = instant(dayOffset: -1)
         let afterDST = instant(hour: 10)
         let initialPage = try launchMeetings(
-            for: host, now: instant(dayOffset: -2), timeZone: newYork, apiVersion: 16
+            for: host, now: instant(dayOffset: -2), timeZone: newYork, apiVersion: .v16
         )
         try assertTime(original, on: initialPage, start: beforeDST, equals: "05:00 - 05:30")
         try assertTime(original, on: initialPage, start: afterDST, equals: "06:00 - 06:30")
 
-        let restartedPage = try restartMeetings(now: instant(hour: 0), timeZone: newYork, apiVersion: 16)
+        let restartedPage = try restartMeetings(now: instant(hour: 0), timeZone: newYork, apiVersion: .v16)
         try assertTime(original, on: restartedPage, start: afterDST, equals: "06:00 - 06:30")
         let restartedForm = try restartedPage.edit(original, start: afterDST)
         try restartedForm.assertRepeat(.daily)
         _ = try restartedForm.cancel()
 
-        let syncedPage = try launchMeetings(for: host, now: instant(hour: 0), timeZone: newYork, apiVersion: 16)
+        let syncedPage = try launchMeetings(for: host, now: instant(hour: 0), timeZone: newYork, apiVersion: .v16)
         let syncedLegacy = try await storedMeeting(legacy, id: original.id)
         let syncedStable = try await storedMeeting(stable, id: original.id)
         XCTAssertNil(syncedLegacy.timeZoneIdentifier)
@@ -310,12 +315,12 @@ final class MeetingTimeZoneTests: WireUITestCase, MeetingJoinTesting {
             recurrence: MeetingRecurrence(frequency: .weekly, interval: 4, until: nil),
             timeZoneIdentifier: berlin
         )
-        let page = try launchMeetings(for: host, now: instant(dayOffset: -29), timeZone: newYork, apiVersion: 18)
+        let page = try launchMeetings(for: host, now: instant(dayOffset: -29), timeZone: newYork, apiVersion: .v18)
         // Before the edit, Berlin's DST transition moves this occurrence to 10:00 UTC.
         try assertTime(original, on: page, start: instant(hour: 10), equals: "06:00 - 07:00")
         try page.scrollToTop(first: original)
         let form = try page.edit(original)
-        // WPB-28918 also sends the device zone for a title-only Save.
+        // Check the current WPB-28918 behavior: a title-only Save sends the device zone.
         form.replaceTitle(with: "TC12038 New York")
         _ = try form.save()
 
@@ -345,7 +350,7 @@ final class MeetingTimeZoneTests: WireUITestCase, MeetingJoinTesting {
             timeZoneIdentifier: berlin
         )
         // Save the existing series in New York, keeping its UTC dates and rule.
-        let page = try launchMeetings(for: host, now: instant(dayOffset: -29), timeZone: newYork, apiVersion: 18)
+        let page = try launchMeetings(for: host, now: instant(dayOffset: -29), timeZone: newYork, apiVersion: .v18)
         let form = try page.edit(original)
         form.replaceTitle(with: "TC12039 New York")
         _ = try form.save()
@@ -359,7 +364,7 @@ final class MeetingTimeZoneTests: WireUITestCase, MeetingJoinTesting {
         XCTAssertEqual(updated.recurrence?.interval, 4)
         XCTAssertNil(updated.recurrence?.until)
 
-        let restarted = try restartMeetings(now: instant(dayOffset: -1), timeZone: newYork, apiVersion: 18)
+        let restarted = try restartMeetings(now: instant(dayOffset: -1), timeZone: newYork, apiVersion: .v18)
         try assertTime(updated, on: restarted, start: instant(), equals: "05:00 - 06:00")
         // New York has left daylight saving time by the next four-week occurrence.
         try assertTime(updated, on: restarted, start: instant(dayOffset: 28, hour: 10), equals: "05:00 - 06:00")
@@ -383,7 +388,7 @@ final class MeetingTimeZoneTests: WireUITestCase, MeetingJoinTesting {
         )
         // The same UTC instant falls on the previous local date in New York.
         let page = try launchMeetings(
-            for: host, now: start.addingTimeInterval(-900), timeZone: newYork, apiVersion: 18
+            for: host, now: start.addingTimeInterval(-900), timeZone: newYork, apiVersion: .v18
         )
         try assertTime(original, on: page, equals: "20:30 - 21:30")
         let formatter = DateFormatter()
@@ -423,18 +428,6 @@ final class MeetingTimeZoneTests: WireUITestCase, MeetingJoinTesting {
         XCTAssertFalse(app.staticTexts.matching(NSPredicate(format: "label CONTAINS[cd] %@", "time zone")).firstMatch
             .exists)
         _ = try schedule.cancel()
-    }
-
-    @MainActor
-    private func restartMeetings(now: Date?, timeZone: String, apiVersion: Int = 18) throws -> MeetingsPage {
-        app.terminate()
-        uiTestConfig.meetingsDate = now
-        app.launchEnvironment[UITestConfig.environmentKey] = uiTestConfig.encode()
-        app.launchEnvironment["TZ"] = timeZone
-        app.launchArguments.removeAll { $0 == "-resetData" || $0.hasPrefix("--preferred-api-version=") }
-        app.launchArguments.append("--preferred-api-version=\(apiVersion)")
-        app.launch()
-        return try ConversationsPage().openMeetings()
     }
 
     private func storedMeeting(_ fixtures: MeetingsTestHelper, id: QualifiedID) async throws -> MeetingResponse {

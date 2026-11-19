@@ -575,7 +575,7 @@ struct MeetingRepositoryTests {
             recurrence: MeetingRecurrence(frequency: .weekly, interval: 1)
         )
 
-        // A title-only Save also sends the device zone under the current iOS policy.
+        // WPB-28918 introduced sending the device zone on every update request.
         let parameters = try #require(meetingsAPI.updateMeetingIdParameters_Invocations.first?.parameters)
         let payload = try #require(
             JSONSerialization.jsonObject(with: JSONEncoder().encode(parameters)) as? [String: Any]
@@ -699,7 +699,12 @@ struct MeetingRepositoryTests {
         // Mock
 
         let expectedTimeZone = TimeZone.current.identifier
-        let response = Scaffolding.response(timeZoneIdentifier: expectedTimeZone, recurrence: nil)
+        let response = Scaffolding.response(
+            timeZoneIdentifier: expectedTimeZone,
+            recurrence: nil,
+            startTime: Scaffolding.meetingResponse.startTime,
+            endTime: Scaffolding.meetingResponse.endTime
+        )
         meetingsAPI.createMeetingParameters_MockValue = response
 
         // When
@@ -1002,16 +1007,16 @@ struct MeetingRepositoryTests {
         static func response(
             timeZoneIdentifier: String?,
             recurrence: WireNetwork.MeetingRecurrence?,
-            startTime: Date? = nil,
-            endTime: Date? = nil
+            startTime: Date,
+            endTime: Date
         ) -> MeetingResponse {
             let source = meetingResponse
             return MeetingResponse(
                 id: source.id,
                 title: source.title,
                 creatorID: source.creatorID,
-                startTime: startTime ?? source.startTime,
-                endTime: endTime ?? source.endTime,
+                startTime: startTime,
+                endTime: endTime,
                 conversationID: source.conversationID,
                 invitedEmails: source.invitedEmails,
                 isTrial: source.isTrial,

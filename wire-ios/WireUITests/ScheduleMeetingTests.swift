@@ -83,14 +83,19 @@ final class ScheduleMeetingTests: WireUITestCase {
     @MainActor
     func testCancelScheduleMeeting_TC_11948() async throws {
         let (host, _, _, _) = try await UserHelper.default.registerMeetingsTeam()
-        let fixtures = try await MeetingsTestHelper(user: host)
+        let fixtures = try await MeetingsTestHelper(user: host, apiVersion: UserHelper.default.apiVersion)
         for locale in ["en_GB", "en_US"] {
             let page = try launchMeetings(for: host, now: date(minute: 7), locale: locale)
             let form = try page.schedule()
             XCTAssertTrue(form.titleField.exists)
             XCTAssertTrue(form.participantsButton.exists)
             XCTAssertTrue(form.repeatButton.exists)
-            form.assertDateTimes(start: date(minute: 15), end: date(hour: 11, minute: 15), locale: locale)
+            form.assertDateTimes(
+                start: date(minute: 15),
+                end: date(hour: 11, minute: 15),
+                locale: locale,
+                timeZone: .current
+            )
             XCTAssertFalse(form.saveButton.isEnabled)
             _ = try form.cancel()
             XCTAssertTrue(page.noUpcomingMeetingsText.waitForExistence(timeout: 10))
@@ -112,7 +117,7 @@ final class ScheduleMeetingTests: WireUITestCase {
     @MainActor
     func testDefaultScheduleDateAndDuration_TC_11950() async throws {
         let (host, _, _, _) = try await UserHelper.default.registerMeetingsTeam()
-        let fixtures = try await MeetingsTestHelper(user: host)
+        let fixtures = try await MeetingsTestHelper(user: host, apiVersion: UserHelper.default.apiVersion)
         let datasets: [(now: Date, start: Date, end: Date)] = [
             (date(minute: 7), date(minute: 15), date(hour: 11, minute: 15)),
             (date(), date(minute: 15), date(hour: 11, minute: 15)),
@@ -123,7 +128,7 @@ final class ScheduleMeetingTests: WireUITestCase {
         for dataset in datasets {
             let page = try launchMeetings(for: host, now: dataset.now)
             let form = try page.schedule()
-            form.assertDateTimes(start: dataset.start, end: dataset.end)
+            form.assertDateTimes(start: dataset.start, end: dataset.end, timeZone: .current)
             _ = try form.cancel()
         }
         let meetings = try await fixtures.list()
@@ -133,7 +138,7 @@ final class ScheduleMeetingTests: WireUITestCase {
     @MainActor
     func testScheduleMeetingTitleValidation_TC_11952() async throws {
         let (host, _, _, _) = try await UserHelper.default.registerMeetingsTeam()
-        let fixtures = try await MeetingsTestHelper(user: host)
+        let fixtures = try await MeetingsTestHelper(user: host, apiVersion: UserHelper.default.apiVersion)
         let page = try launchMeetings(for: host, now: date())
         let form = try page.schedule()
         XCTAssertFalse(form.saveButton.isEnabled)
@@ -168,14 +173,14 @@ final class ScheduleMeetingTests: WireUITestCase {
     @MainActor
     func testScheduleMeetingWithoutInvitees_TC_11954() async throws {
         let (host, _, _, _) = try await UserHelper.default.registerMeetingsTeam()
-        let fixtures = try await MeetingsTestHelper(user: host)
+        let fixtures = try await MeetingsTestHelper(user: host, apiVersion: UserHelper.default.apiVersion)
         let page = try launchMeetings(for: host, now: date())
         let form = try page.schedule()
         let title = "TC11954 host only"
         form.replaceTitle(with: title)
         XCTAssertEqual(form.participantsButton.value as? String, "0")
         try form.assertRepeat(.never)
-        form.assertDateTimes(start: date(minute: 15), end: date(hour: 11, minute: 15))
+        form.assertDateTimes(start: date(minute: 15), end: date(hour: 11, minute: 15), timeZone: .current)
         _ = try form.save()
 
         let meeting = try await onlyMeeting(fixtures, title: title)
@@ -191,12 +196,16 @@ final class ScheduleMeetingTests: WireUITestCase {
     @MainActor
     func testScheduleFutureDateAndQuarterHourTimes_TC_11955() async throws {
         let (host, _, _, _) = try await UserHelper.default.registerMeetingsTeam()
-        let fixtures = try await MeetingsTestHelper(user: host)
+        let fixtures = try await MeetingsTestHelper(user: host, apiVersion: UserHelper.default.apiVersion)
         let page = try launchMeetings(for: host, now: date())
         let form = try page.schedule()
         form.replaceTitle(with: "TC11955 future date")
         try form.selectStartDate(date(dayOffset: 1))
-        form.assertDateTimes(start: date(minute: 15, dayOffset: 1), end: date(hour: 11, minute: 15, dayOffset: 1))
+        form.assertDateTimes(
+            start: date(minute: 15, dayOffset: 1),
+            end: date(hour: 11, minute: 15, dayOffset: 1),
+            timeZone: .current
+        )
         XCTAssertFalse(
             app.buttons[Locators.WireMeetings.MeetingForm.endDate.rawValue].isHittable,
             "End date must not be editable"
@@ -206,13 +215,15 @@ final class ScheduleMeetingTests: WireUITestCase {
             try form.selectTime(start: true, hour: 15, minute: minute)
             form.assertDateTimes(
                 start: date(hour: 15, minute: minute, dayOffset: 1),
-                end: date(hour: 16, minute: minute, dayOffset: 1)
+                end: date(hour: 16, minute: minute, dayOffset: 1),
+                timeZone: .current
             )
         }
         try form.selectTime(start: false, hour: 16, minute: 30)
         form.assertDateTimes(
             start: date(hour: 15, minute: 45, dayOffset: 1),
-            end: date(hour: 16, minute: 30, dayOffset: 1)
+            end: date(hour: 16, minute: 30, dayOffset: 1),
+            timeZone: .current
         )
         _ = try form.save()
         let meeting = try await onlyMeeting(fixtures, title: "TC11955 future date")
@@ -224,7 +235,7 @@ final class ScheduleMeetingTests: WireUITestCase {
     @MainActor
     func testScheduleOnlyValidSameDayTimes_TC_11957() async throws {
         let (host, _, _, _) = try await UserHelper.default.registerMeetingsTeam()
-        let fixtures = try await MeetingsTestHelper(user: host)
+        let fixtures = try await MeetingsTestHelper(user: host, apiVersion: UserHelper.default.apiVersion)
         let page = try launchMeetings(for: host, now: date(minute: 7))
         let constrained = try page.schedule()
         constrained.replaceTitle(with: "TC11957 picker constraints")
@@ -251,7 +262,11 @@ final class ScheduleMeetingTests: WireUITestCase {
             let title = "TC11957 \(hour):\(minute)"
             form.replaceTitle(with: title)
             try form.selectTime(start: true, hour: hour, minute: minute)
-            form.assertDateTimes(start: date(hour: hour, minute: minute), end: date(hour: endHour, minute: endMinute))
+            form.assertDateTimes(
+                start: date(hour: hour, minute: minute),
+                end: date(hour: endHour, minute: endMinute),
+                timeZone: .current
+            )
             _ = try form.save()
             let meeting = try await onlyMeeting(fixtures, title: title)
             XCTAssertEqual(meeting.startTime, date(hour: hour, minute: minute))
@@ -280,7 +295,7 @@ final class ScheduleMeetingTests: WireUITestCase {
     @MainActor
     func testScheduleSupportedRecurrences_TC_11962() async throws {
         let (host, _, _, _) = try await UserHelper.default.registerMeetingsTeam()
-        let fixtures = try await MeetingsTestHelper(user: host)
+        let fixtures = try await MeetingsTestHelper(user: host, apiVersion: UserHelper.default.apiVersion)
         let page = try launchMeetings(for: host, now: date())
         // TC-11962 specifies these English labels. Option selection uses IDs.
         let options: [(
@@ -332,7 +347,7 @@ final class ScheduleMeetingTests: WireUITestCase {
             withMemberCount: 3, names: ["Schedule Host", "Schedule Alice", "Schedule Bob", "Schedule Carol"]
         )
         try await registerClients(for: users)
-        let fixtures = try await MeetingsTestHelper(user: host)
+        let fixtures = try await MeetingsTestHelper(user: host, apiVersion: UserHelper.default.apiVersion)
         let page = try launchMeetings(for: host, now: date())
         let form = try page.schedule()
         try form.openParticipants()
@@ -381,7 +396,7 @@ final class ScheduleMeetingTests: WireUITestCase {
         let (host, users, ids, _) = try await UserHelper.default.registerMeetingsTeam(withMemberCount: 101)
         XCTAssertEqual(users.count, 101, "The staging fixture must support 101 eligible team members")
         try await registerClients(for: users)
-        let fixtures = try await MeetingsTestHelper(user: host)
+        let fixtures = try await MeetingsTestHelper(user: host, apiVersion: UserHelper.default.apiVersion)
         let page = try launchMeetings(for: host, now: date())
         let form = try page.schedule()
         form.replaceTitle(with: "TC11967 101 invitees")
@@ -412,7 +427,7 @@ final class ScheduleMeetingTests: WireUITestCase {
         uiTestConfig.meetingsCreateFailureID = failureID
 
         let (host, _, _, _) = try await UserHelper.default.registerMeetingsTeam()
-        let fixtures = try await MeetingsTestHelper(user: host)
+        let fixtures = try await MeetingsTestHelper(user: host, apiVersion: UserHelper.default.apiVersion)
         let page = try launchMeetings(for: host, now: date())
         let form = try page.schedule()
         let title = "TC11969 retained details"
@@ -443,7 +458,7 @@ final class ScheduleMeetingTests: WireUITestCase {
             throw RuntimeError("The scheduling error could not be dismissed")
         }
         XCTAssertEqual(form.titleField.value as? String, title)
-        form.assertDateTimes(start: date(minute: 15), end: date(hour: 11, minute: 15))
+        form.assertDateTimes(start: date(minute: 15), end: date(hour: 11, minute: 15), timeZone: .current)
         try form.assertRepeat(.weekly)
 
         guard notify_set_state(token, 2) == UInt32(NOTIFY_STATUS_OK) else {
