@@ -44,8 +44,8 @@ class CallKitCallRegister {
 
     // MARK: - Registration
 
-    func registerNewCall(with handle: CallHandle) -> CallKitCall {
-        let call = CallKitCall(id: UUID(), handle: handle)
+    func registerNewCall(with handle: CallHandle, incomingEventTimestamp: Date? = nil) -> CallKitCall {
+        let call = CallKitCall(id: UUID(), handle: handle, incomingEventTimestamp: incomingEventTimestamp)
         storageLock.withLock {
             storage[call.id] = call
             persistStorage()

@@ -382,14 +382,14 @@ public final class AVSWrapper: AVSWrapperType {
 
     private let closedCallHandler: Handler.CloseCall = { reason, conversationId, messageTime, userId, _, contextRef in
         zmLog.debug("closedCallHandler: messageTime = \(messageTime)")
-        let nonZeroMessageTime: UInt32 = messageTime != 0 ? messageTime : UInt32(Date().timeIntervalSince1970)
+        let timestamp = messageTime == 0 ? nil : Date(rawValue: messageTime)
 
-        AVSWrapper.withCallCenter(contextRef, reason, conversationId, nonZeroMessageTime, userId) {
+        AVSWrapper.withCallCenter(contextRef, reason, conversationId, userId) {
             $0.handleCallEnd(
                 reason: $1,
                 conversationId: $2,
-                messageTime: $3,
-                userId: $4
+                messageTime: timestamp,
+                userId: $3
             )
         }
     }
