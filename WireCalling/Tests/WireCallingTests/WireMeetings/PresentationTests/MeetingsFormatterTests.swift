@@ -19,6 +19,9 @@
 import Foundation
 import Testing
 import WireCallingUI
+import WireFoundation
+
+@testable import WireCallingDomain
 
 @Suite("MeetingsFormatter Tests")
 struct MeetingsFormatterTests {
@@ -167,6 +170,45 @@ struct MeetingsFormatterTests {
         #expect(formatter.date(date) == "09/09/2026")
     }
 
+    @Test("recurring Berlin occurrences display in local time across Berlin and New York DST")
+    func recurringOccurrenceFormatsInParticipantTimeZoneAcrossDST() throws {
+        // Generate the same Berlin series before and after both DST transitions.
+        let meeting = Meeting(
+            id: QualifiedID(id: UUID(), domain: "example.com"),
+            title: "Weekly meeting",
+            start: try makeUTCDate("2026-10-18T09:00:00Z"),
+            end: try makeUTCDate("2026-10-18T10:00:00Z"),
+            recurrence: MeetingRecurrence(frequency: .weekly, interval: 1),
+            timeZoneIdentifier: "Europe/Berlin",
+            conversationID: QualifiedID(id: UUID(), domain: "example.com"),
+            creatorID: QualifiedID(id: UUID(), domain: "example.com")
+        )
+        let occurrences = MeetingOccurrencePaginator().occurrences(
+            for: [meeting],
+            startingAt: try makeUTCDate("2026-10-18T00:00:00Z"),
+            offset: 0,
+            limit: 3
+        )
+        let expectedStarts = try [
+            makeUTCDate("2026-10-18T09:00:00Z"),
+            makeUTCDate("2026-10-25T10:00:00Z"),
+            makeUTCDate("2026-11-01T10:00:00Z")
+        ]
+        #expect(occurrences.map(\.start) == expectedStarts)
+
+        // Convert those absolute occurrences to each participant's local time.
+        var berlinCalendar = Calendar(identifier: .gregorian)
+        berlinCalendar.timeZone = try #require(TimeZone(identifier: "Europe/Berlin"))
+        let berlinFormatter = MeetingsFormatter(calendar: berlinCalendar, locale: Locale(identifier: "en_GB"))
+
+        var newYorkCalendar = Calendar(identifier: .gregorian)
+        newYorkCalendar.timeZone = try #require(TimeZone(identifier: "America/New_York"))
+        let newYorkFormatter = MeetingsFormatter(calendar: newYorkCalendar, locale: Locale(identifier: "en_GB"))
+
+        #expect(occurrences.map { berlinFormatter.time($0.start) } == ["11:00", "11:00", "11:00"])
+        #expect(occurrences.map { newYorkFormatter.time($0.start) } == ["05:00", "06:00", "05:00"])
+    }
+
     private func makeDayHeaderDate(hour: Int, minute: Int) throws -> Date {
         try #require(dayHeaderCalendar.date(
             from: DateComponents(year: 2026, month: 9, day: 8, hour: hour, minute: minute)
@@ -177,6 +219,10 @@ struct MeetingsFormatterTests {
         try #require(timeRangeCalendar.date(
             from: DateComponents(year: 2026, month: 9, day: 8, hour: hour, minute: minute)
         ))
+    }
+
+    private func makeUTCDate(_ string: String) throws -> Date {
+        try Date.ISO8601FormatStyle().parse(string)
     }
 
     private func formatter(localeIdentifier: String) -> MeetingsFormatter {

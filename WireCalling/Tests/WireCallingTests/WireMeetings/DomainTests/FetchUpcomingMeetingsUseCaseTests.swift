@@ -36,8 +36,16 @@ struct FetchUpcomingMeetingsUseCaseTests {
         let mockDateProvider = CurrentDateProvidingMock()
         mockDateProvider.now = try Date.ISO8601FormatStyle().parse("2025-10-27T13:59:59Z")
 
-        let meeting1 = Meeting.fixture(title: "Meeting 1", start: mockDateProvider.now.addingTimeInterval(3600))
-        let meeting2 = Meeting.fixture(title: "Meeting 2", start: mockDateProvider.now.addingTimeInterval(7200))
+        let meeting1 = Meeting.fixture(
+            title: "Meeting 1",
+            start: mockDateProvider.now.addingTimeInterval(3600),
+            timeZoneIdentifier: "UTC"
+        )
+        let meeting2 = Meeting.fixture(
+            title: "Meeting 2",
+            start: mockDateProvider.now.addingTimeInterval(7200),
+            timeZoneIdentifier: "UTC"
+        )
         repository.fetchMeetingsInRangeRangeDateOffsetIntLimitIntMeetingReturnValue = [meeting1, meeting2]
 
         let useCase = FetchUpcomingMeetingsUseCase(
@@ -83,7 +91,8 @@ struct FetchUpcomingMeetingsUseCaseTests {
         let meetings = (0 ... 12).map { index in
             Meeting.fixture(
                 title: "Meeting \(index)",
-                start: mockDateProvider.now.addingTimeInterval(TimeInterval(index * 3600))
+                start: mockDateProvider.now.addingTimeInterval(TimeInterval(index * 3600)),
+                timeZoneIdentifier: "UTC"
             )
         }
         repository.fetchMeetingsInRangeRangeDateOffsetIntLimitIntMeetingReturnValue = meetings
@@ -110,7 +119,8 @@ struct FetchUpcomingMeetingsUseCaseTests {
         let meetings = (0 ..< 10).map { index in
             Meeting.fixture(
                 title: "Meeting \(index)",
-                start: mockDateProvider.now.addingTimeInterval(TimeInterval(index * 3600))
+                start: mockDateProvider.now.addingTimeInterval(TimeInterval(index * 3600)),
+                timeZoneIdentifier: "UTC"
             )
         }
         repository.fetchMeetingsInRangeRangeDateOffsetIntLimitIntMeetingReturnValue = meetings
@@ -128,6 +138,84 @@ struct FetchUpcomingMeetingsUseCaseTests {
         #expect(result.meetings.count == 10)
     }
 
+    @Test("daily and weekly recurrence options keep 11:00 Berlin time across DST")
+    func recurrenceOptionsKeepBerlinLocalTimeAcrossDST() throws {
+        // Expand each recurrence option across the Berlin DST transition.
+        let options: [(frequency: MeetingRecurrence.Frequency, interval: Int, start: String, expected: [String])] = [
+            (.daily, 1, "2026-10-24T09:00:00Z", [
+                "2026-10-24T09:00:00Z", "2026-10-25T10:00:00Z", "2026-10-26T10:00:00Z"
+            ]),
+            (.weekly, 1, "2026-10-18T09:00:00Z", [
+                "2026-10-18T09:00:00Z", "2026-10-25T10:00:00Z", "2026-11-01T10:00:00Z"
+            ]),
+            (.weekly, 2, "2026-10-11T09:00:00Z", [
+                "2026-10-11T09:00:00Z", "2026-10-25T10:00:00Z", "2026-11-08T10:00:00Z"
+            ]),
+            (.weekly, 4, "2026-09-27T09:00:00Z", [
+                "2026-09-27T09:00:00Z", "2026-10-25T10:00:00Z", "2026-11-22T10:00:00Z"
+            ])
+        ]
+        let berlin = try #require(TimeZone(identifier: "Europe/Berlin"))
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = berlin
+        let lowerBound = try date("2026-10-25T09:00:00Z")
+
+        for option in options {
+            let meeting = Meeting.fixture(
+                title: "\(option.frequency) interval \(option.interval)",
+                start: try date(option.start),
+                recurrence: MeetingRecurrence(frequency: option.frequency, interval: option.interval),
+                timeZoneIdentifier: berlin.identifier
+            )
+            let expectedStarts = try option.expected.map(date)
+
+            let occurrences = MeetingOccurrencePaginator().occurrences(
+                for: [meeting],
+                startingAt: try date("2026-09-27T00:00:00Z"),
+                offset: 0,
+                limit: expectedStarts.count
+            )
+            #expect(occurrences.map(\.start) == expectedStarts)
+            #expect(occurrences.allSatisfy { calendar.component(.hour, from: $0.start) == 11 })
+
+            // Query after the DST transition to also check the fast-forward path.
+            let afterTransition = MeetingOccurrencePaginator().occurrences(
+                for: [meeting],
+                startingAt: lowerBound,
+                offset: 0,
+                limit: 2
+            )
+            #expect(afterTransition.map(\.start) == Array(expectedStarts.filter { $0 >= lowerBound }.prefix(2)))
+        }
+    }
+
+    @Test("recurrence with no time zone uses the Berlin fallback across DST")
+    func recurrenceWithoutTimeZoneUsesBerlinFallbackAcrossDST() throws {
+        let meeting = Meeting.fixture(
+            title: "Legacy daily meeting",
+            start: try date("2026-10-24T09:00:00Z"),
+            recurrence: MeetingRecurrence(frequency: .daily, interval: 1),
+            timeZoneIdentifier: nil
+        )
+        let expectedStarts = try [
+            date("2026-10-24T09:00:00Z"),
+            date("2026-10-25T10:00:00Z"),
+            date("2026-10-26T10:00:00Z")
+        ]
+        var berlinCalendar = Calendar(identifier: .gregorian)
+        berlinCalendar.timeZone = try #require(TimeZone(identifier: "Europe/Berlin"))
+
+        // A new paginator recalculates occurrences from the meeting's stored values.
+        let occurrences = MeetingOccurrencePaginator().occurrences(
+            for: [meeting],
+            startingAt: try date("2026-10-24T00:00:00Z"),
+            offset: 0,
+            limit: expectedStarts.count
+        )
+        #expect(occurrences.map(\.start) == expectedStarts)
+        #expect(occurrences.allSatisfy { berlinCalendar.component(.hour, from: $0.start) == 11 })
+    }
+
     @Test("invoke returns meetings from the start of today, including meetings earlier today")
     func invoke_ReturnsMeetingsFromToday() async throws {
         // Given
@@ -136,9 +224,21 @@ struct FetchUpcomingMeetingsUseCaseTests {
         let mockDateProvider = CurrentDateProvidingMock()
         mockDateProvider.now = startOfToday.addingTimeInterval(12 * 3600)
 
-        let yesterday = Meeting.fixture(title: "Yesterday", start: startOfToday.addingTimeInterval(-3600))
-        let earlierToday = Meeting.fixture(title: "Earlier today", start: startOfToday.addingTimeInterval(5 * 60))
-        let tomorrow = Meeting.fixture(title: "Tomorrow", start: startOfToday.addingTimeInterval(24 * 3600))
+        let yesterday = Meeting.fixture(
+            title: "Yesterday",
+            start: startOfToday.addingTimeInterval(-3600),
+            timeZoneIdentifier: "UTC"
+        )
+        let earlierToday = Meeting.fixture(
+            title: "Earlier today",
+            start: startOfToday.addingTimeInterval(5 * 60),
+            timeZoneIdentifier: "UTC"
+        )
+        let tomorrow = Meeting.fixture(
+            title: "Tomorrow",
+            start: startOfToday.addingTimeInterval(24 * 3600),
+            timeZoneIdentifier: "UTC"
+        )
         repository.fetchMeetingsInRangeRangeDateOffsetIntLimitIntMeetingReturnValue = [
             yesterday,
             earlierToday,
@@ -170,13 +270,13 @@ struct FetchUpcomingMeetingsUseCaseTests {
         let mockDateProvider = CurrentDateProvidingMock()
         mockDateProvider.now = startOfToday.addingTimeInterval(12 * 3600)
 
-        let sourceStart = calendar.date(byAdding: .day, value: -1, to: startOfToday)!
-            .addingTimeInterval(9 * 3600)
+        let sourceStart = startOfToday.addingTimeInterval(-15 * 3600)
         let meeting = Meeting.fixture(
             title: "Daily sync",
             start: sourceStart,
             duration: 30 * 60,
-            recurrence: MeetingRecurrence(frequency: .daily, interval: 1)
+            recurrence: MeetingRecurrence(frequency: .daily, interval: 1),
+            timeZoneIdentifier: "UTC"
         )
         repository.fetchMeetingsInRangeRangeDateOffsetIntLimitIntMeetingReturnValue = [meeting]
 
@@ -207,15 +307,16 @@ struct FetchUpcomingMeetingsUseCaseTests {
         let mockDateProvider = CurrentDateProvidingMock()
         mockDateProvider.now = startOfToday.addingTimeInterval(12 * 3600)
 
-        let sourceStart = calendar.date(
-            byAdding: .year,
-            value: -6,
-            to: startOfToday.addingTimeInterval(9 * 3600)
-        )!
+        var utcCalendar = Calendar(identifier: .gregorian)
+        utcCalendar.timeZone = .gmt
+        let sourceStart = try #require(
+            utcCalendar.date(byAdding: .year, value: -6, to: startOfToday.addingTimeInterval(9 * 3600))
+        )
         let meeting = Meeting.fixture(
             title: "Daily sync",
             start: sourceStart,
-            recurrence: MeetingRecurrence(frequency: .daily, interval: 1)
+            recurrence: MeetingRecurrence(frequency: .daily, interval: 1),
+            timeZoneIdentifier: "UTC"
         )
         repository.fetchMeetingsInRangeRangeDateOffsetIntLimitIntMeetingReturnValue = [meeting]
 
@@ -244,12 +345,12 @@ struct FetchUpcomingMeetingsUseCaseTests {
         let mockDateProvider = CurrentDateProvidingMock()
         mockDateProvider.now = startOfToday.addingTimeInterval(12 * 3600)
 
-        let sourceStart = calendar.date(byAdding: .day, value: -1, to: startOfToday)!
-            .addingTimeInterval(9 * 3600)
+        let sourceStart = startOfToday.addingTimeInterval(-15 * 3600)
         let meeting = Meeting.fixture(
             title: "Daily sync",
             start: sourceStart,
-            recurrence: MeetingRecurrence(frequency: .daily, interval: 1)
+            recurrence: MeetingRecurrence(frequency: .daily, interval: 1),
+            timeZoneIdentifier: "UTC"
         )
         repository.fetchMeetingsInRangeRangeDateOffsetIntLimitIntMeetingReturnValue = [meeting]
 
@@ -278,9 +379,21 @@ struct FetchUpcomingMeetingsUseCaseTests {
         mockDateProvider.now = startOfToday.addingTimeInterval(12 * 3600)
 
         repository.fetchMeetingsInRangeRangeDateOffsetIntLimitIntMeetingReturnValue = [
-            Meeting.fixture(title: "First", start: startOfToday.addingTimeInterval(9 * 3600)),
-            Meeting.fixture(title: "Second", start: startOfToday.addingTimeInterval(10 * 3600)),
-            Meeting.fixture(title: "Third", start: startOfToday.addingTimeInterval(11 * 3600))
+            Meeting.fixture(
+                title: "First",
+                start: startOfToday.addingTimeInterval(9 * 3600),
+                timeZoneIdentifier: "UTC"
+            ),
+            Meeting.fixture(
+                title: "Second",
+                start: startOfToday.addingTimeInterval(10 * 3600),
+                timeZoneIdentifier: "UTC"
+            ),
+            Meeting.fixture(
+                title: "Third",
+                start: startOfToday.addingTimeInterval(11 * 3600),
+                timeZoneIdentifier: "UTC"
+            )
         ]
 
         let useCase = FetchUpcomingMeetingsUseCase(
@@ -304,9 +417,21 @@ struct FetchUpcomingMeetingsUseCaseTests {
         mockDateProvider.now = try Date.ISO8601FormatStyle().parse("2026-07-11T12:00:00Z")
 
         repository.fetchMeetingsInRangeRangeDateOffsetIntLimitIntMeetingReturnValue = [
-            Meeting.fixture(title: "First", start: mockDateProvider.now.addingTimeInterval(3600)),
-            Meeting.fixture(title: "Second", start: mockDateProvider.now.addingTimeInterval(7200)),
-            Meeting.fixture(title: "Third", start: mockDateProvider.now.addingTimeInterval(10_800))
+            Meeting.fixture(
+                title: "First",
+                start: mockDateProvider.now.addingTimeInterval(3600),
+                timeZoneIdentifier: "UTC"
+            ),
+            Meeting.fixture(
+                title: "Second",
+                start: mockDateProvider.now.addingTimeInterval(7200),
+                timeZoneIdentifier: "UTC"
+            ),
+            Meeting.fixture(
+                title: "Third",
+                start: mockDateProvider.now.addingTimeInterval(10_800),
+                timeZoneIdentifier: "UTC"
+            )
         ]
 
         let useCase = FetchUpcomingMeetingsUseCase(
@@ -317,7 +442,11 @@ struct FetchUpcomingMeetingsUseCaseTests {
         // When
         let firstPage = try await useCase.invoke(pageSize: 2, offset: 0)
         repository.fetchMeetingsInRangeRangeDateOffsetIntLimitIntMeetingReturnValue = [
-            Meeting.fixture(title: "Refetched", start: mockDateProvider.now.addingTimeInterval(14_400))
+            Meeting.fixture(
+                title: "Refetched",
+                start: mockDateProvider.now.addingTimeInterval(14_400),
+                timeZoneIdentifier: "UTC"
+            )
         ]
         let secondPage = try await useCase.invoke(pageSize: 2, offset: firstPage.nextOffset)
 
@@ -335,7 +464,11 @@ struct FetchUpcomingMeetingsUseCaseTests {
         mockDateProvider.now = try Date.ISO8601FormatStyle().parse("2026-07-11T12:00:00Z")
 
         repository.fetchMeetingsInRangeRangeDateOffsetIntLimitIntMeetingReturnValue = [
-            Meeting.fixture(title: "Initial", start: mockDateProvider.now.addingTimeInterval(3600))
+            Meeting.fixture(
+                title: "Initial",
+                start: mockDateProvider.now.addingTimeInterval(3600),
+                timeZoneIdentifier: "UTC"
+            )
         ]
 
         let useCase = FetchUpcomingMeetingsUseCase(
@@ -346,7 +479,11 @@ struct FetchUpcomingMeetingsUseCaseTests {
         // When
         let initialPage = try await useCase.invoke(pageSize: 2, offset: 0)
         repository.fetchMeetingsInRangeRangeDateOffsetIntLimitIntMeetingReturnValue = [
-            Meeting.fixture(title: "Refreshed", start: mockDateProvider.now.addingTimeInterval(7200))
+            Meeting.fixture(
+                title: "Refreshed",
+                start: mockDateProvider.now.addingTimeInterval(7200),
+                timeZoneIdentifier: "UTC"
+            )
         ]
         let refreshedPage = try await useCase.invoke(pageSize: 2, offset: 0)
 
@@ -365,11 +502,12 @@ struct FetchUpcomingMeetingsUseCaseTests {
         mockDateProvider.now = startOfToday.addingTimeInterval(12 * 3600)
 
         let occurrenceStart = startOfToday.addingTimeInterval(9 * 3600)
-        let sourceStart = calendar.date(byAdding: .day, value: -1, to: occurrenceStart)!
+        let sourceStart = occurrenceStart.addingTimeInterval(-86_400)
         let meeting = Meeting.fixture(
             title: "Daily sync",
             start: sourceStart,
-            recurrence: MeetingRecurrence(frequency: .daily, interval: 1, until: occurrenceStart)
+            recurrence: MeetingRecurrence(frequency: .daily, interval: 1, until: occurrenceStart),
+            timeZoneIdentifier: "UTC"
         )
         repository.fetchMeetingsInRangeRangeDateOffsetIntLimitIntMeetingReturnValue = [meeting]
 
@@ -397,7 +535,8 @@ struct FetchUpcomingMeetingsUseCaseTests {
         let meeting = Meeting.fixture(
             title: "Daily sync",
             start: startOfToday.addingTimeInterval(9 * 3600),
-            recurrence: MeetingRecurrence(frequency: .daily, interval: 1)
+            recurrence: MeetingRecurrence(frequency: .daily, interval: 1),
+            timeZoneIdentifier: "UTC"
         )
         repository.fetchMeetingsInRangeRangeDateOffsetIntLimitIntMeetingReturnValue = [meeting]
 
@@ -414,6 +553,10 @@ struct FetchUpcomingMeetingsUseCaseTests {
         #expect(result.hasMore)
     }
 
+    private func date(_ string: String) throws -> Date {
+        try Date.ISO8601FormatStyle().parse(string)
+    }
+
 }
 
 private extension Meeting {
@@ -423,7 +566,8 @@ private extension Meeting {
         title: String,
         start: Date,
         duration: TimeInterval = 3600,
-        recurrence: MeetingRecurrence? = nil
+        recurrence: MeetingRecurrence? = nil,
+        timeZoneIdentifier: String?
     ) -> Meeting {
         Meeting(
             id: id,
@@ -431,7 +575,7 @@ private extension Meeting {
             start: start,
             end: start.addingTimeInterval(duration),
             recurrence: recurrence,
-            timeZoneIdentifier: TimeZone.current.identifier,
+            timeZoneIdentifier: timeZoneIdentifier,
             conversationID: QualifiedID(id: UUID(), domain: ""),
             creatorID: QualifiedID(id: UUID(), domain: "")
         )

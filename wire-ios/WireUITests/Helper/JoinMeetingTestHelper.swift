@@ -37,7 +37,9 @@ protocol MeetingJoinTesting where Self: WireUITestCase {}
 extension MeetingJoinTesting {
 
     @MainActor
-    func launchMeetings(for user: UserInfo, now: Date? = nil) throws -> MeetingsPage {
+    func launchMeetings(
+        for user: UserInfo, now: Date? = nil, timeZone: String?, apiVersion: APIVersion?
+    ) throws -> MeetingsPage {
         let passwordMonitor = addUIInterruptionMonitor(withDescription: "Sign-in password sheet") { alert in
             let title = Locators.FirstTimePage.savePasswordSheet.rawValue
             let notNow = alert.buttons[Locators.FirstTimePage.notNowOption.rawValue].firstMatch
@@ -46,12 +48,7 @@ extension MeetingJoinTesting {
             return true
         }
         defer { removeUIInterruptionMonitor(passwordMonitor) }
-        app.terminate()
-        uiTestConfig.meetingsDate = now
-        app.launchEnvironment[UITestConfig.environmentKey] = uiTestConfig.encode()
-        app.launchArguments = ["-resetData", "--useEnvStaging", "-AppleLanguages", "(en)", "-AppleLocale", "en_GB"]
-        app.setDeveloperFlags([.useWireAuthentication: true])
-        app.launch()
+        launchMeetingsApp(now: now, timeZone: timeZone, apiVersion: apiVersion, resetData: true)
 
         let welcome = try WelcomePage()
         try welcome.typeEmailOrSSO(user.email)
@@ -74,7 +71,7 @@ extension MeetingJoinTesting {
         while deadline.timeIntervalSinceNow > 0 {
             let ready = XCTNSPredicateExpectation(predicate: NSPredicate { _, _ in
                 passwordSheet.exists || allow.exists ||
-                    (!submittedOnboarding && ok.exists && ok.isEnabled) ||
+                    (!submittedOnboarding && ok.exists && ok.isEnabled && ok.isHittable) ||
                     (meetings.exists && meetings.isHittable)
             }, object: nil)
             guard XCTWaiter().wait(for: [ready], timeout: max(0, deadline.timeIntervalSinceNow)) == .completed else {
@@ -95,16 +92,37 @@ extension MeetingJoinTesting {
                     throw RuntimeError("The save-password sheet did not close")
                 }
                 capture("Sign-in password sheet dismissed")
-            } else if !submittedOnboarding, ok.exists, ok.isEnabled {
-                // Let XCTest handle a system prompt that appears before this tap.
+            } else if !submittedOnboarding, ok.exists, ok.isEnabled, ok.isHittable {
+                // A system sheet can consume the tap; confirm that onboarding closed.
                 ok.tap()
-                submittedOnboarding = true
+                submittedOnboarding = ok.waitToDisappear(timeout: promptTimeout())
             } else if meetings.exists, meetings.isHittable {
                 return try ConversationsPage().openMeetings()
             }
         }
         capture("Sign-in did not complete")
         throw RuntimeError("Initial sign-in did not complete")
+    }
+
+    @MainActor
+    func restartMeetings(now: Date?, timeZone: String, apiVersion: APIVersion) throws -> MeetingsPage {
+        launchMeetingsApp(now: now, timeZone: timeZone, apiVersion: apiVersion, resetData: false)
+        return try ConversationsPage().openMeetings()
+    }
+
+    @MainActor
+    private func launchMeetingsApp(
+        now: Date?, timeZone: String?, apiVersion: APIVersion?, resetData: Bool
+    ) {
+        app.terminate()
+        uiTestConfig.meetingsDate = now
+        app.launchEnvironment[UITestConfig.environmentKey] = uiTestConfig.encode()
+        app.launchEnvironment["TZ"] = timeZone
+        app.launchArguments = ["--useEnvStaging", "-AppleLanguages", "(en)", "-AppleLocale", "en_GB"]
+        if resetData { app.launchArguments.append("-resetData") }
+        if let apiVersion { app.launchArguments.append("--preferred-api-version=\(apiVersion.rawValue)") }
+        app.setDeveloperFlags([.useWireAuthentication: true])
+        app.launch()
     }
 
     func registerClients(for users: [UserInfo]) async throws {
@@ -141,12 +159,13 @@ extension MeetingJoinTesting {
             )
             peerID = try XCTUnwrap(instances.first?.id)
         }
-        let fixtures = try await MeetingsTestHelper(user: host)
+        let fixtures = try await MeetingsTestHelper(user: host, apiVersion: UserHelper.default.apiVersion)
         let original = try await fixtures.create(
-            title: "\(title) setup", start: start, duration: duration, recurrence: recurrence
+            title: "\(title) setup", start: start, duration: duration, recurrence: recurrence,
+            timeZoneIdentifier: TimeZone.current.identifier
         )
         uiTestConfig.meetingsExpectedConversationID = original.conversationID.id
-        let hostPage = try launchMeetings(for: host, now: now)
+        let hostPage = try launchMeetings(for: host, now: now, timeZone: nil, apiVersion: nil)
         let form = try hostPage.edit(original)
         form.replaceTitle(with: title)
         try form.addParticipants(members)
@@ -154,7 +173,7 @@ extension MeetingJoinTesting {
         let stored = try await fixtures.list()
         let meeting = try XCTUnwrap(stored.first { $0.id == original.id })
         let user = asHost ? host : invitee
-        let page = asHost ? hostPage : try launchMeetings(for: user, now: now)
+        let page = asHost ? hostPage : try launchMeetings(for: user, now: now, timeZone: nil, apiVersion: nil)
         _ = try page.showRow(meeting)
         return MeetingJoinFixture(
             host: host, invitee: invitee, user: user, fixtures: fixtures,

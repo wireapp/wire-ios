@@ -45,8 +45,8 @@ final class DeleteMeetingTests: WireUITestCase {
         let (host, users, _, _) = try await UserHelper.default.registerMeetingsTeam(withMemberCount: 1)
         let invitee = users[0]
         try await registerClients(for: users)
-        let hostFixtures = try await MeetingsTestHelper(user: host)
-        let inviteeFixtures = try await MeetingsTestHelper(user: invitee)
+        let hostFixtures = try await MeetingsTestHelper(user: host, apiVersion: UserHelper.default.apiVersion)
+        let inviteeFixtures = try await MeetingsTestHelper(user: invitee, apiVersion: UserHelper.default.apiVersion)
         let page = try launchMeetings(for: host, now: date())
         let meeting = try await schedule(on: page, using: hostFixtures, title: "TC12005", inviting: users)
 
@@ -81,8 +81,8 @@ final class DeleteMeetingTests: WireUITestCase {
         let (host, users, _, _) = try await UserHelper.default.registerMeetingsTeam(withMemberCount: 1)
         let invitee = users[0]
         try await registerClients(for: users)
-        let hostFixtures = try await MeetingsTestHelper(user: host)
-        let inviteeFixtures = try await MeetingsTestHelper(user: invitee)
+        let hostFixtures = try await MeetingsTestHelper(user: host, apiVersion: UserHelper.default.apiVersion)
+        let inviteeFixtures = try await MeetingsTestHelper(user: invitee, apiVersion: UserHelper.default.apiVersion)
         let meetings = try await scheduleNonActiveMeetings(for: host, using: hostFixtures, inviting: users)
         let now = date(hour: 12)
         let page = try launchMeetings(for: host, now: now)
@@ -105,8 +105,8 @@ final class DeleteMeetingTests: WireUITestCase {
     func testHostDeletesEntireRecurringSeries_TC_12009() async throws {
         let (host, users, _, _) = try await UserHelper.default.registerMeetingsTeam(withMemberCount: 1)
         try await registerClients(for: users)
-        let hostFixtures = try await MeetingsTestHelper(user: host)
-        let inviteeFixtures = try await MeetingsTestHelper(user: users[0])
+        let hostFixtures = try await MeetingsTestHelper(user: host, apiVersion: UserHelper.default.apiVersion)
+        let inviteeFixtures = try await MeetingsTestHelper(user: users[0], apiVersion: UserHelper.default.apiVersion)
         let page = try launchMeetings(for: host, now: date())
         let meeting = try await schedule(
             on: page, using: hostFixtures, title: "TC12009", inviting: users, recurrence: .daily
@@ -138,9 +138,9 @@ final class DeleteMeetingTests: WireUITestCase {
         let (host, users, _, _) = try await UserHelper.default.registerMeetingsTeam(withMemberCount: 2)
         let (invitee, otherInvitee) = (users[0], users[1])
         try await registerClients(for: users)
-        let hostFixtures = try await MeetingsTestHelper(user: host)
-        let inviteeFixtures = try await MeetingsTestHelper(user: invitee)
-        let otherFixtures = try await MeetingsTestHelper(user: otherInvitee)
+        let hostFixtures = try await MeetingsTestHelper(user: host, apiVersion: UserHelper.default.apiVersion)
+        let inviteeFixtures = try await MeetingsTestHelper(user: invitee, apiVersion: UserHelper.default.apiVersion)
+        let otherFixtures = try await MeetingsTestHelper(user: otherInvitee, apiVersion: UserHelper.default.apiVersion)
         let meetings = try await scheduleNonActiveMeetings(for: host, using: hostFixtures, inviting: users)
         let now = date(hour: 12)
         let page = try launchMeetings(for: invitee, now: now)
@@ -164,9 +164,9 @@ final class DeleteMeetingTests: WireUITestCase {
     @MainActor
     func testInviteeDeletesEntireRecurringSeriesForSelf_TC_12014() async throws {
         let (host, users, _, _) = try await UserHelper.default.registerMeetingsTeam(withMemberCount: 2)
-        let hostFixtures = try await MeetingsTestHelper(user: host)
-        let inviteeFixtures = try await MeetingsTestHelper(user: users[0])
-        let otherFixtures = try await MeetingsTestHelper(user: users[1])
+        let hostFixtures = try await MeetingsTestHelper(user: host, apiVersion: UserHelper.default.apiVersion)
+        let inviteeFixtures = try await MeetingsTestHelper(user: users[0], apiVersion: UserHelper.default.apiVersion)
+        let otherFixtures = try await MeetingsTestHelper(user: users[1], apiVersion: UserHelper.default.apiVersion)
         try await registerClients(for: users)
         let hostPage = try launchMeetings(for: host, now: date())
         let meeting = try await schedule(
@@ -195,8 +195,8 @@ final class DeleteMeetingTests: WireUITestCase {
         let (host, users, _, _) = try await UserHelper.default.registerMeetingsTeam(withMemberCount: 1)
         try await registerClients(for: users)
         try await requireConferenceCalling()
-        let hostFixtures = try await MeetingsTestHelper(user: host)
-        let inviteeFixtures = try await MeetingsTestHelper(user: users[0])
+        let hostFixtures = try await MeetingsTestHelper(user: host, apiVersion: UserHelper.default.apiVersion)
+        let inviteeFixtures = try await MeetingsTestHelper(user: users[0], apiVersion: UserHelper.default.apiVersion)
         let meetings = try await scheduleOngoingMeetings(for: host, using: hostFixtures, inviting: users)
         let page = try launchMeetings(for: host, now: date(minute: 30))
 
@@ -228,9 +228,9 @@ final class DeleteMeetingTests: WireUITestCase {
         let (invitee, otherInvitee) = (users[0], users[1])
         try await registerClients(for: users)
         try await requireConferenceCalling()
-        let hostFixtures = try await MeetingsTestHelper(user: host)
-        let inviteeFixtures = try await MeetingsTestHelper(user: invitee)
-        let otherFixtures = try await MeetingsTestHelper(user: otherInvitee)
+        let hostFixtures = try await MeetingsTestHelper(user: host, apiVersion: UserHelper.default.apiVersion)
+        let inviteeFixtures = try await MeetingsTestHelper(user: invitee, apiVersion: UserHelper.default.apiVersion)
+        let otherFixtures = try await MeetingsTestHelper(user: otherInvitee, apiVersion: UserHelper.default.apiVersion)
         let meetings = try await scheduleOngoingMeetings(for: host, using: hostFixtures, inviting: users)
         let page = try launchMeetings(for: invitee, now: date(minute: 30))
 
@@ -258,9 +258,9 @@ final class DeleteMeetingTests: WireUITestCase {
         let (invitee, otherInvitee) = (users[0], users[1])
         try await registerClients(for: users)
         try await requireConferenceCalling()
-        let hostFixtures = try await MeetingsTestHelper(user: host)
-        let inviteeFixtures = try await MeetingsTestHelper(user: invitee)
-        let otherFixtures = try await MeetingsTestHelper(user: otherInvitee)
+        let hostFixtures = try await MeetingsTestHelper(user: host, apiVersion: UserHelper.default.apiVersion)
+        let inviteeFixtures = try await MeetingsTestHelper(user: invitee, apiVersion: UserHelper.default.apiVersion)
+        let otherFixtures = try await MeetingsTestHelper(user: otherInvitee, apiVersion: UserHelper.default.apiVersion)
         let page = try launchMeetings(for: host, now: nil)
 
         // Start Meet Now, minimize its call, then delete it as the host.
@@ -314,8 +314,8 @@ final class DeleteMeetingTests: WireUITestCase {
         let (host, users, _, _) = try await UserHelper.default.registerMeetingsTeam(withMemberCount: 1)
         let invitee = users[0]
         try await registerClients(for: users)
-        let hostFixtures = try await MeetingsTestHelper(user: host)
-        let inviteeFixtures = try await MeetingsTestHelper(user: invitee)
+        let hostFixtures = try await MeetingsTestHelper(user: host, apiVersion: UserHelper.default.apiVersion)
+        let inviteeFixtures = try await MeetingsTestHelper(user: invitee, apiVersion: UserHelper.default.apiVersion)
         let page = try launchMeetings(for: host, now: date())
         let hostMeeting = try await schedule(on: page, using: hostFixtures, title: "TC12016 host", inviting: users)
         let inviteeMeeting = try await schedule(
