@@ -89,11 +89,17 @@ public final class ProteusService: ProteusServiceInterface {
                 try await context.proteusSessionFromPrekey(sessionId: id.rawValue, prekey: prekeyData)
                 return true
             }
-            logger.info(didEstablishSession ? "established session from prekey" : "session already exists, keeping it")
+            logger.info(
+                didEstablishSession ? "established session from prekey" : "session already exists, keeping it",
+                attributes: .safePublic
+            )
             return didEstablishSession
         } catch {
             // Only domain and code: the error's description could contain identifiers.
-            logger.error("failed to establish session from prekey: \((error as NSError).safeForLoggingDescription)")
+            logger.error(
+                "failed to establish session from prekey: \((error as NSError).safeForLoggingDescription)",
+                attributes: .safePublic
+            )
             throw ProteusSessionError.failedToEstablishSession
         }
     }
