@@ -55,6 +55,67 @@ class ProteusServiceTests: XCTestCase {
         super.tearDown()
     }
 
+    // MARK: - Establishing sessions
+
+    func test_EstablishSessionIfNeeded_SessionDoesNotExist_EstablishesSession() async throws {
+        // Given
+        let sessionID = ProteusSessionID.random()
+        let prekeyData = Data([1, 2, 3])
+
+        // Mock
+        mockCoreCryptoContext.proteusSessionExistsSessionId_MockValue = false
+        mockCoreCryptoContext.proteusSessionFromPrekeySessionIdPrekey_MockMethod = { _, _ in }
+
+        // When
+        let didEstablishSession = try await sut.establishSessionIfNeeded(
+            id: sessionID,
+            fromPrekey: prekeyData.base64EncodedString()
+        )
+
+        // Then
+        XCTAssertTrue(didEstablishSession)
+        XCTAssertEqual(mockCoreCryptoContext.proteusSessionExistsSessionId_Invocations, [sessionID.rawValue])
+        let invocations = mockCoreCryptoContext.proteusSessionFromPrekeySessionIdPrekey_Invocations
+        XCTAssertEqual(invocations.count, 1)
+        XCTAssertEqual(invocations.first?.sessionId, sessionID.rawValue)
+        XCTAssertEqual(invocations.first?.prekey, prekeyData)
+        // The existence check and the creation must happen in a single transaction.
+        XCTAssertEqual(mockCoreCrypto.transaction_Invocations.count, 1)
+    }
+
+    func test_EstablishSessionIfNeeded_SessionExists_KeepsExistingSession() async throws {
+        // Given
+        let sessionID = ProteusSessionID.random()
+
+        // Mock
+        mockCoreCryptoContext.proteusSessionExistsSessionId_MockValue = true
+
+        // When
+        let didEstablishSession = try await sut.establishSessionIfNeeded(
+            id: sessionID,
+            fromPrekey: Data([1, 2, 3]).base64EncodedString()
+        )
+
+        // Then
+        XCTAssertFalse(didEstablishSession)
+        XCTAssertTrue(mockCoreCryptoContext.proteusSessionFromPrekeySessionIdPrekey_Invocations.isEmpty)
+        XCTAssertEqual(mockCoreCrypto.transaction_Invocations.count, 1)
+    }
+
+    func test_EstablishSessionIfNeeded_InvalidPrekey_Throws() async throws {
+        // Given
+        let sessionID = ProteusSessionID.random()
+
+        // When / Then
+        do {
+            _ = try await sut.establishSessionIfNeeded(id: sessionID, fromPrekey: "not base64 !")
+            XCTFail("Expected an error")
+        } catch ProteusService.ProteusSessionError.prekeyNotBase64Encoded {
+            // expected
+        }
+        XCTAssertTrue(mockCoreCrypto.transaction_Invocations.isEmpty)
+    }
+
     // MARK: - Decrypting messages
 
     func test_DecryptDataForSession_SessionExists() async throws {
