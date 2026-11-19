@@ -120,7 +120,10 @@ extension ResetSessionRequestStrategy: KeyPathObjectSyncTranscoder {
 
     /// Clears the flag when there is nowhere to send the reset message, so it doesn't stay pending forever.
     private func skip(completion: () -> Void) {
-        WireLogger.messaging.warn("Can't send reset session message: no conversation shared with the user")
+        WireLogger.messaging.warn(
+            "Can't send reset session message: no conversation shared with the user",
+            attributes: .safePublic
+        )
         completion()
         managedObjectContext.enqueueDelayedSave()
     }
