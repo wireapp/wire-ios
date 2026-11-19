@@ -28,6 +28,16 @@ import WireCoreCrypto
 public protocol ProteusServiceInterface {
 
     func establishSession(id: ProteusSessionID, fromPrekey: String) async throws
+
+    /// Establishes a session from a prekey unless a session with this id already exists.
+    ///
+    /// The existence check and the creation happen in the same CoreCrypto transaction, so within this process a
+    /// session established in the meantime is not replaced. Transactions don't serialize across processes, so a session
+    /// that another process (e.g. the notification or share extension) commits between check and creation can still be
+    /// replaced, but the window is much smaller than with a separate check.
+    ///
+    /// - Returns: `true` if a new session was established, `false` if a session already existed.
+    func establishSessionIfNeeded(id: ProteusSessionID, fromPrekey: String) async throws -> Bool
     func deleteSession(id: ProteusSessionID) async throws
     func sessionExists(id: ProteusSessionID) async -> Bool
     func encrypt(data: Data, forSession id: ProteusSessionID) async throws -> Data
