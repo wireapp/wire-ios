@@ -22,6 +22,8 @@ class CallKitCallRegister {
 
     // MARK: - Properties
 
+    // Keep each storage change and its publication in the same critical section.
+    private let storageLock = NSLock()
     private var storage = [UUID: CallKitCall]()
 
     // MARK: - Life cycle
@@ -43,26 +45,32 @@ class CallKitCallRegister {
     // MARK: - Registration
 
     func registerNewCall(with handle: CallHandle) -> CallKitCall {
-        defer { persistStorage() }
         let call = CallKitCall(id: UUID(), handle: handle)
-        storage[call.id] = call
+        storageLock.withLock {
+            storage[call.id] = call
+            persistStorage()
+        }
         return call
     }
 
     func unregisterCall(_ call: CallKitCall) {
-        defer { persistStorage() }
-        storage.removeValue(forKey: call.id)
+        storageLock.withLock {
+            storage.removeValue(forKey: call.id)
+            persistStorage()
+        }
     }
 
     func reset() {
-        defer { persistStorage() }
-        storage.removeAll()
+        storageLock.withLock {
+            storage.removeAll()
+            persistStorage()
+        }
     }
 
     // MARK: - Lookup
 
     var allCalls: [CallKitCall] {
-        Array(storage.values)
+        storageLock.withLock { Array(storage.values) }
     }
 
     func callExists(for id: UUID) -> Bool {
@@ -70,7 +78,7 @@ class CallKitCallRegister {
     }
 
     func lookupCall(by id: UUID) -> CallKitCall? {
-        storage[id]
+        storageLock.withLock { storage[id] }
     }
 
     func callExists(for handle: CallHandle) -> Bool {
@@ -82,7 +90,7 @@ class CallKitCallRegister {
     }
 
     func lookupCalls(by handle: CallHandle) -> [CallKitCall] {
-        storage.values.filter { $0.handle == handle }
+        storageLock.withLock { storage.values.filter { $0.handle == handle } }
     }
 
 }
