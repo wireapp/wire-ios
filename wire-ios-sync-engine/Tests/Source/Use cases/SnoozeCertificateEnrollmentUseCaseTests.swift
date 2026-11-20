@@ -59,7 +59,7 @@ final class SnoozeCertificateEnrollmentUseCaseTests: ZMUserSessionTestsBase {
 
         // When
         XCTAssertEqual(mockRecurringActionService.registerAction_Invocations.count, 0)
-        await useCase.invoke(endOfPeriod: .now)
+        await useCase.invoke(endOfPeriod: .now) {}
 
         // Then
         XCTAssertEqual(mockRecurringActionService.registerAction_Invocations.count, 1)
