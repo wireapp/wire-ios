@@ -26,6 +26,9 @@ package protocol WireDriveLocalAssetStoreProtocol: Sendable {
     /// Returns the `WireDriveLocalAsset` for a given `nodeID` or `nil`.
     func asset(nodeID: UUID) throws -> WireDriveLocalAsset?
 
+    /// Returns `WireDriveLocalAsset`s for a given path.
+    func assets(path: String) throws -> [WireMessagingDomain.WireDriveLocalAsset]
+
     /// Returns offline `WireDriveLocalAsset` objects for a given path or conversation.
     /// If both parameters are `nil`, all offline assets are returned.
     func offlineAssets(conversationName: String?, assetsPath: String?) async throws
