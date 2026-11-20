@@ -31,6 +31,7 @@ public struct LabeledTextField: View {
     private let keyboardType: UIKeyboardType
     private let textContentType: UITextContentType?
     private let autocapitalizationType: UITextAutocapitalizationType
+    private let trailingAccessory: AnyView?
 
     @Environment(\.isClipboardEnabled) private var isClipboardEnabled
     @FocusState var isFocused: Bool
@@ -43,7 +44,8 @@ public struct LabeledTextField: View {
         string: Binding<String>,
         keyboardType: UIKeyboardType = .default,
         textContentType: UITextContentType? = nil,
-        autocapitalizationType: UITextAutocapitalizationType = .none
+        autocapitalizationType: UITextAutocapitalizationType = .none,
+        trailingAccessory: AnyView? = nil
     ) {
         self.isMandatory = isMandatory
         self.placeholder = placeholder
@@ -52,6 +54,7 @@ public struct LabeledTextField: View {
         self.keyboardType = keyboardType
         self.textContentType = textContentType
         self.autocapitalizationType = autocapitalizationType
+        self.trailingAccessory = trailingAccessory
     }
 
     public var body: some View {
@@ -89,6 +92,9 @@ public struct LabeledTextField: View {
                             .frame(width: 16, height: 16)
                             .padding(16)
                     })
+                }
+                if let trailingAccessory {
+                    trailingAccessory
                 }
             }
             .padding(.leading, 16)
