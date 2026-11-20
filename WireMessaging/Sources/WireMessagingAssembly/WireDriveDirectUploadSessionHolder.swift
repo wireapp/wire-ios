@@ -20,8 +20,9 @@ public import Foundation
 import os
 import WireLogging
 import WireMessagingData
+import WireMessagingDomain
 
-/// Owns the background upload sessions for the lifetime of the process.
+/// Owns the background upload sessions and their Live Activity observation for the lifetime of the process.
 ///
 /// Held by the app target since a background `URLSession` must be a per-process singleton per identifier, but
 /// `handleEventsForBackgroundURLSession` can fire before any account is loaded.
@@ -48,12 +49,14 @@ public final class WireDriveDirectUploadSessionHolder: Sendable {
 
     private struct State {
         var sessions: [String: any WireDriveDirectUploadSessionProtocol] = [:]
+        var liveActivityControllers: [String: WireDriveUploadsLiveActivityController] = [:]
         var completionHandlers: [String: @Sendable () -> Void] = [:]
     }
 
     private let lock = OSAllocatedUnfairLock<State>(initialState: .init())
     private let sharedContainerIdentifier: String?
     private let makeSession: @Sendable (String, String?) -> any WireDriveDirectUploadSessionProtocol
+    private let endActivities: @MainActor @Sendable (UUID) async -> Void
 
     /// - Parameter sharedContainerIdentifier: The app group container identifier. Required so that
     ///   `nsurlsessiond` can read staged files from outside the app, and so transfers survive
@@ -68,10 +71,14 @@ public final class WireDriveDirectUploadSessionHolder: Sendable {
 
     init(
         sharedContainerIdentifier: String?,
-        makeSession: @escaping @Sendable (String, String?) -> any WireDriveDirectUploadSessionProtocol
+        makeSession: @escaping @Sendable (String, String?) -> any WireDriveDirectUploadSessionProtocol,
+        endActivities: @escaping @MainActor @Sendable (UUID) async -> Void = {
+            await ActivityKitUploadsActivityClient(accountInfo: .init(userID: $0)).endAll()
+        }
     ) {
         self.sharedContainerIdentifier = sharedContainerIdentifier
         self.makeSession = makeSession
+        self.endActivities = endActivities
     }
 
     // MARK: - Sessions
@@ -80,6 +87,26 @@ public final class WireDriveDirectUploadSessionHolder: Sendable {
 
     func session(userID: UUID) -> any WireDriveDirectUploadSessionProtocol {
         session(identifier: Identifier.make(userID: userID))
+    }
+
+    /// Keep observing inactive accounts after their UI factory is released. A rebuilt factory
+    /// replaces the controller with one observing its new tracker.
+    @MainActor
+    func retainLiveActivityController(_ controller: WireDriveUploadsLiveActivityController, userID: UUID) {
+        lock.withLock { $0.liveActivityControllers[Identifier.make(userID: userID)] = controller }
+        controller.onActivityChange = { [weak self] in
+            self?.refreshAccountNameVisibility()
+        }
+        refreshAccountNameVisibility()
+    }
+
+    @MainActor
+    private func refreshAccountNameVisibility() {
+        let controllers = lock.withLock { Array($0.liveActivityControllers.values) }
+        let showAccountName = controllers.filter(\.hasActivity).count > 1
+        for controller in controllers {
+            controller.setShowAccountName(showAccountName)
+        }
     }
 
     private func session(identifier: String) -> any WireDriveDirectUploadSessionProtocol {
@@ -133,6 +160,8 @@ public final class WireDriveDirectUploadSessionHolder: Sendable {
 
         // iOS requires this on the main queue.
         Task { @MainActor in
+            let controller = lock.withLock { $0.liveActivityControllers[identifier] }
+            await controller?.waitForPendingActivityUpdates()
             handler()
         }
     }
@@ -141,9 +170,19 @@ public final class WireDriveDirectUploadSessionHolder: Sendable {
 
     public func tearDown(userID: UUID) async {
         let identifier = Identifier.make(userID: userID)
-        let session = lock.withLock { state in
+        let (session, controller) = lock.withLock { state in
             state.completionHandlers.removeValue(forKey: identifier)
-            return state.sessions.removeValue(forKey: identifier)
+            return (
+                state.sessions.removeValue(forKey: identifier),
+                state.liveActivityControllers.removeValue(forKey: identifier)
+            )
+        }
+
+        if let controller {
+            await controller.stop()
+        } else {
+            // A remote removal can precede factory creation, leaving only an activity from a previous process.
+            await endActivities(userID)
         }
 
         guard let session else { return }
