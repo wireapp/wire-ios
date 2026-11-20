@@ -174,6 +174,13 @@ extension ClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
             } catch PendingMessageError.noLongerNeeded {
                 let logAttributes = await logAttributesBuilder.logAttributes(object)
                 WireLogger.messaging.info("pending message no longer needs to be sent", attributes: logAttributes)
+            } catch PendingMessageError.deadlinePassed {
+                let logAttributes = await logAttributesBuilder.logAttributes(object)
+                WireLogger.messaging.info("pending message waited too long to be sent", attributes: logAttributes)
+                await context.perform {
+                    object.expire(withReason: .timeout)
+                    self.localNotificationDispatcher.didFailToSend(object)
+                }
             } catch PendingMessageError.sessionClosed {
                 // The context is being torn down, so leave the message as it is. It's sent after the next login.
                 WireLogger.messaging.info("stopped waiting to send pending message because the session closed")
@@ -211,6 +218,9 @@ extension ClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
     private enum PendingMessageError: Error {
         /// The message was deleted, expired or otherwise changed while it was waiting.
         case noLongerNeeded
+        /// The message waited longer than `ZMClientMessage.maxPendingDuration`, so it fails and has to be
+        /// retried manually.
+        case deadlinePassed
         /// The session closed while the message was waiting.
         case sessionClosed
         /// Saving the send attempt failed and rolled it back. Sending anyway would allow replacing the text
@@ -220,6 +230,7 @@ extension ClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
 
     /// Sends the message. If it stays pending while offline, transient network failures don't fail it:
     /// it waits until the network may be reachable again and is resent with the same nonce and content.
+    /// It fails once its pending deadline has passed.
     ///
     /// - Parameter groups: The context's groups held for this send. They're released while waiting.
     private func send(
@@ -236,11 +247,12 @@ extension ClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
             return
         }
 
+        let deadline = await context.perform { message.pendingDeadline }
         var onlineRetries = 0
         while true {
             if !reachability.mayBeReachable {
                 await waitWithoutHoldingGroups(&groups) {
-                    await self.reachability.waitUntilMayBeReachable()
+                    await self.waitUntilMayBeReachable(before: deadline)
                 }
             }
             // The task is only cancelled when the session closes.
@@ -253,6 +265,9 @@ extension ClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
                     Self.shouldBeSentPredicate(context: self.context).evaluate(with: message)
                 else {
                     return false
+                }
+                if let deadline, deadline <= .now {
+                    throw PendingMessageError.deadlinePassed
                 }
 
                 // From now on the text may reach recipients, so it must no longer be replaced in place.
@@ -317,6 +332,20 @@ extension ClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
         await wait()
         // If the session closed in the meantime, the context must no longer be used.
         groups = Task.isCancelled ? [] : context.enterAllGroupsExceptSecondary()
+    }
+
+    /// Returns once the network may be reachable, the deadline has passed, or the task is cancelled.
+    private func waitUntilMayBeReachable(before deadline: Date?) async {
+        guard let deadline else {
+            await reachability.waitUntilMayBeReachable()
+            return
+        }
+        await withTaskGroup(of: Void.self) { group in
+            group.addTask { await self.reachability.waitUntilMayBeReachable() }
+            group.addTask { try? await Task.sleep(for: .seconds(max(deadline.timeIntervalSinceNow, 0))) }
+            await group.next()
+            group.cancelAll()
+        }
     }
 
     private static func isTransientFailure(_ error: any Error) -> Bool {

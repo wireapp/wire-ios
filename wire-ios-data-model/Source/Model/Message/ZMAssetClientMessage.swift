@@ -222,6 +222,9 @@ public class ZMAssetClientMessage: ZMOTRMessage {
         progress = 0
         setLocallyModifiedKeys([#keyPath(ZMAssetClientMessage.transferState)])
 
+        if DeveloperFlag.offlinePendingMessages.isOn, !isEphemeral {
+            restartPendingPeriod()
+        }
         super.resend()
     }
 

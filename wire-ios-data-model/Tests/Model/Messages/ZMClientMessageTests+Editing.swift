@@ -762,6 +762,45 @@ class ZMClientMessageTests_PendingText: BaseZMClientMessageTests {
         XCTAssertFalse(message.isEditableInPlace)
     }
 
+    func testThatPendingMessageIsNotEditableInPlace_AfterMaxPendingDuration() {
+        let message = makePendingMessage()
+        message.serverTimestamp = Date(timeIntervalSinceNow: -ZMClientMessage.maxPendingDuration - 1)
+
+        XCTAssertFalse(message.staysPendingWhileOffline)
+        XCTAssertTrue(message.canStayPendingWhileOffline)
+        XCTAssertFalse(message.isEditableInPlace)
+    }
+
+    func testThatResendStartsANewPendingPeriod() {
+        // GIVEN
+        let message = makePendingMessage()
+        message.serverTimestamp = Date(timeIntervalSinceNow: -ZMClientMessage.maxPendingDuration - 1)
+        message.expire(withReason: .timeout)
+        let timeBeforeResend = Date()
+
+        // WHEN
+        message.resend()
+
+        // THEN
+        XCTAssertGreaterThanOrEqual(message.serverTimestamp!, timeBeforeResend)
+        XCTAssertTrue(message.staysPendingWhileOffline)
+    }
+
+    func testThatResendKeepsServerTimestamp_WhenFlagIsDisabled() {
+        // GIVEN
+        DeveloperFlag.offlinePendingMessages.enable(false)
+        let message = makePendingMessage()
+        let serverTimestamp = Date(timeIntervalSinceNow: -ZMClientMessage.maxPendingDuration - 1)
+        message.serverTimestamp = serverTimestamp
+        message.expire(withReason: .timeout)
+
+        // WHEN
+        message.resend()
+
+        // THEN
+        XCTAssertEqual(message.serverTimestamp, serverTimestamp)
+    }
+
     func testThatItReplacesPendingTextKeepingNonceWithoutEditedMarker() {
         // GIVEN
         let message = makePendingMessage()

@@ -1749,4 +1749,36 @@ final class ZMAssetClientMessageTests_PendingDeletion: BaseZMAssetClientMessageT
         XCTAssertEqual(conversation.allMessages.count, messageCount - 1)
         XCTAssertEqual(conversation.hiddenMessages.count, 0)
     }
+
+    func testThatResendStartsANewPendingPeriod() {
+        // GIVEN
+        let message = makeUploadingAsset()
+        message.serverTimestamp = Date(timeIntervalSinceNow: -ZMAssetClientMessage.maxPendingDuration - 1)
+        message.expire(withReason: .timeout)
+        XCTAssertTrue(message.hasPassedPendingDeadline)
+        let timeBeforeResend = Date()
+
+        // WHEN
+        message.resend()
+
+        // THEN
+        XCTAssertGreaterThanOrEqual(message.serverTimestamp!, timeBeforeResend)
+        XCTAssertFalse(message.hasPassedPendingDeadline)
+        XCTAssertEqual(message.transferState, .uploading)
+    }
+
+    func testThatResendKeepsServerTimestamp_WhenFlagIsDisabled() {
+        // GIVEN
+        DeveloperFlag.offlinePendingMessages.enable(false)
+        let message = makeUploadingAsset()
+        let serverTimestamp = Date(timeIntervalSinceNow: -ZMAssetClientMessage.maxPendingDuration - 1)
+        message.serverTimestamp = serverTimestamp
+        message.expire(withReason: .timeout)
+
+        // WHEN
+        message.resend()
+
+        // THEN
+        XCTAssertEqual(message.serverTimestamp, serverTimestamp)
+    }
 }
