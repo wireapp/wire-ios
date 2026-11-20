@@ -21,7 +21,7 @@ import Foundation
 extension ZMOTRMessage {
 
     /// How long a message waits for the network before it fails and has to be retried manually.
-    public static let maxPendingDuration: TimeInterval = 7 * 24 * 60 * 60
+    public static let maxPendingDuration: TimeInterval = 2 * 60 // TEMP for QA, release value: 7 * 24 * 60 * 60
 
     /// Until when the message waits for the network. Until the message is sent, its server timestamp is the
     /// time it was created or last retried.
