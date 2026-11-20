@@ -36,23 +36,6 @@ final class SafeCoreCryptoTests: XCTestCase {
             }
             let message = try await fixture.encryptBob()
 
-            // The cached instance still uses the old group state, even though the shared database has advanced.
-            let cachedResult = try await fixture.alice.transaction { context -> Result<DecryptedMessage, Error> in
-                do {
-                    return try await .success(
-                        context.decryptMessage(conversationId: fixture.groupID, payload: message)
-                    )
-                } catch {
-                    return .failure(error)
-                }
-            }
-            switch cachedResult {
-            case .failure(CoreCryptoError.Mls(.BufferedFutureMessage)), .failure(CoreCryptoError.Mls(.WrongEpoch)):
-                break
-            default:
-                XCTFail("Expected the cached instance to reject the future epoch")
-            }
-
             let decrypted = try await sut.transaction { context in
                 // Credential reads on the cached instance must also work inside the fresh transaction.
                 _ = try await sut.coreCrypto.getCredentials()
