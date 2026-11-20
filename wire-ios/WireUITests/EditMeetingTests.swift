@@ -105,7 +105,7 @@ final class EditMeetingTests: WireUITestCase {
     func testCancelEditRetainsExistingValues_TC_11987() async throws {
         let (host, users, _, _) = try await UserHelper.default.registerMeetingsTeam(withMemberCount: 1)
         try await registerClients(for: users)
-        let fixtures = try await MeetingsTestHelper(user: host)
+        let fixtures = try await MeetingsTestHelper(user: host, apiVersion: UserHelper.default.apiVersion)
         let page = try launchMeetings(for: host, now: date())
         let creation = try page.schedule()
         creation.replaceTitle(with: "TC11987 original")
@@ -119,7 +119,7 @@ final class EditMeetingTests: WireUITestCase {
         // Open Edit and check the saved title, dates, repeat rule, and participants.
         let form = try page.edit(original)
         XCTAssertEqual(form.titleField.value as? String, original.title)
-        form.assertDateTimes(start: original.startTime, end: original.endTime)
+        form.assertDateTimes(start: original.startTime, end: original.endTime, timeZone: .current)
         try form.assertRepeat(.weekly)
         XCTAssertEqual(form.participantsButton.value as? String, "1")
         XCTAssertTrue(form.participantsButton.label.contains(users[0].name))
@@ -131,7 +131,7 @@ final class EditMeetingTests: WireUITestCase {
         _ = try form.cancel()
         let reopened = try page.edit(original)
         XCTAssertEqual(reopened.titleField.value as? String, original.title)
-        reopened.assertDateTimes(start: original.startTime, end: original.endTime)
+        reopened.assertDateTimes(start: original.startTime, end: original.endTime, timeZone: .current)
         try reopened.assertRepeat(.weekly)
         XCTAssertEqual(reopened.participantsButton.value as? String, "1")
         _ = try reopened.cancel()
@@ -144,8 +144,12 @@ final class EditMeetingTests: WireUITestCase {
     @MainActor
     func testEditTitleValidation_TC_11990() async throws {
         let (host, _, _, _) = try await UserHelper.default.registerMeetingsTeam()
-        let fixtures = try await MeetingsTestHelper(user: host)
-        let original = try await fixtures.create(title: "TC11990 original", start: date(hour: 12))
+        let fixtures = try await MeetingsTestHelper(user: host, apiVersion: UserHelper.default.apiVersion)
+        let original = try await fixtures.create(
+            title: "TC11990 original",
+            start: date(hour: 12),
+            timeZoneIdentifier: TimeZone.current.identifier
+        )
         let page = try launchMeetings(for: host, now: date())
         let form = try page.edit(original)
 
@@ -182,10 +186,22 @@ final class EditMeetingTests: WireUITestCase {
     @MainActor
     func testEditDateAndTimeRange_TC_11992() async throws {
         let (host, _, _, _) = try await UserHelper.default.registerMeetingsTeam()
-        let fixtures = try await MeetingsTestHelper(user: host)
-        let original = try await fixtures.create(title: "TC11992 edited", start: date(hour: 12))
-        let earlier = try await fixtures.create(title: "Earlier meeting", start: date(hour: 14, dayOffset: 1))
-        let later = try await fixtures.create(title: "Later meeting", start: date(hour: 17, dayOffset: 1))
+        let fixtures = try await MeetingsTestHelper(user: host, apiVersion: UserHelper.default.apiVersion)
+        let original = try await fixtures.create(
+            title: "TC11992 edited",
+            start: date(hour: 12),
+            timeZoneIdentifier: TimeZone.current.identifier
+        )
+        let earlier = try await fixtures.create(
+            title: "Earlier meeting",
+            start: date(hour: 14, dayOffset: 1),
+            timeZoneIdentifier: TimeZone.current.identifier
+        )
+        let later = try await fixtures.create(
+            title: "Later meeting",
+            start: date(hour: 17, dayOffset: 1),
+            timeZoneIdentifier: TimeZone.current.identifier
+        )
         let page = try launchMeetings(for: host, now: date())
         let form = try page.edit(original)
 
@@ -215,7 +231,7 @@ final class EditMeetingTests: WireUITestCase {
         for locale in ["en_GB", "en_US"] {
             let localizedPage = try launchMeetings(for: host, now: date(), locale: locale)
             let edit = try localizedPage.edit(updated)
-            edit.assertDateTimes(start: updated.startTime, end: updated.endTime, locale: locale)
+            edit.assertDateTimes(start: updated.startTime, end: updated.endTime, locale: locale, timeZone: .current)
             _ = try edit.cancel()
         }
     }
@@ -224,8 +240,12 @@ final class EditMeetingTests: WireUITestCase {
     func testEditWholeMeetingSeries_TC_11994() async throws {
         executionTimeAllowance = 600
         let (host, _, _, _) = try await UserHelper.default.registerMeetingsTeam()
-        let fixtures = try await MeetingsTestHelper(user: host)
-        let original = try await fixtures.create(title: "TC11994 series", start: date(hour: 12))
+        let fixtures = try await MeetingsTestHelper(user: host, apiVersion: UserHelper.default.apiVersion)
+        let original = try await fixtures.create(
+            title: "TC11994 series",
+            start: date(hour: 12),
+            timeZoneIdentifier: TimeZone.current.identifier
+        )
         let page = try launchMeetings(for: host, now: date())
         let options: [(MeetingFormPage.RepeatOption, MeetingFrequency?, Int?, Int)] = [
             (.daily, .daily, 1, 1), (.weekly, .weekly, 1, 7),
@@ -262,7 +282,7 @@ final class EditMeetingTests: WireUITestCase {
         executionTimeAllowance = 600
         let (host, users, ids, _) = try await UserHelper.default.registerMeetingsTeam(withMemberCount: 3)
         try await registerClients(for: users)
-        let fixtures = try await MeetingsTestHelper(user: host)
+        let fixtures = try await MeetingsTestHelper(user: host, apiVersion: UserHelper.default.apiVersion)
         let page = try launchMeetings(for: host, now: date())
         let creation = try page.schedule()
         creation.replaceTitle(with: "TC11995 original")
@@ -273,7 +293,11 @@ final class EditMeetingTests: WireUITestCase {
         let before = try await members(fixtures, meeting: original)
         let hostRole = try XCTUnwrap(before.selfMember?.conversationRole)
         let inviteeRole = try XCTUnwrap(before.others.first { $0.qualifiedID == ids[0] }?.conversationRole)
-        let earlier = try await fixtures.create(title: "Earlier meeting", start: date(hour: 14, dayOffset: 1))
+        let earlier = try await fixtures.create(
+            title: "Earlier meeting",
+            start: date(hour: 14, dayOffset: 1),
+            timeZoneIdentifier: TimeZone.current.identifier
+        )
 
         // Change meeting details and add the new participant.
         let form = try page.edit(original)
@@ -302,7 +326,7 @@ final class EditMeetingTests: WireUITestCase {
         guard form.member(users[1]).waitAndTap() else { throw RuntimeError("The invitee could not be removed") }
         try form.confirmParticipants()
         XCTAssertEqual(form.participantsButton.value as? String, "2")
-        form.assertDateTimes(start: date(hour: 15, dayOffset: 1), end: date(hour: 16, dayOffset: 1))
+        form.assertDateTimes(start: date(hour: 15, dayOffset: 1), end: date(hour: 16, dayOffset: 1), timeZone: .current)
         try form.assertRepeat(.weekly)
         _ = try form.save()
         let saved = try await fixtures.list()
@@ -332,7 +356,10 @@ final class EditMeetingTests: WireUITestCase {
         )
         XCTAssertEqual(after.others.first { $0.qualifiedID == ids[2] }?.conversationRole, inviteeRole)
         for (index, user) in users.enumerated() {
-            let participantFixtures = try await MeetingsTestHelper(user: user)
+            let participantFixtures = try await MeetingsTestHelper(
+                user: user,
+                apiVersion: UserHelper.default.apiVersion
+            )
             let visible = try await participantFixtures.list()
             XCTAssertEqual(visible.contains { $0.id == original.id }, index != 1)
             if index == 1 {
@@ -360,17 +387,30 @@ final class EditMeetingTests: WireUITestCase {
     func testEditAvailabilityForMeetingStates_TC_11997() async throws {
         let (host, _, _, _) = try await UserHelper.default.registerMeetingsTeam(withMemberCount: 1)
         try await requireConferenceCalling()
-        let fixtures = try await MeetingsTestHelper(user: host)
-        let upcoming = try await fixtures.create(title: "TC11997 upcoming", start: date(hour: 14))
-        let ongoing = try await fixtures.create(title: "TC11997 ongoing", start: date(hour: 11), duration: 7200)
-        let completed = try await fixtures.create(title: "TC11997 completed", start: date(hour: 9))
+        let fixtures = try await MeetingsTestHelper(user: host, apiVersion: UserHelper.default.apiVersion)
+        let upcoming = try await fixtures.create(
+            title: "TC11997 upcoming",
+            start: date(hour: 14),
+            timeZoneIdentifier: TimeZone.current.identifier
+        )
+        let ongoing = try await fixtures.create(
+            title: "TC11997 ongoing",
+            start: date(hour: 11),
+            duration: 7200,
+            timeZoneIdentifier: TimeZone.current.identifier
+        )
+        let completed = try await fixtures.create(
+            title: "TC11997 completed",
+            start: date(hour: 9),
+            timeZoneIdentifier: TimeZone.current.identifier
+        )
         let page = try launchMeetings(for: host, now: date(hour: 12))
 
         // Upcoming and ongoing meetings must open the edit form.
         for meeting in [upcoming, ongoing] {
             let form = try page.edit(meeting)
             XCTAssertEqual(form.titleField.value as? String, meeting.title)
-            form.assertDateTimes(start: meeting.startTime, end: meeting.endTime)
+            form.assertDateTimes(start: meeting.startTime, end: meeting.endTime, timeZone: .current)
             _ = try form.cancel()
         }
 
@@ -386,7 +426,7 @@ final class EditMeetingTests: WireUITestCase {
         let allMeetings = try await fixtures.list()
         let instant = try XCTUnwrap(allMeetings.first { $0.title == "TC11997 Meet Now" })
         let edit = try page.edit(instant)
-        edit.assertDateTimes(start: instant.startTime, end: instant.endTime)
+        edit.assertDateTimes(start: instant.startTime, end: instant.endTime, timeZone: .current)
         _ = try edit.cancel()
 
         // Completed meetings must keep Delete and hide Edit.
@@ -401,10 +441,11 @@ final class EditMeetingTests: WireUITestCase {
     @MainActor
     func testEditOngoingRecurringMeetingAnchor_TC_11999() async throws {
         let (host, _, _, _) = try await UserHelper.default.registerMeetingsTeam()
-        let fixtures = try await MeetingsTestHelper(user: host)
+        let fixtures = try await MeetingsTestHelper(user: host, apiVersion: UserHelper.default.apiVersion)
         let original = try await fixtures.create(
             title: "TC11999 daily", start: date(), duration: 3600,
-            recurrence: MeetingRecurrence(frequency: .daily, interval: 1, until: nil)
+            recurrence: MeetingRecurrence(frequency: .daily, interval: 1, until: nil),
+            timeZoneIdentifier: TimeZone.current.identifier
         )
         let now = date(minute: 30, dayOffset: 2)
         let today = date(dayOffset: 2)
@@ -412,10 +453,10 @@ final class EditMeetingTests: WireUITestCase {
 
         // Open today's ongoing occurrence, then a future occurrence of the same series.
         let current = try page.edit(original, start: today)
-        current.assertDateTimes(start: today, end: date(hour: 11, dayOffset: 2))
+        current.assertDateTimes(start: today, end: date(hour: 11, dayOffset: 2), timeZone: .current)
         _ = try current.cancel()
         let future = try page.edit(original, start: date(dayOffset: 3))
-        future.assertDateTimes(start: today, end: date(hour: 11, dayOffset: 2))
+        future.assertDateTimes(start: today, end: date(hour: 11, dayOffset: 2), timeZone: .current)
 
         // Save from the future row and check that today's occurrence remains.
         _ = try future.save()
@@ -441,8 +482,12 @@ final class EditMeetingTests: WireUITestCase {
         }
         uiTestConfig.meetingsUpdateFailureID = failureID
         let (host, _, _, _) = try await UserHelper.default.registerMeetingsTeam()
-        let fixtures = try await MeetingsTestHelper(user: host)
-        let original = try await fixtures.create(title: "TC12003 original", start: date(hour: 12))
+        let fixtures = try await MeetingsTestHelper(user: host, apiVersion: UserHelper.default.apiVersion)
+        let original = try await fixtures.create(
+            title: "TC12003 original",
+            start: date(hour: 12),
+            timeZoneIdentifier: TimeZone.current.identifier
+        )
         let page = try launchMeetings(for: host, now: date())
         let form = try page.edit(original)
         form.replaceTitle(with: "TC12003 retained")
@@ -470,7 +515,7 @@ final class EditMeetingTests: WireUITestCase {
             throw RuntimeError("The update error could not close")
         }
         XCTAssertEqual(form.titleField.value as? String, "TC12003 retained")
-        form.assertDateTimes(start: original.startTime, end: original.endTime)
+        form.assertDateTimes(start: original.startTime, end: original.endTime, timeZone: .current)
         try form.assertRepeat(.weekly)
 
         // Restore the request and retry the retained changes on the same meeting.

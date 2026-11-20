@@ -349,7 +349,8 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
         shared {
             MLSMessageDecryptor(
                 mlsDecryptionService: mlsDecryptionService,
-                conversationLocalStore: conversationLocalStore
+                conversationLocalStore: conversationLocalStore,
+                bufferedMessageRecoveryTracker: BufferedMLSMessageRecoveryTracker(journal: dependency.journal)
             )
         }
     }
