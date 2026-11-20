@@ -878,6 +878,37 @@ final class WireCallCenterV3Tests: MessagingTest {
         XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
     }
 
+    func testThatClosingAnMLSOneOnOneCallLeavesTheSubconversationOnlyWithSFT() throws {
+        let conversationID = try XCTUnwrap(oneOnOneConversationID)
+        oneOnOneConversation.messageProtocol = .mls
+        oneOnOneConversation.mlsGroupID = .random()
+
+        let mlsService = MockMLSServiceInterface()
+        syncMOC.performAndWait { syncMOC.mlsService = mlsService }
+
+        let directCallLeave = expectation(description: "Direct call leaves the subconversation")
+        directCallLeave.isInverted = true
+        mlsService.leaveSubconversationParentQualifiedIDParentGroupIDSubconversationType_MockMethod = { _, _, _ in
+            directCallLeave.fulfill()
+        }
+
+        sut.closeCall(conversationId: conversationID)
+
+        wait(for: [directCallLeave], timeout: 0.5)
+        XCTAssertTrue(mockAVSWrapper.didCallEndCall)
+
+        let config = Feature.ConferenceCalling.Config(useSFTForOneToOneCalls: true)
+        conferenceCalling.config = try JSONEncoder().encode(config)
+        let sftCallLeave = expectation(description: "SFT call leaves the subconversation")
+        mlsService.leaveSubconversationParentQualifiedIDParentGroupIDSubconversationType_MockMethod = { _, _, _ in
+            sftCallLeave.fulfill()
+        }
+
+        sut.closeCall(conversationId: conversationID)
+
+        wait(for: [sftCallLeave], timeout: 0.5)
+    }
+
     func testThatItLeavesSubconversationIfNeededOnIncoming() throws {
         // Given
         groupConversation.messageProtocol = .mls
