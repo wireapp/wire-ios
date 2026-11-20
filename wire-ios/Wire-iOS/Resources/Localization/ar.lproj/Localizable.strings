@@ -1055,12 +1055,12 @@
 "message.delete_dialog.action.cancel" = "إلغاء";
 "message.delete_dialog.action.hide" = "حذف بالنسبة لي";
 "message.delete_dialog.action.delete" = "حذف للجميع";
-"message.delete_pending_failed.title" = "Message Is Being Sent";
+"message.delete_pending_failed.title" = "Sending Message";
 "message.delete_pending_failed.message" = "You can delete this message once it has been sent.";
 
 // Edit message
 "message.menu.edit.title" = "تعديل";
-"message.edit_pending_failed.title" = "Message Is Being Sent";
+"message.edit_pending_failed.title" = "Sending Message";
 "message.edit_pending_failed.message" = "You can edit this message once it has been sent.";
 
 // Accept connection request

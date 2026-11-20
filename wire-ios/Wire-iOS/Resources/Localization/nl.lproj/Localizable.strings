@@ -1055,12 +1055,12 @@
 "message.delete_dialog.action.cancel" = "Annuleer";
 "message.delete_dialog.action.hide" = "Verwijderen voor mezelf";
 "message.delete_dialog.action.delete" = "Verwijderen voor iedereen";
-"message.delete_pending_failed.title" = "Message Is Being Sent";
+"message.delete_pending_failed.title" = "Sending Message";
 "message.delete_pending_failed.message" = "You can delete this message once it has been sent.";
 
 // Edit message
 "message.menu.edit.title" = "Bewerken";
-"message.edit_pending_failed.title" = "Message Is Being Sent";
+"message.edit_pending_failed.title" = "Sending Message";
 "message.edit_pending_failed.message" = "You can edit this message once it has been sent.";
 
 // Accept connection request
