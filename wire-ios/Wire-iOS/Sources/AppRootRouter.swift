@@ -562,6 +562,31 @@ extension AppRootRouter: AppStateCalculatorDelegate {
             accountID: account.userIdentifier
         )
 
+        var featureChangeHandlers: [Feature.Name: any FeatureChangeHandler] = [
+            .selfDeletingMessages: SelfDeletingMessagesChangeHandler(userSession: userSession)
+        ]
+
+        // Without a client session component no feature change notifier is created, so the handler wouldn't be used.
+        if let featureConfigRepository = userSession.clientSessionComponent?.featureConfigRepository {
+            featureChangeHandlers[.e2ei] = E2EINotificationActionsHandler(
+                enrollCertificateUseCase: userSession.enrollE2EICertificate,
+                snoozeCertificateEnrollmentUseCase: userSession.snoozeCertificateEnrollmentUseCase,
+                stopCertificateEnrollmentSnoozerUseCase: userSession.stopCertificateEnrollmentSnoozerUseCase,
+                e2eiActivationDateRepository: userSession.e2eiActivationDateRepository,
+                featureConfigRepository: featureConfigRepository,
+                lastE2EIdentityUpdateAlertDateRepository: userSession.lastE2EIUpdateDateRepository,
+                e2eIdentityCertificateUpdateStatus: E2EIdentityCertificateUpdateStatusUseCase(
+                    getE2eIdentityCertificates: userSession.getE2eIdentityCertificates,
+                    featureConfigRepository: featureConfigRepository,
+                    localDomain: userSession.resolvedBackendMetadata.domain,
+                    context: userSession.contextProvider.syncContext,
+                    lastE2EIUpdateDateRepository: userSession.lastE2EIUpdateDateRepository
+                ),
+                selfClientCertificateProvider: userSession.selfClientCertificateProvider,
+                targetVC: { [weak self] in self!.rootViewController }
+            )
+        }
+
         return AuthenticatedRouter(
             mainWindow: mainWindow,
             account: account,
@@ -569,19 +594,7 @@ extension AppRootRouter: AppStateCalculatorDelegate {
             legacyEnvironment: sessionManager.environment,
             newEnvironment: newEnvironment,
             trackingManager: trackingManager,
-            featureRepositoryProvider: userSession,
-            featureChangeActionsHandler: E2EINotificationActionsHandler(
-                enrollCertificateUseCase: userSession.enrollE2EICertificate,
-                snoozeCertificateEnrollmentUseCase: userSession.snoozeCertificateEnrollmentUseCase,
-                stopCertificateEnrollmentSnoozerUseCase: userSession.stopCertificateEnrollmentSnoozerUseCase,
-                e2eiActivationDateRepository: userSession.e2eiActivationDateRepository,
-                e2eiFeature: userSession.e2eiFeature,
-                lastE2EIdentityUpdateAlertDateRepository: userSession.lastE2EIUpdateDateRepository,
-                e2eIdentityCertificateUpdateStatus: userSession.e2eIdentityUpdateCertificateUpdateStatus(),
-                selfClientCertificateProvider: userSession.selfClientCertificateProvider,
-                targetVC: { [weak self] in self!.rootViewController }
-            ),
-            e2eiActivationDateRepository: userSession.e2eiActivationDateRepository
+            featureChangeHandlers: featureChangeHandlers
         )
     }
 }
