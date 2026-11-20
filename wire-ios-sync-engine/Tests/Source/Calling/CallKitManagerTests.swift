@@ -76,9 +76,11 @@ class MockCallKitProvider: CXProvider {
 class MockCallObserver: CXCallObserver {
 
     public var mockCalls: [CXCall] = []
+    var onReadCalls: (() -> Void)?
 
     override var calls: [CXCall] {
-        mockCalls
+        onReadCalls?()
+        return mockCalls
     }
 
 }
@@ -767,6 +769,66 @@ class CallKitManagerTest: DatabaseTest {
 
         let action = callKitController.requestedTransactions.first!.actions.first! as! CXEndCallAction
         XCTAssertEqual(action.callUUID, callUUID)
+    }
+
+    func testEndCallCompletionWaitsForProviderAndSystemCallRemoval() throws {
+        let conversation = conversation(type: .group)
+        let handle = try XCTUnwrap(conversation.callHandle)
+        let call = sut.callRegister.registerNewCall(with: handle)
+        mockCallKitManagerDelegate.mockConversations[handle] = conversation
+
+        let observer = callKitController.mockCallObserver
+        let systemCall = CallKitDelegateTestsMocking.mockConnectedCall(with: call.id)
+        observer.mockCalls = [systemCall]
+        defer { CallKitDelegateTestsMocking.stopMock(systemCall) }
+
+        var didComplete = false
+        let completed = expectation(description: "End call completion")
+        sut.requestEndCall(in: conversation) {
+            didComplete = true
+            completed.fulfill()
+        }
+
+        XCTAssertFalse(didComplete)
+        let request = try XCTUnwrap(callKitController.requestedTransactions.first?.actions.first as? CXEndCallAction)
+        XCTAssertEqual(request.callUUID, call.id)
+
+        let endAction = MockEndCallAction(call: request.callUUID)
+        sut.provider(callKitProvider, perform: endAction)
+        XCTAssertTrue(endAction.isFulfilled)
+        XCTAssertFalse(sut.callRegister.callExists(for: call.id))
+
+        let checkedSystemCall = expectation(description: "Checked the system call after the provider ended the call")
+        observer.onReadCalls = {
+            observer.onReadCalls = nil
+            checkedSystemCall.fulfill()
+        }
+        wait(for: [checkedSystemCall], timeout: 1)
+        XCTAssertFalse(didComplete)
+
+        observer.mockCalls = []
+        wait(for: [completed], timeout: 1)
+        XCTAssertTrue(didComplete)
+    }
+
+    func testEndCallCompletionLeavesAnActiveWireCallWithoutACallKitEntry() throws {
+        let conversation = conversation(type: .group)
+        let conversationID = try XCTUnwrap(conversation.avsIdentifier)
+        mockWireCallCenterV3.setMockCallState(
+            .established,
+            conversationId: conversationID,
+            callerId: otherUser(moc: uiMOC).avsIdentifier,
+            isVideo: false
+        )
+
+        var didComplete = false
+        sut.requestEndCall(in: conversation) {
+            XCTAssertTrue(self.mockWireCallCenterV3.mockAVSWrapper.didCallEndCall)
+            didComplete = true
+        }
+
+        XCTAssertTrue(didComplete)
+        XCTAssertTrue(callKitController.requestedTransactions.isEmpty)
     }
 
     func testThatReportsMutingOfCall() {

@@ -438,6 +438,10 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
 
         guard let call = callRegister.lookupCall(by: conversation) else {
             logger.warn("fail: request end call: call doesn't exist", attributes: .safePublic)
+            if let completion {
+                conversation.voiceChannel?.leave()
+                completion()
+            }
             return
         }
 
@@ -448,9 +452,28 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
             if let error {
                 self?.logger.error("fail: request end call: \(error)", attributes: .safePublic)
                 conversation.voiceChannel?.leave()
+                if completion != nil, self?.callController.existingCall(for: call)?.hasEnded != false {
+                    self?.callRegister.unregisterCall(call)
+                }
             }
 
-            completion?()
+            guard let completion else { return }
+            self?.completeAfterCallEnds(call, completion: completion)
+        }
+    }
+
+    private func completeAfterCallEnds(_ call: CallKitCall, completion: @escaping () -> Void) {
+        Task { @MainActor [weak self] in
+            let deadline = ContinuousClock.now + .seconds(5)
+            while let self, ContinuousClock.now < deadline {
+                // Accepting an end request does not release the CallKit call group.
+                if !callRegister.callExists(for: call.id), callController.existingCall(for: call)?.hasEnded != false {
+                    completion()
+                    return
+                }
+                try? await Task.sleep(for: .milliseconds(50))
+            }
+            self?.logger.warn("timed out waiting for call to end", attributes: .safePublic)
         }
     }
 
