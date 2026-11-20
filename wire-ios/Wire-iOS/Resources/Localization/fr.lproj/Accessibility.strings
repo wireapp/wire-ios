@@ -32,12 +32,22 @@
 "conversation.titleViewForOneToOne.hint" = "Appuyer deux fois pour ouvrir le profile";
 "conversation.legalHoldIcon.description" = "Conservation à des fins juridiques";
 "conversation.verifiedIcon.description" = "Vérifié";
+"conversation.linkPreviewImage.description" = "Preview image for link to %@";
+"conversation.linkPreviewImage.fallbackDescription" = "Link preview image";
+
+"conversation.messageStatus.sending" = "Sending";
+"conversation.messageStatus.sent" = "Sent";
+"conversation.messageStatus.delivered" = "Delivered";
+"conversation.messageStatus.seen" = "Lu";
+// Accessibility announcement for the number of recipients who have read a message. %d is the recipient count.
+"conversation.messageStatus.seenByMultiple" = "Read by %d";
 
 "conversation.sendButton.description" = "Envoyer ce message";
 "conversation.openFormattingButton.description" = "Ouvrir les options de formatage";
 "conversation.hideFormattingButton.description" = "Masquer les options de formatage";
 "conversation.timerButton.description" = "Définir une minuterie pour les messages auto-supprimés";
 "conversation.mentionButton.description" = "Mentionner quelqu'un";
+"conversation.mentionSuggestion.hint" = "Double tap to mention this person";
 "conversation.cameraButton.description" = "Take or select a photo";
 "conversation.camera.maximizeButton.description" = "Maximize view";
 "conversation.sketchButton.description" = "Open sketch to draw or write";

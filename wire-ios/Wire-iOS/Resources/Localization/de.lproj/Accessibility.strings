@@ -32,7 +32,7 @@
 "conversation.titleViewForOneToOne.hint" = "Doppeltippen, um Profil zu öffnen";
 "conversation.legalHoldIcon.description" = "Gesetzliche Aufbewahrung";
 "conversation.verifiedIcon.description" = "Überprüft";
-"conversation.linkPreviewImage.description" = "Vorschau-Bild zum Link-Ziel %@";
+"conversation.linkPreviewImage.description" = "Vorschaubild für den Link zu %@";
 "conversation.linkPreviewImage.fallbackDescription" = "Link-Vorschaubild";
 
 "conversation.messageStatus.sending" = "Wird gesendet";
