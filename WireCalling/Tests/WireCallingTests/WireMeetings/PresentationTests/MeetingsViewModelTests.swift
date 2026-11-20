@@ -79,7 +79,11 @@ struct MeetingsViewModelTests {
     @Test("loadInitialData loads the first page using the initial page size and a zero offset")
     func loadInitialData_loadsFirstPage() async {
         // Given
-        let meeting = Meeting.fixture(title: "Upcoming 1", start: mockDateProvider.now.addingTimeInterval(3600))
+        let meeting = Meeting.fixture(
+            title: "Upcoming 1",
+            start: mockDateProvider.now.addingTimeInterval(3600),
+            timeZoneIdentifier: nil
+        )
         upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsClosure = { _, _ in
             PaginatedMeetings(meetings: [meeting], hasMore: true, nextOffset: 10)
         }
@@ -101,8 +105,16 @@ struct MeetingsViewModelTests {
     @Test("loadInitialData replaces previously loaded meetings and resets the offset")
     func loadInitialData_resetsState() async {
         // Given
-        let first = Meeting.fixture(title: "First load", start: mockDateProvider.now.addingTimeInterval(3600))
-        let second = Meeting.fixture(title: "Second load", start: mockDateProvider.now.addingTimeInterval(7200))
+        let first = Meeting.fixture(
+            title: "First load",
+            start: mockDateProvider.now.addingTimeInterval(3600),
+            timeZoneIdentifier: nil
+        )
+        let second = Meeting.fixture(
+            title: "Second load",
+            start: mockDateProvider.now.addingTimeInterval(7200),
+            timeZoneIdentifier: nil
+        )
         upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsClosure = { _, _ in
             PaginatedMeetings(meetings: [first], hasMore: true, nextOffset: 10)
         }
@@ -135,8 +147,16 @@ struct MeetingsViewModelTests {
     @Test("loadMoreIfNeeded appends the next page using the page size and the returned offset")
     func loadMoreIfNeeded_appendsNextPage() async {
         // Given — page 1 at offset 0, page 2 at offset 10
-        let page1 = Meeting.fixture(title: "Page 1", start: mockDateProvider.now.addingTimeInterval(3600))
-        let page2 = Meeting.fixture(title: "Page 2", start: mockDateProvider.now.addingTimeInterval(2 * 86_400))
+        let page1 = Meeting.fixture(
+            title: "Page 1",
+            start: mockDateProvider.now.addingTimeInterval(3600),
+            timeZoneIdentifier: nil
+        )
+        let page2 = Meeting.fixture(
+            title: "Page 2",
+            start: mockDateProvider.now.addingTimeInterval(2 * 86_400),
+            timeZoneIdentifier: nil
+        )
         upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsClosure = { _, offset in
             if offset == 0 {
                 PaginatedMeetings(meetings: [page1], hasMore: true, nextOffset: 10)
@@ -182,8 +202,16 @@ struct MeetingsViewModelTests {
     @Test("a meeting change event reloads the loaded meetings from offset zero")
     func meetingChangeEvent_reloadsLoadedMeetings() async {
         // Given — an initial load with one meeting
-        let initial = Meeting.fixture(title: "Initial", start: mockDateProvider.now.addingTimeInterval(3600))
-        let updated = Meeting.fixture(title: "Updated", start: mockDateProvider.now.addingTimeInterval(3600))
+        let initial = Meeting.fixture(
+            title: "Initial",
+            start: mockDateProvider.now.addingTimeInterval(3600),
+            timeZoneIdentifier: nil
+        )
+        let updated = Meeting.fixture(
+            title: "Updated",
+            start: mockDateProvider.now.addingTimeInterval(3600),
+            timeZoneIdentifier: nil
+        )
         upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsClosure = { _, _ in
             PaginatedMeetings(meetings: [initial], hasMore: false, nextOffset: 1)
         }
@@ -212,7 +240,8 @@ struct MeetingsViewModelTests {
         var meetings = (0 ..< 25).map { index in
             Meeting.fixture(
                 title: "Meeting \(index)",
-                start: mockDateProvider.now.addingTimeInterval(Double(index + 1) * 3600)
+                start: mockDateProvider.now.addingTimeInterval(Double(index + 1) * 3600),
+                timeZoneIdentifier: nil
             )
         }
         let repository = MeetingRepositoryProtocolMock()
@@ -232,7 +261,12 @@ struct MeetingsViewModelTests {
         observeMeetingChangesUseCase.invokeAsyncStreamVoidReturnValue = changes
 
         // When
-        meetings[0] = Meeting.fixture(id: meetings[0].id, title: "Edited", start: meetings[0].start)
+        meetings[0] = Meeting.fixture(
+            id: meetings[0].id,
+            title: "Edited",
+            start: meetings[0].start,
+            timeZoneIdentifier: nil
+        )
         repository.fetchMeetingsInRangeRangeDateOffsetIntLimitIntMeetingReturnValue = meetings
         changeContinuation.yield(())
         changeContinuation.finish()
@@ -248,9 +282,21 @@ struct MeetingsViewModelTests {
 
     @Test("a meeting change event queues a reload after an in-flight silent refresh")
     func meetingChangeEvent_queuesReloadAfterInFlightSilentRefresh() async {
-        let initial = Meeting.fixture(title: "Initial", start: mockDateProvider.now.addingTimeInterval(3600))
-        let stale = Meeting.fixture(title: "Stale", start: mockDateProvider.now.addingTimeInterval(3600))
-        let updated = Meeting.fixture(title: "Updated", start: mockDateProvider.now.addingTimeInterval(3600))
+        let initial = Meeting.fixture(
+            title: "Initial",
+            start: mockDateProvider.now.addingTimeInterval(3600),
+            timeZoneIdentifier: nil
+        )
+        let stale = Meeting.fixture(
+            title: "Stale",
+            start: mockDateProvider.now.addingTimeInterval(3600),
+            timeZoneIdentifier: nil
+        )
+        let updated = Meeting.fixture(
+            title: "Updated",
+            start: mockDateProvider.now.addingTimeInterval(3600),
+            timeZoneIdentifier: nil
+        )
         upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsClosure = { _, _ in
             PaginatedMeetings(meetings: [initial], hasMore: false, nextOffset: 1)
         }
@@ -308,8 +354,16 @@ struct MeetingsViewModelTests {
     @Test("the initially emitted set populates attendingConversationIDs and isAttending")
     func observeAttendedMeetings_appliesInitialValue() async {
         // Given
-        let attended = Meeting.fixture(title: "Attended", start: mockDateProvider.now.addingTimeInterval(3600))
-        let other = Meeting.fixture(title: "Other", start: mockDateProvider.now.addingTimeInterval(7200))
+        let attended = Meeting.fixture(
+            title: "Attended",
+            start: mockDateProvider.now.addingTimeInterval(3600),
+            timeZoneIdentifier: nil
+        )
+        let other = Meeting.fixture(
+            title: "Other",
+            start: mockDateProvider.now.addingTimeInterval(7200),
+            timeZoneIdentifier: nil
+        )
 
         let (stream, continuation) = AsyncStream<Set<QualifiedID>>.makeStream()
         observeAttendedMeetingsUseCase.invokeAsyncStreamSetWireFoundationQualifiedIDReturnValue = stream
@@ -332,7 +386,8 @@ struct MeetingsViewModelTests {
             title: "Daily",
             start: mockDateProvider.now.addingTimeInterval(-60),
             duration: 120,
-            recurrence: MeetingRecurrence(frequency: .daily, interval: 1)
+            recurrence: MeetingRecurrence(frequency: .daily, interval: 1),
+            timeZoneIdentifier: nil
         )
         let currentOccurrence = MeetingOccurrence(meeting: meeting)
         let pastOccurrence = MeetingOccurrence(
@@ -363,7 +418,11 @@ struct MeetingsViewModelTests {
     @Test("a subsequent emission replaces the attending set")
     func observeAttendedMeetings_appliesSubsequentUpdates() async {
         // Given
-        let meeting = Meeting.fixture(title: "Meeting", start: mockDateProvider.now.addingTimeInterval(3600))
+        let meeting = Meeting.fixture(
+            title: "Meeting",
+            start: mockDateProvider.now.addingTimeInterval(3600),
+            timeZoneIdentifier: nil
+        )
 
         let (stream, continuation) = AsyncStream<Set<QualifiedID>>.makeStream()
         observeAttendedMeetingsUseCase.invokeAsyncStreamSetWireFoundationQualifiedIDReturnValue = stream
@@ -406,10 +465,26 @@ struct MeetingsViewModelTests {
     func groupedUpcomingMeetings_groupsAndSorts() async {
         // Given — same-day meetings (one tie on start time, broken by title) plus a later day,
         // delivered out of order to prove the grouper sorts both days and time slots.
-        let earlyZebra = Meeting.fixture(title: "Zebra sync", start: mockDateProvider.now.addingTimeInterval(3600))
-        let earlyApple = Meeting.fixture(title: "Apple sync", start: mockDateProvider.now.addingTimeInterval(3600))
-        let later = Meeting.fixture(title: "Late", start: mockDateProvider.now.addingTimeInterval(7200))
-        let otherDay = Meeting.fixture(title: "Next day", start: mockDateProvider.now.addingTimeInterval(2 * 86_400))
+        let earlyZebra = Meeting.fixture(
+            title: "Zebra sync",
+            start: mockDateProvider.now.addingTimeInterval(3600),
+            timeZoneIdentifier: nil
+        )
+        let earlyApple = Meeting.fixture(
+            title: "Apple sync",
+            start: mockDateProvider.now.addingTimeInterval(3600),
+            timeZoneIdentifier: nil
+        )
+        let later = Meeting.fixture(
+            title: "Late",
+            start: mockDateProvider.now.addingTimeInterval(7200),
+            timeZoneIdentifier: nil
+        )
+        let otherDay = Meeting.fixture(
+            title: "Next day",
+            start: mockDateProvider.now.addingTimeInterval(2 * 86_400),
+            timeZoneIdentifier: nil
+        )
 
         upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsClosure = { _, _ in
             PaginatedMeetings(meetings: [later, otherDay, earlyZebra, earlyApple], hasMore: false, nextOffset: 10)
@@ -440,8 +515,12 @@ struct MeetingsViewModelTests {
         let beforeMidnight = try Date.ISO8601FormatStyle().parse("2026-03-29T23:30:00Z")
         let afterMidnight = try Date.ISO8601FormatStyle().parse("2026-03-30T00:30:00Z")
         let occurrences = [
-            MeetingOccurrence(meeting: Meeting.fixture(title: "Before midnight", start: beforeMidnight)),
-            MeetingOccurrence(meeting: Meeting.fixture(title: "After midnight", start: afterMidnight))
+            MeetingOccurrence(
+                meeting: Meeting.fixture(title: "Before midnight", start: beforeMidnight, timeZoneIdentifier: nil)
+            ),
+            MeetingOccurrence(
+                meeting: Meeting.fixture(title: "After midnight", start: afterMidnight, timeZoneIdentifier: nil)
+            )
         ]
 
         #expect(grouper.group(occurrences).count == 2)
@@ -458,7 +537,11 @@ struct MeetingsViewModelTests {
     @Test("deleteMeeting calls the use case with the correct ID and removes the meeting")
     func deleteMeeting_callsUseCaseAndRemovesMeeting() async throws {
         // Given
-        let meeting = Meeting.fixture(title: "To delete", start: mockDateProvider.now.addingTimeInterval(3600))
+        let meeting = Meeting.fixture(
+            title: "To delete",
+            start: mockDateProvider.now.addingTimeInterval(3600),
+            timeZoneIdentifier: nil
+        )
         upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsClosure = { _, _ in
             PaginatedMeetings(meetings: [meeting], hasMore: false, nextOffset: 1)
         }
@@ -480,7 +563,8 @@ struct MeetingsViewModelTests {
         let meeting = Meeting.fixture(
             title: "Daily",
             start: mockDateProvider.now,
-            recurrence: MeetingRecurrence(frequency: .daily, interval: 1)
+            recurrence: MeetingRecurrence(frequency: .daily, interval: 1),
+            timeZoneIdentifier: nil
         )
         let tomorrow = mockDateProvider.now.addingTimeInterval(86_400)
         upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsClosure = { _, _ in
@@ -511,7 +595,11 @@ struct MeetingsViewModelTests {
     @Test("deleteMeeting flags an error and keeps the meeting when the use case fails")
     func deleteMeeting_flagsErrorOnFailure() async {
         // Given
-        let meeting = Meeting.fixture(title: "To delete", start: mockDateProvider.now.addingTimeInterval(3600))
+        let meeting = Meeting.fixture(
+            title: "To delete",
+            start: mockDateProvider.now.addingTimeInterval(3600),
+            timeZoneIdentifier: nil
+        )
         upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsClosure = { _, _ in
             PaginatedMeetings(meetings: [meeting], hasMore: false, nextOffset: 1)
         }
@@ -541,7 +629,11 @@ struct MeetingsViewModelTests {
     @Test("setting meetingToDelete presents the confirmation without deleting anything")
     func meetingToDelete_presentsConfirmation() {
         // Given
-        let meeting = Meeting.fixture(title: "To delete", start: mockDateProvider.now.addingTimeInterval(3600))
+        let meeting = Meeting.fixture(
+            title: "To delete",
+            start: mockDateProvider.now.addingTimeInterval(3600),
+            timeZoneIdentifier: nil
+        )
 
         // When
         viewModel.meetingToDelete = meeting
@@ -557,6 +649,7 @@ struct MeetingsViewModelTests {
         let meeting = Meeting.fixture(
             title: "To delete",
             start: mockDateProvider.now,
+            timeZoneIdentifier: nil,
             isOrganizer: false
         )
 
@@ -574,7 +667,11 @@ struct MeetingsViewModelTests {
     @Test("confirmDelete deletes the pending meeting and dismisses the confirmation")
     func confirmDelete_deletesPendingMeeting() async {
         // Given
-        let meeting = Meeting.fixture(title: "To delete", start: mockDateProvider.now.addingTimeInterval(3600))
+        let meeting = Meeting.fixture(
+            title: "To delete",
+            start: mockDateProvider.now.addingTimeInterval(3600),
+            timeZoneIdentifier: nil
+        )
         viewModel.meetingToDelete = meeting
 
         // When — confirmDelete deletes in a fire-and-forget task, so wait for the use case call
@@ -602,7 +699,11 @@ struct MeetingsViewModelTests {
     @Test("dismissing the confirmation clears the pending meeting without deleting it")
     func dismissConfirmation_cancelsDelete() {
         // Given
-        let meeting = Meeting.fixture(title: "To delete", start: mockDateProvider.now.addingTimeInterval(3600))
+        let meeting = Meeting.fixture(
+            title: "To delete",
+            start: mockDateProvider.now.addingTimeInterval(3600),
+            timeZoneIdentifier: nil
+        )
         viewModel.meetingToDelete = meeting
 
         // When — the cancel button dismisses the alert, which resets the binding
@@ -617,13 +718,22 @@ struct MeetingsViewModelTests {
 
     @Test("isHappeningNow is true only while the meeting is in progress")
     func isHappeningNow() {
-        let startingNow = Meeting.fixture(title: "Starting now", start: mockDateProvider.now)
-        let ongoing = Meeting.fixture(title: "Ongoing", start: mockDateProvider.now.addingTimeInterval(-60))
-        let future = Meeting.fixture(title: "Future", start: mockDateProvider.now.addingTimeInterval(60))
+        let startingNow = Meeting.fixture(title: "Starting now", start: mockDateProvider.now, timeZoneIdentifier: nil)
+        let ongoing = Meeting.fixture(
+            title: "Ongoing",
+            start: mockDateProvider.now.addingTimeInterval(-60),
+            timeZoneIdentifier: nil
+        )
+        let future = Meeting.fixture(
+            title: "Future",
+            start: mockDateProvider.now.addingTimeInterval(60),
+            timeZoneIdentifier: nil
+        )
         let ended = Meeting.fixture(
             title: "Ended",
             start: mockDateProvider.now.addingTimeInterval(-3600),
-            duration: 3600
+            duration: 3600,
+            timeZoneIdentifier: nil
         )
 
         #expect(viewModel.isHappeningNow(startingNow) == true)
@@ -635,7 +745,7 @@ struct MeetingsViewModelTests {
     @Test("refreshCurrentDate updates time-based meeting state")
     func refreshCurrentDate_updatesTimeBasedMeetingState() {
         let start = mockDateProvider.now.addingTimeInterval(60)
-        let meeting = Meeting.fixture(title: "Soon", start: start, duration: 60)
+        let meeting = Meeting.fixture(title: "Soon", start: start, duration: 60, timeZoneIdentifier: nil)
         let occurrence = MeetingOccurrence(meeting: meeting)
 
         #expect(viewModel.isHappeningNow(meeting) == false)
@@ -677,8 +787,16 @@ struct MeetingsViewModelTests {
 
     @Test("system date and time changes reload loaded meetings")
     func systemDateTimeChanges_reloadLoadedMeetings() async {
-        let initial = Meeting.fixture(title: "Initial", start: mockDateProvider.now.addingTimeInterval(3600))
-        let updated = Meeting.fixture(title: "Updated", start: mockDateProvider.now.addingTimeInterval(3600))
+        let initial = Meeting.fixture(
+            title: "Initial",
+            start: mockDateProvider.now.addingTimeInterval(3600),
+            timeZoneIdentifier: nil
+        )
+        let updated = Meeting.fixture(
+            title: "Updated",
+            start: mockDateProvider.now.addingTimeInterval(3600),
+            timeZoneIdentifier: nil
+        )
         upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsClosure = { _, _ in
             PaginatedMeetings(meetings: [initial], hasMore: false, nextOffset: 1)
         }
@@ -704,8 +822,16 @@ struct MeetingsViewModelTests {
 
     @Test("system date and time changes reload loaded meetings without showing loading state")
     func systemDateTimeChanges_reloadLoadedMeetingsSilently() async {
-        let initial = Meeting.fixture(title: "Initial", start: mockDateProvider.now.addingTimeInterval(3600))
-        let updated = Meeting.fixture(title: "Updated", start: mockDateProvider.now.addingTimeInterval(3600))
+        let initial = Meeting.fixture(
+            title: "Initial",
+            start: mockDateProvider.now.addingTimeInterval(3600),
+            timeZoneIdentifier: nil
+        )
+        let updated = Meeting.fixture(
+            title: "Updated",
+            start: mockDateProvider.now.addingTimeInterval(3600),
+            timeZoneIdentifier: nil
+        )
         upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsClosure = { _, _ in
             PaginatedMeetings(meetings: [initial], hasMore: false, nextOffset: 1)
         }
@@ -752,8 +878,16 @@ struct MeetingsViewModelTests {
             observeAttendedMeetingsUseCase: observeAttendedMeetingsUseCase,
             isApplicationActiveProvider: { false }
         )
-        let initial = Meeting.fixture(title: "Initial", start: mockDateProvider.now.addingTimeInterval(3600))
-        let updated = Meeting.fixture(title: "Updated", start: mockDateProvider.now.addingTimeInterval(3600))
+        let initial = Meeting.fixture(
+            title: "Initial",
+            start: mockDateProvider.now.addingTimeInterval(3600),
+            timeZoneIdentifier: nil
+        )
+        let updated = Meeting.fixture(
+            title: "Updated",
+            start: mockDateProvider.now.addingTimeInterval(3600),
+            timeZoneIdentifier: nil
+        )
         upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsClosure = { _, _ in
             PaginatedMeetings(meetings: [initial], hasMore: false, nextOffset: 1)
         }
@@ -775,8 +909,16 @@ struct MeetingsViewModelTests {
 
     @Test("system date and time changes schedule a silent reload after an in-flight fetch")
     func systemDateTimeChanges_reloadAfterInFlightFetch() async {
-        let initial = Meeting.fixture(title: "Initial", start: mockDateProvider.now.addingTimeInterval(3600))
-        let updated = Meeting.fixture(title: "Updated", start: mockDateProvider.now.addingTimeInterval(3600))
+        let initial = Meeting.fixture(
+            title: "Initial",
+            start: mockDateProvider.now.addingTimeInterval(3600),
+            timeZoneIdentifier: nil
+        )
+        let updated = Meeting.fixture(
+            title: "Updated",
+            start: mockDateProvider.now.addingTimeInterval(3600),
+            timeZoneIdentifier: nil
+        )
         let (fetchStarted, fetchStartedContinuation) = AsyncStream<Int>.makeStream()
         var fetchStartedIterator = fetchStarted.makeAsyncIterator()
         var fetchContinuations: [CheckedContinuation<PaginatedMeetings, Never>] = []
@@ -828,8 +970,16 @@ struct MeetingsViewModelTests {
     func systemDateTimeChanges_debouncesConsecutiveRefreshes() async {
         let notificationCenter = NotificationCenter()
         let changes = MeetingsViewModel.systemDateTimeChanges(notificationCenter: notificationCenter)
-        let initial = Meeting.fixture(title: "Initial", start: mockDateProvider.now.addingTimeInterval(3600))
-        let updated = Meeting.fixture(title: "Updated", start: mockDateProvider.now.addingTimeInterval(3600))
+        let initial = Meeting.fixture(
+            title: "Initial",
+            start: mockDateProvider.now.addingTimeInterval(3600),
+            timeZoneIdentifier: nil
+        )
+        let updated = Meeting.fixture(
+            title: "Updated",
+            start: mockDateProvider.now.addingTimeInterval(3600),
+            timeZoneIdentifier: nil
+        )
         var fetchCount = 0
         upcomingMeetingsUseCase.invokePageSizeIntOffsetIntPaginatedMeetingsClosure = { _, _ in
             fetchCount += 1
@@ -896,7 +1046,7 @@ struct MeetingsViewModelTests {
             isApplicationActiveProvider: { true }
         )
         let start = try Date.ISO8601FormatStyle().parse("2026-09-08T14:00:00Z")
-        let meeting = Meeting.fixture(title: "Meeting", start: start)
+        let meeting = Meeting.fixture(title: "Meeting", start: start, timeZoneIdentifier: nil)
 
         #expect(viewModel.formatTimeRange(for: meeting).contains("PM"))
 
@@ -916,9 +1066,74 @@ struct MeetingsViewModelTests {
 
     // MARK: - Formatting
 
+    @Test("Join uses the same UTC window after a device time zone change")
+    func joinWindowAcrossTimeZones() async throws {
+        let start = try Date.ISO8601FormatStyle().parse("2026-10-25T10:00:00Z")
+        let meeting = Meeting.fixture(
+            title: "Berlin meeting", start: start, timeZoneIdentifier: "Europe/Berlin", isOrganizer: false
+        )
+        let occurrence = MeetingOccurrence(meeting: meeting)
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = try #require(TimeZone(identifier: "Europe/Berlin"))
+        let formatter = MeetingsFormatter(
+            calendarProvider: { calendar },
+            localeProvider: { Locale(identifier: "en_GB") }
+        )
+        let model = MeetingsViewModel(
+            currentDateProvider: mockDateProvider,
+            formatter: formatter,
+            upcomingMeetingsUseCase: upcomingMeetingsUseCase,
+            observeMeetingChangesUseCase: observeMeetingChangesUseCase,
+            deleteMeetingUseCase: deleteMeetingUseCase,
+            selfUserID: Scaffolding.selfUserID,
+            isApplicationActiveProvider: { true }
+        )
+
+        // Check the exact start and end boundaries before and after the zone changes.
+        for (instant, canJoin) in [
+            (start.addingTimeInterval(-1), false),
+            (start, true),
+            (meeting.end.addingTimeInterval(-1), true),
+            (meeting.end, false)
+        ] {
+            mockDateProvider.now = instant
+            for (zone, display) in [("Europe/Berlin", "11:00 - 12:00"), ("America/New_York", "06:00 - 07:00")] {
+                calendar.timeZone = try #require(TimeZone(identifier: zone))
+                await model.refreshSystemDateTimeState()
+                #expect(model.isHappeningNow(occurrence) == canJoin)
+                #expect(model.formatTime(for: occurrence) == display)
+            }
+        }
+    }
+
+    @Test("Meeting dates and times use the device calendar across a local date boundary")
+    func localMeetingDisplay() throws {
+        // Display a Berlin meeting in New York, where it is still the previous day.
+        let start = try Date.ISO8601FormatStyle().parse("2026-10-26T00:30:00Z")
+        let meeting = Meeting.fixture(
+            title: "Berlin meeting", start: start, timeZoneIdentifier: "Europe/Berlin"
+        )
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = try #require(TimeZone(identifier: "America/New_York"))
+        let formatter = MeetingsFormatter(calendar: calendar, locale: Locale(identifier: "en_GB"))
+        #expect(formatter.date(meeting.start) == "25/10/2026")
+        #expect(formatter.timeRange(from: meeting.start, to: meeting.end) == "20:30 - 21:30")
+
+        // Opening Edit keeps the canonical dates in the form model.
+        let form = MeetingFormViewModel(
+            mode: .edit(meeting),
+            searchMembersUseCase: SearchMembersUseCaseProtocolMock(),
+            createMeetingUseCase: CreateMeetingUseCaseProtocolMock(),
+            updateMeetingUseCase: UpdateMeetingUseCaseProtocolMock(),
+            currentDateProvider: mockDateProvider
+        )
+        #expect(form.startDate == meeting.start)
+        #expect(form.endDate == meeting.end)
+    }
+
     @Test("formatTimeRange delegates to the formatter")
     func formatTimeRange() {
-        let meeting = Meeting.fixture(title: "Meeting", start: mockDateProvider.now)
+        let meeting = Meeting.fixture(title: "Meeting", start: mockDateProvider.now, timeZoneIdentifier: nil)
         #expect(viewModel.formatTimeRange(for: meeting) == formatter.timeRange(from: meeting.start, to: meeting.end))
     }
 
@@ -927,7 +1142,8 @@ struct MeetingsViewModelTests {
         let meeting = Meeting.fixture(
             title: "Ongoing",
             start: mockDateProvider.now.addingTimeInterval(-60),
-            duration: 3600
+            duration: 3600,
+            timeZoneIdentifier: nil
         )
         let occurrence = MeetingOccurrence(meeting: meeting)
 
@@ -969,6 +1185,7 @@ private extension Meeting {
         start: Date,
         duration: TimeInterval = 3600,
         recurrence: MeetingRecurrence? = nil,
+        timeZoneIdentifier: String?,
         isOrganizer: Bool = true
     ) -> Meeting {
         Meeting(
@@ -977,6 +1194,7 @@ private extension Meeting {
             start: start,
             end: start.addingTimeInterval(duration),
             recurrence: recurrence,
+            timeZoneIdentifier: timeZoneIdentifier,
             conversationID: QualifiedID(id: UUID(), domain: ""),
             creatorID: QualifiedID(
                 id: isOrganizer ? Scaffolding.selfUserID : UUID(),
