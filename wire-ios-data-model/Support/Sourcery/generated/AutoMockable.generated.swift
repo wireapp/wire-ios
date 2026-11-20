@@ -4619,6 +4619,29 @@ public class MockProteusServiceInterface: ProteusServiceInterface {
         try await mock(id, fromPrekey)
     }
 
+    // MARK: - establishSessionIfNeeded
+
+    public var establishSessionIfNeededIdFromPrekey_Invocations: [(id: ProteusSessionID, fromPrekey: String)] = []
+    public var establishSessionIfNeededIdFromPrekey_MockError: Error?
+    public var establishSessionIfNeededIdFromPrekey_MockMethod: ((ProteusSessionID, String) async throws -> Bool)?
+    public var establishSessionIfNeededIdFromPrekey_MockValue: Bool?
+
+    public func establishSessionIfNeeded(id: ProteusSessionID, fromPrekey: String) async throws -> Bool {
+        establishSessionIfNeededIdFromPrekey_Invocations.append((id: id, fromPrekey: fromPrekey))
+
+        if let error = establishSessionIfNeededIdFromPrekey_MockError {
+            throw error
+        }
+
+        if let mock = establishSessionIfNeededIdFromPrekey_MockMethod {
+            return try await mock(id, fromPrekey)
+        } else if let mock = establishSessionIfNeededIdFromPrekey_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `establishSessionIfNeededIdFromPrekey`")
+        }
+    }
+
     // MARK: - deleteSession
 
     public var deleteSessionId_Invocations: [ProteusSessionID] = []

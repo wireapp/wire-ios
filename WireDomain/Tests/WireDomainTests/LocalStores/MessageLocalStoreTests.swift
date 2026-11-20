@@ -127,6 +127,93 @@ final class MessageLocalStoreTests: XCTestCase {
         }
     }
 
+    func testAddSystemMessage_DecryptionFailed_StoresSenderClientIDAndErrorCode() async throws {
+        // Given
+
+        let selfUser = await context.perform { [self] in
+            let selfUser = modelHelper.createSelfUser(id: Scaffolding.userID, in: context)
+            let sender = modelHelper.createUser(id: Scaffolding.otherUserID, domain: Scaffolding.domain1, in: context)
+            modelHelper.createClient(id: Scaffolding.failingSenderClientID, for: sender)
+            return selfUser
+        }
+
+        let conversation = await makeConversation(
+            id: Scaffolding.conversationID,
+            domain: Scaffolding.domain1,
+            creator: selfUser
+        )
+
+        // When
+
+        await sut.addSystemMessage(
+            messageType: .decryptionFailed(
+                sender: (id: Scaffolding.otherUserID, domain: Scaffolding.domain1),
+                senderClientID: Scaffolding.failingSenderClientID,
+                remoteIdentityChanged: false,
+                errorCode: 406,
+                date: Scaffolding.date
+            ),
+            conversationID: Scaffolding.conversationID,
+            conversationDomain: Scaffolding.domain1
+        )
+
+        // Then
+
+        await context.perform {
+            let systemMessage = conversation.lastMessage as? ZMSystemMessage
+            XCTAssertEqual(systemMessage?.systemMessageType, .decryptionFailed)
+            XCTAssertEqual(systemMessage?.senderClientID, Scaffolding.failingSenderClientID)
+            XCTAssertEqual(systemMessage?.decryptionErrorCode, 406)
+        }
+    }
+
+    func testAddSystemMessage_DecryptionFailed_IsFoundByResolveQuery() async throws {
+        // Given
+
+        let selfUser = await context.perform { [self] in
+            let selfUser = modelHelper.createSelfUser(id: Scaffolding.userID, in: context)
+            let sender = modelHelper.createUser(id: Scaffolding.otherUserID, domain: Scaffolding.domain1, in: context)
+            modelHelper.createClient(id: Scaffolding.failingSenderClientID, for: sender)
+            return selfUser
+        }
+
+        _ = await makeConversation(
+            id: Scaffolding.conversationID,
+            domain: Scaffolding.domain1,
+            creator: selfUser
+        )
+
+        // When
+
+        await sut.addSystemMessage(
+            messageType: .decryptionFailed(
+                sender: (id: Scaffolding.otherUserID, domain: Scaffolding.domain1),
+                senderClientID: Scaffolding.failingSenderClientID,
+                remoteIdentityChanged: false,
+                errorCode: 406,
+                date: Scaffolding.date
+            ),
+            conversationID: Scaffolding.conversationID,
+            conversationDomain: Scaffolding.domain1
+        )
+
+        // Then
+        // Same predicate as `UserClient.resolveDecryptionFailedSystemMessages()`, which uses a batch update that the
+        // in-memory test store doesn't support.
+
+        try await context.perform { [context] in
+            let request = NSFetchRequest<ZMSystemMessage>(entityName: ZMSystemMessage.entityName())
+            request.predicate = NSPredicate(
+                format: "%K = %d AND %K = %@",
+                ZMMessageSystemMessageTypeKey,
+                ZMSystemMessageType.decryptionFailed.rawValue,
+                ZMMessageSenderClientIDKey,
+                Scaffolding.failingSenderClientID
+            )
+            XCTAssertEqual(try context.count(for: request), 1)
+        }
+    }
+
     func testAddTextMessage_It_Adds_Message_To_Conversation() async throws {
         // Mock
 
@@ -315,6 +402,7 @@ final class MessageLocalStoreTests: XCTestCase {
         static let conversationID = UUID()
         static let userID = UUID()
         static let otherUserID = UUID()
+        static let failingSenderClientID = "abcdef0123"
         static let domain1 = "domain1.com"
         static let domain2 = "domain2.com"
         static let date = Date.now
@@ -343,6 +431,7 @@ final class MessageLocalStoreTests: XCTestCase {
                 sender: (id: userID, domain: domain1),
                 senderClientID: otherUserID.uuidString,
                 remoteIdentityChanged: true,
+                errorCode: nil,
                 date: date
             ),
             .sessionReset(sender: (id: userID, domain: domain), senderClientID: otherUserID.uuidString, date: date),
