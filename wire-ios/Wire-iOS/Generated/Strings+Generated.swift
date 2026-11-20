@@ -1461,6 +1461,12 @@ internal enum L10n {
       }
     }
     internal enum Call {
+      /// You were muted by %@
+      internal static func remoteMutedBy(_ p1: Any) -> String {
+        return L10n.tr("Localizable", "call.remote_muted_by", String(describing: p1), fallback: "You were muted by %@")
+      }
+      /// You were muted by an admin
+      internal static let remoteMutedByAdmin = L10n.tr("Localizable", "call.remote_muted_by_admin", fallback: "You were muted by an admin")
       internal enum Actions {
         internal enum Label {
           /// Accept call
