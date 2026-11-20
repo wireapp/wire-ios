@@ -145,6 +145,9 @@ public class ZMClientMessage: ZMOTRMessage {
                 fetchLinkPreview: true
             )
         }
+        if canStayPendingWhileOffline {
+            restartPendingPeriod()
+        }
         super.resend()
     }
 

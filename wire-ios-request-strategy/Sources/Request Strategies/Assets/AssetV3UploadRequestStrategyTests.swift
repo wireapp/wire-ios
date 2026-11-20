@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireUtilities
 import XCTest
 @testable import WireRequestStrategy
 
@@ -351,4 +352,92 @@ class AssetV3UploadRequestStrategyTests: MessagingTestBase {
         }
     }
 
+}
+
+// MARK: - Offline pending messages
+
+extension AssetV3UploadRequestStrategyTests {
+
+    func testThatItFailsUploadThatWaitedLongerThanMaxPendingDuration_OfflinePendingMessages() {
+        // GIVEN
+        DeveloperFlag.storage = .temporary()
+        DeveloperFlag.offlinePendingMessages.enable(true)
+        defer { DeveloperFlag.storage = .standard }
+
+        syncMOC.performGroupedAndWait {
+            let message = self.createFileMessage()
+            message.serverTimestamp = Date(timeIntervalSinceNow: -ZMAssetClientMessage.maxPendingDuration - 1)
+
+            // WHEN
+            self.sut.pendingUploadDeadlineTimer.addTrackedObjects([message])
+
+            // THEN
+            XCTAssertTrue(message.isExpired)
+            XCTAssertEqual(message.expirationReason, .timeout)
+            XCTAssertEqual(message.transferState, .uploadingFailed)
+        }
+    }
+
+    func testThatItFailsUploadWhenMaxPendingDurationPassesWhileWaiting_OfflinePendingMessages() {
+        // GIVEN
+        DeveloperFlag.storage = .temporary()
+        DeveloperFlag.offlinePendingMessages.enable(true)
+        defer { DeveloperFlag.storage = .standard }
+
+        var message: ZMAssetClientMessage!
+        syncMOC.performGroupedAndWait {
+            message = self.createFileMessage()
+            message.serverTimestamp = Date(timeIntervalSinceNow: -ZMAssetClientMessage.maxPendingDuration + 0.5)
+            self.syncMOC.saveOrRollback()
+
+            // WHEN
+            self.sut.pendingUploadDeadlineTimer.objectsDidChange([message])
+            XCTAssertFalse(message.isExpired)
+        }
+        let deadlinePassed = XCTestExpectation(description: "deadline passed")
+        deadlinePassed.isInverted = true
+        wait(for: [deadlinePassed], timeout: 1.5)
+
+        // THEN
+        syncMOC.performGroupedAndWait {
+            XCTAssertTrue(message.isExpired)
+            XCTAssertEqual(message.transferState, .uploadingFailed)
+        }
+    }
+
+    func testThatItDoesNotFailEphemeralUploadAfterMaxPendingDuration_OfflinePendingMessages() {
+        // GIVEN
+        DeveloperFlag.storage = .temporary()
+        DeveloperFlag.offlinePendingMessages.enable(true)
+        defer { DeveloperFlag.storage = .standard }
+
+        syncMOC.performGroupedAndWait {
+            self.groupConversation.setMessageDestructionTimeoutValue(.tenSeconds, for: .selfUser)
+            let message = self.createFileMessage()
+            XCTAssertTrue(message.isEphemeral)
+            message.serverTimestamp = Date(timeIntervalSinceNow: -ZMAssetClientMessage.maxPendingDuration - 1)
+
+            // WHEN
+            self.sut.pendingUploadDeadlineTimer.addTrackedObjects([message])
+
+            // THEN
+            XCTAssertFalse(message.isExpired)
+            XCTAssertEqual(message.transferState, .uploading)
+        }
+    }
+
+    func testThatItDoesNotFailUploadAfterMaxPendingDuration_WhenFlagIsDisabled() {
+        syncMOC.performGroupedAndWait {
+            // GIVEN
+            let message = self.createFileMessage()
+            message.serverTimestamp = Date(timeIntervalSinceNow: -ZMAssetClientMessage.maxPendingDuration - 1)
+
+            // WHEN
+            self.sut.pendingUploadDeadlineTimer.addTrackedObjects([message])
+
+            // THEN
+            XCTAssertFalse(message.isExpired)
+            XCTAssertEqual(message.transferState, .uploading)
+        }
+    }
 }
