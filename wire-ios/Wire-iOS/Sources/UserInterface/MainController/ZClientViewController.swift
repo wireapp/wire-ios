@@ -330,7 +330,21 @@ final class ZClientViewController: UIViewController {
     }
 
     private func setupWireDriveFilesTab() {
-        guard userSession.isWireDriveEnabled else { return }
+        // Refresh open conversation Files screens from the latest locally stored permissions.
+        NotificationCenter.default.post(name: .wireDriveFeatureDidChange, object: nil)
+
+        guard userSession.isWireDriveEnabled else {
+            sidebarViewController.showFiles = false
+            if mainSplitViewController.filesUI != nil || mainTabBarController.selectedContent == .files {
+                // Discard Files before the coordinator can move it back into the tab bar.
+                mainSplitViewController.filesUI = nil
+                Task { [weak self] in
+                    await self?.mainCoordinator.showConversationList(conversationFilter: nil)
+                }
+            }
+            mainTabBarController.filesUI = nil
+            return
+        }
 
         let filesBrowserView = wireMessagingFactory.makeFilesBrowserView { [weak self] in
             guard let self else { return .default }

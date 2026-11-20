@@ -17,14 +17,18 @@
 //
 
 package import Combine
-import Foundation
-import WireLogging
-package import SwiftUI
+public import Foundation
+import SwiftUI
 import WireLocators
-package import WireMessagingDomain
+import WireLogging
+import WireMessagingDomain
 
 private typealias Strings = L10n.Localizable.Conversation.WireCells
 private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
+
+public extension Notification.Name {
+    static let wireDriveFeatureDidChange = Notification.Name("WireDriveFeatureDidChange")
+}
 
 /// View model for the `FilesView`.
 @MainActor
@@ -83,6 +87,10 @@ package final class FilesViewModel: ObservableObject {
 
     var selfUserRole: WireDriveConversation.Participant.Role {
         selfUser?.role ?? .viewer
+    }
+
+    var isGracePeriod: Bool {
+        !isBrowsing && conversations.first?.isGracePeriod == true
     }
 
     // MARK: Navigation and presentation
@@ -294,12 +302,13 @@ package final class FilesViewModel: ObservableObject {
     private func pullSelfUser() {
         selfUser = conversations.flatMap(\.participants).first(where: \.isSelfUser)
 
-        if let selfUser {
+        if selfUser != nil {
             let isDismissed = cellName
                 .map(ConversationViewerAccessBannerDismissalStore.shared.isDismissed(forCellName:)) ?? false
-            let isViewer = selfUser.role == .viewer
-            showReadOnlyBanner = !isBrowsing && isViewer && !isDismissed &&
+            showReadOnlyBanner = !isBrowsing && selfUserRole == .viewer && !isDismissed &&
                 !isRecycleBin
+        } else {
+            showReadOnlyBanner = false
         }
     }
 
@@ -313,10 +322,14 @@ package final class FilesViewModel: ObservableObject {
 
     // MARK: load files
 
-    func reload(refreshing: Bool = false) async {
-        guard networkMonitor.currentStatus != nil else { return }
+    func refreshPermissions() async {
+        await pullConversations(then: pullSelfUser)
+    }
 
+    func reload(refreshing: Bool = false) async {
         enableMultipleSelection(false)
+        await refreshPermissions()
+        guard networkMonitor.currentStatus != nil else { return }
         await filesController.reload(refreshing: refreshing)
     }
 

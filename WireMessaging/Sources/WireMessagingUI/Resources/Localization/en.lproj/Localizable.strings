@@ -121,6 +121,7 @@
 "conversation.wireCells.files.viewerAccess.navigationSubtitle" = "Viewer access";
 "conversation.wireCells.allFiles.navigationTitle" = "Drive";
 "conversation.wireCells.files.viewerAccess.banner" = "Viewer access: you can’t upload or edit files.";
+"conversation.wireCells.files.viewerAccess.gracePeriodBanner" = "Shared Drive is off. You can no longer share files in this conversation, but you can still read existing files until they’re permanently deleted.";
 "conversation.wireCells.files.item.subtitle" = "%@ by %@";
 "conversation.wireCells.allFiles.item.subtitle" = "%@ in %@";
 "conversation.wireCells.files.loadMore.title" = "Load more";

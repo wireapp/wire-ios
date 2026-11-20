@@ -18,6 +18,7 @@
 
 import AVFoundation
 import avs
+import Combine
 import MobileCoreServices
 import Photos
 import SwiftUI
@@ -173,15 +174,34 @@ final class ConversationInputBarViewController: UIViewController,
 
     let videoButton: IconButton = .init()
 
+    // MARK: - Drive properties
+
+    private var driveFeatureSubscription: AnyCancellable?
+
     private var showDriveViewerBanner: Bool {
-        conversation.isWireDriveEnabled && userSession.selfUser
-            .isGuest(in: conversation)
+        isDriveViewer
     }
 
     private var shouldShowDriveViewerBanner: Bool {
         showDriveViewerBanner &&
             !ConversationViewerAccessBannerDismissalStore.shared
             .isDismissed(forCellName: conversation.wireDriveCellName)
+    }
+
+    private var isDriveGracePeriod: Bool {
+        !userSession.isWireDriveEnabled && conversation.isWireDriveEnabled && conversation.isTeamConversation
+    }
+
+    private var isDriveViewer: Bool {
+        let isGuest = conversation.isWireDriveEnabled && !conversation.isTeamConversation
+
+        return isDriveGracePeriod || isGuest
+    }
+
+    var canUploadAttachments: Bool { !isDriveViewer }
+
+    func useWireDrive() -> Bool {
+        userSession.isWireDriveEnabled && conversation.isWireDriveEnabled
     }
 
     // MARK: subviews
@@ -419,20 +439,21 @@ final class ConversationInputBarViewController: UIViewController,
             self.typingObserverToken = conversation.addTypingObserver(self)
         }
 
-        if conversation.isWireDriveEnabled, !conversation.isTeamConversation {
-            [photoButton, videoButton, sketchButton, uploadFileButton].forEach {
-                $0.isEnabled = false
-                $0.setBackgroundImageColor(
-                    ColorTheme.Buttons.Secondary.disabled,
-                    for: .disabled
-                )
-                $0.accessibilityTraits.insert(.notEnabled)
-            }
-        }
-
         setupNotificationCenter()
         setupInputLanguageObserver()
         setupViews()
+        updateDriveViewerState()
+        self.driveFeatureSubscription = userSession.clientSessionComponent?.featureConfigRepository
+            .observeFeatureStates()
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] featureState in
+                switch featureState.name {
+                case .cells, .cellsInternal:
+                    self?.updateDriveViewerState()
+                default:
+                    break
+                }
+            }
         observeDraftAttachments()
     }
 
@@ -512,11 +533,30 @@ final class ConversationInputBarViewController: UIViewController,
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        inputBar.hideDriveViewerBannerIfDismissed()
+        updateDriveViewerState()
         updateButtonStates()
         inputBar.updateReturnKey()
         inputBar.updateEphemeralState()
         updateMentionList()
+    }
+
+    func updateDriveViewerState() {
+        let isViewer = isDriveViewer
+        [photoButton, videoButton, sketchButton, uploadFileButton].forEach {
+            $0.isEnabled = !isViewer
+            $0.setBackgroundImageColor(ColorTheme.Buttons.Secondary.disabled, for: .disabled)
+            if isViewer {
+                $0.accessibilityTraits.insert(.notEnabled)
+            } else {
+                $0.accessibilityTraits.remove(.notEnabled)
+            }
+        }
+        inputBar.updateDriveViewerBanner(
+            show: shouldShowDriveViewerBanner,
+            isGracePeriod: isDriveGracePeriod
+        )
+        setupAccessibility()
+        updateButtonStates()
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -593,7 +633,7 @@ final class ConversationInputBarViewController: UIViewController,
             syncedMessageDestructionTimeout: conversation.hasSyncedMessageDestructionTimeout,
             isEphemeralSendingDisabled: conversation.isSelfDeletingMessageSendingDisabled,
             isEphemeralTimeoutForced: conversation.isSelfDeletingMessageTimeoutForced,
-            attachmentState: AttachmentState(attachments)
+            attachmentState: AttachmentState(attachments, canUploadAttachments: canUploadAttachments)
         )
 
         sendButton.isEnabled = inputBarButtonState.sendButtonEnabled
@@ -1323,12 +1363,9 @@ extension ConversationInputBarViewController: UIGestureRecognizerDelegate {
         ])
     }
 
-    func useWireDrive() -> Bool {
-        userSession.isWireDriveEnabled && conversation.isWireDriveEnabled
-    }
-
     private func observeDraftAttachments() {
-        guard useWireDrive() else { return }
+        // Keep observing local drafts so uploads work immediately when Drive is re-enabled.
+        guard conversation.isWireDriveEnabled else { return }
 
         Task.detached { [weak self, observeDraftsUseCase, attachmentsCarouselViewModel] in
             let observed = await observeDraftsUseCase.invoke()
@@ -1356,7 +1393,7 @@ extension ConversationInputBarViewController: UIGestureRecognizerDelegate {
 
     private func setAttachments(drafts: [WireDriveDraft]) {
         attachments = drafts
-        let attachmentState = AttachmentState(drafts)
+        let attachmentState = AttachmentState(drafts, canUploadAttachments: canUploadAttachments)
         if inputBarButtonState.attachmentState != attachmentState {
             updateButtonStates()
         }
@@ -1365,9 +1402,11 @@ extension ConversationInputBarViewController: UIGestureRecognizerDelegate {
 }
 
 private extension AttachmentState {
-    init(_ drafts: [WireDriveDraft]) {
+    init(_ drafts: [WireDriveDraft], canUploadAttachments: Bool) {
         if drafts.isEmpty {
             self = .none
+        } else if !canUploadAttachments {
+            self = .suspended
         } else if drafts.allSatisfy(\.status.isUploaded) {
             self = .allUploaded
         } else {

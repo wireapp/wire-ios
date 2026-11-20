@@ -382,6 +382,17 @@ public final class MainTabBarController<
         _ filesUI: UIViewController?,
         animated: Bool
     ) {
+        let previousSelection = selectedContent
+        _filesUI = filesUI
+
+        guard let filesUI else {
+            guard filesNavigationController != nil else { return }
+            filesNavigationController = nil
+            setViewControllers(orderedContents.compactMap { navController(for: $0) }, animated: animated)
+            selectedContent = previousSelection == .files ? .conversations : previousSelection
+            return
+        }
+
         if filesNavigationController == nil {
             let filesNavigationController = UINavigationController()
             filesNavigationController.navigationBar.isTranslucent = false
@@ -393,13 +404,12 @@ public final class MainTabBarController<
             self.filesNavigationController = filesNavigationController
             viewControllers?.insert(filesNavigationController, at: insertIndex)
             setupFilesTabBarItem()
+            selectedContent = previousSelection
         }
 
-        _filesUI = filesUI
         filesNavigationController?.view.backgroundColor = ColorTheme.Backgrounds.surface
 
-        let viewControllers = [filesUI].compactMap(\.self)
-        filesNavigationController?.setViewControllers(viewControllers, animated: animated)
+        filesNavigationController?.setViewControllers([filesUI], animated: animated)
         filesNavigationController?.view.layoutIfNeeded()
     }
 

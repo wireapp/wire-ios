@@ -217,6 +217,7 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
                         imageData: image.data,
                         isFromCamera: isFromCamera
                     ) { localIdentifier in
+                        guard self.canUploadAttachments else { return }
                         let dataToSend = editedImage?.pngData() ?? image.data
                         let utType: UTType = if editedImage != nil {
                             .png
@@ -382,6 +383,7 @@ extension ConversationInputBarViewController: CanvasViewControllerDelegate {
             guard let self else { return }
 
             dismiss(animated: true) {
+                guard self.canUploadAttachments else { return }
                 if let imageData = image.pngData() {
                     if self.useWireDrive() {
                         self.uploadDraft(data: imageData, type: .png)
@@ -402,6 +404,7 @@ extension ConversationInputBarViewController: CanvasViewControllerDelegate {
     }
 
     func uploadDraft(data: Data, type: UTType, localIdentifier: String? = nil, existingNodeID: UUID? = nil) {
+        guard canUploadAttachments else { return }
         Task.detached { [uploadDraftUseCase] in
             // We don't care about the result of the operation here as we will be observing changes.
             do {
