@@ -79,7 +79,7 @@ class ZMUserLegalHoldTests: ModelObjectsTests {
         let (legalHoldRequest, selfUser, conversationOID) = await syncMOC.perform { [self, syncMOC] in
 
             let mockProteusService = MockProteusServiceInterface()
-            mockProteusService.establishSessionIdFromPrekey_MockMethod = { _, _ in }
+            mockProteusService.establishSessionIfNeededIdFromPrekey_MockValue = true
             syncMOC.proteusService = mockProteusService
 
             let selfUser = ZMUser.selfUser(in: syncMOC)

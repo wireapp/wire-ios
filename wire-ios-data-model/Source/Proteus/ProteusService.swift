@@ -19,6 +19,7 @@
 import Foundation
 import WireCoreCrypto
 import WireLogging
+import WireSystem
 
 /// A service that provides support for messaging via the Proteus
 /// end-to-end-encryption protocol.
@@ -68,6 +69,37 @@ public final class ProteusService: ProteusServiceInterface {
             }
         } catch {
             logger.error("failed to establish session from prekey: \(String(describing: error))")
+            throw ProteusSessionError.failedToEstablishSession
+        }
+    }
+
+    public func establishSessionIfNeeded(
+        id: ProteusSessionID,
+        fromPrekey prekey: String
+    ) async throws -> Bool {
+        guard let prekeyData = prekey.base64DecodedData else {
+            throw ProteusSessionError.prekeyNotBase64Encoded
+        }
+
+        do {
+            let didEstablishSession = try await coreCrypto.transaction { context in
+                if try await context.proteusSessionExists(sessionId: id.rawValue) {
+                    return false
+                }
+                try await context.proteusSessionFromPrekey(sessionId: id.rawValue, prekey: prekeyData)
+                return true
+            }
+            logger.info(
+                didEstablishSession ? "established session from prekey" : "session already exists, keeping it",
+                attributes: .safePublic
+            )
+            return didEstablishSession
+        } catch {
+            // Only domain and code: the error's description could contain identifiers.
+            logger.error(
+                "failed to establish session from prekey: \((error as NSError).safeForLoggingDescription)",
+                attributes: .safePublic
+            )
             throw ProteusSessionError.failedToEstablishSession
         }
     }

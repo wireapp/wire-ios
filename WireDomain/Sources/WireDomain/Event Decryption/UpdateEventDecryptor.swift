@@ -207,10 +207,12 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
             return
         }
 
+        let errorCode: UInt16? = if case let .Other(code) = error { code } else { nil }
         let systemMessageType: SystemMessageType = .decryptionFailed(
             sender: (eventData.senderID.id, eventData.senderID.domain),
             senderClientID: eventData.messageSenderClientID,
             remoteIdentityChanged: error == .RemoteIdentityChanged,
+            errorCode: errorCode,
             date: eventData.timestamp
         )
 
