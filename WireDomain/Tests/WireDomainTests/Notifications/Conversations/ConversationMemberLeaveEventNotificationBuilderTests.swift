@@ -363,7 +363,7 @@ final class ConversationMemberLeaveEventNotificationBuilderTests: XCTestCase {
         // Sound
         XCTAssertEqual(
             notificationContent.sound,
-            UNNotificationSound(named: .init("default"))
+            UNNotificationSound(named: .init("new_message.caf"))
         )
 
         // Thread ID
@@ -397,7 +397,7 @@ final class ConversationMemberLeaveEventNotificationBuilderTests: XCTestCase {
             )
         )
         XCTAssertEqual(notificationContent.categoryIdentifier, NotificationCategory.meetingCancellation.rawValue)
-        XCTAssertEqual(notificationContent.sound, .default)
+        XCTAssertEqual(notificationContent.sound, UNNotificationSound(named: .init("new_message.caf")))
         XCTAssertEqual(notificationContent.userInfo["selfUserIDString"] as! String, Scaffolding.selfUserID.uuidString)
     }
 

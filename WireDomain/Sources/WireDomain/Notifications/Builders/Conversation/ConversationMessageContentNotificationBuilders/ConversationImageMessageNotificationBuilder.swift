@@ -100,7 +100,7 @@ struct ConversationImageMessageNotificationBuilder: ConversationImageMessageNoti
     }
 
     private func makeSound() -> UNNotificationSound {
-        let soundType = NotificationSound.default
+        let soundType = NotificationSound.newMessage
         let notificationSoundName = UNNotificationSoundName(soundType.rawValue)
         return UNNotificationSound(named: notificationSoundName)
     }

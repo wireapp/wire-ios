@@ -49,7 +49,7 @@ struct MeetingDeleteEventNotificationBuilder: MeetingDeleteEventNotificationBuil
         content.title = meeting.title
         content.body = String.formated(key: "push.notification.body.senderCanceledMeeting", bundle: .module, hostName)
         content.categoryIdentifier = NotificationCategory.meetingCancellation.rawValue
-        content.sound = .default
+        content.sound = NotificationSound.newMessage.userNotificationSound
         content.userInfo = [
             NotificationUserInfoKey.selfUserID: accountID.uuidString
         ]
