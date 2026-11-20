@@ -17,6 +17,7 @@
 //
 
 import WireDataModel
+import WireFoundation
 import WireNetworkSupport
 import XCTest
 @testable import WireDomain
@@ -28,6 +29,7 @@ final class ShowNotificationUseCaseTests: XCTestCase {
     private var conversationLocalStore: MockConversationLocalStoreProtocol!
     private var databaseSaver: MockDatabaseSaverProtocol!
     private var didDisplayNotification = false
+    private var displayedNotification: UNNotificationContent?
 
     override func setUp() async throws {
         conversationLocalStore = MockConversationLocalStoreProtocol()
@@ -39,7 +41,10 @@ final class ShowNotificationUseCaseTests: XCTestCase {
         )
 
         sut = ShowNotificationUseCase(
-            contentHandler: { _ in self.didDisplayNotification = true },
+            contentHandler: {
+                self.didDisplayNotification = true
+                self.displayedNotification = $0
+            },
             conversationLocalStore: conversationLocalStore,
             selectedAccount: Account(userName: .init(), userIdentifier: .mockID1),
             accountManager: try AccountManager(
@@ -55,6 +60,7 @@ final class ShowNotificationUseCaseTests: XCTestCase {
         sut = nil
         conversationLocalStore = nil
         didDisplayNotification = false
+        displayedNotification = nil
         databaseSaver = nil
     }
 
@@ -62,9 +68,9 @@ final class ShowNotificationUseCaseTests: XCTestCase {
 
         // Mock
 
-        let userNotifications: [UserNotification] = [
-            .text(UNMutableNotificationContent())
-        ]
+        let content = UNMutableNotificationContent()
+        content.sound = UNNotificationSound(named: .init("default"))
+        let userNotifications: [UserNotification] = [.text(content)]
 
         conversationLocalStore.unreadConversationCount_MockValue = 1
         databaseSaver.save_MockMethod = {}
@@ -78,6 +84,42 @@ final class ShowNotificationUseCaseTests: XCTestCase {
         XCTAssertEqual(didDisplayNotification, true)
         XCTAssertEqual(databaseSaver.save_Invocations.count, 1)
         XCTAssertEqual(conversationLocalStore.unreadConversationCount_Invocations.count, 1)
+        XCTAssertEqual(displayedNotification?.sound, UNNotificationSound(named: .init("new_message.caf")))
+    }
+
+    func testProcessUsesSelectedSystemDefaultSound() async throws {
+        sut = ShowNotificationUseCase(
+            contentHandler: { self.displayedNotification = $0 },
+            conversationLocalStore: conversationLocalStore,
+            selectedAccount: Account(userName: .init(), userIdentifier: .mockID1),
+            accountManager: try AccountManager(
+                currentAppVersion: "1.0.0",
+                directory: FileManager.default.temporaryDirectory,
+                defaults: .temporary()
+            ),
+            databaseSaver: databaseSaver,
+            notificationSoundPreference: .systemDefault
+        )
+        conversationLocalStore.unreadConversationCount_MockValue = 1
+        databaseSaver.save_MockMethod = {}
+
+        try await sut.invoke(userNotifications: [.text(UNMutableNotificationContent())])
+
+        XCTAssertEqual(displayedNotification?.sound, UNNotificationSound.default)
+    }
+
+    func testProcessPreservesDedicatedPingSound() async throws {
+        let content = UNMutableNotificationContent()
+        content.sound = UNNotificationSound(named: .init(NotificationSound.ping.rawValue))
+        conversationLocalStore.unreadConversationCount_MockValue = 1
+        databaseSaver.save_MockMethod = {}
+
+        try await sut.invoke(userNotifications: [.text(content)])
+
+        XCTAssertEqual(
+            displayedNotification?.sound,
+            UNNotificationSound(named: .init(NotificationSound.ping.rawValue))
+        )
     }
 
 }
