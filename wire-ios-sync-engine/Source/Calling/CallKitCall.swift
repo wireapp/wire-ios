@@ -22,14 +22,17 @@ class CallKitCall {
 
     let id: UUID
     let handle: CallHandle
+    let incomingEventTimestamp: Date?
     let observer = CallObserver()
 
     init(
         id: UUID,
-        handle: CallHandle
+        handle: CallHandle,
+        incomingEventTimestamp: Date?
     ) {
         self.id = id
         self.handle = handle
+        self.incomingEventTimestamp = incomingEventTimestamp
     }
 
 }

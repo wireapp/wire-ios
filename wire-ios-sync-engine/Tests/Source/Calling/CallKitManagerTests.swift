@@ -1354,6 +1354,64 @@ class CallKitManagerTest: DatabaseTest {
         XCTAssertEqual(callKitProvider.timesReportCallEndedAtCalled, 0)
     }
 
+    func testEarlierEndDoesNotDismissPreemptiveIncomingCall() throws {
+        let conversation = conversation(type: .group)
+        let caller = otherUser(moc: uiMOC)
+        let handle = try XCTUnwrap(conversation.callHandle)
+        let startSecond: TimeInterval = 1_795_079_179
+        sut.reportIncomingCallPreemptively(
+            handle: handle,
+            callerName: "Caller",
+            hasVideo: false,
+            eventTimestamp: Date(timeIntervalSince1970: startSecond + 0.25)
+        )
+        let callID = try XCTUnwrap(sut.callRegister.lookupCall(by: handle)?.id)
+
+        sut.callCenterDidChange(
+            callState: .terminating(reason: .answeredElsewhere),
+            conversation: conversation,
+            caller: caller,
+            timestamp: Date(timeIntervalSince1970: 1_795_079_128),
+            previousCallState: nil,
+            callEndReason: nil
+        )
+
+        XCTAssertEqual(sut.callRegister.lookupCall(by: handle)?.id, callID)
+        XCTAssertEqual(callKitProvider.timesReportCallEndedAtCalled, 0)
+
+        sut.callCenterDidChange(
+            callState: .terminating(reason: .normal),
+            conversation: conversation,
+            caller: caller,
+            timestamp: Date(timeIntervalSince1970: startSecond),
+            previousCallState: nil,
+            callEndReason: nil
+        )
+
+        XCTAssertFalse(sut.callRegister.callExists(for: callID))
+        XCTAssertEqual(callKitProvider.timesReportCallEndedAtCalled, 1)
+    }
+
+    func testPreemptiveIncomingCallCanEndWithMissingEventTime() throws {
+        let conversation = conversation(type: .group)
+        let handle = try XCTUnwrap(conversation.callHandle)
+        let time = Date()
+        let eventTimes: [(incoming: Date?, end: Date?)] = [(nil, time), (time, nil)]
+
+        for times in eventTimes {
+            sut.reportIncomingCallPreemptively(
+                handle: handle,
+                callerName: "Caller",
+                hasVideo: false,
+                eventTimestamp: times.incoming
+            )
+            sut.reportCallEnded(in: conversation, atTime: times.end, reason: .remoteEnded)
+            XCTAssertNil(sut.callRegister.lookupCall(by: handle))
+        }
+
+        XCTAssertEqual(callKitProvider.timesReportCallEndedAtCalled, 2)
+    }
+
     func testThatItReportCallEndedAt_v3_Terminating_normal() {
         // given
         let conversation = conversation()

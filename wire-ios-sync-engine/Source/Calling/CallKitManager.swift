@@ -459,7 +459,8 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
     func reportIncomingCallPreemptively(
         handle: CallHandle,
         callerName: String,
-        hasVideo: Bool
+        hasVideo: Bool,
+        eventTimestamp: Date?
     ) {
         logger.info("report incoming call preemptively", attributes: .safePublic)
 
@@ -468,7 +469,7 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
             logger.warn("report incoming call preemptively: call already exists. Re-reporting", attributes: .safePublic)
         }
 
-        let call = existingCall ?? callRegister.registerNewCall(with: handle)
+        let call = existingCall ?? callRegister.registerNewCall(with: handle, incomingEventTimestamp: eventTimestamp)
 
         let update = CXCallUpdate()
         update.localizedCallerName = callerName
@@ -610,6 +611,13 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
         }
 
         for call in associatedCalls {
+            // AVS reports the server timestamp in whole seconds.
+            if let timestamp, let incomingEventTimestamp = call.incomingEventTimestamp,
+               timestamp.timeIntervalSince1970 < incomingEventTimestamp.timeIntervalSince1970.rounded(.down) {
+                logger.info("ignore call end older than incoming event", attributes: .safePublic)
+                continue
+            }
+
             logger.info("terminating call: \(String(describing: call))")
             callRegister.unregisterCall(call)
             logger.info("provider.reportCallEndedAt: \(String(describing: timestamp))", attributes: .safePublic)
