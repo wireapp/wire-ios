@@ -264,6 +264,35 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         XCTAssertEqual(mockCoreCrypto.transaction_Invocations.count, 0)
     }
 
+    func test_processWelcomeMessage_conversationAlreadyExists_wipesAndRetries() async throws {
+        // Given
+        let groupID = MLSGroupID.random()
+        let welcome = Welcome(noPointer: .init())
+        var attempts = 0
+
+        // Mock
+        mockCoreCryptoContext
+            .processWelcomeMessageWelcomeMessage_MockMethod = { _ in
+                attempts += 1
+                if attempts == 1 {
+                    throw CoreCryptoError.Mls(mlsError: .ConversationAlreadyExists(conversationId: groupID.data))
+                }
+                return groupID.conversationId
+            }
+        mockCoreCryptoContext.wipeConversationConversationId_MockMethod = { _ in }
+
+        // When
+        let result = try await sut.processWelcomeMessage(welcome, context: mockCoreCryptoContext)
+
+        // Then
+        XCTAssertEqual(groupID, result)
+        XCTAssertEqual(mockCoreCryptoContext.processWelcomeMessageWelcomeMessage_Invocations.count, 2)
+        XCTAssertEqual(
+            mockCoreCryptoContext.wipeConversationConversationId_Invocations.map { MLSGroupID($0) },
+            [groupID]
+        )
+    }
+
     // MARK: - Add members
 
     func test_AddMembers() async throws {
