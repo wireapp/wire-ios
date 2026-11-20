@@ -372,7 +372,9 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 ),
                 ResetSessionRequestStrategy(
                     managedObjectContext: syncContext,
-                    messageSender: messageSender
+                    messageSender: messageSender,
+                    sessionEstablisher: sessionEstablisher,
+                    apiVersion: metadata.apiVersion
                 )
             ]
 
