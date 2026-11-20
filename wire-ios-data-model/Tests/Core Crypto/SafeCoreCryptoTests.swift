@@ -58,7 +58,7 @@ final class SafeCoreCryptoTests: XCTestCase {
                 _ = try await sut.coreCrypto.getCredentials()
                 return try await context.decryptMessage(conversationId: fixture.groupID, payload: message)
             }
-            guard case let .text(plaintext, _, _) = decrypted else {
+            guard case let .applicationMessage(plaintext, _, _) = decrypted else {
                 return XCTFail("Expected the same message to decrypt through the retained wrapper")
             }
             XCTAssertEqual(plaintext, fixture.plaintext)
@@ -89,7 +89,7 @@ final class SafeCoreCryptoTests: XCTestCase {
             return XCTFail("Expected the buffered message when the commit arrives")
         }
         XCTAssertTrue(messages.contains {
-            if case let .text(plaintext, _, _) = $0 { return plaintext == fixture.plaintext }
+            if case let .applicationMessage(plaintext, _, _) = $0 { return plaintext == fixture.plaintext }
             return false
         })
     }
