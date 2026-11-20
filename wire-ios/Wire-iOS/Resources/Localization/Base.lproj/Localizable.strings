@@ -1638,6 +1638,11 @@
 "join.group.conversation.alert.joinAction.title" = "Join conversation";
 "join.group.conversation.alert.learnMoreAction.title" = "Learn more about guest links";
 
+// Join Meeting Alert
+"join.meeting.alert.message" = "This meeting is password protected";
+"join.meeting.alert.textfield.placeholder" = "Enter Meeting password";
+"join.meeting.alert.joinAction.title" = "Join Meeting";
+
 // Apps Options
 
 "apps_options.allow_apps.title" = "Allow apps";
@@ -2055,6 +2060,10 @@ Enter your identity provider’s credentials in the next step to update the cert
 "url_action.join_conversation.error.alert.learn_more.action" = "Learn more about guest links";
 
 "url_action.join_conversation.error.alert.invalid_password.message" = "Password is incorrect, please try again.";
+
+"url_action.join_meeting.error.alert.title" = "You could not join the meeting";
+"url_action.join_meeting.error.alert.meeting_is_full.message" = "The meeting is full.";
+"url_action.join_meeting.error.alert.link_is_invalid.message" = "The meeting link is invalid.";
 
 // Deep Link
 "url_action.invalid_user.title" = "Wire can't find this person.";
