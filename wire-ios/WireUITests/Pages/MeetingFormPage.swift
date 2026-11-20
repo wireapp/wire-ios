@@ -101,9 +101,10 @@ class MeetingFormPage: PageModel {
         return try MeetingsPage()
     }
 
-    func assertDateTimes(start: Date, end: Date, locale: String = "en_GB") {
+    func assertDateTimes(start: Date, end: Date, locale: String = "en_GB", timeZone: TimeZone) {
         let dateFormatter = DateFormatter()
         dateFormatter.locale = Locale(identifier: locale)
+        dateFormatter.timeZone = timeZone
         dateFormatter.dateStyle = .short
         XCTAssertEqual(startDateButton.label, dateFormatter.string(from: start))
         // The End date is disabled and hidden from VoiceOver. The End time value includes its date.
