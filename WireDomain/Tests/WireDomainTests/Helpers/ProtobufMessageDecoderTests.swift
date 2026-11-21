@@ -45,6 +45,19 @@ struct ProtobufMessageDecoderTests {
         #expect(error == .failedToDecodeGenericMessage)
     }
 
+    @Test("Unsupported content throws unknownMessageContent")
+    func extractMLSMessageContent_unsupportedContent_throwsUnknownContent() throws {
+        let message = GenericMessage.with {
+            $0.messageID = UUID().uuidString
+            $0.historyClientRequest = HistoryClientRequest()
+        }
+
+        let error = #expect(throws: ProtobufMessageDecoder.Failure.self) {
+            try sut.extractMLSMessageContent(from: message.serializedData().base64EncodedString())
+        }
+        #expect(error == .unknownMessageContent)
+    }
+
     // MARK: - extractProteusMessageContent
 
     @Test("Regular message without externalData returns a GenericMessage")
@@ -75,6 +88,23 @@ struct ProtobufMessageDecoderTests {
         )
 
         #expect(result.text.content == Scaffolding.innerMessageText)
+    }
+
+    @Test("External message with unsupported inner content throws unknownMessageContent")
+    func extractProteusMessageContent_externalMessage_unsupportedContent_throwsUnknownContent() throws {
+        let inner = GenericMessage.with {
+            $0.messageID = UUID().uuidString
+            $0.historyClientRequest = HistoryClientRequest()
+        }
+        let payload = try Scaffolding.ExternalPayload.make(inner: inner)
+
+        let error = #expect(throws: ProtobufMessageDecoder.Failure.self) {
+            try sut.extractProteusMessageContent(
+                from: payload.outerBase64,
+                externalData: MessageContent(encryptedMessage: payload.externalDataBase64)
+            )
+        }
+        #expect(error == .unknownMessageContent)
     }
 
     @Test("External message without externalData throws externalProteusDataMissing")
@@ -164,8 +194,8 @@ private enum Scaffolding {
         let otrKey: Data
         let sha256: Data
 
-        static func make() throws -> ExternalPayload {
-            let inner = GenericMessage.with {
+        static func make(inner: GenericMessage? = nil) throws -> ExternalPayload {
+            let inner = inner ?? GenericMessage.with {
                 $0.messageID = UUID().uuidString
                 $0.text = Text.with { $0.content = innerMessageText }
             }

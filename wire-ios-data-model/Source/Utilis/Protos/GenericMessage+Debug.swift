@@ -176,6 +176,9 @@ extension GenericMessage.OneOf_Content: SafeForLoggingStringConvertible {
 
         case .inCallHandRaise:
             "inCallHandRaise"
+
+        case .historyClientAvailable, .historyClientRequest, .historyClientResponse, .poll, .pollVote:
+            "unsupported"
         }
     }
 
