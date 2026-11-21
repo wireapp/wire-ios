@@ -16,9 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import AVFoundation
 import FLAnimatedImage
 import MobileCoreServices
-import Photos
+import PhotosUI
+import UniformTypeIdentifiers
 import WireCommonComponents
 import WireLogging
 import WireReusableUIComponents
@@ -276,7 +278,7 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
         PHPhotoLibrary.requestAuthorization { status in
             DispatchQueue.main.async {
                 switch status {
-                case .authorized:
+                case .authorized, .limited:
                     closure(true)
                 default:
                     closure(false)
@@ -423,6 +425,22 @@ extension ConversationInputBarViewController: CanvasViewControllerDelegate {
 extension ConversationInputBarViewController {
 
     func showCameraAndPhotos() {
+        // On Mac, both CameraKeyboardViewController and PHPickerViewController connect to
+        // PHPhotoLibrary via XPC, which hangs when the library is in a cloud-synced path.
+        // UIDocumentPickerViewController reads directly from the filesystem and avoids
+        // Photos Library entirely.
+        // The file picker can import existing media, so it needs the same restrictions as the camera roll.
+        if ProcessInfo.processInfo.isiOSAppOnMac,
+           SecurityFlags.cameraRoll.isEnabled,
+           mediaShareRestrictionManager.hasAccessToCameraRoll {
+            let types: [UTType] = [.image, .jpeg, .png, .heic, .gif, .movie, .video, .mpeg4Movie]
+            let picker = UIDocumentPickerViewController(forOpeningContentTypes: types, asCopy: true)
+            picker.allowsMultipleSelection = false
+            picker.delegate = macMediaPickerCoordinator
+            present(picker, animated: true)
+            return
+        }
+
         UIApplication.wr_requestVideoAccess { [mediaShareRestrictionManager] _ in
             if SecurityFlags.cameraRoll.isEnabled,
                mediaShareRestrictionManager.hasAccessToCameraRoll {
@@ -455,5 +473,68 @@ extension ConversationInputBarViewController {
             })
             checker.performAction()
         }
+    }
+}
+
+// MARK: - Mac media picker
+
+/// Handles UIDocumentPickerViewController for the camera button on Mac.
+/// A separate delegate is used so it doesn't conflict with the file-upload
+/// UIDocumentPickerDelegate already conforming to ConversationInputBarViewController.
+private final class MacMediaPickerCoordinator: NSObject, UIDocumentPickerDelegate {
+
+    weak var inputBar: ConversationInputBarViewController?
+
+    func documentPicker(_ controller: UIDocumentPickerViewController, didPickDocumentsAt urls: [URL]) {
+        guard let vc = inputBar, let url = urls.first else { return }
+
+        let type = UTType(filenameExtension: url.pathExtension)
+        if type?.conforms(to: .audiovisualContent) == true || type?.conforms(to: .movie) == true {
+            Task { @MainActor in
+                let asset = AVURLAsset(url: url)
+                let duration = (try? await asset.load(.duration).seconds) ?? 0
+                if duration > vc.userSession.maxVideoLength {
+                    // Too long to upload as is: let the user trim it, like the camera flow does.
+                    let videoEditor = StatusBarVideoEditorController()
+                    videoEditor.delegate = vc
+                    videoEditor.videoMaximumDuration = vc.userSession.maxVideoLength
+                    videoEditor.videoPath = url.path
+                    videoEditor.videoQuality = .typeMedium
+                    vc.present(videoEditor, animated: true)
+                } else {
+                    vc.processRecordedVideoAt(url)
+                }
+            }
+        } else if type?.conforms(to: .image) == true {
+            // Keep the original data and type so animated GIFs stay animated.
+            guard let data = try? Data(contentsOf: url), UIImage(data: data) != nil else { return }
+            let utType = type ?? .image
+            if vc.useWireDrive() {
+                vc.uploadDraft(data: data, type: utType)
+            } else {
+                vc.showConfirmationForImage(SendableImage(name: nil, utType: utType, data: data), isFromCamera: false)
+            }
+        }
+    }
+}
+
+private var macMediaPickerCoordinatorKey: UInt8 = 0
+
+extension ConversationInputBarViewController {
+
+    private var macMediaPickerCoordinator: MacMediaPickerCoordinator {
+        if let existing = objc_getAssociatedObject(self, &macMediaPickerCoordinatorKey)
+            as? MacMediaPickerCoordinator {
+            return existing
+        }
+        let coordinator = MacMediaPickerCoordinator()
+        coordinator.inputBar = self
+        objc_setAssociatedObject(
+            self,
+            &macMediaPickerCoordinatorKey,
+            coordinator,
+            .OBJC_ASSOCIATION_RETAIN_NONATOMIC
+        )
+        return coordinator
     }
 }

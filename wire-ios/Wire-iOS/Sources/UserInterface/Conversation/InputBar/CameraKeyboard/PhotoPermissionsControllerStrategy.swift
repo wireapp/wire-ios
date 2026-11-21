@@ -33,7 +33,7 @@ final class PhotoPermissionsControllerStrategy: PhotoPermissionsController {
 
     var isPhotoLibraryAuthorized: Bool {
         switch PHPhotoLibrary.authorizationStatus() {
-        case .authorized: true
+        case .authorized, .limited: true
         default: false
         }
     }
