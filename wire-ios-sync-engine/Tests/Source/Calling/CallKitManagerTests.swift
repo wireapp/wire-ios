@@ -784,7 +784,8 @@ class CallKitManagerTest: DatabaseTest {
 
         var didComplete = false
         let completed = expectation(description: "End call completion")
-        sut.requestEndCall(in: conversation) {
+        sut.requestEndCall(in: conversation) { didEndCall in
+            XCTAssertTrue(didEndCall)
             didComplete = true
             completed.fulfill()
         }
@@ -822,13 +823,46 @@ class CallKitManagerTest: DatabaseTest {
         )
 
         var didComplete = false
-        sut.requestEndCall(in: conversation) {
+        sut.requestEndCall(in: conversation) { didEndCall in
+            XCTAssertTrue(didEndCall)
             XCTAssertTrue(self.mockWireCallCenterV3.mockAVSWrapper.didCallEndCall)
             didComplete = true
         }
 
         XCTAssertTrue(didComplete)
         XCTAssertTrue(callKitController.requestedTransactions.isEmpty)
+    }
+
+    func testEndCallCompletionReportsFailureWhenCallDoesNotEnd() throws {
+        let conversation = conversation(type: .group)
+        let handle = try XCTUnwrap(conversation.callHandle)
+        let call = sut.callRegister.registerNewCall(with: handle)
+
+        let completed = expectation(description: "End call timed out")
+        sut.requestEndCall(in: conversation) { didEndCall in
+            XCTAssertFalse(didEndCall)
+            completed.fulfill()
+        }
+
+        wait(for: [completed], timeout: 7)
+        XCTAssertTrue(sut.callRegister.callExists(for: call.id))
+    }
+
+    func testEndCallCompletionReportsFailureWhenManagerIsReleased() throws {
+        let conversation = conversation(type: .group)
+        let handle = try XCTUnwrap(conversation.callHandle)
+        sut.callRegister.registerNewCall(with: handle)
+        weak var manager = sut
+
+        let completed = expectation(description: "End call manager released")
+        sut.requestEndCall(in: conversation) { didEndCall in
+            XCTAssertFalse(didEndCall)
+            completed.fulfill()
+        }
+        sut = nil
+
+        XCTAssertNil(manager)
+        wait(for: [completed], timeout: 1)
     }
 
     func testThatReportsMutingOfCall() {

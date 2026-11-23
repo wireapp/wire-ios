@@ -201,12 +201,16 @@ extension VoiceChannelV3: CallActions {
         }
     }
 
-    public func leave(userSession: ZMUserSession, completion: (() -> Void)?) {
+    public func leave(userSession: ZMUserSession, completion: ((Bool) -> Void)?) {
         if userSession.callNotificationStyle == .callKit {
-            userSession.callKitManager?.requestEndCall(in: conversation!, completion: completion)
+            guard let callKitManager = userSession.callKitManager else {
+                completion?(false)
+                return
+            }
+            callKitManager.requestEndCall(in: conversation!, completion: completion)
         } else {
             leave()
-            completion?()
+            completion?(true)
         }
     }
 

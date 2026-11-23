@@ -61,7 +61,7 @@ public protocol CallKitManagerInterface {
     func applyPendingVideoUpgrade()
     func requestMuteCall(in conversation: ZMConversation, muted: Bool)
     func requestJoinCall(in conversation: ZMConversation, video: Bool)
-    func requestEndCall(in conversation: ZMConversation, completion: (() -> Void)?)
+    func requestEndCall(in conversation: ZMConversation, completion: ((Bool) -> Void)?)
 
 }
 
@@ -432,7 +432,7 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
 
     public func requestEndCall(
         in conversation: ZMConversation,
-        completion: (() -> Void)? = nil
+        completion: ((Bool) -> Void)? = nil
     ) {
         logger.info("request end call", attributes: .safePublic)
 
@@ -440,7 +440,7 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
             logger.warn("fail: request end call: call doesn't exist", attributes: .safePublic)
             if let completion {
                 conversation.voiceChannel?.leave()
-                completion()
+                completion(true)
             }
             return
         }
@@ -458,22 +458,27 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
             }
 
             guard let completion else { return }
-            self?.completeAfterCallEnds(call, completion: completion)
+            guard let self else {
+                completion(false)
+                return
+            }
+            completeAfterCallEnds(call, completion: completion)
         }
     }
 
-    private func completeAfterCallEnds(_ call: CallKitCall, completion: @escaping () -> Void) {
+    private func completeAfterCallEnds(_ call: CallKitCall, completion: @escaping (Bool) -> Void) {
         Task { @MainActor [weak self] in
             let deadline = ContinuousClock.now + .seconds(5)
             while let self, ContinuousClock.now < deadline {
                 // Accepting an end request does not release the CallKit call group.
                 if !callRegister.callExists(for: call.id), callController.existingCall(for: call)?.hasEnded != false {
-                    completion()
+                    completion(true)
                     return
                 }
                 try? await Task.sleep(for: .milliseconds(50))
             }
             self?.logger.warn("timed out waiting for call to end", attributes: .safePublic)
+            completion(false)
         }
     }
 

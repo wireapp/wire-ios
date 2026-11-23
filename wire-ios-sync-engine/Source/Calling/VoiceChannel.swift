@@ -70,7 +70,7 @@ public protocol CallActions: NSObjectProtocol {
 
     func mute(_ muted: Bool, userSession: ZMUserSession)
     func join(video: Bool, userSession: ZMUserSession) -> Bool
-    func leave(userSession: ZMUserSession, completion: (() -> Void)?)
+    func leave(userSession: ZMUserSession, completion: ((Bool) -> Void)?)
     func continueByDecreasingConversationSecurity(userSession: ZMUserSession)
     func request(videoStreams: [AVSClientVideoStream])
 
