@@ -1412,6 +1412,45 @@ class CallKitManagerTest: DatabaseTest {
         XCTAssertEqual(callKitProvider.timesReportCallEndedAtCalled, 2)
     }
 
+    func testRereportedIncomingCallIgnoresEndsBeforeLatestRing() throws {
+        let conversation = conversation(type: .group)
+        let handle = try XCTUnwrap(conversation.callHandle)
+        let latestStartSecond: TimeInterval = 1_795_079_179
+        let earlierStart = Date(timeIntervalSince1970: latestStartSecond - 5)
+        let latestStart = Date(timeIntervalSince1970: latestStartSecond + 0.25)
+        sut.reportIncomingCallPreemptively(handle: handle, callerName: "Caller", hasVideo: false, eventTimestamp: nil)
+        let call = try XCTUnwrap(sut.callRegister.lookupCall(by: handle))
+
+        let rereportedTimestamps: [Date?] = [earlierStart, latestStart, earlierStart, nil]
+        for timestamp in rereportedTimestamps {
+            sut.reportIncomingCallPreemptively(
+                handle: handle,
+                callerName: "Caller",
+                hasVideo: false,
+                eventTimestamp: timestamp
+            )
+        }
+        XCTAssertEqual(callKitProvider.timesReportNewIncomingCallCalled, 5)
+
+        sut.reportCallEnded(
+            in: conversation,
+            atTime: Date(timeIntervalSince1970: latestStartSecond - 1),
+            reason: .remoteEnded
+        )
+
+        XCTAssertEqual(sut.callRegister.lookupCalls(by: handle).map(\.id), [call.id])
+        XCTAssertEqual(callKitProvider.timesReportCallEndedAtCalled, 0)
+
+        sut.reportCallEnded(
+            in: conversation,
+            atTime: Date(timeIntervalSince1970: latestStartSecond),
+            reason: .remoteEnded
+        )
+
+        XCTAssertFalse(sut.callRegister.callExists(for: call.id))
+        XCTAssertEqual(callKitProvider.timesReportCallEndedAtCalled, 1)
+    }
+
     func testThatItReportCallEndedAt_v3_Terminating_normal() {
         // given
         let conversation = conversation()

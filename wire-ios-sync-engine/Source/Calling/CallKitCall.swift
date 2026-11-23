@@ -22,7 +22,8 @@ class CallKitCall {
 
     let id: UUID
     let handle: CallHandle
-    let incomingEventTimestamp: Date?
+    // Accessed under the call register's storage lock.
+    var incomingEventTimestamp: Date?
     let observer = CallObserver()
 
     init(

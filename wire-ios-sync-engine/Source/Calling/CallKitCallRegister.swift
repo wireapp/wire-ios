@@ -44,19 +44,47 @@ class CallKitCallRegister {
 
     // MARK: - Registration
 
-    func registerNewCall(with handle: CallHandle, incomingEventTimestamp: Date? = nil) -> CallKitCall {
-        let call = CallKitCall(id: UUID(), handle: handle, incomingEventTimestamp: incomingEventTimestamp)
+    func registerNewCall(with handle: CallHandle) -> CallKitCall {
         storageLock.withLock {
-            storage[call.id] = call
-            persistStorage()
+            insertCall(with: handle, incomingEventTimestamp: nil)
         }
+    }
+
+    func registerIncomingCall(
+        with handle: CallHandle,
+        eventTimestamp: Date?
+    ) -> (call: CallKitCall, reused: Bool) {
+        storageLock.withLock {
+            if let call = storage.values.first(where: { $0.handle == handle }) {
+                if let eventTimestamp, call.incomingEventTimestamp.map({ $0 < eventTimestamp }) ?? true {
+                    call.incomingEventTimestamp = eventTimestamp
+                }
+                return (call, true)
+            }
+
+            return (insertCall(with: handle, incomingEventTimestamp: eventTimestamp), false)
+        }
+    }
+
+    private func insertCall(with handle: CallHandle, incomingEventTimestamp: Date?) -> CallKitCall {
+        let call = CallKitCall(id: UUID(), handle: handle, incomingEventTimestamp: incomingEventTimestamp)
+        storage[call.id] = call
+        persistStorage()
         return call
     }
 
-    func unregisterCall(_ call: CallKitCall) {
+    @discardableResult
+    func unregisterCall(_ call: CallKitCall, endedAt timestamp: Date? = nil) -> Bool {
         storageLock.withLock {
+            // AVS reports the server timestamp in whole seconds.
+            if let timestamp, let incomingEventTimestamp = call.incomingEventTimestamp,
+               timestamp.timeIntervalSince1970 < incomingEventTimestamp.timeIntervalSince1970.rounded(.down) {
+                return false
+            }
+
             storage.removeValue(forKey: call.id)
             persistStorage()
+            return true
         }
     }
 
