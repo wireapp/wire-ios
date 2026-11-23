@@ -533,9 +533,18 @@ public extension UserClient {
         try await proteusService.deleteSession(id: sessionID)
     }
 
+    /// Establishes a Proteus session with `client` from `preKey`.
+    ///
+    /// Unless `replacingExistingSession` is set, an existing session is kept: replacing a working session (e.g. one
+    /// the notification extension just established) would break decryption of messages the other client already
+    /// encrypted for it.
+    ///
+    /// - Parameter replacingExistingSession: Replace an existing session instead of keeping it.
+    /// - Returns: `true` if a session with `client` exists afterwards.
     func establishSessionWithClient(
         _ client: UserClient,
-        usingPreKey preKey: String
+        usingPreKey preKey: String,
+        replacingExistingSession: Bool
     ) async -> Bool {
         guard
             let context = managedObjectContext,
@@ -546,10 +555,11 @@ public extension UserClient {
         }
 
         do {
-            // swiftlint:disable:next todo_requires_jira_link
-            // TODO: check if we should delete session if it exists before creating new one
-
-            try await proteusService.establishSession(id: sessionId, fromPrekey: preKey)
+            if replacingExistingSession {
+                try await proteusService.establishSession(id: sessionId, fromPrekey: preKey)
+            } else {
+                _ = try await proteusService.establishSessionIfNeeded(id: sessionId, fromPrekey: preKey)
+            }
             return true
         } catch {
             zmLog.error("Cannot create session for prekey \(preKey): \(String(describing: error))")

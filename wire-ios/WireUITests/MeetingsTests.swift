@@ -30,27 +30,31 @@ final class MeetingsTests: WireUITestCase {
     @MainActor
     func testRecurringMeetingsGroupOccurrencesByLocalDay_TC_11935() async throws {
         let (owner, _, _, _) = try await UserHelper.default.registerMeetingsTeam(withMemberCount: 0)
-        let meetings = try await MeetingsTestHelper(user: owner)
+        let meetings = try await MeetingsTestHelper(user: owner, apiVersion: UserHelper.default.apiVersion)
         let now = day(0)
         let daily = try await meetings.create(
             title: "TC11935 daily",
             start: day(2, hour: 9),
-            recurrence: MeetingRecurrence(frequency: .daily, interval: 1, until: day(4, hour: 9))
+            recurrence: MeetingRecurrence(frequency: .daily, interval: 1, until: day(4, hour: 9)),
+            timeZoneIdentifier: TimeZone.current.identifier
         )
         let weekly = try await meetings.create(
             title: "TC11935 weekly",
             start: day(3, hour: 10),
-            recurrence: MeetingRecurrence(frequency: .weekly, interval: 1, until: day(17, hour: 10))
+            recurrence: MeetingRecurrence(frequency: .weekly, interval: 1, until: day(17, hour: 10)),
+            timeZoneIdentifier: TimeZone.current.identifier
         )
         let everyTwoWeeks = try await meetings.create(
             title: "TC11935 every two weeks",
             start: day(4, hour: 11),
-            recurrence: MeetingRecurrence(frequency: .weekly, interval: 2, until: day(32, hour: 11))
+            recurrence: MeetingRecurrence(frequency: .weekly, interval: 2, until: day(32, hour: 11)),
+            timeZoneIdentifier: TimeZone.current.identifier
         )
         let everyFourWeeks = try await meetings.create(
             title: "TC11935 every four weeks",
             start: day(5, hour: 12),
-            recurrence: MeetingRecurrence(frequency: .weekly, interval: 4, until: day(61, hour: 12))
+            recurrence: MeetingRecurrence(frequency: .weekly, interval: 4, until: day(61, hour: 12)),
+            timeZoneIdentifier: TimeZone.current.identifier
         )
 
         let meetingsPage = try launchMeetings(for: owner, now: now, locale: "en_GB")
@@ -89,22 +93,29 @@ final class MeetingsTests: WireUITestCase {
     func testMeetingsPaginationKeepsOccurrenceOrderAfterScrollingBack_TC_11936() async throws {
         executionTimeAllowance = 600
         let (owner, _, _, _) = try await UserHelper.default.registerMeetingsTeam(withMemberCount: 0)
-        let meetings = try await MeetingsTestHelper(user: owner)
+        let meetings = try await MeetingsTestHelper(user: owner, apiVersion: UserHelper.default.apiVersion)
         let now = day(0)
         // Meet Now uses the same API with a one-hour meeting that starts now.
-        let instant = try await meetings.create(title: "Meet now", start: now, duration: 3600)
+        let instant = try await meetings.create(
+            title: "Meet now",
+            start: now,
+            duration: 3600,
+            timeZoneIdentifier: TimeZone.current.identifier
+        )
         var singleMeetings: [MeetingResponse] = []
 
         for offset in [3, 12, 22, 32] {
             singleMeetings.append(try await meetings.create(
                 title: "TC11936 scheduled \(offset)",
-                start: day(offset, hour: 8)
+                start: day(offset, hour: 8),
+                timeZoneIdentifier: TimeZone.current.identifier
             ))
         }
         let daily = try await meetings.create(
             title: "TC11936 finite daily recurrence",
             start: day(2, hour: 9),
-            recurrence: MeetingRecurrence(frequency: .daily, interval: 1, until: day(42, hour: 9))
+            recurrence: MeetingRecurrence(frequency: .daily, interval: 1, until: day(42, hour: 9)),
+            timeZoneIdentifier: TimeZone.current.identifier
         )
 
         let meetingsPage = try launchMeetings(for: owner, now: now, locale: "en_GB")
@@ -122,11 +133,19 @@ final class MeetingsTests: WireUITestCase {
     @MainActor
     func testDuplicateMeetingsKeepActionsBoundToSelectedRecord_TC_11942() async throws {
         let (owner, _, _, _) = try await UserHelper.default.registerMeetingsTeam(withMemberCount: 0)
-        let fixtures = try await MeetingsTestHelper(user: owner)
+        let fixtures = try await MeetingsTestHelper(user: owner, apiVersion: UserHelper.default.apiVersion)
         let start = day(3, hour: 10)
         let originalTitle = "TC11942 same visible details"
-        let first = try await fixtures.create(title: originalTitle, start: start)
-        let second = try await fixtures.create(title: originalTitle, start: start)
+        let first = try await fixtures.create(
+            title: originalTitle,
+            start: start,
+            timeZoneIdentifier: TimeZone.current.identifier
+        )
+        let second = try await fixtures.create(
+            title: originalTitle,
+            start: start,
+            timeZoneIdentifier: TimeZone.current.identifier
+        )
         XCTAssertNotEqual(first.id, second.id, "The fixtures must be separate backend meeting records")
 
         let page = try launchMeetings(for: owner, now: day(0))
@@ -176,14 +195,19 @@ final class MeetingsTests: WireUITestCase {
     func testMeetingsRefreshAfterBackgroundResume_TC_11944() async throws {
         executionTimeAllowance = 600
         let (owner, _, _, _) = try await UserHelper.default.registerMeetingsTeam()
-        let fixtures = try await MeetingsTestHelper(user: owner)
+        let fixtures = try await MeetingsTestHelper(user: owner, apiVersion: UserHelper.default.apiVersion)
         var initial: [MeetingResponse] = []
         for offset in 2 ... 6 {
-            initial.append(try await fixtures.create(title: "Meeting \(offset)", start: day(offset)))
+            initial.append(try await fixtures.create(
+                title: "Meeting \(offset)",
+                start: day(offset),
+                timeZoneIdentifier: TimeZone.current.identifier
+            ))
         }
         let recurring = try await fixtures.create(
             title: "Meetings across loaded pages", start: day(7),
-            recurrence: MeetingRecurrence(frequency: .daily, interval: 1, until: day(41))
+            recurrence: MeetingRecurrence(frequency: .daily, interval: 1, until: day(41)),
+            timeZoneIdentifier: TimeZone.current.identifier
         )
         let recurringRows = (7 ... 41).map { (recurring, day($0)) }
         let page = try launchMeetings(for: owner, now: day(0))
@@ -200,7 +224,11 @@ final class MeetingsTests: WireUITestCase {
         )
         let deleted = initial[0]
         try await fixtures.delete(deleted)
-        let created = try await fixtures.create(title: "Created while backgrounded", start: day(43))
+        let created = try await fixtures.create(
+            title: "Created while backgrounded",
+            start: day(43),
+            timeZoneIdentifier: TimeZone.current.identifier
+        )
 
         app.activate()
         XCTAssertTrue(app.wait(for: .runningForeground, timeout: 5))
@@ -224,9 +252,17 @@ final class MeetingsTests: WireUITestCase {
     @MainActor
     func testMeetingsListRetryAfterFetchFailure_TC_11947() async throws {
         let (owner, _, _, _) = try await UserHelper.default.registerMeetingsTeam()
-        let fixtures = try await MeetingsTestHelper(user: owner)
-        let first = try await fixtures.create(title: "Retry first", start: day(1))
-        let second = try await fixtures.create(title: "Retry second", start: day(2))
+        let fixtures = try await MeetingsTestHelper(user: owner, apiVersion: UserHelper.default.apiVersion)
+        let first = try await fixtures.create(
+            title: "Retry first",
+            start: day(1),
+            timeZoneIdentifier: TimeZone.current.identifier
+        )
+        let second = try await fixtures.create(
+            title: "Retry second",
+            start: day(2),
+            timeZoneIdentifier: TimeZone.current.identifier
+        )
         let failureID = UUID().uuidString
         let name = "\(UITestConfig.meetingsFailureNotificationPrefix).\(failureID)"
         var token: Int32 = NOTIFY_TOKEN_INVALID
@@ -259,11 +295,16 @@ final class MeetingsTests: WireUITestCase {
     @MainActor
     func testCompletedMeetingsRemainUntilLocalMidnight_TC_11934() async throws {
         let (owner, _, _, _) = try await UserHelper.default.registerMeetingsTeam()
-        let fixtures = try await MeetingsTestHelper(user: owner)
-        let oneOff = try await fixtures.create(title: "Completed one-off", start: day(0, hour: 10))
+        let fixtures = try await MeetingsTestHelper(user: owner, apiVersion: UserHelper.default.apiVersion)
+        let oneOff = try await fixtures.create(
+            title: "Completed one-off",
+            start: day(0, hour: 10),
+            timeZoneIdentifier: TimeZone.current.identifier
+        )
         let recurring = try await fixtures.create(
             title: "Completed daily occurrence", start: day(0, hour: 11),
-            recurrence: MeetingRecurrence(frequency: .daily, interval: 1, until: day(1, hour: 11))
+            recurrence: MeetingRecurrence(frequency: .daily, interval: 1, until: day(1, hour: 11)),
+            timeZoneIdentifier: TimeZone.current.identifier
         )
         let calendar = Calendar.current
         let beforeMidnight = try XCTUnwrap(calendar.date(bySettingHour: 23, minute: 59, second: 0, of: day(0)))
@@ -300,15 +341,28 @@ final class MeetingsTests: WireUITestCase {
             names: ["Mira Host", "Aaron One", "Bella Two", "Clara Three", "Dario Four", "Elena Five", "Felix Six"]
         )
         try await registerClients(for: members)
-        let fixtures = try await MeetingsTestHelper(user: owner)
+        let fixtures = try await MeetingsTestHelper(user: owner, apiVersion: UserHelper.default.apiVersion)
         let now = day(0)
         let morning = try await fixtures.create(
             title: "Morning planning", start: day(0, hour: 10),
-            recurrence: MeetingRecurrence(frequency: .daily, interval: 1, until: day(0, hour: 11))
+            recurrence: MeetingRecurrence(frequency: .daily, interval: 1, until: day(0, hour: 11)),
+            timeZoneIdentifier: TimeZone.current.identifier
         )
-        let afternoon = try await fixtures.create(title: "Afternoon review", start: day(0, hour: 14))
-        let tomorrow = try await fixtures.create(title: "Tomorrow planning", start: day(1))
-        let future = try await fixtures.create(title: "Future planning", start: day(3))
+        let afternoon = try await fixtures.create(
+            title: "Afternoon review",
+            start: day(0, hour: 14),
+            timeZoneIdentifier: TimeZone.current.identifier
+        )
+        let tomorrow = try await fixtures.create(
+            title: "Tomorrow planning",
+            start: day(1),
+            timeZoneIdentifier: TimeZone.current.identifier
+        )
+        let future = try await fixtures.create(
+            title: "Future planning",
+            start: day(3),
+            timeZoneIdentifier: TimeZone.current.identifier
+        )
         let expected = [morning, afternoon, tomorrow, future]
 
         for locale in ["en_GB", "en_US@hours=h12"] {
@@ -365,9 +419,17 @@ final class MeetingsTests: WireUITestCase {
         )
         let invitee = try XCTUnwrap(members.first)
         try await registerClients(for: [invitee])
-        let fixtures = try await MeetingsTestHelper(user: host)
-        let initial = try await fixtures.create(title: "Initial title", start: day(3, hour: 10))
-        let unchanged = try await fixtures.create(title: "Unchanged meeting", start: day(2))
+        let fixtures = try await MeetingsTestHelper(user: host, apiVersion: UserHelper.default.apiVersion)
+        let initial = try await fixtures.create(
+            title: "Initial title",
+            start: day(3, hour: 10),
+            timeZoneIdentifier: TimeZone.current.identifier
+        )
+        let unchanged = try await fixtures.create(
+            title: "Unchanged meeting",
+            start: day(2),
+            timeZoneIdentifier: TimeZone.current.identifier
+        )
         let hostPage = try launchMeetings(for: host, now: day(0))
         try hostPage.edit(unchanged).addParticipants([invitee]).save()
         try hostPage.edit(initial).addParticipants([invitee]).save()
@@ -407,9 +469,13 @@ final class MeetingsTests: WireUITestCase {
         let host = members[0]
         let invitee = members[1]
         try await registerClients(for: [invitee])
-        let hostFixtures = try await MeetingsTestHelper(user: host)
-        let inviteeFixtures = try await MeetingsTestHelper(user: invitee)
-        let meeting = try await hostFixtures.create(title: "Member-host meeting", start: day(3))
+        let hostFixtures = try await MeetingsTestHelper(user: host, apiVersion: UserHelper.default.apiVersion)
+        let inviteeFixtures = try await MeetingsTestHelper(user: invitee, apiVersion: UserHelper.default.apiVersion)
+        let meeting = try await hostFixtures.create(
+            title: "Member-host meeting",
+            start: day(3),
+            timeZoneIdentifier: TimeZone.current.identifier
+        )
         let hostPage = try launchMeetings(for: host, now: day(0))
         try hostPage.edit(meeting).addParticipants([invitee]).save()
         try assertMenu(on: hostPage, meeting: meeting, isHost: true)

@@ -17,12 +17,17 @@
 //
 
 import WireDataModelSupport
+import WireDomainSupport
 import WireSyncEngineSupport
+import WireTesting
 import XCTest
+
+@testable import WireDomain
 
 final class E2EIdentityCertificateUpdateStatusUseCaseTests: XCTestCase {
 
     private var mockGetE2eIdentityCertificates: MockGetE2eIdentityCertificatesUseCaseProtocol!
+    private var mockFeatureConfigRepository: MockFeatureConfigRepositoryProtocol!
     private var stack: CoreDataStack!
     private var sut: E2EIdentityCertificateUpdateStatusUseCase!
     private var userID: UUID!
@@ -36,9 +41,16 @@ final class E2EIdentityCertificateUpdateStatusUseCaseTests: XCTestCase {
         await stack.syncContext.perform { [self] in
             let conversation = ModelHelper().createSelfMLSConversation(in: stack.syncContext)
             conversation.mlsGroupID = .random()
+            ModelHelper().createSelfUser(domain: "example.com", in: stack.syncContext)
+            ModelHelper().createSelfClient(in: stack.syncContext)
         }
 
         mockGetE2eIdentityCertificates = MockGetE2eIdentityCertificatesUseCaseProtocol()
+        mockFeatureConfigRepository = MockFeatureConfigRepositoryProtocol()
+        mockFeatureConfigRepository.fetchE2EIConfig_MockValue = LocalFeature(
+            status: .enabled,
+            config: .init(verificationExpiration: 0)
+        )
 
         userDefaults = .temporary()
         userID = UUID.create()
@@ -46,18 +58,13 @@ final class E2EIdentityCertificateUpdateStatusUseCaseTests: XCTestCase {
             userID: userID,
             sharedUserDefaults: userDefaults
         )
-        sut = E2EIdentityCertificateUpdateStatusUseCase(
-            getE2eIdentityCertificates: mockGetE2eIdentityCertificates,
-            gracePeriod: 0,
-            mlsClientID: .random(),
-            context: stack.syncContext,
-            lastE2EIUpdateDateRepository: nil
-        )
+        sut = makeSUT(lastE2EIUpdateDateRepository: nil)
     }
 
     override func tearDown() async throws {
         stack = nil
         mockGetE2eIdentityCertificates = nil
+        mockFeatureConfigRepository = nil
         userID = nil
         userDefaults = nil
         sut = nil
@@ -65,8 +72,49 @@ final class E2EIdentityCertificateUpdateStatusUseCaseTests: XCTestCase {
         try await super.tearDown()
     }
 
+    private func makeSUT(
+        lastE2EIUpdateDateRepository: LastE2EIdentityUpdateDateRepositoryInterface?
+    ) -> E2EIdentityCertificateUpdateStatusUseCase {
+        E2EIdentityCertificateUpdateStatusUseCase(
+            getE2eIdentityCertificates: mockGetE2eIdentityCertificates,
+            featureConfigRepository: mockFeatureConfigRepository,
+            localDomain: "example.com",
+            context: stack.syncContext,
+            lastE2EIUpdateDateRepository: lastE2EIUpdateDateRepository
+        )
+    }
+
     private func update(certificate: E2eIdentityCertificate) {
         mockGetE2eIdentityCertificates.invokeMlsGroupIdClientIds_MockValue = [certificate]
+    }
+
+    func testThatItThrowsFeatureDisabled_WhenE2EIIsDisabled() async throws {
+        // Given
+        mockFeatureConfigRepository.fetchE2EIConfig_MockValue = LocalFeature(status: .disabled, config: nil)
+        update(certificate: certificate(with: .oneWeek - .oneSecond))
+
+        // When / Then
+        await XCTAssertThrowsErrorAsync(
+            E2EIdentityCertificateUpdateStatusUseCase.Failure.featureDisabled,
+            when: { try await self.sut.invoke() }
+        )
+    }
+
+    func testThatItUsesTheCurrentFeatureStateOnEveryInvocation() async throws {
+        // Given: the use case was created while e2ei was disabled
+        mockFeatureConfigRepository.fetchE2EIConfig_MockValue = LocalFeature(status: .disabled, config: nil)
+        sut = makeSUT(lastE2EIUpdateDateRepository: nil)
+        update(certificate: certificate(with: .oneWeek - .oneSecond))
+
+        // When e2ei gets enabled later
+        mockFeatureConfigRepository.fetchE2EIConfig_MockValue = LocalFeature(
+            status: .enabled,
+            config: .init(verificationExpiration: 0)
+        )
+        let result = try await sut.invoke()
+
+        // Then
+        XCTAssertEqual(result, .reminder)
     }
 
     func testThatItReturnsNoAction_WhenExpiryDateIsBeyondNudgingDate() async throws {
@@ -94,13 +142,7 @@ final class E2EIdentityCertificateUpdateStatusUseCaseTests: XCTestCase {
     func testThatItReturnsNoAction_WhenExpiryDateIsWithInSevenDaysAndLastAlertWasDisplayedToday() async throws {
         // Given
         lastE2EIUpdateDateRepository.storeLastAlertDate(Date.now)
-        sut = E2EIdentityCertificateUpdateStatusUseCase(
-            getE2eIdentityCertificates: mockGetE2eIdentityCertificates,
-            gracePeriod: 0,
-            mlsClientID: .random(),
-            context: stack.syncContext,
-            lastE2EIUpdateDateRepository: lastE2EIUpdateDateRepository
-        )
+        sut = makeSUT(lastE2EIUpdateDateRepository: lastE2EIUpdateDateRepository)
         update(certificate: certificate(with: .oneWeek))
 
         // When
@@ -113,13 +155,7 @@ final class E2EIdentityCertificateUpdateStatusUseCaseTests: XCTestCase {
     func testThatItReturnsReminder_WhenExpiryDateIsWithInSevenDaysAndLastAlertWasDisplayedNotToday() async throws {
         // Given
         lastE2EIUpdateDateRepository.storeLastAlertDate(Date.now - .oneDay)
-        sut = E2EIdentityCertificateUpdateStatusUseCase(
-            getE2eIdentityCertificates: mockGetE2eIdentityCertificates,
-            gracePeriod: 0,
-            mlsClientID: .random(),
-            context: stack.syncContext,
-            lastE2EIUpdateDateRepository: lastE2EIUpdateDateRepository
-        )
+        sut = makeSUT(lastE2EIUpdateDateRepository: lastE2EIUpdateDateRepository)
         update(certificate: certificate(with: .oneWeek - .oneSecond))
 
         // When
@@ -141,13 +177,7 @@ final class E2EIdentityCertificateUpdateStatusUseCaseTests: XCTestCase {
     func testThatItReturnsNoAction_WhenExpiryDateIsWithInOneDayAndAlertWasShownWithinFourHours() async throws {
         // Given
         lastE2EIUpdateDateRepository.storeLastAlertDate(Date.now)
-        sut = E2EIdentityCertificateUpdateStatusUseCase(
-            getE2eIdentityCertificates: mockGetE2eIdentityCertificates,
-            gracePeriod: 0,
-            mlsClientID: .random(),
-            context: stack.syncContext,
-            lastE2EIUpdateDateRepository: lastE2EIUpdateDateRepository
-        )
+        sut = makeSUT(lastE2EIUpdateDateRepository: lastE2EIUpdateDateRepository)
         update(certificate: certificate(with: .oneHour * 4))
 
         // When
@@ -160,13 +190,7 @@ final class E2EIdentityCertificateUpdateStatusUseCaseTests: XCTestCase {
     func testThatItReturnsNoAction_WhenExpiryDateIsWithInOneDayAndAlertWasShownBeyondFourHours() async throws {
         // Given
         lastE2EIUpdateDateRepository.storeLastAlertDate(Date.now)
-        sut = E2EIdentityCertificateUpdateStatusUseCase(
-            getE2eIdentityCertificates: mockGetE2eIdentityCertificates,
-            gracePeriod: 0,
-            mlsClientID: .random(),
-            context: stack.syncContext,
-            lastE2EIUpdateDateRepository: lastE2EIUpdateDateRepository
-        )
+        sut = makeSUT(lastE2EIUpdateDateRepository: lastE2EIUpdateDateRepository)
         update(certificate: certificate(with: .oneHour * 5))
 
         // When
@@ -215,9 +239,21 @@ final class E2EIdentityCertificateUpdateStatusUseCaseTests: XCTestCase {
         XCTAssertEqual(result, .block)
     }
 
+    func testThatItReturnsNoAction_WhenCertificateWasNeverActivated() async throws {
+        // Given
+        update(certificate: certificate(with: -.oneDay, certificateStatus: .notActivated))
+
+        // When
+        let result = try await sut.invoke()
+
+        // Then
+        XCTAssertEqual(result, .noAction)
+    }
+
     private func certificate(
         with expiry: TimeInterval,
-        serverStoragePeriod: TimeInterval = 0
+        serverStoragePeriod: TimeInterval = 0,
+        certificateStatus: E2EIdentityCertificateStatus = .valid
     ) -> E2eIdentityCertificate {
         E2eIdentityCertificate(
             clientId: "sdfsdfsdfs",
@@ -225,7 +261,7 @@ final class E2EIdentityCertificateUpdateStatusUseCaseTests: XCTestCase {
             mlsThumbprint: "ABCDEFGHIJKLMNOPQRSTUVWX",
             notValidBefore: Date.now,
             expiryDate: Date.now + expiry,
-            certificateStatus: .valid,
+            certificateStatus: certificateStatus,
             serialNumber: .mockSerialNumber,
             serverStoragePeriod: serverStoragePeriod,
             randomPeriod: 0

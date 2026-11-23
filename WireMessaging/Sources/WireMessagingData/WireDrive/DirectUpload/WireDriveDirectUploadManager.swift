@@ -131,8 +131,9 @@ package final class WireDriveDirectUploadManager:
 
     // MARK: - Lifecycle
 
-    package func start() async {
-        guard !didStart else { return }
+    @discardableResult
+    package func start() async -> Bool {
+        guard !didStart else { return true }
 
         var persisted: [WireDriveDirectUploadRecord] = []
         do {
@@ -150,10 +151,11 @@ package final class WireDriveDirectUploadManager:
 
         await session.setEventSink(self)
 
-        guard didStart else { return }
+        guard didStart else { return false }
 
         await reconcile()
         sweepOrphanedStagedFiles()
+        return true
     }
 
     package func tearDown() async {
