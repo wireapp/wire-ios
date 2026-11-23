@@ -342,10 +342,11 @@ final class ZClientViewController: UIViewController {
                     await self?.mainCoordinator.showConversationList(conversationFilter: nil)
                 }
             }
-            mainTabBarController.filesUI = nil
+            mainTabBarController.showFiles = false
             return
         }
 
+        mainTabBarController.showFiles = true
         let filesBrowserView = wireMessagingFactory.makeFilesBrowserView { [weak self] in
             guard let self else { return .default }
             let selfUserColorRawValue = userSession.selfUser.accentColorValue

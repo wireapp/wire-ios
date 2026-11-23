@@ -73,6 +73,14 @@ public final class MainTabBarController<
         set { setFilesUI(newValue, animated: false) }
     }
 
+    public var showFiles: Bool {
+        didSet {
+            if !showFiles {
+                setFilesUI(nil, animated: false)
+            }
+        }
+    }
+
     /// The currently selected tab's content identity.
     ///
     /// Backed by ``orderedContents`` rather than the enum's `rawValue` directly:
@@ -113,7 +121,6 @@ public final class MainTabBarController<
     private weak var _conversationUI: ConversationUI?
     private weak var _settingsContentUI: UIViewController?
     private var showMeetings: Bool
-    private var showFiles: Bool
 
     /// Contents whose nav controller is currently installed, in canonical
     /// visual order. Derived from `MainTabBarControllerContent.allCases` (which
@@ -385,7 +392,7 @@ public final class MainTabBarController<
         let previousSelection = selectedContent
         _filesUI = filesUI
 
-        guard let filesUI else {
+        if !showFiles {
             guard filesNavigationController != nil else { return }
             filesNavigationController = nil
             setViewControllers(orderedContents.compactMap { navController(for: $0) }, animated: animated)
@@ -393,7 +400,7 @@ public final class MainTabBarController<
             return
         }
 
-        if filesNavigationController == nil {
+        if filesNavigationController == nil, filesUI != nil {
             let filesNavigationController = UINavigationController()
             filesNavigationController.navigationBar.isTranslucent = false
             // Compute the insertion index BEFORE the property assignment:
@@ -409,7 +416,7 @@ public final class MainTabBarController<
 
         filesNavigationController?.view.backgroundColor = ColorTheme.Backgrounds.surface
 
-        filesNavigationController?.setViewControllers([filesUI], animated: animated)
+        filesNavigationController?.setViewControllers([filesUI].compactMap(\.self), animated: animated)
         filesNavigationController?.view.layoutIfNeeded()
     }
 
