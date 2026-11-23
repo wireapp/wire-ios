@@ -542,7 +542,7 @@ final class ConversationInputBarViewController: UIViewController,
 
     func updateDriveViewerState() {
         let isViewer = isDriveViewer
-        [photoButton, videoButton, sketchButton, uploadFileButton].forEach {
+        [photoButton, videoButton, sketchButton, uploadFileButton, audioButton].forEach {
             $0.isEnabled = !isViewer
             $0.setBackgroundImageColor(ColorTheme.Buttons.Secondary.disabled, for: .disabled)
             if isViewer {
@@ -1310,7 +1310,8 @@ extension ConversationInputBarViewController: UIGestureRecognizerDelegate {
         sketchButton.accessibilityLabel = showDriveViewerBanner ? Conversation.SketchButtonDisabled
             .description : Conversation.SketchButton.description
         gifButton.accessibilityLabel = Conversation.GifButton.description
-        audioButton.accessibilityLabel = Conversation.AudioButton.description
+        audioButton.accessibilityLabel = showDriveViewerBanner ? Conversation.AudioButtonDisabled
+            .description : Conversation.AudioButton.description
         pingButton.accessibilityLabel = Conversation.PingButton.description
         uploadFileButton.accessibilityLabel = showDriveViewerBanner ? Conversation.UploadFileButtonDisabled
             .description : Conversation.UploadFileButton.description

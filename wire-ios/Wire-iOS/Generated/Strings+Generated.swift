@@ -330,6 +330,10 @@ internal enum L10n {
         /// Record an audio message
         internal static let description = L10n.tr("Accessibility", "conversation.audioButton.description", fallback: "Record an audio message")
       }
+      internal enum AudioButtonDisabled {
+        /// Record an audio message, disabled in viewer access
+        internal static let description = L10n.tr("Accessibility", "conversation.audioButtonDisabled.description", fallback: "Record an audio message, disabled in viewer access")
+      }
       internal enum BackButton {
         /// Go back to conversation list
         internal static let description = L10n.tr("Accessibility", "conversation.backButton.description", fallback: "Go back to conversation list")
