@@ -87,11 +87,11 @@ private enum FlagSection: String, CaseIterable {
         switch flag {
         case .newRegistration, .useWireAuthentication:
             self = .authentication
-        case .channelsHistory, .chatBubbles, .showUnreadConversationsFilter:
+        case .channelsHistory, .chatBubbles, .offlinePendingMessages, .showUnreadConversationsFilter:
             self = .conversations
         case .shakeToReport, .unSafeLogsForPublic:
             self = .diagnostics
-        case .enableDriveBulkActions, .simulateDriveOffline, .simulateAppTerminationInBackground:
+        case .simulateDriveOffline, .simulateAppTerminationInBackground:
             self = .drive
         case .enabledCCDebugLogs, .forceCRLExpiryAfterOneMinute, .lowKeyPackageCount,
              .showCreateMLSGroupToggle, .simulateUnestablishedMLSGroup, .skipMLSMessagesDecryption:

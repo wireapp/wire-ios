@@ -11,6 +11,17 @@ on:
           - cirrus
           - github
         default: in-house
+      uitest_parallel_workers:
+        description: 'UITest parallel simulator workers'
+        type: choice
+        options:
+          - '1'
+          - '2'
+          - '3'
+          - '4'
+          - '5'
+          - '6'
+        default: '6'
   schedule:
     - cron: "0 21 * * MON-FRI"
   
@@ -21,14 +32,15 @@ concurrency:
 
 jobs:
   trigger_tests:
-    if: ${{ github.ref == 'refs/heads/develop' }}
+    if: ${{ github.ref == 'refs/heads/develop' || github.event_name == 'workflow_dispatch' }}
     uses: ./.github/workflows/_reusable_run_tests.yml
     with:
       all: false
-      branch: develop
+      branch: ${{ github.event_name == 'workflow_dispatch' && github.ref_name || 'develop' }}
       mac_runner: ${{ github.event_name == 'workflow_dispatch' && inputs.mac_runner || vars.DEFAULT_MAC_RUNNER }}
       run_critical_flows: true
       ui_test_tags: "!critical"
+      uitest_parallel_workers: ${{ github.event_name == 'workflow_dispatch' && inputs.uitest_parallel_workers || '6' }}
       notify: always
       timeout_minutes: 180
     secrets:
@@ -37,3 +49,4 @@ jobs:
       OP_SERVICE_ACCOUNT_TOKEN: ${{ secrets.OP_SERVICE_ACCOUNT_TOKEN }}
       WIRE_WEBHOOK_URL: ${{ secrets.WIRE_IOS_NIGHTLY_URL }}
       WIRE_WEBHOOK_TOKEN: ${{ secrets.WIRE_IOS_NIGHTLY_TOKEN }}
+

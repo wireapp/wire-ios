@@ -546,7 +546,9 @@ public final class ClientSessionComponent {
         userClientsLocalStore: userClientsLocalStore,
         messageLocalStore: messageLocalStore,
         userLocalStore: userLocalStore,
-        conversationLocalStore: conversationLocalStore
+        conversationLocalStore: conversationLocalStore,
+        bufferedMessageRecoveryTracker: BufferedMLSMessageRecoveryTracker(journal: journal),
+        proteusSessionRepairScheduler: ProteusSessionRepairScheduler(journal: journal, context: syncContext)
     )
 
     private lazy var conversationAccessUpdateEventProcessor = ConversationAccessUpdateEventProcessor(

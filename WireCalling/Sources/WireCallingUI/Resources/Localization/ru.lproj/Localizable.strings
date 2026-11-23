@@ -46,6 +46,9 @@
 "wireMeetings.list.header.yesterday" = "Вчера";
 "wireMeetings.list.header.ongoing" = "В настоящее время";
 "wireMeetings.list.attending" = "Участвует";
+"wireMeetings.list.emailInvitees.count" = "%d получателей приглашения по email";
+"wireMeetings.list.emailInvitees.expanded" = "Развернуто";
+"wireMeetings.list.emailInvitees.collapsed" = "Свернуто";
 "wireMeetings.list.actions.edit" = "Изменить встречу";
 "wireMeetings.list.actions.delete" = "Удалить встречу для всех";
 "wireMeetings.list.actions.deleteForMe" = "Удалить встречу для меня";
@@ -69,7 +72,17 @@
 "wireMeetings.link.passwordProtected" = "Ссылка защищена паролем. Чтобы установить новый пароль, сгенерируйте новую ссылку.";
 "wireMeetings.link.notPasswordProtected" = "Эта ссылка не защищена паролем. Убедитесь, что делитесь ею только с нужными людьми. Чтобы установить пароль, сгенерируйте новую ссылку.";
 "wireMeetings.link.copy" = "Скопировать ссылку";
+"wireMeetings.link.confirmation.description" = "Мы отправили эту ссылку по email вашим участникам. Поделитесь ею, если хотите пригласить больше участников.";
+"wireMeetings.link.confirmation.sharingDescription" = "Поделитесь этой ссылкой, чтобы пригласить участников.";
+"wireMeetings.link.confirmation.instantTitle" = "Пригласить гостей по ссылке";
+"wireMeetings.link.confirmation.close" = "Закрыть";
 "wireMeetings.link.copied" = "Ссылка скопирована в буфер обмена";
+"wireMeetings.link.generate" = "Создать новую ссылку";
+"wireMeetings.link.consequence" = "Все предыдущие ссылки на эту встречу будут аннулированы и будет создана новая ссылка.";
+"wireMeetings.link.creating" = "Создание...";
+"wireMeetings.link.created" = "Создана новая ссылка. Прежние ссылки больше не работают.";
+"wireMeetings.link.close" = "Закрыть";
+"wireMeetings.link.createError" = "Не удалось создать ссылку на встречу. Попробуйте еще раз.";
 "wireMeetings.link.unavailable" = "Ссылка на встречу недоступна.";
 "wireMeetings.link.loadError" = "Не удалось загрузить ссылку на встречу. Попробуйте еще раз.";
 
@@ -110,6 +123,7 @@
 "wireMeetings.schedule.setupTitle.placeholder" = "Введите название встречи";
 "wireMeetings.schedule.setupTitle.error.tooLong" = "Слишком много символов";
 "wireMeetings.schedule.password.title" = "Установить пароль для ссылки на встречу (необязательно)";
+"wireMeetings.schedule.password.reminder" = "Скопируйте этот пароль перед созданием ссылки. Он отображается единственный раз.";
 "wireMeetings.schedule.password.placeholder" = "Введите пароль";
 "wireMeetings.schedule.password.requirements" = "Используйте как минимум %d символов, включая одну строчную букву, одну заглавную букву, цифру и специальный символ.";
 "wireMeetings.schedule.password.copy" = "Скопировать пароль";

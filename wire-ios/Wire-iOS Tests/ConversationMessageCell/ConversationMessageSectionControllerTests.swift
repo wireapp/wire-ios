@@ -137,6 +137,50 @@ final class ConversationMessageSectionControllerTests: XCTestCase {
         XCTAssertTrue(cellDescriptions[1].instance is ConversationMessageToolboxCellDescription)
     }
 
+    func testCellGrouping_OfflineNoticeAbove() throws {
+        // GIVEN
+        let message = MockMessageFactory.textMessage(withText: "Hello")
+        let context = ConversationMessageContext(
+            isSameSenderAsPrevious: true,
+            isTimestampInSameMinuteAsPreviousMessage: true,
+            offlineNotice: .above
+        )
+
+        // WHEN
+        let section = makeSUT(message: message, context: context)
+
+        // THEN
+        let cellDescriptions = section.cellDescriptionsForTesting
+        guard cellDescriptions.count == 4 else {
+            return XCTFail("Expected 4 cells")
+        }
+
+        XCTAssertTrue(cellDescriptions[0].instance is ConversationOfflineNoticeCellDescription)
+        XCTAssertTrue(cellDescriptions[1].instance is ConversationSenderMessageCellDescription)
+        XCTAssertTrue(cellDescriptions[2].instance is ConversationTextMessageCellDescription)
+        XCTAssertTrue(cellDescriptions[3].instance is ConversationMessageToolboxCellDescription)
+    }
+
+    func testCellGrouping_OfflineNoticeBelow() throws {
+        // GIVEN
+        let message = MockMessageFactory.textMessage(withText: "Hello")
+        let context = ConversationMessageContext(isSameSenderAsPrevious: false, offlineNotice: .below)
+
+        // WHEN
+        let section = makeSUT(message: message, context: context)
+
+        // THEN
+        let cellDescriptions = section.cellDescriptionsForTesting
+        guard cellDescriptions.count == 4 else {
+            return XCTFail("Expected 4 cells")
+        }
+
+        XCTAssertTrue(cellDescriptions[0].instance is ConversationSenderMessageCellDescription)
+        XCTAssertTrue(cellDescriptions[1].instance is ConversationTextMessageCellDescription)
+        XCTAssertTrue(cellDescriptions[2].instance is ConversationMessageToolboxCellDescription)
+        XCTAssertTrue(cellDescriptions[3].instance is ConversationOfflineNoticeCellDescription)
+    }
+
     func testCellGrouping_PreviousMessageIsKnock() throws {
         // Given
         let message = MockMessageFactory.textMessage(withText: "Hello")

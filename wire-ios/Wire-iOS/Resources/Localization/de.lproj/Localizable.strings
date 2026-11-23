@@ -675,6 +675,8 @@
 
 "content.system.message_conversation_scheduled_for_deletion.text" = "Diese Gruppe wird am %@ automatisch gelöscht, da es keine berechtigten Gruppen-Admins gibt.";
 "content.system.message_conversation_scheduled_for_deletion.read_more.text" = "Mehr erfahren";
+"content.system.offline_notice.title" = "Sie sind offline.";
+"content.system.offline_notice.message" = "Ihre Nachrichten werden gesendet, sobald Sie wieder online sind.";
 
 //
 "content.system.is_verified" = "Alle Fingerabdrücke sind überprüft";
@@ -1053,9 +1055,13 @@
 "message.delete_dialog.action.cancel" = "Abbrechen";
 "message.delete_dialog.action.hide" = "Für mich löschen";
 "message.delete_dialog.action.delete" = "Für alle löschen";
+"message.delete_pending_failed.title" = "Nachricht wird gesendet";
+"message.delete_pending_failed.message" = "Sie können diese Nachricht löschen, sobald sie gesendet wurde.";
 
 // Edit message
 "message.menu.edit.title" = "Bearbeiten";
+"message.edit_pending_failed.title" = "Nachricht wird gesendet";
+"message.edit_pending_failed.message" = "Sie können diese Nachricht bearbeiten, sobald sie gesendet wurde.";
 
 // Accept connection request
 "profile.connection_request_dialog.title" = "Annehmen?";

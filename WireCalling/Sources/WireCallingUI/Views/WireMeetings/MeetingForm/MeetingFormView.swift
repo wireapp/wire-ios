@@ -644,7 +644,12 @@ struct MeetingPasswordSection: View {
                 isPasswordCopied = false
             }
         } header: {
-            Text(Strings.Password.title)
+            VStack(alignment: .leading) {
+                Text(Strings.Password.title)
+                Text(Strings.Password.reminder)
+                    .fontWeight(.semibold)
+                    .accessibilityIdentifier(Locators.WireMeetings.MeetingForm.passwordReminder)
+            }
         } footer: {
             VStack(alignment: .leading) {
                 if !confirmPassword.isEmpty, !passwordsMatch {

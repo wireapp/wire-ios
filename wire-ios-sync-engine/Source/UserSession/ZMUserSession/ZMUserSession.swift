@@ -674,6 +674,8 @@ public final class ZMUserSession: NSObject {
             coreCryptoProvider.registerPkiEnvironmentHooks(hooks)
         }
 
+        observeE2EIActivationDate()
+
         coreCryptoProvider.registerMlsTransport(clientSessionComponent.mlsTransport)
 
         let syncAgent = SyncAgent(
@@ -813,6 +815,9 @@ public final class ZMUserSession: NSObject {
 
     public func tearDown() {
         guard !isTornDown else { return }
+        isTornDown = true
+        syncStateCancellable?.cancel()
+        syncStateCancellable = nil
 
         Task {
             await clientSessionComponent?.workAgent.clearSchedulerQueue()
@@ -829,6 +834,8 @@ public final class ZMUserSession: NSObject {
         appLockController.delegate = nil
         applicationStatusDirectory.clientRegistrationStatus.registrationStatusDelegate = nil
 
+        // Pending messages waiting for the network must stop before the contexts are closed below.
+        strategyDirectory?.cancelPendingSends()
         syncAgent?.tearDown()
         syncAgent = nil
         syncStrategy?.tearDown()
@@ -857,7 +864,6 @@ public final class ZMUserSession: NSObject {
         NotificationCenter.default.removeObserver(self)
         WireLogger.authentication.clearClientID()
 
-        isTornDown = true
     }
 
     // MARK: - Methods
@@ -1234,12 +1240,38 @@ extension ZMUserSession: ZMNetworkStateDelegate {
 
     private func observeSyncStateForAVS(syncStateSubject: CurrentValueSubject<SyncState, Never>) {
         syncStateCancellable = syncStateSubject
+            .handleEvents(receiveOutput: { [weak self] state in
+                if state == .suspended {
+                    self?.notifyAVSDidProcessEvents()
+                }
+            })
             .map { $0 == .liveSyncing(.ongoing) }
             .removeDuplicates()
             .sink { [weak self] isOngoing in
                 guard let self else { return }
                 notifyAVSOfLiveSyncState(isLiveSyncOngoing: isOngoing)
             }
+    }
+
+    /// Starts the e2ei grace-period clock when e2ei is enabled (unless it is already running)
+    /// and clears it when e2ei is disabled.
+    private func observeE2EIActivationDate() {
+        guard let featureConfigRepository = clientSessionComponent?.featureConfigRepository else { return }
+
+        featureConfigRepository.observeFeatureStates()
+            .filter { $0.name == .e2ei }
+            .sink { [weak self] featureState in
+                guard let self else { return }
+
+                if featureState.isEnabled {
+                    if e2eiActivationDateRepository.e2eiActivatedAt == nil {
+                        e2eiActivationDateRepository.storeE2EIActivationDate(.now)
+                    }
+                } else {
+                    e2eiActivationDateRepository.removeE2EIActivationDate()
+                }
+            }
+            .store(in: &cancellables)
     }
 
 }
@@ -1721,7 +1753,7 @@ extension ZMUserSession {
                 clientId: callEventInfo.clientID
             )
 
-            callCenter.processCallEvent(callEvent)
+            callCenter.processCallEvent(callEvent, senderDomain: callEventInfo.userDomain)
         }
 
     }

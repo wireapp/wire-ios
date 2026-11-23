@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import SwiftUI
 import WireCallingAssembly
 import WireCommonComponents
 import WireData
@@ -109,7 +110,11 @@ final class ZClientControllerBuilder {
             fileCache: userSession.fileAssetCache,
             contextProvider: DefaultManagedObjectContextProvider(contextProvider: userSession.contextProvider),
             analyticsProvider: { [self] in userSession.analyticsEventTracker },
-            selfUserID: account.userIdentifier,
+            accountInfo: WireDriveAccountInfo(
+                userID: account.userIdentifier,
+                name: account.userName,
+                handle: account.handle
+            ),
             uploadSessions: AppDependencies.wireDriveUploadSessions,
             uploadStagingDirectory: driveUploadStagingURL
         )
@@ -117,6 +122,7 @@ final class ZClientControllerBuilder {
         // The database exists by this point, so persisted uploads can be reconciled against the
         // background session. Until this runs, the session buffers its events rather than losing
         // them, which is what makes a background relaunch safe.
+        factory.startDirectUploadsLiveActivity()
         Task { await factory.startDirectUploads() }
 
         return factory
@@ -152,6 +158,17 @@ final class ZClientControllerBuilder {
             selfUserID: account.userIdentifier,
             supportsMeetingLinks: userSession.resolvedBackendMetadata.apiVersion.map { $0 >= .v19 } ?? false,
             isClipboardEnabled: Settings.isClipboardEnabled,
+            makeMemberAvatar: { [userSession] id in
+                let user: (any WireDataModel.UserType)? = if let searchUser = userSession.searchUsersCache
+                    .object(forKey: id.id as NSUUID),
+                    searchUser.domain == id.domain {
+                    searchUser
+                } else {
+                    ZMUser.fetch(with: id.id, domain: id.domain, in: userSession.contextProvider.viewContext)
+                }
+                guard let user else { return nil }
+                return AnyView(UserImageViewRepresentable(user: user, userSession: userSession, size: .small))
+            },
             onInstantMeetingCreated: { [weak router] result in
                 let id = result.meeting.conversationID
                 router?.navigate(to: .meetingInvitation(.init(uuid: id.id, domain: id.domain), result.link))

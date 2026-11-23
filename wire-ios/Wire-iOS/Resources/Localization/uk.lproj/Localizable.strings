@@ -675,6 +675,8 @@
 
 "content.system.message_conversation_scheduled_for_deletion.text" = "This group will be automatically deleted on %@, as there are no eligible group admins.";
 "content.system.message_conversation_scheduled_for_deletion.read_more.text" = "Read more";
+"content.system.offline_notice.title" = "You are offline.";
+"content.system.offline_notice.message" = "Your messages will be sent once you are online again.";
 
 //
 "content.system.is_verified" = "Всі ідентифікатори були верифіковані";
@@ -1053,9 +1055,13 @@
 "message.delete_dialog.action.cancel" = "Скасувати";
 "message.delete_dialog.action.hide" = "Видалити для мене";
 "message.delete_dialog.action.delete" = "Видалити для всіх";
+"message.delete_pending_failed.title" = "Message Is Being Sent";
+"message.delete_pending_failed.message" = "You can delete this message once it has been sent.";
 
 // Edit message
 "message.menu.edit.title" = "Редагувати";
+"message.edit_pending_failed.title" = "Message Is Being Sent";
+"message.edit_pending_failed.message" = "You can edit this message once it has been sent.";
 
 // Accept connection request
 "profile.connection_request_dialog.title" = "Прийняти?";

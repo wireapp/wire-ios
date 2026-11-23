@@ -17,20 +17,21 @@
 //
 
 public import Foundation
+public import SwiftUI
 public import UIKit
 public import WireCallingDomain
+public import WireFoundation
 
-import SwiftUI
 import WireCallingData
 import WireCallingUI
 import WireDesign
-import WireFoundation
 
 public struct WireMeetingsFactory {
 
     private let selfUserID: UUID
     private let supportsMeetingLinks: Bool
     private let isClipboardEnabled: Bool
+    private let makeMemberAvatar: @MainActor (QualifiedID) -> AnyView?
     private let onInstantMeetingCreated: @MainActor (MeetingCreationResult) -> Void
 
     @MainActor
@@ -38,11 +39,13 @@ public struct WireMeetingsFactory {
         selfUserID: UUID,
         supportsMeetingLinks: Bool = false,
         isClipboardEnabled: Bool = true,
+        makeMemberAvatar: @escaping @MainActor (QualifiedID) -> AnyView? = { _ in nil },
         onInstantMeetingCreated: @escaping @MainActor (MeetingCreationResult) -> Void = { _ in }
     ) {
         self.selfUserID = selfUserID
         self.supportsMeetingLinks = supportsMeetingLinks
         self.isClipboardEnabled = isClipboardEnabled
+        self.makeMemberAvatar = makeMemberAvatar
         self.onInstantMeetingCreated = onInstantMeetingCreated
     }
 
@@ -69,13 +72,9 @@ public struct WireMeetingsFactory {
             currentDateProvider: currentDateProvider
         )
         let observeMeetingChangesUseCase = ObserveMeetingChangesUseCase(repository: meetingRepository)
-        let deleteMeetingUseCase = DeleteMeetingUseCase(
+        let deleteMeetingUseCase = makeDeleteMeetingUseCase(
             meetingRepository: meetingRepository,
-            conversationRepository: conversationRepository,
-            cancelReminders: { accountID, meetingID in
-                await MeetingReminderScheduler().cancelAll(accountID: accountID, meetingID: meetingID)
-            },
-            selfUserID: selfUserID
+            conversationRepository: conversationRepository
         )
         let observeAttendedMeetingsUseCase = ObserveAttendedMeetingsUseCase(repository: callRepository)
         let joinMeetingCallUseCase = JoinMeetingCallUseCase(repository: callRepository)
@@ -119,6 +118,7 @@ public struct WireMeetingsFactory {
                 )
                 .environment(\.isClipboardEnabled, isClipboardEnabled)
                 .environment(\.supportsMeetingEmailInvitations, supportsMeetingLinks)
+                .environment(\.meetingMemberAvatarProvider, MeetingMemberAvatarProvider(makeMemberAvatar))
             )
         )
     }
@@ -174,6 +174,26 @@ public struct WireMeetingsFactory {
             }
         #endif
         return updateUseCase
+    }
+
+    private func makeDeleteMeetingUseCase(
+        meetingRepository: any MeetingRepositoryProtocol,
+        conversationRepository: any MeetingConversationRepositoryProtocol
+    ) -> any DeleteMeetingUseCaseProtocol {
+        let deleteUseCase = DeleteMeetingUseCase(
+            meetingRepository: meetingRepository,
+            conversationRepository: conversationRepository,
+            cancelReminders: { accountID, meetingID in
+                await MeetingReminderScheduler().cancelAll(accountID: accountID, meetingID: meetingID)
+            },
+            selfUserID: selfUserID
+        )
+        #if DEBUG
+            if let failureID = UITestConfig.environment?.meetingsDeleteFailureID {
+                return MeetingsUITestDeleteUseCase(wrapping: deleteUseCase, failureID: failureID)
+            }
+        #endif
+        return deleteUseCase
     }
 
     private func makeFetchUpcomingMeetingsUseCase(

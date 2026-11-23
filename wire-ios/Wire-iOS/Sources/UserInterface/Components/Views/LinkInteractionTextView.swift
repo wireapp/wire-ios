@@ -101,58 +101,23 @@ final class LinkInteractionTextView: UITextView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    private var lastLayoutWidth: CGFloat?
-
-    // `intrinsicContentSize`'s default UITextView implementation must be recomputed whenever
-    // `bounds.width` changes width, the same way UILabel recomputes from
-    // `preferredMaxLayoutWidth`. Inside a chat bubble that hugs its content, Auto Layout
-    // narrows this view across candidate widths while solving; without invalidating here, a
-    // wrap decision made at an earlier (wider) candidate width would stick.
-    override func layoutSubviews() {
-        super.layoutSubviews()
-
-        if lastLayoutWidth != bounds.width {
-            lastLayoutWidth = bounds.width
-            invalidateIntrinsicContentSize()
-        }
-    }
-
-    // UITextView's own `sizeThatFits`/`intrinsicContentSize` under-measures paragraphs that
-    // use an explicit `NSTextTab` stop (as Down's list rendering does for the "1.\t" / "•\t"
-    // prefix): it can report a one-line width a few points narrower than what the text
-    // actually needs, so the container ends up one line too short and the last word of a
-    // single-item list silently falls off the bottom instead of wrapping (WPB-27203).
-    // `NSAttributedString.boundingRect` performs the same line-breaking TextKit does when it
-    // actually draws the text and measures tab stops correctly, so use it directly instead.
+    /// Corrects the intrinsic width for text where every line is indented.
+    ///
+    /// UITextView sizes itself to the width of the laid-out text (`usedRect.width`) and ignores where
+    /// that text starts (`usedRect.minX`). That is fine as long as at least one line starts at the leading
+    /// edge. Single-item markdown lists and single-paragraph blockquotes indent every line, though, so the
+    /// view would be narrower than its text by exactly that indent: the text then wraps at the narrower
+    /// width while the height stays as measured, and the last line is clipped (WPB-27203).
+    ///
+    /// Adding the smallest paragraph indent restores the width the text needs. Text with any unindented
+    /// paragraph is returned unchanged, and the correction does not depend on `bounds`.
     override var intrinsicContentSize: CGSize {
-        // Only text with tab stops (list prefixes) is mis-measured by UITextView, so leave
-        // everything else on the superclass sizing. `boundingRect` also ignores
-        // `maximumNumberOfLines`, so line-limited containers (collapsed previews) stay there too.
-        guard let attributedText,
-              attributedText.string.contains("\t"),
-              textContainer.maximumNumberOfLines == 0 else {
-            return super.intrinsicContentSize
-        }
+        let size = super.intrinsicContentSize
+        let indent = attributedText?.minimumLeadingIndent ?? 0
+        guard indent > 0, size.width != UIView.noIntrinsicMetric else { return size }
 
-        let options: NSStringDrawingOptions = [.usesLineFragmentOrigin, .usesFontLeading]
-        let unboundedSize = CGSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)
-        let naturalWidth = attributedText.boundingRect(with: unboundedSize, options: options, context: nil).width
-
-        // Once Auto Layout has actually compressed us narrower than our natural (one-line)
-        // width, report the height needed to wrap at that narrower width; otherwise report
-        // the one-line height.
-        let measuredWidth = if bounds.width > 0, bounds.width < naturalWidth {
-            bounds.width
-        } else {
-            naturalWidth
-        }
-        let height = attributedText.boundingRect(
-            with: CGSize(width: measuredWidth, height: CGFloat.greatestFiniteMagnitude),
-            options: options,
-            context: nil
-        ).height
-
-        return CGSize(width: ceil(naturalWidth), height: ceil(height))
+        let scale = traitCollection.displayScale > 0 ? traitCollection.displayScale : UIScreen.main.scale
+        return CGSize(width: ceil((size.width + indent) * scale) / scale, height: size.height)
     }
 
     override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
@@ -288,4 +253,22 @@ extension LinkInteractionTextView: UITextDragDelegate {
         return dragRequest.suggestedItems
     }
 
+}
+
+// MARK: - Leading indent
+
+private extension NSAttributedString {
+
+    /// The smallest leading indent of any line, or `0` if any paragraph starts at the leading edge.
+    var minimumLeadingIndent: CGFloat {
+        guard length > 0 else { return 0 }
+
+        var indent = CGFloat.greatestFiniteMagnitude
+        enumerateAttribute(.paragraphStyle, in: NSRange(location: 0, length: length)) { value, _, stop in
+            let style = value as? NSParagraphStyle
+            indent = min(indent, style?.firstLineHeadIndent ?? 0, style?.headIndent ?? 0)
+            if indent <= 0 { stop.pointee = true }
+        }
+        return max(indent, 0)
+    }
 }

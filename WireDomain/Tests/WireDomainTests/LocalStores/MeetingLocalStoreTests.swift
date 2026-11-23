@@ -16,10 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireCallingData
 import WireCallingDomain
 import WireDataModel
 import WireDataModelSupport
 import WireNetwork
+import WireNetworkSupport
 import XCTest
 
 @testable import WireDomain
@@ -99,6 +101,107 @@ final class MeetingLocalStoreTests: XCTestCase {
             XCTAssertEqual(storedMeeting.conversation?.remoteIdentifier, Scaffolding.conversationID.id)
             XCTAssertEqual(storedMeeting.creator?.remoteIdentifier, Scaffolding.creatorID.id)
         }
+    }
+
+    func testMeetingTimezoneAndRecurrence_PersistAcrossStackReloadAndMeetingSync() async throws {
+        // Verify the stored Berlin time zone through reload and full sync.
+        try await assertMeetingTimezoneAndRecurrencePersistAcrossReloadAndSync(timeZoneIdentifier: "Europe/Berlin")
+    }
+
+    func testMeetingWithoutTimezone_PersistsNilAcrossStackReloadAndMeetingSync() async throws {
+        // Verify a missing time zone remains nil through reload and full sync.
+        try await assertMeetingTimezoneAndRecurrencePersistAcrossReloadAndSync(timeZoneIdentifier: nil)
+    }
+
+    private func assertMeetingTimezoneAndRecurrencePersistAcrossReloadAndSync(
+        timeZoneIdentifier: String?
+    ) async throws {
+        // Given
+        stack.close()
+        let account = Account(userName: "", userIdentifier: UUID())
+        let storageDirectory = coreDataStackHelper.storageDirectory
+        let persistedMeeting = Meeting(
+            id: Scaffolding.meetingID,
+            title: "Weekly Sync",
+            start: Scaffolding.meeting.start,
+            end: Scaffolding.meeting.end,
+            recurrence: WireCallingDomain.MeetingRecurrence(
+                frequency: .weekly,
+                interval: 2,
+                until: Scaffolding.recurrenceUntil
+            ),
+            timeZoneIdentifier: timeZoneIdentifier,
+            invitedEmails: Scaffolding.meeting.invitedEmails,
+            conversationID: Scaffolding.conversationID,
+            creatorID: Scaffolding.creatorID
+        )
+
+        stack = CoreDataStack(
+            account: account,
+            applicationContainer: storageDirectory,
+            inMemoryStore: false,
+            localDomain: Scaffolding.conversationID.domain,
+            isFederationEnabled: true
+        )
+        try await stack.load()
+        sut = MeetingLocalStore(context: context)
+        await sut.storeMeeting(persistedMeeting)
+
+        // Reopen the same on-disk account store, as a new Core Data stack.
+        stack.close()
+        sut = nil
+        stack = CoreDataStack(
+            account: account,
+            applicationContainer: storageDirectory,
+            inMemoryStore: false,
+            localDomain: Scaffolding.conversationID.domain,
+            isFederationEnabled: true
+        )
+        try await stack.load()
+        sut = MeetingLocalStore(context: context)
+
+        // Then the meeting fields survive the stack reload.
+        let reloadedMeetingValue = await sut.storedMeeting(id: Scaffolding.meetingID)
+        let reloadedMeeting = try XCTUnwrap(reloadedMeetingValue)
+        XCTAssertEqual(reloadedMeeting.timeZoneIdentifier, timeZoneIdentifier)
+        XCTAssertEqual(reloadedMeeting.recurrence, persistedMeeting.recurrence)
+        XCTAssertEqual(reloadedMeeting.start, persistedMeeting.start)
+        XCTAssertEqual(reloadedMeeting.end, persistedMeeting.end)
+
+        // A full meeting list refresh writes through the real store again.
+        let response = MeetingResponse(
+            id: Scaffolding.meetingID,
+            title: persistedMeeting.title,
+            creatorID: Scaffolding.creatorID,
+            startTime: persistedMeeting.start,
+            endTime: persistedMeeting.end,
+            conversationID: Scaffolding.conversationID,
+            invitedEmails: persistedMeeting.invitedEmails,
+            isTrial: false,
+            createdAt: Date(timeIntervalSince1970: 1000),
+            updatedAt: Date(timeIntervalSince1970: 2000),
+            recurrence: WireNetwork.MeetingRecurrence(
+                frequency: .weekly,
+                interval: 2,
+                until: Scaffolding.recurrenceUntil
+            ),
+            timeZoneIdentifier: timeZoneIdentifier
+        )
+        let meetingsAPI = MockMeetingsAPI()
+        meetingsAPI.listMeetings_MockValue = [response]
+        let repository = MeetingRepository(meetingsAPI: meetingsAPI, localStore: sut)
+
+        try await repository.pullMeetings()
+        await context.perform { [context] in context.reset() }
+
+        // The synchronized response also retains its timezone and recurrence on disk.
+        let synchronizedMeetingValue = await sut.storedMeeting(id: Scaffolding.meetingID)
+        let synchronizedMeeting = try XCTUnwrap(synchronizedMeetingValue)
+        XCTAssertEqual(synchronizedMeeting.timeZoneIdentifier, timeZoneIdentifier)
+        XCTAssertEqual(synchronizedMeeting.recurrence, persistedMeeting.recurrence)
+        XCTAssertEqual(synchronizedMeeting.start, persistedMeeting.start)
+        XCTAssertEqual(synchronizedMeeting.end, persistedMeeting.end)
+        XCTAssertEqual(meetingsAPI.listMeetings_Invocations.count, 1)
     }
 
     func testStoredMeeting_It_Preserves_Missing_Relationships_Without_Exposing_Incomplete_Conversation() async throws {

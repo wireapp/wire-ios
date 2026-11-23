@@ -156,3 +156,26 @@ public extension JournalKey where Value == Date? {
     )
 
 }
+
+public extension JournalKey where Value == Data? {
+
+    /// When an automatic repair of a broken Proteus session was last scheduled, per remote client.
+    /// JSON-encoded `[String: Date]`, used to limit repairs to one per client within a time window.
+
+    static let proteusSessionRepairAttempts = Self(
+        "proteusSessionRepairAttempts",
+        defaultValue: Data?.none
+    )
+
+    /// The timestamp ranges of MLS messages buffered by CoreCrypto, encoded by
+    /// `BufferedMLSMessageRecoveryTracker`.
+    ///
+    /// Persisted so that buffering is tracked across notification service extension
+    /// payloads and processes, as well as between the extension and the main app.
+
+    static let bufferedMLSMessageTimestampRanges = Self(
+        "bufferedMLSMessageTimestampRanges",
+        defaultValue: Data?.none
+    )
+
+}

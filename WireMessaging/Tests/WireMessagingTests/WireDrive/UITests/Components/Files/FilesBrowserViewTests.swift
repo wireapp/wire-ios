@@ -65,6 +65,7 @@ final class FilesBrowserViewTests: XCTestCase {
         nodesRepository = MockWireDriveNodesRepositoryProtocol()
         nodesRepository.getNodes_MockMethod = { _ in ([], nil) }
         localAssetsRepository = MockWireDriveLocalAssetRepositoryProtocol()
+        localAssetsRepository.offlineAssetsConversationNameAssetsPath_MockValue = []
 
         let nodesApi = MockNodesAPIProtocol()
         nodesApi.updateTagsNodeIDTags_MockMethod = { _, _ in }
@@ -261,13 +262,13 @@ final class FilesBrowserViewTests: XCTestCase {
                     repository: nodesRepository
                 ),
                 makeAssetAvailableOffline: WireDriveMakeAssetAvailableOfflineUseCase(
-                    localAssetRepository: MockWireDriveLocalAssetRepositoryProtocol()
+                    localAssetRepository: localAssetsRepository
                 ),
                 removeAssetAvailableOffline: WireDriveRemoveAssetAvailableOfflineUseCase(
-                    localAssetRepository: MockWireDriveLocalAssetRepositoryProtocol()
+                    localAssetRepository: localAssetsRepository
                 ),
                 getOfflineAvailableAssets: WireDriveFetchOfflineAvailableAssetsUseCase(
-                    localAssetRepository: MockWireDriveLocalAssetRepositoryProtocol()
+                    localAssetRepository: localAssetsRepository
                 ),
                 observeAsset: observeAssetUseCase,
                 moveNodes: moveNodesUseCase,

@@ -87,6 +87,7 @@ package final class WireDriveDirectUploadSession: NSObject, WireDriveDirectUploa
         var responseBodies: [Int: Data] = [:]
         var isFlushing = false
         var didFinishEventsHandler: (@Sendable (String) -> Void)?
+        var hasPendingFinishedEvents = false
         var droppedProgressEvents = 0
     }
 
@@ -224,10 +225,24 @@ package final class WireDriveDirectUploadSession: NSObject, WireDriveDirectUploa
                 return FlushBatch(sink: sink, events: events)
             }
 
-            guard let sink = batch.sink, !batch.events.isEmpty else { return }
+            guard let sink = batch.sink, !batch.events.isEmpty else {
+                notifyFinishedEventsIfDrained()
+                return
+            }
 
             await sink.handle(batch.events)
         }
+    }
+
+    /// URLSession finishing delivery does not mean the manager has consumed the buffered events.
+    /// Keep the system completion pending through an in-flight batch and through sink attachment on relaunch.
+    private func notifyFinishedEventsIfDrained() {
+        let handler = lock.withLock { state -> (@Sendable (String) -> Void)? in
+            guard state.hasPendingFinishedEvents, state.buffer.isEmpty, !state.isFlushing else { return nil }
+            state.hasPendingFinishedEvents = false
+            return state.didFinishEventsHandler
+        }
+        handler?(identifier)
     }
 
     private func uploadID(of task: URLSessionTask) -> UUID? {
@@ -301,10 +316,8 @@ extension WireDriveDirectUploadSession: URLSessionDataDelegate {
     }
 
     package func urlSessionDidFinishEvents(forBackgroundURLSession session: URLSession) {
-        guard let identifier = session.configuration.identifier else { return }
-
-        let handler = lock.withLock(\.didFinishEventsHandler)
-        handler?(identifier)
+        lock.withLock { $0.hasPendingFinishedEvents = true }
+        notifyFinishedEventsIfDrained()
     }
 }
 

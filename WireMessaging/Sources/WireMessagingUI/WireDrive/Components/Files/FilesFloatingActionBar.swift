@@ -32,6 +32,7 @@ struct FilesFloatingActionBar: View {
     let actions: [Action]
 
     @Environment(\.isEnabled) private var isEnabled
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @GestureState private var touchLocation: CGPoint?
     @State private var itemFrames: [String: CGRect] = [:]
 
@@ -69,6 +70,7 @@ struct FilesFloatingActionBar: View {
                     .accessibilityIdentifier(action.id)
                     .accessibilityAddTraits(.isButton)
                     .accessibilityAction { if isEnabled, action.isEnabled { action.perform() } }
+                    .transition(reduceMotion ? .opacity : .scale(scale: 0.85).combined(with: .opacity))
             }
         }
         .coordinateSpace(name: coordinateSpaceName)
@@ -87,6 +89,7 @@ struct FilesFloatingActionBar: View {
         .scaleEffect(touchLocation != nil ? 1.08 : 1)
         .animation(.spring(response: 0.3, dampingFraction: 0.55), value: touchLocation != nil)
         .animation(.easeOut(duration: 0.15), value: highlightedActionID)
+        .animation(.easeInOut(duration: 0.2), value: actions.map(\.id))
     }
 
     /// Tracks the finger from touch down so the user can slide between actions.

@@ -125,6 +125,13 @@ public enum Locators {
         case saveToFiles = "Save to Files"
     }
 
+    public enum LiveActivity: String {
+
+        case accountName = "UploadsLiveActivityAccount"
+        case statusCheck = "UploadsLiveActivityStatusCheck"
+        case progress = "UploadsLiveActivityProgress"
+    }
+
     public enum AccountSettingsPage: String {
 
         // TODO: [WPB-21952] Improve these identifiers later.
@@ -194,6 +201,7 @@ public enum Locators {
         case labelSelfDeletingMessagesOFF = "Self-deleting messages are off"
         case selfDeletedMessage
         case ephemeralCountdown
+        case scheduledForDeletionSystemMessage
         case sharedFileLabel = "FileTransferTopLabel"
         case sharedFileDetailsLabel = "FileTransferBottomLabel"
         case fileTypeIcon = "FileTransferFileTypeIcon"
@@ -648,6 +656,9 @@ public enum Locators {
             case moveToFolderFloatingButton
             case deleteFloatingButton
             case restoreFloatingButton
+            case makeAvailableOfflineFloatingButton
+            case removeAvailableOfflineFloatingButton
+            case folderOfflineWarning
             case done
             case deleteAll
             case selectAll
@@ -799,6 +810,7 @@ public enum Locators {
             case copyPassword = "meetingFormCopyPassword"
             case generatePassword = "meetingFormGeneratePassword"
             case passwordRequirements = "meetingFormPasswordRequirements"
+            case passwordReminder = "meetingFormPasswordReminder"
             case clearTitle = "meetingFormClearTitle"
             case participants = "meetingFormParticipants"
             case membersSelect = "meetingMembersSelect"

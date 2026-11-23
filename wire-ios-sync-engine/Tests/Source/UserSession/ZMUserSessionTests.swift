@@ -89,6 +89,17 @@ final class ZMUserSessionTests: ZMUserSessionTestsBase {
         XCTAssertEqual(sut.managedObjectContext.zm_sync, sut.syncManagedObjectContext)
     }
 
+    func testThatTearDownCancelsPendingSends() throws {
+        // GIVEN
+        let strategyDirectory = try XCTUnwrap(sut.strategyDirectory as? MockStrategyDirectory)
+
+        // WHEN
+        sut.tearDown()
+
+        // THEN
+        XCTAssertEqual(strategyDirectory.cancelPendingSendsCallCount, 1)
+    }
+
     func testThatLinkedUIContextIsNotStrongReferenced() {
         // GIVEN
         let mocSync: NSManagedObjectContext? = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)

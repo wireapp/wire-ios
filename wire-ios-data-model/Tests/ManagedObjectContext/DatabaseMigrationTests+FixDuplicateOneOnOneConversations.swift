@@ -17,7 +17,9 @@
 //
 
 import Foundation
+import GenericMessageProtocol
 import WireDataModelSupport
+
 @testable import WireDataModel
 
 final class DatabaseMigrationTests_FixDuplicateOneOnOneConversations: XCTestCase {
@@ -75,14 +77,14 @@ final class DatabaseMigrationTests_FixDuplicateOneOnOneConversations: XCTestCase
                     oldOneOnOneConversation.messageProtocol = .proteus
                     oldOneOnOneConversation.userDefinedName = nil
 
-                    try model.addTextMessages(
+                    try Scaffolding.addTextMessages(
                         to: oldOneOnOneConversation,
                         messagePrefix: "oldConv from me",
                         sender: selfUser,
                         count: 3,
                         in: context
                     )
-                    try model.addTextMessages(
+                    try Scaffolding.addTextMessages(
                         to: oldOneOnOneConversation,
                         messagePrefix: "oldConv from otherUser",
                         sender: otherUser,
@@ -108,14 +110,14 @@ final class DatabaseMigrationTests_FixDuplicateOneOnOneConversations: XCTestCase
                     // setup
                     otherUser.setValue(newOneOnOneConversation, forKey: "oneOnOneConversation")
 
-                    try model.addTextMessages(
+                    try Scaffolding.addTextMessages(
                         to: newOneOnOneConversation,
                         messagePrefix: "newConv from me",
                         sender: selfUser,
                         count: 1,
                         in: context
                     )
-                    try model.addTextMessages(
+                    try Scaffolding.addTextMessages(
                         to: newOneOnOneConversation,
                         messagePrefix: "newConv from otherUser",
                         sender: otherUser,
@@ -181,5 +183,31 @@ final class DatabaseMigrationTests_FixDuplicateOneOnOneConversations: XCTestCase
         static let otherUserQualifiedID = QualifiedID(uuid: .create(), domain: Self.domain)
         static let oldOneOnOneConversationID = UUID(uuidString: "11118744-5514-45BB-A145-0B6F37856CDA")!
         static let newOneOnOneConversationID = UUID(uuidString: "87CF8744-5514-45BB-A145-0B6F37856CDA")!
+
+        /// Creates messages using only fields available in the 2.118.0 source schema.
+        /// `ModelHelper.addTextMessages` calls today's composition API, which writes `sendAttemptStarted`
+        /// (added in 2.146.0). The old model has no setter for that property and raises an Objective-C exception.
+        /// Build the fixture directly so new composition requirements don't affect setup before migration.
+        static func addTextMessages(
+            to conversation: ZMConversation,
+            messagePrefix: String,
+            sender: ZMUser,
+            count: Int,
+            in context: NSManagedObjectContext
+        ) throws {
+            for index in 0 ..< count {
+                let nonce = UUID()
+                let message = ZMClientMessage(nonce: nonce, managedObjectContext: context)
+                message.sender = sender
+                message.visibleInConversation = conversation
+
+                let messageData = ZMGenericMessageData.insertNewObject(in: context)
+                try messageData.setGenericMessage(GenericMessage(
+                    content: Text(content: "\(messagePrefix) \(index)"),
+                    nonce: nonce
+                ))
+                messageData.message = message
+            }
+        }
     }
 }

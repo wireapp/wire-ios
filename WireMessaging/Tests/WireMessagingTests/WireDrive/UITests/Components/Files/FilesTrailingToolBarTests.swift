@@ -30,16 +30,13 @@ import XCTest
 final class FilesTrailingToolBarTests: XCTestCase {
 
     private var snapshotHelper: SnapshotHelper!
-    private var originalBulkActionsFlag: Any?
 
     override func setUp() async throws {
         snapshotHelper = SnapshotHelper()
             .withSnapshotDirectory(SnapshotTestReferenceImageDirectory)
-        originalBulkActionsFlag = UserDefaults.standard.object(forKey: "enableDriveBulkActions")
     }
 
     override func tearDown() async throws {
-        UserDefaults.standard.set(originalBulkActionsFlag, forKey: "enableDriveBulkActions")
         snapshotHelper = nil
     }
 
@@ -83,14 +80,11 @@ final class FilesTrailingToolBarTests: XCTestCase {
         var role: WireDriveConversation.Participant.Role = .editor
         var isRecycleBin = false
         var hasItems = true
-        var bulkActionsEnabled = true
         var isSelecting = false
         var isOffline = false
     }
 
     private func makeViewModel(_ configuration: Configuration) async -> FilesViewModel {
-        UserDefaults.standard.set(configuration.bulkActionsEnabled, forKey: "enableDriveBulkActions")
-
         let preview = FilesViewModel.preview(selfUserRole: configuration.role)
         let networkStatus: NetworkMonitor.NetworkStatus = configuration.isOffline ? .disconnected : .connected
         let networkMonitor = NetworkMonitor(monitor: StubPathMonitor(), initialStatus: networkStatus)

@@ -349,7 +349,8 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
         shared {
             MLSMessageDecryptor(
                 mlsDecryptionService: mlsDecryptionService,
-                conversationLocalStore: conversationLocalStore
+                conversationLocalStore: conversationLocalStore,
+                bufferedMessageRecoveryTracker: BufferedMLSMessageRecoveryTracker(journal: dependency.journal)
             )
         }
     }
@@ -360,7 +361,10 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
                 proteusMessageDecryptor: proteusMessageDecryptor,
                 mlsMessageDecryptor: mlsMessageDecryptor,
                 mlsService: nil,
-                messageLocalStore: messageLocalStore
+                messageLocalStore: messageLocalStore,
+                // Not scheduled here: a running app doesn't see the flag the extension saves, and the attempt
+                // recorded in the journal would then keep the app from scheduling the repair itself.
+                proteusSessionRepairScheduler: nil
             )
         }
     }

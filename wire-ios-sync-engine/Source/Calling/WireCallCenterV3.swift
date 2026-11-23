@@ -20,8 +20,14 @@ import avs
 import Combine
 import Foundation
 import struct WireDomain.AnsweredElsewhereCallTracker
+import struct WireDomain.CallNotificationCallerTracker
 import enum WireFoundation.AnsweredElsewhereCallKey
 import WireLogging
+
+#if DEBUG
+    import notify
+    import struct WireFoundation.UITestConfig
+#endif
 
 /// WireCallCenter is used for making Wire calls and observing their state. There can only be one instance of the
 /// WireCallCenter.
@@ -672,6 +678,24 @@ public extension WireCallCenterV3 {
             throw Failure.missingConferencingPermission
         }
 
+        #if DEBUG
+            if let config = UITestConfig.environment, let id = config.meetingsCallControlID {
+                let prefix = "\(UITestConfig.meetingsCallControlNotificationPrefix).\(id)"
+                var startsToken: Int32 = NOTIFY_TOKEN_INVALID
+                precondition(notify_register_check("\(prefix).starts", &startsToken) == NOTIFY_STATUS_OK)
+                defer { notify_cancel(startsToken) }
+                var starts: UInt64 = 0
+                precondition(notify_get_state(startsToken, &starts) == NOTIFY_STATUS_OK)
+                precondition(notify_set_state(startsToken, starts + 1) == NOTIFY_STATUS_OK)
+
+                var conversationToken: Int32 = NOTIFY_TOKEN_INVALID
+                precondition(notify_register_check("\(prefix).conversation", &conversationToken) == NOTIFY_STATUS_OK)
+                defer { notify_cancel(conversationToken) }
+                let matches: UInt64 = conversationId.identifier == config.meetingsExpectedConversationID ? 1 : 0
+                precondition(notify_set_state(conversationToken, matches) == NOTIFY_STATUS_OK)
+            }
+        #endif
+
         let callState: CallState = .outgoing(isVideo: isVideo, degraded: isDegraded(conversationId: conversationId))
         let previousCallState = callSnapshots[conversationId]?.callState
 
@@ -876,7 +900,12 @@ public extension WireCallCenterV3 {
     ) async throws -> MLSGroupID {
         try await withThrowingTaskGroup(of: MLSGroupID.self) { group in
             group.addTask {
-                try await mlsService.createOrJoinSubgroup(
+                #if DEBUG
+                    if let delay = UITestConfig.environment?.meetingsJoinDelay {
+                        try await Task.sleep(for: .seconds(delay))
+                    }
+                #endif
+                return try await mlsService.createOrJoinSubgroup(
                     parentQualifiedID: parentQualifiedID,
                     parentID: parentID
                 )
@@ -1110,13 +1139,32 @@ extension WireCallCenterV3 {
     /// Handles incoming calling messages, and transmist them to AVS when it is ready to process events, or adds it
     /// to the `bufferedEvents`.
     /// - parameter callEvent: calling event to process.
-    func processCallEvent(_ callEvent: CallEvent) {
+    func processCallEvent(_ callEvent: CallEvent, senderDomain: String? = nil) {
         Self.logger.info("process call event")
         AnsweredElsewhereCallTracker(userDefaults: VoIPPushHelper.storage).trackStart(
             data: callEvent.data,
             conversationID: callEvent.conversationId.identifier,
             accountID: selfUserId.identifier,
             isCallerSelf: callEvent.userId == selfUserId
+        )
+        let callerTracker = CallNotificationCallerTracker(userDefaults: VoIPPushHelper.storage)
+        if let domain = senderDomain ?? callEvent.userId.domain {
+            callerTracker.trackStart(
+                data: callEvent.data,
+                conversationID: callEvent.conversationId.identifier,
+                accountID: selfUserId.identifier,
+                senderID: .init(id: callEvent.userId.identifier, domain: domain),
+                isCallerSelf: callEvent.userId == selfUserId,
+                eventTimestamp: callEvent.serverTimestamp,
+                now: .now
+            )
+        }
+        callerTracker.markEnded(
+            data: callEvent.data,
+            conversationID: callEvent.conversationId.identifier,
+            accountID: selfUserId.identifier,
+            eventTimestamp: callEvent.serverTimestamp,
+            now: .now
         )
         if isReady {
             Self.logger

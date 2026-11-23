@@ -49,11 +49,18 @@ public protocol FeatureConfigRepositoryProtocol {
         _ featureConfig: FeatureConfig
     ) async
 
+    /// Acknowledges that the user has been notified about a feature's current state,
+    /// so the same state won't be flagged as needing notification again.
+    /// - parameter name: The name of the feature.
+
+    func acknowledgeFeatureChange(for name: Feature.Name) async
+
     func fetchAllowedGlobalOperations() async throws -> LocalFeature<Feature.AllowedGlobalOperations.Config>
     func fetchMLSConfig() async throws -> LocalFeature<Feature.MLS.Config>
     func fetchMLSMigrationConfig() async throws -> LocalFeature<Feature.MLSMigration.Config>
     func fetchAppLock() async throws -> LocalFeature<Feature.AppLock.Config>
     func fetchCellsInternal() async throws -> LocalFeature<Feature.CellsInternal.Config>
+    func fetchE2EIConfig() async throws -> LocalFeature<Feature.E2EI.Config>
 
     func isFeatureEnabled(
         _ feature: Feature.Name

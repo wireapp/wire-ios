@@ -202,6 +202,11 @@ class ActiveConversationPage: PageModel {
         app.descendants(matching: .any)[Locators.ConversationsPage.useLeftSystemMessage.rawValue]
     }
 
+    var scheduledForDeletionSystemMessage: XCUIElement {
+        app.descendants(matching: .any)[Locators.ActiveConversationPage.scheduledForDeletionSystemMessage.rawValue]
+            .firstMatch
+    }
+
     var photoButton: XCUIElement {
         app.buttons[Locators.ActiveConversationPage.photoButton.rawValue]
     }
