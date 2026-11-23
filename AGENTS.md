@@ -6,6 +6,8 @@ This file provides guidance to AI agents when working with code in this reposito
 
 Wire iOS is a secure messaging app built as a monorepo (`wire-ios-mono.xcworkspace`). The codebase combines modern Swift Package Manager modules with legacy Carthage/Xcode framework projects. The primary workspace file is `wire-ios-mono.xcworkspace`.
 
+IMPORTANT: You should never look at `wire-ios-build-assets` directory and its content.
+
 ## Agent Workflow
 
 - Implement small, clear, low-risk changes directly when requested. Before making broad, high-risk, multi-file, or still-debatable changes, discuss the proposed approach and ask for confirmation.
@@ -109,3 +111,5 @@ Code generation: Sourcery generates mocks (`AutoMockable`), SwiftGen generates s
 - New UI elements require `accessibilityLabel` for VoiceOver / `accessibilityIdentifier` for UI tests
 - UI elements that display text must use the API that supports dynamic type / large fonts
 - Push notifications only work with the App Store-signed build (Apple security restriction)
+
+
