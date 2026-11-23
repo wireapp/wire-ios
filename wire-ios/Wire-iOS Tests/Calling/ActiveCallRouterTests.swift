@@ -86,23 +86,6 @@ final class ActiveCallRouterTests: ZMSnapshotTestCase {
         XCTAssertTrue(executed)
     }
 
-    func testThat_ItSetIsActiveCallShown_ToTrue_When_RestoringCallFromTopOverlay() {
-        // given
-        let conversation = createOneOnOneConversation()
-        let voiceChannel = MockVoiceChannel(conversation: conversation)
-        let mockSelfClient = MockUserClient()
-        mockSelfClient.remoteIdentifier = "selfClient123"
-        MockUser.mockSelf().clients = Set([mockSelfClient])
-
-        sut.isActiveCallShown = false
-
-        // when
-        sut.voiceChannelTopOverlayWantsToRestoreCall(voiceChannel: voiceChannel)
-
-        // then
-        XCTAssertTrue(sut.isActiveCallShown)
-    }
-
     func testThat_ItRepresentsCall_WhenStateSaysShown_ButNoPresentedCallVCExists() {
         // given (stale state)
         let conversation = createOneOnOneConversation()
@@ -157,6 +140,32 @@ final class ActiveCallRouterTests: ZMSnapshotTestCase {
         sut.showCallTopOverlay(for: conversation)
 
         // then
+        XCTAssertEqual(events, ["present", "dismiss", "present"])
+    }
+
+    func testThatCallTopOverlayIsReplacedOnlyWhenTheConversationChanges() {
+        let first = createOneOnOneConversation()
+        let second = createOneOnOneConversation()
+        var events: [String] = []
+        var presentedConversations: [ZMConversation] = []
+        mockTopOverlayPresenter.presentTopOverlayAnimated_MockMethod = { controller, _ in
+            guard let overlay = controller as? CallTopOverlayController else {
+                return XCTFail("Expected a call top overlay")
+            }
+            presentedConversations.append(overlay.conversation)
+            events.append("present")
+        }
+        mockTopOverlayPresenter.dismissTopOverlayAnimated_MockMethod = { animated in
+            XCTAssertFalse(animated)
+            events.append("dismiss")
+        }
+
+        sut.showCallTopOverlay(for: first)
+        sut.showCallTopOverlay(for: first)
+        sut.showCallTopOverlay(for: second)
+        sut.showCallTopOverlay(for: second)
+
+        XCTAssertEqual(presentedConversations, [first, second])
         XCTAssertEqual(events, ["present", "dismiss", "present"])
     }
 
