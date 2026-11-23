@@ -300,6 +300,11 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             backgroundTaskExecuter: backgroundTaskExecuter
         )
 
+        sessionManager.onAccountDeletion = { userID in
+            Task {
+                await AppDependencies.wireDriveUploadSessions.tearDown(userID: userID)
+            }
+        }
         AppDependencies.voIPPushManager.delegate = sessionManager
         return sessionManager
     }
