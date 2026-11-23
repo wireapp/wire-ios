@@ -27,8 +27,10 @@ package protocol WireDriveDirectUploadManagerProtocol: Sendable {
     ///
     /// Called once the database is available, which on a background relaunch may be well after the
     /// session started delivering events.
+    /// Returns whether persisted uploads were loaded successfully, including on an earlier call.
 
-    func start() async
+    @discardableResult
+    func start() async -> Bool
 
     /// Accepts a batch of picked files for upload into `destinationFolderPath`.
     @discardableResult

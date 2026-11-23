@@ -112,7 +112,8 @@ private extension UserClient {
     ) async {
         let sessionCreated = await selfClient.establishSessionWithClient(
             self,
-            usingPreKey: prekey.key
+            usingPreKey: prekey.key,
+            replacingExistingSession: false
         )
 
         await managedObjectContext?.perform { [self] in

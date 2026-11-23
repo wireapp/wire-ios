@@ -19,6 +19,12 @@
 import WireCoreCrypto
 
 // sourcery: AutoMockable
+/// The `CoreCryptoContext` holds the primary `CoreCrypto` APIs.
+///
+/// An instance of this struct is provided to the closure passed to `CoreCryptoFfi::transaction`.
+///
+/// Every mutable operation is done through this struct. Operations are buffered in memory
+/// and persisted to the keystore when the transaction completes.
 public protocol CoreCryptoContextProtocol: AnyObject, Sendable {
 
     /// Adds members to the conversation using their key packages, sending the resulting commit via the transport.
@@ -28,12 +34,6 @@ public protocol CoreCryptoContextProtocol: AnyObject, Sendable {
     ) async throws
 
     /// Adds a `Credential` to this client.
-    ///
-    /// Note that while an arbitrary number of credentials can be generated,
-    /// those which are added to a CoreCrypto instance must be distinct in credential type,
-    /// signature scheme, and the timestamp of creation. This timestamp has only
-    /// 1 second of resolution, limiting the number of credentials which
-    /// can be added. This is a known limitation and will be relaxed in the future.
     func addCredential(credential: WireCoreCryptoUniffi.Credential) async throws -> WireCoreCryptoUniffi.CredentialRef
 
     /// Check all X509 credentials for expiration and revocation
@@ -67,7 +67,10 @@ public protocol CoreCryptoContextProtocol: AnyObject, Sendable {
     ) async throws
 
     /// Decrypts an MLS message received in the given conversation.
-    /// **Note**: this will discard any local pending operations.
+    ///
+    /// A commit from another member supersedes any local pending commit and consumes the pending
+    /// proposals it references. Our own commit, delivered back to us, is merged. Proposals and
+    /// application messages leave local pending state untouched.
     func decryptMessage(conversationId: WireCoreCryptoUniffi.ConversationId, payload: Data) async throws
         -> WireCoreCryptoUniffi.DecryptedMessage
 
@@ -78,14 +81,29 @@ public protocol CoreCryptoContextProtocol: AnyObject, Sendable {
     func e2eiConversationState(conversationId: WireCoreCryptoUniffi.ConversationId) async throws -> WireCoreCryptoUniffi
         .E2eiConversationState
 
-    /// Returns true if end-to-end identity is enabled for the given cipher_suite.
-    func e2eiIsEnabled(cipherSuite: WireCoreCryptoUniffi.CipherSuite) async throws -> Bool
-
     /// Enables history sharing for the given conversation.
     func enableHistorySharing(conversationId: WireCoreCryptoUniffi.ConversationId) async throws
 
     /// Encrypts a plaintext message for all members of the given conversation.
     func encryptMessage(conversationId: WireCoreCryptoUniffi.ConversationId, message: Data) async throws -> Data
+
+    /// Encrypts a plaintext message for one member of the given conversation.
+    ///
+    /// Any feature using a targeted, transient or transient targeted message MUST specify why the lower security
+    /// guarantees (compared to MLS application messages) are acceptable and/or how they are mitigated.
+    func encryptTargetedMessage(
+        conversationId: WireCoreCryptoUniffi.ConversationId,
+        recipient: WireCoreCryptoUniffi.ClientId,
+        policy: WireCoreCryptoUniffi.TargetedMessagePolicy,
+        message: Data
+    ) async throws -> Data
+
+    /// Encrypts a transient plaintext message for all members of the given conversation.
+    ///
+    /// Any feature using a targeted, transient or transient targeted message MUST specify why the lower security
+    /// guarantees (compared to MLS application messages) are acceptable and/or how they are mitigated.
+    func encryptTransientMessage(conversationId: WireCoreCryptoUniffi.ConversationId, message: Data) async throws
+        -> Data
 
     /// Derives and exports a secret of `key_length` bytes for the given conversation.
     ///
@@ -146,6 +164,9 @@ public protocol CoreCryptoContextProtocol: AnyObject, Sendable {
     func mlsInit(clientId: WireCoreCryptoUniffi.ClientId, transport: any WireCoreCryptoUniffi.MlsTransport) async throws
 
     /// Joins a conversation by processing an MLS Welcome message, returning the new conversation's ID.
+    ///
+    /// NOTE: Will retain the referenced key package in case of an error only if it was created in an earlier
+    /// transaction.
     func processWelcomeMessage(welcomeMessage: WireCoreCryptoUniffi.Welcome) async throws -> WireCoreCryptoUniffi
         .ConversationId
 
@@ -189,7 +210,13 @@ public protocol CoreCryptoContextProtocol: AnyObject, Sendable {
 
     /// Creates a new Proteus prekey with the given ID and returns its CBOR-serialized bundle.
     ///
+    /// Fails if the ID is already in use. Prekeys are not replaceable: the ID has been published to
+    /// peers in a bundle, and overwriting it would strand anyone still holding that bundle. Use
+    /// `proteus_new_prekey_auto` to have a free ID chosen instead.
+    ///
     /// Warning: the Proteus client must be initialized with `proteus_init` first or an error will be returned.
+    ///
+    /// This function has been deprecated. Any callers should update to use `proteus_new_prekey_auto` instead.
     func proteusNewPrekey(prekeyId: UInt16) async throws -> Data
 
     /// Creates a new Proteus prekey with an automatically assigned ID and returns its CBOR-serialized bundle.
@@ -228,10 +255,10 @@ public protocol CoreCryptoContextProtocol: AnyObject, Sendable {
     func removeCredential(credentialRef: WireCoreCryptoUniffi.CredentialRef) async throws
 
     /// Remove a `KeyPackage` from the database.
-    func removeKeyPackage(kpRef: WireCoreCryptoUniffi.KeyPackageRef) async throws
+    func removeKeyPackage(kpRef: WireCoreCryptoUniffi.KeyPackageRef) throws
 
     /// Remove all `KeyPackage`s associated with this credential ref.
-    func removeKeyPackagesFor(credentialRef: WireCoreCryptoUniffi.CredentialRef) async throws
+    func removeKeyPackagesFor(credentialRef: WireCoreCryptoUniffi.CredentialRef) throws
 
     /// Set the credential ref for the given conversation.
     func setConversationCredential(
@@ -243,24 +270,11 @@ public protocol CoreCryptoContextProtocol: AnyObject, Sendable {
     ///
     /// The stored data can be retrieved via `get_data`. Keep the data size reasonable;
     /// this is not a general-purpose key-value store.
-    func setData(data: Data) async throws
+    func setData(data: Data) throws
 
     /// Updates this client's key material in the conversation by sending an update commit.
     func updateKeyingMaterial(conversationId: WireCoreCryptoUniffi.ConversationId) async throws
 
     /// Destroys the local state of the given conversation; it can no longer be used locally after this call.
     func wipeConversation(conversationId: WireCoreCryptoUniffi.ConversationId) async throws
-
-    ///
-    /// Encrypts a plaintext message for one member of the given conversation.
-    ///
-    /// Any feature using a targeted, transient or transient targeted message MUST specify why the lower security
-    /// guarantees (compared to MLS application messages) are acceptable and/or how they are mitigated.
-    ///
-    func encryptTargetedMessage(
-        conversationId: WireCoreCryptoUniffi.ConversationId,
-        recipient: WireCoreCryptoUniffi.ClientId,
-        policy: WireCoreCryptoUniffi.TargetedMessagePolicy,
-        message: Data
-    ) async throws -> Data
 }

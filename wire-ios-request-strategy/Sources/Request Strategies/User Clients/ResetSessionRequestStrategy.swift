@@ -20,15 +20,31 @@ import Foundation
 import GenericMessageProtocol
 import WireLogging
 
+/// Sends a session reset message to a client whose `needsToNotifyOtherUserAboutSessionReset` flag is set.
+///
+/// The flag is set when the user resets a session manually, and automatically when the Proteus session with a client
+/// is broken (see `ProteusSessionRepairScheduler`). Whenever possible, the session is rebuilt over Proteus:
+///
+/// 1. delete the local session with the client,
+/// 2. establish a new session from the client's prekey,
+/// 3. send the session reset message to that client only, in a Proteus conversation both users are part of.
+///
+/// The client then receives a prekey message, switches to the new session, and its messages decrypt again.
+/// Sending through the 1:1 conversation instead doesn't work when it uses MLS, so that is only the fallback when
+/// no Proteus conversation is shared.
 public class ResetSessionRequestStrategy: NSObject, ZMContextChangeTrackerSource {
 
     fileprivate let keyPathSync: KeyPathObjectSync<ResetSessionRequestStrategy>
     fileprivate let messageSender: MessageSenderInterface
+    fileprivate let sessionEstablisher: SessionEstablisherInterface?
+    fileprivate let apiVersion: APIVersion?
     fileprivate let managedObjectContext: NSManagedObjectContext
 
     public init(
         managedObjectContext: NSManagedObjectContext,
-        messageSender: MessageSenderInterface
+        messageSender: MessageSenderInterface,
+        sessionEstablisher: SessionEstablisherInterface?,
+        apiVersion: APIVersion?
     ) {
 
         self.managedObjectContext = managedObjectContext
@@ -37,6 +53,8 @@ public class ResetSessionRequestStrategy: NSObject, ZMContextChangeTrackerSource
             \.needsToNotifyOtherUserAboutSessionReset
         )
         self.messageSender = messageSender
+        self.sessionEstablisher = sessionEstablisher
+        self.apiVersion = apiVersion
 
         super.init()
 
@@ -54,21 +72,70 @@ extension ResetSessionRequestStrategy: KeyPathObjectSyncTranscoder {
     typealias T = UserClient
 
     func synchronize(_ userClient: UserClient, completion: @escaping () -> Void) {
-
-        guard let conversation = userClient.user?.oneToOneConversation else {
-            return
+        guard let user = userClient.user else {
+            return skip(completion: completion)
         }
 
-        let message = GenericMessageEntity(
-            message: GenericMessage(clientAction: .resetSession),
-            context: managedObjectContext,
-            conversation: conversation,
-            completionHandler: nil
-        )
+        if
+            let sessionEstablisher,
+            let apiVersion,
+            let qualifiedClientID = userClient.qualifiedClientID,
+            let conversation = sharedProteusConversation(with: user) {
+            let message = GenericMessageEntity(
+                message: GenericMessage(clientAction: .resetSession),
+                context: managedObjectContext,
+                conversation: conversation,
+                targetRecipients: .clients([user: [userClient]]),
+                completionHandler: nil
+            )
 
+            send(resolving: userClient, completion: completion) { [self] in
+                // Clients without a session are silently dropped when targeting specific clients, so the new session
+                // must exist before sending.
+                try await userClient.deleteSession()
+                try await sessionEstablisher.establishSession(with: [qualifiedClientID], apiVersion: apiVersion)
+                // Establishing doesn't throw when the client has no prekey or the session can't be created.
+                guard await userClient.hasSessionWithSelfClient else {
+                    throw ResetSessionError.failedToEstablishSession
+                }
+                try await messageSender.sendMessage(message: message)
+            }
+        } else if let conversation = user.oneToOneConversation {
+            let message = GenericMessageEntity(
+                message: GenericMessage(clientAction: .resetSession),
+                context: managedObjectContext,
+                conversation: conversation,
+                completionHandler: nil
+            )
+
+            send(resolving: userClient, completion: completion) { [self] in
+                try await messageSender.sendMessage(message: message)
+            }
+        } else {
+            skip(completion: completion)
+        }
+    }
+
+    func cancel(_ object: UserClient) {}
+
+    /// Clears the flag when there is nowhere to send the reset message, so it doesn't stay pending forever.
+    private func skip(completion: () -> Void) {
+        WireLogger.messaging.warn(
+            "Can't send reset session message: no conversation shared with the user",
+            attributes: .safePublic
+        )
+        completion()
+        managedObjectContext.enqueueDelayedSave()
+    }
+
+    private func send(
+        resolving userClient: UserClient,
+        completion: @escaping () -> Void,
+        operation: @escaping () async throws -> Void
+    ) {
         WaitingGroupTask(context: managedObjectContext) { [self] in
             do {
-                try await messageSender.sendMessage(message: message)
+                try await operation()
                 await managedObjectContext.perform {
                     userClient.resolveDecryptionFailedSystemMessages()
                 }
@@ -84,6 +151,35 @@ extension ResetSessionRequestStrategy: KeyPathObjectSyncTranscoder {
         }
     }
 
-    func cancel(_ object: UserClient) {}
+    /// A conversation using Proteus that both the self user and `user` are part of, preferring a 1:1 conversation,
+    /// then the most recently active group.
+    private func sharedProteusConversation(with user: ZMUser) -> ZMConversation? {
+        if user.isSelfUser {
+            let selfConversation = ZMConversation.selfConversation(in: managedObjectContext)
+            return selfConversation.messageProtocol == .proteus ? selfConversation : nil
+        }
 
+        let candidates = user.activeConversations.filter { conversation in
+            [.proteus, .mixed].contains(conversation.messageProtocol) &&
+                conversation.isSelfAnActiveMember &&
+                [.oneOnOne, .group].contains(conversation.conversationType) &&
+                // Sending fails in these conversations, after the local session was already replaced.
+                !conversation.isDegraded &&
+                conversation.legalHoldStatus != .pendingApproval
+        }
+
+        return candidates.max { lhs, rhs in
+            let lhsIsOneOnOne = lhs.conversationType == .oneOnOne
+            let rhsIsOneOnOne = rhs.conversationType == .oneOnOne
+            if lhsIsOneOnOne != rhsIsOneOnOne {
+                return !lhsIsOneOnOne
+            }
+            return (lhs.lastModifiedDate ?? .distantPast) < (rhs.lastModifiedDate ?? .distantPast)
+        }
+    }
+
+}
+
+private enum ResetSessionError: Error {
+    case failedToEstablishSession
 }

@@ -26,6 +26,7 @@ struct MLSMessageDecryptor: MLSMessageDecryptorProtocol {
 
     let mlsDecryptionService: any MLSDecryptionServiceInterface
     let conversationLocalStore: any ConversationLocalStoreProtocol
+    let bufferedMessageRecoveryTracker: BufferedMLSMessageRecoveryTracker
 
     func decryptedWelcomeMessageEventData(
         from eventData: ConversationMLSWelcomeEvent,
@@ -84,6 +85,11 @@ struct MLSMessageDecryptor: MLSMessageDecryptorProtocol {
                 context: context
             )
 
+            bufferedMessageRecoveryTracker.clear(
+                groupID: mlsGroupID,
+                subconversation: eventData.subconversation
+            )
+
             let decryptedMessages = await processMLSMessageDecryptionResults(
                 decryptionResults,
                 mlsConversation: mlsConversation,
@@ -99,12 +105,55 @@ struct MLSMessageDecryptor: MLSMessageDecryptorProtocol {
         } catch let error as WireDataModel.MLSDecryptionService.MLSMessageDecryptionError {
             switch error {
             case .wrongEpoch:
+                bufferedMessageRecoveryTracker.clear(
+                    groupID: mlsGroupID,
+                    subconversation: eventData.subconversation
+                )
                 throw MLSMessageDecryptorError.wrongEpoch(mlsGroupID: mlsGroupID)
+
+            case let .bufferedMessage(bufferedGroupID):
+                return try handleBufferedMessage(
+                    eventData,
+                    mlsGroupID: mlsGroupID,
+                    bufferedGroupID: bufferedGroupID
+                )
+
             default:
                 throw error
             }
-
         }
+    }
+
+    /// Tracks the buffered message and requests stale epoch recovery if messages have been buffered for too long.
+    ///
+    /// - Throws: `MLSMessageDecryptorError.bufferedMessageRecoveryRequired` if recovery should be initiated.
+    /// - Returns: The event without any decrypted messages, since the message has been buffered by CoreCrypto.
+
+    private func handleBufferedMessage(
+        _ eventData: ConversationMLSMessageAddEvent,
+        mlsGroupID: MLSGroupID,
+        bufferedGroupID: MLSGroupID
+    ) throws -> ConversationMLSMessageAddEvent {
+        WireLogger.mls.info(
+            "MLS message was buffered by CoreCrypto",
+            attributes: [.mlsGroupID: bufferedGroupID.safeForLoggingDescription, .public: true]
+        )
+
+        if let timestamp = eventData.timestamp {
+            let shouldRecover = bufferedMessageRecoveryTracker.observeBufferedMessage(
+                groupID: mlsGroupID,
+                subconversation: eventData.subconversation,
+                timestamp: timestamp
+            )
+
+            if shouldRecover {
+                throw MLSMessageDecryptorError.bufferedMessageRecoveryRequired(mlsGroupID: bufferedGroupID)
+            }
+        }
+
+        var bufferedEvent = eventData
+        bufferedEvent.decryptedMessages = []
+        return bufferedEvent
     }
 
     private func decryptMLSMessage(

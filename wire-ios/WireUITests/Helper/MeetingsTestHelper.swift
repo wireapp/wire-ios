@@ -22,10 +22,11 @@ import WireNetwork
 final class MeetingsTestHelper {
 
     private let networkStack: NetworkStack
+    private let apiVersion: APIVersion
     let api: any MeetingsAPI
     let conversationsAPI: any ConversationsAPI
 
-    init(user: UserInfo) async throws {
+    init(user: UserInfo, apiVersion: APIVersion) async throws {
         let userHelper = UserHelper.default
         let authenticationManager = MockAuthManager()
         authenticationManager.accessToken = try await userHelper.fetchAccessToken(
@@ -40,31 +41,33 @@ final class MeetingsTestHelper {
             authenticationManager: authenticationManager
         )
         self.networkStack = networkStack
+        self.apiVersion = apiVersion
         self.api = MeetingsAPIBuilder(apiService: self.networkStack.apiService)
-            .makeAPI(for: userHelper.apiVersion)
+            .makeAPI(for: apiVersion)
         self.conversationsAPI = ConversationsAPIBuilder(apiService: self.networkStack.apiService)
-            .makeAPI(for: userHelper.apiVersion)
+            .makeAPI(for: apiVersion)
     }
 
     var selfUserAPI: any SelfUserAPI {
-        SelfUserAPIBuilder(apiService: networkStack.apiService).makeAPI(for: UserHelper.default.apiVersion)
+        SelfUserAPIBuilder(apiService: networkStack.apiService).makeAPI(for: apiVersion)
     }
 
     var usersAPI: any UsersAPI {
-        UsersAPIBuilder(apiService: networkStack.apiService).makeAPI(for: UserHelper.default.apiVersion)
+        UsersAPIBuilder(apiService: networkStack.apiService).makeAPI(for: apiVersion)
     }
 
     func create(
         title: String,
         start: Date,
         duration: TimeInterval = 1800,
-        recurrence: MeetingRecurrence? = nil
+        recurrence: MeetingRecurrence? = nil,
+        timeZoneIdentifier: String
     ) async throws -> MeetingResponse {
         try await api.createMeeting(parameters: CreateMeetingParameters(
             title: title,
             startTime: start,
             endTime: start.addingTimeInterval(duration),
-            timeZoneIdentifier: TimeZone.current.identifier,
+            timeZoneIdentifier: timeZoneIdentifier,
             recurrence: recurrence
         ))
     }
@@ -72,9 +75,10 @@ final class MeetingsTestHelper {
     func update(
         meeting: MeetingResponse,
         title: String? = nil,
-        start: Date? = nil
+        start: Date? = nil,
+        duration: TimeInterval? = nil
     ) async throws -> MeetingResponse {
-        let duration = meeting.endTime.timeIntervalSince(meeting.startTime)
+        let duration = duration ?? meeting.endTime.timeIntervalSince(meeting.startTime)
         return try await api.updateMeeting(
             id: meeting.id,
             parameters: UpdateMeetingParameters(

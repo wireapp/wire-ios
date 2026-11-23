@@ -101,6 +101,7 @@ excluded:
   - vendor
   - wire-ios/Templates
   - wire-ios-sync-engine/Support/Sourcery/generated/AutoMockable.manual.swift
+  - wire-ios/Wire Live Activity/Generated/Strings+Generated.swift
   - wire-ios/Wire-iOS Share Extension/Generated/Strings+Generated.swift
   - wire-ios/Wire-iOS/Generated/Assets+Generated.swift
   - wire-ios/Wire-iOS/Generated/Strings+Generated.swift

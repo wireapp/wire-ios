@@ -28,6 +28,7 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
     private let mlsMessageDecryptor: any MLSMessageDecryptorProtocol
     private let messageLocalStore: any MessageLocalStoreProtocol
     private let mlsService: (any MLSServiceInterface)? // optional because only necessary for live events
+    private let proteusSessionRepairScheduler: (any ProteusSessionRepairScheduling)?
 
     init(
         proteusService: any ProteusServiceInterface,
@@ -36,7 +37,9 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
         userClientsLocalStore: any UserClientsLocalStoreProtocol,
         messageLocalStore: any MessageLocalStoreProtocol,
         userLocalStore: any UserLocalStoreProtocol,
-        conversationLocalStore: any ConversationLocalStoreProtocol
+        conversationLocalStore: any ConversationLocalStoreProtocol,
+        bufferedMessageRecoveryTracker: BufferedMLSMessageRecoveryTracker,
+        proteusSessionRepairScheduler: (any ProteusSessionRepairScheduling)?
     ) {
         self.proteusMessageDecryptor = ProteusMessageDecryptor(
             proteusService: proteusService,
@@ -46,24 +49,28 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
 
         self.mlsMessageDecryptor = MLSMessageDecryptor(
             mlsDecryptionService: mlsDecryptionService,
-            conversationLocalStore: conversationLocalStore
+            conversationLocalStore: conversationLocalStore,
+            bufferedMessageRecoveryTracker: bufferedMessageRecoveryTracker
         )
 
         self.mlsService = mlsService
 
         self.messageLocalStore = messageLocalStore
+        self.proteusSessionRepairScheduler = proteusSessionRepairScheduler
     }
 
     init(
         proteusMessageDecryptor: any ProteusMessageDecryptorProtocol,
         mlsMessageDecryptor: any MLSMessageDecryptorProtocol,
         mlsService: (any MLSServiceInterface)?,
-        messageLocalStore: any MessageLocalStoreProtocol
+        messageLocalStore: any MessageLocalStoreProtocol,
+        proteusSessionRepairScheduler: (any ProteusSessionRepairScheduling)?
     ) {
         self.proteusMessageDecryptor = proteusMessageDecryptor
         self.mlsMessageDecryptor = mlsMessageDecryptor
         self.messageLocalStore = messageLocalStore
         self.mlsService = mlsService
+        self.proteusSessionRepairScheduler = proteusSessionRepairScheduler
     }
 
     func decryptEvents(
@@ -111,6 +118,12 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
                         eventData: eventData,
                         error: error.proteusError
                     )
+
+                    await proteusSessionRepairScheduler?.scheduleRepairIfNeeded(
+                        for: error,
+                        senderUserID: eventData.senderID.id,
+                        senderClientID: eventData.messageSenderClientID
+                    )
                 } catch {
                     WireLogger.updateEvent.error(
                         "failed to decrypt proteus event, dropping: \(String(describing: error))",
@@ -135,8 +148,16 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
                 } catch let error as MLSMessageDecryptorError {
                     switch error {
                     case let .wrongEpoch(mlsGroupID):
+                        logAttributes[.mlsGroupID] = mlsGroupID.safeForLoggingDescription
                         WireLogger.updateEvent.error(
-                            "failed to decrypt MLS due to `WrongEpoch` for group \(mlsGroupID)",
+                            "failed to decrypt MLS due to `WrongEpoch`",
+                            attributes: logAttributes
+                        )
+                        brokenMLSGroupIDs.insert(mlsGroupID.description)
+                    case let .bufferedMessageRecoveryRequired(mlsGroupID):
+                        logAttributes[.mlsGroupID] = mlsGroupID.safeForLoggingDescription
+                        WireLogger.updateEvent.warn(
+                            "MLS messages buffered for too long, requesting recovery",
                             attributes: logAttributes
                         )
                         brokenMLSGroupIDs.insert(mlsGroupID.description)
@@ -186,10 +207,12 @@ struct UpdateEventDecryptor: UpdateEventDecryptorProtocol {
             return
         }
 
+        let errorCode: UInt16? = if case let .Other(code) = error { code } else { nil }
         let systemMessageType: SystemMessageType = .decryptionFailed(
             sender: (eventData.senderID.id, eventData.senderID.domain),
             senderClientID: eventData.messageSenderClientID,
             remoteIdentityChanged: error == .RemoteIdentityChanged,
+            errorCode: errorCode,
             date: eventData.timestamp
         )
 

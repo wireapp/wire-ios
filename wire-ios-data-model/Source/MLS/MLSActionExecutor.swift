@@ -94,12 +94,15 @@ public protocol MLSActionExecutorProtocol {
     ///   - groupID: The group ID of the group this message was for.
     ///   - context: if provided, decryption will happen within the existing transaction
     /// - Returns: The decrypted message.
+    /// - Throws: `CoreCryptoError.Mls(.BufferedFutureMessage)` or `CoreCryptoError.Mls(.BufferedCommit)` if the
+    ///   message was buffered by CoreCrypto. If no context is provided, these errors are thrown after the
+    ///   transaction has been committed, so the buffered message is persisted.
 
     func decryptMessage(
         _ message: Data,
         in groupID: MLSGroupID,
         context: CoreCryptoContextProtocol?
-    ) async throws -> DecryptedMessage?
+    ) async throws -> DecryptedMessage
 
 }
 
@@ -310,12 +313,11 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
                 WireLogger.mls.info("joining group via external commit", attributes: groupID.safeAttributes)
                 let ciphersuite = await featureRepository.fetchMLS().config.defaultCipherSuite.coreCryptoCipherSuite
                 let conversationID = try await coreCrypto.transaction { [self] in
-                    let e2eiIsEnabled = try await $0.e2eiIsEnabled(cipherSuite: ciphersuite)
-                    let credentialRef = try await credentialRef(
-                        coreCrypto: coreCrypto.coreCrypto,
-                        ciphersuite: ciphersuite,
-                        credentialType: e2eiIsEnabled ? .x509 : .basic
-                    )
+                    guard let credentialRef = try await coreCrypto.coreCrypto.preferredMLSCredential(
+                        cipherSuite: ciphersuite
+                    ) else {
+                        throw MLSActionExecutorError.failedToFindCredential
+                    }
                     return try await $0.joinByExternalCommit(
                         groupInfo: try GroupInfo(bytes: groupInfo),
                         credentialRef: credentialRef
@@ -340,54 +342,26 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
         _ message: Data,
         in groupID: MLSGroupID,
         context: CoreCryptoContextProtocol?
-    ) async throws -> DecryptedMessage? {
+    ) async throws -> DecryptedMessage {
         if let context {
-            try await decryptMessageInternal(message, in: groupID, context: context)
-        } else {
-            try await performNonReentrant(groupID: groupID) {
-                try await coreCrypto.transaction {
-                    try await self.decryptMessageInternal(message, in: groupID, context: $0)
+            // The caller owns the transaction and is responsible for not aborting it on buffered errors.
+            return try await context.decryptMessage(conversationId: groupID.conversationId, payload: message)
+        }
+
+        let result = try await performNonReentrant(groupID: groupID) {
+            try await coreCrypto.transaction { context -> Result<DecryptedMessage, CoreCryptoError> in
+                do {
+                    return try await .success(
+                        context.decryptMessage(conversationId: groupID.conversationId, payload: message)
+                    )
+                } catch let CoreCryptoError.Mls(error) where error.isBufferedMessage {
+                    // Don't throw inside the transaction, otherwise it is aborted and the buffered message is lost.
+                    return .failure(CoreCryptoError.Mls(mlsError: error))
                 }
             }
         }
-    }
 
-    private func decryptMessageInternal(
-        _ message: Data,
-        in groupID: MLSGroupID,
-        context: CoreCryptoContextProtocol
-    ) async throws -> DecryptedMessage? {
-        do {
-            return try await context.decryptMessage(conversationId: groupID.conversationId, payload: message)
-        } catch let CoreCryptoError.Mls(error) {
-            switch error {
-            case .BufferedFutureMessage, .BufferedCommit:
-                // ignore error so transaction is saved and message is saved too.
-                return nil
-            default:
-                throw CoreCryptoError.Mls(mlsError: error)
-            }
-        } catch {
-            throw error
-        }
-    }
-
-    private func credentialRef(
-        coreCrypto: CoreCryptoProtocol,
-        ciphersuite: CipherSuite,
-        credentialType: CredentialType
-    ) async throws -> CredentialRef {
-        guard let credential = try await coreCrypto.findCredentials(
-            clientId: nil,
-            publicKey: nil,
-            cipherSuite: ciphersuite,
-            credentialType: credentialType,
-            earliestValidity: nil
-        ).first else {
-            throw MLSActionExecutorError.failedToFindCredential
-        }
-
-        return credential
+        return try result.get()
     }
 }
 
@@ -418,4 +392,15 @@ extension MLSGroupID {
     var safeAttributes: LogAttributes {
         [.mlsGroupID: safeForLoggingDescription, .public: true]
     }
+}
+
+private extension MlsError {
+
+    var isBufferedMessage: Bool {
+        switch self {
+        case .BufferedFutureMessage, .BufferedCommit: true
+        default: false
+        }
+    }
+
 }
