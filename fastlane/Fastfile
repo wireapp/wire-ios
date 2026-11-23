@@ -302,7 +302,7 @@ platform :ios do
         delete_test_simulator_if_needed
     end
 
-    desc "Build & Upload Edge build"
+    desc "Build & Upload Alpha build"
     lane :development do |options|
         options[:build_type] = "Development"
         options[:upload_testflight] = true
@@ -310,9 +310,9 @@ platform :ios do
         options[:extra_distribution_groups] = ["Wire Employees"]
         options[:produce_debug_builds] = true
         options[:countly_api_key] = ENV['COUNTLY_INTERNAL_KEY']
-        save_app_name('Edge')
+        save_app_name('Alpha')
         build_and_upload_app(options)
-        `export TEMP='BUILD_INSTALL_LINK=#{ENV['EDGE_TESTFLIGHT_LINK']}' && echo $TEMP >> ./.post_build/.env`
+        `export TEMP='BUILD_INSTALL_LINK=#{ENV['ALPHA_TESTFLIGHT_LINK']}' && echo $TEMP >> ./.post_build/.env`
     end
 
     desc "Build & Upload Testflight Playground build"
@@ -1477,7 +1477,7 @@ class Build
         if debug_build
             "Development" # yellow
         elsif development_build
-            "Edge"
+            "Alpha"
         elsif playground_build
             "Development" # yellow
         elsif rc_build
