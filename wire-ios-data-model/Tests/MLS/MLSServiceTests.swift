@@ -78,7 +78,6 @@ final class MLSServiceTests: ZMConversationTestsBase, MLSServiceDelegate {
             [MockCredentialRef(cipherSuite: defaultCipherSuite.coreCryptoCipherSuite)]
         mockStaleMLSKeyDetector.keyingMaterialUpdatedFor_MockMethod = { _ in }
         mockCoreCryptoProvider.registerEpochObserver_MockMethod = { _ in }
-        mockCoreCryptoContext.e2eiIsEnabledCipherSuite_MockValue = false
 
         mockActionsProvider.fetchBackendPublicKeysIn_MockValue = BackendMLSPublicKeys()
         mockActionsProvider.claimKeyPackagesUserIDDomainCiphersuiteExcludedSelfClientIDIn_MockValue = []

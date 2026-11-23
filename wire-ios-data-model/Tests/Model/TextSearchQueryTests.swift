@@ -132,13 +132,19 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.remoteIdentifier = .create()
 
-        let firstMessage = try! conversation
-            .appendText(content: "This is the first message in the conversation") as! ZMMessage
-        let secondMessage = try! conversation
-            .appendText(content: "This is the second message in the conversation") as! ZMMessage
+        let firstMessage = appendTextWithIncreasingServerTimestamp(
+            "This is the first message in the conversation",
+            to: conversation
+        )
+        let secondMessage = appendTextWithIncreasingServerTimestamp(
+            "This is the second message in the conversation",
+            to: conversation
+        )
         fillConversationWithMessages(conversation: conversation, messageCount: 400, normalized: false)
-        let lastMessage = try! conversation
-            .appendText(content: "This is the last message in the conversation") as! ZMMessage
+        let lastMessage = appendTextWithIncreasingServerTimestamp(
+            "This is the last message in the conversation",
+            to: conversation
+        )
         [firstMessage, secondMessage, lastMessage].forEach {
             $0.normalizedText = nil
         }
@@ -218,15 +224,19 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.remoteIdentifier = .create()
 
-        let firstMessage = try! conversation
-            .appendText(content: "This is the first message in the conversation") as! ZMMessage
-        Thread.sleep(forTimeInterval: 0.05)
-        let secondMessage = try! conversation
-            .appendText(content: "This is the second message in the conversation") as! ZMMessage
-        Thread.sleep(forTimeInterval: 0.05)
+        let firstMessage = appendTextWithIncreasingServerTimestamp(
+            "This is the first message in the conversation",
+            to: conversation
+        )
+        let secondMessage = appendTextWithIncreasingServerTimestamp(
+            "This is the second message in the conversation",
+            to: conversation
+        )
         fillConversationWithMessages(conversation: conversation, messageCount: 400, normalized: true)
-        let lastMessage = try! conversation
-            .appendText(content: "This is the last message in the conversation") as! ZMMessage
+        let lastMessage = appendTextWithIncreasingServerTimestamp(
+            "This is the last message in the conversation",
+            to: conversation
+        )
 
         XCTAssert(uiMOC.saveOrRollback())
         XCTAssertNotNil(firstMessage.normalizedText)
@@ -259,13 +269,19 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.remoteIdentifier = .create()
 
-        let firstMessage = try! conversation
-            .appendText(content: "This is the first message in the conversation") as! ZMMessage
-        let secondMessage = try! conversation
-            .appendText(content: "This is the second message in the conversation") as! ZMMessage
+        let firstMessage = appendTextWithIncreasingServerTimestamp(
+            "This is the first message in the conversation",
+            to: conversation
+        )
+        let secondMessage = appendTextWithIncreasingServerTimestamp(
+            "This is the second message in the conversation",
+            to: conversation
+        )
         fillConversationWithMessages(conversation: conversation, messageCount: 2, normalized: true)
-        let lastMessage = try! conversation
-            .appendText(content: "This is the last message in the conversation") as! ZMMessage
+        let lastMessage = appendTextWithIncreasingServerTimestamp(
+            "This is the last message in the conversation",
+            to: conversation
+        )
 
         XCTAssert(uiMOC.saveOrRollback())
         XCTAssertNotNil(firstMessage.normalizedText)
@@ -309,14 +325,20 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
         conversation.remoteIdentifier = .create()
 
         // We insert old messages that have not yet been indexed
-        let firstMessage = try! conversation
-            .appendText(content: "This is the first message in the conversation") as! ZMMessage
+        let firstMessage = appendTextWithIncreasingServerTimestamp(
+            "This is the first message in the conversation",
+            to: conversation
+        )
         fillConversationWithMessages(conversation: conversation, messageCount: 200, normalized: false)
-        let secondMessage = try! conversation
-            .appendText(content: "This is the second message in the conversation") as! ZMMessage
+        let secondMessage = appendTextWithIncreasingServerTimestamp(
+            "This is the second message in the conversation",
+            to: conversation
+        )
         fillConversationWithMessages(conversation: conversation, messageCount: 200, normalized: true)
-        let lastMessage = try! conversation
-            .appendText(content: "This is the last message in the conversation") as! ZMMessage
+        let lastMessage = appendTextWithIncreasingServerTimestamp(
+            "This is the last message in the conversation",
+            to: conversation
+        )
         [firstMessage, secondMessage].forEach {
             $0.normalizedText = nil
         }
@@ -609,10 +631,21 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
 
     // MARK: Helper
 
+    /// Messages appended in quick succession can get the same `serverTimestamp`. Search results are sorted by it,
+    /// so equal timestamps make the result order nondeterministic. Give every message a distinct, increasing one.
+    private lazy var lastServerTimestamp = Date()
+
+    func appendTextWithIncreasingServerTimestamp(_ text: String, to conversation: ZMConversation) -> ZMMessage {
+        let message = try! conversation.appendText(content: text) as! ZMMessage
+        lastServerTimestamp = lastServerTimestamp.addingTimeInterval(1)
+        message.serverTimestamp = lastServerTimestamp
+        return message
+    }
+
     func fillConversationWithMessages(conversation: ZMConversation, messageCount: Int, normalized: Bool) {
         for index in 0 ..< messageCount {
             let text = "This is the text message at index \(index)"
-            let message = try! conversation.appendText(content: text) as! ZMMessage
+            let message = appendTextWithIncreasingServerTimestamp(text, to: conversation)
             if normalized {
                 message.updateNormalizedText()
             } else {

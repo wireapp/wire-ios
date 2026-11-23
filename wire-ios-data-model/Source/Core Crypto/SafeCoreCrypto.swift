@@ -48,6 +48,9 @@ public final class SafeCoreCrypto {
             name: "core crypto transaction",
             executer: backgroundTaskExecuter
         ) { [coreCrypto, transactionCoreCryptoFactory] in
+            // TODO: [WPB-23179] A fresh CoreCrypto per transaction worked around stale in-memory group state
+            // in long-lived instances. Since core crypto 11 a cached instance picks up changes from the shared
+            // database, so `transactionCoreCryptoFactory` can probably be removed.
             let transactionCoreCrypto = try await transactionCoreCryptoFactory?() ?? coreCrypto
             return try await transactionCoreCrypto.transaction(block)
         }
