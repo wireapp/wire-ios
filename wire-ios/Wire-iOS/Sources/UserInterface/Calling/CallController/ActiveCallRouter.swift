@@ -88,7 +88,7 @@ final class ActiveCallRouter<TopOverlayPresenter>
 
     private var pendingMeetingInvitation: (conversationID: QualifiedID, link: URL)?
     private var isCallQualityShown = false
-    private var isCallTopOverlayShown = false
+    private var callTopOverlayConversation: ZMConversation?
     private(set) var scheduledPostCallAction: PostCallAction?
     private(set) weak var presentedDegradedAlert: UIAlertController?
     private weak var presentedActiveCallViewController: UIViewController?
@@ -140,7 +140,7 @@ final class ActiveCallRouter<TopOverlayPresenter>
         isActiveCallShown = false
         presentedActiveCallViewController = nil
         topOverlayPresenter.dismissTopOverlay(animated: false)
-        isCallTopOverlayShown = false
+        callTopOverlayConversation = nil
     }
 }
 
@@ -242,16 +242,20 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
     // MARK: - CallTopOverlay
 
     func showCallTopOverlay(for conversation: ZMConversation) {
-        guard !isCallTopOverlayShown else { return }
+        guard callTopOverlayConversation != conversation else { return }
+        hideCallTopOverlay()
+
         let callTopOverlayController = CallTopOverlayController(conversation: conversation, userSession: userSession)
         callTopOverlayController.delegate = self
+        callTopOverlayConversation = conversation
         topOverlayPresenter.presentTopOverlay(callTopOverlayController, animated: true)
-        isCallTopOverlayShown = true
     }
 
     func hideCallTopOverlay() {
-        topOverlayPresenter.dismissTopOverlay(animated: true)
-        isCallTopOverlayShown = false
+        guard callTopOverlayConversation != nil else { return }
+        callTopOverlayConversation = nil
+        // Detach the old banner before the next call can attach its banner.
+        topOverlayPresenter.dismissTopOverlay(animated: false)
     }
 
     // MARK: - Alerts
@@ -453,9 +457,7 @@ extension ActiveCallRouter: CallQualityRouterProtocol {
 // MARK: - CallTopOverlayControllerDelegate
 
 extension ActiveCallRouter: CallTopOverlayControllerDelegate {
-    func voiceChannelTopOverlayWantsToRestoreCall(voiceChannel: VoiceChannel?) {
-        guard let voiceChannel else { return }
-        isActiveCallShown = false
-        presentActiveCall(for: voiceChannel, animated: true)
+    func callTopOverlayWantsToRestoreCall() {
+        callController.restoreActiveCall()
     }
 }
