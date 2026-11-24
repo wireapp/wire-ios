@@ -78,6 +78,57 @@ final class NotificationLabelTests: XCTestCase {
         XCTAssert(sut.timer?.isValid == true)
     }
 
+    func testShowingAnotherMessageReplacesTheHideTimer() throws {
+        sut.show(message: message, hideAfter: 5)
+        let previousTimer = try XCTUnwrap(sut.timer)
+
+        sut.show(message: "You were muted by an admin", hideAfter: 5)
+
+        XCTAssertFalse(previousTimer.isValid)
+        XCTAssert(sut.timer?.isValid == true)
+        XCTAssertFalse(previousTimer === sut.timer)
+        XCTAssertFalse(sut.isHidden)
+        sut.hideAndStopTimer()
+    }
+
+    func testNewMessageStaysVisibleWhenReplacingAnAnimatedNotice() throws {
+        let animationsEnabled = UIView.areAnimationsEnabled
+        UIView.setAnimationsEnabled(true)
+        let scene = try XCTUnwrap(UIApplication.shared.connectedScenes.compactMap { $0 as? UIWindowScene }.first)
+        let previousKeyWindow = scene.windows.first(where: \.isKeyWindow)
+        let window = UIWindow(windowScene: scene)
+        window.rootViewController = UIViewController()
+        sut = NotificationLabel()
+        sut.frame = CGRect(x: 0, y: 0, width: 220, height: 24)
+        sut.alpha = 0
+        window.rootViewController?.view.addSubview(sut)
+        window.makeKeyAndVisible()
+        defer {
+            sut.hideAndStopTimer()
+            window.isHidden = true
+            previousKeyWindow?.makeKeyAndVisible()
+            UIView.setAnimationsEnabled(animationsEnabled)
+        }
+
+        let visible = expectation(description: "the replacement remains visible after the old animation")
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            self.sut.show(message: self.message, hideAfter: 0.6)
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+            XCTAssertFalse(self.sut.layer.animationKeys()?.isEmpty ?? true)
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.8) {
+            self.sut.show(message: "You were muted by an admin", hideAfter: 5)
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.9) {
+            XCTAssertFalse(self.sut.isHidden)
+            XCTAssertEqual(self.sut.alpha, 1)
+            XCTAssert(self.sut.timer?.isValid == true)
+            visible.fulfill()
+        }
+        wait(for: [visible], timeout: 3)
+    }
+
     // hideAndStopTimer()
 
     func testThat_ItHidesMessageAndStopsTimer() {

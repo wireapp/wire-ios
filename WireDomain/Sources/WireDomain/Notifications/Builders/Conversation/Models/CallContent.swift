@@ -31,6 +31,7 @@ struct CallContent: Decodable {
         static let confEnd = "CONFEND"
         static let cancel = "CANCEL"
         static let reject = "REJECT"
+        static let remoteMute = "REMOTEMUTE"
     }
 
     let type: String
@@ -38,6 +39,7 @@ struct CallContent: Decodable {
     let callerUserID: String?
     let callerClientID: String
     let responded: Bool
+    let remoteMuteTargets: [String: [String: [String]]]?
     /// The AVS `CONFSTART` SFT timestamp, used as a best-effort conference identifier.
     /// `nil` if the field is absent or cannot be decoded.
     let conferenceTimestamp: String?
@@ -49,6 +51,7 @@ struct CallContent: Decodable {
         case callerClientID = "src_clientid"
         case responded = "resp"
         case conferenceTimestamp = "timestamp"
+        case data, targets
     }
 
     init(from decoder: Decoder) throws {
@@ -56,8 +59,16 @@ struct CallContent: Decodable {
         self.type = try container.decode(String.self, forKey: .type)
         self.properties = try container.decodeIfPresent(Properties.self, forKey: .properties)
         self.callerUserID = try container.decodeIfPresent(String.self, forKey: .callerUserID)
-        self.callerClientID = try container.decode(String.self, forKey: .callerClientID)
-        self.responded = try container.decode(Bool.self, forKey: .responded)
+        if type == CallType.remoteMute {
+            let data = try container.nestedContainer(keyedBy: CodingKeys.self, forKey: .data)
+            self.remoteMuteTargets = try data.decode([String: [String: [String]]].self, forKey: .targets)
+            self.callerClientID = ""
+            self.responded = false
+        } else {
+            self.remoteMuteTargets = nil
+            self.callerClientID = try container.decode(String.self, forKey: .callerClientID)
+            self.responded = try container.decode(Bool.self, forKey: .responded)
+        }
         self.conferenceTimestamp = try? container.decodeIfPresent(String.self, forKey: .conferenceTimestamp)
     }
 

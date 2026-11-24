@@ -17,6 +17,8 @@
 //
 
 import UIKit
+import WireDesign
+import WireFoundation
 
 class NotificationLabel: RoundedBlurView {
 
@@ -75,11 +77,18 @@ class NotificationLabel: RoundedBlurView {
     /// - Parameters:
     ///   - message: message to show
     ///   - timeInterval: optional time interval after which the message will be hidden
-    func show(message: String, hideAfter timeInterval: TimeInterval? = nil) {
+    ///   - accentColor: optional accent background with larger text
+    func show(message: String, hideAfter timeInterval: TimeInterval? = nil, accentColor: WireAccentColor? = nil) {
+        timer?.invalidate()
+        timer = nil
+        messageLabel.font = accentColor == nil ? FontSpec.mediumSemiboldFont.font : .font(for: .buttonSmall)
+        messageLabel.adjustsFontForContentSizeCategory = accentColor != nil
+        messageLabel.textColor = accentColor == nil ? BaseColorPalette.Neutrals.white : ColorTheme.Base.onPrimary
+        blurView.backgroundColor = accentColor.map(ColorTheme.Base.primary)
+        blurView.effect = accentColor == nil ? UIBlurEffect(style: .light) : nil
         messageLabel.text = message
-        animateMessage(show: true) { [weak self] in
-            self?.startTimer(with: timeInterval)
-        }
+        startTimer(with: timeInterval)
+        animateMessage(show: true)
     }
 
     /// Hides message and invalidates the timer.
@@ -102,16 +111,17 @@ class NotificationLabel: RoundedBlurView {
 
     // MARK: - Helpers
 
-    private func animateMessage(show: Bool, completion: (() -> Void)? = nil) {
+    private func animateMessage(show: Bool) {
+        layer.removeAllAnimations()
         if show { isHidden = false }
 
         let animationBlock: () -> Void = { [weak self] in
             self?.alpha = show ? 1 : 0
         }
 
-        let completionBlock: (Bool) -> Void = { [weak self] _ in
+        let completionBlock: (Bool) -> Void = { [weak self] finished in
+            guard finished else { return }
             self?.isHidden = !show
-            completion?()
         }
 
         if shouldAnimate {

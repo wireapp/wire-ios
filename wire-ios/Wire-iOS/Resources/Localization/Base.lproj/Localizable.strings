@@ -879,6 +879,9 @@
 "call.grid.hints.go_back" = "Double tap to go back";
 "call.grid.hints.zoom" = "Pinch to zoom";
 
+"call.remote_muted_by" = "You were muted by %@";
+"call.remote_muted_by_admin" = "You were muted by an admin";
+
 "call.video.paused" = "Video paused";
 "call.video.too_many.alert.title" = "Too many people for Video";
 "call.video.too_many.alert.message" = "Video calls only work in groups of 4 or less.";
