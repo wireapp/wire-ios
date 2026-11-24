@@ -294,8 +294,10 @@ public final class SearchTask {
             let copiedTeamMembers = teamMemberIDs.compactMap {
                 contextProvider.viewContext.object(with: $0) as? Member
             }
-            let searchTeamMembers = copiedTeamMembers
-                .compactMap(\.user)
+            let teamMemberUsers = copiedTeamMembers.compactMap(\.user)
+            refreshUsersMissingName(teamMemberUsers, in: viewContext)
+
+            let searchTeamMembers = teamMemberUsers
                 .map {
                     ZMSearchUser(
                         contextProvider: contextProvider,
@@ -318,6 +320,19 @@ public final class SearchTask {
             return { $0 = $0.union(withLocalResult: result.copy(on: viewContext)) }
 
         }
+    }
+
+    /// Team members are listed even if their profile was never successfully fetched (e.g. the backend reported
+    /// them as failed), in which case they'd be displayed as "Name not available" until something else refreshes
+    /// them. Request a refresh so the profile is fetched again.
+    private func refreshUsersMissingName(_ users: [ZMUser], in context: NSManagedObjectContext) {
+        let usersToRefresh = users.filter { user in
+            (user.name?.isEmpty ?? true) && !user.needsToBeUpdatedFromBackend
+        }
+        guard !usersToRefresh.isEmpty else { return }
+
+        usersToRefresh.forEach { $0.refreshData() }
+        context.enqueueDelayedSave()
     }
 
     private func filterNonActiveTeamMembers(

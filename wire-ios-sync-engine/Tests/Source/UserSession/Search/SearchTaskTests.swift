@@ -425,6 +425,48 @@ final class SearchTaskTests: DatabaseTest {
         XCTAssertEqual(result.teamMembers.compactMap(\.user), [user])
     }
 
+    func testThatItRefreshesTeamMembersWithoutName_WhenSearchingLocally() async throws {
+        let (userWithoutName, userWithName, task) = await uiMOC.perform { [self] in
+            // given
+            let team = Team.insertNewObject(in: uiMOC)
+            let userWithoutName = ZMUser.insertNewObject(in: uiMOC)
+            let userWithName = ZMUser.insertNewObject(in: uiMOC)
+            let memberA = Member.insertNewObject(in: uiMOC)
+            let memberB = Member.insertNewObject(in: uiMOC)
+
+            userWithoutName.remoteIdentifier = UUID()
+            userWithoutName.needsToBeUpdatedFromBackend = false
+            userWithName.remoteIdentifier = UUID()
+            userWithName.name = "Member B"
+            userWithName.needsToBeUpdatedFromBackend = false
+
+            memberA.team = team
+            memberA.user = userWithoutName
+            memberB.team = team
+            memberB.user = userWithName
+
+            uiMOC.saveOrRollback()
+
+            let request = SearchRequest(query: "", searchOptions: [.teamMembers], team: team)
+            let task = makeSearchTask(request: request)
+            return (userWithoutName, userWithName, task)
+        }
+
+        // when
+        var result = SearchResult()
+        let resultAggregator = await task.performLocalSearch()
+        await uiMOC.perform {
+            resultAggregator(&result)
+        }
+
+        // then
+        await uiMOC.perform {
+            XCTAssertEqual(Set(result.teamMembers.compactMap(\.user)), [userWithoutName, userWithName])
+            XCTAssertTrue(userWithoutName.needsToBeUpdatedFromBackend)
+            XCTAssertFalse(userWithName.needsToBeUpdatedFromBackend)
+        }
+    }
+
     func testThatItDoesNotListAppsFromLocalTeamMembers() async throws {
         let task = await uiMOC.perform { [self] in
             // given
