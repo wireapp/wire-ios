@@ -24,6 +24,8 @@ class MockPresentationDelegate: PresentationDelegate {
     var showConversationCalls: [ZMConversation] = []
     var showConversationListCalls: Int = 0
     var showMeetingsCalls: Int = 0
+    var joinMeetingCallCalls: [QualifiedID] = []
+    var joinMeetingCallAccountIDs: [UUID] = []
     var showUserProfileCalls: [UserType] = []
     var showConnectionRequestCalls: [UUID] = []
     var failedToPerformActionCalls: [(URLAction, Error)] = []
@@ -67,6 +69,11 @@ class MockPresentationDelegate: PresentationDelegate {
 
     func showMeetings() {
         showMeetingsCalls += 1
+    }
+
+    func joinMeetingCall(_ conversationID: QualifiedID, accountID: UUID) {
+        joinMeetingCallCalls.append(conversationID)
+        joinMeetingCallAccountIDs.append(accountID)
     }
 
     func showUserProfile(user: UserType) {

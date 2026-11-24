@@ -30,6 +30,9 @@ public protocol PresentationDelegate: AnyObject {
     /// Called when the meetings screen should be shown.
     func showMeetings()
 
+    /// Called when a meeting link has joined a meeting and its call should be opened.
+    func joinMeetingCall(_ conversationID: QualifiedID, accountID: UUID)
+
     /// Called when an user profile screen should be presented
     /// - parameter user: The user which the profile will belong to.
     func showUserProfile(user: UserType)

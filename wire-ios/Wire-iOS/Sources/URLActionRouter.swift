@@ -54,7 +54,7 @@ class URLActionRouter: URLActionRouterProtocol {
 
     private let rootViewController: () -> UIViewController
     private var pendingDestination: NavigationDestination?
-    private var pendingAlert: UIViewController?
+    private var pendingAlert: (controller: UIViewController, overCurrentScreen: Bool)?
 
     // MARK: - Initialization
 
@@ -114,25 +114,28 @@ class URLActionRouter: URLActionRouterProtocol {
     }
 
     func presentPendingAlert() {
-        guard let alert = pendingAlert else {
+        guard let pendingAlert else {
             return
         }
 
-        pendingAlert = nil
-        presentAlert(alert)
+        self.pendingAlert = nil
+        presentAlert(pendingAlert.controller, overCurrentScreen: pendingAlert.overCurrentScreen)
     }
 
-    func presentAlert(_ alert: UIViewController) {
+    func presentAlert(_ alert: UIViewController, overCurrentScreen: Bool = false) {
         guard delegate?.urlActionRouterCanDisplayAlerts() == true else {
-            pendingAlert = alert
+            pendingAlert = (alert, overCurrentScreen)
             return
         }
 
-        internalPresentAlert(alert)
+        internalPresentAlert(alert, overCurrentScreen: overCurrentScreen)
     }
 
-    func internalPresentAlert(_ alert: UIViewController) {
-        rootViewController().present(alert, animated: true, completion: nil)
+    func internalPresentAlert(_ alert: UIViewController, overCurrentScreen: Bool) {
+        let presenter = overCurrentScreen
+            ? UIApplication.shared.topmostViewController(onlyFullScreen: false) ?? rootViewController()
+            : rootViewController()
+        presenter.present(alert, animated: true)
     }
 }
 
@@ -189,7 +192,7 @@ extension URLActionRouter: PresentationDelegate {
         if delegate?.urlActionRouterCanDisplayAlerts() ?? true {
             rootViewController().present(alertController, animated: true)
         } else {
-            pendingAlert = alertController
+            pendingAlert = (alertController, false)
         }
     }
 
@@ -204,7 +207,7 @@ extension URLActionRouter: PresentationDelegate {
         controller.modalPresentationStyle = .formSheet
         controller.isModalInPresentation = true
         controller.sheetPresentationController?.detents = [.medium(), .large()]
-        presentAlert(controller)
+        presentAlert(controller, overCurrentScreen: true)
     }
 
     // MARK: - Public Implementation
@@ -317,6 +320,10 @@ extension URLActionRouter: PresentationDelegate {
 
     func showMeetings() {
         navigate(to: .meetings)
+    }
+
+    func joinMeetingCall(_ conversationID: QualifiedID, accountID: UUID) {
+        navigate(to: .meetingCall(conversationID, accountID: accountID))
     }
 
     // MARK: - Private Implementation
@@ -495,7 +502,7 @@ private extension URLActionRouter {
         default:
             break
         }
-        presentAlert(alert)
+        presentAlert(alert, overCurrentScreen: isMeeting)
     }
 
 }

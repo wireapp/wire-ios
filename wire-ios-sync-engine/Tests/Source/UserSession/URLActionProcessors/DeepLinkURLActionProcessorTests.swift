@@ -160,7 +160,7 @@ final class DeepLinkURLActionProcessorTests: DatabaseTest {
         )
     }
 
-    func testThatMeetingJoinOpensMeetingsIncludingRepeatedJoin() throws {
+    func testThatMeetingLinkJoinsTheCallIncludingRepeatedJoin() {
         let id = QualifiedID(uuid: UUID(), domain: "wire.com")
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.remoteIdentifier = id.uuid
@@ -204,12 +204,15 @@ final class DeepLinkURLActionProcessorTests: DatabaseTest {
         XCTAssertEqual(passwords, [nil, "mockPassword12345678!3", nil])
         XCTAssertTrue(syncHandler.performedActions.isEmpty)
         XCTAssertEqual(mlsService.joinNewGroupWith_Invocations.count, 1)
-        XCTAssertEqual(presentationDelegate.showMeetingsCalls, 2)
+        XCTAssertEqual(presentationDelegate.joinMeetingCallCalls, [id, id])
+        let accountID = coreDataStack!.account.userIdentifier
+        XCTAssertEqual(presentationDelegate.joinMeetingCallAccountIDs, [accountID, accountID])
+        XCTAssertEqual(presentationDelegate.showMeetingsCalls, 0)
         XCTAssertTrue(presentationDelegate.showConversationCalls.isEmpty)
         XCTAssertTrue(presentationDelegate.failedToPerformActionCalls.isEmpty)
     }
 
-    func testThatMeetingJoinOpensMeetingsForAllStoredGroupTypesIncludingRepeatedJoin() {
+    func testThatMeetingLinkJoinsTheCallForAllStoredGroupTypesIncludingRepeatedJoin() {
         let id = QualifiedID(uuid: UUID(), domain: "wire.com")
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.remoteIdentifier = id.uuid
@@ -234,7 +237,8 @@ final class DeepLinkURLActionProcessorTests: DatabaseTest {
             }
         }
 
-        XCTAssertEqual(presentationDelegate.showMeetingsCalls, 6)
+        XCTAssertEqual(presentationDelegate.joinMeetingCallCalls, Array(repeating: id, count: 6))
+        XCTAssertEqual(presentationDelegate.showMeetingsCalls, 0)
         XCTAssertTrue(presentationDelegate.showConversationCalls.isEmpty)
         XCTAssertEqual(presentationDelegate.completedURLActionCalls, Array(repeating: action, count: 6))
         XCTAssertTrue(presentationDelegate.failedToPerformActionCalls.isEmpty)
@@ -276,7 +280,8 @@ final class DeepLinkURLActionProcessorTests: DatabaseTest {
         XCTAssertEqual(delegate.showPasswordPromptIncorrectPasswordCalls, [false, true])
         XCTAssertTrue(delegate.failedToPerformActionCalls.isEmpty)
         XCTAssertEqual(delegate.completedURLActionCalls, [action])
-        XCTAssertEqual(delegate.showMeetingsCalls, 1)
+        XCTAssertEqual(delegate.joinMeetingCallCalls, [id])
+        XCTAssertEqual(delegate.showMeetingsCalls, 0)
         XCTAssertTrue(delegate.showConversationCalls.isEmpty)
     }
 
@@ -306,9 +311,42 @@ final class DeepLinkURLActionProcessorTests: DatabaseTest {
             XCTAssertEqual(presentationDelegate.showPasswordPromptIsMeetingCalls, [true])
             XCTAssertEqual(presentationDelegate.completedURLActionCalls, [action])
             XCTAssertTrue(presentationDelegate.failedToPerformActionCalls.isEmpty)
+            XCTAssertTrue(presentationDelegate.joinMeetingCallCalls.isEmpty)
             XCTAssertEqual(presentationDelegate.showMeetingsCalls, 0)
             XCTAssertTrue(presentationDelegate.showConversationCalls.isEmpty)
         }
+    }
+
+    func testThatMeetingLinkReportsAnMLSJoinFailureWithoutOpeningTheCall() {
+        let id = QualifiedID(uuid: UUID(), domain: "wire.com")
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
+        conversation.remoteIdentifier = id.uuid
+        conversation.domain = id.domain
+        conversation.conversationType = .group
+        conversation.groupType = .meeting
+        conversation.messageProtocol = .mls
+        conversation.mlsGroupID = .random()
+        conversation.mlsStatus = .pendingJoin
+        let mlsService = MockMLSServiceInterface()
+        mlsService.joinNewGroupWith_MockError = ConversationJoinError.unknown
+        syncMOC.performAndWait { syncMOC.mlsService = mlsService }
+        sut = DeepLinkURLActionProcessor(
+            contextProvider: coreDataStack!,
+            transportSession: mockTransportSession,
+            eventProcessor: mockEventProcessor,
+            metadata: .mock(),
+            joinMeeting: { _, _, _, _ in id }
+        )
+        let action = URLAction.joinMeeting(domain: id.domain, key: "key", code: "code")
+        let completed = expectation(description: "failed meeting link completed")
+        presentationDelegate.completedURLActionCallsCompletion = { completed.fulfill() }
+
+        sut.process(urlAction: action, delegate: presentationDelegate)
+        wait(for: [completed], timeout: 5)
+
+        XCTAssertEqual(presentationDelegate.failedToPerformActionCalls.map(\.0), [action])
+        XCTAssertEqual(presentationDelegate.completedURLActionCalls, [action])
+        XCTAssertTrue(presentationDelegate.joinMeetingCallCalls.isEmpty)
     }
 
     func testThatAlreadyJoinedConversationUsesItsGroupType() {
@@ -336,6 +374,7 @@ final class DeepLinkURLActionProcessorTests: DatabaseTest {
 
         XCTAssertEqual(presentationDelegate.showConversationCalls, [conversation, conversation])
         XCTAssertEqual(presentationDelegate.showMeetingsCalls, 1)
+        XCTAssertTrue(presentationDelegate.joinMeetingCallCalls.isEmpty)
         XCTAssertTrue(mockEventProcessor.processConversationEvents_Invocations.isEmpty)
     }
 
