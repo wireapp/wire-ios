@@ -38,6 +38,10 @@ final class MeetingsAPIV19: MeetingsAPIV18 {
         var components = URLComponents()
         components.percentEncodedPath = "\(pathPrefix)/meeting/\(encodedDomain)/\(encodedKey)/\(encodedCode)/join"
         if let password {
+            // The v19 join query rejects values outside PlainTextPassword8 before checking the password.
+            guard (8 ... 1024).contains(password.unicodeScalars.count) else {
+                throw MeetingsAPIError.invalidMeetingPassword
+            }
             components.queryItems = [URLQueryItem(name: "password", value: password)]
             // The backend decodes a literal plus in the query as a space.
             components.percentEncodedQuery = components.percentEncodedQuery?.replacingOccurrences(of: "+", with: "%2B")

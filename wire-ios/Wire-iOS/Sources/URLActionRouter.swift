@@ -54,7 +54,7 @@ class URLActionRouter: URLActionRouterProtocol {
 
     private let rootViewController: () -> UIViewController
     private var pendingDestination: NavigationDestination?
-    private var pendingAlert: UIAlertController?
+    private var pendingAlert: UIViewController?
 
     // MARK: - Initialization
 
@@ -122,7 +122,7 @@ class URLActionRouter: URLActionRouterProtocol {
         presentAlert(alert)
     }
 
-    func presentAlert(_ alert: UIAlertController) {
+    func presentAlert(_ alert: UIViewController) {
         guard delegate?.urlActionRouterCanDisplayAlerts() == true else {
             pendingAlert = alert
             return
@@ -131,7 +131,7 @@ class URLActionRouter: URLActionRouterProtocol {
         internalPresentAlert(alert)
     }
 
-    func internalPresentAlert(_ alert: UIAlertController) {
+    func internalPresentAlert(_ alert: UIViewController) {
         rootViewController().present(alert, animated: true, completion: nil)
     }
 }
@@ -146,36 +146,35 @@ extension URLActionRouter: PresentationDelegate {
         incorrectPassword: Bool,
         completion: @escaping (String?) -> Void
     ) {
-        typealias ConversationAlert = L10n.Localizable.Join.Group.Conversation.Alert
-        typealias MeetingAlert = L10n.Localizable.Join.Meeting.Alert
-
-        let message = if incorrectPassword {
-            L10n.Localizable.UrlAction.JoinConversation.Error.Alert.InvalidPassword.message
-        } else {
-            isMeeting ? MeetingAlert.message : ConversationAlert.message
+        if isMeeting {
+            showMeetingPasswordPrompt(incorrectPassword: incorrectPassword, completion: completion)
+            return
         }
+
+        typealias ConversationAlert = L10n.Localizable.Join.Group.Conversation.Alert
+
         let alertController = UIAlertController(
             title: conversationName.map(ConversationAlert.title)
                 ?? L10n.Localizable.Registration.Signin.Alert.PasswordNeeded.title,
-            message: message,
+            message: ConversationAlert.message,
             preferredStyle: .alert
         )
 
         alertController.addTextField { textField in
-            textField.placeholder = isMeeting ? MeetingAlert.Textfield.placeholder : ConversationAlert.Textfield
-                .placeholder
+            textField.placeholder = ConversationAlert.Textfield.placeholder
             textField.isSecureTextEntry = true
         }
 
-        let joinTitle = isMeeting ? MeetingAlert.JoinAction.title : ConversationAlert.JoinAction.title
-        let joinAction = UIAlertAction(title: joinTitle, style: .default) { [weak alertController] _ in
+        let joinAction = UIAlertAction(
+            title: ConversationAlert.JoinAction.title,
+            style: .default
+        ) { [weak alertController] _ in
             let password = alertController?.textFields?.first?.text
             completion(password)
         }
 
-        let helpLinkURL = isMeeting ? WireURLs.shared.meetingGuestLinksInfoURL : WireURLs.shared.guestLinksInfo
         let learnMoreAction = UIAlertAction(title: ConversationAlert.LearnMoreAction.title, style: .default) { _ in
-            UIApplication.shared.open(helpLinkURL, options: [:], completionHandler: nil)
+            UIApplication.shared.open(WireURLs.shared.guestLinksInfo, options: [:], completionHandler: nil)
         }
 
         let cancelAction = UIAlertAction(title: L10n.Localizable.General.cancel, style: .cancel) { _ in
@@ -192,6 +191,20 @@ extension URLActionRouter: PresentationDelegate {
         } else {
             pendingAlert = alertController
         }
+    }
+
+    private func showMeetingPasswordPrompt(incorrectPassword: Bool, completion: @escaping (String?) -> Void) {
+        let controller = UIHostingController<MeetingJoinPasswordView?>(rootView: nil)
+        controller.rootView = MeetingJoinPasswordView(
+            incorrectPassword: incorrectPassword
+        ) { [weak controller] password in
+            guard let controller, !controller.isBeingDismissed else { return }
+            controller.dismiss(animated: true) { completion(password) }
+        }
+        controller.modalPresentationStyle = .formSheet
+        controller.isModalInPresentation = true
+        controller.sheetPresentationController?.detents = [.medium(), .large()]
+        presentAlert(controller)
     }
 
     // MARK: - Public Implementation

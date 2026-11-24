@@ -356,6 +356,24 @@ final class MeetingsAPITests: XCTestCase {
         }
     }
 
+    func testJoinMeeting_RejectsPasswordsOutsideServerLengthLimitsWithoutRequest() async {
+        let apiService = MockAPIServiceProtocol()
+        let sut = APIVersion.v19.buildAPI(apiService: apiService)
+
+        for length in [7, 1025] {
+            await XCTAssertThrowsErrorAsync(MeetingsAPIError.invalidMeetingPassword) {
+                _ = try await sut.joinMeeting(
+                    domain: "wire.com",
+                    key: "key",
+                    code: "code",
+                    password: String(repeating: "x", count: length)
+                )
+            }
+        }
+
+        XCTAssertTrue(apiService.executeRequestRequiringAccessToken_Invocations.isEmpty)
+    }
+
     private func meetingJoinResponseData() throws -> Data {
         let meetingResource = try MockJSONPayloadResource(name: "MeetingResponse")
         var meeting = try XCTUnwrap(JSONSerialization.jsonObject(with: meetingResource.jsonData) as? [String: Any])

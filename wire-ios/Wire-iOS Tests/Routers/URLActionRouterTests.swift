@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import SwiftUI
 import WireSyncEngine
 import XCTest
 
@@ -23,17 +24,16 @@ import XCTest
 
 final class URLActionRouterTests: XCTestCase {
 
-    func testMeetingPasswordPromptUsesMeetingCopy() throws {
-        let alert = try passwordPrompt(conversationName: nil, isMeeting: true)
+    func testFirstMeetingPasswordPromptHasNoError() throws {
+        let controller = try passwordPrompt(conversationName: nil, isMeeting: true)
+        let sheet = try XCTUnwrap(controller as? UIHostingController<MeetingJoinPasswordView?>)
 
-        XCTAssertEqual(alert.message, "This meeting is password protected")
-        XCTAssertEqual(alert.textFields?.first?.placeholder, "Enter Meeting password")
-        XCTAssertEqual(alert.textFields?.first?.isSecureTextEntry, true)
-        XCTAssertEqual(alert.actions.map(\.title), ["Join Meeting", "Learn more about guest links", "Cancel"])
+        XCTAssertNil(try XCTUnwrap(sheet.rootView).errorMessage)
     }
 
     func testConversationPasswordPromptKeepsConversationCopy() throws {
-        let alert = try passwordPrompt(conversationName: "Test group")
+        let controller = try passwordPrompt(conversationName: "Test group")
+        let alert = try XCTUnwrap(controller as? UIAlertController)
 
         XCTAssertEqual(alert.message, "This conversation is password protected")
         XCTAssertEqual(alert.textFields?.first?.placeholder, "Enter conversation password")
@@ -41,12 +41,10 @@ final class URLActionRouterTests: XCTestCase {
     }
 
     func testWrongMeetingPasswordShowsErrorInPasswordPrompt() throws {
-        let alert = try passwordPrompt(conversationName: nil, isMeeting: true, incorrectPassword: true)
+        let controller = try passwordPrompt(conversationName: nil, isMeeting: true, incorrectPassword: true)
+        let sheet = try XCTUnwrap(controller as? UIHostingController<MeetingJoinPasswordView?>)
 
-        XCTAssertEqual(alert.title, "Password needed")
-        XCTAssertEqual(alert.message, "Password is incorrect, please try again.")
-        XCTAssertEqual(alert.textFields?.first?.placeholder, "Enter Meeting password")
-        XCTAssertEqual(alert.actions.first?.title, "Join Meeting")
+        XCTAssertEqual(try XCTUnwrap(sheet.rootView).errorMessage, "Password is incorrect, please try again.")
     }
 
     func testInvalidMeetingLinkUsesMeetingError() throws {
@@ -98,7 +96,7 @@ final class URLActionRouterTests: XCTestCase {
         conversationName: String?,
         isMeeting: Bool = false,
         incorrectPassword: Bool = false
-    ) throws -> UIAlertController {
+    ) throws -> UIViewController {
         let delegate = MockURLActionRouterDelegate()
         let router = TestableURLActionRouter(viewController: UIViewController(), sessionManager: nil)
         router.delegate = delegate
@@ -112,7 +110,7 @@ final class URLActionRouterTests: XCTestCase {
             }
         delegate.canDisplayAlerts = true
         router.presentPendingAlert()
-        return try XCTUnwrap(router.presentedAlert)
+        return try XCTUnwrap(router.presentedController)
     }
 
     // MARK: Presenting Alerts
@@ -288,8 +286,10 @@ final class MockURLActionRouterDelegate: URLActionRouterDelegate {
 
 final class TestableURLActionRouter: URLActionRouter {
 
-    var presentedAlert: UIAlertController?
-    override func internalPresentAlert(_ alert: UIAlertController) {
-        presentedAlert = alert
+    var presentedController: UIViewController?
+    var presentedAlert: UIAlertController? { presentedController as? UIAlertController }
+
+    override func internalPresentAlert(_ alert: UIViewController) {
+        presentedController = alert
     }
 }
