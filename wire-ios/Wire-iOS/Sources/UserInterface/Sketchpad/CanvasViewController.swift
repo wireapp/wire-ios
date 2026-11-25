@@ -74,7 +74,14 @@ final class CanvasViewController: UIViewController, UINavigationControllerDelega
         super.viewDidLayoutSubviews()
 
         canvas.setNeedsDisplay()
-        colorPickerController.selectedColorIndex = 0
+
+        // Select the initial color only while nothing is selected yet. This runs on every
+        // layout pass, so resetting unconditionally would override the user's choice
+        // (e.g. after the first stroke hides the hint and triggers a new layout).
+        let hasSelectedColor = colorPickerController.colorsCollectionView.indexPathsForSelectedItems?.isEmpty == false
+        if !hasSelectedColor {
+            colorPickerController.selectedColorIndex = 0
+        }
     }
 
     override func viewDidLoad() {
