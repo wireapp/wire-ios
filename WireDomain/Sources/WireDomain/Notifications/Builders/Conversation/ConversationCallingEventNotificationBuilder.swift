@@ -88,13 +88,14 @@ struct ConversationCallingEventNotificationBuilder: ConversationCallingEventNoti
             wasAnsweredElsewhere: wasAnsweredElsewhere
         )
 
-        if displayCallKitNotification {
+        if displayCallKitNotification, let time {
             // First, let's try to return a CallKit notification if possible.
             return await buildCallKitNotification(
                 callContent: callContent,
                 accountID: accountID,
                 conversationID: resolvedConversationID,
-                senderID: senderID
+                senderID: senderID,
+                eventTimestamp: time
             )
 
         } else if displayCallNotification {
@@ -118,12 +119,14 @@ struct ConversationCallingEventNotificationBuilder: ConversationCallingEventNoti
         callContent: CallContent,
         accountID: UUID,
         conversationID: ConversationID,
-        senderID: UserID
+        senderID: UserID,
+        eventTimestamp: Date
     ) async -> UserNotification {
         let callKitContent: [String: Any] = [
             "accountID": accountID.uuidString,
             "conversationID": conversationID.id.uuidString,
             "shouldRing": callContent.isIncomingCall,
+            "eventTimestamp": eventTimestamp.timeIntervalSince1970,
             "callerName": await makeCallKitTitle(
                 conversationID: conversationID,
                 senderID: senderID

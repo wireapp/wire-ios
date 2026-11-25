@@ -146,12 +146,17 @@ final class ConversationCallingEventNotificationBuilderTests: XCTestCase {
                 accountID: Scaffolding.accountID
             )
 
+            let eventTimestamp = Date.now
             let userNotification = await sut.buildContent(
                 calling: calling,
-                at: .now,
+                at: eventTimestamp,
                 conversationID: Scaffolding.conversationID,
                 senderID: Scaffolding.userID
             )
+
+            if case let .callKit(payload) = userNotification {
+                XCTAssertEqual(payload["eventTimestamp"] as? TimeInterval, eventTimestamp.timeIntervalSince1970)
+            }
 
             try await internalCallKitTest_assertNotificationContent(
                 testUsecase: callKitTestUsecase,
