@@ -21,9 +21,8 @@ import WireSystem
 
 /// This struct contains various URLs used in the app. All links are defined in the `url.json` configuration file.
 ///
-/// IMPORTANT: If you change or add a new property to this struct, you will also need to update the corresponding
-/// link with the same key in the existing URL configuration files.
-/// Failure to do so may cause the application to crash.
+/// All URL configuration files must contain the keys for required properties.
+/// A missing required key causes the application to crash.
 struct WireURLs: Codable {
 
     /// Link to the app on the App store.
@@ -107,10 +106,10 @@ struct WireURLs: Codable {
     let learnMoreAboutE2EE: URL
 
     /// Link to an article explaining the Drive permissions.
-    let learnMoreAboutDrivePermissions: URL
+    let learnMoreAboutDrivePermissions: URL?
 
     /// Link to an article explaining the Adminless Group Prevention feature
-    let learnMoreAboutAdminlessGroupPrevention: URL
+    let learnMoreAboutAdminlessGroupPrevention: URL?
 
     static var shared: WireURLs = {
         do {
