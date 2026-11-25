@@ -441,7 +441,7 @@ platform :ios do
  
     def build_and_upload_app(options)
         xcodes(select_for_current_build_only: true)
-        options[:build_number] = 1
+        options[:build_number] = "1"
         prepare_for_release(options)
         build = Build.new(options: options)
         write_build_info_to_summary(build)
