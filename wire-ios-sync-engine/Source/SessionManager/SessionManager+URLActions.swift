@@ -51,6 +51,9 @@ public extension SessionManager {
         }
 
         guard isSelectedAccountAuthenticated else {
+            if case .joinMeeting = action {
+                pendingURLAction = action
+            }
             throw DeepLinkRequestError.notLoggedIn
         }
 

@@ -71,6 +71,11 @@ public protocol PresentationDelegate: AnyObject {
     /// Called when an URLAction was successfully performed.
     func completedURLAction(_ action: URLAction)
 
-    // Called when showing the password prompt before joining a group conversation
-    func showPasswordPrompt(for conversationName: String, completion: @escaping (String?) -> Void)
+    // Called when showing the password prompt before joining a group conversation or meeting.
+    func showPasswordPrompt(
+        for conversationName: String?,
+        isMeeting: Bool,
+        incorrectPassword: Bool,
+        completion: @escaping (String?) -> Void
+    )
 }

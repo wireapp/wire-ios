@@ -487,16 +487,15 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
     func reportIncomingCallPreemptively(
         handle: CallHandle,
         callerName: String,
-        hasVideo: Bool
+        hasVideo: Bool,
+        eventTimestamp: Date?
     ) {
         logger.info("report incoming call preemptively", attributes: .safePublic)
 
-        let existingCall = callRegister.lookupCall(by: handle)
-        if existingCall != nil {
+        let (call, reused) = callRegister.registerIncomingCall(with: handle, eventTimestamp: eventTimestamp)
+        if reused {
             logger.warn("report incoming call preemptively: call already exists. Re-reporting", attributes: .safePublic)
         }
-
-        let call = existingCall ?? callRegister.registerNewCall(with: handle)
 
         let update = CXCallUpdate()
         update.localizedCallerName = callerName
@@ -638,8 +637,12 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
         }
 
         for call in associatedCalls {
+            guard callRegister.unregisterCall(call, endedAt: timestamp) else {
+                logger.info("ignore call end older than incoming event", attributes: .safePublic)
+                continue
+            }
+
             logger.info("terminating call: \(String(describing: call))")
-            callRegister.unregisterCall(call)
             logger.info("provider.reportCallEndedAt: \(String(describing: timestamp))", attributes: .safePublic)
             provider.reportCall(with: call.id, endedAt: timestamp?.clampForCallKit() ?? Date(), reason: reason)
         }

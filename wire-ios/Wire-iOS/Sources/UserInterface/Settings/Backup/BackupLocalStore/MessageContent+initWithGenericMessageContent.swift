@@ -37,7 +37,8 @@ extension MessageBackupModel.Content {
             self.init(multipart)
         case .knock, .lastRead, .cleared, .external, .clientAction, .calling, .hidden, .deleted, .confirmation,
              .reaction, .availability, .composite, .buttonAction, .buttonActionConfirmation, .dataTransfer, .image,
-             .inCallEmoji, .inCallHandRaise:
+             .inCallEmoji, .inCallHandRaise, .historyClientAvailable, .historyClientRequest, .historyClientResponse,
+             .poll, .pollVote:
             return nil
         }
     }

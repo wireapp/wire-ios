@@ -140,6 +140,8 @@ public extension GenericMessage {
             return data
         case let .inCallHandRaise(data):
             return data
+        case .historyClientAvailable, .historyClientRequest, .historyClientResponse, .poll, .pollVote:
+            return nil
         }
     }
 

@@ -96,8 +96,8 @@
         "repositoryURL": "https://github.com/wireapp/generic-message-proto.git",
         "state": {
           "branch": null,
-          "revision": "9dd668daf0f7b835599b072bdecd2eb60c6c9058",
-          "version": "1.56.0"
+          "revision": "4fb054989f676552672e5dcf8ff42a00b77fa60f",
+          "version": "1.66.0"
         }
       },
       {
