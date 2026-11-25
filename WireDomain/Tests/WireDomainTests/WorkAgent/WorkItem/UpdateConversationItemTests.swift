@@ -34,39 +34,24 @@ struct UpdateConversationItemTests {
         self.repository = MockConversationRepositoryProtocol()
         self.conversationID = .init(id: UUID(), domain: String.randomDomain())
         self.sut = UpdateConversationItem(repository: repository, conversationID: conversationID)
-        repository.isGroupConversationIdDomain_MockValue = true
     }
 
-    @Test("It calls repository pull conversation")
-    func startsPullConversationSuccessfully() async throws {
+    @Test("It refreshes the conversation")
+    func refreshesConversation() async throws {
         // Given
-        repository.pullConversationIdDomain_MockMethod = { _, _ in }
+        repository.refreshConversationIdDomain_MockMethod = { _, _ in }
         // When
         try await sut.start()
 
         // Then
-        let invocation = repository.pullConversationIdDomain_Invocations.first
+        let invocation = repository.refreshConversationIdDomain_Invocations.first
         #expect(invocation?.domain == conversationID.domain && invocation?.id == conversationID.id)
     }
 
-    @Test("It deletes the conversation if not found")
-    func startsDeleteConversationIfNotFound() async throws {
+    @Test("It completes without deleting a conversation if not found")
+    func completesWithoutDeletionIfNotFound() async throws {
         // Given
-        repository.pullConversationIdDomain_MockError = ConversationRepositoryError.conversationNotFound
-        repository.deleteConversationIdDomain_MockMethod = { _, _ in }
-        // When
-        try await sut.start()
-
-        // Then
-        let invocation = repository.deleteConversationIdDomain_Invocations.first
-        #expect(invocation?.domain == conversationID.domain && invocation?.id == conversationID.id)
-    }
-
-    @Test("It does not delete 1:1 conversation if not found")
-    func startDoesNotDeleteOneOnOneConversationIfNotFound() async throws {
-        // Given
-        repository.isGroupConversationIdDomain_MockValue = false
-        repository.pullConversationIdDomain_MockError = ConversationRepositoryError.conversationNotFound
+        repository.refreshConversationIdDomain_MockError = ConversationRepositoryError.conversationNotFound
         repository.deleteConversationIdDomain_MockMethod = { _, _ in }
         // When
         try await sut.start()
@@ -79,14 +64,14 @@ struct UpdateConversationItemTests {
     func startThrowsInOtherError() async throws {
         // Given
         let error = NSError(domain: "randomDomain", code: 999)
-        repository.pullConversationIdDomain_MockError = error
+        repository.refreshConversationIdDomain_MockError = error
         // When
         await #expect(throws: error) {
             try await sut.start()
         }
 
         // Then
-        let invocation = repository.pullConversationIdDomain_Invocations.first
+        let invocation = repository.refreshConversationIdDomain_Invocations.first
         #expect(invocation?.domain == conversationID.domain && invocation?.id == conversationID.id)
     }
 }

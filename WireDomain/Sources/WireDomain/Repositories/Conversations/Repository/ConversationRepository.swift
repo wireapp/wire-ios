@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import CoreData
 import Foundation
 import WireData
 import WireDataModel
@@ -79,24 +80,67 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
 
     public func pullConversation(id: UUID, domain: String) async throws {
         let qualifiedID = WireNetwork.QualifiedID(id: id, domain: domain)
-        let conversationList = try await conversationsAPI.getConversations(
-            for: [qualifiedID]
-        )
+        let conversation = try await fetchConversation(qualifiedID)
+        await storeConversation(conversation.toDomainModel(), timestamp: .now)
+    }
 
-        if let conversation = conversationList.found.first {
-            await conversationsLocalStore.storeConversation(
-                conversation.toDomainModel(),
-                timestamp: .now,
-                isFederationEnabled: isFederationEnabled,
-                isMLSEnabled: isMLSEnabled,
-                markAsRead: false
-            )
-        } else if conversationList.notFound.contains(qualifiedID) {
-            throw ConversationRepositoryError.conversationNotFound
-        } else {
-            throw ConversationRepositoryError.retrievalFailed
+    public func refreshConversation(id: UUID, domain: String) async throws {
+        let qualifiedID = WireNetwork.QualifiedID(id: id, domain: domain)
+        let localID = qualifiedID.toDomainModel()
+
+        while let requestedState = await refreshState(for: localID) {
+            try Task.checkCancellation()
+            let conversation: WireNetwork.Conversation?
+            do {
+                conversation = try await fetchConversation(
+                    qualifiedID,
+                    requireQualifiedID: requestedState.isDeletedRemotely
+                )
+            } catch ConversationRepositoryError.conversationNotFound {
+                conversation = nil
+            }
+            try Task.checkCancellation()
+
+            nonisolated(unsafe) var retry = false
+            let isCurrent: @Sendable (ZMConversation, NSManagedObjectContext) -> Bool = { localConversation, context in
+                guard localConversation.needsToBeUpdatedFromBackend else { return false }
+                let selfUser = ZMUser.selfUser(in: context)
+                let currentState = RefreshState(conversation: localConversation, selfUser: selfUser)
+                retry = currentState != requestedState
+                return !retry
+            }
+
+            if let conversation, conversation.type == .group {
+                await conversationsLocalStore.storeRefreshedGroup(
+                    conversation.toDomainModel(),
+                    id: localID,
+                    isFederationEnabled: isFederationEnabled,
+                    isMLSEnabled: isMLSEnabled,
+                    shouldApply: isCurrent
+                )
+                if retry { continue }
+                return
+            }
+
+            nonisolated(unsafe) var applied = false
+            await conversationsLocalStore.execute(conversationID: localID) { localConversation, context in
+                guard let localConversation, isCurrent(localConversation, context) else { return }
+                if conversation == nil, localConversation.conversationType == .group {
+                    // The list endpoint returns not_found for groups the requester has left.
+                    localConversation.removeParticipantAndUpdateConversationState(user: ZMUser.selfUser(in: context))
+                    localConversation.needsToBeUpdatedFromBackend = false
+                    context.enqueueDelayedSave()
+                }
+                applied = true
+            }
+
+            if retry { continue }
+            if applied {
+                guard let conversation else { throw ConversationRepositoryError.conversationNotFound }
+                await storeConversation(conversation.toDomainModel(), timestamp: .now)
+            }
+            return
         }
-
     }
 
     public func fetchConversation(
@@ -302,24 +346,9 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
             )
         }
 
-        let mlsConversationInfo = await conversationsLocalStore.mlsConversationInfo(
-            conversation: conversation
-        )
-
-        let mlsGroupID = mlsConversationInfo?.mlsGroupID
-
-        if let mlsGroupID {
-
-            try await mlsProvider.service.wipeGroup(mlsGroupID)
-
-            await conversationsLocalStore.deleteConversation(
-                conversation
-            )
-
-        } else {
-            await conversationsLocalStore.deleteConversation(
-                conversation
-            )
+        await conversationsLocalStore.deleteConversation(conversation)
+        if let info = await conversationsLocalStore.mlsConversationInfo(conversation: conversation) {
+            try await mlsProvider.service.wipeGroup(info.mlsGroupID)
         }
     }
 
@@ -473,6 +502,39 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
     }
 
     // MARK: - Private
+
+    private struct RefreshState: Equatable {
+        let selfRoleID: NSManagedObjectID?
+        let isDeletedRemotely: Bool
+
+        init(conversation: ZMConversation, selfUser: ZMUser) {
+            self.selfRoleID = selfUser.participantRole(in: conversation)?.objectID
+            self.isDeletedRemotely = conversation.isDeletedRemotely
+        }
+    }
+
+    private func refreshState(for id: WireDataModel.QualifiedID) async -> RefreshState? {
+        nonisolated(unsafe) var state: RefreshState?
+        await conversationsLocalStore.execute(conversationID: id) { conversation, context in
+            guard let conversation, conversation.needsToBeUpdatedFromBackend else { return }
+            state = RefreshState(conversation: conversation, selfUser: ZMUser.selfUser(in: context))
+        }
+        return state
+    }
+
+    private func fetchConversation(
+        _ id: WireNetwork.QualifiedID,
+        requireQualifiedID: Bool = false
+    ) async throws -> WireNetwork.Conversation {
+        let list = try await conversationsAPI.getConversations(for: [id])
+        if let conversation = list.found.first, !requireQualifiedID || conversation.qualifiedID == id {
+            return conversation
+        }
+        if list.notFound.contains(id) {
+            throw ConversationRepositoryError.conversationNotFound
+        }
+        throw ConversationRepositoryError.retrievalFailed
+    }
 
     private func addSystemMessage(
         conversationID: UUID,

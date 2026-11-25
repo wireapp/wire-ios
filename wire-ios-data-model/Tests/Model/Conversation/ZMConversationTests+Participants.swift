@@ -289,6 +289,7 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
         selfUser.remoteIdentifier = UUID.create()
 
         conversation.addParticipantsAndUpdateConversationState(users: Set([selfUser, user1]), role: nil)
+        conversation.needsToBeUpdatedFromBackend = true
 
         XCTAssertTrue(conversation.isSelfAnActiveMember)
 
@@ -298,6 +299,7 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
 
         // then
         XCTAssertFalse(conversation.isSelfAnActiveMember)
+        XCTAssertFalse(conversation.needsToBeUpdatedFromBackend)
     }
 
     func testThatItDoesNothingForUnknownParticipants() {

@@ -147,8 +147,8 @@ class ConversationUpdatesGeneratorTests {
         #expect(updateConversationItems.isEmpty)
     }
 
-    @Test("It does not generate an item when a conversation is deleted")
-    func deletedConversation() async throws {
+    @Test("It rechecks a hidden group with a pending refresh")
+    func hiddenGroupPendingRefresh() async throws {
         // GIVEN
         let conversationID = QualifiedID.random()
         await coreDataStack.syncContext.perform { [modelHelper, context = coreDataStack.syncContext] in
@@ -168,6 +168,6 @@ class ConversationUpdatesGeneratorTests {
         await sut.start()
 
         // THEN
-        #expect(updateConversationItems.isEmpty)
+        #expect(updateConversationItems.map(\.conversationID) == [conversationID.toAPIModel()])
     }
 }

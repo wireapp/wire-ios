@@ -753,6 +753,21 @@ public class MockConversationLocalStoreProtocol: ConversationLocalStoreProtocol 
         await mock(conversation, timestamp, isFederationEnabled, isMLSEnabled, markAsRead)
     }
 
+    // MARK: - storeRefreshedGroup
+
+    public var storeRefreshedGroupIdIsFederationEnabledIsMLSEnabledShouldApply_Invocations: [(conversation: WireDomain.Conversation, id: QualifiedID, isFederationEnabled: Bool, isMLSEnabled: Bool, shouldApply: (ZMConversation, NSManagedObjectContext) -> Bool)] = []
+    public var storeRefreshedGroupIdIsFederationEnabledIsMLSEnabledShouldApply_MockMethod: ((WireDomain.Conversation, QualifiedID, Bool, Bool, @Sendable @escaping (ZMConversation, NSManagedObjectContext) -> Bool) async -> Void)?
+
+    public func storeRefreshedGroup(_ conversation: WireDomain.Conversation, id: QualifiedID, isFederationEnabled: Bool, isMLSEnabled: Bool, shouldApply: @Sendable @escaping (ZMConversation, NSManagedObjectContext) -> Bool) async {
+        storeRefreshedGroupIdIsFederationEnabledIsMLSEnabledShouldApply_Invocations.append((conversation: conversation, id: id, isFederationEnabled: isFederationEnabled, isMLSEnabled: isMLSEnabled, shouldApply: shouldApply))
+
+        guard let mock = storeRefreshedGroupIdIsFederationEnabledIsMLSEnabledShouldApply_MockMethod else {
+            fatalError("no mock for `storeRefreshedGroupIdIsFederationEnabledIsMLSEnabledShouldApply`")
+        }
+
+        await mock(conversation, id, isFederationEnabled, isMLSEnabled, shouldApply)
+    }
+
     // MARK: - storeConversation
 
     public var storeConversationNeedsBackendUpdateConversationIDConversationDomain_Invocations: [(needsBackendUpdate: Bool, conversationID: UUID, conversationDomain: String)] = []
@@ -1832,6 +1847,26 @@ public class MockConversationRepositoryProtocol: ConversationRepositoryProtocol,
 
         guard let mock = pullConversationIdDomain_MockMethod else {
             fatalError("no mock for `pullConversationIdDomain`")
+        }
+
+        try await mock(id, domain)
+    }
+
+    // MARK: - refreshConversation
+
+    public var refreshConversationIdDomain_Invocations: [(id: UUID, domain: String)] = []
+    public var refreshConversationIdDomain_MockError: Error?
+    public var refreshConversationIdDomain_MockMethod: ((UUID, String) async throws -> Void)?
+
+    public func refreshConversation(id: UUID, domain: String) async throws {
+        refreshConversationIdDomain_Invocations.append((id: id, domain: domain))
+
+        if let error = refreshConversationIdDomain_MockError {
+            throw error
+        }
+
+        guard let mock = refreshConversationIdDomain_MockMethod else {
+            fatalError("no mock for `refreshConversationIdDomain`")
         }
 
         try await mock(id, domain)

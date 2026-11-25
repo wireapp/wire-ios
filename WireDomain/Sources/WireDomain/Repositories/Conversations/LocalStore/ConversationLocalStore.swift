@@ -423,6 +423,10 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             localConversation.addParticipantsAndUpdateConversationState(
                 usersAndRoles: usersAndRoles
             )
+            if localConversation.isDeletedRemotely, localConversation.conversationType == .group,
+               usersAndRoles.contains(where: \.user.isSelfUser) {
+                localConversation.needsToBeUpdatedFromBackend = true
+            }
         }
     }
 
@@ -506,6 +510,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             await updateOrCreateGroupConversation(
                 from: conversation,
                 withID: id,
+                domain: conversation.qualifiedID?.domain,
                 serverTimestamp: timestamp,
                 isFederationEnabled: isFederationEnabled,
                 isMLSEnabled: isMLSEnabled,
@@ -556,6 +561,25 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
 
             conversation?.needsToBeUpdatedFromBackend = needsBackendUpdate
         }
+    }
+
+    public func storeRefreshedGroup(
+        _ conversation: Conversation,
+        id: QualifiedID,
+        isFederationEnabled: Bool,
+        isMLSEnabled: Bool,
+        shouldApply: @Sendable @escaping (ZMConversation, NSManagedObjectContext) -> Bool
+    ) async {
+        await updateOrCreateGroupConversation(
+            from: conversation,
+            withID: id.uuid,
+            domain: id.domain,
+            serverTimestamp: .now,
+            isFederationEnabled: isFederationEnabled,
+            isMLSEnabled: isMLSEnabled,
+            markAsRead: false,
+            shouldApply: shouldApply
+        )
     }
 
     public func storeFailedConversation(
@@ -932,6 +956,9 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     ) async {
         await context.perform {
             conversation.isDeletedRemotely = isDeletedRemotely
+            if isDeletedRemotely {
+                conversation.needsToBeUpdatedFromBackend = false
+            }
         }
     }
 
@@ -1125,20 +1152,24 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
     private func updateOrCreateGroupConversation(
         from conversation: Conversation,
         withID id: UUID,
+        domain: String?,
         serverTimestamp: Date,
         isFederationEnabled: Bool,
         isMLSEnabled: Bool,
-        markAsRead: Bool
+        markAsRead: Bool,
+        shouldApply: (@Sendable (ZMConversation, NSManagedObjectContext) -> Bool)? = nil
     ) async {
-        var isInitialFetch = false
+        let localConversation: ZMConversation
+        if shouldApply == nil {
+            localConversation = await fetchOrCreateConversation(id: id, domain: domain)
+        } else {
+            guard let conversation = await fetchConversation(id: id, domain: domain) else { return }
+            localConversation = conversation
+        }
 
-        let localConversation = await fetchOrCreateConversation(
-            id: id,
-            domain: conversation.qualifiedID?.domain
-        )
-
-        await context.perform { [self] in
-            isInitialFetch = localConversation.isPendingInitialFetch
+        let isInitialFetch: Bool? = await context.perform { [self] in
+            guard shouldApply?(localConversation, context) ?? true else { return nil }
+            let isInitialFetch = localConversation.isPendingInitialFetch
 
             localConversation.conversationType = .group
             localConversation.remoteIdentifier = id
@@ -1197,7 +1228,14 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             Flow.createGroup.checkpoint(
                 description: "conversation created remote id: \(localConversation.remoteIdentifier?.safeForLoggingDescription ?? "<nil>")"
             )
+            if shouldApply != nil {
+                localConversation.isDeletedRemotely = false
+                localConversation.needsToBeUpdatedFromBackend = false
+                context.enqueueDelayedSave()
+            }
+            return isInitialFetch
         }
+        guard let isInitialFetch else { return }
 
         if let selfMember = conversation.members?.selfMember {
             let mutedStatusInfo = (selfMember.mutedStatus, selfMember.mutedReference)
@@ -1240,8 +1278,10 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             // then we should link the one on one user.
             linkOneOnOneUserIfNeeded(for: localConversation)
 
-            // All metadata has been updated, object does not need to be updated from backend
-            localConversation.needsToBeUpdatedFromBackend = false
+            // A guarded refresh consumes its request before the async updates above.
+            if shouldApply == nil {
+                localConversation.needsToBeUpdatedFromBackend = false
+            }
         }
     }
 

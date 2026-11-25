@@ -270,8 +270,11 @@ public extension ZMConversation {
             return user
         })
 
+        if conversationType == .group, users.contains(where: \.isSelfUser) {
+            needsToBeUpdatedFromBackend = false
+        }
+
         if !removedUsers.isEmpty {
-            let removedSelf = removedUsers.contains(where: \.isSelfUser)
             checkIfVerificationLevelChanged(removedUsers: removedUsers)
         }
     }

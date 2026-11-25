@@ -48,6 +48,7 @@ class RemoveLocalConversationUseCaseTests: ZMBaseManagedObjectTest {
             let conversation = ZMConversation.insertNewObject(in: syncMOC)
             conversation.messageProtocol = .mls
             conversation.mlsGroupID = groupID
+            conversation.needsToBeUpdatedFromBackend = true
             return conversation
         }
         mockMLSService.wipeGroup_MockMethod = { _ in }
@@ -58,6 +59,7 @@ class RemoveLocalConversationUseCaseTests: ZMBaseManagedObjectTest {
         // Then
         await syncMOC.perform {
             XCTAssertTrue(conversation.isDeletedRemotely)
+            XCTAssertFalse(conversation.needsToBeUpdatedFromBackend)
         }
         XCTAssertEqual(mockMLSService.wipeGroup_Invocations, [groupID])
     }
