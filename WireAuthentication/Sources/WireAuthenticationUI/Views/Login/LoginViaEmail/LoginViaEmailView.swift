@@ -129,7 +129,8 @@ package struct LoginViaEmailView: View {
         LabeledTextField(
             placeholder: Strings.CloudUserLogin.InputEmail.placeholder,
             title: Strings.CloudUserLogin.InputEmail.title,
-            string: $viewModel.email,
+            // AutoFill can update disabled fields, so keep a prefilled email read-only.
+            string: viewModel.isEmailPrefilled ? .constant(viewModel.email) : $viewModel.email,
             keyboardType: .emailAddress,
             textContentType: .username
         )
