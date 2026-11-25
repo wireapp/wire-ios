@@ -164,12 +164,27 @@ extension ZMAssetClientMessageTests {
     func testThatItDoesNotExportInvalidPathComponents() throws {
         let source = createFileMetadata()
 
-        for filename in ["", ".", "..", "/", "../..", "file\u{0000}.txt"] {
+        for filename in ["", ".", "..", "/", "../..", "file\u{0000}.txt", "bad\u{0000}/Straße.txt"] {
             let metadata = ZMFileMetadata(fileURL: source.fileURL, name: filename)
             let sut = try XCTUnwrap(appendFileMessage(to: conversation, fileMetaData: metadata))
 
             XCTAssertNil(sut.temporaryURLToDecryptedFile(), filename)
         }
+    }
+
+    func testThatReceivedFilenamesFilterExcessiveCombiningMarks() throws {
+        let sut = try XCTUnwrap(appendFileMessage(to: conversation))
+        let filename = "Straße" + String(repeating: "\u{0308}", count: 20) + ".txt"
+        let asset = GenericMessageProtocol.Asset.with {
+            $0.original = GenericMessageProtocol.Asset.Original.with {
+                $0.name = filename
+                $0.mimeType = "text/plain"
+                $0.size = 1024
+            }
+        }
+        try sut.setUnderlyingMessage(GenericMessage(content: asset, nonce: sut.nonce!))
+
+        XCTAssertEqual(sut.filename, "Straße\u{0308}\u{0308}\u{0308}.txt")
     }
 
     func testThatItCreatesFileAssetMessageWithNotRelativePath() {

@@ -60,8 +60,9 @@ final class ConversationFileMessageCellTests: ConversationMessageSnapshotTestCas
             let label = try XCTUnwrap(sut.subviews.first {
                 $0.accessibilityIdentifier == "FileTransferTopLabel"
             } as? UILabel)
-            XCTAssertEqual(label.attributedText?.string, filename)
-            XCTAssertEqual(label.accessibilityValue, filename)
+            let filenameStem = (filename as NSString).deletingPathExtension
+            XCTAssertEqual(label.attributedText?.string, filenameStem)
+            XCTAssertEqual(label.accessibilityValue, filenameStem)
         }
     }
 
