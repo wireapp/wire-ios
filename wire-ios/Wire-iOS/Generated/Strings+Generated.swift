@@ -4294,6 +4294,20 @@ internal enum L10n {
           }
         }
       }
+      internal enum Meeting {
+        internal enum Alert {
+          /// This meeting is password protected
+          internal static let message = L10n.tr("Localizable", "join.meeting.alert.message", fallback: "This meeting is password protected")
+          internal enum JoinAction {
+            /// Join Meeting
+            internal static let title = L10n.tr("Localizable", "join.meeting.alert.joinAction.title", fallback: "Join Meeting")
+          }
+          internal enum Textfield {
+            /// Enter Meeting password
+            internal static let placeholder = L10n.tr("Localizable", "join.meeting.alert.textfield.placeholder", fallback: "Enter Meeting password")
+          }
+        }
+      }
     }
     internal enum KeyboardPhotosAccess {
       internal enum Denied {
@@ -6707,6 +6721,22 @@ internal enum L10n {
             internal enum LinkIsInvalid {
               /// The conversation link is invalid.
               internal static let message = L10n.tr("Localizable", "url_action.join_conversation.error.alert.link_is_invalid.message", fallback: "The conversation link is invalid.")
+            }
+          }
+        }
+      }
+      internal enum JoinMeeting {
+        internal enum Error {
+          internal enum Alert {
+            /// You could not join the meeting
+            internal static let title = L10n.tr("Localizable", "url_action.join_meeting.error.alert.title", fallback: "You could not join the meeting")
+            internal enum LinkIsInvalid {
+              /// The meeting link is invalid.
+              internal static let message = L10n.tr("Localizable", "url_action.join_meeting.error.alert.link_is_invalid.message", fallback: "The meeting link is invalid.")
+            }
+            internal enum MeetingIsFull {
+              /// The meeting is full.
+              internal static let message = L10n.tr("Localizable", "url_action.join_meeting.error.alert.meeting_is_full.message", fallback: "The meeting is full.")
             }
           }
         }

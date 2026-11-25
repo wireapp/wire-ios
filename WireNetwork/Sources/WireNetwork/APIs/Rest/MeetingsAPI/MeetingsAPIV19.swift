@@ -24,6 +24,48 @@ final class MeetingsAPIV19: MeetingsAPIV18 {
         .v19
     }
 
+    override func joinMeeting(
+        domain: String,
+        key: String,
+        code: String,
+        password: String?
+    ) async throws -> MeetingJoinResponse {
+        guard let encodedDomain = domain.pathEncoded,
+              let encodedKey = key.pathEncoded,
+              let encodedCode = code.pathEncoded else {
+            throw MeetingsAPIError.failedToGenerateRequest
+        }
+        var components = URLComponents()
+        components.percentEncodedPath = "\(pathPrefix)/meeting/\(encodedDomain)/\(encodedKey)/\(encodedCode)/join"
+        if let password {
+            // The v19 join query rejects values outside PlainTextPassword8 before checking the password.
+            guard (8 ... 1024).contains(password.unicodeScalars.count) else {
+                throw MeetingsAPIError.invalidMeetingPassword
+            }
+            components.queryItems = [URLQueryItem(name: "password", value: password)]
+            // The backend decodes a literal plus in the query as a space.
+            components.percentEncodedQuery = components.percentEncodedQuery?.replacingOccurrences(of: "+", with: "%2B")
+        }
+        guard let url = components.url else {
+            throw MeetingsAPIError.failedToGenerateRequest
+        }
+        let request = URLRequestBuilder(url: url).withMethod(.post).build()
+        let (data, response) = try await apiService.executeRequest(request, requiringAccessToken: true)
+
+        return try ResponseParser()
+            .success(code: .ok, type: MeetingJoinResponseV19.self)
+            .failure(
+                code: .forbidden,
+                label: "invalid-meeting-password",
+                error: MeetingsAPIError.invalidMeetingPassword
+            )
+            .failure(code: .forbidden, label: "invalid-op", error: MeetingsAPIError.invalidOperation)
+            .failure(code: .forbidden, label: "access-denied", error: MeetingsAPIError.accessDenied)
+            .failure(code: .forbidden, label: "too-many-members", error: MeetingsAPIError.tooManyMembers)
+            .failure(code: .notFound, label: "meeting-not-found", error: MeetingsAPIError.meetingNotFound)
+            .parse(code: response.statusCode, data: data)
+    }
+
     override func createMeeting(parameters: CreateMeetingParameters) async throws -> MeetingResponse {
         let body = try JSONEncoder.defaultEncoder.encode(CreateMeetingParametersV19(parameters: parameters))
         let path = "\(pathPrefix)/meetings"
@@ -93,6 +135,37 @@ final class MeetingsAPIV19: MeetingsAPIV18 {
             .parse(code: response.statusCode, data: data)
     }
 
+}
+
+private extension String {
+    var pathEncoded: String? {
+        addingPercentEncoding(withAllowedCharacters: .urlPathSegmentCharacters)
+    }
+}
+
+private extension CharacterSet {
+    static let urlPathSegmentCharacters = CharacterSet(
+        charactersIn: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._~"
+    )
+}
+
+private struct MeetingJoinResponseV19: Decodable, ToAPIModelConvertible {
+    let meeting: MeetingResponseV16
+    let conversation: ConversationV16
+
+    private enum CodingKeys: String, CodingKey {
+        case conversation
+    }
+
+    init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.meeting = try MeetingResponseV16(from: decoder)
+        self.conversation = try container.decode(ConversationV16.self, forKey: .conversation)
+    }
+
+    func toAPIModel() -> MeetingJoinResponse {
+        MeetingJoinResponse(meeting: meeting.toAPIModel(), conversation: conversation.toAPIModel())
+    }
 }
 
 private struct MeetingInvitationsParameters: Encodable {

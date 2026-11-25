@@ -16,11 +16,102 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import SwiftUI
+import WireSyncEngine
 import XCTest
 
 @testable import Wire
 
 final class URLActionRouterTests: XCTestCase {
+
+    func testFirstMeetingPasswordPromptHasNoError() throws {
+        let controller = try passwordPrompt(conversationName: nil, isMeeting: true)
+        let sheet = try XCTUnwrap(controller as? UIHostingController<MeetingJoinPasswordView?>)
+
+        XCTAssertNil(try XCTUnwrap(sheet.rootView).errorMessage)
+    }
+
+    func testConversationPasswordPromptKeepsConversationCopy() throws {
+        let controller = try passwordPrompt(conversationName: "Test group")
+        let alert = try XCTUnwrap(controller as? UIAlertController)
+
+        XCTAssertEqual(alert.message, "This conversation is password protected")
+        XCTAssertEqual(alert.textFields?.first?.placeholder, "Enter conversation password")
+        XCTAssertEqual(alert.actions.first?.title, "Join conversation")
+    }
+
+    func testWrongMeetingPasswordShowsErrorInPasswordPrompt() throws {
+        let controller = try passwordPrompt(conversationName: nil, isMeeting: true, incorrectPassword: true)
+        let sheet = try XCTUnwrap(controller as? UIHostingController<MeetingJoinPasswordView?>)
+
+        XCTAssertEqual(try XCTUnwrap(sheet.rootView).errorMessage, "Password is incorrect, please try again.")
+    }
+
+    func testInvalidMeetingLinkUsesMeetingError() throws {
+        let delegate = MockURLActionRouterDelegate()
+        let router = TestableURLActionRouter(viewController: UIViewController(), sessionManager: nil)
+        router.delegate = delegate
+
+        router.failedToPerformAction(
+            .joinMeeting(domain: "example.com", key: "key", code: "code"),
+            error: ConversationJoinError.invalidCode
+        )
+
+        let alert = try XCTUnwrap(router.presentedAlert)
+        XCTAssertEqual(alert.title, "You could not join the meeting")
+        XCTAssertEqual(alert.message, "The meeting link is invalid.")
+    }
+
+    func testUnexpectedMeetingFailureKeepsMeetingTitle() throws {
+        let delegate = MockURLActionRouterDelegate()
+        let router = TestableURLActionRouter(viewController: UIViewController(), sessionManager: nil)
+        router.delegate = delegate
+
+        router.failedToPerformAction(
+            .joinMeeting(domain: "example.com", key: "key", code: "code"),
+            error: NSError(domain: "URLActionRouterTests", code: 1)
+        )
+
+        let alert = try XCTUnwrap(router.presentedAlert)
+        XCTAssertEqual(alert.title, "You could not join the meeting")
+        XCTAssertEqual(alert.message, L10n.Localizable.Error.User.unkownError)
+    }
+
+    func testWrongConversationPasswordKeepsConversationError() throws {
+        let delegate = MockURLActionRouterDelegate()
+        let router = TestableURLActionRouter(viewController: UIViewController(), sessionManager: nil)
+        router.delegate = delegate
+
+        router.failedToPerformAction(
+            .joinConversation(key: "key", code: "code"),
+            error: ConversationJoinError.invalidConversationPassword
+        )
+
+        let alert = try XCTUnwrap(router.presentedAlert)
+        XCTAssertEqual(alert.title, "You could not join the conversation")
+        XCTAssertEqual(alert.message, "Password is incorrect, please try again.")
+    }
+
+    private func passwordPrompt(
+        conversationName: String?,
+        isMeeting: Bool = false,
+        incorrectPassword: Bool = false
+    ) throws -> UIViewController {
+        let delegate = MockURLActionRouterDelegate()
+        let router = TestableURLActionRouter(viewController: UIViewController(), sessionManager: nil)
+        router.delegate = delegate
+        delegate.canDisplayAlerts = false
+        router
+            .showPasswordPrompt(
+                for: conversationName,
+                isMeeting: isMeeting,
+                incorrectPassword: incorrectPassword
+            ) { _ in
+            }
+        delegate.canDisplayAlerts = true
+        router.presentPendingAlert()
+        return try XCTUnwrap(router.presentedController)
+    }
 
     // MARK: Presenting Alerts
 
@@ -195,8 +286,10 @@ final class MockURLActionRouterDelegate: URLActionRouterDelegate {
 
 final class TestableURLActionRouter: URLActionRouter {
 
-    var presentedAlert: UIAlertController?
-    override func internalPresentAlert(_ alert: UIAlertController) {
-        presentedAlert = alert
+    var presentedController: UIViewController?
+    var presentedAlert: UIAlertController? { presentedController as? UIAlertController }
+
+    override func internalPresentAlert(_ alert: UIViewController) {
+        presentedController = alert
     }
 }
