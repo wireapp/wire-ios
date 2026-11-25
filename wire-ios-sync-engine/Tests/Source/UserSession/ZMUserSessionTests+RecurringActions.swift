@@ -83,6 +83,45 @@ final class ZMUserSessionTests_RecurringActions: ZMUserSessionTestsBase {
         }
     }
 
+    func testThatItUpdatesUsersMissingName() async {
+        // Given
+        let (userWithoutName, userWithEmptyName, userWithName) = await syncMOC.perform {
+            let userWithoutName = self.createUser(name: nil, moc: self.syncMOC)
+            let userWithEmptyName = self.createUser(name: "", moc: self.syncMOC)
+            let userWithName = self.createUser(name: "Bruce", moc: self.syncMOC)
+            self.syncMOC.saveOrRollback()
+            return (userWithoutName, userWithEmptyName, userWithName)
+        }
+
+        // When
+        await sut.refreshUsersMissingMetadataAction()
+
+        // Then
+        await syncMOC.perform {
+            XCTAssertTrue(userWithoutName.needsToBeUpdatedFromBackend)
+            XCTAssertTrue(userWithEmptyName.needsToBeUpdatedFromBackend)
+            XCTAssertFalse(userWithName.needsToBeUpdatedFromBackend)
+        }
+    }
+
+    func testThatItDoesNotUpdateDeletedUsersMissingName() async {
+        // Given
+        let deletedUser = await syncMOC.perform {
+            let user = self.createUser(name: nil, moc: self.syncMOC)
+            user.isAccountDeleted = true
+            self.syncMOC.saveOrRollback()
+            return user
+        }
+
+        // When
+        await sut.refreshUsersMissingMetadataAction()
+
+        // Then
+        await syncMOC.perform {
+            XCTAssertFalse(deletedUser.needsToBeUpdatedFromBackend)
+        }
+    }
+
     func testThatItUpdatesConversationsMissingMetadata() async {
         let conversation = await syncMOC.perform {
             // Given
@@ -137,6 +176,14 @@ final class ZMUserSessionTests_RecurringActions: ZMUserSessionTestsBase {
         user.domain = domain
         user.needsToBeUpdatedFromBackend = false
         user.isPendingMetadataRefresh = true
+        return user
+    }
+
+    private func createUser(name: String?, moc: NSManagedObjectContext) -> ZMUser {
+        let user = ZMUser(context: moc)
+        user.remoteIdentifier = UUID()
+        user.name = name
+        user.needsToBeUpdatedFromBackend = false
         return user
     }
 

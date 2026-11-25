@@ -36,7 +36,6 @@ public final class SearchDirectory: NSObject {
     private let refreshConversationsMissingMetadataAction: RecurringAction
 
     private let searchUsersCache: SearchUsersCache?
-    private let refreshedUsersTracker = RefreshedUsersTracker()
 
     deinit {
         assert(isTornDown, "`tearDown` must be called before SearchDirectory is deinitialized")
@@ -90,7 +89,6 @@ public final class SearchDirectory: NSObject {
             contextProvider: contextProvider,
             transportSession: transportSession,
             searchUsersCache: searchUsersCache,
-            refreshedUsersTracker: refreshedUsersTracker,
             apiVersion: apiVersion,
             searchAPI: searchAPI,
             teamsAPI: teamsAPI,
@@ -107,7 +105,6 @@ public final class SearchDirectory: NSObject {
             contextProvider: contextProvider,
             transportSession: transportSession,
             searchUsersCache: searchUsersCache,
-            refreshedUsersTracker: refreshedUsersTracker,
             apiVersion: apiVersion,
             searchAPI: searchAPI,
             teamsAPI: teamsAPI,

@@ -99,6 +99,23 @@ public extension ZMUser {
         NSPredicate(format: "%K == YES", #keyPath(ZMUser.isPendingMetadataRefresh))
     }
 
+    /// Users whose metadata should be fetched again: the ones the backend failed to return, and the ones whose
+    /// profile was stored without a name (they'd be displayed as "Name not available" and nothing else would
+    /// refresh them). Deleted accounts are excluded since they don't have a name.
+    static func predicateForUsersMissingMetadata() -> NSPredicate {
+        let isMissingName = NSPredicate(
+            format: "(%K == nil OR %K == '') AND %K == NO AND %K == NO",
+            #keyPath(ZMUser.name),
+            #keyPath(ZMUser.name),
+            #keyPath(ZMUser.needsToBeUpdatedFromBackend),
+            #keyPath(ZMUser.isAccountDeleted)
+        )
+        return NSCompoundPredicate(orPredicateWithSubpredicates: [
+            predicateForUsersArePendingToRefreshMetadata(),
+            isMissingName
+        ])
+    }
+
     internal static func predicateForUsersWithOneOnOneConversation() -> NSPredicate {
         NSPredicate(format: "%K != nil", #keyPath(ZMUser.oneOnOneConversation))
     }

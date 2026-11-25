@@ -29,6 +29,11 @@ public final class SearchUsersUseCase: SearchUsersUseCaseProtocol {
     private var activeSearchTask: SearchTask?
     private let isMLSEnabled: Bool
 
+    /// Whether users and conversations missing metadata were already refreshed by this instance. Searches run on
+    /// each keystroke, so refreshing them each time would request the same metadata over and over if the backend
+    /// keeps failing to return it.
+    private var hasRefreshedIncompleteMetadata = false
+
     deinit {
         searchDirectory.tearDown()
     }
@@ -57,7 +62,10 @@ public final class SearchUsersUseCase: SearchUsersUseCaseProtocol {
         activeSearchTask?.cancel()
         activeSearchTask = nil
 
-        await searchDirectory.updateIncompleteMetadataIfNeeded()
+        if !hasRefreshedIncompleteMetadata {
+            hasRefreshedIncompleteMetadata = true
+            await searchDirectory.updateIncompleteMetadataIfNeeded()
+        }
 
         let (selfDomain, team) = await context.perform { [context] in
             let selfUser = ZMUser.selfUser(in: context)

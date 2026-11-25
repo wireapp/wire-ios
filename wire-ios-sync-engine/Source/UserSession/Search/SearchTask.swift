@@ -30,7 +30,6 @@ public final class SearchTask {
     private let transportSession: TransportSessionType
     private let contextProvider: ContextProvider
     private let searchUsersCache: SearchUsersCache?
-    private let refreshedUsersTracker: RefreshedUsersTracker
     private let searchAPI: any SearchAPI
     private let teamsAPI: any TeamsAPI
     private let usersAPI: any UsersAPI
@@ -61,7 +60,6 @@ public final class SearchTask {
         contextProvider: ContextProvider,
         transportSession: TransportSessionType,
         searchUsersCache: SearchUsersCache?,
-        refreshedUsersTracker: RefreshedUsersTracker = RefreshedUsersTracker(),
         apiVersion: WireTransport.APIVersion?,
         searchAPI: some SearchAPI,
         teamsAPI: some TeamsAPI,
@@ -71,7 +69,6 @@ public final class SearchTask {
         self.transportSession = transportSession
         self.contextProvider = contextProvider
         self.searchUsersCache = searchUsersCache
-        self.refreshedUsersTracker = refreshedUsersTracker
         self.apiVersion = apiVersion
         self.searchAPI = searchAPI
         self.teamsAPI = teamsAPI
@@ -242,7 +239,7 @@ public final class SearchTask {
         }
 
         let searchContext = contextProvider.newBackgroundContext()
-        let (connectedUserIDs, teamMemberIDs, conversationIDs, userIDsToRefresh) = await searchContext.perform { [self] in
+        let (connectedUserIDs, teamMemberIDs, conversationIDs) = await searchContext.perform { [self] in
 
             var team: WireDataModel.Team?
             if let teamObjectID = request.team?.objectID {
@@ -269,23 +266,13 @@ public final class SearchTask {
                 in: searchContext
             ) : []
 
-            let userIDsToRefresh = refreshedUsersTracker.insert(
-                teamMembers
-                    .compactMap(\.user)
-                    .filter(\.isMissingNameAndNotPendingRefresh)
-                    .map(\.objectID)
-            )
-
             return (
                 connectedUsers.map(\.objectID),
                 teamMembers.map(\.objectID),
-                conversations.map(\.objectID),
-                userIDsToRefresh
+                conversations.map(\.objectID)
             )
 
         }
-
-        refreshUsers(with: userIDsToRefresh)
 
         let viewContext = contextProvider.viewContext
         return await viewContext.perform { [self] in
@@ -330,28 +317,6 @@ public final class SearchTask {
 
             return { $0 = $0.union(withLocalResult: result.copy(on: viewContext)) }
 
-        }
-    }
-
-    /// Team members are listed even if their profile was never successfully fetched (e.g. the backend reported
-    /// them as failed), in which case they'd be displayed as "Name not available" until something else refreshes
-    /// them. Request a refresh so the profile is fetched again.
-    ///
-    /// The refresh is done on the sync context, where `UserProfileRequestStrategy` picks it up, without blocking
-    /// the search results.
-    private func refreshUsers(with objectIDs: [NSManagedObjectID]) {
-        guard !objectIDs.isEmpty else { return }
-
-        let syncContext = contextProvider.syncContext
-        syncContext.performGroupedBlock {
-            let users = objectIDs
-                .compactMap { try? syncContext.existingObject(with: $0) as? ZMUser }
-                .filter(\.isMissingNameAndNotPendingRefresh)
-            guard !users.isEmpty else { return }
-
-            WireLogger.search.info("refreshing \(users.count) team member(s) missing a name")
-            users.forEach { $0.refreshData() }
-            syncContext.saveOrRollback()
         }
     }
 
@@ -992,14 +957,6 @@ private extension SearchResult {
 
 }
 
-private extension ZMUser {
-
-    var isMissingNameAndNotPendingRefresh: Bool {
-        (name?.isEmpty ?? true) && !needsToBeUpdatedFromBackend
-    }
-
-}
-
 private extension SearchUserAssetKeys {
 
     init?(_ userAssets: [UserAsset]) {
@@ -1070,25 +1027,6 @@ private extension ZMSearchUser {
             summary: localUser?.appInfo?.appDescription,
             isDeleted: user.deleted ?? false
         )
-    }
-
-}
-
-/// Keeps track of the users whose profile was already refreshed by a search, so that searching again (e.g. on each
-/// keystroke) doesn't request the same profiles over and over when the backend keeps failing to return them.
-///
-/// Shared by all the search tasks created by a `SearchDirectory`.
-final class RefreshedUsersTracker: @unchecked Sendable {
-
-    private let lock = NSLock()
-    private var objectIDs = Set<NSManagedObjectID>()
-
-    /// Inserts the given object IDs and returns the ones that weren't tracked yet.
-    func insert(_ newObjectIDs: [NSManagedObjectID]) -> [NSManagedObjectID] {
-        lock.lock()
-        defer { lock.unlock() }
-
-        return newObjectIDs.filter { objectIDs.insert($0).inserted }
     }
 
 }

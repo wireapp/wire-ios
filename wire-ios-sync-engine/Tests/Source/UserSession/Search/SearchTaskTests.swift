@@ -30,7 +30,6 @@ final class SearchTaskTests: DatabaseTest {
 
     private var mockTransportSession: MockTransportSession!
     private var mockCache: SearchUsersCache!
-    private var refreshedUsersTracker: RefreshedUsersTracker!
     private var searchAPIMock: MockSearchAPI!
     private var teamsAPIMock: MockTeamsAPI!
     private var usersAPIMock: MockUsersAPI!
@@ -40,7 +39,6 @@ final class SearchTaskTests: DatabaseTest {
 
         mockTransportSession = MockTransportSession(dispatchGroup: dispatchGroup)
         mockCache = SearchUsersCache()
-        refreshedUsersTracker = RefreshedUsersTracker()
         teamIdentifier = UUID()
         searchAPIMock = .init()
         teamsAPIMock = .init()
@@ -68,7 +66,6 @@ final class SearchTaskTests: DatabaseTest {
         teamIdentifier = nil
         mockTransportSession = nil
         mockCache = nil
-        refreshedUsersTracker = nil
 
         super.tearDown()
     }
@@ -426,83 +423,6 @@ final class SearchTaskTests: DatabaseTest {
 
         // then
         XCTAssertEqual(result.teamMembers.compactMap(\.user), [user])
-    }
-
-    func testThatItRefreshesTeamMembersWithoutName_WhenSearchingLocally() async throws {
-        let (userWithoutNameID, userWithNameID, team) = await createTeamWithUserWithoutNameAndUserWithName()
-        let request = SearchRequest(query: "", searchOptions: [.teamMembers], team: team)
-
-        // when
-        var result = SearchResult()
-        let resultAggregator = await makeSearchTask(request: request).performLocalSearch()
-        await uiMOC.perform {
-            resultAggregator(&result)
-        }
-
-        // then
-        await uiMOC.perform {
-            let teamMemberIDs = Set(result.teamMembers.compactMap(\.user).map(\.objectID))
-            XCTAssertEqual(teamMemberIDs, [userWithoutNameID, userWithNameID])
-        }
-        // the refresh is enqueued on the sync context before the search returns
-        await syncMOC.perform { [syncMOC] in
-            let userWithoutName = try? syncMOC.existingObject(with: userWithoutNameID) as? ZMUser
-            let userWithName = try? syncMOC.existingObject(with: userWithNameID) as? ZMUser
-            XCTAssertEqual(userWithoutName?.needsToBeUpdatedFromBackend, true)
-            XCTAssertEqual(userWithName?.needsToBeUpdatedFromBackend, false)
-        }
-    }
-
-    func testThatItDoesNotRefreshTeamMembersWithoutNameAgain_WhenSearchingLocallyAgain() async throws {
-        let (userWithoutNameID, _, team) = await createTeamWithUserWithoutNameAndUserWithName()
-        let request = SearchRequest(query: "", searchOptions: [.teamMembers], team: team)
-
-        // given the user was refreshed by a previous search, but the backend failed to return it again
-        _ = await makeSearchTask(request: request).performLocalSearch()
-        await syncMOC.perform { [syncMOC] in
-            let user = try? syncMOC.existingObject(with: userWithoutNameID) as? ZMUser
-            XCTAssertEqual(user?.needsToBeUpdatedFromBackend, true)
-            user?.needsToBeUpdatedFromBackend = false
-            syncMOC.saveOrRollback()
-        }
-
-        // when
-        _ = await makeSearchTask(request: request).performLocalSearch()
-
-        // then
-        await syncMOC.perform { [syncMOC] in
-            let user = try? syncMOC.existingObject(with: userWithoutNameID) as? ZMUser
-            XCTAssertEqual(user?.needsToBeUpdatedFromBackend, false)
-        }
-    }
-
-    private func createTeamWithUserWithoutNameAndUserWithName() async -> (
-        userWithoutNameID: NSManagedObjectID,
-        userWithNameID: NSManagedObjectID,
-        team: WireDataModel.Team
-    ) {
-        await uiMOC.perform { [uiMOC] in
-            let team = Team.insertNewObject(in: uiMOC)
-            let userWithoutName = ZMUser.insertNewObject(in: uiMOC)
-            let userWithName = ZMUser.insertNewObject(in: uiMOC)
-            let memberA = Member.insertNewObject(in: uiMOC)
-            let memberB = Member.insertNewObject(in: uiMOC)
-
-            userWithoutName.remoteIdentifier = UUID()
-            userWithoutName.needsToBeUpdatedFromBackend = false
-            userWithName.remoteIdentifier = UUID()
-            userWithName.name = "Member B"
-            userWithName.needsToBeUpdatedFromBackend = false
-
-            memberA.team = team
-            memberA.user = userWithoutName
-            memberB.team = team
-            memberB.user = userWithName
-
-            uiMOC.saveOrRollback()
-
-            return (userWithoutName.objectID, userWithName.objectID, team)
-        }
     }
 
     func testThatItDoesNotListAppsFromLocalTeamMembers() async throws {
@@ -2044,7 +1964,6 @@ final class SearchTaskTests: DatabaseTest {
             contextProvider: coreDataStack!,
             transportSession: mockTransportSession,
             searchUsersCache: mockCache,
-            refreshedUsersTracker: refreshedUsersTracker,
             apiVersion: apiVersion,
             searchAPI: searchAPIMock,
             teamsAPI: teamsAPIMock,
@@ -2063,7 +1982,6 @@ final class SearchTaskTests: DatabaseTest {
             contextProvider: coreDataStack!,
             transportSession: mockTransportSession,
             searchUsersCache: mockCache,
-            refreshedUsersTracker: refreshedUsersTracker,
             apiVersion: apiVersion,
             searchAPI: searchAPIMock,
             teamsAPI: teamsAPIMock,

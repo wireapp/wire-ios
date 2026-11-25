@@ -57,11 +57,20 @@ extension ZMUserSession {
             }
 
             await context.perform {
-                let predicate = ZMUser.predicateForUsersArePendingToRefreshMetadata()
+                let predicate = ZMUser.predicateForUsersMissingMetadata()
                 let fetchRequest = ZMUser.sortedFetchRequest(with: predicate)
-                guard let users = context.fetchOrAssert(request: fetchRequest) as? [ZMUser] else {
+                guard let users = context.fetchOrAssert(request: fetchRequest) as? [ZMUser], !users.isEmpty else {
                     return
                 }
+
+                // users that aren't pending a metadata refresh are selected because they're missing a name
+                let usersMissingNameIDs = users
+                    .filter { !$0.isPendingMetadataRefresh }
+                    .compactMap(\.remoteIdentifier?.safeForLoggingDescription)
+                WireLogger.userProfile.info(
+                    "refreshing \(users.count) user(s) missing metadata, missing a name: \(usersMissingNameIDs)",
+                    attributes: .safePublic
+                )
 
                 users.forEach { $0.refreshData() }
                 context.saveOrRollback()

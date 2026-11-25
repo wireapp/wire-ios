@@ -173,6 +173,10 @@ class UserProfileByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
 
         if response.httpStatus == 404, let responseFailure = Payload.ResponseFailure(response, decoder: decoder) {
             guard case .notFound = responseFailure.label else { return }
+            WireLogger.userProfile.warn(
+                "user profiles not found: \(identifiers.map(\.safeForLoggingDescription))",
+                attributes: .safePublic
+            )
             markUserProfilesAsFetched(identifiers)
             return
         }
@@ -219,7 +223,11 @@ class UserProfileByQualifiedIDTranscoder: IdentifierObjectSyncTranscoder {
                 in: context
             )
 
-            if let failedIdentifiers = payload.failed {
+            if let failedIdentifiers = payload.failed, !failedIdentifiers.isEmpty {
+                WireLogger.userProfile.warn(
+                    "failed to fetch user profiles: \(failedIdentifiers.map(\.safeForLoggingDescription))",
+                    attributes: .safePublic
+                )
                 markUserProfilesAsUnavailable(Set(failedIdentifiers))
             }
         }
