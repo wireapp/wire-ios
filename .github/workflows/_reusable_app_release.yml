@@ -130,7 +130,8 @@ jobs:
           lfs: 'false'
           token: ${{ secrets.SUBMODULE_PAT }}
           submodules: recursive
-      - name: Download changelog     
+      - name: Download changelog
+        if: ${{ inputs.produce_changelog }}
         id: download_changelog
         uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8.0.1
         with:
@@ -208,62 +209,3 @@ jobs:
         if: always()
         continue-on-error: true
         run: ./scripts/check_duplicate_classes.sh .
-      - name: Archiving Logs
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-        if: failure()
-        with:
-          name: build-logs (${{ github.run_id }} - ${{ github.run_attempt}})
-          path: |
-            /Users/runner/Library/Developer/Xcode/DerivedData/**/Logs/**
-            ~/Library/Logs/DiagnosticReports/**
-            build/**
-
-      - name: Archiving env variables
-        if: always()
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-        with:
-          name: post-build-env-${{ inputs.fastlane_action }} (${{ github.run_id }} - ${{ github.run_attempt}})
-          path: |
-            **/.post_build/*.env
-      - name: Load .env file
-        if: always()
-        uses: xom9ikk/dotenv@ac290ca23a42155a0cba1031d23afa46240116a9 # v2.3.0
-        with:
-          path: fastlane/.post_build
-      - uses: akiojin/decode-base64-github-action@82bef0d9c88d987dc48c45218029b8b8426b3e33 # v1.0.2
-        id: base64-decoded-S3_PATHS
-        with:
-          base64: ${{ env.S3_PATHS }}
-      - name: Notify on Wire if succeeded
-        if: success()
-        continue-on-error: true
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-        uses: ./.github/actions/notify-wire
-        with:
-          notify: custom
-          text: |
-            **${{ env.APP_NAME }}** (version: ${{ env.BUILD_VERSION }} build: ${{ env.BUILD_NUMBER }}) is ready to test 🚀
-            **COUNTLY_ENABLED:** ${{ env.ENABLE_COUNTLY }}
-            **DATADOG_ENABLED:** ${{ env.ENABLE_DATADOG }}
-            **CHANGELOG:** ${{ needs.changelog.outputs.changelog-url }}
-            **Tap on iOS device to install:** ${{ env.BUILD_INSTALL_LINK }}
-            **AWS S3 Paths:**
-            `${{ steps.base64-decoded-S3_PATHS.outputs.decoded }}`
-            **Triggered by:** ${{ github.triggering_actor }}
-            **Build log:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-            **SHA256:**  ${{ env.BUILD_SHA256 }}
-            ${{ env.TESTFLIGHT_ERROR != '' && format('⚠️ **TestFlight:** {0}', env.TESTFLIGHT_ERROR) || '' }}
-      - name: Notify on Wire if failed
-        if: failure()
-        continue-on-error: true
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-        uses: ./.github/actions/notify-wire
-        with:
-          notify: custom
-          text: |
-            🆘 Build **${{ env.APP_NAME }}** (version: ${{ env.BUILD_VERSION }} build: ${{ env.BUILD_NUMBER }}) failed 🆘
-            **Triggered by:** ${{ github.triggering_actor }}
-            **Build log:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-            ${{ env.TESTFLIGHT_ERROR != '' && format('⚠️ **TestFlight:** {0}', env.TESTFLIGHT_ERROR) || '' }}

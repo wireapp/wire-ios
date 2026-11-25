@@ -1,4 +1,4 @@
-name: C1 C2 C3 Restricted
+name: C1 C2 C3 Restricted validation
 
 on: 
   workflow_dispatch:
@@ -47,6 +47,7 @@ jobs:
     uses: ./.github/workflows/_reusable_app_release.yml
     with:
       fastlane_action: appstore_col_1_restricted
+      produce_changelog: false
       is_cloud_build: false
       mac_runner: ${{ inputs.mac_runner || vars.DEFAULT_MAC_RUNNER }}
       countly_enabled: false
@@ -87,6 +88,7 @@ jobs:
     uses: ./.github/workflows/_reusable_app_release.yml
     with:
       fastlane_action: appstore_col_2_restricted
+      produce_changelog: false
       is_cloud_build: false
       mac_runner: ${{ inputs.mac_runner || vars.DEFAULT_MAC_RUNNER }}
       countly_enabled: false
@@ -127,6 +129,7 @@ jobs:
     uses: ./.github/workflows/_reusable_app_release.yml
     with:
       fastlane_action: appstore_col_3_restricted
+      produce_changelog: false
       is_cloud_build: false
       mac_runner: ${{ inputs.mac_runner || vars.DEFAULT_MAC_RUNNER }}
       countly_enabled: false

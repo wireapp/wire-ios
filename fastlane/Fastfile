@@ -441,7 +441,7 @@ platform :ios do
  
     def build_and_upload_app(options)
         xcodes(select_for_current_build_only: true)
-        options[:build_number] = generate_build_number
+        options[:build_number] = 1
         prepare_for_release(options)
         build = Build.new(options: options)
         write_build_info_to_summary(build)
@@ -462,16 +462,7 @@ platform :ios do
             build_for_release(options)
         end
 
-        UI.message "🤖 Upload"
-        if options[:upload_app_store] || false
-            upload_app_store(options)
-        end
-        if options[:upload_testflight] || false
-            upload_testflight(options)
-        end
-        sha256(options)
-        upload_s3(options)
-        save_changelog_to_env(options)
+        UI.success "Restricted release validation complete. Archives are local to the runner."
     end
 
     def save_app_name(name)

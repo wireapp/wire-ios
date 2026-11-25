@@ -123,7 +123,9 @@
         "AppLockModuleViewTests\/test_ItSendsEvent_WhenLockViewRequestReauthentication()",
         "PasswordRuleSetTests\/testPasswordNotMatchingRuleSet()",
         "PasswordRuleSetTests\/testThatItDetectsDisallowedCharacter()",
-        "URL_WireTests\/test_passwordReset_URLIsCorrect()"
+        "URL_WireTests\/test_passwordReset_URLIsCorrect()",
+        "URLsTests\/testURLConfigurationDecodes()",
+        "URLsTests\/testURLConfigurationDecodesWithoutOptionalHelpLinks()"
       ],
       "target" : {
         "containerPath" : "container:Wire-iOS.xcodeproj",
