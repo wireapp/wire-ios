@@ -26,5 +26,5 @@ public struct CallEventInfo {
     public let userDomain: String?
     public let eventTimestamp: Date
     public let clientID: String
-    public let isMuted: Bool
+    public let remoteMuteTargets: [String: [String: [String]]]?
 }

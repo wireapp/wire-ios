@@ -278,12 +278,17 @@ final class CallViewController: UIViewController {
 
         guard
             let conversation,
-            conversation.managedObjectContext != nil
+            let context = conversation.managedObjectContext
         else {
             return
         }
 
         conversationObserverToken = ConversationChangeInfo.add(observer: self, for: conversation)
+        voiceChannelObserverTokens.append(
+            CallRemoteMuteNotification.addObserver(for: conversation, context: context) { [weak self] senderName in
+                self?.callGridViewController.showRemoteMuteNotice(from: senderName)
+            }
+        )
     }
 
     private func minimizeOverlay() {

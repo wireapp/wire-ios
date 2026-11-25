@@ -260,6 +260,16 @@ final class CallGridViewController: UIViewController {
 
     // MARK: - Hint
 
+    func showRemoteMuteNotice(from senderName: String?) {
+        let message: String = if let senderName, !senderName.isEmpty {
+            L10n.Localizable.Call.remoteMutedBy(senderName)
+        } else {
+            L10n.Localizable.Call.remoteMutedByAdmin
+        }
+        hintView.show(message: message, hideAfter: 5, accentColor: userSession.selfUser.wireAccentColor)
+        UIAccessibility.post(notification: .announcement, argument: message)
+    }
+
     func updateHint(for event: CallGridEvent) {
         switch event {
         case .viewDidLoad:

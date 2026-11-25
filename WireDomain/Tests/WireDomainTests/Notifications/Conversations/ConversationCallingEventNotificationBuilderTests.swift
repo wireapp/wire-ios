@@ -67,6 +67,27 @@ final class ConversationCallingEventNotificationBuilderTests: XCTestCase {
 
     // MARK: - CallKit Tests
 
+    func testCallContentDecodesRemoteMuteWithoutAVSFields() throws {
+        var calling = Calling()
+        calling.content = """
+        {"type":"REMOTEMUTE","data":{"targets":{"wire.com":{"user-id":["client-id"]}}}}
+        """
+
+        let content = try XCTUnwrap(CallContent.decode(from: calling))
+        XCTAssertEqual(content.remoteMuteTargets, ["wire.com": ["user-id": ["client-id"]]])
+        XCTAssertFalse(content.isIncomingCall)
+
+        for invalid in [
+            "{\"type\":\"REMOTEMUTE\"}",
+            "{\"type\":\"REMOTEMUTE\",\"data\":{\"targets\":[]}}",
+            "{\"type\":\"CONFSTART\",\"resp\":false}",
+            "{\"type\":\"CONFSTART\",\"src_clientid\":\"client-id\"}"
+        ] {
+            calling.content = invalid
+            XCTAssertNil(CallContent.decode(from: calling), invalid)
+        }
+    }
+
     func testCallContentDecodesConferenceTimestampWithoutDroppingCall() {
         let timestamps: [(String, String?)] = [
             ("\"1000\"", "1000"),
@@ -311,9 +332,7 @@ final class ConversationCallingEventNotificationBuilderTests: XCTestCase {
         let unhandledCallJson = """
         {
             "type": "REMOTEMUTE",
-            "src_clientid": "clientid",
-            "resp": false,
-            "props": { "videosend": "false" }
+            "data": { "targets": { "wire.com": { "user-id": ["client-id"] } } }
         }
         """
 
