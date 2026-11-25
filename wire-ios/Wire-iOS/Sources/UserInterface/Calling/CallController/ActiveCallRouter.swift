@@ -132,10 +132,6 @@ final class ActiveCallRouter<TopOverlayPresenter>
         callController.updateActiveCallPresentationState()
     }
 
-    func restoreCall(in conversation: ZMConversation) {
-        callController.presentCall(in: conversation)
-    }
-
     func prepareForRootReplacement() {
         pendingMeetingInvitation = nil
         // Do not rely on dismiss completion during root swap

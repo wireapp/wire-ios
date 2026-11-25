@@ -29,7 +29,6 @@ enum NavigationDestination {
     case connectionRequest(WireDataModel.QualifiedID)
     case conversationList
     case meetings
-    case meetingCall(WireDataModel.QualifiedID, accountID: UUID)
     case meetingInvitation(WireDataModel.QualifiedID, URL?)
 }
 
@@ -163,30 +162,6 @@ final class AuthenticatedRouter {
 
         _zClientViewController?.present(alert, animated: true)
     }
-
-    @MainActor
-    private func joinMeetingCall(_ conversationID: WireDataModel.QualifiedID, accountID: UUID) async {
-        guard let client = _zClientViewController,
-              let session = client.userSession as? ZMUserSession,
-              SessionManager.shared?.activeUserSession === session,
-              session.contextProvider.account.userIdentifier == accountID,
-              !session.isLocked,
-              session.isMeetingsEnabled else { return }
-
-        if let conversation = session.callCenter?.activeCallConversations(in: session)
-            .first(where: { $0.qualifiedID == conversationID }) {
-            activeCallRouter.restoreCall(in: conversation)
-            return
-        }
-
-        let presenter = UIApplication.shared.topmostViewController(onlyFullScreen: false) ?? client
-        let callRepository = MeetingCallRepositoryBridge(userSession: session, alertPresenter: presenter)
-        do {
-            try await callRepository.joinCall(in: .init(conversationID))
-        } catch {
-            presenter.showAlert(for: error)
-        }
-    }
 }
 
 // MARK: - AuthenticatedRouterProtocol
@@ -215,10 +190,6 @@ extension AuthenticatedRouter: AuthenticatedRouterProtocol {
             _zClientViewController?.showConversationList()
         case let .meetingInvitation(conversationID, link):
             activeCallRouter.prepareMeetingInvitation(conversationID: conversationID, link: link)
-        case let .meetingCall(conversationID, accountID):
-            Task { @MainActor in
-                await joinMeetingCall(conversationID, accountID: accountID)
-            }
         case .meetings:
             Task { @MainActor in
                 // The meetings tab is only installed when the feature is enabled at setup

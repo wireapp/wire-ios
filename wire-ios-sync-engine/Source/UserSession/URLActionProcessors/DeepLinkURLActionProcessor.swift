@@ -122,10 +122,7 @@ class DeepLinkURLActionProcessor: URLActionProcessor {
                 guard let conversation = ZMConversation.fetch(with: id, in: contextProvider.viewContext) else {
                     throw ConversationJoinError.unknown
                 }
-                let accountID = contextProvider.account.userIdentifier
-                handleConversationSynchronization(conversation: conversation, action: action, delegate: delegate) { _ in
-                    delegate.joinMeetingCall(id, accountID: accountID)
-                }
+                handleConversationSynchronization(conversation: conversation, action: action, delegate: delegate)
             } catch MeetingsAPIError.invalidMeetingPassword {
                 delegate.showPasswordPrompt(
                     for: nil,
@@ -217,9 +214,7 @@ class DeepLinkURLActionProcessor: URLActionProcessor {
                     conversation: conversation,
                     action: .joinConversation(key: key, code: code),
                     delegate: delegate
-                ) { conversation in
-                    self.showJoinedConversation(conversation, delegate: delegate)
-                }
+                )
             case let .failure(error):
                 delegate.failedToPerformAction(.joinConversation(key: key, code: code), error: error)
                 delegate.completedURLAction(.joinConversation(key: key, code: code))
@@ -230,14 +225,17 @@ class DeepLinkURLActionProcessor: URLActionProcessor {
     private func handleConversationSynchronization(
         conversation: ZMConversation,
         action: URLAction,
-        delegate: PresentationDelegate,
-        onSuccess: @escaping (ZMConversation) -> Void
+        delegate: PresentationDelegate
     ) {
         let completion: (Result<ZMConversation, Error>) -> Void = { result in
             DispatchQueue.main.async {
                 switch result {
                 case let .success(syncConversation):
-                    onSuccess(syncConversation)
+                    if case .joinMeeting = action {
+                        delegate.showMeetings()
+                    } else {
+                        self.showJoinedConversation(syncConversation, delegate: delegate)
+                    }
                 case let .failure(error):
                     delegate.failedToPerformAction(action, error: error)
                 }

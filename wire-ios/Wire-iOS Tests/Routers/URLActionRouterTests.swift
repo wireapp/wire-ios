@@ -110,7 +110,6 @@ final class URLActionRouterTests: XCTestCase {
             }
         delegate.canDisplayAlerts = true
         router.presentPendingAlert()
-        XCTAssertEqual(router.presentedOverCurrentScreen, isMeeting)
         return try XCTUnwrap(router.presentedController)
     }
 
@@ -257,39 +256,6 @@ final class URLActionRouterTests: XCTestCase {
             return XCTFail("Failed to perform navigation")
         }
     }
-
-    func testThatMeetingCallNavigatesToLinkedMeeting() {
-        let authenticatedRouter = MockAuthenticatedRouter()
-        let router = TestableURLActionRouter(viewController: UIViewController(), sessionManager: nil)
-        let conversationID = QualifiedID(uuid: UUID(), domain: "wire.com")
-        let accountID = UUID()
-        router.authenticatedRouter = authenticatedRouter
-
-        router.joinMeetingCall(conversationID, accountID: accountID)
-
-        guard case let .meetingCall(routedID, routedAccountID) = authenticatedRouter.didNavigateToDestination else {
-            return XCTFail("Expected the meeting call destination")
-        }
-        XCTAssertEqual(routedID, conversationID)
-        XCTAssertEqual(routedAccountID, accountID)
-    }
-
-    func testThatMeetingCallWaitsForAuthenticatedRouter() {
-        let router = TestableURLActionRouter(viewController: UIViewController(), sessionManager: nil)
-        let conversationID = QualifiedID(uuid: UUID(), domain: "wire.com")
-        let accountID = UUID()
-        router.joinMeetingCall(conversationID, accountID: accountID)
-
-        let authenticatedRouter = MockAuthenticatedRouter()
-        router.authenticatedRouter = authenticatedRouter
-        router.performPendingActions()
-
-        guard case let .meetingCall(routedID, routedAccountID) = authenticatedRouter.didNavigateToDestination else {
-            return XCTFail("Expected the pending meeting call destination")
-        }
-        XCTAssertEqual(routedID, conversationID)
-        XCTAssertEqual(routedAccountID, accountID)
-    }
 }
 
 final class MockAuthenticatedRouter: AuthenticatedRouterProtocol {
@@ -321,11 +287,9 @@ final class MockURLActionRouterDelegate: URLActionRouterDelegate {
 final class TestableURLActionRouter: URLActionRouter {
 
     var presentedController: UIViewController?
-    var presentedOverCurrentScreen: Bool?
     var presentedAlert: UIAlertController? { presentedController as? UIAlertController }
 
-    override func internalPresentAlert(_ alert: UIViewController, overCurrentScreen: Bool) {
+    override func internalPresentAlert(_ alert: UIViewController) {
         presentedController = alert
-        presentedOverCurrentScreen = overCurrentScreen
     }
 }

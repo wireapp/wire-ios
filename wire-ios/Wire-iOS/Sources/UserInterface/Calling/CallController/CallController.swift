@@ -62,14 +62,6 @@ final class CallController: NSObject {
         presentOrMinimizeActiveCall(for: priorityCallConversation)
     }
 
-    func presentCall(in conversation: ZMConversation) {
-        guard let voiceChannel = conversation.voiceChannel else { return }
-        if minimizedCall == conversation { minimizedCall = nil }
-
-        let animated = shouldAnimateTransitionForCall(in: conversation)
-        router?.presentActiveCall(for: voiceChannel, animated: animated)
-    }
-
     // MARK: - Private Implementation
 
     private func addObservers(userSession: UserSession) {
@@ -87,6 +79,14 @@ final class CallController: NSObject {
 
     private func minimizeCall() {
         router?.minimizeCall(animated: true, completion: nil)
+    }
+
+    private func presentCall(in conversation: ZMConversation) {
+        guard let voiceChannel = conversation.voiceChannel else { return }
+        if minimizedCall == conversation { minimizedCall = nil }
+
+        let animated = shouldAnimateTransitionForCall(in: conversation)
+        router?.presentActiveCall(for: voiceChannel, animated: animated)
     }
 
     private func dismissCall() {

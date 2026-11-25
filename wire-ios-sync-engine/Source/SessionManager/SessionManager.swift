@@ -672,9 +672,10 @@ public final class SessionManager: NSObject, SessionManagerType {
             cancellationJournal.clear(accountID: accountID, token: token)
         }
 
-        // UIKit provides the URL in the connection options when launching Wire from a link.
-        let launchAction = connectionOptions.urlContexts.first.flatMap { try? URLAction(url: $0.url) }
-        if launchAction?.causesLogout == true {
+        if
+            let url = connectionOptions.urlContexts.first?.url, // Currently we only support one URL
+            let urlAction = try? URLAction(url: url),
+            urlAction.causesLogout {
             // If a logout is coming, then no need to start.
             return
         }
@@ -682,10 +683,6 @@ public final class SessionManager: NSObject, SessionManagerType {
         if shouldPerformPostRebootLogout() {
             performPostRebootLogout()
             return
-        }
-
-        if case .joinMeeting? = launchAction, pendingURLAction == nil {
-            pendingURLAction = launchAction
         }
 
         if let account = accountManager.selectedAccount {
