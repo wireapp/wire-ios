@@ -101,7 +101,7 @@ public extension ZMUser {
 
     /// Users whose metadata should be fetched again: the ones the backend failed to return, and the ones whose
     /// profile was stored without a name (they'd be displayed as "Name not available" and nothing else would
-    /// refresh them). Deleted accounts are excluded since they don't have a name.
+    /// refresh them). Deleted accounts are excluded since fetching them again wouldn't give them a name.
     static func predicateForUsersMissingMetadata() -> NSPredicate {
         let isMissingName = NSPredicate(
             format: "(%K == nil OR %K == '') AND %K == NO AND %K == NO",
