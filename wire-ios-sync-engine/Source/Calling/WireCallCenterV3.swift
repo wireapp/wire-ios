@@ -962,6 +962,10 @@ public extension WireCallCenterV3 {
             snapshot?.mlsConferenceStaleParticipantsRemover?.stopSubscribing()
             snapshot?.mlsConferenceStaleParticipantsRemover = nil
 
+            guard conversationType(from: conversationId, fallbackDomain: localDomain) == .mlsConference else {
+                return
+            }
+
             leaveSubconversation(
                 parentQualifiedID: mlsParentIDs.0,
                 parentGroupID: mlsParentIDs.1
@@ -1211,15 +1215,20 @@ extension WireCallCenterV3 {
         conversationInfo(from: conversationId)?.type
     }
 
+<<<<<<< HEAD
     /// The AVS-relevant properties of the conversation.
     private func conversationInfo(
         from conversationId: AVSIdentifier
     ) -> (type: AVSConversationType, isMeeting: Bool)? {
+=======
+    func conversationType(from conversationId: AVSIdentifier, fallbackDomain: String? = nil) -> AVSConversationType? {
+>>>>>>> aecc09e5d9 (fix: skip subconversation leave for direct MLS 1:1 calls - WPB-26983 🍒 (#5571))
         guard let context = uiMOC else { return nil }
 
         var info: (type: AVSConversationType, isMeeting: Bool)?
 
         context.performAndWait {
+<<<<<<< HEAD
             guard
                 let conversation = ZMConversation.fetch(
                     with: conversationId.identifier,
@@ -1229,6 +1238,14 @@ extension WireCallCenterV3 {
                 let conversationType = getAVSConversationType(for: conversation)
             else {
                 return
+=======
+            if let conversation = ZMConversation.fetch(
+                with: conversationId.identifier,
+                domain: conversationId.domain ?? fallbackDomain,
+                in: context
+            ) {
+                conversationType = getAVSConversationType(for: conversation)
+>>>>>>> aecc09e5d9 (fix: skip subconversation leave for direct MLS 1:1 calls - WPB-26983 🍒 (#5571))
             }
 
             info = (conversationType, conversation.isMeeting)
