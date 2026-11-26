@@ -26,11 +26,14 @@ import XCTest
 final class ShowNotificationUseCaseTests: XCTestCase {
     private var sut: ShowNotificationUseCase!
     private var conversationLocalStore: MockConversationLocalStoreProtocol!
+    private var userLocalStore: MockUserLocalStoreProtocol!
     private var databaseSaver: MockDatabaseSaverProtocol!
-    private var didDisplayNotification = false
+    private var displayedContent: UNNotificationContent?
 
     override func setUp() async throws {
         conversationLocalStore = MockConversationLocalStoreProtocol()
+        userLocalStore = MockUserLocalStoreProtocol()
+        userLocalStore.fetchSelfUserAvailability_MockValue = .available
         databaseSaver = MockDatabaseSaverProtocol()
 
         let applicationSupport = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
@@ -39,8 +42,9 @@ final class ShowNotificationUseCaseTests: XCTestCase {
         )
 
         sut = ShowNotificationUseCase(
-            contentHandler: { _ in self.didDisplayNotification = true },
+            contentHandler: { self.displayedContent = $0 },
             conversationLocalStore: conversationLocalStore,
+            userLocalStore: userLocalStore,
             selectedAccount: Account(userName: .init(), userIdentifier: .mockID1),
             accountManager: try AccountManager(
                 currentAppVersion: "1.0.0",
@@ -54,7 +58,8 @@ final class ShowNotificationUseCaseTests: XCTestCase {
     override func tearDown() async throws {
         sut = nil
         conversationLocalStore = nil
-        didDisplayNotification = false
+        userLocalStore = nil
+        displayedContent = nil
         databaseSaver = nil
     }
 
@@ -75,9 +80,44 @@ final class ShowNotificationUseCaseTests: XCTestCase {
         )
 
         // Then
-        XCTAssertEqual(didDisplayNotification, true)
+        XCTAssertNotNil(displayedContent)
         XCTAssertEqual(databaseSaver.save_Invocations.count, 1)
         XCTAssertEqual(conversationLocalStore.unreadConversationCount_Invocations.count, 1)
+    }
+
+    func testItFiltersMeetingAlertsFromMixedBatchWhileAway() async throws {
+        userLocalStore.fetchSelfUserAvailability_MockValue = .away
+        conversationLocalStore.unreadConversationCount_MockValue = 1
+        databaseSaver.save_MockMethod = {}
+
+        let categories: [NotificationCategory] = [
+            .meetingInvitation, .meetingUpdate, .meetingCancellation, .unmutedConversation
+        ]
+        let notifications = categories.map { category in
+            let content = UNMutableNotificationContent()
+            content.categoryIdentifier = category.rawValue
+            content.body = category.rawValue
+            return UserNotification.text(content)
+        }
+
+        try await sut.invoke(userNotifications: notifications)
+
+        XCTAssertEqual(displayedContent?.body, NotificationCategory.unmutedConversation.rawValue)
+        XCTAssertEqual(displayedContent?.categoryIdentifier, NotificationCategory.unmutedConversation.rawValue)
+    }
+
+    func testItDisplaysMeetingAlertWhileBusy() async throws {
+        userLocalStore.fetchSelfUserAvailability_MockValue = .busy
+        conversationLocalStore.unreadConversationCount_MockValue = 1
+        databaseSaver.save_MockMethod = {}
+        let content = UNMutableNotificationContent()
+        content.categoryIdentifier = NotificationCategory.meetingInvitation.rawValue
+        content.body = "Meeting invitation"
+
+        try await sut.invoke(userNotifications: [.text(content)])
+
+        XCTAssertEqual(displayedContent?.body, content.body)
+        XCTAssertEqual(displayedContent?.categoryIdentifier, content.categoryIdentifier)
     }
 
 }

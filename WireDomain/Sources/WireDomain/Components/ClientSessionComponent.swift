@@ -932,6 +932,7 @@ public final class ClientSessionComponent {
             return
         }
         guard case let .text(content)? = notification else { return }
+        guard await userLocalStore.fetchSelfUserAvailability() != .away else { return }
         await completionHandlers.onMeetingNotification(content)
     }
 

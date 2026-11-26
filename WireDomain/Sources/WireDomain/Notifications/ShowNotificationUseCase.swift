@@ -32,6 +32,7 @@ struct ShowNotificationUseCase: ShowNotificationUseCaseProtocol {
 
     private let contentHandler: (UNNotificationContent) -> Void
     private let conversationLocalStore: any ConversationLocalStoreProtocol
+    private let userLocalStore: any UserLocalStoreProtocol
     private let selectedAccount: Account
     private let accountManager: AccountManager
     private let databaseSaver: any DatabaseSaverProtocol
@@ -39,12 +40,14 @@ struct ShowNotificationUseCase: ShowNotificationUseCaseProtocol {
     init(
         contentHandler: @escaping (UNNotificationContent) -> Void,
         conversationLocalStore: any ConversationLocalStoreProtocol,
+        userLocalStore: any UserLocalStoreProtocol,
         selectedAccount: Account,
         accountManager: AccountManager,
         databaseSaver: any DatabaseSaverProtocol
     ) {
         self.contentHandler = contentHandler
         self.conversationLocalStore = conversationLocalStore
+        self.userLocalStore = userLocalStore
         self.selectedAccount = selectedAccount
         self.accountManager = accountManager
         self.databaseSaver = databaseSaver
@@ -73,6 +76,17 @@ struct ShowNotificationUseCase: ShowNotificationUseCaseProtocol {
                         "failed to wake up main app: \(String(describing: error))",
                         attributes: .newNSE, .safePublic
                     )
+                }
+            }
+        }
+
+        if await userLocalStore.fetchSelfUserAvailability() == .away {
+            notifications.removeAll { notification in
+                switch NotificationCategory(rawValue: notification.categoryIdentifier) {
+                case .meetingInvitation, .meetingUpdate, .meetingCancellation:
+                    true
+                default:
+                    false
                 }
             }
         }
