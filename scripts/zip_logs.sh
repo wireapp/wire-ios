@@ -58,6 +58,15 @@ fi
 
 echo "Zipping..."
 rm -f "$OUT_ZIP"
-ditto -c -k --sequesterRsrc --keepParent "$GROUP_PATH" "$OUT_ZIP"
+STAGING="$(mktemp -d)"
+trap 'rm -rf "$STAGING"' EXIT
+APP_DATA="$(xcrun simctl get_app_container "$DEVICE_ID" "$BUNDLE_ID" data)"
+if [[ -d "$APP_DATA/tmp/WPB30489-owner-logs" ]]; then
+  ditto "$APP_DATA/tmp/WPB30489-owner-logs" "$STAGING/owner-before-reset"
+fi
+while IFS= read -r -d '' LOG_DIR; do
+  ditto "$LOG_DIR" "$STAGING/current-logs"
+done < <(find "$GROUP_PATH" -type d -name Logs -print0)
+ditto -c -k --sequesterRsrc --keepParent "$STAGING" "$OUT_ZIP"
 
 echo "Created zip: $(pwd)/$OUT_ZIP"

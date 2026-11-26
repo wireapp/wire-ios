@@ -167,9 +167,9 @@ platform :ios do
         begin
             run_tests_frameworks(schemes, options)
         rescue => e
-            collect_ui_test_logs
             UI.test_failure!("Failing running tests #{e.to_s}")
         ensure
+            collect_ui_test_logs
             delete_ui_test_shard_simulators
         end
     end

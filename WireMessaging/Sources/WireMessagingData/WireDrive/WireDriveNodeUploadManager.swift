@@ -67,11 +67,17 @@ package final actor WireDriveNodeUploadManager: WireDriveNodeUploadManagerProtoc
         assetSize: UInt64,
         destNodePath: String
     ) async throws -> (node: WireDriveNode, stream: AsyncStream<WireDriveUploadStatus>) {
+        let precheckStart = Date()
+        WireLogger.wireDrive.info("WPB30489 precheck start bytes=\(assetSize)", attributes: .safePublic)
         let result = try await nodesAPI.preCheck(
             nodePath: destNodePath,
             findAvailablePath: true
         )
 
+        WireLogger.wireDrive.info(
+            "WPB30489 precheck complete seconds=\(Date().timeIntervalSince(precheckStart))",
+            attributes: .safePublic
+        )
         let resolvedPath: String = switch result {
         case let .fileExists(nextPath):
             nextPath
@@ -112,6 +118,8 @@ package final actor WireDriveNodeUploadManager: WireDriveNodeUploadManagerProtoc
     ) async -> AsyncStream<WireDriveUploadStatus> {
         let (stream, continuation) = AsyncStream.makeStream(of: WireDriveUploadStatus.self)
         let task = Task { [nodesAPI] in
+            let uploadStart = Date()
+            WireLogger.wireDrive.info("WPB30489 upload stream start bytes=\(assetSize)", attributes: .safePublic)
             do {
                 let upload = try await nodesAPI.uploadFile(path: assetPath, node: node, versionID: versionID)
 
@@ -123,6 +131,10 @@ package final actor WireDriveNodeUploadManager: WireDriveNodeUploadManagerProtoc
                     )
                     continuation.yield(.uploading(progress: Float(progress) / Float(assetSize)))
                 }
+                WireLogger.wireDrive.info(
+                    "WPB30489 upload stream complete seconds=\(Date().timeIntervalSince(uploadStart))",
+                    attributes: .safePublic
+                )
                 await uploads.remove(node.id)
                 continuation.yield(WireDriveUploadStatus.uploaded(isDraft: true))
                 continuation.finish()

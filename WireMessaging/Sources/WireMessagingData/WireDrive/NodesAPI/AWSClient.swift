@@ -210,7 +210,16 @@ final class AWSClient: Sendable {
         try await withTaskCancellationHandler {
             do {
 
+                let putStart = Date()
+                WireLogger.wireDrive.info("WPB30489 putObject start", attributes: .safePublic)
+                defer {
+                    WireLogger.wireDrive.info(
+                        "WPB30489 putObject end seconds=\(Date().timeIntervalSince(putStart))",
+                        attributes: .safePublic
+                    )
+                }
                 _ = try await s3.putObject(input: input)
+                WireLogger.wireDrive.info("WPB30489 putObject success", attributes: .safePublic)
             } catch {
                 if Task.isCancelled {
                     WireLogger.wireDrive.info("Upload cancelled for node: \(node.path)")
@@ -339,7 +348,13 @@ private struct CredentialIdentityResolver: AWSCredentialIdentityResolver {
     let accessTokenProvider: any AccessTokenProvider
 
     func getIdentity(identityProperties: Smithy.Attributes?) async throws -> AWSCredentialIdentity {
+        let credentialStart = Date()
+        WireLogger.wireDrive.info("WPB30489 credential start", attributes: .safePublic)
         let accessToken = try await accessTokenProvider.accessToken()
+        WireLogger.wireDrive.info(
+            "WPB30489 credential complete seconds=\(Date().timeIntervalSince(credentialStart))",
+            attributes: .safePublic
+        )
 
         return AWSCredentialIdentity(
             accessKey: accessToken.token,

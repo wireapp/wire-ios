@@ -206,6 +206,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         private func resetApp() {
             let arguments = ProcessInfo.processInfo.arguments
             if arguments.contains("-resetData") {
+                if ProcessInfo.processInfo.environment["UITEST_CAPTURE_UPLOAD_LOGS"] == "1" {
+                    let snapshot = FileManager.default.temporaryDirectory
+                        .appendingPathComponent("WPB30489-owner-logs")
+                        .appendingPathComponent(UUID().uuidString)
+                    do {
+                        try FileManager.default.createDirectory(at: snapshot, withIntermediateDirectories: true)
+                        for (index, source) in LogFilesProvider().logFileURLs.enumerated() {
+                            try FileManager.default.copyItem(
+                                at: source,
+                                to: snapshot.appendingPathComponent("\(index)-\(source.lastPathComponent)")
+                            )
+                        }
+                    } catch {
+                        print("WPB30489 log snapshot failed: \(type(of: error))")
+                    }
+                }
                 resetFileSystem()
                 resetUserDefaults()
                 resetKeychain()
