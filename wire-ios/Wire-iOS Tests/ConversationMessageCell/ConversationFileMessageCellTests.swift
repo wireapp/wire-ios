@@ -49,6 +49,14 @@ final class ConversationFileMessageCellTests: ConversationMessageSnapshotTestCas
         verify(message: message)
     }
 
+    func testUploadedCell_fromThisDevice_sharpSFilename() {
+        message.backingFileMessageData.transferState = .uploaded
+        message.backingFileMessageData.fileURL = Bundle.main.bundleURL
+        message.backingFileMessageData.filename = "Straße.txt"
+
+        verify(message: message)
+    }
+
     func testThatFileLabelPreservesUnicodeAndCase() throws {
         let sut = FileTransferView(frame: .zero)
         message.backingFileMessageData.transferState = .uploaded
