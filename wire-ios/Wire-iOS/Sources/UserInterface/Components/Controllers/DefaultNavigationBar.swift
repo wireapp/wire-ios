@@ -53,6 +53,8 @@ class DefaultNavigationBar: UINavigationBar, DynamicTypeCapable {
     }
 
     func configureBackground() {
+        guard #unavailable(iOS 26.0) else { return }
+
         isTranslucent = false
         barTintColor = SemanticColors.View.backgroundDefault
         shadowImage = UIImage.singlePixelImage(with: UIColor.clear)

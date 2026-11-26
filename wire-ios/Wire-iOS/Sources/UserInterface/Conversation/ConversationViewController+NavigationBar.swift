@@ -48,10 +48,12 @@ extension ConversationViewController {
         }
         button.addAction(videoCallAction, for: .touchUpInside)
 
-        button.backgroundColor = ButtonColors.backgroundBarItem.resolvedColor(with: traitCollection)
-        button.layer.borderWidth = 1
-        button.layer.borderColor = ButtonColors.borderBarItem.resolvedColor(with: traitCollection).cgColor
-        button.layer.cornerRadius = 12
+        if #unavailable(iOS 26.0) {
+            button.backgroundColor = ButtonColors.backgroundBarItem.resolvedColor(with: traitCollection)
+            button.layer.borderWidth = 1
+            button.layer.borderColor = ButtonColors.borderBarItem.resolvedColor(with: traitCollection).cgColor
+            button.layer.cornerRadius = 12
+        }
 
         // Enable large content viewer
         button.showsLargeContentViewer = true
@@ -122,16 +124,21 @@ extension ConversationViewController {
             ? icon.withTintColor(.accent(), renderingMode: .alwaysOriginal)
             : icon
 
-        let appearance = UINavigationBarAppearance()
-        appearance.configureWithDefaultBackground()
-        appearance.backgroundColor = ColorTheme.Backgrounds.surface
-        // The conversation navigation bar has no hairline separator, unlike Settings.
-        appearance.shadowColor = .clear
-        appearance.setBackIndicatorImage(backIndicator, transitionMaskImage: backIndicator)
+        if #available(iOS 26.0, *) {
+            navigationBar.backIndicatorImage = backIndicator
+            navigationBar.backIndicatorTransitionMaskImage = backIndicator
+        } else {
+            let appearance = UINavigationBarAppearance()
+            appearance.configureWithDefaultBackground()
+            appearance.backgroundColor = ColorTheme.Backgrounds.surface
+            // The conversation navigation bar has no hairline separator, unlike Settings.
+            appearance.shadowColor = .clear
+            appearance.setBackIndicatorImage(backIndicator, transitionMaskImage: backIndicator)
 
-        navigationBar.standardAppearance = appearance
-        navigationBar.scrollEdgeAppearance = appearance
-        navigationBar.compactAppearance = appearance
+            navigationBar.standardAppearance = appearance
+            navigationBar.scrollEdgeAppearance = appearance
+            navigationBar.compactAppearance = appearance
+        }
 
         // The back button shown on the conversation is derived from the previous item in the stack
         // (the conversation list). Configure its display mode (chevron only, no title) and provide

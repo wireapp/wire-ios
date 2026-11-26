@@ -79,11 +79,13 @@ final class ConversationRootViewController: UIViewController {
 
         // Configure navigation bar appearance
         if let navBar = navigationController?.navigationBar {
-            navBar.isTranslucent = false
-            navBar.isOpaque = true
-            navBar.setBackgroundImage(UIImage(), for: .any, barMetrics: .default)
-            navBar.shadowImage = UIImage()
-            navBar.barTintColor = ColorTheme.Backgrounds.surface
+            if #unavailable(iOS 26.0) {
+                navBar.isTranslucent = false
+                navBar.isOpaque = true
+                navBar.setBackgroundImage(UIImage(), for: .any, barMetrics: .default)
+                navBar.shadowImage = UIImage()
+                navBar.barTintColor = ColorTheme.Backgrounds.surface
+            }
             navBar.tintColor = SemanticColors.Label.textDefault
             navBar.barStyle = .default
 
