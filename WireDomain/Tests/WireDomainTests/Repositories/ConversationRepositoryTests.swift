@@ -310,6 +310,21 @@ final class ConversationRepositoryTests: XCTestCase {
     }
 
     func testRemoveMembers_It_Invokes_Local_Store_User_Repo_Team_Repo_And_MLS_Service_Methods() async throws {
+        try await checkRemovingMember(isGroupConversation: true)
+    }
+
+    func testRemoveDeletedMemberFromOneOnOne_DoesNotInsertTeamRemovalMessage() async throws {
+        try await checkRemovingMember(isGroupConversation: false)
+    }
+
+    func testRemoveMemberFromOneOnOne_GivenUserLeft_ItInsertsRemovalMessage() async throws {
+        try await checkRemovingMember(isGroupConversation: false, reason: .userLeft)
+    }
+
+    private func checkRemovingMember(
+        isGroupConversation: Bool,
+        reason: ConversationMemberLeaveReason = .userDeleted
+    ) async throws {
         // Mock
 
         let (conversation, selfUser, senderUser, removedUser) = await context.perform { [self] in
@@ -329,6 +344,7 @@ final class ConversationRepositoryTests: XCTestCase {
         }
 
         conversationsLocalStore.messageProtocolFor_MockValue = .mls
+        conversationsLocalStore.isGroupConversation_MockValue = isGroupConversation
         messageRepository
             .addSystemMessageMessageTypeConversationIDConversationDomain_MockMethod = { _, _, _ in }
         conversationsLocalStore.fetchOrCreateConversationIdDomain_MockValue = conversation
@@ -354,7 +370,7 @@ final class ConversationRepositoryTests: XCTestCase {
             from: .init(id: Scaffolding.id, domain: Scaffolding.domain),
             initiatedBy: .init(id: Scaffolding.id, domain: Scaffolding.domain),
             at: .now,
-            reason: .userDeleted
+            reason: reason
         )
 
         // Then
@@ -362,8 +378,19 @@ final class ConversationRepositoryTests: XCTestCase {
         XCTAssertEqual(conversationsLocalStore.messageProtocolFor_Invocations.count, 1)
         XCTAssertEqual(
             messageRepository.addSystemMessageMessageTypeConversationIDConversationDomain_Invocations.count,
-            1
+            isGroupConversation || reason != .userDeleted ? 1 : 0
         )
+        if isGroupConversation || reason != .userDeleted {
+            let message = try XCTUnwrap(
+                messageRepository.addSystemMessageMessageTypeConversationIDConversationDomain_Invocations.first
+            )
+            switch (reason, message.messageType) {
+            case (.userDeleted, .teamMemberRemoved), (.userLeft, .participantsRemoved):
+                break
+            default:
+                XCTFail("Unexpected removal system message")
+            }
+        }
         XCTAssertEqual(conversationsLocalStore.fetchOrCreateConversationIdDomain_Invocations.count, 1)
         XCTAssertEqual(conversationsLocalStore.localParticipantsIn_Invocations.count, 1)
         XCTAssertEqual(
@@ -376,7 +403,10 @@ final class ConversationRepositoryTests: XCTestCase {
         XCTAssertEqual(userLocalStore.fetchOrCreateUserIdDomain_Invocations.count, 1)
         XCTAssertEqual(userLocalStore.fetchUserIdDomain_Invocations.count, 1)
         XCTAssertEqual(userLocalStore.isSelfUserIdDomain_Invocations.count, 1)
-        XCTAssertEqual(teamRepository.deleteMembershipUserIDDomainDate_Invocations.count, 1)
+        XCTAssertEqual(
+            teamRepository.deleteMembershipUserIDDomainDate_Invocations.count,
+            reason == .userDeleted ? 1 : 0
+        )
     }
 
     func testAddOrUpdateParticipant_It_Invokes_Local_Store_And_User_Repo_Methods() async {

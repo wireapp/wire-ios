@@ -404,7 +404,14 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
             domain: senderDomain
         )
 
-        if !participants.isDisjoint(with: removedUsers) {
+        let shouldInsertRemovalMessage: Bool = if reason == .userDeleted {
+            // One-to-one conversations receive their unavailable-user message from user.delete.
+            await conversationsLocalStore.isGroupConversation(conversation)
+        } else {
+            true
+        }
+
+        if shouldInsertRemovalMessage, !participants.isDisjoint(with: removedUsers) {
             await addSystemMessage(
                 conversationID: conversationID,
                 conversationDomain: conversationDomain,
