@@ -88,12 +88,15 @@ final class ConversationSharedDriveSystemMessageCellDescription: ConversationMes
             attributedText.addAttribute(.font, value: UIFont.mediumSemiboldFont, range: nsRange)
         }
 
+        guard let linkURL = WireURLs.shared.learnMoreAboutDrivePermissions else {
+            return attributedText
+        }
+
         let learnMoreLabel = FileCollaboration.Enabled.learnMore
-        let linkUrl = WireURLs.shared.learnMoreAboutDrivePermissions
         let linkAttributes: [NSAttributedString.Key: AnyObject] = [
             .font: UIFont.mediumSemiboldFont,
             .foregroundColor: ColorTheme.Backgrounds.onSurface,
-            .link: linkUrl as AnyObject,
+            .link: linkURL as AnyObject,
             .underlineStyle: NSUnderlineStyle.single.rawValue as AnyObject,
             .underlineColor: ColorTheme.Backgrounds.onSurface
         ]
