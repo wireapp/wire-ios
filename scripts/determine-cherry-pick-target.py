@@ -7,8 +7,9 @@ This script:
    release/cycle-4.16), targets the LTS_RELEASE branch (env var) so the fix
    flows through LTS before reaching develop; falls back to 'develop' if
    LTS_RELEASE isn't set
-2. If the input branch is the tracked LTS_RELEASE branch, targets 'develop'
-   directly, skipping future release branches
+2. If the input branch is the tracked LTS_RELEASE branch, targets LTS_NEXT_RELEASE;
+   falls back to 'develop' if unset or the same branch. LTS_NEXT_RELEASE targets
+   'develop' directly
 3. Gets all release branches matching release/cycle-* pattern
 4. Sorts them by version number (major.minor)
 5. Finds the position of the input branch in the sorted list
@@ -79,9 +80,15 @@ def determine_target_branch(base_branch):
             print(f"Base branch {base_branch} is the GOV_RELEASE branch, no LTS_RELEASE set, using develop")
         return "develop"
 
-    # LTS_RELEASE skips future release branches and cherry-picks straight to develop.
+    # Continue the LTS chain as each cherry-pick PR merges.
+    lts_next_release = os.environ.get("LTS_NEXT_RELEASE", "").strip()
     if lts_release and base_branch == lts_release:
-        print(f"Base branch {base_branch} is the LTS_RELEASE branch, using develop")
+        target = lts_next_release if lts_next_release and lts_next_release != base_branch else "develop"
+        print(f"Base branch {base_branch} is the LTS_RELEASE branch, using {target}")
+        return target
+
+    if lts_next_release and base_branch == lts_next_release:
+        print(f"Base branch {base_branch} is the LTS_NEXT_RELEASE branch, using develop")
         return "develop"
     
     # Get all release branches
