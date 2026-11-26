@@ -43,9 +43,11 @@ extension Message {
     }()
 
     static let spellOutDateTimeFormatter: DateFormatter = {
-        var longDateFormatter = Message.longDateFormatter
-        longDateFormatter.doesRelativeDateFormatting = true
-        return longDateFormatter
+        let formatter = DateFormatter()
+        formatter.dateStyle = .long
+        formatter.timeStyle = .short
+        formatter.doesRelativeDateFormatting = true
+        return formatter
     }()
 
     static let shortDateTimeFormatter: DateFormatter = {
