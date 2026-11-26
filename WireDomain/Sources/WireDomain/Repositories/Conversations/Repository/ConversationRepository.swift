@@ -123,19 +123,29 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
             }
 
             nonisolated(unsafe) var applied = false
+            nonisolated(unsafe) var missingChannelOrMeeting: ZMConversation?
             await conversationsLocalStore.execute(conversationID: localID) { localConversation, context in
                 guard let localConversation, isCurrent(localConversation, context) else { return }
                 if conversation == nil, localConversation.conversationType == .group {
-                    // The list endpoint returns not_found for groups the requester has left.
-                    localConversation.removeParticipantAndUpdateConversationState(user: ZMUser.selfUser(in: context))
-                    localConversation.needsToBeUpdatedFromBackend = false
-                    context.enqueueDelayedSave()
+                    if localConversation.isRegularGroup {
+                        // The list endpoint returns not_found for groups the requester has left.
+                        localConversation
+                            .removeParticipantAndUpdateConversationState(user: ZMUser.selfUser(in: context))
+                        localConversation.needsToBeUpdatedFromBackend = false
+                        context.enqueueDelayedSave()
+                    } else {
+                        missingChannelOrMeeting = localConversation
+                    }
                 }
                 applied = true
             }
 
             if retry { continue }
             if applied {
+                if let missingChannelOrMeeting {
+                    try await wipeMLSGroup(for: missingChannelOrMeeting)
+                    await conversationsLocalStore.deleteConversation(missingChannelOrMeeting)
+                }
                 guard let conversation else { throw ConversationRepositoryError.conversationNotFound }
                 await storeConversation(conversation.toDomainModel(), timestamp: .now)
             }
@@ -347,9 +357,7 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
         }
 
         await conversationsLocalStore.deleteConversation(conversation)
-        if let info = await conversationsLocalStore.mlsConversationInfo(conversation: conversation) {
-            try await mlsProvider.service.wipeGroup(info.mlsGroupID)
-        }
+        try await wipeMLSGroup(for: conversation)
     }
 
     public func addOrUpdateParticipant(
@@ -502,6 +510,12 @@ public final class ConversationRepository: ConversationRepositoryProtocol {
     }
 
     // MARK: - Private
+
+    private func wipeMLSGroup(for conversation: ZMConversation) async throws {
+        if let info = await conversationsLocalStore.mlsConversationInfo(conversation: conversation) {
+            try await mlsProvider.service.wipeGroup(info.mlsGroupID)
+        }
+    }
 
     private struct RefreshState: Equatable {
         let selfRoleID: NSManagedObjectID?

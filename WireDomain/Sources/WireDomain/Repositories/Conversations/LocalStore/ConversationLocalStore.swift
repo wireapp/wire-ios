@@ -423,7 +423,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
             localConversation.addParticipantsAndUpdateConversationState(
                 usersAndRoles: usersAndRoles
             )
-            if localConversation.isDeletedRemotely, localConversation.conversationType == .group,
+            if localConversation.isDeletedRemotely, localConversation.isRegularGroup,
                usersAndRoles.contains(where: \.user.isSelfUser) {
                 localConversation.needsToBeUpdatedFromBackend = true
             }
@@ -1170,6 +1170,7 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
         let isInitialFetch: Bool? = await context.perform { [self] in
             guard shouldApply?(localConversation, context) ?? true else { return nil }
             let isInitialFetch = localConversation.isPendingInitialFetch
+            let canRestoreVisibility = localConversation.isDeletedRemotely && localConversation.isRegularGroup
 
             localConversation.conversationType = .group
             localConversation.remoteIdentifier = id
@@ -1229,7 +1230,9 @@ public final class ConversationLocalStore: ConversationLocalStoreProtocol {
                 description: "conversation created remote id: \(localConversation.remoteIdentifier?.safeForLoggingDescription ?? "<nil>")"
             )
             if shouldApply != nil {
-                localConversation.isDeletedRemotely = false
+                if canRestoreVisibility, localConversation.isRegularGroup {
+                    localConversation.isDeletedRemotely = false
+                }
                 localConversation.needsToBeUpdatedFromBackend = false
                 context.enqueueDelayedSave()
             }

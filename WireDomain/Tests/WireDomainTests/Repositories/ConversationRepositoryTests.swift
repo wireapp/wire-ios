@@ -212,6 +212,35 @@ final class ConversationRepositoryTests: XCTestCase {
         XCTAssertTrue(mlsService.wipeGroup_Invocations.isEmpty)
     }
 
+    func testRefreshConversation_WhenChannelIsMissing_RequiresMLSCleanupBeforeDeletion() async throws {
+        enum CleanupError: Error { case failed }
+        let conversation = try await makeConversationForRefresh(isSelfMember: true, groupType: .channel)
+        let id = Scaffolding.qualifiedID
+        conversationsAPI.getConversationsFor_MockValue = .init(found: [], notFound: [id], failed: [])
+        mlsService.wipeGroup_MockMethod = { _ in throw CleanupError.failed }
+
+        do {
+            try await sut.refreshConversation(id: id.id, domain: id.domain)
+            XCTFail("Expected cleanup error")
+        } catch CleanupError.failed {}
+
+        await context.perform {
+            XCTAssertFalse(conversation.isDeletedRemotely)
+            XCTAssertTrue(conversation.needsToBeUpdatedFromBackend)
+        }
+
+        mlsService.wipeGroup_MockMethod = { _ in }
+        do {
+            try await sut.refreshConversation(id: id.id, domain: id.domain)
+            XCTFail("Expected conversationNotFound")
+        } catch ConversationRepositoryError.conversationNotFound {}
+
+        await context.perform {
+            XCTAssertTrue(conversation.isDeletedRemotely)
+            XCTAssertFalse(conversation.needsToBeUpdatedFromBackend)
+        }
+    }
+
     func testRefreshConversation_WhenHiddenGroupIsFound_ClearsRemoteDeletion() async throws {
         let conversation = try await makeConversationForRefresh(isSelfMember: false, isDeletedRemotely: true)
         let id = Scaffolding.qualifiedID
@@ -314,7 +343,8 @@ final class ConversationRepositoryTests: XCTestCase {
 
     private func makeConversationForRefresh(
         isSelfMember: Bool,
-        isDeletedRemotely: Bool = false
+        isDeletedRemotely: Bool = false,
+        groupType: WireDataModel.ConversationGroupType = .none
     ) async throws -> ZMConversation {
         let context = context
         let groupID = try XCTUnwrap(MLSGroupID(base64Encoded: Scaffolding.base64EncodedString))
@@ -327,6 +357,7 @@ final class ConversationRepositoryTests: XCTestCase {
                 with: isSelfMember ? [selfUser] : [],
                 in: context
             )
+            conversation.groupType = groupType
             conversation.isPendingInitialFetch = false
             conversation.needsToBeUpdatedFromBackend = true
             conversation.isDeletedRemotely = isDeletedRemotely
@@ -345,6 +376,10 @@ final class ConversationRepositoryTests: XCTestCase {
             localDomain: Scaffolding.domain,
             isFederationEnabled: true
         )
+        conversationsLocalStore.deleteConversation_MockMethod = { await store.deleteConversation($0) }
+        conversationsLocalStore.mlsConversationInfoConversation_MockMethod = {
+            await store.mlsConversationInfo(conversation: $0)
+        }
         conversationsLocalStore.storeRefreshedGroupIdIsFederationEnabledIsMLSEnabledShouldApply_MockMethod =
             { response, id, _, isMLSEnabled, shouldApply in
                 await store.storeRefreshedGroup(

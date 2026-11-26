@@ -74,12 +74,11 @@ public final class ConversationUpdatesGenerator: NSObject, IncrementalGeneratorP
         let request = NSFetchRequest<ZMConversation>(entityName: ZMConversation.entityName())
         request.predicate = NSPredicate.all(of: [
             ZMConversation.predicateForNeedingToBeUpdatedFromBackend(),
-            NSPredicate(
-                format: "%K == NO OR %K == %d",
-                #keyPath(ZMConversation.isDeletedRemotely),
-                ZMConversationConversationTypeKey,
-                ZMConversationType.group.rawValue
-            )
+            // Hidden regular groups can refresh when a rejoin requests it.
+            NSCompoundPredicate(orPredicateWithSubpredicates: [
+                NSPredicate(format: "%K == NO", #keyPath(ZMConversation.isDeletedRemotely)),
+                ZMConversation.predicateForRegularGroups()
+            ])
         ])
 
         request.sortDescriptors = [NSSortDescriptor(key: ZMConversationLastServerTimeStampKey, ascending: true)]

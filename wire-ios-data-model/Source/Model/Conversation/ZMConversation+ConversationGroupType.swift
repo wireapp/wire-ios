@@ -43,6 +43,24 @@ public extension ZMConversation {
 
     @NSManaged var groupType: ConversationGroupType
 
+    /// A group conversation, including groups created before group types were available.
+    var isRegularGroup: Bool {
+        guard conversationType == .group else { return false }
+        guard entity.attributesByName[ZMConversationGroupTypeKey] != nil else { return true }
+        return groupType == .group || groupType == .none
+    }
+
+    static func predicateForRegularGroups() -> NSPredicate {
+        NSPredicate(
+            format: "%K == %d AND (%K == NIL OR %K IN %@)",
+            ZMConversationEffectiveConversationTypeKey,
+            ZMConversationType.group.rawValue,
+            ZMConversationGroupTypeKey,
+            ZMConversationGroupTypeKey,
+            [ConversationGroupType.group.rawValue, ConversationGroupType.none.rawValue] as NSArray
+        )
+    }
+
     /// Whether the conversation is a channel.
     ///
     /// Returns `true` if the conversation type is `group` **and** the group type is `channel`, otherwise false.

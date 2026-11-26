@@ -256,6 +256,8 @@ public extension ZMConversation {
     func removeParticipantsAndUpdateConversationState(users: Set<ZMUser>, initiatingUser: ZMUser? = nil) {
 
         guard let moc = managedObjectContext else { return }
+        // Removing self can change how an unnamed team 1:1 is classified.
+        let shouldCancelRefresh = users.contains(where: \.isSelfUser) && isRegularGroup
         let existingUsers = Set(participantRoles.map(\.user))
 
         let removedUsers = Set(users.compactMap { user -> ZMUser? in
@@ -270,7 +272,7 @@ public extension ZMConversation {
             return user
         })
 
-        if conversationType == .group, users.contains(where: \.isSelfUser) {
+        if shouldCancelRefresh {
             needsToBeUpdatedFromBackend = false
         }
 
