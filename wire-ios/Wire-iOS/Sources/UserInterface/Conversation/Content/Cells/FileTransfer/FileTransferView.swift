@@ -143,7 +143,7 @@ final class FileTransferView: UIView, TransferView {
         let dot = " " + String.MessageToolbox.middleDot + " " && labelFont && labelTextBlendedColor
 
         guard let filename = message.filename else { return }
-        let fileNameAttributed = filename.uppercased() && labelBoldFont && labelTextColor
+        let fileNameAttributed = filename && labelBoldFont && labelTextColor
         let extAttributed = ext.uppercased() && labelFont && labelTextBlendedColor
 
         let fileSize = ByteCountFormatter.string(fromByteCount: Int64(filesize), countStyle: .binary)

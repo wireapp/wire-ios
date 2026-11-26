@@ -135,6 +135,58 @@ final class ZMAssetClientMessageTests: BaseZMAssetClientMessageTests {
 
 extension ZMAssetClientMessageTests {
 
+    func testThatItPreservesUnicodeFilenamesWhenDisplayingAndExportingFiles() throws {
+        let source = createFileMetadata()
+        let filenames = ["Täst.txt", "Straße.pdf", "Größe Übersicht 2026.xlsx", "日本語 📄.txt", "Ta\u{0308}st.txt"]
+
+        for filename in filenames {
+            let metadata = ZMFileMetadata(fileURL: source.fileURL, name: filename)
+            let sut = try XCTUnwrap(appendFileMessage(to: conversation, fileMetaData: metadata))
+
+            XCTAssertEqual(sut.filename, filename)
+            let exportedURL = try XCTUnwrap(sut.temporaryURLToDecryptedFile())
+            XCTAssertEqual(exportedURL.lastPathComponent, filename)
+            XCTAssertEqual(try Data(contentsOf: exportedURL), try Data(contentsOf: source.fileURL))
+        }
+    }
+
+    func testThatExportedUnicodeFilenamesStayInTheTemporaryDirectory() throws {
+        let source = createFileMetadata()
+        let metadata = ZMFileMetadata(fileURL: source.fileURL, name: "../../Straße.txt")
+        let sut = try XCTUnwrap(appendFileMessage(to: conversation, fileMetaData: metadata))
+
+        let exportedURL = try XCTUnwrap(sut.temporaryURLToDecryptedFile())
+
+        XCTAssertEqual(exportedURL.lastPathComponent, "Straße.txt")
+        XCTAssertEqual(exportedURL.deletingLastPathComponent().path, sut.temporaryDirectoryURL?.path)
+    }
+
+    func testThatItDoesNotExportInvalidPathComponents() throws {
+        let source = createFileMetadata()
+
+        for filename in ["", ".", "..", "/", "../..", "file\u{0000}.txt", "bad\u{0000}/Straße.txt"] {
+            let metadata = ZMFileMetadata(fileURL: source.fileURL, name: filename)
+            let sut = try XCTUnwrap(appendFileMessage(to: conversation, fileMetaData: metadata))
+
+            XCTAssertNil(sut.temporaryURLToDecryptedFile(), filename)
+        }
+    }
+
+    func testThatReceivedFilenamesFilterExcessiveCombiningMarks() throws {
+        let sut = try XCTUnwrap(appendFileMessage(to: conversation))
+        let filename = "Straße" + String(repeating: "\u{0308}", count: 20) + ".txt"
+        let asset = GenericMessageProtocol.Asset.with {
+            $0.original = GenericMessageProtocol.Asset.Original.with {
+                $0.name = filename
+                $0.mimeType = "text/plain"
+                $0.size = 1024
+            }
+        }
+        try sut.setUnderlyingMessage(GenericMessage(content: asset, nonce: sut.nonce!))
+
+        XCTAssertEqual(sut.filename, "Straße\u{0308}\u{0308}\u{0308}.txt")
+    }
+
     func testThatItCreatesFileAssetMessageWithNotRelativePath() {
         // given
         let metadata = createFileMetadata(filename: "../../fileName")
