@@ -385,10 +385,10 @@ public extension WireMessagingFactory {
 
     @MainActor
     func makeConversationSharedDrivedOptionsViewController(
-        participants: [WireDriveParticipant],
+        participantsProvider: @escaping () -> [WireDriveParticipant],
         onClose: @escaping () -> Void
     ) -> UIViewController {
-        let viewModel = ConversationSharedDriveOptionsViewModel(participants: participants)
+        let viewModel = ConversationSharedDriveOptionsViewModel(participantsProvider: participantsProvider)
         let view = ConversationSharedDriveOptionsView(viewModel: viewModel, onClose: onClose)
         return UIHostingController(rootView: view)
     }

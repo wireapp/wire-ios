@@ -66,6 +66,9 @@ package struct FilesView: View {
             sheetContent: { sheetContent($0) }
         )
         // FilesView-specific extras
+        .onReceive(NotificationCenter.default.publisher(for: .wireDriveFeatureDidChange)) { _ in
+            Task { await viewModel.reload(refreshing: true) }
+        }
         .fileImporter(
             isPresented: $isFileImporterPresented,
             allowedContentTypes: [.data],

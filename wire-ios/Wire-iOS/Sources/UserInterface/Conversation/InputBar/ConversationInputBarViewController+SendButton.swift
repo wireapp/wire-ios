@@ -45,7 +45,11 @@ extension ConversationInputBarViewController {
             editingMessage = nil
             updateWritingState(animated: true)
         } else {
-            if !attachments.isEmpty {
+            // Keep suspended drafts locally while allowing the user to send text without them.
+            let attachmentsToSend = canUploadAttachments ? attachments : []
+            if !attachments.isEmpty, attachmentsToSend.isEmpty, text.isEmpty { return }
+
+            if !attachmentsToSend.isEmpty {
                 do {
                     try await publishDraftsUseCase.invoke(containsText: !text.isEmpty)
                     await clearPublishedDraftsUseCase.invoke()
@@ -58,7 +62,7 @@ extension ConversationInputBarViewController {
             clearInputBar()
             delegate?.conversationInputBarViewControllerDidComposeText(
                 text: text,
-                attachments: attachments.map { draft in
+                attachments: attachmentsToSend.map { draft in
                     MultipartAttachment(
                         uuid: draft.nodeID,
                         contentType: draft.mimeType,
