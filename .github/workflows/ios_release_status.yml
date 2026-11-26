@@ -1,7 +1,7 @@
 name: Daily iOS Release Status
 
 # **What it does**: Posts a daily Jira-driven status of the three live iOS releases
-#                   — Edge (develop), Beta (latest release/cycle-*), Prod (latest appstore/* tag).
+#                   — Alpha (develop), Beta (latest release/cycle-*), Prod (latest appstore/* tag).
 # **Why we have it**: Surface QA load, triage backlog, and release dates without anyone hunting in Jira.
 # **Who does it impact**: iOS release managers, QA, and engineers owning ticket triage.
 #
@@ -99,8 +99,8 @@ jobs:
             };
 
             // ── Resolve the three versions ────────────────────────────────────
-            // Edge = WIRE_SHORT_VERSION on develop
-            const edgeVersion = await readVersionFromRef('develop');
+            // Alpha = WIRE_SHORT_VERSION on develop
+            const alphaVersion = await readVersionFromRef('develop');
 
             // Beta = latest release/cycle-X.Y branch → its WIRE_SHORT_VERSION.
             // Paginate: this repo has hundreds of branches/tags, so a single page misses them.
@@ -177,7 +177,7 @@ jobs:
               `[${i.key}](${base}/browse/${i.key})`;
 
             // Slack-formatted link to a Jira version's release page; falls back to plain text
-            // when the version isn't in Jira yet (e.g. edge before someone creates it).
+            // when the version isn't in Jira yet (e.g. alpha before someone creates it).
             const releaseLink = (v, label) =>
               v ? `[${label}](${base}/projects/${project}/versions/${v.id})` : label;
 
@@ -200,7 +200,7 @@ jobs:
               return { scheduled, unscheduled };
             };
 
-            // Edge/LTS: bullets headered by status name, with assignee inline.
+            // Alpha/LTS: bullets headered by status name, with assignee inline.
             const assigneeOf = (issue) => issue.fields.assignee?.displayName ?? 'Unassigned';
             const renderGroupedByStatus = (issues, perGroupLimit = 10) => {
               const groups = new Map();
@@ -242,17 +242,17 @@ jobs:
                 return `  - ${issueLink(i)}${scope ? ` — ${mdEscape(scope)}` : ''} — ${mdEscape(sprintOf(i))} - ${mdEscape(i.fields.summary)}`;
               });
 
-            // ── Edge: fixVersion ──────────────────────────────────────────────
-            const edgeName       = `iOS v${edgeVersion}`;
-            const edgeQ          = jqlEscape(edgeName);
-            const edgeJira       = await findJiraVersion(edgeVersion);
-            const daysToEdge     = edgeJira ? daysBetween(edgeJira.startDate) : null;
-            const edgeTotalCount = await countIssues(`project = ${project} AND fixVersion = "${edgeQ}"`);
-            const edgeOpenJql    = `project = ${project} AND fixVersion = "${edgeQ}" AND statusCategory != Done`;
-            const edgeOpenCount  = await countIssues(edgeOpenJql);
-            const edgeOpenItems  = edgeOpenCount > 0 ? (await listIssues(edgeOpenJql, ['summary', 'status', 'assignee'])).issues : [];
-            const edgeQAJql      = `project = ${project} AND fixVersion = "${edgeQ}" AND status in ("Ready for QA", "In QA Review")`;
-            const edgeQACount    = await countIssues(edgeQAJql);
+            // ── Alpha: fixVersion ──────────────────────────────────────────────
+            const alphaName       = `iOS v${alphaVersion}`;
+            const alphaQ          = jqlEscape(alphaName);
+            const alphaJira       = await findJiraVersion(alphaVersion);
+            const daysToAlpha     = alphaJira ? daysBetween(alphaJira.startDate) : null;
+            const alphaTotalCount = await countIssues(`project = ${project} AND fixVersion = "${alphaQ}"`);
+            const alphaOpenJql    = `project = ${project} AND fixVersion = "${alphaQ}" AND statusCategory != Done`;
+            const alphaOpenCount  = await countIssues(alphaOpenJql);
+            const alphaOpenItems  = alphaOpenCount > 0 ? (await listIssues(alphaOpenJql, ['summary', 'status', 'assignee'])).issues : [];
+            const alphaQAJql      = `project = ${project} AND fixVersion = "${alphaQ}" AND status in ("Ready for QA", "In QA Review")`;
+            const alphaQACount    = await countIssues(alphaQAJql);
 
             // ── Beta: affectedVersion + releaseDate ───────────────────────────
             const betaName          = `iOS v${betaVersion}`;
@@ -323,23 +323,23 @@ jobs:
             // they can be posted to Wire separately (one message per release).
             const dateTitle = `**🚀 iOS Release Status — ${new Date().toDateString()}**`;
 
-            // Edge
-            const edgeLines = [];
-            edgeLines.push(`**🟢 Edge — ${releaseLink(edgeJira, edgeName)}**  _(develop)_`);
-            edgeLines.push(`- ${driverLabel(edgeJira?.driver)}`);
-            if (daysToEdge != null) {
-              const label = daysToEdge >= 0 ? 'until start' : 'past start';
-              edgeLines.push(`- ${Math.abs(daysToEdge)} day(s) ${label} (${edgeJira.startDate})`);
+            // Alpha
+            const alphaLines = [];
+            alphaLines.push(`**🟢 Alpha — ${releaseLink(alphaJira, alphaName)}**  _(develop)_`);
+            alphaLines.push(`- ${driverLabel(alphaJira?.driver)}`);
+            if (daysToAlpha != null) {
+              const label = daysToAlpha >= 0 ? 'until start' : 'past start';
+              alphaLines.push(`- ${Math.abs(daysToAlpha)} day(s) ${label} (${alphaJira.startDate})`);
             }
-            edgeLines.push(`- ${edgeOpenCount} of ${edgeTotalCount} tickets not done`);
-            if (edgeQACount > 0) {
-              edgeLines.push(`- 🎮 **${edgeQACount} ticket(s) in QA — Playtest recommended**`);
+            alphaLines.push(`- ${alphaOpenCount} of ${alphaTotalCount} tickets not done`);
+            if (alphaQACount > 0) {
+              alphaLines.push(`- 🎮 **${alphaQACount} ticket(s) in QA — Playtest recommended**`);
             }
-            if (edgeVersion === betaVersion) {
-              edgeLines.push(`- ⚠️ **develop is still on ${edgeVersion} — bump \`WIRE_SHORT_VERSION\` now that \`${betaBranch}\` is cut**`);
+            if (alphaVersion === betaVersion) {
+              alphaLines.push(`- ⚠️ **develop is still on ${alphaVersion} — bump \`WIRE_SHORT_VERSION\` now that \`${betaBranch}\` is cut**`);
             }
-            if (edgeOpenCount > 0) {
-              edgeLines.push(...renderGroupedByStatus(edgeOpenItems));
+            if (alphaOpenCount > 0) {
+              alphaLines.push(...renderGroupedByStatus(alphaOpenItems));
             }
 
             // Beta
@@ -423,7 +423,7 @@ jobs:
               }
             }
 
-            const edgeMsg = edgeLines.join('\n');
+            const alphaMsg = alphaLines.join('\n');
             const betaMsg = betaLines.join('\n');
             const prodMsg = prodLines.join('\n');
             const ltsMsg  = ltsLines ? ltsLines.join('\n') : '';
@@ -431,14 +431,14 @@ jobs:
 
             // LTS/GOV are '' when their vars aren't configured — their post steps are skipped.
             core.setOutput('date', dateTitle);
-            core.setOutput('edge', edgeMsg);
+            core.setOutput('alpha', alphaMsg);
             core.setOutput('beta', betaMsg);
             core.setOutput('prod', prodMsg);
             core.setOutput('lts', ltsMsg);
             core.setOutput('gov', govMsg);
 
             await core.summary
-              .addRaw([dateTitle, edgeMsg, betaMsg, prodMsg, ltsMsg, govMsg].filter(Boolean).join('\n\n'))
+              .addRaw([dateTitle, alphaMsg, betaMsg, prodMsg, ltsMsg, govMsg].filter(Boolean).join('\n\n'))
               .write();
 
       - name: Post Date to Wire
@@ -451,7 +451,7 @@ jobs:
           notify: custom
           text: ${{ steps.build.outputs.date }}
 
-      - name: Post Edge to Wire
+      - name: Post Alpha to Wire
         if: ${{ env.HAS_WIRE_WEBHOOK == 'true' }}
         uses: ./.github/actions/notify-wire
         env:
@@ -459,7 +459,7 @@ jobs:
           WIRE_WEBHOOK_TOKEN: ${{ secrets.WIRE_IOS_RELEASE_TOKEN }}
         with:
           notify: custom
-          text: ${{ steps.build.outputs.edge }}
+          text: ${{ steps.build.outputs.alpha }}
 
       - name: Post Beta to Wire
         if: ${{ env.HAS_WIRE_WEBHOOK == 'true' }}

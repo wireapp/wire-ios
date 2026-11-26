@@ -35,6 +35,7 @@ import WireCallingDomain
 import WireMessagingDomain
 import WireMessagingUI
 import WireFoundation
+import WireDomain
 
 @testable import Wire
 @testable import WireCommonComponents
@@ -855,6 +856,56 @@ class MockDidPresentNotificationPermissionHintUseCaseProtocol: DidPresentNotific
         }
 
         mock()
+    }
+
+}
+
+class MockFeatureChangeAlertPresenting: FeatureChangeAlertPresenting {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - present
+
+    var present_Invocations: [UIAlertController] = []
+    var present_MockMethod: ((UIAlertController) -> Void)?
+
+    func present(_ alert: UIAlertController) {
+        present_Invocations.append(alert)
+
+        guard let mock = present_MockMethod else {
+            fatalError("no mock for `present`")
+        }
+
+        mock(alert)
+    }
+
+}
+
+class MockFeatureChangeHandler: FeatureChangeHandler {
+
+    // MARK: - Life cycle
+
+
+
+    // MARK: - alert
+
+    var alertForAcknowledger_Invocations: [(featureState: FeatureState, acknowledger: FeatureChangeAcknowledger)] = []
+    var alertForAcknowledger_MockMethod: ((FeatureState, FeatureChangeAcknowledger) async -> UIAlertController?)?
+    var alertForAcknowledger_MockValue: UIAlertController??
+
+    @MainActor
+    func alert(for featureState: FeatureState, acknowledger: FeatureChangeAcknowledger) async -> UIAlertController? {
+        alertForAcknowledger_Invocations.append((featureState: featureState, acknowledger: acknowledger))
+
+        if let mock = alertForAcknowledger_MockMethod {
+            return await mock(featureState, acknowledger)
+        } else if let mock = alertForAcknowledger_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `alertForAcknowledger`")
+        }
     }
 
 }
@@ -1986,6 +2037,22 @@ class MockWireMessagingFactoryProtocol: WireMessagingFactoryProtocol {
         await mock()
     }
 
+    // MARK: - startDirectUploadsLiveActivity
+
+    var startDirectUploadsLiveActivity_Invocations: [Void] = []
+    var startDirectUploadsLiveActivity_MockMethod: (() -> Void)?
+
+    @MainActor
+    func startDirectUploadsLiveActivity() {
+        startDirectUploadsLiveActivity_Invocations.append(())
+
+        guard let mock = startDirectUploadsLiveActivity_MockMethod else {
+            fatalError("no mock for `startDirectUploadsLiveActivity`")
+        }
+
+        mock()
+    }
+
     // MARK: - tearDownDirectUploads
 
     var tearDownDirectUploads_Invocations: [Void] = []
@@ -2059,20 +2126,20 @@ class MockWireMessagingFactoryProtocol: WireMessagingFactoryProtocol {
 
     // MARK: - makeConversationSharedDrivedOptionsView
 
-    var makeConversationSharedDrivedOptionsViewParticipantsOnClose_Invocations: [(participants: [WireDriveParticipant], onClose: () -> Void)] = []
-    var makeConversationSharedDrivedOptionsViewParticipantsOnClose_MockMethod: (([WireDriveParticipant], @escaping () -> Void) -> UIViewController)?
-    var makeConversationSharedDrivedOptionsViewParticipantsOnClose_MockValue: UIViewController?
+    var makeConversationSharedDrivedOptionsViewParticipantsProviderOnClose_Invocations: [(participantsProvider: () -> [WireDriveParticipant], onClose: () -> Void)] = []
+    var makeConversationSharedDrivedOptionsViewParticipantsProviderOnClose_MockMethod: ((@escaping () -> [WireDriveParticipant], @escaping () -> Void) -> UIViewController)?
+    var makeConversationSharedDrivedOptionsViewParticipantsProviderOnClose_MockValue: UIViewController?
 
     @MainActor
-    func makeConversationSharedDrivedOptionsView(participants: [WireDriveParticipant], onClose: @escaping () -> Void) -> UIViewController {
-        makeConversationSharedDrivedOptionsViewParticipantsOnClose_Invocations.append((participants: participants, onClose: onClose))
+    func makeConversationSharedDrivedOptionsView(participantsProvider: @escaping () -> [WireDriveParticipant], onClose: @escaping () -> Void) -> UIViewController {
+        makeConversationSharedDrivedOptionsViewParticipantsProviderOnClose_Invocations.append((participantsProvider: participantsProvider, onClose: onClose))
 
-        if let mock = makeConversationSharedDrivedOptionsViewParticipantsOnClose_MockMethod {
-            return mock(participants, onClose)
-        } else if let mock = makeConversationSharedDrivedOptionsViewParticipantsOnClose_MockValue {
+        if let mock = makeConversationSharedDrivedOptionsViewParticipantsProviderOnClose_MockMethod {
+            return mock(participantsProvider, onClose)
+        } else if let mock = makeConversationSharedDrivedOptionsViewParticipantsProviderOnClose_MockValue {
             return mock
         } else {
-            fatalError("no mock for `makeConversationSharedDrivedOptionsViewParticipantsOnClose`")
+            fatalError("no mock for `makeConversationSharedDrivedOptionsViewParticipantsProviderOnClose`")
         }
     }
 

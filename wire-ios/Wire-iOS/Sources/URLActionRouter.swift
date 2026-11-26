@@ -18,6 +18,7 @@
 
 import SwiftUI
 import WireCommonComponents
+import enum WireNetwork.MeetingsAPIError
 import WireSyncEngine
 
 extension Notification.Name {
@@ -53,7 +54,7 @@ class URLActionRouter: URLActionRouterProtocol {
 
     private let rootViewController: () -> UIViewController
     private var pendingDestination: NavigationDestination?
-    private var pendingAlert: UIAlertController?
+    private var pendingAlert: UIViewController?
 
     // MARK: - Initialization
 
@@ -121,7 +122,7 @@ class URLActionRouter: URLActionRouterProtocol {
         presentAlert(alert)
     }
 
-    func presentAlert(_ alert: UIAlertController) {
+    func presentAlert(_ alert: UIViewController) {
         guard delegate?.urlActionRouterCanDisplayAlerts() == true else {
             pendingAlert = alert
             return
@@ -130,7 +131,7 @@ class URLActionRouter: URLActionRouterProtocol {
         internalPresentAlert(alert)
     }
 
-    func internalPresentAlert(_ alert: UIAlertController) {
+    func internalPresentAlert(_ alert: UIViewController) {
         rootViewController().present(alert, animated: true, completion: nil)
     }
 }
@@ -139,11 +140,22 @@ class URLActionRouter: URLActionRouterProtocol {
 
 extension URLActionRouter: PresentationDelegate {
 
-    func showPasswordPrompt(for conversationName: String, completion: @escaping (String?) -> Void) {
+    func showPasswordPrompt(
+        for conversationName: String?,
+        isMeeting: Bool,
+        incorrectPassword: Bool,
+        completion: @escaping (String?) -> Void
+    ) {
+        if isMeeting {
+            showMeetingPasswordPrompt(incorrectPassword: incorrectPassword, completion: completion)
+            return
+        }
+
         typealias ConversationAlert = L10n.Localizable.Join.Group.Conversation.Alert
 
         let alertController = UIAlertController(
-            title: ConversationAlert.title(conversationName),
+            title: conversationName.map(ConversationAlert.title)
+                ?? L10n.Localizable.Registration.Signin.Alert.PasswordNeeded.title,
             message: ConversationAlert.message,
             preferredStyle: .alert
         )
@@ -153,14 +165,16 @@ extension URLActionRouter: PresentationDelegate {
             textField.isSecureTextEntry = true
         }
 
-        let joinAction = UIAlertAction(title: ConversationAlert.JoinAction.title, style: .default) { _ in
-            let password = alertController.textFields?.first?.text
+        let joinAction = UIAlertAction(
+            title: ConversationAlert.JoinAction.title,
+            style: .default
+        ) { [weak alertController] _ in
+            let password = alertController?.textFields?.first?.text
             completion(password)
         }
 
-        let helpLinkURL = WireURLs.shared.guestLinksInfo
         let learnMoreAction = UIAlertAction(title: ConversationAlert.LearnMoreAction.title, style: .default) { _ in
-            UIApplication.shared.open(helpLinkURL, options: [:], completionHandler: nil)
+            UIApplication.shared.open(WireURLs.shared.guestLinksInfo, options: [:], completionHandler: nil)
         }
 
         let cancelAction = UIAlertAction(title: L10n.Localizable.General.cancel, style: .cancel) { _ in
@@ -179,11 +193,28 @@ extension URLActionRouter: PresentationDelegate {
         }
     }
 
+    private func showMeetingPasswordPrompt(incorrectPassword: Bool, completion: @escaping (String?) -> Void) {
+        let controller = UIHostingController<MeetingJoinPasswordView?>(rootView: nil)
+        controller.rootView = MeetingJoinPasswordView(
+            incorrectPassword: incorrectPassword
+        ) { [weak controller] password in
+            guard let controller, !controller.isBeingDismissed else { return }
+            controller.dismiss(animated: true) { completion(password) }
+        }
+        controller.modalPresentationStyle = .formSheet
+        controller.isModalInPresentation = true
+        controller.sheetPresentationController?.detents = [.medium(), .large()]
+        presentAlert(controller)
+    }
+
     // MARK: - Public Implementation
 
     func failedToPerformAction(_ action: URLAction, error: Error) {
-        let localizedError = mapToLocalizedError(error)
-        presentLocalizedErrorAlert(localizedError)
+        if case .joinMeeting = action {
+            presentLocalizedErrorAlert(URLActionError(from: error), isMeeting: true)
+        } else {
+            presentLocalizedErrorAlert(mapToLocalizedError(error))
+        }
     }
 
     func completedURLAction(_ action: URLAction) {
@@ -392,16 +423,16 @@ private extension URLActionRouter {
 
         init(from error: Error) {
             switch error {
-            case ConversationJoinError.invalidCode:
+            case ConversationJoinError.invalidCode, MeetingsAPIError.meetingNotFound:
                 self = .conversationLinkIsInvalid
 
-            case ConversationJoinError.tooManyMembers:
+            case ConversationJoinError.tooManyMembers, MeetingsAPIError.tooManyMembers:
                 self = .conversationIsFull
 
             case ConversationJoinError.guestLinksDisabled, ConversationFetchError.guestLinksDisabled:
                 self = .conversationLinkIsDisabled
 
-            case ConversationJoinError.invalidConversationPassword:
+            case ConversationJoinError.invalidConversationPassword, MeetingsAPIError.invalidMeetingPassword:
                 self = .invalidConversationPassword
 
             default:
@@ -414,12 +445,17 @@ private extension URLActionRouter {
         }
 
         var failureReason: String? {
-            switch self {
+            failureReason(isMeeting: false)
+        }
+
+        func failureReason(isMeeting: Bool) -> String? {
+            typealias MeetingStrings = L10n.Localizable.UrlAction.JoinMeeting.Error.Alert
+            return switch self {
             case .conversationIsFull:
-                AlertStrings.ConverationIsFull.message
+                isMeeting ? MeetingStrings.MeetingIsFull.message : AlertStrings.ConverationIsFull.message
 
             case .conversationLinkIsInvalid, .conversationLinkIsDisabled:
-                AlertStrings.LinkIsInvalid.message
+                isMeeting ? MeetingStrings.LinkIsInvalid.message : AlertStrings.LinkIsInvalid.message
 
             case .invalidConversationPassword:
                 AlertStrings.InvalidPassword.message
@@ -435,9 +471,10 @@ private extension URLActionRouter {
         (error as? LocalizedError) ?? URLActionError(from: error)
     }
 
-    private func presentLocalizedErrorAlert(_ error: LocalizedError) {
-        let title = error.errorDescription
-        let message = error.failureReason ?? L10n.Localizable.Error.User.unkownError
+    private func presentLocalizedErrorAlert(_ error: LocalizedError, isMeeting: Bool = false) {
+        let title = isMeeting ? L10n.Localizable.UrlAction.JoinMeeting.Error.Alert.title : error.errorDescription
+        let message = (error as? URLActionError)?.failureReason(isMeeting: isMeeting)
+            ?? error.failureReason ?? L10n.Localizable.Error.User.unkownError
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(
             title: L10n.Localizable.General.ok,

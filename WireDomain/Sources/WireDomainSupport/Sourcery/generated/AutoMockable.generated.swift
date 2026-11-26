@@ -2335,6 +2335,21 @@ public class MockFeatureConfigRepositoryProtocol: FeatureConfigRepositoryProtoco
         await mock(featureConfig)
     }
 
+    // MARK: - acknowledgeFeatureChange
+
+    public var acknowledgeFeatureChangeFor_Invocations: [Feature.Name] = []
+    public var acknowledgeFeatureChangeFor_MockMethod: ((Feature.Name) async -> Void)?
+
+    public func acknowledgeFeatureChange(for name: Feature.Name) async {
+        acknowledgeFeatureChangeFor_Invocations.append(name)
+
+        guard let mock = acknowledgeFeatureChangeFor_MockMethod else {
+            fatalError("no mock for `acknowledgeFeatureChangeFor`")
+        }
+
+        await mock(name)
+    }
+
     // MARK: - fetchAllowedGlobalOperations
 
     public var fetchAllowedGlobalOperations_Invocations: [Void] = []
@@ -2447,6 +2462,29 @@ public class MockFeatureConfigRepositoryProtocol: FeatureConfigRepositoryProtoco
             return mock
         } else {
             fatalError("no mock for `fetchCellsInternal`")
+        }
+    }
+
+    // MARK: - fetchE2EIConfig
+
+    public var fetchE2EIConfig_Invocations: [Void] = []
+    public var fetchE2EIConfig_MockError: Error?
+    public var fetchE2EIConfig_MockMethod: (() async throws -> LocalFeature<Feature.E2EI.Config>)?
+    public var fetchE2EIConfig_MockValue: LocalFeature<Feature.E2EI.Config>?
+
+    public func fetchE2EIConfig() async throws -> LocalFeature<Feature.E2EI.Config> {
+        fetchE2EIConfig_Invocations.append(())
+
+        if let error = fetchE2EIConfig_MockError {
+            throw error
+        }
+
+        if let mock = fetchE2EIConfig_MockMethod {
+            return try await mock()
+        } else if let mock = fetchE2EIConfig_MockValue {
+            return mock
+        } else {
+            fatalError("no mock for `fetchE2EIConfig`")
         }
     }
 

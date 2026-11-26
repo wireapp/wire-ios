@@ -674,6 +674,8 @@ public final class ZMUserSession: NSObject {
             coreCryptoProvider.registerPkiEnvironmentHooks(hooks)
         }
 
+        observeE2EIActivationDate()
+
         coreCryptoProvider.registerMlsTransport(clientSessionComponent.mlsTransport)
 
         let syncAgent = SyncAgent(
@@ -813,6 +815,9 @@ public final class ZMUserSession: NSObject {
 
     public func tearDown() {
         guard !isTornDown else { return }
+        isTornDown = true
+        syncStateCancellable?.cancel()
+        syncStateCancellable = nil
 
         Task {
             await clientSessionComponent?.workAgent.clearSchedulerQueue()
@@ -859,7 +864,6 @@ public final class ZMUserSession: NSObject {
         NotificationCenter.default.removeObserver(self)
         WireLogger.authentication.clearClientID()
 
-        isTornDown = true
     }
 
     // MARK: - Methods
@@ -906,7 +910,18 @@ public final class ZMUserSession: NSObject {
                 contextProvider: coreDataStack,
                 transportSession: transportSession,
                 eventProcessor: conversationEventProcessor,
-                metadata: resolvedBackendMetadata
+                metadata: resolvedBackendMetadata,
+                joinMeeting: { [weak self] domain, key, code, password in
+                    guard let self, isMeetingsEnabled, let clientSessionComponent else {
+                        throw ConversationJoinError.unknown
+                    }
+                    return try await clientSessionComponent.joinMeeting(
+                        domain: domain,
+                        key: key,
+                        code: code,
+                        password: password
+                    )
+                }
             ),
             ConnectToBotURLActionProcessor(
                 contextProvider: coreDataStack,
@@ -1236,12 +1251,38 @@ extension ZMUserSession: ZMNetworkStateDelegate {
 
     private func observeSyncStateForAVS(syncStateSubject: CurrentValueSubject<SyncState, Never>) {
         syncStateCancellable = syncStateSubject
+            .handleEvents(receiveOutput: { [weak self] state in
+                if state == .suspended {
+                    self?.notifyAVSDidProcessEvents()
+                }
+            })
             .map { $0 == .liveSyncing(.ongoing) }
             .removeDuplicates()
             .sink { [weak self] isOngoing in
                 guard let self else { return }
                 notifyAVSOfLiveSyncState(isLiveSyncOngoing: isOngoing)
             }
+    }
+
+    /// Starts the e2ei grace-period clock when e2ei is enabled (unless it is already running)
+    /// and clears it when e2ei is disabled.
+    private func observeE2EIActivationDate() {
+        guard let featureConfigRepository = clientSessionComponent?.featureConfigRepository else { return }
+
+        featureConfigRepository.observeFeatureStates()
+            .filter { $0.name == .e2ei }
+            .sink { [weak self] featureState in
+                guard let self else { return }
+
+                if featureState.isEnabled {
+                    if e2eiActivationDateRepository.e2eiActivatedAt == nil {
+                        e2eiActivationDateRepository.storeE2EIActivationDate(.now)
+                    }
+                } else {
+                    e2eiActivationDateRepository.removeE2EIActivationDate()
+                }
+            }
+            .store(in: &cancellables)
     }
 
 }
@@ -1690,23 +1731,47 @@ extension ZMUserSession {
         }
     }
 
-    private func onProcessedCallEvent(callEventInfo: CallEventInfo) {
+    func onProcessedCallEvent(callEventInfo: CallEventInfo) {
         let serverTimeDelta = syncContext.performAndWait {
             syncContext.serverTimeDelta // serverTimeDelta can only be accessed on the sync context
         }
 
         viewContext.perform { [weak self] in // callCenter can only be accessed on the ui context
             guard let self, let callCenter else { return }
-            guard !callEventInfo.isMuted else {
-                callCenter.isMuted = true
-                return
-            }
-
             let conversationId = AVSIdentifier(
                 identifier: callEventInfo.conversationID,
                 domain: callEventInfo.conversationDomain,
                 isFederationEnabled: resolvedBackendMetadata.isFederationEnabled
             )
+
+            if let targets = callEventInfo.remoteMuteTargets {
+                let selfUser = ZMUser.selfUser(in: viewContext)
+                guard
+                    let domain = selfUser.domain ?? callCenter.localDomain,
+                    let userID = selfUser.remoteIdentifier?.transportString(),
+                    let clientID = selfUser.selfClient()?.remoteIdentifier,
+                    targets[domain]?[userID]?.contains(clientID) == true,
+                    callCenter.isActive(conversationId: conversationId),
+                    let conversation = ZMConversation.fetch(
+                        with: callEventInfo.conversationID,
+                        domain: callEventInfo.conversationDomain,
+                        in: viewContext
+                    ),
+                    let sender = ZMUser.fetch(
+                        with: callEventInfo.userID,
+                        domain: callEventInfo.userDomain,
+                        in: viewContext
+                    ),
+                    sender.isGroupAdmin(in: conversation)
+                else { return }
+
+                callCenter.isMuted = true
+                CallRemoteMuteNotification(senderName: sender.name).post(
+                    in: viewContext.notificationContext,
+                    object: conversation
+                )
+                return
+            }
 
             let userId = AVSIdentifier(
                 identifier: callEventInfo.userID,

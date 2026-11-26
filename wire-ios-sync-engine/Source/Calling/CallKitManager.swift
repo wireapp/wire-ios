@@ -61,7 +61,7 @@ public protocol CallKitManagerInterface {
     func applyPendingVideoUpgrade()
     func requestMuteCall(in conversation: ZMConversation, muted: Bool)
     func requestJoinCall(in conversation: ZMConversation, video: Bool)
-    func requestEndCall(in conversation: ZMConversation, completion: (() -> Void)?)
+    func requestEndCall(in conversation: ZMConversation, completion: ((Bool) -> Void)?)
 
 }
 
@@ -432,12 +432,16 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
 
     public func requestEndCall(
         in conversation: ZMConversation,
-        completion: (() -> Void)? = nil
+        completion: ((Bool) -> Void)? = nil
     ) {
         logger.info("request end call", attributes: .safePublic)
 
         guard let call = callRegister.lookupCall(by: conversation) else {
             logger.warn("fail: request end call: call doesn't exist", attributes: .safePublic)
+            if let completion {
+                conversation.voiceChannel?.leave()
+                completion(true)
+            }
             return
         }
 
@@ -448,9 +452,33 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
             if let error {
                 self?.logger.error("fail: request end call: \(error)", attributes: .safePublic)
                 conversation.voiceChannel?.leave()
+                if completion != nil, self?.callController.existingCall(for: call)?.hasEnded != false {
+                    self?.callRegister.unregisterCall(call)
+                }
             }
 
-            completion?()
+            guard let completion else { return }
+            guard let self else {
+                completion(false)
+                return
+            }
+            completeAfterCallEnds(call, completion: completion)
+        }
+    }
+
+    private func completeAfterCallEnds(_ call: CallKitCall, completion: @escaping (Bool) -> Void) {
+        Task { @MainActor [weak self] in
+            let deadline = ContinuousClock.now + .seconds(5)
+            while let self, ContinuousClock.now < deadline {
+                // Accepting an end request does not release the CallKit call group.
+                if !callRegister.callExists(for: call.id), callController.existingCall(for: call)?.hasEnded != false {
+                    completion(true)
+                    return
+                }
+                try? await Task.sleep(for: .milliseconds(50))
+            }
+            self?.logger.warn("timed out waiting for call to end", attributes: .safePublic)
+            completion(false)
         }
     }
 
@@ -459,16 +487,15 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
     func reportIncomingCallPreemptively(
         handle: CallHandle,
         callerName: String,
-        hasVideo: Bool
+        hasVideo: Bool,
+        eventTimestamp: Date?
     ) {
         logger.info("report incoming call preemptively", attributes: .safePublic)
 
-        let existingCall = callRegister.lookupCall(by: handle)
-        if existingCall != nil {
+        let (call, reused) = callRegister.registerIncomingCall(with: handle, eventTimestamp: eventTimestamp)
+        if reused {
             logger.warn("report incoming call preemptively: call already exists. Re-reporting", attributes: .safePublic)
         }
-
-        let call = existingCall ?? callRegister.registerNewCall(with: handle)
 
         let update = CXCallUpdate()
         update.localizedCallerName = callerName
@@ -610,8 +637,12 @@ public class CallKitManager: NSObject, CallKitManagerInterface {
         }
 
         for call in associatedCalls {
+            guard callRegister.unregisterCall(call, endedAt: timestamp) else {
+                logger.info("ignore call end older than incoming event", attributes: .safePublic)
+                continue
+            }
+
             logger.info("terminating call: \(String(describing: call))")
-            callRegister.unregisterCall(call)
             logger.info("provider.reportCallEndedAt: \(String(describing: timestamp))", attributes: .safePublic)
             provider.reportCall(with: call.id, endedAt: timestamp?.clampForCallKit() ?? Date(), reason: reason)
         }

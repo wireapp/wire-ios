@@ -23,6 +23,7 @@ extension URL {
         static let user = "user"
         static let conversation = "conversation"
         static let conversationJoin = "conversation-join"
+        static let meetingJoin = "meeting-join"
         static let importEvents = "import-events"
     }
 }

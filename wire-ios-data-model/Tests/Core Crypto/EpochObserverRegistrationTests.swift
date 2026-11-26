@@ -107,6 +107,29 @@ final class EpochObserverRegistrationTests: XCTestCase {
         XCTAssertEqual(registrar.registeredObservers.count, 1)
     }
 
+    func testItRegistersTheObserverWithFreshRegistrars_WithoutChangingBaseRegistration() async throws {
+        // Given
+        sut.setObserver(observer)
+        sut.markMLSInitialised()
+        try await sut.registerIfNecessary(with: registrar)
+
+        let firstFreshRegistrar = RegistrarSpy()
+        let secondFreshRegistrar = RegistrarSpy()
+
+        // When
+        try await sut.register(with: firstFreshRegistrar)
+        try await sut.register(with: secondFreshRegistrar)
+        try await sut.registerIfNecessary(with: registrar)
+
+        // Then
+        XCTAssertEqual(registrar.registeredObservers.count, 1)
+        XCTAssertTrue(registrar.registeredObservers.first === observer)
+        XCTAssertEqual(firstFreshRegistrar.registeredObservers.count, 1)
+        XCTAssertTrue(firstFreshRegistrar.registeredObservers.first === observer)
+        XCTAssertEqual(secondFreshRegistrar.registeredObservers.count, 1)
+        XCTAssertTrue(secondFreshRegistrar.registeredObservers.first === observer)
+    }
+
     func testItRegistersOnlyOnce_WhenCalledConcurrently() async throws {
         // Given
         registrar.delay = .milliseconds(50)

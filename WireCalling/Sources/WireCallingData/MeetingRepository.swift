@@ -65,6 +65,10 @@ public final class MeetingRepository: MeetingRepositoryProtocol {
         changeBroadcaster.makeStream(bufferingPolicy: .bufferingNewest(1))
     }
 
+    public func storeMeeting(_ response: MeetingResponse) async {
+        await storeMeeting(response.toDomainMeeting())
+    }
+
     public func createMeeting(
         title: String,
         startTime: Date,

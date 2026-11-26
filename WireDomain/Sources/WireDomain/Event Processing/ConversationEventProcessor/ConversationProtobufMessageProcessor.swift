@@ -240,7 +240,7 @@ public struct ConversationProtobufMessageProcessor: ConversationProtobufMessageP
             break // Not handled yet, TODO: [WPB-11769] implement here
 
         case .historyClientAvailable, .historyClientRequest, .historyClientResponse, .poll, .pollVote:
-            break
+            break // Not supported, discard.
         }
     }
 

@@ -215,7 +215,6 @@ struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAd
             return nil
         }
 
-        let isRemoteMute = callContent.type == "REMOTEMUTE"
         let callingConversationID = genericMessage.calling.qualifiedConversationID
         let senderID = event.senderID
         let eventTimestamp = event.timestamp
@@ -235,7 +234,7 @@ struct ConversationProteusMessageAddEventProcessor: ConversationProteusMessageAd
             userDomain: senderID.domain,
             eventTimestamp: eventTimestamp,
             clientID: clientID,
-            isMuted: isRemoteMute
+            remoteMuteTargets: callContent.remoteMuteTargets
         )
     }
 

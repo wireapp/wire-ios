@@ -94,6 +94,50 @@ final class CallControllerTests: XCTestCase, CoreDataFixtureTestHelper {
         XCTAssertTrue(router.minimizeCallIsCalled)
     }
 
+    func testRestoringThePriorityCallKeepsItPresentedOnLaterUpdates() {
+        let currentCall = ZMConversation.createGroupConversation(
+            moc: coreDataFixture.uiMOC,
+            otherUser: otherUser,
+            selfUser: ZMUser.selfUser(in: coreDataFixture.uiMOC)
+        )
+        callConversationProvider.priorityCallConversation = currentCall
+        sut.testHelper_setMinimizedCall(currentCall)
+
+        sut.restoreActiveCall()
+
+        XCTAssertEqual(router.presentedCallConversation, currentCall)
+
+        router.presentActiveCallIsCalled = false
+        callController_callCenterDidChange(callState: .established, conversation: currentCall)
+
+        XCTAssertTrue(router.presentActiveCallIsCalled)
+        XCTAssertEqual(router.presentedCallConversation, currentCall)
+        XCTAssertFalse(router.minimizeCallIsCalled)
+    }
+
+    func testDismissalCompletionRefreshesTheNewPriorityCall() throws {
+        let nextCall = ZMConversation.createGroupConversation(
+            moc: coreDataFixture.uiMOC,
+            otherUser: otherUser,
+            selfUser: ZMUser.selfUser(in: coreDataFixture.uiMOC)
+        )
+        callConversationProvider.priorityCallConversation = conversation
+        sut.updateActiveCallPresentationState()
+        XCTAssertEqual(router.shownTopOverlayConversation, conversation)
+
+        callConversationProvider.priorityCallConversation = nil
+        sut.updateActiveCallPresentationState()
+
+        XCTAssertNil(router.shownTopOverlayConversation)
+        let completeDismissal = try XCTUnwrap(router.dismissActiveCallCompletion)
+
+        callConversationProvider.priorityCallConversation = nextCall
+        completeDismissal()
+
+        XCTAssertEqual(router.shownTopOverlayConversation, nextCall)
+        XCTAssertEqual(router.presentedCallConversation, nextCall)
+    }
+
     // MARK: - CallTopOverlay Presentation Tests
 
     func testThatCallTopOverlayIsShown_WhenPriorityCallConversationIsNotNil() {
@@ -199,14 +243,17 @@ final class ActiveCallRouterProtocolMock: ActiveCallRouterProtocol {
     }
 
     var presentActiveCallIsCalled: Bool = false
+    var presentedCallConversation: ZMConversation?
     func presentActiveCall(for voiceChannel: VoiceChannel, animated: Bool) {
         presentActiveCallIsCalled = true
+        presentedCallConversation = voiceChannel.conversation
     }
 
     var dismissActiveCallIsCalled: Bool = false
+    var dismissActiveCallCompletion: Completion?
     func dismissActiveCall(animated: Bool, completion: Completion?) {
         dismissActiveCallIsCalled = true
-        hideCallTopOverlay()
+        dismissActiveCallCompletion = completion
     }
 
     var minimizeCallIsCalled: Bool = false
@@ -215,13 +262,16 @@ final class ActiveCallRouterProtocolMock: ActiveCallRouterProtocol {
     }
 
     var showCallTopOverlayIsCalled: Bool = false
+    var shownTopOverlayConversation: ZMConversation?
     func showCallTopOverlay(for conversation: ZMConversation) {
         showCallTopOverlayIsCalled = true
+        shownTopOverlayConversation = conversation
     }
 
     var hideCallTopOverlayIsCalled: Bool = false
     func hideCallTopOverlay() {
         hideCallTopOverlayIsCalled = true
+        shownTopOverlayConversation = nil
     }
 
     var expectedEndedAlertChoice: AlertChoice?

@@ -402,6 +402,13 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
             splitViewController.conversationUI = nil
         }
 
+        // Restore Files and its selection after moving from the expanded layout.
+        if let filesUI = splitViewController.filesUI {
+            splitViewController.filesUI = nil
+            tabBarController.filesUI = filesUI
+            tabBarController.selectedContent = .files
+        }
+
         // move the archived conversations list back to the tab bar controller if needed
         if let archiveUI = splitViewController.archiveUI {
             splitViewController.archiveUI = nil
@@ -441,6 +448,11 @@ public final class MainCoordinator<Dependencies>: NSObject, MainCoordinatorProto
                 tabBarController.conversationUI = nil
                 splitViewController.conversationUI = conversationUI
             }
+        }
+
+        if tabBarController.selectedContent == .files, let filesUI = tabBarController.filesUI {
+            tabBarController.filesUI = nil
+            splitViewController.filesUI = filesUI
         }
 
         // if the archived conversations view controller was visible, present it

@@ -76,7 +76,9 @@ struct UserClientDeveloperItemsProvider: DeveloperToolsContextItemsProvider {
             }
             _ = await selfClient.establishSessionWithClient(
                 client,
-                usingPreKey: "pQABAQACoQBYIBi1nXQxPf9hpIp1K1tBOj/tlBuERZHfTMOYEW38Ny7PA6EAoQBYIAZbZQ9KtsLVc9VpHkPjYy2+Bmz95fyR0MGKNUqtUUi1BPY="
+                usingPreKey: "pQABAQACoQBYIBi1nXQxPf9hpIp1K1tBOj/tlBuERZHfTMOYEW38Ny7PA6EAoQBYIAZbZQ9KtsLVc9VpHkPjYy2+Bmz95fyR0MGKNUqtUUi1BPY=",
+                // Deliberately overwrite the working session to corrupt it.
+                replacingExistingSession: true
             )
             _ = await sync.perform { sync.saveOrRollback() }
         } catch {

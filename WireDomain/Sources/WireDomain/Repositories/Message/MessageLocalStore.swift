@@ -822,7 +822,7 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
 
             return [systemMessage]
 
-        case let .decryptionFailed(sender, senderClientID, remoteIdentityChanged, date):
+        case let .decryptionFailed(sender, senderClientID, remoteIdentityChanged, errorCode, date):
             guard let sender = await fetchUser(
                 id: sender.id,
                 domain: sender.domain
@@ -847,6 +847,13 @@ public final class MessageLocalStore: MessageLocalStoreProtocol {
                 clients: clients,
                 timestamp: date
             )
+
+            // Needed so `UserClient.resolveDecryptionFailedSystemMessages()` can find this message once the session
+            // with the sender's client is reset, and so the error code is available for diagnostics.
+            await context.perform {
+                systemMessage.senderClientID = senderClientID
+                systemMessage.decryptionErrorCode = errorCode.map { NSNumber(value: $0) }
+            }
 
             return [systemMessage]
 

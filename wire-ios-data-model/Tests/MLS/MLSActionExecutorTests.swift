@@ -42,7 +42,6 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
     override func setUp() {
         super.setUp()
         mockCoreCryptoContext = MockCoreCryptoContextProtocol()
-        mockCoreCryptoContext.e2eiIsEnabledCipherSuite_MockValue = false
         mockCoreCrypto = MockCoreCryptoProtocol()
         mockCoreCrypto.mockTransaction(context: mockCoreCryptoContext)
         mockCoreCryptoProvider = MockCoreCryptoProviderProtocol()
@@ -92,7 +91,7 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
             deviceId: DeviceId(id: 1),
             domain: "wire.com"
         )
-        return DecryptedMessage.text(
+        return DecryptedMessage.applicationMessage(
             plaintext: plaintext,
             senderClientId: senderClientId,
             identity: .withBasicCredentials()
@@ -264,6 +263,35 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         XCTAssertEqual(mockCoreCrypto.transaction_Invocations.count, 0)
     }
 
+    func test_processWelcomeMessage_conversationAlreadyExists_wipesAndRetries() async throws {
+        // Given
+        let groupID = MLSGroupID.random()
+        let welcome = Welcome(noPointer: .init())
+        var attempts = 0
+
+        // Mock
+        mockCoreCryptoContext
+            .processWelcomeMessageWelcomeMessage_MockMethod = { _ in
+                attempts += 1
+                if attempts == 1 {
+                    throw CoreCryptoError.Mls(mlsError: .ConversationAlreadyExists(conversationId: groupID.data))
+                }
+                return groupID.conversationId
+            }
+        mockCoreCryptoContext.wipeConversationConversationId_MockMethod = { _ in }
+
+        // When
+        let result = try await sut.processWelcomeMessage(welcome, context: mockCoreCryptoContext)
+
+        // Then
+        XCTAssertEqual(groupID, result)
+        XCTAssertEqual(mockCoreCryptoContext.processWelcomeMessageWelcomeMessage_Invocations.count, 2)
+        XCTAssertEqual(
+            mockCoreCryptoContext.wipeConversationConversationId_Invocations.map { MLSGroupID($0) },
+            [groupID]
+        )
+    }
+
     // MARK: - Add members
 
     func test_AddMembers() async throws {
@@ -378,10 +406,14 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
         )
 
         let ref = CredentialRef(noPointer: .init())
-        mockCoreCrypto.findCredentials_ClientId_MockValue = [ref]
+        mockCoreCrypto.findCredentials_ClientId_MockMethod = { _, _, cipherSuite, credentialType, _ in
+            XCTAssertEqual(cipherSuite, .mls128Dhkemx25519Aes128gcmSha256Ed25519)
+            return credentialType == .x509 ? [] : [ref]
+        }
 
         mockCoreCryptoContext
-            .joinByExternalCommitGroupInfoCredentialRef_MockMethod = { groupInfo, _ in
+            .joinByExternalCommitGroupInfoCredentialRef_MockMethod = { groupInfo, credentialRef in
+                XCTAssertTrue(credentialRef === ref)
                 mockJoinByExternalCommitArguments.append(groupInfo)
                 return MLSGroupID.random().conversationId
             }
@@ -391,6 +423,28 @@ class MLSActionExecutorTests: ZMBaseManagedObjectTest {
 
         // Then core crypto creates conversation init bundle
         XCTAssertEqual(mockJoinByExternalCommitArguments.count, 1)
+        XCTAssertEqual(mockCoreCrypto.findCredentials_ClientId_Invocations.map(\.3), [.x509, .basic])
+    }
+
+    func test_JoinGroup_PrefersX509Credential() async throws {
+        let credential = CredentialRef(noPointer: .init())
+        mockLegacyFeatureRepository.fetchMLS_MockValue = Feature.MLS(
+            status: .enabled,
+            config: .init(defaultCipherSuite: .MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519)
+        )
+        mockCoreCrypto.findCredentials_ClientId_MockMethod = { _, _, cipherSuite, credentialType, _ in
+            XCTAssertEqual(cipherSuite, .mls128Dhkemx25519Aes128gcmSha256Ed25519)
+            XCTAssertEqual(credentialType, .x509)
+            return [credential]
+        }
+        mockCoreCryptoContext.joinByExternalCommitGroupInfoCredentialRef_MockMethod = { _, credentialRef in
+            XCTAssertTrue(credentialRef === credential)
+            return MLSGroupID.random().conversationId
+        }
+
+        try await sut.joinGroup(.random(), groupInfo: XCTUnwrap(groupInfoBase64.base64DecodedData))
+
+        XCTAssertEqual(mockCoreCryptoContext.joinByExternalCommitGroupInfoCredentialRef_Invocations.count, 1)
     }
 
     // MARK: - Decrypt Message
@@ -526,7 +580,19 @@ extension DecryptedMessage: @retroactive Equatable {
         rhs: DecryptedMessage
     ) -> Bool {
         switch (lhs, rhs) {
-        case let (.text(lPlaintext, lSenderClientId, lIdentity), .text(rPlaintext, rSenderClientId, rIdentity)):
+        case let (
+            .applicationMessage(lPlaintext, lSenderClientId, lIdentity),
+            .applicationMessage(rPlaintext, rSenderClientId, rIdentity)
+        ), let (
+            .transient(lPlaintext, lSenderClientId, lIdentity),
+            .transient(rPlaintext, rSenderClientId, rIdentity)
+        ), let (
+            .transientTargeted(lPlaintext, lSenderClientId, lIdentity),
+            .transientTargeted(rPlaintext, rSenderClientId, rIdentity)
+        ), let (
+            .persistedTargeted(lPlaintext, lSenderClientId, lIdentity),
+            .persistedTargeted(rPlaintext, rSenderClientId, rIdentity)
+        ):
             lPlaintext == rPlaintext && lSenderClientId == rSenderClientId && lIdentity == rIdentity
         case let (.commit(lIsActive, lBufferedMessages, lIdentity), .commit(rIsActive, rBufferedMessages, rIdentity)):
             lIsActive == rIsActive && lBufferedMessages == rBufferedMessages && lIdentity == rIdentity
@@ -546,7 +612,19 @@ extension BufferedDecryptedMessage: @retroactive Equatable {
         rhs: BufferedDecryptedMessage
     ) -> Bool {
         switch (lhs, rhs) {
-        case let (.text(lPlaintext, lSenderClientId, lIdentity), .text(rPlaintext, rSenderClientId, rIdentity)):
+        case let (
+            .applicationMessage(lPlaintext, lSenderClientId, lIdentity),
+            .applicationMessage(rPlaintext, rSenderClientId, rIdentity)
+        ), let (
+            .transient(lPlaintext, lSenderClientId, lIdentity),
+            .transient(rPlaintext, rSenderClientId, rIdentity)
+        ), let (
+            .transientTargeted(lPlaintext, lSenderClientId, lIdentity),
+            .transientTargeted(rPlaintext, rSenderClientId, rIdentity)
+        ), let (
+            .persistedTargeted(lPlaintext, lSenderClientId, lIdentity),
+            .persistedTargeted(rPlaintext, rSenderClientId, rIdentity)
+        ):
             lPlaintext == rPlaintext && lSenderClientId == rSenderClientId && lIdentity == rIdentity
         case let (.commit(lIsActive, lIdentity), .commit(rIsActive, rIdentity)):
             lIsActive == rIsActive && lIdentity == rIdentity

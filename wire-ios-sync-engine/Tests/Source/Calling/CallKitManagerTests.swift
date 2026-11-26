@@ -76,9 +76,11 @@ class MockCallKitProvider: CXProvider {
 class MockCallObserver: CXCallObserver {
 
     public var mockCalls: [CXCall] = []
+    var onReadCalls: (() -> Void)?
 
     override var calls: [CXCall] {
-        mockCalls
+        onReadCalls?()
+        return mockCalls
     }
 
 }
@@ -769,6 +771,100 @@ class CallKitManagerTest: DatabaseTest {
         XCTAssertEqual(action.callUUID, callUUID)
     }
 
+    func testEndCallCompletionWaitsForProviderAndSystemCallRemoval() throws {
+        let conversation = conversation(type: .group)
+        let handle = try XCTUnwrap(conversation.callHandle)
+        let call = sut.callRegister.registerNewCall(with: handle)
+        mockCallKitManagerDelegate.mockConversations[handle] = conversation
+
+        let observer = callKitController.mockCallObserver
+        let systemCall = CallKitDelegateTestsMocking.mockConnectedCall(with: call.id)
+        observer.mockCalls = [systemCall]
+        defer { CallKitDelegateTestsMocking.stopMock(systemCall) }
+
+        var didComplete = false
+        let completed = expectation(description: "End call completion")
+        sut.requestEndCall(in: conversation) { didEndCall in
+            XCTAssertTrue(didEndCall)
+            didComplete = true
+            completed.fulfill()
+        }
+
+        XCTAssertFalse(didComplete)
+        let request = try XCTUnwrap(callKitController.requestedTransactions.first?.actions.first as? CXEndCallAction)
+        XCTAssertEqual(request.callUUID, call.id)
+
+        let endAction = MockEndCallAction(call: request.callUUID)
+        sut.provider(callKitProvider, perform: endAction)
+        XCTAssertTrue(endAction.isFulfilled)
+        XCTAssertFalse(sut.callRegister.callExists(for: call.id))
+
+        let checkedSystemCall = expectation(description: "Checked the system call after the provider ended the call")
+        observer.onReadCalls = {
+            observer.onReadCalls = nil
+            checkedSystemCall.fulfill()
+        }
+        wait(for: [checkedSystemCall], timeout: 1)
+        XCTAssertFalse(didComplete)
+
+        observer.mockCalls = []
+        wait(for: [completed], timeout: 1)
+        XCTAssertTrue(didComplete)
+    }
+
+    func testEndCallCompletionLeavesAnActiveWireCallWithoutACallKitEntry() throws {
+        let conversation = conversation(type: .group)
+        let conversationID = try XCTUnwrap(conversation.avsIdentifier)
+        mockWireCallCenterV3.setMockCallState(
+            .established,
+            conversationId: conversationID,
+            callerId: otherUser(moc: uiMOC).avsIdentifier,
+            isVideo: false
+        )
+
+        var didComplete = false
+        sut.requestEndCall(in: conversation) { didEndCall in
+            XCTAssertTrue(didEndCall)
+            XCTAssertTrue(self.mockWireCallCenterV3.mockAVSWrapper.didCallEndCall)
+            didComplete = true
+        }
+
+        XCTAssertTrue(didComplete)
+        XCTAssertTrue(callKitController.requestedTransactions.isEmpty)
+    }
+
+    func testEndCallCompletionReportsFailureWhenCallDoesNotEnd() throws {
+        let conversation = conversation(type: .group)
+        let handle = try XCTUnwrap(conversation.callHandle)
+        let call = sut.callRegister.registerNewCall(with: handle)
+
+        let completed = expectation(description: "End call timed out")
+        sut.requestEndCall(in: conversation) { didEndCall in
+            XCTAssertFalse(didEndCall)
+            completed.fulfill()
+        }
+
+        wait(for: [completed], timeout: 7)
+        XCTAssertTrue(sut.callRegister.callExists(for: call.id))
+    }
+
+    func testEndCallCompletionReportsFailureWhenManagerIsReleased() throws {
+        let conversation = conversation(type: .group)
+        let handle = try XCTUnwrap(conversation.callHandle)
+        sut.callRegister.registerNewCall(with: handle)
+        weak var manager = sut
+
+        let completed = expectation(description: "End call manager released")
+        sut.requestEndCall(in: conversation) { didEndCall in
+            XCTAssertFalse(didEndCall)
+            completed.fulfill()
+        }
+        sut = nil
+
+        XCTAssertNil(manager)
+        wait(for: [completed], timeout: 1)
+    }
+
     func testThatReportsMutingOfCall() {
         // given
         let conversation = conversation(type: .group)
@@ -1352,6 +1448,103 @@ class CallKitManagerTest: DatabaseTest {
         XCTAssertEqual(callKitProvider.timesReportOutgoingCallConnectedAtCalled, 0)
         XCTAssertEqual(callKitProvider.timesReportOutgoingCallStartedConnectingCalled, 0)
         XCTAssertEqual(callKitProvider.timesReportCallEndedAtCalled, 0)
+    }
+
+    func testEarlierEndDoesNotDismissPreemptiveIncomingCall() throws {
+        let conversation = conversation(type: .group)
+        let caller = otherUser(moc: uiMOC)
+        let handle = try XCTUnwrap(conversation.callHandle)
+        let startSecond: TimeInterval = 1_795_079_179
+        sut.reportIncomingCallPreemptively(
+            handle: handle,
+            callerName: "Caller",
+            hasVideo: false,
+            eventTimestamp: Date(timeIntervalSince1970: startSecond + 0.25)
+        )
+        let callID = try XCTUnwrap(sut.callRegister.lookupCall(by: handle)?.id)
+
+        sut.callCenterDidChange(
+            callState: .terminating(reason: .answeredElsewhere),
+            conversation: conversation,
+            caller: caller,
+            timestamp: Date(timeIntervalSince1970: 1_795_079_128),
+            previousCallState: nil,
+            callEndReason: nil
+        )
+
+        XCTAssertEqual(sut.callRegister.lookupCall(by: handle)?.id, callID)
+        XCTAssertEqual(callKitProvider.timesReportCallEndedAtCalled, 0)
+
+        sut.callCenterDidChange(
+            callState: .terminating(reason: .normal),
+            conversation: conversation,
+            caller: caller,
+            timestamp: Date(timeIntervalSince1970: startSecond),
+            previousCallState: nil,
+            callEndReason: nil
+        )
+
+        XCTAssertFalse(sut.callRegister.callExists(for: callID))
+        XCTAssertEqual(callKitProvider.timesReportCallEndedAtCalled, 1)
+    }
+
+    func testPreemptiveIncomingCallCanEndWithMissingEventTime() throws {
+        let conversation = conversation(type: .group)
+        let handle = try XCTUnwrap(conversation.callHandle)
+        let time = Date()
+        let eventTimes: [(incoming: Date?, end: Date?)] = [(nil, time), (time, nil)]
+
+        for times in eventTimes {
+            sut.reportIncomingCallPreemptively(
+                handle: handle,
+                callerName: "Caller",
+                hasVideo: false,
+                eventTimestamp: times.incoming
+            )
+            sut.reportCallEnded(in: conversation, atTime: times.end, reason: .remoteEnded)
+            XCTAssertNil(sut.callRegister.lookupCall(by: handle))
+        }
+
+        XCTAssertEqual(callKitProvider.timesReportCallEndedAtCalled, 2)
+    }
+
+    func testRereportedIncomingCallIgnoresEndsBeforeLatestRing() throws {
+        let conversation = conversation(type: .group)
+        let handle = try XCTUnwrap(conversation.callHandle)
+        let latestStartSecond: TimeInterval = 1_795_079_179
+        let earlierStart = Date(timeIntervalSince1970: latestStartSecond - 5)
+        let latestStart = Date(timeIntervalSince1970: latestStartSecond + 0.25)
+        sut.reportIncomingCallPreemptively(handle: handle, callerName: "Caller", hasVideo: false, eventTimestamp: nil)
+        let call = try XCTUnwrap(sut.callRegister.lookupCall(by: handle))
+
+        let rereportedTimestamps: [Date?] = [earlierStart, latestStart, earlierStart, nil]
+        for timestamp in rereportedTimestamps {
+            sut.reportIncomingCallPreemptively(
+                handle: handle,
+                callerName: "Caller",
+                hasVideo: false,
+                eventTimestamp: timestamp
+            )
+        }
+        XCTAssertEqual(callKitProvider.timesReportNewIncomingCallCalled, 5)
+
+        sut.reportCallEnded(
+            in: conversation,
+            atTime: Date(timeIntervalSince1970: latestStartSecond - 1),
+            reason: .remoteEnded
+        )
+
+        XCTAssertEqual(sut.callRegister.lookupCalls(by: handle).map(\.id), [call.id])
+        XCTAssertEqual(callKitProvider.timesReportCallEndedAtCalled, 0)
+
+        sut.reportCallEnded(
+            in: conversation,
+            atTime: Date(timeIntervalSince1970: latestStartSecond),
+            reason: .remoteEnded
+        )
+
+        XCTAssertFalse(sut.callRegister.callExists(for: call.id))
+        XCTAssertEqual(callKitProvider.timesReportCallEndedAtCalled, 1)
     }
 
     func testThatItReportCallEndedAt_v3_Terminating_normal() {

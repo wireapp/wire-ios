@@ -217,10 +217,17 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
         _ message: Welcome,
         context: CoreCryptoContextProtocol
     ) async throws -> MLSGroupID {
-        let conversationID = try await context.processWelcomeMessage(
-            welcomeMessage: message
-        )
-
+        let conversationID: WireCoreCryptoUniffi.ConversationId
+        do {
+            conversationID = try await context.processWelcomeMessage(
+                welcomeMessage: message
+            )
+        } catch let CoreCryptoError.Mls(.ConversationAlreadyExists(existingConversationId)) {
+            try await context.wipeConversation(conversationId: MLSGroupID(existingConversationId).conversationId)
+            conversationID = try await context.processWelcomeMessage(
+                welcomeMessage: message
+            )
+        }
         return MLSGroupID(conversationID)
     }
 
@@ -313,12 +320,11 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
                 WireLogger.mls.info("joining group via external commit", attributes: groupID.safeAttributes)
                 let ciphersuite = await featureRepository.fetchMLS().config.defaultCipherSuite.coreCryptoCipherSuite
                 let conversationID = try await coreCrypto.transaction { [self] in
-                    let e2eiIsEnabled = try await $0.e2eiIsEnabled(cipherSuite: ciphersuite)
-                    let credentialRef = try await credentialRef(
-                        coreCrypto: coreCrypto.coreCrypto,
-                        ciphersuite: ciphersuite,
-                        credentialType: e2eiIsEnabled ? .x509 : .basic
-                    )
+                    guard let credentialRef = try await coreCrypto.coreCrypto.preferredMLSCredential(
+                        cipherSuite: ciphersuite
+                    ) else {
+                        throw MLSActionExecutorError.failedToFindCredential
+                    }
                     return try await $0.joinByExternalCommit(
                         groupInfo: try GroupInfo(bytes: groupInfo),
                         credentialRef: credentialRef
@@ -363,24 +369,6 @@ public actor MLSActionExecutor: MLSActionExecutorProtocol {
         }
 
         return try result.get()
-    }
-
-    private func credentialRef(
-        coreCrypto: CoreCryptoProtocol,
-        ciphersuite: CipherSuite,
-        credentialType: CredentialType
-    ) async throws -> CredentialRef {
-        guard let credential = try await coreCrypto.findCredentials(
-            clientId: nil,
-            publicKey: nil,
-            cipherSuite: ciphersuite,
-            credentialType: credentialType,
-            earliestValidity: nil
-        ).first else {
-            throw MLSActionExecutorError.failedToFindCredential
-        }
-
-        return credential
     }
 }
 

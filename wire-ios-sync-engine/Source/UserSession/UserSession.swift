@@ -220,6 +220,8 @@ public protocol UserSession: AnyObject {
 
     var e2eiFeature: Feature.E2EI { get }
 
+    var selfDeletingMessagesFeature: Feature.SelfDeletingMessages { get }
+
     var mlsFeature: Feature.MLS { get }
 
     var channelsFeature: Feature.Channels { get }
@@ -304,8 +306,6 @@ public protocol UserSession: AnyObject {
 
     func resolveOneOnOneConversation(with userID: WireDataModel
         .QualifiedID) async throws -> OneOnOneConversationResolution
-
-    func e2eIdentityUpdateCertificateUpdateStatus() -> E2EIdentityCertificateUpdateStatusUseCaseProtocol?
 
     // MARK: - Dependency Injection
 

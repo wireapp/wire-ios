@@ -88,7 +88,7 @@ final class ActiveCallRouter<TopOverlayPresenter>
 
     private var pendingMeetingInvitation: (conversationID: QualifiedID, link: URL)?
     private var isCallQualityShown = false
-    private var isCallTopOverlayShown = false
+    private var callTopOverlayConversation: ZMConversation?
     private(set) var scheduledPostCallAction: PostCallAction?
     private(set) weak var presentedDegradedAlert: UIAlertController?
     private weak var presentedActiveCallViewController: UIViewController?
@@ -139,6 +139,8 @@ final class ActiveCallRouter<TopOverlayPresenter>
         isPresentingActiveCall = false
         isActiveCallShown = false
         presentedActiveCallViewController = nil
+        topOverlayPresenter.dismissTopOverlay(animated: false)
+        callTopOverlayConversation = nil
     }
 }
 
@@ -199,21 +201,31 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
     }
 
     func dismissActiveCall(animated: Bool = true, completion: Completion? = nil) {
-        if let presented = presentedActiveCallViewController {
-            presented.dismiss(animated: animated) { [weak self] in
-                guard let self else { completion?(); return }
+        guard let presented = presentedActiveCallViewController else {
+            activeCallDidDismiss(nil, completion: completion)
+            return
+        }
 
-                presentedActiveCallViewController = nil
-                isActiveCallShown = false
-                isPresentingActiveCall = false
+        presented.dismiss(animated: animated) { [weak self] in
+            guard let self else { completion?(); return }
+            activeCallDidDismiss(presented, completion: completion)
+        }
+    }
 
-                if let action = scheduledPostCallAction {
-                    action { completion?() }
-                } else {
-                    completion?()
-                }
-                scheduledPostCallAction = nil
-            }
+    func activeCallDidDismiss(_ dismissed: UIViewController?, completion: Completion?) {
+        guard presentedActiveCallViewController === dismissed else {
+            completion?()
+            return
+        }
+
+        presentedActiveCallViewController = nil
+        isActiveCallShown = false
+        isPresentingActiveCall = false
+
+        let action = scheduledPostCallAction
+        scheduledPostCallAction = nil
+        if let action {
+            action { completion?() }
         } else {
             completion?()
         }
@@ -230,16 +242,20 @@ extension ActiveCallRouter: ActiveCallRouterProtocol {
     // MARK: - CallTopOverlay
 
     func showCallTopOverlay(for conversation: ZMConversation) {
-        guard !isCallTopOverlayShown else { return }
+        guard callTopOverlayConversation != conversation else { return }
+        hideCallTopOverlay()
+
         let callTopOverlayController = CallTopOverlayController(conversation: conversation, userSession: userSession)
         callTopOverlayController.delegate = self
+        callTopOverlayConversation = conversation
         topOverlayPresenter.presentTopOverlay(callTopOverlayController, animated: true)
-        isCallTopOverlayShown = true
     }
 
     func hideCallTopOverlay() {
-        topOverlayPresenter.dismissTopOverlay(animated: true)
-        isCallTopOverlayShown = false
+        guard callTopOverlayConversation != nil else { return }
+        callTopOverlayConversation = nil
+        // Detach the old banner before the next call can attach its banner.
+        topOverlayPresenter.dismissTopOverlay(animated: false)
     }
 
     // MARK: - Alerts
@@ -441,9 +457,7 @@ extension ActiveCallRouter: CallQualityRouterProtocol {
 // MARK: - CallTopOverlayControllerDelegate
 
 extension ActiveCallRouter: CallTopOverlayControllerDelegate {
-    func voiceChannelTopOverlayWantsToRestoreCall(voiceChannel: VoiceChannel?) {
-        guard let voiceChannel else { return }
-        isActiveCallShown = false
-        presentActiveCall(for: voiceChannel, animated: true)
+    func callTopOverlayWantsToRestoreCall() {
+        callController.restoreActiveCall()
     }
 }

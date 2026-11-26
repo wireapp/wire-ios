@@ -177,8 +177,20 @@ extension GenericMessage.OneOf_Content: SafeForLoggingStringConvertible {
         case .inCallHandRaise:
             "inCallHandRaise"
 
-        case .historyClientAvailable, .historyClientRequest, .historyClientResponse, .poll, .pollVote:
-            "unsupported"
+        case .historyClientAvailable:
+            "historyClientAvailable"
+
+        case .historyClientRequest:
+            "historyClientRequest"
+
+        case .historyClientResponse:
+            "historyClientResponse"
+
+        case .poll:
+            "poll"
+
+        case .pollVote:
+            "pollVote"
         }
     }
 

@@ -62,6 +62,12 @@ final class CallController: NSObject {
         presentOrMinimizeActiveCall(for: priorityCallConversation)
     }
 
+    func restoreActiveCall() {
+        guard let voiceChannel = priorityCallConversation?.voiceChannel else { return }
+        minimizedCall = nil
+        router?.presentActiveCall(for: voiceChannel, animated: true)
+    }
+
     // MARK: - Private Implementation
 
     private func addObservers(userSession: UserSession) {
@@ -90,9 +96,11 @@ final class CallController: NSObject {
     }
 
     private func dismissCall() {
+        hideCallTopOverlay()
+        minimizedCall = nil
         router?.dismissActiveCall(animated: true, completion: { [weak self] in
-            self?.hideCallTopOverlay()
-            self?.minimizedCall = nil
+            guard let self, priorityCallConversation != nil else { return }
+            updateActiveCallPresentationState()
         })
     }
 

@@ -234,7 +234,8 @@ extension ZMUser: SelfLegalHoldSubject {
 
         guard await selfClient.establishSessionWithClient(
             legalHoldClient,
-            usingPreKey: request.lastPrekey.key.base64String()
+            usingPreKey: request.lastPrekey.key.base64String(),
+            replacingExistingSession: false
         ) else {
             log.error("Could not establish session with new legal hold device.")
             await context.perform { context.delete(legalHoldClient) }

@@ -41,6 +41,11 @@ protocol WireMessagingFactoryProtocol {
 
     func startDirectUploads() async
 
+    /// Starts showing the ongoing Drive direct uploads in a Live Activity.
+
+    @MainActor
+    func startDirectUploadsLiveActivity()
+
     /// Cancels every Drive direct upload and removes its state. For logout or account deletion.
 
     func tearDownDirectUploads() async
@@ -63,7 +68,7 @@ protocol WireMessagingFactoryProtocol {
 
     @MainActor
     func makeConversationSharedDrivedOptionsView(
-        participants: [WireDriveParticipant],
+        participantsProvider: @escaping () -> [WireDriveParticipant],
         onClose: @escaping () -> Void
     ) -> UIViewController
 }
@@ -94,10 +99,10 @@ extension WireMessagingFactory: @preconcurrency WireMessagingFactoryProtocol {
 
     @MainActor
     func makeConversationSharedDrivedOptionsView(
-        participants: [WireDriveParticipant],
+        participantsProvider: @escaping () -> [WireDriveParticipant],
         onClose: @escaping () -> Void
     ) -> UIViewController {
-        makeConversationSharedDrivedOptionsViewController(participants: participants, onClose: onClose)
+        makeConversationSharedDrivedOptionsViewController(participantsProvider: participantsProvider, onClose: onClose)
     }
 
 }

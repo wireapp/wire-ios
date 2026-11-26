@@ -17,18 +17,20 @@
 //
 
 WIRE_BUILD_NUMBER = 999999
-SSO_URL_SCHEME = wire-sso-alpha
+SSO_URL_SCHEME = wire-sso-dev
 WIRE_URL_SCHEME = wire
+// Previously named Alpha the Wire Debug connected to Xcode for development is now called Wire Dev
 WIRE_BUNDLE_ID = com.wearezeta.zclient.alpha
-WIRE_INTERNAL_NAME = Alpha
+WIRE_INTERNAL_NAME = Dev
 
 //Code Signing
 CODE_SIGN_IDENTITY = Apple Development
 
 DEVELOPMENT_TEAM = EDF3JCE8BC
-PROVISIONING_PROFILE_SPECIFIER_APP = Wire iOS Alpha
-PROVISIONING_PROFILE_SPECIFIER_SHARE_EXT = Wire iOS Alpha Share Extension
-PROVISIONING_PROFILE_SPECIFIER_NOTIFICATION_EXT = Wire iOS Alpha Notification Service Extension
+PROVISIONING_PROFILE_SPECIFIER_APP = Wire iOS Dev
+PROVISIONING_PROFILE_SPECIFIER_SHARE_EXT = Wire iOS Dev Share Extension
+PROVISIONING_PROFILE_SPECIFIER_NOTIFICATION_EXT = Wire iOS Dev Notification Service Extension
+PROVISIONING_PROFILE_SPECIFIER_LIVE_ACTIVITY_EXT = Wire iOS Dev Live Activity
 
 // App icon from asset bundle
-APPICON_NAME = AppIcon-Debug
+APPICON_NAME = AppIcon-Dev

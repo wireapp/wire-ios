@@ -22,6 +22,8 @@ class CallKitCallRegister {
 
     // MARK: - Properties
 
+    // Keep each storage change and its publication in the same critical section.
+    private let storageLock = NSLock()
     private var storage = [UUID: CallKitCall]()
 
     // MARK: - Life cycle
@@ -43,26 +45,60 @@ class CallKitCallRegister {
     // MARK: - Registration
 
     func registerNewCall(with handle: CallHandle) -> CallKitCall {
-        defer { persistStorage() }
-        let call = CallKitCall(id: UUID(), handle: handle)
+        storageLock.withLock {
+            insertCall(with: handle, incomingEventTimestamp: nil)
+        }
+    }
+
+    func registerIncomingCall(
+        with handle: CallHandle,
+        eventTimestamp: Date?
+    ) -> (call: CallKitCall, reused: Bool) {
+        storageLock.withLock {
+            if let call = storage.values.first(where: { $0.handle == handle }) {
+                if let eventTimestamp, call.incomingEventTimestamp.map({ $0 < eventTimestamp }) ?? true {
+                    call.incomingEventTimestamp = eventTimestamp
+                }
+                return (call, true)
+            }
+
+            return (insertCall(with: handle, incomingEventTimestamp: eventTimestamp), false)
+        }
+    }
+
+    private func insertCall(with handle: CallHandle, incomingEventTimestamp: Date?) -> CallKitCall {
+        let call = CallKitCall(id: UUID(), handle: handle, incomingEventTimestamp: incomingEventTimestamp)
         storage[call.id] = call
+        persistStorage()
         return call
     }
 
-    func unregisterCall(_ call: CallKitCall) {
-        defer { persistStorage() }
-        storage.removeValue(forKey: call.id)
+    @discardableResult
+    func unregisterCall(_ call: CallKitCall, endedAt timestamp: Date? = nil) -> Bool {
+        storageLock.withLock {
+            // AVS reports the server timestamp in whole seconds.
+            if let timestamp, let incomingEventTimestamp = call.incomingEventTimestamp,
+               timestamp.timeIntervalSince1970 < incomingEventTimestamp.timeIntervalSince1970.rounded(.down) {
+                return false
+            }
+
+            storage.removeValue(forKey: call.id)
+            persistStorage()
+            return true
+        }
     }
 
     func reset() {
-        defer { persistStorage() }
-        storage.removeAll()
+        storageLock.withLock {
+            storage.removeAll()
+            persistStorage()
+        }
     }
 
     // MARK: - Lookup
 
     var allCalls: [CallKitCall] {
-        Array(storage.values)
+        storageLock.withLock { Array(storage.values) }
     }
 
     func callExists(for id: UUID) -> Bool {
@@ -70,7 +106,7 @@ class CallKitCallRegister {
     }
 
     func lookupCall(by id: UUID) -> CallKitCall? {
-        storage[id]
+        storageLock.withLock { storage[id] }
     }
 
     func callExists(for handle: CallHandle) -> Bool {
@@ -82,7 +118,7 @@ class CallKitCallRegister {
     }
 
     func lookupCalls(by handle: CallHandle) -> [CallKitCall] {
-        storage.values.filter { $0.handle == handle }
+        storageLock.withLock { storage.values.filter { $0.handle == handle } }
     }
 
 }

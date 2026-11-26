@@ -89,6 +89,8 @@ extension ConversationInputBarViewController {
     }
 
     private func continueUploadFiles(_ files: [FileMetadata]) {
+        guard canUploadAttachments else { return }
+
         if useWireDrive() {
             for file in files {
                 Task.detached { [uploadDraftUseCase] in
@@ -145,6 +147,7 @@ extension ConversationInputBarViewController {
             userSession.perform { [weak self] in
 
                 guard let self else { return }
+                guard canUploadAttachments else { return completion() }
 
                 impactFeedbackGenerator.impactOccurred()
 

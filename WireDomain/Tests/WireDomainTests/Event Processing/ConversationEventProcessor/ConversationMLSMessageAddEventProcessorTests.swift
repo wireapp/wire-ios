@@ -136,6 +136,23 @@ final class ConversationMLSMessageAddEventProcessorTests: XCTestCase {
         XCTAssertNotNil(callEventInfo) // There's a call, we got the call info.
     }
 
+    func testRemoteMuteKeepsTargetsWithoutAVSFields() throws {
+        let message = GenericMessage(content: Calling(content: """
+        {"type":"REMOTEMUTE","data":{"targets":{"wire.com":{"user-id":["client-id"]}}}}
+        """, conversationId: .random()))
+        let event = Scaffolding.callingMessageEvent
+        let decryptedMessage = try XCTUnwrap(event.decryptedMessages.first)
+
+        let info = try XCTUnwrap(sut.getCallEventInfo(
+            event: event,
+            decryptedMessage: decryptedMessage,
+            genericMessage: message
+        ))
+
+        XCTAssertEqual(info.remoteMuteTargets, ["wire.com": ["user-id": ["client-id"]]])
+        XCTAssertEqual(info.clientID, decryptedMessage.senderClientID)
+    }
+
     private enum Scaffolding {
         static let event = ConversationMLSMessageAddEvent(
             conversationID: ConversationID(id: UUID(), domain: "domain.com"),

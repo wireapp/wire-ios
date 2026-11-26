@@ -330,6 +330,10 @@ internal enum L10n {
         /// Record an audio message
         internal static let description = L10n.tr("Accessibility", "conversation.audioButton.description", fallback: "Record an audio message")
       }
+      internal enum AudioButtonDisabled {
+        /// Record an audio message, disabled in viewer access
+        internal static let description = L10n.tr("Accessibility", "conversation.audioButtonDisabled.description", fallback: "Record an audio message, disabled in viewer access")
+      }
       internal enum BackButton {
         /// Go back to conversation list
         internal static let description = L10n.tr("Accessibility", "conversation.backButton.description", fallback: "Go back to conversation list")
@@ -1461,6 +1465,12 @@ internal enum L10n {
       }
     }
     internal enum Call {
+      /// You were muted by %@
+      internal static func remoteMutedBy(_ p1: Any) -> String {
+        return L10n.tr("Localizable", "call.remote_muted_by", String(describing: p1), fallback: "You were muted by %@")
+      }
+      /// You were muted by an admin
+      internal static let remoteMutedByAdmin = L10n.tr("Localizable", "call.remote_muted_by_admin", fallback: "You were muted by an admin")
       internal enum Actions {
         internal enum Label {
           /// Accept call
@@ -4292,6 +4302,20 @@ internal enum L10n {
           }
         }
       }
+      internal enum Meeting {
+        internal enum Alert {
+          /// This meeting is password protected
+          internal static let message = L10n.tr("Localizable", "join.meeting.alert.message", fallback: "This meeting is password protected")
+          internal enum JoinAction {
+            /// Join Meeting
+            internal static let title = L10n.tr("Localizable", "join.meeting.alert.joinAction.title", fallback: "Join Meeting")
+          }
+          internal enum Textfield {
+            /// Enter Meeting password
+            internal static let placeholder = L10n.tr("Localizable", "join.meeting.alert.textfield.placeholder", fallback: "Enter Meeting password")
+          }
+        }
+      }
     }
     internal enum KeyboardPhotosAccess {
       internal enum Denied {
@@ -6705,6 +6729,22 @@ internal enum L10n {
             internal enum LinkIsInvalid {
               /// The conversation link is invalid.
               internal static let message = L10n.tr("Localizable", "url_action.join_conversation.error.alert.link_is_invalid.message", fallback: "The conversation link is invalid.")
+            }
+          }
+        }
+      }
+      internal enum JoinMeeting {
+        internal enum Error {
+          internal enum Alert {
+            /// You could not join the meeting
+            internal static let title = L10n.tr("Localizable", "url_action.join_meeting.error.alert.title", fallback: "You could not join the meeting")
+            internal enum LinkIsInvalid {
+              /// The meeting link is invalid.
+              internal static let message = L10n.tr("Localizable", "url_action.join_meeting.error.alert.link_is_invalid.message", fallback: "The meeting link is invalid.")
+            }
+            internal enum MeetingIsFull {
+              /// The meeting is full.
+              internal static let message = L10n.tr("Localizable", "url_action.join_meeting.error.alert.meeting_is_full.message", fallback: "The meeting is full.")
             }
           }
         }

@@ -110,7 +110,11 @@ final class ZClientControllerBuilder {
             fileCache: userSession.fileAssetCache,
             contextProvider: DefaultManagedObjectContextProvider(contextProvider: userSession.contextProvider),
             analyticsProvider: { [self] in userSession.analyticsEventTracker },
-            selfUserID: account.userIdentifier,
+            accountInfo: WireDriveAccountInfo(
+                userID: account.userIdentifier,
+                name: account.userName,
+                handle: account.handle
+            ),
             uploadSessions: AppDependencies.wireDriveUploadSessions,
             uploadStagingDirectory: driveUploadStagingURL
         )
@@ -118,6 +122,7 @@ final class ZClientControllerBuilder {
         // The database exists by this point, so persisted uploads can be reconciled against the
         // background session. Until this runs, the session buffers its events rather than losing
         // them, which is what makes a background relaunch safe.
+        factory.startDirectUploadsLiveActivity()
         Task { await factory.startDirectUploads() }
 
         return factory
@@ -200,15 +205,20 @@ extension ConversationLocalStore: @retroactive WireDriveConversationsLocalStoreP
     @unchecked @retroactive Sendable {
     public func fetchDriveConversations() async -> [WireMessagingDomain.WireDriveConversation] {
         let driveEnabledConversations: [ZMConversation] = await fetchDriveConversations()
+        let isDriveFeatureEnabled = await isDriveEnabled
 
-        return await context.perform {
-            driveEnabledConversations.reduce(into: [WireDriveConversation]()) { result, conversation in
+        return await context.perform { [self] in
+            return driveEnabledConversations.reduce(into: [WireDriveConversation]()) { result, conversation in
+                let isGracePeriod = !isDriveFeatureEnabled && conversation.isWireDriveEnabled &&
+                    conversation.isTeamConversation
+
                 if let name = conversation.name {
                     let participants: [WireDriveParticipant] = conversation.participants
                         .compactMap { item -> WireDriveParticipant? in
                             guard let id = item.remoteIdentifier, let domain = item.domain else { return nil }
-                            let role: WireDriveParticipant.Role = conversation
-                                .matchesTeam(with: item) ? .editor : .viewer
+                            let role: WireDriveParticipant.Role = !isGracePeriod && conversation
+                                .matchesTeam(with: item)
+                                ? .editor : .viewer
 
                             let userType: WireDriveParticipant.UserType = if item.isFederated {
                                 .federated
@@ -239,11 +249,21 @@ extension ConversationLocalStore: @retroactive WireDriveConversationsLocalStoreP
                         id: conversation.wireDriveCellName,
                         name: name,
                         kind: kind,
-                        participants: Set(participants)
+                        participants: Set(participants),
+                        isGracePeriod: isGracePeriod
                     )
 
                     result.append(driveConversation)
                 }
+            }
+        }
+    }
+
+    private var isDriveEnabled: Bool {
+        get async {
+            await context.perform { [self] in
+                let feature = Feature.fetch(name: .cells, context: context)
+                return feature?.status == .enabled
             }
         }
     }
