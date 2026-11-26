@@ -75,6 +75,10 @@ class RemoveUserTests: WireUITestCase {
             oneOnOneConversation.userRemovedSystemMessage.waitForExistence(timeout: 1),
             "system message should be inserted"
         )
+        let evidence = XCTAttachment(screenshot: app.screenshot())
+        evidence.name = "Deleted user conversation - read-only and unavailable message"
+        evidence.lifetime = .keepAlways
+        add(evidence)
     }
 
     /// Test when a team member is removed, the 1:1 with the user is marked as readonly on an active conversation
@@ -134,6 +138,10 @@ class RemoveUserTests: WireUITestCase {
             oneOnOneConversation.userRemovedSystemMessage.waitForExistence(timeout: 1),
             "system message should be inserted"
         )
+        let evidence = XCTAttachment(screenshot: app.screenshot())
+        evidence.name = "Deleted user conversation - read-only and unavailable message"
+        evidence.lifetime = .keepAlways
+        add(evidence)
     }
 
     private func deleteMember(_ user: UserInfo) async throws {
