@@ -299,9 +299,8 @@ platform :ios do
             _, _, downloaded = Open3.capture3("aws", "s3", "cp", source, archive, "--only-show-errors")
             if downloaded.success?
                 sh("ditto", "-x", "-k", archive, directory, log: false)
-                candidates = Dir.glob(File.join(directory, "Payload", "*.app"))
-                UI.user_error!("Expected one app in the archived simulator package") unless candidates.count == 1
-                app = candidates.first
+                app = File.join(directory, "Payload", "Wire.app")
+                UI.user_error!("Wire.app is missing from the archived simulator package") unless File.directory?(app)
                 UI.message("Package source: original 19390 simulator IPA from the C3 release job")
             else
                 UI.message("Original simulator IPA unavailable. Rebuilding the C3 RC from its original source and assets.")
