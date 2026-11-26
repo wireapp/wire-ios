@@ -1,163 +1,75 @@
-name: C1 C2 C3 Restricted
+name: Symbolicate C3 19629 launch crash
 
-on: 
+on:
   workflow_dispatch:
     inputs:
-      mac_runner:
-        description: 'macOS runner'
-        type: choice
-        options:
-          - in-house
-          - cirrus
-          - github
-        default: in-house
-      column:
-        description: 'Column (C1, C2, C3, all)'
-        type: choice
-        options:
-          - C1
-          - C2
-          - C3
-          - all
+      dwarf_uuid:
+        description: Mach-O UUID
+        type: string
         required: true
-        default: 'all'
-      datadog_enabled:
-        description: 'Enable DataDog'
-        type: boolean
-        default: false
-      skip_security_tests:
-        description: 'Skip security tests'
-        type: boolean
-        default: false
-      distribute_externals:
-        type: boolean
-        description: 'Distribute externally: Wire Employees'
-        default: true
-      
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+      load_address:
+        description: Runtime load address
+        type: string
+        required: true
+      frame_addresses:
+        description: Wire frame addresses
+        type: string
+        required: true
 
-permissions:
-  checks: write
+permissions: {}
 
 jobs:
-  column_1_restricted:
-    if: ${{ inputs.column == 'C1' || inputs.column == 'all' }}
-    uses: ./.github/workflows/_reusable_app_release.yml
-    with:
-      fastlane_action: appstore_col_1_restricted
-      is_cloud_build: false
-      mac_runner: ${{ inputs.mac_runner || vars.DEFAULT_MAC_RUNNER }}
-      countly_enabled: false
-      datadog_enabled: ${{ inputs.datadog_enabled }}
-      skip_security_tests: ${{ inputs.skip_security_tests }}
-      distribute_externals: ${{ inputs.distribute_externals }}
-    secrets:
-      KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
-      APPSTORE_API_KEY_BASE64: ${{ secrets.APPSTORE_API_KEY_BASE64 }}
-      MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
-      WIRE_INTERNAL_GITHUB_USER: ${{ secrets.WIRE_INTERNAL_GITHUB_USER }}
-      WIRE_INTERNAL_GITHUB_TOKEN: ${{ secrets.WIRE_INTERNAL_GITHUB_TOKEN }}
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      DD_API_KEY: ${{ secrets.DD_API_KEY }}
-      DATADOG_APP_ID: ${{ secrets.DATADOG_APP_ID }}
-      DATADOG_CLIENT_TOKEN: ${{ secrets.DATADOG_CLIENT_TOKEN }}
-      GOV_SUBFOLDER_PRODUCTION: ${{ secrets.GOV_SUBFOLDER_PRODUCTION }}
-      C1_S3_SUBFOLDER_RESTRICTED: ${{ secrets.C1_S3_SUBFOLDER_RESTRICTED }}
-      C1_S3_SUBFOLDER_PRODUCTION: ${{ secrets.C1_S3_SUBFOLDER_PRODUCTION }}
-      C2_S3_SUBFOLDER_RESTRICTED: ${{ secrets.C2_S3_SUBFOLDER_RESTRICTED }}
-      C2_S3_SUBFOLDER_PRODUCTION: ${{ secrets.C2_S3_SUBFOLDER_PRODUCTION }}
-      C3_S3_SUBFOLDER_RESTRICTED: ${{ secrets.C3_S3_SUBFOLDER_RESTRICTED }}
-      C3_S3_SUBFOLDER_PRODUCTION: ${{ secrets.C3_S3_SUBFOLDER_PRODUCTION }}
-      PLAYGROUND_TESTFLIGHT_LINK: ${{ secrets.PLAYGROUND_TESTFLIGHT_LINK }}
-      BETA_TESTFLIGHT_LINK: ${{ secrets.BETA_TESTFLIGHT_LINK }}
-      EDGE_TESTFLIGHT_LINK: ${{ secrets.EDGE_TESTFLIGHT_LINK }}
-      COUNTLY_PRODUCTION_KEY: ${{ secrets.COUNTLY_PRODUCTION_KEY }}
-      COUNTLY_INTERNAL_KEY: ${{ secrets.COUNTLY_INTERNAL_KEY }}
-      SUBMODULE_PAT: ${{ secrets.SUBMODULE_PAT }}
-      CLIENT_NAME_C1_C2_C3: ${{ secrets.CLIENT_NAME_C1_C2_C3 }}
-      CLIENT_ID_C1_C2_C3: ${{ secrets.CLIENT_ID_C1_C2_C3 }}
-      JIRA_TOKEN: ${{ secrets.JIRA_TOKEN }}
-      SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_BUILD_WEBHOOK }}
+  symbolicate:
+    runs-on: [self-hosted, in-house, delivery]
+    timeout-minutes: 10
+    steps:
+      - name: Configure Wire artifact access
+        uses: aws-actions/configure-aws-credentials@7474bc4690e29a8392af63c5b98e7449536d5c3a # v4.3.1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: eu-west-1
+      - name: Resolve the Wire frames
+        shell: bash
+        env:
+          C3_RELEASE_FOLDER: ${{ secrets.C3_S3_SUBFOLDER_RESTRICTED }}
+          DSYM_UUID: ${{ inputs.dwarf_uuid }}
+          LOAD_ADDRESS: ${{ inputs.load_address }}
+          FRAME_ADDRESSES: ${{ inputs.frame_addresses }}
+        run: |
+          set -euo pipefail
+          hex_address='^0x[0-9a-fA-F]+$'
+          uuid_pattern='^[0-9A-Fa-f]{8}(-[0-9A-Fa-f]{4}){3}-[0-9A-Fa-f]{12}$'
+          [[ -n "$C3_RELEASE_FOLDER" && "$DSYM_UUID" =~ $uuid_pattern && "$LOAD_ADDRESS" =~ $hex_address ]]
+          read -r -a frames <<< "$FRAME_ADDRESSES"
+          for frame in "${frames[@]}"; do
+            [[ "$frame" =~ $hex_address ]]
+          done
 
-  column_2_restricted:
-    if: ${{ inputs.column == 'C2' || inputs.column == 'all' }}
-    uses: ./.github/workflows/_reusable_app_release.yml
-    with:
-      fastlane_action: appstore_col_2_restricted
-      is_cloud_build: false
-      mac_runner: ${{ inputs.mac_runner || vars.DEFAULT_MAC_RUNNER }}
-      countly_enabled: false
-      datadog_enabled: ${{ inputs.datadog_enabled }}
-      skip_security_tests: ${{ inputs.skip_security_tests }}
-      distribute_externals: ${{ inputs.distribute_externals }}
-    secrets:
-      KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
-      APPSTORE_API_KEY_BASE64: ${{ secrets.APPSTORE_API_KEY_BASE64 }}
-      MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
-      WIRE_INTERNAL_GITHUB_USER: ${{ secrets.WIRE_INTERNAL_GITHUB_USER }}
-      WIRE_INTERNAL_GITHUB_TOKEN: ${{ secrets.WIRE_INTERNAL_GITHUB_TOKEN }}
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      DD_API_KEY: ${{ secrets.DD_API_KEY }}
-      DATADOG_APP_ID: ${{ secrets.DATADOG_APP_ID }}
-      DATADOG_CLIENT_TOKEN: ${{ secrets.DATADOG_CLIENT_TOKEN }}
-      GOV_SUBFOLDER_PRODUCTION: ${{ secrets.GOV_SUBFOLDER_PRODUCTION }}
-      C1_S3_SUBFOLDER_RESTRICTED: ${{ secrets.C1_S3_SUBFOLDER_RESTRICTED }}
-      C1_S3_SUBFOLDER_PRODUCTION: ${{ secrets.C1_S3_SUBFOLDER_PRODUCTION }}
-      C2_S3_SUBFOLDER_RESTRICTED: ${{ secrets.C2_S3_SUBFOLDER_RESTRICTED }}
-      C2_S3_SUBFOLDER_PRODUCTION: ${{ secrets.C2_S3_SUBFOLDER_PRODUCTION }}
-      C3_S3_SUBFOLDER_RESTRICTED: ${{ secrets.C3_S3_SUBFOLDER_RESTRICTED }}
-      C3_S3_SUBFOLDER_PRODUCTION: ${{ secrets.C3_S3_SUBFOLDER_PRODUCTION }}
-      PLAYGROUND_TESTFLIGHT_LINK: ${{ secrets.PLAYGROUND_TESTFLIGHT_LINK }}
-      BETA_TESTFLIGHT_LINK: ${{ secrets.BETA_TESTFLIGHT_LINK }}
-      EDGE_TESTFLIGHT_LINK: ${{ secrets.EDGE_TESTFLIGHT_LINK }}
-      COUNTLY_PRODUCTION_KEY: ${{ secrets.COUNTLY_PRODUCTION_KEY }}
-      COUNTLY_INTERNAL_KEY: ${{ secrets.COUNTLY_INTERNAL_KEY }}
-      SUBMODULE_PAT: ${{ secrets.SUBMODULE_PAT }}
-      CLIENT_NAME_C1_C2_C3: ${{ secrets.CLIENT_NAME_C1_C2_C3 }}
-      CLIENT_ID_C1_C2_C3: ${{ secrets.CLIENT_ID_C1_C2_C3 }}
-      JIRA_TOKEN: ${{ secrets.JIRA_TOKEN }}
-      SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_BUILD_WEBHOOK }}
+          stage=$(mktemp -d)
+          trap 'rm -rf -- "$stage"' EXIT
+          filename=Wire-rc-release_cycle-4.29-19629
+          prefix="ios/$C3_RELEASE_FOLDER/release/device/release/$filename/"
+          location="s3://z-lohika/$prefix"
+          if ! aws s3 cp "$location$filename.app.dSYM.zip" "$stage/symbols.zip" --only-show-errors 2>"$stage/download-error"; then
+            if ! aws s3 cp "${location}Wire.app.dSYM.zip" "$stage/symbols.zip" --only-show-errors 2>"$stage/download-error"; then
+              echo "::error::No dSYM archive at the expected release artifact keys"
+              exit 1
+            fi
+          fi
+          ditto -x -k "$stage/symbols.zip" "$stage/symbols"
 
-  column_3_restricted:
-    if: ${{ inputs.column == 'C3' || inputs.column == 'all' }}
-    uses: ./.github/workflows/_reusable_app_release.yml
-    with:
-      fastlane_action: appstore_col_3_restricted
-      is_cloud_build: false
-      mac_runner: ${{ inputs.mac_runner || vars.DEFAULT_MAC_RUNNER }}
-      countly_enabled: false
-      datadog_enabled: ${{ inputs.datadog_enabled }}
-      skip_security_tests: ${{ inputs.skip_security_tests }}
-      distribute_externals: ${{ inputs.distribute_externals }}
-    secrets:
-      KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
-      APPSTORE_API_KEY_BASE64: ${{ secrets.APPSTORE_API_KEY_BASE64 }}
-      MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
-      WIRE_INTERNAL_GITHUB_USER: ${{ secrets.WIRE_INTERNAL_GITHUB_USER }}
-      WIRE_INTERNAL_GITHUB_TOKEN: ${{ secrets.WIRE_INTERNAL_GITHUB_TOKEN }}
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      DD_API_KEY: ${{ secrets.DD_API_KEY }}
-      DATADOG_APP_ID: ${{ secrets.DATADOG_APP_ID }}
-      DATADOG_CLIENT_TOKEN: ${{ secrets.DATADOG_CLIENT_TOKEN }}
-      GOV_SUBFOLDER_PRODUCTION: ${{ secrets.GOV_SUBFOLDER_PRODUCTION }}
-      C1_S3_SUBFOLDER_RESTRICTED: ${{ secrets.C1_S3_SUBFOLDER_RESTRICTED }}
-      C1_S3_SUBFOLDER_PRODUCTION: ${{ secrets.C1_S3_SUBFOLDER_PRODUCTION }}
-      C2_S3_SUBFOLDER_RESTRICTED: ${{ secrets.C2_S3_SUBFOLDER_RESTRICTED }}
-      C2_S3_SUBFOLDER_PRODUCTION: ${{ secrets.C2_S3_SUBFOLDER_PRODUCTION }}
-      C3_S3_SUBFOLDER_RESTRICTED: ${{ secrets.C3_S3_SUBFOLDER_RESTRICTED }}
-      C3_S3_SUBFOLDER_PRODUCTION: ${{ secrets.C3_S3_SUBFOLDER_PRODUCTION }}
-      PLAYGROUND_TESTFLIGHT_LINK: ${{ secrets.PLAYGROUND_TESTFLIGHT_LINK }}
-      BETA_TESTFLIGHT_LINK: ${{ secrets.BETA_TESTFLIGHT_LINK }}
-      EDGE_TESTFLIGHT_LINK: ${{ secrets.EDGE_TESTFLIGHT_LINK }}
-      COUNTLY_PRODUCTION_KEY: ${{ secrets.COUNTLY_PRODUCTION_KEY }}
-      COUNTLY_INTERNAL_KEY: ${{ secrets.COUNTLY_INTERNAL_KEY }}
-      SUBMODULE_PAT: ${{ secrets.SUBMODULE_PAT }}
-      CLIENT_NAME_C1_C2_C3: ${{ secrets.CLIENT_NAME_C1_C2_C3 }}
-      CLIENT_ID_C1_C2_C3: ${{ secrets.CLIENT_ID_C1_C2_C3 }}
-      JIRA_TOKEN: ${{ secrets.JIRA_TOKEN }}
-      SLACK_WEBHOOK_URL: ${{ secrets.WIRE_IOS_BUILD_WEBHOOK }}
+          dwarf=""
+          while IFS= read -r -d '' candidate; do
+            if xcrun dwarfdump --uuid "$candidate" | grep -Fi "UUID: $DSYM_UUID" | grep -Fq "(arm64)"; then
+              dwarf=$candidate
+              break
+            fi
+          done < <(find "$stage/symbols" -type f -path '*/Contents/Resources/DWARF/Wire' -print0)
+
+          if [[ -z "$dwarf" ]]; then
+            echo "::error::The release archive has no Wire arm64 dSYM with the crash report UUID"
+            exit 1
+          fi
+          echo "Verified Wire arm64 UUID $DSYM_UUID"
+          xcrun atos -arch arm64 -o "$dwarf" -l "$LOAD_ADDRESS" "${frames[@]}"
