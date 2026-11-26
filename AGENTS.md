@@ -12,6 +12,27 @@ IMPORTANT: You should never look at `wire-ios-build-assets` directory and its co
 
 - Implement small, clear, low-risk changes directly when requested. Before making broad, high-risk, multi-file, or still-debatable changes, discuss the proposed approach and ask for confirmation.
 
+## Code Review and Pull Request Guidelines
+
+### Review scope and findings
+
+- Establish the actual PR base branch from PR metadata or the user's instructions before reviewing. Do not assume `develop`; release fixes may target a release branch. Ask if the base cannot be determined.
+- Gather context with `git log <base>..HEAD`, `git diff --stat <base>...HEAD`, and `git diff --name-only <base>...HEAD`, then read the diff and relevant surrounding code. For an existing PR, review its current head; keep uncommitted local changes separate.
+- Check correctness, regressions, security, error handling, and relevant test coverage. For UI changes, also check dynamic type, theme colors, and VoiceOver support against the conventions below.
+- Report actionable findings using conventional comments, with a precise code location, the triggering condition, and the impact. Distinguish blocking defects from optional suggestions; avoid speculative findings and unrelated cleanup.
+- State what was verified, which tests were run, and any remaining verification gaps. If no actionable findings remain, say so without implying that unrun tests passed.
+- A review request alone does not authorize pushing changes, creating a PR, posting review comments, or merging.
+
+### PR title and description
+
+- Verify that the title and description match the committed diff against the actual base. Mention only changes present in that diff.
+- Use `type: short description - WPB-XXXXX` for the title, replacing the example ticket with the real Jira identifier. Find it in the branch name, then commit messages; ask if it is missing or ambiguous. Never invent a ticket or leave a placeholder.
+- Use `.github/pull_request_template.md`, preserve its Jira markers verbatim, and retain Testing, Checklist, and UI accessibility checklist sections. Remove template prompts and optional paragraphs that do not apply; mark checklist items complete only when verified.
+- For bug fixes, use Issue, Cause, and Solution sections: state the broken behavior in one sentence, explain the cause in prose, and describe the solution concisely.
+- For features, open with a short active description such as "This PR adds…", followed by a Changes section. Omit Changes for a self-explanatory fix.
+- Keep prose direct and free of filler. In Changes, use action verbs such as Added, Updated, and Introduced; refer to class names in backticks instead of file paths, and omit file extensions when naming files. Omit `project.pbxproj` from the narrative Changes list, but still review its diff.
+- Write manual testing instructions as imperative steps with expected results. Use bold headers only for prerequisites or non-obvious expected results. Distinguish instructions to run from tests actually completed.
+
 ## Prerequisites & Setup
 
 - **Xcode**: version specified in `.xcode-version`

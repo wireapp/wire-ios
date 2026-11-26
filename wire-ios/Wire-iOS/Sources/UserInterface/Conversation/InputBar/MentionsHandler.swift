@@ -75,4 +75,13 @@ final class MentionsHandler: NSObject {
         return (mentionMatchRange, mentionString + suffix)
     }
 
+    func replacementForEveryone(in attributedString: NSAttributedString) -> (NSRange, NSAttributedString) {
+        let mentionString = NSAttributedString(attachment: MentionTextAttachment(everyoneWithColor: .accent()))
+        let characterAfterMention = mentionMatchRange.upperBound
+        let endOfString = !attributedString.wholeRange.contains(characterAfterMention)
+        let suffix = endOfString || !attributedString.hasSpaceAt(position: characterAfterMention) ? " " : ""
+
+        return (mentionMatchRange, mentionString + suffix)
+    }
+
 }

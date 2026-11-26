@@ -24,6 +24,7 @@ enum AttachmentState {
     case none
     case someUploaded
     case allUploaded
+    case suspended
 }
 
 final class ConversationInputBarButtonState {
@@ -36,6 +37,8 @@ final class ConversationInputBarButtonState {
             return false
         case .allUploaded:
             return true
+        case .suspended:
+            return hasText
         }
 
         // TODO: [WPB-18166] Fix this messed up logic.

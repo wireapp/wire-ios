@@ -447,6 +447,38 @@ final class FilesViewTests: XCTestCase {
             .verify(matching: view, named: "dark", record: record)
     }
 
+    @MainActor
+    func testFilesView_GracePeriod() async {
+        let nodesApi = MockNodesAPIProtocol()
+        nodesApi.getDriveConversations_MockValue = [
+            WireDriveConversation(
+                id: "conversation",
+                name: "Conversation",
+                participants: Set([WireDriveParticipant].mocked(selfUserRole: .viewer)),
+                isGracePeriod: true
+            )
+        ]
+        driveConversationsUseCase = WireDriveGetConversationsUseCase(nodesAPI: nodesApi)
+
+        let view = await makeFilesView(state: .received(items: []), isReadOnly: true)
+
+        snapshotHelper.verifyLightAndDark(matching: view)
+    }
+
+    @MainActor
+    func testGracePeriodBannerLargeText() {
+        let view = ConversationViewerAccessBanner(
+            backgroundColor: ColorTheme.Buttons.Secondary.disabled,
+            isGracePeriod: true,
+            onClose: {}
+        )
+        .dynamicTypeSize(.accessibility5)
+        .frame(width: 320)
+        .fixedSize(horizontal: false, vertical: true)
+
+        snapshotHelper.verifyLightAndDark(matching: view)
+    }
+
     private func filesViewItem(
         name: String = "image.jpg",
         ownedBy: String = "Natsuko Shiroi",

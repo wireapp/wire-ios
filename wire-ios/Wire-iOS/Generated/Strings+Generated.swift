@@ -330,6 +330,10 @@ internal enum L10n {
         /// Record an audio message
         internal static let description = L10n.tr("Accessibility", "conversation.audioButton.description", fallback: "Record an audio message")
       }
+      internal enum AudioButtonDisabled {
+        /// Record an audio message, disabled in viewer access
+        internal static let description = L10n.tr("Accessibility", "conversation.audioButtonDisabled.description", fallback: "Record an audio message, disabled in viewer access")
+      }
       internal enum BackButton {
         /// Go back to conversation list
         internal static let description = L10n.tr("Accessibility", "conversation.backButton.description", fallback: "Go back to conversation list")
@@ -2940,6 +2944,10 @@ internal enum L10n {
             /// Tap to send
             internal static let tapSend = L10n.tr("Localizable", "conversation.input_bar.audio_message.tooltip.tap_send", fallback: "Tap to send")
           }
+        }
+        internal enum MentionAll {
+          /// Notify everyone in this conversation
+          internal static let subtitle = L10n.tr("Localizable", "conversation.input_bar.mention_all.subtitle", fallback: "Notify everyone in this conversation")
         }
         internal enum MessagePreview {
           /// Replying to message: %@

@@ -152,12 +152,16 @@ extension ZMAssetClientMessage: ZMFileMessageData {
             let assetURL = asset?.fileURL,
             let temporaryDirectoryURL,
             let filename,
+            !filename.contains("\u{0000}"),
             !(filename as NSString).lastPathComponent.isEmpty
         else {
             return nil
         }
 
         let secureFilename = (filename as NSString).lastPathComponent
+        guard secureFilename != ".", secureFilename != "..", secureFilename != "/" else {
+            return nil
+        }
         var temporaryFileURL = temporaryDirectoryURL.appendingPathComponent(secureFilename)
 
         if let mime = mimeType,
@@ -200,7 +204,7 @@ extension ZMAssetClientMessage: ZMFileMessageData {
 
     /// File name as was sent or `nil` in case of an image asset
     public var filename: String? {
-        underlyingMessage?.assetData?.original.name.normalizedFilename
+        underlyingMessage?.assetData?.original.name.removingExtremeCombiningCharacters
     }
 
     public var thumbnailAssetID: String? {

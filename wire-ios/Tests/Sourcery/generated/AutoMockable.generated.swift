@@ -2126,20 +2126,20 @@ class MockWireMessagingFactoryProtocol: WireMessagingFactoryProtocol {
 
     // MARK: - makeConversationSharedDrivedOptionsView
 
-    var makeConversationSharedDrivedOptionsViewParticipantsOnClose_Invocations: [(participants: [WireDriveParticipant], onClose: () -> Void)] = []
-    var makeConversationSharedDrivedOptionsViewParticipantsOnClose_MockMethod: (([WireDriveParticipant], @escaping () -> Void) -> UIViewController)?
-    var makeConversationSharedDrivedOptionsViewParticipantsOnClose_MockValue: UIViewController?
+    var makeConversationSharedDrivedOptionsViewParticipantsProviderOnClose_Invocations: [(participantsProvider: () -> [WireDriveParticipant], onClose: () -> Void)] = []
+    var makeConversationSharedDrivedOptionsViewParticipantsProviderOnClose_MockMethod: ((@escaping () -> [WireDriveParticipant], @escaping () -> Void) -> UIViewController)?
+    var makeConversationSharedDrivedOptionsViewParticipantsProviderOnClose_MockValue: UIViewController?
 
     @MainActor
-    func makeConversationSharedDrivedOptionsView(participants: [WireDriveParticipant], onClose: @escaping () -> Void) -> UIViewController {
-        makeConversationSharedDrivedOptionsViewParticipantsOnClose_Invocations.append((participants: participants, onClose: onClose))
+    func makeConversationSharedDrivedOptionsView(participantsProvider: @escaping () -> [WireDriveParticipant], onClose: @escaping () -> Void) -> UIViewController {
+        makeConversationSharedDrivedOptionsViewParticipantsProviderOnClose_Invocations.append((participantsProvider: participantsProvider, onClose: onClose))
 
-        if let mock = makeConversationSharedDrivedOptionsViewParticipantsOnClose_MockMethod {
-            return mock(participants, onClose)
-        } else if let mock = makeConversationSharedDrivedOptionsViewParticipantsOnClose_MockValue {
+        if let mock = makeConversationSharedDrivedOptionsViewParticipantsProviderOnClose_MockMethod {
+            return mock(participantsProvider, onClose)
+        } else if let mock = makeConversationSharedDrivedOptionsViewParticipantsProviderOnClose_MockValue {
             return mock
         } else {
-            fatalError("no mock for `makeConversationSharedDrivedOptionsViewParticipantsOnClose`")
+            fatalError("no mock for `makeConversationSharedDrivedOptionsViewParticipantsProviderOnClose`")
         }
     }
 

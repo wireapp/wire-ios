@@ -68,7 +68,7 @@ protocol WireMessagingFactoryProtocol {
 
     @MainActor
     func makeConversationSharedDrivedOptionsView(
-        participants: [WireDriveParticipant],
+        participantsProvider: @escaping () -> [WireDriveParticipant],
         onClose: @escaping () -> Void
     ) -> UIViewController
 }
@@ -99,10 +99,10 @@ extension WireMessagingFactory: @preconcurrency WireMessagingFactoryProtocol {
 
     @MainActor
     func makeConversationSharedDrivedOptionsView(
-        participants: [WireDriveParticipant],
+        participantsProvider: @escaping () -> [WireDriveParticipant],
         onClose: @escaping () -> Void
     ) -> UIViewController {
-        makeConversationSharedDrivedOptionsViewController(participants: participants, onClose: onClose)
+        makeConversationSharedDrivedOptionsViewController(participantsProvider: participantsProvider, onClose: onClose)
     }
 
 }

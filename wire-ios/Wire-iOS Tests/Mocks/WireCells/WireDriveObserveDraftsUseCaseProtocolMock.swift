@@ -21,7 +21,10 @@ import WireMessagingDomain
 final class WireDriveObserveDraftsUseCaseProtocolMock: WireDriveObserveDraftsUseCaseProtocol {
 
     func invoke() async -> AsyncStream<[WireMessagingDomain.WireDriveDraft]> {
-        fatalError("Implement")
+        AsyncStream { continuation in
+            continuation.yield([])
+            continuation.finish()
+        }
     }
 
 }
