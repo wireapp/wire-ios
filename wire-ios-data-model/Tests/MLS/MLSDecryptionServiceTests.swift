@@ -61,7 +61,7 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
             deviceId: DeviceId(id: 1),
             domain: "wire.com"
         )
-        return DecryptedMessage.text(
+        return DecryptedMessage.applicationMessage(
             plaintext: plaintext,
             senderClientId: senderClientId,
             identity: .withBasicCredentials()
@@ -78,7 +78,7 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
             domain: "wire.com"
         )
         let identity = WireIdentity.withBasicCredentials()
-        let bufferedMessage = BufferedDecryptedMessage.text(
+        let bufferedMessage = BufferedDecryptedMessage.applicationMessage(
             plaintext: plaintext,
             senderClientId: senderClientId,
             identity: identity
@@ -93,6 +93,55 @@ final class MLSDecryptionServiceTests: ZMConversationTestsBase {
     // MARK: - Message Decryption
 
     typealias DecryptionError = MLSDecryptionService.MLSMessageDecryptionError
+
+    func test_Decrypt_IgnoresTransientAndTargetedMessages() async throws {
+        let sender = try MLSClientID.random().cryptoId()
+        let identity = WireIdentity.withBasicCredentials()
+        let plaintext = Data("unsupported message".utf8)
+        let messages: [DecryptedMessage] = [
+            .transient(plaintext: plaintext, senderClientId: sender, identity: identity),
+            .transientTargeted(plaintext: plaintext, senderClientId: sender, identity: identity),
+            .persistedTargeted(plaintext: plaintext, senderClientId: sender, identity: identity)
+        ]
+
+        for message in messages {
+            mockMLSActionExecutor.mockDecryptMessage = { _, _ in message }
+
+            let results = try await sut.decrypt(
+                message: Data.random().base64EncodedString(),
+                for: .random(),
+                subconversationType: nil,
+                context: nil
+            )
+
+            XCTAssertTrue(results.isEmpty)
+        }
+    }
+
+    func test_Decrypt_IgnoresBufferedTransientAndTargetedMessages_PreservingApplicationMessages() async throws {
+        let sender = MLSClientID.random()
+        let clientID = try sender.cryptoId()
+        let identity = WireIdentity.withBasicCredentials()
+        let plaintext = Data("application message".utf8)
+        let bufferedMessages: [BufferedDecryptedMessage] = [
+            .transient(plaintext: plaintext, senderClientId: clientID, identity: identity),
+            .transientTargeted(plaintext: plaintext, senderClientId: clientID, identity: identity),
+            .persistedTargeted(plaintext: plaintext, senderClientId: clientID, identity: identity),
+            .applicationMessage(plaintext: plaintext, senderClientId: clientID, identity: identity)
+        ]
+        mockMLSActionExecutor.mockDecryptMessage = { _, _ in
+            .commit(isActive: true, bufferedMessages: bufferedMessages, identity: identity)
+        }
+
+        let results = try await sut.decrypt(
+            message: Data.random().base64EncodedString(),
+            for: .random(),
+            subconversationType: nil,
+            context: nil
+        )
+
+        XCTAssertEqual(results, [.message(plaintext, sender.clientID)])
+    }
 
     func test_Decrypt_ThrowsFailedToConvertMessageToBytes() async {
         // Given

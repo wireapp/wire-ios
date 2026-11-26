@@ -325,6 +325,17 @@ public actor CoreCryptoProvider: CoreCryptoProviderProtocol {
             location: configuration.path,
             key: DatabaseKey(bytes: configuration.key)
         )
+        // Since CoreCrypto 11 the keystore salt lives in `<database>.salt` instead of the keychain. The NSE must be
+        // able to read it while the device is locked, so make sure it uses the same protection class as the
+        // account directory. The database can't be decrypted without this file.
+        let saltURL = URL(fileURLWithPath: configuration.path + ".salt")
+        if FileManager.default.fileExists(atPath: saltURL.path) {
+            do {
+                try FileManager.default.setProtectionUntilFirstUserAuthentication(saltURL)
+            } catch {
+                WireLogger.coreCrypto.error("Failed to set database salt file protection: \(error)")
+            }
+        }
         self.database = database
         let coreCrypto = try CoreCrypto(database: database)
 
