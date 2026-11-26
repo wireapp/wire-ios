@@ -32,6 +32,7 @@ final class UserLocalStoreTests: XCTestCase {
     private var modelHelper: ModelHelper!
     private var mockUserDefaults: UserDefaults!
     private var conversationLocalStore: MockConversationLocalStoreProtocol!
+    private var messageLocalStore: MockMessageLocalStoreProtocol!
 
     private var context: NSManagedObjectContext {
         stack.syncContext
@@ -47,10 +48,11 @@ final class UserLocalStoreTests: XCTestCase {
         )
 
         conversationLocalStore = MockConversationLocalStoreProtocol()
+        messageLocalStore = MockMessageLocalStoreProtocol()
 
         sut = UserLocalStore(
             context: context,
-            messageLocalStore: MockMessageLocalStoreProtocol(),
+            messageLocalStore: messageLocalStore,
             userDefaults: mockUserDefaults
         )
     }
@@ -66,6 +68,7 @@ final class UserLocalStoreTests: XCTestCase {
         coreDataStackHelper = nil
         modelHelper = nil
         conversationLocalStore = nil
+        messageLocalStore = nil
     }
 
     // MARK: - Tests
@@ -252,6 +255,73 @@ final class UserLocalStoreTests: XCTestCase {
 
         await context.perform {
             XCTAssertEqual(user.isAccountDeleted, true)
+        }
+    }
+
+    func testRemoveDeletedUser_GivenMemberLeaveAlreadyProcessed_ItUpdatesLinkedOneOnOne() async throws {
+        try await checkRemovingDeletedUserFromLinkedOneOnOne(removeMembershipFirst: true)
+    }
+
+    func testRemoveDeletedUser_GivenLinkedOneOnOneIsStillJoined_ItInsertsOneSystemMessage() async throws {
+        try await checkRemovingDeletedUserFromLinkedOneOnOne(removeMembershipFirst: false)
+    }
+
+    func testRemoveDeletedUser_GivenLinkedConversationIsGroup_ItUpdatesDeletedOneOnOne() async throws {
+        try await checkRemovingDeletedUserFromLinkedOneOnOne(removeMembershipFirst: true, conversationType: .group)
+    }
+
+    func testRemoveDeletedUser_GivenRepeatedDeletion_ItInsertsOneSystemMessage() async throws {
+        try await checkRemovingDeletedUserFromLinkedOneOnOne(removeMembershipFirst: true, repeatDeletion: true)
+    }
+
+    private func checkRemovingDeletedUserFromLinkedOneOnOne(
+        removeMembershipFirst: Bool,
+        conversationType: ZMConversationType = .oneOnOne,
+        repeatDeletion: Bool = false
+    ) async throws {
+        let userID = UUID()
+        let conversation = await context.perform { [self] in
+            let selfUser = modelHelper.createSelfUser(in: context)
+            let user = modelHelper.createUser(id: userID, domain: Scaffolding.domain, in: context)
+            let conversation = modelHelper.createMLSConversation(
+                conversationType: conversationType,
+                with: [selfUser, user],
+                in: context
+            )
+            conversation.oneOnOneUser = user
+            if removeMembershipFirst {
+                conversation.removeParticipantAndUpdateConversationState(user: user, initiatingUser: user)
+            }
+            user.isAccountDeleted = true
+            return conversation
+        }
+        messageLocalStore
+            .addSystemMessageMessageTypeConversationIDConversationDomain_MockMethod = { [context] _, _, _ in
+                await context.perform {
+                    let message = ZMSystemMessage(nonce: UUID(), managedObjectContext: context)
+                    message.systemMessageType = .userRemovedFromTeam
+                    message.sender = conversation.oneOnOneUser
+                    conversation.append(message)
+                }
+            }
+
+        await sut.removeUserFromAllConversations(id: userID, domain: Scaffolding.domain, date: .now)
+        if repeatDeletion {
+            await sut.removeUserFromAllConversations(id: userID, domain: Scaffolding.domain, date: .now)
+        }
+
+        let messages = messageLocalStore.addSystemMessageMessageTypeConversationIDConversationDomain_Invocations
+        XCTAssertEqual(messages.count, 1)
+        let message = try XCTUnwrap(messages.first)
+        guard case let .userDeleted(sender) = message.messageType else {
+            return XCTFail("Expected the deleted-user system message")
+        }
+        XCTAssertEqual(sender.id, userID)
+        await context.perform {
+            XCTAssertEqual(message.conversationID, conversation.remoteIdentifier)
+            XCTAssertEqual(conversation.mlsStatus, .invalid)
+            XCTAssertTrue(conversation.isForcedReadOnly)
+            XCTAssertTrue(conversation.isReadOnly)
         }
     }
 

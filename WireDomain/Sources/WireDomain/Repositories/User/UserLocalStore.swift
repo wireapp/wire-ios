@@ -255,8 +255,11 @@ public final class UserLocalStore: UserLocalStoreProtocol {
         }
 
         let allConversations = await context.perform {
-            // swiftformat:disable:next redundantProperty
-            user.participantRoles.compactMap(\.conversation)
+            var conversations = Set(user.participantRoles.compactMap(\.conversation))
+            if let oneOnOneConversation = user.oneOnOneConversation {
+                conversations.insert(oneOnOneConversation)
+            }
+            return conversations
         }
 
         for conversation in allConversations {
@@ -274,7 +277,8 @@ public final class UserLocalStore: UserLocalStoreProtocol {
                     conversation.team,
                     conversation.remoteIdentifier as UUID,
                     conversation.domain,
-                    conversation.conversationType
+                    // A preceding member-leave event can change the inferred conversation type.
+                    conversation == user.oneOnOneConversation ? .oneOnOne : conversation.conversationType
                 )
             }
 
@@ -309,19 +313,36 @@ public final class UserLocalStore: UserLocalStoreProtocol {
 
             } else if conversationType == .oneOnOne {
 
-                // insert User is no longer available system message
-                let systemMessageType: SystemMessageType = .userDeleted(sender: (id, domain))
+                let hasDeletionMessage = await context.perform { [context] in
+                    let request = NSFetchRequest<ZMSystemMessage>(entityName: ZMSystemMessage.entityName())
+                    request.predicate = NSPredicate(
+                        format: "%K == %d AND %K == %@ AND %K == %@",
+                        #keyPath(ZMSystemMessage.systemMessageType),
+                        ZMSystemMessageType.userRemovedFromTeam.rawValue,
+                        #keyPath(ZMSystemMessage.visibleInConversation),
+                        conversation,
+                        #keyPath(ZMSystemMessage.sender),
+                        user
+                    )
+                    request.fetchLimit = 1
+                    return context.countOrAssert(request: request) > 0
+                }
 
-                await messageLocalStore.addSystemMessage(
-                    messageType: systemMessageType,
-                    conversationID: conversationID,
-                    conversationDomain: conversationDomain
-                )
+                if !hasDeletionMessage {
+                    await messageLocalStore.addSystemMessage(
+                        messageType: .userDeleted(sender: (id, domain)),
+                        conversationID: conversationID,
+                        conversationDomain: conversationDomain
+                    )
+                }
             }
 
             await context.perform {
-                if conversationType == .oneOnOne, conversation.messageProtocol.isOne(of: .mls, .mixed) {
-                    conversation.mlsStatus = .invalid
+                if conversationType == .oneOnOne {
+                    conversation.isForcedReadOnly = true
+                    if conversation.messageProtocol.isOne(of: .mls, .mixed) {
+                        conversation.mlsStatus = .invalid
+                    }
                 }
                 conversation.removeParticipantAndUpdateConversationState(
                     user: user,
