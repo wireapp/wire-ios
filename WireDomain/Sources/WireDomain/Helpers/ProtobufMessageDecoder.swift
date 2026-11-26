@@ -18,6 +18,7 @@
 
 import Foundation
 import GenericMessageProtocol
+import WireDataModel
 import WireNetwork
 
 struct ProtobufMessageDecoder {
@@ -58,6 +59,8 @@ struct ProtobufMessageDecoder {
                 external: externalMessage,
                 externalData: externalData
             )
+
+            try validateMessageContent(message)
         }
 
         return message
@@ -75,11 +78,15 @@ struct ProtobufMessageDecoder {
         }
 
         // Ensure the content is understood.
-        if genericMessage.content == nil {
-            throw Failure.unknownMessageContent
-        }
+        try validateMessageContent(genericMessage)
 
         return genericMessage
+    }
+
+    private func validateMessageContent(_ message: GenericMessage) throws {
+        if message.content == nil || message.hasUnsupportedContent {
+            throw Failure.unknownMessageContent
+        }
     }
 
     private func decryptExternalProteusData(
