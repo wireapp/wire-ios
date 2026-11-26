@@ -55,6 +55,8 @@ package extension FilesViewModel {
         // Only exports owned by Wire are cleaned up; document-picker originals are never touched.
         defer { removeTemporaryExports(of: sources) }
 
+        await refreshPermissions()
+        guard selfUserRole == .editor else { return }
         guard let destinationFolderPath = uploadDestinationPath, !sources.isEmpty else { return }
 
         do {

@@ -37,6 +37,12 @@ final class ConversationInputBarSendController: NSObject {
     ) {
 
         guard let conversation = conversation as? ZMConversation else { return }
+        guard !conversation.isWireDriveEnabled ||
+            (userSession.isWireDriveEnabled && conversation.isTeamConversation)
+        else {
+            completionHandler?()
+            return
+        }
 
         feedbackGenerator.prepare()
         userSession.enqueue {

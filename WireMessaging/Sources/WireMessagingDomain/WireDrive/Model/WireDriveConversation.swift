@@ -28,17 +28,20 @@ public struct WireDriveConversation: Sendable, Hashable, Identifiable {
     public let name: String
     public let kind: Kind?
     public let participants: Set<WireDriveParticipant>
+    public let isGracePeriod: Bool
 
     public init(
         id: String,
         name: String,
         kind: Kind? = nil,
-        participants: Set<WireDriveParticipant>
+        participants: Set<WireDriveParticipant>,
+        isGracePeriod: Bool = false
     ) {
         self.id = id
         self.name = name
         self.kind = kind
         self.participants = participants
+        self.isGracePeriod = isGracePeriod
     }
 }
 
