@@ -61,12 +61,9 @@ jobs:
         id: target-branch
         env:
           LTS_RELEASE: ${{ vars.LTS_RELEASE }}
-<<<<<<< HEAD
           GOV_RELEASE: ${{ vars.GOV_RELEASE }}
           BASE_REF: ${{ github.event.pull_request.base.ref }}
-=======
           LTS_NEXT_RELEASE: ${{ vars.LTS_NEXT_RELEASE }}
->>>>>>> c35d59fc88 (fix: chain LTS cherry-picks - WPB-30466 (#5588))
         run: |
           scripts/determine-cherry-pick-target.py "$BASE_REF"
 

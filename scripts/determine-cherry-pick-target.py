@@ -3,26 +3,17 @@
 Determine the target branch for cherry-picking from a release branch.
 
 This script:
-<<<<<<< HEAD
 1. If the input branch is the tracked GOV_RELEASE branch (env var, e.g.
    release/cycle-4.16), targets the LTS_RELEASE branch (env var) so the fix
    flows through LTS before reaching develop; falls back to 'develop' if
    LTS_RELEASE isn't set
-2. If the input branch is the tracked LTS_RELEASE branch, targets 'develop'
-   directly, skipping future release branches
+2. If the input branch is the tracked LTS_RELEASE branch, targets LTS_NEXT_RELEASE;
+   falls back to 'develop' if unset or the same branch. LTS_NEXT_RELEASE targets
+   'develop' directly
 3. Gets all release branches matching release/cycle-* pattern
 4. Sorts them by version number (major.minor)
 5. Finds the position of the input branch in the sorted list
 6. Selects the next branch in the sorted list, or 'develop' if no next branch exists
-=======
-1. If the input branch is the LTS release branch (LTS_RELEASE env var, e.g.
-   release/cycle-4.16), targets LTS_NEXT_RELEASE; falls back to 'develop' if unset
-   or the same branch. LTS_NEXT_RELEASE targets 'develop' directly.
-2. Gets all release branches matching release/cycle-* pattern
-3. Sorts them by version number (major.minor)
-4. Finds the position of the input branch in the sorted list
-5. Selects the next branch in the sorted list, or 'develop' if no next branch exists
->>>>>>> c35d59fc88 (fix: chain LTS cherry-picks - WPB-30466 (#5588))
 
 Usage:
     python3 scripts/determine-cherry-pick-target.py <base_branch>
@@ -74,7 +65,6 @@ def determine_target_branch(base_branch):
         print(f"Base branch {base_branch} doesn't match release/cycle-* pattern, using develop")
         return "develop"
 
-<<<<<<< HEAD
     lts_release = os.environ.get("LTS_RELEASE", "").strip()
     gov_release = os.environ.get("GOV_RELEASE", "").strip()
 
@@ -90,12 +80,7 @@ def determine_target_branch(base_branch):
             print(f"Base branch {base_branch} is the GOV_RELEASE branch, no LTS_RELEASE set, using develop")
         return "develop"
 
-    # LTS_RELEASE skips future release branches and cherry-picks straight to develop.
-    if lts_release and base_branch == lts_release:
-        print(f"Base branch {base_branch} is the LTS_RELEASE branch, using develop")
-=======
     # Continue the LTS chain as each cherry-pick PR merges.
-    lts_release = os.environ.get("LTS_RELEASE", "").strip()
     lts_next_release = os.environ.get("LTS_NEXT_RELEASE", "").strip()
     if lts_release and base_branch == lts_release:
         target = lts_next_release if lts_next_release and lts_next_release != base_branch else "develop"
@@ -104,7 +89,6 @@ def determine_target_branch(base_branch):
 
     if lts_next_release and base_branch == lts_next_release:
         print(f"Base branch {base_branch} is the LTS_NEXT_RELEASE branch, using develop")
->>>>>>> c35d59fc88 (fix: chain LTS cherry-picks - WPB-30466 (#5588))
         return "develop"
     
     # Get all release branches
