@@ -49,6 +49,31 @@ final class ConversationFileMessageCellTests: ConversationMessageSnapshotTestCas
         verify(message: message)
     }
 
+    func testUploadedCell_fromThisDevice_sharpSFilename() {
+        message.backingFileMessageData.transferState = .uploaded
+        message.backingFileMessageData.fileURL = Bundle.main.bundleURL
+        message.backingFileMessageData.filename = "Straße.txt"
+
+        verify(message: message)
+    }
+
+    func testThatFileLabelPreservesUnicodeAndCase() throws {
+        let sut = FileTransferView(frame: .zero)
+        message.backingFileMessageData.transferState = .uploaded
+
+        for filename in ["Täst.txt", "Straße.pdf", "Größe Übersicht 2026.xlsx"] {
+            message.backingFileMessageData.filename = filename
+            sut.configure(for: message, isInitial: true)
+
+            let label = try XCTUnwrap(sut.subviews.first {
+                $0.accessibilityIdentifier == "FileTransferTopLabel"
+            } as? UILabel)
+            let filenameStem = (filename as NSString).deletingPathExtension
+            XCTAssertEqual(label.attributedText?.string, filenameStem)
+            XCTAssertEqual(label.accessibilityValue, filenameStem)
+        }
+    }
+
     func testUploadedCell_fromOtherDevice() {
         message.backingFileMessageData.transferState = .uploaded
         message.backingFileMessageData.fileURL = nil
