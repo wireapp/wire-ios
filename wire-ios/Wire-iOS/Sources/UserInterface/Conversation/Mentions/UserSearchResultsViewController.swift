@@ -318,8 +318,8 @@ extension UserSearchResultsViewController: UICollectionViewDataSource {
         _ collectionView: UICollectionView,
         cellForItemAt indexPath: IndexPath
     ) -> UICollectionViewCell {
-        let suggestion = searchResults[indexPath.item]
-        if case .everyone = suggestion {
+        switch searchResults[indexPath.item] {
+        case .everyone:
             let cell = collectionView.dequeueReusableCell(
                 withReuseIdentifier: EveryoneMentionCell.reuseIdentifier,
                 for: indexPath
@@ -328,29 +328,29 @@ extension UserSearchResultsViewController: UICollectionViewDataSource {
             cell.accessibilityHint = L10n.Accessibility.Conversation.MentionSuggestion.hint
             configureBackground(for: cell, at: indexPath)
             return cell
+
+        case let .user(user):
+            let cell = collectionView.dequeueReusableCell(
+                withReuseIdentifier: UserCell.reuseIdentifier,
+                for: indexPath
+            ) as! UserCell
+            if let selfUser = ZMUser.selfUser() {
+                cell.configure(
+                    user: user,
+                    isSelfUserPartOfATeam: selfUser.hasTeam
+                )
+            } else {
+                assertionFailure("ZMUser.selfUser() is nil")
+            }
+            cell.showSeparator = false
+            cell.avatarSpacing = conversationHorizontalMargins.left
+            cell.accessibilityHintOverride = L10n.Accessibility.Conversation.MentionSuggestion.hint
+
+            configureBackground(for: cell, at: indexPath)
+
+            cell.accessibilityIdentifier = Locators.ActiveConversationPage.userCellName.rawValue
+            return cell
         }
-
-        guard case let .user(user) = suggestion else { fatal("Unsupported mention suggestion") }
-        let cell = collectionView.dequeueReusableCell(
-            withReuseIdentifier: UserCell.reuseIdentifier,
-            for: indexPath
-        ) as! UserCell
-        if let selfUser = ZMUser.selfUser() {
-            cell.configure(
-                user: user,
-                isSelfUserPartOfATeam: selfUser.hasTeam
-            )
-        } else {
-            assertionFailure("ZMUser.selfUser() is nil")
-        }
-        cell.showSeparator = false
-        cell.avatarSpacing = conversationHorizontalMargins.left
-        cell.accessibilityHintOverride = L10n.Accessibility.Conversation.MentionSuggestion.hint
-
-        configureBackground(for: cell, at: indexPath)
-
-        cell.accessibilityIdentifier = Locators.ActiveConversationPage.userCellName.rawValue
-        return cell
     }
 
     private func configureBackground(for cell: UICollectionViewCell, at indexPath: IndexPath) {
