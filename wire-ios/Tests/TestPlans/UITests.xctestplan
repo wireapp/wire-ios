@@ -143,7 +143,6 @@
     }
   ],
   "defaultOptions" : {
-    "systemAttachmentLifetime" : "keepAlways",
     "defaultTestExecutionTimeAllowance" : 300,
     "environmentVariableEntries" : [
 

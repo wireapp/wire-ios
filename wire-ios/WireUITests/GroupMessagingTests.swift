@@ -247,7 +247,11 @@ final class GroupMessagingTests: WireUITestCase {
         )
         .acceptPopup()
         .openConversation()
-        .openPhotosAndGrantPermission()
+
+        print("VIDEO_EVIDENCE_START")
+        defer { print("VIDEO_EVIDENCE_STOP") }
+        try await Task.sleep(for: .seconds(2))
+        _ = sentConversationPage.openPhotosAndGrantPermission()
         .selectVideoAndSend()
 
         // THEN - video is sent
@@ -257,6 +261,8 @@ final class GroupMessagingTests: WireUITestCase {
         XCTAssertTrue(
             sentConversationPage.videoPlayButton.waitForExistence(timeout: 2), "No Video play button found"
         )
+
+        print("VIDEO_EVIDENCE_STOP")
 
         let receivedConversationPage = try sentConversationPage
             .goBackToConversationPage()
