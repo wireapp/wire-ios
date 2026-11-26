@@ -20,6 +20,7 @@
 @import WireTesting;
 
 static NSString const * TypeJPEG = @"image/jpeg";
+static NSString const * TypePNG = @"image/png";
 
 @interface ZMImageDownsampleOperationTests : ZMTBaseTest
 @end
@@ -294,6 +295,29 @@ static NSString const * TypeJPEG = @"image/jpeg";
     AssertImageDataIsEqual(inputData, outputData.downsampleImageData);
     XCTAssertEqual(outputData.format, ZMImageFormatMedium);
     XCTAssert(CGSizeEqualToSize(outputData.properties.size, [UIImage imageWithData:outputData.downsampleImageData].size));
+}
+
+
+- (void)testThatItKeepsTheOriginalPNGWhenTheJPEGFallbackDoesNotHelp
+{
+    // WPB-30247: a PNG that is too big in bytes, small in pixels and does not compress well to JPEG
+    // used to crash because the JPEG format was returned as a `UTType` object instead of a string.
+
+    // given
+    // The pasted image reaches the preprocessing re-encoded as PNG by UIKit, which makes it big enough
+    // to force the JPEG fallback.
+    NSData *originalData = [self dataForResource:@"png_noise_with_alpha_375_KB" extension:@"png"];
+    NSData *inputData = UIImagePNGRepresentation([UIImage imageWithData:originalData]);
+
+    // when
+    ZMImageDownsampleOperation *outputData = [self mediumImageDataForInputData:inputData];
+
+    // then
+    XCTAssertNotNil(outputData);
+    XCTAssertNotNil(outputData.downsampleImageData);
+    XCTAssertEqualObjects(outputData.properties.mimeType, TypePNG);
+    XCTAssertEqual(outputData.format, ZMImageFormatMedium);
+    XCTAssertNotNil([UIImage imageWithData:outputData.downsampleImageData]);
 }
 
 
