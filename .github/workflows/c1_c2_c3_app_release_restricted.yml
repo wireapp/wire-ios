@@ -1,4 +1,4 @@
-name: C1 C2 C3 Restricted
+name: C3 Restricted 4.16 launch check
 
 on: 
   workflow_dispatch:
@@ -38,40 +38,13 @@ permissions:
   checks: write
 
 jobs:
-  column_1_restricted:
-    if: ${{ inputs.column == 'C1' || inputs.column == 'all' }}
-    uses: ./.github/workflows/_reusable_app_release.yml
-    with:
-      mac_runner: ${{ inputs.mac_runner || vars.DEFAULT_MAC_RUNNER || 'in-house' }}
-      fastlane_action: appstore_col_1_restricted
-      is_cloud_build: false
-      countly_enabled: false
-      datadog_enabled: ${{ inputs.datadog_enabled }}
-      skip_security_tests: ${{ inputs.skip_security_tests }}
-      notify_secret: WIRE_IOS_DELIVERY
-      distribute_externals: ${{ inputs.distribute_externals }}
-    secrets: inherit
-
-  column_2_restricted:
-    if: ${{ inputs.column == 'C2' || inputs.column == 'all' }}
-    uses: ./.github/workflows/_reusable_app_release.yml
-    with:
-      mac_runner: ${{ inputs.mac_runner || vars.DEFAULT_MAC_RUNNER || 'in-house' }}
-      fastlane_action: appstore_col_2_restricted
-      is_cloud_build: false
-      countly_enabled: false
-      datadog_enabled: ${{ inputs.datadog_enabled }}
-      skip_security_tests: ${{ inputs.skip_security_tests }}
-      notify_secret: WIRE_IOS_DELIVERY
-      distribute_externals: ${{ inputs.distribute_externals }}
-    secrets: inherit
-
   column_3_restricted:
     if: ${{ inputs.column == 'C3' || inputs.column == 'all' }}
     uses: ./.github/workflows/_reusable_app_release.yml
     with:
       mac_runner: ${{ inputs.mac_runner || vars.DEFAULT_MAC_RUNNER || 'in-house' }}
       fastlane_action: appstore_col_3_restricted
+      produce_changelog: false
       is_cloud_build: false
       countly_enabled: false
       datadog_enabled: ${{ inputs.datadog_enabled }}

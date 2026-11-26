@@ -2,6 +2,8 @@ require 'git'
 require 'base64'
 require 'httparty'
 require 'json'
+require 'open3'
+require 'tmpdir'
 require 'securerandom'
 require 'fastlane/action'
 require_relative 'framework'
@@ -280,16 +282,88 @@ platform :ios do
         build_and_upload_app(options)
     end
     
-    desc "Build & Upload Col 3 Restricted AppStore build"
+    desc "Check launch for C3 Restricted 4.16.5 (19390)"
     lane :appstore_col_3_restricted do |options|
+        xcodes(select_for_current_build_only: true)
         options[:build_type] = "RC"
         options[:override_folder] = "BK-COLUMN3"
-        options[:s3_subfolder] = ENV['C3_S3_SUBFOLDER_RESTRICTED']
-        options[:upload_testflight] = true
-        options[:produce_debug_builds] = true
-        options[:extra_distribution_groups] = ["Wire Employees"]
-        save_app_name('Column 3 Restricted')
-        build_and_upload_app(options)
+        options[:build_number] = "19390"
+        root = ENV.fetch("REPO_ROOT")
+
+        Dir.mktmpdir("wire-c3-launch-") do |directory|
+            archive = File.join(directory, "19390.ipa")
+            folder = ENV.fetch("C3_S3_SUBFOLDER_RESTRICTED")
+            UI.user_error!("Missing C3 Restricted package folder") if folder.empty?
+            filename = "Wire-rc-release_cycle-4.16-simulator-19390"
+            source = "s3://#{ENV.fetch("S3_BUCKET")}/ios/#{folder}/release/simulator/#{filename}/#{filename}.ipa"
+            _, _, downloaded = Open3.capture3("aws", "s3", "cp", source, archive, "--only-show-errors")
+            if downloaded.success?
+                sh("ditto", "-x", "-k", archive, directory, log: false)
+                candidates = Dir.glob(File.join(directory, "Payload", "*.app"))
+                UI.user_error!("Expected one app in the archived simulator package") unless candidates.count == 1
+                app = candidates.first
+                UI.message("Package source: original 19390 simulator IPA from the C3 release job")
+            else
+                UI.message("Original simulator IPA unavailable. Rebuilding the C3 RC from its original source and assets.")
+                prepare_for_release(options)
+                build_for_release(options.merge(configuration: "Debug", for_simulator: true))
+                app = File.join(root, "DerivedData", "Build", "Products", "Debug-iphonesimulator", "Wire.app")
+                UI.message("Package source: simulator rebuild from the original 19390 source and assets")
+            end
+
+            plist = File.join(app, "Info.plist")
+            bundle_id = sh("/usr/libexec/PlistBuddy", "-c", "Print CFBundleIdentifier", plist, log: false).strip
+            executable = sh("/usr/libexec/PlistBuddy", "-c", "Print CFBundleExecutable", plist, log: false).strip
+            version = sh("/usr/libexec/PlistBuddy", "-c", "Print CFBundleShortVersionString", plist, log: false).strip
+            build = sh("/usr/libexec/PlistBuddy", "-c", "Print CFBundleVersion", plist, log: false).strip
+            UI.user_error!("Unexpected simulator app version #{version} (#{build})") unless version == "4.16.5" && build == "19390"
+            UI.message("Verified C3 Restricted simulator app version #{version} (#{build})")
+
+            ENV.delete("IOS_SIM_ID")
+            create_simulator_if_needed
+            simulator = ENV.fetch("IOS_SIM_ID")
+            sh("xcrun", "simctl", "install", simulator, app, log: false)
+            verify_c3_startup(simulator, bundle_id, executable, "Fresh install")
+            sh("xcrun", "simctl", "terminate", simulator, bundle_id, log: false)
+            sh("xcrun", "simctl", "uninstall", simulator, bundle_id, log: false)
+            sh("xcrun", "simctl", "install", simulator, app, log: false)
+            verify_c3_startup(simulator, bundle_id, executable, "Reinstall on the same simulator")
+        end
+    end
+
+    def verify_c3_startup(simulator, bundle_id, executable, label)
+        launched_at = Time.now
+        output = sh("xcrun", "simctl", "launch", simulator, bundle_id, log: false)
+        pid = output[/:\s+(\d+)\s*$/, 1]
+        UI.user_error!("Could not read the app process ID after #{label}") unless pid
+
+        sleep 12
+        process, status = Open3.capture2("/bin/ps", "-p", pid, "-o", "state=", "-o", "comm=")
+        state, command = process.strip.split(/\s+/, 2)
+        if status.success? && state && !state.start_with?("Z") && command && File.basename(command) == executable
+            UI.success("#{label}: C3 process stayed running for 12 seconds")
+            return
+        end
+
+        Dir.glob(File.expand_path("~/Library/Logs/DiagnosticReports/*.ips")).each do |path|
+            next if File.mtime(path) < launched_at
+
+            header, body = File.read(path).split("\n", 2)
+            next unless body && header.include?(bundle_id)
+
+            report = JSON.parse(body)
+            next unless report["pid"].to_s == pid
+
+            exception = report.fetch("exception", {})
+            UI.error("Exception: #{exception['type']} #{exception['signal']}")
+            thread = report.fetch("threads", []).find { |entry| entry["triggered"] }
+            frames = thread&.fetch("frames", [])&.first(12) || []
+            UI.error("Triggered frames: #{frames.filter_map { |frame| frame['symbol'] }.join(' | ')}")
+            break
+        rescue JSON::ParserError, Errno::ENOENT
+            next
+        end
+        UI.user_error!("#{label}: C3 process exited during startup")
     end
 
     desc "Build & Upload Col 1 Production AppStore build"

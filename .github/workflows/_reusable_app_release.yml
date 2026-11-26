@@ -153,7 +153,8 @@ jobs:
           lfs: 'false'
           token: ${{ secrets.SUBMODULE_PAT }}
           submodules: recursive
-      - name: Download changelog     
+      - name: Download changelog
+        if: ${{ inputs.produce_changelog }}
         id: download_changelog
         uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
         with:
@@ -210,70 +211,5 @@ jobs:
           FASTLANE_ACTION: ${{ inputs.fastlane_action }}
           HAS_PACKAGES_CACHE_HIT: ${{ steps.cache-swift-packages.outputs.cache-hit == 'true' }}
       - name: Delete simulator
-        if: ${{ always() && inputs.skip_security_tests == false }}
+        if: ${{ always() && env.IOS_SIM_ID != '' }}
         run: bundle exec fastlane delete_test_simulator
-
-      - name: Check for duplicate symbol implementations
-        if: always()
-        continue-on-error: true
-        run: ./scripts/check_duplicate_classes.sh .
-      - name: Archiving Logs
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
-        if: failure()
-        with:
-          name: build-logs (${{ github.run_id }} - ${{ github.run_attempt}})
-          path: |
-            ~/Library/Developer/Xcode/DerivedData/**/Logs/**
-            DerivedData/**/Logs/**
-            ~/Library/Logs/DiagnosticReports/**
-            build/**
-
-      - name: Archiving env variables
-        if: always()
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
-        with:
-          name: post-build-env-${{ inputs.fastlane_action }} (${{ github.run_id }} - ${{ github.run_attempt}})
-          path: |
-            **/.post_build/*.env
-      - name: Load .env file
-        if: always()
-        uses: xom9ikk/dotenv@ac290ca23a42155a0cba1031d23afa46240116a9 # v2.3.0
-        with:
-          path: fastlane/.post_build
-      - uses: akiojin/decode-base64-github-action@82bef0d9c88d987dc48c45218029b8b8426b3e33 # v1.0.2
-        id: base64-decoded-S3_PATHS
-        with:
-          base64: ${{ env.S3_PATHS }}
-      - name: Notify on Wire if succeeded
-        if: success()
-        continue-on-error: true
-        uses: ./.github/actions/notify-wire
-        with:
-          notify: custom
-          text: |
-            **${{ env.APP_NAME }}** (version: ${{ env.BUILD_VERSION }} build: ${{ env.BUILD_NUMBER }}) is ready to test 🚀
-            **COUNTLY_ENABLED:** ${{ env.ENABLE_COUNTLY }}
-            **DATADOG_ENABLED:** ${{ env.ENABLE_DATADOG }}
-            **CHANGELOG:** ${{ needs.changelog.outputs.changelog-url }}
-            **Tap on iOS device to install:** ${{ env.BUILD_INSTALL_LINK }}
-            **AWS S3 Paths:**
-            ```
-            ${{ steps.base64-decoded-S3_PATHS.outputs.decoded }}
-            ```
-            **Triggered by:** ${{ github.triggering_actor }}
-            **Commit:** ${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}
-            **Runner:** ${{ runner.name }} (${{ inputs.mac_runner }})
-            **Build log:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
-            **SHA256:**  ${{ env.BUILD_SHA256 }}
-      - name: Notify on Wire if failed
-        if: failure()
-        continue-on-error: true
-        uses: ./.github/actions/notify-wire
-        with:
-          notify: custom
-          text: |
-            🆘 Build **${{ env.APP_NAME }}** (version: ${{ env.BUILD_VERSION }} build: ${{ env.BUILD_NUMBER }}) failed 🆘
-            **Triggered by:** ${{ github.triggering_actor }}
-            **Commit:** ${{ github.server_url }}/${{ github.repository }}/commit/${{ github.sha }}
-            **Runner:** ${{ runner.name }} (${{ inputs.mac_runner }})
-            **Build log:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
