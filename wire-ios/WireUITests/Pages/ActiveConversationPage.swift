@@ -610,6 +610,11 @@ class ActiveConversationPage: PageModel {
         XCTAssertTrue(attachmentImagePreview.waitForExistence(timeout: 3))
 
         XCTAssertTrue(
+            sendButton.wait(for: \.isEnabled, toEqual: true, timeout: 30),
+            "Attachment upload did not finish within 30 seconds"
+        )
+
+        XCTAssertTrue(
             sendButton.waitAndTap(timeout: 10),
             "Send button did not become hittable for attachment"
         )
