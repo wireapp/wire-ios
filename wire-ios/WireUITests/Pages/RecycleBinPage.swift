@@ -83,7 +83,7 @@ class RecycleBinPage: PageModel {
     }
 
     func deleteFilePermanently() -> Self {
-        moreButton.tap()
+        XCTAssertTrue(moreButton.waitAndTap(timeout: 15), "Recycle bin file did not become hittable")
         deletePermanentlyOnMenuContext.tap()
         deletePermanentlyOptionOnBottomSheet.tap()
         return self
