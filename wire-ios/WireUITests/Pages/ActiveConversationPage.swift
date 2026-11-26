@@ -425,13 +425,6 @@ class ActiveConversationPage: PageModel {
         app.images.element(boundBy: index).firstMatch
     }
 
-    func videoToChoose(at index: Int = 0) -> XCUIElement {
-        app.collectionViews.containing(
-            .button,
-            identifier: Locators.ActiveConversationPage.takePictureButton.rawValue
-        ).images.element(boundBy: index).firstMatch
-    }
-
     func fetchMessages() -> [String] {
         var messages: [String] = []
         for i in 0 ..< messageLabels.count {
@@ -780,19 +773,30 @@ class ActiveConversationPage: PageModel {
     }
 
     func selectVideoAndSend(at index: Int = 0) throws -> ActiveConversationPage {
-        if !videoToChoose(at: index).waitForExistence(timeout: 2) {
-            photoButton.waitAndTap()
+        if !cameraRollButton.waitForExistence(timeout: 3) {
+            XCTAssertTrue(photoButton.waitAndTap(), "Photo button did not become hittable")
         }
         XCTAssertTrue(
-            videoToChoose(at: index).waitAndTap(),
-            "Video thumbnail did not become hittable"
+            cameraRollButton.waitAndTap(),
+            "Camera roll button did not become hittable"
         )
 
+        let video = app.images.matching(NSPredicate(
+            format: "identifier == %@ AND label BEGINSWITH %@",
+            Locators.PhotosAppPage.imageTile.rawValue,
+            "Video"
+        )).element(boundBy: index)
         XCTAssertTrue(
-            okToSend.waitForExistence(timeout: 3),
-            "OK button did not appear after selecting media"
+            video.waitForExistence(timeout: 10),
+            "No video found at index \(index) in the simulator photo library"
         )
-        okToSend.waitAndTap()
+        // Photos grid cells are not always directly hittable in UI tests.
+        video.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).tap()
+
+        XCTAssertTrue(
+            app.buttons["Choose"].waitAndTap(timeout: 10),
+            "Choose button did not become hittable after selecting video"
+        )
         return self
     }
 
