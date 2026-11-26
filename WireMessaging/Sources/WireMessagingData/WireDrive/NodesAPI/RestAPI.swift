@@ -425,6 +425,9 @@ final class RestAPI: Sendable {
         config.basePath = try apiURL.absoluteString
         config.customHeaders = ["Authorization": "Bearer \(try await accessTokenProvider.accessToken().token)"]
         config.interceptor = LoggingIntercepter()
+        if ProcessInfo.processInfo.environment["UITEST_CAPTURE_UPLOAD_LOGS"] == "1" {
+            config.requestBuilderFactory = UploadDiagnosticRequestBuilderFactory()
+        }
 
         return config
     }
@@ -711,6 +714,73 @@ private extension WireDriveFileType {
             ["text/*"]
         case .other, .folder, .code:
             []
+        }
+    }
+}
+
+// Diagnostic branch only: preserve the SDK session and attach a metrics-only task delegate.
+private struct UploadDiagnosticRequestBuilderFactory: RequestBuilderFactory {
+    func getNonDecodableBuilder<T>() -> RequestBuilder<T>.Type {
+        UploadDiagnosticRequestBuilder<T>.self
+    }
+
+    func getBuilder<T: Decodable>() -> RequestBuilder<T>.Type {
+        UploadDiagnosticDecodableRequestBuilder<T>.self
+    }
+}
+
+private final class UploadDiagnosticRequestBuilder<T>: URLSessionRequestBuilder<T>, @unchecked Sendable {
+    override func createURLSession() -> any URLSessionProtocol {
+        UploadDiagnosticSession(session: super.createURLSession())
+    }
+}
+
+private final class UploadDiagnosticDecodableRequestBuilder<T: Decodable>:
+    URLSessionDecodableRequestBuilder<T>, @unchecked Sendable {
+    override func createURLSession() -> any URLSessionProtocol {
+        UploadDiagnosticSession(session: super.createURLSession())
+    }
+}
+
+private struct UploadDiagnosticSession: URLSessionProtocol {
+    let session: any URLSessionProtocol
+
+    func dataTaskFromProtocol(
+        with request: URLRequest,
+        completionHandler: @escaping @Sendable (Data?, URLResponse?, (any Error)?) -> Void
+    ) -> any URLSessionDataTaskProtocol {
+        let task = session.dataTaskFromProtocol(with: request, completionHandler: completionHandler)
+        if let task = task as? URLSessionTask {
+            task.delegate = UploadDiagnosticMetricsDelegate()
+        }
+        return task
+    }
+}
+
+private final class UploadDiagnosticMetricsDelegate: NSObject, URLSessionTaskDelegate {
+    func urlSession(_ session: URLSession, task: URLSessionTask, didFinishCollecting metrics: URLSessionTaskMetrics) {
+        let phase = task.originalRequest?.url?.path.hasSuffix("/precheck") == true ? "precheck" : "other-rest"
+        WireLogger.wireDrive.info(
+            "WPB30489 metrics phase=\(phase) transactions=\(metrics.transactionMetrics.count) " +
+                "redirects=\(metrics.redirectCount) total=\(metrics.taskInterval.duration)",
+            attributes: .safePublic
+        )
+        for (index, transaction) in metrics.transactionMetrics.enumerated() {
+            func elapsed(_ start: Date?, _ end: Date?) -> String {
+                guard let start, let end else { return "unavailable" }
+                return String(end.timeIntervalSince(start))
+            }
+            WireLogger.wireDrive.info(
+                "WPB30489 transaction phase=\(phase) index=\(index) " +
+                    "reused=\(transaction.isReusedConnection) status=\((transaction.response as? HTTPURLResponse)?.statusCode ?? -1) " +
+                    "dns=\(elapsed(transaction.domainLookupStartDate, transaction.domainLookupEndDate)) " +
+                    "connect=\(elapsed(transaction.connectStartDate, transaction.connectEndDate)) " +
+                    "tls=\(elapsed(transaction.secureConnectionStartDate, transaction.secureConnectionEndDate)) " +
+                    "send=\(elapsed(transaction.requestStartDate, transaction.requestEndDate)) " +
+                    "wait=\(elapsed(transaction.requestEndDate, transaction.responseStartDate)) " +
+                    "receive=\(elapsed(transaction.responseStartDate, transaction.responseEndDate))",
+                attributes: .safePublic
+            )
         }
     }
 }
