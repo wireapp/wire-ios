@@ -25,8 +25,6 @@ final class ConversationScheduledForDeletionSystemMessageCell:
     ConversationIconBasedCell<ConversationScheduledForDeletionCellDescription>,
     ConversationMessageCell {
 
-    static var readMoreURL: URL { WireURLs.shared.learnMoreAboutAdminlessGroupPrevention }
-
     struct Configuration {
         let attributedText: NSAttributedString?
         var icon: UIImage?
@@ -94,18 +92,20 @@ final class ConversationScheduledForDeletionCellDescription: ConversationMessage
             attributes: baseAttributes
         )
 
-        let readMore = L10n.Localizable.Content.System.MessageConversationScheduledForDeletion.ReadMore.text
-        let linkUrl = View.readMoreURL
-        let linkAttributes: [NSAttributedString.Key: AnyObject] = [
-            .font: UIFont.systemFont(ofSize: 12, weight: .regular),
-            .foregroundColor: ColorTheme.Buttons.Secondary.onEnabled,
-            .link: linkUrl as AnyObject,
-            .underlineStyle: NSUnderlineStyle.single.rawValue as AnyObject,
-            .underlineColor: ColorTheme.Buttons.Secondary.onEnabled
-        ]
+        if let linkURL = WireURLs.shared.learnMoreAboutAdminlessGroupPrevention {
+            let readMore = L10n.Localizable.Content.System.MessageConversationScheduledForDeletion.ReadMore.text
+            let linkAttributes: [NSAttributedString.Key: AnyObject] = [
+                .font: UIFont.systemFont(ofSize: 12, weight: .regular),
+                .foregroundColor: ColorTheme.Buttons.Secondary.onEnabled,
+                .link: linkURL as AnyObject,
+                .underlineStyle: NSUnderlineStyle.single.rawValue as AnyObject,
+                .underlineColor: ColorTheme.Buttons.Secondary.onEnabled
+            ]
 
-        let spaceBetweenParagraphs = "\n"
-        attributedText.append(.init(string: spaceBetweenParagraphs + readMore, attributes: linkAttributes))
+            let spaceBetweenParagraphs = "\n"
+            attributedText.append(.init(string: spaceBetweenParagraphs + readMore, attributes: linkAttributes))
+        }
+
         let icon = UIImage(resource: .attention).withRenderingMode(.alwaysTemplate)
 
         self.configuration = View.Configuration(
