@@ -33,6 +33,9 @@ public protocol MeetingsAPI: Sendable {
 
     func getMeeting(id: QualifiedID) async throws -> MeetingResponse
 
+    /// Joins the meeting behind a meeting link.
+    func joinMeeting(domain: String, key: String, code: String, password: String?) async throws -> MeetingJoinResponse
+
     /// Create a new meeting.
     ///
     /// - Parameter parameters: The meeting creation parameters.

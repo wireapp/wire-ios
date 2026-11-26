@@ -71,6 +71,28 @@ struct WireCallCenterMutedNotification: SelfPostingNotification {
     public let muted: Bool
 }
 
+public struct CallRemoteMuteNotification: SelfPostingNotification {
+    static let notificationName = Notification.Name("CallRemoteMuteNotification")
+
+    public let senderName: String?
+
+    public static func addObserver(
+        for conversation: ZMConversation,
+        context: NSManagedObjectContext,
+        using block: @escaping (String?) -> Void
+    ) -> AnyObject {
+        NotificationInContext.addObserver(
+            name: notificationName,
+            context: context.notificationContext,
+            object: conversation,
+            queue: .main
+        ) { note in
+            guard let note = note.userInfo[userInfoKey] as? CallRemoteMuteNotification else { return }
+            block(note.senderName)
+        }
+    }
+}
+
 // MARK: - Conference calling unavailable observer
 
 public protocol ConferenceCallingUnavailableObserver: AnyObject {

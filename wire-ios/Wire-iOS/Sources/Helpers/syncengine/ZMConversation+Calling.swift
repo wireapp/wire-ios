@@ -123,16 +123,28 @@ extension ZMConversation {
         }
 
         let controller = UIAlertController
-            .ongoingCallJoinCallConfirmation(forceAlertModal: forceAlertModal) { confirmed in
+            .ongoingCallJoinCallConfirmation(forceAlertModal: forceAlertModal) { [weak alertPresenter] confirmed in
                 guard confirmed else { return }
-                self.endAllCallsExceptIncoming(completion: completion)
+                self.endAllCallsExceptIncoming { didEndCall in
+                    if didEndCall {
+                        completion()
+                    } else {
+                        let alert = UIAlertController(
+                            title: L10n.Localizable.General.failure,
+                            message: L10n.Localizable.General.Failure.tryAgain,
+                            preferredStyle: .alert
+                        )
+                        alert.addAction(UIAlertAction(title: L10n.Localizable.General.ok, style: .cancel))
+                        alertPresenter?.present(alert, animated: true)
+                    }
+                }
             }
 
         alertPresenter.present(controller, animated: true)
     }
 
     /// Ends all the active calls, except the conversation's incoming call, if any.
-    func endAllCallsExceptIncoming(completion: @escaping () -> Void) {
+    func endAllCallsExceptIncoming(completion: @escaping (Bool) -> Void) {
         guard let sharedSession = ZMUserSession.shared() else { return }
         sharedSession.callCenter?.activeCallConversations(in: sharedSession)
             .filter { $0.remoteIdentifier != self.remoteIdentifier }

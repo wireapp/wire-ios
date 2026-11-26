@@ -29,6 +29,9 @@ class MockPresentationDelegate: PresentationDelegate {
     var failedToPerformActionCalls: [(URLAction, Error)] = []
     var shouldPerformActionCalls: [URLAction] = []
     var completedURLActionCalls: [URLAction] = []
+    var passwordPromptResponse: String? = "mockPassword12345678!3"
+    var showPasswordPromptIsMeetingCalls: [Bool] = []
+    var showPasswordPromptIncorrectPasswordCalls: [Bool] = []
     var isPerformingActions = true
 
     func failedToPerformAction(_ action: URLAction, error: Error) {
@@ -74,9 +77,15 @@ class MockPresentationDelegate: PresentationDelegate {
         showConnectionRequestCalls.append(qualifiedID.uuid)
     }
 
-    func showPasswordPrompt(for conversationName: String, completion: @escaping (String?) -> Void) {
-        let mockPassword = "mockPassword12345678!3"
-        completion(mockPassword)
+    func showPasswordPrompt(
+        for conversationName: String?,
+        isMeeting: Bool,
+        incorrectPassword: Bool,
+        completion: @escaping (String?) -> Void
+    ) {
+        showPasswordPromptIsMeetingCalls.append(isMeeting)
+        showPasswordPromptIncorrectPasswordCalls.append(incorrectPassword)
+        completion(passwordPromptResponse)
     }
 
 }

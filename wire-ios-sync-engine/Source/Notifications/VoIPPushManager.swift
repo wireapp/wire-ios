@@ -133,11 +133,13 @@ public final class VoIPPushManager: NSObject, PKPushRegistryDelegate {
         // Report the call immediately to fulfill API obligations, otherwise the app will be killed.
         // See https://developer.apple.com/documentation/callkit/sending_end-to-end_encrypted_voip_calls
         if shouldRing {
+            let eventTimestamp = (payload["eventTimestamp"] as? TimeInterval).map(Date.init(timeIntervalSince1970:))
             Self.logger.info("will report new incoming call")
             callKitManager.reportIncomingCallPreemptively(
                 handle: handle,
                 callerName: callerName,
-                hasVideo: hasVideo
+                hasVideo: hasVideo,
+                eventTimestamp: eventTimestamp
             )
         } else {
             Self.logger.info("will report call ended")

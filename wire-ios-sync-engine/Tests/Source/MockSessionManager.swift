@@ -127,7 +127,7 @@ class MockCallKitManager: CallKitManagerInterface {
         // no-op
     }
 
-    func requestEndCall(in conversation: ZMConversation, completion: (() -> Void)?) {
+    func requestEndCall(in conversation: ZMConversation, completion: ((Bool) -> Void)?) {
         // no-op
     }
 

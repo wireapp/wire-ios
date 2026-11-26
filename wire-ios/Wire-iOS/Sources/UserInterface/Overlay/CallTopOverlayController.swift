@@ -27,7 +27,7 @@ import WireSyncEngine
 // MARK: - CallTopOverlayControllerDelegate
 
 protocol CallTopOverlayControllerDelegate: AnyObject {
-    func voiceChannelTopOverlayWantsToRestoreCall(voiceChannel: VoiceChannel?)
+    func callTopOverlayWantsToRestoreCall()
 }
 
 // MARK: - CallState
@@ -232,7 +232,7 @@ final class CallTopOverlayController: UIViewController {
 
     @objc
     private func openCall(_ sender: UITapGestureRecognizer?) {
-        delegate?.voiceChannelTopOverlayWantsToRestoreCall(voiceChannel: conversation.voiceChannel)
+        delegate?.callTopOverlayWantsToRestoreCall()
     }
 
     // MARK: - TapableAccessibleView
@@ -268,6 +268,7 @@ extension CallTopOverlayController: WireCallCenterCallStateObserver {
         previousCallState: CallState?,
         callEndReason: CallClosedReason?
     ) {
+        guard conversation == self.conversation else { return }
         updateCallDurationTimer(for: callState)
     }
 }

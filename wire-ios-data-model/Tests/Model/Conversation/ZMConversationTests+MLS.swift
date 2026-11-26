@@ -83,6 +83,51 @@ final class ZMConversationTests_MLS: ZMConversationTestsBase {
 
 final class ZMConversationTests_MLS_Migration: ModelObjectsTests {
 
+    override var shouldUseInMemoryStore: Bool {
+        false
+    }
+
+    func test_fetchAllTeamGroupConversations_excludesLegacyTeamOneOnOnes() async throws {
+        for messageProtocol in [MessageProtocol.proteus, .mixed] {
+            try await syncMOC.perform { [syncMOC] in
+                // Given a legacy team 1:1 and a named group with the same two participants.
+                let team = Team.insertNewObject(in: syncMOC)
+                team.remoteIdentifier = UUID()
+                let selfUser = ZMUser.selfUser(in: syncMOC)
+                selfUser.teamIdentifier = team.remoteIdentifier
+                let otherUser = ZMUser.insertNewObject(in: syncMOC)
+                otherUser.remoteIdentifier = UUID()
+                otherUser.teamIdentifier = team.remoteIdentifier
+
+                let conversations = (0 ..< 2).map { _ in
+                    let conversation = MLSGroupID.random().createConversation(in: syncMOC)
+                    conversation.messageProtocol = messageProtocol
+                    conversation.conversationType = .group
+                    conversation.team = team
+                    conversation.teamRemoteIdentifier = team.remoteIdentifier
+                    conversation.addParticipantAndUpdateConversationState(user: selfUser, role: nil)
+                    conversation.addParticipantAndUpdateConversationState(user: otherUser, role: nil)
+                    return conversation
+                }
+                let legacyOneOnOne = conversations[0]
+                let namedGroup = conversations[1]
+                namedGroup.userDefinedName = "Group"
+                try syncMOC.save()
+                XCTAssertEqual(legacyOneOnOne.conversationType, .oneOnOne)
+                XCTAssertEqual(namedGroup.conversationType, .group)
+
+                // When fetching candidates for migration startup or finalization.
+                let fetchedConversations = try ZMConversation.fetchAllTeamGroupConversations(
+                    messageProtocol: messageProtocol,
+                    in: syncMOC
+                )
+
+                // Then only the actual group is eligible.
+                XCTAssertEqual(fetchedConversations, [namedGroup])
+            }
+        }
+    }
+
     func test_fetchAllTeamGroupConversations_messageProtocolProteus() async throws {
         // Given
         let conversations = try await syncMOC.perform { [syncMOC] in

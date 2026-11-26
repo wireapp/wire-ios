@@ -18,6 +18,7 @@
 
 import XCTest
 @testable import Wire
+@testable import WireSyncEngine
 
 final class CallViewControllerTests: ZMSnapshotTestCase {
 
@@ -151,6 +152,30 @@ final class CallViewControllerTests: ZMSnapshotTestCase {
             callController.startOverlayTimer()
             return callController
         }
+    }
+
+    func testRemoteMuteNoticeShowsTheAdminNameOnlyForItsConversation() throws {
+        let grid = try XCTUnwrap(sut.children.compactMap { $0 as? CallGridViewController }.first)
+        let otherConversation = ZMConversation.insertNewObject(in: uiMOC)
+        let adminName = "Lorine Considine's !! @$%^&*()"
+
+        CallRemoteMuteNotification(senderName: adminName).post(
+            in: uiMOC.notificationContext,
+            object: otherConversation
+        )
+        XCTAssertTrue(grid.hintView.isHidden)
+
+        CallRemoteMuteNotification(senderName: adminName).post(
+            in: uiMOC.notificationContext,
+            object: conversation
+        )
+        let label = try XCTUnwrap(grid.hintView.subviews.compactMap { $0 as? UILabel }.first)
+        XCTAssertFalse(grid.hintView.isHidden)
+        XCTAssertEqual(label.text, "You were muted by \(adminName)")
+
+        CallRemoteMuteNotification(senderName: nil).post(in: uiMOC.notificationContext, object: conversation)
+        XCTAssertEqual(label.text, "You were muted by an admin")
+        grid.hintView.hideAndStopTimer()
     }
 
     // MARK: - Mock ZMConversation
