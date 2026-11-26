@@ -251,7 +251,7 @@ final class GroupMessagingTests: WireUITestCase {
         print("VIDEO_EVIDENCE_START")
         defer { print("VIDEO_EVIDENCE_STOP") }
         try await Task.sleep(for: .seconds(2))
-        _ = sentConversationPage.openPhotosAndGrantPermission()
+        _ = try sentConversationPage.openPhotosAndGrantPermission()
         .selectVideoAndSend()
 
         // THEN - video is sent
