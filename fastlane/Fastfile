@@ -1474,12 +1474,10 @@ class Build
     end
 
     def iconset_name
-        if debug_build
-            "Development" # yellow
+        if debug_build || playground_build
+            "Playground"
         elsif development_build
             "Alpha"
-        elsif playground_build
-            "Development" # yellow
         elsif rc_build
             "Release"
         else
