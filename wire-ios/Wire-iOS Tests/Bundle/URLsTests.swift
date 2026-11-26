@@ -22,7 +22,7 @@ import XCTest
 
 final class URLsTests: XCTestCase {
 
-    func testUrlFileContainsAllKeys() throws {
+    func testURLConfigurationDecodes() throws {
         // Given
         guard let fileURL = Bundle.fileURL(for: "url", with: "json") else {
             XCTFail("Failed to load url.json file")
@@ -31,6 +31,19 @@ final class URLsTests: XCTestCase {
 
         // When / Then
         XCTAssertNoThrow(try fileURL.decode(WireURLs.self))
+    }
+
+    func testURLConfigurationDecodesWithoutOptionalHelpLinks() throws {
+        let fileURL = try XCTUnwrap(Bundle.fileURL(for: "url", with: "json"))
+        let data = try Data(contentsOf: fileURL)
+        var configuration = try XCTUnwrap(JSONSerialization.jsonObject(with: data) as? [String: Any])
+        configuration.removeValue(forKey: WireURLs.CodingKeys.learnMoreAboutDrivePermissions.rawValue)
+        configuration.removeValue(forKey: WireURLs.CodingKeys.learnMoreAboutAdminlessGroupPrevention.rawValue)
+
+        let urls = try JSONDecoder().decode(WireURLs.self, from: JSONSerialization.data(withJSONObject: configuration))
+
+        XCTAssertNil(urls.learnMoreAboutDrivePermissions)
+        XCTAssertNil(urls.learnMoreAboutAdminlessGroupPrevention)
     }
 
 }
