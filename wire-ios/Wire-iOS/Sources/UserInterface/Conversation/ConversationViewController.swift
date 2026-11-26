@@ -735,7 +735,8 @@ extension ConversationViewController: ZMConversationObserver {
         }
 
         if note.participantsChanged ||
-            note.connectionStateChanged {
+            note.connectionStateChanged ||
+            note.readOnlyChanged {
             updateRightNavigationItemsButtons()
             updateLeftNavigationBarItems()
             updateOutgoingConnectionVisibility()

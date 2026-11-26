@@ -1113,6 +1113,7 @@ extension ConversationInputBarViewController: ZMConversationObserver {
     func conversationDidChange(_ change: ConversationChangeInfo) {
         if change.participantsChanged ||
             change.connectionStateChanged ||
+            change.readOnlyChanged ||
             change.allowGuestsChanged {
             // Sometime participantsChanged is not observed after allowGuestsChanged
             updateInputBarVisibility()

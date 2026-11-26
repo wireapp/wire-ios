@@ -25,6 +25,7 @@ extension ZMConversation: ObjectInSnapshot {
             #keyPath(ZMConversation.allMessages),
             #keyPath(ZMConversation.lastModifiedDate),
             #keyPath(ZMConversation.isArchived),
+            #keyPath(ZMConversation.isReadOnly),
             #keyPath(ZMConversation.conversationListIndicator),
             #keyPath(ZMConversation.mutedStatus),
             #keyPath(ZMConversation.securityLevel),
@@ -116,6 +117,10 @@ public final class ConversationChangeInfo: ObjectChangeInfo {
 
     public var connectionStateChanged: Bool {
         changedKeysContain(keys: #keyPath(ZMConversation.relatedConnectionState))
+    }
+
+    public var readOnlyChanged: Bool {
+        changedKeysContain(keys: #keyPath(ZMConversation.isReadOnly))
     }
 
     public var isArchivedChanged: Bool {
@@ -211,6 +216,7 @@ public final class ConversationChangeInfo: ObjectChangeInfo {
             "lastModifiedDateChanged: \(lastModifiedDateChanged)",
             "connectionStateChanged: \(connectionStateChanged)",
             "isArchivedChanged: \(isArchivedChanged)",
+            "readOnlyChanged: \(readOnlyChanged)",
             "mutedMessageTypesChanged: \(mutedMessageTypesChanged)",
             "conversationListIndicatorChanged \(conversationListIndicatorChanged)",
             "clearedChanged \(clearedChanged)",

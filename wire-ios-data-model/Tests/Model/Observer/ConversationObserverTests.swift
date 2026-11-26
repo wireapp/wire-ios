@@ -137,6 +137,31 @@ final class ConversationObserverTests: NotificationDispatcherTestBase {
         token = nil
     }
 
+    func testThatItNotifiesTheObserverOfReadOnlyChangeWithoutParticipantChanges() {
+        // given
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
+        conversation.conversationType = .oneOnOne
+        uiMOC.saveOrRollback()
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertFalse(conversation.isReadOnly)
+
+        let observer = ConversationObserver()
+        token = ConversationChangeInfo.add(observer: observer, for: conversation)
+
+        // when
+        conversation.isForcedReadOnly = true
+        uiMOC.saveOrRollback()
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // then
+        XCTAssertTrue(conversation.isReadOnly)
+        XCTAssertEqual(observer.notifications.count, 1)
+        guard let change = observer.notifications.first else { return XCTFail("Missing read-only notification") }
+        XCTAssertTrue(change.readOnlyChanged)
+        XCTAssertFalse(change.participantsChanged)
+        XCTAssertFalse(change.connectionStateChanged)
+    }
+
     func testThatItNotifiesTheObserverOfANameChange() {
         // given
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
