@@ -629,6 +629,7 @@ platform :ios do
     def build_for_release(options)
         build = Build.new(options: options)
         export_method = options[:export_method] || build.export_method
+        package_plugin_validation_arg = is_running_on_ci ? "-skipPackagePluginValidation " : ""
 
         if build.for_simulator
             Dir.chdir("..") do
@@ -639,6 +640,7 @@ platform :ios do
                    "-configuration 'Debug' " \
                    "-destination \"generic/platform=iOS Simulator\" " \
                    "-derivedDataPath DerivedData " \
+                   "#{package_plugin_validation_arg}" \
                    "-quiet build " \
                    "BUILD_NUMBER=#{build.build_number}"
 
@@ -660,6 +662,7 @@ platform :ios do
             ]
 
             xcargs = ["BUILD_NUMBER=#{build.build_number}"]
+            xcargs << "-skipPackagePluginValidation" if is_running_on_ci
             xcargs += enable_datadog_args if build.enable_datadog
             xcargs += enable_countly_args if build.enable_countly
 
@@ -708,6 +711,7 @@ platform :ios do
 
         # Disable verbose diagnostics as these are generally not useful and collecting them can cause 600 second delays per test scheme.
         xcargs = ["-collect-test-diagnostics never"]
+        xcargs << "-skipPackagePluginValidation" if is_running_on_ci
         if scheme == "WireUITests"
             # Keep Debug builds, but use release assertion behavior for UI tests.
             xcargs << "OTHER_SWIFT_FLAGS='$(inherited) -assert-config Release'"
