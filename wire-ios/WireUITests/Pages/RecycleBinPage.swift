@@ -83,6 +83,10 @@ class RecycleBinPage: PageModel {
     }
 
     func deleteFilePermanently() -> Self {
+        XCTAssertTrue(
+            app.activityIndicators.firstMatch.waitToDisappear(andThenWaitFor: moreButton, timeout: 15),
+            "Recycle bin did not finish loading or its file menu did not become hittable"
+        )
         moreButton.tap()
         deletePermanentlyOnMenuContext.tap()
         deletePermanentlyOptionOnBottomSheet.tap()
