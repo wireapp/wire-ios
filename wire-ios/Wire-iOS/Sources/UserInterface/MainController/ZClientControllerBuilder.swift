@@ -68,7 +68,7 @@ final class ZClientControllerBuilder {
             selfProfileViewsMonitor: SelfProfileViewsMonitorImplementation(),
             userSession: userSession,
             trackingManager: trackingManager,
-            wireMeetingsFactory: buildWireMeetingsFactory(router: router),
+            wireMeetingsFactory: buildWireMeetingsFactory(),
             wireMessagingFactory: buildWireMessagingFactory()
         )
         viewController.router = router
@@ -153,7 +153,7 @@ final class ZClientControllerBuilder {
     }
 
     @MainActor
-    private func buildWireMeetingsFactory(router: AuthenticatedRouterProtocol) -> any WireMeetingsFactoryProtocol {
+    private func buildWireMeetingsFactory() -> any WireMeetingsFactoryProtocol {
         WireMeetingsFactory(
             selfUserID: account.userIdentifier,
             supportsMeetingLinks: userSession.resolvedBackendMetadata.apiVersion.map { $0 >= .v19 } ?? false,
@@ -168,10 +168,6 @@ final class ZClientControllerBuilder {
                 }
                 guard let user else { return nil }
                 return AnyView(UserImageViewRepresentable(user: user, userSession: userSession, size: .small))
-            },
-            onInstantMeetingCreated: { [weak router] result in
-                let id = result.meeting.conversationID
-                router?.navigate(to: .meetingInvitation(.init(uuid: id.id, domain: id.domain), result.link))
             }
         )
     }

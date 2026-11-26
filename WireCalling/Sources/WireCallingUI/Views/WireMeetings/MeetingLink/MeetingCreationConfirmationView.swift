@@ -29,13 +29,11 @@ package struct MeetingCreationConfirmationView: View {
     @State private var copyConfirmation: UUID?
 
     let link: URL
-    let isInstant: Bool
     let hasEmailInvitees: Bool
     let onClose: () -> Void
 
-    package init(link: URL, isInstant: Bool, hasEmailInvitees: Bool = false, onClose: @escaping () -> Void) {
+    package init(link: URL, hasEmailInvitees: Bool, onClose: @escaping () -> Void) {
         self.link = link
-        self.isInstant = isInstant
         self.hasEmailInvitees = hasEmailInvitees
         self.onClose = onClose
     }
@@ -45,22 +43,15 @@ package struct MeetingCreationConfirmationView: View {
     }
 
     package var body: some View {
-        Group {
-            if isInstant {
-                content
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
-            } else {
-                NavigationStack {
-                    content
-                        .navigationTitle(Strings.title)
-                        .navigationBarTitleDisplayMode(.inline)
-                        .toolbar {
-                            ToolbarItem(placement: .confirmationAction) { closeButton }
-                        }
+        NavigationStack {
+            content
+                .navigationTitle(Strings.title)
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .confirmationAction) { closeButton }
                 }
-                .presentationDetents([.medium, .large])
-            }
         }
+        .presentationDetents([.medium, .large])
         .task(id: copyConfirmation) {
             guard copyConfirmation != nil else { return }
             try? await Task.sleep(for: .seconds(3))
@@ -73,19 +64,8 @@ package struct MeetingCreationConfirmationView: View {
         VStack(spacing: 16) {
             ScrollView {
                 VStack(alignment: .leading, spacing: 16) {
-                    if isInstant {
-                        HStack(alignment: .top) {
-                            Text(Strings.Confirmation.instantTitle)
-                                .font(for: .body1)
-                                .accessibilityAddTraits(.isHeader)
-                            Spacer()
-                            closeButton
-                        }
-                    }
-                    if !isInstant {
-                        Text(confirmationDescription)
-                            .font(for: .body1)
-                    }
+                    Text(confirmationDescription)
+                        .font(for: .body1)
                     linkView
                         .accessibilityElement(children: .ignore)
                         .accessibilityLabel(Strings.title)
@@ -121,26 +101,12 @@ package struct MeetingCreationConfirmationView: View {
         }
     }
 
-    @ViewBuilder private var linkView: some View {
-        if isInstant {
-            Label {
-                Text(verbatim: link.absoluteString)
-                    .lineLimit(1)
-                    .truncationMode(.tail)
-            } icon: {
-                Image(systemName: "link")
-                    .accessibilityHidden(true)
-            }
-            .font(for: .body1)
-            .foregroundStyle(ColorTheme.Base.secondaryText.color)
+    private var linkView: some View {
+        Text(verbatim: link.absoluteString)
+            .font(.system(.body, design: .monospaced))
             .frame(maxWidth: .infinity, alignment: .leading)
-        } else {
-            Text(verbatim: link.absoluteString)
-                .font(.system(.body, design: .monospaced))
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(12)
-                .background(ColorTheme.Backgrounds.surface.color, in: RoundedRectangle(cornerRadius: 8))
-        }
+            .padding(12)
+            .background(ColorTheme.Backgrounds.surface.color, in: RoundedRectangle(cornerRadius: 8))
     }
 
     private var closeButton: some View {
