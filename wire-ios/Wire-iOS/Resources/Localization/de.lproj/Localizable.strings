@@ -1359,7 +1359,7 @@
 // dark theme
 "dark_theme.option.dark" = "Dunkel";
 "dark_theme.option.light" = "Hell";
-"dark_theme.option.system" = " Mit Systemeinstellungen synchronisieren";
+"dark_theme.option.system" = "Mit Systemeinstellungen synchronisieren";
 
 // Open in
 "self.settings.external_apps.header" = "Öffnen mit";
