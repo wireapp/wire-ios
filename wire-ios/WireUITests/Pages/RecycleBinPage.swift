@@ -87,8 +87,20 @@ class RecycleBinPage: PageModel {
             app.activityIndicators.firstMatch.waitToDisappear(andThenWaitFor: moreButton, timeout: 15),
             "Recycle bin did not finish loading or its file menu did not become hittable"
         )
+        XCTContext.runActivity(named: "TC8960 loaded recycle-bin file") { activity in
+            let capture = XCTAttachment(screenshot: app.screenshot())
+            capture.name = "TC8960-loaded-file"
+            capture.lifetime = .keepAlways
+            activity.add(capture)
+        }
         moreButton.tap()
         deletePermanentlyOnMenuContext.tap()
+        XCTContext.runActivity(named: "TC8960 permanent-delete confirmation") { activity in
+            let capture = XCTAttachment(screenshot: app.screenshot())
+            capture.name = "TC8960-delete-confirmation"
+            capture.lifetime = .keepAlways
+            activity.add(capture)
+        }
         deletePermanentlyOptionOnBottomSheet.tap()
         return self
     }

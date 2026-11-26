@@ -307,6 +307,12 @@ final class WireDriveTests: WireUITestCase {
 
         // THEN
         XCTAssertTrue(recycleBinPage.verifyRecycleBinIsEmpty())
+        XCTContext.runActivity(named: "TC8960 empty recycle bin after deletion") { activity in
+            let capture = XCTAttachment(screenshot: app.screenshot())
+            capture.name = "TC8960-empty-after-deletion"
+            capture.lifetime = .keepAlways
+            activity.add(capture)
+        }
     }
 
     @MainActor
