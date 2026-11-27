@@ -25,31 +25,54 @@ private typealias Accessibility = L10n.Accessibility.Conversation.WireCells
 public struct ConversationViewerAccessBanner: View {
     private let onClose: () -> Void
     private let backgroundColor: UIColor
+    private let isGracePeriod: Bool
 
-    public init(backgroundColor: UIColor, onClose: @escaping () -> Void) {
+    public init(backgroundColor: UIColor, isGracePeriod: Bool = false, onClose: @escaping () -> Void) {
         self.backgroundColor = backgroundColor
+        self.isGracePeriod = isGracePeriod
         self.onClose = onClose
     }
 
     public var body: some View {
-        HStack(spacing: 12) {
-            Text(Strings.Files.ViewerAccess.banner)
+        HStack(alignment: .center, spacing: 12) {
+            if isGracePeriod {
+                Image(systemName: "info.circle")
+                    .font(for: .h5)
+                    .foregroundStyle(foregroundColor)
+                    .accessibilityHidden(true)
+            }
+
+            Text(isGracePeriod ? Strings.Files.ViewerAccess.gracePeriodBanner : Strings.Files.ViewerAccess.banner)
                 .font(for: .h5)
+                .foregroundStyle(foregroundColor)
 
             Spacer()
 
             Button(action: onClose) {
                 Image(systemName: "xmark")
+                    .foregroundStyle(foregroundColor)
             }
             .buttonStyle(.plain)
             .accessibilityLabel(Accessibility.Files.ViewerAccess.Banner.close)
         }
         .padding(.horizontal, 24)
+        .padding(.vertical, isGracePeriod ? 8 : 0)
         .frame(minHeight: 32)
-        .background(backgroundColor.color)
+        .background(isGracePeriod ? ColorTheme.Base.warning.color : backgroundColor.color)
+    }
+
+    private var foregroundColor: Color {
+        isGracePeriod ? ColorTheme.Base.onWarning.color : Color.primary
     }
 }
 
 #Preview {
     ConversationViewerAccessBanner(backgroundColor: ColorTheme.Buttons.Secondary.disabled) {}
+}
+
+#Preview("Grace period") {
+    ConversationViewerAccessBanner(
+        backgroundColor: ColorTheme.Buttons.Secondary.disabled,
+        isGracePeriod: true
+    ) {}
 }

@@ -8,7 +8,8 @@
 #   LTS release branch (vars.LTS_RELEASE) so the fix flows through LTS before reaching
 #   `develop`; falls back to `develop` if vars.LTS_RELEASE isn't set.
 # - If the source branch is the LTS release branch (vars.LTS_RELEASE, e.g. release/cycle-4.16),
-#   targets `develop` directly, skipping any future release branches.
+#   targets vars.LTS_NEXT_RELEASE, falling back to `develop` if unset or the same branch.
+# - If the source branch is vars.LTS_NEXT_RELEASE, targets `develop` directly.
 # - Gets all release branches and sorts them
 # - Finds the position of the source branch in the sorted list
 # - Selects the next branch in the sorted list, or `develop` if no next branch exists
@@ -62,6 +63,7 @@ jobs:
           LTS_RELEASE: ${{ vars.LTS_RELEASE }}
           GOV_RELEASE: ${{ vars.GOV_RELEASE }}
           BASE_REF: ${{ github.event.pull_request.base.ref }}
+          LTS_NEXT_RELEASE: ${{ vars.LTS_NEXT_RELEASE }}
         run: |
           scripts/determine-cherry-pick-target.py "$BASE_REF"
 

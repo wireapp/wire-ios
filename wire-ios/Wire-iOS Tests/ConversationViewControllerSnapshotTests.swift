@@ -203,6 +203,28 @@ extension ConversationViewControllerSnapshotTests {
         snapshotHelper.verify(matching: sut)
     }
 
+    func testThatGracePeriodBannerIsVisibleForATeamMemberInAWireDriveConversation() {
+        teamTest {
+            let conversation = createTeamGroupConversation()
+            conversation.teamRemoteIdentifier = team?.remoteIdentifier
+            conversation.cellsState = .ready
+            UIColor.setAccentOverride(.green)
+            XCTAssertTrue(conversation.isTeamConversation)
+
+            createSut(conversation: conversation)
+            XCTAssertFalse(userSession.isWireDriveEnabled)
+            sut.loadViewIfNeeded()
+            XCTAssertTrue(sut.inputBarController.inputBar.isDriveViewerBannerVisible)
+
+            snapshotHelper
+                .withUserInterfaceStyle(.light)
+                .verify(matching: sut, size: CGSize(width: 375, height: 812), named: "light")
+            snapshotHelper
+                .withUserInterfaceStyle(.dark)
+                .verify(matching: sut, size: CGSize(width: 375, height: 812), named: "dark")
+        }
+    }
+
     // MARK: - Helper Method
 
     private func createSut(conversation: ZMConversation, mockUser: MockUserType = .createSelfUser(name: "Bob")) {

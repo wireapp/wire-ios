@@ -82,7 +82,14 @@ final class MarkdownTextView: NextResponderTextView {
 
         // We reverse to maintain correct ranges for subsequent inserts.
         for mention in mentions.reversed() {
-            let attachment = MentionTextAttachment(user: mention.user)
+            let attachment: MentionTextAttachment
+            if mention.isEveryone {
+                attachment = MentionTextAttachment(everyoneWithColor: .accent())
+            } else if let user = mention.user {
+                attachment = MentionTextAttachment(user: user)
+            } else {
+                continue
+            }
             let attributedString = NSAttributedString(attachment: attachment) && typingAttributes
             mutable.replaceCharacters(in: mention.range, with: attributedString)
         }
@@ -92,13 +99,18 @@ final class MarkdownTextView: NextResponderTextView {
 
     private func mentions(from attributedText: NSAttributedString) -> [Mention] {
         var locationOffset = 0
-        return mentionAttachmentsWithRange(from: attributedText).map { tuple in
+        return mentionAttachmentsWithRange(from: attributedText).compactMap { tuple in
             let (attachment, range) = tuple
             let length = attachment.attributedText.string.utf16.count
             let adjustedRange = NSRange(location: range.location + locationOffset, length: length)
             locationOffset += length - 1 // Adjust for the length 1 attachment that we replaced.
 
-            return Mention(range: adjustedRange, user: attachment.user)
+            if attachment.isEveryone {
+                return Mention(range: adjustedRange, isEveryone: true)
+            }
+
+            guard let user = attachment.user else { return nil }
+            return Mention(range: adjustedRange, user: user)
         }
     }
 

@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+public import Combine
 import SwiftUI
 import WireDesign
 public import WireMessagingDomain
@@ -26,9 +27,19 @@ private typealias Strings = L10n.Localizable.Conversation.Details
 public class ConversationSharedDriveOptionsViewModel: ObservableObject {
     @Published var participants: [WireDriveParticipant]
     @Published var isSharedDriveEnabled = true
+    private var featureSubscription: AnyCancellable?
 
     public init(participants: [WireDriveParticipant]) {
         self.participants = participants.sorted(by: { $0.displayName < $1.displayName })
+    }
+
+    package convenience init(participantsProvider: @escaping () -> [WireDriveParticipant]) {
+        self.init(participants: participantsProvider())
+        self.featureSubscription = NotificationCenter.default.publisher(for: .wireDriveFeatureDidChange)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                self?.participants = participantsProvider().sorted { $0.displayName < $1.displayName }
+            }
     }
 
     func blockedOrPendingApprovalAvatarIcon(for participant: WireDriveParticipant) -> UIImage? {

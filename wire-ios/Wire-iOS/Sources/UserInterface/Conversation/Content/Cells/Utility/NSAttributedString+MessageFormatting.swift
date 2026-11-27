@@ -317,7 +317,14 @@ private extension String {
             }
 
             // Create a corrected mention with the adjusted range
-            let correctedMention = Mention(range: adjustedRange, user: mention.user)
+            let correctedMention: Mention
+            if mention.isEveryone {
+                correctedMention = Mention(range: adjustedRange, isEveryone: true)
+            } else if let user = mention.user {
+                correctedMention = Mention(range: adjustedRange, user: user)
+            } else {
+                return nil
+            }
 
             // Strip the '@' from the name since the mention rendering code adds it back
             let nameWithoutAt = name.hasPrefix("@") ? String(name.dropFirst()) : name

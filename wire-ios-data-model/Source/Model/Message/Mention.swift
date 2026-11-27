@@ -23,34 +23,43 @@ import GenericMessageProtocol
 public class Mention: NSObject {
 
     public let range: NSRange
-    public let user: UserType
+    public let user: UserType?
+    public let isEveryone: Bool
 
     init?(_ protobuf: GenericMessageProtocol.Mention, context: NSManagedObjectContext) {
         let userRemoteID = protobuf.hasQualifiedUserID ? protobuf.qualifiedUserID.id : protobuf.userID
         let domain = protobuf.hasQualifiedUserID ? protobuf.qualifiedUserID.domain : nil
 
-        guard
-            let userId = UUID(uuidString: userRemoteID),
-            protobuf.length > 0,
-            protobuf.start >= 0,
-            let user = ZMUser.fetch(with: userId, domain: domain, in: context)
-        else {
-            return nil
+        guard protobuf.length > 0, protobuf.start >= 0 else { return nil }
+        if protobuf.everyone {
+            self.user = nil
+            self.isEveryone = true
+        } else {
+            guard let userId = UUID(uuidString: userRemoteID),
+                  let user = ZMUser.fetch(with: userId, domain: domain, in: context) else { return nil }
+            self.user = user
+            self.isEveryone = false
         }
-
-        self.user = user
         self.range = NSRange(location: Int(protobuf.start), length: Int(protobuf.length))
     }
 
     public init(range: NSRange, user: UserType) {
         self.range = range
         self.user = user
+        self.isEveryone = false
+    }
+
+    public init(range: NSRange, isEveryone: Bool) {
+        self.range = range
+        self.user = nil
+        self.isEveryone = isEveryone
     }
 
     public override func isEqual(_ object: Any?) -> Bool {
         guard let otherMention = object as? Mention else { return false }
 
-        return user.isEqual(otherMention.user) && NSEqualRanges(range, otherMention.range)
+        return isEveryone == otherMention.isEveryone &&
+            (isEveryone || user?.isEqual(otherMention.user) == true) && NSEqualRanges(range, otherMention.range)
     }
 
 }
@@ -93,7 +102,7 @@ private extension NSRange {
 @objc
 public extension Mention {
     var isForSelf: Bool {
-        user.isSelfUser
+        isEveryone || user?.isSelfUser == true
     }
 }
 

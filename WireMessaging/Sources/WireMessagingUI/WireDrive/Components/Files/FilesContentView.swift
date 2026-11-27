@@ -67,10 +67,12 @@ package struct FilesContentView<Toolbar: ToolbarContent, Sheet: View>: View {
                     }
 
                     if viewModel.showReadOnlyBanner {
-                        ConversationViewerAccessBanner(backgroundColor: ColorTheme.Buttons.Secondary
-                            .disabledOutline) {
-                                viewModel.dismissReadOnlyBanner()
-                            }.padding(.bottom, viewModel.isOffline ? 0 : 15)
+                        ConversationViewerAccessBanner(
+                            backgroundColor: ColorTheme.Buttons.Secondary.disabledOutline,
+                            isGracePeriod: viewModel.isGracePeriod
+                        ) {
+                            viewModel.dismissReadOnlyBanner()
+                        }.padding(.bottom, viewModel.isOffline ? 0 : 15)
                     }
 
                     if viewModel.showFiltersBar {

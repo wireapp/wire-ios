@@ -24,6 +24,32 @@ import XCTest
 
 class MentionTests: ZMBaseManagedObjectTest {
 
+    func testEveryoneMentionRoundTripsAndMentionsSelf() throws {
+        let original = Mention(range: NSRange(location: 2, length: 4), isEveryone: true)
+        let proto = try XCTUnwrap(original.convertToProtosMention())
+        XCTAssertTrue(proto.everyone)
+        XCTAssertTrue(proto.userID.isEmpty)
+        XCTAssertNotNil(proto.validatingFields())
+        let decoded = try XCTUnwrap(Mention(proto, context: uiMOC))
+        XCTAssertEqual(decoded, original)
+        XCTAssertTrue(decoded.isForSelf)
+        XCTAssertTrue(Text.with { $0.mentions = [proto] }.isMentioningSelf(ZMUser.selfUser(in: uiMOC)))
+    }
+
+    func testEveryoneMentionRejectsInvalidRange() {
+        let proto = GenericMessageProtocol.Mention.with {
+            $0.everyone = true
+            $0.start = -1
+            $0.length = 4
+        }
+        XCTAssertNil(Mention(proto, context: uiMOC))
+    }
+
+    func testNewProtocolContentRemainsUnsupported() {
+        let message = GenericMessage.with { $0.poll = Poll() }
+        XCTAssertTrue(message.hasUnsupportedContent)
+    }
+
     func createMention(
         start: Int = 0,
         length: Int = 1,
