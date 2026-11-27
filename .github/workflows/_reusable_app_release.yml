@@ -226,6 +226,7 @@ jobs:
         with:
           name: build-logs (${{ github.run_id }} - ${{ github.run_attempt}})
           path: |
+            DerivedData/**/Logs/**
             /Users/runner/Library/Developer/Xcode/DerivedData/**/Logs/**
             ~/Library/Logs/DiagnosticReports/**
             build/**
