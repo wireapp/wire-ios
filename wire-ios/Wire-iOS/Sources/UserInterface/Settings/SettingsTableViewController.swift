@@ -236,18 +236,22 @@ final class SettingsTableViewController: SettingsBaseTableViewController {
     }
 
     func configureNavigationBarAppearance() {
-        let appearance = UINavigationBarAppearance()
-        appearance.configureWithDefaultBackground()
-        appearance.backgroundColor = ColorTheme.Backgrounds.surface
-
         let backIndicator = UIImage(resource: view.isRightToLeft ? .forwardArrow : .backArrow)
-        appearance.setBackIndicatorImage(backIndicator, transitionMaskImage: backIndicator)
         navigationItem.backButtonDisplayMode = .minimal
 
-        // Configure appearance for different states
-        navigationController?.navigationBar.standardAppearance = appearance
-        navigationController?.navigationBar.scrollEdgeAppearance = appearance
-        navigationController?.navigationBar.compactAppearance = appearance
+        if #available(iOS 26.0, *) {
+            navigationController?.navigationBar.backIndicatorImage = backIndicator
+            navigationController?.navigationBar.backIndicatorTransitionMaskImage = backIndicator
+        } else {
+            let appearance = UINavigationBarAppearance()
+            appearance.configureWithDefaultBackground()
+            appearance.backgroundColor = ColorTheme.Backgrounds.surface
+            appearance.setBackIndicatorImage(backIndicator, transitionMaskImage: backIndicator)
+
+            navigationController?.navigationBar.standardAppearance = appearance
+            navigationController?.navigationBar.scrollEdgeAppearance = appearance
+            navigationController?.navigationBar.compactAppearance = appearance
+        }
     }
 
     private func setupTableView() {

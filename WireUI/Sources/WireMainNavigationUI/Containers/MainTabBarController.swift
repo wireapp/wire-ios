@@ -166,26 +166,36 @@ public final class MainTabBarController<
 
     private func setupTabs() {
         let conversationListNavigationController = UINavigationController()
-        conversationListNavigationController.navigationBar.isTranslucent = false
+        if #unavailable(iOS 26.0) {
+            conversationListNavigationController.navigationBar.isTranslucent = false
+        }
         self.conversationListNavigationController = conversationListNavigationController
 
         if showFiles {
             let filesNavigationController = UINavigationController()
-            filesNavigationController.navigationBar.isTranslucent = false
+            if #unavailable(iOS 26.0) {
+                filesNavigationController.navigationBar.isTranslucent = false
+            }
             self.filesNavigationController = filesNavigationController
         }
 
         let archiveNavigationController = UINavigationController()
-        archiveNavigationController.navigationBar.isTranslucent = false
+        if #unavailable(iOS 26.0) {
+            archiveNavigationController.navigationBar.isTranslucent = false
+        }
         self.archiveNavigationController = archiveNavigationController
 
         let settingsNavigationController = UINavigationController()
-        settingsNavigationController.navigationBar.isTranslucent = false
+        if #unavailable(iOS 26.0) {
+            settingsNavigationController.navigationBar.isTranslucent = false
+        }
         self.settingsNavigationController = settingsNavigationController
 
         if showMeetings {
             let meetingsNavigationController = UINavigationController()
-            meetingsNavigationController.navigationBar.isTranslucent = false
+            if #unavailable(iOS 26.0) {
+                meetingsNavigationController.navigationBar.isTranslucent = false
+            }
             self.meetingsNavigationController = meetingsNavigationController
         } else {
             meetingsNavigationController = nil
@@ -268,6 +278,8 @@ public final class MainTabBarController<
     }
 
     private func setupAppearance() {
+        guard #unavailable(iOS 26.0) else { return }
+
         let tabBarItemAppearance = UITabBarItemAppearance()
         tabBarItemAppearance.normal.iconColor = .systemGray
         tabBarItemAppearance.normal.titleTextAttributes[.foregroundColor] = UIColor.systemGray
@@ -308,7 +320,9 @@ public final class MainTabBarController<
     private func setMeetingsUI(_ meetingsUI: MeetingsUI?, animated: Bool) {
         if meetingsNavigationController == nil, meetingsUI != nil {
             let meetingsNavigationController = UINavigationController()
-            meetingsNavigationController.navigationBar.isTranslucent = false
+            if #unavailable(iOS 26.0) {
+                meetingsNavigationController.navigationBar.isTranslucent = false
+            }
             // Compute the insertion index BEFORE the property assignment:
             // `insertionIndex` reads `orderedContents`, which reflects the
             // installed nav controllers, so assigning first would include
@@ -402,7 +416,9 @@ public final class MainTabBarController<
 
         if filesNavigationController == nil, filesUI != nil {
             let filesNavigationController = UINavigationController()
-            filesNavigationController.navigationBar.isTranslucent = false
+            if #unavailable(iOS 26.0) {
+                filesNavigationController.navigationBar.isTranslucent = false
+            }
             // Compute the insertion index BEFORE the property assignment:
             // `insertionIndex` reads `orderedContents`, which reflects the
             // installed nav controllers, so assigning first would include

@@ -84,9 +84,10 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
             .accessibilityValue(viewModel.userSession.selfUser.name ?? "")
         accountImageView.accessibilityTraits = .button
         accountImageView.accessibilityHint = L10n.Accessibility.ConversationsList.AccountButton.hint
+        let avatarSize: CGFloat = if #available(iOS 26.0, *) { 44 } else { 28 }
         accountImageView.translatesAutoresizingMaskIntoConstraints = false
-        accountImageView.widthAnchor.constraint(equalToConstant: 28).isActive = true
-        accountImageView.heightAnchor.constraint(equalToConstant: 28).isActive = true
+        accountImageView.widthAnchor.constraint(equalToConstant: avatarSize).isActive = true
+        accountImageView.heightAnchor.constraint(equalToConstant: avatarSize).isActive = true
 
         let design = AccountImageViewDesign()
         accountImageView.imageBorderWidth = design.borderWidth
@@ -99,9 +100,6 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(presentProfile))
         accountImageView.addGestureRecognizer(tapGestureRecognizer)
 
-        accountImageView.translatesAutoresizingMaskIntoConstraints = false
-        accountImageView.widthAnchor.constraint(equalToConstant: 28).isActive = true
-        accountImageView.heightAnchor.constraint(equalToConstant: 28).isActive = true
 
         return accountImageView
     }
@@ -112,6 +110,7 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
         // so we'll use a stack view instead
         let stackView = UIStackView()
         stackView.spacing = 4
+        stackView.alignment = .center
 
         // avatar
         let accountImageView = makeAccountImageView()
@@ -142,7 +141,11 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
             stackView.addArrangedSubview(imageView)
         }
 
-        navigationItem.leftBarButtonItems = [.init(customView: stackView)]
+        let accountItem = UIBarButtonItem(customView: stackView)
+        if #available(iOS 26.0, *) {
+            accountItem.hidesSharedBackground = true
+        }
+        navigationItem.leftBarButtonItems = [accountItem]
     }
 
     func setupLeftNavigationBarButtonItems_SplitView() {
@@ -184,21 +187,30 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
 
         // New Conversation Button
         let symbolConfiguration = UIImage.SymbolConfiguration(weight: .semibold)
-        let newConversationImage = UIImage(systemName: "plus.circle.fill", withConfiguration: symbolConfiguration)!
+        let usesLiquidGlass = if #available(iOS 26.0, *) { true } else { false }
+        let newConversationImage = UIImage(
+            systemName: usesLiquidGlass ? "plus" : "plus.circle.fill",
+            withConfiguration: symbolConfiguration
+        )!
         let newConversationAction = UIAction(image: newConversationImage) { [weak self] _ in self?.presentConnectUI() }
         let newConversationButton = UIButton(primaryAction: newConversationAction)
-        let startConversationItem = UIBarButtonItem(customView: newConversationButton)
+        let startConversationItem = usesLiquidGlass
+            ? UIBarButtonItem(primaryAction: newConversationAction)
+            : UIBarButtonItem(customView: newConversationButton)
+        if usesLiquidGlass {
+            startConversationItem.tintColor = .accent()
+        }
         startConversationItem.accessibilityIdentifier = Locators.ConversationsPage.createGroupOrSearchButton.rawValue
         startConversationItem.accessibilityLabel = L10n.Accessibility.ConversationList.StartConversationButton
             .description
         navigationItem.rightBarButtonItems = [startConversationItem, spacer]
 
         let defaultFilterImage = UIImage(
-            systemName: "line.3.horizontal.decrease.circle",
+            systemName: usesLiquidGlass ? "line.3.horizontal.decrease" : "line.3.horizontal.decrease.circle",
             withConfiguration: symbolConfiguration
         )!
         let filledFilterImage = UIImage(
-            systemName: "line.3.horizontal.decrease.circle.fill",
+            systemName: usesLiquidGlass ? "line.3.horizontal.decrease" : "line.3.horizontal.decrease.circle.fill",
             withConfiguration: symbolConfiguration
         )!
 
@@ -299,7 +311,14 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
         filterButton.accessibilityLabel = L10n.Accessibility.ConversationsList.FilterButton.description
         filterButton.menu = filterMenu
 
-        navigationItem.rightBarButtonItems?.append(UIBarButtonItem(customView: filterButton))
+        let filterItem = usesLiquidGlass
+            ? UIBarButtonItem(image: selectedFilterImage, menu: filterMenu)
+            : UIBarButtonItem(customView: filterButton)
+        filterItem.accessibilityLabel = filterButton.accessibilityLabel
+        if usesLiquidGlass, listContentController.listViewModel.selectedFilter != nil {
+            filterItem.tintColor = .accent()
+        }
+        navigationItem.rightBarButtonItems?.append(filterItem)
 
         // Trigger a layout update to ensure the correct positioning
         // of the add conversation button and filter button
@@ -308,6 +327,20 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
     }
 
     func setupRightNavigationBarButtonItems_SplitView() {
+        if #available(iOS 26.0, *) {
+            let newConversationItem = UIBarButtonItem(
+                image: UIImage(systemName: "plus"),
+                style: .plain,
+                target: self,
+                action: #selector(presentCreateConversationUI)
+            )
+            newConversationItem.tintColor = .accent()
+            newConversationItem.accessibilityIdentifier = "create_group_or_search_button"
+            newConversationItem.accessibilityLabel = L10n.Accessibility.ConversationList.StartConversationButton
+                .description
+            navigationItem.rightBarButtonItems = [newConversationItem]
+            return
+        }
 
         let newConversationBarButton = IconButton()
         newConversationBarButton.setIcon(.plus, size: .tiny, for: .normal)

@@ -339,6 +339,8 @@ final class ConversationListViewController: UIViewController {
     }
 
     func configureNavigationBarAppearance() {
+        guard #unavailable(iOS 26.0) else { return }
+
         let appearance = UINavigationBarAppearance()
         appearance.configureWithDefaultBackground()
         appearance.backgroundColor = ColorTheme.Backgrounds.surface
@@ -473,7 +475,9 @@ final class ConversationListViewController: UIViewController {
     static func makeSearchController() -> UISearchController {
         let searchController = UISearchController(searchResultsController: nil)
         searchController.obscuresBackgroundDuringPresentation = false
-        searchController.searchBar.isTranslucent = false
+        if #unavailable(iOS 26.0) {
+            searchController.searchBar.isTranslucent = false
+        }
         searchController.searchBar.searchTextField.accessibilityIdentifier =
             Locators.ConversationsPage.conversationSearchBar.rawValue
         searchController.hidesNavigationBarDuringPresentation = true

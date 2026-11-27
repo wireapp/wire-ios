@@ -33,9 +33,18 @@ struct PreferredSizeKey: PreferenceKey, Sendable {
 struct PreferredSizeModifier: ViewModifier {
 
     @State var size: CGSize = .init(width: 390, height: 420)
+    var isBottomAttached = false
+    var availableHeight: CGFloat = .infinity
+    var topInset: CGFloat = 0
 
     func body(content: Content) -> some View {
-        if UIDevice.current.userInterfaceIdiom == .pad {
+        if isBottomAttached {
+            content
+                .frame(maxWidth: .infinity)
+                // The nested navigation stack consumes the host inset in addition to the measured content.
+                .frame(height: min(size.height + topInset, availableHeight))
+                .onPreferenceChange(PreferredSizeKey.self, perform: setSize)
+        } else if UIDevice.current.userInterfaceIdiom == .pad {
             content
                 .frame(width: size.width, height: size.height)
                 .onPreferenceChange(PreferredSizeKey.self, perform: setSize)
@@ -50,7 +59,7 @@ struct PreferredSizeModifier: ViewModifier {
         if let value {
             DispatchQueue.main.async {
                 withAnimation(.easeInOut(duration: 0.4)) {
-                    size.height = min(value.height, maxSize.height)
+                    size.height = isBottomAttached ? value.height : min(value.height, maxSize.height)
                     size.width = min(value.width, maxSize.width)
                 }
             }
@@ -86,7 +95,15 @@ extension View {
     }
 
     @ViewBuilder
-    func applyPreferredSize() -> some View {
-        modifier(PreferredSizeModifier())
+    func applyPreferredSize(
+        isBottomAttached: Bool = false,
+        availableHeight: CGFloat = .infinity,
+        topInset: CGFloat = 0
+    ) -> some View {
+        modifier(PreferredSizeModifier(
+            isBottomAttached: isBottomAttached,
+            availableHeight: availableHeight,
+            topInset: topInset
+        ))
     }
 }

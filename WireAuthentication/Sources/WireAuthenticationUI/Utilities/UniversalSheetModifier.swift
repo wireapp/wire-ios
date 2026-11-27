@@ -19,7 +19,8 @@ import SwiftUI
 import SwiftUIIntrospect
 import WireDesign
 
-/// This ViewModifier creates a custom overlay for iPad and fallback to .sheet on iPhone
+/// Presents authentication as a bottom-attached panel on modern iPhone, a centered panel on iPad,
+/// and a system sheet on older iPhone releases.
 /// - Note: On iPad, `sheet` modifier is presented as a page. PresentationDetents have no effect
 struct UniversalSheetModifier<Item: Identifiable, SheetContent: View>: ViewModifier {
 
@@ -29,7 +30,35 @@ struct UniversalSheetModifier<Item: Identifiable, SheetContent: View>: ViewModif
 
     @ViewBuilder
     func body(content: Content) -> some View {
-        if #available(iOS 18.0, *) {
+        if #available(iOS 26.0, *), UIDevice.current.userInterfaceIdiom == .phone {
+            content
+                .accessibilityHidden(item != nil)
+                .overlay(alignment: .bottom) {
+                    GeometryReader { geometry in
+                        if let item {
+                            self.content(item)
+                                .applyPreferredSize(
+                                    isBottomAttached: true,
+                                    availableHeight: geometry.size.height,
+                                    topInset: geometry.safeAreaInsets.top
+                                )
+                                .clipShape(UnevenRoundedRectangle(topLeadingRadius: 24, topTrailingRadius: 24))
+                                .background {
+                                    UnevenRoundedRectangle(topLeadingRadius: 24, topTrailingRadius: 24)
+                                        .fill(ColorTheme.Backgrounds.surface.color)
+                                        .ignoresSafeArea(.container, edges: .bottom)
+                                }
+                                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
+                        }
+                    }
+                    .ignoresSafeArea(.container, edges: .horizontal)
+                }
+                .onChange(of: item?.id) { oldValue, newValue in
+                    if oldValue != nil, newValue == nil {
+                        onDismiss?()
+                    }
+                }
+        } else if #available(iOS 18.0, *) {
             if UIDevice.current.userInterfaceIdiom == .pad {
 
                 content

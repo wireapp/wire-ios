@@ -22,6 +22,9 @@ public extension UITabBarController {
 
     /// Sets colors so that this instance looks like the `MainTabBarController` should look like.
     func applyMainTabBarControllerAppearance() {
+        tabBar.unselectedItemTintColor = ColorTheme.Base.secondaryText
+        guard #unavailable(iOS 26.0) else { return }
+
         let tabBarItemAppearance = UITabBarItemAppearance()
         tabBarItemAppearance.normal.iconColor = ColorTheme.Base.secondaryText
         tabBarItemAppearance.normal.titleTextAttributes[.foregroundColor] = ColorTheme.Base.secondaryText
@@ -32,7 +35,6 @@ public extension UITabBarController {
         tabBarAppearance.stackedLayoutAppearance = tabBarItemAppearance
 
         tabBar.backgroundColor = ColorTheme.Backgrounds.backgroundVariant
-        tabBar.unselectedItemTintColor = ColorTheme.Base.secondaryText
         tabBar.standardAppearance = tabBarAppearance
     }
 }

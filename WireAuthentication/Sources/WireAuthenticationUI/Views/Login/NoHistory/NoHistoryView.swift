@@ -34,35 +34,43 @@ package struct NoHistoryView: View {
     }
 
     package var body: some View {
-        VStack(spacing: 20) {
-            Text(viewModel.didReauthenticate ? Strings.MissingHistory.title : Strings.NoHistory.title)
-                .multilineTextAlignment(.center)
-                .font(for: .h2)
-                .lineLimit(nil)
-                .fixedSize(horizontal: false, vertical: true)
-            Text(viewModel.didReauthenticate ? Strings.MissingHistory.message : Strings.NoHistory.message)
-                .multilineTextAlignment(.center)
-                .font(for: .body1)
-                .lineLimit(nil)
-                .fixedSize(horizontal: false, vertical: true)
+        ScrollView {
+            VStack(spacing: 20) {
+                Text(viewModel.didReauthenticate ? Strings.MissingHistory.title : Strings.NoHistory.title)
+                    .multilineTextAlignment(.center)
+                    .font(for: .h2)
+                    .accessibilityAddTraits(.isHeader)
+                    .lineLimit(nil)
+                    .fixedSize(horizontal: false, vertical: true)
+                Text(viewModel.didReauthenticate ? Strings.MissingHistory.message : Strings.NoHistory.message)
+                    .multilineTextAlignment(.center)
+                    .font(for: .body1)
+                    .lineLimit(nil)
+                    .fixedSize(horizontal: false, vertical: true)
 
-            Button {
-                viewModel.confirm()
-            } label: {
-                HStack {
-                    if viewModel.isLoading {
-                        ProgressView()
+                Button {
+                    viewModel.confirm()
+                } label: {
+                    HStack {
+                        if viewModel.isLoading {
+                            ProgressView()
+                                .accessibilityHidden(true)
+                        }
+
+                        Text(Strings.NoHistory.confirm)
+                            .lineLimit(nil)
                     }
-
-                    Text(Strings.NoHistory.confirm)
-                        .lineLimit(nil)
                 }
-            }
-            .wireButtonStyle(.primary)
-            .bold()
-            .disabled(viewModel.isLoading)
-            .accessibilityIdentifier(Locators.FirstTimePage.okButton.rawValue)
+                .wireButtonStyle(.primary)
+                .bold()
+                .disabled(viewModel.isLoading)
+                .accessibilityLabel(Strings.NoHistory.confirm)
+                .accessibilityIdentifier(Locators.FirstTimePage.okButton.rawValue)
 
+            }
+            .padding(.vertical, 32)
+            .padding()
+            .setPreferredSize()
         }
         .alert(
             item: $viewModel.alert,
@@ -83,7 +91,6 @@ package struct NoHistoryView: View {
         .onAppear {
             viewModel.onAppear()
         }
-        .padding(.vertical, 32)
         .onReceive(
             NotificationCenter.default.publisher(
                 for: UIApplication.willEnterForegroundNotification
@@ -91,11 +98,10 @@ package struct NoHistoryView: View {
         ) { _ in
             viewModel.onAppear()
         }
-        .padding()
-        .setPreferredSize()
         .interactiveDismissDisabled()
         .presentationDragIndicator(.hidden)
         .navigationBarBackButtonHidden()
+        .toolbar(.hidden, for: .navigationBar)
     }
 
     private func titleForAlert(_ alert: NoHistoryViewModel.Alert) -> Text {

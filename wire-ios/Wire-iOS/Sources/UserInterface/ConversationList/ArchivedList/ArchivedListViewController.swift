@@ -66,6 +66,8 @@ final class ArchivedListViewController: UIViewController {
     }
 
     func configureNavigationBarAppearance() {
+        guard #unavailable(iOS 26.0) else { return }
+
         let appearance = UINavigationBarAppearance()
         appearance.configureWithDefaultBackground()
         appearance.backgroundColor = ColorTheme.Backgrounds.surface
