@@ -1,0 +1,18 @@
+"live_activity.uploads.uploading.title" = "Загрузка на общий диск";
+"live_activity.uploads.uploading.subtitle" = "%1$lld из %2$lld загружено";
+"live_activity.uploads.uploading.failed" = "Не удалось: %lld";
+/* VoiceOver upload progress: uploaded/failed file counts followed by a localized percentage. */
+"live_activity.uploads.uploading.accessibility_value" = "%1$@, %2$@";
+
+"live_activity.uploads.stale.title" = "Загрузки общего диска";
+"live_activity.uploads.stale.subtitle" = "Откройте Wire для проверки статуса загрузки";
+"live_activity.uploads.stale.compact_text" = "Открыть Wire";
+
+"live_activity.uploads.completed.title" = "Загрузка завершена";
+"live_activity.uploads.completed.subtitle_one" = "1 файл в общем диске";
+"live_activity.uploads.completed.subtitle_many" = "%lld файлов в общем диске";
+
+"live_activity.uploads.failed.title_one" = "Не удалось загрузить 1 файл";
+"live_activity.uploads.failed.title_many" = "Не удалось загрузить %lld файлов";
+"live_activity.uploads.failed.subtitle" = "в общий диск";
+"live_activity.uploads.failed.subtitle_with_uploaded" = "%1$lld из %2$lld загружено";
