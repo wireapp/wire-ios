@@ -138,7 +138,7 @@ static NSString * const PendingKey = @"Pending";
 
 - (NSArray *)fetchAllFolders:(NSManagedObjectContext *)context
 {
-    return [context executeFetchRequestOrAssert:[Label sortedFetchRequest]];
+    return [context fetchOrFatal:[Label sortedFetchRequest]];
 }
 
 - (NSMutableDictionary *)createListsFromFolders:(NSArray<Label *> *)folders

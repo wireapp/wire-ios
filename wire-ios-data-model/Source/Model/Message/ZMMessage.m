@@ -494,7 +494,7 @@ NSString * const ZMSystemMessageConversationScheduledDeletionDateKey = @"convers
     fetchRequest.fetchLimit = 2;
     fetchRequest.includesSubentities = YES;
     
-    NSArray* fetchResult = [moc executeFetchRequestOrAssert:fetchRequest];
+    NSArray* fetchResult = [moc fetchOrFatal:fetchRequest];
     VerifyString([fetchResult count] <= 1, "More than one message with the same nonce in the same conversation");
     ZMMessage *message = fetchResult.firstObject;
     
@@ -747,7 +747,7 @@ NSString * const ZMSystemMessageConversationScheduledDeletionDateKey = @"convers
     request.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:ZMMessageServerTimestampKey ascending:NO]];
     request.fetchBatchSize = 1;
     request.predicate = [self predicateForPotentialGapSystemMessagesNeedingUpdatingUsersInConversation:conversation];
-    NSArray *result = [conversation.managedObjectContext executeFetchRequestOrAssert:request];
+    NSArray *result = [conversation.managedObjectContext fetchOrFatal:request];
     return result.firstObject;
 }
 
@@ -914,7 +914,7 @@ NSString * const ZMSystemMessageConversationScheduledDeletionDateKey = @"convers
 {
     ZMLogDebug(@"deleting old ephemeral messages");
     NSFetchRequest *request = [self fetchRequestForEphemeralMessagesThatNeedToBeDeleted];
-    NSArray *messages = [context executeFetchRequestOrAssert:request];
+    NSArray *messages = [context fetchOrFatal:request];
 
     for (ZMMessage *message in messages) {
         NSTimeInterval timeToDeletion = [message.destructionDate timeIntervalSinceNow];

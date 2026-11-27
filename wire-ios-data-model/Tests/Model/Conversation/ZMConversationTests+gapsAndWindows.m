@@ -46,7 +46,7 @@
     
     // then
     NSFetchRequest *fetchRequest = [ZMConversation sortedFetchRequest];
-    NSArray *conversations = [self.uiMOC executeFetchRequestOrAssert:fetchRequest];
+    NSArray *conversations = [self.uiMOC fetchOrFatal:fetchRequest];
     
     XCTAssertEqual(conversations.count, 1u);
     ZMConversation *fetchedConversation = conversations[0];

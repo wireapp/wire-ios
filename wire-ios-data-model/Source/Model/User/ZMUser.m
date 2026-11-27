@@ -379,7 +379,7 @@ static NSString *const PrimaryKey = @"primaryKey";
     
     NSFetchRequest *usersWithEmailFetch = [NSFetchRequest fetchRequestWithEntityName:[ZMUser entityName]];
     usersWithEmailFetch.predicate = [NSPredicate predicateWithFormat:@"%K = %@", EmailAddressKey, emailAddress];
-    NSArray<ZMUser *> *users = (NSArray<ZMUser *> *) [context executeFetchRequestOrAssert:usersWithEmailFetch];
+    NSArray<ZMUser *> *users = (NSArray<ZMUser *> *) [context fetchOrFatal:usersWithEmailFetch];
 
     RequireString(users.count <= 1, "More than one user with the same email address");
     
@@ -628,7 +628,7 @@ static NSString *const PrimaryKey = @"primaryKey";
     NSError *error;
 
     //if there is no already session object than create one
-    ZMSession *session = (ZMSession *)[moc executeFetchRequestOrAssert:[ZMSession sortedFetchRequest]].firstObject;
+    ZMSession *session = (ZMSession *)[moc fetchOrFatal:[ZMSession sortedFetchRequest]].firstObject;
     if (session == nil) {
         session = [ZMSession insertNewObjectInManagedObjectContext:moc];
         RequireString([moc obtainPermanentIDsForObjects:@[session] error:&error],

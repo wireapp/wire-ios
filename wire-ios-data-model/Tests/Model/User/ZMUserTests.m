@@ -1021,7 +1021,7 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
         
         //then
         //check that self user is already created
-        NSArray *users = [moc executeFetchRequestOrAssert:[ZMUser sortedFetchRequest]];
+        NSArray *users = [moc fetchOrFatal:[ZMUser sortedFetchRequest]];
 
         //check that only one user created
         XCTAssertEqual(users.count, 1u);
@@ -1030,7 +1030,7 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
         XCTAssertFalse(selfUser.objectID.isTemporaryID);
         
         //check that only one session is created
-        NSArray *sessions = [moc executeFetchRequestOrAssert:[ZMSession sortedFetchRequest]];
+        NSArray *sessions = [moc fetchOrFatal:[ZMSession sortedFetchRequest]];
         XCTAssertEqual(sessions.count, 1u);
         
         //check that session stores user
@@ -1063,9 +1063,9 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
         XCTAssertEqualObjects(user, selfUser);
         
         //check that no new session and user is created
-        sessions = [moc executeFetchRequestOrAssert:[ZMSession sortedFetchRequest]];
+        sessions = [moc fetchOrFatal:[ZMSession sortedFetchRequest]];
         XCTAssertEqual(sessions.count, 1u);
-        users = [moc executeFetchRequestOrAssert:[ZMUser sortedFetchRequest]];
+        users = [moc fetchOrFatal:[ZMUser sortedFetchRequest]];
         XCTAssertEqual(users.count, 1u);
     }];
 }

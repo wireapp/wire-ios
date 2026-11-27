@@ -388,7 +388,7 @@
     NSPredicate *p = [NSPredicate predicateWithFormat:@"testUUID_data == %@", [UUID data]];
     NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"MockEntity"];
     request.predicate = p;
-    NSArray *users = [moc executeFetchRequestOrAssert:request];
+    NSArray *users = [moc fetchOrFatal:request];
     return users[0];
 }
 

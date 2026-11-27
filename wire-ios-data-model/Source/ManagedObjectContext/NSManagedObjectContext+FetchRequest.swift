@@ -18,8 +18,29 @@
 
 import Foundation
 import WireLogging
+import WireSystem
 
 public extension NSManagedObjectContext {
+
+    /// Executes a fetch request and terminates on errors other than a deleted persistent store.
+    func fetchOrFatal<T: NSFetchRequestResult>(request: NSFetchRequest<T>) -> [T] {
+        do {
+            return try fetch(request)
+        } catch {
+            WireLogger.localStorage
+                .error("CoreData: Error in fetching request : \(request),  \(error.localizedDescription)")
+            if !error.isPersistentStoreGone {
+                fatal("Error in fetching \(error.localizedDescription)")
+            }
+            return []
+        }
+    }
+
+    /// Exposes the fatal fetch helper to Objective-C.
+    @objc(fetchOrFatal:)
+    func fetchOrFatalFromObjectiveC(request: NSFetchRequest<NSFetchRequestResult>) -> [Any] {
+        fetchOrFatal(request: request)
+    }
 
     /// Executes a fetch request and asserts in case of error
     func fetchOrAssert<T>(request: NSFetchRequest<T>) -> [T] {

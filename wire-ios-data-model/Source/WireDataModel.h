@@ -28,7 +28,7 @@
 
 #import <WireDataModel/NSManagedObjectContext+zmessaging.h>
 #import <WireDataModel/NSManagedObjectContext+tests.h>
-#import <WireDataModel/NSManagedObjectContext+executeFetchRequestOrAssert.h>
+#import <WireDataModel/NSManagedObjectContext+FetchRequest.h>
 
 #import <WireDataModel/ZMUser.h>
 #import <WireDataModel/ZMUser+Internal.h>
