@@ -67,6 +67,7 @@ public extension WireLogger {
     static let ui = WireLogger(tag: "UI")
     static let updateEvent = WireLogger(tag: "update-event")
     static let userClient = WireLogger(tag: "user-client")
+    static let userProfile = WireLogger(tag: "user-profile")
     static let webSocket = WireLogger(tag: "websocket")
     static let wireDrive = WireLogger(tag: "wire-drive")
     static let workAgent = WireLogger(tag: "work-agent")

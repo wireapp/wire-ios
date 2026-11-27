@@ -19,6 +19,7 @@
 import Foundation
 import WireDataModel
 import WireFoundation
+import WireLogging
 
 // sourcery: AutoMockable
 protocol UserProfilePayloadProcessing {
@@ -108,6 +109,14 @@ final class UserProfilePayloadProcessor: UserProfilePayloadProcessing {
         }
 
         if (payload.name != nil || authoritative) && !user.isAccountDeleted {
+            if payload.name?.isEmpty ?? true {
+                // The user would be displayed as "Name not available".
+                let userID = user.remoteIdentifier?.safeForLoggingDescription ?? "<nil>"
+                WireLogger.userProfile.warn(
+                    "received profile without a name for user \(userID), handle missing: \(payload.handle == nil)",
+                    attributes: .safePublic
+                )
+            }
             user.name = payload.name
         }
 
