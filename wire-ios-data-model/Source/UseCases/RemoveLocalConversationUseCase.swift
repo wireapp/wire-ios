@@ -37,7 +37,10 @@ public class RemoveLocalConversationUseCase: RemoveLocalConversationUseCaseProto
         let isSyncContext = await syncContext.perform { syncContext.zm_isSyncContext }
         precondition(isSyncContext, "use case should only be accessed on the sync context")
 
-        await syncContext.perform { conversation.isDeletedRemotely = true }
+        await syncContext.perform {
+            conversation.isDeletedRemotely = true
+            conversation.needsToBeUpdatedFromBackend = false
+        }
         try await wipeMLSGroupIfNeeded(for: conversation, in: syncContext)
         await syncContext.perform { _ = syncContext.saveOrRollback() }
     }

@@ -289,6 +289,7 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
         selfUser.remoteIdentifier = UUID.create()
 
         conversation.addParticipantsAndUpdateConversationState(users: Set([selfUser, user1]), role: nil)
+        conversation.needsToBeUpdatedFromBackend = true
 
         XCTAssertTrue(conversation.isSelfAnActiveMember)
 
@@ -298,6 +299,26 @@ final class ConversationParticipantsTests: ZMConversationTestsBase {
 
         // then
         XCTAssertFalse(conversation.isSelfAnActiveMember)
+        XCTAssertFalse(conversation.needsToBeUpdatedFromBackend)
+    }
+
+    func testThatRemovingSelfFromOtherConversationTypesPreservesPendingRefresh() {
+        let team = createTeam(in: uiMOC)
+        let otherUser = createTeamMember(in: uiMOC, for: team)
+        let selfUser = ZMUser.selfUser(in: uiMOC)
+        selfUser.remoteIdentifier = UUID.create()
+        let cases: [(ConversationGroupType, Team?)] = [(.channel, nil), (.meeting, nil), (.group, team)]
+
+        for (type, team) in cases {
+            let conversation = createConversation(in: uiMOC, with: [selfUser, otherUser])
+            conversation.groupType = type
+            conversation.team = team
+            conversation.needsToBeUpdatedFromBackend = true
+
+            conversation.removeParticipantAndUpdateConversationState(user: selfUser, initiatingUser: otherUser)
+
+            XCTAssertTrue(conversation.needsToBeUpdatedFromBackend)
+        }
     }
 
     func testThatItDoesNothingForUnknownParticipants() {

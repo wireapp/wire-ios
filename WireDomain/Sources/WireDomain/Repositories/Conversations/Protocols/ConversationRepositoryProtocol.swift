@@ -34,6 +34,9 @@ public protocol ConversationRepositoryProtocol: Sendable {
         domain: String
     ) async throws
 
+    /// Refreshes a local conversation whose metadata is pending.
+    func refreshConversation(id: UUID, domain: String) async throws
+
     /// Fetches a conversation locally.
     /// - Parameters:
     ///     - id: The ID of the conversation.

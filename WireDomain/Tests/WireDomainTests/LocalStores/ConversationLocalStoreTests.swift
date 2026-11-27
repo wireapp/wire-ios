@@ -433,6 +433,41 @@ final class ConversationLocalStoreTests: XCTestCase {
         }
     }
 
+    func testReplayedSelfJoin_RefreshesOnlyHiddenRegularGroups() async throws {
+        let types: [WireDataModel.ConversationGroupType] = [.none, .channel]
+        for type in types {
+            let id = UUID()
+            let conversation = await context.perform { [self] in
+                let selfUser = modelHelper.createSelfUser(
+                    id: Scaffolding.userID,
+                    domain: Scaffolding.domain,
+                    in: context
+                )
+                let conversation = modelHelper.createGroupConversation(
+                    id: id,
+                    with: [selfUser],
+                    domain: Scaffolding.domain,
+                    in: context
+                )
+                conversation.groupType = type
+                conversation.isDeletedRemotely = true
+                conversation.needsToBeUpdatedFromBackend = false
+                return conversation
+            }
+
+            try await sut.addParticipants(
+                [(Scaffolding.userID, Scaffolding.domain, nil)],
+                addedBy: (Scaffolding.otherUserID, Scaffolding.domain),
+                atDate: .distantPast,
+                conversation: (id, Scaffolding.domain)
+            )
+
+            await context.perform {
+                XCTAssertEqual(conversation.needsToBeUpdatedFromBackend, type == .none)
+            }
+        }
+    }
+
     func testStoreMLSConversationEstablished_It_Sets_MLS_Status_Ready_And_Updates_MLS_Group_ID() async throws {
 
         // Mock

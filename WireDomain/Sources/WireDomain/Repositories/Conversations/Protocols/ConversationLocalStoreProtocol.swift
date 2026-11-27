@@ -66,6 +66,15 @@ public protocol ConversationLocalStoreProtocol {
         markAsRead: Bool
     ) async
 
+    /// Applies a group refresh only if its local state still matches the request.
+    func storeRefreshedGroup(
+        _ conversation: WireDomain.Conversation,
+        id: QualifiedID,
+        isFederationEnabled: Bool,
+        isMLSEnabled: Bool,
+        shouldApply: @Sendable @escaping (ZMConversation, NSManagedObjectContext) -> Bool
+    ) async
+
     /// Stores a flag indicating whether a conversation requires an update from backend.
     /// - Parameter needsBackendUpdate: A flag indicated whether the qualified conversation needs to be updated from
     /// backend.

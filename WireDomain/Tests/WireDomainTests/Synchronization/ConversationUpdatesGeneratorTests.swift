@@ -147,27 +147,59 @@ class ConversationUpdatesGeneratorTests {
         #expect(updateConversationItems.isEmpty)
     }
 
-    @Test("It does not generate an item when a conversation is deleted")
-    func deletedConversation() async throws {
-        // GIVEN
-        let conversationID = QualifiedID.random()
-        await coreDataStack.syncContext.perform { [modelHelper, context = coreDataStack.syncContext] in
-            let conversation = modelHelper.createGroupConversation(
-                id: conversationID.uuid,
-                domain: conversationID.domain,
+    @Test("It refreshes visible conversations and rechecks hidden regular groups with pending refreshes")
+    func refreshEligibility() async throws {
+        let diskStackHelper = CoreDataStackHelper()
+        defer { try? diskStackHelper.cleanupDirectory() }
+        let diskStack = try await diskStackHelper.createStack(inMemoryStore: false)
+        let context = diskStack.syncContext
+        let cases: [(groupType: ConversationGroupType?, hidden: Bool, pending: Bool, shouldRefresh: Bool)] = [
+            (.channel, false, true, true),
+            (.group, true, true, true),
+            (.some(.none), true, true, true),
+            (nil, true, true, true),
+            (.channel, true, true, false),
+            (.meeting, true, true, false),
+            (.group, true, false, false)
+        ]
+        let fixtures = cases.map { (id: QualifiedID.random(), scenario: $0) }
+
+        try await context.perform { [modelHelper] in
+            for (id, scenario) in fixtures {
+                let conversation = modelHelper.createGroupConversation(id: id.uuid, domain: id.domain, in: context)
+                if let groupType = scenario.groupType {
+                    conversation.groupType = groupType
+                }
+                conversation.isDeletedRemotely = scenario.hidden
+                conversation.needsToBeUpdatedFromBackend = scenario.pending
+            }
+
+            let (team, selfUser, otherUsers) = modelHelper.createSelfTeam(numberOfUsers: 1, in: context)
+            let legacyOneOnOne = modelHelper.createGroupConversation(
+                with: otherUsers.union([selfUser]),
+                team: team,
+                domain: "example.com",
                 in: context
             )
-            conversation.needsToBeUpdatedFromBackend = true
-            conversation.isDeletedRemotely = true
-        }
-        var updateConversationItems = [UpdateConversationItem]()
-        updateConversationItemClosure = { item in
-            updateConversationItems.append(item)
-        }
-        // WHEN
-        await sut.start()
+            legacyOneOnOne.groupType = .group
+            legacyOneOnOne.isDeletedRemotely = true
+            legacyOneOnOne.needsToBeUpdatedFromBackend = true
 
-        // THEN
-        #expect(updateConversationItems.isEmpty)
+            try context.save()
+            #expect(legacyOneOnOne.conversationType == .oneOnOne)
+            context.reset()
+        }
+
+        var updateConversationItems = [UpdateConversationItem]()
+        let generator = ConversationUpdatesGenerator(
+            repository: repository,
+            context: context,
+            onConversationUpdated: { updateConversationItems.append($0) }
+        )
+        await generator.start()
+
+        let expected = Set(fixtures.filter(\.scenario.shouldRefresh).map { $0.id.toAPIModel() })
+        let actual = updateConversationItems.map(\.conversationID)
+        #expect(Set(actual) == expected && actual.count == expected.count)
     }
 }

@@ -190,6 +190,209 @@ final class ConversationRepositoryTests: XCTestCase {
         }
     }
 
+    func testRefreshConversation_WhenGroupIsMissing_PreservesHistoryAndClearsSelfMembership() async throws {
+        let conversation = try await makeConversationForRefresh(isSelfMember: true)
+        let id = Scaffolding.qualifiedID
+        conversationsAPI.getConversationsFor_MockMethod = { ids in
+            XCTAssertEqual(ids, [id])
+            return .init(found: [], notFound: [id], failed: [])
+        }
+
+        do {
+            try await sut.refreshConversation(id: id.id, domain: id.domain)
+            XCTFail("Expected conversationNotFound")
+        } catch ConversationRepositoryError.conversationNotFound {}
+
+        await context.perform {
+            XCTAssertFalse(conversation.isDeletedRemotely)
+            XCTAssertFalse(conversation.isSelfAnActiveMember)
+            XCTAssertFalse(conversation.needsToBeUpdatedFromBackend)
+            XCTAssertNotNil(conversation.mlsGroupID)
+        }
+        XCTAssertTrue(mlsService.wipeGroup_Invocations.isEmpty)
+    }
+
+    func testRefreshConversation_WhenChannelIsMissing_RequiresMLSCleanupBeforeDeletion() async throws {
+        enum CleanupError: Error { case failed }
+        let conversation = try await makeConversationForRefresh(isSelfMember: true, groupType: .channel)
+        let id = Scaffolding.qualifiedID
+        conversationsAPI.getConversationsFor_MockValue = .init(found: [], notFound: [id], failed: [])
+        mlsService.wipeGroup_MockMethod = { _ in throw CleanupError.failed }
+
+        do {
+            try await sut.refreshConversation(id: id.id, domain: id.domain)
+            XCTFail("Expected cleanup error")
+        } catch CleanupError.failed {}
+
+        await context.perform {
+            XCTAssertFalse(conversation.isDeletedRemotely)
+            XCTAssertTrue(conversation.needsToBeUpdatedFromBackend)
+        }
+
+        mlsService.wipeGroup_MockMethod = { _ in }
+        do {
+            try await sut.refreshConversation(id: id.id, domain: id.domain)
+            XCTFail("Expected conversationNotFound")
+        } catch ConversationRepositoryError.conversationNotFound {}
+
+        await context.perform {
+            XCTAssertTrue(conversation.isDeletedRemotely)
+            XCTAssertFalse(conversation.needsToBeUpdatedFromBackend)
+        }
+    }
+
+    func testRefreshConversation_WhenHiddenGroupIsFound_ClearsRemoteDeletion() async throws {
+        let conversation = try await makeConversationForRefresh(isSelfMember: false, isDeletedRemotely: true)
+        let id = Scaffolding.qualifiedID
+        conversationsAPI.getConversationsFor_MockValue = .init(found: [], notFound: [id], failed: [])
+
+        do {
+            try await sut.refreshConversation(id: id.id, domain: id.domain)
+            XCTFail("Expected conversationNotFound")
+        } catch ConversationRepositoryError.conversationNotFound {}
+
+        await context.perform {
+            XCTAssertTrue(conversation.isDeletedRemotely)
+            conversation.needsToBeUpdatedFromBackend = true
+        }
+        var otherConversation = Scaffolding.conversation
+        otherConversation.qualifiedID = .init(id: id.id, domain: "other.example.com")
+        conversationsAPI.getConversationsFor_MockValue = .init(found: [otherConversation], notFound: [], failed: [])
+
+        do {
+            try await sut.refreshConversation(id: id.id, domain: id.domain)
+            XCTFail("Expected retrievalFailed")
+        } catch ConversationRepositoryError.retrievalFailed {}
+
+        await context.perform {
+            XCTAssertTrue(conversation.isDeletedRemotely)
+        }
+        conversationsAPI.getConversationsFor_MockValue = .init(
+            found: [Scaffolding.conversation],
+            notFound: [],
+            failed: []
+        )
+
+        try await sut.refreshConversation(id: id.id, domain: id.domain)
+
+        await context.perform {
+            XCTAssertFalse(conversation.isDeletedRemotely)
+        }
+        XCTAssertEqual(
+            conversationsLocalStore.storeRefreshedGroupIdIsFederationEnabledIsMLSEnabledShouldApply_Invocations
+                .count,
+            1
+        )
+        XCTAssertTrue(mlsService.wipeGroup_Invocations.isEmpty)
+    }
+
+    func testRefreshConversation_WhenSelfRejoinsDuringRequest_PreservesNewMembership() async throws {
+        let conversation = try await makeConversationForRefresh(isSelfMember: false)
+        let id = Scaffolding.qualifiedID
+        let context = context
+        conversationsAPI.getConversationsFor_MockMethod = { _ in
+            let selfJoined = await context.perform {
+                guard !conversation.isSelfAnActiveMember else { return false }
+                conversation.addParticipantAndUpdateConversationState(user: ZMUser.selfUser(in: context))
+                return true
+            }
+            if selfJoined {
+                return .init(found: [], notFound: [id], failed: [])
+            }
+            return .init(found: [Scaffolding.conversation], notFound: [], failed: [])
+        }
+
+        try await sut.refreshConversation(id: id.id, domain: id.domain)
+
+        await context.perform {
+            XCTAssertTrue(conversation.isSelfAnActiveMember)
+            XCTAssertFalse(conversation.isDeletedRemotely)
+        }
+        XCTAssertEqual(conversationsAPI.getConversationsFor_Invocations, [[id], [id]])
+        XCTAssertTrue(mlsService.wipeGroup_Invocations.isEmpty)
+    }
+
+    func testRefreshConversation_WhenSelfLeavesBeforeGroupIsStored_DiscardsResponse() async throws {
+        let conversation = try await makeConversationForRefresh(isSelfMember: true)
+        let id = Scaffolding.qualifiedID
+        conversationsAPI.getConversationsFor_MockValue = .init(
+            found: [Scaffolding.conversation],
+            notFound: [],
+            failed: []
+        )
+        let context = context
+        let store = try XCTUnwrap(
+            conversationsLocalStore.storeRefreshedGroupIdIsFederationEnabledIsMLSEnabledShouldApply_MockMethod
+        )
+        conversationsLocalStore.storeRefreshedGroupIdIsFederationEnabledIsMLSEnabledShouldApply_MockMethod =
+            { response, id, isFederationEnabled, isMLSEnabled, shouldApply in
+                await context.perform {
+                    conversation.removeParticipantAndUpdateConversationState(user: ZMUser.selfUser(in: context))
+                }
+                await store(response, id, isFederationEnabled, isMLSEnabled, shouldApply)
+            }
+
+        try await sut.refreshConversation(id: id.id, domain: id.domain)
+
+        await context.perform {
+            XCTAssertFalse(conversation.isSelfAnActiveMember)
+            XCTAssertFalse(conversation.needsToBeUpdatedFromBackend)
+        }
+        XCTAssertEqual(conversationsAPI.getConversationsFor_Invocations, [[id]])
+    }
+
+    private func makeConversationForRefresh(
+        isSelfMember: Bool,
+        isDeletedRemotely: Bool = false,
+        groupType: WireDataModel.ConversationGroupType = .none
+    ) async throws -> ZMConversation {
+        let context = context
+        let groupID = try XCTUnwrap(MLSGroupID(base64Encoded: Scaffolding.base64EncodedString))
+        let conversation = try await context.perform { [self] in
+            let selfUser = modelHelper.createSelfUser(in: context)
+            let conversation = modelHelper.createMLSConversation(
+                id: Scaffolding.id,
+                domain: Scaffolding.domain,
+                mlsGroupID: groupID,
+                with: isSelfMember ? [selfUser] : [],
+                in: context
+            )
+            conversation.groupType = groupType
+            conversation.isPendingInitialFetch = false
+            conversation.needsToBeUpdatedFromBackend = true
+            conversation.isDeletedRemotely = isDeletedRemotely
+            try context.save()
+            return conversation
+        }
+        conversationsLocalStore.executeConversationIDBlock_MockMethod = { id, block in
+            await context.perform {
+                block(ZMConversation.fetch(with: id, in: context), context)
+            }
+        }
+        let store = ConversationLocalStore(
+            context: context,
+            mlsService: nil,
+            messageLocalStore: MockMessageLocalStoreProtocol(),
+            localDomain: Scaffolding.domain,
+            isFederationEnabled: true
+        )
+        conversationsLocalStore.deleteConversation_MockMethod = { await store.deleteConversation($0) }
+        conversationsLocalStore.mlsConversationInfoConversation_MockMethod = {
+            await store.mlsConversationInfo(conversation: $0)
+        }
+        conversationsLocalStore.storeRefreshedGroupIdIsFederationEnabledIsMLSEnabledShouldApply_MockMethod =
+            { response, id, _, isMLSEnabled, shouldApply in
+                await store.storeRefreshedGroup(
+                    response,
+                    id: id,
+                    isFederationEnabled: true,
+                    isMLSEnabled: isMLSEnabled,
+                    shouldApply: shouldApply
+                )
+            }
+        return conversation
+    }
+
     func testFetchConversation_It_Invokes_Local_Store_Method() async {
         // Mock
 
@@ -492,6 +695,7 @@ final class ConversationRepositoryTests: XCTestCase {
         static let id = UUID.mockID1
 
         static let domain = "domain.com"
+        static let qualifiedID = WireNetwork.QualifiedID(id: id, domain: domain)
         static let guestLink = "https://www.example.com"
 
         static let conversation = Conversation(
