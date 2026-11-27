@@ -28,6 +28,8 @@ final class EmojiSectionViewController: UIViewController {
 
     private var typesByButton = [IconButton: EmojiSectionType]()
     private var sectionButtons = [IconButton]()
+    private var spacingConstraints = [NSLayoutConstraint]()
+    private let horizontalInset: CGFloat = 16
     private let iconSize = StyleKitIcon.Size.tiny.rawValue
     private var ignoreSelectionUpdates = false
 
@@ -122,23 +124,19 @@ final class EmojiSectionViewController: UIViewController {
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
-        sectionButtons.forEach {
-            $0.removeFromSuperview()
-            view.addSubview($0)
+        if sectionButtons.count > 1 {
+            let spacing = (view.bounds.width - 2 * horizontalInset - iconSize) / CGFloat(sectionButtons.count - 1)
+            for constraint in spacingConstraints where constraint.constant != spacing {
+                constraint.constant = spacing
+            }
         }
 
-        createConstraints()
         sectionButtons.forEach {
             $0.hitAreaPadding = CGSize(width: 5, height: view.bounds.height / 2)
         }
     }
 
     private func createConstraints() {
-
-        let inset: CGFloat = 16
-        let count = CGFloat(sectionButtons.count)
-        let fullSpacing = (view.bounds.width - 2 * inset) - iconSize
-        let padding: CGFloat = fullSpacing / (count - 1)
 
         var constraints = [NSLayoutConstraint]()
 
@@ -148,11 +146,16 @@ final class EmojiSectionViewController: UIViewController {
 
             switch idx {
             case 0:
-                constraints.append(button.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: inset))
-                constraints.append(view.heightAnchor.constraint(equalToConstant: iconSize + inset))
+                constraints.append(button.leadingAnchor.constraint(
+                    equalTo: view.leadingAnchor,
+                    constant: horizontalInset
+                ))
+                constraints.append(view.heightAnchor.constraint(equalToConstant: iconSize + horizontalInset))
             default:
                 let previous = sectionButtons[idx - 1]
-                constraints.append(button.centerXAnchor.constraint(equalTo: previous.centerXAnchor, constant: padding))
+                let spacingConstraint = button.centerXAnchor.constraint(equalTo: previous.centerXAnchor)
+                spacingConstraints.append(spacingConstraint)
+                constraints.append(spacingConstraint)
             }
 
             constraints.append(button.topAnchor.constraint(equalTo: view.topAnchor))

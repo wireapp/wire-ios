@@ -46,6 +46,27 @@ final class CanvasViewControllerTests: XCTestCase {
         super.tearDown()
     }
 
+    func testEmojiSectionsKeepConstraintsStableWhenResizing() {
+        let sections = EmojiSectionViewController(types: EmojiSectionType.allCases)
+        let view = sections.view!
+        let buttons = view.subviews
+        view.frame = CGRect(x: 0, y: 0, width: 320, height: 48)
+        view.layoutIfNeeded()
+        let constraintCount = view.constraints.count
+
+        for width: CGFloat in [320, 640, 320] {
+            view.frame = CGRect(x: 0, y: 0, width: width, height: 48)
+            view.layoutIfNeeded()
+            view.setNeedsLayout()
+            view.layoutIfNeeded()
+
+            XCTAssertEqual(view.subviews, buttons)
+            XCTAssertEqual(view.constraints.count, constraintCount)
+            XCTAssertEqual(buttons.first!.frame.minX, 16, accuracy: 0.5)
+            XCTAssertEqual(buttons.last!.frame.maxX, width - 16, accuracy: 0.5)
+        }
+    }
+
     func testForSendButtonEnabled() {
         sut.sendButton.isEnabled = true
         snapshotHelper.verify(matching: sut.view)
