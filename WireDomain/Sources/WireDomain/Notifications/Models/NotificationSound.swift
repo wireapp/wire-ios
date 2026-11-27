@@ -17,10 +17,15 @@
 //
 
 import Foundation
+import UserNotifications
 
 /// Push notification sounds.
 enum NotificationSound: String {
     case call = "ringing_from_them_long.caf"
     case ping = "ping_from_them.caf"
-    case `default`
+    case newMessage = "new_message.caf"
+
+    var userNotificationSound: UNNotificationSound {
+        UNNotificationSound(named: .init(rawValue))
+    }
 }
