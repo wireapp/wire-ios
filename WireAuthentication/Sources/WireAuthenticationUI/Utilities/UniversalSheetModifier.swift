@@ -33,16 +33,20 @@ struct UniversalSheetModifier<Item: Identifiable, SheetContent: View>: ViewModif
         if #available(iOS 26.0, *), UIDevice.current.userInterfaceIdiom == .phone {
             content
                 .overlay(alignment: .bottom) {
-                    if let item {
-                        self.content(item)
-                            .applyPreferredSize(isBottomAttached: true)
-                            .clipShape(UnevenRoundedRectangle(topLeadingRadius: 24, topTrailingRadius: 24))
-                            .background {
-                                UnevenRoundedRectangle(topLeadingRadius: 24, topTrailingRadius: 24)
-                                    .fill(ColorTheme.Backgrounds.surface.color)
-                                    .ignoresSafeArea(.container, edges: .bottom)
-                            }
+                    GeometryReader { geometry in
+                        if let item {
+                            self.content(item)
+                                .applyPreferredSize(isBottomAttached: true, availableHeight: geometry.size.height)
+                                .clipShape(UnevenRoundedRectangle(topLeadingRadius: 24, topTrailingRadius: 24))
+                                .background {
+                                    UnevenRoundedRectangle(topLeadingRadius: 24, topTrailingRadius: 24)
+                                        .fill(ColorTheme.Backgrounds.surface.color)
+                                        .ignoresSafeArea(.container, edges: .bottom)
+                                }
+                                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
+                        }
                     }
+                    .ignoresSafeArea(.container, edges: .horizontal)
                 }
                 .onChange(of: item?.id) { oldValue, newValue in
                     if oldValue != nil, newValue == nil {

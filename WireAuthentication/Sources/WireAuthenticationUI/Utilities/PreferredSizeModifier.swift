@@ -34,12 +34,13 @@ struct PreferredSizeModifier: ViewModifier {
 
     @State var size: CGSize = .init(width: 390, height: 420)
     var isBottomAttached = false
+    var availableHeight: CGFloat = .infinity
 
     func body(content: Content) -> some View {
         if isBottomAttached {
             content
                 .frame(maxWidth: .infinity)
-                .frame(height: size.height)
+                .frame(height: min(size.height, availableHeight))
                 .onPreferenceChange(PreferredSizeKey.self, perform: setSize)
         } else if UIDevice.current.userInterfaceIdiom == .pad {
             content
@@ -56,7 +57,7 @@ struct PreferredSizeModifier: ViewModifier {
         if let value {
             DispatchQueue.main.async {
                 withAnimation(.easeInOut(duration: 0.4)) {
-                    size.height = min(value.height, maxSize.height)
+                    size.height = isBottomAttached ? value.height : min(value.height, maxSize.height)
                     size.width = min(value.width, maxSize.width)
                 }
             }
@@ -92,7 +93,7 @@ extension View {
     }
 
     @ViewBuilder
-    func applyPreferredSize(isBottomAttached: Bool = false) -> some View {
-        modifier(PreferredSizeModifier(isBottomAttached: isBottomAttached))
+    func applyPreferredSize(isBottomAttached: Bool = false, availableHeight: CGFloat = .infinity) -> some View {
+        modifier(PreferredSizeModifier(isBottomAttached: isBottomAttached, availableHeight: availableHeight))
     }
 }
