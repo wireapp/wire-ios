@@ -32,11 +32,16 @@ struct UniversalSheetModifier<Item: Identifiable, SheetContent: View>: ViewModif
     func body(content: Content) -> some View {
         if #available(iOS 26.0, *), UIDevice.current.userInterfaceIdiom == .phone {
             content
+                .accessibilityHidden(item != nil)
                 .overlay(alignment: .bottom) {
                     GeometryReader { geometry in
                         if let item {
                             self.content(item)
-                                .applyPreferredSize(isBottomAttached: true, availableHeight: geometry.size.height)
+                                .applyPreferredSize(
+                                    isBottomAttached: true,
+                                    availableHeight: geometry.size.height,
+                                    topInset: geometry.safeAreaInsets.top
+                                )
                                 .clipShape(UnevenRoundedRectangle(topLeadingRadius: 24, topTrailingRadius: 24))
                                 .background {
                                     UnevenRoundedRectangle(topLeadingRadius: 24, topTrailingRadius: 24)
