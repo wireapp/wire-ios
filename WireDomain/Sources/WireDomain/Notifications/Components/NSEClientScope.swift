@@ -777,6 +777,7 @@ final class NSEClientScope: Component<NSEClientScopeDependency> {
         ShowNotificationUseCase(
             contentHandler: contentHandler,
             conversationLocalStore: conversationLocalStore,
+            userLocalStore: userLocalStore,
             selectedAccount: dependency.account,
             accountManager: dependency.accountManager,
             databaseSaver: databaseSaver
