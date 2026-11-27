@@ -127,7 +127,7 @@
         NSSet *predicates = [entityToRequestsMap objectForKey:entity];
         NSFetchRequest *fetchRequest = [self compoundRequestForEntity:entity predicates:predicates];
         
-        NSArray *result = [self.managedObjectContext executeFetchRequestOrAssert:fetchRequest];
+        NSArray *result = [self.managedObjectContext fetchOrFatal:fetchRequest];
         if (result.count > 0){
             [resultsMap setObject:result forKey:entity];
         }

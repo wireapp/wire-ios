@@ -114,7 +114,7 @@
 			);
 			publicHeaders = (
 				ConversationList/ZMConversationListDirectory.h,
-				"ManagedObjectContext/NSManagedObjectContext+executeFetchRequestOrAssert.h",
+				"ManagedObjectContext/NSManagedObjectContext+FetchRequest.h",
 				"ManagedObjectContext/NSManagedObjectContext+tests.h",
 				"ManagedObjectContext/NSManagedObjectContext+zmessaging.h",
 				Model/Connection/ZMConnection.h,

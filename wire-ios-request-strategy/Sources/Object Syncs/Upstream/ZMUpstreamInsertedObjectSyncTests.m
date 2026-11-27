@@ -510,7 +510,7 @@ static NSString *foo = @"foo";
     
     // then
     NSFetchRequest *convFetchRequest = [MockEntity sortedFetchRequest];
-    NSArray *mockEntities = [self.testMOC executeFetchRequestOrAssert:convFetchRequest];
+    NSArray *mockEntities = [self.testMOC fetchOrFatal:convFetchRequest];
     XCTAssertEqual(0u, mockEntities.count);
 }
 
@@ -538,7 +538,7 @@ static NSString *foo = @"foo";
     
     // then
     NSFetchRequest *convFetchRequest = [MockEntity sortedFetchRequest];
-    NSArray *mockEntities = [self.testMOC executeFetchRequestOrAssert:convFetchRequest];
+    NSArray *mockEntities = [self.testMOC fetchOrFatal:convFetchRequest];
     XCTAssertEqual(1u, mockEntities.count);
 }
 
@@ -566,7 +566,7 @@ static NSString *foo = @"foo";
     
     // then
     NSFetchRequest *convFetchRequest = [MockEntity sortedFetchRequest];
-    NSArray *mockEntities = [self.testMOC executeFetchRequestOrAssert:convFetchRequest];
+    NSArray *mockEntities = [self.testMOC fetchOrFatal:convFetchRequest];
     XCTAssertEqual(0u, mockEntities.count);
 }
 
@@ -693,7 +693,7 @@ static NSString *foo = @"foo";
     
     // then
     NSFetchRequest *convFetchRequest = [MockEntity sortedFetchRequest];
-    NSArray *mockEntities = [self.testMOC executeFetchRequestOrAssert:convFetchRequest];
+    NSArray *mockEntities = [self.testMOC fetchOrFatal:convFetchRequest];
     XCTAssertEqual(1u, mockEntities.count);
     
     [(id)self.mockTranscoder verify];
@@ -821,7 +821,7 @@ static NSString *foo = @"foo";
     
     // then
     NSFetchRequest *convFetchRequest = [MockEntity sortedFetchRequest];
-    NSArray *mockEntities = [self.testMOC executeFetchRequestOrAssert:convFetchRequest];
+    NSArray *mockEntities = [self.testMOC fetchOrFatal:convFetchRequest];
     XCTAssertEqual(1u, mockEntities.count);
 }
 
@@ -846,7 +846,7 @@ static NSString *foo = @"foo";
     
     // then
     NSFetchRequest *convFetchRequest = [MockEntity sortedFetchRequest];
-    NSArray *mockEntities = [self.testMOC executeFetchRequestOrAssert:convFetchRequest];
+    NSArray *mockEntities = [self.testMOC fetchOrFatal:convFetchRequest];
     XCTAssertEqual(1u, mockEntities.count);
 }
 

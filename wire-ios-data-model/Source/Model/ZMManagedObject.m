@@ -345,7 +345,7 @@ static NSString * const KeysForCachedValuesKey = @"ZMKeysForCachedValues";
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:self.entityName];
     fetchRequest.predicate = [NSPredicate predicateWithFormat:@"%K == %@", [self remoteIdentifierDataKey], uuid.data];
     fetchRequest.fetchLimit = 2; // We only want 1, but want to check if there are too many.
-    NSArray *fetchResult = [moc executeFetchRequestOrAssert:fetchRequest];
+    NSArray *fetchResult = [moc fetchOrFatal:fetchRequest];
     if (fetchResult.count > 1) {
         // Duplicates should never coexist. Log each one (persisted with the logs) before crashing,
         // so the cause can be confirmed from the logs and the assertion dump.
@@ -399,7 +399,7 @@ static NSString * const KeysForCachedValuesKey = @"ZMKeysForCachedValues";
     }
 
     fetchRequest.fetchLimit = 2; // We only want 1, but want to check if there are too many.
-    NSArray *fetchResult = [moc executeFetchRequestOrAssert:fetchRequest];
+    NSArray *fetchResult = [moc fetchOrFatal:fetchRequest];
     if (fetchResult.count > 1) {
         // Duplicates should never coexist. Log each one (persisted with the logs) before crashing,
         // so the cause can be confirmed from the logs and the assertion dump.
@@ -442,7 +442,7 @@ static NSString * const KeysForCachedValuesKey = @"ZMKeysForCachedValues";
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:self.entityName];
     fetchRequest.predicate = [NSPredicate predicateWithFormat:@"%K IN %@", [self remoteIdentifierDataKey], uuidDataArray];
     fetchRequest.fetchLimit = uuidDataArray.count + 1; // We only want 1 object for each uuid, but want to check if there are too many.
-    NSArray *fetchResult = [moc executeFetchRequestOrAssert:fetchRequest];
+    NSArray *fetchResult = [moc fetchOrFatal:fetchRequest];
     RequireString([fetchResult count] <= uuidDataArray.count, "More than one object with the same UUID");
     [objects addObjectsFromArray:fetchResult];
     return objects;

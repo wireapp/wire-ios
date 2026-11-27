@@ -2601,7 +2601,7 @@
     NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"Conversation"];
     request.predicate = [ZMConversation predicateForSearchQuery:@"User1" team:nil moc:self.uiMOC];
     
-    NSArray *result = [self.uiMOC executeFetchRequestOrAssert:request];
+    NSArray *result = [self.uiMOC fetchOrFatal:request];
     
     // then
     XCTAssertEqual(result.count, 1u);
@@ -2626,7 +2626,7 @@
     NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"Conversation"];
     request.predicate = [ZMConversation predicateForSearchQuery:@"Foo Bar" team:nil moc:self.uiMOC];
     
-    NSArray *result = [self.uiMOC executeFetchRequestOrAssert:request];
+    NSArray *result = [self.uiMOC fetchOrFatal:request];
     
     // then
     XCTAssertEqual(result.count, 1u);
@@ -2648,7 +2648,7 @@
     NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"Conversation"];
     request.predicate = [ZMConversation userDefinedNamePredicateForSearchString:@"The Wire"];
     
-    NSArray *result = [self.uiMOC executeFetchRequestOrAssert:request];
+    NSArray *result = [self.uiMOC fetchOrFatal:request];
     
     // then
     XCTAssertEqual(result.count, 1u);
@@ -2671,7 +2671,7 @@
     NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"Conversation"];
     request.predicate = [ZMConversation userDefinedNamePredicateForSearchString:@"The Wire"];
     
-    NSArray *result = [self.uiMOC executeFetchRequestOrAssert:request];
+    NSArray *result = [self.uiMOC fetchOrFatal:request];
     
     // then
     XCTAssertEqual(result.count, 1u);
@@ -2699,7 +2699,7 @@
     NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"Conversation"];
     request.predicate = [ZMConversation predicateForSearchQuery:@"Bine" team:nil moc:self.uiMOC];
     
-    NSArray *result = [self.uiMOC executeFetchRequestOrAssert:request];
+    NSArray *result = [self.uiMOC fetchOrFatal:request];
     
     // then
     XCTAssertEqual(result.count, 2u);
@@ -2723,7 +2723,7 @@
     NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"Conversation"];
     request.predicate = [ZMConversation userDefinedNamePredicateForSearchString:@"Find Conversation"];
     
-    NSArray *result = [self.uiMOC executeFetchRequestOrAssert:request];
+    NSArray *result = [self.uiMOC fetchOrFatal:request];
     
     // then
     XCTAssertEqual(result.count, 0u);
@@ -2743,7 +2743,7 @@
     NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"Conversation"];
     request.predicate = [ZMConversation userDefinedNamePredicateForSearchString:@"TheString"];
     
-    NSArray *result = [self.uiMOC executeFetchRequestOrAssert:request];
+    NSArray *result = [self.uiMOC fetchOrFatal:request];
     
     // then
     XCTAssertEqual(result.count, 1u);
@@ -2769,7 +2769,7 @@
     NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"Conversation"];
     request.predicate = [ZMConversation predicateForSearchQuery:@"Club" team:nil moc:self.uiMOC];
     
-    NSArray *result = [self.uiMOC executeFetchRequestOrAssert:request];
+    NSArray *result = [self.uiMOC fetchOrFatal:request];
     
     // then
     XCTAssertEqual(result.count, 1u);
@@ -2797,7 +2797,7 @@
     NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"Conversation"];
     request.predicate = [ZMConversation predicateForSearchQuery:@"Club" team:team moc:self.uiMOC];
     
-    NSArray *result = [self.uiMOC executeFetchRequestOrAssert:request];
+    NSArray *result = [self.uiMOC fetchOrFatal:request];
     
     // then
     XCTAssertEqual(result.count, 1u);

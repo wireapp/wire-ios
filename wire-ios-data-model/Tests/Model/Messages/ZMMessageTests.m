@@ -882,7 +882,7 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
     
     // when
     NSFetchRequest *request = [ZMSystemMessage sortedFetchRequest];
-    NSArray *result = [self.uiMOC executeFetchRequestOrAssert:request];
+    NSArray *result = [self.uiMOC fetchOrFatal:request];
 
     // then
     XCTAssertNotNil(result);
@@ -927,7 +927,7 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
     WaitForAllGroupsToBeEmpty(0.5);
     
     NSFetchRequest *request = [ZMSystemMessage sortedFetchRequest];
-    NSArray *messages = [self.uiMOC executeFetchRequestOrAssert:request];
+    NSArray *messages = [self.uiMOC fetchOrFatal:request];
     
     // then
     XCTAssertNotNil(messages);
@@ -964,7 +964,7 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
     WaitForAllGroupsToBeEmpty(0.5);
     
     NSFetchRequest *request = [ZMSystemMessage sortedFetchRequest];
-    NSArray *messages = [self.uiMOC executeFetchRequestOrAssert:request];
+    NSArray *messages = [self.uiMOC fetchOrFatal:request];
     
     // then
     XCTAssertNotNil(messages);
@@ -1003,7 +1003,7 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
     WaitForAllGroupsToBeEmpty(0.5);
     
     NSFetchRequest *request = [ZMSystemMessage sortedFetchRequest];
-    NSArray *messages = [self.uiMOC executeFetchRequestOrAssert:request];
+    NSArray *messages = [self.uiMOC fetchOrFatal:request];
     
     // then
     XCTAssertNotNil(messages);
@@ -1042,7 +1042,7 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
     WaitForAllGroupsToBeEmpty(0.5);
     
     NSFetchRequest *request = [ZMSystemMessage sortedFetchRequest];
-    NSArray *messages = [self.uiMOC executeFetchRequestOrAssert:request];
+    NSArray *messages = [self.uiMOC fetchOrFatal:request];
     
     // then
     XCTAssertNotNil(messages);
@@ -1082,7 +1082,7 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
     WaitForAllGroupsToBeEmpty(0.5);
     
     NSFetchRequest *request = [ZMSystemMessage sortedFetchRequest];
-    NSArray *messages = [self.uiMOC executeFetchRequestOrAssert:request];
+    NSArray *messages = [self.uiMOC fetchOrFatal:request];
     
     // then
     XCTAssertEqual(messages.count, 0u);
