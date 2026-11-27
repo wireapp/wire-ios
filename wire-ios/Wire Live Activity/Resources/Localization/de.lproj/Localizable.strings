@@ -1,0 +1,18 @@
+"live_activity.uploads.uploading.title" = "Hochladen auf Geteiltes Drive";
+"live_activity.uploads.uploading.subtitle" = "%1$lld von %2$lld hochgeladen";
+"live_activity.uploads.uploading.failed" = "%lld fehlgeschlagen";
+/* VoiceOver upload progress: uploaded/failed file counts followed by a localized percentage. */
+"live_activity.uploads.uploading.accessibility_value" = "%1$@,%2$@";
+
+"live_activity.uploads.stale.title" = "Uploads auf Geteiltes Drive";
+"live_activity.uploads.stale.subtitle" = "Öffnen Sie Wire, um Upload-Status zu überprüfen";
+"live_activity.uploads.stale.compact_text" = "Wire öffnen";
+
+"live_activity.uploads.completed.title" = "Upload abgeschlossen";
+"live_activity.uploads.completed.subtitle_one" = "1 Datei auf Geteiltes Drive";
+"live_activity.uploads.completed.subtitle_many" = "%lld Dateien auf Geteiltes Drive";
+
+"live_activity.uploads.failed.title_one" = "1 Datei nicht hochgeladen";
+"live_activity.uploads.failed.title_many" = "%lld Dateien nicht hochgeladen";
+"live_activity.uploads.failed.subtitle" = "auf Geteiltes Drive";
+"live_activity.uploads.failed.subtitle_with_uploaded" = "%1$lld von %2$lld hochgeladen";

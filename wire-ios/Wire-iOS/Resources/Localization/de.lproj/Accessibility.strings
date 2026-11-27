@@ -32,7 +32,7 @@
 "conversation.titleViewForOneToOne.hint" = "Doppeltippen, um Profil zu öffnen";
 "conversation.legalHoldIcon.description" = "Gesetzliche Aufbewahrung";
 "conversation.verifiedIcon.description" = "Überprüft";
-"conversation.linkPreviewImage.description" = "Vorschau-Bild zum Link-Ziel %@";
+"conversation.linkPreviewImage.description" = "Vorschaubild für den Link zu %@";
 "conversation.linkPreviewImage.fallbackDescription" = "Link-Vorschaubild";
 
 "conversation.messageStatus.sending" = "Wird gesendet";
@@ -68,6 +68,7 @@
 "conversation.timerForSelfDeletingMessagesWeek.value" = "%@ Woche";
 "conversation.timerForSelfDeletingMessagesWeeks.value" = "%@ Wochen";
 "conversation.cameraButtonDisabled.description" = "Foto aufnehmen oder auswählen, deaktiviert für Betrachter";
+"conversation.audioButtonDisabled.description" = "Audionachricht aufnehmen, deaktiviert im Betrachter-Zugriff";
 "conversation.sketchButtonDisabled.description" = " Skizze zum Zeichnen oder Schreiben öffnen, deaktiviert für Betrachter";
 "conversation.uploadFileButtonDisabled.description" = "Datei teilen, deaktiviert für Betrachter";
 "conversation.videoButtonDisabled.description" = "Video aufnehmen, deaktiviert für Betrachter";
