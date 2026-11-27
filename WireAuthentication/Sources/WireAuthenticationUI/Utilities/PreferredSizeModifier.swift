@@ -33,9 +33,15 @@ struct PreferredSizeKey: PreferenceKey, Sendable {
 struct PreferredSizeModifier: ViewModifier {
 
     @State var size: CGSize = .init(width: 390, height: 420)
+    var isBottomAttached = false
 
     func body(content: Content) -> some View {
-        if UIDevice.current.userInterfaceIdiom == .pad {
+        if isBottomAttached {
+            content
+                .frame(maxWidth: .infinity)
+                .frame(height: size.height)
+                .onPreferenceChange(PreferredSizeKey.self, perform: setSize)
+        } else if UIDevice.current.userInterfaceIdiom == .pad {
             content
                 .frame(width: size.width, height: size.height)
                 .onPreferenceChange(PreferredSizeKey.self, perform: setSize)
@@ -86,7 +92,7 @@ extension View {
     }
 
     @ViewBuilder
-    func applyPreferredSize() -> some View {
-        modifier(PreferredSizeModifier())
+    func applyPreferredSize(isBottomAttached: Bool = false) -> some View {
+        modifier(PreferredSizeModifier(isBottomAttached: isBottomAttached))
     }
 }

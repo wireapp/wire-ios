@@ -19,7 +19,8 @@ import SwiftUI
 import SwiftUIIntrospect
 import WireDesign
 
-/// This ViewModifier creates a custom overlay for iPad and fallback to .sheet on iPhone
+/// Presents authentication as a bottom-attached panel on modern iPhone, a centered panel on iPad,
+/// and a system sheet on older iPhone releases.
 /// - Note: On iPad, `sheet` modifier is presented as a page. PresentationDetents have no effect
 struct UniversalSheetModifier<Item: Identifiable, SheetContent: View>: ViewModifier {
 
@@ -29,7 +30,26 @@ struct UniversalSheetModifier<Item: Identifiable, SheetContent: View>: ViewModif
 
     @ViewBuilder
     func body(content: Content) -> some View {
-        if #available(iOS 18.0, *) {
+        if #available(iOS 26.0, *), UIDevice.current.userInterfaceIdiom == .phone {
+            content
+                .overlay(alignment: .bottom) {
+                    if let item {
+                        self.content(item)
+                            .applyPreferredSize(isBottomAttached: true)
+                            .clipShape(UnevenRoundedRectangle(topLeadingRadius: 24, topTrailingRadius: 24))
+                            .background {
+                                UnevenRoundedRectangle(topLeadingRadius: 24, topTrailingRadius: 24)
+                                    .fill(ColorTheme.Backgrounds.surface.color)
+                                    .ignoresSafeArea(.container, edges: .bottom)
+                            }
+                    }
+                }
+                .onChange(of: item?.id) { oldValue, newValue in
+                    if oldValue != nil, newValue == nil {
+                        onDismiss?()
+                    }
+                }
+        } else if #available(iOS 18.0, *) {
             if UIDevice.current.userInterfaceIdiom == .pad {
 
                 content
