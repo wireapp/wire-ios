@@ -55,7 +55,7 @@ extension UIApplication: ApplicationProtocol {
     }
 
     static func wr_requestOrWarnAboutPhotoLibraryAccess(_ grantedHandler: @escaping (Bool) -> Void) {
-        PHPhotoLibrary.requestAuthorization { status in
+        PHPhotoLibrary.requestAuthorization(for: .readWrite) { status in
             DispatchQueue.main.async {
                 switch status {
                 case .restricted:
@@ -68,7 +68,7 @@ extension UIApplication: ApplicationProtocol {
                 case .authorized:
                     grantedHandler(true)
                 case .limited:
-                    fallthrough
+                    grantedHandler(true)
                 @unknown default:
                     break
                 }

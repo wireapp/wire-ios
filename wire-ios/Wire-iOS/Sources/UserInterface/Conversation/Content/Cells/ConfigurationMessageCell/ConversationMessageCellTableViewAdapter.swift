@@ -293,6 +293,7 @@ final class ConversationMessageCellTableViewAdapter<
             verticalFittingPriority: verticalFittingPriority
         )
     }
+
 }
 
 extension UITableView {

@@ -66,6 +66,7 @@ final class ConversationReplyWithTextCell: UIView, ConversationMessageCell, Text
         let view = LinkInteractionTextView.withBlockquoteBars()
         view.isEditable = false
         view.isSelectable = true
+        view.isCopyAllowed = { [weak self] in self?.message?.canBeCopied ?? false }
         view.backgroundColor = .clear
         view.isScrollEnabled = false
         view.textContainerInset = .zero
