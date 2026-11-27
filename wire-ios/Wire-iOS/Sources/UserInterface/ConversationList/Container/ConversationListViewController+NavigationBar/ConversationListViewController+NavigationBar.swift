@@ -84,9 +84,10 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
             .accessibilityValue(viewModel.userSession.selfUser.name ?? "")
         accountImageView.accessibilityTraits = .button
         accountImageView.accessibilityHint = L10n.Accessibility.ConversationsList.AccountButton.hint
+        let avatarSize: CGFloat = if #available(iOS 26.0, *) { 44 } else { 28 }
         accountImageView.translatesAutoresizingMaskIntoConstraints = false
-        accountImageView.widthAnchor.constraint(equalToConstant: 28).isActive = true
-        accountImageView.heightAnchor.constraint(equalToConstant: 28).isActive = true
+        accountImageView.widthAnchor.constraint(equalToConstant: avatarSize).isActive = true
+        accountImageView.heightAnchor.constraint(equalToConstant: avatarSize).isActive = true
 
         let design = AccountImageViewDesign()
         accountImageView.imageBorderWidth = design.borderWidth
@@ -99,9 +100,6 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
         let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(presentProfile))
         accountImageView.addGestureRecognizer(tapGestureRecognizer)
 
-        accountImageView.translatesAutoresizingMaskIntoConstraints = false
-        accountImageView.widthAnchor.constraint(equalToConstant: 28).isActive = true
-        accountImageView.heightAnchor.constraint(equalToConstant: 28).isActive = true
 
         return accountImageView
     }
@@ -112,6 +110,7 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
         // so we'll use a stack view instead
         let stackView = UIStackView()
         stackView.spacing = 4
+        stackView.alignment = .center
 
         // avatar
         let accountImageView = makeAccountImageView()
