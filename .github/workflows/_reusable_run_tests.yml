@@ -287,6 +287,10 @@ jobs:
           PREVIOUS_FAILED_UI_TEST_CASES: ${{ steps.previous-failed-ui-tests.outputs.ui_test_cases }}
           UITEST_PARALLEL_WORKERS: ${{ inputs.uitest_parallel_workers }}
         run: |
+          mkdir -p video-evidence
+          python3 scripts/record-video-evidence.py &
+          recording_watcher=$!
+          trap 'kill -TERM "$recording_watcher" 2>/dev/null || true; wait "$recording_watcher" || true' EXIT
           if [ -n "$UI_TEST_CASES" ]; then
             bundle exec fastlane run_uitests testiny_cases:"$UI_TEST_CASES" skip_testing:"$UI_TEST_SKIP_CASES" parallel_workers:"$UITEST_PARALLEL_WORKERS"
           elif [ -n "$PREVIOUS_FAILED_UI_TEST_CASES" ]; then
@@ -296,6 +300,14 @@ jobs:
           else
             bundle exec fastlane run_uitests skip_testing:"$UI_TEST_SKIP_CASES" parallel_workers:"$UITEST_PARALLEL_WORKERS"
           fi
+
+      - name: Upload diagnostic deletion video
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: deletion-video-evidence
+          path: video-evidence/
+          retention-days: 3
 
       - name: Stop Kalium Testservice
         if: ${{ always() && env.KALIUM_TEST_SERVICE_ENABLED == 'true' }}

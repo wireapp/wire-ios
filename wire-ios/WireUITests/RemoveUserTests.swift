@@ -65,6 +65,10 @@ class RemoveUserTests: WireUITestCase {
             .openConversation()
             .sendMessage("test")
 
+        print("VIDEO_EVIDENCE_START")
+        defer { print("VIDEO_EVIDENCE_STOP") }
+        try await Task.sleep(for: .seconds(2))
+
         // WHEN
         try await deleteMember(member2)
 
@@ -75,6 +79,8 @@ class RemoveUserTests: WireUITestCase {
             oneOnOneConversation.userRemovedSystemMessage.waitForExistence(timeout: 1),
             "system message should be inserted"
         )
+        try await Task.sleep(for: .seconds(3))
+        print("VIDEO_EVIDENCE_STOP")
     }
 
     /// Test when a team member is removed, the 1:1 with the user is marked as readonly on an active conversation
