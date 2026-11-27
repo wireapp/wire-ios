@@ -224,15 +224,21 @@ static void bitmapContextReleaseData(void *releaseInfo, void *data);
     {
         // Force JPEG:
         compressedData = [self createCompressImageDataFromImage:image format:UTTypeJPEG.identifier];
-        finalFormat = (NSString *)UTTypeJPEG;
+        finalFormat = UTTypeJPEG.identifier;
     }
-    
+
     // did I not achieve any sensible compression?
     if (compressedData.length * DownsampleResizeThreshold < self.loadOperation.originalImageData.length)
     {
         // not worth compressing, use original
         self.downsampleImageData = compressedData;
         finalFormat = format;
+    }
+    else
+    {
+        // `downsampleImageData` stays unset, so the original data is used: report its original format
+        // instead of the JPEG fallback, otherwise the format would not match the data.
+        finalFormat = self.loadOperation.computedImageProperties.mimeType;
     }
     return finalFormat;
 }
