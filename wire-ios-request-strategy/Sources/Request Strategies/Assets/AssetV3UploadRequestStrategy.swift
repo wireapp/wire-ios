@@ -19,6 +19,7 @@
 import Foundation
 import WireDataModel
 import WireLogging
+import WireUtilities
 
 /// AssetV3UploadRequestStrategy is responsible for uploading all the assets associated with a asset message
 /// after they've been preprocessed (downscaled & encrypted). After all the assets have been uploaded
@@ -28,6 +29,7 @@ public final class AssetV3UploadRequestStrategy: AbstractRequestStrategy, ZMCont
     let requestFactory = AssetRequestFactory()
     var upstreamSync: ZMUpstreamModifiedObjectSync!
     var preprocessor: AssetsPreprocessor
+    let pendingUploadDeadlineTimer: PendingUploadDeadlineTimer
 
     private let featureRepository: LegacyFeatureRepository
 
@@ -50,6 +52,7 @@ public final class AssetV3UploadRequestStrategy: AbstractRequestStrategy, ZMCont
         isCloudDomain: Bool
     ) {
         self.preprocessor = AssetsPreprocessor(managedObjectContext: managedObjectContext)
+        self.pendingUploadDeadlineTimer = PendingUploadDeadlineTimer(context: managedObjectContext)
         self.localDomain = localDomain
         self.isCloudDomain = isCloudDomain
         self.featureRepository = LegacyFeatureRepository(context: managedObjectContext)
@@ -67,8 +70,12 @@ public final class AssetV3UploadRequestStrategy: AbstractRequestStrategy, ZMCont
         )
     }
 
+    deinit {
+        pendingUploadDeadlineTimer.tearDown()
+    }
+
     public var contextChangeTrackers: [ZMContextChangeTracker] {
-        [preprocessor, upstreamSync, self]
+        [preprocessor, upstreamSync, pendingUploadDeadlineTimer, self]
     }
 
     public override func nextRequestIfAllowed(for apiVersion: APIVersion) -> ZMTransportRequest? {
@@ -342,4 +349,93 @@ extension AssetV3UploadRequestStrategy: ZMUpstreamTranscoder {
         false
     }
 
+}
+
+// MARK: - Pending upload deadline
+
+/// Fails asset uploads that waited for the network longer than `ZMOTRMessage.maxPendingDuration`, so the user
+/// can retry them. Uploads otherwise wait for the network indefinitely. Only applies with the offline pending
+/// messages flag enabled, and not to self-deleting messages, like for text messages.
+///
+/// It waits on the continuous clock, which keeps running while the device sleeps, unlike `ZMMessageTimer`.
+final class PendingUploadDeadlineTimer: NSObject, ZMContextChangeTracker {
+
+    private static let isUploadingPredicate = NSPredicate(
+        format: "version >= 3 && delivered == NO && %K == 0 && transferState == %@",
+        ZMMessageIsExpiredKey,
+        NSNumber(value: AssetTransferState.uploading.rawValue)
+    )
+
+    private let context: NSManagedObjectContext
+
+    /// The waits per uploading message. Only accessed on the context's queue.
+    private var waits: [NSManagedObjectID: Task<Void, Never>] = [:]
+
+    init(context: NSManagedObjectContext) {
+        self.context = context
+    }
+
+    func tearDown() {
+        waits.values.forEach { $0.cancel() }
+        waits.removeAll()
+    }
+
+    func fetchRequestForTrackedObjects() -> NSFetchRequest<NSFetchRequestResult>? {
+        guard DeveloperFlag.offlinePendingMessages.isOn else { return nil }
+        return ZMAssetClientMessage.sortedFetchRequest(with: Self.isUploadingPredicate)
+    }
+
+    func addTrackedObjects(_ objects: Set<NSManagedObject>) {
+        update(objects)
+    }
+
+    func objectsDidChange(_ objects: Set<NSManagedObject>) {
+        update(objects)
+    }
+
+    private func update(_ objects: Set<NSManagedObject>) {
+        guard DeveloperFlag.offlinePendingMessages.isOn else { return }
+
+        for case let message as ZMAssetClientMessage in objects {
+            let objectID = message.objectID
+            guard hasUploadDeadline(message), let deadline = message.pendingDeadline else {
+                waits.removeValue(forKey: objectID)?.cancel()
+                continue
+            }
+            if deadline <= .now {
+                waits.removeValue(forKey: objectID)?.cancel()
+                fail(message)
+            } else if waits[objectID] == nil {
+                waits[objectID] = Task { [weak self, context] in
+                    try? await Task.sleep(for: .seconds(deadline.timeIntervalSinceNow))
+                    guard !Task.isCancelled else { return }
+                    await context.perform {
+                        // Only fail the upload if it's still waiting in the same period, not after a retry.
+                        guard
+                            let self,
+                            let message = try? context.existingObject(with: objectID) as? ZMAssetClientMessage,
+                            hasUploadDeadline(message),
+                            message.pendingDeadline == deadline
+                        else { return }
+                        waits[objectID] = nil
+                        fail(message)
+                    }
+                }
+            }
+        }
+    }
+
+    private func hasUploadDeadline(_ message: ZMAssetClientMessage) -> Bool {
+        !message.isZombieObject && !message.isEphemeral && Self.isUploadingPredicate.evaluate(with: message)
+    }
+
+    private func fail(_ message: ZMAssetClientMessage) {
+        WireLogger.assets.info(
+            "failing upload that waited too long for the network",
+            attributes: [.nonce: message.nonce?.safeForLoggingDescription ?? "<nil>"],
+            .safePublic
+        )
+        message.expire(withReason: .timeout)
+        context.enqueueDelayedSave()
+    }
 }

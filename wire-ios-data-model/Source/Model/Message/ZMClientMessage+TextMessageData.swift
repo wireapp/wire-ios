@@ -116,17 +116,23 @@ extension ZMClientMessage: TextMessageData {
 
     // MARK: - Pending messages
 
-    /// Whether the message waits for the network instead of failing when the device is offline.
-    public var staysPendingWhileOffline: Bool {
+    /// Whether the message is of a kind that waits for the network instead of failing when the device is
+    /// offline, regardless of how long it has been waiting.
+    public var canStayPendingWhileOffline: Bool {
         DeveloperFlag.offlinePendingMessages.isOn && !isEphemeral
+    }
+
+    /// Whether the message waits for the network instead of failing when the device is offline. It only
+    /// waits until `pendingDeadline`.
+    public var staysPendingWhileOffline: Bool {
+        canStayPendingWhileOffline && !hasPassedPendingDeadline
     }
 
     /// Whether the text can be replaced without sending an edit, because the message is pending and
     /// hasn't been sent yet. Recipients then only ever see the new text, without an edited marker.
     public var isEditableInPlace: Bool {
         guard
-            DeveloperFlag.offlinePendingMessages.isOn,
-            !isEphemeral,
+            staysPendingWhileOffline,
             !isExpired,
             !delivered,
             !sendAttemptStarted,

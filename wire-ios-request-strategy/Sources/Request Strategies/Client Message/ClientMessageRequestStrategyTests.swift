@@ -739,6 +739,91 @@ extension ClientMessageRequestStrategyTests {
             XCTAssertFalse(message.isExpired)
         }
     }
+
+    func testThatItExpiresStaleMessageAfterMaxPendingDuration_OfflinePendingMessages() {
+        // GIVEN
+        enableOfflinePendingMessages()
+        var message: ZMClientMessage!
+        var didComplete: XCTestExpectation!
+        syncMOC.performAndWait {
+            self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
+            message = try! self.groupConversation.appendText(content: "Lorem ipsum") as? ZMClientMessage
+            message.serverTimestamp = Date(timeIntervalSinceNow: -ZMClientMessage.maxPendingDuration - 1)
+            self.syncMOC.saveOrRollback()
+
+            // WHEN
+            didComplete = self.insert(message, isFresh: false)
+        }
+        wait(for: [didComplete], timeout: 5)
+
+        // THEN
+        syncMOC.performAndWait {
+            XCTAssertEqual(self.mockMessageSender.sendMessageMessage_Invocations.count, 0)
+            XCTAssertTrue(message.isExpired)
+        }
+    }
+
+    func testThatItExpiresMessageWhenMaxPendingDurationPassesWhileWaitingForNetwork_OfflinePendingMessages() {
+        // GIVEN
+        enableOfflinePendingMessages()
+        mockReachability.mayBeReachable = false
+        var message: ZMClientMessage!
+        var didComplete: XCTestExpectation!
+        syncMOC.performAndWait {
+            self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
+            message = try! self.groupConversation.appendText(content: "Lorem ipsum") as? ZMClientMessage
+            message.serverTimestamp = Date(timeIntervalSinceNow: -ZMClientMessage.maxPendingDuration + 1)
+            self.syncMOC.saveOrRollback()
+
+            // WHEN
+            didComplete = self.insert(message, isFresh: true)
+        }
+        XCTAssertTrue(mockReachability.waitForObserver())
+        wait(for: [didComplete], timeout: 5)
+
+        // THEN
+        syncMOC.performAndWait {
+            XCTAssertEqual(self.mockMessageSender.sendMessageMessage_Invocations.count, 0)
+            XCTAssertTrue(message.isExpired)
+            XCTAssertEqual(message.expirationReason, .timeout)
+            XCTAssertEqual(self.localNotificationDispatcher.failedToSend.count, 1)
+        }
+        XCTAssertTrue(mockReachability.waitForObserver(toBeRemoved: true))
+    }
+
+    func testThatItWaitsForNetworkAgainAfterRetryingMessageOlderThanMaxPendingDuration_OfflinePendingMessages() {
+        // GIVEN
+        enableOfflinePendingMessages()
+        mockReachability.mayBeReachable = false
+        var message: ZMClientMessage!
+        var didComplete: XCTestExpectation!
+        syncMOC.performAndWait {
+            self.mockMessageSender.sendMessageMessage_MockMethod = { _ in }
+            message = try! self.groupConversation.appendText(content: "Lorem ipsum") as? ZMClientMessage
+            message.serverTimestamp = Date(timeIntervalSinceNow: -ZMClientMessage.maxPendingDuration - 1)
+            message.expire(withReason: .timeout)
+            self.syncMOC.saveOrRollback()
+
+            // WHEN
+            message.resend()
+            self.syncMOC.saveOrRollback()
+            didComplete = self.insert(message, isFresh: true)
+        }
+        XCTAssertTrue(mockReachability.waitForObserver())
+        syncMOC.performAndWait {
+            XCTAssertEqual(self.mockMessageSender.sendMessageMessage_Invocations.count, 0)
+            XCTAssertFalse(message.isExpired)
+        }
+        mockReachability.setMayBeReachable(true)
+        wait(for: [didComplete], timeout: 5)
+
+        // THEN
+        syncMOC.performAndWait {
+            XCTAssertEqual(self.mockMessageSender.sendMessageMessage_Invocations.count, 1)
+            XCTAssertFalse(message.isExpired)
+            XCTAssertTrue(message.delivered)
+        }
+    }
 }
 
 // MARK: - Helpers
