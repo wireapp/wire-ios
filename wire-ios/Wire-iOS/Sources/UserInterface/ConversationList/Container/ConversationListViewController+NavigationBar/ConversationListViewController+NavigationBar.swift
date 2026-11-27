@@ -328,6 +328,20 @@ extension ConversationListViewController: ConversationListContainerViewModelDele
     }
 
     func setupRightNavigationBarButtonItems_SplitView() {
+        if #available(iOS 26.0, *) {
+            let newConversationItem = UIBarButtonItem(
+                image: UIImage(systemName: "plus"),
+                style: .plain,
+                target: self,
+                action: #selector(presentCreateConversationUI)
+            )
+            newConversationItem.tintColor = .accent()
+            newConversationItem.accessibilityIdentifier = "create_group_or_search_button"
+            newConversationItem.accessibilityLabel = L10n.Accessibility.ConversationList.StartConversationButton
+                .description
+            navigationItem.rightBarButtonItems = [newConversationItem]
+            return
+        }
 
         let newConversationBarButton = IconButton()
         newConversationBarButton.setIcon(.plus, size: .tiny, for: .normal)
