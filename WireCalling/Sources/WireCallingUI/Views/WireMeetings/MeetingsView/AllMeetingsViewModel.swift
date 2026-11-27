@@ -42,7 +42,6 @@ package final class AllMeetingsViewModel {
     var presentedLink: MeetingLinkViewModel?
     var createdMeetingLink: URL?
     private(set) var createdMeetingHasEmailInvitees = false
-    private let onInstantMeetingCreated: @MainActor (MeetingCreationResult) -> Void
 
     private let joinMeetingCallUseCase: any JoinMeetingCallUseCaseProtocol
     private let fetchMeetingLink: (@Sendable (QualifiedID) async throws -> MeetingLink?)?
@@ -61,7 +60,6 @@ package final class AllMeetingsViewModel {
         joinMeetingCallUseCase: any JoinMeetingCallUseCaseProtocol,
         fetchMeetingLink: (@Sendable (QualifiedID) async throws -> MeetingLink?)? = nil,
         refreshMeetingLink: (@Sendable (QualifiedID, String?) async throws -> MeetingLink?)? = nil,
-        onInstantMeetingCreated: @escaping @MainActor (MeetingCreationResult) -> Void = { _ in },
         makeFormViewModel: @escaping @MainActor (
             _ mode: MeetingFormViewModel.Mode,
             _ onSuccess: @escaping (Meeting, URL?, Bool) -> Void
@@ -80,7 +78,6 @@ package final class AllMeetingsViewModel {
         self.fetchMeetingLink = fetchMeetingLink
         self.refreshMeetingLink = refreshMeetingLink
         self.makeFormViewModel = makeFormViewModel
-        self.onInstantMeetingCreated = onInstantMeetingCreated
     }
 
     // MARK: - Public Interface
@@ -120,12 +117,7 @@ package final class AllMeetingsViewModel {
             guard let self else { return }
             presentedFormMode = nil
             if case .instant = mode {
-                onInstantMeetingCreated(MeetingCreationResult(meeting: meeting, link: link))
-                Task {
-                    if await !self.joinCall(conversationID: meeting.conversationID) {
-                        self.onInstantMeetingCreated(MeetingCreationResult(meeting: meeting, link: nil))
-                    }
-                }
+                Task { await self.joinCall(conversationID: meeting.conversationID) }
             } else if case .scheduled = mode {
                 createdMeetingHasEmailInvitees = hasEmailInvitees
                 createdMeetingLink = link
@@ -135,15 +127,12 @@ package final class AllMeetingsViewModel {
 
     // MARK: - Private Helpers
 
-    @discardableResult
-    private func joinCall(conversationID: QualifiedID) async -> Bool {
+    private func joinCall(conversationID: QualifiedID) async {
         do {
             try await joinMeetingCallUseCase.invoke(conversationID: conversationID)
-            return true
         } catch {
             hasJoinError = true
             WireLogger.meetings.error("failed to join meeting call: \(String(reflecting: error))")
-            return false
         }
     }
 

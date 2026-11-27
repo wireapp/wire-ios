@@ -32,21 +32,18 @@ public struct WireMeetingsFactory {
     private let supportsMeetingLinks: Bool
     private let isClipboardEnabled: Bool
     private let makeMemberAvatar: @MainActor (QualifiedID) -> AnyView?
-    private let onInstantMeetingCreated: @MainActor (MeetingCreationResult) -> Void
 
     @MainActor
     public init(
         selfUserID: UUID,
         supportsMeetingLinks: Bool = false,
         isClipboardEnabled: Bool = true,
-        makeMemberAvatar: @escaping @MainActor (QualifiedID) -> AnyView? = { _ in nil },
-        onInstantMeetingCreated: @escaping @MainActor (MeetingCreationResult) -> Void = { _ in }
+        makeMemberAvatar: @escaping @MainActor (QualifiedID) -> AnyView? = { _ in nil }
     ) {
         self.selfUserID = selfUserID
         self.supportsMeetingLinks = supportsMeetingLinks
         self.isClipboardEnabled = isClipboardEnabled
         self.makeMemberAvatar = makeMemberAvatar
-        self.onInstantMeetingCreated = onInstantMeetingCreated
     }
 
     @MainActor
@@ -95,7 +92,6 @@ public struct WireMeetingsFactory {
             joinMeetingCallUseCase: joinMeetingCallUseCase,
             fetchMeetingLink: supportsMeetingLinks ? fetchMeetingLink : nil,
             refreshMeetingLink: supportsMeetingLinks ? refreshMeetingLink : nil,
-            onInstantMeetingCreated: onInstantMeetingCreated,
             makeFormViewModel: { mode, onSuccess in
                 MeetingFormViewModel(
                     mode: mode,
@@ -120,18 +116,6 @@ public struct WireMeetingsFactory {
                 .environment(\.supportsMeetingEmailInvitations, supportsMeetingLinks)
                 .environment(\.meetingMemberAvatarProvider, MeetingMemberAvatarProvider(makeMemberAvatar))
             )
-        )
-    }
-
-    @MainActor
-    public static func makeMeetingInvitationView(
-        link: URL,
-        isClipboardEnabled: Bool,
-        onClose: @escaping () -> Void
-    ) -> UIViewController {
-        UIHostingController(
-            rootView: MeetingCreationConfirmationView(link: link, isInstant: true, onClose: onClose)
-                .environment(\.isClipboardEnabled, isClipboardEnabled)
         )
     }
 

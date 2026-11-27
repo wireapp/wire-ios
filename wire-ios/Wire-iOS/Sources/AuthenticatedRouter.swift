@@ -30,7 +30,6 @@ enum NavigationDestination {
     case connectionRequest(WireDataModel.QualifiedID)
     case conversationList
     case meetings
-    case meetingInvitation(WireDataModel.QualifiedID, URL?)
 }
 
 protocol AuthenticatedRouterProtocol: AnyObject {
@@ -165,8 +164,6 @@ extension AuthenticatedRouter: AuthenticatedRouterProtocol {
             _zClientViewController?.showConnectionRequest(qualifiedID: qualifiedID)
         case .conversationList:
             _zClientViewController?.showConversationList()
-        case let .meetingInvitation(conversationID, link):
-            activeCallRouter.prepareMeetingInvitation(conversationID: conversationID, link: link)
         case .meetings:
             Task { @MainActor in
                 // The meetings tab is only installed when the feature is enabled at setup

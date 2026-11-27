@@ -79,7 +79,6 @@ package struct AllMeetingsView: View {
             if let link = viewModel.createdMeetingLink {
                 MeetingCreationConfirmationView(
                     link: link,
-                    isInstant: false,
                     hasEmailInvitees: viewModel.createdMeetingHasEmailInvitees
                 ) {
                     viewModel.createdMeetingLink = nil

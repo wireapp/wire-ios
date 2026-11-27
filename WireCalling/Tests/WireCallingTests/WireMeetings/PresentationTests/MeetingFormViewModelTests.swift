@@ -427,7 +427,6 @@ struct MeetingFormViewModelTests {
         #expect(receivedHasEmailInvitees == !invitedEmails.isEmpty)
         let confirmation = MeetingCreationConfirmationView(
             link: try #require(receivedLink),
-            isInstant: false,
             hasEmailInvitees: receivedHasEmailInvitees
         ) {}
         #expect(confirmation.confirmationDescription == (invitedEmails.isEmpty
